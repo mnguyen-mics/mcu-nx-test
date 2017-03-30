@@ -6,7 +6,7 @@ const paths = require('./paths');
 const babelOptions = require('./babel');
 const pkg = require('../package.json');
 
-const extractSass = new ExtractTextPlugin({
+const extractStyle = new ExtractTextPlugin({
   filename: '[name].[chunkhash].css',
   disable: process.env.NODE_ENV === 'development'
 });
@@ -19,6 +19,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
       babel: 'babel-polyfill',
       app: path.join(paths.reactAppSrc, '/index.js'),
       style: paths.appStyle,
+      'style-less': paths.appStyleLess,
       'react-vendors': Object.keys(pkg.dependencies)
     },
 
@@ -44,8 +45,17 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
           }
         },
         {
+          test: /\.less$/,
+          loader: extractStyle.extract({
+            use: [
+              'css-loader?sourceMap',
+              'less-loader'
+            ]
+          })
+        },
+        {
           test: /\.scss$/,
-          loader: extractSass.extract({
+          loader: extractStyle.extract({
             use: [
               'css-loader?sourceMap',
               'resolve-url-loader',
@@ -93,7 +103,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
     },
 
     plugins: [
-      extractSass,
+      extractStyle,
       new webpack.DefinePlugin({
         PUBLIC_PATH: JSON.stringify('react')
       }),
