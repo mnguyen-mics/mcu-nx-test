@@ -46,6 +46,14 @@ Here on Debian :
 sudo aptitude install ruby1.9.3 build-essential libpng-dev zlib1g-dev imagemagick
 ```
 
+Here for the mac users:
+make sure xcode is installed on your mac and follow those steps to install libpng-dev 
+http://mac-dev-env.patrickbougie.com/libpng/
+```
+xcode-select --install
+brew install ImageMagick
+```
+
 #### update path
 
 Before the build or in your bashrc :
