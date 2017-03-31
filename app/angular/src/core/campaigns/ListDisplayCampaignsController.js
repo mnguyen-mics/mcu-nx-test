@@ -56,6 +56,11 @@ define(['./module'], function (module) {
         params = {administration_id: currentWorkspace.organisation_id, max_results: 150, campaign_type: "DISPLAY"};
       }
 
+      // redirect to v2
+      var organisationPart = '/organisation/' + (params.organisation_id || params.administration_id);
+      var datamartPart = params.datamart_id ? '/datamart/' + params.datamart_id : '/';
+      $location.path('v2' + organisationPart + datamartPart + 'campaigns');
+
       Restangular.all('display_campaigns').getList(params).then(function (displayCampaigns) {
         $scope.displayCampaigns = displayCampaigns;
       });
