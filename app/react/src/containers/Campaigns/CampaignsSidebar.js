@@ -37,7 +37,7 @@ class CampaignsSidebar extends Component {
       }
     ];
 
-    return <Sidebar items={items} />;
+    return <Sidebar items={items}>{this.props.children}</Sidebar>;
   }
 
 }

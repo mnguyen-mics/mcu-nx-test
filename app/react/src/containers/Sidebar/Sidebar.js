@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { Layout, Menu } from 'antd';
+
+const { Sider, Content } = Layout;
 
 class Sidebar extends Component {
 
@@ -13,19 +16,41 @@ class Sidebar extends Component {
 
     const buildSidebarItems = () => {
       return items.map((item, index) => {
-        return <li className={item.isActive ? 'active' : ''} key={index.toString()}>{ item.element }</li>;
+        return <Menu.Item key={index.toString()}>{ item.element }</Menu.Item>;
       });
     };
 
+    const reduceArraySize = (value) => {
+      return value.filter((val) => {
+        return val !== null;
+      });
+    };
+
+    const getSelectedItemKey = () => {
+      return reduceArraySize(items.map((item, index) => {
+        return item.isActive ? index.toString() : null;
+      }));
+    };
+
+
     const content = (
-      <div className="mcs-sidebar">
-        <div className="mcs-sidebar-background" />
-        <div className="mcs-sidebar-content">
-          <ul className="mcs-lm-nav mcs-lm-nav-pills mcs-lm-nav-stacked">
+      <Layout>
+        <Sider width={200} style={{ background: '#fff' }}>
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={getSelectedItemKey()}
+            style={{ height: '100%' }}
+            className="mcs-menu-inline"
+          >
             { buildSidebarItems() }
-          </ul>
-        </div>
-      </div>
+          </Menu>
+        </Sider>
+        <Layout>
+          <Content>
+            {this.props.children}
+          </Content>
+        </Layout>
+      </Layout>
     );
 
     return isVisible ? content : null;
