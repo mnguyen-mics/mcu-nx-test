@@ -11,6 +11,7 @@ define(['./module'], function (module) {
       function isLogged() {
         $scope.isLogged = Session.isInitialized();
         $scope.user = Session.getUserProfile();
+        $scope.campaignUrl = "#/v2/organisation/" + $scope.organisationId + ($scope.datamartId ? ('/datamart/' + $scope.datamartId) + "/" : '/') + "campaigns";
       }
 
       isLogged();
