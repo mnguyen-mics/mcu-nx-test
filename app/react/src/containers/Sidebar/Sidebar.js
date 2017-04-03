@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Layout, Menu } from 'antd';
 
-import logoUrl from '../../assets/images/logo-small.png';
+import logoUrl from '../../assets/images/logo-mediarithmics.png';
 
 const { Sider, Content } = Layout;
 
@@ -45,7 +45,7 @@ class Sidebar extends Component {
             className="mcs-menu-inline"
           >
             { buildSidebarItems() }
-            <Menu.Item style={{ position: 'absolute', bottom: 0, left: 0, height: '95px', width: '100%', backgroundColor: '#fcfcfc', boxShadow: '0 -1px 0 0 #e1e1e1' }}>
+            <Menu.Item style={{ position: 'absolute', bottom: 0, left: 0, height: '95px', width: '100%', backgroundColor: '#fcfcfc', boxShadow: '0 -1px 0 0 #e1e1e1', cursor: 'default' }} disabled >
               <img alt="mics-logo" className="mcs-footer-img" src={logoUrl} />
             </Menu.Item>
           </Menu>
