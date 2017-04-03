@@ -21,7 +21,7 @@ div[data-reactroot] {
 
 .ant-menu-inline.mcs-menu-inline .ant-menu-selected, .ant-menu-inline .ant-menu-item-selected {
     border-left-color: @info-color!important;
-    border-right: 1px solid @border-color-base;
+    border-right: @border-width-base @border-style-base @border-color-base;
     transform: translateZ(0);
 }
 
@@ -39,4 +39,10 @@ div[data-reactroot] {
 
 .mcs-menu-inline .ant-menu-item > a:hover {
     color: @info-color!important;
+}
+
+
+.mcs-footer-img {
+    width: 100%; 
+    margin-top:24px;
 }

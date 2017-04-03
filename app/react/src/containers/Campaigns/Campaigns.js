@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Layout } from 'antd';
+import { Layout, Row } from 'antd';
 
 import CampaignsSidebar from './CampaignsSidebar';
 
@@ -10,7 +10,10 @@ class Campaigns extends Component {
     return (
       <Layout>
         <CampaignsSidebar {...this.props}>
-          { this.props.children || <FormattedMessage id="CAMPAIGN_COMPONENT" /> }
+          <Row style={{ overflowY: 'scroll', padding: '0 23px' }}>
+            <div><FormattedMessage id="FILTERED_BY" /></div>
+            { this.props.children || <FormattedMessage id="LOREM_IPSUM" /> }
+          </Row>
         </CampaignsSidebar>
       </Layout>
     );

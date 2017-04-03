@@ -20,7 +20,7 @@ class CampaignsSidebar extends Component {
 
     const items = [
       {
-        element: <a href={`#/${workspaceId}/campaigns/display`}>Display Campaigns</a>,
+        element: <a href={`#/v2/${workspaceId}/campaigns/display`}>Display Campaigns</a>,
         isActive: isActiveUrl(new RegExp(/display|[^(email|scenarios|goals)]/))
       },
       {
