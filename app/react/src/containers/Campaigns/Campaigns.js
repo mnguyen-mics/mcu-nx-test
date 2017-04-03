@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Layout, Row } from 'antd';
+import { Layout } from 'antd';
 
 import CampaignsSidebar from './CampaignsSidebar';
+import { ScrollComponent } from '../../components/ScrollComponent';
 
 class Campaigns extends Component {
 
@@ -10,10 +11,9 @@ class Campaigns extends Component {
     return (
       <Layout>
         <CampaignsSidebar {...this.props}>
-          <Row style={{ overflowY: 'scroll', padding: '0 23px' }}>
-            <div><FormattedMessage id="FILTERED_BY" /></div>
-            { this.props.children || <FormattedMessage id="LOREM_IPSUM" /> }
-          </Row>
+          <ScrollComponent>
+            <FormattedMessage id="LOREM_IPSUM" />
+          </ScrollComponent>
         </CampaignsSidebar>
       </Layout>
     );
