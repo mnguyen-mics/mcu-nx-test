@@ -11,7 +11,7 @@ define(['./module'], function (module) {
       function isLogged() {
         $scope.isLogged = Session.isInitialized();
         $scope.user = Session.getUserProfile();
-        $scope.campaignUrl = "#/v2/organisation/" + $scope.organisationId + ($scope.datamartId ? ('/datamart/' + $scope.datamartId) + "/" : '/') + "campaigns";
+        updateCampaignUrl();
       }
 
       isLogged();
@@ -26,6 +26,11 @@ define(['./module'], function (module) {
         $scope.hasDatamart = Session.hasDatamart();
         $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
         $scope.datamartId = Session.getCurrentDatamartId();
+        updateCampaignUrl();
+      }
+
+      function updateCampaignUrl() {
+        $scope.campaignUrl = "#/v2/organisation/" + $scope.organisationId + ($scope.datamartId ? ('/datamart/' + $scope.datamartId) + "/" : '/') + "campaigns";
       }
 
       if (Session.isInitialized()) {
