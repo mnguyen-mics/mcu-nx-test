@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import Link from 'react-router/lib/Link';
-import { Cascader, Button, Icon, Menu, Row, Col } from 'antd';
+import { Cascader, Popover, Icon, Menu, Row, Col } from 'antd';
 import classNames from 'classnames';
 
 import * as sessionActions from '../../services/session/SessionActions';
@@ -18,9 +18,10 @@ class NavigatorHeader extends Component {
     this.buildWorkspaceItems = this.buildWorkspaceItems.bind(this);
     this.buildProfileItems = this.buildProfileItems.bind(this);
     this.setActiveHeaderItem = this.setActiveHeaderItem.bind(this);
+    this.getCampaignsUrl = this.getCampaignsUrl.bind(this);
     this.state = {
       // retrieve activeRoute from location
-      activeRoute: ''
+      activeRoute: 'campaigns'
     };
   }
 
@@ -38,7 +39,7 @@ class NavigatorHeader extends Component {
       activeRoute
     } = this.state;
 
-    const homeUrl = authenticated ? `/${workspaceId}/campaigns/display` : '';
+    const homeUrl = authenticated ? this.getCampaignsUrl() : '';
     const navigationItems = this.displayNavigationItems();
     const workspaceItems = this.buildWorkspaceItems();
     const profileItems = this.buildProfileItems();
@@ -58,31 +59,38 @@ class NavigatorHeader extends Component {
       'clearfix'
     ]);
 
+    const text = <span>Title</span>;
+    const content = (
+      <div>
+        { profileItems.map(profileItem => {
+          return <span onClick={profileItem.onClick}>{ profileItem.label }</span>;
+        }) }
+      </div>
+    );
+
     return (
       <header id="header" className={headerClassName}>
         <Row>
           <Col lg={1}>
-            <Cascader options={workspaceItems.workspaces} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu">
-              <span>Workspace</span>
-            </Cascader>
+            <Cascader options={workspaceItems.workspaces} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" placeholder="" />
           </Col>
           <Col lg={3}>
             <Link to={homeUrl} id="logo">
-              <span>{organisationName}</span>
+              <span className="mcs-header-logo-name">{organisationName}</span>
             </Link>
           </Col>
-          <Col lg={18} >
+          <Col lg={20} >
             <Menu onClick={this.setActiveHeaderItem} selectedKeys={[activeRoute]} mode="horizontal" className="mcs-header-menu-horizontal">
               {navigationItems}
             </Menu>
             <div className="mcs-header-menu-icons" >
-              <Link to={`/#/${workspaceId}/settings/useraccount`}>
+              <Link to={`/${workspaceId}/settings/useraccount`}>
                 <Icon type="setting" className="mcs-header-anticon" />
               </Link>
               <div className="mcs-header-divider" />
-              <Link to={`/#/${workspaceId}/settings/useraccount`}>
+              <Popover placement="bottomRight" title={text} content={content}>
                 <Icon type="user" className="mcs-header-anticon" />
-              </Link>
+              </Popover>
             </div>
           </Col>
         </Row>
@@ -107,7 +115,7 @@ class NavigatorHeader extends Component {
 
     return items.map(item => {
       return (
-        <Menu.Item key={item.label}>
+        <Menu.Item key={item.path}>
           <Link to={item.url}><FormattedMessage id={item.label} /></Link>
         </Menu.Item>
       );
@@ -115,11 +123,21 @@ class NavigatorHeader extends Component {
 
   }
 
+  getCampaignsUrl() {
+    const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      }
+    } = this.props;
+
+    return `/v2/organisation/${organisationId}${datamartId ? `/datamart/${datamartId}` : ''}/campaigns`;
+  }
+
   buildNavigationItems() {
 
     const {
       activeWorkspace: {
-        // organisationId,
         datamartId,
         workspaceId
       },
@@ -139,38 +157,34 @@ class NavigatorHeader extends Component {
     const datamartEntries = datamartId ? [
       {
         url: `/${workspaceId}/datamart/segments`,
-        label: 'AUDIENCE'
+        label: 'AUDIENCE',
+        path: 'segments'
       },
       {
         url: `/${workspaceId}/datamart/categories`,
-        label: 'CATALOGS'
+        label: 'CATALOGS',
+        path: 'categories'
       },
     ] : [];
 
     const reactEntries = [
-      /*
-        To test until a real link is implemented
-        const campaignsUrl = `/v2/organisation/${organisationId}${datamartId ? `/datamart/${datamartId}` : ''}/campaigns`;
-        {
-          url: campaignsUrl,
-          label: 'CAMPAIGNS'
-          active: isActiveUrl('campaigns'),
-        }
-      */
+      {
+        url: this.getCampaignsUrl(),
+        label: 'CAMPAIGNS',
+        path: 'campaigns'
+      }
     ];
 
     const angularEntries = [
       {
-        url: `/${workspaceId}/campaigns/display`,
-        label: 'CAMPAIGNS'
-      },
-      {
         url: `/${workspaceId}/creatives/display-ad`,
-        label: 'CREATIVES'
+        label: 'CREATIVES',
+        path: 'display-ad'
       },
       {
         url: `/${workspaceId}/library/placementlists`,
-        label: 'LIBRARY'
+        label: 'LIBRARY',
+        path: 'placementlists'
       }
     ];
 
@@ -194,6 +208,16 @@ class NavigatorHeader extends Component {
       };
     };
 
+    const getDatamarts = workspace => {
+      return workspace.datamarts.map(datamart => {
+        return {
+          value: datamart.datamartName,
+          label: datamart.datamartName,
+          onClick: () => switchWorkspace(workspace),
+        };
+      });
+    };
+
     const getWorkspaceItems = () => workspaces.map(workspace => {
 
       const isActive = (workspace.organisationId === activeWorkspace.organisationId) && (workspace.role === activeWorkspace.role) && (workspace.datamartId === activeWorkspace.datamartId);
@@ -202,7 +226,8 @@ class NavigatorHeader extends Component {
         value: getLabel(workspace),
         label: getLabel(workspace),
         onClick: isActive ? () => {} : () => switchWorkspace(workspace),
-        isActive
+        isActive,
+        children: getDatamarts(workspace)
       };
 
     });
@@ -274,7 +299,6 @@ NavigatorHeader.propTypes = {
   user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   workspaces: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isVisible: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   switchWorkspace: PropTypes.func.isRequired,
@@ -286,8 +310,7 @@ const mapStateToProps = state => ({
   authenticated: state.sessionState.authenticated,
   user: state.sessionState.user,
   activeWorkspace: state.sessionState.activeWorkspace,
-  workspaces: state.sessionState.workspaces,
-  isVisible: state.headerState.isVisible
+  workspaces: state.sessionState.workspaces
 });
 
 const mapDispatchToProps = {

@@ -104,7 +104,7 @@ const logout = () => {
   };
 };
 
-const buildWorkspace = (workspace, datamart = {}) => {
+const buildWorkspace = (workspace) => {
 
   const {
     organisation_name: organisationName,
@@ -113,20 +113,29 @@ const buildWorkspace = (workspace, datamart = {}) => {
     role
   } = workspace;
 
-  const {
-    id: datamartId,
-    name: datamartName
-  } = datamart;
+  const workspaceId = `o${organisationId}`;
 
-  const workspaceId = `o${organisationId}d${datamartId}`;
+  const buildDatamarts = () => {
+    return workspace.datamarts.map(datamart => {
+      const {
+        id: datamartId,
+        name: datamartName
+      } = datamart;
+
+      return {
+        workspaceId: `${workspaceId}d${datamartId}`,
+        datamartId,
+        datamartName
+      };
+    });
+  };
 
   return {
     organisationName,
     organisationId,
     administrator,
     role,
-    datamartId,
-    datamartName,
+    datamarts: buildDatamarts(),
     workspaceId
   };
 
@@ -136,16 +145,10 @@ const buildWorkspaces = workspaces => {
 
   const builtWorkspaces = [];
 
-  workspaces.forEach(workspace => {
+  const uniqueWorkspaces = workspaces.filter((workspace, index, self) => self.findIndex(w => w.organisation_id === workspace.organisation_id && w.role === workspace.role) === index);
 
-    if (workspace.datamarts.length) {
-      workspace.datamarts.forEach(datamart => {
-        builtWorkspaces.push(buildWorkspace(workspace, datamart));
-      });
-    } else {
-      builtWorkspaces.push(buildWorkspace(workspace));
-    }
-
+  uniqueWorkspaces.forEach(workspace => {
+    builtWorkspaces.push(buildWorkspace(workspace));
   });
 
   return builtWorkspaces;
@@ -171,9 +174,22 @@ const setActiveWorkspace = (workspace, workspaces, defaultWorkspace, init = fals
     return defaultOrFirstWorkspace;
   };
 
+  const findWorkspaceByDatamart = workspaceWithDatamartId => {
+
+    let w = {};
+
+    workspaces.forEach(currentWorkspace => {
+      if (currentWorkspace.organisationId === workspaceWithDatamartId.organisationId) {
+        w = currentWorkspace.datamarts.findIndex(datamart => datamart.datamartId === workspaceWithDatamartId.datamartId);
+      }
+    });
+
+    return w;
+  };
+
   if (init) {
     if (workspace.datamartId) {
-      activeWorkspace = workspaces.find(userWorkspace => (userWorkspace.organisationId === workspace.organisationId) && (userWorkspace.datamartId === workspace.datamartId));
+      activeWorkspace = findWorkspaceByDatamart(workspace);
     } else {
       activeWorkspace = workspaces.find(userWorkspace => userWorkspace.organisationId === workspace.organisationId);
     }
@@ -185,7 +201,13 @@ const setActiveWorkspace = (workspace, workspaces, defaultWorkspace, init = fals
     activeWorkspace = getDefaultOrFirstWorkspace();
   }
 
-  return activeWorkspace;
+  const flattenActiveWorkspace = workspace => {
+    return {
+      ...workspace
+    };
+  };
+
+  return flattenActiveWorkspace(activeWorkspace);
 };
 
 const isReactUrl = url => {
@@ -241,7 +263,7 @@ const sessionState = (state = defaultSessionState, action) => {
       return {
         ...state,
         isFetchingWorkspaces: false,
-        workspaces: buildWorkspaces([action.response.data])
+        workspaces: buildWorkspaces([action.response.data].concat(state.user.workspaces))
       };
 
     case GET_ACCESS_TOKEN_FAILURE:
