@@ -7,9 +7,6 @@ import classNames from 'classnames';
 
 import * as sessionActions from '../../services/session/SessionActions';
 
-import logoUrl from '../../assets/images/mediarithmics-small-white.png';
-import imgUrl from '../../assets/images/user.svg';
-
 class NavigatorHeader extends Component {
 
   constructor(props) {
@@ -44,15 +41,6 @@ class NavigatorHeader extends Component {
     const workspaceItems = this.buildWorkspaceItems();
     const profileItems = this.buildProfileItems();
 
-    const logo = {
-      url: logoUrl,
-      alt: 'mediarithmics'
-    };
-
-    const img = {
-      url: imgUrl,
-      alt: 'profile'
-    };
 
     const headerClassName = classNames([
       'mcs-header',
@@ -73,7 +61,7 @@ class NavigatorHeader extends Component {
       <header id="header" className={headerClassName}>
         <Row>
           <Col lg={3}>
-            <Cascader options={workspaceItems.workspaces} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" placeholder="" />
+            <Cascader options={workspaceItems.workspaces} defaultValue={[workspaceId]} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" />
           </Col>
           <Col lg={3}>
             <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
@@ -104,10 +92,11 @@ class NavigatorHeader extends Component {
     }
   }
 
-  setActiveHeaderItem(item) {
-    this.setState({
+  setActiveHeaderItem(/* item */) {
+    /* this.setState({
       activeRoute: item.key,
     });
+    */
   }
 
   displayNavigationItems() {
@@ -275,8 +264,7 @@ NavigatorHeader.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   switchWorkspace: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired,
-  router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  logout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
