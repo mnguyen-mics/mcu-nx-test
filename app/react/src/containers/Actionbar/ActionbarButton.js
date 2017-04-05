@@ -22,9 +22,10 @@ class ActionbarButton extends Component {
 
     const selected = currentSecondaryBar !== null && currentSecondaryBar === secondaryBar;
 
-    const containerClassNamesWithSelected = containerClassNames.slice();
+    const selectionClasses = ['selectionArrow'];
 
-    if (selected) { containerClassNamesWithSelected.push('selected'); }
+    if (!selected) { selectionClasses.push('hidden'); }
+
 
     const clickAction = evt => {
       setSecondaryActionBar(secondaryBar);
@@ -32,10 +33,16 @@ class ActionbarButton extends Component {
     };
 
     return (
-      <div className={classNames(containerClassNamesWithSelected)}>
+      <div className={classNames(containerClassNames)}>
         <button className={classNames(buttonClassNames)} onClick={clickAction} {...this.props}>
           {content}
         </button>
+        <svg className={classNames(selectionClasses)} width="40" height="10">
+          <polyline
+            points="0 9 20 0 40 9" stroke="#d3dbe1" strokeWidth="1"
+            strokeLinecap="butt" fill="none"
+          />
+        </svg>
       </div>
     );
   }
