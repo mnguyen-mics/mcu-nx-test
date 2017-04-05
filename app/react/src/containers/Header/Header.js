@@ -59,27 +59,26 @@ class NavigatorHeader extends Component {
       'clearfix'
     ]);
 
-    const text = <span>Title</span>;
+    const text = profileItems.title;
+
     const content = (
       <div>
-        { profileItems.map(profileItem => {
-          return <span onClick={profileItem.onClick}>{ profileItem.label }</span>;
-        }) }
+        { profileItems.content.map((profileItem, index) => {
+          return <div key={index.toString()}>{profileItem}</div>;
+        })}
       </div>
     );
 
     return (
       <header id="header" className={headerClassName}>
         <Row>
-          <Col lg={1}>
+          <Col lg={3}>
             <Cascader options={workspaceItems.workspaces} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" placeholder="" />
           </Col>
           <Col lg={3}>
-            <Link to={homeUrl} id="logo">
-              <span className="mcs-header-logo-name">{organisationName}</span>
-            </Link>
+            <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
           </Col>
-          <Col lg={20} >
+          <Col lg={18} >
             <Menu onClick={this.setActiveHeaderItem} selectedKeys={[activeRoute]} mode="horizontal" className="mcs-header-menu-horizontal">
               {navigationItems}
             </Menu>
@@ -100,7 +99,9 @@ class NavigatorHeader extends Component {
   }
 
   onWorkspaceChange(value, selectedOptions) {
-    selectedOptions[0].onClick();
+    if (value.length) {
+      selectedOptions[0].onClick();
+    }
   }
 
   setActiveHeaderItem(item) {
@@ -208,26 +209,15 @@ class NavigatorHeader extends Component {
       };
     };
 
-    const getDatamarts = workspace => {
-      return workspace.datamarts.map(datamart => {
-        return {
-          value: datamart.datamartName,
-          label: datamart.datamartName,
-          onClick: () => switchWorkspace(workspace),
-        };
-      });
-    };
-
     const getWorkspaceItems = () => workspaces.map(workspace => {
 
       const isActive = (workspace.organisationId === activeWorkspace.organisationId) && (workspace.role === activeWorkspace.role) && (workspace.datamartId === activeWorkspace.datamartId);
 
       return {
-        value: getLabel(workspace),
+        value: workspace.workspaceId,
         label: getLabel(workspace),
-        onClick: isActive ? () => {} : () => switchWorkspace(workspace),
-        isActive,
-        children: getDatamarts(workspace)
+        onClick: () => switchWorkspace(workspace),
+        isActive
       };
 
     });
@@ -246,50 +236,33 @@ class NavigatorHeader extends Component {
       activeWorkspace: {
         workspaceId
       },
-      logout,
-      router
+      logout
     } = this.props;
 
     const loginUrl = `${PUBLIC_URL}/login`; // eslint-disable-line no-undef
 
-    const redirect = url => {
-      return router.replace(url);
+    const loginItem = <Link to={loginUrl}><FormattedMessage id="LOGIN" /></Link>;
+
+    const onLogoutClick = () => {
+      logout();
     };
 
-    const login = () => {
-      return redirect(loginUrl);
-    };
+    const logoutItem = <Link to="/logout" onClick={onLogoutClick}><FormattedMessage id="LOGOUT" /></Link>; // eslint-disable-line jsx-a11y/no-static-element-interactions
+    const accountUrl = `${workspaceId}/settings/useraccount`;
 
-    const loginItem = {
-      label: <p><FormattedMessage id="LOGIN" /></p>,
-      onClick: login
-    };
+    const account = <Link to={accountUrl}><FormattedMessage id="ACCOUNT_SETTINGS" /></Link>;
 
-    const logoutItem = {
-      label: <p><FormattedMessage id="LOGOUT" /></p>,
-      onClick: () => {
-        logout();
-        // should use redirect(loginUrl) later
-        window.location = '/#/logout'; // eslint-disable-line no-undef
-      }
-    };
-
-    const account = {
-      label: <p><FormattedMessage id="ACCOUNT_SETTINGS" /></p>,
-      onClick: () => {
-        window.location = `/#/${workspaceId}/settings/useraccount`; // eslint-disable-line no-undef
-      }
-    };
-
-    const userItem = user ? { label: <p>{user.email}</p> } : null;
+    const userItem = user ? <p>{user.email}</p> : null;
     const accountItem = user ? account : null;
     const authenticatedItem = authenticated ? logoutItem : loginItem;
 
-    return [
-      userItem,
-      accountItem,
-      authenticatedItem
-    ];
+    return {
+      title: userItem,
+      content: [
+        accountItem,
+        authenticatedItem
+      ]
+    };
 
   }
 

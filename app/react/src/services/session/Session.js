@@ -104,7 +104,7 @@ const logout = () => {
   };
 };
 
-const buildWorkspace = (workspace) => {
+const buildWorkspace = (workspace, datamart = {}) => {
 
   const {
     organisation_name: organisationName,
@@ -113,29 +113,20 @@ const buildWorkspace = (workspace) => {
     role
   } = workspace;
 
-  const workspaceId = `o${organisationId}`;
+  const {
+    id: datamartId,
+    name: datamartName
+  } = datamart;
 
-  const buildDatamarts = () => {
-    return workspace.datamarts.map(datamart => {
-      const {
-        id: datamartId,
-        name: datamartName
-      } = datamart;
-
-      return {
-        workspaceId: `${workspaceId}d${datamartId}`,
-        datamartId,
-        datamartName
-      };
-    });
-  };
+  const workspaceId = `o${organisationId}d${datamartId}`;
 
   return {
     organisationName,
     organisationId,
     administrator,
     role,
-    datamarts: buildDatamarts(),
+    datamartId,
+    datamartName,
     workspaceId
   };
 
@@ -145,10 +136,18 @@ const buildWorkspaces = workspaces => {
 
   const builtWorkspaces = [];
 
-  const uniqueWorkspaces = workspaces.filter((workspace, index, self) => self.findIndex(w => w.organisation_id === workspace.organisation_id && w.role === workspace.role) === index);
+  const uniqueWorkspaces = workspaces.filter((workspace, index, self) => self.findIndex(w => w.organisation_id === workspace.organisation_id) === index);
 
   uniqueWorkspaces.forEach(workspace => {
-    builtWorkspaces.push(buildWorkspace(workspace));
+
+    if (workspace.datamarts.length) {
+      workspace.datamarts.forEach(datamart => {
+        builtWorkspaces.push(buildWorkspace(workspace, datamart));
+      });
+    } else {
+      builtWorkspaces.push(buildWorkspace(workspace));
+    }
+
   });
 
   return builtWorkspaces;
@@ -174,22 +173,9 @@ const setActiveWorkspace = (workspace, workspaces, defaultWorkspace, init = fals
     return defaultOrFirstWorkspace;
   };
 
-  const findWorkspaceByDatamart = workspaceWithDatamartId => {
-
-    let w = {};
-
-    workspaces.forEach(currentWorkspace => {
-      if (currentWorkspace.organisationId === workspaceWithDatamartId.organisationId) {
-        w = currentWorkspace.datamarts.findIndex(datamart => datamart.datamartId === workspaceWithDatamartId.datamartId);
-      }
-    });
-
-    return w;
-  };
-
   if (init) {
     if (workspace.datamartId) {
-      activeWorkspace = findWorkspaceByDatamart(workspace);
+      activeWorkspace = workspaces.find(userWorkspace => (userWorkspace.organisationId === workspace.organisationId) && (userWorkspace.datamartId === workspace.datamartId));
     } else {
       activeWorkspace = workspaces.find(userWorkspace => userWorkspace.organisationId === workspace.organisationId);
     }
@@ -201,13 +187,7 @@ const setActiveWorkspace = (workspace, workspaces, defaultWorkspace, init = fals
     activeWorkspace = getDefaultOrFirstWorkspace();
   }
 
-  const flattenActiveWorkspace = workspace => {
-    return {
-      ...workspace
-    };
-  };
-
-  return flattenActiveWorkspace(activeWorkspace);
+  return activeWorkspace;
 };
 
 const isReactUrl = url => {
