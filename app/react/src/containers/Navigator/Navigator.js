@@ -125,8 +125,8 @@ class Navigator extends Component {
 
     const redirectActiveWorkspace = nextActiveWorkspace ? nextActiveWorkspace : activeWorkspace;
 
-    const datamartPart = redirectActiveWorkspace.datamartId ? `/datamart/${redirectActiveWorkspace.datamartId}` : '';
-    const url = `${PUBLIC_URL}/organisation/${redirectActiveWorkspace.organisationId}${datamartPart}/campaigns`; // eslint-disable-line no-undef
+    const datamartPart = redirectActiveWorkspace.datamartId ? `/d/${redirectActiveWorkspace.datamartId}` : '';
+    const url = `${PUBLIC_URL}/o/${redirectActiveWorkspace.organisationId}${datamartPart}/campaigns/display`; // eslint-disable-line no-undef
 
     if (isReactUrl) {
       router.replace(url);

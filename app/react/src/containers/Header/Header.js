@@ -121,7 +121,7 @@ class NavigatorHeader extends Component {
       }
     } = this.props;
 
-    return `/v2/organisation/${organisationId}${datamartId ? `/datamart/${datamartId}` : ''}/campaigns`;
+    return `/v2/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`;
   }
 
   buildNavigationItems() {

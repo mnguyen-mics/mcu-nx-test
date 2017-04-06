@@ -15,6 +15,11 @@
   "EMAIL_PLACEHOLDER": "Type your email address",
   "PASSWORD_PLACEHOLDER": "Type your password",
   "FORGOT_PASSWORD": "Forgot password?",
-  "SUBMIT": "Submit"
+  "SUBMIT": "Submit",
+
+  "DISPLAY_CAMPAIGNS": "Display Campaigns",
+  "EMAIL_CAMPAIGNS": "Emails Campaigns",
+  "SCENARIOS": "Scenarios",
+  "GOALS": "Goals"
 
 }
