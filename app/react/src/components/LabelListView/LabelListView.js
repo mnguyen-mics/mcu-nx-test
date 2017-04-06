@@ -97,6 +97,7 @@ class LabelListView extends Component {
   }
 }
 
+
 LabelListView.defaultProps = {
   onInputSubmit: () => {},
   label: '',
@@ -105,7 +106,12 @@ LabelListView.defaultProps = {
 
 LabelListView.propTypes = {
   label: PropTypes.string,
-  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  items: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.any.isRequired,
+    value: PropTypes.string.isRequired,
+    isClosable: PropTypes.bool.isRequired,
+    icon: PropTypes.string,
+  })).isRequired,
   isInputVisible: PropTypes.bool,
   onClickOnClose: PropTypes.func.isRequired,
   onInputSubmit: PropTypes.func,

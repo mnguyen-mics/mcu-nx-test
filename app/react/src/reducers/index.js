@@ -7,6 +7,9 @@ import { HeaderReducers } from '../containers/Header/redux';
 import { SidebarReducers } from '../containers/Sidebar/redux';
 import { SessionReducers } from '../services/session';
 import { LoginReducers } from '../containers/Login/redux';
+
+import { CampaignsTableViewReducers } from '../containers/Campaigns/redux';
+
 import { i18nReducers } from '../services/i18n';
 
 const allReducers = Object.assign(
@@ -23,6 +26,7 @@ const allReducers = Object.assign(
   SidebarReducers,
   SessionReducers,
   LoginReducers,
+  CampaignsTableViewReducers,
   i18nReducers
 );
 

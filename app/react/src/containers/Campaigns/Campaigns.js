@@ -3,8 +3,10 @@ import { FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
 
 import CampaignsSidebar from './CampaignsSidebar';
+import CampaignsTableView from './CampaignsTableView';
 import { ScrollComponent } from '../../components/ScrollComponent';
 import { LabelListView } from '../../components/LabelListView';
+
 
 const items = [
   {
@@ -36,9 +38,9 @@ class Campaigns extends Component {
       <Layout>
         <CampaignsSidebar {...this.props}>
           <ScrollComponent>
-            <LabelListView items={items} label="Filtered by:" onClickOnClose={returnFunc} isInputVisible onInputSubmit={returnFunc} />
+            <LabelListView items={items} label="Filtered by:" onClickOnClose={returnFunc} />
             <br />
-            <FormattedMessage id="LOREM_IPSUM" />
+            <CampaignsTableView filters={[]} isSearchEnabled isDateRangePickerEnabled />
           </ScrollComponent>
         </CampaignsSidebar>
       </Layout>
