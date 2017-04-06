@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { IntlProvider } from 'react-intl';
 import Loading from 'mcs-react-loading';
+import { Layout } from 'antd';
 
 import { NavigatorHeader } from '../Header';
 
@@ -84,10 +85,10 @@ class Navigator extends Component {
 
     return (
       <IntlProvider locale={locale} key={locale} messages={translations}>
-        <div>
+        <Layout className="mcs-main-layout">
           <NavigatorHeader {...this.props} />
           {this.props.children}
-        </div>
+        </Layout>
       </IntlProvider>
     );
   }
