@@ -20,7 +20,6 @@ class BreadcrumbBar extends Component {
     return (
       <Breadcrumb separator={sep} {...this.props}>
         {path.map(buildItem)}
-        <Breadcrumb.Item>Plop</Breadcrumb.Item>
       </Breadcrumb>);
   }
 }

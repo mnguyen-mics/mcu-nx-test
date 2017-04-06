@@ -15,6 +15,7 @@
   "EMAIL_PLACEHOLDER": "Type your email address",
   "PASSWORD_PLACEHOLDER": "Type your password",
   "FORGOT_PASSWORD": "Forgot password?",
-  "SUBMIT": "Submit"
+  "SUBMIT": "Submit",
+  "SAVE": "Save"
 
 }
