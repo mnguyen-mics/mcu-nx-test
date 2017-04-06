@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
+import moment from 'moment';
 
 import CampaignsSidebar from './CampaignsSidebar';
 import CampaignsTableView from './CampaignsTableView';
