@@ -35,9 +35,7 @@ class Campaigns extends Component {
     return (
       <Layout>
         <CampaignsSidebar {...this.props}>
-          <ScrollComponent>
-            <LabelListView items={items} label="Filtered by:" onClickOnClose={returnFunc} isInputVisible onInputSubmit={returnFunc} />
-          </ScrollComponent>
+          {this.props.children}
         </CampaignsSidebar>
       </Layout>
     );

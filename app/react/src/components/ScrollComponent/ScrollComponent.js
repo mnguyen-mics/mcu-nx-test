@@ -12,4 +12,11 @@ class ScrollComponent extends Component {
   }
 }
 
+/*
+* EXAMPLE :
+*<ScrollComponent>
+* {this.props.children}
+*</ScrollComponent>
+*/
+
 export default ScrollComponent;

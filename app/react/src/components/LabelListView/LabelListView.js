@@ -112,4 +112,10 @@ LabelListView.propTypes = {
   onInputSubmit: PropTypes.func,
 };
 
+/*
+* EXAMPLE :
+<LabelListView items={items} label="Filtered by:" onClickOnClose={returnFunc} isInputVisible onInputSubmit={returnFunc} />
+*/
+
+
 export default LabelListView;
