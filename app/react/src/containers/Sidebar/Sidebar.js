@@ -50,7 +50,7 @@ class Sidebar extends Component {
           </Menu>
         </Sider>
         <Layout>
-          <Content>
+          <Content className="mcs-layout-content">
             {this.props.children}
           </Content>
         </Layout>

@@ -30,7 +30,7 @@ define(['./module'], function (module) {
       }
 
       function updateCampaignUrl() {
-        $scope.campaignUrl = "#/v2/organisation/" + $scope.organisationId + ($scope.datamartId ? ('/datamart/' + $scope.datamartId) + "/" : '/') + "campaigns";
+        $scope.campaignUrl = "#/v2/o/" + $scope.organisationId + ($scope.datamartId ? ('/d/' + $scope.datamartId) + "/" : '/') + "campaigns/display";
       }
 
       if (Session.isInitialized()) {

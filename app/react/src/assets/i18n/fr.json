@@ -16,6 +16,11 @@
   "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
   "FORGOT_PASSWORD": "Mot de passe oublié ?",
   "SUBMIT": "Valider",
-  "SAVE" : "Sauvegarder"
+  "SAVE" : "Sauvegarder",
+
+  "DISPLAY_CAMPAIGNS": "Display Campaigns",
+  "EMAIL_CAMPAIGNS": "Emails Campaigns",
+  "SCENARIOS": "Scenarios",
+  "GOALS": "Goals"
 
 }

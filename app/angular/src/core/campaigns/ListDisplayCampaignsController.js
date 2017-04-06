@@ -57,9 +57,9 @@ define(['./module'], function (module) {
       }
 
       // redirect to v2
-      var organisationPart = '/organisation/' + (params.organisation_id || params.administration_id);
-      var datamartPart = params.datamart_id ? '/datamart/' + params.datamart_id : '/';
-      $location.path('v2' + organisationPart + datamartPart + 'campaigns');
+      var organisationPart = '/o/' + (params.organisation_id || params.administration_id);
+      var datamartPart = params.datamart_id ? '/d/' + params.datamart_id : '/';
+      $location.path('v2' + organisationPart + datamartPart + 'campaigns/display');
 
       Restangular.all('display_campaigns').getList(params).then(function (displayCampaigns) {
         $scope.displayCampaigns = displayCampaigns;
