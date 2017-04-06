@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import { Row, Col, Table, Icon, Input, DatePicker, Dropdown, Menu } from 'antd';
 import * as CampaignsTableViewActions from './redux/CampaignsTableViewActions';
 
@@ -130,6 +131,12 @@ const columns = [{
   ),
 }];
 
+
+const dateFormat = 'DD/MM/YYYY';
+const twentyDaysAgo = moment(moment().subtract(20, 'days').calendar()).format(dateFormat);
+const now = moment(new Date()).format(dateFormat);
+console.log(twentyDaysAgo, now);
+
 function onChange(date, dateString) {
   console.log(date, dateString);
 }
@@ -152,8 +159,7 @@ class CampaignTableView extends Component {
       campaignsPerformance,
       isSearchEnabled,
       isDateRangePickerEnabled,
-      isFetching,
-      isFetchingCampaignsPerformance
+      isFetching
     } = this.props;
 
     campaigns.sort((a, b) => {
@@ -176,10 +182,8 @@ class CampaignTableView extends Component {
       return 0;
     });
 
-    console.log(campaigns);
-
     this.formatCampaigns(campaigns, campaignsPerformance.report_view);
-
+    moment().subtract(10, 'days').calendar();
     return (
       <Row>
         <Row>
@@ -187,11 +191,15 @@ class CampaignTableView extends Component {
             <Search
               placeholder="input search text"
               style={{ width: 200 }}
-              onSearch={(value) => { console.log(this.searchThroughtTable(value, campaigns)); }}
+              onSearch={(value) => { return this.searchThroughTable(value, campaigns); }}
             />
           </Col>)}
           {isDateRangePickerEnabled && (<Col span={12} style={{ textAlign: 'right' }}>
-            <RangePicker onChange={onChange} />
+            <RangePicker
+              defaultValue={[moment(twentyDaysAgo, dateFormat), moment(now, dateFormat)]}
+              format={dateFormat}
+              onChange={onChange}
+            />
           </Col>)}
         </Row>
         <Row>
@@ -203,15 +211,13 @@ class CampaignTableView extends Component {
     );
   }
 
-  searchThroughtTable(value, campaigns) {
+  searchThroughTable(value) {
+    const {
+      campaigns,
+      searchCampaigns
+    } = this.props;
 
-    console.log(value);
-    return campaigns.find((element) => {
-      if (element.name.search(value) > -1) {
-        return element;
-      }
-      return null;
-    });
+    return searchCampaigns(campaigns, value);
   }
 
   formatCampaigns(campaigns, campaignsPerformance) {
@@ -311,6 +317,7 @@ CampaignTableView.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   campaigns: PropTypes.arrayOf(PropTypes.object).isRequired,
   fetchCampaigns: PropTypes.func.isRequired,
+  searchCampaigns: PropTypes.func.isRequired,
   fetchCampaignsPerformance: PropTypes.func.isRequired,
   isFetchingCampaignsPerformance: PropTypes.bool.isRequired,
   campaignsPerformance: PropTypes.shape({ report_view: PropTypes.shape({ items_per_page: PropTypes.number, total_items: PropTypes.number, columns_headers: PropTypes.array, rows: PropTypes.array }) }).isRequired
@@ -324,6 +331,7 @@ CampaignTableView.defaultProps = {
 const mapStateToProps = state => ({
   campaigns: state.campaignsState.campaigns,
   campaignsPerformance: state.campaignsState.campaignsPerformance,
+  filteredCampaign: state.campaignsState.filteredCampaign,
   isFetching: state.campaignsState.isFetching,
   isFetchingCampaignsPerformance: state.campaignsState.isFetchingCampaignsPerformance
 });
@@ -331,6 +339,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   fetchCampaigns: CampaignsTableViewActions.fetchCampaigns,
   fetchCampaignsPerformance: CampaignsTableViewActions.fetchCampaignsPerformance,
+  searchCampaigns: PropTypes.func.isRequired,
 };
 
 export default connect(

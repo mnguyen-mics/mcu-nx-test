@@ -6,6 +6,7 @@ const FETCH_CAMPAIGNS_FAILURE = 'FETCH_CAMPAIGNS_FAILURE';
 const FETCH_CAMPAIGNS_PERFORMANCE_REQUEST = 'FETCH_CAMPAIGNS_PERFORMANCE_REQUEST';
 const FETCH_CAMPAIGNS_PERFORMANCE_FAILURE = 'FETCH_CAMPAIGNS_PERFORMANCE_FAILURE';
 const FETCH_CAMPAIGNS_PERFORMANCE_SUCCESS = 'FETCH_CAMPAIGNS_PERFORMANCE_SUCCESS';
+const SEARCH_CAMPAIGNS = 'SEARCH_CAMPAIGNS';
 
 const fetchCampaigns = (params) => {
   return (dispatch, getState) => { // eslint-disable-line consistent-return
@@ -21,6 +22,27 @@ const fetchCampaigns = (params) => {
           authenticated: true,
           types: [FETCH_CAMPAIGNS_REQUEST, FETCH_CAMPAIGNS_SUCCESS, FETCH_CAMPAIGNS_FAILURE]
         }
+      });
+    }
+  };
+};
+
+const searchCampaigns = (campaigns, queryString) => {
+  return (dispatch, getState) => { // eslint-disable-line consistent-return
+
+    const { campaignsState } = getState();
+
+    const sortedCampaigns = campaigns.find((element) => {
+      if (element.name.search(queryString) > -1) {
+        return element;
+      }
+      return null;
+    });
+
+    if (!campaignsState.isFetching) {
+      return dispatch({
+        type: SEARCH_CAMPAIGNS,
+        data: sortedCampaigns
       });
     }
   };
@@ -99,6 +121,12 @@ const campaignsState = (state = defaultcampaignsState, action) => {
         ...state,
         isFetchingCampaignsPerformance: false
       };
+    case SEARCH_CAMPAIGNS:
+      return {
+        ...state,
+        isFetchingCampaignsPerformance: false,
+        filtereCampaigns: action.data
+      };
     default:
       return state;
   }
@@ -108,5 +136,6 @@ const campaignsState = (state = defaultcampaignsState, action) => {
 export {
   fetchCampaigns,
   fetchCampaignsPerformance,
-  campaignsState
+  campaignsState,
+  searchCampaigns
 };
