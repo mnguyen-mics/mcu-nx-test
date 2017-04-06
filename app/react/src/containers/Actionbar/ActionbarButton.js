@@ -15,7 +15,9 @@ class ActionbarButton extends Component {
       buttonClassNames,
       secondaryBar,
       setSecondaryActionBar,
-      currentSecondaryBar
+      currentSecondaryBar,
+      onClick,
+      ...other
     } = this.props;
 
     const content = imageUrl ? <img src={imageUrl} alt={text} /> : text;
@@ -29,12 +31,12 @@ class ActionbarButton extends Component {
 
     const clickAction = evt => {
       setSecondaryActionBar(secondaryBar);
-      if (this.props.onClick) { this.props.onClick(evt); }
+      if (onClick) { onClick(evt); }
     };
 
     return (
       <div className={classNames(containerClassNames)}>
-        <button className={classNames(buttonClassNames)} onClick={clickAction} {...this.props}>
+        <button className={classNames(buttonClassNames)} onClick={clickAction} {...other}>
           {content}
         </button>
         <svg className={classNames(selectionClasses)} width="40" height="10">
