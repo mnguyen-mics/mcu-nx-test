@@ -30,15 +30,15 @@ class CampaignsSidebar extends Component {
         isActive: isActiveUrl(new RegExp(/display|[^(email|scenarios|goals)]/))
       },
       {
-        element: <Link to={`#/${workspaceId}/campaigns/email`}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
+        element: <Link to={`${workspaceId}/campaigns/email`}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('email')
       },
       {
-        element: <Link to={`#/${workspaceId}/library/scenarios`}><FormattedMessage id="SCENARIOS" /></Link>,
+        element: <Link to={`${workspaceId}/library/scenarios`}><FormattedMessage id="SCENARIOS" /></Link>,
         isActive: isActiveUrl('scenarios')
       },
       {
-        element: <Link to={`#/${workspaceId}/library/goals`}><FormattedMessage id="GOALS" /></Link>,
+        element: <Link to={`${workspaceId}/library/goals`}><FormattedMessage id="GOALS" /></Link>,
         isActive: isActiveUrl('goals')
       }
     ];
