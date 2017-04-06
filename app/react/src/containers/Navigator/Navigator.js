@@ -85,7 +85,7 @@ class Navigator extends Component {
 
     return (
       <IntlProvider locale={locale} key={locale} messages={translations}>
-        <Layout style={{ height: '100%' }}>
+        <Layout className="mcs-main-layout">
           <NavigatorHeader {...this.props} />
           {this.props.children}
         </Layout>

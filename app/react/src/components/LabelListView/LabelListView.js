@@ -2,10 +2,14 @@ import React, { Component, PropTypes } from 'react';
 import { Row, Col, Tag, Icon, Tooltip, Button, Input } from 'antd';
 
 class LabelListView extends Component {
-  state = {
-    inputVisible: false,
-    inputValue: '',
-  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputVisible: false,
+      inputValue: '',
+    };
+  }
 
   showInput = () => {
     this.setState({ inputVisible: true }, () => this.textInput.focus());
@@ -22,9 +26,7 @@ class LabelListView extends Component {
   }
 
   handleInputConfirm = () => {
-    const state = this.state;
-    const inputValue = state.inputValue;
-    // send to main component
+    const { inputValue } = this.state;
     if (inputValue !== '') {
       this.props.onInputSubmit(inputValue);
     }
@@ -40,20 +42,19 @@ class LabelListView extends Component {
 
     const {
       items,
-      isInputVisible
+      isInputVisible,
+      onClickOnClose,
+      label
     } = this.props;
 
     const { inputVisible, inputValue } = this.state;
 
     const onClickCloseTag = (tag) => {
-      return this.props.onClickOnClose(tag);
+      return onClickOnClose(tag);
     };
 
     const displayContent = (item) => {
-      if (item.icon) {
-        return (<span><Icon type={item.icon} /> {item.value}</span>);
-      }
-      return (<span>{item.value}</span>);
+      return item.icon ? (<span><Icon type={item.icon} /> {item.value}</span>) : (<span>{item.value}</span>);
     };
 
 
@@ -69,9 +70,9 @@ class LabelListView extends Component {
 
     return (
       <Row>
-        {this.props.label && (
+        { label && (
           <Col span={24}>
-            { this.props.label }
+            { label }
           </Col>)}
         <Col span={24}>
           {items.map((tag) => {
@@ -81,7 +82,7 @@ class LabelListView extends Component {
           <Input
             ref={(input) => { this.textInput = input; }}
             type="text" size="small"
-            style={{ width: 78 }}
+            className="mcs-input-label"
             value={inputValue}
             onChange={this.handleInputChange}
             onBlur={this.handleInputBlur}

@@ -37,8 +37,6 @@ class Campaigns extends Component {
         <CampaignsSidebar {...this.props}>
           <ScrollComponent>
             <LabelListView items={items} label="Filtered by:" onClickOnClose={returnFunc} isInputVisible onInputSubmit={returnFunc} />
-            <br />
-            <FormattedMessage id="LOREM_IPSUM" />
           </ScrollComponent>
         </CampaignsSidebar>
       </Layout>

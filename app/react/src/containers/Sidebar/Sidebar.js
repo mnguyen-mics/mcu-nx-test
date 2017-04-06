@@ -37,15 +37,14 @@ class Sidebar extends Component {
 
     const content = (
       <Layout>
-        <Sider width={200} style={{ background: '#fff' }}>
+        <Sider className="mcs-sider-container">
           <Menu
             mode="inline"
             defaultSelectedKeys={getSelectedItemKey()}
-            style={{ height: '100%' }}
-            className="mcs-menu-inline"
+            className="mcs-menu-inline mcs-menu"
           >
             { buildSidebarItems() }
-            <Menu.Item style={{ position: 'absolute', bottom: 0, left: 0, height: '95px', width: '100%', backgroundColor: '#fcfcfc', boxShadow: '0 -1px 0 0 #e1e1e1', cursor: 'default' }} disabled >
+            <Menu.Item disabled >
               <img alt="mics-logo" className="mcs-footer-img" src={logoUrl} />
             </Menu.Item>
           </Menu>
