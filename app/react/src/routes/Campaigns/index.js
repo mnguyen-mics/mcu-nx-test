@@ -2,10 +2,10 @@ import React from 'react';
 import Route from 'react-router/lib/Route';
 
 import { requireAuthentication } from '../../components/AuthenticatedComponent';
-import { Campaigns } from '../../containers/Campaigns';
+import { Campaigns, CampaignsDisplay } from '../../containers/Campaigns';
 
 export default (
-  <div>
-    <Route path="campaigns" component={requireAuthentication(Campaigns)} />
-  </div>
+  <Route path="campaigns" component={requireAuthentication(Campaigns)}>
+    <Route path="display" component={CampaignsDisplay} />
+  </Route>
 );

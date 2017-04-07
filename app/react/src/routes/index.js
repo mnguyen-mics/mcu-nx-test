@@ -20,7 +20,7 @@ class NoMatch extends React.Component {
 export default (store) => { // eslint-disable-line no-unused-vars
   return (
     <Route path="/" component={Navigator}>
-      <Route path={`${PUBLIC_URL}/organisation/:organisationId(/datamart/:datamartId)`} component={TemporaryView}>
+      <Route path={`${PUBLIC_URL}/o/:organisationId(/d/:datamartId)`} component={TemporaryView}>
         { CampaignsRouter }
         <Route path="*" component={NotFound} />
       </Route>

@@ -20,7 +20,7 @@
         <li ng-show="hasDatamart" ng-class="category == 'catalog' ? 'active' : ''">
           <a href="#/{{currentWorkspaceId}}/datamart/categories/">Catalogs</a>
         </li>
-        <li ng-class="category == 'campaigns' ? 'active' : ''"><a href="#/{{currentWorkspaceId}}/campaigns/display">Campaigns</a>
+        <li ng-class="category == 'campaigns' ? 'active' : ''"><a href="{{campaignUrl}}">Campaigns</a>
         </li>
         <li ng-class="category == 'creatives' ? 'active' : ''"><a href="#/{{currentWorkspaceId}}/creatives/display-ad">Creatives</a>
         </li>
