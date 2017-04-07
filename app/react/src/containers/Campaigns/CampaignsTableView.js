@@ -280,7 +280,6 @@ class CampaignTableView extends Component {
       searchCampaigns
     } = this.props;
 
-    console.log('searchin and cruzin ', value);
     searchCampaigns(value);
   }
 
@@ -322,7 +321,6 @@ class CampaignTableView extends Component {
         organisationId
       },
     } = this.props;
-    console.log(organisationId);
     const first_result = 0; // eslint-disable-line camelcase
     const max_results = 300; // eslint-disable-line camelcase
     const campaign_type = 'DISPLAY'; // eslint-disable-line camelcase
@@ -358,8 +356,6 @@ class CampaignTableView extends Component {
 
     const startD = moment(startDate, dateFormat).format('YYYY-MM-DD');
     const endD = moment(endDate, dateFormat).format('YYYY-MM-DD');
-
-    console.log(startD, endD);
 
     const dimension = ''; // eslint-disable-line camelcase
     const end_date = endD; // eslint-disable-line camelcase

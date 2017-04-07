@@ -44,7 +44,6 @@ const searchCampaigns = (queryString) => {
         }
         return null;
       });
-      console.log(filteredCampaigns);
       return dispatch({
         type: SEARCH_CAMPAIGNS,
         data: {

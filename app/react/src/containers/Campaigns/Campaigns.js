@@ -14,9 +14,7 @@ class Campaigns extends Component {
     return (
       <Layout>
         <CampaignsSidebar {...this.props}>
-          <ScrollComponent>
-            <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={[]} />
-          </ScrollComponent>
+          {this.props.children}
         </CampaignsSidebar>
       </Layout>
     );

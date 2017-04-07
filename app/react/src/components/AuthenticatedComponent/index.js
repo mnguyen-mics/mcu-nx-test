@@ -48,8 +48,6 @@ export function requireAuthentication(Component) {
     render() {
 
       const { authenticated, activeWorkspace: { organisationId } } = this.props;
-
-      console.log(organisationId);
       const component = authenticated && organisationId ? <Component {...this.props} /> : null;
 
       return component;
