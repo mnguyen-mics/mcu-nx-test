@@ -26,7 +26,7 @@ class GridInput extends Component {
 
     const completeLabel = isRequired ? `${label} *` : label;
 
-    const required = v => (v ? undefined : 'Required');
+    const required = fieldValue => (fieldValue ? undefined : 'Required');
     const alwaysValid = () => undefined;
 
     return (

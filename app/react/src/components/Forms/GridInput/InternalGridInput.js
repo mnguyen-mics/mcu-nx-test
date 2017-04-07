@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Input } from 'antd';
 
 class InternalGridInput extends Component {
   render() {
@@ -13,7 +14,7 @@ class InternalGridInput extends Component {
     const classValue = (touched && error) ? 'mics-gridinput-input-error' : className;
 
     return (
-      <div > <input {...input} className={classValue} type="text" {...other} /> </div>
+      <div> <Input {...input} className={classValue} type="text" {...other} /> </div>
     );
   }
 }
