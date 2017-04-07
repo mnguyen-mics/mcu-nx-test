@@ -1,152 +1,34 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Row, Col, Table, Icon, Input, DatePicker, Dropdown, Menu } from 'antd';
+import { Row, Col, Table, Icon, Input, DatePicker, Dropdown, Menu, Modal } from 'antd';
 import * as CampaignsTableViewActions from './redux/CampaignsTableViewActions';
+import * as sessionActions from '../../services/session/SessionActions';
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
-
-const menu = (
-  <Menu>
-    <Menu.Item key="0">
-      <a href="#/">Edit</a>
-    </Menu.Item>
-    <Menu.Item key="1">
-      <a href="#/">Archive</a>
-    </Menu.Item>
-  </Menu>
-);
-
-const columns = [{
-  title: 'Status',
-  dataIndex: 'status',
-  key: 'status',
-}, {
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name',
-  render: (text, record) => (
-    <a>{text}</a>
-  )
-}, {
-  title: 'Imp.',
-  dataIndex: 'impressions',
-  key: 'impression',
-  render: (text, record) => {
-    if (!text) {
-      return (<span>loading...</span>);
-    }
-    if (text === '-') {
-      return text;
-    }
-    return text;
-  }
-}, {
-  title: 'Clicks.',
-  dataIndex: 'clicks',
-  key: 'clicks',
-  render: (text, record) => {
-    if (!text) {
-      return (<span>loading...</span>);
-    }
-    if (text === '-') {
-      return text;
-    }
-    return Math.round(text * 100) / 100;
-  }
-}, {
-  title: 'Spent',
-  dataIndex: 'impressions_cost',
-  key: 'spent',
-  render: (text, record) => {
-    if (!text) {
-      return (<span>loading...</span>);
-    }
-    if (text === '-') {
-      return text;
-    }
-    return Math.round(text * 100) / 100;
-  }
-}, {
-  title: 'CPM',
-  dataIndex: 'cpm',
-  key: 'cpm',
-  render: (text, record) => {
-    if (!text) {
-      return (<span>loading...</span>);
-    }
-    if (text === '-') {
-      return text;
-    }
-    return Math.round(text * 100) / 100;
-  }
-}, {
-  title: 'CTR',
-  dataIndex: 'ctr',
-  key: 'ctr',
-  render: (text, record) => {
-    if (!text) {
-      return (<span>loading...</span>);
-    }
-    if (text === '-') {
-      return text;
-    }
-    return Math.round(text * 100) / 100;
-  }
-}, {
-  title: 'CPC',
-  dataIndex: 'cpc',
-  key: 'cpc',
-  render: (text, record) => {
-    if (!text) {
-      return (<span>loading...</span>);
-    }
-    if (text === '-') {
-      return text;
-    }
-    return Math.round(text * 100) / 100;
-  }
-}, {
-  title: 'CPA',
-  dataIndex: 'cpa',
-  key: 'cpa',
-  render: (text, record) => {
-    if (!text) {
-      return (<span>loading...</span>);
-    }
-    if (text === '-') {
-      return text;
-    }
-    return Math.round(text * 100) / 100;
-  }
-}, {
-  key: 'action',
-  render: (text, record) => (
-    <Dropdown overlay={menu} trigger={['click']}>
-      <a className="ant-dropdown-link">
-        <Icon type="down" />
-      </a>
-    </Dropdown>
-  ),
-}];
-
+const confirm = Modal.confirm;
 
 const dateFormat = 'DD/MM/YYYY';
 const twentyDaysAgo = moment(moment().subtract(20, 'days').calendar()).format(dateFormat);
 const now = moment(new Date()).format(dateFormat);
-console.log(twentyDaysAgo, now);
-
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 
 
 class CampaignTableView extends Component {
 
   constructor(props) {
     super(props);
+    this.fetchCampaignsWithProps = this.fetchCampaignsWithProps.bind(this);
     this.fetchCampaignsPerformanceWithProps = this.fetchCampaignsPerformanceWithProps.bind(this);
+    this.onDateRangeChange = this.onDateRangeChange.bind(this);
+    this.archiveCampaign = this.archiveCampaign.bind(this);
+    this.state = {
+      inputVisible: false,
+      startDate: twentyDaysAgo,
+      endDate: now,
+      inputValue: '',
+      modalVisible: false,
+    };
   }
 
   componentDidMount() {
@@ -159,7 +41,10 @@ class CampaignTableView extends Component {
       campaignsPerformance,
       isSearchEnabled,
       isDateRangePickerEnabled,
-      isFetching
+      isFetching,
+      isFetchingCampaignsPerformance,
+      hasSearched,
+      filteredCampaigns,
     } = this.props;
 
     campaigns.sort((a, b) => {
@@ -183,41 +68,220 @@ class CampaignTableView extends Component {
     });
 
     this.formatCampaigns(campaigns, campaignsPerformance.report_view);
-    moment().subtract(10, 'days').calendar();
+
     return (
-      <Row>
-        <Row>
+      <Row className="mcs-table-container">
+        <Row className="mcs-table-header">
           {isSearchEnabled && (<Col span={12}>
             <Search
-              placeholder="input search text"
-              style={{ width: 200 }}
-              onSearch={(value) => { return this.searchThroughTable(value, campaigns); }}
+              placeholder="Search Display Campaigns"
+              className="mcs-search-input"
+              onSearch={(value) => { return this.searchThroughTable(value); }}
             />
           </Col>)}
           {isDateRangePickerEnabled && (<Col span={12} style={{ textAlign: 'right' }}>
             <RangePicker
               defaultValue={[moment(twentyDaysAgo, dateFormat), moment(now, dateFormat)]}
               format={dateFormat}
-              onChange={onChange}
+              onChange={this.onDateRangeChange}
+              disabled={isFetchingCampaignsPerformance}
             />
           </Col>)}
         </Row>
-        <Row>
+        <Row className="mcs-table-body">
           <Col span={24} style={{ padding: '20px 10px' }}>
-            <Table columns={columns} dataSource={campaigns} onChange={this.handleChange} loading={isFetching} pagination={{ size: 'small', showSizeChanger: true }} />
+            <Table columns={this.renderCol()} dataSource={hasSearched ? filteredCampaigns : campaigns} onChange={this.handleChange} loading={isFetching} pagination={{ size: 'small', showSizeChanger: true }} />
           </Col>
         </Row>
       </Row>
     );
   }
 
+  renderCol() {
+    const {
+      activeWorkspace: {
+        workspaceId
+      },
+      isFetchingCampaignsPerformance
+    } = this.props;
+
+    const columns = [{
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+    }, {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text, record) => (
+        <a href={`#/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</a>
+      )
+    }, {
+      title: 'Imp.',
+      dataIndex: 'impressions',
+      key: 'impression',
+      render: (text) => {
+        if (!text || isFetchingCampaignsPerformance) {
+          return (<span>loading...</span>);
+        }
+        if (text === '-') {
+          return text;
+        }
+        return text;
+      }
+    }, {
+      title: 'Clicks.',
+      dataIndex: 'clicks',
+      key: 'clicks',
+      render: (text) => {
+        if (!text || isFetchingCampaignsPerformance) {
+          return (<span>loading...</span>);
+        }
+        if (text === '-') {
+          return text;
+        }
+        return Math.round(text * 100) / 100;
+      }
+    }, {
+      title: 'Spent',
+      dataIndex: 'impressions_cost',
+      key: 'spent',
+      render: (text) => {
+        if (!text || isFetchingCampaignsPerformance) {
+          return (<span>loading...</span>);
+        }
+        if (text === '-') {
+          return text;
+        }
+        return Math.round(text * 100) / 100;
+      }
+    }, {
+      title: 'CPM',
+      dataIndex: 'cpm',
+      key: 'cpm',
+      render: (text) => {
+        if (!text || isFetchingCampaignsPerformance) {
+          return (<span>loading...</span>);
+        }
+        if (text === '-') {
+          return text;
+        }
+        return Math.round(text * 100) / 100;
+      }
+    }, {
+      title: 'CTR',
+      dataIndex: 'ctr',
+      key: 'ctr',
+      render: (text) => {
+        if (!text || isFetchingCampaignsPerformance) {
+          return (<span>loading...</span>);
+        }
+        if (text === '-') {
+          return text;
+        }
+        return Math.round(text * 100) / 100;
+      }
+    }, {
+      title: 'CPC',
+      dataIndex: 'cpc',
+      key: 'cpc',
+      render: (text) => {
+        if (!text || isFetchingCampaignsPerformance) {
+          return (<span>loading...</span>);
+        }
+        if (text === '-') {
+          return text;
+        }
+        return Math.round(text * 100) / 100;
+      }
+    }, {
+      title: 'CPA',
+      dataIndex: 'cpa',
+      key: 'cpa',
+      render: (text) => {
+        if (!text || isFetchingCampaignsPerformance) {
+          return (<span>loading...</span>);
+        }
+        if (text === '-') {
+          return text;
+        }
+        return Math.round(text * 100) / 100;
+      }
+    }, {
+      key: 'action',
+      render: (text, record) => (
+        <Dropdown overlay={this.renderColMenu(workspaceId, record)} trigger={['click']}>
+          <a className="ant-dropdown-link">
+            <Icon type="down" />
+          </a>
+        </Dropdown>
+      ),
+    }];
+
+    return columns;
+  }
+
+  renderColMenu(workspace, record) {
+    let editUrl;
+    switch (record.editor_artifact_id) {
+      case 'default-editor':
+        editUrl = `#/${workspace}/campaigns/display/expert/edit/${record.id}`;
+        break;
+      case 'external-campaign-editor':
+        editUrl = `#/${workspace}/campaigns/display/external/edit/${record.id}`;
+        break;
+      case 'keywords-targeting-editor':
+        editUrl = `#/${workspace}/campaigns/display/keywords/${record.id}`;
+        break;
+      default:
+        break;
+    }
+
+    return (
+      <Menu onClick={(item) => { if (item.key === '1') { this.archiveCampaign(record.id); } }}>
+        <Menu.Item key="0">
+          <a href={editUrl}>Edit</a>
+        </Menu.Item>
+        <Menu.Item key="1">
+          <a>Archive</a>
+        </Menu.Item>
+      </Menu>
+    );
+  }
+
+  archiveCampaign(id) {
+    const {
+      deleteCampaigns,
+    } = this.props;
+    const it = this;
+    confirm({
+      title: 'Are you sure you want to archive this campaign?',
+      content: 'By archiving the campaign all its activities will be suspended. You\'ll be able to recover it from the archived campaign filter.',
+      iconType: 'exclamation-circle',
+      okText: 'Archive Now',
+      cancelText: 'Cancel',
+      onOk() {
+        return deleteCampaigns(id).then(() => { it.fetchCampaignsWithProps(); });
+      },
+      onCancel() {},
+    });
+  }
+
+  onDateRangeChange(date) {
+    this.setState({
+      startDate: date[0],
+      endDate: date[1],
+    });
+    this.fetchCampaignsPerformanceWithProps();
+  }
+
   searchThroughTable(value) {
     const {
-      campaigns,
       searchCampaigns
     } = this.props;
 
-    return searchCampaigns(campaigns, value);
+    console.log('searchin and cruzin ', value);
+    searchCampaigns(value);
   }
 
   formatCampaigns(campaigns, campaignsPerformance) {
@@ -246,6 +310,7 @@ class CampaignTableView extends Component {
           objetTemp[value] = '-';
         }
       });
+      objetTemp.key = campaign.id;
       return objetTemp;
     });
   }
@@ -253,13 +318,15 @@ class CampaignTableView extends Component {
   fetchCampaignsWithProps(props) {
     const {
       fetchCampaigns,
-      fetchCampaignsPerformance
+      activeWorkspace: {
+        organisationId
+      },
     } = this.props;
-
+    console.log(organisationId);
     const first_result = 0; // eslint-disable-line camelcase
     const max_results = 300; // eslint-disable-line camelcase
     const campaign_type = 'DISPLAY'; // eslint-disable-line camelcase
-    const organisation_id = 1042; // eslint-disable-line camelcase
+    const organisation_id = organisationId; // eslint-disable-line camelcase
 
     const params = {
       first_result,
@@ -284,12 +351,22 @@ class CampaignTableView extends Component {
       fetchCampaignsPerformance,
     } = this.props;
 
+    const {
+      startDate,
+      endDate
+    } = this.state;
+
+    const startD = moment(startDate, dateFormat).format('YYYY-MM-DD');
+    const endD = moment(endDate, dateFormat).format('YYYY-MM-DD');
+
+    console.log(startD, endD);
+
     const dimension = ''; // eslint-disable-line camelcase
-    const end_date = '2017-04-6'; // eslint-disable-line camelcase
+    const end_date = endD; // eslint-disable-line camelcase
     const filters = 'organisation%3D%3D1042'; // eslint-disable-line camelcase
     const metrics = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa']; // eslint-disable-line camelcase
     const organisation_id = 1042; // eslint-disable-line camelcase
-    const start_date = '2017-03-16'; // eslint-disable-line camelcase
+    const start_date = startD; // eslint-disable-line camelcase
 
     const params = {
       dimension,
@@ -320,7 +397,11 @@ CampaignTableView.propTypes = {
   searchCampaigns: PropTypes.func.isRequired,
   fetchCampaignsPerformance: PropTypes.func.isRequired,
   isFetchingCampaignsPerformance: PropTypes.bool.isRequired,
-  campaignsPerformance: PropTypes.shape({ report_view: PropTypes.shape({ items_per_page: PropTypes.number, total_items: PropTypes.number, columns_headers: PropTypes.array, rows: PropTypes.array }) }).isRequired
+  campaignsPerformance: PropTypes.shape({ report_view: PropTypes.shape({ items_per_page: PropTypes.number, total_items: PropTypes.number, columns_headers: PropTypes.array, rows: PropTypes.array }) }).isRequired,
+  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  hasSearched: PropTypes.bool.isRequired,
+  filteredCampaigns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deleteCampaigns: PropTypes.func.isRequired,
 };
 
 CampaignTableView.defaultProps = {
@@ -333,13 +414,17 @@ const mapStateToProps = state => ({
   campaignsPerformance: state.campaignsState.campaignsPerformance,
   filteredCampaign: state.campaignsState.filteredCampaign,
   isFetching: state.campaignsState.isFetching,
-  isFetchingCampaignsPerformance: state.campaignsState.isFetchingCampaignsPerformance
+  isFetchingCampaignsPerformance: state.campaignsState.isFetchingCampaignsPerformance,
+  activeWorkspace: state.sessionState.activeWorkspace,
+  hasSearched: state.campaignsState.hasSearched,
+  filteredCampaigns: state.campaignsState.filteredCampaigns,
 });
 
 const mapDispatchToProps = {
   fetchCampaigns: CampaignsTableViewActions.fetchCampaigns,
   fetchCampaignsPerformance: CampaignsTableViewActions.fetchCampaignsPerformance,
-  searchCampaigns: PropTypes.func.isRequired,
+  searchCampaigns: CampaignsTableViewActions.searchCampaigns,
+  deleteCampaigns: CampaignsTableViewActions.deleteCampaigns,
 };
 
 export default connect(

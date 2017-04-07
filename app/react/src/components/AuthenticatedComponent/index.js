@@ -47,8 +47,10 @@ export function requireAuthentication(Component) {
 
     render() {
 
-      const { authenticated } = this.props;
-      const component = authenticated ? <Component {...this.props} /> : null;
+      const { authenticated, activeWorkspace: { organisationId } } = this.props;
+
+      console.log(organisationId);
+      const component = authenticated && organisationId ? <Component {...this.props} /> : null;
 
       return component;
 
@@ -68,10 +70,14 @@ export function requireAuthentication(Component) {
     }).isRequired,
     getAccessTokens: PropTypes.func.isRequired,
     getConnectedUser: PropTypes.func.isRequired,
-    router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+    router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    activeWorkspace: PropTypes.shape({
+      organisationId: PropTypes.string
+    }).isRequired
   };
 
   const mapStateToProps = (state) => ({
+    activeWorkspace: state.sessionState.activeWorkspace,
     authenticated: state.sessionState.authenticated,
     refreshToken: state.persistedState.refresh_token
   });

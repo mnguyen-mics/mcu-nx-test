@@ -1,7 +1,8 @@
-import { fetchCampaigns, fetchCampaignsPerformance, searchCampaigns } from './Campaigns';
+import { fetchCampaigns, fetchCampaignsPerformance, searchCampaigns, deleteCampaigns } from './Campaigns';
 
 export {
   fetchCampaigns,
   searchCampaigns,
+  deleteCampaigns,
   fetchCampaignsPerformance
 };
