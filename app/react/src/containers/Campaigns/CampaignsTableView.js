@@ -428,3 +428,6 @@ export default connect(
   mapDispatchToProps
 )(CampaignTableView);
 
+/*
+¨*<CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={[]} />
+*/
