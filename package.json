@@ -10,6 +10,7 @@
     "mcs-react-button": "^0.1.0",
     "mcs-react-header": "^0.2.1",
     "mcs-react-loading": "^0.1.0",
+    "moment": "^2.18.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-intl": "^2.2.3",
