@@ -16,11 +16,22 @@
   "PASSWORD_PLACEHOLDER": "Type your password",
   "FORGOT_PASSWORD": "Forgot password?",
   "SUBMIT": "Submit",
+  "MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this campaign?",
+  "MODAL_CONFIRM_ARCHIVED_BODY": "By archiving the campaign all its activities will be suspended. You'll be able to recover it from the archived campaign filter.",
+  "MODAL_CONFIRM_ARCHIVED_OK": "Archive Now",
+  "MODAL_CONFIRM_ARCHIVED_CANCEL": "Cancel",
+  "STATUS":"Status",
+  "NAME":"Name",
+  "Impression":"Imp.",
+  "Clicks":"Clicks.",
+  "Spent":"Spent",
+  "CPM":"CPM",
+  "CTR":"CTR",
+  "CPC":"CPC",
+  "CPA":"CPA",
   "SAVE": "Save",
-
   "DISPLAY_CAMPAIGNS": "Display Campaigns",
   "EMAIL_CAMPAIGNS": "Emails Campaigns",
   "SCENARIOS": "Scenarios",
   "GOALS": "Goals"
-
 }

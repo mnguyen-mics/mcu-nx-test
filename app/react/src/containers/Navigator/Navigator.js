@@ -1,8 +1,10 @@
+import enUS from 'antd/lib/locale-provider/en_US';
+
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { IntlProvider } from 'react-intl';
 import Loading from 'mcs-react-loading';
-import { Layout } from 'antd';
+import { Layout, LocaleProvider } from 'antd';
 
 import { NavigatorHeader } from '../Header';
 
@@ -85,10 +87,12 @@ class Navigator extends Component {
 
     return (
       <IntlProvider locale={locale} key={locale} messages={translations}>
-        <Layout className="mcs-main-layout">
-          <NavigatorHeader {...this.props} />
-          {this.props.children}
-        </Layout>
+        <LocaleProvider locale={enUS}>
+          <Layout className="mcs-main-layout">
+            <NavigatorHeader {...this.props} />
+            {this.props.children}
+          </Layout>
+        </LocaleProvider>
       </IntlProvider>
     );
   }
