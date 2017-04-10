@@ -6,6 +6,25 @@ import { ActionbarActions } from './redux';
 
 class ActionbarButton extends Component {
 
+  constructor(props) {
+    super(props);
+    this.toggleSecondaryBar = this.toggleSecondaryBar.bind(this);
+  }
+
+  toggleSecondaryBar() {
+    const {
+      secondaryBar,
+      setSecondaryActionBar,
+      currentSecondaryBar,
+    } = this.props;
+
+    if (currentSecondaryBar !== null && currentSecondaryBar === secondaryBar) {
+      setSecondaryActionBar(null);
+    } else {
+      setSecondaryActionBar(secondaryBar);
+    }
+  }
+
   render() {
 
     const {
@@ -14,7 +33,6 @@ class ActionbarButton extends Component {
       containerClassNames,
       buttonClassNames,
       secondaryBar,
-      setSecondaryActionBar,
       currentSecondaryBar,
       onClick,
       ...other
@@ -30,7 +48,7 @@ class ActionbarButton extends Component {
 
 
     const clickAction = evt => {
-      setSecondaryActionBar(secondaryBar);
+      this.toggleSecondaryBar();
       if (onClick) { onClick(evt); }
     };
 
@@ -57,7 +75,7 @@ ActionbarButton.propTypes = {
   containerClassNames: PropTypes.arrayOf(PropTypes.string),
   buttonClassNames: PropTypes.arrayOf(PropTypes.string),
   setSecondaryActionBar: PropTypes.func, // eslint-disable-line react/require-default-props
-  currentSecondaryBar: PropTypes.func, // eslint-disable-line react/require-default-props
+  currentSecondaryBar: PropTypes.string, // eslint-disable-line react/require-default-props
   onClick: PropTypes.func // eslint-disable-line react/require-default-props
 };
 

@@ -14,7 +14,7 @@ class BreadcrumbBar extends Component {
 
     const buildItem = elt => {
       const item = elt.url ? <Link to={elt.url}>{elt.name}</Link> : elt.name;
-      return <Breadcrumb.Item>{item}</Breadcrumb.Item>;
+      return <Breadcrumb.Item key={elt.name} >{item}</Breadcrumb.Item>;
     };
     const sep = <svg width="7" height="12" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg"><title>EC88C228-76F7-4171-933A-063605048718</title><path d="M6.748 6.594l-5.28 5.16a.874.874 0 0 1-1.216 0 .827.827 0 0 1 0-1.189L4.924 6 .252 1.435a.827.827 0 0 1 0-1.189.874.874 0 0 1 1.216 0l5.28 5.16a.828.828 0 0 1 0 1.188z" fill="#AEAEAE" /></svg>;
     return (
