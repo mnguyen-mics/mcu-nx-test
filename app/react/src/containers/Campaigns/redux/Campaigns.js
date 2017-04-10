@@ -102,14 +102,9 @@ const defaultcampaignsState = {
 };
 
 const filterCampaigns = (campaigns, querySring) => {
-  const filteredCamapaigns = [];
-  campaigns.map((element) => {
-    if (element.name.toLowerCase().indexOf(querySring.toLowerCase()) > -1) {
-      return filteredCamapaigns.push(element);
-    }
-    return null;
+  return campaigns.filter(element => {
+    return element.name.toLowerCase().indexOf(querySring.toLowerCase()) > -1;
   });
-  return filteredCamapaigns;
 };
 
 const campaignsState = (state = defaultcampaignsState, action) => {
