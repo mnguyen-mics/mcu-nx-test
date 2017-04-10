@@ -110,6 +110,7 @@
   },
   "scripts": {
     "test": "grunt test",
+    "i18n": "node scripts/i18n.js",
     "start": "grunt serve",
     "build": "grunt build"
   }
