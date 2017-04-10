@@ -7,9 +7,9 @@ const FETCH_CAMPAIGNS_PERFORMANCE_REQUEST = 'FETCH_CAMPAIGNS_PERFORMANCE_REQUEST
 const FETCH_CAMPAIGNS_PERFORMANCE_FAILURE = 'FETCH_CAMPAIGNS_PERFORMANCE_FAILURE';
 const FETCH_CAMPAIGNS_PERFORMANCE_SUCCESS = 'FETCH_CAMPAIGNS_PERFORMANCE_SUCCESS';
 const SEARCH_CAMPAIGNS = 'SEARCH_CAMPAIGNS';
-const DELETE_CAMPAIGNS_PERFORMANCE_REQUEST = 'DELETE_CAMPAIGNS_PERFORMANCE_REQUEST';
-const DELETE_CAMPAIGNS_PERFORMANCE_FAILURE = 'DELETE_CAMPAIGNS_PERFORMANCE_FAILURE';
-const DELETE_CAMPAIGNS_PERFORMANCE_SUCCESS = 'DELETE_CAMPAIGNS_PERFORMANCE_SUCCESS';
+const DELETE_CAMPAIGNS_REQUEST = 'DELETE_CAMPAIGNS_REQUEST';
+const DELETE_CAMPAIGNS_FAILURE = 'DELETE_CAMPAIGNS_FAILURE';
+const DELETE_CAMPAIGNS_SUCCESS = 'DELETE_CAMPAIGNS_SUCCESS';
 
 
 const fetchCampaigns = (params) => {
@@ -37,18 +37,10 @@ const searchCampaigns = (queryString) => {
     const { campaignsState } = getState();
 
     if (!campaignsState.isFetching) {
-      const filteredCampaigns = [];
-      campaignsState.campaigns.map((element) => {
-        if (element.name.toLowerCase().indexOf(queryString.toLowerCase()) > -1) {
-          return filteredCampaigns.push(element);
-        }
-        return null;
-      });
       return dispatch({
         type: SEARCH_CAMPAIGNS,
         data: {
           querySring: queryString,
-          filteredCampaign: filteredCampaigns
         }
       });
     }
@@ -85,7 +77,7 @@ const deleteCampaigns = (id) => {
           method: 'delete',
           endpoint: `display_campaigns/${id}`,
           authenticated: true,
-          types: [DELETE_CAMPAIGNS_PERFORMANCE_REQUEST, DELETE_CAMPAIGNS_PERFORMANCE_SUCCESS, DELETE_CAMPAIGNS_PERFORMANCE_FAILURE]
+          types: [DELETE_CAMPAIGNS_REQUEST, DELETE_CAMPAIGNS_SUCCESS, DELETE_CAMPAIGNS_FAILURE]
         }
       });
     }
@@ -110,7 +102,7 @@ const defaultcampaignsState = {
 };
 
 const campaignsState = (state = defaultcampaignsState, action) => {
-
+  const filteredCa = [];
   switch (action.type) {
     case FETCH_CAMPAIGNS_REQUEST:
       return {
@@ -124,8 +116,8 @@ const campaignsState = (state = defaultcampaignsState, action) => {
         campaigns: action.response.data,
         count: action.response.count,
         pagination: {
-          skip: action.response.first_result,
-          limit: action.response.max_result
+          skip: action.response.first_results,
+          limit: action.response.max_results
         }
       };
     case FETCH_CAMPAIGNS_FAILURE:
@@ -149,27 +141,33 @@ const campaignsState = (state = defaultcampaignsState, action) => {
         ...state,
         isFetchingCampaignsPerformance: false
       };
-    case DELETE_CAMPAIGNS_PERFORMANCE_REQUEST:
+    case DELETE_CAMPAIGNS_REQUEST:
       return {
         ...state,
         isDeleting: true
       };
-    case DELETE_CAMPAIGNS_PERFORMANCE_SUCCESS:
+    case DELETE_CAMPAIGNS_SUCCESS:
       return {
         ...state,
         isDeleting: false,
       };
-    case DELETE_CAMPAIGNS_PERFORMANCE_FAILURE:
+    case DELETE_CAMPAIGNS_FAILURE:
       return {
         ...state,
         isDeleting: false
       };
     case SEARCH_CAMPAIGNS:
+      state.campaigns.map((element) => {
+        if (element.name.toLowerCase().indexOf(action.data.querySring.toLowerCase()) > -1) {
+          return filteredCa.push(element);
+        }
+        return null;
+      });
       return {
         ...state,
         isFetchingCampaignsPerformance: false,
         hasSearched: action.data.querySring ? true : false,
-        filteredCampaigns: action.data.filteredCampaign,
+        filteredCampaigns: filteredCa,
       };
     default:
       return state;

@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
+import CampaignsTableView from './CampaignsTableView';
 
 import CampaignsSidebar from './CampaignsSidebar';
-import CampaignsTableView from './CampaignsTableView';
-import { ScrollComponent } from '../../components/ScrollComponent';
-import { LabelListView } from '../../components/LabelListView';
 
 
 class Campaigns extends Component {
@@ -14,7 +11,7 @@ class Campaigns extends Component {
     return (
       <Layout>
         <CampaignsSidebar {...this.props}>
-          {this.props.children}
+          <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={[]} />
         </CampaignsSidebar>
       </Layout>
     );

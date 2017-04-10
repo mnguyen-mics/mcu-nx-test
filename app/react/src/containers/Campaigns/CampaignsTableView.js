@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import Link from 'react-router/lib/Link';
 import { Row, Col, Table, Icon, Input, DatePicker, Dropdown, Menu, Modal } from 'antd';
 import * as CampaignsTableViewActions from './redux/CampaignsTableViewActions';
-import * as sessionActions from '../../services/session/SessionActions';
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
@@ -79,7 +79,7 @@ class CampaignTableView extends Component {
               onSearch={(value) => { return this.searchThroughTable(value); }}
             />
           </Col>)}
-          {isDateRangePickerEnabled && (<Col span={12} style={{ textAlign: 'right' }}>
+          {isDateRangePickerEnabled && (<Col span={12} className="text-right" >
             <RangePicker
               defaultValue={[moment(twentyDaysAgo, dateFormat), moment(now, dateFormat)]}
               format={dateFormat}
@@ -102,22 +102,23 @@ class CampaignTableView extends Component {
       activeWorkspace: {
         workspaceId
       },
-      isFetchingCampaignsPerformance
+      isFetchingCampaignsPerformance,
+      translations
     } = this.props;
 
     const columns = [{
-      title: 'Status',
+      title: translations.STATUS,
       dataIndex: 'status',
       key: 'status',
     }, {
-      title: 'Name',
+      title: translations.NAME,
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <a href={`#/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</a>
+        <Link to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
       )
     }, {
-      title: 'Imp.',
+      title: translations.Impression,
       dataIndex: 'impressions',
       key: 'impression',
       render: (text) => {
@@ -130,7 +131,7 @@ class CampaignTableView extends Component {
         return text;
       }
     }, {
-      title: 'Clicks.',
+      title: translations.Clicks,
       dataIndex: 'clicks',
       key: 'clicks',
       render: (text) => {
@@ -143,7 +144,7 @@ class CampaignTableView extends Component {
         return Math.round(text * 100) / 100;
       }
     }, {
-      title: 'Spent',
+      title: translations.Spent,
       dataIndex: 'impressions_cost',
       key: 'spent',
       render: (text) => {
@@ -156,7 +157,7 @@ class CampaignTableView extends Component {
         return Math.round(text * 100) / 100;
       }
     }, {
-      title: 'CPM',
+      title: translations.CPM,
       dataIndex: 'cpm',
       key: 'cpm',
       render: (text) => {
@@ -169,7 +170,7 @@ class CampaignTableView extends Component {
         return Math.round(text * 100) / 100;
       }
     }, {
-      title: 'CTR',
+      title: translations.CTR,
       dataIndex: 'ctr',
       key: 'ctr',
       render: (text) => {
@@ -182,7 +183,7 @@ class CampaignTableView extends Component {
         return Math.round(text * 100) / 100;
       }
     }, {
-      title: 'CPC',
+      title: translations.CPC,
       dataIndex: 'cpc',
       key: 'cpc',
       render: (text) => {
@@ -195,7 +196,7 @@ class CampaignTableView extends Component {
         return Math.round(text * 100) / 100;
       }
     }, {
-      title: 'CPA',
+      title: translations.CPA,
       dataIndex: 'cpa',
       key: 'cpa',
       render: (text) => {
@@ -225,13 +226,13 @@ class CampaignTableView extends Component {
     let editUrl;
     switch (record.editor_artifact_id) {
       case 'default-editor':
-        editUrl = `#/${workspace}/campaigns/display/expert/edit/${record.id}`;
+        editUrl = `/${workspace}/campaigns/display/expert/edit/${record.id}`;
         break;
       case 'external-campaign-editor':
-        editUrl = `#/${workspace}/campaigns/display/external/edit/${record.id}`;
+        editUrl = `/${workspace}/campaigns/display/external/edit/${record.id}`;
         break;
       case 'keywords-targeting-editor':
-        editUrl = `#/${workspace}/campaigns/display/keywords/${record.id}`;
+        editUrl = `/${workspace}/campaigns/display/keywords/${record.id}`;
         break;
       default:
         break;
@@ -240,7 +241,7 @@ class CampaignTableView extends Component {
     return (
       <Menu onClick={(item) => { if (item.key === '1') { this.archiveCampaign(record.id); } }}>
         <Menu.Item key="0">
-          <a href={editUrl}>Edit</a>
+          <Link to={editUrl}>Edit</Link>
         </Menu.Item>
         <Menu.Item key="1">
           <a>Archive</a>
@@ -252,14 +253,16 @@ class CampaignTableView extends Component {
   archiveCampaign(id) {
     const {
       deleteCampaigns,
+      translations
     } = this.props;
+
     const it = this;
     confirm({
-      title: 'Are you sure you want to archive this campaign?',
-      content: 'By archiving the campaign all its activities will be suspended. You\'ll be able to recover it from the archived campaign filter.',
+      title: translations.MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.MODAL_CONFIRM_ARCHIVED_BODY,
       iconType: 'exclamation-circle',
-      okText: 'Archive Now',
-      cancelText: 'Cancel',
+      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
+      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return deleteCampaigns(id).then(() => { it.fetchCampaignsWithProps(); });
       },
@@ -285,7 +288,7 @@ class CampaignTableView extends Component {
 
   formatCampaigns(campaigns, campaignsPerformance) {
     const newArray = [];
-    campaignsPerformance.rows.map((row, index) => {
+    campaignsPerformance.rows.map((row) => {
       const newObject = {};
       let i = 0;
       campaignsPerformance.columns_headers.forEach((value) => {
@@ -299,7 +302,7 @@ class CampaignTableView extends Component {
       return newArray.push(newObject);
     });
 
-    campaigns.map((campaign, index) => {
+    campaigns.map((campaign) => {
       const objectToAdd = newArray.find((element) => {
         return element.campaign_id === campaign.id;
       });
@@ -347,6 +350,9 @@ class CampaignTableView extends Component {
 
     const {
       fetchCampaignsPerformance,
+      activeWorkspace: {
+        organisationId
+      },
     } = this.props;
 
     const {
@@ -359,9 +365,9 @@ class CampaignTableView extends Component {
 
     const dimension = ''; // eslint-disable-line camelcase
     const end_date = endD; // eslint-disable-line camelcase
-    const filters = 'organisation%3D%3D1042'; // eslint-disable-line camelcase
+    const filters = `organisation%3D%3D${organisationId}`; // eslint-disable-line camelcase
     const metrics = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa']; // eslint-disable-line camelcase
-    const organisation_id = 1042; // eslint-disable-line camelcase
+    const organisation_id = organisationId; // eslint-disable-line camelcase
     const start_date = startD; // eslint-disable-line camelcase
 
     const params = {
@@ -398,6 +404,7 @@ CampaignTableView.propTypes = {
   hasSearched: PropTypes.bool.isRequired,
   filteredCampaigns: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteCampaigns: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 CampaignTableView.defaultProps = {
@@ -414,6 +421,7 @@ const mapStateToProps = state => ({
   activeWorkspace: state.sessionState.activeWorkspace,
   hasSearched: state.campaignsState.hasSearched,
   filteredCampaigns: state.campaignsState.filteredCampaigns,
+  translations: state.translationsState.translations,
 });
 
 const mapDispatchToProps = {
