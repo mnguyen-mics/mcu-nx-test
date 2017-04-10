@@ -111,6 +111,7 @@
   "scripts": {
     "test": "grunt test",
     "i18n": "node scripts/i18n.js",
+    "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "start": "grunt serve",
     "build": "grunt build"
   }
