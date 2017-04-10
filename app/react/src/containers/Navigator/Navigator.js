@@ -39,7 +39,7 @@ class Navigator extends Component {
           };
           this.initWorkspace(workspace);
         } else if (nextParams.datamartId !== nextActiveWorkspace.datamartId) {
-          this.validateUrl();
+          this.validateUrl(nextActiveWorkspace);
         }
       }
     }
@@ -110,7 +110,7 @@ class Navigator extends Component {
 
   }
 
-  validateUrl() {
+  validateUrl(nextActiveWorkspace) {
 
     const {
       activeWorkspace,
@@ -127,8 +127,10 @@ class Navigator extends Component {
       isReactUrl
     } = this.props;
 
-    const datamartPart = activeWorkspace.datamartId ? `/datamart/${activeWorkspace.datamartId}` : '';
-    const url = `${PUBLIC_URL}/organisation/${activeWorkspace.organisationId}${datamartPart}/campaigns`; // eslint-disable-line no-undef
+    const redirectActiveWorkspace = nextActiveWorkspace ? nextActiveWorkspace : activeWorkspace;
+
+    const datamartPart = redirectActiveWorkspace.datamartId ? `/d/${redirectActiveWorkspace.datamartId}` : '';
+    const url = `${PUBLIC_URL}/o/${redirectActiveWorkspace.organisationId}${datamartPart}/campaigns/display`; // eslint-disable-line no-undef
 
     if (isReactUrl) {
       router.replace(url);

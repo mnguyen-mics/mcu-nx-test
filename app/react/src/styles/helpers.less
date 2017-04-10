@@ -12,8 +12,13 @@ div[data-reactroot] {
 
 .ant-menu-root.ant-menu-inline.mcs-menu {
     height:100%;
+    padding-top: 10px;
 }
 
+.mcs-menu,
+.mcs-layout-content {
+    border-top: @border-width-base @border-style-base @border-color-base;
+}
 
 .ant-menu-inline.mcs-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-item {
     border-left: 5px solid transparent;
@@ -29,8 +34,19 @@ div[data-reactroot] {
     transform: translateZ(0);
 }
 
-.ant-menu-item-selected > a, .ant-menu-item-selected > a:hover {
-    color: @info-color!important;
+.ant-menu-item-selected {
+    a,
+    a:hover {
+        font-weight: bold;
+    }
+}
+
+.ant-menu-horizontal {
+    .ant-menu-item-selected,
+    .ant-menu-item:hover {
+        border-bottom-color: @info-color!important;
+        border-bottom: 4px @border-style-base @border-color-base;
+    }
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {

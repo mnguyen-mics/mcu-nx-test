@@ -5,6 +5,7 @@ import { routerReducer } from 'react-router-redux';
 import { PersistentReducers } from './PersistentReducers';
 import { HeaderReducers } from '../containers/Header/redux';
 import { SidebarReducers } from '../containers/Sidebar/redux';
+import { ActionbarReducers } from '../containers/Actionbar/redux';
 import { SessionReducers } from '../services/session';
 import { LoginReducers } from '../containers/Login/redux';
 
@@ -23,6 +24,7 @@ const allReducers = Object.assign(
 
   PersistentReducers,
   HeaderReducers,
+  ActionbarReducers,
   SidebarReducers,
   SessionReducers,
   LoginReducers,

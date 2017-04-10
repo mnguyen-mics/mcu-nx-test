@@ -49,6 +49,8 @@ module.exports = function (grunt) {
 
   var isSnapshot = version.indexOf("SNAPSHOT") !== -1;
 
+  var betaArtifact = grunt.option('beta');
+
   var webpack = require('webpack');
   var webpackMiddleware = require("webpack-dev-middleware");
   var webpackDevConfig = require('./config/webpack.config.dev.js');
@@ -82,7 +84,7 @@ module.exports = function (grunt) {
       release: {
         options: {
           groupId: "com.mediarithmics.web",
-          artifactId: "navigator",
+          artifactId: betaArtifact ? "navigator-beta" : "navigator",
           version: version,
           packaging: 'zip',
           auth: {

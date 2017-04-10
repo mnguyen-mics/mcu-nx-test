@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
-import CampaignsTableView from './CampaignsTableView';
 
 import CampaignsSidebar from './CampaignsSidebar';
 
@@ -11,7 +10,7 @@ class Campaigns extends Component {
     return (
       <Layout>
         <CampaignsSidebar {...this.props}>
-          <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={[]} />
+          {this.props.children}
         </CampaignsSidebar>
       </Layout>
     );

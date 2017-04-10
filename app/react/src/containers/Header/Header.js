@@ -1,12 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
-import Header from 'mcs-react-header';
+import Link from 'react-router/lib/Link';
+import { Cascader, Popover, Icon, Menu, Row, Col } from 'antd';
+import classNames from 'classnames';
 
 import * as sessionActions from '../../services/session/SessionActions';
-
-import logoUrl from '../../assets/images/mediarithmics-small-white.png';
-import imgUrl from '../../assets/images/user.svg';
 
 class NavigatorHeader extends Component {
 
@@ -15,42 +14,120 @@ class NavigatorHeader extends Component {
     this.buildNavigationItems = this.buildNavigationItems.bind(this);
     this.buildWorkspaceItems = this.buildWorkspaceItems.bind(this);
     this.buildProfileItems = this.buildProfileItems.bind(this);
+    this.setActiveHeaderItem = this.setActiveHeaderItem.bind(this);
+    this.getCampaignsUrl = this.getCampaignsUrl.bind(this);
+    this.state = {
+      // retrieve activeRoute from location
+      activeRoute: 'campaigns'
+    };
   }
 
   render() {
 
     const {
       authenticated,
-      isVisible,
       activeWorkspace: {
-        workspaceId
+        workspaceId,
+        organisationName
       }
     } = this.props;
 
-    const homeUrl = authenticated ? `/${workspaceId}/campaigns/display` : '';
-    const navigationItems = this.buildNavigationItems();
+    const {
+      activeRoute
+    } = this.state;
+
+    const homeUrl = authenticated ? this.getCampaignsUrl() : '';
+    const navigationItems = this.displayNavigationItems();
     const workspaceItems = this.buildWorkspaceItems();
     const profileItems = this.buildProfileItems();
 
-    const logo = {
-      url: logoUrl,
-      alt: 'mediarithmics'
-    };
 
-    const img = {
-      url: imgUrl,
-      alt: 'profile'
-    };
+    const headerClassName = classNames([
+      'mcs-header',
+      'clearfix'
+    ]);
 
-    return isVisible ? <Header homeUrl={homeUrl} navigationItems={navigationItems} workspaceItems={workspaceItems} profileItems={profileItems} logo={logo} img={img} /> : null;
+    const text = profileItems.title;
 
+    const content = (
+      <div>
+        { profileItems.content.map((profileItem, index) => {
+          return <div key={index.toString()}>{profileItem}</div>;
+        })}
+      </div>
+    );
+
+    return (
+      <header id="header" className={headerClassName}>
+        <Row>
+          <Col lg={3}>
+            <Cascader options={workspaceItems.workspaces} defaultValue={[workspaceId]} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" />
+          </Col>
+          <Col lg={3}>
+            <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
+          </Col>
+          <Col lg={18} >
+            <Menu onClick={this.setActiveHeaderItem} selectedKeys={[activeRoute]} mode="horizontal" className="mcs-header-menu-horizontal">
+              {navigationItems}
+            </Menu>
+            <div className="mcs-header-menu-icons" >
+              <Link to={`/${workspaceId}/settings/useraccount`}>
+                <Icon type="setting" className="mcs-header-anticon" />
+              </Link>
+              <div className="mcs-header-divider" />
+              <Popover placement="bottomRight" title={text} content={content}>
+                <Icon type="user" className="mcs-header-anticon" />
+              </Popover>
+            </div>
+          </Col>
+        </Row>
+      </header>
+    );
+
+  }
+
+  onWorkspaceChange(value, selectedOptions) {
+    if (value.length) {
+      selectedOptions[0].onClick();
+    }
+  }
+
+  setActiveHeaderItem(/* item */) {
+    /* this.setState({
+      activeRoute: item.key,
+    });
+    */
+  }
+
+  displayNavigationItems() {
+
+    const items = this.buildNavigationItems();
+
+    return items.map(item => {
+      return (
+        <Menu.Item key={item.path}>
+          <Link to={item.url}><FormattedMessage id={item.label} /></Link>
+        </Menu.Item>
+      );
+    });
+
+  }
+
+  getCampaignsUrl() {
+    const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      }
+    } = this.props;
+
+    return `/${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
   }
 
   buildNavigationItems() {
 
     const {
       activeWorkspace: {
-        // organisationId,
         datamartId,
         workspaceId
       },
@@ -70,38 +147,34 @@ class NavigatorHeader extends Component {
     const datamartEntries = datamartId ? [
       {
         url: `/${workspaceId}/datamart/segments`,
-        label: <FormattedMessage id="AUDIENCE" />
+        label: 'AUDIENCE',
+        path: 'segments'
       },
       {
         url: `/${workspaceId}/datamart/categories`,
-        label: <FormattedMessage id="CATALOGS" />
+        label: 'CATALOGS',
+        path: 'categories'
       },
     ] : [];
 
     const reactEntries = [
-      /*
-        To test until a real link is implemented
-        const campaignsUrl = `/v2/organisation/${organisationId}${datamartId ? `/datamart/${datamartId}` : ''}/campaigns`;
-        {
-          url: campaignsUrl,
-          label: <FormattedMessage id="CAMPAIGNS" />,
-          active: isActiveUrl('campaigns'),
-        }
-      */
+      {
+        url: this.getCampaignsUrl(),
+        label: 'CAMPAIGNS',
+        path: 'campaigns'
+      }
     ];
 
     const angularEntries = [
       {
-        url: `/${workspaceId}/campaigns/display`,
-        label: <FormattedMessage id="CAMPAIGNS" />
-      },
-      {
         url: `/${workspaceId}/creatives/display-ad`,
-        label: <FormattedMessage id="CREATIVES" />
+        label: 'CREATIVES',
+        path: 'display-ad'
       },
       {
         url: `/${workspaceId}/library/placementlists`,
-        label: <FormattedMessage id="LIBRARY" />
+        label: 'LIBRARY',
+        path: 'placementlists'
       }
     ];
 
@@ -130,8 +203,9 @@ class NavigatorHeader extends Component {
       const isActive = (workspace.organisationId === activeWorkspace.organisationId) && (workspace.role === activeWorkspace.role) && (workspace.datamartId === activeWorkspace.datamartId);
 
       return {
+        value: workspace.workspaceId,
         label: getLabel(workspace),
-        onClick: isActive ? () => {} : () => switchWorkspace(workspace),
+        onClick: () => switchWorkspace(workspace),
         isActive
       };
 
@@ -151,50 +225,33 @@ class NavigatorHeader extends Component {
       activeWorkspace: {
         workspaceId
       },
-      logout,
-      router
+      logout
     } = this.props;
 
     const loginUrl = `${PUBLIC_URL}/login`; // eslint-disable-line no-undef
 
-    const redirect = url => {
-      return router.replace(url);
+    const loginItem = <Link to={loginUrl}><FormattedMessage id="LOGIN" /></Link>;
+
+    const onLogoutClick = () => {
+      logout();
     };
 
-    const login = () => {
-      return redirect(loginUrl);
-    };
+    const logoutItem = <Link to="/logout" onClick={onLogoutClick}><FormattedMessage id="LOGOUT" /></Link>; // eslint-disable-line jsx-a11y/no-static-element-interactions
+    const accountUrl = `${workspaceId}/settings/useraccount`;
 
-    const loginItem = {
-      label: <p><FormattedMessage id="LOGIN" /></p>,
-      onClick: login
-    };
+    const account = <Link to={accountUrl}><FormattedMessage id="ACCOUNT_SETTINGS" /></Link>;
 
-    const logoutItem = {
-      label: <p><FormattedMessage id="LOGOUT" /></p>,
-      onClick: () => {
-        logout();
-        // should use redirect(loginUrl) later
-        window.location = '/#/logout'; // eslint-disable-line no-undef
-      }
-    };
-
-    const account = {
-      label: <p><FormattedMessage id="ACCOUNT_SETTINGS" /></p>,
-      onClick: () => {
-        window.location = `/#/${workspaceId}/settings/useraccount`; // eslint-disable-line no-undef
-      }
-    };
-
-    const userItem = user ? { label: <p>{user.email}</p> } : null;
+    const userItem = user ? <p>{user.email}</p> : null;
     const accountItem = user ? account : null;
     const authenticatedItem = authenticated ? logoutItem : loginItem;
 
-    return [
-      userItem,
-      accountItem,
-      authenticatedItem
-    ];
+    return {
+      title: userItem,
+      content: [
+        accountItem,
+        authenticatedItem
+      ]
+    };
 
   }
 
@@ -204,20 +261,17 @@ NavigatorHeader.propTypes = {
   user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   workspaces: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isVisible: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   switchWorkspace: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired,
-  router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  logout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   authenticated: state.sessionState.authenticated,
   user: state.sessionState.user,
   activeWorkspace: state.sessionState.activeWorkspace,
-  workspaces: state.sessionState.workspaces,
-  isVisible: state.headerState.isVisible
+  workspaces: state.sessionState.workspaces
 });
 
 const mapDispatchToProps = {

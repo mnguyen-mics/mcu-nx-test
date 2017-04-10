@@ -28,5 +28,10 @@
   "CPM":"CPM",
   "CTR":"CTR",
   "CPC":"CPC",
-  "CPA":"CPA"
+  "CPA":"CPA",
+  "SAVE": "Save",
+  "DISPLAY_CAMPAIGNS": "Display Campaigns",
+  "EMAIL_CAMPAIGNS": "Emails Campaigns",
+  "SCENARIOS": "Scenarios",
+  "GOALS": "Goals"
 }
