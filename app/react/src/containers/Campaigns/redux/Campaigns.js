@@ -101,8 +101,18 @@ const defaultcampaignsState = {
   }
 };
 
+const filterCampaigns = (campaigns, querySring) => {
+  const filteredCamapaigns = [];
+  campaigns.map((element) => {
+    if (element.name.toLowerCase().indexOf(querySring.toLowerCase()) > -1) {
+      return filteredCamapaigns.push(element);
+    }
+    return null;
+  });
+  return filteredCamapaigns;
+};
+
 const campaignsState = (state = defaultcampaignsState, action) => {
-  const filteredCa = [];
   switch (action.type) {
     case FETCH_CAMPAIGNS_REQUEST:
       return {
@@ -157,17 +167,11 @@ const campaignsState = (state = defaultcampaignsState, action) => {
         isDeleting: false
       };
     case SEARCH_CAMPAIGNS:
-      state.campaigns.map((element) => {
-        if (element.name.toLowerCase().indexOf(action.data.querySring.toLowerCase()) > -1) {
-          return filteredCa.push(element);
-        }
-        return null;
-      });
       return {
         ...state,
         isFetchingCampaignsPerformance: false,
         hasSearched: action.data.querySring ? true : false,
-        filteredCampaigns: filteredCa,
+        filteredCampaigns: filterCampaigns(state.campaigns, action.data.querySring),
       };
     default:
       return state;

@@ -15,6 +15,18 @@
   "EMAIL_PLACEHOLDER": "Entrez votre adresse email",
   "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
   "FORGOT_PASSWORD": "Mot de passe oublié ?",
-  "SUBMIT": "Valider"
-
+  "SUBMIT": "Valider",
+  "MODAL_CONFIRM_ARCHIVED_TITLE": "Êtes vous sure de vouloir archiver cette campagne?",
+  "MODAL_CONFIRM_ARCHIVED_BODY": "En archivant cette campagne toute ces activités vont être suspendue. Vous serez capable de la recupérer dans le categaorie 'archivés'.",
+  "MODAL_CONFIRM_ARCHIVED_OK": "Archiver Maintenant",
+  "MODAL_CONFIRM_ARCHIVED_CANCEL": "Annuler",
+  "STATUS":"Status",
+  "NAME":"Nom",
+  "Impression":"Imp.",
+  "Clicks":"Clicks.",
+  "Spent":"Dépensé",
+  "CPM":"CPM",
+  "CTR":"CTR",
+  "CPC":"CPC",
+  "CPA":"CPA"
 }
