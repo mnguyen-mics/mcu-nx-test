@@ -17,5 +17,9 @@
   "FORGOT_PASSWORD": "Mot de passe oublié ?",
   "SUBMIT": "Valider",
   "SAVE" : "Sauvegarder"
+  "DISPLAY_CAMPAIGNS": "Display Campaigns",
+  "EMAIL_CAMPAIGNS": "Emails Campaigns",
+  "SCENARIOS": "Scenarios",
+  "GOALS": "Goals"
 
 }
