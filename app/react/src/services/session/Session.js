@@ -136,7 +136,9 @@ const buildWorkspaces = workspaces => {
 
   const builtWorkspaces = [];
 
-  workspaces.forEach(workspace => {
+  const uniqueWorkspaces = workspaces.filter((workspace, index, self) => self.findIndex(w => w.organisation_id === workspace.organisation_id) === index);
+
+  uniqueWorkspaces.forEach(workspace => {
 
     if (workspace.datamarts.length) {
       workspace.datamarts.forEach(datamart => {
@@ -241,7 +243,7 @@ const sessionState = (state = defaultSessionState, action) => {
       return {
         ...state,
         isFetchingWorkspaces: false,
-        workspaces: buildWorkspaces([action.response.data])
+        workspaces: buildWorkspaces([action.response.data].concat(state.user.workspaces))
       };
 
     case GET_ACCESS_TOKEN_FAILURE:

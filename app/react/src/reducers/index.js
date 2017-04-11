@@ -5,8 +5,12 @@ import { routerReducer } from 'react-router-redux';
 import { PersistentReducers } from './PersistentReducers';
 import { HeaderReducers } from '../containers/Header/redux';
 import { SidebarReducers } from '../containers/Sidebar/redux';
+import { ActionbarReducers } from '../containers/Actionbar/redux';
 import { SessionReducers } from '../services/session';
 import { LoginReducers } from '../containers/Login/redux';
+
+import { CampaignsTableViewReducers } from '../containers/Campaigns/redux';
+
 import { i18nReducers } from '../services/i18n';
 
 const allReducers = Object.assign(
@@ -20,9 +24,11 @@ const allReducers = Object.assign(
 
   PersistentReducers,
   HeaderReducers,
+  ActionbarReducers,
   SidebarReducers,
   SessionReducers,
   LoginReducers,
+  CampaignsTableViewReducers,
   i18nReducers
 );
 

@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Link from 'react-router/lib/Link';
+import { FormattedMessage } from 'react-intl';
 
 import { Sidebar } from '../Sidebar';
 
@@ -9,7 +11,9 @@ class CampaignsSidebar extends Component {
 
     const {
       activeWorkspace: {
-        workspaceId
+        workspaceId,
+        organisationId,
+        datamartId,
       },
       location: {
         pathname
@@ -18,21 +22,23 @@ class CampaignsSidebar extends Component {
 
     const isActiveUrl = path => pathname.search(path) >= 0; // eslint-disable-line no-unused-vars
 
+    const displayCampaignUrl = `/${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
+
     const items = [
       {
-        element: <a href={`#/${workspaceId}/campaigns/display`}>Display Campaigns</a>,
+        element: <Link to={displayCampaignUrl}><FormattedMessage id="DISPLAY_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl(new RegExp(/display|[^(email|scenarios|goals)]/))
       },
       {
-        element: <a href={`#/${workspaceId}/campaigns/email`}>Email Campaigns</a>,
+        element: <Link to={`${workspaceId}/campaigns/email`}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('email')
       },
       {
-        element: <a href={`#/${workspaceId}/library/scenarios`}>Scenarios</a>,
+        element: <Link to={`${workspaceId}/library/scenarios`}><FormattedMessage id="SCENARIOS" /></Link>,
         isActive: isActiveUrl('scenarios')
       },
       {
-        element: <a href={`#/${workspaceId}/library/goals`}>Goals</a>,
+        element: <Link to={`${workspaceId}/library/goals`}><FormattedMessage id="GOALS" /></Link>,
         isActive: isActiveUrl('goals')
       }
     ];
