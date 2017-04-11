@@ -180,7 +180,7 @@ class CampaignTableView extends Component {
       title: translations.STATUS,
       dataIndex: 'status',
       key: 'status',
-      render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage className={`mcs-campaigns-status-${text.toLowerCase()}`} id={text} /></span>
+      render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
     }, {
       title: translations.NAME,
       dataIndex: 'name',
