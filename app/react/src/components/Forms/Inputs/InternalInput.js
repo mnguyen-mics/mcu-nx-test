@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Input } from 'antd';
 
 import Alert from 'mcs-react-alert';
 
@@ -13,7 +14,7 @@ class InternalInput extends Component {
 
     return (
       <div >
-        <input {...input} type="text" {...other} />
+        <Input {...input} type="text" {...other} />
         {(touched && error && <Alert type="danger" text={error} />) ||
           (warning && <Alert type="warning" text={warning} />)}
       </div>
