@@ -34,11 +34,12 @@ class ActionbarButton extends Component {
       buttonClassNames,
       secondaryBar,
       currentSecondaryBar,
+      setSecondaryActionBar,
       onClick,
       ...other
     } = this.props;
 
-    const content = imageUrl ? <img src={imageUrl} alt={text} /> : text;
+    const content = text ? (imageUrl ? <img src={imageUrl} alt={text} /> : text) : this.props.children;
 
     const selected = currentSecondaryBar !== null && currentSecondaryBar === secondaryBar;
 
@@ -59,7 +60,7 @@ class ActionbarButton extends Component {
         </button>
         <svg className={classNames(selectionClasses)} width="40" height="10">
           <polyline
-            points="0 9 20 0 40 9" stroke="#d3dbe1" strokeWidth="1"
+            points="0 7 10 0 20 7" stroke="#d3dbe1" strokeWidth="1"
             strokeLinecap="butt" fill="none"
           />
         </svg>
@@ -69,7 +70,7 @@ class ActionbarButton extends Component {
 }
 
 ActionbarButton.propTypes = {
-  text: PropTypes.string.isRequired,
+  text: PropTypes.string,
   imageUrl: PropTypes.string,
   secondaryBar: PropTypes.string,
   containerClassNames: PropTypes.arrayOf(PropTypes.string),
@@ -83,7 +84,8 @@ ActionbarButton.defaultProps = {
   buttonClassNames: ['mcs-actionbar-button'],
   containerClassNames: ['mcs-actionbar-button-wrapper'],
   secondaryBar: null,
-  imageUrl: null
+  imageUrl: null,
+  text: null
 };
 
 const mapStateToProps = state => ({

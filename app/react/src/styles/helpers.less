@@ -32,6 +32,9 @@ div[data-reactroot] {
     border-left-color: @info-color!important;
     border-right: @border-width-base @border-style-base @border-color-base;
     transform: translateZ(0);
+    &:after {
+        border-right: none;
+    }
 }
 
 .ant-menu-item-selected {
@@ -68,7 +71,7 @@ div[data-reactroot] {
     height: 95px; 
     width: 100%; 
     background-color: #fcfcfc; 
-    box-shadow: 0 -1px 0 0 #e1e1e1; 
+    box-shadow: 0 -1px 0 0 @border-color-base; 
     cursor: default;
 }
 
@@ -78,8 +81,7 @@ div[data-reactroot] {
 }
 
 .mcs-scroll-view {
-    overflow-y: scroll;
-    padding: 0px 15px 25px 15px;
+    // overflow-y: scroll;
 }
 
 .mcs-main-layout {
@@ -96,7 +98,9 @@ div[data-reactroot] {
 }
 
 .mcs-table-container {
-    border: 1px solid #d3dbe1;
+    border-top: 1px solid @border-color-split;
+    border-bottom: 1px solid @border-color-split;
+    padding: 20px 40px;
 }
 
 .mcs-table-container .mcs-search-input {
@@ -104,8 +108,7 @@ div[data-reactroot] {
 }
 
 .mcs-table-header {
-    background-color: #FAFAFA;
-    padding: 20px 10px;
+    margin-bottom: 20px;
 }
 
 .text-right {

@@ -61,7 +61,7 @@ class NavigatorHeader extends Component {
       <header id="header" className={headerClassName}>
         <Row>
           <Col lg={3}>
-            <Cascader options={workspaceItems.workspaces} defaultValue={[workspaceId]} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" />
+            { workspaceId && <Cascader options={workspaceItems.workspaces} defaultValue={[workspaceId]} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" /> }
           </Col>
           <Col lg={3}>
             <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
@@ -121,7 +121,7 @@ class NavigatorHeader extends Component {
       }
     } = this.props;
 
-    return `/${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
+    return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
   }
 
   buildNavigationItems() {

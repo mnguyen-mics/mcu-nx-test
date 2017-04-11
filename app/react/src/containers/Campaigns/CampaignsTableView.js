@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import Link from 'react-router/lib/Link';
 import { Row, Col, Table, Icon, Input, DatePicker, Dropdown, Menu, Modal } from 'antd';
+import { FormattedMessage } from 'react-intl';
+
 import * as CampaignsTableViewActions from './redux/CampaignsTableViewActions';
 
 const Search = Input.Search;
@@ -32,7 +34,65 @@ class CampaignTableView extends Component {
   }
 
   componentDidMount() {
-    this.fetchCampaignsWithProps();
+
+    const {
+      filters,
+      archived
+    } = this.props;
+
+    const params = {};
+
+    Object.keys(filters).forEach(filter => {
+      if (filters[filter].data.length) {
+        params[filter] = filters[filter].data.join();
+      }
+    });
+
+    params.archived = archived;
+
+    this.fetchCampaignsWithProps(params);
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    const {
+      filters,
+      archived,
+      activeWorkspace: {
+        organisationId
+      }
+    } = this.props;
+
+    const {
+      filters: nextFilters,
+      archived: nextArchived,
+      activeWorkspace: {
+        organisationId: nextOrganisationId
+      }
+    } = nextProps;
+
+    const params = {};
+
+    Object.keys(filters).forEach(filter => {
+      if (filters[filter].data && nextFilters[filter] && nextFilters[filter].data) {
+        if (filters[filter].data.length !== nextFilters[filter].data.length) {
+          params[filter] = nextFilters[filter].data.join();
+        }
+      }
+    });
+
+    if (archived !== nextArchived) {
+      params.archived = nextArchived;
+    }
+
+    if (organisationId !== nextOrganisationId) {
+      params.organisation_id = nextOrganisationId;
+    }
+
+    if (Object.keys(params).length) {
+      this.fetchCampaignsWithProps(params);
+    }
+
   }
 
   render() {
@@ -89,7 +149,7 @@ class CampaignTableView extends Component {
           </Col>)}
         </Row>
         <Row className="mcs-table-body">
-          <Col span={24} style={{ padding: '20px 10px' }}>
+          <Col span={24}>
             <Table columns={this.renderCol()} dataSource={hasSearched ? filteredCampaigns : campaigns} onChange={this.handleChange} loading={isFetching} pagination={{ size: 'small', showSizeChanger: true }} />
           </Col>
         </Row>
@@ -106,108 +166,61 @@ class CampaignTableView extends Component {
       translations
     } = this.props;
 
+    const renderText = (text, number = false) => {
+      if (!text || isFetchingCampaignsPerformance) {
+        return (<span>loading...</span>);
+      }
+      if (text === '-') {
+        return text;
+      }
+      return number ? (Math.round(text * 100) / 100) : text;
+    };
+
     const columns = [{
       title: translations.STATUS,
       dataIndex: 'status',
       key: 'status',
+      render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage className={`mcs-campaigns-status-${text.toLowerCase()}`} id={text} /></span>
     }, {
       title: translations.NAME,
       dataIndex: 'name',
       key: 'name',
-      render: (text, record) => (
-        <Link to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
-      )
+      render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
     }, {
       title: translations.Impression,
       dataIndex: 'impressions',
       key: 'impression',
-      render: (text) => {
-        if (!text || isFetchingCampaignsPerformance) {
-          return (<span>loading...</span>);
-        }
-        if (text === '-') {
-          return text;
-        }
-        return text;
-      }
+      render: text => renderText(text)
     }, {
       title: translations.Clicks,
       dataIndex: 'clicks',
       key: 'clicks',
-      render: (text) => {
-        if (!text || isFetchingCampaignsPerformance) {
-          return (<span>loading...</span>);
-        }
-        if (text === '-') {
-          return text;
-        }
-        return Math.round(text * 100) / 100;
-      }
+      render: text => renderText(text, true)
     }, {
       title: translations.Spent,
       dataIndex: 'impressions_cost',
       key: 'spent',
-      render: (text) => {
-        if (!text || isFetchingCampaignsPerformance) {
-          return (<span>loading...</span>);
-        }
-        if (text === '-') {
-          return text;
-        }
-        return Math.round(text * 100) / 100;
-      }
+      render: text => renderText(text, true)
     }, {
       title: translations.CPM,
       dataIndex: 'cpm',
       key: 'cpm',
-      render: (text) => {
-        if (!text || isFetchingCampaignsPerformance) {
-          return (<span>loading...</span>);
-        }
-        if (text === '-') {
-          return text;
-        }
-        return Math.round(text * 100) / 100;
-      }
+      render: text => renderText(text, true)
     }, {
       title: translations.CTR,
       dataIndex: 'ctr',
       key: 'ctr',
-      render: (text) => {
-        if (!text || isFetchingCampaignsPerformance) {
-          return (<span>loading...</span>);
-        }
-        if (text === '-') {
-          return text;
-        }
-        return Math.round(text * 100) / 100;
-      }
+      render: text => renderText(text, true)
     }, {
       title: translations.CPC,
       dataIndex: 'cpc',
       key: 'cpc',
-      render: (text) => {
-        if (!text || isFetchingCampaignsPerformance) {
-          return (<span>loading...</span>);
-        }
-        if (text === '-') {
-          return text;
-        }
-        return Math.round(text * 100) / 100;
-      }
+      render: text => renderText(text, true)
     }, {
       title: translations.CPA,
       dataIndex: 'cpa',
       key: 'cpa',
-      render: (text) => {
-        if (!text || isFetchingCampaignsPerformance) {
-          return (<span>loading...</span>);
-        }
-        if (text === '-') {
-          return text;
-        }
-        return Math.round(text * 100) / 100;
-      }
+      render: text => renderText(text, true)
     }, {
       key: 'action',
       render: (text, record) => (
@@ -323,6 +336,7 @@ class CampaignTableView extends Component {
       activeWorkspace: {
         organisationId
       },
+      router
     } = this.props;
     const first_result = 0; // eslint-disable-line camelcase
     const max_results = 300; // eslint-disable-line camelcase
@@ -342,7 +356,16 @@ class CampaignTableView extends Component {
       });
     }
 
-    fetchCampaigns(params).then(this.fetchCampaignsPerformanceWithProps());
+    const updateUrl = () => {
+      const location = router.getCurrentLocation();
+      const query = Object.assign({}, location.query, params);
+      router.replace({
+        pathname: location.pathname,
+        query
+      });
+    };
+
+    fetchCampaigns(params).then(updateUrl).then(this.fetchCampaignsPerformanceWithProps());
 
   }
 
@@ -352,7 +375,7 @@ class CampaignTableView extends Component {
       fetchCampaignsPerformance,
       activeWorkspace: {
         organisationId
-      },
+      }
     } = this.props;
 
     const {
@@ -400,6 +423,9 @@ CampaignTableView.propTypes = {
   fetchCampaignsPerformance: PropTypes.func.isRequired,
   isFetchingCampaignsPerformance: PropTypes.bool.isRequired,
   campaignsPerformance: PropTypes.shape({ report_view: PropTypes.shape({ items_per_page: PropTypes.number, total_items: PropTypes.number, columns_headers: PropTypes.array, rows: PropTypes.array }) }).isRequired,
+  filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  archived: PropTypes.bool.isRequired, // eslint-disable-line react/forbid-prop-types
+  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasSearched: PropTypes.bool.isRequired,
   filteredCampaigns: PropTypes.arrayOf(PropTypes.object).isRequired,
