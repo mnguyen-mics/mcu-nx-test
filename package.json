@@ -30,8 +30,6 @@
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-2": "^6.22.0",
-    "bootstrap-sass": "^3.3.7",
-    "bourbon": "^4.3.3",
     "bower": "^1.3.8",
     "bower-requirejs": "^0.11.0",
     "clean-webpack-plugin": "^0.1.15",
