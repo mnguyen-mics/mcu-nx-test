@@ -4,21 +4,30 @@
 
 .mcs-header-menu-horizontal {
   border-bottom: none;
-  display: inline-block
+  display: inline-block;
+  padding-left: 20px;
+}
+
+.mcs-header-logo {
+  max-width: 200px;
+}
+
+.mcs-header-navigation {
+  width: ~'calc(100% - 200px)';
 }
 
 .mcs-header-logo-name {
   font-size: 15px;
   font-weight: bold;
   overflow: hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-  width:150px;
-  display:inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 150px;
 }
 
 .mcs-header-menu-icons {
   float: right;
+  padding-right: 40px;
 }
 
 .mcs-header-cascader-menu {
@@ -41,13 +50,12 @@
 
 .mcs-header-anticon {
   font-size: 25px;
-  margin-left: 25px;
-  margin-right: 25px; 
 }
 
 .mcs-header-divider {
   width: 1px;
   height: 25px;
+  margin: 0px 25px;
   background-color: @border-color-base;
   display: inline-block
 }

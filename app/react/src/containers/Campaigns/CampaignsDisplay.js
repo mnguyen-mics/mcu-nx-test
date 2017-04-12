@@ -183,8 +183,7 @@ class CampaignsDisplay extends Component {
     };
 
     return (
-      <ScrollComponent>
-
+      <div>
         <Actionbar {...this.props}>
           <Dropdown overlay={addMenu} trigger={['click']}>
             <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
@@ -215,11 +214,13 @@ class CampaignsDisplay extends Component {
 
         </Actionbar>
 
-        { items.length && <LabelListView className="mcs-campaigns-filter-view" items={items} label="FILTERED_BY" onClickOnClose={onClickOnClose} /> }
+        <ScrollComponent>
+          { items.length && <LabelListView className="mcs-campaigns-filter-view" items={items} label="FILTERED_BY" onClickOnClose={onClickOnClose} /> }
 
-        <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={filters} archived={archived} {...this.props} />
+          <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={filters} archived={archived} {...this.props} />
 
-      </ScrollComponent>
+        </ScrollComponent>
+      </div>
     );
 
   }
