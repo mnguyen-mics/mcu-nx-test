@@ -37,7 +37,9 @@ define(['app-setup', 'angularAMD', 'jquery'],
           if (!Session.isInitialized()) {
             $log.debug("not initialized");
             AuthenticationService.pushPendingPath($location.url());
-            $location.path('/init-session');
+            if (!$location.url().match('/v2')) {
+              $location.path('/init-session');
+            }
           }
         } else if (AuthenticationService.hasRefreshToken()) {
           $log.debug("has refresh token -> remember-me");
