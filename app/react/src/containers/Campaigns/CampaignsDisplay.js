@@ -33,13 +33,19 @@ class CampaignsDisplay extends Component {
         }
       }
     };
+    this.initStateWithQuery = this.initStateWithQuery.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
 
     const {
       translations,
-      setBreadcrumb
+      setBreadcrumb,
+      router: {
+        location: {
+          query
+        }
+      }
     } = this.props;
 
     const breadcrumb = {
@@ -47,6 +53,38 @@ class CampaignsDisplay extends Component {
     };
 
     setBreadcrumb(0, [breadcrumb]);
+    this.initStateWithQuery(query);
+
+  }
+
+  initStateWithQuery(query) {
+
+    const {
+      filters,
+      archived
+    } = this.state;
+
+    const buildFilters = () => {
+
+      const builtFilters = {};
+
+      const splitStr = str => str.split(',');
+
+      Object.keys(filters).forEach(filter => {
+        builtFilters[filter] = {
+          visible: filters[filter].visible,
+          data: query[filter] ? splitStr(query[filter]) : filters[filter].data
+        };
+      });
+
+      return builtFilters;
+    };
+
+    this.setState({
+      archived: query.archived ? (query.archived === 'true') : archived,
+      filters: buildFilters()
+    });
+
   }
 
   render() {
@@ -206,7 +244,7 @@ class CampaignsDisplay extends Component {
             </div>
 
             <div className="mcs-actionbar-button-wrapper">
-              <Checkbox className="mcs-campaigns-checkbox" onChange={onArchivedCheckboxChange}>
+              <Checkbox className="mcs-campaigns-checkbox" checked={archived} onChange={onArchivedCheckboxChange}>
                 <FormattedMessage id="ARCHIVED" />
               </Checkbox>
             </div>
@@ -255,7 +293,8 @@ class CampaignsDisplay extends Component {
 CampaignsDisplay.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  setBreadcrumb: PropTypes.func.isRequired
+  setBreadcrumb: PropTypes.func.isRequired,
+  router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({

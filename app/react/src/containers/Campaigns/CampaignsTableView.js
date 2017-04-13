@@ -37,10 +37,15 @@ class CampaignTableView extends Component {
 
     const {
       filters,
-      archived
+      archived,
+      router: {
+        location: {
+          query
+        }
+      }
     } = this.props;
 
-    const params = {};
+    const params = query;
 
     Object.keys(filters).forEach(filter => {
       if (filters[filter].data.length) {
