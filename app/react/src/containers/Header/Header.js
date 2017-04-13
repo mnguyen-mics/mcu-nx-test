@@ -178,7 +178,7 @@ class NavigatorHeader extends Component {
         path: 'segments'
       },
       {
-        url: `/${workspaceId}/datamart/categories`,
+        url: `/${workspaceId}/datamart/categories/`,
         label: 'CATALOGS',
         path: 'categories'
       },

@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Menu, Dropdown, Button, Icon, Checkbox } from 'antd';
+import { Menu, Dropdown, Button, Icon, Checkbox, Layout } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
@@ -10,6 +10,8 @@ import { LabelListView } from '../../components/LabelListView';
 import CampaignsTableView from './CampaignsTableView';
 
 import { ActionbarActions } from '../Actionbar/redux';
+
+const { Content } = Layout;
 
 class CampaignsDisplay extends Component {
 
@@ -92,8 +94,7 @@ class CampaignsDisplay extends Component {
     const {
       activeWorkspace: {
         organisationId
-      },
-      secondaryActionbar
+      }
     } = this.props;
 
     const {
@@ -221,11 +222,10 @@ class CampaignsDisplay extends Component {
       });
     };
 
-    const scrollViewClass = secondaryActionbar ? 'mcs-campaigns-padding-actionbar' : 'mcs-campaigns-padding-without-actionbar';
     const labelListView = items.length ? <LabelListView className="mcs-campaigns-filter-view" items={items} label="FILTERED_BY" onClickOnClose={onClickOnClose} /> : null;
 
     return (
-      <div>
+      <Layout>
         <Actionbar {...this.props}>
           <Dropdown overlay={addMenu} trigger={['click']}>
             <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
@@ -256,13 +256,13 @@ class CampaignsDisplay extends Component {
 
         </Actionbar>
 
-        <ScrollComponent>
-          <div className={scrollViewClass}>
+        <Content>
+          <ScrollComponent>
             { labelListView }
             <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={filters} archived={archived} {...this.props} />
-          </div>
-        </ScrollComponent>
-      </div>
+          </ScrollComponent>
+        </Content>
+      </Layout>
     );
 
   }
@@ -294,22 +294,16 @@ class CampaignsDisplay extends Component {
 
 }
 
-CampaignsDisplay.defaultProps = {
-  secondaryActionbar: null
-};
-
 CampaignsDisplay.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   setBreadcrumb: PropTypes.func.isRequired,
-  secondaryActionbar: PropTypes.string,
   router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({
   translations: state.translationsState.translations,
-  activeWorkspace: state.sessionState.activeWorkspace,
-  secondaryActionbar: state.actionbarState.secondary
+  activeWorkspace: state.sessionState.activeWorkspace
 });
 
 const mapDispatchToProps = {
