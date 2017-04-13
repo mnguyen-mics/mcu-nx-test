@@ -4,8 +4,6 @@ define(['app-setup', 'angularAMD', 'jquery'],
 
     jQuery("#mics_loading").remove();
 
-    app.run(['$rootScope', '$location', '$log', 'core/common/auth/AuthenticationService', 'core/common/auth/Session', "lodash", "core/login/constants", "core/common/ErrorReporting","$state","$stateParams", "$urlRouter",
-      function ($rootScope, $location, $log, AuthenticationService, Session, _, LoginConstants, ErrorReporting, $state, $stateParams, $urlRouter ) {
     app.run(['$rootScope', '$window', '$location', '$log', 'core/common/auth/AuthenticationService', 'core/common/auth/Session', "lodash", "core/login/constants", "core/common/ErrorReporting","$state","$stateParams", "$urlRouter",
       function ($rootScope, $window, $location, $log, AuthenticationService, Session, _, LoginConstants, ErrorReporting, $state, $stateParams, $urlRouter ) {
         var defaults = _.partialRight(_.assign, function (a, b) {
