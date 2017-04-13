@@ -92,7 +92,8 @@ class CampaignsDisplay extends Component {
     const {
       activeWorkspace: {
         organisationId
-      }
+      },
+      secondaryActionbar
     } = this.props;
 
     const {
@@ -220,6 +221,9 @@ class CampaignsDisplay extends Component {
       });
     };
 
+    const scrollViewClass = secondaryActionbar ? 'mcs-campaigns-padding-actionbar' : 'mcs-campaigns-padding-without-actionbar';
+    const labelListView = items.length ? <LabelListView className="mcs-campaigns-filter-view" items={items} label="FILTERED_BY" onClickOnClose={onClickOnClose} /> : null;
+
     return (
       <div>
         <Actionbar {...this.props}>
@@ -253,10 +257,10 @@ class CampaignsDisplay extends Component {
         </Actionbar>
 
         <ScrollComponent>
-          { items.length && <LabelListView className="mcs-campaigns-filter-view" items={items} label="FILTERED_BY" onClickOnClose={onClickOnClose} /> }
-
-          <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={filters} archived={archived} {...this.props} />
-
+          <div className={scrollViewClass}>
+            { labelListView }
+            <CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={filters} archived={archived} {...this.props} />
+          </div>
         </ScrollComponent>
       </div>
     );
@@ -290,16 +294,22 @@ class CampaignsDisplay extends Component {
 
 }
 
+CampaignsDisplay.defaultProps = {
+  secondaryActionbar: null
+};
+
 CampaignsDisplay.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   setBreadcrumb: PropTypes.func.isRequired,
+  secondaryActionbar: PropTypes.string,
   router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({
   translations: state.translationsState.translations,
-  activeWorkspace: state.sessionState.activeWorkspace
+  activeWorkspace: state.sessionState.activeWorkspace,
+  secondaryActionbar: state.actionbarState.secondary
 });
 
 const mapDispatchToProps = {

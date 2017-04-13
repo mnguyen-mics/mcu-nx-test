@@ -1,12 +1,16 @@
 .mcs-actionbar-wrapper {
   box-shadow: 2px 4px 4px 0 rgba(200, 200, 200, 0.5);
+  border-bottom: solid 1px @border-color-split;
+  position: absolute;
+  width: ~'calc(100% - 200px)';
+  background-color: white;
+  z-index: 1000;
 }
 
 .mcs-actionbar,
 .mcs-actionbar-secondary { 
   width: 100%;
   height: 60px;
-  border-bottom: solid 1px @border-color-split;
   padding: 0px 40px;
 }
 
