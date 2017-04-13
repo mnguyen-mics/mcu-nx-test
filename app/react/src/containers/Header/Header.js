@@ -70,12 +70,16 @@ class NavigatorHeader extends Component {
       <header id="header" className={headerClassName}>
         <Row>
           <Col sm={4} md={4} lg={4} className="mcs-header-logo">
-            <Dropdown overlay={menu} trigger={['click']}>
-              <a className="ant-dropdown-link mcs-header-cascader-menu">
-                <Icon type="down" />
-              </a>
-            </Dropdown>
-            <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
+            <div className="mcs-header-logo-item">
+              <Dropdown overlay={menu} trigger={['click']}>
+                <a className="ant-dropdown-link mcs-header-cascader-menu">
+                  <Icon type="down" />
+                </a>
+              </Dropdown>
+            </div>
+            <div className="mcs-header-logo-item mcs-header-logo-name">
+              <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
+            </div>
           </Col>
           <Col sm={20} md={20} lg={20} className="mcs-header-navigation">
             <Menu onClick={this.setActiveHeaderItem} selectedKeys={[activeRoute]} mode="horizontal" className="mcs-header-menu-horizontal">
