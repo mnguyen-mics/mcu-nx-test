@@ -35,6 +35,10 @@
   "SCENARIOS": "Scenarios",
   "GOALS": "Goals",
 
+  "SEARCH_CAMPAIGNS_DISPLAY": "Search Display Campaigns",
+  "EDIT": "Edit",
+  "ARCHIVE": "Archive",
+
   "DESKTOP_AND_MOBILE": "Desktop et Mobile",
   "SIMPLIFIED_KEYWORDS_TARGETING": "Simplified Keywords Targeting",
   "EXTERNAL_CAMPAIGN": "Campagne Externe",
