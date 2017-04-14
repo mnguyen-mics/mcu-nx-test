@@ -11,9 +11,7 @@ class Actionbar extends Component {
 
 
   isSecondaryBarContent(elt) {
-    return elt.type !== 'undefined' &&
-    elt.type.name !== 'undefined' &&
-    elt.type.name === 'SecondaryActionbar';
+    return elt.props.secondary;
   }
 
   render() {

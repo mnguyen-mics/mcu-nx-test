@@ -237,7 +237,7 @@ class CampaignsDisplay extends Component {
             <Icon type="filter" />
           </ActionbarButton>
 
-          <SecondaryActionbar id="filterActionBar">
+          <SecondaryActionbar secondary id="filterActionBar">
             <div className="mcs-actionbar-button-wrapper">
               <Dropdown overlay={statusMenu} trigger={['click']} onVisibleChange={visible => handleVisibleChange('status', visible)} visible={filters.status.visible}>
                 <Button>
