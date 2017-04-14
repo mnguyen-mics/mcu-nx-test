@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 
-class TemporaryView extends Component {
+class ContentView extends Component {
   render() {
     return <Layout className="mcs-main-layout">{this.props.children}</Layout>;
   }
 }
 
-export default TemporaryView;
+export default ContentView;
