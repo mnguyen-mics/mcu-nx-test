@@ -33,5 +33,15 @@
   "DISPLAY_CAMPAIGNS": "Display Campaigns",
   "EMAIL_CAMPAIGNS": "Emails Campaigns",
   "SCENARIOS": "Scenarios",
-  "GOALS": "Goals"
+  "GOALS": "Goals",
+
+  "DESKTOP_AND_MOBILE": "Desktop et Mobile",
+  "SIMPLIFIED_KEYWORDS_TARGETING": "Simplified Keywords Targeting",
+  "EXTERNAL_CAMPAIGN": "Campagne Externe",
+
+  "PAUSED": "En pause",
+  "ACTIVE": "Active",
+  "PENDING": "En attente",
+  "ARCHIVED": "Archivée"
+
 }

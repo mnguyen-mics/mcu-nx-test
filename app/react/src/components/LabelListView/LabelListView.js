@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Row, Col, Tag, Icon, Tooltip, Button, Input } from 'antd';
+import { FormattedMessage } from 'react-intl';
 
 class LabelListView extends Component {
 
@@ -44,7 +45,8 @@ class LabelListView extends Component {
       items,
       isInputVisible,
       onClickOnClose,
-      label
+      label,
+      className
     } = this.props;
 
     const { inputVisible, inputValue } = this.state;
@@ -69,10 +71,10 @@ class LabelListView extends Component {
     };
 
     return (
-      <Row>
+      <Row className={className} >
         { label && (
-          <Col span={24}>
-            { label }
+          <Col className="mcs-label-list-view-label" span={24}>
+            <FormattedMessage id={label} />
           </Col>)}
         <Col span={24}>
           {items.map((tag) => {
@@ -102,7 +104,8 @@ class LabelListView extends Component {
 LabelListView.defaultProps = {
   onInputSubmit: () => {},
   label: '',
-  isInputVisible: false
+  isInputVisible: false,
+  className: ''
 };
 
 LabelListView.propTypes = {
@@ -116,6 +119,7 @@ LabelListView.propTypes = {
   isInputVisible: PropTypes.bool,
   onClickOnClose: PropTypes.func.isRequired,
   onInputSubmit: PropTypes.func,
+  className: PropTypes.string
 };
 
 /*

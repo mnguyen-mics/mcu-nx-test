@@ -131,9 +131,13 @@ class Navigator extends Component {
 
     const datamartPart = redirectActiveWorkspace.datamartId ? `/d/${redirectActiveWorkspace.datamartId}` : '';
     const url = `${PUBLIC_URL}/o/${redirectActiveWorkspace.organisationId}${datamartPart}/campaigns/display`; // eslint-disable-line no-undef
+    const query = router.location.query;
 
     if (isReactUrl) {
-      router.replace(url);
+      router.replace({
+        pathname: url,
+        query
+      });
     }
   }
 

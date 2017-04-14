@@ -4,7 +4,7 @@ import { Layout, Menu } from 'antd';
 
 import logoUrl from '../../assets/images/logo-mediarithmics.png';
 
-const { Sider, Content } = Layout;
+const { Sider } = Layout;
 
 class Sidebar extends Component {
 
@@ -49,11 +49,7 @@ class Sidebar extends Component {
             </Menu.Item>
           </Menu>
         </Sider>
-        <Layout>
-          <Content className="mcs-layout-content">
-            {this.props.children}
-          </Content>
-        </Layout>
+        {this.props.children}
       </Layout>
     );
 

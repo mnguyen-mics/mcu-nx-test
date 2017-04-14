@@ -4,8 +4,8 @@ define(['app-setup', 'angularAMD', 'jquery'],
 
     jQuery("#mics_loading").remove();
 
-    app.run(['$rootScope', '$location', '$log', 'core/common/auth/AuthenticationService', 'core/common/auth/Session', "lodash", "core/login/constants", "core/common/ErrorReporting","$state","$stateParams", "$urlRouter",
-      function ($rootScope, $location, $log, AuthenticationService, Session, _, LoginConstants, ErrorReporting, $state, $stateParams, $urlRouter ) {
+    app.run(['$rootScope', '$window', '$location', '$log', 'core/common/auth/AuthenticationService', 'core/common/auth/Session', "lodash", "core/login/constants", "core/common/ErrorReporting","$state","$stateParams", "$urlRouter",
+      function ($rootScope, $window, $location, $log, AuthenticationService, Session, _, LoginConstants, ErrorReporting, $state, $stateParams, $urlRouter ) {
         var defaults = _.partialRight(_.assign, function (a, b) {
           return typeof a === 'undefined' ? b : a;
         });
@@ -37,7 +37,15 @@ define(['app-setup', 'angularAMD', 'jquery'],
           if (!Session.isInitialized()) {
             $log.debug("not initialized");
             AuthenticationService.pushPendingPath($location.url());
-            $location.path('/init-session');
+            if (!$location.url().match('/v2')) {
+              $location.path('/init-session');
+            } else {
+              Session.init($stateParams.organisationId).then(function () {
+                var event = new Event(LoginConstants.LOGIN_SUCCESS);
+                $window.dispatchEvent(event);
+                $rootScope.$broadcast(LoginConstants.LOGIN_SUCCESS);
+              });
+            }
           }
         } else if (AuthenticationService.hasRefreshToken()) {
           $log.debug("has refresh token -> remember-me");

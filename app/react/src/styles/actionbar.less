@@ -1,27 +1,32 @@
-.mcs-actionbar {
+.mcs-actionbar-wrapper {
+  box-shadow: 2px 4px 4px 0 rgba(200, 200, 200, 0.5);
+  border-top: solid 1px @border-color-split;
+  border-bottom: solid 1px @border-color-split;
+  background-color: white;
+  z-index: 1000;
+}
+
+.mcs-actionbar,
+.mcs-actionbar-secondary { 
   width: 100%;
   height: 60px;
-  background-color: #ffffff;
-  border: solid 1px #d3dbe1;
+  padding: 0px 40px;
+}
+
+.mcs-actionbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .mcs-actionbar-secondary {
-  width: 100%;
-  height: 60px;
-  background-color: #ffffff;
-  box-shadow: 2px 4px 4px 0 rgba(200, 200, 200, 0.5);
+  border-top: solid 1px @border-color-split;
   margin-top: -1px;
-  border: solid 1px #d3dbe1;
 }
 
 .mcs-actionbar-breadcrumb {
-  font-family: CircularStd;
   font-size: 16px;
   font-weight: 500;
-
 }
 
 .mcs-actionbar-button-add  {
@@ -29,8 +34,10 @@
   height: 40px;
   display: block;
   border-radius: 3px;
-  background-color: #00a1df;
+  background-color: @info-color !important;
+  border: none !important;
   border-style: none;
+  color: white;
 }
 
 .mcs-actionbar-button  {
@@ -38,14 +45,21 @@
   height: 40px;
   display: block;
   border-radius: 3px;
-  border: solid 1px #d3dbe1;
+  border: solid 1px @border-color-split;
+  background: white;
 }
 
 .mcs-actionbar-button-wrapper {
   float: left;
   height: 60px;
   margin: 0px;
-  padding-top: 8px;
+  padding: 10px;
+  &:first-child {
+    padding-left: 0px;
+  }
+  &:last-child {
+    padding-right: 0px;
+  }
 }
 
 .selectionArrow {
@@ -53,6 +67,7 @@
   width: 40px;
   height: 10px;
   border-bottom: solid 1px #ffffff;
+  margin-left: 10px;
 }
 .hidden {
   visibility: hidden;

@@ -18,7 +18,6 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
     entry: {
       babel: 'babel-polyfill',
       app: path.join(paths.reactAppSrc, '/index.js'),
-      style: paths.appStyle,
       'style-less': paths.appStyleLess,
       'react-vendors': Object.keys(pkg.dependencies)
     },
@@ -51,21 +50,6 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
               'css-loader?sourceMap',
               'less-loader'
             ]
-          })
-        },
-        {
-          test: /\.scss$/,
-          loader: extractStyle.extract({
-            use: [
-              'css-loader?sourceMap',
-              'resolve-url-loader',
-              `sass-loader?${JSON.stringify({
-                sourceMap: false,
-                includePaths: [paths.appNodeModules],
-                data: `$custom_font_path: '${customFontPath}';`
-              })}`
-            ],
-            fallback: 'style-loader'
           })
         },
         {

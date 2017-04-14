@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import Link from 'react-router/lib/Link';
-import { Cascader, Popover, Icon, Menu, Row, Col } from 'antd';
+import { Dropdown, Popover, Icon, Menu, Row, Col } from 'antd';
 import classNames from 'classnames';
 
 import * as sessionActions from '../../services/session/SessionActions';
@@ -16,6 +16,7 @@ class NavigatorHeader extends Component {
     this.buildProfileItems = this.buildProfileItems.bind(this);
     this.setActiveHeaderItem = this.setActiveHeaderItem.bind(this);
     this.getCampaignsUrl = this.getCampaignsUrl.bind(this);
+    this.onWorkspaceChange = this.onWorkspaceChange.bind(this);
     this.state = {
       // retrieve activeRoute from location
       activeRoute: 'campaigns'
@@ -57,16 +58,30 @@ class NavigatorHeader extends Component {
       </div>
     );
 
+    const menu = (
+      <Menu onClick={this.onWorkspaceChange}>
+        {workspaceItems.workspaces.map(workspaceItem => {
+          return <Menu.Item data={workspaceItem.data} key={workspaceItem.value}>{workspaceItem.label}</Menu.Item>;
+        })}
+      </Menu>
+    );
+
     return (
       <header id="header" className={headerClassName}>
         <Row>
-          <Col lg={3}>
-            <Cascader options={workspaceItems.workspaces} defaultValue={[workspaceId]} onChange={this.onWorkspaceChange} className="mcs-header-cascader-menu" popupClassName="mcs-header-cascader-popover" />
+          <Col sm={4} md={4} lg={4} className="mcs-header-logo">
+            <div className="mcs-header-logo-item">
+              <Dropdown overlay={menu} trigger={['click']}>
+                <a className="ant-dropdown-link mcs-header-cascader-menu">
+                  <Icon type="down" />
+                </a>
+              </Dropdown>
+            </div>
+            <div className="mcs-header-logo-item mcs-header-logo-name">
+              <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
+            </div>
           </Col>
-          <Col lg={3}>
-            <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
-          </Col>
-          <Col lg={18} >
+          <Col sm={20} md={20} lg={20} className="mcs-header-navigation">
             <Menu onClick={this.setActiveHeaderItem} selectedKeys={[activeRoute]} mode="horizontal" className="mcs-header-menu-horizontal">
               {navigationItems}
             </Menu>
@@ -75,7 +90,7 @@ class NavigatorHeader extends Component {
                 <Icon type="setting" className="mcs-header-anticon" />
               </Link>
               <div className="mcs-header-divider" />
-              <Popover placement="bottomRight" title={text} content={content}>
+              <Popover placement="bottomRight" trigger="click" title={text} content={content}>
                 <Icon type="user" className="mcs-header-anticon" />
               </Popover>
             </div>
@@ -86,10 +101,22 @@ class NavigatorHeader extends Component {
 
   }
 
-  onWorkspaceChange(value, selectedOptions) {
-    if (value.length) {
-      selectedOptions[0].onClick();
-    }
+  onWorkspaceChange(value) {
+
+    const {
+      switchWorkspace
+    } = this.props;
+
+    const {
+      item: {
+        props: {
+          data: workspace
+        }
+      }
+    } = value;
+
+    switchWorkspace(workspace);
+
   }
 
   setActiveHeaderItem(/* item */) {
@@ -121,7 +148,7 @@ class NavigatorHeader extends Component {
       }
     } = this.props;
 
-    return `/${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
+    return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
   }
 
   buildNavigationItems() {
@@ -151,7 +178,7 @@ class NavigatorHeader extends Component {
         path: 'segments'
       },
       {
-        url: `/${workspaceId}/datamart/categories`,
+        url: `/${workspaceId}/datamart/categories/`,
         label: 'CATALOGS',
         path: 'categories'
       },
@@ -205,6 +232,7 @@ class NavigatorHeader extends Component {
       return {
         value: workspace.workspaceId,
         label: getLabel(workspace),
+        data: workspace,
         onClick: () => switchWorkspace(workspace),
         isActive
       };
