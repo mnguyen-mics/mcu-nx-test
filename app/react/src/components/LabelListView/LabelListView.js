@@ -112,6 +112,7 @@ LabelListView.propTypes = {
   label: PropTypes.string,
   items: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.any.isRequired,
+    type: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     isClosable: PropTypes.bool.isRequired,
     icon: PropTypes.string,

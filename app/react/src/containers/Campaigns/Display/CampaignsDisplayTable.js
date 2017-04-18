@@ -2,34 +2,27 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import Link from 'react-router/lib/Link';
-import { Row, Col, Table, Icon, Input, DatePicker, Dropdown, Menu, Modal } from 'antd';
+import { Icon, Dropdown, Menu, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import * as CampaignsTableViewActions from './redux/CampaignsTableViewActions';
+import * as CampaignsDisplayActions from './redux/CampaignsDisplayActions';
 
-const Search = Input.Search;
-const { RangePicker } = DatePicker;
+import { TableView } from '../../../components/TableView';
+
 const confirm = Modal.confirm;
-
 const dateFormat = 'DD/MM/YYYY';
-const twentyDaysAgo = moment(moment().subtract(20, 'days').calendar()).format(dateFormat);
-const now = moment(new Date()).format(dateFormat);
 
-
-class CampaignTableView extends Component {
+class CampaignsDisplayTable extends Component {
 
   constructor(props) {
     super(props);
-    this.fetchCampaignsWithProps = this.fetchCampaignsWithProps.bind(this);
+    this.fetchCampaignsDisplayWithProps = this.fetchCampaignsDisplayWithProps.bind(this);
     this.fetchCampaignsPerformanceWithProps = this.fetchCampaignsPerformanceWithProps.bind(this);
     this.onDateRangeChange = this.onDateRangeChange.bind(this);
     this.archiveCampaign = this.archiveCampaign.bind(this);
     this.state = {
-      inputVisible: false,
-      startDate: twentyDaysAgo,
-      endDate: now,
-      inputValue: '',
-      modalVisible: false,
+      startDate: moment(moment().subtract(20, 'days').calendar()).format(dateFormat),
+      endDate: moment(new Date()).format(dateFormat)
     };
   }
 
@@ -55,7 +48,7 @@ class CampaignTableView extends Component {
 
     params.archived = archived;
 
-    this.fetchCampaignsWithProps(params);
+    this.fetchCampaignsDisplayWithProps(params);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -95,71 +88,55 @@ class CampaignTableView extends Component {
     }
 
     if (Object.keys(params).length) {
-      this.fetchCampaignsWithProps(params);
+      this.fetchCampaignsDisplayWithProps(params);
     }
 
   }
 
   render() {
     const {
-      campaigns,
-      campaignsPerformance,
-      isSearchEnabled,
-      isDateRangePickerEnabled,
-      isFetching,
-      isFetchingCampaignsPerformance,
+      campaignsDisplay,
+      campaignsDisplayPerformance,
+      isFetchingCampaignsDisplay,
+      isFetchingCampaignsDisplayPerformance,
+      searchCampaignsDisplay,
       hasSearched,
-      filteredCampaigns,
+      filteredCampaignsDisplay,
+      translations
     } = this.props;
 
-    campaigns.sort((a, b) => {
-      if (a.name.toUpperCase() < b.name.toUpperCase()) {
-        return -1;
-      }
-      if (a.name.toUpperCase() > b.name.toUpperCase()) {
-        return 1;
-      }
-      return 0;
-    });
+    const {
+      startDate,
+      endDate
+    } = this.state;
 
-    campaigns.sort((a, b) => {
-      if (a.status.toUpperCase() < b.status.toUpperCase()) {
-        return -1;
-      }
-      if (a.status.toUpperCase() > b.status.toUpperCase()) {
-        return 1;
-      }
-      return 0;
-    });
+    this.formatCampaigns(campaignsDisplay, campaignsDisplayPerformance.report_view);
+    const columns = this.renderCol();
 
-    this.formatCampaigns(campaigns, campaignsPerformance.report_view);
+    const searchOptions = {
+      isEnabled: true,
+      placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
+      onSearch: searchCampaignsDisplay
+    };
 
-    return (
-      <Row className="mcs-table-container">
-        <Row className="mcs-table-header">
-          {isSearchEnabled && (<Col span={12}>
-            <Search
-              placeholder="Search Display Campaigns"
-              className="mcs-search-input"
-              onSearch={(value) => { return this.searchThroughTable(value); }}
-            />
-          </Col>)}
-          {isDateRangePickerEnabled && (<Col span={12} className="text-right" >
-            <RangePicker
-              defaultValue={[moment(twentyDaysAgo, dateFormat), moment(now, dateFormat)]}
-              format={dateFormat}
-              onChange={this.onDateRangeChange}
-              disabled={isFetchingCampaignsPerformance}
-            />
-          </Col>)}
-        </Row>
-        <Row className="mcs-table-body">
-          <Col span={24}>
-            <Table columns={this.renderCol()} dataSource={hasSearched ? filteredCampaigns : campaigns} onChange={this.handleChange} loading={isFetching} pagination={{ size: 'small', showSizeChanger: true }} />
-          </Col>
-        </Row>
-      </Row>
-    );
+    const dateRangePickerOptions = {
+      isEnabled: true,
+      onChange: this.onDateRangeChange,
+      isRangePickerDisabled: isFetchingCampaignsDisplayPerformance,
+      startDate,
+      endDate,
+      dateFormat
+    };
+
+    return (<TableView
+      columns={columns}
+      dataSource={hasSearched ? filteredCampaignsDisplay : campaignsDisplay}
+      loading={isFetchingCampaignsDisplay}
+      searchOptions={searchOptions}
+      onChange={() => {}}
+      dateRangePickerOptions={dateRangePickerOptions}
+    />);
+
   }
 
   renderCol() {
@@ -167,12 +144,12 @@ class CampaignTableView extends Component {
       activeWorkspace: {
         workspaceId
       },
-      isFetchingCampaignsPerformance,
+      isFetchingCampaignsDisplayPerformance,
       translations
     } = this.props;
 
     const renderText = (text, number = false) => {
-      if (!text || isFetchingCampaignsPerformance) {
+      if (!text || isFetchingCampaignsDisplayPerformance) {
         return (<span>loading...</span>);
       }
       if (text === '-') {
@@ -256,13 +233,23 @@ class CampaignTableView extends Component {
         break;
     }
 
+    const onClick = item => {
+      if (item.key === '1') {
+        this.archiveCampaign(record.id);
+      }
+    };
+
     return (
-      <Menu onClick={(item) => { if (item.key === '1') { this.archiveCampaign(record.id); } }}>
+      <Menu onClick={onClick}>
         <Menu.Item key="0">
-          <Link to={editUrl}>Edit</Link>
+          <Link to={editUrl}>
+            <FormattedMessage id="EDIT" />
+          </Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <a>Archive</a>
+          <a>
+            <FormattedMessage id="ARCHIVE" />
+          </a>
         </Menu.Item>
       </Menu>
     );
@@ -270,7 +257,7 @@ class CampaignTableView extends Component {
 
   archiveCampaign(id) {
     const {
-      deleteCampaigns,
+      deleteCampaignsDisplay,
       translations
     } = this.props;
 
@@ -282,7 +269,7 @@ class CampaignTableView extends Component {
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return deleteCampaigns(id).then(() => { it.fetchCampaignsWithProps(); });
+        return deleteCampaignsDisplay(id).then(() => { it.fetchCampaignsDisplayWithProps(); });
       },
       onCancel() {},
     });
@@ -296,20 +283,12 @@ class CampaignTableView extends Component {
     this.fetchCampaignsPerformanceWithProps();
   }
 
-  searchThroughTable(value) {
-    const {
-      searchCampaigns
-    } = this.props;
-
-    searchCampaigns(value);
-  }
-
-  formatCampaigns(campaigns, campaignsPerformance) {
+  formatCampaigns(campaignsDisplay, campaignsDisplayPerformance) {
     const newArray = [];
-    campaignsPerformance.rows.map((row) => {
+    campaignsDisplayPerformance.rows.map((row) => {
       const newObject = {};
       let i = 0;
-      campaignsPerformance.columns_headers.forEach((value) => {
+      campaignsDisplayPerformance.columns_headers.forEach((value) => {
         if (row[i]) {
           newObject[value] = row[i];
         } else {
@@ -320,12 +299,12 @@ class CampaignTableView extends Component {
       return newArray.push(newObject);
     });
 
-    campaigns.map((campaign) => {
+    campaignsDisplay.map((campaign) => {
       const objectToAdd = newArray.find((element) => {
         return element.campaign_id === campaign.id;
       });
       const objetTemp = Object.assign(campaign, objectToAdd);
-      campaignsPerformance.columns_headers.forEach((value) => {
+      campaignsDisplayPerformance.columns_headers.forEach((value) => {
         if (!campaign[value]) {
           objetTemp[value] = '-';
         }
@@ -335,9 +314,9 @@ class CampaignTableView extends Component {
     });
   }
 
-  fetchCampaignsWithProps(props) {
+  fetchCampaignsDisplayWithProps(props) {
     const {
-      fetchCampaigns,
+      fetchCampaignsDisplay,
       activeWorkspace: {
         organisationId
       },
@@ -370,14 +349,14 @@ class CampaignTableView extends Component {
       });
     };
 
-    fetchCampaigns(params).then(updateUrl).then(this.fetchCampaignsPerformanceWithProps());
+    fetchCampaignsDisplay(params).then(updateUrl).then(this.fetchCampaignsPerformanceWithProps());
 
   }
 
   fetchCampaignsPerformanceWithProps(props) {
 
     const {
-      fetchCampaignsPerformance,
+      fetchCampaignsDisplayPerformance,
       activeWorkspace: {
         organisationId
       }
@@ -412,61 +391,50 @@ class CampaignTableView extends Component {
         params[key] = props[key];
       });
     }
-    return fetchCampaignsPerformance(params);
+    return fetchCampaignsDisplayPerformance(params);
 
   }
 
 }
 
-CampaignTableView.propTypes = {
-  isSearchEnabled: PropTypes.bool,
-  isDateRangePickerEnabled: PropTypes.bool,
-  isFetching: PropTypes.bool.isRequired,
-  campaigns: PropTypes.arrayOf(PropTypes.object).isRequired,
-  fetchCampaigns: PropTypes.func.isRequired,
-  searchCampaigns: PropTypes.func.isRequired,
-  fetchCampaignsPerformance: PropTypes.func.isRequired,
-  isFetchingCampaignsPerformance: PropTypes.bool.isRequired,
-  campaignsPerformance: PropTypes.shape({ report_view: PropTypes.shape({ items_per_page: PropTypes.number, total_items: PropTypes.number, columns_headers: PropTypes.array, rows: PropTypes.array }) }).isRequired,
+CampaignsDisplayTable.propTypes = {
+  isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
+  campaignsDisplay: PropTypes.arrayOf(PropTypes.object).isRequired,
+  fetchCampaignsDisplay: PropTypes.func.isRequired,
+  searchCampaignsDisplay: PropTypes.func.isRequired,
+  fetchCampaignsDisplayPerformance: PropTypes.func.isRequired,
+  isFetchingCampaignsDisplayPerformance: PropTypes.bool.isRequired,
+  campaignsDisplayPerformance: PropTypes.shape({ report_view: PropTypes.shape({ items_per_page: PropTypes.number, total_items: PropTypes.number, columns_headers: PropTypes.array, rows: PropTypes.array }) }).isRequired,
   filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   archived: PropTypes.bool.isRequired, // eslint-disable-line react/forbid-prop-types
   router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasSearched: PropTypes.bool.isRequired,
-  filteredCampaigns: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deleteCampaigns: PropTypes.func.isRequired,
+  filteredCampaignsDisplay: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deleteCampaignsDisplay: PropTypes.func.isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
-CampaignTableView.defaultProps = {
-  isSearchEnabled: false,
-  isDateRangePickerEnabled: false
-};
-
 const mapStateToProps = state => ({
-  campaigns: state.campaignsState.campaigns,
-  campaignsPerformance: state.campaignsState.campaignsPerformance,
-  filteredCampaign: state.campaignsState.filteredCampaign,
-  isFetching: state.campaignsState.isFetching,
-  isFetchingCampaignsPerformance: state.campaignsState.isFetchingCampaignsPerformance,
+  campaignsDisplay: state.campaignsDisplayState.campaignsDisplay,
+  campaignsDisplayPerformance: state.campaignsDisplayState.campaignsDisplayPerformance,
+  filteredCampaign: state.campaignsDisplayState.filteredCampaign,
+  isFetchingCampaignsDisplay: state.campaignsDisplayState.isFetchingCampaignsDisplay,
+  isFetchingCampaignsDisplayPerformance: state.campaignsDisplayState.isFetchingCampaignsDisplayPerformance,
   activeWorkspace: state.sessionState.activeWorkspace,
-  hasSearched: state.campaignsState.hasSearched,
-  filteredCampaigns: state.campaignsState.filteredCampaigns,
-  translations: state.translationsState.translations,
+  hasSearched: state.campaignsDisplayState.hasSearched,
+  filteredCampaignsDisplay: state.campaignsDisplayState.filteredCampaignsDisplay,
+  translations: state.translationsState.translations
 });
 
 const mapDispatchToProps = {
-  fetchCampaigns: CampaignsTableViewActions.fetchCampaigns,
-  fetchCampaignsPerformance: CampaignsTableViewActions.fetchCampaignsPerformance,
-  searchCampaigns: CampaignsTableViewActions.searchCampaigns,
-  deleteCampaigns: CampaignsTableViewActions.deleteCampaigns,
+  fetchCampaignsDisplay: CampaignsDisplayActions.fetchCampaignsDisplay,
+  fetchCampaignsDisplayPerformance: CampaignsDisplayActions.fetchCampaignsDisplayPerformance,
+  searchCampaignsDisplay: CampaignsDisplayActions.searchCampaignsDisplay,
+  deleteCampaignsDisplay: CampaignsDisplayActions.deleteCampaignsDisplay,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CampaignTableView);
-
-/*
-¨*<CampaignsTableView isSearchEnabled isDateRangePickerEnabled filters={[]} />
-*/
+)(CampaignsDisplayTable);
