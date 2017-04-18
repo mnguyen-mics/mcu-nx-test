@@ -7,15 +7,6 @@ const { RangePicker } = DatePicker;
 
 class TableView extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      inputVisible: false,
-      inputValue: '',
-      modalVisible: false,
-    };
-  }
-
   render() {
     const {
       columns,
@@ -34,7 +25,8 @@ class TableView extends Component {
             <Search
               placeholder={searchOptions.placeholder}
               className="mcs-search-input"
-              onSearch={(value) => searchOptions.onSearch(value)}
+              defaultValue={searchOptions.defaultValue}
+              onSearch={searchOptions.onSearch}
             />
           </Col>)}
           {dateRangePickerOptions.isEnabled && (<Col span={12} className="text-right" >
@@ -71,18 +63,28 @@ TableView.defaultProps = {
 };
 
 TableView.propTypes = {
-  searchOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  dateRangePickerOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  searchOptions: PropTypes.shape({
+    isEnabled: PropTypes.bool,
+    placeholder: PropTypes.string,
+    defaultValue: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ]),
+    onSearch: PropTypes.func
+  }),
+  dateRangePickerOptions: PropTypes.shape({
+    isEnabled: PropTypes.bool,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    dateFormat: PropTypes.string,
+    onChange: PropTypes.func,
+    isRangePickerDisabled: PropTypes.bool
+  }),
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   loading: PropTypes.bool.isRequired,
   pagination: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   onChange: PropTypes.func.isRequired
-};
-
-TableView.defaultProps = {
-  isSearchEnabled: false,
-  isDateRangePickerEnabled: false
 };
 
 export default TableView;
