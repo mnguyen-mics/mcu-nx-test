@@ -74,7 +74,7 @@ export default store => next => action => {
   }
 
   const { method, endpoint, params, body, types, authenticated, adminApi, localUrl, others = {} } = callAPI;
-  const [requestType, successType, failureType] = types;
+  const [requestType, failureType, successType] = types;
   const { dispatch } = store;
   const options = {
     adminApi,

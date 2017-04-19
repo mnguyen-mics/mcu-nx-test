@@ -2,7 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { ActionbarActions } from './redux';
+import * as ActionbarActions from '../../state/Actionbar/actions';
 
 class ActionbarButton extends Component {
 

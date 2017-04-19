@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import * as sessionActions from '../../services/session/SessionActions';
+import * as sessionActions from '../../state/Session/actions';
 
 export function requireAuthentication(Component) {
 

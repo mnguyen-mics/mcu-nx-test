@@ -1,13 +1,4 @@
-const SWITCH_SIDEBAR_VISIBILITY = 'SWITCH_SIDEBAR_VISIBILITY';
-
-const switchSidebarVisibility = isVisible => {
-  return (dispatch) => {
-    return dispatch({
-      type: SWITCH_SIDEBAR_VISIBILITY,
-      isVisible
-    });
-  };
-};
+import { SIDEBAR_SWITCH_VISIBILITY } from '../action-types';
 
 const defaultSidebarState = {
   isVisible: true
@@ -17,7 +8,7 @@ const sidebarState = (state = defaultSidebarState, action) => {
 
   switch (action.type) {
 
-    case SWITCH_SIDEBAR_VISIBILITY:
+    case SIDEBAR_SWITCH_VISIBILITY:
       return {
         ...state,
         isVisible: action.isVisible ? action.isVisible : !state.isVisible
@@ -29,8 +20,8 @@ const sidebarState = (state = defaultSidebarState, action) => {
 
 };
 
-export {
-  switchSidebarVisibility,
-
+const SidebarStateReducers = {
   sidebarState
 };
+
+export default SidebarStateReducers;

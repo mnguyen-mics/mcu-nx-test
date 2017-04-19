@@ -8,8 +8,8 @@ import { Layout, LocaleProvider } from 'antd';
 
 import { NavigatorHeader } from '../Header';
 
-import * as i18nActions from '../../services/i18n/i18nActions';
-import * as sessionActions from '../../services/session/SessionActions';
+import * as TranslationsActions from '../../state/Translations/actions';
+import * as sessionActions from '../../state/Session/actions';
 
 class Navigator extends Component {
 
@@ -48,7 +48,7 @@ class Navigator extends Component {
   componentDidMount() {
 
     const {
-      initI18n,
+      initTranslations,
       params,
       getConnectedUser
     } = this.props;
@@ -63,7 +63,7 @@ class Navigator extends Component {
         .then(() => this.initWorkspace(workspace));
     };
 
-    initI18n();
+    initTranslations();
 
     // todo remove later
     // as the angular app will be bootstraped first, we need to know if the user has logged in through the angular app
@@ -152,7 +152,7 @@ Navigator.propTypes = {
   isReady: PropTypes.bool.isRequired,
   locale: PropTypes.string,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  initI18n: PropTypes.func.isRequired,
+  initTranslations: PropTypes.func.isRequired,
   authenticated: PropTypes.bool.isRequired,
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   isReactUrl: PropTypes.bool.isRequired,
@@ -178,7 +178,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  initI18n: i18nActions.initI18n,
+  initTranslations: TranslationsActions.initTranslations,
   getConnectedUser: sessionActions.getConnectedUser,
   getWorkspaces: sessionActions.getWorkspaces,
   initActiveWorkspace: sessionActions.initActiveWorkspace,

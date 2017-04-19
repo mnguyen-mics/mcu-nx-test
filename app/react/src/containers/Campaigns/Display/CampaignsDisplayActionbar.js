@@ -5,7 +5,7 @@ import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar, ActionbarButton, SecondaryActionbar } from '../../Actionbar';
-import { ActionbarActions } from '../../Actionbar/redux';
+import * as ActionbarActions from '../../../state/Actionbar/actions';
 
 class CampaignsDisplayActionbar extends Component {
 

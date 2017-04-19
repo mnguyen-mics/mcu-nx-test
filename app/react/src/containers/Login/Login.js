@@ -7,8 +7,8 @@ import { FormattedMessage } from 'react-intl';
 import Button from 'mcs-react-button';
 import Alert from 'mcs-react-alert';
 
-import * as loginActions from './redux/LoginActions';
-import * as sessionActions from '../../services/session/SessionActions';
+import * as loginActions from '../../state/Login/actions';
+import * as sessionActions from '../../state/Session/actions';
 
 import { Input } from '../../components/Forms';
 
