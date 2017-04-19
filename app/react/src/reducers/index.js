@@ -3,15 +3,14 @@ import { reducer as formReducer } from 'redux-form';
 import { routerReducer } from 'react-router-redux';
 
 import { PersistentReducers } from './PersistentReducers';
-import { HeaderReducers } from '../containers/Header/redux';
-import { SidebarReducers } from '../containers/Sidebar/redux';
-import { ActionbarReducers } from '../containers/Actionbar/redux';
-import { SessionReducers } from '../services/session';
-import { LoginReducers } from '../containers/Login/redux';
 
-import { CampaignsDisplayReducers } from '../containers/Campaigns/Display/redux';
-
-import { i18nReducers } from '../services/i18n';
+import ActionbarReducers from '../state/Actionbar/reducer';
+import CampaignsDisplayReducers from '../state/Campaigns/Display/reducer';
+import HeaderReducers from '../state/Header/reducer';
+import LoginReducers from '../state/Login/reducer';
+import SessionReducers from '../state/Session/reducer';
+import SidebarReducers from '../state/Sidebar/reducer';
+import TranslationsReducers from '../state/Translations/reducer';
 
 const allReducers = Object.assign(
   {},
@@ -23,13 +22,13 @@ const allReducers = Object.assign(
   },
 
   PersistentReducers,
-  HeaderReducers,
   ActionbarReducers,
-  SidebarReducers,
-  SessionReducers,
-  LoginReducers,
   CampaignsDisplayReducers,
-  i18nReducers
+  HeaderReducers,
+  LoginReducers,
+  SessionReducers,
+  SidebarReducers,
+  TranslationsReducers
 );
 
 export default combineReducers(allReducers);

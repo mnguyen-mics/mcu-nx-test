@@ -1,13 +1,4 @@
-const SWITCH_VISIBILITY = 'SWITCH_VISIBILITY';
-
-const switchVisibility = isVisible => {
-  return (dispatch) => {
-    return dispatch({
-      type: SWITCH_VISIBILITY,
-      isVisible
-    });
-  };
-};
+import { HEADER_SWITCH_VISIBILITY } from '../action-types';
 
 const defaultHeaderState = {
   isVisible: true
@@ -17,7 +8,7 @@ const headerState = (state = defaultHeaderState, action) => {
 
   switch (action.type) {
 
-    case SWITCH_VISIBILITY:
+    case HEADER_SWITCH_VISIBILITY:
       return {
         ...state,
         isVisible: action.isVisible ? action.isVisible : !state.isVisible
@@ -29,8 +20,8 @@ const headerState = (state = defaultHeaderState, action) => {
 
 };
 
-export {
-  switchVisibility,
-
+const HeaderStateReducers = {
   headerState
 };
+
+export default HeaderStateReducers;

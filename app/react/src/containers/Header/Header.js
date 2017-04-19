@@ -5,7 +5,7 @@ import Link from 'react-router/lib/Link';
 import { Dropdown, Popover, Icon, Menu, Row, Col } from 'antd';
 import classNames from 'classnames';
 
-import * as sessionActions from '../../services/session/SessionActions';
+import * as sessionActions from '../../state/Session/actions';
 
 class NavigatorHeader extends Component {
 

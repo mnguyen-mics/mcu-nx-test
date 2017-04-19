@@ -1,108 +1,18 @@
-import { CALL_API } from '../../middleware/api';
-
-const GET_CONNECTED_USER_REQUEST = 'GET_CONNECTED_USER_REQUEST';
-const GET_CONNECTED_USER_SUCCESS = 'GET_CONNECTED_USER_SUCCESS';
-const GET_CONNECTED_USER_FAILURE = 'GET_CONNECTED_USER_FAILURE';
-
-const GET_ACCESS_TOKEN_REQUEST = 'GET_ACCESS_TOKEN_REQUEST';
-const GET_ACCESS_TOKEN_SUCCESS = 'GET_ACCESS_TOKEN_SUCCESS';
-const GET_ACCESS_TOKEN_FAILURE = 'GET_ACCESS_TOKEN_FAILURE';
-
-const GET_WORKSPACES_REQUEST = 'GET_WORKSPACES_REQUEST';
-const GET_WORKSPACES_SUCCESS = 'GET_WORKSPACES_SUCCESS';
-const GET_WORKSPACES_FAILURE = 'GET_WORKSPACES_FAILURE';
-
-const INIT_WORKSPACE = 'INIT_WORKSPACE';
-const SWITCH_WORKSPACE = 'SWITCH_WORKSPACE';
-
-const IS_REACT_URL = 'IS_REACT_URL';
-
-const LOGOUT = 'LOGOUT';
-
-const getAccessToken = () => {
-  return (dispatch, getState) => {
-
-    const {
-      persistedState
-    } = getState();
-
-    const body = {
-      refresh_token: persistedState.refresh_token
-    };
-
-    return dispatch({
-      [CALL_API]: {
-        method: 'post',
-        endpoint: 'authentication/access_tokens',
-        body,
-        types: [GET_ACCESS_TOKEN_REQUEST, GET_ACCESS_TOKEN_SUCCESS, GET_ACCESS_TOKEN_FAILURE]
-      }
-    });
-
-  };
-};
-
-const getConnectedUser = () => {
-  return (dispatch) => {
-    return dispatch({
-      [CALL_API]: {
-        method: 'get',
-        endpoint: 'connected_user',
-        authenticated: true,
-        types: [GET_CONNECTED_USER_REQUEST, GET_CONNECTED_USER_SUCCESS, GET_CONNECTED_USER_FAILURE]
-      }
-    });
-  };
-};
-
-const getWorkspaces = workspace => {
-  return (dispatch, getState) => {
-
-    const {
-      sessionState: {
-        user
-      }
-    } = getState();
-
-    const organisationId = workspace.organisationId || user.default_workspace;
-
-    return dispatch({
-      [CALL_API]: {
-        method: 'get',
-        endpoint: `organisations/${organisationId}/workspace`,
-        authenticated: true,
-        types: [GET_WORKSPACES_REQUEST, GET_WORKSPACES_SUCCESS, GET_WORKSPACES_FAILURE]
-      }
-    });
-  };
-};
-
-const initActiveWorkspace = workspace => {
-  return {
-    type: INIT_WORKSPACE,
-    workspace
-  };
-};
-
-const switchWorkspace = workspace => {
-  return {
-    type: SWITCH_WORKSPACE,
-    workspace
-  };
-};
-
-const checkUrl = url => {
-  return {
-    type: IS_REACT_URL,
-    url
-  };
-};
-
-const logout = () => {
-  return {
-    type: LOGOUT
-  };
-};
+import {
+  SESSION_GET_ACCESS_TOKEN_REQUEST,
+  SESSION_GET_ACCESS_TOKEN_REQUEST_FAILURE,
+  SESSION_GET_ACCESS_TOKEN_REQUEST_SUCCESS,
+  SESSION_GET_CONNECTED_USER_REQUEST,
+  SESSION_GET_CONNECTED_USER_REQUEST_FAILURE,
+  SESSION_GET_CONNECTED_USER_REQUEST_SUCCESS,
+  SESSION_GET_WORKSPACES_REQUEST,
+  SESSION_GET_WORKSPACES_REQUEST_FAILURE,
+  SESSION_GET_WORKSPACES_REQUEST_SUCCESS,
+  SESSION_INIT_WORKSPACE,
+  SESSION_IS_REACT_URL,
+  SESSION_LOGOUT,
+  SESSION_SWITCH_WORKSPACE
+} from '../action-types';
 
 const buildWorkspace = (workspace, datamart = {}) => {
 
@@ -210,80 +120,80 @@ const sessionState = (state = defaultSessionState, action) => {
 
   switch (action.type) {
 
-    case GET_ACCESS_TOKEN_REQUEST:
+    case SESSION_GET_ACCESS_TOKEN_REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case GET_CONNECTED_USER_REQUEST:
-      return {
-        ...state,
-        isFetching: true
-      };
-    case GET_WORKSPACES_REQUEST:
-      return {
-        ...state,
-        isFetchingWorkspaces: true
-      };
-
-    case GET_ACCESS_TOKEN_SUCCESS:
+    case SESSION_GET_ACCESS_TOKEN_REQUEST_SUCCESS:
       return {
         ...state,
         isFetching: false,
         access_token: action.response.data.access_token
       };
-    case GET_CONNECTED_USER_SUCCESS:
+    case SESSION_GET_ACCESS_TOKEN_REQUEST_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.response.error
+      };
+
+    case SESSION_GET_CONNECTED_USER_REQUEST:
+      return {
+        ...state,
+        isFetching: true
+      };
+    case SESSION_GET_CONNECTED_USER_REQUEST_SUCCESS:
       return {
         ...state,
         isFetching: false,
         user: action.response.data,
         authenticated: true
       };
-    case GET_WORKSPACES_SUCCESS:
+    case SESSION_GET_CONNECTED_USER_REQUEST_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.response.error
+      };
+
+    case SESSION_GET_WORKSPACES_REQUEST:
+      return {
+        ...state,
+        isFetchingWorkspaces: true
+      };
+    case SESSION_GET_WORKSPACES_REQUEST_SUCCESS:
       return {
         ...state,
         isFetchingWorkspaces: false,
         workspaces: buildWorkspaces([action.response.data].concat(state.user.workspaces))
       };
-
-    case GET_ACCESS_TOKEN_FAILURE:
-      return {
-        ...state,
-        isFetching: false,
-        error: action.response.error
-      };
-    case GET_CONNECTED_USER_FAILURE:
-      return {
-        ...state,
-        isFetching: false,
-        error: action.response.error
-      };
-    case GET_WORKSPACES_FAILURE:
+    case SESSION_GET_WORKSPACES_REQUEST_FAILURE:
       return {
         ...state,
         isFetchingWorkspaces: false,
         workspaces: defaultSessionState.workspaces
       };
 
-    case INIT_WORKSPACE:
+    case SESSION_INIT_WORKSPACE:
       return {
         ...state,
         activeWorkspace: setActiveWorkspace(action.workspace, state.workspaces, state.user.default_workspace, true)
       };
 
-    case SWITCH_WORKSPACE:
+    case SESSION_SWITCH_WORKSPACE:
       return {
         ...state,
         activeWorkspace: setActiveWorkspace(action.workspace, state.workspaces, state.user.default_workspace)
       };
 
-    case IS_REACT_URL:
+    case SESSION_IS_REACT_URL:
       return {
         ...state,
         isReactUrl: isReactUrl(action.url)
       };
 
-    case LOGOUT:
+    case SESSION_LOGOUT:
       return defaultSessionState;
 
     default:
@@ -292,15 +202,8 @@ const sessionState = (state = defaultSessionState, action) => {
 
 };
 
-
-export {
-getAccessToken,
-getConnectedUser,
-getWorkspaces,
-checkUrl,
-initActiveWorkspace,
-switchWorkspace,
-logout,
-
-sessionState
+const SessionStateReducers = {
+  sessionState
 };
+
+export default SessionStateReducers;

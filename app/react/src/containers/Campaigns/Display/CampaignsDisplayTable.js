@@ -5,7 +5,7 @@ import Link from 'react-router/lib/Link';
 import { Icon, Dropdown, Menu, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import * as CampaignsDisplayActions from './redux/CampaignsDisplayActions';
+import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
 
 import { TableView } from '../../../components/TableView';
 
