@@ -289,6 +289,9 @@ class CampaignsDisplayTable extends Component {
       if (text === '-') {
         return text;
       }
+      if (format.includes('%')) {
+        return number ? currency.concat(numeral(text / 100).format(format)) : text;
+      }
       return number ? currency.concat(numeral(text).format(format)) : text;
     };
 
@@ -343,7 +346,7 @@ class CampaignsDisplayTable extends Component {
       title: translations.CTR,
       dataIndex: 'ctr',
       key: 'ctr',
-      render: (text) => renderText(text / 100, true, '0.000%'),
+      render: (text) => renderText(text, true, '0.000%'),
       sorter: (a, b) => this.columnSorter(a, b, 'ctr'),
       isHiddable: true,
       visible: true
