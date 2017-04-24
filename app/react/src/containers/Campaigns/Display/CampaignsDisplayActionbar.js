@@ -56,7 +56,7 @@ class CampaignsDisplayActionbar extends Component {
       <Actionbar {...this.props}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icon type="plus" /> New Campaign
+            <Icon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </ActionbarButton>
         </Dropdown>
       </Actionbar>
