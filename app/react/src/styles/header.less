@@ -1,5 +1,7 @@
 .mcs-header {
-  height: 70px;
+  height: @layout-header-height;
+  z-index: 3;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.02), 0 4px 5px 0 rgba(0, 0, 0, 0.07), 0 2px 10px -1px rgba(0, 0, 0, 0.06);
 }
 
 .mcs-header-menu-horizontal {
@@ -53,8 +55,8 @@
 .ant-menu-item,
 .mcs-header-anticon,
 .mcs-header-divider {
-  line-height: 70px;
-  height: 70px
+  line-height: @layout-header-height;
+  height: @layout-header-height;
 }
 
 .mcs-header-anticon {

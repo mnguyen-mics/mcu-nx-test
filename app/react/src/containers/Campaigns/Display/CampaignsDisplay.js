@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { ScrollComponent } from '../../../components/ScrollComponent';
 
 import CampaignsDisplayActionbar from './CampaignsDisplayActionbar';
-import CampaignsDisplayLabel from './CampaignsDisplayLabel';
 import CampaignsDisplayTable from './CampaignsDisplayTable';
 
 const { Content } = Layout;
@@ -112,7 +111,6 @@ class CampaignsDisplay extends Component {
     };
 
     const handleChange = (type, value, withVisibility) => {
-
       const {
         key
       } = value;
@@ -182,8 +180,7 @@ class CampaignsDisplay extends Component {
         />
         <Content>
           <ScrollComponent>
-            <CampaignsDisplayLabel filters={filters} onClickOnClose={onClickOnClose} />
-            <CampaignsDisplayTable filters={filters} archived={archived} {...this.props} />
+            <CampaignsDisplayTable filters={filters} handleVisibleChange={handleVisibleChange} onClickOnClose={onClickOnClose} handleChange={handleChange} archived={archived} {...this.props} />
           </ScrollComponent>
         </Content>
       </Layout>

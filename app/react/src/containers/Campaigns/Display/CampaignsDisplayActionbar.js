@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import { Menu, Dropdown, Button, Icon, Checkbox } from 'antd';
+import { Menu, Dropdown, Icon } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar, ActionbarButton, SecondaryActionbar } from '../../Actionbar';
+import { Actionbar, ActionbarButton } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
 
 class CampaignsDisplayActionbar extends Component {
@@ -29,12 +29,7 @@ class CampaignsDisplayActionbar extends Component {
     const {
       activeWorkspace: {
         organisationId
-      },
-      filters,
-      archived,
-      onArchivedCheckboxChange,
-      handleChange,
-      handleVisibleChange
+      }
     } = this.props;
 
     const addMenu = (
@@ -57,49 +52,13 @@ class CampaignsDisplayActionbar extends Component {
       </Menu>
     );
 
-    const statusMenu = (
-      <Menu onClick={value => handleChange('status', value, true)}>
-        <Menu.Item key="ACTIVE">
-          <FormattedMessage id="ACTIVE" />
-        </Menu.Item>
-        <Menu.Item key="PENDING">
-          <FormattedMessage id="PENDING" />
-        </Menu.Item>
-        <Menu.Item key="PAUSED">
-          <FormattedMessage id="PAUSED" />
-        </Menu.Item>
-      </Menu>
-    );
-
     return (
       <Actionbar {...this.props}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icon type="plus" />
+            <Icon type="plus" /> New Campaign
           </ActionbarButton>
         </Dropdown>
-
-        <ActionbarButton secondaryBar="filterActionBar">
-          <Icon type="filter" />
-        </ActionbarButton>
-
-        <SecondaryActionbar secondary id="filterActionBar">
-          <div className="mcs-actionbar-button-wrapper">
-            <Dropdown overlay={statusMenu} trigger={['click']} onVisibleChange={visible => handleVisibleChange('status', visible)} visible={filters.status.visible}>
-              <Button>
-                <FormattedMessage id="STATUS" />
-                <Icon type="down" />
-              </Button>
-            </Dropdown>
-          </div>
-
-          <div className="mcs-actionbar-button-wrapper">
-            <Checkbox className="mcs-campaigns-checkbox" checked={archived} onChange={onArchivedCheckboxChange}>
-              <FormattedMessage id="ARCHIVED" />
-            </Checkbox>
-          </div>
-        </SecondaryActionbar>
-
       </Actionbar>
     );
 
@@ -110,12 +69,7 @@ class CampaignsDisplayActionbar extends Component {
 CampaignsDisplayActionbar.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  archived: PropTypes.bool.isRequired,
   setBreadcrumb: PropTypes.func.isRequired,
-  onArchivedCheckboxChange: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleVisibleChange: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
