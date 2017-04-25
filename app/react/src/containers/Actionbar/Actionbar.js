@@ -28,7 +28,7 @@ class Actionbar extends Component {
         <div className="mcs-actionbar" >
           <BreadcrumbBar className="mcs-actionbar-breadcrumb" />
           <div className="mcs-actionbar-buttons">
-            {children.filter(v => !this.isSecondaryBarContent(v))}
+            {secondaryRendering ? children.filter(v => !this.isSecondaryBarContent(v)) : children}
           </div>
         </div>
         { secondaryRendering }

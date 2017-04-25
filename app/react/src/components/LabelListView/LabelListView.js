@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { Row, Col, Tag, Icon, Tooltip, Button, Input } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
@@ -38,16 +39,41 @@ class LabelListView extends Component {
     });
   }
 
+  buildFilterItems() {
+
+    const {
+      filters,
+      translations
+    } = this.props;
+
+    const items = [];
+
+    Object.keys(filters).forEach(filter => {
+      return filters[filter].data.forEach(value => {
+        items.push({
+          key: value,
+          type: filter,
+          value: translations[value],
+          isClosable: filters[filter].closable
+        });
+      });
+    });
+
+    return items;
+
+  }
+
 
   render() {
 
     const {
-      items,
       isInputVisible,
       onClickOnClose,
       label,
       className
     } = this.props;
+
+    const items = this.buildFilterItems();
 
     const { inputVisible, inputValue } = this.state;
 
@@ -110,22 +136,27 @@ LabelListView.defaultProps = {
 
 LabelListView.propTypes = {
   label: PropTypes.string,
-  items: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.any.isRequired,
-    type: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-    isClosable: PropTypes.bool.isRequired,
-    icon: PropTypes.string,
-  })).isRequired,
+  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   isInputVisible: PropTypes.bool,
   onClickOnClose: PropTypes.func.isRequired,
   onInputSubmit: PropTypes.func,
   className: PropTypes.string
 };
 
+const mapStateToProps = state => ({
+  translations: state.translationsState.translations
+});
+
+const mapDispatchToProps = {};
+
+LabelListView = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LabelListView);
 /*
 * EXAMPLE :
-<LabelListView items={items} label="Filtered by:" onClickOnClose={returnFunc} isInputVisible onInputSubmit={returnFunc} />
+<LabelListView filters={filters} label="Filtered by:" onClickOnClose={returnFunc} isInputVisible onInputSubmit={returnFunc} />
 */
 
 

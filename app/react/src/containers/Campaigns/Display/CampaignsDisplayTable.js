@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import numeral from 'numeral';
 import Link from 'react-router/lib/Link';
-import { Icon, Dropdown, Menu, Modal } from 'antd';
+import { Icon, Dropdown, Menu, Modal, Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
@@ -22,7 +23,8 @@ class CampaignsDisplayTable extends Component {
     this.archiveCampaign = this.archiveCampaign.bind(this);
     this.state = {
       startDate: moment(moment().subtract(20, 'days').calendar()).format(dateFormat),
-      endDate: moment(new Date()).format(dateFormat)
+      endDate: moment(new Date()).format(dateFormat),
+      columns: this.renderCol()
     };
   }
 
@@ -102,16 +104,21 @@ class CampaignsDisplayTable extends Component {
       searchCampaignsDisplay,
       hasSearched,
       filteredCampaignsDisplay,
-      translations
+      translations,
+      onClickOnClose,
+      handleChange,
+      filters,
+      handleVisibleChange
     } = this.props;
 
     const {
       startDate,
-      endDate
+      endDate,
+      columns,
+      isColSelectorOpen
     } = this.state;
 
     this.formatCampaigns(campaignsDisplay, campaignsDisplayPerformance.report_view);
-    const columns = this.renderCol();
 
     const searchOptions = {
       isEnabled: true,
@@ -128,6 +135,66 @@ class CampaignsDisplayTable extends Component {
       dateFormat
     };
 
+    const filteredValue = {
+      items: this.buildFilterItems(),
+      onClickOnClose
+    };
+
+    const statusMenu = (
+      <Menu onClick={value => handleChange('status', value, true)}>
+        <Menu.Item key="ACTIVE">
+          {this.isChecked('ACTIVE') && (<Icon type="check" />)}
+          <span className="mcs-list-item"><FormattedMessage id="ACTIVE" /></span>
+        </Menu.Item>
+        <Menu.Item key="PENDING">
+          {this.isChecked('PENDING') && (<Icon type="check" />)}
+          <span className="mcs-list-item"><FormattedMessage id="PENDING" /></span>
+        </Menu.Item>
+        <Menu.Item key="PAUSED">
+          {this.isChecked('PAUSED') && (<Icon type="check" />)}
+          <span className="mcs-list-item"><FormattedMessage id="PAUSED" /></span>
+        </Menu.Item>
+        <Menu.Item key="ARCHIVED">
+          {this.isChecked('ARCHIVED') && (<Icon type="check" />)}
+          <span className="mcs-list-item"><FormattedMessage id="ARCHIVED" /></span>
+        </Menu.Item>
+      </Menu>
+    );
+
+    const statusFilters = (
+      <Dropdown overlay={statusMenu} trigger={['click']} onVisibleChange={visible => handleVisibleChange('status', visible)} visible={filters.status.visible}>
+        <Button className="mcs-filters-item">
+          <FormattedMessage id="STATUS" />
+          <Icon type="down" />
+        </Button>
+      </Dropdown>
+    );
+
+    const colMenu = (
+      <Menu onClick={value => this.changeColVisibility(value)}>
+        {columns.map((item) => {
+          return item && item.isHiddable && (
+            <Menu.Item key={item.key}>
+              {item.visible && (<Icon type="check" />)}
+              <span className="mcs-list-item">{item.title}</span>
+            </Menu.Item>
+          );
+        })}
+      </Menu>
+    );
+
+    const colDropdownButton = (
+      <Dropdown overlay={colMenu} trigger={['click']} onVisibleChange={visible => this.setState({ isColSelectorOpen: visible })} visible={isColSelectorOpen}>
+        <Button className="mcs-filters-item">
+          <Icon type="layout" />
+        </Button>
+      </Dropdown>
+    );
+
+    const filtersRenderer = (
+      <span>{statusFilters}{colDropdownButton}</span>
+    );
+
     return (<TableView
       columns={columns}
       dataSource={hasSearched ? filteredCampaignsDisplay : campaignsDisplay}
@@ -135,8 +202,60 @@ class CampaignsDisplayTable extends Component {
       searchOptions={searchOptions}
       onChange={() => {}}
       dateRangePickerOptions={dateRangePickerOptions}
+      filters={filteredValue}
+      filtersElement={filtersRenderer}
     />);
 
+  }
+
+  changeColVisibility(item) {
+    const {
+      columns
+    } = this.state;
+    const newColumns = columns.map(column => {
+      return {
+        ...column,
+        visible: column.key === item.key ? !column.visible : column.visible
+      };
+    });
+    this.setState({
+      columns: newColumns,
+      isColSelectorOpen: true
+    });
+  }
+
+  buildFilterItems() {
+
+    const {
+      filters,
+      translations
+    } = this.props;
+
+    const items = [];
+
+    Object.keys(filters).forEach(filter => {
+      return filters[filter].data.forEach(value => {
+        items.push({
+          key: value,
+          type: filter,
+          value: translations[value],
+          isClosable: filters[filter].closable
+        });
+      });
+    });
+
+    return items;
+
+  }
+
+  isChecked(value) {
+    let isChecked = false;
+    this.buildFilterItems().forEach((item) => {
+      if (item.value.toLowerCase() === value.toLowerCase()) {
+        isChecked = true;
+      }
+    });
+    return isChecked;
   }
 
   renderCol() {
@@ -148,61 +267,90 @@ class CampaignsDisplayTable extends Component {
       translations
     } = this.props;
 
-    const renderText = (text, number = false) => {
+    const renderText = (text, number = false, format = '0,0', currency = '') => {
       if (!text || isFetchingCampaignsDisplayPerformance) {
         return (<span>loading...</span>);
       }
       if (text === '-') {
         return text;
       }
-      return number ? (Math.round(text * 100) / 100) : text;
+      if (format.includes('%')) {
+        return number ? currency.concat(numeral(text / 100).format(format)) : text;
+      }
+      return number ? currency.concat(numeral(text).format(format)) : text;
     };
 
     const columns = [{
       title: translations.STATUS,
       dataIndex: 'status',
       key: 'status',
-      render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+      render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>,
+      isHiddable: false,
+      visible: true
     }, {
       title: translations.NAME,
       dataIndex: 'name',
       key: 'name',
-      render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+      render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>,
+      sorter: (a, b) => this.columnSorter(a, b, 'name'),
+      isHiddable: false,
+      visible: true
     }, {
       title: translations.Impression,
       dataIndex: 'impressions',
       key: 'impression',
-      render: text => renderText(text)
+      render: text => renderText(text, true, '0,0'),
+      sorter: (a, b) => this.columnSorter(a, b, 'impressions'),
+      isHiddable: true,
+      visible: true
     }, {
       title: translations.Clicks,
       dataIndex: 'clicks',
       key: 'clicks',
-      render: text => renderText(text, true)
+      render: text => renderText(text, true, '0,0'),
+      sorter: (a, b) => this.columnSorter(a, b, 'clicks'),
+      isHiddable: true,
+      visible: true
     }, {
       title: translations.Spent,
       dataIndex: 'impressions_cost',
       key: 'spent',
-      render: text => renderText(text, true)
+      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
+      sorter: (a, b) => this.columnSorter(a, b, 'impressions_cost'),
+      isHiddable: true,
+      visible: true
     }, {
       title: translations.CPM,
       dataIndex: 'cpm',
       key: 'cpm',
-      render: text => renderText(text, true)
+      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
+      sorter: (a, b) => this.columnSorter(a, b, 'cpm'),
+      isHiddable: true,
+      visible: true
     }, {
       title: translations.CTR,
       dataIndex: 'ctr',
       key: 'ctr',
-      render: text => renderText(text, true)
+      render: (text) => renderText(text, true, '0.000%'),
+      sorter: (a, b) => this.columnSorter(a, b, 'ctr'),
+      isHiddable: true,
+      visible: true
     }, {
       title: translations.CPC,
       dataIndex: 'cpc',
       key: 'cpc',
-      render: text => renderText(text, true)
+      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
+      sorter: (a, b) => this.columnSorter(a, b, 'cpc'),
+      isHiddable: true,
+      visible: true
     }, {
       title: translations.CPA,
       dataIndex: 'cpa',
       key: 'cpa',
-      render: text => renderText(text, true)
+      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
+      sorter: (a, b) => this.columnSorter(a, b, 'cpa'),
+      isHiddable: true,
+      visible: true
     }, {
       key: 'action',
       render: (text, record) => (
@@ -212,9 +360,24 @@ class CampaignsDisplayTable extends Component {
           </a>
         </Dropdown>
       ),
+      isHiddable: false,
+      visible: true
     }];
 
     return columns;
+  }
+
+  columnSorter(a, b, key) {
+    if (a[key] === '-' && b[key] === '-') {
+      return 0;
+    }
+    if (a[key] === '-') {
+      return 0 - b[key];
+    }
+    if (b[key] === '-') {
+      return a[key] - 0;
+    }
+    return a[key] - b[key];
   }
 
   renderColMenu(workspace, record) {
@@ -364,7 +527,7 @@ class CampaignsDisplayTable extends Component {
 
     const {
       startDate,
-      endDate
+      endDate,
     } = this.state;
 
     const startD = moment(startDate, dateFormat).format('YYYY-MM-DD');
@@ -413,6 +576,9 @@ CampaignsDisplayTable.propTypes = {
   filteredCampaignsDisplay: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteCampaignsDisplay: PropTypes.func.isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  onClickOnClose: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleVisibleChange: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

@@ -17,7 +17,7 @@ div[data-reactroot] {
 
 .mcs-menu,
 .mcs-layout-content {
-    border-top: @border-width-base @border-style-base @border-color-base;
+    border-top: @border-width-base @border-style-base @border-color-split;
 }
 
 .ant-menu-inline.mcs-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-item {
@@ -30,7 +30,7 @@ div[data-reactroot] {
 
 .ant-menu-inline.mcs-menu-inline .ant-menu-selected, .ant-menu-inline .ant-menu-item-selected {
     border-left-color: @info-color!important;
-    border-right: @border-width-base @border-style-base @border-color-base;
+    border-right: @border-width-base @border-style-base @border-color-split;
     transform: translateZ(0);
     &:after {
         border-right: none;
@@ -71,7 +71,7 @@ div[data-reactroot] {
     height: 95px; 
     width: 100%; 
     background-color: #fcfcfc; 
-    box-shadow: 0 -1px 0 0 @border-color-base; 
+    box-shadow: 0 -1px 0 0 @border-color-split; 
     cursor: default;
 }
 
@@ -91,6 +91,8 @@ div[data-reactroot] {
 .mcs-sider-container {
     width:200px;
     background: #fff;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    z-index: 2;
 }
 
 .mcs-input-label {
@@ -98,8 +100,12 @@ div[data-reactroot] {
 }
 
 .mcs-table-container {
-    border-top: 1px solid @border-color-split;
-    padding: 20px 40px;
+    /*border: @border-width-base @border-style-base @border-color-split;*/
+    border-radius: 2px;
+    padding: 20px 20px;
+    margin: 50px 40px;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
+    background-color: #fff;
 }
 
 .mcs-table-container .mcs-search-input {
@@ -107,9 +113,48 @@ div[data-reactroot] {
 }
 
 .mcs-table-header {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+}
+
+.mcs-table-filters {
+    margin-bottom: 5px;
+}
+
+.mcs-table-nofilters {
+    margin-bottom: 27px;
 }
 
 .text-right {
     text-align: right;
+}
+
+body {
+    min-width: 1280px;
+}
+
+.ant-layout {
+    z-index: 1;
+}
+
+.ant-layout-content {
+    background-color: #f1f1f1;
+}
+
+.ant-table-thead > tr > th {
+    color: #919191!important;
+    background: none!important;
+    padding-top: 0px!important;
+}
+
+.ant-table-body > tr > th {
+    color: #373737!important;
+    background: none!important;
+}
+
+.mcs-list-item {
+    padding-left: 12px;
+}
+
+.mcs-filters-item {
+    margin-left: 8px;
 }
