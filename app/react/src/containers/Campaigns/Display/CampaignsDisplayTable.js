@@ -24,7 +24,7 @@ class CampaignsDisplayTable extends Component {
     this.state = {
       startDate: moment(moment().subtract(20, 'days').calendar()).format(dateFormat),
       endDate: moment(new Date()).format(dateFormat),
-      col: this.renderCol()
+      columns: this.renderCol()
     };
   }
 
@@ -114,12 +114,11 @@ class CampaignsDisplayTable extends Component {
     const {
       startDate,
       endDate,
-      col,
+      columns,
       isColSelectorOpen
     } = this.state;
 
     this.formatCampaigns(campaignsDisplay, campaignsDisplayPerformance.report_view);
-    const columns = col;
 
     const searchOptions = {
       isEnabled: true,
@@ -211,30 +210,17 @@ class CampaignsDisplayTable extends Component {
 
   changeColVisibility(item) {
     const {
-      col
+      columns
     } = this.state;
-    col.map((c) => {
-      if (c.key === item.key) {
-        c.visible = !c.visible; // eslint-disable-line no-param-reassign
-        return c;
-      }
-      return c;
+    const newColumns = columns.map(column => {
+      return {
+        ...column,
+        visible: column.key === item.key ? !column.visible : column.visible
+      };
     });
     this.setState({
-      col,
+      columns: newColumns,
       isColSelectorOpen: true
-    });
-  }
-
-  buildColumnBasedOnVisibility() {
-    const {
-      col
-    } = this.state;
-    return col.map((c) => {
-      if (c.visible) {
-        return c;
-      }
-      return null;
     });
   }
 
@@ -264,11 +250,10 @@ class CampaignsDisplayTable extends Component {
 
   isChecked(value) {
     let isChecked = false;
-    this.buildFilterItems().map((item) => {
+    this.buildFilterItems().forEach((item) => {
       if (item.value.toLowerCase() === value.toLowerCase()) {
         isChecked = true;
       }
-      return true;
     });
     return isChecked;
   }
