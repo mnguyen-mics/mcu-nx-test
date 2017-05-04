@@ -550,9 +550,11 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('versionFile', function () {
+  grunt.registerTask('versionFile', function (target) {
     var path = require("path");
-    grunt.file.write(path.join(grunt.config('yeoman.dist'), "version.txt"), version);
+    var targetPathConfig = grunt.config('yeoman.' + target);
+    grunt.file.write(path.join(targetPathConfig, "version.txt"), version);
+    grunt.file.write(path.join(targetPathConfig, "version.json"), JSON.stringify({ version: version }));
   });
 
   grunt.registerMultiTask('genRequireJsFiles', function () {
@@ -607,6 +609,7 @@ module.exports = function (grunt) {
       'genRequireJsFiles:config',
       'concurrent:server',
       'connect:livereload',
+      'versionFile:app',
       'watch'
     ]);
   });
@@ -644,7 +647,7 @@ module.exports = function (grunt) {
     'copy:generated_iab',
     'webpack:build',
     'htmlmin',
-    'versionFile',
+    'versionFile:dist',
     'compress'
   ]);
 

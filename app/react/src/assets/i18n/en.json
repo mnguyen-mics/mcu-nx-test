@@ -78,7 +78,7 @@
   "TECHNICAL_NAME": "Technical Name",
 
   "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Segment?",
-  "SEGMENT__MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Segment all it will stop campaign using it. Are you sure?",
+  "SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Segment all it will stop campaign using it. Are you sure?",
 
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation",
@@ -98,5 +98,11 @@
   "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",
   "CAMPAIGNS_EMAIL_EXPORT_TITLE": "Campaigns Email Export",
   "GOALS_EXPORT_TITLE": "Goals Export",
-  "AUDIENCE_SEGMENTS_EXPORT_TITLE": "Audience Segments Export"
+  "AUDIENCE_SEGMENTS_EXPORT_TITLE": "Audience Segments Export",
+
+  "NOTIFICATION_ERROR_TITLE": "Error",
+  "NOTIFICATION_ERROR_DESCRIPTION": "An error occured",
+  "NOTIFICATION_NEW_VERSION_TITLE": "New Version",
+  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page"
+
 }
