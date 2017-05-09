@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+<<<<<<< HEAD
+=======
+import numeral from 'numeral';
+>>>>>>> b93d70ba... Addning new DateRange Picker with relative and Absolute lookback window
 import { FormattedMessage } from 'react-intl';
-import { Dropdown, Icon, Menu, Row, Col, Table, Input, DatePicker } from 'antd';
+import { Dropdown, Icon, Menu, Row, Col, Table, Input } from 'antd';
+import { McsDateRangePicker } from '../McsDateRangePicker';
 
 import { MultiSelect } from '../Forms';
 
 const Search = Input.Search;
-const { RangePicker } = DatePicker;
 
 const DEFAULT_RANGE_PICKER_DATE_FORMAT = 'DD/MM/YYYY';
 
@@ -74,11 +78,9 @@ class TableView extends Component {
     </Col>) : null;
 
     const dateRangePicker = dateRangePickerOptions.isEnabled ?
-    (<RangePicker
-      defaultValue={[dateRangePickerOptions.from, dateRangePickerOptions.to]}
-      format={dateRangePickerOptions.format}
+    (<McsDateRangePicker
+      values={dateRangePickerOptions.values}
       onChange={dateRangePickerOptions.onChange}
-      disabled={dateRangePickerOptions.disabled}
     />) : null;
 
     const filtersMultiSelect = filtersOptions.map(filterOptions => {

@@ -56,6 +56,15 @@
   "EMAIL_HARD_BOUNCED": "Emails hard bounced",
   "EMAIL_SOFT_BOUNCED": "Emails soft bounced",
   "USD": "$",
-  "EUR": "€"
-
+  "EUR": "€",
+  "TODAY": "Today",
+  "YESTERDAY": "Yesterday",
+  "LAST_7_DAYS": "Last 7 Days",
+  "LAST_30_DAYS": "Last 30 Days",
+  "CUSTOM": "Custom",
+  "LOOKBACK_WINDOW": "Lookback Window",
+  "FROM": "From",
+  "TO": "To",
+  "ERROR": "Error",
+  "SECONDS": "seconds"
 }
