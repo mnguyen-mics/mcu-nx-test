@@ -19,21 +19,22 @@ const ranges = [{
   duration: [moment().subtract(1, 'month'), moment()]
 }];
 
-const format = 'DD/MM/YYYY';
+const format = 'YYYY-MM-DD';
 
 class McsDateRangePicker extends Component {
 
   constructor(props) {
     super(props);
-    this.handleMenuClick = this.handleMenuClick.bind(this);
-    this.handleMenuChange = this.handleMenuChange.bind(this);
+    this.handleDropdownMenuClick = this.handleDropdownMenuClick.bind(this);
+    this.handleDatePickerMenuChange = this.handleDatePickerMenuChange.bind(this);
+    this.onDatePickerOpenChange = this.onDatePickerOpenChange.bind(this);
     this.state = {
       isCustom: false,
       isOpen: false
     };
   }
 
-  handleMenuClick(e) {
+  handleDropdownMenuClick(e) {
     if (e.key === 'CUSTOM') {
       return this.setState({
         isCustom: true,
@@ -52,11 +53,13 @@ class McsDateRangePicker extends Component {
     });
     return onChange({
       lookbackWindow: moment.duration(selectedRange.duration[1] - selectedRange.duration[0]),
-      rangeType: 'relative'
+      rangeType: 'relative',
+      from: selectedRange.duration[0],
+      to: selectedRange.duration[1]
     });
   }
 
-  handleMenuChange(dates) {
+  handleDatePickerMenuChange(dates) {
     const {
       onChange
     } = this.props;
@@ -67,7 +70,15 @@ class McsDateRangePicker extends Component {
     return onChange({
       rangeType: 'absolute',
       from: dates[0],
-      to: dates[1]
+      to: dates[1],
+      lookbackWindow: moment.duration(dates[1] - dates[0]),
+    });
+  }
+
+  onDatePickerOpenChange() {
+    this.setState({
+      isCustom: false,
+      isOpen: false
     });
   }
 
@@ -78,7 +89,7 @@ class McsDateRangePicker extends Component {
     } = this.props;
 
     if (values.rangeType === 'absolute') {
-      return translations.FROM.concat(' ', values.from.format(format), ' ', translations.TO, ' ', values.to.format(format));
+      return `${values.from.format(format)} ~ ${values.to.format(format)}`;
     } else if (values.rangeType === 'relative') {
       let selectedRange;
       ranges.forEach((range) => {
@@ -98,7 +109,7 @@ class McsDateRangePicker extends Component {
     } = this.props;
 
     const menu = (
-      <Menu onClick={(key) => this.handleMenuClick(key)}>
+      <Menu onClick={(key) => this.handleDropdownMenuClick(key)}>
         <Menu.ItemGroup title={translations.LOOKBACK_WINDOW}>
           {
             ranges.map((item) => {
@@ -112,7 +123,7 @@ class McsDateRangePicker extends Component {
 
     return (
       <Dropdown overlay={menu} trigger={['click']}>
-        <Button style={{ marginLeft: 8 }}>
+        <Button>
           <Icon type="calendar" /> {this.getSelectedPresettedRange()} <Icon type="down" />
         </Button>
       </Dropdown>
@@ -135,9 +146,10 @@ class McsDateRangePicker extends Component {
 
     return isCustom === true ? (<RangePicker
       allowClear={false}
-      onChange={this.handleMenuChange}
+      onChange={this.handleDatePickerMenuChange}
       value={[values.from, values.to]}
       disabledDate={current => this.disableFutureDates(current)}
+      onOpenChange={this.onDatePickerOpenChange}
       open={isOpen}
     />) : this.renderRangesDropdown();
   }
