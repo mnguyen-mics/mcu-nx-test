@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Row, Col, Tag, Icon, Tooltip, Button, Input } from 'antd';
 import { FormattedMessage } from 'react-intl';
 

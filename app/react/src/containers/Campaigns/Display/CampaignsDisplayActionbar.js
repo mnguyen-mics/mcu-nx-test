@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Menu, Dropdown, Icon } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';

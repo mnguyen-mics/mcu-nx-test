@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
@@ -22,15 +23,17 @@ class CampaignsSidebar extends Component {
 
     const isActiveUrl = path => pathname.search(path) >= 0; // eslint-disable-line no-unused-vars
 
-    const displayCampaignUrl = `/${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
+    const displayCampaignUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
+    const emailCampaignUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/email`; // eslint-disable-line no-undef
+    const goalsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/goal`; // eslint-disable-line no-undef
 
     const items = [
       {
         element: <Link to={displayCampaignUrl}><FormattedMessage id="DISPLAY_CAMPAIGNS" /></Link>,
-        isActive: isActiveUrl(new RegExp(/display|[^(email|scenarios|goals)]/))
+        isActive: isActiveUrl('display')
       },
       {
-        element: <Link to={`${workspaceId}/campaigns/email`}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
+        element: <Link to={emailCampaignUrl}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('email')
       },
       {
@@ -38,8 +41,8 @@ class CampaignsSidebar extends Component {
         isActive: isActiveUrl('scenarios')
       },
       {
-        element: <Link to={`${workspaceId}/library/goals`}><FormattedMessage id="GOALS" /></Link>,
-        isActive: isActiveUrl('goals')
+        element: <Link to={goalsUrl}><FormattedMessage id="GOALS" /></Link>,
+        isActive: isActiveUrl('goal')
       }
     ];
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Link from 'react-router/lib/Link';
 import { connect } from 'react-redux';
 import { Breadcrumb } from 'antd';
-import { PathPropTypes } from '../../validators';
+import { PathPropTypes } from '../../validators/proptypes';
 
 
 class BreadcrumbBar extends Component {

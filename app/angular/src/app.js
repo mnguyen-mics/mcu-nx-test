@@ -11,6 +11,7 @@ define(['app-setup', 'angularAMD', 'jquery'],
         });
 
         ErrorReporting.setup();
+        //
 
         function updateWorkspaces() {
           $log.debug("app.js updateWorkspaces !", $state.current, $state.params);
@@ -19,6 +20,7 @@ define(['app-setup', 'angularAMD', 'jquery'],
           var workspace = Session.getCurrentWorkspace();
           $rootScope.currentWorkspace =  workspace;
           $rootScope.currentWorkspaceId = "o" + workspace.organisation_id + "d" + workspace.datamart_id;
+          $rootScope.currentV2WorkspaceId = Session.getV2WorkspacePrefixUrl();
           var toStateParams = _.extend({} , $stateParams);
           toStateParams.organisation_id = $rootScope.currentWorkspaceId;
           $log.debug("redirect to new state", toStateParams);

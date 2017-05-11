@@ -1,603 +1,360 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import numeral from 'numeral';
+import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Icon, Dropdown, Menu, Modal, Button } from 'antd';
+import { Icon, Modal, Spin } from 'antd';
 import { FormattedMessage } from 'react-intl';
-
-import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
 
 import { TableView } from '../../../components/TableView';
 
-const confirm = Modal.confirm;
-const dateFormat = 'DD/MM/YYYY';
+import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
+
+import {
+  DISPLAY_QUERY_SETTINGS,
+
+  updateQueryWithParams,
+  deserializeQuery
+} from '../RouteQuerySelector';
+
+import { formatMetric } from '../../../utils/MetricHelper';
+import { CampaignStatuses } from '../../../constants/CampaignConstant';
+
+import {
+  getTableDataSource
+ } from '../../../state/Campaigns/Display/selectors';
 
 class CampaignsDisplayTable extends Component {
 
   constructor(props) {
     super(props);
-    this.fetchCampaignsDisplayWithProps = this.fetchCampaignsDisplayWithProps.bind(this);
-    this.fetchCampaignsPerformanceWithProps = this.fetchCampaignsPerformanceWithProps.bind(this);
-    this.onDateRangeChange = this.onDateRangeChange.bind(this);
+    this.updateQueryParams = this.updateQueryParams.bind(this);
     this.archiveCampaign = this.archiveCampaign.bind(this);
-    this.state = {
-      startDate: moment(moment().subtract(20, 'days').calendar()).format(dateFormat),
-      endDate: moment(new Date()).format(dateFormat),
-      columns: this.renderCol()
-    };
+    this.editCampaign = this.editCampaign.bind(this);
   }
 
   componentDidMount() {
-
     const {
-      filters,
-      archived,
-      router: {
-        location: {
-          query
-        }
-      }
+      query,
+
+      fetchCampaignsAndStatistics
     } = this.props;
 
-    const params = query;
-
-    Object.keys(filters).forEach(filter => {
-      if (filters[filter].data.length) {
-        params[filter] = filters[filter].data.join();
-      }
-    });
-
-    params.archived = archived;
-
-    this.fetchCampaignsDisplayWithProps(params);
+    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+    fetchCampaignsAndStatistics(filter);
   }
 
   componentWillReceiveProps(nextProps) {
-
     const {
-      filters,
-      archived,
+      query,
       activeWorkspace: {
-        organisationId
-      }
+        workspaceId
+      },
+
+      fetchCampaignsAndStatistics
     } = this.props;
 
     const {
-      filters: nextFilters,
-      archived: nextArchived,
+      query: nextQuery,
       activeWorkspace: {
-        organisationId: nextOrganisationId
-      }
+        workspaceId: nextWorkspaceId
+      },
     } = nextProps;
 
-    const params = {};
+    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
+      const filter = deserializeQuery(nextQuery, DISPLAY_QUERY_SETTINGS);
+      fetchCampaignsAndStatistics(filter);
+    }
+  }
 
-    Object.keys(filters).forEach(filter => {
-      if (filters[filter].data && nextFilters[filter] && nextFilters[filter].data) {
-        if (filters[filter].data.length !== nextFilters[filter].data.length) {
-          params[filter] = nextFilters[filter].data.join();
-        }
-      }
+  componentWillUnmount() {
+    this.props.resetCampaignsDisplayTable();
+  }
+
+  updateQueryParams(params) {
+    const {
+      router,
+      query: currentQuery
+    } = this.props;
+
+    const location = router.getCurrentLocation();
+    router.replace({
+      pathname: location.pathname,
+      query: updateQueryWithParams(currentQuery, params, DISPLAY_QUERY_SETTINGS)
     });
-
-    if (archived !== nextArchived) {
-      params.archived = nextArchived;
-    }
-
-    if (organisationId !== nextOrganisationId) {
-      params.organisation_id = nextOrganisationId;
-    }
-
-    if (Object.keys(params).length) {
-      this.fetchCampaignsDisplayWithProps(params);
-    }
-
   }
 
   render() {
     const {
-      campaignsDisplay,
-      campaignsDisplayPerformance,
-      isFetchingCampaignsDisplay,
-      isFetchingCampaignsDisplayPerformance,
-      searchCampaignsDisplay,
-      hasSearched,
-      filteredCampaignsDisplay,
+      query,
+      activeWorkspace: {
+        workspaceId
+      },
       translations,
-      onClickOnClose,
-      handleChange,
-      filters,
-      handleVisibleChange
+      isFetchingCampaignsDisplay,
+      isFetchingCampaignsStat,
+      dataSource,
+      totalCampaignsDisplay
     } = this.props;
 
-    const {
-      startDate,
-      endDate,
-      columns,
-      isColSelectorOpen
-    } = this.state;
-
-    this.formatCampaigns(campaignsDisplay, campaignsDisplayPerformance.report_view);
+    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
 
     const searchOptions = {
       isEnabled: true,
       placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
-      onSearch: searchCampaignsDisplay
+      onSearch: value => this.updateQueryParams({
+        keywords: value
+      }),
+      defaultValue: filter.keywords
     };
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: this.onDateRangeChange,
-      isRangePickerDisabled: isFetchingCampaignsDisplayPerformance,
-      startDate,
-      endDate,
-      dateFormat
+      onChange: (dates) => this.updateQueryParams({
+        from: dates[0],
+        to: dates[1]
+      }),
+      from: filter.from,
+      to: filter.to
     };
 
-    const filteredValue = {
-      items: this.buildFilterItems(),
-      onClickOnClose
+    const columnsVisibilityOptions = {
+      isEnabled: true
     };
 
-    const statusMenu = (
-      <Menu onClick={value => handleChange('status', value, true)}>
-        <Menu.Item key="ACTIVE">
-          {this.isChecked('ACTIVE') && (<Icon type="check" />)}
-          <span className="mcs-list-item"><FormattedMessage id="ACTIVE" /></span>
-        </Menu.Item>
-        <Menu.Item key="PENDING">
-          {this.isChecked('PENDING') && (<Icon type="check" />)}
-          <span className="mcs-list-item"><FormattedMessage id="PENDING" /></span>
-        </Menu.Item>
-        <Menu.Item key="PAUSED">
-          {this.isChecked('PAUSED') && (<Icon type="check" />)}
-          <span className="mcs-list-item"><FormattedMessage id="PAUSED" /></span>
-        </Menu.Item>
-        <Menu.Item key="ARCHIVED">
-          {this.isChecked('ARCHIVED') && (<Icon type="check" />)}
-          <span className="mcs-list-item"><FormattedMessage id="ARCHIVED" /></span>
-        </Menu.Item>
-      </Menu>
-    );
+    const pagination = {
+      currentPage: filter.currentPage,
+      pageSize: filter.pageSize,
+      total: totalCampaignsDisplay,
+      onChange: (page) => this.updateQueryParams({
+        currentPage: page
+      }),
+      onShowSizeChange: (current, size) => this.updateQueryParams({
+        pageSize: size
+      })
+    };
 
-    const statusFilters = (
-      <Dropdown overlay={statusMenu} trigger={['click']} onVisibleChange={visible => handleVisibleChange('status', visible)} visible={filters.status.visible}>
-        <Button className="mcs-filters-item">
-          <FormattedMessage id="STATUS" />
-          <Icon type="down" />
-        </Button>
-      </Dropdown>
-    );
+    const renderMetricData = (value, numeralFormat, currency = '') => {
+      if (isFetchingCampaignsStat) {
+        return (<Spin size="small" />); // (<span>loading...</span>);
+      }
+      const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
+      return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
+    };
 
-    const colMenu = (
-      <Menu onClick={value => this.changeColVisibility(value)}>
-        {columns.map((item) => {
-          return item && item.isHiddable && (
-            <Menu.Item key={item.key}>
-              {item.visible && (<Icon type="check" />)}
-              <span className="mcs-list-item">{item.title}</span>
-            </Menu.Item>
-          );
-        })}
-      </Menu>
-    );
+    const dataColumns = [
+      {
+        translationKey: 'STATUS',
+        key: 'status',
+        isHiddable: false,
+        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+      },
+      {
+        translationKey: 'NAME',
+        key: 'name',
+        isHiddable: false,
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+      },
+      {
+        translationKey: 'IMPRESSIONS',
+        key: 'impressions',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0')
+      },
+      {
+        translationKey: 'CLICKS',
+        key: 'clicks',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0')
+      },
+      {
+        translationKey: 'IMPRESSIONS_COST',
+        key: 'impressions_cost',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: (text, record) => {
+          // TODO find campaign (with getCampaignsDisplayById(record['campaign_id']))
+          const campaignCurrency = 'EUR';
+          return renderMetricData(text, '0,0.00', campaignCurrency);
+        }
+      },
+      {
+        translationKey: 'CPM',
+        key: 'cpm',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0.00', 'EUR')
+      },
+      {
+        translationKey: 'CTR',
+        key: 'ctr',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,00 %')
+      },
+      {
+        translationKey: 'CPC',
+        key: 'cpc',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0.00', 'EUR')
+      },
+      {
+        translationKey: 'CPA',
+        key: 'cpa',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0.00', 'EUR')
+      }
+    ];
 
-    const colDropdownButton = (
-      <Dropdown overlay={colMenu} trigger={['click']} onVisibleChange={visible => this.setState({ isColSelectorOpen: visible })} visible={isColSelectorOpen}>
-        <Button className="mcs-filters-item">
-          <Icon type="layout" />
-        </Button>
-      </Dropdown>
-    );
+    const actionColumns = [
+      {
+        key: 'action',
+        actions: [
+          {
+            translationKey: 'ARCHIVE',
+            callback: this.archiveCampaign
+          },
+          {
+            translationKey: 'EDIT',
+            callback: this.editCampaign
+          }
+        ]
+      }
+    ];
 
-    const filtersRenderer = (
-      <span>{statusFilters}{colDropdownButton}</span>
-    );
+    const statusItems = CampaignStatuses.map(status => ({ key: status, value: status }));
+
+    // lodash.debounce(plop, 1000)
+    // const plop = value => {
+    //   console.log('plop');
+    //   return this.updateQueryParams({
+    //     statuses: value.status.map(item => item.value)
+    //   });
+    // };
+
+    const filtersOptions = [
+      {
+        name: 'status',
+        displayElement: (<div><FormattedMessage id="STATUS" /><Icon type="down" /></div>),
+        menuItems: {
+          handleMenuClick: value => this.updateQueryParams({ statuses: value.status.map(item => item.value) }),
+          selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
+          items: statusItems
+        }
+      }
+    ];
+
+    const columnsDefinitions = {
+      dataColumnsDefinition: dataColumns,
+      actionsColumnsDefinition: actionColumns
+    };
 
     return (<TableView
-      columns={columns}
-      dataSource={hasSearched ? filteredCampaignsDisplay : campaignsDisplay}
+      columnsDefinitions={columnsDefinitions}
+      dataSource={dataSource}
       loading={isFetchingCampaignsDisplay}
-      searchOptions={searchOptions}
       onChange={() => {}}
+      searchOptions={searchOptions}
       dateRangePickerOptions={dateRangePickerOptions}
-      filters={filteredValue}
-      filtersElement={filtersRenderer}
+      filtersOptions={filtersOptions}
+      columnsVisibilityOptions={columnsVisibilityOptions}
+      pagination={pagination}
     />);
 
   }
 
-  changeColVisibility(item) {
-    const {
-      columns
-    } = this.state;
-    const newColumns = columns.map(column => {
-      return {
-        ...column,
-        visible: column.key === item.key ? !column.visible : column.visible
-      };
-    });
-    this.setState({
-      columns: newColumns,
-      isColSelectorOpen: true
-    });
-  }
-
-  buildFilterItems() {
-
-    const {
-      filters,
-      translations
-    } = this.props;
-
-    const items = [];
-
-    Object.keys(filters).forEach(filter => {
-      return filters[filter].data.forEach(value => {
-        items.push({
-          key: value,
-          type: filter,
-          value: translations[value],
-          isClosable: filters[filter].closable
-        });
-      });
-    });
-
-    return items;
-
-  }
-
-  isChecked(value) {
-    let isChecked = false;
-    this.buildFilterItems().forEach((item) => {
-      if (item.value.toLowerCase() === value.toLowerCase()) {
-        isChecked = true;
-      }
-    });
-    return isChecked;
-  }
-
-  renderCol() {
+  editCampaign(campaign) {
     const {
       activeWorkspace: {
         workspaceId
       },
-      isFetchingCampaignsDisplayPerformance,
-      translations
+      router
     } = this.props;
 
-    const renderText = (text, number = false, format = '0,0', currency = '') => {
-      if (!text || isFetchingCampaignsDisplayPerformance) {
-        return (<span>loading...</span>);
-      }
-      if (text === '-') {
-        return text;
-      }
-      if (format.includes('%')) {
-        return number ? currency.concat(numeral(text / 100).format(format)) : text;
-      }
-      return number ? currency.concat(numeral(text).format(format)) : text;
-    };
-
-    const columns = [{
-      title: translations.STATUS,
-      dataIndex: 'status',
-      key: 'status',
-      render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>,
-      isHiddable: false,
-      visible: true
-    }, {
-      title: translations.NAME,
-      dataIndex: 'name',
-      key: 'name',
-      render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>,
-      sorter: (a, b) => this.columnSorter(a, b, 'name'),
-      isHiddable: false,
-      visible: true
-    }, {
-      title: translations.Impression,
-      dataIndex: 'impressions',
-      key: 'impression',
-      render: text => renderText(text, true, '0,0'),
-      sorter: (a, b) => this.columnSorter(a, b, 'impressions'),
-      isHiddable: true,
-      visible: true
-    }, {
-      title: translations.Clicks,
-      dataIndex: 'clicks',
-      key: 'clicks',
-      render: text => renderText(text, true, '0,0'),
-      sorter: (a, b) => this.columnSorter(a, b, 'clicks'),
-      isHiddable: true,
-      visible: true
-    }, {
-      title: translations.Spent,
-      dataIndex: 'impressions_cost',
-      key: 'spent',
-      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
-      sorter: (a, b) => this.columnSorter(a, b, 'impressions_cost'),
-      isHiddable: true,
-      visible: true
-    }, {
-      title: translations.CPM,
-      dataIndex: 'cpm',
-      key: 'cpm',
-      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
-      sorter: (a, b) => this.columnSorter(a, b, 'cpm'),
-      isHiddable: true,
-      visible: true
-    }, {
-      title: translations.CTR,
-      dataIndex: 'ctr',
-      key: 'ctr',
-      render: (text) => renderText(text, true, '0.000%'),
-      sorter: (a, b) => this.columnSorter(a, b, 'ctr'),
-      isHiddable: true,
-      visible: true
-    }, {
-      title: translations.CPC,
-      dataIndex: 'cpc',
-      key: 'cpc',
-      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
-      sorter: (a, b) => this.columnSorter(a, b, 'cpc'),
-      isHiddable: true,
-      visible: true
-    }, {
-      title: translations.CPA,
-      dataIndex: 'cpa',
-      key: 'cpa',
-      render: (text, record) => renderText(text, true, '0,0.00', translations[record.currency_code]),
-      sorter: (a, b) => this.columnSorter(a, b, 'cpa'),
-      isHiddable: true,
-      visible: true
-    }, {
-      key: 'action',
-      render: (text, record) => (
-        <Dropdown overlay={this.renderColMenu(workspaceId, record)} trigger={['click']}>
-          <a className="ant-dropdown-link">
-            <Icon type="down" />
-          </a>
-        </Dropdown>
-      ),
-      isHiddable: false,
-      visible: true
-    }];
-
-    return columns;
-  }
-
-  columnSorter(a, b, key) {
-    if (a[key] === '-' && b[key] === '-') {
-      return 0;
-    }
-    if (a[key] === '-') {
-      return 0 - b[key];
-    }
-    if (b[key] === '-') {
-      return a[key] - 0;
-    }
-    return a[key] - b[key];
-  }
-
-  renderColMenu(workspace, record) {
     let editUrl;
-    switch (record.editor_artifact_id) {
+    switch (campaign.editor_artifact_id) {
       case 'default-editor':
-        editUrl = `/${workspace}/campaigns/display/expert/edit/${record.id}`;
+        editUrl = `/${workspaceId}/campaigns/display/expert/edit/${campaign.id}`;
         break;
       case 'external-campaign-editor':
-        editUrl = `/${workspace}/campaigns/display/external/edit/${record.id}`;
+        editUrl = `/${workspaceId}/campaigns/display/external/edit/${campaign.id}`;
         break;
       case 'keywords-targeting-editor':
-        editUrl = `/${workspace}/campaigns/display/keywords/${record.id}`;
+        editUrl = `/${workspaceId}/campaigns/display/keywords/${campaign.id}`;
         break;
       default:
         break;
     }
 
-    const onClick = item => {
-      if (item.key === '1') {
-        this.archiveCampaign(record.id);
-      }
-    };
-
-    return (
-      <Menu onClick={onClick}>
-        <Menu.Item key="0">
-          <Link to={editUrl}>
-            <FormattedMessage id="EDIT" />
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="1">
-          <a>
-            <FormattedMessage id="ARCHIVE" />
-          </a>
-        </Menu.Item>
-      </Menu>
-    );
+    router.push(editUrl);
   }
 
-  archiveCampaign(id) {
+  archiveCampaign(campaign) {
     const {
-      deleteCampaignsDisplay,
-      translations
+      archiveCampaignDisplay,
+      fetchCampaignsAndStatistics,
+      translations,
+      query
     } = this.props;
 
-    const it = this;
-    confirm({
-      title: translations.MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.MODAL_CONFIRM_ARCHIVED_BODY,
+    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+
+    Modal.confirm({
+      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
       iconType: 'exclamation-circle',
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return deleteCampaignsDisplay(id).then(() => { it.fetchCampaignsDisplayWithProps(); });
+        return archiveCampaignDisplay(campaign.id).then(() => {
+          fetchCampaignsAndStatistics(filter);
+        });
       },
-      onCancel() {},
+      onCancel() { },
     });
-  }
-
-  onDateRangeChange(date) {
-    this.setState({
-      startDate: date[0],
-      endDate: date[1],
-    });
-    this.fetchCampaignsPerformanceWithProps();
-  }
-
-  formatCampaigns(campaignsDisplay, campaignsDisplayPerformance) {
-    const newArray = [];
-    campaignsDisplayPerformance.rows.map((row) => {
-      const newObject = {};
-      let i = 0;
-      campaignsDisplayPerformance.columns_headers.forEach((value) => {
-        if (row[i]) {
-          newObject[value] = row[i];
-        } else {
-          newObject[value] = '-';
-        }
-        i += 1;
-      });
-      return newArray.push(newObject);
-    });
-
-    campaignsDisplay.map((campaign) => {
-      const objectToAdd = newArray.find((element) => {
-        return element.campaign_id === campaign.id;
-      });
-      const objetTemp = Object.assign(campaign, objectToAdd);
-      campaignsDisplayPerformance.columns_headers.forEach((value) => {
-        if (!campaign[value]) {
-          objetTemp[value] = '-';
-        }
-      });
-      objetTemp.key = campaign.id;
-      return objetTemp;
-    });
-  }
-
-  fetchCampaignsDisplayWithProps(props) {
-    const {
-      fetchCampaignsDisplay,
-      activeWorkspace: {
-        organisationId
-      },
-      router
-    } = this.props;
-    const first_result = 0; // eslint-disable-line camelcase
-    const max_results = 300; // eslint-disable-line camelcase
-    const campaign_type = 'DISPLAY'; // eslint-disable-line camelcase
-    const organisation_id = organisationId; // eslint-disable-line camelcase
-
-    const params = {
-      first_result,
-      max_results,
-      campaign_type,
-      organisation_id
-    };
-
-    if (props) {
-      Object.keys(props).forEach(key => {
-        params[key] = props[key];
-      });
-    }
-
-    const updateUrl = () => {
-      const location = router.getCurrentLocation();
-      const query = Object.assign({}, location.query, params);
-      router.replace({
-        pathname: location.pathname,
-        query
-      });
-    };
-
-    fetchCampaignsDisplay(params).then(updateUrl).then(this.fetchCampaignsPerformanceWithProps());
-
-  }
-
-  fetchCampaignsPerformanceWithProps(props) {
-
-    const {
-      fetchCampaignsDisplayPerformance,
-      activeWorkspace: {
-        organisationId
-      }
-    } = this.props;
-
-    const {
-      startDate,
-      endDate,
-    } = this.state;
-
-    const startD = moment(startDate, dateFormat).format('YYYY-MM-DD');
-    const endD = moment(endDate, dateFormat).format('YYYY-MM-DD');
-
-    const dimension = ''; // eslint-disable-line camelcase
-    const end_date = endD; // eslint-disable-line camelcase
-    const filters = `organisation%3D%3D${organisationId}`; // eslint-disable-line camelcase
-    const metrics = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa']; // eslint-disable-line camelcase
-    const organisation_id = organisationId; // eslint-disable-line camelcase
-    const start_date = startD; // eslint-disable-line camelcase
-
-    const params = {
-      dimension,
-      end_date,
-      filters,
-      metrics,
-      organisation_id,
-      start_date
-    };
-
-    if (props) {
-      Object.keys(props).forEach(key => {
-        params[key] = props[key];
-      });
-    }
-    return fetchCampaignsDisplayPerformance(params);
-
   }
 
 }
 
-CampaignsDisplayTable.propTypes = {
-  isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
-  campaignsDisplay: PropTypes.arrayOf(PropTypes.object).isRequired,
-  fetchCampaignsDisplay: PropTypes.func.isRequired,
-  searchCampaignsDisplay: PropTypes.func.isRequired,
-  fetchCampaignsDisplayPerformance: PropTypes.func.isRequired,
-  isFetchingCampaignsDisplayPerformance: PropTypes.bool.isRequired,
-  campaignsDisplayPerformance: PropTypes.shape({ report_view: PropTypes.shape({ items_per_page: PropTypes.number, total_items: PropTypes.number, columns_headers: PropTypes.array, rows: PropTypes.array }) }).isRequired,
-  filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  archived: PropTypes.bool.isRequired, // eslint-disable-line react/forbid-prop-types
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  hasSearched: PropTypes.bool.isRequired,
-  filteredCampaignsDisplay: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deleteCampaignsDisplay: PropTypes.func.isRequired,
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  onClickOnClose: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleVisibleChange: PropTypes.func.isRequired
+CampaignsDisplayTable.defaultProps = {
+  archiveCampaignDisplay: () => { }
 };
 
-const mapStateToProps = state => ({
-  campaignsDisplay: state.campaignsDisplayState.campaignsDisplay,
-  campaignsDisplayPerformance: state.campaignsDisplayState.campaignsDisplayPerformance,
-  filteredCampaign: state.campaignsDisplayState.filteredCampaign,
-  isFetchingCampaignsDisplay: state.campaignsDisplayState.isFetchingCampaignsDisplay,
-  isFetchingCampaignsDisplayPerformance: state.campaignsDisplayState.isFetchingCampaignsDisplayPerformance,
+CampaignsDisplayTable.propTypes = {
+  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+  isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
+  isFetchingCampaignsStat: PropTypes.bool.isRequired,
+  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
+  totalCampaignsDisplay: PropTypes.number.isRequired,
+
+  fetchCampaignsAndStatistics: PropTypes.func.isRequired,
+  archiveCampaignDisplay: PropTypes.func.isRequired,
+  resetCampaignsDisplayTable: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state, ownProps) => ({
   activeWorkspace: state.sessionState.activeWorkspace,
-  hasSearched: state.campaignsDisplayState.hasSearched,
-  filteredCampaignsDisplay: state.campaignsDisplayState.filteredCampaignsDisplay,
-  translations: state.translationsState.translations
+  query: ownProps.router.location.query,
+  translations: state.translationsState.translations,
+
+  isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
+  isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
+  dataSource: getTableDataSource(state),
+  totalCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.total,
 });
 
 const mapDispatchToProps = {
-  fetchCampaignsDisplay: CampaignsDisplayActions.fetchCampaignsDisplay,
-  fetchCampaignsDisplayPerformance: CampaignsDisplayActions.fetchCampaignsDisplayPerformance,
-  searchCampaignsDisplay: CampaignsDisplayActions.searchCampaignsDisplay,
-  deleteCampaignsDisplay: CampaignsDisplayActions.deleteCampaignsDisplay,
+  fetchCampaignsAndStatistics: CampaignsDisplayActions.fetchCampaignsAndStatistics,
+  // archiveCampaignDisplay: CampaignEmailAction.archiveCampaignDisplay,
+  resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable
 };
 
 export default connect(

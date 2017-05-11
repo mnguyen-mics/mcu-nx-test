@@ -176,6 +176,12 @@ define(['./module'], function (module) {
         return "/o"+ service.getCurrentWorkspace().organisation_id + "d"+service.getCurrentWorkspace().datamart_id;
       };
 
+      service.getV2WorkspacePrefixUrl = function () {
+        var organisationPart = '/o/' + service.getCurrentWorkspace().organisation_id;
+        var datamartPart = service.getCurrentWorkspace().datamart_id ? '/d/' + service.getCurrentWorkspace().datamart_id : '';
+        return 'v2' + organisationPart + datamartPart;
+      };
+
       service.getCurrentDatamartId = function () {
         return service.getCurrentWorkspace().datamart_id;
       };

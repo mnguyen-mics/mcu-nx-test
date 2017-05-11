@@ -1,6 +1,7 @@
 import enUS from 'antd/lib/locale-provider/en_US';
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { IntlProvider } from 'react-intl';
 import Loading from 'mcs-react-loading';
@@ -130,7 +131,8 @@ class Navigator extends Component {
     const redirectActiveWorkspace = nextActiveWorkspace ? nextActiveWorkspace : activeWorkspace;
 
     const datamartPart = redirectActiveWorkspace.datamartId ? `/d/${redirectActiveWorkspace.datamartId}` : '';
-    const url = `${PUBLIC_URL}/o/${redirectActiveWorkspace.organisationId}${datamartPart}/campaigns/display`; // eslint-disable-line no-undef
+    const destinationPart = /o\/\d+\/(d\/\d+\/)?(.*)/.exec(router.location.pathname)[2];
+    const url = `${PUBLIC_URL}/o/${redirectActiveWorkspace.organisationId}${datamartPart}/${destinationPart}`; // eslint-disable-line no-undef
     const query = router.location.query;
 
     if (isReactUrl) {

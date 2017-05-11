@@ -358,7 +358,7 @@ define(['./module'], function (module) {
       
         function success() {
           WaitingService.hideWaitingModal();
-          $location.path(Session.getWorkspacePrefixUrl() + "/library/goals");
+          $location.path(Session.getV2WorkspacePrefixUrl() + "/campaigns/goal");
         }
 
         function error(reason) {
@@ -393,7 +393,7 @@ define(['./module'], function (module) {
         }
 
         function redirectToGoalsLibrary() {
-          return $location.path(Session.getWorkspacePrefixUrl() + "/library/goals");
+          $location.path(Session.getV2WorkspacePrefixUrl() + "/campaigns/goal");        
         }
 
         function displayError(error) {

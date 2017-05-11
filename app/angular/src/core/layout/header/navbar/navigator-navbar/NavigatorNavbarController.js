@@ -11,7 +11,7 @@ define(['./module'], function (module) {
       function isLogged() {
         $scope.isLogged = Session.isInitialized();
         $scope.user = Session.getUserProfile();
-        updateCampaignUrl();
+        // updateCampaignUrl()
       }
 
       isLogged();
@@ -30,7 +30,7 @@ define(['./module'], function (module) {
       }
 
       function updateCampaignUrl() {
-        $scope.campaignUrl = "#/v2/o/" + $scope.organisationId + ($scope.datamartId ? ('/d/' + $scope.datamartId) + "/" : '/') + "campaigns/display";
+        $scope.campaignUrl = "#/" + Session.getV2WorkspacePrefixUrl() + "/campaigns/display";
       }
 
       if (Session.isInitialized()) {
