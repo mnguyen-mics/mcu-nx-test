@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-<<<<<<< HEAD
-=======
-import numeral from 'numeral';
->>>>>>> b93d70ba... Addning new DateRange Picker with relative and Absolute lookback window
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Icon, Menu, Row, Col, Table, Input } from 'antd';
 import { McsDateRangePicker } from '../McsDateRangePicker';
