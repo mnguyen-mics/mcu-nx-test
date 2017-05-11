@@ -46,7 +46,7 @@ export const EMAIL_QUERY_SETTINGS = [
   {
     paramName: 'lookbackWindow',
     defaultValue: moment.duration(7, 'days'),
-    deserialize: query => moment.duration(parseInt(query.lookbackWindow, 10), 'seconds'),
+    deserialize: query => moment.duration(parseInt(query.lookbackWindow, 0), 'seconds'),
     serialize: value => Math.ceil(value.asSeconds()),
     isValid: query => query.lookbackWindow
   },

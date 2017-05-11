@@ -7,16 +7,16 @@ const { RangePicker } = DatePicker;
 
 const ranges = [{
   name: 'TODAY',
-  duration: [moment(), moment()]
+  dateRange: [moment(), moment()]
 }, {
   name: 'YESTERDAY',
-  duration: [moment().subtract(1, 'days'), moment()]
+  dateRange: [moment().subtract(1, 'days'), moment()]
 }, {
   name: 'LAST_7_DAYS',
-  duration: [moment().subtract(7, 'days'), moment()]
+  dateRange: [moment().subtract(7, 'days'), moment()]
 }, {
   name: 'LAST_30_DAYS',
-  duration: [moment().subtract(1, 'month'), moment()]
+  dateRange: [moment().subtract(1, 'month'), moment()]
 }];
 
 const format = 'YYYY-MM-DD';
@@ -29,33 +29,35 @@ class McsDateRangePicker extends Component {
     this.handleDatePickerMenuChange = this.handleDatePickerMenuChange.bind(this);
     this.onDatePickerOpenChange = this.onDatePickerOpenChange.bind(this);
     this.state = {
-      isCustom: false,
-      isOpen: false
+      showRangePicker: false,
     };
   }
 
   handleDropdownMenuClick(e) {
-    if (e.key === 'CUSTOM') {
-      return this.setState({
-        isCustom: true,
-        isOpen: true
-      });
-    }
     const {
       onChange
     } = this.props;
+
+    if (e.key === 'CUSTOM') {
+      this.setState({
+        showRangePicker: true
+      });
+      return;
+    }
+
     this.setState({
-      isCustom: false,
-      isOpen: false
+      showRangePicker: false,
     });
+
     const selectedRange = ranges.find(element => {
       return element.name.toLowerCase() === e.key.toLowerCase();
     });
-    return onChange({
-      lookbackWindow: moment.duration(selectedRange.duration[1] - selectedRange.duration[0]),
+
+    onChange({
+      lookbackWindow: moment.duration(selectedRange.dateRange[1] - selectedRange.dateRange[0]),
       rangeType: 'relative',
-      from: selectedRange.duration[0],
-      to: selectedRange.duration[1]
+      from: selectedRange.dateRange[0],
+      to: selectedRange.dateRange[1]
     });
   }
 
@@ -64,10 +66,9 @@ class McsDateRangePicker extends Component {
       onChange
     } = this.props;
     this.setState({
-      isCustom: false,
-      isOpen: false
+      showRangePicker: false,
     });
-    return onChange({
+    onChange({
       rangeType: 'absolute',
       from: dates[0],
       to: dates[1],
@@ -77,8 +78,7 @@ class McsDateRangePicker extends Component {
 
   onDatePickerOpenChange() {
     this.setState({
-      isCustom: false,
-      isOpen: false
+      showRangePicker: false,
     });
   }
 
@@ -91,13 +91,11 @@ class McsDateRangePicker extends Component {
     if (values.rangeType === 'absolute') {
       return `${values.from.format(format)} ~ ${values.to.format(format)}`;
     } else if (values.rangeType === 'relative') {
-      let selectedRange;
-      ranges.forEach((range) => {
-        if (Math.round(moment.duration(range.duration[1] - range.duration[0], 'milliseconds').asSeconds()) === Math.round(values.lookbackWindow.asSeconds())) {
-          selectedRange = range;
-        }
+
+      const selectedRange = ranges.find((range) => {
+        return Math.ceil(moment.duration(range.dateRange[1] - range.dateRange[0]).asSeconds()) === Math.ceil(values.lookbackWindow.asSeconds());
       });
-      return selectedRange ? translations[selectedRange.name] : Math.round(values.lookbackWindow.asSeconds()).toString().concat(' ', translations.SECONDS);
+      return selectedRange ? translations[selectedRange.name] : Math.ceil(values.lookbackWindow.asSeconds()).toString().concat(' ', translations.SECONDS);
     }
     return translations.ERROR;
   }
@@ -140,17 +138,16 @@ class McsDateRangePicker extends Component {
     } = this.props;
 
     const {
-      isCustom,
-      isOpen,
+      showRangePicker,
     } = this.state;
 
-    return isCustom === true ? (<RangePicker
+    return showRangePicker === true ? (<RangePicker
       allowClear={false}
       onChange={this.handleDatePickerMenuChange}
       value={[values.from, values.to]}
       disabledDate={current => this.disableFutureDates(current)}
       onOpenChange={this.onDatePickerOpenChange}
-      open={isOpen}
+      open={showRangePicker}
     />) : this.renderRangesDropdown();
   }
 }
