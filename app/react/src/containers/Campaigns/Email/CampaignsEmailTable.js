@@ -91,7 +91,8 @@ class CampaignsEmailTable extends Component {
     const {
       query,
       activeWorkspace: {
-        workspaceId
+        workspaceId,
+        organisationId
       },
       translations,
       isFetchingCampaignsEmail,
@@ -162,7 +163,7 @@ class CampaignsEmailTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/email/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'EMAIL_SENT',

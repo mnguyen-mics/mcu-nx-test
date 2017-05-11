@@ -6,6 +6,7 @@ import { PersistentReducers } from './PersistentReducers';
 
 import ActionbarReducers from '../state/Actionbar/reducer';
 import CampaignsDisplayReducers from '../state/Campaigns/Display/reducer';
+import CampaignEmailReducers from '../state/Campaign/Email/reducer';
 import CampaignsEmailReducers from '../state/Campaigns/Email/reducer';
 import GoalsReducers from '../state/Campaigns/Goal/reducer';
 import GoalReducers from '../state/Campaign/Goal/reducer';
@@ -32,6 +33,7 @@ const allReducers = Object.assign(
   PersistentReducers,
   ActionbarReducers,
   CampaignsDisplayReducers,
+  CampaignEmailReducers,
   CampaignsEmailReducers,
   GoalsReducers,
   GoalReducers,
