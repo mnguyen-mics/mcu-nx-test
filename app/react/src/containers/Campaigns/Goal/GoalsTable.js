@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Icon, Modal, Spin } from 'antd';
+import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView } from '../../../components/TableView';
 
 import * as GoalsActions from '../../../state/Campaigns/Goal/actions';
-import * as GoalActions from '../../../state/Campaign/Goal/actions';
 
 import {
   GOAL_QUERY_SETTINGS,
@@ -137,7 +136,7 @@ class GoalsTable extends Component {
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingGoalsStat) {
-        return (<Spin size="small" />); // (<span>loading...</span>);
+        return (<i className="mcs-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -171,12 +170,11 @@ class GoalsTable extends Component {
         key: 'action',
         actions: [
           {
-            translationKey: 'ARCHIVE',
-            callback: this.handleArchiveGoal
-          },
-          {
             translationKey: 'EDIT',
             callback: this.handleEditGoal
+          }, {
+            translationKey: 'ARCHIVE',
+            callback: this.handleArchiveGoal
           }
         ]
       }
@@ -185,7 +183,7 @@ class GoalsTable extends Component {
     const filtersOptions = [
       {
         name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /><Icon type="down" /></div>),
+        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
           handleMenuClick: value => {
             this.updateQueryParams({

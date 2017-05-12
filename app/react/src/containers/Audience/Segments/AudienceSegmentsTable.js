@@ -3,45 +3,44 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Icon, Modal } from 'antd';
+import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView } from '../../../components/TableView';
 
-import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
+import * as AudienceSegmentsActions from '../../../state/Audience/Segments/actions';
 
 import {
-  DISPLAY_QUERY_SETTINGS,
+  AUDIENCE_SEGMENTS_SETTINGS,
 
   updateQueryWithParams,
   deserializeQuery
 } from '../RouteQuerySelector';
 
 import { formatMetric } from '../../../utils/MetricHelper';
-import { CampaignStatuses } from '../../../constants/CampaignConstant';
 
 import {
   getTableDataSource
- } from '../../../state/Campaigns/Display/selectors';
+ } from '../../../state/Audience/Segments/selectors';
 
-class CampaignsDisplayTable extends Component {
+class AudienceSegmentsTable extends Component {
 
   constructor(props) {
     super(props);
     this.updateQueryParams = this.updateQueryParams.bind(this);
-    this.archiveCampaign = this.archiveCampaign.bind(this);
-    this.editCampaign = this.editCampaign.bind(this);
+    this.archiveSegment = this.archiveSegment.bind(this);
+    this.editSegment = this.editSegment.bind(this);
   }
 
   componentDidMount() {
     const {
       query,
 
-      fetchCampaignsAndStatistics
+      fetchSegmentsAndStatistics
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
-    fetchCampaignsAndStatistics(filter);
+    const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
+    fetchSegmentsAndStatistics(filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,7 +50,7 @@ class CampaignsDisplayTable extends Component {
         workspaceId
       },
 
-      fetchCampaignsAndStatistics
+      fetchSegmentsAndStatistics
     } = this.props;
 
     const {
@@ -62,13 +61,13 @@ class CampaignsDisplayTable extends Component {
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, DISPLAY_QUERY_SETTINGS);
-      fetchCampaignsAndStatistics(filter);
+      const filter = deserializeQuery(nextQuery, AUDIENCE_SEGMENTS_SETTINGS);
+      fetchSegmentsAndStatistics(filter);
     }
   }
 
   componentWillUnmount() {
-    this.props.resetCampaignsDisplayTable();
+    this.props.resetAudienceSegmentsTable();
   }
 
   updateQueryParams(params) {
@@ -80,7 +79,7 @@ class CampaignsDisplayTable extends Component {
     const location = router.getCurrentLocation();
     router.replace({
       pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, DISPLAY_QUERY_SETTINGS)
+      query: updateQueryWithParams(currentQuery, params, AUDIENCE_SEGMENTS_SETTINGS)
     });
   }
 
@@ -91,17 +90,17 @@ class CampaignsDisplayTable extends Component {
         workspaceId
       },
       translations,
-      isFetchingCampaignsDisplay,
-      isFetchingCampaignsStat,
+      isFetchingAudienceSegments,
+      isFetchingSegmentsStat,
       dataSource,
-      totalCampaignsDisplay
+      totalAudienceSegments
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+    const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
 
     const searchOptions = {
       isEnabled: true,
-      placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
+      placeholder: translations.SEARCH_AUDIENCE_SEGMENTS,
       onSearch: value => this.updateQueryParams({
         keywords: value
       }),
@@ -125,7 +124,7 @@ class CampaignsDisplayTable extends Component {
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalCampaignsDisplay,
+      total: totalAudienceSegments,
       onChange: (page) => this.updateQueryParams({
         currentPage: page
       }),
@@ -135,7 +134,7 @@ class CampaignsDisplayTable extends Component {
     };
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
-      if (isFetchingCampaignsStat) {
+      if (isFetchingSegmentsStat) {
         return (<i className="mcs-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
@@ -144,70 +143,77 @@ class CampaignsDisplayTable extends Component {
 
     const dataColumns = [
       {
-        translationKey: 'STATUS',
-        key: 'status',
+        translationKey: 'TYPE',
+        key: 'type',
         isHiddable: false,
-        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+        render: (text) => {
+          switch (text) {
+            case 'USER_ACTIVATION':
+              return (<Tooltip placement="top" title={translations[text]}><Icon type="rocket" /></Tooltip>);
+            case 'USER_QUERY':
+              return (<Tooltip placement="top" title={translations[text]}><Icon type="database" /></Tooltip>);
+            case 'USER_LIST':
+              return (<Tooltip placement="top" title={translations[text]}><Icon type="solution" /></Tooltip>);
+            default:
+              return (<Tooltip placement="top" title={translations[text]}><Icon type="database" /></Tooltip>);
+          }
+        }
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
       },
       {
-        translationKey: 'IMPRESSIONS',
-        key: 'impressions',
+        translationKey: 'TECHNICAL_NAME',
+        isVisibleByDefault: false,
+        key: 'technical_name',
+        isHiddable: true,
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
+      },
+      {
+        translationKey: 'USER_POINTS',
+        key: 'user_points',
         isVisibleByDefault: true,
         isHiddable: true,
         render: text => renderMetricData(text, '0,0')
       },
       {
-        translationKey: 'CLICKS',
-        key: 'clicks',
+        translationKey: 'USER_ACCOUNTS',
+        key: 'user_accounts',
         isVisibleByDefault: true,
         isHiddable: true,
         render: text => renderMetricData(text, '0,0')
       },
       {
-        translationKey: 'IMPRESSIONS_COST',
-        key: 'impressions_cost',
+        translationKey: 'EMAILS',
+        key: 'emails',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: (text, record) => {
-          // TODO find campaign (with getCampaignsDisplayById(record['campaign_id']))
-          const campaignCurrency = 'EUR';
-          return renderMetricData(text, '0,0.00', campaignCurrency);
-        }
+        render: text => renderMetricData(text, '0,0')
       },
       {
-        translationKey: 'CPM',
-        key: 'cpm',
+        translationKey: 'COOKIES',
+        key: 'desktop_cookie_ids',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0')
       },
       {
-        translationKey: 'CTR',
-        key: 'ctr',
+        translationKey: 'ADDITION',
+        key: 'user_point_additions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,00 %')
+        render: text => renderMetricData(text, '0,0')
       },
       {
-        translationKey: 'CPC',
-        key: 'cpc',
+        translationKey: 'DELETION',
+        key: 'user_point_deletions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0')
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
-      }
     ];
 
     const actionColumns = [
@@ -216,16 +222,16 @@ class CampaignsDisplayTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editCampaign
+            callback: this.editSegment
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign
+            callback: this.archiveSegment
           }
         ]
       }
     ];
 
-    const statusItems = CampaignStatuses.map(status => ({ key: status, value: status }));
+    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY'].map(type => ({ key: type, value: type }));
 
     // lodash.debounce(plop, 1000)
     // const plop = value => {
@@ -237,15 +243,23 @@ class CampaignsDisplayTable extends Component {
 
     const filtersOptions = [
       {
-        name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
+        name: 'types',
+        displayElement: (<div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>),
         menuItems: {
-          handleMenuClick: value => this.updateQueryParams({ statuses: value.status.map(item => item.value) }),
-          selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
-          items: statusItems
+          handleMenuClick: value => this.updateQueryParams({ types: value.types.map(item => item.value) }),
+          selectedItems: filter.types.map(type => ({ key: type, value: type })),
+          items: typeItems
         }
       }
     ];
+
+    // lodash.debounce(plop, 1000)
+    // const plop = value => {
+    //   console.log('plop');
+    //   return this.updateQueryParams({
+    //     statuses: value.status.map(item => item.value)
+    //   });
+    // };
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
@@ -255,7 +269,7 @@ class CampaignsDisplayTable extends Component {
     return (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
-      loading={isFetchingCampaignsDisplay}
+      loading={isFetchingAudienceSegments}
       onChange={() => {}}
       searchOptions={searchOptions}
       dateRangePickerOptions={dateRangePickerOptions}
@@ -266,7 +280,7 @@ class CampaignsDisplayTable extends Component {
 
   }
 
-  editCampaign(campaign) {
+  editSegment(segment) {
     const {
       activeWorkspace: {
         workspaceId
@@ -274,43 +288,30 @@ class CampaignsDisplayTable extends Component {
       router
     } = this.props;
 
-    let editUrl;
-    switch (campaign.editor_artifact_id) {
-      case 'default-editor':
-        editUrl = `/${workspaceId}/campaigns/display/expert/edit/${campaign.id}`;
-        break;
-      case 'external-campaign-editor':
-        editUrl = `/${workspaceId}/campaigns/display/external/edit/${campaign.id}`;
-        break;
-      case 'keywords-targeting-editor':
-        editUrl = `/${workspaceId}/campaigns/display/keywords/${campaign.id}`;
-        break;
-      default:
-        break;
-    }
+    const editUrl = `/${workspaceId}/datamart/segments//${segment.id}`;
 
     router.push(editUrl);
   }
 
-  archiveCampaign(campaign) {
+  archiveSegment(segment) {
     const {
-      archiveCampaignDisplay,
-      fetchCampaignsAndStatistics,
+      archiveAudienceSegment,
+      fetchSegmentsAndStatistics,
       translations,
       query
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+    const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
 
     Modal.confirm({
-      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY,
       iconType: 'exclamation-circle',
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return archiveCampaignDisplay(campaign.id).then(() => {
-          fetchCampaignsAndStatistics(filter);
+        return archiveAudienceSegment(segment.id).then(() => {
+          fetchSegmentsAndStatistics(filter);
         });
       },
       onCancel() { },
@@ -319,24 +320,24 @@ class CampaignsDisplayTable extends Component {
 
 }
 
-CampaignsDisplayTable.defaultProps = {
-  archiveCampaignDisplay: () => { }
+AudienceSegmentsTable.defaultProps = {
+  archiveAudienceSegment: () => { }
 };
 
-CampaignsDisplayTable.propTypes = {
+AudienceSegmentsTable.propTypes = {
   router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-  isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
-  isFetchingCampaignsStat: PropTypes.bool.isRequired,
+  isFetchingAudienceSegments: PropTypes.bool.isRequired,
+  isFetchingSegmentsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  totalCampaignsDisplay: PropTypes.number.isRequired,
+  totalAudienceSegments: PropTypes.number.isRequired,
 
-  fetchCampaignsAndStatistics: PropTypes.func.isRequired,
-  archiveCampaignDisplay: PropTypes.func.isRequired,
-  resetCampaignsDisplayTable: PropTypes.func.isRequired,
+  fetchSegmentsAndStatistics: PropTypes.func.isRequired,
+  archiveAudienceSegment: PropTypes.func.isRequired,
+  resetAudienceSegmentsTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -344,19 +345,19 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
-  isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
-  isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
+  isFetchingAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.isFetching,
+  isFetchingSegmentsStat: state.audienceSegmentsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.total,
+  totalAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.total,
 });
 
 const mapDispatchToProps = {
-  fetchCampaignsAndStatistics: CampaignsDisplayActions.fetchCampaignsAndStatistics,
-  // archiveCampaignDisplay: CampaignEmailAction.archiveCampaignDisplay,
-  resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable
+  fetchSegmentsAndStatistics: AudienceSegmentsActions.fetchSegmentsAndStatistics,
+  archiveAudienceSegment: AudienceSegmentsActions.archiveAudienceSegment,
+  resetAudienceSegmentsTable: AudienceSegmentsActions.resetAudienceSegmentsTable
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CampaignsDisplayTable);
+)(AudienceSegmentsTable);

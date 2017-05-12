@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import lodash from 'lodash';
 
 import Link from 'react-router/lib/Link';
-import { Icon, Modal, Spin } from 'antd';
+import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView } from '../../../components/TableView';
@@ -137,7 +137,7 @@ class CampaignsEmailTable extends Component {
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingCampaignsStat) {
-        return (<Spin size="small" />); // (<span>loading...</span>);
+        return (<i className="mcs-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -198,12 +198,11 @@ class CampaignsEmailTable extends Component {
         key: 'action',
         actions: [
           {
-            translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign
-          },
-          {
             translationKey: 'EDIT',
             callback: this.editCampaign
+          }, {
+            translationKey: 'ARCHIVE',
+            callback: this.archiveCampaign
           }
         ]
       }
@@ -214,7 +213,7 @@ class CampaignsEmailTable extends Component {
     const filtersOptions = [
       {
         name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /><Icon type="down" /></div>),
+        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
           handleMenuClick: value => {
             this.updateQueryParams({

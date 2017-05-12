@@ -9,6 +9,7 @@ import { NotFound } from '../containers/NotFound';
 import { ContentView } from '../containers/ContentView';
 
 import CampaignsRouter from './Campaigns';
+import AudienceRouter from './Audience';
 import CampaignRouter from './Campaign';
 import LoginRouter from './Login';
 
@@ -25,6 +26,7 @@ export default (store) => { // eslint-disable-line no-unused-vars
       <Route path={`${PUBLIC_URL}/o/:organisationId(/d/:datamartId)`} component={requireAuthentication(ContentView)}>
         { CampaignsRouter }
         { CampaignRouter }
+        { AudienceRouter }
         <Route path="*" component={NotFound} />
       </Route>
       <Route path={`${PUBLIC_URL}`} component={ContentView}>
