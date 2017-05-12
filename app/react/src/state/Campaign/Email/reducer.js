@@ -28,12 +28,14 @@ const campaignEmailState = (state = defaultCampaignEmailState, action) => {
     case CAMPAIGN_EMAIL_FETCH_REQUEST_FAILURE:
       return {
         ...state,
-        campaignEmail: defaultCampaignEmailState.campaignEmail
+        campaignEmail: defaultCampaignEmailState.campaignEmail,
+        isFetching: false
       };
     case CAMPAIGN_EMAIL_FETCH_REQUEST_SUCCESS:
       return {
         ...state,
-        campaignEmail: action.response.data
+        campaignEmail: action.response.data,
+        isFetching: false
       };
     case CAMPAIGN_EMAIL_UPDATE_REQUEST:
       return {
@@ -58,6 +60,7 @@ const campaignEmailState = (state = defaultCampaignEmailState, action) => {
     case CAMPAIGN_EMAIL_UPDATE_REQUEST_SUCCESS:
       return {
         ...state,
+        campaignEmail: action.response.data,
         isUpdating: false
       };
     case CAMPAIGN_EMAIL_ARCHIVE_REQUEST_SUCCESS:

@@ -7,7 +7,6 @@ import { ScrollComponent } from '../../../components/ScrollComponent';
 import CampaignEmailActionbar from './CampaignEmailActionbar';
 import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
 
-console.log(CampaignEmailActions);
 const { Content } = Layout;
 
 class CampaignEmail extends Component {
@@ -19,14 +18,17 @@ class CampaignEmail extends Component {
       },
       fetchCampaignEmail
     } = this.props;
-
     fetchCampaignEmail(campaignId);
+  }
+
+  componentWillUnmount() {
+    this.props.resetCampaignEmail();
   }
 
   render() {
     return (
       <Layout>
-        <CampaignEmailActionbar />
+        <CampaignEmailActionbar {...this.props} />
         <Content>
           <ScrollComponent />
         </Content>
@@ -40,7 +42,8 @@ CampaignEmail.propTypes = {
   params: PropTypes.shape({
     campaignId: PropTypes.string
   }).isRequired,
-  fetchCampaignEmail: PropTypes.func.isRequired
+  fetchCampaignEmail: PropTypes.func.isRequired,
+  resetCampaignEmail: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -48,7 +51,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchCampaignEmail: CampaignEmailActions.fetchCampaignEmail
+  fetchCampaignEmail: CampaignEmailActions.fetchCampaignEmail,
+  resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
 };
 
 CampaignEmail = connect(

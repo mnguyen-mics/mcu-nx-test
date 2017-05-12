@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Icon } from 'antd';
+import { Menu, Modal, Dropdown, Icon } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
@@ -13,6 +13,7 @@ class CampaignEmailActionbar extends Component {
   constructor(props) {
     super(props);
     this.buildActionElement = this.buildActionElement.bind(this);
+    this.buildMenu = this.buildMenu.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -27,7 +28,7 @@ class CampaignEmailActionbar extends Component {
       campaignEmail: newCampaignEmail
     } = nextProps;
 
-    if (newCampaignEmail.id !== campaignEmail.id) {
+    if (newCampaignEmail.id || (newCampaignEmail.id !== campaignEmail.id)) {
       const breadcrumb1 = {
         name: translations.EMAIL_CAMPAIGNS
       };
@@ -41,11 +42,32 @@ class CampaignEmailActionbar extends Component {
 
   render() {
 
+    const {
+      activeWorkspace: {
+        workspaceId
+      },
+      params: {
+        campaignId
+      }
+    } = this.props;
+
     const actionElement = this.buildActionElement();
+    const menu = this.buildMenu();
 
     return (
       <Actionbar {...this.props}>
         { actionElement }
+        <Link to={`/${workspaceId}/campaigns/email/edit/${campaignId}`}>
+          <ActionbarButton className="mcs-actionbar-button">
+            <Icon type="edit" />
+            <FormattedMessage id="EDIT" />
+          </ActionbarButton>
+        </Link>
+        <Dropdown overlay={menu} trigger={['click']}>
+          <ActionbarButton className="mcs-actionbar-button">
+            <Icon type="ellipsis" />
+          </ActionbarButton>
+        </Dropdown>
       </Actionbar>
     );
 
@@ -58,7 +80,8 @@ class CampaignEmailActionbar extends Component {
     } = this.props;
 
     const onClickElement = status => updateCampaignEmail(campaignEmail.id, {
-      status
+      status,
+      type: 'EMAIL'
     });
 
     const activeCampaignElement = (
@@ -77,23 +100,73 @@ class CampaignEmailActionbar extends Component {
     return (campaignEmail.status === 'PAUSED' || campaignEmail.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement;
   }
 
+  buildMenu() {
+
+    const {
+      translations,
+      campaignEmail,
+      archiveCampaignEmail
+    } = this.props;
+
+    const handleArchiveGoal = campaignEmailId => {
+      Modal.confirm({
+        title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
+        content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+        iconType: 'exclamation-circle',
+        okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
+        cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+        onOk() {
+          return archiveCampaignEmail(campaignEmailId);
+        },
+        onCancel() { },
+      });
+    };
+
+    const onClick = event => {
+      switch (event.key) {
+        case 'ARCHIVED':
+          return handleArchiveGoal(campaignEmail.id);
+        default:
+          return () => {};
+      }
+    };
+
+    const addMenu = (
+      <Menu onClick={onClick}>
+        <Menu.Item key="ARCHIVED">
+          <FormattedMessage id="ARCHIVED" />
+        </Menu.Item>
+      </Menu>
+    );
+
+    return addMenu;
+  }
+
 }
 
 CampaignEmailActionbar.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  params: PropTypes.shape({
+    campaignId: PropTypes.string
+  }).isRequired,
   campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   setBreadcrumb: PropTypes.func.isRequired,
-  updateCampaignEmail: PropTypes.func.isRequired
+  updateCampaignEmail: PropTypes.func.isRequired,
+  archiveCampaignEmail: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   translations: state.translationsState.translations,
-  campaignEmail: state.campaignEmailState.campaignEmail
+  activeWorkspace: state.sessionState.activeWorkspace,
+  campaignEmail: state.campaignEmailState.campaignEmail,
+  params: ownProps.router.params
 });
 
 const mapDispatchToProps = {
   setBreadcrumb: ActionbarActions.setBreadcrumb,
-  updateCampaignEmail: CampaignEmailActions.updateCampaignEmail
+  updateCampaignEmail: CampaignEmailActions.updateCampaignEmail,
+  archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail
 };
 
 CampaignEmailActionbar = connect(

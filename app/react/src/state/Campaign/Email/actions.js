@@ -51,7 +51,7 @@ const updateCampaignEmail = (id, body) => {
   };
 };
 
-const archiveCampaignEmail = (id) => {
+const archiveCampaignEmail = id => {
   return (dispatch, getState) => { // eslint-disable-line consistent-return
     const { campaignEmailState } = getState();
 
@@ -72,12 +72,10 @@ const archiveCampaignEmail = (id) => {
   };
 };
 
-const resetCampaignEmail = () => {
-  return (dispatch) => {
-    return dispatch({
-      type: CAMPAIGN_EMAIL_RESET
-    });
-  };
+const resetCampaignEmail = () => dispatch => {
+  return dispatch({
+    type: CAMPAIGN_EMAIL_RESET
+  });
 };
 
 export {
