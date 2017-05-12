@@ -38,10 +38,17 @@ export const EMAIL_QUERY_SETTINGS = [
   },
   {
     paramName: 'rangeType',
-    defaultValue: 'absolute',
+    defaultValue: 'relative',
     deserialize: query => query.rangeType,
     serialize: value => value,
     isValid: query => query.rangeType
+  },
+  {
+    paramName: 'lookbackWindow',
+    defaultValue: moment.duration(7, 'days'),
+    deserialize: query => moment.duration(parseInt(query.lookbackWindow, 0), 'seconds'),
+    serialize: value => Math.ceil(value.asSeconds()),
+    isValid: query => query.lookbackWindow
   },
   {
     paramName: 'from',

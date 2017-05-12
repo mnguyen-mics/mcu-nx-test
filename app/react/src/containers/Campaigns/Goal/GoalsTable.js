@@ -111,12 +111,18 @@ class GoalsTable extends Component {
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (dates) => this.updateQueryParams({
-        from: dates[0],
-        to: dates[1]
+      onChange: (values) => this.updateQueryParams({
+        rangeType: values.rangeType,
+        lookbackWindow: values.lookbackWindow,
+        from: values.from,
+        to: values.to,
       }),
-      from: filter.from,
-      to: filter.to
+      values: {
+        rangeType: filter.rangeType,
+        lookbackWindow: filter.lookbackWindow,
+        from: filter.from,
+        to: filter.to
+      }
     };
 
     const columnsVisibilityOptions = {
