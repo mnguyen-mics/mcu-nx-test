@@ -35,13 +35,15 @@ class GoalsTable extends Component {
 
   componentDidMount() {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       query,
-
-      fetchGoalsAndStatistics
+      loadGoalsDataSource
     } = this.props;
 
     const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
-    fetchGoalsAndStatistics(filter);
+    loadGoalsDataSource(organisationId, filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,19 +53,20 @@ class GoalsTable extends Component {
         workspaceId
       },
 
-      fetchGoalsAndStatistics
+      loadGoalsDataSource
     } = this.props;
 
     const {
       query: nextQuery,
       activeWorkspace: {
-        workspaceId: nextWorkspaceId
+        workspaceId: nextWorkspaceId,
+        organisationId
       },
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
       const filter = deserializeQuery(nextQuery, GOAL_QUERY_SETTINGS);
-      fetchGoalsAndStatistics(filter);
+      loadGoalsDataSource(organisationId, filter);
     }
   }
 
@@ -160,14 +163,14 @@ class GoalsTable extends Component {
         key: 'conversions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0')
+        render: text => renderMetricData(text, '0,0')
       },
       {
         translationKey: 'CONVERSION_VALUE',
         key: 'value',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0', 'EUR')
+        render: text => renderMetricData(text, '0,0.00', 'EUR')
       }
     ];
 
@@ -236,8 +239,11 @@ class GoalsTable extends Component {
 
   handleArchiveGoal(goal) {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       archiveGoal,
-      fetchGoalsAndStatistics,
+      loadGoalsDataSource,
       translations,
       query
     } = this.props;
@@ -252,7 +258,7 @@ class GoalsTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveGoal(goal.id).then(() => {
-          fetchGoalsAndStatistics(filter);
+          loadGoalsDataSource(organisationId, filter);
         });
       },
       onCancel() { },
@@ -276,7 +282,7 @@ GoalsTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalGoals: PropTypes.number.isRequired,
 
-  fetchGoalsAndStatistics: PropTypes.func.isRequired,
+  loadGoalsDataSource: PropTypes.func.isRequired,
   archiveGoal: PropTypes.func.isRequired,
   resetGoalsTable: PropTypes.func.isRequired,
 };
@@ -293,7 +299,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchGoalsAndStatistics: GoalsActions.fetchGoalsAndStatistics,
+  loadGoalsDataSource: GoalsActions.loadGoalsDataSource,
   // archiveGoal: GoalActions.archiveGoal,
   resetGoalsTable: GoalsActions.resetGoalsTable
 };

@@ -1,6 +1,6 @@
 import 'whatwg-fetch';
 
-import { CALL_API } from '../../middleware/api';
+import { CALL_API } from '../../middleware/apiRequest';
 
 import {
   TRANSLATIONS_FETCH_REQUEST,

@@ -5,13 +5,9 @@ import {
   // CAMPAIGNS_DISPLAY_DELETE_REQUEST_FAILURE,
   // CAMPAIGNS_DISPLAY_DELETE_REQUEST_SUCCESS,
 
-  CAMPAIGNS_DISPLAY_FETCH_REQUEST,
-  CAMPAIGNS_DISPLAY_FETCH_REQUEST_FAILURE,
-  CAMPAIGNS_DISPLAY_FETCH_REQUEST_SUCCESS,
-
-  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST,
-  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE,
-  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS,
+  CAMPAIGNS_DISPLAY_LOAD_ALL,
+  CAMPAIGNS_DISPLAY_LIST_FETCH,
+  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH,
 
   CAMPAIGNS_DISPLAY_TABLE_RESET
 } from '../../action-types';
@@ -24,19 +20,19 @@ const defaultCampaignsDisplayApiState = {
 
 const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) => {
   switch (action.type) {
-
-    case CAMPAIGNS_DISPLAY_FETCH_REQUEST:
+    case CAMPAIGNS_DISPLAY_LOAD_ALL:
+    case CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case CAMPAIGNS_DISPLAY_FETCH_REQUEST_SUCCESS:
+    case CAMPAIGNS_DISPLAY_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.response
+        ...action.payload
       };
-    case CAMPAIGNS_DISPLAY_FETCH_REQUEST_FAILURE:
+    case CAMPAIGNS_DISPLAY_LIST_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false
@@ -59,18 +55,19 @@ const defaultPerformanceReportApiState = {
 };
 const performanceReportApi = (state = defaultPerformanceReportApiState, action) => {
   switch (action.type) {
-    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST:
+    case CAMPAIGNS_DISPLAY_LOAD_ALL:
+    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS:
+    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.response.data
+        ...action.payload.data
       };
-    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE:
+    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false
@@ -81,7 +78,6 @@ const performanceReportApi = (state = defaultPerformanceReportApiState, action) 
       return state;
   }
 };
-
 
 const campaignsDisplayTable = combineReducers({
   campaignsDisplayApi,

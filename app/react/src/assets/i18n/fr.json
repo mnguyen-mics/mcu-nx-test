@@ -91,6 +91,10 @@
   "FROM": "De",
   "TO": "à",
   "ERROR": "Erreur",
-  "SECONDS": "secondes"
-
+  "SECONDS": "secondes",
+  "EXPORT": "Export",
+  "EXPORT_IN_PROGRESS": "Export en cours...",
+  "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",
+  "CAMPAIGNS_EMAIL_EXPORT_TITLE": "Campaigns Email Export",
+  "GOALS_EXPORT_TITLE": "Goals Export"
 }
