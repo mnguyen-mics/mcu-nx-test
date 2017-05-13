@@ -24,9 +24,9 @@ class AudienceSidebar extends Component {
     const isActiveUrl = path => pathname.search(path) >= 0; // eslint-disable-line no-unused-vars
 
     const segmentsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/segments`; // eslint-disable-line no-undef
-    const partitionsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/partitions`; // eslint-disable-line no-undef
-    const queriesUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/queries`; // eslint-disable-line no-undef
-    const monitoringUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/monitoring`; // eslint-disable-line no-undef
+    // const partitionsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/partitions`; // eslint-disable-line no-undef
+    // const queriesUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/queries`; // eslint-disable-line no-undef
+    // const monitoringUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/monitoring`; // eslint-disable-line no-undef
 
     const items = [
       {

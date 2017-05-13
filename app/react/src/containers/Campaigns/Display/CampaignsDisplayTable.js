@@ -174,7 +174,7 @@ class CampaignsDisplayTable extends Component {
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: (text, record) => {
+        render: text => {
           // TODO find campaign (with getCampaignsDisplayById(record['campaign_id']))
           const campaignCurrency = 'EUR';
           return renderMetricData(text, '0,0.00', campaignCurrency);

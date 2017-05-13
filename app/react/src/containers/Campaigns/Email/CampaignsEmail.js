@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Layout } from 'antd';
 
 import { ScrollComponent } from '../../../components/ScrollComponent';
@@ -25,9 +24,5 @@ class CampaignsEmail extends Component {
   }
 
 }
-
-CampaignsEmail.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-};
 
 export default CampaignsEmail;
