@@ -7,7 +7,7 @@ const getPerformanceReportHeaders = state => state.audienceSegmentsTable.perform
 const getAudienceSegmentsById = createSelector(
   getAudienceSegments,
   audienceSegments => audienceSegments.reduce((acc, audienceSegment) => {
-    acc[audienceSegment.id] = audienceSegment;
+    acc[audienceSegment.id] = audienceSegment; // eslint-disable-line no-param-reassign
     return acc;
   }, {})
 );
@@ -17,7 +17,7 @@ const convertPerformanceReportToObjectArray = createSelector(
   getPerformanceReportRows,
   (headers, rows) => rows.map(row => {
     return headers.reduce((acc, header, index) => {
-      acc[header] = row[index];
+      acc[header] = row[index]; // eslint-disable-line no-param-reassign
       return acc;
     }, {});
   })
@@ -26,7 +26,7 @@ const convertPerformanceReportToObjectArray = createSelector(
 const getStatBySegmentId = createSelector(
   convertPerformanceReportToObjectArray,
   (array) => array.reduce((acc, reportObject) => {
-    acc[reportObject.audience_segment_id] = reportObject;
+    acc[reportObject.audience_segment_id] = reportObject; // eslint-disable-line no-param-reassign
     return acc;
   }, {})
 );

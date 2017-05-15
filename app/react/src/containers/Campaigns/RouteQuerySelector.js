@@ -74,9 +74,9 @@ export const isQueryValid = (query = {}, settings) => {
 export const buildDefaultQuery = (existingQuery = {}, settings) => {
   return settings.reduce((acc, setting) => {
     if (setting.isValid(existingQuery)) {
-      acc[setting.paramName] = existingQuery[setting.paramName];
+      acc[setting.paramName] = existingQuery[setting.paramName]; // eslint-disable-line no-param-reassign
     } else {
-      acc[setting.paramName] = setting.serialize(setting.defaultValue);
+      acc[setting.paramName] = setting.serialize(setting.defaultValue); // eslint-disable-line no-param-reassign
     }
     return acc;
   }, {});
@@ -87,7 +87,7 @@ export const updateQueryWithParams = (query, params, settings) => {
   const serializedParams = Object.keys(params).reduce((acc, paramName) => {
     const setting = settings.find(s => s.paramName === paramName);
     if (setting) {
-      acc[paramName] = setting.serialize(params[paramName]);
+      acc[paramName] = setting.serialize(params[paramName]); // eslint-disable-line no-param-reassign
     }
     return acc;
   }, {});
@@ -100,7 +100,7 @@ export const updateQueryWithParams = (query, params, settings) => {
 // run deserialize function on object keys and return a new object
 export const deserializeQuery = (query, settings) => {
   return settings.reduce((acc, setting) => {
-    acc[setting.paramName] = setting.deserialize(query);
+    acc[setting.paramName] = setting.deserialize(query); // eslint-disable-line no-param-reassign
     return acc;
   }, {});
 };
