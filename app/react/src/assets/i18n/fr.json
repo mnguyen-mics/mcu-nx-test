@@ -76,5 +76,8 @@
   "DELETION": "Suppression",
   "USER_ACTIVATION": "Activation d'Utilisateurs",
   "SEARCH_AUDIENCE_SEGMENTS": "Recherche de Segments",
-  "TECHNICAL_NAME": "Nom Technique"
+  "TECHNICAL_NAME": "Nom Technique",
+
+  "AUTOMATIONS_LIST": "Automations",
+  "NEW_AUTOMATION": "New Automation"
 }

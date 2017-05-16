@@ -12,7 +12,6 @@ class CampaignsSidebar extends Component {
 
     const {
       activeWorkspace: {
-        workspaceId,
         organisationId,
         datamartId,
       },
@@ -35,10 +34,6 @@ class CampaignsSidebar extends Component {
       {
         element: <Link to={emailCampaignUrl}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('email')
-      },
-      {
-        element: <Link to={`${workspaceId}/library/scenarios`}><FormattedMessage id="SCENARIOS" /></Link>,
-        isActive: isActiveUrl('scenarios')
       },
       {
         element: <Link to={goalsUrl}><FormattedMessage id="GOALS" /></Link>,

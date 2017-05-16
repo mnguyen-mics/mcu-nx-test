@@ -158,6 +158,17 @@ class NavigatorHeader extends Component {
     return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/segments`; // eslint-disable-line no-undef
   }
 
+  getAutomationsUrl() {
+    const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      }
+    } = this.props;
+
+    return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/automations/list`; // eslint-disable-line no-undef
+  }
+
   buildNavigationItems() {
 
     const {
@@ -195,6 +206,11 @@ class NavigatorHeader extends Component {
         url: this.getCampaignsUrl(),
         label: 'CAMPAIGNS',
         path: 'campaigns'
+      },
+      {
+        url: this.getAutomationsUrl(),
+        label: 'AUTOMATIONS_LIST',
+        path: 'automations'
       }
     ];
 

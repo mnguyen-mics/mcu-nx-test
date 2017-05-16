@@ -77,5 +77,8 @@
   "TECHNICAL_NAME": "Technical Name",
 
   "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Segment?",
-  "SEGMENT__MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Segment all it will stop campaign using it. Are you sure?"
+  "SEGMENT__MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Segment all it will stop campaign using it. Are you sure?",
+
+  "AUTOMATIONS_LIST": "Automations",
+  "NEW_AUTOMATION": "New Automation"
 }

@@ -10,8 +10,10 @@ import { ContentView } from '../containers/ContentView';
 
 import CampaignsRouter from './Campaigns';
 import AudienceRouter from './Audience';
+import AutomationsRouter from './Automations';
 import CampaignRouter from './Campaign';
 import LoginRouter from './Login';
+
 
 // Dumb component to display when angular handle the app
 class NoMatch extends React.Component {
@@ -27,6 +29,7 @@ export default (store) => { // eslint-disable-line no-unused-vars
         { CampaignsRouter }
         { CampaignRouter }
         { AudienceRouter }
+        { AutomationsRouter }
         <Route path="*" component={NotFound} />
       </Route>
       <Route path={`${PUBLIC_URL}`} component={ContentView}>
