@@ -25,7 +25,8 @@ class TableView extends Component {
     this.buildActionsColumns = this.buildActionsColumns.bind(this);
     this.changeColumnVisibility = this.changeColumnVisibility.bind(this);
     this.state = {
-      visibilitySelectedColumns: this.getHiddableColumns().filter(column => column.isVisibleByDefault).map(column => ({ key: column.translationKey, value: column.key }))
+      visibilitySelectedColumns: this.getHiddableColumns().filter(column => column.isVisibleByDefault).map(column => ({ key: column.translationKey, value: column.key })),
+      waiting: true
     };
   }
 
@@ -77,9 +78,11 @@ class TableView extends Component {
     </Col>) : null;
 
     const dateRangePicker = dateRangePickerOptions.isEnabled ?
-    (<McsDateRangePicker
-      values={dateRangePickerOptions.values}
+    (<RangePicker
+      defaultValue={[dateRangePickerOptions.from, dateRangePickerOptions.to]}
+      format={dateRangePickerOptions.format}
       onChange={dateRangePickerOptions.onChange}
+      disabled={dateRangePickerOptions.disabled}
     />) : null;
 
     const filtersMultiSelect = filtersOptions.map(filterOptions => {
