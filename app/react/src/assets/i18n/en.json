@@ -57,6 +57,7 @@
   "EMAIL_SOFT_BOUNCED": "Emails soft bounced",
   "USD": "$",
   "EUR": "€",
+
   "NEW_SEGMENT": "New Segment",
   "USER_LIST": "List",
   "USER_QUERY": "Query",
@@ -81,4 +82,16 @@
 
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation"
+
+  "TODAY": "Today",
+  "YESTERDAY": "Yesterday",
+  "LAST_7_DAYS": "Last 7 Days",
+  "LAST_30_DAYS": "Last 30 Days",
+  "CUSTOM": "Custom",
+  "LOOKBACK_WINDOW": "Lookback Window",
+  "FROM": "From",
+  "TO": "To",
+  "ERROR": "Error",
+  "SECONDS": "seconds"
+
 }

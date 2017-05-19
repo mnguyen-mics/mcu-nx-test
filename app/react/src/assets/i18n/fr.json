@@ -59,6 +59,7 @@
   "EMAIL_SOFT_BOUNCED": "Emails soft bounced",
   "USD": "$",
   "EUR": "€",
+
   "NEW_SEGMENT": "Nouveau Segment",
   "USER_LIST": "Liste",
   "USER_QUERY": "Requête",
@@ -80,4 +81,16 @@
 
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation"
+
+  "TODAY": "Aujourd'hui",
+  "YESTERDAY": "Hier",
+  "LAST_7_DAYS": "Derniers 7 Jours",
+  "LAST_30_DAYS": "Derniers 30 Jours",
+  "CUSTOM": "Autre",
+  "LOOKBACK_WINDOW": "Fenêtre Temporelle",
+  "FROM": "De",
+  "TO": "à",
+  "ERROR": "Erreur",
+  "SECONDS": "secondes"
+
 }
