@@ -109,12 +109,18 @@ class AudienceSegmentsTable extends Component {
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (dates) => this.updateQueryParams({
-        from: dates[0],
-        to: dates[1]
+      onChange: (values) => this.updateQueryParams({
+        rangeType: values.rangeType,
+        lookbackWindow: values.lookbackWindow,
+        from: values.from,
+        to: values.to,
       }),
-      from: filter.from,
-      to: filter.to
+      values: {
+        rangeType: filter.rangeType,
+        lookbackWindow: filter.lookbackWindow,
+        from: filter.from,
+        to: filter.to
+      }
     };
 
     const columnsVisibilityOptions = {
@@ -233,14 +239,6 @@ class AudienceSegmentsTable extends Component {
 
     const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY'].map(type => ({ key: type, value: type }));
 
-    // lodash.debounce(plop, 1000)
-    // const plop = value => {
-    //   console.log('plop');
-    //   return this.updateQueryParams({
-    //     statuses: value.status.map(item => item.value)
-    //   });
-    // };
-
     const filtersOptions = [
       {
         name: 'types',
@@ -252,14 +250,6 @@ class AudienceSegmentsTable extends Component {
         }
       }
     ];
-
-    // lodash.debounce(plop, 1000)
-    // const plop = value => {
-    //   console.log('plop');
-    //   return this.updateQueryParams({
-    //     statuses: value.status.map(item => item.value)
-    //   });
-    // };
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,

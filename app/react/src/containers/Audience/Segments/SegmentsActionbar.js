@@ -35,17 +35,17 @@ class CampaignsDisplayActionbar extends Component {
 
     const addMenu = (
       <Menu>
-        <Menu.Item key="DESKTOP_AND_MOBILE">
+        <Menu.Item key="USER_LIST">
           <Link to={`${organisationId}/datamart/segments/USER_LIST`}>
             <FormattedMessage id="USER_LIST" />
           </Link>
         </Menu.Item>
-        <Menu.Item key="SIMPLIFIED_KEYWORDS_TARGETING">
+        <Menu.Item key="USER_QUERY">
           <Link to={`${organisationId}/datamart/segments/USER_QUERY`}>
             <FormattedMessage id="USER_QUERY" />
           </Link>
         </Menu.Item>
-        <Menu.Item key="EXTERNAL_CAMPAIGN">
+        <Menu.Item key="USER_LOOK_ALIKE">
           <Link to={`${organisationId}/datamart/segments/USER_LOOK_ALIKE`}>
             <FormattedMessage id="USER_LOOK_ALIKE" />
           </Link>

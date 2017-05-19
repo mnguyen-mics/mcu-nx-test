@@ -34,11 +34,11 @@ class AutomationsListTable extends Component {
     const {
       query,
 
-      fetchAutomationsAndStatistics
+      fetchAutomationList
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
-    fetchAutomationsAndStatistics(filter);
+    fetchAutomationList(filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,7 +48,7 @@ class AutomationsListTable extends Component {
         workspaceId
       },
 
-      fetchAutomationsAndStatistics
+      fetchAutomationList
     } = this.props;
 
     const {
@@ -60,7 +60,7 @@ class AutomationsListTable extends Component {
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
       const filter = deserializeQuery(nextQuery, AUTOMATIONS_LIST_SETTINGS);
-      fetchAutomationsAndStatistics(filter);
+      fetchAutomationList(filter);
     }
   }
 
@@ -93,18 +93,6 @@ class AutomationsListTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
-
-    const searchOptions = {
-      isEnabled: false
-    };
-
-    const dateRangePickerOptions = {
-      isEnabled: false
-    };
-
-    const columnsVisibilityOptions = {
-      isEnabled: false
-    };
 
     const pagination = {
       currentPage: filter.currentPage,
@@ -149,15 +137,6 @@ class AutomationsListTable extends Component {
       }
     ];
 
-
-    // lodash.debounce(plop, 1000)
-    // const plop = value => {
-    //   console.log('plop');
-    //   return this.updateQueryParams({
-    //     statuses: value.status.map(item => item.value)
-    //   });
-    // };
-
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
       actionsColumnsDefinition: actionColumns
@@ -168,9 +147,6 @@ class AutomationsListTable extends Component {
       dataSource={dataSource}
       loading={isFetchingAutomationList}
       onChange={() => {}}
-      searchOptions={searchOptions}
-      dateRangePickerOptions={dateRangePickerOptions}
-      columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
     />);
 
@@ -190,7 +166,7 @@ class AutomationsListTable extends Component {
   archiveScenario(campaign) {
     const {
       archiveAutomationList,
-      fetchAutomationsAndStatistics,
+      fetchAutomationList,
       translations,
       query
     } = this.props;
@@ -205,7 +181,7 @@ class AutomationsListTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveAutomationList(campaign.id).then(() => {
-          fetchAutomationsAndStatistics(filter);
+          fetchAutomationList(filter);
         });
       },
       onCancel() { },
@@ -228,7 +204,7 @@ AutomationsListTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalAutomations: PropTypes.number.isRequired,
 
-  fetchAutomationsAndStatistics: PropTypes.func.isRequired,
+  fetchAutomationList: PropTypes.func.isRequired,
   archiveAutomationList: PropTypes.func.isRequired,
   resetAutomationsTable: PropTypes.func.isRequired,
 };
@@ -244,7 +220,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchAutomationsAndStatistics: AutomationsListActions.fetchAutomations,
+  fetchAutomationList: AutomationsListActions.fetchAutomations,
   // archiveAutomationList: CampaignEmailAction.archiveAutomationList,
   resetAutomationsTable: AutomationsListActions.resetAutomationsTable
 };
