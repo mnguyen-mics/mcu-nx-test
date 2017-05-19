@@ -5,6 +5,7 @@ import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Sidebar } from '../Sidebar';
+import { Icons } from '../../components/Icons';
 
 class CampaignsSidebar extends Component {
 
@@ -29,19 +30,19 @@ class CampaignsSidebar extends Component {
 
     const items = [
       {
-        element: <Link to={displayCampaignUrl}><FormattedMessage id="DISPLAY_CAMPAIGNS" /></Link>,
+        element: <Link to={displayCampaignUrl}><Icons type="display" className="icon-sidebar" /> <FormattedMessage id="DISPLAY_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('display')
       },
       {
-        element: <Link to={emailCampaignUrl}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
+        element: <Link to={emailCampaignUrl}><Icons type="email" className="icon-sidebar" /> <FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('email')
       },
       {
-        element: <Link to={`${workspaceId}/library/scenarios`}><FormattedMessage id="SCENARIOS" /></Link>,
+        element: <Link to={`${workspaceId}/library/scenarios`}><Icons type="automation" className="icon-sidebar" /> <FormattedMessage id="SCENARIOS" /></Link>,
         isActive: isActiveUrl('scenarios')
       },
       {
-        element: <Link to={goalsUrl}><FormattedMessage id="GOALS" /></Link>,
+        element: <Link to={goalsUrl}><Icons type="goals-rounded" className="icon-sidebar" /> <FormattedMessage id="GOALS" /></Link>,
         isActive: isActiveUrl('goal')
       }
     ];

@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { Icon } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar, ActionbarButton } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
+import { Icons } from '../../../components/Icons';
 
 class CampaignsEmailActionbar extends Component {
 
@@ -36,7 +36,7 @@ class CampaignsEmailActionbar extends Component {
       <Actionbar {...this.props}>
         <Link to={`/${workspaceId}/campaigns/email/edit`}>
           <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <Icons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </ActionbarButton>
         </Link>
       </Actionbar>

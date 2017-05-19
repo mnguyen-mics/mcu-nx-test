@@ -68,5 +68,8 @@
   "FROM": "De",
   "TO": "à",
   "ERROR": "Erreur",
-  "SECONDS": "secondes"
+  "SECONDS": "secondes",
+  "EMPTY_EMAILS": "Il n'y a aucune Campagne Email créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_DISPLAY": "Il n'y a aucune Campagne Display créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_GOALS": "Il n'y a aucun Objectif créée! Clickez sur Nouveau pour commencer."
 }

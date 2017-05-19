@@ -13,6 +13,7 @@ import {
 
 const defaultGoalsApiState = {
   isFetching: false,
+  hasFetched: false,
   data: [],
   total: 0
 };
@@ -27,12 +28,13 @@ const goalsApi = (state = defaultGoalsApiState, action) => {
       return {
         ...state,
         isFetching: false,
+        hasFetched: true,
         ...action.response
       };
     case GOALS_FETCH_REQUEST_FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case GOALS_TABLE_RESET:
       return defaultGoalsApiState;

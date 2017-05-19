@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar, ActionbarButton } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
+import { Icons } from '../../../components/Icons';
 
 class GoalsActionbar extends Component {
 
@@ -37,7 +37,7 @@ class GoalsActionbar extends Component {
       <Actionbar {...this.props}>
         <Link to={`${organisationId}/goals/`}>
           <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icon type="plus" /><FormattedMessage id="NEW_GOAL" />
+            <Icons type="plus" /> <FormattedMessage id="NEW_GOAL" />
           </ActionbarButton>
         </Link>
       </Actionbar>

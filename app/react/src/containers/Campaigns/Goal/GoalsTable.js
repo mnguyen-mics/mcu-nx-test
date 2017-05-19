@@ -6,7 +6,7 @@ import Link from 'react-router/lib/Link';
 import { Icon, Modal, Spin } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../components/TableView';
 
 import * as GoalsActions from '../../../state/Campaigns/Goal/actions';
 import * as GoalActions from '../../../state/Campaign/Goal/actions';
@@ -92,6 +92,7 @@ class GoalsTable extends Component {
         workspaceId
       },
       translations,
+      hasFetchedGoals,
       isFetchingGoals,
       isFetchingGoalsStat,
       dataSource,
@@ -206,14 +207,23 @@ class GoalsTable extends Component {
       }
     ];
 
+    let activeFilters = 0;
+    filtersOptions.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(item.menuItems, 'selectedItems') === true) {
+        activeFilters += item.menuItems.selectedItems.length;
+      }
+    });
+    const hasFilters = activeFilters !== 0 ? true : false;
+
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return (!hasFilters && dataSource.length === 0 && hasFetchedGoals === true) ? (<EmptyTableView text="EMPTY_GOALS" icon="goals" />) : (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
+      hasFetched={hasFetchedGoals}
       loading={isFetchingGoals}
       onChange={() => {}}
       searchOptions={searchOptions}
@@ -273,6 +283,7 @@ GoalsTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasFetchedGoals: PropTypes.bool.isRequired,
   isFetchingGoals: PropTypes.bool.isRequired,
   isFetchingGoalsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -288,6 +299,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
+  hasFetchedGoals: state.goalsTable.goalsApi.hasFetched,
   isFetchingGoals: state.goalsTable.goalsApi.isFetching,
   isFetchingGoalsStat: state.goalsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),

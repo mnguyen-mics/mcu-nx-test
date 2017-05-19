@@ -6,7 +6,7 @@ import Link from 'react-router/lib/Link';
 import { Icon, Modal, Spin } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../components/TableView';
 
 import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
 
@@ -91,6 +91,7 @@ class CampaignsDisplayTable extends Component {
         workspaceId
       },
       translations,
+      hasFetchedCampaignsDisplay,
       isFetchingCampaignsDisplay,
       isFetchingCampaignsStat,
       dataSource,
@@ -259,10 +260,19 @@ class CampaignsDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    let activeFilters = 0;
+    filtersOptions.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(item.menuItems, 'selectedItems') === true) {
+        activeFilters += item.menuItems.selectedItems.length;
+      }
+    });
+    const hasFilters = activeFilters !== 0 ? true : false;
+
+    return (!hasFilters && dataSource.length === 0 && hasFetchedCampaignsDisplay === true) ? (<EmptyTableView text="EMPTY_DISPLAY" icon="display" />) : (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingCampaignsDisplay}
+      hasFetched={hasFetchedCampaignsDisplay}
       onChange={() => {}}
       searchOptions={searchOptions}
       dateRangePickerOptions={dateRangePickerOptions}
@@ -336,6 +346,7 @@ CampaignsDisplayTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasFetchedCampaignsDisplay: PropTypes.bool.isRequired,
   isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -350,7 +361,7 @@ const mapStateToProps = (state, ownProps) => ({
   activeWorkspace: state.sessionState.activeWorkspace,
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
-
+  hasFetchedCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.hasFetched,
   isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
   isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),

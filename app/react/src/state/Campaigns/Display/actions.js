@@ -34,9 +34,11 @@ const fetchCampaignsDisplay = filter => (dispatch, getState) => { // eslint-disa
     }
   } = getState();
 
+  /*
   if (isFetching) {
     return Promise.resolve();
   }
+  */
 
   const params = {
     organisation_id: organisationId,

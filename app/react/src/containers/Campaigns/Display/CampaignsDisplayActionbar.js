@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar, ActionbarButton } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
+import { Icons } from '../../../components/Icons';
 
 class CampaignsDisplayActionbar extends Component {
 
@@ -57,7 +58,7 @@ class CampaignsDisplayActionbar extends Component {
       <Actionbar {...this.props}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <Icons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </ActionbarButton>
         </Dropdown>
       </Actionbar>

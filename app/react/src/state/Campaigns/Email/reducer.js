@@ -17,6 +17,7 @@ import {
 
 const defaultCampaignsEmailApiState = {
   isFetching: false,
+  hasFetched: false,
   data: [],
   total: 0
 };
@@ -24,19 +25,19 @@ const campaignsEmailApi = (state = defaultCampaignsEmailApiState, action) => {
   switch (action.type) {
     case CAMPAIGNS_EMAIL_FETCH_REQUEST:
       return {
-        ...state,
-        isFetching: true
+        ...state
       };
     case CAMPAIGNS_EMAIL_FETCH_REQUEST_SUCCESS:
       return {
         ...state,
         isFetching: false,
+        hasFetched: true,
         ...action.response
       };
     case CAMPAIGNS_EMAIL_FETCH_REQUEST_FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case CAMPAIGNS_EMAIL_TABLE_RESET:
       return defaultCampaignsEmailApiState;

@@ -34,8 +34,8 @@
   "CONVERSIONS":"Conversions",
   "CONVERSION_VALUE":"Conversion value",
   "SAVE": "Save",
-  "DISPLAY_CAMPAIGNS": "Display Campaigns",
-  "EMAIL_CAMPAIGNS": "Emails Campaigns",
+  "DISPLAY_CAMPAIGNS": "Display",
+  "EMAIL_CAMPAIGNS": "Emails",
   "SCENARIOS": "Scenarios",
   "GOALS": "Goals",
   "NEW_CAMPAIGN": "New Campaign",
@@ -66,5 +66,8 @@
   "FROM": "From",
   "TO": "To",
   "ERROR": "Error",
-  "SECONDS": "seconds"
+  "SECONDS": "seconds",
+  "EMPTY_EMAILS": "There is no Emails Campaigns created yet! Click on new to get started.",
+  "EMPTY_DISPLAY": "There is no Display Campaigns created yet! Click on new to get started.",
+  "EMPTY_GOALS": "There is no Goals created yet! Click on new to get started."
 }

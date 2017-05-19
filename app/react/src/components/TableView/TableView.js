@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { Dropdown, Icon, Menu, Row, Col, Table, Input } from 'antd';
-import { McsDateRangePicker } from '../McsDateRangePicker';
+import { Dropdown, Icon, Menu, Row, Col, Table, Input, DatePicker } from 'antd';
+import { Icons } from '../Icons';
 
 import { MultiSelect } from '../Forms';
 
 const Search = Input.Search;
+const { RangePicker } = DatePicker;
 
 const DEFAULT_RANGE_PICKER_DATE_FORMAT = 'DD/MM/YYYY';
 
@@ -38,6 +39,7 @@ class TableView extends Component {
   }
 
   render() {
+
     const {
       columnsDefinitions,
       dataSource,
@@ -47,7 +49,8 @@ class TableView extends Component {
       loading,
       onChange,
       filtersOptions,
-      columnsVisibilityOptions
+      columnsVisibilityOptions,
+      hasFetched
     } = this.props;
 
     const {
@@ -186,10 +189,11 @@ class TableView extends Component {
     const actionColumns = defaultActionsColumns.map(column => {
       return {
         key: column.key,
+        width: 30,
         render: (text, record) => {
           return (<Dropdown overlay={this.renderActionsMenu(column.actions, record)} trigger={['click']}>
             <a className="ant-dropdown-link">
-              <Icon type="down" />
+              <Icons type="chevron" />
             </a>
           </Dropdown>);
         }
@@ -275,6 +279,7 @@ TableView.propTypes = {
   }),
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   loading: PropTypes.bool.isRequired,
+  hasFetched: PropTypes.bool.isRequired,
   pagination: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   onChange: PropTypes.func.isRequired
 };

@@ -34,9 +34,11 @@ const fetchCampaignsEmail = filter => (dispatch, getState) => { // eslint-disabl
     }
   } = getState();
 
+  /*
   if (isFetching) {
     return Promise.resolve();
   }
+  */
 
   const params = {
     organisation_id: organisationId,
