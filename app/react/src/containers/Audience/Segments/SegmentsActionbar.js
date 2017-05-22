@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown, Icon, Button } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar, ActionbarButton } from '../../Actionbar';
+import { Actionbar } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
 
-class CampaignsDisplayActionbar extends Component {
+class SegmentsActionbar extends Component {
 
   componentWillMount() {
 
@@ -56,9 +56,9 @@ class CampaignsDisplayActionbar extends Component {
     return (
       <Actionbar {...this.props}>
         <Dropdown overlay={addMenu} trigger={['click']}>
-          <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
+          <Button type="primary">
             <Icon type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
-          </ActionbarButton>
+          </Button>
         </Dropdown>
       </Actionbar>
     );
@@ -67,7 +67,7 @@ class CampaignsDisplayActionbar extends Component {
 
 }
 
-CampaignsDisplayActionbar.propTypes = {
+SegmentsActionbar.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   setBreadcrumb: PropTypes.func.isRequired,
@@ -82,9 +82,9 @@ const mapDispatchToProps = {
   setBreadcrumb: ActionbarActions.setBreadcrumb
 };
 
-CampaignsDisplayActionbar = connect(
+SegmentsActionbar = connect(
   mapStateToProps,
   mapDispatchToProps
-)(CampaignsDisplayActionbar);
+)(SegmentsActionbar);
 
-export default CampaignsDisplayActionbar;
+export default SegmentsActionbar;

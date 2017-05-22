@@ -50,8 +50,25 @@ const getConversionPerformanceReport = (organisationId, startDate, endDate, dime
   return ApiService.getRequest(endpoint, params);
 };
 
+const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
+  const endpoint = 'reports/audience_segment_report';
+  const DEFAULT_METRICS = ['user_points', 'user_accounts', 'emails,desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'];
+
+  const params = {
+    organisation_id: organisationId,
+    start_date: startDate.format(DATE_FORMAT),
+    end_date: endDate.format(DATE_FORMAT),
+    dimension,
+    metrics: metrics || DEFAULT_METRICS,
+    ...options
+  };
+
+  return ApiService.getRequest(endpoint, params);
+};
+
 export default {
   getDisplayCampaignPerfomanceReport,
   getEmailDeliveryReport,
-  getConversionPerformanceReport
+  getConversionPerformanceReport,
+  getAudienceSegmentReport
 };

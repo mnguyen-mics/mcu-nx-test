@@ -236,14 +236,6 @@ class CampaignsDisplayTable extends Component {
 
     const statusItems = CampaignStatuses.map(status => ({ key: status, value: status }));
 
-    // lodash.debounce(plop, 1000)
-    // const plop = value => {
-    //   console.log('plop');
-    //   return this.updateQueryParams({
-    //     statuses: value.status.map(item => item.value)
-    //   });
-    // };
-
     const filtersOptions = [
       {
         name: 'status',

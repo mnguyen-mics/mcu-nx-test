@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'antd';
+import { Icon, Button } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar, ActionbarButton } from '../../Actionbar';
+import { Actionbar } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
 
 class ListActionbar extends Component {
@@ -36,9 +36,9 @@ class ListActionbar extends Component {
     return (
       <Actionbar {...this.props}>
         <Link to={`/${workspaceId}/library/scenarios/`}>
-          <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
+          <Button type="primary">
             <Icon type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
-          </ActionbarButton>
+          </Button>
         </Link>
       </Actionbar>
     );

@@ -34,13 +34,17 @@ class AudienceSegmentsTable extends Component {
 
   componentDidMount() {
     const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      },
       query,
 
-      fetchSegmentsAndStatistics
+      loadAudienceSegmentsDataSource
     } = this.props;
 
     const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
-    fetchSegmentsAndStatistics(filter);
+    loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -50,19 +54,21 @@ class AudienceSegmentsTable extends Component {
         workspaceId
       },
 
-      fetchSegmentsAndStatistics
+      loadAudienceSegmentsDataSource
     } = this.props;
 
     const {
       query: nextQuery,
       activeWorkspace: {
-        workspaceId: nextWorkspaceId
+        workspaceId: nextWorkspaceId,
+        organisationId,
+        datamartId
       },
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
       const filter = deserializeQuery(nextQuery, AUDIENCE_SEGMENTS_SETTINGS);
-      fetchSegmentsAndStatistics(filter);
+      loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
     }
   }
 
@@ -285,8 +291,12 @@ class AudienceSegmentsTable extends Component {
 
   archiveSegment(segment) {
     const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      },
       archiveAudienceSegment,
-      fetchSegmentsAndStatistics,
+      loadAudienceSegmentsDataSource,
       translations,
       query
     } = this.props;
@@ -301,7 +311,7 @@ class AudienceSegmentsTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveAudienceSegment(segment.id).then(() => {
-          fetchSegmentsAndStatistics(filter);
+          loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
         });
       },
       onCancel() { },
@@ -325,7 +335,7 @@ AudienceSegmentsTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalAudienceSegments: PropTypes.number.isRequired,
 
-  fetchSegmentsAndStatistics: PropTypes.func.isRequired,
+  loadAudienceSegmentsDataSource: PropTypes.func.isRequired,
   archiveAudienceSegment: PropTypes.func.isRequired,
   resetAudienceSegmentsTable: PropTypes.func.isRequired,
 };
@@ -342,7 +352,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchSegmentsAndStatistics: AudienceSegmentsActions.fetchSegmentsAndStatistics,
+  loadAudienceSegmentsDataSource: AudienceSegmentsActions.loadAudienceSegmentsDataSource,
   archiveAudienceSegment: AudienceSegmentsActions.archiveAudienceSegment,
   resetAudienceSegmentsTable: AudienceSegmentsActions.resetAudienceSegmentsTable
 };

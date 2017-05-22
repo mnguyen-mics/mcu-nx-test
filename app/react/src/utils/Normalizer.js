@@ -18,7 +18,7 @@ export const normalizeArrayOfObject = (arr, key) => {
   return arr.reduce((acc, object) => {
     const keyValue = object[key];
     if (!keyValue) throw new Error(`Missing key ${key} for object ${JSON.stringify(object)}`);
-    acc[object[key]] = object;
+    acc[object[key]] = object; // eslint-disable-line no-param-reassign
     return acc;
   }, {});
 };
