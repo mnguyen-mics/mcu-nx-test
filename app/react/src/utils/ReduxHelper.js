@@ -53,7 +53,7 @@ const FAILURE = 'FAILURE';
 
 export const createRequestTypes = base => {
   return [REQUEST, SUCCESS, FAILURE].reduce((acc, type) => {
-    acc[type] = `${base}_${type}`;
+    acc[type] = `${base}_${type}`; // eslint-disable-line no-param-reassign
     return acc;
   }, {});
 };

@@ -246,9 +246,59 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
 };
 
+const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, translations) => {
+
+  const titleLine = [translations.AUDIENCE_SEGMENTS_EXPORT_TITLE];
+  const blankLine = [];
+
+  const dataSheet = [];
+
+  dataSheet.push(titleLine);
+  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push(blankLine);
+
+  if (filter.keywords) {
+    dataSheet.push(['Search keywords', filter.keywords]);
+  }
+  if (filter.types.length > 0) {
+    dataSheet.push(['Displayed types', filter.statuses.join(', ')]);
+  }
+
+  dataSheet.push(blankLine);
+
+  const headersMap = [
+    { name: 'type', translation: translations.TYPE },
+    { name: 'name', translation: translations.NAME },
+    { name: 'user_points', translation: translations.USER_POINTS },
+    { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
+    { name: 'emails', translation: translations.EMAILS },
+    { name: 'user_point_additions', translation: translations.ADDITION },
+    { name: 'user_point_deletions', translation: translations.DELETION }
+  ];
+
+  const headersLine = headersMap.map(header => header.translation);
+
+  dataSheet.push(headersLine);
+
+  dataSource.forEach(row => {
+    const dataLine = headersMap.map(header => {
+      return row[header.name];
+    });
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
+    data: dataSheet
+  }];
+
+  exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
+};
+
 export default {
   exportData,
   exportCampaignsDisplay,
   exportCampaignsEmail,
-  exportGoals
+  exportGoals,
+  exportAudienceSegments
 };

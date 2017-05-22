@@ -13,7 +13,7 @@ class Segments extends Component {
   render() {
     return (
       <Layout>
-        <SegmentsActionbar />
+        <SegmentsActionbar {...this.props} />
         <Content>
           <ScrollComponent>
             <AudienceSegmentsTable {...this.props} />
