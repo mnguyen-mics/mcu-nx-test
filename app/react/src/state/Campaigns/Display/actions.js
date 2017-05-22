@@ -80,9 +80,9 @@ const fetchCampaignsDisplayPerformanceReport = filter => (dispatch, getState) =>
 
   const DATE_FORMAT = 'YYYY-MM-DD';
 
-  // if (isFetching) {
-    // return Promise.resolve();
-  // }
+  if (isFetching) {
+    return Promise.resolve();
+  }
 
   const params = {
     organisation_id: organisationId,

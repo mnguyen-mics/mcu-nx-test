@@ -3,26 +3,27 @@ import { Layout } from 'antd';
 
 import { ScrollComponent } from '../../../components/ScrollComponent';
 
-import CampaignsEmailActionbar from './CampaignsEmailActionbar';
-import CampaignsEmailTable from './CampaignsEmailTable';
+import SegmentsActionbar from './SegmentsActionbar';
+import AudienceSegmentsTable from './AudienceSegmentsTable';
 
 const { Content } = Layout;
 
-class CampaignsEmail extends Component {
+class Segments extends Component {
 
   render() {
     return (
       <Layout>
-        <CampaignsEmailActionbar />
+        <SegmentsActionbar />
         <Content>
           <ScrollComponent>
-            <CampaignsEmailTable {...this.props} />
+            <AudienceSegmentsTable {...this.props} />
           </ScrollComponent>
         </Content>
       </Layout>
     );
+
   }
 
 }
 
-export default CampaignsEmail;
+export default Segments;

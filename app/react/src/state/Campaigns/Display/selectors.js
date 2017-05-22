@@ -7,7 +7,7 @@ const getPerformanceReportHeaders = state => state.campaignsDisplayTable.perform
 const getCampaignsDisplayById = createSelector(
   getCampaignsDisplay,
   campaignsDisplay => campaignsDisplay.reduce((acc, campaignDisplay) => {
-    acc[campaignDisplay.id] = campaignDisplay;
+    acc[campaignDisplay.id] = campaignDisplay; // eslint-disable-line no-param-reassign
     return acc;
   }, {})
 );
@@ -17,7 +17,7 @@ const convertPerformanceReportToObjectArray = createSelector(
   getPerformanceReportRows,
   (headers, rows) => rows.map(row => {
     return headers.reduce((acc, header, index) => {
-      acc[header] = row[index];
+      acc[header] = row[index]; // eslint-disable-line no-param-reassign
       return acc;
     }, {});
   })
@@ -26,7 +26,7 @@ const convertPerformanceReportToObjectArray = createSelector(
 const getStatByCampaignId = createSelector(
   convertPerformanceReportToObjectArray,
   (array) => array.reduce((acc, reportObject) => {
-    acc[reportObject.campaign_id] = reportObject;
+    acc[reportObject.campaign_id] = reportObject; // eslint-disable-line no-param-reassign
     return acc;
   }, {})
 );

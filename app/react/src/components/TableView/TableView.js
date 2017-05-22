@@ -186,6 +186,7 @@ class TableView extends Component {
     const actionColumns = defaultActionsColumns.map(column => {
       return {
         key: column.key,
+        width: 30,
         render: (text, record) => {
           return (<Dropdown overlay={this.renderActionsMenu(column.actions, record)} trigger={['click']}>
             <a className="ant-dropdown-link">

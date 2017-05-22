@@ -1,6 +1,5 @@
 import React from 'react';
 import Route from 'react-router/lib/Route';
-import lodash from 'lodash';
 
 import {
   DISPLAY_QUERY_SETTINGS,

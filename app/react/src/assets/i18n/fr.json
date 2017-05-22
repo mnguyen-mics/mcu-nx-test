@@ -59,6 +59,29 @@
   "EMAIL_SOFT_BOUNCED": "Emails soft bounced",
   "USD": "$",
   "EUR": "€",
+
+  "NEW_SEGMENT": "Nouveau Segment",
+  "USER_LIST": "Liste",
+  "USER_QUERY": "Requête",
+  "USER_LOOK_ALIKE": "Look Alike",
+  "AUDIENCE_SEGMENTS": "Segments",
+  "AUDIENCE_PARTITIONS": "Partitions",
+  "QUERY_TOOL": "Query Tool",
+  "MONITORING": "Monitoring",
+  "TYPE": "Type",
+  "USER_POINTS": "User Points",
+  "USER_ACCOUNTS": "User Accounts",
+  "EMAILS": "Emails",
+  "COOKIES": "Cookies",
+  "ADDITION": "Addition",
+  "DELETION": "Suppression",
+  "USER_ACTIVATION": "Activation d'Utilisateurs",
+  "SEARCH_AUDIENCE_SEGMENTS": "Recherche de Segments",
+  "TECHNICAL_NAME": "Nom Technique",
+
+  "AUTOMATIONS_LIST": "Automations",
+  "NEW_AUTOMATION": "New Automation",
+
   "TODAY": "Aujourd'hui",
   "YESTERDAY": "Hier",
   "LAST_7_DAYS": "Derniers 7 Jours",
@@ -69,4 +92,5 @@
   "TO": "à",
   "ERROR": "Erreur",
   "SECONDS": "secondes"
+
 }
