@@ -30,9 +30,9 @@ export const normalizeReportView = (reportView) => {
   const headers = reportView.columns_headers;
   const rows = reportView.rows;
   return rows.map(row => {
-    return headers.reduce((acc, header, index) => {
-      acc[header] = row[index]; // eslint-disable-line no-param-reassign
-      return acc;
-    }, {});
+    return headers.reduce((acc, header, index) => ({
+      ...acc,
+      [header]: row[index]
+    }), {});
   });
 };
