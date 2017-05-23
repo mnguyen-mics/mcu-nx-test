@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { Dropdown, Icon, Menu, Row, Col, Table, Input, DatePicker } from 'antd';
+import { Dropdown, Icon, Menu, Row, Col, Table, Input } from 'antd';
 import { Icons } from '../Icons';
-
+import { McsDateRangePicker } from '../McsDateRangePicker';
 import { MultiSelect } from '../Forms';
 
 const Search = Input.Search;
-const { RangePicker } = DatePicker;
 
 const DEFAULT_RANGE_PICKER_DATE_FORMAT = 'DD/MM/YYYY';
 
@@ -78,8 +77,8 @@ class TableView extends Component {
     </Col>) : null;
 
     const dateRangePicker = dateRangePickerOptions.isEnabled ?
-    (<RangePicker
-      defaultValue={[dateRangePickerOptions.from, dateRangePickerOptions.to]}
+    (<McsDateRangePicker
+      values={dateRangePickerOptions.values}
       format={dateRangePickerOptions.format}
       onChange={dateRangePickerOptions.onChange}
       disabled={dateRangePickerOptions.disabled}

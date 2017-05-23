@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Modal } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { Modal, Tooltip } from 'antd';
 
 import { TableView } from '../../../components/TableView';
+import { Icons } from '../../../components/Icons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 
@@ -89,7 +89,8 @@ class AutomationsListTable extends Component {
       },
       isFetchingAutomationList,
       dataSource,
-      totalAutomations
+      totalAutomations,
+      translations
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
@@ -112,7 +113,7 @@ class AutomationsListTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><Icons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',

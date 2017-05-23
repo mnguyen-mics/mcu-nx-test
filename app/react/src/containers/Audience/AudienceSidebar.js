@@ -5,6 +5,7 @@ import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Sidebar } from '../Sidebar';
+import { Icons } from '../../components/Icons';
 
 class AudienceSidebar extends Component {
 
@@ -30,19 +31,19 @@ class AudienceSidebar extends Component {
 
     const items = [
       {
-        element: <Link to={segmentsUrl}><FormattedMessage id="AUDIENCE_SEGMENTS" /></Link>,
+        element: <Link to={segmentsUrl}><Icons type="users" className="icon-sidebar" /> <FormattedMessage id="AUDIENCE_SEGMENTS" /></Link>,
         isActive: isActiveUrl('segments')
       },
       {
-        element: <Link to={`${workspaceId}/datamart/partitions`}><FormattedMessage id="AUDIENCE_PARTITIONS" /></Link>,
+        element: <Link to={`${workspaceId}/datamart/partitions`}><Icons type="partitions" className="icon-sidebar" /> <FormattedMessage id="AUDIENCE_PARTITIONS" /></Link>,
         isActive: isActiveUrl('partitions')
       },
       {
-        element: <Link to={`${workspaceId}/datamart/queries`}><FormattedMessage id="QUERY_TOOL" /></Link>,
+        element: <Link to={`${workspaceId}/datamart/queries`}><Icons type="query" className="icon-sidebar" /> <FormattedMessage id="QUERY_TOOL" /></Link>,
         isActive: isActiveUrl('email')
       },
       {
-        element: <Link to={`${workspaceId}/datamart/monitoring`}><FormattedMessage id="MONITORING" /></Link>,
+        element: <Link to={`${workspaceId}/datamart/monitoring`}><Icons type="user" className="icon-sidebar" /> <FormattedMessage id="MONITORING" /></Link>,
         isActive: isActiveUrl('monitoring')
       }
     ];

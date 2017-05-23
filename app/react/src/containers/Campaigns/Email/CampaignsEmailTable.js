@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import lodash from 'lodash';
 
 import Link from 'react-router/lib/Link';
-import { Icon, Modal } from 'antd';
+import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView, EmptyTableView } from '../../../components/TableView';
+import { Icons } from '../../../components/Icons';
 
 import * as CampaignsEmailActions from '../../../state/Campaigns/Email/actions';
 
@@ -156,7 +157,7 @@ class CampaignsEmailTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><Icons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
