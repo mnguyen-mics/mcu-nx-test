@@ -3,6 +3,7 @@ import { campaignsEmailSagas } from './Campaigns/Email/sagas';
 import { goalsSagas } from './Campaigns/Goal/sagas';
 import { automationsSagas } from './Automations/sagas';
 import { segmentsSagas } from './Audience/Segments/sagas';
+import { navigatorSagas } from './Navigator/sagas';
 
 export default function* sagas() {
   yield [
@@ -10,6 +11,7 @@ export default function* sagas() {
     ...campaignsEmailSagas,
     ...goalsSagas,
     ...automationsSagas,
-    ...segmentsSagas
+    ...segmentsSagas,
+    ...navigatorSagas
   ];
 }

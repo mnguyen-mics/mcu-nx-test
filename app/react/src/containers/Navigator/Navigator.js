@@ -126,7 +126,7 @@ class Navigator extends Component {
       retrieveUser();
     }, false);
 
-    setInterval(() => getAppVersion(), 1 * 1000);
+    setInterval(() => getAppVersion(), 1 * 10000);
 
   }
 
@@ -252,7 +252,7 @@ const mapDispatchToProps = {
   initActiveWorkspace: sessionActions.initActiveWorkspace,
   checkUrl: sessionActions.checkUrl,
   removeNotification: navigatorActions.removeNotification,
-  getAppVersion: navigatorActions.getAppVersion
+  getAppVersion: navigatorActions.getAppVersion.request
 };
 
 Navigator = connect(

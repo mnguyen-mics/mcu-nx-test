@@ -3,9 +3,7 @@ import {
   NAVIGATOR_NOTIFICATIONS_REMOVE,
   NAVIGATOR_NOTIFICATIONS_RESET,
 
-  NAVIGATOR_VERSION_REQUEST,
-  NAVIGATOR_VERSION_FAILURE,
-  NAVIGATOR_VERSION_SUCCESS
+  NAVIGATOR_GET_VERSION
 } from '../action-types';
 
 const defaultNavigatorState = {
@@ -52,14 +50,14 @@ const navigator = (state = defaultNavigatorState, action) => {
         notifications: defaultNavigatorState.notifications
       };
 
-    case NAVIGATOR_VERSION_SUCCESS:
+    case NAVIGATOR_GET_VERSION.SUCCESS:
       return {
         ...state,
-        version: action.response.version
+        ...action.payload
       };
 
-    case NAVIGATOR_VERSION_REQUEST:
-    case NAVIGATOR_VERSION_FAILURE:
+    case NAVIGATOR_GET_VERSION.REQUEST:
+    case NAVIGATOR_GET_VERSION.FAILURE:
     default:
       return state;
   }
