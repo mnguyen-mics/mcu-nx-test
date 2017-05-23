@@ -80,25 +80,25 @@ export const isQueryValid = (query = {}, settings) => {
 // add missing and/or replace invalid params with default value
 export const buildDefaultQuery = (existingQuery = {}, settings) => {
   return settings.reduce((acc, setting) => {
-    const newAcc = acc;
-    if (setting.isValid(existingQuery)) {
-      newAcc[setting.paramName] = existingQuery[setting.paramName];
-    } else {
-      newAcc[setting.paramName] = setting.serialize(setting.defaultValue);
-    }
-    return newAcc;
+    const paramValue = setting.isValid(existingQuery) ? existingQuery[setting.paramName] : setting.serialize(setting.defaultValue);
+    return {
+      ...acc,
+      [setting.paramName]: paramValue
+    };
   }, {});
 };
 
 // merge query with serialized params object
 export const updateQueryWithParams = (query, params, settings) => {
   const serializedParams = Object.keys(params).reduce((acc, paramName) => {
-    const newAcc = acc;
     const setting = settings.find(s => s.paramName === paramName);
     if (setting) {
-      newAcc[paramName] = setting.serialize(params[paramName]);
+      return {
+        ...acc,
+        [paramName]: setting.serialize(params[paramName])
+      };
     }
-    return newAcc;
+    return acc;
   }, {});
   return {
     ...query,
