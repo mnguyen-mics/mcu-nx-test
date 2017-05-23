@@ -16,13 +16,8 @@ class NavigatorHeader extends Component {
     this.buildNavigationItems = this.buildNavigationItems.bind(this);
     this.buildWorkspaceItems = this.buildWorkspaceItems.bind(this);
     this.buildProfileItems = this.buildProfileItems.bind(this);
-    this.setActiveHeaderItem = this.setActiveHeaderItem.bind(this);
     this.getCampaignsUrl = this.getCampaignsUrl.bind(this);
     this.onWorkspaceChange = this.onWorkspaceChange.bind(this);
-    this.state = {
-      // retrieve activeRoute from location
-      activeRoute: 'campaigns'
-    };
   }
 
   render() {
@@ -32,18 +27,24 @@ class NavigatorHeader extends Component {
       activeWorkspace: {
         workspaceId,
         organisationName
+      },
+      router: {
+        location: {
+          pathname
+        }
       }
     } = this.props;
 
-    const {
-      activeRoute
-    } = this.state;
 
     const homeUrl = authenticated ? this.getCampaignsUrl() : '';
     const navigationItems = this.displayNavigationItems();
     const workspaceItems = this.buildWorkspaceItems();
     const profileItems = this.buildProfileItems();
 
+    const activeItem = this.buildNavigationItems().find(item => {
+      return pathname.search(item.path) >= 0;
+    });
+    const activeKey = activeItem ? activeItem.path : 'campaigns';
 
     const headerClassName = classNames([
       'mcs-header',
@@ -85,7 +86,7 @@ class NavigatorHeader extends Component {
             </div>
           </Col>
           <Col sm={20} md={20} lg={20} className="mcs-header-navigation">
-            <Menu onClick={this.setActiveHeaderItem} selectedKeys={[activeRoute]} mode="horizontal" className="mcs-header-menu-horizontal">
+            <Menu selectedKeys={[activeKey]} mode="horizontal" className="mcs-header-menu-horizontal">
               {navigationItems}
             </Menu>
             <div className="mcs-header-menu-icons" >
@@ -124,12 +125,6 @@ class NavigatorHeader extends Component {
 
   }
 
-  setActiveHeaderItem(/* item */) {
-    /* this.setState({
-      activeRoute: item.key,
-    });
-    */
-  }
 
   displayNavigationItems() {
 
@@ -156,6 +151,28 @@ class NavigatorHeader extends Component {
     return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/campaigns/display`; // eslint-disable-line no-undef
   }
 
+  getAudienceUrl() {
+    const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      }
+    } = this.props;
+
+    return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/audience/segments`; // eslint-disable-line no-undef
+  }
+
+  getAutomationsUrl() {
+    const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      }
+    } = this.props;
+
+    return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/automations/list`; // eslint-disable-line no-undef
+  }
+
   buildNavigationItems() {
 
     const {
@@ -175,12 +192,11 @@ class NavigatorHeader extends Component {
       The property is used by the NavLink component to apply an active class to the element.
     */
     const isActiveUrl = path => pathname.search(path) >= 0; // eslint-disable-line no-unused-vars
-
     const datamartEntries = datamartId ? [
       {
-        url: `/${workspaceId}/datamart/segments`,
+        url: this.getAudienceUrl(),
         label: 'AUDIENCE',
-        path: 'segments'
+        path: 'audience'
       },
       {
         url: `/${workspaceId}/datamart/categories/`,
@@ -194,6 +210,11 @@ class NavigatorHeader extends Component {
         url: this.getCampaignsUrl(),
         label: 'CAMPAIGNS',
         path: 'campaigns'
+      },
+      {
+        url: this.getAutomationsUrl(),
+        label: 'AUTOMATIONS_LIST',
+        path: 'automations'
       }
     ];
 
@@ -297,7 +318,8 @@ NavigatorHeader.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   switchWorkspace: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired
+  logout: PropTypes.func.isRequired,
+  router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({

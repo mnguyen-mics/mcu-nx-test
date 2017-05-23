@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Icon, Modal, Spin } from 'antd';
+import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView, EmptyTableView } from '../../../components/TableView';
@@ -143,7 +143,7 @@ class CampaignsDisplayTable extends Component {
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingCampaignsStat) {
-        return (<Spin size="small" />); // (<span>loading...</span>);
+        return (<i className="mcs-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -181,7 +181,7 @@ class CampaignsDisplayTable extends Component {
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: (text, record) => {
+        render: text => {
           // TODO find campaign (with getCampaignsDisplayById(record['campaign_id']))
           const campaignCurrency = 'EUR';
           return renderMetricData(text, '0,0.00', campaignCurrency);
@@ -222,12 +222,11 @@ class CampaignsDisplayTable extends Component {
         key: 'action',
         actions: [
           {
-            translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign
-          },
-          {
             translationKey: 'EDIT',
             callback: this.editCampaign
+          }, {
+            translationKey: 'ARCHIVE',
+            callback: this.archiveCampaign
           }
         ]
       }
@@ -246,7 +245,7 @@ class CampaignsDisplayTable extends Component {
     const filtersOptions = [
       {
         name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /><Icon type="down" /></div>),
+        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
           handleMenuClick: value => this.updateQueryParams({ statuses: value.status.map(item => item.value) }),
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),

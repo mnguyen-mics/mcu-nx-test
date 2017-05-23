@@ -16,6 +16,9 @@ define(['./module'], function (module) {
       $scope.currentPage = 1;
       $scope.itemsPerPage = 10;
 
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/segments');
+
       Restangular.all('audience_segments').getList({datamart_id: datamartId, max_results: 200}).then(function (segments) {
         var filteredSegments = segments.filter(function (seg){
           return seg.type !== 'USER_PARTITION';

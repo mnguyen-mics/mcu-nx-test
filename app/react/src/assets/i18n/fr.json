@@ -59,6 +59,29 @@
   "EMAIL_SOFT_BOUNCED": "Emails soft bounced",
   "USD": "$",
   "EUR": "€",
+
+  "NEW_SEGMENT": "Nouveau Segment",
+  "USER_LIST": "Liste",
+  "USER_QUERY": "Requête",
+  "USER_LOOK_ALIKE": "Look Alike",
+  "AUDIENCE_SEGMENTS": "Segments",
+  "AUDIENCE_PARTITIONS": "Partitions",
+  "QUERY_TOOL": "Query Tool",
+  "MONITORING": "Monitoring",
+  "TYPE": "Type",
+  "USER_POINTS": "User Points",
+  "USER_ACCOUNTS": "User Accounts",
+  "EMAILS": "Emails",
+  "COOKIES": "Cookies",
+  "ADDITION": "Addition",
+  "DELETION": "Suppression",
+  "USER_ACTIVATION": "Activation d'Utilisateurs",
+  "SEARCH_AUDIENCE_SEGMENTS": "Recherche de Segments",
+  "TECHNICAL_NAME": "Nom Technique",
+
+  "AUTOMATIONS_LIST": "Automations",
+  "NEW_AUTOMATION": "New Automation",
+
   "TODAY": "Aujourd'hui",
   "YESTERDAY": "Hier",
   "LAST_7_DAYS": "Derniers 7 Jours",
@@ -68,8 +91,13 @@
   "FROM": "De",
   "TO": "à",
   "ERROR": "Erreur",
+<<<<<<< HEAD
   "SECONDS": "secondes",
   "EMPTY_EMAILS": "Il n'y a aucune Campagne Email créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_DISPLAY": "Il n'y a aucune Campagne Display créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_GOALS": "Il n'y a aucun Objectif créée! Clickez sur Nouveau pour commencer."
+=======
+  "SECONDS": "secondes"
+
+>>>>>>> 8a5652d09517ade30cfaa8fba04fe7ba33461cb6
 }

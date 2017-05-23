@@ -13,7 +13,6 @@ class CampaignsSidebar extends Component {
 
     const {
       activeWorkspace: {
-        workspaceId,
         organisationId,
         datamartId,
       },
@@ -38,11 +37,15 @@ class CampaignsSidebar extends Component {
         isActive: isActiveUrl('email')
       },
       {
+<<<<<<< HEAD
         element: <Link to={`${workspaceId}/library/scenarios`}><Icons type="automation" className="icon-sidebar" /> <FormattedMessage id="SCENARIOS" /></Link>,
         isActive: isActiveUrl('scenarios')
       },
       {
         element: <Link to={goalsUrl}><Icons type="goals-rounded" className="icon-sidebar" /> <FormattedMessage id="GOALS" /></Link>,
+=======
+        element: <Link to={goalsUrl}><FormattedMessage id="GOALS" /></Link>,
+>>>>>>> 8a5652d09517ade30cfaa8fba04fe7ba33461cb6
         isActive: isActiveUrl('goal')
       }
     ];

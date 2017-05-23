@@ -6,6 +6,10 @@ define(['./module'], function (module) {
     '$scope', 'Restangular', 'core/common/auth/Session', '$location', '$uibModal',
     function ($scope, Restangular, Session, $location, $uibModal) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
+
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/automations/list');
+
       Restangular.all('scenarios').getList({organisation_id: organisationId}).then(function (scenarios) {
         $scope.scenarios = scenarios;
       });

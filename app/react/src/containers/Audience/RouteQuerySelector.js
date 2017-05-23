@@ -2,7 +2,7 @@ import moment from 'moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-export const EMAIL_QUERY_SETTINGS = [
+export const AUDIENCE_SEGMENTS_SETTINGS = [
   {
     paramName: 'currentPage',
     defaultValue: 1,
@@ -12,7 +12,7 @@ export const EMAIL_QUERY_SETTINGS = [
   },
   {
     paramName: 'pageSize',
-    defaultValue: 10,
+    defaultValue: 200,
     deserialize: query => parseInt(query.pageSize, 0),
     serialize: value => value.toString(),
     isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0))
@@ -23,18 +23,6 @@ export const EMAIL_QUERY_SETTINGS = [
     deserialize: query => query.keywords,
     serialize: value => value,
     isValid: () => true
-  },
-  {
-    paramName: 'statuses',
-    defaultValue: [],
-    deserialize: query => {
-      if (query.statuses) {
-        return query.statuses.split(',');
-      }
-      return [];
-    },
-    serialize: value => value.join(','),
-    isValid: query => !query.statuses || query.statuses.split(',').length > 0
   },
   {
     paramName: 'rangeType',
@@ -63,11 +51,20 @@ export const EMAIL_QUERY_SETTINGS = [
     deserialize: query => moment(query.to, DATE_FORMAT),
     serialize: value => value.format(DATE_FORMAT),
     isValid: query => moment(query.to, DATE_FORMAT).isValid()
-  }
+  },
+  {
+    paramName: 'types',
+    defaultValue: [],
+    deserialize: query => {
+      if (query.types) {
+        return query.types.split(',');
+      }
+      return [];
+    },
+    serialize: value => value.join(','),
+    isValid: query => !query.types || query.types.split(',').length > 0
+  },
 ];
-
-export const DISPLAY_QUERY_SETTINGS = EMAIL_QUERY_SETTINGS;
-export const GOAL_QUERY_SETTINGS = EMAIL_QUERY_SETTINGS;
 
 export const isQueryValid = (query = {}, settings) => {
   // notEmpty and must forall settings query isValid

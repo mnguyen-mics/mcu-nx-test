@@ -9,6 +9,8 @@ define(['./module'], function (module) {
         organisation_id : Session.getCurrentWorkspace().organisation_id
       }).$object;
 
+      
+
       $scope.selectedScenarios = [];
 
       $scope.done = function() {

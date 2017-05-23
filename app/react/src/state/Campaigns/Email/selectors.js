@@ -7,7 +7,7 @@ const getDeliveryReportHeaders = state => state.campaignsEmailTable.deliveryRepo
 const getCampaignsEmailById = createSelector(
   getCampaignsEmail,
   campaignsEmail => campaignsEmail.reduce((acc, campaignEmail) => {
-    acc[campaignEmail.id] = campaignEmail;
+    acc[campaignEmail.id] = campaignEmail; // eslint-disable-line no-param-reassign
     return acc;
   }, {})
 );
@@ -17,7 +17,7 @@ const convertDeliveryReportToObjectArray = createSelector(
   getDeliveryReportRows,
   (headers, rows) => rows.map(row => {
     return headers.reduce((acc, header, index) => {
-      acc[header] = row[index];
+      acc[header] = row[index]; // eslint-disable-line no-param-reassign
       return acc;
     }, {});
   })
@@ -26,7 +26,7 @@ const convertDeliveryReportToObjectArray = createSelector(
 const getStatByCampaignId = createSelector(
   convertDeliveryReportToObjectArray,
   (array) => array.reduce((acc, reportObject) => {
-    acc[reportObject.campaign_id] = reportObject;
+    acc[reportObject.campaign_id] = reportObject; // eslint-disable-line no-param-reassign
     return acc;
   }, {})
 );
