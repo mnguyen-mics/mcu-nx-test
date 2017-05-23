@@ -1,21 +1,13 @@
-import { CALL_API } from '../../../middleware/api';
+import { createAction } from '../../../utils/ReduxHelper';
 
 import {
-  // CAMPAIGNS_DISPLAY_DELETE_REQUEST,
-  // CAMPAIGNS_DISPLAY_DELETE_REQUEST_FAILURE,
-  // CAMPAIGNS_DISPLAY_DELETE_REQUEST_SUCCESS,
-
-  CAMPAIGNS_DISPLAY_FETCH_REQUEST,
-  CAMPAIGNS_DISPLAY_FETCH_REQUEST_FAILURE,
-  CAMPAIGNS_DISPLAY_FETCH_REQUEST_SUCCESS,
-
-  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST,
-  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE,
-  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS,
-
+  CAMPAIGNS_DISPLAY_LOAD_ALL,
+  CAMPAIGNS_DISPLAY_LIST_FETCH,
+  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH,
   CAMPAIGNS_DISPLAY_TABLE_RESET
 } from '../../action-types';
 
+<<<<<<< HEAD
 const resetCampaignsDisplayTable = () => ({
   type: CAMPAIGNS_DISPLAY_TABLE_RESET
 });
@@ -54,87 +46,28 @@ const fetchCampaignsDisplay = filter => (dispatch, getState) => { // eslint-disa
   if (apiStatuses.length > 0) {
     params.status = apiStatuses;
   }
+=======
+const resetCampaignsDisplayTable = createAction(CAMPAIGNS_DISPLAY_TABLE_RESET);
+>>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
 
-  return dispatch({
-    [CALL_API]: {
-      method: 'get',
-      endpoint: 'campaigns',
-      params,
-      authenticated: true,
-      types: [CAMPAIGNS_DISPLAY_FETCH_REQUEST, CAMPAIGNS_DISPLAY_FETCH_REQUEST_FAILURE, CAMPAIGNS_DISPLAY_FETCH_REQUEST_SUCCESS]
-    }
-  });
+const fetchCampaignsDisplayList = {
+  request: (organisationId, filter = {}) => createAction(CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST)({ organisationId, filter }),
+  success: (response) => createAction(CAMPAIGNS_DISPLAY_LIST_FETCH.SUCCESS)(response),
+  failure: (error) => createAction(CAMPAIGNS_DISPLAY_LIST_FETCH.FAILURE)(error)
 };
 
-const fetchCampaignsDisplayPerformanceReport = filter => (dispatch, getState) => { // eslint-disable-line consistent-return
-  const {
-    campaignsDisplayTable: {
-      performanceReportApi: {
-        isFetching
-      }
-    },
-    sessionState: {
-      activeWorkspace: {
-        organisationId
-      }
-    }
-  } = getState();
-
-  const DATE_FORMAT = 'YYYY-MM-DD';
-
-  if (isFetching) {
-    return Promise.resolve();
-  }
-
-  const params = {
-    organisation_id: organisationId,
-    start_date: filter.from.format(DATE_FORMAT),
-    end_date: filter.to.format(DATE_FORMAT),
-    dimension: '',
-    filters: `organisation_id==${organisationId}`,
-    metrics: ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa']
-  };
-
-  return dispatch({
-    [CALL_API]: {
-      method: 'get',
-      endpoint: 'reports/display_campaign_performance_report',
-      params,
-      authenticated: true,
-      types: [CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST, CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE, CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS]
-    }
-  });
+const fetchCampaignsDisplayPerformanceReport = {
+  request: (organisationId, filter = {}) => createAction(CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.REQUEST)({ organisationId, filter }),
+  success: (response) => createAction(CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.SUCCESS)(response),
+  failure: (error) => createAction(CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.FAILURE)(error)
 };
 
-// const deleteCampaignsDisplay = (id) => {
-//   return (dispatch, getState) => { // eslint-disable-line consistent-return
+const loadCampaignsDisplayDataSource = (organisationId, filter) => createAction(CAMPAIGNS_DISPLAY_LOAD_ALL)({ organisationId, filter });
 
-//     const { campaignsDisplayState } = getState();
-
-//     if (!campaignsDisplayState.isDeleting) {
-//       return dispatch({
-//         [CALL_API]: {
-//           method: 'delete',
-//           endpoint: `display_campaigns/${id}`,
-//           authenticated: true,
-//           types: [CAMPAIGNS_DISPLAY_DELETE_REQUEST, CAMPAIGNS_DISPLAY_DELETE_REQUEST_FAILURE, CAMPAIGNS_DISPLAY_DELETE_REQUEST_SUCCESS]
-//         }
-//       });
-//     }
-//   };
-// };
-
-const fetchCampaignsAndStatistics = filter => dispatch => {
-  // return dispatch(fetchCampaignsEmail(filter));
-  return Promise.all([
-    dispatch(fetchCampaignsDisplay(filter)),
-    dispatch(fetchCampaignsDisplayPerformanceReport(filter))
-  ]);
-};
 
 export {
-  fetchCampaignsDisplay,
+  fetchCampaignsDisplayList,
   fetchCampaignsDisplayPerformanceReport,
-  fetchCampaignsAndStatistics,
+  loadCampaignsDisplayDataSource,
   resetCampaignsDisplayTable
 };

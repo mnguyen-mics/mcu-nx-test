@@ -1,15 +1,85 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+<<<<<<< HEAD
 import { Menu, Dropdown } from 'antd';
+=======
+import { Menu, Dropdown, Icon, Button, message } from 'antd';
+>>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar, ActionbarButton } from '../../Actionbar';
+import { Actionbar } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
 import { Icons } from '../../../components/Icons';
 
+import ExportService from '../../../services/ExportService';
+import CampaignService from '../../../services/CampaignService';
+import ReportService from '../../../services/ReportService';
+
+import { normalizeReportView } from '../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+
+import {
+  DISPLAY_QUERY_SETTINGS,
+
+  deserializeQuery
+} from '../RouteQuerySelector';
+
+const fetchExportData = (organisationId, filter) => {
+
+  const campaignType = 'DISPLAY';
+
+  const buildOptionsForGetCampaigns = () => {
+    const options = {
+      archived: filter.statuses.includes('ARCHIVED'),
+      first_result: 0,
+      max_results: 2000
+    };
+
+    const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
+
+    if (filter.keywords) { options.keywords = filter.keywords; }
+    if (apiStatuses.length > 0) {
+      options.status = apiStatuses;
+    }
+    return options;
+  };
+
+  const startDate = filter.from;
+  const endDate = filter.to;
+  const dimension = '';
+
+  const apiResults = Promise.all([
+    CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
+    ReportService.getDisplayCampaignPerfomanceReport(organisationId, startDate, endDate, dimension)
+  ]);
+
+  return apiResults.then(results => {
+    const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
+    const performanceReport = normalizeArrayOfObject(
+      normalizeReportView(results[1].data.report_view),
+      'campaign_id'
+    );
+
+    const mergedData = Object.keys(campaignsDisplay).map((campaignId) => {
+      return {
+        ...campaignsDisplay[campaignId],
+        ...performanceReport[campaignId]
+      };
+    });
+
+    return mergedData;
+  });
+};
+
 class CampaignsDisplayActionbar extends Component {
+
+  constructor(props) {
+    super(props);
+    this.handleRunExport = this.handleRunExport.bind(this);
+    this.state = { exportIsRunning: false };
+  }
 
   componentWillMount() {
 
@@ -26,6 +96,32 @@ class CampaignsDisplayActionbar extends Component {
 
   }
 
+  handleRunExport() {
+    const {
+      activeWorkspace: {
+        organisationId
+      },
+      translations,
+
+    } = this.props;
+
+    const filter = deserializeQuery(this.props.query, DISPLAY_QUERY_SETTINGS);
+
+    this.setState({ exportIsRunning: true });
+    const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
+
+    fetchExportData(organisationId, filter).then(data => {
+      ExportService.exportCampaignsDisplay(organisationId, data, filter, translations);
+      this.setState({ exportIsRunning: false });
+      hideExportLoadingMsg();
+    }).catch(() => {
+      // TODO notify error
+      this.setState({ exportIsRunning: false });
+      hideExportLoadingMsg();
+    });
+
+  }
+
   render() {
 
     const {
@@ -34,7 +130,9 @@ class CampaignsDisplayActionbar extends Component {
       }
     } = this.props;
 
-    const addMenu = (
+    const exportIsRunning = this.state.exportIsRunning;
+
+    const newCampaignMenu = (
       <Menu>
         <Menu.Item key="DESKTOP_AND_MOBILE">
           <Link to={`${organisationId}/campaigns/display/expert/edit/T1`}>
@@ -55,12 +153,23 @@ class CampaignsDisplayActionbar extends Component {
     );
 
     return (
+<<<<<<< HEAD
       <Actionbar {...this.props}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
             <Icons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </ActionbarButton>
+=======
+      <Actionbar>
+        <Dropdown overlay={newCampaignMenu} trigger={['click']}>
+          <Button type="primary">
+            <Icon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+          </Button>
+>>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
         </Dropdown>
+        <Button onClick={this.handleRunExport} loading={exportIsRunning}>
+          { !exportIsRunning && <Icon type="export" /> }<FormattedMessage id="EXPORT" />
+        </Button>
       </Actionbar>
     );
 
@@ -69,14 +178,17 @@ class CampaignsDisplayActionbar extends Component {
 }
 
 CampaignsDisplayActionbar.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  setBreadcrumb: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+  setBreadcrumb: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  translations: state.translationsState.translations,
-  activeWorkspace: state.sessionState.activeWorkspace
+const mapStateToProps = (state, ownProps) => ({
+  activeWorkspace: state.sessionState.activeWorkspace,
+  query: ownProps.router.location.query,
+  translations: state.translationsState.translations
 });
 
 const mapDispatchToProps = {

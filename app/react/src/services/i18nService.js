@@ -1,8 +1,4 @@
-import {
-  getItem,
-  setItem,
-  LANGUAGE_KEY
- } from './local-storage';
+import LocalStorage from './LocalStorage';
 
 const AVAILABLE_LANGUAGES = {
   FR: 'fr',
@@ -12,14 +8,14 @@ const DEFAULT_LANGUAGE = process.env.DEFAULT_LANGUAGE || getNavigatorLanguage();
 const DEFAULT_PART = process.env.DEFAULT_PART;
 
 const getLanguage = () => {
-  return getItem(LANGUAGE_KEY) || DEFAULT_LANGUAGE;
+  return LocalStorage.getItem(LocalStorage.LANGUAGE_KEY) || DEFAULT_LANGUAGE;
 };
 
 const setLanguage = (language) => {
   const item = {
-    [LANGUAGE_KEY]: language
+    [LocalStorage.LANGUAGE_KEY]: language
   };
-  return setItem(item);
+  return LocalStorage.setItem(item);
 };
 
 const getContent = (part = DEFAULT_PART, language = getLanguage()) => {
@@ -43,7 +39,7 @@ const getNavigatorLanguage = () => {
   return navigatorLanguage;
 };
 
-export {
+export default {
   initI18n,
   getContent,
   getLanguage,

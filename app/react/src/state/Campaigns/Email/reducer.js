@@ -1,17 +1,9 @@
 import { combineReducers } from 'redux';
 
 import {
-  // CAMPAIGNS_EMAIL_DELETE_REQUEST,
-  // CAMPAIGNS_EMAIL_DELETE_REQUEST_FAILURE,
-  // CAMPAIGNS_EMAIL_DELETE_REQUEST_SUCCESS,
-  CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH_REQUEST,
-  CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH_REQUEST_FAILURE,
-  CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH_REQUEST_SUCCESS,
-
-  CAMPAIGNS_EMAIL_FETCH_REQUEST,
-  CAMPAIGNS_EMAIL_FETCH_REQUEST_FAILURE,
-  CAMPAIGNS_EMAIL_FETCH_REQUEST_SUCCESS,
-
+  CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH,
+  CAMPAIGNS_EMAIL_LIST_FETCH,
+  CAMPAIGNS_EMAIL_LOAD_ALL,
   CAMPAIGNS_EMAIL_TABLE_RESET
 } from '../../action-types';
 
@@ -23,18 +15,23 @@ const defaultCampaignsEmailApiState = {
 };
 const campaignsEmailApi = (state = defaultCampaignsEmailApiState, action) => {
   switch (action.type) {
-    case CAMPAIGNS_EMAIL_FETCH_REQUEST:
+    case CAMPAIGNS_EMAIL_LOAD_ALL:
+    case CAMPAIGNS_EMAIL_LIST_FETCH.REQUEST:
       return {
         ...state
       };
-    case CAMPAIGNS_EMAIL_FETCH_REQUEST_SUCCESS:
+    case CAMPAIGNS_EMAIL_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
+<<<<<<< HEAD
         hasFetched: true,
         ...action.response
+=======
+        ...action.payload
+>>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
       };
-    case CAMPAIGNS_EMAIL_FETCH_REQUEST_FAILURE:
+    case CAMPAIGNS_EMAIL_LIST_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false,
@@ -57,18 +54,19 @@ const defaultDeliveryReportApiState = {
 };
 const deliveryReportApi = (state = defaultDeliveryReportApiState, action) => {
   switch (action.type) {
-    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH_REQUEST:
+    case CAMPAIGNS_EMAIL_LOAD_ALL:
+    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH_REQUEST_SUCCESS:
+    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.response.data
+        ...action.payload.data
       };
-    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH_REQUEST_FAILURE:
+    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false

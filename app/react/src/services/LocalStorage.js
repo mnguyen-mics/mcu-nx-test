@@ -82,9 +82,9 @@ const removeItem = (property) => {
   return isLocalStorageSupported ? removeItemLocalStorage(property) : removeItemCookie(property);
 };
 
-export {
-  MCS_STORAGE,
+export default {
   LANGUAGE_KEY,
+
   getItem,
   setItem,
   removeItem

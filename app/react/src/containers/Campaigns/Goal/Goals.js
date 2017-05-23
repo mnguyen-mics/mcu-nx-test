@@ -14,7 +14,7 @@ class Goals extends Component {
 
     return (
       <Layout>
-        <GoalsActionbar />
+        <GoalsActionbar {...this.props} />
         <Content>
           <ScrollComponent>
             <GoalsTable {...this.props} />

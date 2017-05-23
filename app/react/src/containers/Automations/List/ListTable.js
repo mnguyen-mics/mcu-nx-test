@@ -32,13 +32,16 @@ class AutomationsListTable extends Component {
 
   componentDidMount() {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       query,
 
       fetchAutomationList
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
-    fetchAutomationList(filter);
+    fetchAutomationList(organisationId, filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -54,13 +57,14 @@ class AutomationsListTable extends Component {
     const {
       query: nextQuery,
       activeWorkspace: {
-        workspaceId: nextWorkspaceId
+        workspaceId: nextWorkspaceId,
+        organisationId
       },
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
       const filter = deserializeQuery(nextQuery, AUTOMATIONS_LIST_SETTINGS);
-      fetchAutomationList(filter);
+      fetchAutomationList(organisationId, filter);
     }
   }
 
@@ -166,6 +170,9 @@ class AutomationsListTable extends Component {
 
   archiveScenario(campaign) {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       archiveAutomationList,
       fetchAutomationList,
       translations,
@@ -182,7 +189,7 @@ class AutomationsListTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveAutomationList(campaign.id).then(() => {
-          fetchAutomationList(filter);
+          fetchAutomationList(organisationId, filter);
         });
       },
       onCancel() { },
@@ -221,7 +228,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchAutomationList: AutomationsListActions.fetchAutomations,
+  fetchAutomationList: AutomationsListActions.fetchAutomations.request,
   // archiveAutomationList: CampaignEmailAction.archiveAutomationList,
   resetAutomationsTable: AutomationsListActions.resetAutomationsTable
 };

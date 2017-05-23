@@ -92,6 +92,11 @@
   "FROM": "From",
   "TO": "To",
   "ERROR": "Error",
-  "SECONDS": "seconds"
-
+  "SECONDS": "seconds",
+  "EXPORT": "Export",
+  "EXPORT_IN_PROGRESS": "Export in progress...",
+  "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",
+  "CAMPAIGNS_EMAIL_EXPORT_TITLE": "Campaigns Email Export",
+  "GOALS_EXPORT_TITLE": "Goals Export",
+  "AUDIENCE_SEGMENTS_EXPORT_TITLE": "Audience Segments Export"
 }

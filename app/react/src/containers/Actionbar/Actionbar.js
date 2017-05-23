@@ -1,68 +1,20 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import BreadcrumbBar from './BreadcrumbBar';
 
 class Actionbar extends Component {
 
-  constructor(props) {
-    super(props);
-    this.renderSecondary = this.renderSecondary.bind(this);
-  }
-
-
-  isSecondaryBarContent(elt) {
-    return elt.props.secondary;
-  }
-
   render() {
-    const {
-      secondary,
-      children
-    } = this.props;
-
-    const secondaryRendering = secondary ? this.renderSecondary() : null;
 
     return (
-      <div className="mcs-actionbar-wrapper" >
-
-        <div className="mcs-actionbar" >
-          <BreadcrumbBar className="mcs-actionbar-breadcrumb" />
-          <div className="mcs-actionbar-buttons">
-            {secondaryRendering ? children.filter(v => !this.isSecondaryBarContent(v)) : children}
-          </div>
+      <div className="mcs-actionbar-wrapper mcs-actionbar" >
+        <BreadcrumbBar className="mcs-actionbar-breadcrumb" />
+        <div className="mcs-actionbar-button-wrapper">
+          {this.props.children}
         </div>
-        { secondaryRendering }
       </div>
     );
   }
 
-  renderSecondary() {
-    const {
-      secondary,
-      children
-    } = this.props;
-
-    return (
-      <div className="mcs-actionbar-secondary" >
-        {children.find(c => this.isSecondaryBarContent(c) && c.props.id === secondary)}
-      </div>);
-  }
-
 }
 
-
-Actionbar.propTypes = {
-  secondary: PropTypes.string // eslint-disable-line react/require-default-props
-};
-
-const mapStateToProps = state => ({
-  secondary: state.actionbarState.secondary
-});
-
-const mapDispatchToProps = {};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Actionbar);
+export default Actionbar;

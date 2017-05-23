@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
-
 import Link from 'react-router/lib/Link';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
@@ -37,14 +36,20 @@ class CampaignsEmailTable extends Component {
 
   componentDidMount() {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       query,
-
-      fetchCampaignsAndStatistics
+      loadCampaignsEmailDataSource
     } = this.props;
 
     const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
+<<<<<<< HEAD
 
     fetchCampaignsAndStatistics(filter);
+=======
+    loadCampaignsEmailDataSource(organisationId, filter);
+>>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
   }
 
   componentWillReceiveProps(nextProps) {
@@ -54,19 +59,20 @@ class CampaignsEmailTable extends Component {
         workspaceId
       },
 
-      fetchCampaignsAndStatistics
+      loadCampaignsEmailDataSource
     } = this.props;
 
     const {
       query: nextQuery,
       activeWorkspace: {
-        workspaceId: nextWorkspaceId
+        workspaceId: nextWorkspaceId,
+        organisationId
       },
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
       const filter = deserializeQuery(nextQuery, EMAIL_QUERY_SETTINGS);
-      fetchCampaignsAndStatistics(filter);
+      loadCampaignsEmailDataSource(organisationId, filter);
     }
   }
 
@@ -170,35 +176,35 @@ class CampaignsEmailTable extends Component {
         key: 'email_sent',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0.0')
+        render: text => renderMetricData(text, '0,0')
       },
       {
         translationKey: 'EMAIL_HARD_BOUNCED',
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0.0')
+        render: text => renderMetricData(text, '0,0')
       },
       {
         translationKey: 'EMAIL_SOFT_BOUNCED',
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0.0')
+        render: text => renderMetricData(text, '0,0')
       },
       {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0.0')
+        render: text => renderMetricData(text, '0,0')
       },
       {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0.0')
+        render: text => renderMetricData(text, '0,0')
       }
     ];
 
@@ -276,8 +282,11 @@ class CampaignsEmailTable extends Component {
 
   archiveCampaign(campaign) {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       archiveCampaignEmail,
-      fetchCampaignsAndStatistics,
+      loadCampaignsEmailDataSource,
       translations,
       query
     } = this.props;
@@ -292,7 +301,7 @@ class CampaignsEmailTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveCampaignEmail(campaign.id).then(() => {
-          fetchCampaignsAndStatistics(filter);
+          loadCampaignsEmailDataSource(organisationId, filter);
         });
       },
       onCancel() { },
@@ -317,7 +326,7 @@ CampaignsEmailTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalCampaignsEmail: PropTypes.number.isRequired,
 
-  fetchCampaignsAndStatistics: PropTypes.func.isRequired,
+  loadCampaignsEmailDataSource: PropTypes.func.isRequired,
   archiveCampaignEmail: PropTypes.func,
   resetCampaignsEmailTable: PropTypes.func.isRequired,
 };
@@ -335,7 +344,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchCampaignsAndStatistics: CampaignsEmailActions.fetchCampaignsAndStatistics,
+  loadCampaignsEmailDataSource: CampaignsEmailActions.loadCampaignsEmailDataSource,
   // archiveCampaignEmail: CampaignEmailAction.archiveCampaignEmail,
   resetCampaignsEmailTable: CampaignsEmailActions.resetCampaignsEmailTable,
 };
