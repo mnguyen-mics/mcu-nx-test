@@ -8,6 +8,9 @@ import {
   SESSION_GET_WORKSPACES_REQUEST,
   SESSION_GET_WORKSPACES_REQUEST_FAILURE,
   SESSION_GET_WORKSPACES_REQUEST_SUCCESS,
+  SESSION_GET_LOGO_REQUEST,
+  SESSION_GET_LOGO_REQUEST_FAILURE,
+  SESSION_GET_LOGO_REQUEST_SUCCESS,
   SESSION_INIT_WORKSPACE,
   SESSION_IS_REACT_URL,
   SESSION_LOGOUT,
@@ -23,18 +26,22 @@ import {
 const defaultSessionState = {
   user: {},
   activeWorkspace: {},
+  logo: null,
   workspaces: [],
   isReactUrl: false,
   authenticated: false,
   isFetching: false,
-  isFetchingWorkspaces: false
+  isFetchingWorkspaces: false,
+  isFetchingLogo: false
 };
-
 
 const sessionState = (state = defaultSessionState, action) => {
 
   switch (action.type) {
 
+    /**
+     * Access Token
+     */
     case SESSION_GET_ACCESS_TOKEN_REQUEST:
       return {
         ...state,
@@ -53,6 +60,9 @@ const sessionState = (state = defaultSessionState, action) => {
         error: action.response.error
       };
 
+    /**
+     * Connected User
+     */
     case SESSION_GET_CONNECTED_USER_REQUEST:
       return {
         ...state,
@@ -72,6 +82,9 @@ const sessionState = (state = defaultSessionState, action) => {
         error: action.response.error
       };
 
+    /**
+     * Workspaces
+     */
     case SESSION_GET_WORKSPACES_REQUEST:
       return {
         ...state,
@@ -102,6 +115,30 @@ const sessionState = (state = defaultSessionState, action) => {
         activeWorkspace: setActiveWorkspace(action.workspace, state.workspaces, state.user.default_workspace)
       };
 
+    /**
+     * Logo
+     */
+    case SESSION_GET_LOGO_REQUEST:
+      return {
+        ...state,
+        isFetchingLogo: true
+      };
+    case SESSION_GET_LOGO_REQUEST_SUCCESS:
+      return {
+        ...state,
+        isFetchingLogo: false,
+        logo: action.response
+      };
+    case SESSION_GET_LOGO_REQUEST_FAILURE:
+      return {
+        ...state,
+        isFetchingLogo: false,
+        logo: null
+      };
+
+    /**
+     * Utils
+     */
     case SESSION_IS_REACT_URL:
       return {
         ...state,

@@ -11,7 +11,7 @@ export default store => next => action => {
     return next(action);
   }
 
-  const { method, endpoint, params, body, types, authenticated, adminApi, localUrl, others = {} } = callAPI;
+  const { method, endpoint, params, headers, body, types, authenticated, adminApi, localUrl, others = {} } = callAPI;
   const [requestType, failureType, successType] = types;
   const { dispatch } = store;
   const options = {
@@ -46,7 +46,7 @@ export default store => next => action => {
 
   dispatch(onRequest(requestType));
 
-  return ApiService.request(method, endpoint, params, body, authenticated, options)
+  return ApiService.request(method, endpoint, params, headers, body, authenticated, options)
     .then(json => dispatch(onRequestSuccess(successType, json)))
     .catch(error => {
       dispatch(onRequestFailure(failureType, error));
