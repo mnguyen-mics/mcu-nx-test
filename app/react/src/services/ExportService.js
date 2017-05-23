@@ -1,113 +1,304 @@
-// const exportData = (sheets, fileName, extension) => {
+const datenum = (v, date1904) => {
+  let newV = v;
+  if (date1904) {
+    newV += 1462;
+  }
+  const epoch = Date.parse(newV);
+  return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
+};
 
-// };
+const s2ab = s => {
+  const buf = new ArrayBuffer(s.length);
+  const view = new Uint8Array(buf);
+  for (let i = 0; i !== s.length; i += 1) {
+    view[i] = s.charCodeAt(i) & 0xFF; // eslint-disable-line
+  }
+  return buf;
+};
 
-// export default {
-//   exportData
-// };
+/**
+ * Export Specific Methods
+ */
 
-// function datenum(v, date1904) {
-//       if (date1904) {
-//         v += 1462;
-//       }
-//       var epoch = Date.parse(v);
-//       return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
-//     }
+class Workbook {
+  constructor() {
+    this.SheetNames = [];
+    this.Sheets = {};
+  }
+}
 
-//     function s2ab(s) {
-//       var buf = new ArrayBuffer(s.length);
-//       var view = new Uint8Array(buf);
-//       for (var i = 0; i !== s.length; ++i) {
-//         view[i] = s.charCodeAt(i) & 0xFF;
-//       }
-//       return buf;
-//     }
+const buildWorkbookSheet = data => {
+  const ws = {};
+  const range = { s: { c: 10000000, r: 10000000 }, e: { c: 0, r: 0 } };
+  for (let R = 0; R !== data.length; R += 1) {
+    for (let C = 0; C !== data[R].length; C += 1) {
+      if (range.s.r > R) {
+        range.s.r = R;
+      }
+      if (range.s.c > C) {
+        range.s.c = C;
+      }
+      if (range.e.r < R) {
+        range.e.r = R;
+      }
+      if (range.e.c < C) {
+        range.e.c = C;
+      }
+      const cell = { v: data[R][C] };
+      if (cell.v === null) {
+        continue; // eslint-disable-line
+      }
+      const cell_ref = XLSX.utils.encode_cell({ c: C, r: R }); // eslint-disable-line
 
-//     /**
-//      * Export Specific Methods
-//      */
+      if (typeof cell.v === 'number') {
+        cell.t = 'n';
+      } else if (typeof cell.v === 'boolean') {
+        cell.t = 'b';
+      } else if (cell.v instanceof Date) {
+        cell.t = 'n';
+        cell.z = XLSX.SSF._table[14]; // eslint-disable-line
+        cell.v = datenum(cell.v);
+      } else {
+        cell.t = 's';
+      }
 
-//     function Workbook() {
-//       if (!(this instanceof Workbook)) {
-//         return new Workbook();
-//       }
-//       this.SheetNames = [];
-//       this.Sheets = {};
-//     }
+      ws[cell_ref] = cell;
+    }
+  }
+  if (range.s.c < 10000000) {
+    ws['!ref'] = XLSX.utils.encode_range(range); // eslint-disable-line
+  }
+  return ws;
+};
 
-//     function buildWorkbookSheet(data) {
-//       var ws = {};
-//       var range = {s: {c: 10000000, r: 10000000}, e: {c: 0, r: 0}};
-//       for (var R = 0; R !== data.length; ++R) {
-//         for (var C = 0; C !== data[R].length; ++C) {
-//           if (range.s.r > R) {
-//             range.s.r = R;
-//           }
-//           if (range.s.c > C) {
-//             range.s.c = C;
-//           }
-//           if (range.e.r < R) {
-//             range.e.r = R;
-//           }
-//           if (range.e.c < C) {
-//             range.e.c = C;
-//           }
-//           var cell = {v: data[R][C]};
-//           if (cell.v === null) {
-//             continue;
-//           }
-//           var cell_ref = XLSX.utils.encode_cell({c: C, r: R});
+/**
+ * Export data and return a blob (to be used with fileSaver saveAs())
+ * @param sheets Array of sheets. Contains sheet names and sheet data.
+ * @param fileName File name of the exported file.
+ * @param extension Extension of the exported file.
+ */
+const exportData = (sheets, fileName, extension) => {
+  const newExtension = extension.replace('.', '');
+  const workBook = new Workbook();
 
-//           if (typeof cell.v === 'number') {
-//             cell.t = 'n';
-//           } else if (typeof cell.v === 'boolean') {
-//             cell.t = 'b';
-//           } else if (cell.v instanceof Date) {
-//             cell.t = 'n';
-//             cell.z = XLSX.SSF._table[14];
-//             cell.v = datenum(cell.v);
-//           } else {
-//             cell.t = 's';
-//           }
+  for (let i = 0; i < sheets.length; i += 1) {
+    let workbookSheet = {};
+    workbookSheet = buildWorkbookSheet(sheets[i].data);
+    // TODO rewrite export to csv
+    // if (newExtension === 'csv') {
+    //   workbookSheet = XLSX.utils.sheet_to_csv(workbookSheet); // eslint-disable-line
+    //   return new Blob([workbookSheet], { type: 'text/csv;charset=utf-8' }), `${fileName}-${i}.${newExtension}`; // eslint-disable-line
+    //   if (i + 1 === sheets.length) {
+    //     return;
+    //   }
+    // } else {
+    workBook.SheetNames.push(sheets[i].name);
+    workBook.Sheets[sheets[i].name] = workbookSheet;
+    // }
+  }
 
-//           ws[cell_ref] = cell;
-//         }
-//       }
-//       if (range.s.c < 10000000) {
-//         ws['!ref'] = XLSX.utils.encode_range(range);
-//       }
-//       return ws;
-//     }
+  const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
+  saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream'}), `${fileName}.${newExtension}`); // eslint-disable-line
+};
 
-//     /**
-//      * Export data and save it
-//      * @param sheets Array of sheets. Contains sheet names and sheet data.
-//      * @param fileName File name of the exported file.
-//      * @param extension Extension of the exported file.
-//      */
-//     var exportData = function (sheets, fileName, extension) {
-//       extension = extension.replace('.', '');
-//       var workBook = new Workbook();
+const exportCampaignsDisplay = (organisationId, dataSource, filter, translations) => {
 
-//       for (var i = 0; i < sheets.length; ++i) {
-//         var workbookSheet = {};
-//         workbookSheet = buildWorkbookSheet(sheets[i].data);
-//         if (extension === "csv") {
-//           workbookSheet = XLSX.utils.sheet_to_csv(workbookSheet);
-//           saveAs(new Blob([workbookSheet], {type: "text/csv;charset=utf-8"}), fileName + "-" + i + "." + extension);
-//           if (i + 1 === sheets.length) {
-//             return;
-//           }
-//         } else {
-//           workBook.SheetNames.push(sheets[i].name);
-//           workBook.Sheets[sheets[i].name] = workbookSheet;
-//         }
-//       }
+  const titleLine = [translations.CAMPAIGNS_DISPAY_EXPORT_TITLE];
+  const blankLine = [];
 
-//       var output = XLSX.write(workBook, {bookType: 'xlsx', bookSST: false, type: 'binary'});
-//       saveAs(new Blob([s2ab(output)], {type: "application/octet-stream"}), fileName + "." + extension);
-//     };
+  const dataSheet = [];
 
-//     return {
-//       exportData: exportData
-//     };
+  dataSheet.push(titleLine);
+  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push(blankLine);
+
+  if (filter.keywords) {
+    dataSheet.push(['Search keywords', filter.keywords]);
+  }
+  if (filter.statuses.length > 0) {
+    dataSheet.push(['Displayed statuses', filter.statuses.join(', ')]);
+  }
+
+  dataSheet.push(blankLine);
+
+  const headersMap = [
+      { name: 'status', translation: translations.STATUS },
+      { name: 'name', translation: translations.NAME },
+      { name: 'impressions', translation: translations.IMPRESSIONS },
+      { name: 'clicks', translation: translations.CLICKS },
+      { name: 'cpm', translation: translations.CPM },
+      { name: 'ctr', translation: translations.CTR },
+      { name: 'cpc', translation: translations.CPC },
+      { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
+      { name: 'cpa', translation: translations.CPA },
+  ];
+
+  const headersLine = headersMap.map(header => header.translation);
+
+  dataSheet.push(headersLine);
+
+  dataSource.forEach(row => {
+    const dataLine = headersMap.map(header => {
+      return row[header.name];
+    });
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
+    data: dataSheet
+  }];
+
+  exportData(sheets, `${organisationId}_campaigns-display`, 'xlsx');
+};
+
+const exportCampaignsEmail = (organisationId, dataSource, filter, translations) => {
+
+  const titleLine = [translations.CAMPAIGNS_EMAIL_EXPORT_TITLE];
+  const blankLine = [];
+
+  const dataSheet = [];
+
+  dataSheet.push(titleLine);
+  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push(blankLine);
+
+  if (filter.keywords) {
+    dataSheet.push(['Search keywords', filter.keywords]);
+  }
+  if (filter.statuses.length > 0) {
+    dataSheet.push(['Displayed statuses', filter.statuses.join(', ')]);
+  }
+
+  dataSheet.push(blankLine);
+
+  const headersMap = [
+    { name: 'status', translation: translations.STATUS },
+    { name: 'name', translation: translations.NAME },
+    { name: 'email_sent', translation: translations.EMAIL_SENT },
+    { name: 'email_hard_bounced', translation: translations.EMAIL_HARD_BOUNCED },
+    { name: 'email_soft_bounced', translation: translations.EMAIL_SOFT_BOUNCED },
+    { name: 'clicks', translation: translations.CLICKS },
+    { name: 'impressions', translation: translations.IMPRESSIONS }
+  ];
+
+  const headersLine = headersMap.map(header => header.translation);
+
+  dataSheet.push(headersLine);
+
+  dataSource.forEach(row => {
+    const dataLine = headersMap.map(header => {
+      return row[header.name];
+    });
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: translations.CAMPAIGNS_EMAIL_EXPORT_TITLE,
+    data: dataSheet
+  }];
+
+  exportData(sheets, `${organisationId}_campaigns-email`, 'xlsx');
+};
+
+const exportGoals = (organisationId, dataSource, filter, translations) => {
+
+  const titleLine = [translations.GOALS_EXPORT_TITLE];
+  const blankLine = [];
+
+  const dataSheet = [];
+
+  dataSheet.push(titleLine);
+  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push(blankLine);
+
+  if (filter.keywords) {
+    dataSheet.push(['Search keywords', filter.keywords]);
+  }
+  if (filter.statuses.length > 0) {
+    dataSheet.push(['Displayed statuses', filter.statuses.join(', ')]);
+  }
+
+  dataSheet.push(blankLine);
+
+  const headersMap = [
+    { name: 'name', translation: translations.NAME },
+    { name: 'conversions', translation: translations.CONVERSIONS },
+    { name: 'value', translation: translations.CONVERSION_VALUE }
+  ];
+
+  const headersLine = headersMap.map(header => header.translation);
+
+  dataSheet.push(headersLine);
+
+  dataSource.forEach(row => {
+    const dataLine = headersMap.map(header => {
+      return row[header.name];
+    });
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: translations.GOALS_EXPORT_TITLE,
+    data: dataSheet
+  }];
+
+  exportData(sheets, `${organisationId}_goals`, 'xlsx');
+};
+
+const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, translations) => {
+
+  const titleLine = [translations.AUDIENCE_SEGMENTS_EXPORT_TITLE];
+  const blankLine = [];
+
+  const dataSheet = [];
+
+  dataSheet.push(titleLine);
+  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push(blankLine);
+
+  if (filter.keywords) {
+    dataSheet.push(['Search keywords', filter.keywords]);
+  }
+  if (filter.types.length > 0) {
+    dataSheet.push(['Displayed types', filter.statuses.join(', ')]);
+  }
+
+  dataSheet.push(blankLine);
+
+  const headersMap = [
+    { name: 'type', translation: translations.TYPE },
+    { name: 'name', translation: translations.NAME },
+    { name: 'user_points', translation: translations.USER_POINTS },
+    { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
+    { name: 'emails', translation: translations.EMAILS },
+    { name: 'user_point_additions', translation: translations.ADDITION },
+    { name: 'user_point_deletions', translation: translations.DELETION }
+  ];
+
+  const headersLine = headersMap.map(header => header.translation);
+
+  dataSheet.push(headersLine);
+
+  dataSource.forEach(row => {
+    const dataLine = headersMap.map(header => {
+      return row[header.name];
+    });
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
+    data: dataSheet
+  }];
+
+  exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
+};
+
+export default {
+  exportData,
+  exportCampaignsDisplay,
+  exportCampaignsEmail,
+  exportGoals,
+  exportAudienceSegments
+};

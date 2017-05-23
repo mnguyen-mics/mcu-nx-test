@@ -13,7 +13,7 @@ class CampaignsEmail extends Component {
   render() {
     return (
       <Layout>
-        <CampaignsEmailActionbar />
+        <CampaignsEmailActionbar {...this.props} />
         <Content>
           <ScrollComponent>
             <CampaignsEmailTable {...this.props} />

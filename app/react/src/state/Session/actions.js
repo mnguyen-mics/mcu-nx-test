@@ -1,4 +1,4 @@
-import { CALL_API } from '../../middleware/api';
+import { CALL_API } from '../../middleware/apiRequest';
 
 import {
   SESSION_GET_ACCESS_TOKEN_REQUEST,

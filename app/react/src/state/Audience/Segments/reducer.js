@@ -5,14 +5,9 @@ import {
   // AUDIENCE_SEGMENTS_DELETE_REQUEST_FAILURE,
   // AUDIENCE_SEGMENTS_DELETE_REQUEST_SUCCESS,
 
-  AUDIENCE_SEGMENTS_FETCH_REQUEST,
-  AUDIENCE_SEGMENTS_FETCH_REQUEST_FAILURE,
-  AUDIENCE_SEGMENTS_FETCH_REQUEST_SUCCESS,
-
-  AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH_REQUEST,
-  AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE,
-  AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS,
-
+  AUDIENCE_SEGMENTS_LOAD_ALL,
+  AUDIENCE_SEGMENTS_LIST_FETCH,
+  AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH,
   AUDIENCE_SEGMENTS_TABLE_RESET
 } from '../../action-types';
 
@@ -24,19 +19,19 @@ const defaultAudienceSegmentsApiState = {
 
 const audienceSegmentsApi = (state = defaultAudienceSegmentsApiState, action) => {
   switch (action.type) {
-
-    case AUDIENCE_SEGMENTS_FETCH_REQUEST:
+    case AUDIENCE_SEGMENTS_LOAD_ALL:
+    case AUDIENCE_SEGMENTS_LIST_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case AUDIENCE_SEGMENTS_FETCH_REQUEST_SUCCESS:
+    case AUDIENCE_SEGMENTS_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.response
+        ...action.payload
       };
-    case AUDIENCE_SEGMENTS_FETCH_REQUEST_FAILURE:
+    case AUDIENCE_SEGMENTS_LIST_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false
@@ -59,18 +54,19 @@ const defaultPerformanceReportApiState = {
 };
 const performanceReportApi = (state = defaultPerformanceReportApiState, action) => {
   switch (action.type) {
-    case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH_REQUEST:
+    case AUDIENCE_SEGMENTS_LOAD_ALL:
+    case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS:
+    case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.response.data
+        ...action.payload.data
       };
-    case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE:
+    case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false

@@ -1,14 +1,9 @@
 import { combineReducers } from 'redux';
 import {
-  GOALS_PERFORMANCE_REPORT_FETCH_REQUEST,
-  GOALS_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE,
-  GOALS_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS,
-
-  GOALS_FETCH_REQUEST,
-  GOALS_FETCH_REQUEST_FAILURE,
-  GOALS_FETCH_REQUEST_SUCCESS,
-
-  GOALS_TABLE_RESET
+  GOALS_FETCH,
+  GOALS_LOAD_ALL,
+  GOALS_PERFORMANCE_REPORT_FETCH,
+  GOALS_TABLE_RESET,
 } from '../../action-types';
 
 const defaultGoalsApiState = {
@@ -18,18 +13,19 @@ const defaultGoalsApiState = {
 };
 const goalsApi = (state = defaultGoalsApiState, action) => {
   switch (action.type) {
-    case GOALS_FETCH_REQUEST:
+    case GOALS_LOAD_ALL:
+    case GOALS_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case GOALS_FETCH_REQUEST_SUCCESS:
+    case GOALS_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.response
+        ...action.payload
       };
-    case GOALS_FETCH_REQUEST_FAILURE:
+    case GOALS_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false
@@ -52,18 +48,19 @@ const defaultPerformanceReportApiState = {
 };
 const performanceReportApi = (state = defaultPerformanceReportApiState, action) => {
   switch (action.type) {
-    case GOALS_PERFORMANCE_REPORT_FETCH_REQUEST:
+    case GOALS_LOAD_ALL:
+    case GOALS_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case GOALS_PERFORMANCE_REPORT_FETCH_REQUEST_SUCCESS:
+    case GOALS_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.response.data
+        ...action.payload.data
       };
-    case GOALS_PERFORMANCE_REPORT_FETCH_REQUEST_FAILURE:
+    case GOALS_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false

@@ -1,15 +1,8 @@
 import {
   ACTION_BAR_BREADCRUMB_POP,
   ACTION_BAR_BREADCRUMB_PUSH,
-  ACTION_BAR_BREADCRUMB_SET,
-  ACTION_BAR_SET_SECONDARY
+  ACTION_BAR_BREADCRUMB_SET
 } from '../action-types';
-
-const setSecondaryActionBar = visible => dispatch =>
-    dispatch({
-      type: ACTION_BAR_SET_SECONDARY,
-      secondaryBar: visible
-    });
 
 const pushBreadcrumb = breadcrumbValue => dispatch =>
   dispatch({
@@ -30,7 +23,6 @@ const setBreadcrumb = (from, path) => dispatch =>
   });
 
 export {
-  setSecondaryActionBar,
   pushBreadcrumb,
   popBreadcrumb,
   setBreadcrumb

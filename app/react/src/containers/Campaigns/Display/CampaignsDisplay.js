@@ -13,7 +13,7 @@ class CampaignsDisplay extends Component {
   render() {
     return (
       <Layout>
-        <CampaignsDisplayActionbar />
+        <CampaignsDisplayActionbar {...this.props} />
         <Content>
           <ScrollComponent>
             <CampaignsDisplayTable {...this.props} />

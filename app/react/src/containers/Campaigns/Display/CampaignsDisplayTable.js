@@ -35,13 +35,15 @@ class CampaignsDisplayTable extends Component {
 
   componentDidMount() {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       query,
-
-      fetchCampaignsAndStatistics
+      loadCampaignsDisplayDataSource
     } = this.props;
 
     const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
-    fetchCampaignsAndStatistics(filter);
+    loadCampaignsDisplayDataSource(organisationId, filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,19 +53,20 @@ class CampaignsDisplayTable extends Component {
         workspaceId
       },
 
-      fetchCampaignsAndStatistics
+      loadCampaignsDisplayDataSource
     } = this.props;
 
     const {
       query: nextQuery,
       activeWorkspace: {
-        workspaceId: nextWorkspaceId
+        workspaceId: nextWorkspaceId,
+        organisationId
       },
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
       const filter = deserializeQuery(nextQuery, DISPLAY_QUERY_SETTINGS);
-      fetchCampaignsAndStatistics(filter);
+      loadCampaignsDisplayDataSource(organisationId, filter);
     }
   }
 
@@ -180,8 +183,8 @@ class CampaignsDisplayTable extends Component {
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => {
-          // TODO find campaign (with getCampaignsDisplayById(record['campaign_id']))
+        render: (text) => {
+          // TODO find campaign currency (with getCampaignsDisplayById(record['campaign_id']))
           const campaignCurrency = 'EUR';
           return renderMetricData(text, '0,0.00', campaignCurrency);
         }
@@ -232,14 +235,6 @@ class CampaignsDisplayTable extends Component {
     ];
 
     const statusItems = CampaignStatuses.map(status => ({ key: status, value: status }));
-
-    // lodash.debounce(plop, 1000)
-    // const plop = value => {
-    //   console.log('plop');
-    //   return this.updateQueryParams({
-    //     statuses: value.status.map(item => item.value)
-    //   });
-    // };
 
     const filtersOptions = [
       {
@@ -300,8 +295,11 @@ class CampaignsDisplayTable extends Component {
 
   archiveCampaign(campaign) {
     const {
+      activeWorkspace: {
+        organisationId
+      },
       archiveCampaignDisplay,
-      fetchCampaignsAndStatistics,
+      loadCampaignsDisplayDataSource,
       translations,
       query
     } = this.props;
@@ -316,7 +314,7 @@ class CampaignsDisplayTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveCampaignDisplay(campaign.id).then(() => {
-          fetchCampaignsAndStatistics(filter);
+          loadCampaignsDisplayDataSource(organisationId, filter);
         });
       },
       onCancel() { },
@@ -340,7 +338,7 @@ CampaignsDisplayTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalCampaignsDisplay: PropTypes.number.isRequired,
 
-  fetchCampaignsAndStatistics: PropTypes.func.isRequired,
+  loadCampaignsDisplayDataSource: PropTypes.func.isRequired,
   archiveCampaignDisplay: PropTypes.func.isRequired,
   resetCampaignsDisplayTable: PropTypes.func.isRequired,
 };
@@ -357,7 +355,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchCampaignsAndStatistics: CampaignsDisplayActions.fetchCampaignsAndStatistics,
+  loadCampaignsDisplayDataSource: CampaignsDisplayActions.loadCampaignsDisplayDataSource,
   // archiveCampaignDisplay: CampaignEmailAction.archiveCampaignDisplay,
   resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable
 };

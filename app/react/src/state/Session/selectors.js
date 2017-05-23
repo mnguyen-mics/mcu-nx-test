@@ -89,8 +89,21 @@ const isReactUrl = url => {
   return url.search(regex) >= 0;
 };
 
+const getWorkspaceOrganisationId = (state) => {
+  const {
+    sessionState: {
+      activeWorkspace: {
+        organisationId
+      }
+    }
+  } = state;
+
+  return organisationId;
+};
+
 export {
   buildWorkspaces,
   setActiveWorkspace,
-  isReactUrl
+  isReactUrl,
+  getWorkspaceOrganisationId
 };

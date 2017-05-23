@@ -131,7 +131,8 @@ class Navigator extends Component {
     const redirectActiveWorkspace = nextActiveWorkspace ? nextActiveWorkspace : activeWorkspace;
 
     const datamartPart = redirectActiveWorkspace.datamartId ? `/d/${redirectActiveWorkspace.datamartId}` : '';
-    const destinationPart = /o\/\d+\/(d\/\d+\/)?(.*)/.exec(router.location.pathname)[2];
+    const matches = /o\/\d+\/(d\/\d+\/)?(.*)/.exec(router.location.pathname);
+    const destinationPart = matches ? matches[2] : '';
     const url = `${PUBLIC_URL}/o/${redirectActiveWorkspace.organisationId}${datamartPart}/${destinationPart}`; // eslint-disable-line no-undef
     const query = router.location.query;
 

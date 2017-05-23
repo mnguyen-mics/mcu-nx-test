@@ -77,12 +77,11 @@ export const isQueryValid = (query = {}, settings) => {
 // add missing and/or replace invalid params with default value
 export const buildDefaultQuery = (existingQuery = {}, settings) => {
   return settings.reduce((acc, setting) => {
-    if (setting.isValid(existingQuery)) {
-      acc[setting.paramName] = existingQuery[setting.paramName]; // eslint-disable-line no-param-reassign
-    } else {
-      acc[setting.paramName] = setting.serialize(setting.defaultValue); // eslint-disable-line no-param-reassign
-    }
-    return acc;
+    const paramValue = setting.isValid(existingQuery) ? existingQuery[setting.paramName] : setting.serialize(setting.defaultValue);
+    return {
+      ...acc,
+      [setting.paramName]: paramValue
+    };
   }, {});
 };
 
@@ -91,7 +90,10 @@ export const updateQueryWithParams = (query, params, settings) => {
   const serializedParams = Object.keys(params).reduce((acc, paramName) => {
     const setting = settings.find(s => s.paramName === paramName);
     if (setting) {
-      acc[paramName] = setting.serialize(params[paramName]); // eslint-disable-line no-param-reassign
+      return {
+        ...acc,
+        [paramName]: setting.serialize(params[paramName])
+      };
     }
     return acc;
   }, {});
@@ -103,9 +105,9 @@ export const updateQueryWithParams = (query, params, settings) => {
 
 // run deserialize function on object keys and return a new object
 export const deserializeQuery = (query, settings) => {
-  return settings.reduce((acc, setting) => {
-    acc[setting.paramName] = setting.deserialize(query); // eslint-disable-line no-param-reassign
-    return acc;
-  }, {});
+  return settings.reduce((acc, setting) => ({
+    ...acc,
+    [setting.paramName]: setting.deserialize(query)
+  }), {});
 };
 
