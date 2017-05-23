@@ -1,39 +1,30 @@
 import {
-  LOGIN_REFRESH_TOKEN_REQUEST,
-  LOGIN_REFRESH_TOKEN_REQUEST_FAILURE,
-  LOGIN_REFRESH_TOKEN_REQUEST_SUCCESS,
-  LOGIN_RESET
+  LOG_IN
 } from '../action-types';
 
 const defaultLoginState = {
-  refresh_token: null,
-  isFetching: false
+  isRequesting: false,
+  hasError: false,
+  error: {}
 };
 
-const loginState = (state = defaultLoginState, action) => {
+const login = (state = defaultLoginState, action) => {
 
   switch (action.type) {
 
-    case LOGIN_REFRESH_TOKEN_REQUEST:
+    case LOG_IN.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isRequesting: true
       };
-    case LOGIN_REFRESH_TOKEN_REQUEST_SUCCESS:
+    case LOG_IN.FAILURE:
       return {
-        ...state,
-        isFetching: false,
-        refresh_token: action.response.data.refresh_token
+        isRequesting: false,
+        hasError: true,
+        error: action.payload
       };
-    case LOGIN_REFRESH_TOKEN_REQUEST_FAILURE:
-      return {
-        ...state,
-        isFetching: false,
-        error: action.response.error
-      };
-    case LOGIN_RESET:
+    case LOG_IN.SUCCESS:
       return defaultLoginState;
-
     default:
       return state;
   }
@@ -41,7 +32,7 @@ const loginState = (state = defaultLoginState, action) => {
 };
 
 const LoginStateReducers = {
-  loginState
+  login
 };
 
 export default LoginStateReducers;

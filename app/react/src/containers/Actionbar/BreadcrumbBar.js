@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Link from 'react-router/lib/Link';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Breadcrumb } from 'antd';
 import { PathPropTypes } from '../../validators/proptypes';
@@ -30,7 +30,7 @@ BreadcrumbBar.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  path: state.actionbarState.path
+  // path: state.actionbarState.path
 });
 
 const mapDispatchToProps = {};

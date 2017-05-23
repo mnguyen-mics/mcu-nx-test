@@ -146,7 +146,7 @@ LabelListView.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  translations: state.translationsState.translations
+  translations: state.translations
 });
 
 const mapDispatchToProps = {};

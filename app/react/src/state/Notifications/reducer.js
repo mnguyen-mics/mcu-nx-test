@@ -1,51 +1,44 @@
+import lodash from 'lodash';
+
 import {
   NOTIFICATIONS_ADD,
   NOTIFICATIONS_REMOVE,
   NOTIFICATIONS_RESET
 } from '../action-types';
 
-const defaultNotificationsState = {
-  notifications: [
-    /**
-     * Notification format:
-     * {
-     *  type: 'error' || 'info' || 'warning' || 'success'  || 'reload',
-     *  messageKey: String,
-     *  descriptionKey: String,
-     *  values: Object
-     * }
-     */
-  ]
-};
+/**
+ * Notification format:
+ * {
+ *  type: 'error' || 'info' || 'warning' || 'success'  || 'reload',
+ *  messageKey: String,
+ *  descriptionKey: String,
+ *  values: Object
+ * }
+ */
+const emptyNotificationsArray = [];
 
-const notifications = (state = defaultNotificationsState, action) => {
+const notifications = (state = emptyNotificationsArray, action) => {
 
   switch (action.type) {
     case NOTIFICATIONS_ADD:
-      return {
+      return [
         ...state,
-        notifications: state.notifications.concat({
-          type: action.payload.type,
-          messageKey: action.payload.messageKey,
-          descriptionKey: action.payload.descriptionKey,
-          values: action.payload.values
-        })
-      };
+        lodash.pick(action.payload, [
+          'type',
+          'messageKey',
+          'descriptionKey',
+          'values'
+        ])
+      ];
 
     case NOTIFICATIONS_REMOVE:
-      return {
-        ...state,
-        notifications: [
-          ...state.notifications.slice(0, action.payload),
-          ...state.notifications.slice(action.payload + 1)
-        ]
-      };
+      return [
+        ...state.slice(0, action.payload),
+        ...state.slice(action.payload + 1)
+      ];
 
     case NOTIFICATIONS_RESET:
-      return {
-        ...state,
-        notifications: defaultNotificationsState.notifications
-      };
+      return emptyNotificationsArray;
 
     default:
       return state;

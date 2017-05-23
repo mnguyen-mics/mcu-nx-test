@@ -1,59 +1,53 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon, Button } from 'antd';
 import { connect } from 'react-redux';
-import Link from 'react-router/lib/Link';
+import { Menu, Dropdown, Button } from 'antd';
+import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import * as ActionbarActions from '../../../../state/Actionbar/actions';
-
+import { McsIcons } from '../../../../components/McsIcons';
+import { withTranslations } from '../../../Helpers';
+import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class PartitionsActionbar extends Component {
 
-  componentWillMount() {
-
-    const {
-      translations,
-      setBreadcrumb
-    } = this.props;
-
-    const breadcrumb = {
-      name: translations.AUDIENCE_PARTITIONS
-    };
-
-    setBreadcrumb(0, [breadcrumb]);
-
-  }
-
   render() {
-
     const {
-      activeWorkspace: {
-        organisationId
-      }
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      translations,
+      defaultDatamart
     } = this.props;
+
+    const datamartId = defaultDatamart(organisationId).id;
 
     const addMenu = (
       <Menu>
         <Menu.Item key="RANDOM_SPLIT">
-          <Link to={`${organisationId}/datamart/partitions/RANDOM_SPLIT`}>
+          <Link to={`/o${organisationId}d${datamartId}/datamart/partitions/RANDOM_SPLIT`}>
             <FormattedMessage id="RANDOM_SPLIT" />
           </Link>
         </Menu.Item>
         <Menu.Item key="CLUSTERING">
-          <Link to={`${organisationId}/datamart/partitions/CLUSTERING`}>
+          <Link to={`/o${organisationId}d${datamartId}/datamart/partitions/CLUSTERING`}>
             <FormattedMessage id="CLUSTERING" />
           </Link>
         </Menu.Item>
       </Menu>
     );
 
+    const breadcrumbPaths = [{ name: translations.AUDIENCE_PARTITIONS, url: `/v2/o/${organisationId}/audience/partitions` }];
+
     return (
-      <Actionbar {...this.props}>
+      <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_PARTITION" />
+            <McsIcons type="plus" /> <FormattedMessage id="NEW_PARTITION" />
           </Button>
         </Dropdown>
       </Actionbar>
@@ -64,25 +58,22 @@ class PartitionsActionbar extends Component {
 }
 
 PartitionsActionbar.propTypes = {
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-
-  setBreadcrumb: PropTypes.func.isRequired
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  defaultDatamart: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations
+const mapStateToProps = state => ({
+  defaultDatamart: getDefaultDatamart(state)
 });
 
-const mapDispatchToProps = {
-  setBreadcrumb: ActionbarActions.setBreadcrumb
-};
-
 PartitionsActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
+)(PartitionsActionbar);
+
+PartitionsActionbar = compose(
+  withTranslations,
+  withRouter,
 )(PartitionsActionbar);
 
 export default PartitionsActionbar;

@@ -1,74 +1,105 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView, EmptyTableView } from '../../../../components/TableView';
-import { Icons } from '../../../../components/McsIcons';
+import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsEmailActions from '../../../../state/Campaigns/Email/actions';
 
-import {
-  EMAIL_QUERY_SETTINGS,
+import { EMAIL_SEARCH_SETTINGS } from './constants';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
+import {
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
-import { CampaignStatuses } from '../../../../constants/CampaignConstant';
-
-import {
-  getTableDataSource
- } from '../../../../state/Campaigns/Email/selectors';
+import { campaignStatuses } from '../../constants';
+import { getTableDataSource } from '../../../../state/Campaigns/Email/selectors';
 
 class CampaignsEmailTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveCampaign = this.archiveCampaign.bind(this);
     this.editCampaign = this.editCampaign.bind(this);
   }
 
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       loadCampaignsEmailDataSource
     } = this.props;
 
-    const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
-
-    loadCampaignsEmailDataSource(organisationId, filter, true);
+    if (!isSearchValid(search, EMAIL_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, EMAIL_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
+      });
+    } else {
+      const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
+      loadCampaignsEmailDataSource(organisationId, filter, true);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       loadCampaignsEmailDataSource
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch,
+        state
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, EMAIL_QUERY_SETTINGS);
-      loadCampaignsEmailDataSource(organisationId, filter);
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, EMAIL_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, EMAIL_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
+        });
+      } else {
+        const filter = parseSearch(nextSearch, EMAIL_SEARCH_SETTINGS);
+        loadCampaignsEmailDataSource(nextOrganisationId, filter, checkEmptyDataSource);
+      }
     }
   }
 
@@ -76,24 +107,32 @@ class CampaignsEmailTable extends Component {
     this.props.resetCampaignsEmailTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, EMAIL_QUERY_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, EMAIL_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       translations,
       isFetchingCampaignsEmail,
@@ -103,12 +142,12 @@ class CampaignsEmailTable extends Component {
       hasEmailCampaigns,
     } = this.props;
 
-    const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
+    const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
 
     const searchOptions = {
       isEnabled: true,
       placeholder: translations.SEARCH_CAMPAIGNS_EMAIL,
-      onSearch: value => this.updateQueryParams({
+      onSearch: value => this.updateLocationSearch({
         keywords: value
       }),
       defaultValue: filter.keywords
@@ -116,7 +155,7 @@ class CampaignsEmailTable extends Component {
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (values) => this.updateQueryParams({
+      onChange: (values) => this.updateLocationSearch({
         rangeType: values.rangeType,
         lookbackWindow: values.lookbackWindow,
         from: values.from,
@@ -138,10 +177,10 @@ class CampaignsEmailTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCampaignsEmail,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -159,13 +198,13 @@ class CampaignsEmailTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><Icons type="status" /></span></Tooltip>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/email/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/email/report/${record.id}/basic`}>{text}</Link>
       },
       {
         translationKey: 'EMAIL_SENT',
@@ -219,7 +258,7 @@ class CampaignsEmailTable extends Component {
       }
     ];
 
-    const statusItems = CampaignStatuses.map(status => ({ key: status, value: status }));
+    const statusItems = campaignStatuses.map(status => ({ key: status, value: status }));
 
     const filtersOptions = [
       {
@@ -227,7 +266,7 @@ class CampaignsEmailTable extends Component {
         displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
           handleMenuClick: value => {
-            this.updateQueryParams({
+            this.updateLocationSearch({
               statuses: value.status.map(item => item.value)
             });
           },
@@ -258,27 +297,33 @@ class CampaignsEmailTable extends Component {
 
   editCampaign(campaign) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    router.push(`/${workspaceId}/campaigns/email/report/${campaign.id}/basic`);
+    history.push(`/v2/o/${organisationId}/campaigns/email/report/${campaign.id}/basic`);
   }
 
   archiveCampaign(campaign) {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveCampaignEmail,
       loadCampaignsEmailDataSource,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
+    const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -302,10 +347,10 @@ CampaignsEmailTable.defaultProps = {
 };
 
 CampaignsEmailTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   hasEmailCampaigns: PropTypes.bool.isRequired,
   isFetchingCampaignsEmail: PropTypes.bool.isRequired,
@@ -318,10 +363,8 @@ CampaignsEmailTable.propTypes = {
   resetCampaignsEmailTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = (state) => ({
+  translations: state.translations,
 
   hasEmailCampaigns: state.campaignsEmailTable.campaignsEmailApi.hasItems,
   isFetchingCampaignsEmail: state.campaignsEmailTable.campaignsEmailApi.isFetching,
@@ -336,7 +379,11 @@ const mapDispatchToProps = {
   resetCampaignsEmailTable: CampaignsEmailActions.resetCampaignsEmailTable,
 };
 
-export default connect(
+CampaignsEmailTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CampaignsEmailTable);
+
+CampaignsEmailTable = withRouter(CampaignsEmailTable);
+
+export default CampaignsEmailTable;

@@ -1,156 +1,128 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
-import Link from 'react-router/lib/Link';
+import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
 
-import Button from 'mcs-react-button';
 import Alert from 'mcs-react-alert';
 
-import * as loginActions from '../../state/Login/actions';
-import * as sessionActions from '../../state/Session/actions';
+import log from '../../utils/Logger';
 
-import { Input } from '../../components/Forms';
+import logoUrl from '../../assets/images/logo-mediarithmics.png';
 
+import { logIn } from '../../state/Login/actions';
+
+const FormItem = Form.Item;
 
 class Login extends Component {
 
   constructor(props) {
     super(props);
-    this.submitCredentials = this.submitCredentials.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentWillUnmount() {
-    this.props.resetLogin();
-  }
-
-  /**
-   * Rendering
-   **/
   render() {
 
     const {
       translations,
-      handleSubmit,
-      loginState: { error }
+      form: {
+        getFieldDecorator
+      },
+      isRequesting,
+      hasError
      } = this.props;
 
-    const submitCredentials = this.submitCredentials;
-
-    const errorMsg = error ? <Alert type="danger" text={<FormattedMessage id={error} />} /> : null;
+    const errorMsg = hasError ? <Alert type="danger" text={<FormattedMessage id="LOG_IN_ERROR" />} /> : null;
 
     return (
-      <div className="container">
-
-        <form className="mcs-form-signin" role="form" onSubmit={handleSubmit(submitCredentials)}>
-
-          <div className="form-group">
+      <div className="mcs-login-container">
+        <div className="login-frame">
+          <Form onSubmit={this.handleSubmit} className="login-form">
+            <img alt="mics-logo" className="login-logo" src={logoUrl} />
             { errorMsg }
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="loginEmail">
-              <FormattedMessage id="EMAIL_ADDRESS" />
-            </label>
-            <Input name="email" placeholder={translations.EMAIL_PLACEHOLDER} />
-          </div>
-          <div>
-            <label htmlFor="loginPassword">
-              <FormattedMessage id="EMAIL_ADDRESS" />
-            </label>
-            <Input name="password" type="password" placeholder={translations.PASSWORD_PLACEHOLDER} />
-          </div>
-          <div className="row">
-            <div className="col-lg-offset-6 col-lg-6">
-              <Link className="text-right" to="/request-password-reset">
-                <FormattedMessage id="FORGOT_PASSWORD" />
-              </Link>
-            </div>
-          </div>
-          <Button action="finish" type="submit">
-            <FormattedMessage id="SUBMIT" />
-          </Button>
-        </form>
-
+            <FormItem>
+              {getFieldDecorator('email', {
+                rules: [{ required: true, message: translations.EMAL_REQUIRED }],
+              })(
+                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={translations.EMAIL_PLACEHOLDER} />
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('password', {
+                rules: [{ required: true, message: translations.PASSWORD_REQURED }],
+              })(
+                <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder={translations.PASSWORD_PLACEHOLDER} />
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('remember', {
+                valuePropName: 'checked',
+                initialValue: false,
+              })(
+                <Checkbox><FormattedMessage id="REMEMBER_ME" /></Checkbox>
+              )}
+              <a className="login-form-forgot" href=""><FormattedMessage id="FORGOT_PASSWORD" /></a>
+              <Button type="primary" htmlType="submit" className="login-form-button" loading={isRequesting}>
+                <FormattedMessage id="LOG_IN" />
+              </Button>
+            </FormItem>
+          </Form>
+        </div>
       </div>
     );
   }
 
-  submitCredentials(credentialsForm) {
-
-    const {
-     refreshToken,
-     getAccessToken,
-     getConnectedUser,
-     location: {
-       query: {
-         next
-       }
-     },
-     router
-    } = this.props;
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { from } = this.props.location.state || { from: { pathname: '/' } };
+    const { match } = this.props;
 
     const redirect = () => {
-
-      const {
-        activeWorkspace: {
-          organisationId,
-          datamartId
-        }
-      } = this.props;
-
-      const redirectUrl = `o${organisationId}d${datamartId}/campaigns/display`;
-      const nextUrl = next ? next : redirectUrl;
-      router.push(nextUrl);
+      log.debug(`Redirect from ${match.url} to ${from.pathname}`);
+      this.props.history.push(from);
     };
 
-    refreshToken(credentialsForm)
-      .then(getAccessToken)
-      .then(getConnectedUser)
-      .then(redirect);
-
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.props.logInRequest({
+          email: values.email,
+          password: values.password,
+          remember: values.remember
+        }, { redirect });
+      }
+    });
   }
-
 }
 
 Login.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  loginState: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.shape({
-    query: PropTypes.shape({
-      next: PropTypes.string
-    })
-  }).isRequired,
-  refreshToken: PropTypes.func.isRequired,
-  resetLogin: PropTypes.func.isRequired,
-  getAccessToken: PropTypes.func.isRequired,
-  getConnectedUser: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  form: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  hasError: PropTypes.bool.isRequired,
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  logInRequest: PropTypes.func.isRequired,
+  isRequesting: PropTypes.bool.isRequired,
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types,
 };
 
 const mapStateToProps = state => ({
-  translations: state.translationsState.translations,
-  loginState: state.loginState,
-  activeWorkspace: state.sessionState.activeWorkspace
+  translations: state.translations,
+  hasError: state.login.hasError,
+  isRequesting: state.login.isRequesting
 });
 
 const mapDispatchToProps = {
-  refreshToken: loginActions.refreshToken,
-  resetLogin: loginActions.resetLogin,
-  getAccessToken: sessionActions.getAccessToken,
-  getConnectedUser: sessionActions.getConnectedUser
+  logInRequest: logIn.request
 };
+
+Login = withRouter(Login);
 
 Login = connect(
   mapStateToProps,
   mapDispatchToProps
 )(Login);
 
-Login = reduxForm({
-  form: 'credentialsForm'
-})(Login);
+Login = Form.create()(Login);
 
 export default Login;

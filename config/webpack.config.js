@@ -83,6 +83,9 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
     },
 
     resolve: {
+      alias: {
+        Containers: path.resolve(__dirname, 'app/react/src/containers/')
+      },
       modules: [paths.appNodeModules]
     },
 

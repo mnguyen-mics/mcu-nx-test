@@ -1,3 +1,7 @@
+import { appSagas } from './App/sagas';
+import { translationsSagas } from './Translations/sagas';
+import { loginSagas } from './Login/sagas';
+import { sessionSagas } from './Session/sagas';
 import { campaignsDisplaySagas } from './Campaigns/Display/sagas';
 import { campaignsEmailSagas } from './Campaigns/Email/sagas';
 import { goalsSagas } from './Campaigns/Goal/sagas';
@@ -9,16 +13,20 @@ import { keywordListsSagas } from './Library/KeywordLists/sagas';
 import { assetsFilesSagas } from './Library/AssetsFiles/sagas';
 import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
-import { navigatorSagas } from './Navigator/sagas';
+import { versionSagas } from './Version/sagas';
 
 export default function* sagas() {
   yield [
+    ...appSagas,
+    ...translationsSagas,
+    ...sessionSagas,
+    ...loginSagas,
     ...campaignsDisplaySagas,
     ...campaignsEmailSagas,
     ...goalsSagas,
     ...automationsSagas,
     ...segmentsSagas,
-    ...navigatorSagas,
+    ...versionSagas,
     ...partitionsSagas,
     ...placementListsSagas,
     ...keywordListsSagas,

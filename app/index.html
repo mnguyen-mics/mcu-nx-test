@@ -51,16 +51,16 @@
     <div ui-view="" class="container-fluid"></div>
   </div>
 
-  <div id="mics_loading">
-    <div id="mics_loading_progress">
-      <img src="./images/ajax-loader.gif" alt="The application is loading, please wait." class="ajax-loader" />
+  <!--<div id="mics_loading">-->
+    <!--<div id="mics_loading_progress">-->
+      <!--<img src="./images/ajax-loader.gif" alt="The application is loading, please wait." class="ajax-loader" />-->
       <!-- <h1>Navigator is loading&nbsp;<small>please wait</small></h1> -->
       <!-- <span id="mics_loading_progress_current"></span> -->
-    </div>
-    <div id="mics_loading_error" style="display:none;">
-      An unexpected error occured while loading the application.<br /> Try reloading the page or contact your support.
-    </div>
-  </div>
+    <!--</div>-->
+    <!--<div id="mics_loading_error" style="display:none;">-->
+      <!--An unexpected error occured while loading the application.<br /> Try reloading the page or contact your support.-->
+    <!--</div>-->
+  <!--</div>-->
   
 </div>
 
@@ -73,7 +73,9 @@
     var reactContainer = document.getElementById("mcs-react-app");
 
     function isReactApp(url) {
-      return url.match(/v2/);
+      var parser = document.createElement('a');
+      parser.href = url;
+      return parser.hash.match(/^#\/v2/) || parser.hash.match(/^#\/login/);
     }
 
     if (!isReactApp(newUrl)) {

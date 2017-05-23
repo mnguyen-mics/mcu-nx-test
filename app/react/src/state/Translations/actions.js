@@ -1,29 +1,15 @@
-import 'whatwg-fetch';
-
-import { CALL_API } from '../../middleware/apiRequest';
+import { createAction } from '../../utils/ReduxHelper';
 
 import {
-  TRANSLATIONS_FETCH_REQUEST,
-  TRANSLATIONS_FETCH_REQUEST_FAILURE,
-  TRANSLATIONS_FETCH_REQUEST_SUCCESS
+  LOAD_TRANSLATIONS
 } from '../action-types';
 
-const publicPath = PUBLIC_PATH; // eslint-disable-line no-undef
-
-const initTranslations = (locale = 'en') => {
-  return dispatch => {
-    return dispatch({
-      [CALL_API]: {
-        method: 'get',
-        localUrl: true,
-        endpoint: `${publicPath}/src/assets/i18n/${locale}.json`,
-        authenticated: false,
-        types: [TRANSLATIONS_FETCH_REQUEST, TRANSLATIONS_FETCH_REQUEST_FAILURE, TRANSLATIONS_FETCH_REQUEST_SUCCESS]
-      }
-    });
-  };
+const loadTranslations = {
+  request: createAction(LOAD_TRANSLATIONS.REQUEST),
+  success: createAction(LOAD_TRANSLATIONS.SUCCESS),
+  failure: createAction(LOAD_TRANSLATIONS.FAILURE)
 };
 
 export {
-  initTranslations
+  loadTranslations
 };

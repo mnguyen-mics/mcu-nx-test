@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
@@ -10,12 +9,15 @@ import { TableView, EmptyTableView } from '../../../../components/TableView';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 
-import {
-  GOAL_QUERY_SETTINGS,
+import { GOAL_SEARCH_SETTINGS } from './constants';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
+import {
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
 
@@ -28,45 +30,78 @@ class GoalsTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.handleArchiveGoal = this.handleArchiveGoal.bind(this);
     this.handleEditGoal = this.handleEditGoal.bind(this);
   }
 
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       loadGoalsDataSource
     } = this.props;
 
-    const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
-    loadGoalsDataSource(organisationId, filter, true);
+    if (!isSearchValid(search, GOAL_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, GOAL_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
+      });
+    } else {
+      const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
+      loadGoalsDataSource(organisationId, filter, true);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       loadGoalsDataSource
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch,
+        state
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, GOAL_QUERY_SETTINGS);
-      loadGoalsDataSource(organisationId, filter);
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, GOAL_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, GOAL_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
+        });
+      } else {
+        const filter = parseSearch(nextSearch, GOAL_SEARCH_SETTINGS);
+        loadGoalsDataSource(nextOrganisationId, filter, checkEmptyDataSource);
+      }
     }
   }
 
@@ -74,24 +109,32 @@ class GoalsTable extends Component {
     this.props.resetGoalsTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, GOAL_QUERY_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, GOAL_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       translations,
       isFetchingGoals,
@@ -101,12 +144,12 @@ class GoalsTable extends Component {
       hasGoals
     } = this.props;
 
-    const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
+    const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
 
     const searchOptions = {
       isEnabled: true,
       placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
-      onSearch: value => this.updateQueryParams({
+      onSearch: value => this.updateLocationSearch({
         keywords: value
       }),
       defaultValue: filter.keywords
@@ -114,7 +157,7 @@ class GoalsTable extends Component {
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (values) => this.updateQueryParams({
+      onChange: (values) => this.updateLocationSearch({
         rangeType: values.rangeType,
         lookbackWindow: values.lookbackWindow,
         from: values.from,
@@ -136,10 +179,10 @@ class GoalsTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalGoals,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -157,7 +200,7 @@ class GoalsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
       },
       {
         translationKey: 'CONVERSIONS',
@@ -196,7 +239,7 @@ class GoalsTable extends Component {
         displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
           handleMenuClick: value => {
-            this.updateQueryParams({
+            this.updateLocationSearch({
               statuses: value.status.map(item => item.value)
             });
           },
@@ -229,27 +272,33 @@ class GoalsTable extends Component {
 
   handleEditGoal(goal) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    router.push(`/${workspaceId}/goals/${goal.id}`);
+    history.push(`/${organisationId}/goals/${goal.id}`);
   }
 
   handleArchiveGoal(goal) {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveGoal,
       loadGoalsDataSource,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
+    const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.GOAL_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -273,10 +322,10 @@ GoalsTable.defaultProps = {
 };
 
 GoalsTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   hasGoals: PropTypes.bool.isRequired,
   isFetchingGoals: PropTypes.bool.isRequired,
@@ -289,10 +338,8 @@ GoalsTable.propTypes = {
   resetGoalsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = (state) => ({
+  translations: state.translations,
 
   hasGoals: state.goalsTable.goalsApi.hasItems,
   isFetchingGoals: state.goalsTable.goalsApi.isFetching,
@@ -307,7 +354,11 @@ const mapDispatchToProps = {
   resetGoalsTable: GoalsActions.resetGoalsTable
 };
 
-export default connect(
+GoalsTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(GoalsTable);
+
+GoalsTable = withRouter(GoalsTable);
+
+export default GoalsTable;

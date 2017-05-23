@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Dropdown, Button, message } from 'antd';
-import { connect } from 'react-redux';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 
+import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import * as ActionbarActions from '../../../../state/Actionbar/actions';
 import { McsIcons } from '../../../../components/McsIcons';
-
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
@@ -16,11 +15,9 @@ import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
-import {
-  DISPLAY_QUERY_SETTINGS,
+import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
-  deserializeQuery
-} from '../../RouteQuerySelector';
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
 
 const fetchExportData = (organisationId, filter) => {
 
@@ -48,7 +45,7 @@ const fetchExportData = (organisationId, filter) => {
 
   const apiResults = Promise.all([
     CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getDisplayCampaignPerformanceReport(organisationId, startDate, endDate, dimension)
+    ReportService.getDisplayCampaignPerfomanceReport(organisationId, startDate, endDate, dimension)
   ]);
 
   return apiResults.then(results => {
@@ -77,31 +74,17 @@ class CampaignsDisplayActionbar extends Component {
     this.state = { exportIsRunning: false };
   }
 
-  componentWillMount() {
-
-    const {
-      translations,
-      setBreadcrumb
-    } = this.props;
-
-    const breadcrumb = {
-      name: translations.DISPLAY_CAMPAIGNS
-    };
-
-    setBreadcrumb(0, [breadcrumb]);
-
-  }
-
   handleRunExport() {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
       },
       translations,
-
     } = this.props;
 
-    const filter = deserializeQuery(this.props.query, DISPLAY_QUERY_SETTINGS);
+    const filter = parseSearch(this.props.location.search, DISPLAY_SEARCH_SETTINGS);
 
     this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
@@ -121,36 +104,52 @@ class CampaignsDisplayActionbar extends Component {
   render() {
 
     const {
-      activeWorkspace: {
-        organisationId
-      }
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
+      translations
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
 
+    const handleOnClick = ({ key }) => {
+      switch (key) {
+        case 'DESKTOP_AND_MOBILE':
+          history.push(`/${organisationId}/campaigns/display/expert/edit/T1`);
+          break;
+
+        default:
+          break;
+      }
+    };
+
     const newCampaignMenu = (
-      <Menu>
+      <Menu onClick={handleOnClick}>
         <Menu.Item key="DESKTOP_AND_MOBILE">
-          <Link to={`${organisationId}/campaigns/display/expert/edit/T1`}>
-            <FormattedMessage id="DESKTOP_AND_MOBILE" />
-          </Link>
+          {/* <Link to={`/${organisationId}/campaigns/display/expert/edit/T1`}>*/}
+          <FormattedMessage id="DESKTOP_AND_MOBILE" />
+          {/* </Link>*/}
         </Menu.Item>
         <Menu.Item key="SIMPLIFIED_KEYWORDS_TARGETING">
-          <Link to={`${organisationId}/campaigns/display/keywords`}>
+          <Link to={`/${organisationId}/campaigns/display/keywords`}>
             <FormattedMessage id="SIMPLIFIED_KEYWORDS_TARGETING" />
           </Link>
         </Menu.Item>
         <Menu.Item key="EXTERNAL_CAMPAIGN">
-          <Link to={`${organisationId}/campaigns/display/external/edit/T1`}>
+          <Link to={`/${organisationId}/campaigns/display/external/edit/T1`}>
             <FormattedMessage id="EXTERNAL_CAMPAIGN" />
           </Link>
         </Menu.Item>
       </Menu>
     );
 
-    return (
+    const breadcrumbPaths = [{ name: translations.DISPLAY, url: `/v2/o/${organisationId}/campaigns/display` }];
 
-      <Actionbar>
+    return (
+      <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={newCampaignMenu} trigger={['click']}>
           <Button type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
@@ -167,26 +166,15 @@ class CampaignsDisplayActionbar extends Component {
 }
 
 CampaignsDisplayActionbar.propTypes = {
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-  setBreadcrumb: PropTypes.func.isRequired
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations
-});
-
-const mapDispatchToProps = {
-  setBreadcrumb: ActionbarActions.setBreadcrumb
-};
-
-CampaignsDisplayActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps
+CampaignsDisplayActionbar = compose(
+  withTranslations,
+  withRouter,
 )(CampaignsDisplayActionbar);
 
 export default CampaignsDisplayActionbar;

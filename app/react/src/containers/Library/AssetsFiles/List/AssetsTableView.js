@@ -1,29 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
+import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
 import { TableView } from '../../../../components/TableView';
 
 import * as AssetsFilesActions from '../../../../state/Library/AssetsFiles/actions';
 
+import { ASSETS_SEARCH_SETTINGS } from './constants';
 import {
-  ASSETS_FILES_SETTINGS,
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
-
-import {
-  getTableDataSource
- } from '../../../../state//Library/AssetsFiles/selectors';
+import { getTableDataSource } from '../../../../state//Library/AssetsFiles/selectors';
 
 class AssetsFilesTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveAsset = this.archiveAsset.bind(this);
     this.editAsset = this.editAsset.bind(this);
   }
@@ -31,38 +31,66 @@ class AssetsFilesTable extends Component {
 
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
       fetchAssetsFiles
     } = this.props;
-    const filter = deserializeQuery(query, ASSETS_FILES_SETTINGS);
-    fetchAssetsFiles(organisationId, filter);
+
+    if (!isSearchValid(search, ASSETS_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, ASSETS_SEARCH_SETTINGS)
+      });
+    } else {
+      const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
+      fetchAssetsFiles(organisationId, filter);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       fetchAssetsFiles
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, ASSETS_FILES_SETTINGS);
-      fetchAssetsFiles(organisationId, filter);
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, ASSETS_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, ASSETS_SEARCH_SETTINGS)
+        });
+      } else {
+        const filter = parseSearch(nextSearch, ASSETS_SEARCH_SETTINGS);
+        fetchAssetsFiles(nextOrganisationId, filter);
+      }
     }
   }
 
@@ -70,37 +98,48 @@ class AssetsFilesTable extends Component {
     this.props.resetAssetsFilesTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, ASSETS_FILES_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, ASSETS_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
+      },
       isFetchingAssetsFiles,
       dataSource,
       totalPlacements
     } = this.props;
 
-    const filter = deserializeQuery(query, ASSETS_FILES_SETTINGS);
+    const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
 
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -163,27 +202,33 @@ class AssetsFilesTable extends Component {
 
   editAsset(keyword) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    router.push(`/${workspaceId}/library/keywordslists/${keyword.id}`);
+    history.push(`/${organisationId}/library/keywordslists/${keyword.id}`);
   }
 
   archiveAsset(keyword) {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveAssetList,
       fetchAssetsFiles,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, ASSETS_FILES_SETTINGS);
+    const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -207,10 +252,10 @@ AssetsFilesTable.defaultProps = {
 };
 
 AssetsFilesTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   isFetchingAssetsFiles: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -222,9 +267,7 @@ AssetsFilesTable.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+  translations: state.translations,
 
   isFetchingAssetsFiles: state.assetsFilesTable.assetsFilesApi.isFetching,
   dataSource: getTableDataSource(state),
@@ -237,7 +280,11 @@ const mapDispatchToProps = {
   resetAssetsFilesTable: AssetsFilesActions.resetAssetsFilesTable
 };
 
-export default connect(
+AssetsFilesTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(AssetsFilesTable);
+
+AssetsFilesTable = withRouter(AssetsFilesTable);
+
+export default AssetsFilesTable;

@@ -1,4 +1,4 @@
-import NavigatorHeader from './Header';
+import NavigatorHeader from './NavigatorHeader';
 
 export {
   NavigatorHeader

@@ -7,6 +7,10 @@ import * as notificationsActions from '../../state/Notifications/actions';
 
 class Notifications extends Component {
 
+  componentDidMount() {
+    // start
+  }
+
   componentWillReceiveProps(nextProps) {
     const {
       notifications,
@@ -85,8 +89,8 @@ Notifications.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  translations: state.translationsState.translations,
-  notifications: state.notifications.notifications
+  translations: state.translations,
+  notifications: state.notifications
 });
 
 const mapDispatchToProps = {

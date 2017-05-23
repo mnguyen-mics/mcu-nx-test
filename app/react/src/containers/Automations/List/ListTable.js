@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Modal, Tooltip } from 'antd';
 
 import { TableView, EmptyTableView } from '../../../components/TableView';
@@ -10,12 +9,15 @@ import { McsIcons } from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 
-import {
-  AUTOMATIONS_LIST_SETTINGS,
+import { SCENARIOS_SEARCH_SETTINGS } from './constants';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../RouteQuerySelector';
+import {
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../utils/LocationSearchHelper';
 
 import {
   getTableDataSource
@@ -25,46 +27,78 @@ class AutomationsListTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveScenario = this.archiveScenario.bind(this);
     this.editAutomation = this.editAutomation.bind(this);
   }
 
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
       fetchAutomationList
     } = this.props;
 
-    const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
-    fetchAutomationList(organisationId, filter, true);
+    if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
+      });
+    } else {
+      const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
+      fetchAutomationList(organisationId, filter, true);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       fetchAutomationList
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch,
+        state
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, AUTOMATIONS_LIST_SETTINGS);
-      fetchAutomationList(organisationId, filter);
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, SCENARIOS_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, SCENARIOS_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
+        });
+      } else {
+        const filter = parseSearch(nextSearch, SCENARIOS_SEARCH_SETTINGS);
+        fetchAutomationList(nextOrganisationId, filter, checkEmptyDataSource);
+      }
     }
   }
 
@@ -72,24 +106,32 @@ class AutomationsListTable extends Component {
     this.props.resetAutomationsTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, AUTOMATIONS_LIST_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, SCENARIOS_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       isFetchingAutomationList,
       dataSource,
@@ -98,16 +140,16 @@ class AutomationsListTable extends Component {
       hasAutomations
     } = this.props;
 
-    const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
+    const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
 
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAutomations,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -124,7 +166,7 @@ class AutomationsListTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/library/scenarios/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`}>{text}</Link>
       }
     ];
 
@@ -158,29 +200,35 @@ class AutomationsListTable extends Component {
 
   }
 
-  editAutomation(campaign) {
+  editAutomation(record) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    router.push(`/${workspaceId}/library/scenarios/${campaign.id}`);
+    history.push(`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`);
   }
 
   archiveScenario(campaign) {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveAutomationList,
       fetchAutomationList,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
+    const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -204,10 +252,10 @@ AutomationsListTable.defaultProps = {
 };
 
 AutomationsListTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   hasAutomations: PropTypes.bool.isRequired,
   isFetchingAutomationList: PropTypes.bool.isRequired,
@@ -219,10 +267,8 @@ AutomationsListTable.propTypes = {
   resetAutomationsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = (state) => ({
+  translations: state.translations,
   hasAutomations: state.automationsTable.automationsApi.hasItems,
   isFetchingAutomationList: state.automationsTable.automationsApi.isFetching,
   dataSource: getTableDataSource(state),
@@ -235,7 +281,11 @@ const mapDispatchToProps = {
   resetAutomationsTable: AutomationsListActions.resetAutomationsTable
 };
 
-export default connect(
+AutomationsListTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(AutomationsListTable);
+
+AutomationsListTable = withRouter(AutomationsListTable);
+
+export default AutomationsListTable;

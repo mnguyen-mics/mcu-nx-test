@@ -2,8 +2,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import 'babel-polyfill';
 import createSagaMiddleware from 'redux-saga';
-import hashHistory from 'react-router/lib/hashHistory';
-import { routerMiddleware } from 'react-router-redux';
 
 import { apiRequest, logoutListener } from '../middleware';
 import rootReducer from '../reducers';
@@ -18,9 +16,6 @@ export default function configureStore() {
 
   const sagaMiddleware = createSagaMiddleware();
 
-  const reactRouterMiddleware = routerMiddleware(hashHistory);
-
-  middlewares.push(reactRouterMiddleware);
   middlewares.push(logoutListener);
   middlewares.push(thunkMiddleware);
   middlewares.push(apiRequest);

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
-import { Modal, Tooltip } from 'antd';
+import { Link, withRouter } from 'react-router-dom';
+import { Modal, Tooltip, Icon } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView, EmptyTableView } from '../../../../components/TableView';
@@ -11,15 +10,18 @@ import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsDisplayActions from '../../../../state/Campaigns/Display/actions';
 
-import {
-  DISPLAY_QUERY_SETTINGS,
+import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
+import {
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
-import { CampaignStatuses } from '../../../../constants/CampaignConstant';
+import { campaignStatuses } from '../../constants';
 
 import {
   getTableDataSource
@@ -29,45 +31,78 @@ class CampaignsDisplayTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveCampaign = this.archiveCampaign.bind(this);
     this.editCampaign = this.editCampaign.bind(this);
   }
 
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       loadCampaignsDisplayDataSource
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
-    loadCampaignsDisplayDataSource(organisationId, filter, true);
+    if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
+      });
+    } else {
+      const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+      loadCampaignsDisplayDataSource(organisationId, filter, true);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       loadCampaignsDisplayDataSource
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch,
+        state
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, DISPLAY_QUERY_SETTINGS);
-      loadCampaignsDisplayDataSource(organisationId, filter);
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, DISPLAY_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, DISPLAY_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
+        });
+      } else {
+        const filter = parseSearch(nextSearch, DISPLAY_SEARCH_SETTINGS);
+        loadCampaignsDisplayDataSource(nextOrganisationId, filter, checkEmptyDataSource);
+      }
     }
   }
 
@@ -75,24 +110,32 @@ class CampaignsDisplayTable extends Component {
     this.props.resetCampaignsDisplayTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, DISPLAY_QUERY_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, DISPLAY_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       hasDisplayCampaigns,
       translations,
@@ -102,12 +145,12 @@ class CampaignsDisplayTable extends Component {
       totalCampaignsDisplay
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
 
     const searchOptions = {
       isEnabled: true,
       placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
-      onSearch: value => this.updateQueryParams({
+      onSearch: value => this.updateLocationSearch({
         keywords: value
       }),
       defaultValue: filter.keywords
@@ -115,7 +158,7 @@ class CampaignsDisplayTable extends Component {
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (values) => this.updateQueryParams({
+      onChange: (values) => this.updateLocationSearch({
         rangeType: values.rangeType,
         lookbackWindow: values.lookbackWindow,
         from: values.from,
@@ -137,10 +180,10 @@ class CampaignsDisplayTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCampaignsDisplay,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -164,7 +207,7 @@ class CampaignsDisplayTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
       },
       {
         translationKey: 'IMPRESSIONS',
@@ -236,14 +279,14 @@ class CampaignsDisplayTable extends Component {
       }
     ];
 
-    const statusItems = CampaignStatuses.map(status => ({ key: status, value: status }));
+    const statusItems = campaignStatuses.map(status => ({ key: status, value: status }));
 
     const filtersOptions = [
       {
         name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /> <McsIcons type="down" /></div>),
+        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
-          handleMenuClick: value => this.updateQueryParams({ statuses: value.status.map(item => item.value) }),
+          handleMenuClick: value => this.updateLocationSearch({ statuses: value.status.map(item => item.value) }),
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
           items: statusItems
         }
@@ -271,42 +314,48 @@ class CampaignsDisplayTable extends Component {
 
   editCampaign(campaign) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
     let editUrl;
     switch (campaign.editor_artifact_id) {
       case 'default-editor':
-        editUrl = `/${workspaceId}/campaigns/display/expert/edit/${campaign.id}`;
+        editUrl = `/${organisationId}/campaigns/display/expert/edit/${campaign.id}`;
         break;
       case 'external-campaign-editor':
-        editUrl = `/${workspaceId}/campaigns/display/external/edit/${campaign.id}`;
+        editUrl = `/${organisationId}/campaigns/display/external/edit/${campaign.id}`;
         break;
       case 'keywords-targeting-editor':
-        editUrl = `/${workspaceId}/campaigns/display/keywords/${campaign.id}`;
+        editUrl = `/${organisationId}/campaigns/display/keywords/${campaign.id}`;
         break;
       default:
         break;
     }
 
-    router.push(editUrl);
+    history.push(editUrl);
   }
 
   archiveCampaign(campaign) {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveCampaignDisplay,
       loadCampaignsDisplayDataSource,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -330,10 +379,10 @@ CampaignsDisplayTable.defaultProps = {
 };
 
 CampaignsDisplayTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   hasDisplayCampaigns: PropTypes.bool.isRequired,
   isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
@@ -346,10 +395,9 @@ CampaignsDisplayTable.propTypes = {
   resetCampaignsDisplayTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = (state) => ({
+  translations: state.translations,
+
   hasDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.hasItems,
   isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
   isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
@@ -363,7 +411,11 @@ const mapDispatchToProps = {
   resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable
 };
 
-export default connect(
+CampaignsDisplayTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CampaignsDisplayTable);
+
+CampaignsDisplayTable = withRouter(CampaignsDisplayTable);
+
+export default CampaignsDisplayTable;

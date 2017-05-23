@@ -19,6 +19,9 @@ const defaultCampaignsDisplayApiState = {
   hasItems: true
 };
 
+// TODO try to intruce a higher order reducer
+// that handle isFetching base on type name (x.REQUEST, x.SUCCESS, ...)
+
 const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) => {
   switch (action.type) {
     case CAMPAIGNS_DISPLAY_LOAD_ALL:

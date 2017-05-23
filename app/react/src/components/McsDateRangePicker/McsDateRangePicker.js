@@ -1,7 +1,9 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Dropdown, Button, DatePicker, Menu, Icon } from 'antd';
 import moment from 'moment';
+
+import { withTranslations } from '../../containers/Helpers';
 
 const { RangePicker } = DatePicker;
 
@@ -155,7 +157,7 @@ class McsDateRangePicker extends Component {
 
 McsDateRangePicker.propTypes = {
   values: PropTypes.shape({
-    rangeType: PropTypes.string.isRequired,
+    rangeType: PropTypes.string,
     lookbackWindow: PropTypes.object,
     from: PropTypes.object,
     to: PropTypes.object
@@ -164,16 +166,6 @@ McsDateRangePicker.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = state => ({
-  translations: state.translationsState.translations
-});
-
-const mapDispatchToProps = {};
-
-McsDateRangePicker = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(McsDateRangePicker);
-
+McsDateRangePicker = withTranslations(McsDateRangePicker);
 
 export default McsDateRangePicker;

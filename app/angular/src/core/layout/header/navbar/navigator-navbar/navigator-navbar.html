@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#/{{currentWorkspaceId}}/campaigns/display"><img ng-src="{{getBrandLogo()}}"/></a>
+      <a class="navbar-brand" href="#/{{campaignUrl}}"><img ng-src="{{getBrandLogo()}}"/></a>
     </div>
 
     <div class="navbar-collapse collapse" ng-if="isLogged">
@@ -22,9 +22,9 @@
         </li>
         <li ng-class="category == 'campaigns' ? 'active' : ''"><a href="{{campaignUrl}}">Campaigns</a>
         </li>
-        <li ng-class="category == 'creatives' ? 'active' : ''"><a href="#/{{currentWorkspaceId}}/creatives/display-ad">Creatives</a>
+        <li ng-class="category == 'creatives' ? 'active' : ''"><a href="#/{{currentV2WorkspaceId}}/creatives/display">Creatives</a>
         </li>
-        <li ng-class="category == 'library' ? 'active' : ''"><a href="#/{{currentWorkspaceId}}/library/placementlists">Library</a>
+        <li ng-class="category == 'library' ? 'active' : ''"><a href="#/{{currentV2WorkspaceId}}/library/placements">Library</a>
         </li>
       </ul>
 
@@ -49,7 +49,7 @@
             <li><p>{{user.email}}</p></li>
             <li><a href="#/{{currentWorkspaceId}}/settings">Account & Settings</a></li>
             <li class="divider"></li>
-            <li><a href="#logout">Log out</a></li>
+            <li><a href="#/logout">Log out</a></li>
           </ul>
         </li>
       </ul>

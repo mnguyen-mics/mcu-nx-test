@@ -1,69 +1,95 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
 import { TableView } from '../../../../components/TableView';
 
 import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
+import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import {
-  CREATIVE_EMAILS_LIST_SETTINGS,
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
-
-import {
-  getTableDataSource
- } from '../../../../state/Creatives/Emails/selectors';
+import { getTableDataSource } from '../../../../state/Creatives/Emails/selectors';
 
 class CreativeEmailsTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveCreativeEmails = this.archiveCreativeEmails.bind(this);
     this.editCreativeEmails = this.editCreativeEmails.bind(this);
   }
 
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
       fetchCreativeEmails
     } = this.props;
 
-    const filter = deserializeQuery(query, CREATIVE_EMAILS_LIST_SETTINGS);
-    fetchCreativeEmails(organisationId, filter);
+    if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS)
+      });
+    } else {
+      const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+      fetchCreativeEmails(organisationId, filter);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       fetchCreativeEmails
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, CREATIVE_EMAILS_LIST_SETTINGS);
-      fetchCreativeEmails(organisationId, filter);
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)
+        });
+      } else {
+        const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
+        fetchCreativeEmails(nextOrganisationId, filter);
+      }
     }
   }
 
@@ -71,40 +97,48 @@ class CreativeEmailsTable extends Component {
     this.props.resetCreativeEmailsTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, CREATIVE_EMAILS_LIST_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, CREATIVE_EMAIL_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       isFetchingCreativeEmails,
       dataSource,
       totalCreativeEmails
     } = this.props;
 
-    const filter = deserializeQuery(query, CREATIVE_EMAILS_LIST_SETTINGS);
+    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeEmails,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -122,7 +156,7 @@ class CreativeEmailsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'AUDIT_STATUS',
@@ -170,27 +204,33 @@ class CreativeEmailsTable extends Component {
 
   editCreativeEmails(campaign) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    router.push(`/${workspaceId}/creatives/display-ad/default-editor/edit/${campaign.id}`);
+    history.push(`/${organisationId}/creatives/display-ad/default-editor/edit/${campaign.id}`);
   }
 
   archiveCreativeEmails(campaign) {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveCreativeEmails,
       fetchCreativeEmails,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, CREATIVE_EMAILS_LIST_SETTINGS);
+    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -214,10 +254,10 @@ CreativeEmailsTable.defaultProps = {
 };
 
 CreativeEmailsTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   isFetchingCreativeEmails: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -228,10 +268,8 @@ CreativeEmailsTable.propTypes = {
   resetCreativeEmailsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = state => ({
+  translations: state.translations,
 
   isFetchingCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.isFetching,
   dataSource: getTableDataSource(state),
@@ -244,7 +282,11 @@ const mapDispatchToProps = {
   resetCreativeEmailsTable: CreativeEmailsActions.resetCreativeEmailsTable
 };
 
-export default connect(
+CreativeEmailsTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CreativeEmailsTable);
+
+CreativeEmailsTable = withRouter(CreativeEmailsTable);
+
+export default CreativeEmailsTable;
