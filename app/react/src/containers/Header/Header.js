@@ -7,7 +7,7 @@ import { Dropdown, Popover, Icon, Menu, Row, Col } from 'antd';
 import classNames from 'classnames';
 
 import * as sessionActions from '../../state/Session/actions';
-import { Icons } from '../../components/Icons';
+import { Icons } from '../../components/McsIcons';
 
 class NavigatorHeader extends Component {
 

@@ -7,7 +7,7 @@ import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView, EmptyTableView } from '../../../components/TableView';
-import { Icons } from '../../../components/Icons';
+import { Icons } from '../../../components/McsIcons';
 
 import * as CampaignsEmailActions from '../../../state/Campaigns/Email/actions';
 

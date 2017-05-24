@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { Actionbar } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
-import { Icons } from '../../../components/Icons';
+import { Icons } from '../../../components/McsIcons';
 
 import ExportService from '../../../services/ExportService';
 import CampaignService from '../../../services/CampaignService';

@@ -5,7 +5,7 @@ import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Sidebar } from '../Sidebar';
-import { Icons } from '../../components/Icons';
+import { Icons } from '../../components/McsIcons';
 
 class CampaignsSidebar extends Component {
 

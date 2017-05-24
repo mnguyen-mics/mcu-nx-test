@@ -6,7 +6,7 @@ import Link from 'react-router/lib/Link';
 import { Modal, Tooltip } from 'antd';
 
 import { TableView, EmptyTableView } from '../../../components/TableView';
-import { Icons } from '../../../components/Icons';
+import { Icons } from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 

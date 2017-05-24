@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Icons } from '../../../components/Icons';
+import { Icons } from '../../../components/McsIcons';
 import { Actionbar } from '../../Actionbar';
 
 import * as ActionbarActions from '../../../state/Actionbar/actions';
