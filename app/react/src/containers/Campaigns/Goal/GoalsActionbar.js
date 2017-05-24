@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-<<<<<<< HEAD
-=======
 import { Icon, Button, message } from 'antd';
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
@@ -136,18 +133,12 @@ class GoalsActionbar extends Component {
     return (
       <Actionbar {...this.props}>
         <Link to={`${organisationId}/goals/`}>
-<<<<<<< HEAD
-          <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icons type="plus" /> <FormattedMessage id="NEW_GOAL" />
-          </ActionbarButton>
-=======
           <Button type="primary">
-            <Icon type="plus" /><FormattedMessage id="NEW_GOAL" />
+            <Icons type="plus" /><FormattedMessage id="NEW_GOAL" />
           </Button>
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <Icon type="export" />}<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <Icons type="download" />}<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

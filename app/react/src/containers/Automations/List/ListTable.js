@@ -5,7 +5,7 @@ import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
 import { Modal, Tooltip } from 'antd';
 
-import { TableView } from '../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../components/TableView';
 import { Icons } from '../../../components/Icons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
@@ -41,7 +41,7 @@ class AutomationsListTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
-    fetchAutomationList(organisationId, filter);
+    fetchAutomationList(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -94,7 +94,8 @@ class AutomationsListTable extends Component {
       isFetchingAutomationList,
       dataSource,
       totalAutomations,
-      translations
+      translations,
+      hasAutomations
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
@@ -147,13 +148,13 @@ class AutomationsListTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return (hasAutomations) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingAutomationList}
       onChange={() => {}}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="automation" text="EMPTY_AUTOMATIONS" />);
 
   }
 
@@ -208,6 +209,7 @@ AutomationsListTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasAutomations: PropTypes.bool.isRequired,
   isFetchingAutomationList: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalAutomations: PropTypes.number.isRequired,
@@ -221,7 +223,7 @@ const mapStateToProps = (state, ownProps) => ({
   activeWorkspace: state.sessionState.activeWorkspace,
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
-
+  hasAutomations: state.automationsTable.automationsApi.hasItems,
   isFetchingAutomationList: state.automationsTable.automationsApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAutomations: state.automationsTable.automationsApi.total,

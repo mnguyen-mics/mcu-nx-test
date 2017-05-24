@@ -8,7 +8,7 @@ import {
 const resetAutomationsTable = createAction(AUTOMATIONS_LIST_TABLE_RESET);
 
 const fetchAutomations = {
-  request: (organisationId, filter = {}) => createAction(AUTOMATIONS_LIST_FETCH.REQUEST)({ organisationId, filter }),
+  request: (organisationId, filter = {}, isInitialRender = false) => createAction(AUTOMATIONS_LIST_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
   success: (response) => createAction(AUTOMATIONS_LIST_FETCH.SUCCESS)(response),
   failure: (error) => createAction(AUTOMATIONS_LIST_FETCH.FAILURE)(error)
 };

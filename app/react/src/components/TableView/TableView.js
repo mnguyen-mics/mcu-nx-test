@@ -50,7 +50,6 @@ class TableView extends Component {
       onChange,
       filtersOptions,
       columnsVisibilityOptions,
-      hasFetched
     } = this.props;
 
     const {
@@ -281,7 +280,6 @@ TableView.propTypes = {
   }),
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   loading: PropTypes.bool.isRequired,
-  hasFetched: PropTypes.bool.isRequired,
   pagination: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   onChange: PropTypes.func.isRequired
 };

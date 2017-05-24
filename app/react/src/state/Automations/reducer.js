@@ -8,7 +8,8 @@ import {
 const defaultAutomationsApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const automationsApi = (state = defaultAutomationsApiState, action) => {

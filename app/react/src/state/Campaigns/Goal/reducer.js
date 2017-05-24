@@ -8,9 +8,9 @@ import {
 
 const defaultGoalsApiState = {
   isFetching: false,
-  hasFetched: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: 0
 };
 const goalsApi = (state = defaultGoalsApiState, action) => {
   switch (action.type) {
@@ -24,12 +24,7 @@ const goalsApi = (state = defaultGoalsApiState, action) => {
       return {
         ...state,
         isFetching: false,
-<<<<<<< HEAD
-        hasFetched: true,
-        ...action.response
-=======
         ...action.payload
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
       };
     case GOALS_FETCH.FAILURE:
       return {

@@ -1,8 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-<<<<<<< HEAD
-=======
 import { Icon, Button, message } from 'antd';
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
@@ -141,18 +138,12 @@ class CampaignsEmailActionbar extends Component {
     return (
       <Actionbar>
         <Link to={`/${workspaceId}/campaigns/email/edit`}>
-<<<<<<< HEAD
-          <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
-          </ActionbarButton>
-=======
           <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <Icons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          { !exportIsRunning && <Icon type="export" /> }<FormattedMessage id="EXPORT" />
+          { !exportIsRunning && <Icons type="download" /> }<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

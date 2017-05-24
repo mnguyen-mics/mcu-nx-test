@@ -21,7 +21,7 @@ const fetchGoalsPerformanceReport = {
   failure: (error) => createAction(GOALS_PERFORMANCE_REPORT_FETCH.FAILURE)(error)
 };
 
-const loadGoalsDataSource = (organisationId, filter) => createAction(GOALS_LOAD_ALL)({ organisationId, filter });
+const loadGoalsDataSource = (organisationId, filter, isInitialRender) => createAction(GOALS_LOAD_ALL)({ organisationId, filter, isInitialRender });
 
 export {
   fetchGoals,

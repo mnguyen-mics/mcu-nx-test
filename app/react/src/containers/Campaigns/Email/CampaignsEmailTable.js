@@ -44,12 +44,8 @@ class CampaignsEmailTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
-<<<<<<< HEAD
 
-    fetchCampaignsAndStatistics(filter);
-=======
-    loadCampaignsEmailDataSource(organisationId, filter);
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
+    loadCampaignsEmailDataSource(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -100,11 +96,11 @@ class CampaignsEmailTable extends Component {
         workspaceId
       },
       translations,
-      hasFetchedCampaignsEmail,
       isFetchingCampaignsEmail,
       isFetchingCampaignsStat,
       dataSource,
-      totalCampaignsEmail
+      totalCampaignsEmail,
+      hasEmailCampaigns,
     } = this.props;
 
     const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
@@ -254,10 +250,9 @@ class CampaignsEmailTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (!hasFilters && dataSource.length === 0 && hasFetchedCampaignsEmail === true) ? (<EmptyTableView text="EMPTY_EMAILS" icon="email" />) : (<TableView
+    return (hasEmailCampaigns) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
-      hasFetched={hasFetchedCampaignsEmail}
       loading={isFetchingCampaignsEmail}
       onChange={() => {}}
       searchOptions={searchOptions}
@@ -265,7 +260,7 @@ class CampaignsEmailTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="email" text="EMPTY_EMAILS" />);
 
   }
 
@@ -320,7 +315,7 @@ CampaignsEmailTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-  hasFetchedCampaignsEmail: PropTypes.bool.isRequired,
+  hasEmailCampaigns: PropTypes.bool.isRequired,
   isFetchingCampaignsEmail: PropTypes.bool.isRequired,
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -336,7 +331,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
-  hasFetchedCampaignsEmail: state.campaignsEmailTable.campaignsEmailApi.hasFetched,
+  hasEmailCampaigns: state.campaignsEmailTable.campaignsEmailApi.hasItems,
   isFetchingCampaignsEmail: state.campaignsEmailTable.campaignsEmailApi.isFetching,
   isFetchingCampaignsStat: state.campaignsEmailTable.deliveryReportApi.isFetching,
   dataSource: getTableDataSource(state),

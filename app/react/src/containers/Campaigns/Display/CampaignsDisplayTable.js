@@ -44,7 +44,7 @@ class CampaignsDisplayTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
-    loadCampaignsDisplayDataSource(organisationId, filter);
+    loadCampaignsDisplayDataSource(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -94,8 +94,8 @@ class CampaignsDisplayTable extends Component {
       activeWorkspace: {
         workspaceId
       },
+      hasDisplayCampaigns,
       translations,
-      hasFetchedCampaignsDisplay,
       isFetchingCampaignsDisplay,
       isFetchingCampaignsStat,
       dataSource,
@@ -255,26 +255,17 @@ class CampaignsDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    let activeFilters = 0;
-    filtersOptions.forEach(item => {
-      if (Object.prototype.hasOwnProperty.call(item.menuItems, 'selectedItems') === true) {
-        activeFilters += item.menuItems.selectedItems.length;
-      }
-    });
-    const hasFilters = activeFilters !== 0 ? true : false;
-
-    return (!hasFilters && dataSource.length === 0 && hasFetchedCampaignsDisplay === true) ? (<EmptyTableView text="EMPTY_DISPLAY" icon="display" />) : (<TableView
+    return (hasDisplayCampaigns) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingCampaignsDisplay}
-      hasFetched={hasFetchedCampaignsDisplay}
       onChange={() => {}}
       searchOptions={searchOptions}
       dateRangePickerOptions={dateRangePickerOptions}
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="display" text="EMPTY_DISPLAY" />);
 
   }
 
@@ -344,7 +335,7 @@ CampaignsDisplayTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-  hasFetchedCampaignsDisplay: PropTypes.bool.isRequired,
+  hasDisplayCampaigns: PropTypes.bool.isRequired,
   isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -359,7 +350,7 @@ const mapStateToProps = (state, ownProps) => ({
   activeWorkspace: state.sessionState.activeWorkspace,
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
-  hasFetchedCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.hasFetched,
+  hasDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.hasItems,
   isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
   isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),

@@ -14,9 +14,9 @@ import {
 
 const defaultCampaignsDisplayApiState = {
   isFetching: false,
-  hasFetched: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) => {
@@ -31,12 +31,7 @@ const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) =>
       return {
         ...state,
         isFetching: false,
-<<<<<<< HEAD
-        hasFetched: true,
-        ...action.response
-=======
         ...action.payload
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
       };
     case CAMPAIGNS_DISPLAY_LIST_FETCH.FAILURE:
       return {

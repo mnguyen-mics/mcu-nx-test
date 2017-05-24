@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-<<<<<<< HEAD
-import { Menu, Dropdown } from 'antd';
-=======
+
 import { Menu, Dropdown, Icon, Button, message } from 'antd';
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
+
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
@@ -151,18 +149,12 @@ class SegmentsActionbar extends Component {
     return (
       <Actionbar {...this.props}>
         <Dropdown overlay={addMenu} trigger={['click']}>
-<<<<<<< HEAD
-          <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button">
-            <Icons type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
-          </ActionbarButton>
-=======
           <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
+            <Icons type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
           </Button>
->>>>>>> 31970ec99ef421bc2d17e0f12cd9c39953a83363
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <Icon type="export" />}<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <Icons type="download" />}<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

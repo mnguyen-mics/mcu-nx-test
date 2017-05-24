@@ -43,7 +43,7 @@ class GoalsTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
-    loadGoalsDataSource(organisationId, filter);
+    loadGoalsDataSource(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -94,11 +94,11 @@ class GoalsTable extends Component {
         workspaceId
       },
       translations,
-      hasFetchedGoals,
       isFetchingGoals,
       isFetchingGoalsStat,
       dataSource,
-      totalGoals
+      totalGoals,
+      hasGoals
     } = this.props;
 
     const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
@@ -221,10 +221,9 @@ class GoalsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (!hasFilters && dataSource.length === 0 && hasFetchedGoals === true) ? (<EmptyTableView text="EMPTY_GOALS" icon="goals" />) : (<TableView
+    return (hasGoals) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
-      hasFetched={hasFetchedGoals}
       loading={isFetchingGoals}
       onChange={() => {}}
       searchOptions={searchOptions}
@@ -232,7 +231,7 @@ class GoalsTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="goals" text="EMPTY_GOALS" />);
 
   }
 
@@ -287,7 +286,7 @@ GoalsTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-  hasFetchedGoals: PropTypes.bool.isRequired,
+  hasGoals: PropTypes.bool.isRequired,
   isFetchingGoals: PropTypes.bool.isRequired,
   isFetchingGoalsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -303,7 +302,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
-  hasFetchedGoals: state.goalsTable.goalsApi.hasFetched,
+  hasGoals: state.goalsTable.goalsApi.hasItems,
   isFetchingGoals: state.goalsTable.goalsApi.isFetching,
   isFetchingGoalsStat: state.goalsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
