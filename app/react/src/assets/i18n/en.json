@@ -103,6 +103,14 @@
   "NOTIFICATION_ERROR_TITLE": "Error",
   "NOTIFICATION_ERROR_DESCRIPTION": "An error occured",
   "NOTIFICATION_NEW_VERSION_TITLE": "New Version",
-  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page"
+  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page",
+
+  "PART_COUNT": "Part Count",
+  "NEW_PARTITION": "New Partition",
+  "RANDOM_SPLIT": "Random Split",
+  "CLUSTERING": "Clustering",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Partition?",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Partition all it will stop campaign using it. Are you sure?",
+  "SEARCH_AUDIENCE_PARTITIONS": "Search Partition"
 
 }

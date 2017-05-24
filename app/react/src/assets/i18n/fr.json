@@ -103,6 +103,14 @@
   "NOTIFICATION_ERROR_TITLE": "Erreur", 
   "NOTIFICATION_ERROR_DESCRIPTION": "Une erreur est survenue", 
   "NOTIFICATION_NEW_VERSION_TITLE": "Nouvelle Version", 
-  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Recharger la page"
+  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Recharger la page",
+
+  "PART_COUNT": "Nombre de Part",
+  "NEW_PARTITION": "Nouvelle Partition",
+  "RANDOM_SPLIT": "Découpage Aléatoire",
+  "CLUSTERING": "Clustering",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE": "Etes vous sur de vouloir supprimer cette Partition?",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cette Partition?",
+  "SEARCH_AUDIENCE_PARTITIONS": "Search Partition"
 
 }

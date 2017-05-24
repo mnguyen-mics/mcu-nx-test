@@ -127,15 +127,15 @@ class AudiencePartitionsTable extends Component {
 
     const dataColumns = [
       {
+        translationKey: 'NAME',
+        key: 'name',
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/datamart/partitions/${record.type}/${record.id}/report`}>{text}</Link>
+      },
+      {
         translationKey: 'TYPE',
         key: 'type',
         isHiddable: false,
         render: (text) => <span>{text}</span>
-      },
-      {
-        translationKey: 'NAME',
-        key: 'name',
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/datamart/partitions/${record.type}/${record.id}/report`}>{text}</Link>
       },
       {
         translationKey: 'PART_COUNT',
@@ -208,8 +208,8 @@ class AudiencePartitionsTable extends Component {
     const filter = deserializeQuery(query, AUDIENCE_PARTITIONS_SETTINGS);
 
     Modal.confirm({
-      title: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: translations.PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY,
       iconType: 'exclamation-circle',
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
