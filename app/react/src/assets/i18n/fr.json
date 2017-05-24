@@ -95,10 +95,12 @@
   "EMPTY_EMAILS": "Il n'y a aucune Campagne Email créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_DISPLAY": "Il n'y a aucune Campagne Display créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_GOALS": "Il n'y a aucun Objectif créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_SEGMENTS": "Il n'y a aucun Segments créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_AUTOMATIONS": "Il n'y a aucune Automations créée! Clickez sur Nouveau pour commencer.",
   "EXPORT": "Export",
   "EXPORT_IN_PROGRESS": "Export en cours...",
   "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",
   "CAMPAIGNS_EMAIL_EXPORT_TITLE": "Campaigns Email Export",
   "GOALS_EXPORT_TITLE": "Goals Export",
-  "AUDIENCE_SEGMENTS_EXPORT_TITLE": "Audience Segments Export"
+  "AUDIENCE_SEGMENTS_EXPORT_TITLE": "Audience Segments Export",
 }
