@@ -4,9 +4,12 @@ import { call, fork, put, select } from 'redux-saga/effects';
 import log from '../../utils/Logger';
 
 import {
-  addNotification,
   getAppVersion
 } from './actions';
+
+import {
+  addNotification
+} from '../Notifications/actions';
 
 import {
   getCurrentVersion

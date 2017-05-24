@@ -3,11 +3,12 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { IntlProvider, FormattedMessage } from 'react-intl';
+import { IntlProvider } from 'react-intl';
 import Loading from 'mcs-react-loading';
-import { Layout, LocaleProvider, notification as antNotification, Icon } from 'antd';
+import { Layout, LocaleProvider } from 'antd';
 
 import { NavigatorHeader } from '../Header';
+import { Notifications } from '../Notifications';
 
 import * as TranslationsActions from '../../state/Translations/actions';
 import * as sessionActions from '../../state/Session/actions';
@@ -24,16 +25,12 @@ class Navigator extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       authenticated,
-      activeWorkspace,
-      notifications,
-      translations,
-      removeNotification
+      activeWorkspace
     } = this.props;
 
     const {
       activeWorkspace: nextActiveWorkspace,
-      params: nextParams,
-      notifications: nextNotifications
+      params: nextParams
     } = nextProps;
 
     if (authenticated) {
@@ -50,53 +47,6 @@ class Navigator extends Component {
       }
     }
 
-    if (notifications.length !== nextNotifications.length && nextNotifications.length) {
-
-      const onReloadButton = () => window.location.reload(); // eslint-disable-line no-undef
-
-      const reloadButton = <Icon type="reload" onClick={onReloadButton} />;
-
-      const buildDefaultNotification = (notification, index) => ({
-        message: translations[notification.messageKey],
-        description: translations[notification.descriptionKey],
-        key: index,
-        duration: null,
-        onClose: () => removeNotification(index)
-      });
-
-      nextNotifications
-        .filter((nextNotification, index) => index >= notifications.length)
-        .forEach((notification, index) => {
-          switch (notification.type) {
-            case 'success':
-              return antNotification.success({
-                ...buildDefaultNotification(notification, index),
-                duration: 4.5
-              });
-            case 'error':
-              return antNotification.error({
-                ...buildDefaultNotification(notification, index)
-              });
-            case 'info':
-              return antNotification.info({
-                ...buildDefaultNotification(notification, index)
-              });
-            case 'warning':
-              return antNotification.warning({
-                ...buildDefaultNotification(notification, index)
-              });
-            case 'reload':
-              return antNotification.warning({
-                ...buildDefaultNotification(notification, index),
-                btn: reloadButton,
-              });
-            default:
-              return antNotification.open({
-                ...buildDefaultNotification(notification, index)
-              });
-          }
-        });
-    }
   }
 
   componentDidMount() {
@@ -147,6 +97,7 @@ class Navigator extends Component {
         <LocaleProvider locale={enUS}>
           <Layout className="mcs-main-layout">
             <NavigatorHeader {...this.props} />
+            <Notifications />
             {this.props.children}
           </Layout>
         </LocaleProvider>
@@ -225,13 +176,6 @@ Navigator.propTypes = {
   getWorkspaces: PropTypes.func.isRequired,
   initActiveWorkspace: PropTypes.func.isRequired,
   checkUrl: PropTypes.func.isRequired,
-  notifications: PropTypes.arrayOf(PropTypes.shape({
-    type: PropTypes.string,
-    messageKey: PropTypes.string,
-    descriptionKey: PropTypes.string,
-    values: PropTypes.object
-  })).isRequired,
-  removeNotification: PropTypes.func.isRequired,
   getAppVersion: PropTypes.func.isRequired
 };
 
@@ -241,8 +185,7 @@ const mapStateToProps = state => ({
   authenticated: state.sessionState.authenticated,
   activeWorkspace: state.sessionState.activeWorkspace,
   isReactUrl: state.sessionState.isReactUrl,
-  token: state.persistedState.access_token,
-  notifications: state.navigator.notifications
+  token: state.persistedState.access_token
 });
 
 const mapDispatchToProps = {
@@ -251,7 +194,6 @@ const mapDispatchToProps = {
   getWorkspaces: sessionActions.getWorkspaces,
   initActiveWorkspace: sessionActions.initActiveWorkspace,
   checkUrl: sessionActions.checkUrl,
-  removeNotification: navigatorActions.removeNotification,
   getAppVersion: navigatorActions.getAppVersion.request
 };
 
