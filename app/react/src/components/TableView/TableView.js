@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Icon, Menu, Row, Col, Table, Input } from 'antd';
-import { Icons } from '../Icons';
+import { McsIcons } from '../McsIcons';
 import { McsDateRangePicker } from '../McsDateRangePicker';
 import { MultiSelect } from '../Forms';
 
@@ -194,7 +194,7 @@ class TableView extends Component {
         render: (text, record) => {
           return (<Dropdown overlay={this.renderActionsMenu(column.actions, record)} trigger={['click']}>
             <a className="ant-dropdown-link">
-              <Icons type="chevron" />
+              <McsIcons type="chevron" />
             </a>
           </Dropdown>);
         }

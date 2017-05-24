@@ -1,5 +1,5 @@
-import Icons from './Icons';
+import McsIcons from './McsIcons';
 
 export {
-  Icons
+  McsIcons
 };

@@ -9,7 +9,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { Actionbar } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
-import { Icons } from '../../../components/Icons';
+import { McsIcons } from '../../../components/McsIcons';
 
 import ExportService from '../../../services/ExportService';
 import AudienceSegmentService from '../../../services/AudienceSegmentService';
@@ -150,11 +150,11 @@ class SegmentsActionbar extends Component {
       <Actionbar {...this.props}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button type="primary">
-            <Icons type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
+            <McsIcons type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <Icons type="download" />}<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <McsIcons type="download" />}<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

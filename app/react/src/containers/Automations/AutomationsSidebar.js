@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Icons } from '../../components/McsIcons';
+import { McsIcons } from '../../components/McsIcons';
 import { Sidebar } from '../Sidebar';
 
 class AutomationsSidebar extends Component {
@@ -30,7 +30,7 @@ class AutomationsSidebar extends Component {
 
     const items = [
       {
-        element: <Link to={segmentsUrl}><Icons type="automation" className="icon-sidebar" /> <FormattedMessage id="AUTOMATIONS_LIST" /></Link>,
+        element: <Link to={segmentsUrl}><McsIcons type="automation" className="icon-sidebar" /> <FormattedMessage id="AUTOMATIONS_LIST" /></Link>,
         isActive: isActiveUrl('list')
       }
     ];

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Col } from 'antd';
 
-import { Icons } from '../Icons';
+import { McsIcons } from '../McsIcons';
 
 
 class EmptyTableView extends Component {
@@ -18,7 +18,7 @@ class EmptyTableView extends Component {
     return (
       <Col span={24} className={className}>
         <div className="logo">
-          <Icons type={icon} />
+          <McsIcons type={icon} />
         </div>
         <FormattedMessage id={text} />
       </Col>);

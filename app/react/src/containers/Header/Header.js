@@ -7,7 +7,7 @@ import { Dropdown, Popover, Icon, Menu, Row, Col } from 'antd';
 import classNames from 'classnames';
 
 import * as sessionActions from '../../state/Session/actions';
-import { Icons } from '../../components/McsIcons';
+import { McsIcons } from '../../components/McsIcons';
 
 class NavigatorHeader extends Component {
 
@@ -76,7 +76,7 @@ class NavigatorHeader extends Component {
             <div className="mcs-header-logo-item">
               <Dropdown overlay={menu} trigger={['click']}>
                 <a className="ant-dropdown-link mcs-header-cascader-menu">
-                  <Icons type="chevron" />
+                  <McsIcons type="chevron" />
                 </a>
               </Dropdown>
               <div className="mcs-header-left-divider" />
@@ -91,12 +91,12 @@ class NavigatorHeader extends Component {
             </Menu>
             <div className="mcs-header-menu-icons" >
               <Link to={`/${workspaceId}/settings/useraccount`}>
-                <Icons type="options" className="mcs-header-anticon" />
+                <McsIcons type="options" className="mcs-header-anticon" />
               </Link>
               <div className="mcs-header-divider" />
               <a>
                 <Popover placement="bottomRight" trigger="click" title={text} content={content}>
-                  <Icons type="user" className="mcs-header-anticon" />
+                  <McsIcons type="user" className="mcs-header-anticon" />
                 </Popover>
               </a>
             </div>

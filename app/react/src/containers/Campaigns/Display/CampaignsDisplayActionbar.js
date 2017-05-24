@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon, Button, message } from 'antd';
+import { Menu, Dropdown, Button, message } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
-import { Icons } from '../../../components/McsIcons';
+import { McsIcons } from '../../../components/McsIcons';
 
 import ExportService from '../../../services/ExportService';
 import CampaignService from '../../../services/CampaignService';
@@ -153,11 +153,11 @@ class CampaignsDisplayActionbar extends Component {
       <Actionbar>
         <Dropdown overlay={newCampaignMenu} trigger={['click']}>
           <Button type="primary">
-            <Icons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          { !exportIsRunning && <Icons type="download" /> }<FormattedMessage id="EXPORT" />
+          { !exportIsRunning && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

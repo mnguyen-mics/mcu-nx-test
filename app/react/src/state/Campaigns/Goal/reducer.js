@@ -10,7 +10,7 @@ const defaultGoalsApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: 0
+  hasItems: true
 };
 const goalsApi = (state = defaultGoalsApiState, action) => {
   switch (action.type) {

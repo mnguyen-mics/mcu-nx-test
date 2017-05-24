@@ -7,7 +7,7 @@ import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView, EmptyTableView } from '../../../components/TableView';
-import { Icons } from '../../../components/McsIcons';
+import { McsIcons } from '../../../components/McsIcons';
 
 import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
 
@@ -158,7 +158,7 @@ class CampaignsDisplayTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><Icons type="status" /></span></Tooltip>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
@@ -241,7 +241,7 @@ class CampaignsDisplayTable extends Component {
     const filtersOptions = [
       {
         name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
+        displayElement: (<div><FormattedMessage id="STATUS" /> <McsIcons type="down" /></div>),
         menuItems: {
           handleMenuClick: value => this.updateQueryParams({ statuses: value.status.map(item => item.value) }),
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),

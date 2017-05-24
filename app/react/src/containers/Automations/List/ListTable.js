@@ -6,7 +6,7 @@ import Link from 'react-router/lib/Link';
 import { Modal, Tooltip } from 'antd';
 
 import { TableView, EmptyTableView } from '../../../components/TableView';
-import { Icons } from '../../../components/McsIcons';
+import { McsIcons } from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 
@@ -118,7 +118,7 @@ class AutomationsListTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><Icons type="status" /></span></Tooltip>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
