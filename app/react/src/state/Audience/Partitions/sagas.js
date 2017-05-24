@@ -1,0 +1,50 @@
+import { takeLatest } from 'redux-saga';
+import { call, fork, put } from 'redux-saga/effects';
+
+import log from '../../../utils/Logger';
+
+import {
+    fetchAudiencePartitionsList,
+} from './actions';
+
+import AudiencePartitionsService from '../../../services/AudiencePartitionsService';
+
+import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+
+import {
+    AUDIENCE_PARTITIONS_LIST_FETCH,
+} from '../../action-types';
+
+function* loadAudiencePartitionsList({ payload }) {
+  try {
+
+    const {
+      organisationId,
+      datamartId,
+      filter
+    } = payload;
+
+    if (!(organisationId || datamartId || filter)) throw new Error('Payload is invalid');
+
+    const options = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+    };
+
+    if (filter.keywords) { options.name = filter.keywords; }
+    if (filter.types) { options.types = filter.types; }
+
+    const response = yield call(AudiencePartitionsService.getPartitions, organisationId, datamartId, options);
+    yield put(fetchAudiencePartitionsList.success(response));
+  } catch (error) {
+    log.error(error);
+    yield put(fetchAudiencePartitionsList.failure(error));
+  }
+}
+
+function* watchFetchAudiencePartitionsList() {
+  yield* takeLatest(AUDIENCE_PARTITIONS_LIST_FETCH.REQUEST, loadAudiencePartitionsList);
+}
+
+export const partitionsSagas = [
+  fork(watchFetchAudiencePartitionsList),
+];
