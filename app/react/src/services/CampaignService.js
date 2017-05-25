@@ -1,5 +1,15 @@
 import ApiService from './ApiService';
 
+const getCampaignEmail = (campaignId) => {
+  const endpoint = `email_campaigns/${campaignId}`;
+  return ApiService.getRequest(endpoint);
+};
+
+const updateCampaignEmail = (campaignId, body) => {
+  const endpoint = `email_campaigns/${campaignId}`;
+  return ApiService.putRequest(endpoint, body);
+};
+
 const getCampaigns = (organisationId, campaignType, options = {}) => {
   const endpoint = 'campaigns';
 
@@ -13,5 +23,7 @@ const getCampaigns = (organisationId, campaignType, options = {}) => {
 };
 
 export default {
+  getCampaignEmail,
+  updateCampaignEmail,
   getCampaigns
 };

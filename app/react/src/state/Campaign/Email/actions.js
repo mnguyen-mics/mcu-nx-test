@@ -1,82 +1,31 @@
-import { CALL_API } from '../../../middleware/api';
+import { createAction } from '../../../utils/ReduxHelper';
 
 import {
-  CAMPAIGN_EMAIL_ARCHIVE_REQUEST,
-  CAMPAIGN_EMAIL_ARCHIVE_REQUEST_FAILURE,
-  CAMPAIGN_EMAIL_ARCHIVE_REQUEST_SUCCESS,
-  CAMPAIGN_EMAIL_FETCH_REQUEST,
-  CAMPAIGN_EMAIL_FETCH_REQUEST_FAILURE,
-  CAMPAIGN_EMAIL_FETCH_REQUEST_SUCCESS,
-  CAMPAIGN_EMAIL_UPDATE_REQUEST,
-  CAMPAIGN_EMAIL_UPDATE_REQUEST_FAILURE,
-  CAMPAIGN_EMAIL_UPDATE_REQUEST_SUCCESS,
+  CAMPAIGN_EMAIL_ARCHIVE,
+  CAMPAIGN_EMAIL_FETCH,
+  CAMPAIGN_EMAIL_UPDATE,
   CAMPAIGN_EMAIL_RESET
 } from '../../action-types';
 
-const fetchCampaignEmail = id => (dispatch, getState) => {
-  const { campaignEmailState } = getState();
-
-  if (campaignEmailState.isFetching) {
-    return Promise.resolve();
-  }
-
-  return dispatch({
-    [CALL_API]: {
-      method: 'get',
-      endpoint: `email_campaigns/${id}`,
-      authenticated: true,
-      types: [CAMPAIGN_EMAIL_FETCH_REQUEST, CAMPAIGN_EMAIL_FETCH_REQUEST_FAILURE, CAMPAIGN_EMAIL_FETCH_REQUEST_SUCCESS]
-    }
-  });
+const fetchCampaignEmail = {
+  request: campaignId => createAction(CAMPAIGN_EMAIL_FETCH.REQUEST)({ campaignId }),
+  success: createAction(CAMPAIGN_EMAIL_FETCH.SUCCESS),
+  failure: createAction(CAMPAIGN_EMAIL_FETCH.FAILURE)
 };
 
-const updateCampaignEmail = (id, body) => {
-  return (dispatch, getState) => { // eslint-disable-line consistent-return
-
-    const { campaignEmailState } = getState();
-
-    if (campaignEmailState.isUpdating) {
-      return Promise.resolve();
-    }
-
-    return dispatch({
-      [CALL_API]: {
-        method: 'put',
-        endpoint: `email_campaigns/${id}`,
-        body,
-        authenticated: true,
-        types: [CAMPAIGN_EMAIL_UPDATE_REQUEST, CAMPAIGN_EMAIL_UPDATE_REQUEST_FAILURE, CAMPAIGN_EMAIL_UPDATE_REQUEST_SUCCESS]
-      }
-    });
-  };
+const archiveCampaignEmail = {
+  request: (campaignId, body) => createAction(CAMPAIGN_EMAIL_ARCHIVE.REQUEST)({ campaignId, body }),
+  success: createAction(CAMPAIGN_EMAIL_ARCHIVE.SUCCESS),
+  failure: createAction(CAMPAIGN_EMAIL_ARCHIVE.FAILURE)
 };
 
-const archiveCampaignEmail = id => {
-  return (dispatch, getState) => { // eslint-disable-line consistent-return
-    const { campaignEmailState } = getState();
-
-    if (campaignEmailState.isArchiving) {
-      return Promise.resolve();
-    }
-
-    const body = {
-      archived: true
-    };
-
-    dispatch({ type: CAMPAIGN_EMAIL_ARCHIVE_REQUEST });
-    return dispatch(updateCampaignEmail(id, body)).then((updatedCampaignEmail) => {
-      dispatch({ type: CAMPAIGN_EMAIL_ARCHIVE_REQUEST_SUCCESS });
-      return updatedCampaignEmail;
-    }).catch(() => { dispatch({ type: CAMPAIGN_EMAIL_ARCHIVE_REQUEST_FAILURE }); });
-
-  };
+const updateCampaignEmail = {
+  request: (campaignId, body) => createAction(CAMPAIGN_EMAIL_UPDATE.REQUEST)({ campaignId, body }),
+  success: createAction(CAMPAIGN_EMAIL_UPDATE.SUCCESS),
+  failure: createAction(CAMPAIGN_EMAIL_UPDATE.FAILURE)
 };
 
-const resetCampaignEmail = () => dispatch => {
-  return dispatch({
-    type: CAMPAIGN_EMAIL_RESET
-  });
-};
+const resetCampaignEmail = createAction(CAMPAIGN_EMAIL_RESET);
 
 export {
   fetchCampaignEmail,

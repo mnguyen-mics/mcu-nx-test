@@ -1,13 +1,7 @@
 import {
-  CAMPAIGN_EMAIL_ARCHIVE_REQUEST,
-  CAMPAIGN_EMAIL_ARCHIVE_REQUEST_FAILURE,
-  CAMPAIGN_EMAIL_ARCHIVE_REQUEST_SUCCESS,
-  CAMPAIGN_EMAIL_FETCH_REQUEST,
-  CAMPAIGN_EMAIL_FETCH_REQUEST_FAILURE,
-  CAMPAIGN_EMAIL_FETCH_REQUEST_SUCCESS,
-  CAMPAIGN_EMAIL_UPDATE_REQUEST,
-  CAMPAIGN_EMAIL_UPDATE_REQUEST_FAILURE,
-  CAMPAIGN_EMAIL_UPDATE_REQUEST_SUCCESS,
+  CAMPAIGN_EMAIL_ARCHIVE,
+  CAMPAIGN_EMAIL_FETCH,
+  CAMPAIGN_EMAIL_UPDATE,
   CAMPAIGN_EMAIL_RESET
 } from '../../action-types';
 
@@ -20,54 +14,24 @@ const defaultCampaignEmailState = {
 
 const campaignEmailState = (state = defaultCampaignEmailState, action) => {
   switch (action.type) {
-    case CAMPAIGN_EMAIL_FETCH_REQUEST:
+    case CAMPAIGN_EMAIL_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true
       };
-    case CAMPAIGN_EMAIL_FETCH_REQUEST_FAILURE:
+    case CAMPAIGN_EMAIL_FETCH.SUCCESS:
+      return {
+        ...state,
+        campaignEmail: action.payload.data,
+        isFetching: false
+      };
+    case CAMPAIGN_EMAIL_FETCH.FAILURE:
       return {
         ...state,
         campaignEmail: defaultCampaignEmailState.campaignEmail,
         isFetching: false
       };
-    case CAMPAIGN_EMAIL_FETCH_REQUEST_SUCCESS:
-      return {
-        ...state,
-        campaignEmail: action.response.data,
-        isFetching: false
-      };
-    case CAMPAIGN_EMAIL_UPDATE_REQUEST:
-      return {
-        ...state,
-        isUpdating: true
-      };
-    case CAMPAIGN_EMAIL_ARCHIVE_REQUEST:
-      return {
-        ...state,
-        isArchiving: true
-      };
-    case CAMPAIGN_EMAIL_UPDATE_REQUEST_FAILURE:
-      return {
-        ...state,
-        isUpdating: false
-      };
-    case CAMPAIGN_EMAIL_ARCHIVE_REQUEST_FAILURE:
-      return {
-        ...state,
-        isArchiving: false
-      };
-    case CAMPAIGN_EMAIL_UPDATE_REQUEST_SUCCESS:
-      return {
-        ...state,
-        campaignEmail: action.response.data,
-        isUpdating: false
-      };
-    case CAMPAIGN_EMAIL_ARCHIVE_REQUEST_SUCCESS:
-      return {
-        ...state,
-        isArchiving: false
-      };
+
     case CAMPAIGN_EMAIL_RESET:
       return defaultCampaignEmailState;
     default:

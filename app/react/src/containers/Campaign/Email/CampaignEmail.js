@@ -51,7 +51,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchCampaignEmail: CampaignEmailActions.fetchCampaignEmail,
+  fetchCampaignEmail: CampaignEmailActions.fetchCampaignEmail.request,
   resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
 };
 

@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import { Menu, Modal, Dropdown, Icon } from 'antd';
+import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar, ActionbarButton } from '../../Actionbar';
+import { Actionbar } from '../../Actionbar';
 import * as ActionbarActions from '../../../state/Actionbar/actions';
 import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
 
@@ -58,15 +58,15 @@ class CampaignEmailActionbar extends Component {
       <Actionbar {...this.props}>
         { actionElement }
         <Link to={`/${workspaceId}/campaigns/email/edit/${campaignId}`}>
-          <ActionbarButton className="mcs-actionbar-button">
+          <Button>
             <Icon type="edit" />
             <FormattedMessage id="EDIT" />
-          </ActionbarButton>
+          </Button>
         </Link>
         <Dropdown overlay={menu} trigger={['click']}>
-          <ActionbarButton className="mcs-actionbar-button">
+          <Button>
             <Icon type="ellipsis" />
-          </ActionbarButton>
+          </Button>
         </Dropdown>
       </Actionbar>
     );
@@ -85,19 +85,19 @@ class CampaignEmailActionbar extends Component {
     });
 
     const activeCampaignElement = (
-      <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button" onClick={() => onClickElement('ACTIVE')}>
+      <Button type="primary" onClick={() => onClickElement('ACTIVE')}>
         <Icon type="play-circle-o" />
         <FormattedMessage id="ACTIVE" />
-      </ActionbarButton>
+      </Button>
     );
     const pauseCampaignElement = (
-      <ActionbarButton className="mcs-actionbar-button-add mcs-actionbar-button" onClick={() => onClickElement('PAUSED')}>
+      <Button type="primary" onClick={() => onClickElement('PAUSED')}>
         <Icon type="pause-circle-o" />
         <FormattedMessage id="PAUSED" />
-      </ActionbarButton>
+      </Button>
     );
 
-    return (campaignEmail.status === 'PAUSED' || campaignEmail.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement;
+    return campaignEmail.id ? ((campaignEmail.status === 'PAUSED' || campaignEmail.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement) : null;
   }
 
   buildMenu() {
@@ -165,8 +165,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = {
   setBreadcrumb: ActionbarActions.setBreadcrumb,
-  updateCampaignEmail: CampaignEmailActions.updateCampaignEmail,
-  archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail
+  updateCampaignEmail: CampaignEmailActions.updateCampaignEmail.request,
+  archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail.request
 };
 
 CampaignEmailActionbar = connect(
