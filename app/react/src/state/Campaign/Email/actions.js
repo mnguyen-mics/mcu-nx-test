@@ -3,6 +3,7 @@ import { createAction } from '../../../utils/ReduxHelper';
 import {
   CAMPAIGN_EMAIL_ARCHIVE,
   CAMPAIGN_EMAIL_FETCH,
+  CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
   CAMPAIGN_EMAIL_UPDATE,
   CAMPAIGN_EMAIL_RESET
 } from '../../action-types';
@@ -11,6 +12,12 @@ const fetchCampaignEmail = {
   request: campaignId => createAction(CAMPAIGN_EMAIL_FETCH.REQUEST)({ campaignId }),
   success: createAction(CAMPAIGN_EMAIL_FETCH.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_FETCH.FAILURE)
+};
+
+const fetchCampaignDeliveryReport = {
+  request: (organisationId, campaignId, filter = {}) => createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST)({ organisationId, filter }),
+  success: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS),
+  failure: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.FAILURE)
 };
 
 const archiveCampaignEmail = {
@@ -29,6 +36,7 @@ const resetCampaignEmail = createAction(CAMPAIGN_EMAIL_RESET);
 
 export {
   fetchCampaignEmail,
+  fetchCampaignDeliveryReport,
   archiveCampaignEmail,
   updateCampaignEmail,
   resetCampaignEmail

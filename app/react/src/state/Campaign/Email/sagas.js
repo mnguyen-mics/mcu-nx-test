@@ -5,14 +5,17 @@ import log from '../../../utils/Logger';
 
 import {
   fetchCampaignEmail,
+  fetchCampaignEmailDeliveryReport,
   updateCampaignEmail,
   archiveCampaignEmail
 } from './actions';
 
 import CampaignService from '../../../services/CampaignService';
+import ReportService from '../../../services/ReportService';
 
 import {
     CAMPAIGN_EMAIL_FETCH,
+    CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
     CAMPAIGN_EMAIL_ARCHIVE,
     CAMPAIGN_EMAIL_UPDATE,
     CAMPAIGN_EMAIL_LOAD_ALL
@@ -32,6 +35,30 @@ function* loadCampaignEmail({ payload }) {
   } catch (error) {
     log.error(error);
     yield put(fetchCampaignEmail.failure(error));
+  }
+}
+
+function* loadDeliveryReport({ payload }) {
+  try {
+
+    const {
+      organisationId,
+      campaignId,
+      filter
+    } = payload;
+
+    if (!(campaignId || filter)) throw new Error('Payload is invalid');
+
+    const startDate = filter.from;
+    const endDate = filter.to;
+    const dimension = 'day';
+
+    const response = yield call(ReportService.getEmailDeliveryReport, organisationId, startDate, endDate, dimension);
+    yield put(fetchCampaignEmailDeliveryReport.success(response));
+  } catch (error) {
+    log.error(error);
+    // TODO add meta data in order to show error in global notification
+    yield put(fetchCampaignEmailDeliveryReport.failure(error));
   }
 }
 
@@ -55,11 +82,17 @@ function* modifyCampaignEmail({ payload }) {
 
 function* loadCampaignAndPerformance(action) {
   yield call(loadCampaignEmail, action);
+  yield call(loadDeliveryReport, action);
 }
 
 function* watchFetchCampaignEmail() {
   yield* takeLatest(CAMPAIGN_EMAIL_FETCH.REQUEST, loadCampaignEmail);
 }
+
+function* watchFetchDeliveryReport() {
+  yield* takeLatest(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
+}
+
 function* watchUpdateCampaignEmail() {
   yield* takeLatest(CAMPAIGN_EMAIL_UPDATE.REQUEST, modifyCampaignEmail);
 }
@@ -74,6 +107,7 @@ function* watchLoadCampaignAndPerformance() {
 
 export const campaignEmailSagas = [
   fork(watchFetchCampaignEmail),
+  fork(watchFetchDeliveryReport),
   fork(watchUpdateCampaignEmail),
   fork(watchArchiveCampaignEmail),
   fork(watchLoadCampaignAndPerformance)
