@@ -6,22 +6,22 @@ import Link from 'react-router/lib/Link';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView } from '../../../../components/TableView';
 
-import * as AudienceSegmentsActions from '../../../state/Audience/Segments/actions';
+import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
 import {
   AUDIENCE_SEGMENTS_SETTINGS,
 
   updateQueryWithParams,
   deserializeQuery
-} from '../RouteQuerySelector';
+} from '../../RouteQuerySelector';
 
-import { formatMetric } from '../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper';
 
 import {
   getTableDataSource
- } from '../../../state/Audience/Segments/selectors';
+ } from '../../../../state/Audience/Segments/selectors';
 
 class AudienceSegmentsTable extends Component {
 

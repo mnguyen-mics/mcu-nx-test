@@ -5,15 +5,15 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar } from '../../Actionbar';
-import * as ActionbarActions from '../../../state/Actionbar/actions';
+import { Actionbar } from '../../../Actionbar';
+import * as ActionbarActions from '../../../../state/Actionbar/actions';
 
-import ExportService from '../../../services/ExportService';
-import AudienceSegmentService from '../../../services/AudienceSegmentService';
-import ReportService from '../../../services/ReportService';
+import ExportService from '../../../../services/ExportService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import ReportService from '../../../../services/ReportService';
 
-import { normalizeReportView } from '../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
 import {
   AUDIENCE_SEGMENTS_SETTINGS,

@@ -5,62 +5,57 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar } from '../../Actionbar';
-import * as ActionbarActions from '../../../state/Actionbar/actions';
+import { Actionbar } from '../../../Actionbar';
+import * as ActionbarActions from '../../../../state/Actionbar/actions';
 
-import ExportService from '../../../services/ExportService';
-import CampaignService from '../../../services/CampaignService';
-import ReportService from '../../../services/ReportService';
+import ExportService from '../../../../services/ExportService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import ReportService from '../../../../services/ReportService';
 
-import { normalizeReportView } from '../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
 import {
-  DISPLAY_QUERY_SETTINGS,
+  AUDIENCE_SEGMENTS_SETTINGS,
 
   deserializeQuery
-} from '../RouteQuerySelector';
+} from '../../RouteQuerySelector';
 
-const fetchExportData = (organisationId, filter) => {
+const fetchExportData = (organisationId, datamartId, filter) => {
 
-  const campaignType = 'DISPLAY';
-
-  const buildOptionsForGetCampaigns = () => {
+  const buildOptions = () => {
     const options = {
-      archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
       max_results: 2000
     };
 
-    const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
-
-    if (filter.keywords) { options.keywords = filter.keywords; }
-    if (apiStatuses.length > 0) {
-      options.status = apiStatuses;
+    if (filter.keywords) { options.name = filter.keywords; }
+    if (filter.types.length > 0) {
+      options.types = filter.types;
     }
     return options;
   };
 
   const startDate = filter.from;
   const endDate = filter.to;
-  const dimension = '';
+  const dimension = 'audience_segment_id';
 
   const apiResults = Promise.all([
-    CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getDisplayCampaignPerfomanceReport(organisationId, startDate, endDate, dimension)
+    AudienceSegmentService.getSegments(organisationId, datamartId, buildOptions()),
+    ReportService.getAudienceSegmentReport(organisationId, startDate, endDate, dimension)
   ]);
 
   return apiResults.then(results => {
     const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
-      'campaign_id'
+      'audience_segment_id'
     );
 
-    const mergedData = Object.keys(campaignsDisplay).map((campaignId) => {
+    const mergedData = Object.keys(campaignsDisplay).map((segmentId) => {
       return {
-        ...campaignsDisplay[campaignId],
-        ...performanceReport[campaignId]
+        ...campaignsDisplay[segmentId],
+        ...performanceReport[segmentId]
       };
     });
 
@@ -68,7 +63,7 @@ const fetchExportData = (organisationId, filter) => {
   });
 };
 
-class CampaignsDisplayActionbar extends Component {
+class SegmentsActionbar extends Component {
 
   constructor(props) {
     super(props);
@@ -84,7 +79,7 @@ class CampaignsDisplayActionbar extends Component {
     } = this.props;
 
     const breadcrumb = {
-      name: translations.DISPLAY_CAMPAIGNS
+      name: translations.AUDIENCE_SEGMENTS
     };
 
     setBreadcrumb(0, [breadcrumb]);
@@ -94,19 +89,20 @@ class CampaignsDisplayActionbar extends Component {
   handleRunExport() {
     const {
       activeWorkspace: {
-        organisationId
+        organisationId,
+        datamartId
       },
       translations,
 
     } = this.props;
 
-    const filter = deserializeQuery(this.props.query, DISPLAY_QUERY_SETTINGS);
+    const filter = deserializeQuery(this.props.query, AUDIENCE_SEGMENTS_SETTINGS);
 
     this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
 
-    fetchExportData(organisationId, filter).then(data => {
-      ExportService.exportCampaignsDisplay(organisationId, data, filter, translations);
+    fetchExportData(organisationId, datamartId, filter).then(data => {
+      ExportService.exportAudienceSegments(organisationId, datamartId, data, filter, translations);
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
     }).catch(() => {
@@ -127,35 +123,35 @@ class CampaignsDisplayActionbar extends Component {
 
     const exportIsRunning = this.state.exportIsRunning;
 
-    const newCampaignMenu = (
+    const addMenu = (
       <Menu>
-        <Menu.Item key="DESKTOP_AND_MOBILE">
-          <Link to={`${organisationId}/campaigns/display/expert/edit/T1`}>
-            <FormattedMessage id="DESKTOP_AND_MOBILE" />
+        <Menu.Item key="USER_LIST">
+          <Link to={`${organisationId}/datamart/segments/USER_LIST`}>
+            <FormattedMessage id="USER_LIST" />
           </Link>
         </Menu.Item>
-        <Menu.Item key="SIMPLIFIED_KEYWORDS_TARGETING">
-          <Link to={`${organisationId}/campaigns/display/keywords`}>
-            <FormattedMessage id="SIMPLIFIED_KEYWORDS_TARGETING" />
+        <Menu.Item key="USER_QUERY">
+          <Link to={`${organisationId}/datamart/segments/USER_QUERY`}>
+            <FormattedMessage id="USER_QUERY" />
           </Link>
         </Menu.Item>
-        <Menu.Item key="EXTERNAL_CAMPAIGN">
-          <Link to={`${organisationId}/campaigns/display/external/edit/T1`}>
-            <FormattedMessage id="EXTERNAL_CAMPAIGN" />
+        <Menu.Item key="USER_LOOK_ALIKE">
+          <Link to={`${organisationId}/datamart/segments/USER_LOOK_ALIKE`}>
+            <FormattedMessage id="USER_LOOK_ALIKE" />
           </Link>
         </Menu.Item>
       </Menu>
     );
 
     return (
-      <Actionbar>
-        <Dropdown overlay={newCampaignMenu} trigger={['click']}>
+      <Actionbar {...this.props}>
+        <Dropdown overlay={addMenu} trigger={['click']}>
           <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <Icon type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          { !exportIsRunning && <Icon type="export" /> }<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <Icon type="export" />}<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );
@@ -164,7 +160,7 @@ class CampaignsDisplayActionbar extends Component {
 
 }
 
-CampaignsDisplayActionbar.propTypes = {
+SegmentsActionbar.propTypes = {
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -182,9 +178,9 @@ const mapDispatchToProps = {
   setBreadcrumb: ActionbarActions.setBreadcrumb
 };
 
-CampaignsDisplayActionbar = connect(
+SegmentsActionbar = connect(
   mapStateToProps,
   mapDispatchToProps
-)(CampaignsDisplayActionbar);
+)(SegmentsActionbar);
 
-export default CampaignsDisplayActionbar;
+export default SegmentsActionbar;

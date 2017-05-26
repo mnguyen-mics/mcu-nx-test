@@ -6,25 +6,25 @@ import Link from 'react-router/lib/Link';
 import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView } from '../../../../components/TableView';
 
-import * as CampaignsDisplayActions from '../../../state/Campaigns/Display/actions';
+import * as CampaignsEmailActions from '../../../../state/Campaigns/Email/actions';
 
 import {
-  DISPLAY_QUERY_SETTINGS,
+  EMAIL_QUERY_SETTINGS,
 
   updateQueryWithParams,
   deserializeQuery
-} from '../RouteQuerySelector';
+} from '../../RouteQuerySelector';
 
-import { formatMetric } from '../../../utils/MetricHelper';
-import { CampaignStatuses } from '../../../constants/CampaignConstant';
+import { formatMetric } from '../../../../utils/MetricHelper';
+import { CampaignStatuses } from '../../../../constants/CampaignConstant';
 
 import {
   getTableDataSource
- } from '../../../state/Campaigns/Display/selectors';
+ } from '../../../../state/Campaigns/Email/selectors';
 
-class CampaignsDisplayTable extends Component {
+class CampaignsEmailTable extends Component {
 
   constructor(props) {
     super(props);
@@ -39,11 +39,11 @@ class CampaignsDisplayTable extends Component {
         organisationId
       },
       query,
-      loadCampaignsDisplayDataSource
+      loadCampaignsEmailDataSource
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
-    loadCampaignsDisplayDataSource(organisationId, filter);
+    const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
+    loadCampaignsEmailDataSource(organisationId, filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,7 +53,7 @@ class CampaignsDisplayTable extends Component {
         workspaceId
       },
 
-      loadCampaignsDisplayDataSource
+      loadCampaignsEmailDataSource
     } = this.props;
 
     const {
@@ -65,13 +65,13 @@ class CampaignsDisplayTable extends Component {
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, DISPLAY_QUERY_SETTINGS);
-      loadCampaignsDisplayDataSource(organisationId, filter);
+      const filter = deserializeQuery(nextQuery, EMAIL_QUERY_SETTINGS);
+      loadCampaignsEmailDataSource(organisationId, filter);
     }
   }
 
   componentWillUnmount() {
-    this.props.resetCampaignsDisplayTable();
+    this.props.resetCampaignsEmailTable();
   }
 
   updateQueryParams(params) {
@@ -83,7 +83,7 @@ class CampaignsDisplayTable extends Component {
     const location = router.getCurrentLocation();
     router.replace({
       pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, DISPLAY_QUERY_SETTINGS)
+      query: updateQueryWithParams(currentQuery, params, EMAIL_QUERY_SETTINGS)
     });
   }
 
@@ -94,17 +94,17 @@ class CampaignsDisplayTable extends Component {
         workspaceId
       },
       translations,
-      isFetchingCampaignsDisplay,
+      isFetchingCampaignsEmail,
       isFetchingCampaignsStat,
       dataSource,
-      totalCampaignsDisplay
+      totalCampaignsEmail
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+    const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
 
     const searchOptions = {
       isEnabled: true,
-      placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
+      placeholder: translations.SEARCH_CAMPAIGNS_EMAIL,
       onSearch: value => this.updateQueryParams({
         keywords: value
       }),
@@ -134,7 +134,7 @@ class CampaignsDisplayTable extends Component {
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalCampaignsDisplay,
+      total: totalCampaignsEmail,
       onChange: (page) => this.updateQueryParams({
         currentPage: page
       }),
@@ -162,11 +162,25 @@ class CampaignsDisplayTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/email/report/${record.id}/basic`}>{text}</Link>
       },
       {
-        translationKey: 'IMPRESSIONS',
-        key: 'impressions',
+        translationKey: 'EMAIL_SENT',
+        key: 'email_sent',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0')
+      },
+      {
+        translationKey: 'EMAIL_HARD_BOUNCED',
+        key: 'email_hard_bounced',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0')
+      },
+      {
+        translationKey: 'EMAIL_SOFT_BOUNCED',
+        key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
         render: text => renderMetricData(text, '0,0')
@@ -179,43 +193,11 @@ class CampaignsDisplayTable extends Component {
         render: text => renderMetricData(text, '0,0')
       },
       {
-        translationKey: 'IMPRESSIONS_COST',
-        key: 'impressions_cost',
+        translationKey: 'IMPRESSIONS',
+        key: 'impressions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: (text) => {
-          // TODO find campaign currency (with getCampaignsDisplayById(record['campaign_id']))
-          const campaignCurrency = 'EUR';
-          return renderMetricData(text, '0,0.00', campaignCurrency);
-        }
-      },
-      {
-        translationKey: 'CPM',
-        key: 'cpm',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
-      },
-      {
-        translationKey: 'CTR',
-        key: 'ctr',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,00 %')
-      },
-      {
-        translationKey: 'CPC',
-        key: 'cpc',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
-      },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0')
       }
     ];
 
@@ -241,7 +223,11 @@ class CampaignsDisplayTable extends Component {
         name: 'status',
         displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
-          handleMenuClick: value => this.updateQueryParams({ statuses: value.status.map(item => item.value) }),
+          handleMenuClick: value => {
+            this.updateQueryParams({
+              statuses: value.status.map(item => item.value)
+            });
+          },
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
           items: statusItems
         }
@@ -256,7 +242,7 @@ class CampaignsDisplayTable extends Component {
     return (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
-      loading={isFetchingCampaignsDisplay}
+      loading={isFetchingCampaignsEmail}
       onChange={() => {}}
       searchOptions={searchOptions}
       dateRangePickerOptions={dateRangePickerOptions}
@@ -275,22 +261,7 @@ class CampaignsDisplayTable extends Component {
       router
     } = this.props;
 
-    let editUrl;
-    switch (campaign.editor_artifact_id) {
-      case 'default-editor':
-        editUrl = `/${workspaceId}/campaigns/display/expert/edit/${campaign.id}`;
-        break;
-      case 'external-campaign-editor':
-        editUrl = `/${workspaceId}/campaigns/display/external/edit/${campaign.id}`;
-        break;
-      case 'keywords-targeting-editor':
-        editUrl = `/${workspaceId}/campaigns/display/keywords/${campaign.id}`;
-        break;
-      default:
-        break;
-    }
-
-    router.push(editUrl);
+    router.push(`/${workspaceId}/campaigns/email/report/${campaign.id}/basic`);
   }
 
   archiveCampaign(campaign) {
@@ -298,13 +269,13 @@ class CampaignsDisplayTable extends Component {
       activeWorkspace: {
         organisationId
       },
-      archiveCampaignDisplay,
-      loadCampaignsDisplayDataSource,
+      archiveCampaignEmail,
+      loadCampaignsEmailDataSource,
       translations,
       query
     } = this.props;
 
-    const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
+    const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -313,8 +284,8 @@ class CampaignsDisplayTable extends Component {
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return archiveCampaignDisplay(campaign.id).then(() => {
-          loadCampaignsDisplayDataSource(organisationId, filter);
+        return archiveCampaignEmail(campaign.id).then(() => {
+          loadCampaignsEmailDataSource(organisationId, filter);
         });
       },
       onCancel() { },
@@ -323,24 +294,24 @@ class CampaignsDisplayTable extends Component {
 
 }
 
-CampaignsDisplayTable.defaultProps = {
-  archiveCampaignDisplay: () => { }
+CampaignsEmailTable.defaultProps = {
+  archiveCampaignEmail: () => {}
 };
 
-CampaignsDisplayTable.propTypes = {
+CampaignsEmailTable.propTypes = {
   router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-  isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
+  isFetchingCampaignsEmail: PropTypes.bool.isRequired,
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  totalCampaignsDisplay: PropTypes.number.isRequired,
+  totalCampaignsEmail: PropTypes.number.isRequired,
 
-  loadCampaignsDisplayDataSource: PropTypes.func.isRequired,
-  archiveCampaignDisplay: PropTypes.func.isRequired,
-  resetCampaignsDisplayTable: PropTypes.func.isRequired,
+  loadCampaignsEmailDataSource: PropTypes.func.isRequired,
+  archiveCampaignEmail: PropTypes.func,
+  resetCampaignsEmailTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -348,19 +319,19 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
-  isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
-  isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
+  isFetchingCampaignsEmail: state.campaignsEmailTable.campaignsEmailApi.isFetching,
+  isFetchingCampaignsStat: state.campaignsEmailTable.deliveryReportApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.total,
+  totalCampaignsEmail: state.campaignsEmailTable.campaignsEmailApi.total,
 });
 
 const mapDispatchToProps = {
-  loadCampaignsDisplayDataSource: CampaignsDisplayActions.loadCampaignsDisplayDataSource,
-  // archiveCampaignDisplay: CampaignEmailAction.archiveCampaignDisplay,
-  resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable
+  loadCampaignsEmailDataSource: CampaignsEmailActions.loadCampaignsEmailDataSource,
+  // archiveCampaignEmail: CampaignEmailAction.archiveCampaignEmail,
+  resetCampaignsEmailTable: CampaignsEmailActions.resetCampaignsEmailTable,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CampaignsDisplayTable);
+)(CampaignsEmailTable);

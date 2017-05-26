@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import { Actionbar } from '../../Actionbar';
-import * as ActionbarActions from '../../../state/Actionbar/actions';
+import { Actionbar } from '../../../Actionbar';
+import * as ActionbarActions from '../../../../state/Actionbar/actions';
 
 
 class PartitionsActionbar extends Component {

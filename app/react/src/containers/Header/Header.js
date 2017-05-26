@@ -169,6 +169,17 @@ class NavigatorHeader extends Component {
     return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/automations/list`; // eslint-disable-line no-undef
   }
 
+  getLibraryUrl() {
+    const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      }
+    } = this.props;
+
+    return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/placements`; // eslint-disable-line no-undef
+  }
+
   buildNavigationItems() {
 
     const {
@@ -211,23 +222,20 @@ class NavigatorHeader extends Component {
         url: this.getAutomationsUrl(),
         label: 'AUTOMATIONS_LIST',
         path: 'automations'
-      }
-    ];
-
-    const angularEntries = [
+      },
       {
         url: `/${workspaceId}/creatives/display-ad`,
         label: 'CREATIVES',
         path: 'display-ad'
       },
       {
-        url: `/${workspaceId}/library/placementlists`,
+        url: this.getLibraryUrl(),
         label: 'LIBRARY',
-        path: 'placementlists'
+        path: 'library'
       }
     ];
 
-    return authenticated ? datamartEntries.concat(reactEntries).concat(angularEntries) : [];
+    return authenticated ? datamartEntries.concat(reactEntries) : [];
   }
 
   buildWorkspaceItems() {

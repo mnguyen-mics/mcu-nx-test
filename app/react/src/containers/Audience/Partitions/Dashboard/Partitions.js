@@ -3,20 +3,20 @@ import { Layout } from 'antd';
 
 import { ScrollComponent } from '../../../../components/ScrollComponent';
 
-import SegmentsActionbar from './SegmentsActionbar';
-import AudienceSegmentsTable from './AudienceSegmentsTable';
+import PartitonsActionbar from './PartitonsActionbar';
+import PartitionsDashboard from './PartitionsDashboard';
 
 const { Content } = Layout;
 
-class Segments extends Component {
+class Partitions extends Component {
 
   render() {
     return (
       <Layout>
-        <SegmentsActionbar {...this.props} />
+        <PartitonsActionbar {...this.props} />
         <Content>
           <ScrollComponent>
-            <AudienceSegmentsTable {...this.props} />
+            <PartitionsDashboard {...this.props} />
           </ScrollComponent>
         </Content>
       </Layout>
@@ -26,4 +26,4 @@ class Segments extends Component {
 
 }
 
-export default Segments;
+export default Partitions;

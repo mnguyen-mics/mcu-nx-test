@@ -3,20 +3,20 @@ import { Layout } from 'antd';
 
 import { ScrollComponent } from '../../../../components/ScrollComponent';
 
-import SegmentsActionbar from './SegmentsActionbar';
-import AudienceSegmentsTable from './AudienceSegmentsTable';
+import KeywordActionBar from './KeywordActionBar';
+import KeywordListsTable from './KeywordTable';
 
 const { Content } = Layout;
 
-class Segments extends Component {
+class Keywords extends Component {
 
   render() {
     return (
       <Layout>
-        <SegmentsActionbar {...this.props} />
+        <KeywordActionBar {...this.props} />
         <Content>
           <ScrollComponent>
-            <AudienceSegmentsTable {...this.props} />
+            <KeywordListsTable {...this.props} />
           </ScrollComponent>
         </Content>
       </Layout>
@@ -26,4 +26,4 @@ class Segments extends Component {
 
 }
 
-export default Segments;
+export default Keywords;

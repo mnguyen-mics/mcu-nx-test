@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 
-import { ScrollComponent } from '../../../components/ScrollComponent';
+import { ScrollComponent } from '../../../../components/ScrollComponent';
 
 import PartitonsActionbar from './PartitonsActionbar';
 import AudiencePartitionsTable from './AudiencePartitionsTable';

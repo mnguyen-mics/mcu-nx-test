@@ -19,7 +19,8 @@ import TranslationsReducers from '../state/Translations/reducer';
 import AudienceSegmentsReducers from '../state/Audience/Segments/reducer';
 import AudiencePartitionsReducers from '../state/Audience/Partitions/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
-
+import PlacementListsReducers from '../state/Library/PlacementLists/reducer';
+import KeywordListsReducers from '../state/Library/KeywordLists/reducer';
 
 const allReducers = Object.assign(
   {},
@@ -45,7 +46,9 @@ const allReducers = Object.assign(
   TranslationsReducers,
   AudienceSegmentsReducers,
   AutomationListReducers,
-  AudiencePartitionsReducers
+  AudiencePartitionsReducers,
+  PlacementListsReducers,
+  KeywordListsReducers
 );
 
 export default combineReducers(allReducers);

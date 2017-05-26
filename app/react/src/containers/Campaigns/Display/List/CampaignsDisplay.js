@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 
-import { ScrollComponent } from '../../../components/ScrollComponent';
+import { ScrollComponent } from '../../../../components/ScrollComponent';
 
 import CampaignsDisplayActionbar from './CampaignsDisplayActionbar';
 import CampaignsDisplayTable from './CampaignsDisplayTable';

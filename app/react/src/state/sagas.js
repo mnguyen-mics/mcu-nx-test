@@ -4,6 +4,8 @@ import { goalsSagas } from './Campaigns/Goal/sagas';
 import { automationsSagas } from './Automations/sagas';
 import { segmentsSagas } from './Audience/Segments/sagas';
 import { partitionsSagas } from './Audience/Partitions/sagas';
+import { placementListsSagas } from './Library/PlacementLists/sagas';
+import { keywordListsSagas } from './Library/KeywordLists/sagas';
 import { navigatorSagas } from './Navigator/sagas';
 
 
@@ -15,6 +17,8 @@ export default function* sagas() {
     ...automationsSagas,
     ...segmentsSagas,
     ...navigatorSagas,
-    ...partitionsSagas
+    ...partitionsSagas,
+    ...placementListsSagas,
+    ...keywordListsSagas
   ];
 }

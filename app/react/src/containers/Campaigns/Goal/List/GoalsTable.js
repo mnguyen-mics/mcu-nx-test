@@ -6,22 +6,22 @@ import Link from 'react-router/lib/Link';
 import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView } from '../../../../components/TableView';
 
-import * as GoalsActions from '../../../state/Campaigns/Goal/actions';
+import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 
 import {
   GOAL_QUERY_SETTINGS,
 
   updateQueryWithParams,
   deserializeQuery
-} from '../RouteQuerySelector';
+} from '../../RouteQuerySelector';
 
-import { formatMetric } from '../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper';
 
 import {
   getTableDataSource
- } from '../../../state/Campaigns/Goal/selectors';
+ } from '../../../../state/Campaigns/Goal/selectors';
 
 
 class GoalsTable extends Component {
