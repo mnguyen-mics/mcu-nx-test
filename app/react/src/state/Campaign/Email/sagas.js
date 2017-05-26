@@ -1,5 +1,5 @@
 import { takeLatest } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, select } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -9,6 +9,10 @@ import {
   updateCampaignEmail,
   archiveCampaignEmail
 } from './actions';
+
+import {
+  getWorkspaceOrganisationId
+} from '../../Session/selectors';
 
 import CampaignService from '../../../services/CampaignService';
 import ReportService from '../../../services/ReportService';
@@ -42,7 +46,6 @@ function* loadDeliveryReport({ payload }) {
   try {
 
     const {
-      organisationId,
       campaignId,
       filter
     } = payload;
@@ -53,7 +56,9 @@ function* loadDeliveryReport({ payload }) {
     const endDate = filter.to;
     const dimension = 'day';
 
-    const response = yield call(ReportService.getEmailDeliveryReport, organisationId, startDate, endDate, dimension);
+    const currentOrganisationId = yield select(getWorkspaceOrganisationId);
+
+    const response = yield call(ReportService.getEmailDeliveryReport, currentOrganisationId, startDate, endDate, dimension);
     yield put(fetchCampaignEmailDeliveryReport.success(response));
   } catch (error) {
     log.error(error);

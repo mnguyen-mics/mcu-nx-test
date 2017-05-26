@@ -7,22 +7,55 @@ import { ScrollComponent } from '../../../components/ScrollComponent';
 import CampaignEmailActionbar from './CampaignEmailActionbar';
 import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
 
+import {
+  CAMPAIGN_EMAIL_QUERY_SETTINGS
+} from '../RouteQuerySelector';
+
+import {
+  updateQueryWithParams,
+  deserializeQuery
+} from '../../../services/RouteQuerySelectorService';
+
 const { Content } = Layout;
 
 class CampaignEmail extends Component {
+
+  constructor(props) {
+    super(props);
+    this.updateQueryParams = this.updateQueryParams.bind(this);
+  }
 
   componentDidMount() {
     const {
       params: {
         campaignId
       },
-      fetchCampaignEmail
+      query,
+      fetchCampaignEmail,
+      fetchCampaignEmailDeliveryReport
     } = this.props;
+
+    const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
+
     fetchCampaignEmail(campaignId);
+    fetchCampaignEmailDeliveryReport(campaignId, filter);
   }
 
   componentWillUnmount() {
     this.props.resetCampaignEmail();
+  }
+
+  updateQueryParams(params) {
+    const {
+      router,
+      query: currentQuery
+    } = this.props;
+
+    const location = router.getCurrentLocation();
+    router.replace({
+      pathname: location.pathname,
+      query: updateQueryWithParams(currentQuery, params, CAMPAIGN_EMAIL_QUERY_SETTINGS)
+    });
   }
 
   render() {
@@ -39,19 +72,24 @@ class CampaignEmail extends Component {
 }
 
 CampaignEmail.propTypes = {
+  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   params: PropTypes.shape({
     campaignId: PropTypes.string
   }).isRequired,
   fetchCampaignEmail: PropTypes.func.isRequired,
+  fetchCampaignEmailDeliveryReport: PropTypes.func.isRequired,
   resetCampaignEmail: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  params: ownProps.router.params
+  params: ownProps.router.params,
+  query: ownProps.router.location.query
 });
 
 const mapDispatchToProps = {
   fetchCampaignEmail: CampaignEmailActions.fetchCampaignEmail.request,
+  fetchCampaignEmailDeliveryReport: CampaignEmailActions.fetchCampaignEmailDeliveryReport.request,
   resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
 };
 

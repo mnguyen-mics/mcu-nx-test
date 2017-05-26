@@ -14,8 +14,8 @@ const fetchCampaignEmail = {
   failure: createAction(CAMPAIGN_EMAIL_FETCH.FAILURE)
 };
 
-const fetchCampaignDeliveryReport = {
-  request: (organisationId, campaignId, filter = {}) => createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST)({ organisationId, filter }),
+const fetchCampaignEmailDeliveryReport = {
+  request: (campaignId, filter = {}) => createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST)({ campaignId, filter }),
   success: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.FAILURE)
 };
@@ -36,7 +36,7 @@ const resetCampaignEmail = createAction(CAMPAIGN_EMAIL_RESET);
 
 export {
   fetchCampaignEmail,
-  fetchCampaignDeliveryReport,
+  fetchCampaignEmailDeliveryReport,
   archiveCampaignEmail,
   updateCampaignEmail,
   resetCampaignEmail
