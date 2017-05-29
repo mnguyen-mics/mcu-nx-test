@@ -107,6 +107,8 @@
 
   "CAMPAIGN_STATUS_ACTIVE": "Campaign Ongoing",
   "CAMPAIGN_STATUS_PAUSED": "Campaign pause",
-  "CAMPAIGN_STATUS_PENDING": "Campaign pending"
+  "CAMPAIGN_STATUS_PENDING": "Campaign pending",
+  "CAMPAIGN_OVERVIEW": "Overview",
+  "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis"
 
 }

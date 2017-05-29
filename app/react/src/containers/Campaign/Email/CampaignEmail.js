@@ -66,6 +66,7 @@ class CampaignEmail extends Component {
         <Content>
           <ScrollComponent>
             <CampaignEmailHeader {...this.props} />
+            <CampaignEmailDashboard {...this.props} />
           </ScrollComponent>
         </Content>
       </Layout>
