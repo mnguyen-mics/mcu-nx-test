@@ -103,6 +103,10 @@
   "NOTIFICATION_ERROR_TITLE": "Erreur", 
   "NOTIFICATION_ERROR_DESCRIPTION": "Une erreur est survenue", 
   "NOTIFICATION_NEW_VERSION_TITLE": "Nouvelle Version", 
-  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Recharger la page"
+  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Recharger la page",
+
+  "CAMPAIGN_STATUS_ACTIVE": "Campaign en cours",
+  "CAMPAIGN_STATUS_PAUSED": "Campaign en pause",
+  "CAMPAIGN_STATUS_PENDING": "Campaign en attente"
 
 }

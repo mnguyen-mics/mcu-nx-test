@@ -1,0 +1,40 @@
+.mcs-title-status-header {
+  width: 100%;
+  .mcs-title-status-header-title {
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .mcs-title-status-header-status {
+    float: right;
+
+    div {
+      display: inline-block
+    };
+
+    .mcs-title-status-header-status-divider {
+      margin: 0px 10px;
+    }
+
+    .mcs-title-status-header-status-title {
+      font-size: 14px;
+    }
+
+    .mcs-indicator-paused,
+    .mcs-indicator-active,
+    .mcs-indicator-pending {
+      width: 13px;
+      height: 13px;
+      border-radius: 100%;
+    }
+
+    .mcs-indicator-paused {
+      background-color: @info-color;
+    }
+    .mcs-indicator-active {
+      background-color: @success-color;
+    }
+    .mcs-indicator-pending {
+      background-color: @error-color
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { Layout } from 'antd';
 
 import { ScrollComponent } from '../../../components/ScrollComponent';
 import CampaignEmailActionbar from './CampaignEmailActionbar';
+import CampaignEmailHeader from './CampaignEmailHeader';
 import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
 
 import {
@@ -63,7 +64,9 @@ class CampaignEmail extends Component {
       <Layout>
         <CampaignEmailActionbar {...this.props} />
         <Content>
-          <ScrollComponent />
+          <ScrollComponent>
+            <CampaignEmailHeader {...this.props} />
+          </ScrollComponent>
         </Content>
       </Layout>
     );
