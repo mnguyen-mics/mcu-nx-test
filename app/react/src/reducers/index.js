@@ -21,6 +21,7 @@ import AudiencePartitionsReducers from '../state/Audience/Partitions/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
 import PlacementListsReducers from '../state/Library/PlacementLists/reducer';
 import KeywordListsReducers from '../state/Library/KeywordLists/reducer';
+import AssetsFilesReducers from '../state/Library/AssetsFiles/reducer';
 
 const allReducers = Object.assign(
   {},
@@ -48,7 +49,8 @@ const allReducers = Object.assign(
   AutomationListReducers,
   AudiencePartitionsReducers,
   PlacementListsReducers,
-  KeywordListsReducers
+  KeywordListsReducers,
+  AssetsFilesReducers
 );
 
 export default combineReducers(allReducers);

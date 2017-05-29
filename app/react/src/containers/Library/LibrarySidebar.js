@@ -60,15 +60,15 @@ class LibrarySidebar extends Component {
         isActive: isActiveUrl('catalog')
       },
       {
-        element: <Link to={catalogUrl}><FormattedMessage id="AD_LAYOUTS" /></Link>,
+        element: <Link to={adLayoutUrl}><FormattedMessage id="AD_LAYOUTS" /></Link>,
         isActive: isActiveUrl('adlayouts')
       },
       {
-        element: <Link to={adLayoutUrl}><FormattedMessage id="STYLESHEETS" /></Link>,
+        element: <Link to={styleSheetsUrl}><FormattedMessage id="STYLESHEETS" /></Link>,
         isActive: isActiveUrl('stylesheets')
       },
       {
-        element: <Link to={styleSheetsUrl}><FormattedMessage id="ASSETS" /></Link>,
+        element: <Link to={assetsUrl}><FormattedMessage id="ASSETS" /></Link>,
         isActive: isActiveUrl('assets')
       },
       {

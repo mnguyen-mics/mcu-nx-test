@@ -32,6 +32,23 @@ export const KEYWORD_LISTS_SETTINGS = [
   }
 ];
 
+export const ASSETS_FILES_SETTINGS = [
+  {
+    paramName: 'currentPage',
+    defaultValue: 1,
+    deserialize: query => parseInt(query.currentPage, 0),
+    serialize: value => value.toString(),
+    isValid: query => query.currentPage && !isNaN(parseInt(query.currentPage, 0))
+  },
+  {
+    paramName: 'pageSize',
+    defaultValue: 10,
+    deserialize: query => parseInt(query.pageSize, 0),
+    serialize: value => value.toString(),
+    isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0))
+  }
+];
+
 export const isQueryValid = (query = {}, settings) => {
   // notEmpty and must forall settings query isValid
   return Object.keys(query).length > 0 &&

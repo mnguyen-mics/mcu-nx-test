@@ -4,12 +4,13 @@ import Route from 'react-router/lib/Route';
 import {
   PLACEMENT_LISTS_SETTINGS,
   KEYWORD_LISTS_SETTINGS,
+  ASSETS_FILES_SETTINGS,
 
   isQueryValid,
   buildDefaultQuery
 } from '../../containers/Library/RouteQuerySelector';
 
-import { Library, Placements, Keywords } from '../../containers/Library';
+import { Library, Placements, Keywords, Assets } from '../../containers/Library';
 
 const handleOnEnter = (nextState, replace, settings) => {
   if (!isQueryValid(nextState.location.query, settings)) {
@@ -43,6 +44,12 @@ export default (
         component={Keywords}
         onEnter={(nextState, replace) => handleOnEnter(nextState, replace, KEYWORD_LISTS_SETTINGS)}
         onChange={(prevState, nextState, replace) => handleOnChange(prevState, nextState, replace, KEYWORD_LISTS_SETTINGS)}
+      />
+      <Route
+        path="assets"
+        component={Assets}
+        onEnter={(nextState, replace) => handleOnEnter(nextState, replace, ASSETS_FILES_SETTINGS)}
+        onChange={(prevState, nextState, replace) => handleOnChange(prevState, nextState, replace, ASSETS_FILES_SETTINGS)}
       />
     </Route>
   </div>

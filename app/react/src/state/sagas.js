@@ -6,8 +6,8 @@ import { segmentsSagas } from './Audience/Segments/sagas';
 import { partitionsSagas } from './Audience/Partitions/sagas';
 import { placementListsSagas } from './Library/PlacementLists/sagas';
 import { keywordListsSagas } from './Library/KeywordLists/sagas';
+import { assetsFilesSagas } from './Library/AssetsFiles/sagas';
 import { navigatorSagas } from './Navigator/sagas';
-
 
 export default function* sagas() {
   yield [
@@ -19,6 +19,7 @@ export default function* sagas() {
     ...navigatorSagas,
     ...partitionsSagas,
     ...placementListsSagas,
-    ...keywordListsSagas
+    ...keywordListsSagas,
+    ...assetsFilesSagas
   ];
 }
