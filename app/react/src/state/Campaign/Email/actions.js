@@ -4,6 +4,7 @@ import {
   CAMPAIGN_EMAIL_ARCHIVE,
   CAMPAIGN_EMAIL_FETCH,
   CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
+  CAMPAIGN_EMAIL_LOAD_ALL,
   CAMPAIGN_EMAIL_UPDATE,
   CAMPAIGN_EMAIL_RESET
 } from '../../action-types';
@@ -19,6 +20,8 @@ const fetchCampaignEmailDeliveryReport = {
   success: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.FAILURE)
 };
+
+const loadCampaignEmailAndDeliveryReport = (campaignId, filter) => createAction(CAMPAIGN_EMAIL_LOAD_ALL)({ campaignId, filter });
 
 const archiveCampaignEmail = {
   request: (campaignId, body) => createAction(CAMPAIGN_EMAIL_ARCHIVE.REQUEST)({ campaignId, body }),
@@ -37,6 +40,7 @@ const resetCampaignEmail = createAction(CAMPAIGN_EMAIL_RESET);
 export {
   fetchCampaignEmail,
   fetchCampaignEmailDeliveryReport,
+  loadCampaignEmailAndDeliveryReport,
   archiveCampaignEmail,
   updateCampaignEmail,
   resetCampaignEmail

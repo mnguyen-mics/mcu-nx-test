@@ -6,6 +6,8 @@ import { Layout } from 'antd';
 import { ScrollComponent } from '../../../components/ScrollComponent';
 import CampaignEmailActionbar from './CampaignEmailActionbar';
 import CampaignEmailHeader from './CampaignEmailHeader';
+import CampaignEmailLabels from './CampaignEmailLabels';
+import CampaignEmailDashboard from './CampaignEmailDashboard';
 import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
 
 import {
@@ -32,14 +34,12 @@ class CampaignEmail extends Component {
         campaignId
       },
       query,
-      fetchCampaignEmail,
-      fetchCampaignEmailDeliveryReport
+      loadCampaignEmailAndDeliveryReport
     } = this.props;
 
     const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
 
-    fetchCampaignEmail(campaignId);
-    fetchCampaignEmailDeliveryReport(campaignId, filter);
+    loadCampaignEmailAndDeliveryReport(campaignId, filter);
   }
 
   componentWillUnmount() {
@@ -65,8 +65,9 @@ class CampaignEmail extends Component {
         <CampaignEmailActionbar {...this.props} />
         <Content>
           <ScrollComponent>
-            <CampaignEmailHeader {...this.props} />
-            <CampaignEmailDashboard {...this.props} />
+            <CampaignEmailHeader />
+            <CampaignEmailLabels />
+            <CampaignEmailDashboard />
           </ScrollComponent>
         </Content>
       </Layout>
@@ -81,8 +82,7 @@ CampaignEmail.propTypes = {
   params: PropTypes.shape({
     campaignId: PropTypes.string
   }).isRequired,
-  fetchCampaignEmail: PropTypes.func.isRequired,
-  fetchCampaignEmailDeliveryReport: PropTypes.func.isRequired,
+  loadCampaignEmailAndDeliveryReport: PropTypes.func.isRequired,
   resetCampaignEmail: PropTypes.func.isRequired
 };
 
@@ -92,8 +92,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  fetchCampaignEmail: CampaignEmailActions.fetchCampaignEmail.request,
-  fetchCampaignEmailDeliveryReport: CampaignEmailActions.fetchCampaignEmailDeliveryReport.request,
+  loadCampaignEmailAndDeliveryReport: CampaignEmailActions.loadCampaignEmailAndDeliveryReport,
   resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
 };
 
