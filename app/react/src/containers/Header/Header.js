@@ -180,12 +180,22 @@ class NavigatorHeader extends Component {
     return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/placements`; // eslint-disable-line no-undef
   }
 
+  getCreativeUrl() {
+    const {
+      activeWorkspace: {
+        organisationId,
+        datamartId
+      }
+    } = this.props;
+
+    return `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/creatives/display`; // eslint-disable-line no-undef
+  }
+
   buildNavigationItems() {
 
     const {
       activeWorkspace: {
         datamartId,
-        workspaceId
       },
       location: {
         pathname
@@ -205,11 +215,6 @@ class NavigatorHeader extends Component {
         label: 'AUDIENCE',
         path: 'audience'
       },
-      {
-        url: `/${workspaceId}/datamart/categories/`,
-        label: 'CATALOGS',
-        path: 'categories'
-      },
     ] : [];
 
     const reactEntries = [
@@ -224,9 +229,9 @@ class NavigatorHeader extends Component {
         path: 'automations'
       },
       {
-        url: `/${workspaceId}/creatives/display-ad`,
+        url: this.getCreativeUrl(),
         label: 'CREATIVES',
-        path: 'display-ad'
+        path: 'creatives'
       },
       {
         url: this.getLibraryUrl(),

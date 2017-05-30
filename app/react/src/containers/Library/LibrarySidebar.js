@@ -25,16 +25,16 @@ class LibrarySidebar extends Component {
 
     const placementsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/placements`; // eslint-disable-line no-undef
     const keywordsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/keywords`; // eslint-disable-line no-undef
-    const bidOptimizerUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/bidoptimizer`; // eslint-disable-line no-undef
-    const attributionModelUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/attributionmodel`; // eslint-disable-line no-undef
-    const visitAnalyzerUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/visitanalyzer`; // eslint-disable-line no-undef
-    const catalogUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/catalog`; // eslint-disable-line no-undef
-    const adLayoutUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/adlayouts`; // eslint-disable-line no-undef
-    const styleSheetsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/stylesheets`; // eslint-disable-line no-undef
+    const bidOptimizerUrl = `/${workspaceId}/library/bidOptimizers`; // eslint-disable-line no-undef
+    const attributionModelUrl = `/${workspaceId}/library/attributionmodels`; // eslint-disable-line no-undef
+    const visitAnalyzerUrl = `/${workspaceId}/library/visitanalysers`; // eslint-disable-line no-undef
+    const catalogUrl = `/${workspaceId}/datamart/categories/`; // eslint-disable-line no-undef
+    const adLayoutUrl = `/${workspaceId}/library/adlayouts`; // eslint-disable-line no-undef
+    const styleSheetsUrl = `/${workspaceId}/library/stylesheets`; // eslint-disable-line no-undef
     const assetsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/assets`; // eslint-disable-line no-undef
-    const exportsUrl = `${PUBLIC_URL}/o/${organisationId}${datamartId ? `/d/${datamartId}` : ''}/library/exports`; // eslint-disable-line no-undef
+    const exportsUrl = `/${workspaceId}/library/exports`; // eslint-disable-line no-undef
 
-    const items = [
+    const itemsTop = [
       {
         element: <Link to={placementsUrl}><FormattedMessage id="PLACEMENT_LIST" /></Link>,
         isActive: isActiveUrl('placements')
@@ -55,10 +55,9 @@ class LibrarySidebar extends Component {
         element: <Link to={visitAnalyzerUrl}><FormattedMessage id="VISIT_ANALYZER" /></Link>,
         isActive: isActiveUrl('visitanalyzer')
       },
-      {
-        element: <Link to={catalogUrl}><FormattedMessage id="CATALOG" /></Link>,
-        isActive: isActiveUrl('catalog')
-      },
+    ];
+
+    const itemsBottom = [
       {
         element: <Link to={adLayoutUrl}><FormattedMessage id="AD_LAYOUTS" /></Link>,
         isActive: isActiveUrl('adlayouts')
@@ -76,6 +75,15 @@ class LibrarySidebar extends Component {
         isActive: isActiveUrl('exports')
       }
     ];
+
+    const itemsDataMart = [
+      {
+        element: <Link to={catalogUrl}><FormattedMessage id="CATALOG" /></Link>,
+        isActive: isActiveUrl('catalog')
+      }
+    ];
+
+    const items = datamartId ? itemsTop.concat(itemsDataMart).concat(itemsBottom) : itemsTop.concat(itemsBottom);
 
     return <Sidebar items={items}>{this.props.children}</Sidebar>;
   }

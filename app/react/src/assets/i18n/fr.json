@@ -130,5 +130,17 @@
 
   "NEW_KEYWORD_LIST": "Nouvelle Liste de Mot Clef",
   "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Etes vous sur de vouloir supprimer cette Liste de Mots Clefs?",
-  "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cette Liste de Mots Clefs?"
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cette Liste de Mots Clefs?",
+
+  "NEW_ASSET": "Nouvel Asset",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_TITLE":  "Etes vous sur de vouloir supprimer cet Asset?",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cet Asset?",
+  "PREVIEW": "Prévisualisation",
+  "DIMENSIONS": "Dimensions",
+  "AUDIT_STATUS": "Statut d'Audit",
+  "PUBLISHED_VERSION": "Version Publiée",
+
+  "DISPLAY_ADS": "Display Ads",
+  "EMAILS_TEMPLATES": "Templates d'Email",
+  "NEW_DISPLAY_AD": "Nouveau Display Ad"
 }

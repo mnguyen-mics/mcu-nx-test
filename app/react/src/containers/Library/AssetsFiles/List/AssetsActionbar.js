@@ -18,7 +18,7 @@ class AssetsActionbar extends Component {
     } = this.props;
 
     const breadcrumb = {
-      name: translations.PLACEMENT_LIST
+      name: translations.ASSETS
     };
 
     setBreadcrumb(0, [breadcrumb]);

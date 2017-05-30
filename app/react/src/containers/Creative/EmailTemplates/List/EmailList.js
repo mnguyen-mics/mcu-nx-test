@@ -7,10 +7,10 @@ import { Modal } from 'antd';
 
 import { TableView } from '../../../../components/TableView';
 
-import * as KeywordListsActions from '../../../../state/Library/KeywordLists/actions';
+import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
 import {
-  KEYWORD_LISTS_SETTINGS,
+  CREATIVE_EMAILS_LIST_SETTINGS,
 
   updateQueryWithParams,
   deserializeQuery
@@ -18,17 +18,16 @@ import {
 
 import {
   getTableDataSource
- } from '../../../../state//Library/KeywordLists/selectors';
+ } from '../../../../state/Creatives/Emails/selectors';
 
-class KeywordListsTable extends Component {
+class CreativeEmailsTable extends Component {
 
   constructor(props) {
     super(props);
     this.updateQueryParams = this.updateQueryParams.bind(this);
-    this.archiveKeyword = this.archiveKeyword.bind(this);
-    this.editKeyword = this.editKeyword.bind(this);
+    this.archiveCreativeEmails = this.archiveCreativeEmails.bind(this);
+    this.editCreativeEmails = this.editCreativeEmails.bind(this);
   }
-
 
   componentDidMount() {
     const {
@@ -37,10 +36,11 @@ class KeywordListsTable extends Component {
       },
       query,
 
-      fetchKeywordLists
+      fetchCreativeEmails
     } = this.props;
-    const filter = deserializeQuery(query, KEYWORD_LISTS_SETTINGS);
-    fetchKeywordLists(organisationId, filter);
+
+    const filter = deserializeQuery(query, CREATIVE_EMAILS_LIST_SETTINGS);
+    fetchCreativeEmails(organisationId, filter);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -50,7 +50,7 @@ class KeywordListsTable extends Component {
         workspaceId
       },
 
-      fetchKeywordLists
+      fetchCreativeEmails
     } = this.props;
 
     const {
@@ -62,13 +62,13 @@ class KeywordListsTable extends Component {
     } = nextProps;
 
     if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, KEYWORD_LISTS_SETTINGS);
-      fetchKeywordLists(organisationId, filter);
+      const filter = deserializeQuery(nextQuery, CREATIVE_EMAILS_LIST_SETTINGS);
+      fetchCreativeEmails(organisationId, filter);
     }
   }
 
   componentWillUnmount() {
-    this.props.resetKeywordListsTable();
+    this.props.resetCreativeEmailsTable();
   }
 
   updateQueryParams(params) {
@@ -80,7 +80,7 @@ class KeywordListsTable extends Component {
     const location = router.getCurrentLocation();
     router.replace({
       pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, KEYWORD_LISTS_SETTINGS)
+      query: updateQueryWithParams(currentQuery, params, CREATIVE_EMAILS_LIST_SETTINGS)
     });
   }
 
@@ -90,17 +90,17 @@ class KeywordListsTable extends Component {
       activeWorkspace: {
         workspaceId
       },
-      isFetchingKeywordLists,
+      isFetchingCreativeEmails,
       dataSource,
-      totalPlacements
+      totalCreativeEmails
     } = this.props;
 
-    const filter = deserializeQuery(query, KEYWORD_LISTS_SETTINGS);
+    const filter = deserializeQuery(query, CREATIVE_EMAILS_LIST_SETTINGS);
 
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalPlacements,
+      total: totalCreativeEmails,
       onChange: (page) => this.updateQueryParams({
         currentPage: page
       }),
@@ -112,10 +112,29 @@ class KeywordListsTable extends Component {
 
     const dataColumns = [
       {
+        translationKey: 'PREVIEW',
+        key: 'asset_path',
+        isHiddable: false,
+        className: 'mcs-table-image-col',
+        render: (text, record) => <div className="mics-small-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
+      },
+      {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/library/keywordslists/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
+      },
+      {
+        translationKey: 'AUDIT_STATUS',
+        key: 'audit_status',
+        isHiddable: false,
+        render: (text) => <span>{text}</span>
+      },
+      {
+        translationKey: 'PUBLISHED_VERSION',
+        key: 'published_version',
+        isHiddable: false,
+        render: (text) => <span>{text}</span>
       }
     ];
 
@@ -125,10 +144,10 @@ class KeywordListsTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editKeyword
+            callback: this.editCreativeEmails
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveKeyword
+            callback: this.archiveCreativeEmails
           }
         ]
       }
@@ -142,14 +161,14 @@ class KeywordListsTable extends Component {
     return (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
-      loading={isFetchingKeywordLists}
+      loading={isFetchingCreativeEmails}
       onChange={() => {}}
       pagination={pagination}
     />);
 
   }
 
-  editKeyword(keyword) {
+  editCreativeEmails(campaign) {
     const {
       activeWorkspace: {
         workspaceId
@@ -157,31 +176,31 @@ class KeywordListsTable extends Component {
       router
     } = this.props;
 
-    router.push(`/${workspaceId}/library/keywordslists/${keyword.id}`);
+    router.push(`/${workspaceId}/creatives/display-ad/default-editor/edit/${campaign.id}`);
   }
 
-  archiveKeyword(keyword) {
+  archiveCreativeEmails(campaign) {
     const {
       activeWorkspace: {
         organisationId
       },
-      archiveKeywordList,
-      fetchKeywordLists,
+      archiveCreativeEmails,
+      fetchCreativeEmails,
       translations,
       query
     } = this.props;
 
-    const filter = deserializeQuery(query, KEYWORD_LISTS_SETTINGS);
+    const filter = deserializeQuery(query, CREATIVE_EMAILS_LIST_SETTINGS);
 
     Modal.confirm({
-      title: translations.KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
       iconType: 'exclamation-circle',
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return archiveKeywordList(keyword.id).then(() => {
-          fetchKeywordLists(organisationId, filter);
+        return archiveCreativeEmails(campaign.id).then(() => {
+          fetchCreativeEmails(organisationId, filter);
         });
       },
       onCancel() { },
@@ -190,23 +209,23 @@ class KeywordListsTable extends Component {
 
 }
 
-KeywordListsTable.defaultProps = {
-  archiveKeywordList: () => { }
+CreativeEmailsTable.defaultProps = {
+  archiveCreativeEmails: () => { }
 };
 
-KeywordListsTable.propTypes = {
+CreativeEmailsTable.propTypes = {
   router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-  isFetchingKeywordLists: PropTypes.bool.isRequired,
+  isFetchingCreativeEmails: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  totalPlacements: PropTypes.number.isRequired,
+  totalCreativeEmails: PropTypes.number.isRequired,
 
-  fetchKeywordLists: PropTypes.func.isRequired,
-  archiveKeywordList: PropTypes.func.isRequired,
-  resetKeywordListsTable: PropTypes.func.isRequired,
+  fetchCreativeEmails: PropTypes.func.isRequired,
+  archiveCreativeEmails: PropTypes.func.isRequired,
+  resetCreativeEmailsTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -214,18 +233,18 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
-  isFetchingKeywordLists: state.placementListTable.placementListsApi.isFetching,
+  isFetchingCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalPlacements: state.placementListTable.placementListsApi.total,
+  totalCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.total,
 });
 
 const mapDispatchToProps = {
-  fetchKeywordLists: KeywordListsActions.fetchKeywordLists.request,
-  // archiveKeywordList: CampaignEmailAction.archiveKeywordList,
-  resetKeywordListsTable: KeywordListsActions.resetKeywordListsTable
+  fetchCreativeEmails: CreativeEmailsActions.fetchCreativeEmails.request,
+  // archiveCreativeEmails: CreativeEmailsActions.archiveCreativeEmails,
+  resetCreativeEmailsTable: CreativeEmailsActions.resetCreativeEmailsTable
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(KeywordListsTable);
+)(CreativeEmailsTable);

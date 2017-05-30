@@ -131,5 +131,17 @@
 
   "NEW_KEYWORD_LIST": "New Keyword List",
   "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Keyword List?",
-  "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Keyword all it will stop campaign using it. Are you sure?"
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Keyword all it will stop campaign using it. Are you sure?",
+
+  "NEW_ASSET": "New Asset",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Asset?",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Asset all it will stop campaign using it. Are you sure?",
+  "PREVIEW": "Preview",
+  "DIMENSIONS": "Dimensions",
+  "AUDIT_STATUS": "Audit Status",
+  "PUBLISHED_VERSION": "Published Version",
+
+  "DISPLAY_ADS": "Display Ads",
+  "EMAILS_TEMPLATES": "Email Templates",
+  "NEW_DISPLAY_AD": "New Display Ad"
 }

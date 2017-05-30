@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
 import { Modal } from 'antd';
-import { FormattedMessage } from 'react-intl';
 
 import { TableView } from '../../../../components/TableView';
 

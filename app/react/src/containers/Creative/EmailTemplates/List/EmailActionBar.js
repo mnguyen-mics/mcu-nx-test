@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import { Actionbar } from '../../../Actionbar';
 import * as ActionbarActions from '../../../../state/Actionbar/actions';
 
-class KeywordActionbar extends Component {
+class EmailActionBar extends Component {
 
   componentWillMount() {
 
@@ -18,7 +18,7 @@ class KeywordActionbar extends Component {
     } = this.props;
 
     const breadcrumb = {
-      name: translations.KEYWORD_LIST
+      name: translations.EMAILS_TEMPLATES
     };
 
     setBreadcrumb(0, [breadcrumb]);
@@ -35,9 +35,9 @@ class KeywordActionbar extends Component {
 
     return (
       <Actionbar {...this.props}>
-        <Link to={`/${workspaceId}/library/keywordslists/new`}>
+        <Link to={`/${workspaceId}/creatives/display-ad/default-editor/create`}>
           <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_KEYWORD_LIST" />
+            <Icon type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
           </Button>
         </Link>
       </Actionbar>
@@ -47,7 +47,7 @@ class KeywordActionbar extends Component {
 
 }
 
-KeywordActionbar.propTypes = {
+EmailActionBar.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   setBreadcrumb: PropTypes.func.isRequired,
@@ -62,9 +62,9 @@ const mapDispatchToProps = {
   setBreadcrumb: ActionbarActions.setBreadcrumb
 };
 
-KeywordActionbar = connect(
+EmailActionBar = connect(
   mapStateToProps,
   mapDispatchToProps
-)(KeywordActionbar);
+)(EmailActionBar);
 
-export default KeywordActionbar;
+export default EmailActionBar;
