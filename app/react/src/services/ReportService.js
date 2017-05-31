@@ -2,7 +2,7 @@ import ApiService from './ApiService';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-const getDisplayCampaignPerfomanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
+const getDisplayCampaignPerformanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/display_campaign_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
@@ -67,7 +67,7 @@ const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension,
 };
 
 export default {
-  getDisplayCampaignPerfomanceReport,
+  getDisplayCampaignPerformanceReport,
   getEmailDeliveryReport,
   getConversionPerformanceReport,
   getAudienceSegmentReport
