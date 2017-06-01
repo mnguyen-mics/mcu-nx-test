@@ -64,15 +64,14 @@ div[data-reactroot] {
     color: @info-color!important;
 }
 
-.mcs-menu-inline .ant-menu-item-disabled.ant-menu-item {
+.mcs-menu-inline .ant-menu-item-disabled.ant-menu-item.mcs-footer {
     position: absolute; 
     bottom: 0; 
     left: 0; 
     height: 95px; 
     width: 100%; 
-    background-color: #fcfcfc; 
-    box-shadow: 0 -1px 0 0 @border-color-split; 
     cursor: default;
+    padding: 0 24px;
 }
 
 .mcs-footer-img {
@@ -208,8 +207,32 @@ a {
     font-size: 0.8em;
     color: @text-color-secondary;
     padding: 10px;
-
 }
+
+.mcs-table-view-empty {
+    .logo {
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+        margin: 0 auto;
+        background-color: #d8d8d8;
+        color: #fff;
+        line-height: 100px;
+        font-size: 3.5em;
+        display: table;
+        margin-bottom: 10px;
+        .icon {
+            display: table-cell;
+            vertical-align: middle;
+        }
+    }
+    font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	color: #9c9c9c;
+    margin-top:18%;
+}
+
 
 .ant-btn {
     height: auto!important;

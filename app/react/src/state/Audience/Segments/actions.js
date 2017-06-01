@@ -21,7 +21,7 @@ const fetchAudienceSegmentsPerformanceReport = {
   failure: (error) => createAction(AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.FAILURE)(error)
 };
 
-const loadAudienceSegmentsDataSource = (organisationId, datamartId, filter) => createAction(AUDIENCE_SEGMENTS_LOAD_ALL)({ organisationId, datamartId, filter });
+const loadAudienceSegmentsDataSource = (organisationId, datamartId, filter, isInitialRender = false) => createAction(AUDIENCE_SEGMENTS_LOAD_ALL)({ organisationId, datamartId, filter, isInitialRender });
 
 export {
   fetchAudienceSegmentList,

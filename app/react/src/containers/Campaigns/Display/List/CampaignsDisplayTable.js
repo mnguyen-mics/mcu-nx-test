@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Icon, Modal } from 'antd';
+import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../../components/TableView';
+import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsDisplayActions from '../../../../state/Campaigns/Display/actions';
 
@@ -43,7 +44,7 @@ class CampaignsDisplayTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, DISPLAY_QUERY_SETTINGS);
-    loadCampaignsDisplayDataSource(organisationId, filter);
+    loadCampaignsDisplayDataSource(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -93,6 +94,7 @@ class CampaignsDisplayTable extends Component {
       activeWorkspace: {
         workspaceId
       },
+      hasDisplayCampaigns,
       translations,
       isFetchingCampaignsDisplay,
       isFetchingCampaignsStat,
@@ -156,7 +158,7 @@ class CampaignsDisplayTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
@@ -239,7 +241,7 @@ class CampaignsDisplayTable extends Component {
     const filtersOptions = [
       {
         name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
+        displayElement: (<div><FormattedMessage id="STATUS" /> <McsIcons type="down" /></div>),
         menuItems: {
           handleMenuClick: value => this.updateQueryParams({ statuses: value.status.map(item => item.value) }),
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
@@ -253,7 +255,7 @@ class CampaignsDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return (hasDisplayCampaigns) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingCampaignsDisplay}
@@ -263,7 +265,7 @@ class CampaignsDisplayTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="display" text="EMPTY_DISPLAY" />);
 
   }
 
@@ -333,6 +335,7 @@ CampaignsDisplayTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasDisplayCampaigns: PropTypes.bool.isRequired,
   isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -347,7 +350,7 @@ const mapStateToProps = (state, ownProps) => ({
   activeWorkspace: state.sessionState.activeWorkspace,
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
-
+  hasDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.hasItems,
   isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
   isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),

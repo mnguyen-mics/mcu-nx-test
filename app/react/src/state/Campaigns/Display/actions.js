@@ -21,7 +21,7 @@ const fetchCampaignsDisplayPerformanceReport = {
   failure: (error) => createAction(CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.FAILURE)(error)
 };
 
-const loadCampaignsDisplayDataSource = (organisationId, filter) => createAction(CAMPAIGNS_DISPLAY_LOAD_ALL)({ organisationId, filter });
+const loadCampaignsDisplayDataSource = (organisationId, filter, isInitialRender = false) => createAction(CAMPAIGNS_DISPLAY_LOAD_ALL)({ organisationId, filter, isInitialRender });
 
 
 export {

@@ -14,7 +14,8 @@ import {
 const defaultAudienceSegmentsApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const audienceSegmentsApi = (state = defaultAudienceSegmentsApiState, action) => {

@@ -34,8 +34,8 @@
   "CONVERSIONS":"Conversions",
   "CONVERSION_VALUE":"Conversion value",
   "SAVE": "Save",
-  "DISPLAY_CAMPAIGNS": "Display Campaigns",
-  "EMAIL_CAMPAIGNS": "Emails Campaigns",
+  "DISPLAY_CAMPAIGNS": "Display",
+  "EMAIL_CAMPAIGNS": "Emails",
   "SCENARIOS": "Scenarios",
   "GOALS": "Goals",
   "NEW_CAMPAIGN": "New Campaign",
@@ -82,6 +82,12 @@
 
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation",
+
+  "EMPTY_EMAILS": "There is no Email Campaigns created yet! Click on New to get started",
+  "EMPTY_DISPLAY": "There is no Display Campaigns created yet! Click on New to get started",
+  "EMPTY_GOALS": "There is no Goals created yet! Click on New to get started",
+  "EMPTY_SEGMENTS": "There is no Segments created yet! Click on New to get started",
+  "EMPTY_AUTOMATIONS": "There is no Automations created yet! Click on New to get started",
 
   "TODAY": "Today",
   "YESTERDAY": "Yesterday",

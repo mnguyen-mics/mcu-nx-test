@@ -1,5 +1,5 @@
 import { takeLatest } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, all } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -49,7 +49,8 @@ function* loadAudienceSegmentList({ payload }) {
     const {
       organisationId,
       datamartId,
-      filter
+      filter,
+      isInitialRender
     } = payload;
 
     if (!(organisationId || datamartId || filter)) throw new Error('Payload is invalid');
@@ -61,7 +62,29 @@ function* loadAudienceSegmentList({ payload }) {
     if (filter.keywords) { options.name = filter.keywords; }
     if (filter.types) { options.types = filter.types; }
 
-    const response = yield call(AudienceSegmentService.getSegments, organisationId, datamartId, options);
+    const initialOptions = {
+      ...getPaginatedApiParam(1, 1)
+    };
+
+    let allCalls;
+
+    if (isInitialRender) {
+      allCalls = {
+        initialFetch: call(AudienceSegmentService.getSegments, organisationId, datamartId, initialOptions),
+        response: call(AudienceSegmentService.getSegments, organisationId, datamartId, options)
+      };
+    } else {
+      allCalls = {
+        response: call(AudienceSegmentService.getSegments, organisationId, datamartId, options)
+      };
+    }
+
+    const { initialFetch, response } = yield all(allCalls);
+
+    if (initialFetch) {
+      response.hasItems = initialFetch.count > 0;
+    }
+
     yield put(fetchAudienceSegmentList.success(response));
   } catch (error) {
     log.error(error);

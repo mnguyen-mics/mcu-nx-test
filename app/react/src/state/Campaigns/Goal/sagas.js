@@ -1,5 +1,5 @@
 import { takeLatest } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, all } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -47,7 +47,8 @@ function* loadGoals({ payload }) {
 
     const {
       organisationId,
-      filter
+      filter,
+      isInitialRender
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
@@ -59,7 +60,29 @@ function* loadGoals({ payload }) {
 
     if (filter.keywords) { options.keywords = filter.keywords; }
 
-    const response = yield call(GoalService.getGoals, organisationId, options);
+    const initialOptions = {
+      ...getPaginatedApiParam(1, 1)
+    };
+
+    let allCalls;
+
+    if (isInitialRender) {
+      allCalls = {
+        initialFetch: call(GoalService.getGoals, organisationId, initialOptions),
+        response: call(GoalService.getGoals, organisationId, options)
+      };
+    } else {
+      allCalls = {
+        response: call(GoalService.getGoals, organisationId, options)
+      };
+    }
+
+    const { initialFetch, response } = yield all(allCalls);
+
+    if (initialFetch) {
+      response.hasItems = initialFetch.count > 0;
+    }
+
     yield put(fetchGoals.success(response));
   } catch (error) {
     log.error(error);

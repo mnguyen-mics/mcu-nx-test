@@ -77,8 +77,8 @@
   "SEARCH_AUDIENCE_SEGMENTS": "Recherche de Segments",
   "TECHNICAL_NAME": "Nom Technique",
 
-  "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Segment?",
-  "SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Segment all it will stop campaign using it. Are you sure?",
+  "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Êtes-vous sûr de vouloir archiver ce Segment?",
+  "SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY": "En archivant cette campagne, toute ces activités vont être suspendues. Vous serez capable de la recupérer dans la catégorie 'archivés'",
 
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation",
@@ -93,6 +93,11 @@
   "TO": "à",
   "ERROR": "Erreur",
   "SECONDS": "secondes",
+  "EMPTY_EMAILS": "Il n'y a aucune Campagne Email créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_DISPLAY": "Il n'y a aucune Campagne Display créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_GOALS": "Il n'y a aucun Objectif créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_SEGMENTS": "Il n'y a aucun Segments créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_AUTOMATIONS": "Il n'y a aucune Automations créée! Clickez sur Nouveau pour commencer.",
   "EXPORT": "Export",
   "EXPORT_IN_PROGRESS": "Export en cours...",
   "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",

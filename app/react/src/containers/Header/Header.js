@@ -7,6 +7,7 @@ import { Dropdown, Popover, Icon, Menu, Row, Col } from 'antd';
 import classNames from 'classnames';
 
 import * as sessionActions from '../../state/Session/actions';
+import { McsIcons } from '../../components/McsIcons';
 
 class NavigatorHeader extends Component {
 
@@ -20,7 +21,6 @@ class NavigatorHeader extends Component {
   }
 
   render() {
-
     const {
       authenticated,
       activeWorkspace: {
@@ -31,9 +31,10 @@ class NavigatorHeader extends Component {
         location: {
           pathname
         }
-      }
+      },
+      logo,
+      isFetchingLogo
     } = this.props;
-
 
     const homeUrl = authenticated ? this.getCampaignsUrl() : '';
     const navigationItems = this.displayNavigationItems();
@@ -68,6 +69,8 @@ class NavigatorHeader extends Component {
       </Menu>
     );
 
+    const logoUrl = logo ? URL.createObjectURL(logo) : null;  // eslint-disable-line no-undef
+
     return (
       <header id="header" className={headerClassName}>
         <Row>
@@ -75,32 +78,37 @@ class NavigatorHeader extends Component {
             <div className="mcs-header-logo-item">
               <Dropdown overlay={menu} trigger={['click']}>
                 <a className="ant-dropdown-link mcs-header-cascader-menu">
-                  <Icon type="down" />
+                  <McsIcons type="chevron" />
                 </a>
               </Dropdown>
+              <div className="mcs-header-left-divider" />
             </div>
             <div className="mcs-header-logo-item mcs-header-logo-name">
-              <Link to={homeUrl} id="logo" className="mcs-header-logo-name">{organisationName}</Link>
+              <Link to={homeUrl} id="logo">
+                { !!logo && <img alt="logo" src={logoUrl} /> }
+                { !logo && !isFetchingLogo && organisationName }
+              </Link>
             </div>
           </Col>
           <Col sm={20} md={20} lg={20} className="mcs-header-navigation">
             <Menu selectedKeys={[activeKey]} mode="horizontal" className="mcs-header-menu-horizontal">
               {navigationItems}
             </Menu>
-            <div className="mcs-header-menu-icons" >
+            <div className="mcs-header-menu-icons">
               <Link to={`/${workspaceId}/settings/useraccount`}>
-                <Icon type="setting" className="mcs-header-anticon" />
+                <McsIcons type="options" className="mcs-header-anticon" />
               </Link>
               <div className="mcs-header-divider" />
-              <Popover placement="bottomRight" trigger="click" title={text} content={content}>
-                <Icon type="user" className="mcs-header-anticon" />
-              </Popover>
+              <a>
+                <Popover placement="bottomRight" trigger="click" title={text} content={content}>
+                  <McsIcons type="user" className="mcs-header-anticon" />
+                </Popover>
+              </a>
             </div>
           </Col>
         </Row>
       </header>
     );
-
   }
 
   onWorkspaceChange(value) {
@@ -204,10 +212,10 @@ class NavigatorHeader extends Component {
     } = this.props;
 
     /*
-      To add a new link to the navbar use an object with the property active.
-      Use isActiveUrl function by passing the path of the route.
-      The property is used by the NavLink component to apply an active class to the element.
-    */
+     To add a new link to the navbar use an object with the property active.
+     Use isActiveUrl function by passing the path of the route.
+     The property is used by the NavLink component to apply an active class to the element.
+     */
     const isActiveUrl = path => pathname.search(path) >= 0; // eslint-disable-line no-unused-vars
     const datamartEntries = datamartId ? [
       {
@@ -253,7 +261,7 @@ class NavigatorHeader extends Component {
 
     const getLabel = workspace => `${workspace.organisationName} ${workspace.datamartName ? `[${workspace.datamartName}]` : ''}`;
 
-    const getActiveWorkespace = () => {
+    const getActiveWorkspace = () => {
       return {
         label: getLabel(activeWorkspace),
         onClick: () => {}
@@ -275,7 +283,7 @@ class NavigatorHeader extends Component {
     });
 
     return {
-      activeWorkspace: getActiveWorkespace(),
+      activeWorkspace: getActiveWorkspace(),
       workspaces: getWorkspaceItems()
     };
   }
@@ -320,9 +328,15 @@ class NavigatorHeader extends Component {
 
 }
 
+NavigatorHeader.defaultProps = {
+  logo: null
+};
+
 NavigatorHeader.propTypes = {
   user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  logo: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  isFetchingLogo: PropTypes.bool.isRequired,
   workspaces: PropTypes.arrayOf(PropTypes.object).isRequired,
   authenticated: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -335,6 +349,8 @@ const mapStateToProps = state => ({
   authenticated: state.sessionState.authenticated,
   user: state.sessionState.user,
   activeWorkspace: state.sessionState.activeWorkspace,
+  logo: state.sessionState.logo,
+  isFetchingLogo: state.sessionState.isFetchingLogo,
   workspaces: state.sessionState.workspaces
 });
 
