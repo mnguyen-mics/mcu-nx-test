@@ -79,6 +79,9 @@
   "SEARCH_AUDIENCE_SEGMENTS": "Recherche de Segments",
   "TECHNICAL_NAME": "Nom Technique",
 
+  "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Êtes-vous sûr de vouloir archiver ce Segment?",
+  "SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY": "En archivant cette campagne, toute ces activités vont être suspendues. Vous serez capable de la recupérer dans la catégorie 'archivés'",
+
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation",
 
@@ -102,5 +105,5 @@
   "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",
   "CAMPAIGNS_EMAIL_EXPORT_TITLE": "Campaigns Email Export",
   "GOALS_EXPORT_TITLE": "Goals Export",
-  "AUDIENCE_SEGMENTS_EXPORT_TITLE": "Audience Segments Export",
+  "AUDIENCE_SEGMENTS_EXPORT_TITLE": "Audience Segments Export"
 }
