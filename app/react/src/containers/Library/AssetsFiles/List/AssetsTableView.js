@@ -86,9 +86,6 @@ class AssetsFilesTable extends Component {
   render() {
     const {
       query,
-      activeWorkspace: {
-        workspaceId
-      },
       isFetchingAssetsFiles,
       dataSource,
       totalPlacements

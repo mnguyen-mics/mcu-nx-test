@@ -3,7 +3,7 @@ import { Layout } from 'antd';
 
 import { ScrollComponent } from '../../../../components/ScrollComponent';
 
-import PartitonsActionbar from './PartitonsActionbar';
+import PartitionsActionbar from './PartitionsActionbar';
 import PartitionsDashboard from './PartitionsDashboard';
 
 const { Content } = Layout;
@@ -13,7 +13,7 @@ class Partitions extends Component {
   render() {
     return (
       <Layout>
-        <PartitonsActionbar {...this.props} />
+        <PartitionsActionbar {...this.props} />
         <Content>
           <ScrollComponent>
             <PartitionsDashboard {...this.props} />

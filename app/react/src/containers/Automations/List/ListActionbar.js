@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Button } from 'antd';
+import { Button } from 'antd';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';

@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Icon, Modal, Tooltip } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { Modal } from 'antd';
 
 import { TableView } from '../../../../components/TableView';
 
@@ -16,8 +15,6 @@ import {
   updateQueryWithParams,
   deserializeQuery
 } from '../../RouteQuerySelector';
-
-import { formatMetric } from '../../../../utils/MetricHelper';
 
 import {
   getTableDataSource

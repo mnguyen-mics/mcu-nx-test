@@ -14,8 +14,7 @@ class CampaignsSidebar extends Component {
     const {
       activeWorkspace: {
         organisationId,
-        workspaceId,
-        datamartId,
+        datamartId
       },
       location: {
         pathname

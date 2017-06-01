@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import Link from 'react-router/lib/Link';
-import { Dropdown, Popover, Icon, Menu, Row, Col } from 'antd';
+import { Dropdown, Popover, Menu, Row, Col } from 'antd';
 import classNames from 'classnames';
 
 import * as sessionActions from '../../state/Session/actions';

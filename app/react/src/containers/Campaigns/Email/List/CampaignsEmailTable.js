@@ -237,14 +237,6 @@ class CampaignsEmailTable extends Component {
       }
     ];
 
-    let activeFilters = 0;
-    filtersOptions.forEach(item => {
-      if (Object.prototype.hasOwnProperty.call(item.menuItems, 'selectedItems') === true) {
-        activeFilters += item.menuItems.selectedItems.length;
-      }
-    });
-    const hasFilters = activeFilters !== 0 ? true : false;
-
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
       actionsColumnsDefinition: actionColumns

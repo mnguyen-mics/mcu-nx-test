@@ -66,14 +66,11 @@ class PartitionsActionbar extends Component {
 PartitionsActionbar.propTypes = {
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
   setBreadcrumb: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
   activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
   translations: state.translationsState.translations
 });
 
