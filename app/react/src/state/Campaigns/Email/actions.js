@@ -21,7 +21,7 @@ const fetchCampaignsEmailDeliveryReport = {
   failure: (error) => createAction(CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.FAILURE)(error)
 };
 
-const loadCampaignsEmailDataSource = (organisationId, filter) => createAction(CAMPAIGNS_EMAIL_LOAD_ALL)({ organisationId, filter });
+const loadCampaignsEmailDataSource = (organisationId, filter, isInitialRender = false) => createAction(CAMPAIGNS_EMAIL_LOAD_ALL)({ organisationId, filter, isInitialRender });
 
 export {
   fetchCampaignsEmailList,

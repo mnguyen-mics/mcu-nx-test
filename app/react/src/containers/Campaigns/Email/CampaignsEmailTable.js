@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Icon, Modal } from 'antd';
+import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../components/TableView';
+import { Icons } from '../../../components/McsIcons';
 
 import * as CampaignsEmailActions from '../../../state/Campaigns/Email/actions';
 
@@ -43,7 +44,8 @@ class CampaignsEmailTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
-    loadCampaignsEmailDataSource(organisationId, filter);
+
+    loadCampaignsEmailDataSource(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -97,7 +99,8 @@ class CampaignsEmailTable extends Component {
       isFetchingCampaignsEmail,
       isFetchingCampaignsStat,
       dataSource,
-      totalCampaignsEmail
+      totalCampaignsEmail,
+      hasEmailCampaigns,
     } = this.props;
 
     const filter = deserializeQuery(query, EMAIL_QUERY_SETTINGS);
@@ -156,7 +159,7 @@ class CampaignsEmailTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><Icons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
@@ -234,12 +237,20 @@ class CampaignsEmailTable extends Component {
       }
     ];
 
+    let activeFilters = 0;
+    filtersOptions.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(item.menuItems, 'selectedItems') === true) {
+        activeFilters += item.menuItems.selectedItems.length;
+      }
+    });
+    const hasFilters = activeFilters !== 0 ? true : false;
+
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return (hasEmailCampaigns) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingCampaignsEmail}
@@ -249,7 +260,7 @@ class CampaignsEmailTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="email" text="EMPTY_EMAILS" />);
 
   }
 
@@ -304,6 +315,7 @@ CampaignsEmailTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasEmailCampaigns: PropTypes.bool.isRequired,
   isFetchingCampaignsEmail: PropTypes.bool.isRequired,
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -319,6 +331,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
+  hasEmailCampaigns: state.campaignsEmailTable.campaignsEmailApi.hasItems,
   isFetchingCampaignsEmail: state.campaignsEmailTable.campaignsEmailApi.isFetching,
   isFetchingCampaignsStat: state.campaignsEmailTable.deliveryReportApi.isFetching,
   dataSource: getTableDataSource(state),

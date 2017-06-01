@@ -6,7 +6,7 @@ import Link from 'react-router/lib/Link';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../components/TableView';
 
 import * as AudienceSegmentsActions from '../../../state/Audience/Segments/actions';
 
@@ -44,7 +44,7 @@ class AudienceSegmentsTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
-    loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
+    loadAudienceSegmentsDataSource(organisationId, datamartId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -99,7 +99,8 @@ class AudienceSegmentsTable extends Component {
       isFetchingAudienceSegments,
       isFetchingSegmentsStat,
       dataSource,
-      totalAudienceSegments
+      totalAudienceSegments,
+      hasAudienceSegments
     } = this.props;
 
     const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
@@ -262,7 +263,7 @@ class AudienceSegmentsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return (hasAudienceSegments) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingAudienceSegments}
@@ -272,7 +273,7 @@ class AudienceSegmentsTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="users" text="EMPTY_SEGMENTS" />);
 
   }
 
@@ -330,6 +331,7 @@ AudienceSegmentsTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasAudienceSegments: PropTypes.bool.isRequired,
   isFetchingAudienceSegments: PropTypes.bool.isRequired,
   isFetchingSegmentsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -345,6 +347,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
+  hasAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.hasItems,
   isFetchingAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.isFetching,
   isFetchingSegmentsStat: state.audienceSegmentsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),

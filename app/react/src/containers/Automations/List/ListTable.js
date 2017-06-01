@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import lodash from 'lodash';
 import Link from 'react-router/lib/Link';
-import { Modal } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { Modal, Tooltip } from 'antd';
 
-import { TableView } from '../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../components/TableView';
+import { McsIcons } from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 
@@ -41,7 +41,7 @@ class AutomationsListTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
-    fetchAutomationList(organisationId, filter);
+    fetchAutomationList(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -93,7 +93,9 @@ class AutomationsListTable extends Component {
       },
       isFetchingAutomationList,
       dataSource,
-      totalAutomations
+      totalAutomations,
+      translations,
+      hasAutomations
     } = this.props;
 
     const filter = deserializeQuery(query, AUTOMATIONS_LIST_SETTINGS);
@@ -116,7 +118,7 @@ class AutomationsListTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
@@ -146,13 +148,13 @@ class AutomationsListTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return (hasAutomations) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingAutomationList}
       onChange={() => {}}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="automation" text="EMPTY_AUTOMATIONS" />);
 
   }
 
@@ -207,6 +209,7 @@ AutomationsListTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasAutomations: PropTypes.bool.isRequired,
   isFetchingAutomationList: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalAutomations: PropTypes.number.isRequired,
@@ -220,7 +223,7 @@ const mapStateToProps = (state, ownProps) => ({
   activeWorkspace: state.sessionState.activeWorkspace,
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
-
+  hasAutomations: state.automationsTable.automationsApi.hasItems,
   isFetchingAutomationList: state.automationsTable.automationsApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAutomations: state.automationsTable.automationsApi.total,

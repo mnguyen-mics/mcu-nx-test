@@ -45,7 +45,7 @@ class Sidebar extends Component {
             className="mcs-menu-inline mcs-menu"
           >
             { buildSidebarItems() }
-            <Menu.Item disabled >
+            <Menu.Item disabled className="mcs-footer">
               <img alt="mics-logo" className="mcs-footer-img" src={logoUrl} />
             </Menu.Item>
           </Menu>

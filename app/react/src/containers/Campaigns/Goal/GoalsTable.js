@@ -6,7 +6,7 @@ import Link from 'react-router/lib/Link';
 import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView } from '../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../components/TableView';
 
 import * as GoalsActions from '../../../state/Campaigns/Goal/actions';
 
@@ -43,7 +43,7 @@ class GoalsTable extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
-    loadGoalsDataSource(organisationId, filter);
+    loadGoalsDataSource(organisationId, filter, true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -97,7 +97,8 @@ class GoalsTable extends Component {
       isFetchingGoals,
       isFetchingGoalsStat,
       dataSource,
-      totalGoals
+      totalGoals,
+      hasGoals
     } = this.props;
 
     const filter = deserializeQuery(query, GOAL_QUERY_SETTINGS);
@@ -207,12 +208,20 @@ class GoalsTable extends Component {
       }
     ];
 
+    let activeFilters = 0;
+    filtersOptions.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(item.menuItems, 'selectedItems') === true) {
+        activeFilters += item.menuItems.selectedItems.length;
+      }
+    });
+    const hasFilters = activeFilters !== 0 ? true : false;
+
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return (hasGoals) ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingGoals}
@@ -222,7 +231,7 @@ class GoalsTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView icon="goals" text="EMPTY_GOALS" />);
 
   }
 
@@ -277,6 +286,7 @@ GoalsTable.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+  hasGoals: PropTypes.bool.isRequired,
   isFetchingGoals: PropTypes.bool.isRequired,
   isFetchingGoalsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -292,6 +302,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.router.location.query,
   translations: state.translationsState.translations,
 
+  hasGoals: state.goalsTable.goalsApi.hasItems,
   isFetchingGoals: state.goalsTable.goalsApi.isFetching,
   isFetchingGoalsStat: state.goalsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),

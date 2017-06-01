@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Icon, Menu, Row, Col, Table, Input } from 'antd';
+import { McsIcons } from '../McsIcons';
 import { McsDateRangePicker } from '../McsDateRangePicker';
-
 import { MultiSelect } from '../Forms';
 
 const Search = Input.Search;
@@ -24,7 +24,8 @@ class TableView extends Component {
     this.buildActionsColumns = this.buildActionsColumns.bind(this);
     this.changeColumnVisibility = this.changeColumnVisibility.bind(this);
     this.state = {
-      visibilitySelectedColumns: this.getHiddableColumns().filter(column => column.isVisibleByDefault).map(column => ({ key: column.translationKey, value: column.key }))
+      visibilitySelectedColumns: this.getHiddableColumns().filter(column => column.isVisibleByDefault).map(column => ({ key: column.translationKey, value: column.key })),
+      waiting: true
     };
   }
 
@@ -38,6 +39,7 @@ class TableView extends Component {
   }
 
   render() {
+
     const {
       columnsDefinitions,
       dataSource,
@@ -47,7 +49,7 @@ class TableView extends Component {
       loading,
       onChange,
       filtersOptions,
-      columnsVisibilityOptions
+      columnsVisibilityOptions,
     } = this.props;
 
     const {
@@ -76,7 +78,9 @@ class TableView extends Component {
     const dateRangePicker = dateRangePickerOptions.isEnabled ?
     (<McsDateRangePicker
       values={dateRangePickerOptions.values}
+      format={dateRangePickerOptions.format}
       onChange={dateRangePickerOptions.onChange}
+      disabled={dateRangePickerOptions.disabled}
     />) : null;
 
     const filtersMultiSelect = filtersOptions.map(filterOptions => {
@@ -190,7 +194,7 @@ class TableView extends Component {
         render: (text, record) => {
           return (<Dropdown overlay={this.renderActionsMenu(column.actions, record)} trigger={['click']}>
             <a className="ant-dropdown-link">
-              <Icon type="down" />
+              <McsIcons type="chevron" />
             </a>
           </Dropdown>);
         }
