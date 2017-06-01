@@ -8,9 +8,11 @@ import Loading from 'mcs-react-loading';
 import { Layout, LocaleProvider } from 'antd';
 
 import { NavigatorHeader } from '../Header';
+import { Notifications } from '../Notifications';
 
 import * as TranslationsActions from '../../state/Translations/actions';
 import * as sessionActions from '../../state/Session/actions';
+import * as navigatorActions from '../../state/Navigator/actions';
 
 class Navigator extends Component {
 
@@ -44,6 +46,7 @@ class Navigator extends Component {
         }
       }
     }
+
   }
 
   componentDidMount() {
@@ -51,7 +54,8 @@ class Navigator extends Component {
     const {
       initTranslations,
       params,
-      getConnectedUser
+      getConnectedUser,
+      getAppVersion
     } = this.props;
 
     const workspace = {
@@ -72,6 +76,8 @@ class Navigator extends Component {
       retrieveUser();
     }, false);
 
+    setInterval(() => getAppVersion(), 1 * 10000);
+
   }
 
   render() {
@@ -91,6 +97,7 @@ class Navigator extends Component {
         <LocaleProvider locale={enUS}>
           <Layout className="mcs-main-layout">
             <NavigatorHeader {...this.props} />
+            <Notifications />
             {this.props.children}
           </Layout>
         </LocaleProvider>
@@ -168,7 +175,8 @@ Navigator.propTypes = {
   getConnectedUser: PropTypes.func.isRequired,
   getWorkspaces: PropTypes.func.isRequired,
   initActiveWorkspace: PropTypes.func.isRequired,
-  checkUrl: PropTypes.func.isRequired
+  checkUrl: PropTypes.func.isRequired,
+  getAppVersion: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -185,7 +193,8 @@ const mapDispatchToProps = {
   getConnectedUser: sessionActions.getConnectedUser,
   getWorkspaces: sessionActions.getWorkspaces,
   initActiveWorkspace: sessionActions.initActiveWorkspace,
-  checkUrl: sessionActions.checkUrl
+  checkUrl: sessionActions.checkUrl,
+  getAppVersion: navigatorActions.getAppVersion.request
 };
 
 Navigator = connect(

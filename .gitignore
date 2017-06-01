@@ -16,6 +16,7 @@ navigator-zip/
 app/conf/app-configuration.js
 app/conf/plugins-configuration.js
 app/conf/react-configuration.js
+app/version*
 .tags*
 .DS_Store
 Icon?

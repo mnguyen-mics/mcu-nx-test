@@ -18,13 +18,23 @@
   width: ~'calc(100% - 200px)';
 }
 
-.mcs-header-logo-name {
+.mcs-header-logo-name > a {
   font-size: 15px;
   font-weight: bold;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 150px;
+  max-width: 138px;
+
+  img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    max-height: 70px;
+    max-width: 138px;
+  }
 }
 
 .mcs-header-logo-item {
@@ -34,6 +44,9 @@
 
 .mcs-header-logo-name {
   max-width: 135px;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 .mcs-header-menu-icons {

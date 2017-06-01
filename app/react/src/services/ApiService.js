@@ -7,7 +7,7 @@ const LOCAL_URL = '/';
 const API_URL = `${MCS_CONSTANTS.API_URL}/v1/`;
 const ADMIN_API_URL = `${MCS_CONSTANTS.ADMIN_API_URL}/v1/`;
 
-const request = (method, endpoint, params = {}, body, authenticated = true, options = {}) => {
+const request = (method, endpoint, params = {}, headers, body, authenticated = true, options = {}) => {
 
   const paramsToQueryString = (paramsArg) => {
     const paramsToArray = Object.keys(paramsArg);
@@ -34,58 +34,64 @@ const request = (method, endpoint, params = {}, body, authenticated = true, opti
     }
   }
 
-  if (body) {
+  if (headers) {
+    config.headers = Object.assign({}, config.headers, headers);
+  } else {
     config.headers = Object.assign({}, config.headers, {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     });
+  }
+
+  if (body) {
     config.body = JSON.stringify(body);
   }
 
-  const parseJson = (response) => {
-    return response.json()
-            .then(json => ({ json, response }));
+  const parseResponse = response => {
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType === 'image/png') {
+      return response.blob();
+    }
+    return response.json();
   };
 
-  const checkStatus = ({ json, response }) => {
+  const checkStatus = response => {
     if (!response.ok) {
-      return Promise.reject(json);
+      return Promise.reject(response);
     }
-    return Object.assign({}, json);
+    return Promise.resolve(response);
   };
 
   return fetch(url, config) // eslint-disable-line no-undef
-        .then(parseJson)
-        .then(checkStatus)
-        .catch(response => {
-          const error = response.error ? response : { error: 'UNKNOWN_ERROR' };
-          throw error;
-        });
+    .then(checkStatus)
+    .then(parseResponse)
+    .catch(response => {
+      throw response.error ? response : { error: `Error on fetch ${url}` };
+    });
 };
 
-const getRequest = (endpoint, params = {}, options = {}) => {
+const getRequest = (endpoint, params = {}, headers = {}, options = {}) => {
   const authenticated = options.authenticated || true;
-  return request('get', endpoint, params, null, authenticated, options);
+  return request('get', endpoint, params, headers, null, authenticated, options);
 };
 
-const postRequest = (endpoint, body, params = {}, options = {}) => {
+const postRequest = (endpoint, body, params = {}, headers = {}, options = {}) => {
   const authenticated = options.authenticated || true;
-  return request('post', endpoint, params, body, authenticated, options);
+  return request('post', endpoint, params, headers, body, authenticated, options);
 };
 
-const putRequest = (endpoint, body, params = {}, options = {}) => {
+const putRequest = (endpoint, body, params = {}, headers = {}, options = {}) => {
   const authenticated = options.authenticated || true;
-  return request('post', endpoint, params, body, authenticated, options);
+  return request('post', endpoint, params, headers, body, authenticated, options);
 };
 
-const deleteRequest = (endpoint, params = {}, options = {}) => {
+const deleteRequest = (endpoint, params = {}, headers = {}, options = {}) => {
   const authenticated = options.authenticated || true;
-  return request('delete', endpoint, params, null, authenticated, options);
+  return request('delete', endpoint, params, headers, null, authenticated, options);
 };
 
 export default {
   request,
-
   getRequest,
   postRequest,
   putRequest,

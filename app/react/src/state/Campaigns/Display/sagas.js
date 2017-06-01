@@ -33,7 +33,7 @@ function* loadPerformanceReport({ payload }) {
     const endDate = filter.to;
     const dimension = '';
 
-    const response = yield call(ReportService.getDisplayCampaignPerfomanceReport, organisationId, startDate, endDate, dimension);
+    const response = yield call(ReportService.getDisplayCampaignPerformanceReport, organisationId, startDate, endDate, dimension);
     yield put(fetchCampaignsDisplayPerformanceReport.success(response));
   } catch (error) {
     log.error(error);
