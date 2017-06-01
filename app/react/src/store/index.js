@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import 'babel-polyfill';
 import createSagaMiddleware from 'redux-saga';
 import hashHistory from 'react-router/lib/hashHistory';
 import { routerMiddleware } from 'react-router-redux';
