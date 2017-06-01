@@ -87,11 +87,7 @@ function* loadCampaignsEmailList({ payload }) {
     const { initialFetch, response } = yield all(allCalls);
 
     if (initialFetch) {
-      if (initialFetch.count > 0) {
-        response.hasItems = true;
-      } else {
-        response.hasItems = false;
-      }
+      response.hasItems = initialFetch.count > 0;
     }
 
     yield put(fetchCampaignsEmailList.success(response));
