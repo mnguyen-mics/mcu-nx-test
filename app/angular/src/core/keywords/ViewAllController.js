@@ -11,6 +11,8 @@ define(['./module'], function (module) {
         $scope.keywordsLists = keywordsLists;
       });
 
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/keywords');
 
       $scope.organisationId = organisationId;
 

@@ -66,6 +66,30 @@ export const AUDIENCE_SEGMENTS_SETTINGS = [
   },
 ];
 
+export const AUDIENCE_PARTITIONS_SETTINGS = [
+  {
+    paramName: 'currentPage',
+    defaultValue: 1,
+    deserialize: query => parseInt(query.currentPage, 0),
+    serialize: value => value.toString(),
+    isValid: query => query.currentPage && !isNaN(parseInt(query.currentPage, 0))
+  },
+  {
+    paramName: 'pageSize',
+    defaultValue: 10,
+    deserialize: query => parseInt(query.pageSize, 0),
+    serialize: value => value.toString(),
+    isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0))
+  },
+  {
+    paramName: 'keywords',
+    defaultValue: '',
+    deserialize: query => query.keywords,
+    serialize: value => value,
+    isValid: () => true
+  }
+];
+
 export const isQueryValid = (query = {}, settings) => {
   // notEmpty and must forall settings query isValid
   return Object.keys(query).length > 0 &&

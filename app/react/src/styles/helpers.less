@@ -170,7 +170,33 @@ body {
     max-width: 100px;
     height: 8px;
     border-radius: 10px;
-    background-color: #dee4e8;
+    background: linear-gradient(149deg, #dee4e8, #eceaea);
+    background-size: 400% 400%;
+    -webkit-animation: loadingAnimation 1s ease infinite;
+    -moz-animation: loadingAnimation 1s ease infinite;
+    -o-animation: loadingAnimation 1s ease infinite;
+    animation: loadingAnimation 1s ease infinite;
+}
+
+@-webkit-keyframes loadingAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes loadingAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-o-keyframes loadingAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes loadingAnimation { 
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
 
 a {
@@ -210,4 +236,26 @@ a {
 
 .ant-btn {
     height: auto!important;
+}
+
+.mcs-table-image-col {
+    width: 100px;
+}
+
+.mics-small-thumbnail {
+    background-color: #fff;
+    background-image: linear-gradient(45deg,#e6e6e6 25%,transparent 0,transparent 75%,#e6e6e6 0,#e6e6e6),linear-gradient(45deg,#e6e6e6 25%,transparent 0,transparent 75%,#e6e6e6 0,#e6e6e6);
+    background-size: 20px 20px;
+    background-position: 0 0,30px 30px;
+}
+
+.thumbnail-helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.mics-small-thumbnail img {
+    max-width: 50px;
+    max-height: 50px;
 }

@@ -11,7 +11,9 @@ import { ContentView } from '../containers/ContentView';
 import CampaignsRouter from './Campaigns';
 import AudienceRouter from './Audience';
 import AutomationsRouter from './Automations';
+import LibraryRouter from './Library';
 import CampaignRouter from './Campaign';
+import CreativeRouter from './Creatives';
 import LoginRouter from './Login';
 
 
@@ -30,6 +32,8 @@ export default (store) => { // eslint-disable-line no-unused-vars
         { CampaignRouter }
         { AudienceRouter }
         { AutomationsRouter }
+        { LibraryRouter }
+        { CreativeRouter }
         <Route path="*" component={NotFound} />
       </Route>
       <Route path={`${PUBLIC_URL}`} component={ContentView}>

@@ -109,6 +109,45 @@
   "NOTIFICATION_ERROR_TITLE": "Error",
   "NOTIFICATION_ERROR_DESCRIPTION": "An error occured",
   "NOTIFICATION_NEW_VERSION_TITLE": "New Version",
-  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page"
+  "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page",
 
+  "PART_COUNT": "Part Count",
+  "NEW_PARTITION": "New Partition",
+  "RANDOM_SPLIT": "Random Split",
+  "CLUSTERING": "Clustering",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Partition?",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Partition all it will stop campaign using it. Are you sure?",
+  "SEARCH_AUDIENCE_PARTITIONS": "Search Partition",
+
+  "PLACEMENT_LIST": "Placement List",
+  "KEYWORD_LIST": "Keyword List",
+  "BID_OPTIMIZER": "Bid Optimizer",
+  "ATTRIBUTION_MODEL": "Attribution Model",
+  "VISIT_ANALYZER": "Visit Analyzer",
+  "CATALOG": "Catalog",
+  "AD_LAYOUTS":"Ad Layouts",
+  "STYLESHEETS":"Stylesheets",
+  "ASSETS": "Assets",
+  "EXPORTS": "Exports",
+
+  "NEW_PLACEMENT_LIST": "New Placement List",
+  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Placement List?",
+  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this PLacement all it will stop campaign using it. Are you sure?",
+
+
+  "NEW_KEYWORD_LIST": "New Keyword List",
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Keyword List?",
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Keyword all it will stop campaign using it. Are you sure?",
+
+  "NEW_ASSET": "New Asset",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Asset?",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Asset all it will stop campaign using it. Are you sure?",
+  "PREVIEW": "Preview",
+  "DIMENSIONS": "Dimensions",
+  "AUDIT_STATUS": "Audit Status",
+  "PUBLISHED_VERSION": "Published Version",
+
+  "DISPLAY_ADS": "Display Ads",
+  "EMAILS_TEMPLATES": "Email Templates",
+  "NEW_DISPLAY_AD": "New Display Ad"
 }

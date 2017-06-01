@@ -174,6 +174,7 @@ class TableView extends Component {
       return !column.isHiddable || visibilitySelectedColumns.find((selectedColumn) => selectedColumn.value === column.key);
     }).map(dataColumn => {
       return {
+        ...dataColumn,
         title: <FormattedMessage id={dataColumn.translationKey} />,
         dataIndex: dataColumn.key,
         key: dataColumn.key,

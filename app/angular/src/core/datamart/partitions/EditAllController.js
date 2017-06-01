@@ -16,6 +16,9 @@ define(['./module'], function (module) {
         $scope.sortType = 'name';
       });
 
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/partitions');
+
       $scope.createAudiencePartition = function (type) {
         $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + type);
       };
