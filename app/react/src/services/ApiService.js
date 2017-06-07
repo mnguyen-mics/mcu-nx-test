@@ -75,7 +75,7 @@ const postRequest = (endpoint, body, params = {}, options = {}) => {
 
 const putRequest = (endpoint, body, params = {}, options = {}) => {
   const authenticated = options.authenticated || true;
-  return request('post', endpoint, params, body, authenticated, options);
+  return request('put', endpoint, params, body, authenticated, options);
 };
 
 const deleteRequest = (endpoint, params = {}, options = {}) => {

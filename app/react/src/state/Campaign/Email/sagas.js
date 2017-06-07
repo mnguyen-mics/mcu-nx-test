@@ -58,7 +58,7 @@ function* loadDeliveryReport({ payload }) {
 
     const currentOrganisationId = yield select(getWorkspaceOrganisationId);
 
-    const response = yield call(ReportService.getEmailDeliveryReport, currentOrganisationId, startDate, endDate, dimension);
+    const response = yield call(ReportService.getSingleEmailDeliveryReport, currentOrganisationId, campaignId, startDate, endDate, dimension);
     yield put(fetchCampaignEmailDeliveryReport.success(response));
   } catch (error) {
     log.error(error);
@@ -79,6 +79,7 @@ function* modifyCampaignEmail({ payload }) {
 
     const response = yield call(CampaignService.updateCampaignEmail, campaignId, body);
     yield put(updateCampaignEmail.success(response));
+    yield put(fetchCampaignEmail.request(campaignId, body));
   } catch (error) {
     log.error(error);
     yield put(updateCampaignEmail.failure(error));

@@ -16,7 +16,6 @@ class CampaignDashboardTabs extends Component {
         <Tabs
           defaultActiveKey="0"
           onChange={onChangeTab}
-          animated={false}
         >
           {menuItems}
         </Tabs>

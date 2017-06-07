@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Row, Col, Tag, Icon, Tooltip, Button, Input, Menu, Dropdown, AutoComplete } from 'antd';
+import { Row, Col, Tag, Icon, Tooltip, Button, Input, Menu, Dropdown } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 
@@ -13,13 +13,6 @@ class LabelListView extends Component {
     this.state = {
       inputVisible: false,
       inputValue: '',
-      data: this.props.listItems.map(item => {
-        const filter = {
-          value: item.id,
-          text: item.name
-        };
-        return filter;
-      })
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
   }
@@ -87,29 +80,11 @@ class LabelListView extends Component {
     this.inputElement.focus(e);
   };
 
-  handleSearch = (value) => {
-    this.setState({
-      data: this.setData(value)
-    });
-  }
-
-  setData = (value) => {
-    console.log(value);
-    if (value) {
-      return this.state.data.filter(element => {
-        return element.text.indexOf(value) > -1;
-      });
-    }
-
-    return this.props.listItems.map(item => {
-      const filter = {
-        value: item.id,
-        text: item.name
-      };
-      return filter;
-    });
-
-  }
+  saveInputRef = input => this.inputElement = input
+  // clickDiv(el) {
+  //   console.log(el);
+  //   el.onClick();
+  // }
 
   render() {
 
@@ -123,14 +98,6 @@ class LabelListView extends Component {
     } = this.props;
 
     const items = filters;
-
-    const selectedTags = listItems.map(item => {
-      const filter = {
-        value: item.id,
-        text: item.name
-      };
-      return filter;
-    });
 
     const { inputVisible, inputValue } = this.state;
 
@@ -150,6 +117,26 @@ class LabelListView extends Component {
 
     };
 
+    const filteredElements = listItems.filter(element => {
+      return element.name.indexOf(inputValue) > -1;
+    });
+
+    const menu = inputValue ? (
+      <Menu onClick={this.handleMenuClick} >
+        { filteredElements.map(item => {
+          return (<Menu.Item key={item.id}>{item.name}</Menu.Item>);
+        }) }
+        <Menu.Divider />
+        <Menu.Item key="CREATE_NEW"><FormattedMessage id="CREATE_NEW_TAG" /></Menu.Item>
+      </Menu>
+    ) : (
+      <Menu onClick={this.handleMenuClick} >
+        { listItems.map(item => {
+          return (<Menu.Item key={item.id}>{item.name}</Menu.Item>);
+        }) }
+      </Menu>
+    );
+
     return (
       <Row className={className} >
         { label && (
@@ -161,14 +148,18 @@ class LabelListView extends Component {
             return generateTag(tag);
           })}
           {isInputVisible && inputVisible && (
-          <AutoComplete
-            dataSource={selectedTags}
-            onChange={this.handleSearch}
-            placeholder="website"
-            style={{ width: 200 }}
-          >
-            <Input size="small" />
-          </AutoComplete>
+          <Dropdown overlay={menu} visible={inputVisible} >
+            <Input
+              ref={this.saveInputRef}
+              type="text"
+              size="small"
+              className="mcs-input-label"
+              value={inputValue}
+              onChange={this.handleInputChange}
+              onBlur={this.handleInputBlur}
+              onPressEnter={this.handleInputConfirm}
+            />
+          </Dropdown>
         )}
           {isInputVisible && !inputVisible && (
             <Button size="small" type="dashed" onClick={e => { this.showInput(e); this.handleClick(e); }}>Add New Tag</Button>

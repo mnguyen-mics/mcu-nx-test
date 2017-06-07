@@ -19,6 +19,7 @@ import SidebarReducers from '../state/Sidebar/reducer';
 import TranslationsReducers from '../state/Translations/reducer';
 import AudienceSegmentsReducers from '../state/Audience/Segments/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
+import LabelsReducers from '../state/Labels/reducer';
 
 
 const allReducers = Object.assign(
@@ -45,7 +46,8 @@ const allReducers = Object.assign(
   SidebarReducers,
   TranslationsReducers,
   AudienceSegmentsReducers,
-  AutomationListReducers
+  AutomationListReducers,
+  LabelsReducers
 );
 
 export default combineReducers(allReducers);

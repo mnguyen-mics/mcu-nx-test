@@ -109,6 +109,11 @@
   "CAMPAIGN_STATUS_PAUSED": "Campaign pause",
   "CAMPAIGN_STATUS_PENDING": "Campaign pending",
   "CAMPAIGN_OVERVIEW": "Overview",
-  "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis"
+  "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
 
+  "NO_EMAIL_STATS": "No Data during the selected period.",
+  "EMAIL_BLASTS": "Email Blast",
+  "NEW_EMAIL_BLAST": "New Email Blast",
+
+  "CREATE_NEW_TAG": "Create New"
 }

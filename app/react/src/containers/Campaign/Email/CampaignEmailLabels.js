@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 
 import { LabelListView } from '../../../components/LabelListView';
 
-import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
+import * as LabelsActions from '../../../state/Labels/actions';
+import * as EmailsActions from '../../../state/Campaign/Email/actions';
+
 
 class CampaignEmailLabels extends Component {
 
@@ -14,17 +16,37 @@ class CampaignEmailLabels extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  componentDidMount() {
+    const {
+      params: {
+        campaignId
+      },
+      activeWorkspace: {
+        organisationId,
+      },
+      getLabels,
+      getLabelsOfObject
+    } = this.props;
+    console.log(this.props);
+    getLabels(organisationId);
+    getLabelsOfObject(organisationId, 'EMAIL_CAMPAIGN', campaignId);
+  }
+
   render() {
 
-    const filters = this.buildFilters();
+    const {
+      labels,
+      attachedLabels
+    } = this.props;
 
     return (
       <div className="mcs-campaign-labels">
         <LabelListView
-          filters={filters}
+          filters={attachedLabels.data}
           onClickOnClose={this.onClickOnCloseLabel}
           onInputSubmit={this.onSubmit}
           isInputVisible
+          listItems={labels.data}
         />
       </div>
     );
@@ -50,31 +72,84 @@ class CampaignEmailLabels extends Component {
 
   onClickOnCloseLabel(label) {
     const {
-      updateCampaignEmail
+      activeWorkspace: {
+        organisationId,
+      },
+      unPairLabelWithObject,
+      params: {
+        campaignId
+      },
     } = this.props;
-    // updateCampaignEmail();
+    unPairLabelWithObject(label.id, organisationId, 'EMAIL_CAMPAIGN', campaignId);
   }
 
   onSubmit(value) {
     const {
-      updateCampaignEmail
+      activeWorkspace: {
+        organisationId,
+      },
+      createLabels,
+      campaignEmail,
+      pairLabelWithObject
     } = this.props;
-    // updateCampaignEmail();
+
+    if (value === 'CREATE_NEW') {
+      createLabels(value, organisationId);
+    } else {
+      pairLabelWithObject(value, organisationId, 'EMAIL_CAMPAIGN', campaignEmail.id);
+    }
   }
 
 }
 
 CampaignEmailLabels.propTypes = {
   campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  updateCampaignEmail: PropTypes.func.isRequired
+  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  getLabels: PropTypes.func.isRequired,
+  createLabels: PropTypes.func.isRequired,
+  fetchCampaignEmail: PropTypes.func.isRequired,
+  pairLabelWithObject: PropTypes.func.isRequired,
+  labels: PropTypes.shape({
+    isFetching: PropTypes.bool,
+    data: PropTypes.arrayOf({
+      id: PropTypes.number,
+      organisation_id: PropTypes.number,
+      name: PropTypes.string,
+    }),
+    total: PropTypes.number,
+    count: PropTypes.number,
+    first_result: PropTypes.number,
+    max_result: PropTypes.number,
+  }).isRequired,
+  getLabelsOfObject: PropTypes.func.isRequired,
+  params: PropTypes.shape({
+    campaignId: PropTypes.string
+  }).isRequired,
+  attachedLabels: PropTypes.arrayOf(PropTypes.shape({
+    isFetching: PropTypes.string,
+    data: PropTypes.object // eslint-disable-line react/forbid-prop-types
+  })).isRequired,
+  unPairLabelWithObject: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  campaignEmail: state.campaignEmailState.campaignEmail
+const mapStateToProps = (state, ownProps) => ({
+  params: ownProps.router.params,
+  query: ownProps.router.location.query,
+  activeWorkspace: state.sessionState.activeWorkspace,
+  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
+  labels: state.labels.labelsApi,
+  attachedLabels: state.labels.labelsAttachedApi,
 });
 
 const mapDispatchToProps = {
-  updateCampaignEmail: CampaignEmailActions.updateCampaignEmail.request,
+  getLabels: LabelsActions.fetchAllLabels.request,
+  createLabels: LabelsActions.createLabels.request,
+  pairLabelWithObject: LabelsActions.pairLabelWithObject.request,
+  unPairLabelWithObject: LabelsActions.unPairLabelWithObject.request,
+  fetchCampaignEmail: EmailsActions.fetchCampaignEmail.request,
+  getLabelsOfObject: LabelsActions.fetchLabelsOfObjects.request,
 };
 
 CampaignEmailLabels = connect(

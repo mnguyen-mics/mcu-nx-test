@@ -159,7 +159,7 @@ CampaignEmailActionbar.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   translations: state.translationsState.translations,
   activeWorkspace: state.sessionState.activeWorkspace,
-  campaignEmail: state.campaignEmailState.campaignEmail,
+  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
   params: ownProps.router.params
 });
 

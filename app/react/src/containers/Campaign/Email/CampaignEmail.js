@@ -8,6 +8,7 @@ import CampaignEmailActionbar from './CampaignEmailActionbar';
 import CampaignEmailHeader from './CampaignEmailHeader';
 import CampaignEmailLabels from './CampaignEmailLabels';
 import CampaignEmailDashboard from './CampaignEmailDashboard';
+import CampaignEmailTable from './CampaignEmailTable';
 import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
 
 import {
@@ -66,8 +67,9 @@ class CampaignEmail extends Component {
         <Content>
           <ScrollComponent>
             <CampaignEmailHeader />
-            <CampaignEmailLabels />
-            <CampaignEmailDashboard />
+            <CampaignEmailLabels {...this.props} />
+            <CampaignEmailDashboard {...this.props} />
+            <CampaignEmailTable />
           </ScrollComponent>
         </Content>
       </Layout>

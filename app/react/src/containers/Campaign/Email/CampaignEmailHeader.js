@@ -14,6 +14,8 @@ class CampaignEmailHeader extends Component {
       }
     } = this.props;
 
+    console.log(this.props.campaignEmail);
+
     const campaignEmailStatusHeader = {
       value: campaignEmailStatus,
       translationKeyPrefix: 'CAMPAIGN_STATUS'
@@ -34,7 +36,7 @@ CampaignEmailHeader.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  campaignEmail: state.campaignEmailState.campaignEmail
+  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
 });
 
 const mapDispatchToProps = {};

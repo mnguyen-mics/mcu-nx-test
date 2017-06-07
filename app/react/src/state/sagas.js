@@ -5,6 +5,7 @@ import { goalsSagas } from './Campaigns/Goal/sagas';
 import { automationsSagas } from './Automations/sagas';
 import { segmentsSagas } from './Audience/Segments/sagas';
 import { navigatorSagas } from './Navigator/sagas';
+import { labelsSagas } from './Labels/sagas';
 
 export default function* sagas() {
   yield [
@@ -14,6 +15,7 @@ export default function* sagas() {
     ...goalsSagas,
     ...automationsSagas,
     ...segmentsSagas,
-    ...navigatorSagas
+    ...navigatorSagas,
+    ...labelsSagas
   ];
 }
