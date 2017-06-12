@@ -6,7 +6,9 @@ import {
   CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
   CAMPAIGN_EMAIL_LOAD_ALL,
   CAMPAIGN_EMAIL_UPDATE,
-  CAMPAIGN_EMAIL_RESET
+  CAMPAIGN_EMAIL_RESET,
+  EMAIL_BLAST_FETCH_ALL,
+  EMAIL_BLAST_FETCH_PERFORMANCE
 } from '../../action-types';
 
 const fetchCampaignEmail = {
@@ -37,11 +39,25 @@ const updateCampaignEmail = {
 
 const resetCampaignEmail = createAction(CAMPAIGN_EMAIL_RESET);
 
+const fetchAllEmailBlast = {
+  request: campaignId => createAction(EMAIL_BLAST_FETCH_ALL.REQUEST)({ campaignId }),
+  success: createAction(EMAIL_BLAST_FETCH_ALL.SUCCESS),
+  failure: createAction(EMAIL_BLAST_FETCH_ALL.FAILURE)
+};
+
+const fetchAllEmailBlastPerformance = {
+  request: (campaignId, body) => createAction(EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST)({ campaignId, body }),
+  success: createAction(EMAIL_BLAST_FETCH_PERFORMANCE.SUCCESS),
+  failure: createAction(EMAIL_BLAST_FETCH_PERFORMANCE.FAILURE)
+};
+
 export {
   fetchCampaignEmail,
   fetchCampaignEmailDeliveryReport,
   loadCampaignEmailAndDeliveryReport,
   archiveCampaignEmail,
   updateCampaignEmail,
-  resetCampaignEmail
+  resetCampaignEmail,
+  fetchAllEmailBlast,
+  fetchAllEmailBlastPerformance
 };

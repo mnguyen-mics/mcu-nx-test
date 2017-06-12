@@ -10,6 +10,7 @@ import * as CampaignEmailActions from '../../../state/Campaign/Email/actions';
 import { McsDateRangePicker } from '../../../components/McsDateRangePicker';
 import { EmptyCharts } from '../../../components/EmptyCharts';
 import { LegendChart } from '../../../components/LegendChart';
+import { EmailPieCharts, EmailStackedAreaChart } from './Charts';
 
 import {
   CAMPAIGN_EMAIL_QUERY_SETTINGS
@@ -36,7 +37,7 @@ class CampaignEmailDashboard extends Component {
     } = this.props;
 
     const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
-
+    console.log(filter);
     loadCampaignEmailAndDeliveryReport(campaignId, filter);
   }
 
@@ -70,252 +71,20 @@ class CampaignEmailDashboard extends Component {
     }
   }
 
-  updateQueryParams(params) {
-    const {
-      router,
-      query: currentQuery
-    } = this.props;
-
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, CAMPAIGN_EMAIL_QUERY_SETTINGS)
-    });
-  }
-
-  renderDatePicker() {
-    const {
-      query
-    } = this.props;
-
-    const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
-
-    const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
-      from: filter.from,
-      to: filter.to
-    };
-
-    const onChange = (newValues) => this.updateQueryParams({
-      rangeType: newValues.rangeType,
-      lookbackWindow: newValues.lookbackWindow,
-      from: newValues.from,
-      to: newValues.to,
-    });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
-  }
-
-  renderOverview() {
-    const {
-      translations,
-      dataSource,
-      hasFetchedCampaignStat,
-    } = this.props;
-
-    const options = {
-      domains: ['email_sent', 'clicks', 'impressions', 'email_hard_bounced'],
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
-    };
-
-    const chartArea = (
-      <div>
-        <Row className="mcs-chart-header">
-          <Col span={12}>
-            <LegendChart identifier="chartLegend" options={options} />
-          </Col>
-          <Col span={12}>
-            <span className="mcs-card-button">
-              { this.renderDatePicker() }
-            </span>
-          </Col>
-        </Row>
-        { (dataSource.length === 0 && hasFetchedCampaignStat) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderStackedAreaCharts() }
-      </div>
-    );
-
-    return chartArea;
-  }
-
-  renderDeliveryAnalysis() {
-    const {
-      translations,
-      dataSource,
-      hasFetchedCampaignStat
-    } = this.props;
-
-    const chartArea = (
-      <div>
-        <Row>
-          <Col span={24}>
-            <span className="mcs-card-button">
-              { this.renderDatePicker() }
-            </span>
-          </Col>
-        </Row>
-        { (dataSource.length === 0 && hasFetchedCampaignStat) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderPieCharts() }
-      </div>
-    );
-
-    return chartArea;
-  }
-
-  renderStackedAreaCharts() {
-    const {
-      translations,
-      dataSource,
-      hasFetchedCampaignStat,
-      query
-    } = this.props;
-
-    const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
-
-    const {
-      lookbackWindow
-    } = filter;
-
-    const optionsForChart = {
-      xKey: 'day',
-      yKeys: ['email_sent', 'clicks', 'impressions', 'email_hard_bounced'],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
-    };
-    if (hasFetchedCampaignStat) {
-      console.log(dataSource);
-    }
-    return hasFetchedCampaignStat ? (<StackedAreaPlot identifier="test2" dataset={dataSource} options={optionsForChart} />) : (<span>Loading</span>);
-  }
-
-  renderPieCharts() {
-    const {
-      translations,
-      dataSource,
-      hasFetchedCampaignStat
-    } = this.props;
-
-    const optionsForCirclePieChart = {
-      innerRadius: true,
-      colors: ['#eaeaea', '#ff9012']
-    };
-
-    const optionsForHalfCirclePieChart = {
-      innerRadius: true,
-      startAngle: -Math.PI / 2,
-      endAngle: Math.PI / 2,
-      colors: ['#00a1df', '#eaeaea']
-    };
-
-    const data = [
-      { key: 'opens', val: 10, color: '#00a1df' },
-      { key: 'rest', val: 15, color: '#eaeaea' }
-    ];
-
-    const dataDelive = [
-      { key: 'rest', val: 10, color: '#eaeaea' },
-      { key: 'delivered', val: 90, color: '#ff9012' }
-    ];
-
-    let dataDelivered = [];
-    let dataOpens = [];
-    let dataClicks2Opens = [];
-    let dataUnsubscribe = [];
-    let dataClicks = [];
-
-    if (hasFetchedCampaignStat) {
-      const emailSent = dataSource.reduce((a, b) => {
-        return a + b.email_sent;
-      }, 0);
-
-      const emailHardBounced = dataSource.reduce((a, b) => {
-        return a + b.email_hard_bounced;
-      }, 0);
-
-      const emailSoftBounced = dataSource.reduce((a, b) => {
-        return a + b.email_soft_bounced;
-      }, 0);
-
-      const emailDelivered = emailSent - emailHardBounced - emailSoftBounced;
-      const emailOpened = dataSource.reduce((a, b) => {
-        return a + b.impressions;
-      }, 0);
-      const emailClicks = dataSource.reduce((a, b) => {
-        return a + b.clicks;
-      }, 0);
-      const emailUnsubscribe = dataSource.reduce((a, b) => {
-        return a + b.email_unsubscribed;
-      }, 0);
-
-      dataDelivered = [
-        { key: 'delivered', val: emailDelivered, color: '#eaeaea' },
-        { key: 'rest', val: emailSent - emailDelivered, color: '#ff9012' }
-      ];
-
-      dataOpens = [
-        { key: 'delivered', val: emailOpened, color: '#eaeaea' },
-        { key: 'rest', val: emailSent - emailOpened, color: '#ff9012' }
-      ];
-
-      dataClicks2Opens = [
-        { key: 'delivered', val: emailClicks, color: '#eaeaea' },
-        { key: 'rest', val: emailOpened - emailClicks, color: '#ff9012' }
-      ];
-
-      dataClicks = [
-        { key: 'delivered', val: emailClicks, color: '#eaeaea' },
-        { key: 'rest', val: emailSent - emailClicks, color: '#ff9012' }
-      ];
-
-      dataUnsubscribe = [
-        { key: 'unsubscribe', val: emailUnsubscribe, color: '#eaeaea' },
-        { key: 'rest', val: emailSent - emailUnsubscribe, color: '#ff9012' }
-      ];
-    }
-
-    return hasFetchedCampaignStat ? (
-      <div>
-        <Row>
-          <Col span={9}>
-            <PieChart identifier="pieDelivered" dataset={dataDelivered} options={optionsForCirclePieChart} />
-          </Col>
-          <Col span={15}>
-            <Row>
-              <Col span={12}>
-                <PieChart identifier="pieOpens" dataset={dataOpens} options={optionsForHalfCirclePieChart} />
-              </Col>
-              <Col span={12}>
-                <PieChart identifier="pieClicks" dataset={dataClicks} options={optionsForHalfCirclePieChart} />
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <PieChart identifier="pieClicks2Opens" dataset={dataClicks2Opens} options={optionsForHalfCirclePieChart} />
-              </Col>
-              <Col span={12}>
-                <PieChart identifier="pieUnsubscribe" dataset={dataUnsubscribe} options={optionsForHalfCirclePieChart} />
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </div>) : (<span>Loading</span>);
-  }
-
   render() {
 
     const {
       translations,
-      dataSource,
-      hasFetchedCampaignStat
     } = this.props;
 
     const items = [
       {
         title: translations.CAMPAIGN_OVERVIEW,
-        display: this.renderOverview()
+        display: <EmailPieCharts {...this.props} />
       },
       {
         title: translations.CAMPAIGN_DELIVERY_ANALYSIS,
-        display: this.renderDeliveryAnalysis()
+        display: <EmailStackedAreaChart {...this.props} />
       }
     ];
 

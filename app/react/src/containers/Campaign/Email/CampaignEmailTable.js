@@ -8,6 +8,10 @@ import { Card } from '../../../components/Card';
 import { TableViewLight } from '../../../components/TableView';
 import { formatMetric } from '../../../utils/MetricHelper';
 
+import {
+  getEmailBlastTableView
+ } from '../../../state/Campaign/Email/selectors';
+
 
 class CampaignEmailTable extends Component {
 
@@ -18,7 +22,9 @@ class CampaignEmailTable extends Component {
         organisationId,
         workspaceId
       },
-      translations
+      translations,
+      isLoading,
+      dataset
     } = this.props;
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
@@ -33,13 +39,21 @@ class CampaignEmailTable extends Component {
     const dataColumns = [
       {
         translationKey: 'STATUS',
-        key: 'status',
+        key: 'sendDate',
         isHiddable: false,
-        render: text => <span className={`mcs-campaigns-status-${text.toLowerCase()}`}><FormattedMessage id={text} /></span>
+        render: text => {
+          const mydate = new Date(text);
+          const today = new Date();
+          let status = 'PENDING';
+          if (today > mydate) {
+            status = 'SENT';
+          }
+          return (<span className={`mcs-campaigns-status-${status}`}><FormattedMessage id={status} /></span>);
+        }
       },
       {
         translationKey: 'NAME',
-        key: 'name',
+        key: 'blastName',
         isHiddable: false,
         render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${record.id}`}>{text}</Link>
       },
@@ -106,9 +120,9 @@ class CampaignEmailTable extends Component {
       <Card title={translations.EMAIL_BLASTS} buttons={buttons}>
         <TableViewLight
           columnsDefinitions={columnsDefinitions}
-          dataSource={[]}
+          dataSource={dataset}
           onChange={() => {}}
-          pagination={0}
+          loading={isLoading}
         />
       </Card>);
   }
@@ -118,11 +132,15 @@ class CampaignEmailTable extends Component {
 CampaignEmailTable.propTypes = {
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  dataset: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translationsState.translations,
   activeWorkspace: state.sessionState.activeWorkspace,
+  isLoading: state.campaignEmailSingle.emailBlastApi.isFetching,
+  dataset: getEmailBlastTableView(state)
 });
 
 const mapDispatchToProps = {};

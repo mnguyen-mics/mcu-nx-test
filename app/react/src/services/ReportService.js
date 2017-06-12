@@ -83,10 +83,27 @@ const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension,
   return ApiService.getRequest(endpoint, params);
 };
 
+const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endDate, dimension, metrics, options = {}) => {
+  const endpoint = 'reports/delivery_report';
+  const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions', 'email_unsubscribed', 'email_complaints', 'uniq_impressions', 'uniq_clicks', 'uniq_email_sent', 'uniq_email_unsubscribed', 'uniq_email_hard_bounced', 'uniq_email_soft_bounced', 'uniq_email_complaints'];
+
+  const params = {
+    organisation_id: organisationId,
+    start_date: startDate.format(DATE_FORMAT),
+    end_date: endDate.format(DATE_FORMAT),
+    dimension,
+    metrics: metrics || DEFAULT_METRICS,
+    ...options
+  };
+
+  return ApiService.getRequest(endpoint, params);
+};
+
 export default {
   getDisplayCampaignPerfomanceReport,
   getEmailDeliveryReport,
   getConversionPerformanceReport,
   getAudienceSegmentReport,
-  getSingleEmailDeliveryReport
+  getSingleEmailDeliveryReport,
+  getAllEmailBlastPerformance
 };

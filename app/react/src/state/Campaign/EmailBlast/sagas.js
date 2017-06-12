@@ -4,12 +4,12 @@ import { call, fork, put, select } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-  fetchCampaignEmail,
-  fetchCampaignEmailDeliveryReport,
-  updateCampaignEmail,
-  archiveCampaignEmail,
-  fetchAllEmailBlast,
-  fetchAllEmailBlastPerformance
+  fetchEmailBlast,
+  fetchEmailBlastDeliveryReport,
+  loadEmailBlastAndDeliveryReport,
+  archiveEmailBlast,
+  updateEmailBlast,
+  resetEmailBlast
 } from './actions';
 
 import {
@@ -20,16 +20,25 @@ import CampaignService from '../../../services/CampaignService';
 import ReportService from '../../../services/ReportService';
 
 import {
-    CAMPAIGN_EMAIL_FETCH,
-    CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
-    CAMPAIGN_EMAIL_ARCHIVE,
-    CAMPAIGN_EMAIL_UPDATE,
-    CAMPAIGN_EMAIL_LOAD_ALL,
-    EMAIL_BLAST_FETCH_ALL,
-    EMAIL_BLAST_FETCH_PERFORMANCE
+    EMAIL_BLAST_FETCH,
+    EMAIL_BLAST_DELIVERY_REPORT_FETCH,
+    EMAIL_BLAST_ARCHIVE,
+    EMAIL_BLAST_UPDATE,
+    EMAIL_BLAST_LOAD_ALL
 } from '../../action-types';
 
-function* loadCampaignEmail({ payload }) {
+function* loadAllEmailBlast({ payload }) {
+  try {
+
+    const response = yield call(CampaignService.getCampaignEmail);
+    yield put(fetchCampaignEmail.success(response));
+  } catch (error) {
+    log.error(error);
+    yield put(fetchCampaignEmail.failure(error));
+  }
+}
+
+function* loadOneEmailBlast({ payload }) {
   try {
 
     const {
@@ -90,79 +99,29 @@ function* modifyCampaignEmail({ payload }) {
   }
 }
 
-function* loadAllEmailBlast({ payload }) {
-  try {
-
-    const {
-      campaignId
-    } = payload;
-
-    if (!campaignId) throw new Error('Payload is invalid');
-    console.log('ok loading blasts');
-    const response = yield call(CampaignService.getAllEmailBlast, campaignId);
-    console.log(response);
-    yield put(fetchAllEmailBlast.success(response));
-  } catch (error) {
-    log.error(error);
-    yield put(fetchAllEmailBlast.failure(error));
-  }
-}
-
-function* loadAllEmailBlastPErformance({ payload }) {
-  try {
-
-    const {
-      campaignId,
-      filter
-    } = payload;
-
-    if (!(campaignId || filter)) throw new Error('Payload is invalid');
-
-    const startDate = filter.from;
-    const endDate = filter.to;
-    const dimension = 'blast_id';
-
-    const currentOrganisationId = yield select(getWorkspaceOrganisationId);
-
-    const response = yield call(ReportService.getAllEmailBlastPerformance, currentOrganisationId, campaignId, startDate, endDate, dimension);
-    yield put(fetchAllEmailBlastPerformance.success(response));
-  } catch (error) {
-    log.error(error);
-    yield put(fetchAllEmailBlastPerformance.failure(error));
-  }
-}
-
 function* loadCampaignAndPerformance(action) {
   yield call(loadCampaignEmail, action);
   yield call(loadDeliveryReport, action);
 }
 
 function* watchFetchCampaignEmail() {
-  yield* takeLatest(CAMPAIGN_EMAIL_FETCH.REQUEST, loadCampaignEmail);
+  yield* takeLatest(EMAIL_BLAST_FETCH.REQUEST, loadCampaignEmail);
 }
 
 function* watchFetchDeliveryReport() {
-  yield* takeLatest(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
+  yield* takeLatest(EMAIL_BLAST_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
 }
 
 function* watchUpdateCampaignEmail() {
-  yield* takeLatest(CAMPAIGN_EMAIL_UPDATE.REQUEST, modifyCampaignEmail);
+  yield* takeLatest(EMAIL_BLAST_UPDATE.REQUEST, modifyCampaignEmail);
 }
 
 function* watchArchiveCampaignEmail() {
-  yield* takeLatest(CAMPAIGN_EMAIL_ARCHIVE.REQUEST, modifyCampaignEmail);
+  yield* takeLatest(EMAIL_BLAST_ARCHIVE.REQUEST, modifyCampaignEmail);
 }
 
 function* watchLoadCampaignAndPerformance() {
-  yield* takeLatest(CAMPAIGN_EMAIL_LOAD_ALL, loadCampaignAndPerformance);
-}
-
-function* watchLoadBlast() {
-  yield* takeLatest(CAMPAIGN_EMAIL_LOAD_ALL, loadAllEmailBlast);
-}
-
-function* watchLoadBlastPerformance() {
-  yield* takeLatest(CAMPAIGN_EMAIL_LOAD_ALL, loadAllEmailBlastPErformance);
+  yield* takeLatest(EMAIL_BLAST_LOAD_ALL, loadCampaignAndPerformance);
 }
 
 export const campaignEmailSagas = [
@@ -170,7 +129,5 @@ export const campaignEmailSagas = [
   fork(watchFetchDeliveryReport),
   fork(watchUpdateCampaignEmail),
   fork(watchArchiveCampaignEmail),
-  fork(watchLoadCampaignAndPerformance),
-  fork(watchLoadBlast),
-  fork(watchLoadBlastPerformance)
+  fork(watchLoadCampaignAndPerformance)
 ];

@@ -6,10 +6,23 @@ class PieChart extends Component {
   constructor(props) {
     super(props);
     this.renderPieChart = this.renderPieChart.bind(this);
+    this.plot = null;
+    this.plotDataset = null;
   }
 
   componentDidMount() {
     this.renderPieChart(this.svg);
+  }
+
+  componentDidUpdate() {
+
+    this.plot.destroy();
+    this.renderPieChart(this.svg);
+  }
+
+  componentWillUnmount() {
+    this.plot.destroy();
+    // global.window.removeEventListener('resize');
   }
 
   render() {
@@ -21,16 +34,35 @@ class PieChart extends Component {
 
     let classNameOuter = 'mcs-plot-container';
     let classNameInner = 'mcs-area-plot-svg';
-    if (options.startAngle || options.endAngle) {
+    if (options.isHalf) {
       classNameOuter = 'mcs-plot-container-half';
       classNameInner = 'mcs-area-plot-svg-half';
     }
 
-    return (
+    return options.isHalf ? (
+      <div className={classNameOuter}>
+        <div ref={svg => { this.svg = svg; }} id={identifier} className={classNameInner} />
+        <div className="mcs-donut-chart-title" />
+        <div className="mcs-chart-title">
+          { options.text ? (
+            <div className="mcs-half-title">
+              <div className="value">{options.text.value}</div>
+              <div className="helper">{options.text.text}</div>
+            </div>) : (<div />) }
+        </div>
+
+      </div>
+    ) : (
       <div className={classNameOuter}>
         <div ref={svg => { this.svg = svg; }} id={identifier} className={classNameInner} />
         <div className="mcs-donut-chart-title">
-          <div className="mcs-chart-title">This is a title</div>
+          <div className="mcs-chart-title">
+            { options.text ? (
+              <div>
+                <div className="value">{options.text.value}</div>
+                <div className="helper">{options.text.text}</div>
+              </div>) : (<div />) }
+          </div>
         </div>
       </div>
     );
@@ -47,43 +79,55 @@ class PieChart extends Component {
     const colorScale = new Plottable.Scales.InterpolatedColor();
     colorScale.range(options.colors);
 
-    const innerRadius = svg.clientHeight > svg.clientWidth ? svg.clientWidth / 3 : svg.clientHeight / 3;
-    const innerRadiusHalf = svg.clientHeight > svg.clientWidth ? svg.clientWidth / 3 : svg.clientHeight / 3;
+    const outerRadius = svg.clientHeight > svg.clientWidth ? (svg.clientWidth / 2) - 20 : (svg.clientHeight / 2) - 20;
+    const outerRadiusHalf = svg.clientHeight > svg.clientWidth ? (svg.clientWidth / 2) - 20 : svg.clientHeight - 20;
+
+
+    const plotData = new Plottable.Dataset(dataset);
+    this.plotDataset = plotData;
 
     const plot = new Plottable.Plots.Pie()
-      .addDataset(new Plottable.Dataset(dataset))
+      .addDataset(plotData)
+      .animated(true)
+      .animator(Plottable.Plots.Animator.MAIN, new Plottable.Animators.Easing().easingMode('quad').stepDuration(3500))
       .sectorValue((d) => { return d.val; }, scale)
       .attr('fill', (d) => { return d.val; }, colorScale);
 
-    if (options.innerRadius) {
-      if (options.startAngle || options.endAngle) {
-        plot.innerRadius(innerRadiusHalf);
-      } else {
-        plot.innerRadius(innerRadius);
-      }
+    if (options.isHalf) {
+      plot.outerRadius(outerRadiusHalf);
+      plot.innerRadius(outerRadiusHalf * 0.606);
+    } else {
+      plot.outerRadius(outerRadius);
+      plot.innerRadius(outerRadius * 0.606);
     }
 
-    if (options.startAngle) {
+    if (options.isHalf) {
       plot.startAngle(-Math.PI / 2);
-    }
-
-    if (options.endAngle) {
       plot.endAngle(Math.PI / 2);
     }
 
     plot.xAlignment('center');
     plot.yAlignment('center');
 
-    const title = new Plottable.Components.Label('Hello World!')
-      .xAlignment('center')
-      .yAlignment('center');
-
-    const plots = new Plottable.Components.Group([plot, title]);
-
-    plots.renderTo(`#${identifier}`);
-
+    plot.renderTo(`#${identifier}`);
+    this.plot = plot;
     global.window.addEventListener('resize', () => {
-      plots.redraw();
+      plot.xAlignment('center');
+      plot.yAlignment('center');
+
+      const outerRadiusResized = svg.clientHeight > svg.clientWidth / 2 ? (svg.clientWidth / 2) - 20 : (svg.clientHeight - 20);
+      plot.outerRadius(outerRadiusResized);
+      plot.innerRadius(outerRadiusResized * 0.606);
+      /*
+      if (options.isHalf) {
+
+        plot.innerRadius(svg.clientHeight > svg.clientWidth / 2 ? (svg.clientWidth / 2) - 70 : (svg.clientHeight - 70));
+      } else {
+        plot.outerRadius(this.svg.clientHeight > this.svg.clientWidth ? (this.svg.clientWidth / 2) - 20 : (this.svg.clientHeight / 2) - 20);
+        plot.innerRadius(this.svg.clientHeight > this.svg.clientWidth ? (this.svg.clientWidth / 2) - 70 : (this.svg.clientHeight / 2) - 70);
+      }
+      */
+      plot.redraw();
     });
   }
 
@@ -98,8 +142,11 @@ PieChart.propTypes = {
   })).isRequired,
   options: PropTypes.shape({
     innerRadius: PropTypes.bool,
-    startAngle: PropTypes.number,
-    endAngle: PropTypes.number
+    isHalf: PropTypes.bool,
+    text: PropTypes.shape({
+      value: PropTypes.string,
+      text: PropTypes.string
+    })
   }).isRequired
 };
 

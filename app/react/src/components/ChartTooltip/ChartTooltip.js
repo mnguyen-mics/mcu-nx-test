@@ -33,16 +33,30 @@ class ChartTooltip extends Component {
   }
 }
 
+ChartTooltip.defaultProps = {
+  xTooltip: 0,
+  yTooltip: 0,
+  content: {
+    xLabel: '',
+    entries: [{
+      label: '',
+      color: '',
+      value: 0
+    }]
+  },
+  visibility: 'hidden'
+};
+
 ChartTooltip.propTypes = {
   /*
   * The X pixel where the tooltip will be displayed
   */
-  xTooltip: PropTypes.number.isRequired,
+  xTooltip: PropTypes.number,
 
   /*
   * The Y pixel where the tooltip will be displayed
   */
-  yTooltip: PropTypes.number.isRequired,
+  yTooltip: PropTypes.number,
 
   /*
   * The content of the tooltip
@@ -73,15 +87,15 @@ ChartTooltip.propTypes = {
         /*
         * The value of the plot entry
         */
-        value: PropTypes.string.isRequired
+        value: PropTypes.number.isRequired
       })
     )
-  }).isRequired,
+  }),
 
   /*
   * To show or not the tooltip
   */
-  visibility: React.PropTypes.string.isRequired
+  visibility: React.PropTypes.string
 };
 
 export default ChartTooltip;

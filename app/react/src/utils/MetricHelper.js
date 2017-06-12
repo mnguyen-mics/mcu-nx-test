@@ -36,3 +36,36 @@ export const normalizeReportView = (reportView) => {
     }), {});
   });
 };
+
+/**
+ * Format a reportView to an object like the following :
+ *
+ *  {
+ *    "campaign_id" : "1812",
+ *    "impressions","clicks"}
+ *  rows: [["1812",4,0],["1814",38258,86]]
+ * }
+ *
+ * TO
+ *
+ * {
+ *  campaign_id: ["1812","1814"]
+ *  impressions: [4, 38258]
+ *  clicks: [0, 86]
+ * }
+ *
+ * @param {Object} reportView an object comming from performance api
+ * @return {Object} normalized object
+ */
+export const formatNormalizeReportView = (reportView) => {
+  const returnValue = {};
+  if (reportView.length > 0) {
+    Object.keys(reportView[0]).forEach(key => {
+      returnValue[key] = reportView.reduce((a, b) => {
+        return a + b[key];
+      }, 0);
+    });
+    return returnValue;
+  }
+  return returnValue;
+};

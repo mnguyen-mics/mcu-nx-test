@@ -115,5 +115,10 @@
   "EMAIL_BLASTS": "Email Blast",
   "NEW_EMAIL_BLAST": "Nouveau Email Blast",
 
-  "CREATE_NEW_TAG": "Créer Nouveau"
+  "CREATE_NEW_TAG": "Créer Nouveau",
+
+  "DELIVERED": "Délivrés",
+  "OPENS": "Ouverts",
+  "CLICKS_TO_OPENS": "Ouverts puis Clickés",
+  "UNSUBSCRIBE": "Désinscriptions"
 }

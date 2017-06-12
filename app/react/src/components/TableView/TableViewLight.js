@@ -3,11 +3,6 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Icon, Menu, Table } from 'antd';
 
-const DEFAULT_PAGINATION = {
-  size: 'small',
-  showSizeChanger: true
-};
-
 class TableViewLight extends Component {
 
   constructor(props) {
@@ -26,18 +21,13 @@ class TableViewLight extends Component {
       onChange,
     } = this.props;
 
-    const extendedPagination = {
-      ...DEFAULT_PAGINATION,
-      ...pagination
-    };
-
     const actionsColumns = this.buildActionsColumns(columnsDefinitions.actionsColumnsDefinition);
 
     const columns = this.buildDataColumns().concat(actionsColumns);
 
 
     return (
-      <Table columns={columns} dataSource={dataSource} onChange={onChange} loading={loading} pagination={extendedPagination} />
+      <Table columns={columns} dataSource={dataSource} onChange={onChange} loading={loading} pagination={pagination} />
     );
   }
 
@@ -119,7 +109,7 @@ class TableViewLight extends Component {
 }
 
 TableViewLight.defaultProps = {
-  pagination: {}
+  pagination: false
 };
 
 TableViewLight.propTypes = {
@@ -129,7 +119,7 @@ TableViewLight.propTypes = {
   }).isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   loading: PropTypes.bool.isRequired,
-  pagination: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  pagination: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   onChange: PropTypes.func.isRequired
 };
 

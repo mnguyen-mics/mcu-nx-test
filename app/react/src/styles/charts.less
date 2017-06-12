@@ -10,20 +10,50 @@
     overflow: visible;
 }
 
-.mcs-plot-container-half {
-    .mcs-area-plot-svg-half {
-        min-height: 250px;
-        width: 100%
-    }
-    overflow: visible;
+
+
+@media (max-width:1400px) {
+
+  .mcs-plot-container-half {
+      .mcs-area-plot-svg-half {
+          min-height: 200px;
+          width: 100%
+      }
+      overflow: visible;
+  }
+
 }
+
+@media (min-width:1401px) {
+
+  .mcs-plot-container-half {
+      .mcs-area-plot-svg-half {
+          margin-top: 20px;
+          min-height: 200px;
+          width: 100%
+      }
+      overflow: visible;
+  }
+
+}
+
 
 .mcs-donut-chart-title {
   position: absolute;
-  top: 47%;
+  top: 43%;
   width: 100%;
-  font-size: 1.5em;
   text-align: center;
+
+  .value {
+    font-weight: bold;
+    text-align: center;
+    color: #022344;
+    font-size: 1.1em;
+  }
+  .helper {
+    text-align: center;
+    color: #022344;
+  }
 }
 
 .mcs-chart-title {
@@ -133,4 +163,20 @@
       }
     }
 
+}
+
+.mcs-half-title {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  .value {
+    font-weight: bold;
+    text-align: center;
+    color: #022344;
+    font-size: 1.1em;
+  }
+  .helper {
+    text-align: center;
+    color: #022344;
+  }
 }

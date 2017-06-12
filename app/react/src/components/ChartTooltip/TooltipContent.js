@@ -79,7 +79,7 @@ TooltipContent.propTypes = {
         /*
         * The value of the plot entry
         */
-        value: PropTypes.string.isRequired
+        value: PropTypes.number.isRequired
       })
     ).isRequired
 };

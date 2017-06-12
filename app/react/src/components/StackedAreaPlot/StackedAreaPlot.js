@@ -9,7 +9,9 @@ class StackedAreaPlot extends Component {
     this.renderStackedAreaPlot = this.renderStackedAreaPlot.bind(this);
     this.defineSvg = this.defineSvg.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
-
+    this.plot = null;
+    this.plotDataset = null;
+    this.pointers = [];
     this.state = {
       xTooltip: null,
       yTooltip: null,
@@ -32,27 +34,57 @@ class StackedAreaPlot extends Component {
   }
 
   componentDidMount() {
-    this.renderStackedAreaPlot(this.svg);
+    const {
+      options,
+      dataset
+    } = this.props;
+
+    const setMetadata = {};
+    options.colors.forEach((color, i) => {
+      setMetadata[options.yKeys[i]] = color;
+    });
+
+    const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
+    this.renderStackedAreaPlot(plottableDataSet);
+    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+  }
+
+  // shouldComponentUpdate() {
+  //   if (this.props.dataset) {
+  //     console.log('update');
+  //   }
+  //   return false;
+  // }
+
+  componentWillUnmount() {
+    this.plot.destroy();
+    // global.window.removeEventListener('resize');
+  }
+
+  componentDidUpdate() {
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      dataset,
-      options,
-      identifier
-    } = this.props;
-
-    const {
-      dataset: nextDataset,
-      options: nextOptions,
-      identifier: nextIdentifier
+      dataset: nextDataset
     } = nextProps;
 
-    if (dataset !== nextDataset || options !== nextOptions || identifier !== nextIdentifier) {
-      console.log('rerender');
-      // this.renderStackedAreaPlot(this.svg);
-    }
+    const {
+      options,
+      dataset
+    } = this.props;
+
+    const setMetadata = {};
+    options.colors.forEach((color, i) => {
+      setMetadata[options.yKeys[i]] = color;
+    });
+    this.pointers.forEach(point => {
+      point.pointer.detachFrom(point.plot);
+    });
+    const plottableDataSet = new Plottable.Dataset(nextDataset, setMetadata);
+    this.renderStackedAreaPlot(plottableDataSet);
+    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
   defineSvg = svg => { this.svg = svg; };
@@ -82,12 +114,18 @@ class StackedAreaPlot extends Component {
     );
   }
 
-  renderStackedAreaPlot(svg) {
+  renderStackedAreaPlot(plottableDataSet) {
     const {
       identifier,
       options,
       dataset
     } = this.props;
+
+    console.log('renderStackedAreaPlot');
+
+    if (this.plot !== null) {
+      this.plot.destroy();
+    }
 
     const xScale = new Plottable.Scales.Time().padProportion(0);
     const yScale = new Plottable.Scales.Linear().addIncludedValuesProvider(() => { return [0]; }).addPaddingExceptionsProvider(() => { return [0]; }).padProportion(0.2);
@@ -109,21 +147,15 @@ class StackedAreaPlot extends Component {
     ).scale(xScale);
 
     pnts.push(guideline);
-    if (dataset) {
+    if (dataset.length > 0) {
       Object.keys(dataset[0]).forEach(item => {
         if (item !== options.xKey && options.yKeys.indexOf(item) > -1) {
-
-          const setMetadata = {};
-          options.colors.forEach((color, i) => {
-            setMetadata[options.yKeys[i]] = color;
-          });
-
-          const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
 
           const plot = new Plottable.Plots.Area()
             .addDataset(plottableDataSet)
             .x((d) => { return new Date(d[options.xKey]); }, xScale)
             .y((d) => { return d[item]; }, yScale)
+            .animated(true)
             .attr('fill', () => { return item; }, colorScale)
             .attr('stroke', () => { return item; }, colorScale);
 
@@ -141,13 +173,6 @@ class StackedAreaPlot extends Component {
       });
     }
 
-    console.log(xAxis.innerTickLength());
-    console.log(yAxis.innerTickLength());
-
-    // const gridlines = new Plottable.Components.Gridlines(xScale, yScale);
-    // pnts.push(gridlines);
-
-
     const plots = new Plottable.Components.Group(plts.concat(pnts));
 
     // TODO KEEP IT AND MAKE IT SIMPLER
@@ -164,11 +189,12 @@ class StackedAreaPlot extends Component {
       [null, xAxis]
     ]);
 
-
     table.renderTo(`#${identifier}`);
+    this.plot = table;
+
 
     plts.forEach((plot) => {
-      colorScale.range([plot.foreground().style('fill')]);
+      // colorScale.range([plot.foreground().style('fill')]);
       const crosshair = this.createDotsCrosshair(plot);
       const line = this.createLineCrosshair(plot);
       const pointer = new Plottable.Interactions.Pointer();
@@ -187,6 +213,11 @@ class StackedAreaPlot extends Component {
         });
       });
       pointer.attachTo(plot);
+      const point = {
+        pointer: pointer,
+        plot: plot
+      };
+      this.pointers.push(point);
     });
 
     global.window.addEventListener('resize', () => {
@@ -258,7 +289,6 @@ class StackedAreaPlot extends Component {
 
       const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
       const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
-
       this.setTooltip({
         xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 180,
         yTooltip: mousePosition.y + 120 < height ? this.svgBoundingClientRect.top + mousePosition.y : (this.svgBoundingClientRect.top + mousePosition.y) - 50,

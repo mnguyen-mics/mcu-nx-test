@@ -35,11 +35,15 @@ class CampaignEmail extends Component {
         campaignId
       },
       query,
-      loadCampaignEmailAndDeliveryReport
+      loadCampaignEmailAndDeliveryReport,
+      fetchAllEmailBlast,
+      fetchAllEmailBlastPerformance
     } = this.props;
 
     const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
 
+    fetchAllEmailBlast(campaignId);
+    fetchAllEmailBlastPerformance(campaignId, filter);
     loadCampaignEmailAndDeliveryReport(campaignId, filter);
   }
 
@@ -67,7 +71,6 @@ class CampaignEmail extends Component {
         <Content>
           <ScrollComponent>
             <CampaignEmailHeader />
-            <CampaignEmailLabels {...this.props} />
             <CampaignEmailDashboard {...this.props} />
             <CampaignEmailTable />
           </ScrollComponent>
@@ -85,6 +88,8 @@ CampaignEmail.propTypes = {
     campaignId: PropTypes.string
   }).isRequired,
   loadCampaignEmailAndDeliveryReport: PropTypes.func.isRequired,
+  fetchAllEmailBlast: PropTypes.func.isRequired,
+  fetchAllEmailBlastPerformance: PropTypes.func.isRequired,
   resetCampaignEmail: PropTypes.func.isRequired
 };
 
@@ -94,6 +99,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
+  fetchAllEmailBlast: CampaignEmailActions.fetchAllEmailBlast.request,
+  fetchAllEmailBlastPerformance: CampaignEmailActions.fetchAllEmailBlastPerformance.request,
   loadCampaignEmailAndDeliveryReport: CampaignEmailActions.loadCampaignEmailAndDeliveryReport,
   resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
 };
