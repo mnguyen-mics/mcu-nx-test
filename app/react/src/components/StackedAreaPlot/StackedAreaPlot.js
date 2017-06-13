@@ -12,6 +12,7 @@ class StackedAreaPlot extends Component {
     this.plot = null;
     this.plotDataset = null;
     this.pointers = [];
+    this.pointersAttached = [];
     this.state = {
       xTooltip: null,
       yTooltip: null,
@@ -57,6 +58,9 @@ class StackedAreaPlot extends Component {
   // }
 
   componentWillUnmount() {
+    this.pointersAttached.forEach(pointer => {
+      pointer.enabled(false);
+    });
     this.plot.destroy();
     // global.window.removeEventListener('resize');
   }
@@ -195,6 +199,7 @@ class StackedAreaPlot extends Component {
       const crosshair = this.createDotsCrosshair(plot);
       const line = this.createLineCrosshair(plot);
       const pointer = new Plottable.Interactions.Pointer();
+      this.pointersAttached.push(pointer);
       pointer.onPointerMove((p) => {
         const nearestEntity = plot.entityNearestByXThenY(p);
         line.hide();
