@@ -60,7 +60,7 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
       if (!dataForDay) {
         const newDateData = [];
         newDateData.push(d.format(DATE_FORMAT));
-        params.metrics.forEach(f => {
+        params.metrics.forEach(() => {
           newDateData.push(0);
         });
         formattedData.push(newDateData);
@@ -68,7 +68,7 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
         formattedData.push(dataForDay);
       }
     }
-    response.data.report_view.rows = formattedData;
+    response.data.report_view.rows = formattedData; // eslint-disable-line no-param-reassign
     return response;
   });
 };

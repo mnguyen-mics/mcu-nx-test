@@ -1,5 +1,5 @@
 import { takeLatest, takeEvery } from 'redux-saga';
-import { call, fork, put, select } from 'redux-saga/effects';
+import { call, fork, put } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 
@@ -10,12 +10,13 @@ import {
   pairLabelWithObject,
   unPairLabelWithObject,
   updateLabels,
-  resetLabels
 } from './actions';
 
+/*
 import {
   getWorkspaceOrganisationId
 } from '../Session/selectors';
+*/
 
 import LabelsService from '../../services/LabelsService';
 
