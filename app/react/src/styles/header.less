@@ -18,13 +18,23 @@
   width: ~'calc(100% - 200px)';
 }
 
-.mcs-header-logo-name {
+.mcs-header-logo-name > a {
   font-size: 15px;
   font-weight: bold;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 150px;
+  max-width: 138px;
+
+  img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    max-height: 70px;
+    max-width: 138px;
+  }
 }
 
 .mcs-header-logo-item {
@@ -33,7 +43,10 @@
 }
 
 .mcs-header-logo-name {
-  max-width: 138px;
+  max-width: 135px;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 .mcs-header-menu-icons {
@@ -43,7 +56,7 @@
 
 .mcs-header-cascader-menu {
   margin-left: 25px;
-  margin-right: 25px;
+  margin-right: 12px;
 }
 
 .ant-cascader-menu {
@@ -60,7 +73,7 @@
 }
 
 .mcs-header-anticon {
-  font-size: 25px;
+  font-size: 20px;
   &:hover {
     cursor: pointer;
   }
@@ -68,8 +81,18 @@
 
 .mcs-header-divider {
   width: 1px;
-  height: 25px;
+  height: 40px;
   margin: 0px 25px;
   background-color: @border-color-base;
-  display: inline-block
+  display: inline-block;
+  vertical-align: sub;
+}
+
+.mcs-header-left-divider {
+  width: 1px;
+  height: 40px;
+  background-color: @border-color-base;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 13px;
 }

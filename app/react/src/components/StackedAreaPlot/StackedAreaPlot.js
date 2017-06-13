@@ -121,8 +121,6 @@ class StackedAreaPlot extends Component {
       dataset
     } = this.props;
 
-    console.log('renderStackedAreaPlot');
-
     if (this.plot !== null) {
       this.plot.destroy();
     }
@@ -177,7 +175,6 @@ class StackedAreaPlot extends Component {
 
     // TODO KEEP IT AND MAKE IT SIMPLER
     /*
-    console.log(options);
     new Plottable.Interactions.PanZoom(xScale, null)
       .attachTo(plots)
       .minDomainExtent(xScale, 1000 * 60 * 60 * 24 * 3)
@@ -205,7 +202,6 @@ class StackedAreaPlot extends Component {
         crosshair.drawAt(nearestEntity.position);
       });
       pointer.onPointerExit(() => {
-        console.log('pointer exit');
         line.hide();
         crosshair.hide();
         this.setTooltip({

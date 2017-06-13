@@ -1,5 +1,5 @@
 import { takeLatest } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, all } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -47,7 +47,8 @@ function* loadCampaignsEmailList({ payload }) {
 
     const {
       organisationId,
-      filter
+      filter,
+      isInitialRender
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
@@ -66,7 +67,29 @@ function* loadCampaignsEmailList({ payload }) {
       options.status = apiStatuses;
     }
 
-    const response = yield call(CampaignService.getCampaigns, organisationId, campaignType, options);
+    const initialOptions = {
+      ...getPaginatedApiParam(1, 1)
+    };
+
+    let allCalls;
+
+    if (isInitialRender) {
+      allCalls = {
+        initialFetch: call(CampaignService.getCampaigns, organisationId, campaignType, initialOptions),
+        response: call(CampaignService.getCampaigns, organisationId, campaignType, options)
+      };
+    } else {
+      allCalls = {
+        response: call(CampaignService.getCampaigns, organisationId, campaignType, options)
+      };
+    }
+
+    const { initialFetch, response } = yield all(allCalls);
+
+    if (initialFetch) {
+      response.hasItems = initialFetch.count > 0;
+    }
+
     yield put(fetchCampaignsEmailList.success(response));
   } catch (error) {
     log.error(error);

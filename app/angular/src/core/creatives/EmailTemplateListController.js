@@ -12,6 +12,11 @@ define(['./module'], function (module) {
       /**
        * Variables
        */
+
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/emails');
+
+
         // Pagination
       $scope.currentPageCreative = 1;
       $scope.itemsPerPage = 10;

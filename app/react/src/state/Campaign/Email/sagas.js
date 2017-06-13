@@ -98,9 +98,7 @@ function* loadAllEmailBlast({ payload }) {
     } = payload;
 
     if (!campaignId) throw new Error('Payload is invalid');
-    console.log('ok loading blasts');
     const response = yield call(CampaignService.getAllEmailBlast, campaignId);
-    console.log(response);
     yield put(fetchAllEmailBlast.success(response));
   } catch (error) {
     log.error(error);

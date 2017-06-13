@@ -10,15 +10,15 @@ import {
 const defaultCampaignsEmailApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 const campaignsEmailApi = (state = defaultCampaignsEmailApiState, action) => {
   switch (action.type) {
     case CAMPAIGNS_EMAIL_LOAD_ALL:
     case CAMPAIGNS_EMAIL_LIST_FETCH.REQUEST:
       return {
-        ...state,
-        isFetching: true
+        ...state
       };
     case CAMPAIGNS_EMAIL_LIST_FETCH.SUCCESS:
       return {
@@ -29,7 +29,7 @@ const campaignsEmailApi = (state = defaultCampaignsEmailApiState, action) => {
     case CAMPAIGNS_EMAIL_LIST_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case CAMPAIGNS_EMAIL_TABLE_RESET:
       return defaultCampaignsEmailApiState;

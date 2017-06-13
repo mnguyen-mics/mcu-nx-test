@@ -79,8 +79,7 @@ class PieChart extends Component {
     const colorScale = new Plottable.Scales.InterpolatedColor();
     colorScale.range(options.colors);
 
-    const outerRadius = svg.clientHeight > svg.clientWidth ? (svg.clientWidth / 2) - 20 : (svg.clientHeight / 2) - 20;
-    const outerRadiusHalf = svg.clientHeight > svg.clientWidth ? (svg.clientWidth / 2) - 20 : svg.clientHeight - 20;
+    const outerRadius = svg.clientHeight > svg.clientWidth / 2 ? (svg.clientWidth / 2) - 20 : svg.clientHeight - 20;
 
 
     const plotData = new Plottable.Dataset(dataset);
@@ -88,14 +87,12 @@ class PieChart extends Component {
 
     const plot = new Plottable.Plots.Pie()
       .addDataset(plotData)
-      .animated(true)
-      .animator(Plottable.Plots.Animator.MAIN, new Plottable.Animators.Easing().easingMode('quad').stepDuration(3500))
       .sectorValue((d) => { return d.val; }, scale)
       .attr('fill', (d) => { return d.val; }, colorScale);
 
     if (options.isHalf) {
-      plot.outerRadius(outerRadiusHalf);
-      plot.innerRadius(outerRadiusHalf * 0.606);
+      plot.outerRadius(outerRadius);
+      plot.innerRadius(outerRadius * 0.606);
     } else {
       plot.outerRadius(outerRadius);
       plot.innerRadius(outerRadius * 0.606);
@@ -118,15 +115,6 @@ class PieChart extends Component {
       const outerRadiusResized = svg.clientHeight > svg.clientWidth / 2 ? (svg.clientWidth / 2) - 20 : (svg.clientHeight - 20);
       plot.outerRadius(outerRadiusResized);
       plot.innerRadius(outerRadiusResized * 0.606);
-      /*
-      if (options.isHalf) {
-
-        plot.innerRadius(svg.clientHeight > svg.clientWidth / 2 ? (svg.clientWidth / 2) - 70 : (svg.clientHeight - 70));
-      } else {
-        plot.outerRadius(this.svg.clientHeight > this.svg.clientWidth ? (this.svg.clientWidth / 2) - 20 : (this.svg.clientHeight / 2) - 20);
-        plot.innerRadius(this.svg.clientHeight > this.svg.clientWidth ? (this.svg.clientWidth / 2) - 70 : (this.svg.clientHeight / 2) - 70);
-      }
-      */
       plot.redraw();
     });
   }

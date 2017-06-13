@@ -77,8 +77,8 @@
   "SEARCH_AUDIENCE_SEGMENTS": "Recherche de Segments",
   "TECHNICAL_NAME": "Nom Technique",
 
-  "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Segment?",
-  "SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Segment all it will stop campaign using it. Are you sure?",
+  "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Êtes-vous sûr de vouloir archiver ce Segment?",
+  "SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY": "En archivant cette campagne, toute ces activités vont être suspendues. Vous serez capable de la recupérer dans la catégorie 'archivés'",
 
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation",
@@ -93,6 +93,11 @@
   "TO": "à",
   "ERROR": "Erreur",
   "SECONDS": "secondes",
+  "EMPTY_EMAILS": "Il n'y a aucune Campagne Email créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_DISPLAY": "Il n'y a aucune Campagne Display créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_GOALS": "Il n'y a aucun Objectif créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_SEGMENTS": "Il n'y a aucun Segments créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_AUTOMATIONS": "Il n'y a aucune Automations créée! Clickez sur Nouveau pour commencer.",
   "EXPORT": "Export",
   "EXPORT_IN_PROGRESS": "Export en cours...",
   "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",
@@ -120,5 +125,46 @@
   "DELIVERED": "Délivrés",
   "OPENS": "Ouverts",
   "CLICKS_TO_OPENS": "Ouverts puis Clickés",
-  "UNSUBSCRIBE": "Désinscriptions"
+  "UNSUBSCRIBE": "Désinscriptions",
+  "PART_COUNT": "Nombre de Part",
+  "NEW_PARTITION": "Nouvelle Partition",
+  "RANDOM_SPLIT": "Découpage Aléatoire",
+  "CLUSTERING": "Clustering",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE": "Etes vous sur de vouloir supprimer cette Partition?",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cette Partition?",
+  "SEARCH_AUDIENCE_PARTITIONS": "Search Partition",
+
+  "PLACEMENT_LIST": "Liste de Placement",
+  "KEYWORD_LIST": "Liste de Mot Clef",
+  "BID_OPTIMIZER": "Bid Optimizer",
+  "ATTRIBUTION_MODEL": "AModel d'Attribution",
+  "VISIT_ANALYZER": "Visit Analyzer",
+  "CATALOG": "Catalogue",
+  "AD_LAYOUTS":"Ad Layouts",
+  "STYLESHEETS":"Stylesheets",
+  "ASSETS": "Assets",
+  "EXPORTS": "Exports",
+
+  "NEW_PLACEMENT_LIST": "Nouvelle Liste de Placement",
+  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE":  "Etes vous sur de vouloir supprimer cette Liste de Placements?",
+  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cette Liste de Placements?",
+
+  "NEW_KEYWORD_LIST": "Nouvelle Liste de Mot Clef",
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Etes vous sur de vouloir supprimer cette Liste de Mots Clefs?",
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cette Liste de Mots Clefs?",
+
+  "NEW_ASSET": "Nouvel Asset",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_TITLE":  "Etes vous sur de vouloir supprimer cet Asset?",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cet Asset?",
+  "PREVIEW": "Prévisualisation",
+  "DIMENSIONS": "Dimensions",
+  "AUDIT_STATUS": "Statut d'Audit",
+  "PUBLISHED_VERSION": "Version Publiée",
+
+  "DISPLAY_ADS": "Display Ads",
+  "EMAILS_TEMPLATES": "Templates d'Email",
+  "NEW_DISPLAY_AD": "Nouveau Display Ad",
+
+  "ACTIVATE_CAMPAIGN": "Activer la Campagne",
+  "PAUSE_CAMPAIGN": "Arrêter la Campagne"
 }

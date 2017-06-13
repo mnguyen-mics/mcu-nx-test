@@ -5,7 +5,7 @@ import {
   DISPLAY_QUERY_SETTINGS,
   EMAIL_QUERY_SETTINGS,
   GOAL_QUERY_SETTINGS,
-
+  CAMPAIGN_EMAIL_QUERY_SETTINGS,
   isQueryValid,
   buildDefaultQuery
 } from '../../containers/Campaigns/RouteQuerySelector';
@@ -14,7 +14,8 @@ import {
   Campaigns,
   CampaignsDisplay,
   CampaignsEmail,
-  Goals
+  Goals,
+  CampaignEmail
  } from '../../containers/Campaigns';
 
 const handleOnEnter = (nextState, replace, settings) => {
@@ -49,6 +50,12 @@ export default (
         component={CampaignsEmail}
         onEnter={(nextState, replace) => handleOnEnter(nextState, replace, EMAIL_QUERY_SETTINGS)}
         onChange={(prevState, nextState, replace) => handleOnChange(prevState, nextState, replace, EMAIL_QUERY_SETTINGS)}
+      />
+      <Route
+        path="email/:campaignId"
+        component={CampaignEmail}
+        onEnter={(nextState, replace) => handleOnEnter(nextState, replace, CAMPAIGN_EMAIL_QUERY_SETTINGS)}
+        onChange={(prevState, nextState, replace) => handleOnChange(prevState, nextState, replace, CAMPAIGN_EMAIL_QUERY_SETTINGS)}
       />
       <Route
         path="goal"

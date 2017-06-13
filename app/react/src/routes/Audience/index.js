@@ -3,12 +3,12 @@ import Route from 'react-router/lib/Route';
 
 import {
   AUDIENCE_SEGMENTS_SETTINGS,
-
+  AUDIENCE_PARTITIONS_SETTINGS,
   isQueryValid,
   buildDefaultQuery
 } from '../../containers/Audience/RouteQuerySelector';
 
-import { Audience, Segments } from '../../containers/Audience';
+import { Audience, Segments, Partitions } from '../../containers/Audience';
 
 const handleOnEnter = (nextState, replace, settings) => {
   if (!isQueryValid(nextState.location.query, settings)) {
@@ -36,6 +36,12 @@ export default (
         component={Segments}
         onEnter={(nextState, replace) => handleOnEnter(nextState, replace, AUDIENCE_SEGMENTS_SETTINGS)}
         onChange={(prevState, nextState, replace) => handleOnChange(prevState, nextState, replace, AUDIENCE_SEGMENTS_SETTINGS)}
+      />
+      <Route
+        path="partitions"
+        component={Partitions}
+        onEnter={(nextState, replace) => handleOnEnter(nextState, replace, AUDIENCE_PARTITIONS_SETTINGS)}
+        onChange={(prevState, nextState, replace) => handleOnChange(prevState, nextState, replace, AUDIENCE_PARTITIONS_SETTINGS)}
       />
     </Route>
   </div>

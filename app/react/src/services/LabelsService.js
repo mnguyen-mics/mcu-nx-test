@@ -26,7 +26,6 @@ const createLabel = (name, organisationId, options = {}) => {
     organisation_id: organisationId,
     ...options
   };
-  console.log(params);
   return ApiService.postRequest(endpoint, params);
 };
 

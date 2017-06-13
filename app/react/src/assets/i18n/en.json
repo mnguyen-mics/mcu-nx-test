@@ -34,8 +34,8 @@
   "CONVERSIONS":"Conversions",
   "CONVERSION_VALUE":"Conversion value",
   "SAVE": "Save",
-  "DISPLAY_CAMPAIGNS": "Display Campaigns",
-  "EMAIL_CAMPAIGNS": "Emails Campaigns",
+  "DISPLAY_CAMPAIGNS": "Display",
+  "EMAIL_CAMPAIGNS": "Emails",
   "SCENARIOS": "Scenarios",
   "GOALS": "Goals",
   "NEW_CAMPAIGN": "New Campaign",
@@ -83,6 +83,12 @@
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation",
 
+  "EMPTY_EMAILS": "There is no Email Campaigns created yet! Click on New to get started",
+  "EMPTY_DISPLAY": "There is no Display Campaigns created yet! Click on New to get started",
+  "EMPTY_GOALS": "There is no Goals created yet! Click on New to get started",
+  "EMPTY_SEGMENTS": "There is no Segments created yet! Click on New to get started",
+  "EMPTY_AUTOMATIONS": "There is no Automations created yet! Click on New to get started",
+
   "TODAY": "Today",
   "YESTERDAY": "Yesterday",
   "LAST_7_DAYS": "Last 7 Days",
@@ -106,8 +112,8 @@
   "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page",
 
   "CAMPAIGN_STATUS_ACTIVE": "Campaign Ongoing",
-  "CAMPAIGN_STATUS_PAUSED": "Campaign pause",
-  "CAMPAIGN_STATUS_PENDING": "Campaign pending",
+  "CAMPAIGN_STATUS_PAUSED": "Campaign Paused",
+  "CAMPAIGN_STATUS_PENDING": "Campaign Pending",
   "CAMPAIGN_OVERVIEW": "Overview",
   "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
 
@@ -120,5 +126,48 @@
   "DELIVERED": "Delivered",
   "OPENS": "Opens",
   "CLICKS_TO_OPENS": "Clicks To Opens",
-  "UNSUBSCRIBE": "Unsubscribe"
+  "UNSUBSCRIBE": "Unsubscribe",
+
+  "PART_COUNT": "Part Count",
+  "NEW_PARTITION": "New Partition",
+  "RANDOM_SPLIT": "Random Split",
+  "CLUSTERING": "Clustering",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Partition?",
+  "PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Partition all it will stop campaign using it. Are you sure?",
+  "SEARCH_AUDIENCE_PARTITIONS": "Search Partition",
+
+  "PLACEMENT_LIST": "Placement List",
+  "KEYWORD_LIST": "Keyword List",
+  "BID_OPTIMIZER": "Bid Optimizer",
+  "ATTRIBUTION_MODEL": "Attribution Model",
+  "VISIT_ANALYZER": "Visit Analyzer",
+  "CATALOG": "Catalog",
+  "AD_LAYOUTS":"Ad Layouts",
+  "STYLESHEETS":"Stylesheets",
+  "ASSETS": "Assets",
+  "EXPORTS": "Exports",
+
+  "NEW_PLACEMENT_LIST": "New Placement List",
+  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Placement List?",
+  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this PLacement all it will stop campaign using it. Are you sure?",
+
+
+  "NEW_KEYWORD_LIST": "New Keyword List",
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Keyword List?",
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Keyword all it will stop campaign using it. Are you sure?",
+
+  "NEW_ASSET": "New Asset",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Asset?",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Asset all it will stop campaign using it. Are you sure?",
+  "PREVIEW": "Preview",
+  "DIMENSIONS": "Dimensions",
+  "AUDIT_STATUS": "Audit Status",
+  "PUBLISHED_VERSION": "Published Version",
+
+  "DISPLAY_ADS": "Display Ads",
+  "EMAILS_TEMPLATES": "Email Templates",
+  "NEW_DISPLAY_AD": "New Display Ad",
+
+  "ACTIVATE_CAMPAIGN": "Activate Campaign",
+  "PAUSE_CAMPAIGN": "Pause Campaign"
 }

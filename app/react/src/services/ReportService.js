@@ -1,8 +1,10 @@
+import moment from 'moment';
 import ApiService from './ApiService';
+
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-const getDisplayCampaignPerfomanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
+const getDisplayCampaignPerformanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/display_campaign_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
@@ -48,7 +50,27 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
     ...options
   };
 
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getRequest(endpoint, params).then(response => {
+    const data = response.data.report_view.rows;
+    const formattedData = [];
+    for (const d = moment(params.start_date); d.diff(moment(params.end_date)) < 0; d.add('days', 1)) {
+      const dataForDay = data.find(a => {
+        return a[0] === d.format(DATE_FORMAT);
+      });
+      if (!dataForDay) {
+        const newDateData = [];
+        newDateData.push(d.format(DATE_FORMAT));
+        params.metrics.forEach(f => {
+          newDateData.push(0);
+        });
+        formattedData.push(newDateData);
+      } else {
+        formattedData.push(dataForDay);
+      }
+    }
+    response.data.report_view.rows = formattedData;
+    return response;
+  });
 };
 
 const getConversionPerformanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
@@ -100,7 +122,7 @@ const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endD
 };
 
 export default {
-  getDisplayCampaignPerfomanceReport,
+  getDisplayCampaignPerformanceReport,
   getEmailDeliveryReport,
   getConversionPerformanceReport,
   getAudienceSegmentReport,

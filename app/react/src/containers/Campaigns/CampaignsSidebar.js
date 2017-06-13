@@ -5,6 +5,7 @@ import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
 import { Sidebar } from '../Sidebar';
+import { McsIcons } from '../../components/McsIcons';
 
 class CampaignsSidebar extends Component {
 
@@ -13,7 +14,7 @@ class CampaignsSidebar extends Component {
     const {
       activeWorkspace: {
         organisationId,
-        datamartId,
+        datamartId
       },
       location: {
         pathname
@@ -28,15 +29,15 @@ class CampaignsSidebar extends Component {
 
     const items = [
       {
-        element: <Link to={displayCampaignUrl}><FormattedMessage id="DISPLAY_CAMPAIGNS" /></Link>,
+        element: <Link to={displayCampaignUrl}><McsIcons type="display" className="icon-sidebar" /> <FormattedMessage id="DISPLAY_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('display')
       },
       {
-        element: <Link to={emailCampaignUrl}><FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
+        element: <Link to={emailCampaignUrl}><McsIcons type="email" className="icon-sidebar" /> <FormattedMessage id="EMAIL_CAMPAIGNS" /></Link>,
         isActive: isActiveUrl('email')
       },
       {
-        element: <Link to={goalsUrl}><FormattedMessage id="GOALS" /></Link>,
+        element: <Link to={goalsUrl}><McsIcons type="goals-rounded" className="icon-sidebar" /> <FormattedMessage id="GOALS" /></Link>,
         isActive: isActiveUrl('goal')
       }
     ];

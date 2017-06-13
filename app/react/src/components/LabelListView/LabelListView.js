@@ -25,7 +25,6 @@ class LabelListView extends Component {
   }
 
   showInput = () => {
-    console.log(this);
     this.setState({ inputVisible: true }, () => { this.inputElement.focus(); });
   }
 
@@ -94,7 +93,6 @@ class LabelListView extends Component {
   }
 
   setData = (value) => {
-    console.log(value);
     if (value) {
       return this.state.data.filter(element => {
         return element.text.indexOf(value) > -1;
