@@ -156,7 +156,7 @@ class CreativeEmailsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/email-template/default-editor/edit/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'AUDIT_STATUS',
@@ -212,7 +212,7 @@ class CreativeEmailsTable extends Component {
       history
     } = this.props;
 
-    history.push(`/${organisationId}/creatives/display-ad/default-editor/edit/${campaign.id}`);
+    history.push(`/${organisationId}/creatives/email-template/default-editor/edit/${campaign.id}`);
   }
 
   archiveCreativeEmails(campaign) {

@@ -1,4 +1,4 @@
-export const itemDisplayedOnlyIfDatamart = ['audience', 'library_catalog'];
+export const itemDisplayedOnlyIfDatamart = ['audience', 'library_catalog', 'automations'];
 
 
 // ATTENTION : ALL KEYS MUST BE UNIQUE !

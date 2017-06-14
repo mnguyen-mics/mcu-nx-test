@@ -73,7 +73,6 @@ Logo.propTypes = {
   mode: PropTypes.string.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   logoBlob: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  getWorkspaceByOrganisation: PropTypes.func.isRequired,
   getLogoRequest: PropTypes.func.isRequired,
   updateLogo: PropTypes.func.isRequired
 };

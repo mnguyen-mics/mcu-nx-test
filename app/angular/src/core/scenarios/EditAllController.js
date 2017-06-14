@@ -8,7 +8,7 @@ define(['./module'], function (module) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
 
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + '/automations/list');
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/automations');
 
       Restangular.all('scenarios').getList({organisation_id: organisationId}).then(function (scenarios) {
         $scope.scenarios = scenarios;

@@ -19,6 +19,8 @@ define(['./module'], function (module) {
     function ($scope, $location, $uibModal, $log, Restangular, d3, moment, DisplayCampaignService, Session, CampaignAnalyticsReportService, CampaignPluginService, ExportService) {
       var currentWorkspace = Session.getCurrentWorkspace();
 
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/email');
+
       $scope.currentPageEmailCampaign = 1;
       $scope.itemsPerPage = 10;
 
