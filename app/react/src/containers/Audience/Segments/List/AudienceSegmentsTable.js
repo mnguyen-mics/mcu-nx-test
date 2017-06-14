@@ -273,7 +273,7 @@ class AudienceSegmentsTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />) : (<EmptyTableView icon="users" text="EMPTY_SEGMENTS" />);
+    />) : (<EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />);
 
   }
 

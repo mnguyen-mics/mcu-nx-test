@@ -6,6 +6,7 @@ import { PersistentReducers } from './PersistentReducers';
 
 import ActionbarReducers from '../state/Actionbar/reducer';
 import CampaignsDisplayReducers from '../state/Campaigns/Display/reducer';
+import CampaignEmailReducers from '../state/Campaign/Email/reducer';
 import CampaignsEmailReducers from '../state/Campaigns/Email/reducer';
 import GoalsReducers from '../state/Campaigns/Goal/reducer';
 import GoalReducers from '../state/Campaign/Goal/reducer';
@@ -19,6 +20,8 @@ import TranslationsReducers from '../state/Translations/reducer';
 import AudienceSegmentsReducers from '../state/Audience/Segments/reducer';
 import AudiencePartitionsReducers from '../state/Audience/Partitions/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
+import LabelsReducers from '../state/Labels/reducer';
+
 import PlacementListsReducers from '../state/Library/PlacementLists/reducer';
 import KeywordListsReducers from '../state/Library/KeywordLists/reducer';
 import creativeDisplayReducers from '../state/Creatives/Display/reducer';
@@ -37,6 +40,7 @@ const allReducers = Object.assign(
   PersistentReducers,
   ActionbarReducers,
   CampaignsDisplayReducers,
+  CampaignEmailReducers,
   CampaignsEmailReducers,
   GoalsReducers,
   GoalReducers,
@@ -49,6 +53,7 @@ const allReducers = Object.assign(
   TranslationsReducers,
   AudienceSegmentsReducers,
   AutomationListReducers,
+  LabelsReducers,
   AudiencePartitionsReducers,
   PlacementListsReducers,
   KeywordListsReducers,

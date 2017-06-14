@@ -36,3 +36,38 @@ export const normalizeReportView = (reportView) => {
     }), {});
   });
 };
+
+/**
+ * Format a reportView to an object like the following :
+ *
+ *  [{
+ *    "clicks": 1,
+ *    "views": 2
+ *  },{
+ *    "clicks": 3,
+ *    "views": 2
+ *  }]
+ * }
+ *
+ * TO
+ *
+ * {
+ *  "clicks" : 4
+ *  "clicks" : 4
+ * }
+ *
+ * @param {Object} reportView an object comming from performance api
+ * @return {Object} normalized object
+ */
+export const formatNormalizeReportView = (reportView) => {
+  const returnValue = {};
+  if (reportView.length > 0) {
+    Object.keys(reportView[0]).forEach(key => {
+      returnValue[key] = reportView.reduce((a, b) => {
+        return a + b[key];
+      }, 0);
+    });
+    return returnValue;
+  }
+  return returnValue;
+};

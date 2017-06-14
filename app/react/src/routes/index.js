@@ -12,7 +12,6 @@ import CampaignsRouter from './Campaigns';
 import AudienceRouter from './Audience';
 import AutomationsRouter from './Automations';
 import LibraryRouter from './Library';
-import CampaignRouter from './Campaign';
 import CreativeRouter from './Creatives';
 import LoginRouter from './Login';
 
@@ -29,7 +28,6 @@ export default (store) => { // eslint-disable-line no-unused-vars
     <Route path="/" component={Navigator}>
       <Route path={`${PUBLIC_URL}/o/:organisationId(/d/:datamartId)`} component={requireAuthentication(ContentView)}>
         { CampaignsRouter }
-        { CampaignRouter }
         { AudienceRouter }
         { AutomationsRouter }
         { LibraryRouter }

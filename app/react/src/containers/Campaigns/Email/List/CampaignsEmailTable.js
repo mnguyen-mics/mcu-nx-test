@@ -7,7 +7,7 @@ import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { TableView, EmptyTableView } from '../../../../components/TableView';
-import { Icons } from '../../../../components/McsIcons';
+import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsEmailActions from '../../../../state/Campaigns/Email/actions';
 
@@ -93,7 +93,8 @@ class CampaignsEmailTable extends Component {
     const {
       query,
       activeWorkspace: {
-        workspaceId
+        workspaceId,
+        organisationId
       },
       translations,
       isFetchingCampaignsEmail,
@@ -159,13 +160,13 @@ class CampaignsEmailTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><Icons type="status" /></span></Tooltip>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/campaigns/email/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaigns/email/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'EMAIL_SENT',
@@ -252,7 +253,7 @@ class CampaignsEmailTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />) : (<EmptyTableView icon="email" text="EMPTY_EMAILS" />);
+    />) : (<EmptyTableView iconType="email" text="EMPTY_EMAILS" />);
 
   }
 
