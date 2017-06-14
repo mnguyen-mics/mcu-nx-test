@@ -249,7 +249,7 @@ PlacementListsTable.propTypes = {
   resetPlacementListsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   translations: state.translations,
 
   isFetchingAutomationList: state.placementListTable.placementListsApi.isFetching,

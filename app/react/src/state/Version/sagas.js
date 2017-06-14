@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import { delay } from 'redux-saga';
 import { call, fork, put } from 'redux-saga/effects';
 

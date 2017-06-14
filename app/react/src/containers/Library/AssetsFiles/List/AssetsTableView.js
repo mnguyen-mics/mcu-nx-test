@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
 import { TableView } from '../../../../components/TableView';
@@ -117,11 +117,6 @@ class AssetsFilesTable extends Component {
 
   render() {
     const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
       location: {
         search
       },
@@ -266,7 +261,7 @@ AssetsFilesTable.propTypes = {
   resetAssetsFilesTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   translations: state.translations,
 
   isFetchingAssetsFiles: state.assetsFilesTable.assetsFilesApi.isFetching,

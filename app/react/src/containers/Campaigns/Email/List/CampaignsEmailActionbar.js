@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Button, message } from 'antd';
+import { Button, message } from 'antd';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';

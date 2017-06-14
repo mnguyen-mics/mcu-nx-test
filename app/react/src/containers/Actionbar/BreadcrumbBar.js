@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { Breadcrumb } from 'antd';
 import { PathPropTypes } from '../../validators/proptypes';
 
@@ -29,13 +28,4 @@ BreadcrumbBar.propTypes = {
   path: PathPropTypes // eslint-disable-line react/require-default-props
 };
 
-const mapStateToProps = state => ({
-  // path: state.actionbarState.path
-});
-
-const mapDispatchToProps = {};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BreadcrumbBar);
+export default BreadcrumbBar;

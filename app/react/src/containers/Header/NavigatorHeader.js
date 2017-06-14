@@ -28,10 +28,7 @@ class NavigatorHeader extends Component {
       workspaces,
       workspace,
       userEmail,
-      history,
-      location: {
-        search
-      }
+      history
     } = this.props;
 
     const organisationId = params.organisationId;
@@ -101,7 +98,6 @@ class NavigatorHeader extends Component {
 
 NavigatorHeader.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   workspace: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
   workspaces: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

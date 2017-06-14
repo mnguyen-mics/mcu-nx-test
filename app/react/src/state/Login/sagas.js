@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import { delay } from 'redux-saga';
 import { call, put, take, race, fork } from 'redux-saga/effects';
 import moment from 'moment';

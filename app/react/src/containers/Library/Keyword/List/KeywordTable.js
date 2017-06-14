@@ -250,7 +250,7 @@ KeywordListsTable.propTypes = {
   resetKeywordListsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   translations: state.translations,
 
   isFetchingKeywordLists: state.placementListTable.placementListsApi.isFetching,

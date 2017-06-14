@@ -1,10 +1,9 @@
 import { combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 
-import { PersistentReducers } from './PersistentReducers';
+// import { PersistentReducers } from './PersistentReducers';
 
 import AppReducer from '../state/App/reducer';
-// import ActionbarReducers from '../state/Actionbar/reducer';
 import CampaignsDisplayReducers from '../state/Campaigns/Display/reducer';
 import CampaignsEmailReducers from '../state/Campaigns/Email/reducer';
 import GoalsReducers from '../state/Campaigns/Goal/reducer';
@@ -32,7 +31,6 @@ const allReducers = Object.assign(
 
   // PersistentReducers,
   AppReducer,
-  // ActionbarReducers,
   CampaignsDisplayReducers,
   CampaignsEmailReducers,
   GoalsReducers,
