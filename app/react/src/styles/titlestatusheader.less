@@ -1,0 +1,47 @@
+.mcs-title-status-header {
+  width: 100%;
+  line-height: 45px;
+  .mcs-title-status-header-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #003056;
+  }
+  .mcs-title-status-header-status {
+    float: right;
+
+    div {
+      display: inline-block
+    };
+
+    .mcs-title-status-header-status-divider {
+      margin: 0px 10px;
+      color: #919191;
+    }
+
+    .mcs-title-status-header-status-title {
+      color: #919191;
+    }
+
+    .mcs-indicator-paused,
+    .mcs-indicator-active,
+    .mcs-indicator-pending {
+      width: 13px;
+      height: 13px;
+      border-radius: 100%;
+    }
+
+    .mcs-indicator-paused {
+      background-color: @info-color;
+    }
+    .mcs-indicator-active {
+      background-color: @success-color;
+    }
+    .mcs-indicator-pending {
+      background-color: @error-color
+    }
+  }
+}
+
+.mcs-campaign-labels {
+  padding: 0px 40px 30px 40px;
+}

@@ -4,6 +4,7 @@ import { loginSagas } from './Login/sagas';
 import { sessionSagas } from './Session/sagas';
 import { campaignsDisplaySagas } from './Campaigns/Display/sagas';
 import { campaignsEmailSagas } from './Campaigns/Email/sagas';
+import { campaignEmailSagas } from './Campaign/Email/sagas';
 import { goalsSagas } from './Campaigns/Goal/sagas';
 import { automationsSagas } from './Automations/sagas';
 import { segmentsSagas } from './Audience/Segments/sagas';
@@ -13,6 +14,7 @@ import { keywordListsSagas } from './Library/KeywordLists/sagas';
 import { assetsFilesSagas } from './Library/AssetsFiles/sagas';
 import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
+import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas';
 
 export default function* sagas() {
@@ -23,10 +25,12 @@ export default function* sagas() {
     ...loginSagas,
     ...campaignsDisplaySagas,
     ...campaignsEmailSagas,
+    ...campaignEmailSagas,
     ...goalsSagas,
     ...automationsSagas,
     ...segmentsSagas,
     ...versionSagas,
+    ...labelsSagas,
     ...partitionsSagas,
     ...placementListsSagas,
     ...keywordListsSagas,

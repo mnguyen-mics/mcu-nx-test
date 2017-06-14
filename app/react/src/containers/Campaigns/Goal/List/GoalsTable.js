@@ -266,7 +266,7 @@ class GoalsTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />) : (<EmptyTableView icon="goals" text="EMPTY_GOALS" />);
+    />) : (<EmptyTableView iconType="goals" text="EMPTY_GOALS" />);
 
   }
 

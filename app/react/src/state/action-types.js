@@ -27,7 +27,21 @@ export const CAMPAIGNS_DISPLAY_TABLE_RESET = 'CAMPAIGNS_DISPLAY_TABLE_RESET';
 
 export const CAMPAIGN_EMAIL_ARCHIVE = createRequestTypes('CAMPAIGN_EMAIL_ARCHIVE');
 export const CAMPAIGN_EMAIL_DELETE = createRequestTypes('CAMPAIGN_EMAIL_DELETE');
+export const CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH = createRequestTypes('CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH');
+export const CAMPAIGN_EMAIL_FETCH = createRequestTypes('CAMPAIGN_EMAIL_FETCH');
+export const CAMPAIGN_EMAIL_LOAD_ALL = 'CAMPAIGN_EMAIL_LOAD_ALL';
+export const CAMPAIGN_EMAIL_RESET = 'CAMPAIGN_EMAIL_RESET';
 export const CAMPAIGN_EMAIL_UPDATE = createRequestTypes('CAMPAIGN_EMAIL_UPDATE');
+
+export const EMAIL_BLAST_ARCHIVE = createRequestTypes('EMAIL_BLAST_ARCHIVE');
+export const EMAIL_BLAST_DELETE = createRequestTypes('EMAIL_BLAST_DELETE');
+export const EMAIL_BLAST_DELIVERY_REPORT_FETCH = createRequestTypes('EMAIL_BLAST_DELIVERY_REPORT_FETCH');
+export const EMAIL_BLAST_FETCH_ALL = createRequestTypes('EMAIL_BLAST_FETCH_ALL');
+export const EMAIL_BLAST_FETCH_PERFORMANCE = createRequestTypes('EMAIL_BLAST_FETCH_PERFORMANCE');
+export const EMAIL_BLAST_FETCH = createRequestTypes('EMAIL_BLAST_FETCH');
+export const EMAIL_BLAST_LOAD_ALL = 'EMAIL_BLAST_LOAD_ALL';
+export const EMAIL_BLAST_RESET = 'EMAIL_BLAST_RESET';
+export const EMAIL_BLAST_UPDATE = createRequestTypes('EMAIL_BLAST_UPDATE');
 
 export const CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH = createRequestTypes('CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH');
 export const CAMPAIGNS_EMAIL_LIST_FETCH = createRequestTypes('CAMPAIGNS_EMAIL_LIST_FETCH');
@@ -81,6 +95,12 @@ export const SIDEBAR_SWITCH_VISIBILITY = 'SIDEBAR_SWITCH_VISIBILITY';
 
 export const LOAD_TRANSLATIONS = createRequestTypes('LOAD_TRANSLATIONS');
 
+export const LABELS_FETCH = createRequestTypes('LABELS_FETCH');
+export const LABELS_CREATE = createRequestTypes('LABELS_CREATE');
+export const LABELS_UPDATE = createRequestTypes('LABELS_UPDATE');
+export const LABELS_PAIR = createRequestTypes('LABELS_PAIR');
+export const LABELS_UNPAIR = createRequestTypes('LABELS_UNPAIR');
+export const LABELS_OBJECT_FETCH = createRequestTypes('LABELS_OBJECT_FETCH');
 export const PLACEMENT_LISTS_DELETE = createRequestTypes('PLACEMENT_LISTS_DELETE');
 export const PLACEMENT_LISTS_FETCH = createRequestTypes('PLACEMENT_LISTS_FETCH');
 export const PLACEMENT_LISTS_TABLE_RESET = 'PLACEMENT_LISTS_TABLE_RESET';

@@ -11,14 +11,14 @@ class EmptyTableView extends Component {
   render() {
     const {
       className,
-      icon,
+      iconType,
       text
     } = this.props;
 
     return (
       <Col span={24} className={className}>
         <div className="logo">
-          <McsIcons type={icon} />
+          <McsIcons type={iconType} />
         </div>
         <FormattedMessage id={text} />
       </Col>);
@@ -27,13 +27,13 @@ class EmptyTableView extends Component {
 }
 
 EmptyTableView.defaultProps = {
-  icon: 'exclamation',
+  iconType: 'exclamation',
   className: 'mcs-table-view-empty'
 };
 
 EmptyTableView.propTypes = {
   text: PropTypes.string.isRequired,
-  icon: PropTypes.string,
+  iconType: PropTypes.string,
   className: PropTypes.string
 };
 

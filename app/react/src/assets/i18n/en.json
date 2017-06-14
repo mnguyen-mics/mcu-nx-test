@@ -118,6 +118,23 @@
   "NOTIFICATION_NEW_VERSION_TITLE": "New Version",
   "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page",
 
+  "CAMPAIGN_STATUS_ACTIVE": "Campaign Ongoing",
+  "CAMPAIGN_STATUS_PAUSED": "Campaign Paused",
+  "CAMPAIGN_STATUS_PENDING": "Campaign Pending",
+  "CAMPAIGN_OVERVIEW": "Overview",
+  "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
+
+  "NO_EMAIL_STATS": "No Data during the selected period.",
+  "EMAIL_BLASTS": "Email Blast",
+  "NEW_EMAIL_BLAST": "New Email Blast",
+
+  "CREATE_NEW_TAG": "Create New",
+
+  "DELIVERED": "Delivered",
+  "OPENS": "Opens",
+  "CLICKS_TO_OPENS": "Clicks To Opens",
+  "UNSUBSCRIBE": "Unsubscribe",
+
   "PART_COUNT": "Part Count",
   "NEW_PARTITION": "New Partition",
   "RANDOM_SPLIT": "Random Split",
@@ -157,5 +174,8 @@
   "DISPLAY_ADS": "Display Ads",
   "EMAILS_TEMPLATES": "Email Templates",
   "NEW_DISPLAY_AD": "New Display Ad",
-  "NEW_EMAIL_TEMPLATE": "New Email Template"
+  "NEW_EMAIL_TEMPLATE": "New Email Template",
+
+  "ACTIVATE_CAMPAIGN": "Activate Campaign",
+  "PAUSE_CAMPAIGN": "Pause Campaign"
 }

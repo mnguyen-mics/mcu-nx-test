@@ -204,7 +204,7 @@ class CampaignsEmailTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/email/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/email/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'EMAIL_SENT',
@@ -291,7 +291,7 @@ class CampaignsEmailTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />) : (<EmptyTableView icon="email" text="EMPTY_EMAILS" />);
+    />) : (<EmptyTableView iconType="email" text="EMPTY_EMAILS" />);
 
   }
 

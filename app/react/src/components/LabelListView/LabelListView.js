@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Row, Col, Tag, Icon, Tooltip, Button, Input } from 'antd';
+import { Row, Col, Tag, Icon, Tooltip, Button, Input, Menu, Dropdown, AutoComplete } from 'antd';
 import { FormattedMessage } from 'react-intl';
+
 
 class LabelListView extends Component {
 
@@ -11,11 +13,19 @@ class LabelListView extends Component {
     this.state = {
       inputVisible: false,
       inputValue: '',
+      data: this.props.listItems.map(item => {
+        const filter = {
+          value: item.id,
+          text: item.name
+        };
+        return filter;
+      })
     };
+    this.handleMenuClick = this.handleMenuClick.bind(this);
   }
 
   showInput = () => {
-    this.setState({ inputVisible: true }, () => this.textInput.focus());
+    this.setState({ inputVisible: true }, () => { this.inputElement.focus(); });
   }
 
   handleInputChange = (e) => {
@@ -52,7 +62,7 @@ class LabelListView extends Component {
     Object.keys(filters).forEach(filter => {
       return filters[filter].data.forEach(value => {
         items.push({
-          key: value,
+          id: value,
           type: filter,
           value: translations[value],
           isClosable: filters[filter].closable
@@ -64,6 +74,40 @@ class LabelListView extends Component {
 
   }
 
+  handleMenuClick = (e) => {
+    this.setState({
+      inputVisible: false
+    });
+    this.props.onInputSubmit(e.key, true);
+  }
+
+  handleClick = (e) => {
+    console.log(this.inputElement);
+    this.inputElement.focus(e);
+  };
+
+  handleSearch = (value) => {
+    this.setState({
+      data: this.setData(value)
+    });
+  }
+
+  setData = (value) => {
+    if (value) {
+      return this.state.data.filter(element => {
+        return element.text.indexOf(value) > -1;
+      });
+    }
+
+    return this.props.listItems.map(item => {
+      const filter = {
+        value: item.id,
+        text: item.name
+      };
+      return filter;
+    });
+
+  }
 
   render() {
 
@@ -71,10 +115,20 @@ class LabelListView extends Component {
       isInputVisible,
       onClickOnClose,
       label,
-      className
+      className,
+      listItems,
+      filters
     } = this.props;
 
-    const items = this.buildFilterItems();
+    const items = filters;
+
+    const selectedTags = listItems.map(item => {
+      const filter = {
+        value: item.id,
+        text: item.name
+      };
+      return filter;
+    });
 
     const { inputVisible, inputValue } = this.state;
 
@@ -83,18 +137,15 @@ class LabelListView extends Component {
     };
 
     const displayContent = (item) => {
-      return item.icon ? (<span><Icon type={item.icon} /> {item.value}</span>) : (<span>{item.value}</span>);
+      return item.icon ? (<span><Icon type={item.icon} /> {item.name}</span>) : (<span>{item.name}</span>);
     };
 
 
     const generateTag = (item) => {
-      const isLongTag = item.value.length > 20;
-      if (item.isClosable === true) {
-        const tagElem = (<Tag closable key={item.key} afterClose={() => { onClickCloseTag(item); }} >{ displayContent(item) }</Tag>);
-        return isLongTag ? <Tooltip title={item.value}>{tagElem}</Tooltip> : tagElem;
-      }
-      const tagElem = (<Tag key={item.key} >{ displayContent(item) }</Tag>);
-      return isLongTag ? <Tooltip title={item.value}>{tagElem}</Tooltip> : tagElem;
+      const isLongTag = item.name.length > 20;
+      const tagElem = (<Tag closable key={item.id} afterClose={() => { onClickCloseTag(item); }} >{ displayContent(item) }</Tag>);
+      return isLongTag ? <Tooltip title={item.name}>{tagElem}</Tooltip> : tagElem;
+
     };
 
     return (
@@ -108,18 +159,17 @@ class LabelListView extends Component {
             return generateTag(tag);
           })}
           {isInputVisible && inputVisible && (
-          <Input
-            ref={(input) => { this.textInput = input; }}
-            type="text" size="small"
-            className="mcs-input-label"
-            value={inputValue}
-            onChange={this.handleInputChange}
-            onBlur={this.handleInputBlur}
-            onPressEnter={this.handleInputConfirm}
-          />
+          <AutoComplete
+            dataSource={selectedTags}
+            onChange={this.handleSearch}
+            placeholder="website"
+            style={{ width: 200 }}
+          >
+            <Input size="small" />
+          </AutoComplete>
         )}
           {isInputVisible && !inputVisible && (
-            <Button size="small" type="dashed" onClick={this.showInput}>Add New Tag</Button>
+            <Button size="small" type="dashed" onClick={e => { this.showInput(e); this.handleClick(e); }}>Add New Tag</Button>
           )}
         </Col>
       </Row>
@@ -142,7 +192,11 @@ LabelListView.propTypes = {
   isInputVisible: PropTypes.bool,
   onClickOnClose: PropTypes.func.isRequired,
   onInputSubmit: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
+  listItems: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string
+  })).isRequired,
 };
 
 const mapStateToProps = state => ({
