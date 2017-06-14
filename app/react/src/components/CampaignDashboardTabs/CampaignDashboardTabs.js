@@ -5,17 +5,13 @@ class CampaignDashboardTabs extends Component {
 
   render() {
 
-    const {
-      onChangeTab
-    } = this.props;
-
     const menuItems = this.buildMenuItems();
 
     return (
       <div className="mcs-campaign-dashboard-tabs">
         <Tabs
           defaultActiveKey="0"
-          onChange={onChangeTab}
+          onChange={() => {}}
         >
           {menuItems}
         </Tabs>
@@ -42,16 +38,11 @@ class CampaignDashboardTabs extends Component {
 
 }
 
-CampaignDashboardTabs.defaultProps = {
-  onChangeTab: () => {}
-};
-
 CampaignDashboardTabs.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string,
     display: PropTypes.element
-  })).isRequired,
-  onChangeTab: PropTypes.func
+  })).isRequired
 };
 
 export default CampaignDashboardTabs;

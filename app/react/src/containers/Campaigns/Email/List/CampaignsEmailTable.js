@@ -253,7 +253,7 @@ class CampaignsEmailTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />) : (<EmptyTableView icon="email" text="EMPTY_EMAILS" />);
+    />) : (<EmptyTableView iconType="email" text="EMPTY_EMAILS" />);
 
   }
 

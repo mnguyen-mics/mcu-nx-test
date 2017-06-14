@@ -50,19 +50,11 @@ class StackedAreaPlot extends Component {
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
-  // shouldComponentUpdate() {
-  //   if (this.props.dataset) {
-  //     console.log('update');
-  //   }
-  //   return false;
-  // }
-
   componentWillUnmount() {
     this.pointersAttached.forEach(pointer => {
       pointer.enabled(false);
     });
     this.plot.destroy();
-    // global.window.removeEventListener('resize');
   }
 
   componentDidUpdate() {

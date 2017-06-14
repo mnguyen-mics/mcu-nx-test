@@ -265,7 +265,7 @@ class CampaignsDisplayTable extends Component {
       filtersOptions={filtersOptions}
       columnsVisibilityOptions={columnsVisibilityOptions}
       pagination={pagination}
-    />) : (<EmptyTableView icon="display" text="EMPTY_DISPLAY" />);
+    />) : (<EmptyTableView iconType="display" text="EMPTY_DISPLAY" />);
 
   }
 

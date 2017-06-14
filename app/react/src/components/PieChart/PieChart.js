@@ -22,7 +22,6 @@ class PieChart extends Component {
 
   componentWillUnmount() {
     this.plot.destroy();
-    // global.window.removeEventListener('resize');
   }
 
   render() {

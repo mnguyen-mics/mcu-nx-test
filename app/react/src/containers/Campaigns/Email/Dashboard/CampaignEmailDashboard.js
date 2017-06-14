@@ -25,11 +25,9 @@ class CampaignEmailDashboard extends Component {
         campaignId
       },
       query,
-      loadCampaignEmailAndDeliveryReport
     } = this.props;
 
     const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
-    loadCampaignEmailAndDeliveryReport(campaignId, filter);
   }
 
   componentWillUnmount() {
@@ -52,7 +50,6 @@ class CampaignEmailDashboard extends Component {
       query: nextQuery,
       activeWorkspace: {
         workspaceId: nextWorkspaceId,
-        organisationId
       },
     } = nextProps;
 

@@ -31,11 +31,7 @@ const campaignEmailApi = (state = defaultCampaignEmailState, action) => {
         isFetching: false
       };
     case CAMPAIGN_EMAIL_FETCH.FAILURE:
-      return {
-        ...state,
-        campaignEmail: defaultCampaignEmailState.campaignEmail,
-        isFetching: false
-      };
+      return defaultCampaignEmailState;
 
     case CAMPAIGN_EMAIL_RESET:
       return defaultCampaignEmailState;
@@ -105,11 +101,7 @@ const emailBlastApi = (state = defaultEmailBlastState, action) => {
         hasFetched: true
       };
     case EMAIL_BLAST_FETCH_ALL.FAILURE:
-      return {
-        ...state,
-        isFetching: false,
-        hasFetched: true
-      };
+      return defaultEmailBlastState;
 
     case CAMPAIGN_EMAIL_RESET:
       return defaultEmailBlastState;

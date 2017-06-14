@@ -40,18 +40,20 @@ export const normalizeReportView = (reportView) => {
 /**
  * Format a reportView to an object like the following :
  *
- *  {
- *    "campaign_id" : "1812",
- *    "impressions","clicks"}
- *  rows: [["1812",4,0],["1814",38258,86]]
+ *  [{
+ *    "clicks": 1,
+ *    "views": 2
+ *  },{
+ *    "clicks": 3,
+ *    "views": 2
+ *  }]
  * }
  *
  * TO
  *
  * {
- *  campaign_id: ["1812","1814"]
- *  impressions: [4, 38258]
- *  clicks: [0, 86]
+ *  "clicks" : 4
+ *  "clicks" : 4
  * }
  *
  * @param {Object} reportView an object comming from performance api

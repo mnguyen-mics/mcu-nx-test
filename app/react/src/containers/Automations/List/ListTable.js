@@ -154,7 +154,7 @@ class AutomationsListTable extends Component {
       loading={isFetchingAutomationList}
       onChange={() => {}}
       pagination={pagination}
-    />) : (<EmptyTableView icon="automation" text="EMPTY_AUTOMATIONS" />);
+    />) : (<EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />);
 
   }
 
