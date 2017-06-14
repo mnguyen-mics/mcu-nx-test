@@ -39,7 +39,7 @@ class MainLayout extends Component {
 
     return (
       <Layout id="mcs-main-layout" className="mcs-fullscreen">
-        <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
+        <Sider style={this.state.collapsed ? {} : { overflow: 'auto' }} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
           <Logo mode={this.state.mode} />
           <NavigatorMenu mode={this.state.mode} />
         </Sider>

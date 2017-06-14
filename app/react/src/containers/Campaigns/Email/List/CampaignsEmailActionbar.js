@@ -126,7 +126,7 @@ class CampaignsEmailActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/email/edit`}>
-          <Button type="primary">
+          <Button type="primary" className="mcs-primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
         </Link>

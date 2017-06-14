@@ -331,3 +331,48 @@ a {
 .ant-breadcrumb-separator {
     font-size: 0.8em;
 }
+
+
+// AJOUTER POUR LA REFONTE
+/*
+.ant-btn-primary.mcs-primary {
+    color: #fff;
+    background-color: #00a1e1;
+    border-color: #00a1e1;
+    &:active {
+        background-color: #00a1e1;
+        border-color: #00a1e1;
+    }
+    &:hover {
+        background-color: rgba(0, 161, 225, 0.67);
+        border-color: rgba(0, 161, 225, 0.67);
+    }
+}
+
+.ant-layout-sider{
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
+    z-index: 2;
+
+    .ant-menu-submenu-title {
+      .icon {
+          vertical-align: middle;
+      }
+    }
+    .ant-menu-item {
+        .icon {
+            vertical-align: middle;
+        }
+    }
+
+  }
+  */
+
+.ant-menu.ant-menu-vertical.ant-menu-sub.ant-menu-open {
+    overflow-y: scroll;
+}
+
+  /*
+  * add style={this.state.collapsed ? {} : { overflow: 'auto' }} to <Sider> in Component Main Layout
+  * add padding: 24px; #mcs-main-layout .mcs-logo-placeholder .mcs-logo
+  *
+  */
