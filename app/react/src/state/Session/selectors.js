@@ -5,9 +5,16 @@ import { normalizeArrayOfObject } from '../../utils/Normalizer';
 const getAdditionnalWorkspace = state => state.session.workspace;
 const getConnectedUserWorkspaces = state => state.session.connectedUser.workspaces;
 
+const getDefaultWorkspaceIndex = state => {
+  if (state.session.connectedUser.default_workspace && state.session.connectedUser.default_workspace !== -1) {
+    return state.session.connectedUser.default_workspace;
+  }
+  return 0;
+};
+
 const getDefaultWorkspace = createSelector(
   state => state.session.connectedUser.workspaces,
-  state => state.session.connectedUser.default_workspace,
+  getDefaultWorkspaceIndex,
   (userWorkspaces, defaultWorkspaceIndex) => userWorkspaces[defaultWorkspaceIndex]
 );
 
