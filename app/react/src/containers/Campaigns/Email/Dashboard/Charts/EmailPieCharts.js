@@ -1,19 +1,19 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
+
 import { EmptyCharts } from '../../../../../components/EmptyCharts';
-import * as CampaignEmailActions from '../../../../../state/Campaign/Email/actions';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { PieChart } from '../../../../../components/PieChart';
 
-import {
-  CAMPAIGN_EMAIL_QUERY_SETTINGS
-} from '../../../RouteQuerySelector';
+import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
 import {
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../../../../services/RouteQuerySelectorService';
+  updateSearch,
+  parseSearch
+} from '../../../../../utils/LocationSearchHelper';
 
 import {
   getTableDataSource,
@@ -22,25 +22,31 @@ import {
 
 class EmailPieCharts extends Component {
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, CAMPAIGN_EMAIL_QUERY_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, EMAIL_DASHBOARD_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   renderDatePicker() {
     const {
-      query
+      location: {
+        search
+      }
     } = this.props;
 
-    const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
+    const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
       rangeType: filter.rangeType,
@@ -49,7 +55,7 @@ class EmailPieCharts extends Component {
       to: filter.to
     };
 
-    const onChange = (newValues) => this.updateQueryParams({
+    const onChange = (newValues) => this.updateLocationSearch({
       rangeType: newValues.rangeType,
       lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
@@ -190,29 +196,25 @@ class EmailPieCharts extends Component {
 }
 EmailPieCharts.propTypes = {
   translations: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   flatData: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  translations: state.translationsState.translations,
-  params: ownProps.router.params,
-  query: ownProps.router.location.query,
+const mapStateToProps = state => ({
+  translations: state.translations,
   hasFetchedCampaignStat: state.campaignEmailSingle.campaignEmailPerformance.hasFetched,
   dataSource: getTableDataSource(state),
   flatData: flattenData(state)
 });
 
 
-const mapDispatchToProps = {
-};
-
 EmailPieCharts = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(EmailPieCharts);
+
+EmailPieCharts = withRouter(EmailPieCharts);
 
 export default EmailPieCharts;

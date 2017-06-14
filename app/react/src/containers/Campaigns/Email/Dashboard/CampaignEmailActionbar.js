@@ -1,11 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar } from '../../../Actionbar';
-import * as ActionbarActions from '../../../../state/Actionbar/actions';
 import * as CampaignEmailActions from '../../../../state/Campaign/Email/actions';
 
 class CampaignEmailActionbar extends Component {
@@ -16,48 +15,31 @@ class CampaignEmailActionbar extends Component {
     this.buildMenu = this.buildMenu.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-
-    const {
-      translations,
-      campaignEmail,
-      setBreadcrumb
-    } = this.props;
-
-    const {
-      campaignEmail: newCampaignEmail
-    } = nextProps;
-
-    if (newCampaignEmail.id || (newCampaignEmail.id !== campaignEmail.id)) {
-      const breadcrumb1 = {
-        name: translations.EMAIL_CAMPAIGNS
-      };
-      const breadcrumb2 = {
-        name: newCampaignEmail.name
-      };
-      setBreadcrumb(0, [breadcrumb1, breadcrumb2]);
-    }
-
-  }
-
   render() {
 
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId,
+          campaignId
+        },
       },
-      params: {
-        campaignId
-      }
+      campaignEmail,
+      translations
     } = this.props;
 
     const actionElement = this.buildActionElement();
     const menu = this.buildMenu();
 
+    const breadcrumbPaths = [
+      { name: translations.EMAIL_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/email` },
+      { name: campaignEmail.name },
+    ];
+
     return (
-      <Actionbar {...this.props}>
+      <Actionbar path={breadcrumbPaths}>
         { actionElement }
-        <Link to={`/${workspaceId}/campaigns/email/edit/${campaignId}`}>
+        <Link to={`/${organisationId}/campaigns/email/edit/${campaignId}`}>
           <Button>
             <Icon type="edit" />
             <FormattedMessage id="EDIT" />
@@ -146,25 +128,18 @@ class CampaignEmailActionbar extends Component {
 
 CampaignEmailActionbar.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  params: PropTypes.shape({
-    campaignId: PropTypes.string
-  }).isRequired,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  setBreadcrumb: PropTypes.func.isRequired,
   updateCampaignEmail: PropTypes.func.isRequired,
   archiveCampaignEmail: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  translations: state.translationsState.translations,
-  activeWorkspace: state.sessionState.activeWorkspace,
-  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
-  params: ownProps.router.params
+const mapStateToProps = state => ({
+  translations: state.translations,
+  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail
 });
 
 const mapDispatchToProps = {
-  setBreadcrumb: ActionbarActions.setBreadcrumb,
   updateCampaignEmail: CampaignEmailActions.updateCampaignEmail.request,
   archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail.request
 };
@@ -173,5 +148,7 @@ CampaignEmailActionbar = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CampaignEmailActionbar);
+
+CampaignEmailActionbar = withRouter(CampaignEmailActionbar);
 
 export default CampaignEmailActionbar;

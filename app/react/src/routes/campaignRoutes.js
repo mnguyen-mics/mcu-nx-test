@@ -9,6 +9,11 @@ import {
 } from '../containers/Campaigns/Email/List';
 
 import {
+  CampaignEmailActionbar,
+  CampaignEmail
+} from '../containers/Campaigns/Email/Dashboard';
+
+import {
   GoalsActionbar,
   GoalsTable
 } from '../containers/Campaigns/Goal/List';
@@ -25,6 +30,12 @@ const campaignsRoutes = [
     layout: 'main',
     contentComponent: CampaignsEmailTable,
     actionBarComponent: CampaignsEmailActionbar
+  },
+  {
+    path: '/campaigns/email/:campaignId',
+    layout: 'main',
+    contentComponent: CampaignEmail,
+    actionBarComponent: CampaignEmailActionbar
   },
   {
     path: '/campaigns/goal',

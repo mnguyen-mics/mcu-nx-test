@@ -18,12 +18,12 @@ const fetchCampaignEmail = {
 };
 
 const fetchCampaignEmailDeliveryReport = {
-  request: (campaignId, filter = {}) => createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST)({ campaignId, filter }),
+  request: (organisationId, campaignId, filter = {}) => createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST)({ organisationId, campaignId, filter }),
   success: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.FAILURE)
 };
 
-const loadCampaignEmailAndDeliveryReport = (campaignId, filter) => createAction(CAMPAIGN_EMAIL_LOAD_ALL)({ campaignId, filter });
+const loadCampaignEmailAndDeliveryReport = (organisationId, campaignId, filter) => createAction(CAMPAIGN_EMAIL_LOAD_ALL)({ organisationId, campaignId, filter });
 
 const archiveCampaignEmail = {
   request: (campaignId, body) => createAction(CAMPAIGN_EMAIL_ARCHIVE.REQUEST)({ campaignId, body }),

@@ -161,7 +161,7 @@ class NavigatorMenu extends Component {
     const getSelectedKeys = () => {
       const currentItem = this.getAllKeysWithPath().find(item => {
         const matched = matchPath(pathname, { path: `${basePath}${item.path}` });
-        return matched && matched.isExact;
+        return matched; // && matched.isExact;
       });
       return [currentItem.key];
     };

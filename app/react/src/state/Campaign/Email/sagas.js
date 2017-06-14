@@ -12,10 +12,6 @@ import {
   fetchAllEmailBlastPerformance
 } from './actions';
 
-import {
-  getWorkspaceOrganisationId
-} from '../../Session/selectors';
-
 import CampaignService from '../../../services/CampaignService';
 import ReportService from '../../../services/ReportService';
 
@@ -50,19 +46,18 @@ function* loadDeliveryReport({ payload }) {
   try {
 
     const {
+      organisationId,
       campaignId,
       filter
     } = payload;
 
-    if (!(campaignId || filter)) throw new Error('Payload is invalid');
+    if (!(organisationId || campaignId || filter)) throw new Error('Payload is invalid');
 
     const startDate = filter.from;
     const endDate = filter.to;
     const dimension = 'day';
 
-    const currentOrganisationId = yield select(getWorkspaceOrganisationId);
-
-    const response = yield call(ReportService.getSingleEmailDeliveryReport, currentOrganisationId, campaignId, startDate, endDate, dimension);
+    const response = yield call(ReportService.getSingleEmailDeliveryReport, organisationId, campaignId, startDate, endDate, dimension);
     yield put(fetchCampaignEmailDeliveryReport.success(response));
   } catch (error) {
     log.error(error);
@@ -110,19 +105,18 @@ function* loadAllEmailBlastPErformance({ payload }) {
   try {
 
     const {
+      organisationId,
       campaignId,
       filter
     } = payload;
 
-    if (!(campaignId || filter)) throw new Error('Payload is invalid');
+    if (!(organisationId || campaignId || filter)) throw new Error('Payload is invalid');
 
     const startDate = filter.from;
     const endDate = filter.to;
     const dimension = 'blast_id';
 
-    const currentOrganisationId = yield select(getWorkspaceOrganisationId);
-
-    const response = yield call(ReportService.getAllEmailBlastPerformance, currentOrganisationId, campaignId, startDate, endDate, dimension);
+    const response = yield call(ReportService.getAllEmailBlastPerformance, organisationId, campaignId, startDate, endDate, dimension);
     yield put(fetchAllEmailBlastPerformance.success(response));
   } catch (error) {
     log.error(error);
