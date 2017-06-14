@@ -7,6 +7,8 @@ import { compose, withState, withHandlers } from 'recompose';
 import { getWorkspace } from '../../state/Session/selectors';
 import { getLogo } from '../../state/Session/actions';
 
+import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
+
 class Logo extends Component {
 
   componentDidMount() {
@@ -43,16 +45,10 @@ class Logo extends Component {
   render() {
     const {
       mode,
-      match: {
-        params: { organisationId }
-      },
-      logoBlob,
-      getWorkspaceByOrganisation
+      logoBlob
     } = this.props;
 
     const logoUrl = logoBlob ? URL.createObjectURL(logoBlob) : null;  // eslint-disable-line no-undef
-    const workspace = getWorkspaceByOrganisation(organisationId);
-    const organisationName = workspace ? workspace.organisation_name : '';
 
     return (
       <div className="mcs-logo-placeholder">
@@ -60,7 +56,7 @@ class Logo extends Component {
           <div className="mcs-logo" >
             <Link to="/" id="logo">
               {!!logoBlob && <img alt="logo" src={logoUrl} />}
-              {!logoBlob && organisationName}
+              {!logoBlob && <img alt="logo" src={mediarithmicsLogo} />}
             </Link>
           </div>
         }

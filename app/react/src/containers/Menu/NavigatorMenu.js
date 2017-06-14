@@ -163,8 +163,7 @@ class NavigatorMenu extends Component {
         const matched = matchPath(pathname, { path: `${basePath}${item.path}` });
         return matched && matched.isExact;
       });
-      if (currentItem && mode !== 'vertical') return [currentItem.key];
-      return null;
+      return [currentItem.key];
     };
 
     const getOpenKeysInMode = () => {
