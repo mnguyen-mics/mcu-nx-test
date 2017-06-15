@@ -21,13 +21,13 @@ import {
 import LabelsService from '../../services/LabelsService';
 
 import {
-  LABELS_ARCHIVE,
+  // LABELS_ARCHIVE,
   LABELS_FETCH,
   LABELS_CREATE,
   LABELS_UPDATE,
   LABELS_PAIR,
   LABELS_UNPAIR,
-  LABELS_RESET,
+  // LABELS_RESET,
   LABELS_OBJECT_FETCH
 } from '../action-types';
 
@@ -110,13 +110,13 @@ function* createOneLabel({ payload }) {
 function* pairLabelsWithObject({ payload }) {
   try {
     const {
-      labelId,
+      // labelId,
       labellableType,
       objectId,
       organisationId
     } = payload;
 
-    const response = yield call(LabelsService.pairLabels, labelId, labellableType, objectId);
+    // const response = yield call(LabelsService.pairLabels, labelId, labellableType, objectId);
     yield put(pairLabelWithObject.success(payload));
 
     yield put(fetchLabelsOfObjects.request(organisationId, labellableType, objectId));
@@ -129,13 +129,13 @@ function* pairLabelsWithObject({ payload }) {
 function* unPairLabelsWithObject({ payload }) {
   try {
     const {
-      labelId,
+      // labelId,
       labellableType,
       objectId,
       organisationId
     } = payload;
 
-    const response = yield call(LabelsService.unPairLabels, labelId, labellableType, objectId);
+    // const response = yield call(LabelsService.unPairLabels, labelId, labellableType, objectId);
     yield put(unPairLabelWithObject.success(payload));
     yield put(fetchLabelsOfObjects.request(organisationId, labellableType, objectId));
 

@@ -122,11 +122,8 @@ EmailStackedAreaChart.propTypes = {
   translations: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  loadCampaignEmailAndDeliveryReport: PropTypes.func.isRequired,
-  isFetchingCampaignStat: PropTypes.bool.isRequired,
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
-  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  resetCampaignEmail: PropTypes.func.isRequired
+  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const mapStateToProps = state => ({

@@ -100,6 +100,7 @@ export const LABELS_CREATE = createRequestTypes('LABELS_CREATE');
 export const LABELS_UPDATE = createRequestTypes('LABELS_UPDATE');
 export const LABELS_PAIR = createRequestTypes('LABELS_PAIR');
 export const LABELS_UNPAIR = createRequestTypes('LABELS_UNPAIR');
+export const LABELS_RESET = 'LABELS_FETCH';
 export const LABELS_OBJECT_FETCH = createRequestTypes('LABELS_OBJECT_FETCH');
 export const PLACEMENT_LISTS_DELETE = createRequestTypes('PLACEMENT_LISTS_DELETE');
 export const PLACEMENT_LISTS_FETCH = createRequestTypes('PLACEMENT_LISTS_FETCH');

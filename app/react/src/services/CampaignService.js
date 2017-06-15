@@ -5,17 +5,17 @@ const getCampaignEmail = (campaignId) => {
   return ApiService.getRequest(endpoint);
 };
 
-const getEmailBlast = (campaignId) => {
-  const endpoint = `email_campaigns/${campaignId}`;
-  return ApiService.getRequest(endpoint);
-};
+// const getEmailBlast = (campaignId) => {
+//   const endpoint = `email_campaigns/${campaignId}`;
+//   return ApiService.getRequest(endpoint);
+// };
 
 const updateCampaignEmail = (campaignId, body) => {
   const endpoint = `email_campaigns/${campaignId}`;
   return ApiService.putRequest(endpoint, body);
 };
 
-const getAllEmailBlast = (campaignId, body) => {
+const getAllEmailBlast = () => {
   const emailBlast = {
     status: 'ok',
     data: [{

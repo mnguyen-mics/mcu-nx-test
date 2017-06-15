@@ -55,9 +55,9 @@ class CampaignEmailLabels extends Component {
 
   buildFilters() {
 
-    const {
-      campaignEmail
-    } = this.props;
+    // const {
+    //   campaignEmail
+    // } = this.props;
 
     return {
       // test: {
@@ -105,11 +105,8 @@ class CampaignEmailLabels extends Component {
 CampaignEmailLabels.propTypes = {
   campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   getLabels: PropTypes.func.isRequired,
   createLabels: PropTypes.func.isRequired,
-  fetchCampaignEmail: PropTypes.func.isRequired,
   pairLabelWithObject: PropTypes.func.isRequired,
   labels: PropTypes.shape({
     isFetching: PropTypes.bool,

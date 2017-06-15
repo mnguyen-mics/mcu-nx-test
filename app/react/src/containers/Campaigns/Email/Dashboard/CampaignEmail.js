@@ -57,8 +57,7 @@ class CampaignEmail extends Component {
       },
       match: {
         params: {
-          campaignId,
-          organisationId
+          campaignId
         }
       },
       history,

@@ -2,10 +2,10 @@ import { combineReducers } from 'redux';
 
 import {
   LABELS_FETCH,
-  LABELS_CREATE,
-  LABELS_UPDATE,
-  LABELS_PAIR,
-  LABELS_UNPAIR,
+  // LABELS_CREATE,
+  // LABELS_UPDATE,
+  // LABELS_PAIR,
+  // LABELS_UNPAIR,
   LABELS_RESET,
   LABELS_OBJECT_FETCH
 } from '../action-types';

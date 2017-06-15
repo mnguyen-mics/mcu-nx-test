@@ -1,5 +1,5 @@
 import { takeLatest } from 'redux-saga';
-import { call, fork, put, select } from 'redux-saga/effects';
+import { call, fork, put } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -7,7 +7,6 @@ import {
   fetchCampaignEmail,
   fetchCampaignEmailDeliveryReport,
   updateCampaignEmail,
-  archiveCampaignEmail,
   fetchAllEmailBlast,
   fetchAllEmailBlastPerformance
 } from './actions';
@@ -20,9 +19,7 @@ import {
     CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
     CAMPAIGN_EMAIL_ARCHIVE,
     CAMPAIGN_EMAIL_UPDATE,
-    CAMPAIGN_EMAIL_LOAD_ALL,
-    EMAIL_BLAST_FETCH_ALL,
-    EMAIL_BLAST_FETCH_PERFORMANCE
+    CAMPAIGN_EMAIL_LOAD_ALL
 } from '../../action-types';
 
 function* loadCampaignEmail({ payload }) {

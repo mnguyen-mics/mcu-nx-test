@@ -67,8 +67,7 @@ class StackedAreaPlot extends Component {
     } = nextProps;
 
     const {
-      options,
-      dataset
+      options
     } = this.props;
 
     const setMetadata = {};
