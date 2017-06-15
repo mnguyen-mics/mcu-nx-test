@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react';
-import { Row, Col, Button } from 'antd';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Row, Col } from 'antd';
 
 class Card extends Component {
 

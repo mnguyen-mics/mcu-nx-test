@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Row, Col, Tag, Icon, Tooltip, Button, Input, Menu, Dropdown, AutoComplete } from 'antd';
+import { Row, Col, Tag, Icon, Tooltip, Button, Input, AutoComplete } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 
@@ -82,7 +81,6 @@ class LabelListView extends Component {
   }
 
   handleClick = (e) => {
-    console.log(this.inputElement);
     this.inputElement.focus(e);
   };
 
@@ -130,7 +128,7 @@ class LabelListView extends Component {
       return filter;
     });
 
-    const { inputVisible, inputValue } = this.state;
+    const { inputVisible } = this.state;
 
     const onClickCloseTag = (tag) => {
       return onClickOnClose(tag);
