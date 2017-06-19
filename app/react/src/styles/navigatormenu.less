@@ -1,0 +1,69 @@
+#mcs-main-layout {
+
+  .ant-layout-sider{
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
+    z-index: 2;
+  }
+
+  .ant-layout-sider-collapsed {
+    .nav-text {
+      display: none;
+    }
+    .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+      display: none;
+    }
+  }
+
+  .ant-menu-inline {
+    .ant-menu-sub {
+      .ant-menu-item {
+        padding-left: 73px !important;
+      }
+    }
+  }
+
+  .ant-layout-sider-trigger {
+    background: @border-color-base
+  }
+
+  .ant-menu-inline {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: ~'calc(100% - 120px - 48px)';
+    border: none;
+  }
+
+  .ant-menu {
+    .icon {
+      font-size: 26px;
+      min-width: 14px;
+      margin-right: 16px;
+    }  
+  }
+
+  .ant-menu-submenu-selected {
+    .ant-menu-submenu-title {
+      border-left: 5px solid @info-color;
+    }
+  }
+
+  .mcs-logo-placeholder {
+    display: flex;
+    min-height: 120px;
+
+    .mcs-logo {
+      display: flex;
+      align-items: center;
+      align-content: center;
+      margin: 10px;
+
+      img {
+        max-height: 50px;
+        max-width: 180px;
+      }
+
+    }
+    
+  }
+
+}

@@ -1,11 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, message } from 'antd';
-import { connect } from 'react-redux';
-import Link from 'react-router/lib/Link';
+import { compose } from 'recompose';
+import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
+import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import * as ActionbarActions from '../../../../state/Actionbar/actions';
 import { McsIcons } from '../../../../components/McsIcons';
 
 import ExportService from '../../../../services/ExportService';
@@ -15,11 +16,9 @@ import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
-import {
-  EMAIL_QUERY_SETTINGS,
+import { EMAIL_SEARCH_SETTINGS } from './constants';
 
-  deserializeQuery
-} from '../../RouteQuerySelector';
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
 
 const fetchExportData = (organisationId, filter) => {
 
@@ -78,35 +77,19 @@ class CampaignsEmailActionbar extends Component {
     };
   }
 
-  componentWillMount() {
-
-    const {
-      translations,
-      setBreadcrumb
-    } = this.props;
-
-    const breadcrumb = {
-      name: translations.EMAIL_CAMPAIGNS
-    };
-
-    setBreadcrumb(0, [breadcrumb]);
-
-  }
-
   handleRunExport() {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
       },
       translations,
-
     } = this.props;
 
-    const filter = deserializeQuery(this.props.query, EMAIL_QUERY_SETTINGS);
+    const filter = parseSearch(this.props.location.search, EMAIL_SEARCH_SETTINGS);
 
-    this.setState({
-      exportIsRunning: true
-    });
+    this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
 
     fetchExportData(organisationId, filter).then(data => {
@@ -128,16 +111,21 @@ class CampaignsEmailActionbar extends Component {
   render() {
 
     const {
-      activeWorkspace: {
-        workspaceId
-      }
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      translations
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
 
+    const breadcrumbPaths = [{ name: translations.EMAILS, url: `/v2/o/${organisationId}/campaigns/email` }];
+
     return (
-      <Actionbar>
-        <Link to={`/${workspaceId}/campaigns/email/edit`}>
+      <Actionbar path={breadcrumbPaths}>
+        <Link to={`/v2/o/${organisationId}/campaigns/email/edit`}>
           <Button type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
@@ -153,26 +141,14 @@ class CampaignsEmailActionbar extends Component {
 }
 
 CampaignsEmailActionbar.propTypes = {
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-  setBreadcrumb: PropTypes.func.isRequired
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  translations: state.translationsState.translations,
-  query: ownProps.router.location.query,
-  activeWorkspace: state.sessionState.activeWorkspace
-});
-
-const mapDispatchToProps = {
-  setBreadcrumb: ActionbarActions.setBreadcrumb
-};
-
-CampaignsEmailActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps
+CampaignsEmailActionbar = compose(
+  withTranslations,
+  withRouter
 )(CampaignsEmailActionbar);
 
 export default CampaignsEmailActionbar;

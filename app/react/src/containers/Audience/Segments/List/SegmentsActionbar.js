@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon, Button, message } from 'antd';
 import { connect } from 'react-redux';
-import Link from 'react-router/lib/Link';
+import { Menu, Dropdown, Icon, Button, message } from 'antd';
+import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
+import lodash from 'lodash';
 
+import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import * as ActionbarActions from '../../../../state/Actionbar/actions';
 
 import ExportService from '../../../../services/ExportService';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
@@ -15,11 +17,9 @@ import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
-import {
-  AUDIENCE_SEGMENTS_SETTINGS,
-
-  deserializeQuery
-} from '../../RouteQuerySelector';
+import { SEGMENTS_SEARCH_SETTINGS } from './constants';
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 const fetchExportData = (organisationId, datamartId, filter) => {
 
@@ -71,36 +71,51 @@ class SegmentsActionbar extends Component {
     this.state = { exportIsRunning: false };
   }
 
-  componentWillMount() {
-
+  getSearchSetting() {
     const {
-      translations,
-      setBreadcrumb
+      match: {
+        params: { organisationId }
+      },
+      defaultDatamart
     } = this.props;
 
-    const breadcrumb = {
-      name: translations.AUDIENCE_SEGMENTS
-    };
-
-    setBreadcrumb(0, [breadcrumb]);
+    return [
+      ...SEGMENTS_SEARCH_SETTINGS,
+      {
+        paramName: 'datamarts',
+        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
+        deserialize: query => {
+          if (query.datamarts) {
+            return query.datamarts.split(',').map((d) => parseInt(d, 0));
+          }
+          return [];
+        },
+        serialize: value => value.join(','),
+        isValid: query =>
+          query.datamarts &&
+          query.datamarts.split(',').length > 0 &&
+          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
+      }
+    ];
 
   }
 
   handleRunExport() {
     const {
-      activeWorkspace: {
-        organisationId,
-        datamartId
+      match: {
+        params: {
+          organisationId
+        }
       },
       translations,
-
     } = this.props;
 
-    const filter = deserializeQuery(this.props.query, AUDIENCE_SEGMENTS_SETTINGS);
+    const filter = parseSearch(this.props.location.search, this.getSearchSetting());
 
     this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
 
+    const datamartId = filter.datamarts[0];
     fetchExportData(organisationId, datamartId, filter).then(data => {
       ExportService.exportAudienceSegments(organisationId, datamartId, data, filter, translations);
       this.setState({ exportIsRunning: false });
@@ -116,35 +131,42 @@ class SegmentsActionbar extends Component {
   render() {
 
     const {
-      activeWorkspace: {
-        organisationId
-      }
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      translations,
+      defaultDatamart
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
+    const datamartId = defaultDatamart(organisationId).id;
 
     const addMenu = (
       <Menu>
         <Menu.Item key="USER_LIST">
-          <Link to={`${organisationId}/datamart/segments/USER_LIST`}>
+          <Link to={`/o${organisationId}d${datamartId}/datamart/segments/USER_LIST`}>
             <FormattedMessage id="USER_LIST" />
           </Link>
         </Menu.Item>
         <Menu.Item key="USER_QUERY">
-          <Link to={`${organisationId}/datamart/segments/USER_QUERY`}>
+          <Link to={`/o${organisationId}d${datamartId}/datamart/segments/USER_QUERY`}>
             <FormattedMessage id="USER_QUERY" />
           </Link>
         </Menu.Item>
         <Menu.Item key="USER_LOOK_ALIKE">
-          <Link to={`${organisationId}/datamart/segments/USER_LOOK_ALIKE`}>
+          <Link to={`/o${organisationId}d${datamartId}/datamart/segments/USER_LOOK_ALIKE`}>
             <FormattedMessage id="USER_LOOK_ALIKE" />
           </Link>
         </Menu.Item>
       </Menu>
     );
 
+    const breadcrumbPaths = [{ name: translations.AUDIENCE_SEGMENTS, url: `/v2/o/${organisationId}/audience/segments` }];
+
     return (
-      <Actionbar {...this.props}>
+      <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button type="primary">
             <Icon type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
@@ -161,26 +183,23 @@ class SegmentsActionbar extends Component {
 }
 
 SegmentsActionbar.propTypes = {
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-  setBreadcrumb: PropTypes.func.isRequired
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  defaultDatamart: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations
+const mapStateToProps = state => ({
+  defaultDatamart: getDefaultDatamart(state)
 });
 
-const mapDispatchToProps = {
-  setBreadcrumb: ActionbarActions.setBreadcrumb
-};
-
 SegmentsActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
+)(SegmentsActionbar);
+
+SegmentsActionbar = compose(
+  withTranslations,
+  withRouter,
 )(SegmentsActionbar);
 
 export default SegmentsActionbar;

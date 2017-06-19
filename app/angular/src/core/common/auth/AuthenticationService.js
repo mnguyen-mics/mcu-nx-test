@@ -22,6 +22,7 @@ define(['./module'], function (module) {
 
       service.getAccessToken = function() {
         // get the access token in a cookie
+        $.cookie.raw = true;
         $log.debug("getAccessToken : ", $.cookie("access_token"));
         return $.cookie("access_token");
       };
@@ -41,6 +42,7 @@ define(['./module'], function (module) {
       };
 
       service.hasAccessToken = function() {
+        $.cookie.raw = true;
         var accessToken = $.cookie("access_token");
         if (accessToken) {
           Restangular.setDefaultHeaders({Authorization: accessToken});
@@ -62,6 +64,7 @@ define(['./module'], function (module) {
       service.getRefreshToken = function() {
         // get the refresh token in a cookie
         $log.debug("getRefreshToken : ", $.cookie("refresh_token"));
+        $.cookie.raw = true;
         return $.cookie("refresh_token");
       };
 
@@ -72,6 +75,7 @@ define(['./module'], function (module) {
       };
 
       service.hasRefreshToken = function() {
+        $.cookie.raw = true;
         var refreshToken = $.cookie("refresh_token");
         return !!refreshToken;
       };
@@ -120,7 +124,9 @@ define(['./module'], function (module) {
         return result;
       };
 
-
+      service.setRestangularAuthHeader = function() {
+        Restangular.setDefaultHeaders({ Authorization: this.getAccessToken() });
+      };
 
       /* returns a promise on access token creation */
       service.createAccessToken = function(email, password) {

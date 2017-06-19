@@ -1,35 +1,19 @@
-import { CALL_API } from '../../middleware/apiRequest';
+import { createAction } from '../../utils/ReduxHelper';
 
 import {
-  LOGIN_REFRESH_TOKEN_REQUEST,
-  LOGIN_REFRESH_TOKEN_REQUEST_FAILURE,
-  LOGIN_REFRESH_TOKEN_REQUEST_SUCCESS,
-  LOGIN_RESET
+  LOG_IN,
+  LOG_OUT
 } from '../action-types';
 
-const refreshToken = (credentials) => {
-  return (dispatch) => {
-    return dispatch({
-      [CALL_API]: {
-        method: 'post',
-        endpoint: 'authentication/refresh_tokens',
-        body: credentials,
-        authenticated: false,
-        types: [LOGIN_REFRESH_TOKEN_REQUEST, LOGIN_REFRESH_TOKEN_REQUEST_FAILURE, LOGIN_REFRESH_TOKEN_REQUEST_SUCCESS]
-      }
-    });
-  };
+const logIn = {
+  request: createAction(LOG_IN.REQUEST, undefined, (_, meta) => meta),
+  success: createAction(LOG_IN.SUCCESS),
+  failure: createAction(LOG_IN.FAILURE)
 };
 
-const resetLogin = () => {
-  return dispatch => {
-    return dispatch({
-      type: LOGIN_RESET
-    });
-  };
-};
+const logOut = createAction(LOG_OUT, undefined, (_, meta) => meta);
 
 export {
-  refreshToken,
-  resetLogin
+  logIn,
+  logOut
 };

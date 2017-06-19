@@ -30,26 +30,27 @@ define(['./module'], function (module) {
           templateUrl: 'angular/src/core/campaigns/external/edit-ad-group.html',
           data: {navbar: 'angular/src/core/layout/header/navbar/empty-navbar/empty-navbar.html'}
         })
-        .state('campaigns/display', {
-          url: '/{organisation_id}/campaigns/display',
-          templateUrl: 'angular/src/core/campaigns/list-display-campaigns.html',
-          data: {
-            sidebar: {
-              templateUrl : 'angular/src/core/campaigns/campaigns-sidebar.html',
-              selected: 'display_campaigns'
-            }
-          }
-        })
-        .state('campaigns/email', {
-          url: '/{organisation_id}/campaigns/email',
-          templateUrl: 'angular/src/core/campaigns/list-email-campaigns.html',
-          data: {
-            sidebar: {
-              templateUrl : 'angular/src/core/campaigns/campaigns-sidebar.html',
-              selected: 'email_campaigns'
-            }
-          }
-        });
+        // .state('campaigns/display', {
+        //   url: '/{organisation_id}/campaigns/display',
+        //   templateUrl: 'angular/src/core/campaigns/list-display-campaigns.html',
+        //   data: {
+        //     sidebar: {
+        //       templateUrl : 'angular/src/core/campaigns/campaigns-sidebar.html',
+        //       selected: 'display_campaigns'
+        //     }
+        //   }
+        // })
+        // .state('campaigns/email', {
+        //   url: '/{organisation_id}/campaigns/email',
+        //   templateUrl: 'angular/src/core/campaigns/list-email-campaigns.html',
+        //   data: {
+        //     sidebar: {
+        //       templateUrl : 'angular/src/core/campaigns/campaigns-sidebar.html',
+        //       selected: 'email_campaigns'
+        //     }
+        //   }
+        // })
+        ;
     }
   ]);
 });

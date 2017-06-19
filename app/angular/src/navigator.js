@@ -59,54 +59,54 @@ define(['navigator-setup', 'angularAMD', 'lodash', 'async', 'jquery', 'plupload'
     navigator.config(["$stateProvider", "$logProvider", "$urlRouterProvider",
       function ($stateProvider, $logProvider, $urlRouterProvider) {
 
-        $stateProvider
-          .state('404', {
-            template: '<div>404 Not Found</div>'
-          })
-          .state('login', {
-            url: '/login',
-            templateUrl: 'angular/src/core/login/main.html',
-            publicUrl: true
-          })
-          .state('logout', {
-            url: '/logout',
-            templateUrl: 'angular/src/core/login/logout.html',
-            publicUrl: true
-          })
-          .state('remember-me', {
-            url: '/remember-me',
-            templateUrl: 'angular/src/core/login/remember-me.html',
-            publicUrl: true
-          })
-          .state('init-session/withOrganisation', {
-            url: '/init-session/:organisationId',
-            templateUrl: 'angular/src/core/login/init-session.html',
-            publicUrl: true
-          })
-          .state('init-session/withoutOrganisation', {
-            url: '/init-session',
-            templateUrl: 'angular/src/core/login/init-session.html',
-            publicUrl: true
-          });
+        // $stateProvider
+          // .state('404', {
+          //   template: '<div>404 Not Found</div>'
+          // })
+          // .state('login', {
+          //   url: '/login',
+          //   templateUrl: 'angular/src/core/login/main.html',
+          //   publicUrl: true
+          // })
+          // .state('logout', {
+          //   url: '/logout',
+          //   templateUrl: 'angular/src/core/login/logout.html',
+          //   publicUrl: true
+          // })
+          // .state('remember-me', {
+          //   url: '/remember-me',
+          //   templateUrl: 'angular/src/core/login/remember-me.html',
+          //   publicUrl: true
+          // })
+          // .state('init-session/withOrganisation', {
+          //   url: '/init-session/:organisationId',
+          //   templateUrl: 'angular/src/core/login/init-session.html',
+          //   publicUrl: true
+          // })
+          // .state('init-session/withoutOrganisation', {
+          //   url: '/init-session',
+          //   templateUrl: 'angular/src/core/login/init-session.html',
+          //   publicUrl: true
+          // });
 
 //        $urlRouterProvider.when('', '/init-session');
 //        $urlRouterProvider.when('/', '/init-session');
 
-        function handleRedirection($match, $stateParams) {
-          if (!$match.organisationId.match(/v2/)) {
-            var organisationId = $stateParams.organisation_id || $match.organisationId;
-            return '/' + organisationId + '/campaigns/display';
-          }
-        }
+        // function handleRedirection($match, $stateParams) {
+        //   if (!$match.organisationId.match(/v2/)) {
+        //     var organisationId = $stateParams.organisation_id || $match.organisationId;
+        //     return '/' + organisationId + '/campaigns/display';
+        //   }
+        // }
 
         $urlRouterProvider.when('/:organisationId/settings', '/:organisationId/settings/useraccount');
-        $urlRouterProvider.when('/:organisationId', handleRedirection);
-        $urlRouterProvider.when('/:organisationId/campaigns', '/:organisationId/campaigns/display');
+        // $urlRouterProvider.when('/:organisationId', handleRedirection);
+        // $urlRouterProvider.when('/:organisationId/campaigns', '/:organisationId/campaigns/display');
 
-        $urlRouterProvider.otherwise(function ($injector, $location) {
-          var state = $injector.get('$state');
-          state.go('404');
-        });
+        // $urlRouterProvider.otherwise(function ($injector, $location) {
+        //   var state = $injector.get('$state');
+        //   state.go('404');
+        // });
 
         $logProvider.debugEnabled(true);
 

@@ -1,71 +1,126 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
+import lodash from 'lodash';
 
 import { TableView } from '../../../../components/TableView';
-
 import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
 
+import { PARTITIONS_SEARCH_SETTINGS } from './constants';
 import {
-  AUDIENCE_PARTITIONS_SETTINGS,
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
-
-import {
-  getTableDataSource
- } from '../../../../state/Audience/Partitions/selectors';
+import { getTableDataSource } from '../../../../state/Audience/Partitions/selectors';
+import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class AudiencePartitionsTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archivePartition = this.archivePartition.bind(this);
     this.editPartition = this.editPartition.bind(this);
   }
 
+  getSearchSetting(organisationId) {
+    const { defaultDatamart } = this.props;
+
+    return [
+      ...PARTITIONS_SEARCH_SETTINGS,
+      {
+        paramName: 'datamarts',
+        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
+        deserialize: query => {
+          if (query.datamarts) {
+            return query.datamarts.split(',').map((d) => parseInt(d, 0));
+          }
+          return [];
+        },
+        serialize: value => value.join(','),
+        isValid: query =>
+          query.datamarts &&
+          query.datamarts.split(',').length > 0 &&
+          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
+      }
+    ];
+  }
+
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId,
-        datamartId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
       loadAudiencePartitionsDataSource
     } = this.props;
 
-    const filter = deserializeQuery(query, AUDIENCE_PARTITIONS_SETTINGS);
-    loadAudiencePartitionsDataSource(organisationId, datamartId, filter);
+    if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, this.getSearchSetting(organisationId)),
+        state: { reloadDataSource: true }
+      });
+    } else {
+      const filter = parseSearch(search, this.getSearchSetting(organisationId));
+      const datamartId = filter.datamarts[0];
+      loadAudiencePartitionsDataSource(organisationId, datamartId, filter, true);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       loadAudiencePartitionsDataSource
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId,
-        datamartId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch,
+        state
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, AUDIENCE_PARTITIONS_SETTINGS);
-      loadAudiencePartitionsDataSource(organisationId, datamartId, filter);
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, this.getSearchSetting(nextOrganisationId)),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
+        });
+      } else {
+        const filter = parseSearch(nextSearch, this.getSearchSetting(nextOrganisationId));
+        const datamartId = filter.datamarts[0];
+        loadAudiencePartitionsDataSource(nextOrganisationId, datamartId, filter, checkEmptyDataSource);
+      }
     }
   }
 
@@ -73,24 +128,35 @@ class AudiencePartitionsTable extends Component {
     this.props.resetAudiencePartitionsTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      match: {
+        params: { organisationId }
+      },
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, AUDIENCE_PARTITIONS_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, this.getSearchSetting(organisationId))
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       translations,
       isFetchingAudiencePartitions,
@@ -98,12 +164,12 @@ class AudiencePartitionsTable extends Component {
       totalAudiencePartitions
     } = this.props;
 
-    const filter = deserializeQuery(query, AUDIENCE_PARTITIONS_SETTINGS);
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
 
     const searchOptions = {
       isEnabled: true,
       placeholder: translations.SEARCH_AUDIENCE_PARTITIONS,
-      onSearch: value => this.updateQueryParams({
+      onSearch: value => this.updateLocationSearch({
         keywords: value
       }),
       defaultValue: filter.keywords
@@ -114,10 +180,10 @@ class AudiencePartitionsTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAudiencePartitions,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -126,7 +192,7 @@ class AudiencePartitionsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/datamart/partitions/${record.type}/${record.id}/report`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/o${organisationId}d${record.datamart_id}/datamart/partitions/${record.type}/${record.id}/report`}>{text}</Link>
       },
       {
         translationKey: 'TYPE',
@@ -179,30 +245,35 @@ class AudiencePartitionsTable extends Component {
 
   editPartition(partition) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    const editUrl = `/${workspaceId}/datamart/partitions//${partition.id}`;
+    const editUrl = `/o${organisationId}d${partition.datamart_id}/datamart/partitions//${partition.id}`;
 
-    router.push(editUrl);
+    history.push(editUrl);
   }
 
   archivePartition(partition) {
     const {
-      activeWorkspace: {
-        organisationId,
-        datamartId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveAudiencePartition,
       loadAudiencePartitionsDataSource,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, AUDIENCE_PARTITIONS_SETTINGS);
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
 
     Modal.confirm({
       title: translations.PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -212,6 +283,7 @@ class AudiencePartitionsTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveAudiencePartition(partition.id).then(() => {
+          const datamartId = filter.datamarts[0];
           loadAudiencePartitionsDataSource(organisationId, datamartId, filter);
         });
       },
@@ -226,28 +298,29 @@ AudiencePartitionsTable.defaultProps = {
 };
 
 AudiencePartitionsTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   isFetchingAudiencePartitions: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalAudiencePartitions: PropTypes.number.isRequired,
+
+  defaultDatamart: PropTypes.func.isRequired,
 
   loadAudiencePartitionsDataSource: PropTypes.func.isRequired,
   archiveAudiencePartition: PropTypes.func.isRequired,
   resetAudiencePartitionsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = state => ({
+  translations: state.translations,
 
   isFetchingAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.total,
+  defaultDatamart: getDefaultDatamart(state)
 });
 
 const mapDispatchToProps = {
@@ -256,7 +329,11 @@ const mapDispatchToProps = {
   resetAudiencePartitionsTable: AudiencePartitionsActions.resetAudiencePartitionsTable
 };
 
-export default connect(
+AudiencePartitionsTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(AudiencePartitionsTable);
+
+AudiencePartitionsTable = withRouter(AudiencePartitionsTable);
+
+export default AudiencePartitionsTable;

@@ -1,41 +1,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Button } from 'antd';
-import { connect } from 'react-redux';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import * as ActionbarActions from '../../../../state/Actionbar/actions';
+import { withTranslations } from '../../../Helpers';
 
 class AssetsActionbar extends Component {
-
-  componentWillMount() {
-
-    const {
-      translations,
-      setBreadcrumb
-    } = this.props;
-
-    const breadcrumb = {
-      name: translations.ASSETS
-    };
-
-    setBreadcrumb(0, [breadcrumb]);
-
-  }
 
   render() {
 
     const {
-      activeWorkspace: {
-        workspaceId
-      }
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      translations
     } = this.props;
 
+    const breadcrumbPaths = [{ name: translations.ASSETS, url: `/v2/o/${organisationId}/library/assets` }];
+
     return (
-      <Actionbar {...this.props}>
-        <Link to={`/${workspaceId}/library/keywordslists/new`}>
+      <Actionbar path={breadcrumbPaths}>
+        <Link to={`/${organisationId}/library/keywordslists/new`}>
           <Button type="primary">
             <Icon type="plus" /> <FormattedMessage id="NEW_ASSET" />
           </Button>
@@ -48,23 +38,13 @@ class AssetsActionbar extends Component {
 }
 
 AssetsActionbar.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  setBreadcrumb: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = state => ({
-  translations: state.translationsState.translations,
-  activeWorkspace: state.sessionState.activeWorkspace
-});
-
-const mapDispatchToProps = {
-  setBreadcrumb: ActionbarActions.setBreadcrumb
-};
-
-AssetsActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps
+AssetsActionbar = compose(
+  withTranslations,
+  withRouter,
 )(AssetsActionbar);
 
 export default AssetsActionbar;

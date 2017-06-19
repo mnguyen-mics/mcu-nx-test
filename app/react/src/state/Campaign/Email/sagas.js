@@ -1,5 +1,5 @@
 import { takeLatest } from 'redux-saga';
-import { call, fork, put, select } from 'redux-saga/effects';
+import { call, fork, put } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -7,14 +7,9 @@ import {
   fetchCampaignEmail,
   fetchCampaignEmailDeliveryReport,
   updateCampaignEmail,
-  archiveCampaignEmail,
   fetchAllEmailBlast,
   fetchAllEmailBlastPerformance
 } from './actions';
-
-import {
-  getWorkspaceOrganisationId
-} from '../../Session/selectors';
 
 import CampaignService from '../../../services/CampaignService';
 import ReportService from '../../../services/ReportService';
@@ -24,9 +19,7 @@ import {
     CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
     CAMPAIGN_EMAIL_ARCHIVE,
     CAMPAIGN_EMAIL_UPDATE,
-    CAMPAIGN_EMAIL_LOAD_ALL,
-    EMAIL_BLAST_FETCH_ALL,
-    EMAIL_BLAST_FETCH_PERFORMANCE
+    CAMPAIGN_EMAIL_LOAD_ALL
 } from '../../action-types';
 
 function* loadCampaignEmail({ payload }) {
@@ -50,19 +43,18 @@ function* loadDeliveryReport({ payload }) {
   try {
 
     const {
+      organisationId,
       campaignId,
       filter
     } = payload;
 
-    if (!(campaignId || filter)) throw new Error('Payload is invalid');
+    if (!(organisationId || campaignId || filter)) throw new Error('Payload is invalid');
 
     const startDate = filter.from;
     const endDate = filter.to;
     const dimension = 'day';
 
-    const currentOrganisationId = yield select(getWorkspaceOrganisationId);
-
-    const response = yield call(ReportService.getSingleEmailDeliveryReport, currentOrganisationId, campaignId, startDate, endDate, dimension);
+    const response = yield call(ReportService.getSingleEmailDeliveryReport, organisationId, campaignId, startDate, endDate, dimension);
     yield put(fetchCampaignEmailDeliveryReport.success(response));
   } catch (error) {
     log.error(error);
@@ -110,19 +102,18 @@ function* loadAllEmailBlastPErformance({ payload }) {
   try {
 
     const {
+      organisationId,
       campaignId,
       filter
     } = payload;
 
-    if (!(campaignId || filter)) throw new Error('Payload is invalid');
+    if (!(organisationId || campaignId || filter)) throw new Error('Payload is invalid');
 
     const startDate = filter.from;
     const endDate = filter.to;
     const dimension = 'blast_id';
 
-    const currentOrganisationId = yield select(getWorkspaceOrganisationId);
-
-    const response = yield call(ReportService.getAllEmailBlastPerformance, currentOrganisationId, campaignId, startDate, endDate, dimension);
+    const response = yield call(ReportService.getAllEmailBlastPerformance, organisationId, campaignId, startDate, endDate, dimension);
     yield put(fetchAllEmailBlastPerformance.success(response));
   } catch (error) {
     log.error(error);

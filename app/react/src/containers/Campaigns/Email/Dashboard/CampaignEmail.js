@@ -1,101 +1,125 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Layout } from 'antd';
+import { withRouter } from 'react-router-dom';
 
-import { ScrollComponent } from '../../../../components/ScrollComponent';
-import CampaignEmailActionbar from './CampaignEmailActionbar';
 import CampaignEmailHeader from './CampaignEmailHeader';
 import CampaignEmailDashboard from './CampaignEmailDashboard';
 import CampaignEmailTable from './CampaignEmailTable';
 import * as CampaignEmailActions from '../../../../state/Campaign/Email/actions';
 
-import {
-  CAMPAIGN_EMAIL_QUERY_SETTINGS
-} from '../../RouteQuerySelector';
+import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from './constants';
 
 import {
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../../../services/RouteQuerySelectorService';
-
-const { Content } = Layout;
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
 class CampaignEmail extends Component {
 
-  constructor(props) {
-    super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
-  }
-
   componentDidMount() {
     const {
-      params: {
-        campaignId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
+      match: {
+        params: {
+          organisationId,
+          campaignId
+        }
+      },
       loadCampaignEmailAndDeliveryReport,
       fetchAllEmailBlast,
       fetchAllEmailBlastPerformance
     } = this.props;
 
-    const filter = deserializeQuery(query, CAMPAIGN_EMAIL_QUERY_SETTINGS);
+    if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)
+      });
+    } else {
+      const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+      fetchAllEmailBlast(campaignId);
+      fetchAllEmailBlastPerformance(campaignId, filter);
+      loadCampaignEmailAndDeliveryReport(organisationId, campaignId, filter);
+    }
+  }
 
-    fetchAllEmailBlast(campaignId);
-    fetchAllEmailBlastPerformance(campaignId, filter);
-    loadCampaignEmailAndDeliveryReport(campaignId, filter);
+  componentWillReceiveProps(nextProps) {
+    const {
+      location: {
+        search
+      },
+      match: {
+        params: {
+          campaignId
+        }
+      },
+      history,
+      loadCampaignEmailAndDeliveryReport,
+      fetchAllEmailBlast,
+      fetchAllEmailBlastPerformance
+    } = this.props;
+
+    const {
+      location: {
+        pathname: nextPathname,
+        search: nextSearch
+      },
+      match: {
+        params: {
+          campaignId: nextCampaignId,
+          organisationId: nextOrganisationId
+        }
+      }
+    } = nextProps;
+
+
+    if (!compareSearchs(search, nextSearch) || campaignId !== nextCampaignId) {
+      if (!isSearchValid(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)
+        });
+      } else {
+        const filter = parseSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+        fetchAllEmailBlast(nextCampaignId);
+        fetchAllEmailBlastPerformance(nextCampaignId, filter);
+        loadCampaignEmailAndDeliveryReport(nextOrganisationId, nextCampaignId, filter);
+      }
+    }
   }
 
   componentWillUnmount() {
     this.props.resetCampaignEmail();
   }
 
-  updateQueryParams(params) {
-    const {
-      router,
-      query: currentQuery
-    } = this.props;
-
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, CAMPAIGN_EMAIL_QUERY_SETTINGS)
-    });
-  }
-
   render() {
     return (
-      <Layout>
-        <CampaignEmailActionbar {...this.props} />
-        <Content>
-          <ScrollComponent>
-            <CampaignEmailHeader />
-            <CampaignEmailDashboard {...this.props} />
-            <CampaignEmailTable />
-          </ScrollComponent>
-        </Content>
-      </Layout>
+      <div>
+        <CampaignEmailHeader />
+        <CampaignEmailDashboard />
+        <CampaignEmailTable />
+      </div>
     );
   }
 
 }
 
 CampaignEmail.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  params: PropTypes.shape({
-    campaignId: PropTypes.string
-  }).isRequired,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   loadCampaignEmailAndDeliveryReport: PropTypes.func.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
   fetchAllEmailBlastPerformance: PropTypes.func.isRequired,
   resetCampaignEmail: PropTypes.func.isRequired
 };
-
-const mapStateToProps = (state, ownProps) => ({
-  params: ownProps.router.params,
-  query: ownProps.router.location.query
-});
 
 const mapDispatchToProps = {
   fetchAllEmailBlast: CampaignEmailActions.fetchAllEmailBlast.request,
@@ -105,8 +129,10 @@ const mapDispatchToProps = {
 };
 
 CampaignEmail = connect(
-  mapStateToProps,
+  () => ({}),
   mapDispatchToProps
 )(CampaignEmail);
+
+CampaignEmail = withRouter(CampaignEmail);
 
 export default CampaignEmail;

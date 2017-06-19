@@ -14,7 +14,7 @@ define(['./module'], function (module) {
        */
 
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/emails');
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/email');
 
 
         // Pagination

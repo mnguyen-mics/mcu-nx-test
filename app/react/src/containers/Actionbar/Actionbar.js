@@ -7,7 +7,7 @@ class Actionbar extends Component {
 
     return (
       <div className="mcs-actionbar-wrapper mcs-actionbar" >
-        <BreadcrumbBar className="mcs-actionbar-breadcrumb" />
+        <BreadcrumbBar className="mcs-actionbar-breadcrumb" {...this.props} />
         <div className="mcs-actionbar-button-wrapper">
           {this.props.children}
         </div>

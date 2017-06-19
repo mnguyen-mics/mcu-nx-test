@@ -1,43 +1,37 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'antd';
 import { connect } from 'react-redux';
-import Link from 'react-router/lib/Link';
+import { Button } from 'antd';
+import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 
-import { McsIcons } from '../../../components/McsIcons';
+import { withTranslations } from '../../Helpers';
 import { Actionbar } from '../../Actionbar';
-
-import * as ActionbarActions from '../../../state/Actionbar/actions';
+import { McsIcons } from '../../../components/McsIcons';
+import { getDefaultDatamart } from '../../../state/Session/selectors';
 
 class ListActionbar extends Component {
-
-  componentWillMount() {
-
-    const {
-      translations,
-      setBreadcrumb
-    } = this.props;
-
-    const breadcrumb = {
-      name: translations.AUTOMATIONS_LIST
-    };
-
-    setBreadcrumb(0, [breadcrumb]);
-
-  }
 
   render() {
 
     const {
-      activeWorkspace: {
-        workspaceId
-      }
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      translations,
+      defaultDatamart
     } = this.props;
 
+    const breadcrumbPaths = [{ name: translations.AUTOMATIONS_LIST, url: `/v2/o/${organisationId}/automations` }];
+
+    const datamartId = defaultDatamart(organisationId).id;
+
     return (
-      <Actionbar {...this.props}>
-        <Link to={`/${workspaceId}/library/scenarios/`}>
+      <Actionbar path={breadcrumbPaths}>
+        <Link to={`/o${organisationId}d${datamartId}/library/scenarios/`}>
           <Button type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
           </Button>
@@ -50,23 +44,22 @@ class ListActionbar extends Component {
 }
 
 ListActionbar.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  setBreadcrumb: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  defaultDatamart: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  translations: state.translationsState.translations,
-  activeWorkspace: state.sessionState.activeWorkspace
+  defaultDatamart: getDefaultDatamart(state)
 });
 
-const mapDispatchToProps = {
-  setBreadcrumb: ActionbarActions.setBreadcrumb
-};
-
 ListActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
+)(ListActionbar);
+
+ListActionbar = compose(
+  withTranslations,
+  withRouter,
 )(ListActionbar);
 
 export default ListActionbar;

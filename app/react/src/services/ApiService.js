@@ -7,9 +7,10 @@ const LOCAL_URL = '/';
 const API_URL = `${MCS_CONSTANTS.API_URL}/v1/`;
 const ADMIN_API_URL = `${MCS_CONSTANTS.ADMIN_API_URL}/v1/`;
 
-const request = (method, endpoint, params = {}, headers, body, authenticated = true, options = {}) => {
+const request = (method, endpoint, params, headers, body, authenticated = true, options = {}) => {
 
   const paramsToQueryString = (paramsArg) => {
+    if (!paramsArg) return '';
     const paramsToArray = Object.keys(paramsArg);
     const str = paramsToArray.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`).join('&');
     return str.length ? `?${str}` : '';
@@ -18,19 +19,19 @@ const request = (method, endpoint, params = {}, headers, body, authenticated = t
   let url = options.adminApi ? ADMIN_API_URL : options.localUrl ? LOCAL_URL : API_URL;
   url = `${url}${endpoint}${paramsToQueryString(params)}`;
 
-  const token = AuthService.getToken();
+  const token = AuthService.getAccessToken();
 
   const config = {
     method
   };
 
-  if (authenticated) {
+  if (!options.localUrl && authenticated) {
     if (token) {
       config.headers = {
         Authorization: token
       };
     } else {
-      throw new Error('Error. Authenticated without token');
+      throw new Error(`Error. Authenticated without token, endpoint:${endpoint}`);
     }
   }
 
@@ -71,22 +72,22 @@ const request = (method, endpoint, params = {}, headers, body, authenticated = t
 };
 
 const getRequest = (endpoint, params = {}, headers = {}, options = {}) => {
-  const authenticated = options.authenticated || true;
+  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
   return request('get', endpoint, params, headers, null, authenticated, options);
 };
 
 const postRequest = (endpoint, body, params = {}, headers = {}, options = {}) => {
-  const authenticated = options.authenticated || true;
+  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
   return request('post', endpoint, params, headers, body, authenticated, options);
 };
 
 const putRequest = (endpoint, body, params = {}, headers, options = {}) => {
-  const authenticated = options.authenticated || true;
+  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
   return request('put', endpoint, params, headers, body, authenticated, options);
 };
 
 const deleteRequest = (endpoint, params = {}, headers = {}, options = {}) => {
-  const authenticated = options.authenticated || true;
+  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
   return request('delete', endpoint, params, headers, null, authenticated, options);
 };
 

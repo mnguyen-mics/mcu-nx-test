@@ -14,7 +14,7 @@ function isLocalStorageSupported() {
   try {
     localStorage.setItem(LOCAL_STORAGE_TEST, true);
     localStorage.removeItem(LOCAL_STORAGE_TEST);
-    return true;
+    return false;
   } catch (e) {
     return false;
   }
@@ -54,7 +54,7 @@ function setItemLocalStorage(property) {
 function setItemCookie(property) {
 
   Object.keys(property).forEach(key => {
-    localStorage.setItem(key, property[key]);
+    Cookies.set(key, property[key]);
   });
 
 }

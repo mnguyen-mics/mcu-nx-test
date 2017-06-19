@@ -6,7 +6,7 @@ const getVersion = () => {
   const options = {
     localUrl: true
   };
-  return ApiService.getRequest(endpoint, params, options);
+  return ApiService.getRequest(endpoint, params, null, options);
 };
 
 export default {

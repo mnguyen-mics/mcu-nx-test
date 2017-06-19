@@ -1,35 +1,35 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Button } from 'antd';
 
 import { Card } from '../../../../components/Card';
 import { TableViewLight } from '../../../../components/TableView';
 import { formatMetric } from '../../../../utils/MetricHelper';
 
-import {
-  getEmailBlastTableView
- } from '../../../../state/Campaign/Email/selectors';
-
+import { getEmailBlastTableView } from '../../../../state/Campaign/Email/selectors';
 
 class CampaignEmailTable extends Component {
 
   render() {
 
     const {
-      activeWorkspace: {
-        organisationId,
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
       translations,
-      isLoading,
-      dataset
+      isFetchingBlasts,
+      isFetchingBlastsStat,
+      dataSet
     } = this.props;
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
-      if (null) {
-        return (<i className="mcs-loading" />); // (<span>loading...</span>);
+      if (isFetchingBlastsStat) {
+        return (<i className="mcs-loading" />);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -114,15 +114,15 @@ class CampaignEmailTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    const buttons = (<Link to={`/${workspaceId}/campaigns/email/edit/`}><Button type="primary"><FormattedMessage id="NEW_EMAIL_BLAST" /></Button></Link>);
+    const buttons = (<Link to={`/${organisationId}/campaigns/email/edit/`}><Button type="primary"><FormattedMessage id="NEW_EMAIL_BLAST" /></Button></Link>);
 
     return (
       <Card title={translations.EMAIL_BLASTS} buttons={buttons}>
         <TableViewLight
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataset}
+          dataSource={dataSet}
           onChange={() => {}}
-          loading={isLoading}
+          loading={isFetchingBlasts}
         />
       </Card>);
   }
@@ -130,24 +130,24 @@ class CampaignEmailTable extends Component {
 }
 
 CampaignEmailTable.propTypes = {
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  dataset: PropTypes.arrayOf(PropTypes.object).isRequired,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  isFetchingBlasts: PropTypes.bool.isRequired,
+  isFetchingBlastsStat: PropTypes.bool.isRequired,
+  dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const mapStateToProps = state => ({
-  translations: state.translationsState.translations,
-  activeWorkspace: state.sessionState.activeWorkspace,
-  isLoading: state.campaignEmailSingle.emailBlastApi.isFetching,
-  dataset: getEmailBlastTableView(state)
+  translations: state.translations,
+  isFetchingBlasts: state.campaignEmailSingle.emailBlastApi.isFetching,
+  isFetchingBlastsStat: state.campaignEmailSingle.emailBlastPerformanceApi.isFetching,
+  dataSet: getEmailBlastTableView(state)
 });
 
-const mapDispatchToProps = {};
-
 CampaignEmailTable = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(CampaignEmailTable);
+
+CampaignEmailTable = withRouter(CampaignEmailTable);
 
 export default CampaignEmailTable;

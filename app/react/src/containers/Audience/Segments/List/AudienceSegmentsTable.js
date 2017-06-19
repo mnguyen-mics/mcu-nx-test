@@ -1,74 +1,128 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
+import lodash from 'lodash';
 
 import { TableView, EmptyTableView } from '../../../../components/TableView';
-
 import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
+import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
-  AUDIENCE_SEGMENTS_SETTINGS,
-
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
-
-import {
-  getTableDataSource
- } from '../../../../state/Audience/Segments/selectors';
+import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';
+import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class AudienceSegmentsTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveSegment = this.archiveSegment.bind(this);
     this.editSegment = this.editSegment.bind(this);
   }
 
+  getSearchSetting(organisationId) {
+    const { defaultDatamart } = this.props;
+
+    return [
+      ...SEGMENTS_SEARCH_SETTINGS,
+      {
+        paramName: 'datamarts',
+        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
+        deserialize: query => {
+          if (query.datamarts) {
+            return query.datamarts.split(',').map((d) => parseInt(d, 0));
+          }
+          return [];
+        },
+        serialize: value => value.join(','),
+        isValid: query =>
+          query.datamarts &&
+          query.datamarts.split(',').length > 0 &&
+          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
+      }
+    ];
+  }
+
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId,
-        datamartId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
       loadAudienceSegmentsDataSource
     } = this.props;
 
-    const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
-    loadAudienceSegmentsDataSource(organisationId, datamartId, filter, true);
+    if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, this.getSearchSetting(organisationId)),
+        state: { reloadDataSource: true }
+      });
+    } else {
+      const filter = parseSearch(search, this.getSearchSetting(organisationId));
+      const datamartId = filter.datamarts[0];
+      loadAudienceSegmentsDataSource(organisationId, datamartId, filter, true);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       loadAudienceSegmentsDataSource
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId,
-        datamartId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch,
+        state
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, AUDIENCE_SEGMENTS_SETTINGS);
-      loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, this.getSearchSetting(nextOrganisationId)),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
+        });
+      } else {
+        const filter = parseSearch(nextSearch, this.getSearchSetting(nextOrganisationId));
+        const datamartId = filter.datamarts[0];
+        loadAudienceSegmentsDataSource(nextOrganisationId, datamartId, filter, checkEmptyDataSource);
+      }
     }
   }
 
@@ -76,24 +130,35 @@ class AudienceSegmentsTable extends Component {
     this.props.resetAudienceSegmentsTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      match: {
+        params: { organisationId }
+      },
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, AUDIENCE_SEGMENTS_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, this.getSearchSetting(organisationId))
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       translations,
       isFetchingAudienceSegments,
@@ -103,12 +168,12 @@ class AudienceSegmentsTable extends Component {
       hasAudienceSegments
     } = this.props;
 
-    const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
 
     const searchOptions = {
       isEnabled: true,
       placeholder: translations.SEARCH_AUDIENCE_SEGMENTS,
-      onSearch: value => this.updateQueryParams({
+      onSearch: value => this.updateLocationSearch({
         keywords: value
       }),
       defaultValue: filter.keywords
@@ -116,7 +181,7 @@ class AudienceSegmentsTable extends Component {
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (values) => this.updateQueryParams({
+      onChange: (values) => this.updateLocationSearch({
         rangeType: values.rangeType,
         lookbackWindow: values.lookbackWindow,
         from: values.from,
@@ -138,10 +203,10 @@ class AudienceSegmentsTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAudienceSegments,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -176,14 +241,14 @@ class AudienceSegmentsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/o${organisationId}d${record.datamart_id}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
       },
       {
         translationKey: 'TECHNICAL_NAME',
         isVisibleByDefault: false,
         key: 'technical_name',
         isHiddable: true,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/o${organisationId}d${record.datamart_id}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
       },
       {
         translationKey: 'USER_POINTS',
@@ -251,7 +316,7 @@ class AudienceSegmentsTable extends Component {
         name: 'types',
         displayElement: (<div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>),
         menuItems: {
-          handleMenuClick: value => this.updateQueryParams({ types: value.types.map(item => item.value) }),
+          handleMenuClick: value => this.updateLocationSearch({ types: value.types.map(item => item.value) }),
           selectedItems: filter.types.map(type => ({ key: type, value: type })),
           items: typeItems
         }
@@ -279,30 +344,35 @@ class AudienceSegmentsTable extends Component {
 
   editSegment(segment) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    const editUrl = `/${workspaceId}/datamart/segments//${segment.id}`;
+    const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
 
-    router.push(editUrl);
+    history.push(editUrl);
   }
 
   archiveSegment(segment) {
     const {
-      activeWorkspace: {
-        organisationId,
-        datamartId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archiveAudienceSegment,
       loadAudienceSegmentsDataSource,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, AUDIENCE_SEGMENTS_SETTINGS);
+    const filter = parseSearch(search, this.getSearchSetting());
 
     Modal.confirm({
       title: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -312,6 +382,7 @@ class AudienceSegmentsTable extends Component {
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
         return archiveAudienceSegment(segment.id).then(() => {
+          const datamartId = filter.datamarts[0];
           loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
         });
       },
@@ -326,10 +397,10 @@ AudienceSegmentsTable.defaultProps = {
 };
 
 AudienceSegmentsTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   hasAudienceSegments: PropTypes.bool.isRequired,
   isFetchingAudienceSegments: PropTypes.bool.isRequired,
@@ -337,21 +408,22 @@ AudienceSegmentsTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalAudienceSegments: PropTypes.number.isRequired,
 
+  defaultDatamart: PropTypes.func.isRequired,
+
   loadAudienceSegmentsDataSource: PropTypes.func.isRequired,
   archiveAudienceSegment: PropTypes.func.isRequired,
   resetAudienceSegmentsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = state => ({
+  translations: state.translations,
 
   hasAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.hasItems,
   isFetchingAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.isFetching,
   isFetchingSegmentsStat: state.audienceSegmentsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.total,
+  defaultDatamart: getDefaultDatamart(state)
 });
 
 const mapDispatchToProps = {
@@ -360,7 +432,11 @@ const mapDispatchToProps = {
   resetAudienceSegmentsTable: AudienceSegmentsActions.resetAudienceSegmentsTable
 };
 
-export default connect(
+AudienceSegmentsTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(AudienceSegmentsTable);
+
+AudienceSegmentsTable = withRouter(AudienceSegmentsTable);
+
+export default AudienceSegmentsTable;

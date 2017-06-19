@@ -15,6 +15,9 @@ const DEFAULT_PAGINATION = {
   showSizeChanger: true
 };
 
+// TODO refactoring idea : extract filtering features (search input, date pircker, dropdowns, etc)
+// into an HOC that enhance the underlying table, eg withFilters(McsMainTable)
+
 class TableView extends Component {
 
   constructor(props) {

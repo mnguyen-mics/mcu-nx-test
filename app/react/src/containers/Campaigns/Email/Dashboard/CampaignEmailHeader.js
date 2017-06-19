@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { TitleAndStatusHeader } from '../../../../components/TitleAndStatusHeader';
@@ -37,11 +38,8 @@ const mapStateToProps = state => ({
   campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
 });
 
-const mapDispatchToProps = {};
-
 CampaignEmailHeader = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(CampaignEmailHeader);
 
 export default CampaignEmailHeader;

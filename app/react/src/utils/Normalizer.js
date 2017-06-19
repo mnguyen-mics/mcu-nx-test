@@ -17,7 +17,7 @@ export const normalizeArrayOfObject = (arr, key) => {
   if (!Array.isArray(arr)) throw new Error(`${arr} is not an array`);
   return arr.reduce((acc, object) => {
     const keyValue = object[key];
-    if (!keyValue) throw new Error(`Missing key ${key} for object ${JSON.stringify(object)}`);
+    if (!keyValue) return acc;
     return {
       ...acc,
       [keyValue]: object

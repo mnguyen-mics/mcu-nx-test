@@ -1,69 +1,95 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import lodash from 'lodash';
-import Link from 'react-router/lib/Link';
+import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
 import { TableView } from '../../../../components/TableView';
 
 import * as PlacementListsActions from '../../../../state/Library/PlacementLists/actions';
 
+import { PLACEMENTS_SEARCH_SETTINGS } from './constants';
 import {
-  PLACEMENT_LISTS_SETTINGS,
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearchs
+} from '../../../../utils/LocationSearchHelper';
 
-  updateQueryWithParams,
-  deserializeQuery
-} from '../../RouteQuerySelector';
-
-import {
-  getTableDataSource
- } from '../../../../state//Library/PlacementLists/selectors';
+import { getTableDataSource } from '../../../../state//Library/PlacementLists/selectors';
 
 class PlacementListsTable extends Component {
 
   constructor(props) {
     super(props);
-    this.updateQueryParams = this.updateQueryParams.bind(this);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archivePlacement = this.archivePlacement.bind(this);
     this.editPlacement = this.editPlacement.bind(this);
   }
 
   componentDidMount() {
     const {
-      activeWorkspace: {
-        organisationId
+      history,
+      location: {
+        search,
+        pathname
       },
-      query,
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
       fetchPlacementLists
     } = this.props;
 
-    const filter = deserializeQuery(query, PLACEMENT_LISTS_SETTINGS);
-    fetchPlacementLists(organisationId, filter);
+    if (!isSearchValid(search, PLACEMENTS_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, PLACEMENTS_SEARCH_SETTINGS)
+      });
+    } else {
+      const filter = parseSearch(search, PLACEMENTS_SEARCH_SETTINGS);
+      fetchPlacementLists(organisationId, filter);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      location: {
+        search
       },
-
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      history,
       fetchPlacementLists
     } = this.props;
 
     const {
-      query: nextQuery,
-      activeWorkspace: {
-        workspaceId: nextWorkspaceId,
-        organisationId
+      location: {
+        pathname: nextPathname,
+        search: nextSearch
       },
+      match: {
+        params: {
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
 
-    if (!lodash.isEqual(query, nextQuery) || workspaceId !== nextWorkspaceId) {
-      const filter = deserializeQuery(nextQuery, PLACEMENT_LISTS_SETTINGS);
-      fetchPlacementLists(organisationId, filter);
+    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+      if (!isSearchValid(nextSearch, PLACEMENTS_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, PLACEMENTS_SEARCH_SETTINGS)
+        });
+      } else {
+        const filter = parseSearch(nextSearch, PLACEMENTS_SEARCH_SETTINGS);
+        fetchPlacementLists(nextOrganisationId, filter);
+      }
     }
   }
 
@@ -71,40 +97,48 @@ class PlacementListsTable extends Component {
     this.props.resetPlacementListsTable();
   }
 
-  updateQueryParams(params) {
+  updateLocationSearch(params) {
     const {
-      router,
-      query: currentQuery
+      history,
+      location: {
+        search: currentSearch,
+        pathname
+      }
     } = this.props;
 
-    const location = router.getCurrentLocation();
-    router.replace({
-      pathname: location.pathname,
-      query: updateQueryWithParams(currentQuery, params, PLACEMENT_LISTS_SETTINGS)
-    });
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, PLACEMENTS_SEARCH_SETTINGS)
+    };
+
+    history.push(nextLocation);
   }
 
   render() {
     const {
-      query,
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       isFetchingAutomationList,
       dataSource,
       totalPlacements
     } = this.props;
 
-    const filter = deserializeQuery(query, PLACEMENT_LISTS_SETTINGS);
+    const filter = parseSearch(search, PLACEMENTS_SEARCH_SETTINGS);
 
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
-      onChange: (page) => this.updateQueryParams({
+      onChange: (page) => this.updateLocationSearch({
         currentPage: page
       }),
-      onShowSizeChange: (current, size) => this.updateQueryParams({
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
         pageSize: size
       })
     };
@@ -115,7 +149,7 @@ class PlacementListsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${workspaceId}/library/placementlists/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/library/placementlists/${record.id}`}>{text}</Link>
       }
     ];
 
@@ -151,27 +185,33 @@ class PlacementListsTable extends Component {
 
   editPlacement(placement) {
     const {
-      activeWorkspace: {
-        workspaceId
+      match: {
+        params: {
+          organisationId
+        }
       },
-      router
+      history
     } = this.props;
 
-    router.push(`/${workspaceId}/library/placementlists/${placement.id}`);
+    history.push(`/${organisationId}/library/placementlists/${placement.id}`);
   }
 
   archivePlacement(placement) {
     const {
-      activeWorkspace: {
-        organisationId
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
       },
       archivePlacementList,
       fetchPlacementLists,
-      translations,
-      query
+      translations
     } = this.props;
 
-    const filter = deserializeQuery(query, PLACEMENT_LISTS_SETTINGS);
+    const filter = parseSearch(search, PLACEMENTS_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -195,10 +235,10 @@ PlacementListsTable.defaultProps = {
 };
 
 PlacementListsTable.propTypes = {
-  router: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  query: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
   isFetchingAutomationList: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -209,10 +249,8 @@ PlacementListsTable.propTypes = {
   resetPlacementListsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  activeWorkspace: state.sessionState.activeWorkspace,
-  query: ownProps.router.location.query,
-  translations: state.translationsState.translations,
+const mapStateToProps = state => ({
+  translations: state.translations,
 
   isFetchingAutomationList: state.placementListTable.placementListsApi.isFetching,
   dataSource: getTableDataSource(state),
@@ -225,7 +263,11 @@ const mapDispatchToProps = {
   resetPlacementListsTable: PlacementListsActions.resetPlacementListsTable
 };
 
-export default connect(
+PlacementListsTable = connect(
   mapStateToProps,
   mapDispatchToProps
 )(PlacementListsTable);
+
+PlacementListsTable = withRouter(PlacementListsTable);
+
+export default PlacementListsTable;
