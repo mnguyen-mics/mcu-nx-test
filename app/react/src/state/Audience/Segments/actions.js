@@ -4,9 +4,14 @@ import {
   AUDIENCE_SEGMENTS_LOAD_ALL,
   AUDIENCE_SEGMENTS_LIST_FETCH,
   AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH,
-  AUDIENCE_SEGMENTS_TABLE_RESET
+  AUDIENCE_SEGMENTS_TABLE_RESET,
+  AUDIENCE_SEGMENT_SINGLE_LOAD_ALL,
+  AUDIENCE_SEGMENT_SINGLE_FETCH,
+  AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH,
+  AUDIENCE_SEGMENT_SINGLE_RESET
 } from '../../action-types';
 
+// ACTIONS FOR LIST
 const resetAudienceSegmentsTable = createAction(AUDIENCE_SEGMENTS_TABLE_RESET);
 
 const fetchAudienceSegmentList = {
@@ -23,9 +28,30 @@ const fetchAudienceSegmentsPerformanceReport = {
 
 const loadAudienceSegmentsDataSource = (organisationId, datamartId, filter, isInitialRender = false) => createAction(AUDIENCE_SEGMENTS_LOAD_ALL)({ organisationId, datamartId, filter, isInitialRender });
 
+// ACTIONS FOR DASHBOARD VIEW
+const resetAudienceSegmentSingle = createAction(AUDIENCE_SEGMENT_SINGLE_RESET);
+
+const fetchAudienceSegmentSingle = {
+  request: (organisationId, datamartId, filter = {}) => createAction(AUDIENCE_SEGMENT_SINGLE_FETCH.REQUEST)({ organisationId, datamartId, filter }),
+  success: (response) => createAction(AUDIENCE_SEGMENT_SINGLE_FETCH.SUCCESS)(response),
+  failure: (error) => createAction(AUDIENCE_SEGMENT_SINGLE_FETCH.FAILURE)(error)
+};
+
+const fetchAudienceSegmentSinglePerformanceReport = {
+  request: (organisationId, filter = {}) => createAction(AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH.REQUEST)({ organisationId, filter }),
+  success: (response) => createAction(AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH.SUCCESS)(response),
+  failure: (error) => createAction(AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH.FAILURE)(error)
+};
+
+const loadAudienceSegmentSingleDataSource = (segmentId, organisationId, filter, isInitialRender = false) => createAction(AUDIENCE_SEGMENT_SINGLE_LOAD_ALL)({ segmentId, organisationId, filter, isInitialRender });
+
 export {
   fetchAudienceSegmentList,
   fetchAudienceSegmentsPerformanceReport,
   loadAudienceSegmentsDataSource,
-  resetAudienceSegmentsTable
+  resetAudienceSegmentsTable,
+  resetAudienceSegmentSingle,
+  fetchAudienceSegmentSingle,
+  fetchAudienceSegmentSinglePerformanceReport,
+  loadAudienceSegmentSingleDataSource
 };

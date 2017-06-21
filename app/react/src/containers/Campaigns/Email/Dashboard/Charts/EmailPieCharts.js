@@ -146,10 +146,10 @@ class EmailPieCharts extends Component {
     return hasFetchedCampaignStat ? (
       <div>
         <Row>
-          <Col span={8}>
+          <Col span={7}>
             <PieChart identifier="pieDelivered1" dataset={generateData('delivered')} options={generateOptions(false, 'orange', 'DELIVERED', emailDelivered, emailSent)} />
           </Col>
-          <Col span={16}>
+          <Col span={17}>
             <Row>
               <Col span={12}>
                 <PieChart identifier="pieOpens1" dataset={generateData('opens')} options={generateOptions(true, 'blue', 'OPENS', emailOpened, emailSent)} />

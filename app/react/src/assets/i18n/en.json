@@ -95,6 +95,9 @@
   "EMPTY_GOALS": "There is no Goals created yet! Click on New to get started",
   "EMPTY_SEGMENTS": "There is no Segments created yet! Click on New to get started",
   "EMPTY_AUTOMATIONS": "There is no Automations created yet! Click on New to get started",
+  "EMPTY_PARTITIONS": "There is no Partitions created yet! Click on New to get started",
+  "EMPTY_CREATIVES_DISPLAY": "There is no Display Creatives created yet! Click on New to get started",
+  "EMPTY_CREATIVES_EMAIL": "There is no Email Creatives created yet! Click on New to get started",
 
   "TODAY": "Today",
   "YESTERDAY": "Yesterday",
@@ -177,5 +180,10 @@
   "NEW_EMAIL_TEMPLATE": "New Email Template",
 
   "ACTIVATE_CAMPAIGN": "Activate Campaign",
-  "PAUSE_CAMPAIGN": "Pause Campaign"
+  "PAUSE_CAMPAIGN": "Pause Campaign",
+  "ACTIVATE": "Activate",
+  "USERPOINTS": "Userpoints",
+  "OVERLAP": "Overlap",
+  "OVERVIEW": "Overview",
+  "ADDITION_DELETION": "Addition Deletion"
 }

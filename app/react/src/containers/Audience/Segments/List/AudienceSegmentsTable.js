@@ -241,14 +241,14 @@ class AudienceSegmentsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/o${organisationId}d${record.datamart_id}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'TECHNICAL_NAME',
         isVisibleByDefault: false,
         key: 'technical_name',
         isHiddable: true,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/o${organisationId}d${record.datamart_id}/datamart/segments/${record.type}/${record.id}/report`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'USER_POINTS',

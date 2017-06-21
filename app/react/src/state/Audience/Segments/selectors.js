@@ -5,6 +5,7 @@ import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 
 const getAudienceSegments = state => state.audienceSegmentsTable.audienceSegmentsApi.data;
 const getPerformanceReportView = state => state.audienceSegmentsTable.performanceReportApi.report_view;
+const getAudienceSegmentSinglePerformance = state => state.audienceSegmentsTable.performanceReportSingleApi.report_view;
 
 const getAudienceSegmentsById = createSelector(
   getAudienceSegments,
@@ -34,6 +35,12 @@ const getTableDataSource = createSelector(
   }
 );
 
+const getSinglePerfView = createSelector(
+  getAudienceSegmentSinglePerformance,
+  (array) => normalizeReportView(array)
+);
+
 export {
-  getTableDataSource
+  getTableDataSource,
+  getSinglePerfView
 };

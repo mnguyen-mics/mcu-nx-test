@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Button } from 'antd';
+import { Button } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
+import { McsIcons } from '../../../../components/McsIcons';
 import { withTranslations } from '../../../Helpers';
 
 class ListCreativesDisplay extends Component {
@@ -26,8 +27,8 @@ class ListCreativesDisplay extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/${organisationId}/creatives/display-ad/default-editor/create`}>
-          <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
+          <Button className="mcs-primary" type="primary">
+            <McsIcons type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
           </Button>
         </Link>
       </Actionbar>

@@ -5,7 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import lodash from 'lodash';
 
-import { TableView } from '../../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../../components/TableView';
 import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
 
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
@@ -161,7 +161,8 @@ class AudiencePartitionsTable extends Component {
       translations,
       isFetchingAudiencePartitions,
       dataSource,
-      totalAudiencePartitions
+      totalAudiencePartitions,
+      hasAudiencePartitions
     } = this.props;
 
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
@@ -232,14 +233,14 @@ class AudiencePartitionsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return hasAudiencePartitions ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingAudiencePartitions}
       onChange={() => {}}
       searchOptions={searchOptions}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView iconType="partitions" text="EMPTY_PARTITIONS" />);
 
   }
 
@@ -308,7 +309,7 @@ AudiencePartitionsTable.propTypes = {
   totalAudiencePartitions: PropTypes.number.isRequired,
 
   defaultDatamart: PropTypes.func.isRequired,
-
+  hasAudiencePartitions: PropTypes.bool.isRequired,
   loadAudiencePartitionsDataSource: PropTypes.func.isRequired,
   archiveAudiencePartition: PropTypes.func.isRequired,
   resetAudiencePartitionsTable: PropTypes.func.isRequired,
@@ -316,7 +317,7 @@ AudiencePartitionsTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
+  hasAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.hasItems,
   isFetchingAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.total,

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableView } from '../../../../components/TableView';
+import { TableView, EmptyTableView } from '../../../../components/TableView';
 
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 
@@ -50,7 +50,7 @@ class CreativeDisplayTable extends Component {
       });
     } else {
       const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-      fetchCreativeDisplay(organisationId, filter);
+      fetchCreativeDisplay(organisationId, filter, true);
     }
   }
 
@@ -126,7 +126,8 @@ class CreativeDisplayTable extends Component {
       },
       isFetchingCreativeDisplay,
       dataSource,
-      totalCreativeDisplay
+      totalCreativeDisplay,
+      hasCreativeDisplay
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -192,13 +193,13 @@ class CreativeDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
+    return hasCreativeDisplay ? (<TableView
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingCreativeDisplay}
       onChange={() => {}}
       pagination={pagination}
-    />);
+    />) : (<EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />);
 
   }
 
@@ -262,7 +263,7 @@ CreativeDisplayTable.propTypes = {
   isFetchingCreativeDisplay: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalCreativeDisplay: PropTypes.number.isRequired,
-
+  hasCreativeDisplay: PropTypes.bool.isRequired,
   fetchCreativeDisplay: PropTypes.func.isRequired,
   archiveCreativeDisplay: PropTypes.func.isRequired,
   resetCreativeDisplayTable: PropTypes.func.isRequired,
@@ -270,7 +271,7 @@ CreativeDisplayTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
+  hasCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.hasItems,
   isFetchingCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.isFetching,
   dataSource: getTableDataSource(state),
   totalCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.total,

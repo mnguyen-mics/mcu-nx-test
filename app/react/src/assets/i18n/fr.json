@@ -98,6 +98,10 @@
   "EMPTY_GOALS": "Il n'y a aucun Objectif créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_SEGMENTS": "Il n'y a aucun Segments créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_AUTOMATIONS": "Il n'y a aucune Automations créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_PARTITIONS": "Il n'y a aucune Partitions créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_CREATIVES_DISPLAY": "Il n'y a aucune Créa Display créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_CREATIVES_EMAIL": "Il n'y a aucune Créa Email créée! Clickez sur Nouveau pour commencer.",
+
   "EXPORT": "Export",
   "EXPORT_IN_PROGRESS": "Export en cours...",
   "CAMPAIGNS_DISPAY_EXPORT_TITLE": "Campaigns Display Export",
@@ -166,5 +170,11 @@
   "NEW_DISPLAY_AD": "Nouveau Display Ad",
 
   "ACTIVATE_CAMPAIGN": "Activer la Campagne",
-  "PAUSE_CAMPAIGN": "Arrêter la Campagne"
+  "PAUSE_CAMPAIGN": "Arrêter la Campagne",
+  "ACTIVATE": "Activer",
+  "USERPOINTS": "Userpoints",
+  "OVERLAP": "Recouvrement",
+  "OVERVIEW": "Aperçu",
+  "ADDITION_DELETION": "Ajout Suppression"
+  
 }

@@ -3,8 +3,21 @@ import Plottable from 'plottable';
 
 class LegendChart extends Component {
 
+  constructor(props) {
+    super(props);
+    this.legend = null;
+  }
+
   componentDidMount() {
     this.renderLegend(this.svg);
+  }
+
+  componentWillUnmount() {
+    this.legend.destroy();
+  }
+
+  componentWillReceiveProps() {
+    this.legend.redraw();
   }
 
   render() {
@@ -39,7 +52,7 @@ class LegendChart extends Component {
     legend.maxEntriesPerRow(7);
     legend.addClass('mcs-legend-font');
     legend.renderTo(`#${identifier}`);
-
+    this.legend = legend;
     global.window.addEventListener('resize', () => {
       legend.redraw();
     });

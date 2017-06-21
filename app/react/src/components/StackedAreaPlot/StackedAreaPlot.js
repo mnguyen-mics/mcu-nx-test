@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Plottable from 'plottable';
-import { ChartTooltip } from '../ChartTooltip';
+import { ChartTooltip, BasisTooltip } from '../ChartTooltip';
 
 class StackedAreaPlot extends Component {
 
@@ -96,15 +96,19 @@ class StackedAreaPlot extends Component {
       visibility
     } = this.state;
 
+    const tooltipStyle = {
+      xTooltip,
+      yTooltip,
+      visibility
+    };
+
     return (
       <div className="mcs-plot-container">
-        <ChartTooltip
-          xTooltip={xTooltip}
-          yTooltip={yTooltip}
-          content={content}
-          visibility={visibility}
-        />
+
         <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg" />
+        <ChartTooltip tooltipStyle={tooltipStyle}>
+          <BasisTooltip content={content} />
+        </ChartTooltip>
       </div>
     );
   }
@@ -201,6 +205,8 @@ class StackedAreaPlot extends Component {
         line.hide();
         crosshair.hide();
         this.setTooltip({
+          xTooltip: -100,
+          yTooltip: -100,
           visible: 'hidden'
         });
       });
@@ -282,7 +288,7 @@ class StackedAreaPlot extends Component {
       const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
       const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
       this.setTooltip({
-        xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 180,
+        xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 200,
         yTooltip: mousePosition.y + 120 < height ? this.svgBoundingClientRect.top + mousePosition.y : (this.svgBoundingClientRect.top + mousePosition.y) - 50,
         content: tooltipContent,
         visibility: 'visible'

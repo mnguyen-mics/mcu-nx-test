@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import { CampaignDashboardTabs } from '../../../../components/CampaignDashboardTabs';
+import { McsTabs } from '../../../../components/McsTabs';
 import { EmailPieCharts, EmailStackedAreaChart } from './Charts';
 import { withTranslations } from '../../../Helpers';
 
@@ -26,7 +26,7 @@ class CampaignEmailDashboard extends Component {
       }
     ];
 
-    return <CampaignDashboardTabs items={items} />;
+    return <McsTabs items={items} />;
   }
 
 }
