@@ -12,13 +12,14 @@ class Card extends Component {
     } = this.props;
 
     return (
-      <Row className="mcs-table-container">
-        <Row className="mcs-table-header mcs-card-header">
+      <Row className="mcs-card-container">
+        <Row className="mcs-card-header">
           <Col span={24}>
             <span className="mcs-card-title">{title}</span><span className="mcs-card-button">{buttons}</span>
           </Col>
         </Row>
-        <Row className="mcs-table-body">
+        <hr />
+        <Row>
           <Col span={24}>
             {this.props.children}
           </Col>

@@ -150,7 +150,7 @@ class CreativeDisplayTable extends Component {
         key: 'asset_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mics-small-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
+        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
       },
       {
         translationKey: 'NAME',
@@ -196,7 +196,6 @@ class CreativeDisplayTable extends Component {
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingCreativeDisplay}
-      onChange={() => {}}
       pagination={pagination}
     />);
 

@@ -146,7 +146,7 @@ class AssetsFilesTable extends Component {
         key: 'file_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mics-small-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`} ><span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} /></a></div>
+        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`} ><span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} /></a></div>
       },
       {
         translationKey: 'NAME',
@@ -189,7 +189,6 @@ class AssetsFilesTable extends Component {
       columnsDefinitions={columnsDefinitions}
       dataSource={dataSource}
       loading={isFetchingAssetsFiles}
-      onChange={() => {}}
       pagination={pagination}
     />);
 

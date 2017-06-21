@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
+import { withRouter, Link } from 'react-router-dom';
+import { Button } from 'antd';
 
 import CampaignEmailHeader from './CampaignEmailHeader';
 import CampaignEmailDashboard from './CampaignEmailDashboard';
+import { Card } from '../../../../components/Card';
 import CampaignEmailTable from './CampaignEmailTable';
 import * as CampaignEmailActions from '../../../../state/Campaign/Email/actions';
 
@@ -100,11 +103,29 @@ class CampaignEmail extends Component {
   }
 
   render() {
+
+    const {
+      match: {
+        params: { organisationId }
+      },
+      translations
+    } = this.props;
+
+    const buttons = (
+      <Link to={`/${organisationId}/campaigns/email/edit/`}>
+        <Button type="primary">
+          <FormattedMessage id="NEW_EMAIL_BLAST" />
+        </Button>
+      </Link>
+    );
+
     return (
       <div>
         <CampaignEmailHeader />
         <CampaignEmailDashboard />
-        <CampaignEmailTable />
+        <Card title={translations.EMAIL_BLASTS} buttons={buttons}>
+          <CampaignEmailTable />
+        </Card>
       </div>
     );
   }
@@ -112,6 +133,7 @@ class CampaignEmail extends Component {
 }
 
 CampaignEmail.propTypes = {
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -121,6 +143,10 @@ CampaignEmail.propTypes = {
   resetCampaignEmail: PropTypes.func.isRequired
 };
 
+const mapStateToProps = state => ({
+  translations: state.translations
+});
+
 const mapDispatchToProps = {
   fetchAllEmailBlast: CampaignEmailActions.fetchAllEmailBlast.request,
   fetchAllEmailBlastPerformance: CampaignEmailActions.fetchAllEmailBlastPerformance.request,
@@ -129,7 +155,7 @@ const mapDispatchToProps = {
 };
 
 CampaignEmail = connect(
-  () => ({}),
+  mapStateToProps,
   mapDispatchToProps
 )(CampaignEmail);
 

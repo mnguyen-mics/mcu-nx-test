@@ -11,7 +11,7 @@ class EmptyCharts extends Component {
     } = this.props;
 
     return (
-      <Row className="mcs-no-data">
+      <Row className="mcs-card-no-data">
         <Col span={24} className="">
           <Icon type={icon} />
         </Col>

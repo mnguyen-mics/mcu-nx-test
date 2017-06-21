@@ -5,7 +5,11 @@ import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView, EmptyTableView } from '../../../../components/TableView';
+import {
+  TableView,
+  TableViewFilters,
+  EmptyTableView
+ } from '../../../../components/TableView';
 import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsEmailActions from '../../../../state/Campaigns/Email/actions';
@@ -187,7 +191,7 @@ class CampaignsEmailTable extends Component {
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingCampaignsStat) {
-        return (<i className="mcs-loading" />); // (<span>loading...</span>);
+        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -281,17 +285,22 @@ class CampaignsEmailTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (hasEmailCampaigns) ? (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingCampaignsEmail}
-      onChange={() => {}}
-      searchOptions={searchOptions}
-      dateRangePickerOptions={dateRangePickerOptions}
-      filtersOptions={filtersOptions}
-      columnsVisibilityOptions={columnsVisibilityOptions}
-      pagination={pagination}
-    />) : (<EmptyTableView iconType="email" text="EMPTY_EMAILS" />);
+    return (hasEmailCampaigns) ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+        searchOptions={searchOptions}
+        dateRangePickerOptions={dateRangePickerOptions}
+        filtersOptions={filtersOptions}
+        columnsVisibilityOptions={columnsVisibilityOptions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingCampaignsEmail}
+          pagination={pagination}
+        />
+      </TableViewFilters>
+    ) : (<EmptyTableView iconType="email" text="EMPTY_EMAILS" />);
 
   }
 
@@ -305,7 +314,7 @@ class CampaignsEmailTable extends Component {
       history
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/campaigns/email/report/${campaign.id}/basic`);
+    history.push(`/${organisationId}/campaigns/email/edit/${campaign.id}`);
   }
 
   archiveCampaign(campaign) {

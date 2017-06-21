@@ -41,8 +41,10 @@ class EmailPieCharts extends Component {
 
   renderDatePicker() {
     const {
-      location: {
-        search
+      history: {
+        location: {
+          search
+        }
       }
     } = this.props;
 
@@ -175,7 +177,7 @@ class EmailPieCharts extends Component {
     const {
       translations,
       dataSource,
-      hasFetchedCampaignStat,
+      hasFetchedCampaignStat
     } = this.props;
 
     const chartArea = (

@@ -5,7 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import lodash from 'lodash';
 
-import { TableView } from '../../../../components/TableView';
+import { TableView, TableViewFilters } from '../../../../components/TableView';
 import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
 
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
@@ -232,14 +232,19 @@ class AudiencePartitionsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingAudiencePartitions}
-      onChange={() => {}}
-      searchOptions={searchOptions}
-      pagination={pagination}
-    />);
+    return (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+        searchOptions={searchOptions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingAudiencePartitions}
+          pagination={pagination}
+        />
+      </TableViewFilters>
+    );
 
   }
 

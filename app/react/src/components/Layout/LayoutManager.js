@@ -13,6 +13,7 @@ class LayoutManager extends Component {
     const {
       layout,
       contentComponent,
+      editComponent,
       actionBarComponent
     } = this.props;
 
@@ -22,17 +23,24 @@ class LayoutManager extends Component {
       case 'main':
         return (<MainLayout contentComponent={contentComponent} actionBarComponent={actionBarComponent} />);
       case 'edit':
-        return (<EditLayout contentComponent={contentComponent} />);
+        return (<EditLayout editComponent={editComponent} />);
       default:
         throw new Error(`Unhandled layout ${layout}`);
     }
   }
 }
 
+LayoutManager.defaultProps = {
+  contentComponent: () => <div>no content</div>,
+  editComponent: () => <div>no edit</div>,
+  actionBarComponent: null
+};
+
 LayoutManager.propTypes = {
   layout: PropTypes.string.isRequired,
-  contentComponent: PropTypes.func.isRequired,
-  actionBarComponent: PropTypes.func.isRequired
+  contentComponent: PropTypes.func,
+  editComponent: PropTypes.func,
+  actionBarComponent: PropTypes.func
 };
 
 export default LayoutManager;

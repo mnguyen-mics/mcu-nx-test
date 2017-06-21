@@ -40,8 +40,10 @@ class EmailStackedAreaChart extends Component {
 
   renderDatePicker() {
     const {
-      location: {
-        search
+      history: {
+        location: {
+          search
+        }
       }
     } = this.props;
 

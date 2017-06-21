@@ -9,9 +9,13 @@ import {
   Route,
   Redirect
 } from 'react-router-dom';
-import { IntlProvider } from 'react-intl';
+import { IntlProvider, addLocaleData } from 'react-intl';
+
 import { LocaleProvider } from 'antd';
+
 import enUS from 'antd/lib/locale-provider/en_US';
+import enLocaleData from 'react-intl/locale-data/en';
+import frLocaleData from 'react-intl/locale-data/fr';
 
 import { LayoutManager } from '../../components/Layout';
 import { NotFound } from '../../components/NotFound';
@@ -26,6 +30,8 @@ import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
 import { isAppInitialized } from '../../state/App/selectors';
 import { logOut } from '../../state/Login/actions';
+
+addLocaleData([enLocaleData, frLocaleData]);
 
 class Navigator extends Component {
 
@@ -43,10 +49,11 @@ class Navigator extends Component {
     if (!initialized) return (<Loading />); // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
     const basePath = '/v2/o/:organisationId(\\d+)';
+    const homeUrl = `/v2/o/${defaultWorspaceOrganisationId}/campaigns/display`;
     const authenticated = AuthService.isAuthenticated();
 
     return (
-      <IntlProvider locale={locale} key={locale} messages={translations}>
+      <IntlProvider locale={locale} messages={translations}>
         <LocaleProvider locale={enUS}>
           { /* <NotificationCenter /> */}
           <Router>
@@ -56,7 +63,7 @@ class Navigator extends Component {
 
                   let redirectToUrl = '/login';
                   if (authenticated) {
-                    redirectToUrl = `/v2/o/${defaultWorspaceOrganisationId}/campaigns/display`;
+                    redirectToUrl = homeUrl;
                   }
 
                   log.debug(`Redirect from ${match.url}  to ${redirectToUrl}`);
@@ -79,6 +86,7 @@ class Navigator extends Component {
                           layout={route.layout}
                           contentComponent={route.contentComponent}
                           actionBarComponent={route.actionBarComponent}
+                          editComponent={route.editComponent}
                           {...props}
                         />
                       </div>
@@ -87,7 +95,12 @@ class Navigator extends Component {
                 );
               }) }
 
-              <Route exact path="/login" component={Login} />
+              <Route
+                exact path="/login" render={() => {
+                  if (authenticated) return (<Redirect to={homeUrl} />);
+                  return (<Login />);
+                }}
+              />
               <Route
                 exact
                 path="/logout"

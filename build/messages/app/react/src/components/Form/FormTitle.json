@@ -1,0 +1,10 @@
+[
+  {
+    "id": "app.title",
+    "defaultMessage": "React Intl Translations Example"
+  },
+  {
+    "id": "app.title2",
+    "defaultMessage": "React Intl Translations Example 2"
+  }
+]

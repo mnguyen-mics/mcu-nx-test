@@ -6,7 +6,9 @@
 <!--[if IE 8]>
 <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
+<html class="no-js">
+<!--<![endif]-->
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,9 +20,9 @@
 
   <!-- CSS -->
   <!-- build:css styles/vendor.css -->
-  <link rel="stylesheet" href="angular/bower_components/ng-table/dist/ng-table.css"/>
-  <link rel="stylesheet" href="angular/bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead.css"/>
-  <link rel="stylesheet" href="angular/bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css"/>
+  <link rel="stylesheet" href="angular/bower_components/ng-table/dist/ng-table.css" />
+  <link rel="stylesheet" href="angular/bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead.css" />
+  <link rel="stylesheet" href="angular/bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css" />
   <link rel="stylesheet" href="angular/bower_components/nvd3/build/nv.d3.css">
   <link rel="stylesheet" href="angular/bower_components/joint/dist/joint.min.css">
   <link rel="stylesheet" href="angular/bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css">
@@ -30,144 +32,148 @@
   <link rel="stylesheet" href="angular/bower_components/videojs-vast/videojs.vast.css">
   <link rel="stylesheet" href="angular/bower_components/video.js/dist/video-js/video-js.css">
   <!-- endbuild -->
-  <!-- build:css({.tmp,app}) styles/main.css --> 
-  <link rel="stylesheet" href="styles/main.css"> 
-  <!-- endbuild --> 
+  <!-- build:css({.tmp,app}) styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
   <link rel="stylesheet" href="styles/font/stylesheet.css">
 
 </head>
+
 <body>
-<!--[if lt IE 7]>
+  <!--[if lt IE 7]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please
   <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<div id="mcs-app" class="mcs-app" ng-controller="LayoutController">
-  <div ng-include="'angular/src/core/layout/header/header.html'"></div>
+  <div id="mcs-app" class="mcs-app" ng-controller="LayoutController">
+    <div ng-include="'angular/src/core/layout/header/header.html'"></div>
 
-  <div ng-include="'angular/src/core/layout/sidebar/sidebar.html'" ng-class="{'hidden': !showSidebar }"></div>
+    <div ng-include="'angular/src/core/layout/sidebar/sidebar.html'" ng-class="{'hidden': !showSidebar }"></div>
 
-  <div ng-class="{'content-with-sidebar': showSidebar }">
-    <div ui-view="" class="container-fluid"></div>
-  </div>
+    <div ng-class="{'content-with-sidebar': showSidebar }">
+      <div ui-view="" class="container-fluid"></div>
+    </div>
 
-  <!--<div id="mics_loading">-->
+    <!--<div id="mics_loading">-->
     <!--<div id="mics_loading_progress">-->
-      <!--<img src="./images/ajax-loader.gif" alt="The application is loading, please wait." class="ajax-loader" />-->
-      <!-- <h1>Navigator is loading&nbsp;<small>please wait</small></h1> -->
-      <!-- <span id="mics_loading_progress_current"></span> -->
+    <!--<img src="./images/ajax-loader.gif" alt="The application is loading, please wait." class="ajax-loader" />-->
+    <!-- <h1>Navigator is loading&nbsp;<small>please wait</small></h1> -->
+    <!-- <span id="mics_loading_progress_current"></span> -->
     <!--</div>-->
     <!--<div id="mics_loading_error" style="display:none;">-->
-      <!--An unexpected error occured while loading the application.<br /> Try reloading the page or contact your support.-->
+    <!--An unexpected error occured while loading the application.<br /> Try reloading the page or contact your support.-->
     <!--</div>-->
-  <!--</div>-->
-  
-</div>
+    <!--</div>-->
 
-<div id="mcs-react-app" class="mcs-react-app"></div>
+  </div>
 
-<script>
-  function switchApp(newUrl) {
+  <div id="mcs-react-app" class="mcs-react-app"></div>
 
-    var angularContainer = document.getElementById("mcs-app");
-    var reactContainer = document.getElementById("mcs-react-app");
+  <script>
+    function switchApp(newUrl) {
 
-    function isReactApp(url) {
-      var parser = document.createElement('a');
-      parser.href = url;
-      return parser.hash.match(/^#\/v2/) || parser.hash.match(/^#\/login/);
+      var angularContainer = document.getElementById("mcs-app");
+      var reactContainer = document.getElementById("mcs-react-app");
+
+      function isReactApp(url) {
+        var parser = document.createElement('a');
+        parser.href = url;
+        return parser.hash.match(/^#\/v2/) || parser.hash.match(/^#\/login/);
+      }
+
+      if (!isReactApp(newUrl)) {
+        angularContainer.style.display = "block";
+        reactContainer.style.display = "none";
+      } else {
+        angularContainer.style.display = "none";
+        reactContainer.style.display = "block";
+      }
+
     }
 
-    if (!isReactApp(newUrl)) {
-      angularContainer.style.display = "block";
-      reactContainer.style.display = "none";
-    } else {
-      angularContainer.style.display = "none";
-      reactContainer.style.display = "block";
+    function onHashChange(location) {
+      return switchApp(location.newURL);
     }
 
-  }
+    switchApp(window.location.href);
+    window.onhashchange = onHashChange;
 
-  function onHashChange(location) {
-    return switchApp(location.newURL);
-  }
+  </script>
 
-  switchApp(window.location.href);
-  window.onhashchange = onHashChange;
-
-</script>
-
-<!--[if lt IE 9]>
+  <!--[if lt IE 9]>
 <script src="angular/bower_components/es5-shim/es5-shim.js"></script>
 <script src="angular/bower_components/json3/lib/json3.min.js"></script>
 <![endif]-->
 
-<noscript>
-  <h1>Mediarithmics navigator</h1>
+  <noscript>
+    <h1>Mediarithmics navigator</h1>
 
-  <h2>This website requires javascript to work properly.</h2>
+    <h2>This website requires javascript to work properly.</h2>
 
-  <p>
-    If you don't know how to enable javascript in your browser, please see
-    <a href="http://www.enable-javascript.com/" target="_blank">here</a>.
-  </p>
+    <p>
+      If you don't know how to enable javascript in your browser, please see
+      <a href="http://www.enable-javascript.com/" target="_blank">here</a>.
+    </p>
 
-  <p>
-    <!--   TODO : explain why our website is awesome and you should allow js here to manage your campaigns. -->
-  </p>
-</noscript>
+    <p>
+      <!--   TODO : explain why our website is awesome and you should allow js here to manage your campaigns. -->
+    </p>
+  </noscript>
 
 
-<!-- Scripts -->
-<!-- The scripts included below are used for video support. The production minification,
+  <!-- Scripts -->
+  <!-- The scripts included below are used for video support. The production minification,
 and the videojs-vast plugin expecting from the vast-client plugin to to always be globally declared,
 are two of the factors making these dependencies injections impossible. -->
-<!-- build:js scripts/video.js -->
-<script src="angular/bower_components/video.js/dist/video-js/video.js"></script>
-<script src="angular/bower_components/videojs-contrib-ads/src/videojs.ads.js"></script>
-<script src="angular/bower_components/vast-client-js/vast-client.js"></script>
-<script src="angular/bower_components/videojs-vast/videojs.vast.js"></script>
-<!-- The xlsx lib checks if jszip exists before anything. AGAIN we need jszip and then xlsx after minification.-->
-<script src="angular/bower_components/js-xlsx/jszip.js"></script>
-<!-- endbuild -->
-<script>
-var require = {
-  waitSeconds: 60,
-  paths: {'core/configuration': '../../conf/app-configuration'}
-};
-</script>
-<script src="conf/plugins-configuration.js"></script>
-<script src="conf/react-configuration.js"></script>
-<script data-main="main.js" src="angular/bower_components/requirejs/require.js"></script>
+  <!-- build:js scripts/video.js -->
+  <script src="angular/bower_components/video.js/dist/video-js/video.js"></script>
+  <script src="angular/bower_components/videojs-contrib-ads/src/videojs.ads.js"></script>
+  <script src="angular/bower_components/vast-client-js/vast-client.js"></script>
+  <script src="angular/bower_components/videojs-vast/videojs.vast.js"></script>
+  <!-- The xlsx lib checks if jszip exists before anything. AGAIN we need jszip and then xlsx after minification.-->
+  <script src="angular/bower_components/js-xlsx/jszip.js"></script>
+  <!-- endbuild -->
+  <script>
+    var require = {
+      waitSeconds: 60,
+      paths: { 'core/configuration': '../../conf/app-configuration' }
+    };
 
-<script>
-  require.onResourceLoad = function(context, map, depArray) {
-    var elt = document.getElementById("mics_loading_progress_current");
+  </script>
+  <script src="conf/plugins-configuration.js"></script>
+  <script src="conf/react-configuration.js"></script>
+  <script data-main="main.js" src="angular/bower_components/requirejs/require.js"></script>
 
-    if (elt) {
-      elt.innerHTML = "Loaded " + map.name;
-    }
-  };
-  // This warning is for developers : if a plugin can't load a dependency, I don't really want to throw an `alert`...
-  requirejs.onError = function (err) {
-    if (!err.requireModules) {
-      // happens when a dependency tries to load an other dependency with requirejs: some libs does a "try{require("my_dep")} catch () {window.my_dep}"
-      // which triggers an error here. This is not a fatal error, just a warning.
-      console.warn(err);
-      return;
-    }
-    console.error("the scripts " + err.requireModules + " couldn't be loaded. Do you have an ad blocker ?", err);
+  <script>
+    require.onResourceLoad = function (context, map, depArray) {
+      var elt = document.getElementById("mics_loading_progress_current");
 
-    var progressElt = document.getElementById("mics_loading_progress");
-    var errorElt = document.getElementById("mics_loading_error");
-    if (progressElt && errorElt) {
-      progressElt.style.display = "none";
-      errorElt.style.display = "block";
-    }
+      if (elt) {
+        elt.innerHTML = "Loaded " + map.name;
+      }
+    };
+    // This warning is for developers : if a plugin can't load a dependency, I don't really want to throw an `alert`...
+    requirejs.onError = function (err) {
+      if (!err.requireModules) {
+        // happens when a dependency tries to load an other dependency with requirejs: some libs does a "try{require("my_dep")} catch () {window.my_dep}"
+        // which triggers an error here. This is not a fatal error, just a warning.
+        console.warn(err);
+        return;
+      }
+      console.error("the scripts " + err.requireModules + " couldn't be loaded. Do you have an ad blocker ?", err);
 
-    throw err;
-  };
-</script>
+      var progressElt = document.getElementById("mics_loading_progress");
+      var errorElt = document.getElementById("mics_loading_error");
+      if (progressElt && errorElt) {
+        progressElt.style.display = "none";
+        errorElt.style.display = "block";
+      }
+
+      throw err;
+    };
+
+  </script>
 
 </body>
+
 </html>

@@ -5,7 +5,11 @@ import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView, EmptyTableView } from '../../../../components/TableView';
+import {
+  TableView,
+  TableViewFilters,
+  EmptyTableView
+ } from '../../../../components/TableView';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 
@@ -189,7 +193,7 @@ class GoalsTable extends Component {
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingGoalsStat) {
-        return (<i className="mcs-loading" />); // (<span>loading...</span>);
+        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -256,17 +260,22 @@ class GoalsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (hasGoals) ? (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingGoals}
-      onChange={() => {}}
-      searchOptions={searchOptions}
-      dateRangePickerOptions={dateRangePickerOptions}
-      filtersOptions={filtersOptions}
-      columnsVisibilityOptions={columnsVisibilityOptions}
-      pagination={pagination}
-    />) : (<EmptyTableView iconType="goals" text="EMPTY_GOALS" />);
+    return (hasGoals) ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+        searchOptions={searchOptions}
+        dateRangePickerOptions={dateRangePickerOptions}
+        filtersOptions={filtersOptions}
+        columnsVisibilityOptions={columnsVisibilityOptions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingGoals}
+          pagination={pagination}
+        />
+      </TableViewFilters>
+    ) : (<EmptyTableView iconType="goals" text="EMPTY_GOALS" />);
 
   }
 

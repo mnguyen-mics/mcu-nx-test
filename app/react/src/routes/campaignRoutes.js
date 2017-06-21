@@ -4,6 +4,10 @@ import {
 } from '../containers/Campaigns/Display/List';
 
 import {
+   EditEmail
+} from '../containers/Campaigns/Email/Edit';
+
+import {
   CampaignsEmailActionbar,
   CampaignsEmailTable
 } from '../containers/Campaigns/Email/List';
@@ -36,6 +40,11 @@ const campaignsRoutes = [
     layout: 'main',
     contentComponent: CampaignEmail,
     actionBarComponent: CampaignEmailActionbar
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: EditEmail
   },
   {
     path: '/campaigns/goal',

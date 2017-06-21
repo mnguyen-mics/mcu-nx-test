@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Row, Col } from 'antd';
 import BreadcrumbBar from './BreadcrumbBar';
 
 class Actionbar extends Component {
@@ -6,12 +7,12 @@ class Actionbar extends Component {
   render() {
 
     return (
-      <div className="mcs-actionbar-wrapper mcs-actionbar" >
-        <BreadcrumbBar className="mcs-actionbar-breadcrumb" {...this.props} />
-        <div className="mcs-actionbar-button-wrapper">
+      <Row type="flex" align="middle" justify="space-between" className="mcs-actionbar">
+        <BreadcrumbBar {...this.props} />
+        <div className="left-part-margin">
           {this.props.children}
         </div>
-      </div>
+      </Row>
     );
   }
 

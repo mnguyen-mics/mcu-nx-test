@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import { CampaignDashboardTabs } from '../../../../components/CampaignDashboardTabs';
@@ -36,8 +35,7 @@ CampaignEmailDashboard.propTypes = {
 };
 
 CampaignEmailDashboard = compose(
-  withTranslations,
-  withRouter
+  withTranslations
 )(CampaignEmailDashboard);
 
 export default CampaignEmailDashboard;

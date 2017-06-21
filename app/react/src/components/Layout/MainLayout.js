@@ -46,7 +46,7 @@ class MainLayout extends Component {
         <Layout>
           <NavigatorHeader />
           { this.getActionBar() }
-          <Content>
+          <Content className="mcs-content-container">
             <ContentComponent />
           </Content>
         </Layout>
