@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-import { EmptyCharts } from '../../../../../components/EmptyCharts';
+
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { StackedBarCharts } from '../../../../../components/BarCharts';
 import { LegendChart } from '../../../../../components/LegendChart';
+import messages from '../messages';
 
 import { SEGMENT_QUERY_SETTINGS } from '../constants';
 
@@ -89,11 +91,11 @@ class AdditionDeletion extends Component {
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: ['user_point_additions', 'user_point_deletions'],
+      yKeys: [{ key: 'user_point_additions', message: messages.userPointAddition }, { key: 'user_point_deletions', message: messages.UserPointDeletion }],
       lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#00ad68', '#ff5959']
     };
-    return hasFetchedAudienceStat ? (<StackedBarCharts identifier="StackedBarCharAdditionDeletion" dataset={formatedDataSource} options={optionsForChart} />) : (<span>Loading</span>);
+    return hasFetchedAudienceStat ? (<StackedBarCharts identifier="StackedBarCharAdditionDeletion" dataset={formatedDataSource} options={optionsForChart} />) : (<LoadingChart />);
   }
 
   render() {
@@ -104,7 +106,7 @@ class AdditionDeletion extends Component {
     } = this.props;
 
     const options = {
-      domains: ['user_point_additions', 'user_point_deletions'],
+      domains: [translations['user_point_additions'.toUpperCase()], translations['user_point_deletions'.toUpperCase()]],
       colors: ['#00ad68', '#ff5959']
     };
 

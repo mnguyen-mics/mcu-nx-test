@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-import { EmptyCharts } from '../../../../../components/EmptyCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
-import { StackedLinePlot } from '../../../../../components/StackedAreaPlot';
+import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
 import { SEGMENT_QUERY_SETTINGS } from '../constants';
@@ -19,6 +19,8 @@ import {
 import {
   getSinglePerfView
  } from '../../../../../state/Audience/Segments/selectors';
+
+import messages from '../messages';
 
 
 class Overview extends Component {
@@ -81,11 +83,11 @@ class Overview extends Component {
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
+      yKeys: [{ key: 'user_points', message: messages.userPoints }, { key: 'user_accounts', message: messages.userAccounts }, { key: 'emails', message: messages.emails }, { key: 'desktop_cookie_ids', message: messages.desktopCookieId }],
       lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
     };
-    return hasFetchedAudienceStat ? (<StackedLinePlot identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />) : (<span>Loading</span>);
+    return hasFetchedAudienceStat ? (<StackedAreaPlot identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />) : (<LoadingChart />);
   }
 
   render() {
@@ -96,7 +98,7 @@ class Overview extends Component {
     } = this.props;
 
     const options = {
-      domains: ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
+      domains: [translations['user_points'.toUpperCase()], translations['user_accounts'.toUpperCase()], translations['emails'.toUpperCase()], translations['desktop_cookie_ids'.toUpperCase()]],
       colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
     };
 

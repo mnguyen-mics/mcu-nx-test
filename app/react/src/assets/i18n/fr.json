@@ -101,6 +101,9 @@
   "EMPTY_PARTITIONS": "Il n'y a aucune Partitions créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_CREATIVES_DISPLAY": "Il n'y a aucune Créa Display créée! Clickez sur Nouveau pour commencer.",
   "EMPTY_CREATIVES_EMAIL": "Il n'y a aucune Créa Email créée! Clickez sur Nouveau pour commencer.",
+  "EMPTY_LIBRARY_ASSETS": "Il n'y a aucuns Assets créé! Clickez sur Nouveau pour commencer.",
+  "EMPTY_LIBRARY_PLACEMENT": "Il n'y a aucuns Placement créé! Clickez sur Nouveau pour commencer.",
+  "EMPTY_LIBRARY_KEYWORD": "Il n'y a aucuns Keyword créé! Clickez sur Nouveau pour commencer.",
 
   "EXPORT": "Export",
   "EXPORT_IN_PROGRESS": "Export en cours...",
@@ -175,6 +178,11 @@
   "USERPOINTS": "Userpoints",
   "OVERLAP": "Recouvrement",
   "OVERVIEW": "Aperçu",
-  "ADDITION_DELETION": "Ajout Suppression"
-  
+  "ADDITION_DELETION": "Ajout Suppression",
+
+  "OVERLAP_NUMBER": "Overlap",
+  "USER_POINT_ADDITIONS": "Ajout de Userpoint",
+  "USER_POINT_DELETIONS": "Suppression de Userpoint",
+  "DESKTOP_COOKIE_IDS": "Display Cookies",
+  "EXTEND": "Etendre"
 }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableView } from '../../../../components/TableView';
+import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
 
 import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
@@ -46,11 +46,12 @@ class CreativeEmailsTable extends Component {
     if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS)
+        search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
       });
     } else {
       const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-      fetchCreativeEmails(organisationId, filter);
+      fetchCreativeEmails(organisationId, filter, true);
     }
   }
 
@@ -71,7 +72,8 @@ class CreativeEmailsTable extends Component {
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch
+        search: nextSearch,
+        state
       },
       match: {
         params: {
@@ -80,15 +82,18 @@ class CreativeEmailsTable extends Component {
       }
     } = nextProps;
 
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
     if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)
+          search: buildDefaultSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
         });
       } else {
         const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
-        fetchCreativeEmails(nextOrganisationId, filter);
+        fetchCreativeEmails(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
@@ -126,7 +131,8 @@ class CreativeEmailsTable extends Component {
       },
       isFetchingCreativeEmails,
       dataSource,
-      totalCreativeEmails
+      totalCreativeEmails,
+      hasCreativeEmails
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -150,7 +156,7 @@ class CreativeEmailsTable extends Component {
         key: 'asset_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mics-small-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
+        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
       },
       {
         translationKey: 'NAME',
@@ -192,13 +198,17 @@ class CreativeEmailsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingCreativeEmails}
-      onChange={() => {}}
-      pagination={pagination}
-    />);
+    return hasCreativeEmails ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingCreativeEmails}
+          pagination={pagination}
+        />
+      </TableViewFilters>) : (<EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />);
 
   }
 
@@ -258,7 +268,7 @@ CreativeEmailsTable.propTypes = {
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-
+  hasCreativeEmails: PropTypes.bool.isRequired,
   isFetchingCreativeEmails: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalCreativeEmails: PropTypes.number.isRequired,
@@ -270,7 +280,7 @@ CreativeEmailsTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
+  hasCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.hasItems,
   isFetchingCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.isFetching,
   dataSource: getTableDataSource(state),
   totalCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.total,

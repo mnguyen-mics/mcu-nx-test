@@ -1,19 +1,27 @@
+/* eslint-disable */
+require('babel-polyfill');
+require('react-hot-loader/patch');
 import React from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
+import { AppContainer } from 'react-hot-loader';
 
-import configureStore from './store';
-import { Navigator } from './containers/Navigator';
-
-const store = configureStore();
-
-const micsProvider = (
-  <Provider store={store}>
-    <Navigator />
-  </Provider>
-);
+import App from './App';
 
 render(
-  micsProvider,
-  document.getElementById('mcs-react-app') // eslint-disable-line no-undef
+  <AppContainer>
+      <App />
+  </AppContainer>,
+  document.getElementById('mcs-react-app')
 );
+
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    const NextApp = require('./App').default;
+    render(
+      <AppContainer>
+          <NextApp />
+      </AppContainer>,
+      document.getElementById('mcs-react-app')
+    );
+  });
+}

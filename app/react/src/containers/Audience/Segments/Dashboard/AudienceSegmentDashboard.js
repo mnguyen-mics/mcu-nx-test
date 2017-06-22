@@ -52,7 +52,7 @@ class AudienceSegmentDashboard extends Component {
     const items = [
       {
         title: translations.OVERVIEW,
-        display: <Overlap />
+        display: <Overview />
       },
       {
         title: translations.ADDITION_DELETION,
@@ -60,7 +60,7 @@ class AudienceSegmentDashboard extends Component {
       },
       {
         title: translations.OVERLAP,
-        display: <Overview />
+        display: <Overlap />
       }
     ];
     return (

@@ -1,6 +1,7 @@
 /* eslint-disable react/require-default-props */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 const BasisTooltip = (props) => {
   const buildStyle = (c) => {
@@ -22,7 +23,7 @@ const BasisTooltip = (props) => {
             </svg>
           </td>
           <td className={'key'}>
-            {entry.label}
+            {entry.label && (<FormattedMessage {...entry.label} />)}
           </td>
           <td className={'value'}>
             {entry.value}
@@ -31,7 +32,7 @@ const BasisTooltip = (props) => {
       );
     });
   } else {
-    tooltipTableContent = (<div />);
+    tooltipTableContent = (<tr />);
   }
   return (
     <div className="mcs-tooltip">
@@ -51,9 +52,9 @@ BasisTooltip.defaultProps = {
   content: {
     xLabel: '',
     entries: [{
-      label: '',
+      label: null,
       color: '',
-      value: ''
+      value: 0
     }]
   }
 };
@@ -76,17 +77,17 @@ BasisTooltip.propTypes = {
         /*
         * The legend of the plot entry
         */
-        label: PropTypes.string.isRequired,
+        label: PropTypes.object,
 
         /*
         * The color of the plot entry
         */
-        color: PropTypes.string.isRequired,
+        color: PropTypes.string,
 
         /*
         * The value of the plot entry
         */
-        value: PropTypes.number.isRequired
+        value: PropTypes.number
       })
     ).isRequired
   })

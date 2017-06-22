@@ -44,7 +44,7 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
       refreshToken = yield call(AuthService.getRefreshToken);
     } else if (remember) {
       refreshToken = yield call(AuthService.createRefreshToken, credentialsOrRefreshToken);
-      const result = yield call(authorize, credentialsOrRefreshToken);
+      const result = yield call(authorize, { refreshToken });
       refreshToken = result.refreshToken;
       expiresIn = result.expiresIn;
     } else {

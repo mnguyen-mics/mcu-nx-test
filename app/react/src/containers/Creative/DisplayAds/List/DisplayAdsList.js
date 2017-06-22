@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableView, EmptyTableView } from '../../../../components/TableView';
+import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
 
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 
@@ -42,14 +42,16 @@ class CreativeDisplayTable extends Component {
       },
       fetchCreativeDisplay
     } = this.props;
-
+    console.log('components mounting');
     if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)
+        search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
       });
     } else {
       const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
+      console.log('components fetching');
       fetchCreativeDisplay(organisationId, filter, true);
     }
   }
@@ -71,24 +73,28 @@ class CreativeDisplayTable extends Component {
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch
+        search: nextSearch,
+        state
       },
       match: {
         params: {
           organisationId: nextOrganisationId
         }
-      }
+      },
     } = nextProps;
+
+    const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)
+          search: buildDefaultSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
         });
       } else {
         const filter = parseSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-        fetchCreativeDisplay(nextOrganisationId, filter);
+        fetchCreativeDisplay(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
@@ -151,7 +157,7 @@ class CreativeDisplayTable extends Component {
         key: 'asset_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mics-small-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
+        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
       },
       {
         translationKey: 'NAME',
@@ -193,13 +199,17 @@ class CreativeDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return hasCreativeDisplay ? (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingCreativeDisplay}
-      onChange={() => {}}
-      pagination={pagination}
-    />) : (<EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />);
+    return hasCreativeDisplay ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingCreativeDisplay}
+          pagination={pagination}
+        />
+      </TableViewFilters>) : (<EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />);
 
   }
 

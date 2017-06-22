@@ -8,7 +8,7 @@ import {
 const resetCreativeEmailsTable = createAction(CREATIVES_EMAILS_TABLE_RESET);
 
 const fetchCreativeEmails = {
-  request: (organisationId, filter = {}) => createAction(CREATIVES_EMAILS_FETCH.REQUEST)({ organisationId, filter }),
+  request: (organisationId, filter = {}, isInitialRender = false) => createAction(CREATIVES_EMAILS_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
   success: (response) => createAction(CREATIVES_EMAILS_FETCH.SUCCESS)(response),
   failure: (error) => createAction(CREATIVES_EMAILS_FETCH.FAILURE)(error)
 };

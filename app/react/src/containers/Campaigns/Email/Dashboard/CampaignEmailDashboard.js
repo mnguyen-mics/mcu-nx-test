@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import { McsTabs } from '../../../../components/McsTabs';
+import { Card } from '../../../../components/Card';
 import { EmailPieCharts, EmailStackedAreaChart } from './Charts';
 import { withTranslations } from '../../../Helpers';
 
@@ -26,7 +26,7 @@ class CampaignEmailDashboard extends Component {
       }
     ];
 
-    return <McsTabs items={items} />;
+    return <Card><McsTabs items={items} /></Card>;
   }
 
 }
@@ -36,8 +36,7 @@ CampaignEmailDashboard.propTypes = {
 };
 
 CampaignEmailDashboard = compose(
-  withTranslations,
-  withRouter
+  withTranslations
 )(CampaignEmailDashboard);
 
 export default CampaignEmailDashboard;

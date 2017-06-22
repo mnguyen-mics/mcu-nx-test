@@ -1,5 +1,6 @@
 
 import { Component, PropTypes } from 'react';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 const React = require('react');
 
@@ -24,7 +25,7 @@ class TooltipContent extends Component {
             </svg>
           </td>
           <td className={'key'}>
-            {entry.label}
+            <FormattedMessage id={entry.label} />
           </td>
           <td className={'value'}>
             {entry.value}
@@ -81,7 +82,8 @@ TooltipContent.propTypes = {
         */
         value: PropTypes.number.isRequired
       })
-    ).isRequired
+    ).isRequired,
+  intl: intlShape.isRequired
 };
 
 export default TooltipContent;

@@ -1,0 +1,39 @@
+.stepper {
+
+  li {
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+    border-bottom: solid 1px @border-color-split;
+    border-left: solid 1px @border-color-split;
+    padding-left: 15px;
+
+    a {
+      color: @border-color-split;
+    }
+  }
+
+  .currentStep {
+    background-color: @layout-content-background;
+    border-left: 5px solid @info-color;
+    color: @info-color;
+    
+    a {
+      color: @info-color;
+    }
+
+  }
+
+  .anticon {
+    margin-right: 10px;
+    font-size: 1.4em;
+    vertical-align: middle;
+    font-weight: bold;
+  }
+
+  .step-title {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
+}

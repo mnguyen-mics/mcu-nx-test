@@ -16,7 +16,6 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
   return {
 
     entry: {
-      babel: 'babel-polyfill',
       app: path.join(paths.reactAppSrc, '/index.js'),
       'style-less': paths.appStyleLess,
       'react-vendors': Object.keys(pkg.dependencies)

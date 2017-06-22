@@ -6,7 +6,11 @@ import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import lodash from 'lodash';
 
-import { TableView, EmptyTableView } from '../../../../components/TableView';
+import {
+  TableView,
+  TableViewFilters,
+  EmptyTableView
+} from '../../../../components/TableView';
 import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
@@ -68,7 +72,7 @@ class AudienceSegmentsTable extends Component {
       },
       loadAudienceSegmentsDataSource
     } = this.props;
-
+    console.log('mounting');
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
       history.replace({
         pathname: pathname,
@@ -110,7 +114,6 @@ class AudienceSegmentsTable extends Component {
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
-
     if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
         history.replace({
@@ -213,7 +216,7 @@ class AudienceSegmentsTable extends Component {
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingSegmentsStat) {
-        return (<i className="mcs-loading" />); // (<span>loading...</span>);
+        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -328,17 +331,22 @@ class AudienceSegmentsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (hasAudienceSegments) ? (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingAudienceSegments}
-      onChange={() => {}}
-      searchOptions={searchOptions}
-      dateRangePickerOptions={dateRangePickerOptions}
-      filtersOptions={filtersOptions}
-      columnsVisibilityOptions={columnsVisibilityOptions}
-      pagination={pagination}
-    />) : (<EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />);
+    return (hasAudienceSegments) ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+        searchOptions={searchOptions}
+        dateRangePickerOptions={dateRangePickerOptions}
+        filtersOptions={filtersOptions}
+        columnsVisibilityOptions={columnsVisibilityOptions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingAudienceSegments}
+          pagination={pagination}
+        />
+      </TableViewFilters>
+    ) : (<EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />);
 
   }
 

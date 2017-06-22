@@ -98,6 +98,9 @@
   "EMPTY_PARTITIONS": "There is no Partitions created yet! Click on New to get started",
   "EMPTY_CREATIVES_DISPLAY": "There is no Display Creatives created yet! Click on New to get started",
   "EMPTY_CREATIVES_EMAIL": "There is no Email Creatives created yet! Click on New to get started",
+  "EMPTY_LIBRARY_ASSETS": "There is no Assets created yet! Click on New to get started",
+  "EMPTY_LIBRARY_PLACEMENT": "There is no Placement created yet! Click on New to get started",
+  "EMPTY_LIBRARY_KEYWORD": "There is no Keyword created yet! Click on New to get started",
 
   "TODAY": "Today",
   "YESTERDAY": "Yesterday",
@@ -185,5 +188,11 @@
   "USERPOINTS": "Userpoints",
   "OVERLAP": "Overlap",
   "OVERVIEW": "Overview",
-  "ADDITION_DELETION": "Addition Deletion"
+  "ADDITION_DELETION": "Addition Deletion",
+
+  "OVERLAP_NUMBER": "Overlap Number",
+  "USER_POINT_ADDITIONS": "Userpoint Additions",
+  "USER_POINT_DELETIONS": "Userpoint Deletions",
+  "DESKTOP_COOKIE_IDS": "Display Cookies",
+  "EXTEND": "Extend"
 }

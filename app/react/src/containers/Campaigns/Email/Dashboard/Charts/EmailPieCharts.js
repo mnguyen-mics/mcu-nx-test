@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-import { EmptyCharts } from '../../../../../components/EmptyCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { PieChart } from '../../../../../components/PieChart';
 
@@ -41,8 +41,10 @@ class EmailPieCharts extends Component {
 
   renderDatePicker() {
     const {
-      location: {
-        search
+      history: {
+        location: {
+          search
+        }
       }
     } = this.props;
 
@@ -168,14 +170,14 @@ class EmailPieCharts extends Component {
             </Row>
           </Col>
         </Row>
-      </div>) : (<span>Loading</span>);
+      </div>) : (<LoadingChart />);
   }
 
   render() {
     const {
       translations,
       dataSource,
-      hasFetchedCampaignStat,
+      hasFetchedCampaignStat
     } = this.props;
 
     const chartArea = (

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableView } from '../../../../components/TableView';
+import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
 
 import * as AssetsFilesActions from '../../../../state/Library/AssetsFiles/actions';
 
@@ -47,11 +47,12 @@ class AssetsFilesTable extends Component {
     if (!isSearchValid(search, ASSETS_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, ASSETS_SEARCH_SETTINGS)
+        search: buildDefaultSearch(search, ASSETS_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
       });
     } else {
       const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
-      fetchAssetsFiles(organisationId, filter);
+      fetchAssetsFiles(organisationId, filter, true);
     }
   }
 
@@ -72,7 +73,8 @@ class AssetsFilesTable extends Component {
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch
+        search: nextSearch,
+        state
       },
       match: {
         params: {
@@ -81,15 +83,18 @@ class AssetsFilesTable extends Component {
       }
     } = nextProps;
 
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
     if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, ASSETS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, ASSETS_SEARCH_SETTINGS)
+          search: buildDefaultSearch(nextSearch, ASSETS_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
         });
       } else {
         const filter = parseSearch(nextSearch, ASSETS_SEARCH_SETTINGS);
-        fetchAssetsFiles(nextOrganisationId, filter);
+        fetchAssetsFiles(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
@@ -122,7 +127,8 @@ class AssetsFilesTable extends Component {
       },
       isFetchingAssetsFiles,
       dataSource,
-      totalPlacements
+      totalPlacements,
+      hasFetchingAssetsItems
     } = this.props;
 
     const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
@@ -146,7 +152,7 @@ class AssetsFilesTable extends Component {
         key: 'file_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mics-small-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`} ><span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} /></a></div>
+        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`} ><span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} /></a></div>
       },
       {
         translationKey: 'NAME',
@@ -185,13 +191,17 @@ class AssetsFilesTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingAssetsFiles}
-      onChange={() => {}}
-      pagination={pagination}
-    />);
+    return hasFetchingAssetsItems ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingAssetsFiles}
+          pagination={pagination}
+        />
+      </TableViewFilters>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_ASSETS" />);
 
   }
 
@@ -255,6 +265,7 @@ AssetsFilesTable.propTypes = {
   isFetchingAssetsFiles: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalPlacements: PropTypes.number.isRequired,
+  hasFetchingAssetsItems: PropTypes.bool.isRequired,
 
   fetchAssetsFiles: PropTypes.func.isRequired,
   archiveAssetList: PropTypes.func.isRequired,
@@ -263,7 +274,7 @@ AssetsFilesTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
+  hasFetchingAssetsItems: state.assetsFilesTable.assetsFilesApi.hasItems,
   isFetchingAssetsFiles: state.assetsFilesTable.assetsFilesApi.isFetching,
   dataSource: getTableDataSource(state),
   totalPlacements: state.assetsFilesTable.assetsFilesApi.total,

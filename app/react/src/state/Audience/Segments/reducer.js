@@ -12,7 +12,9 @@ import {
   AUDIENCE_SEGMENT_SINGLE_LOAD_ALL,
   AUDIENCE_SEGMENT_SINGLE_FETCH,
   AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH,
-  AUDIENCE_SEGMENT_SINGLE_RESET
+  AUDIENCE_SEGMENT_SINGLE_RESET,
+  AUDIENCE_SEGMENT_CREATE_OVERLAP,
+  AUDIENCE_SEGMENT_RETRIEVE_OVERLAP
 } from '../../action-types';
 
 const defaultAudienceSegmentsApiState = {
@@ -153,12 +155,49 @@ const performanceReportSingleApi = (state = defaultPerformanceReportSingleApiSta
   }
 };
 
+const defaultOverlapAnalysisApiState = {
+  isFetching: false,
+  hasOverlap: true,
+  data: {
+    date: 0,
+    segments: [],
+    overlaps: []
+  }
+};
+
+const overlapAnalysisApi = (state = defaultOverlapAnalysisApiState, action) => {
+  switch (action.type) {
+    case AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.REQUEST:
+      return {
+        ...state,
+        isFetching: true
+      };
+    case AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        hasOverlap: action.payload.hasOverlap,
+        data: action.payload
+      };
+    case AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.FAILURE:
+      return {
+        ...state,
+        isFetching: false
+      };
+    case AUDIENCE_SEGMENT_SINGLE_RESET:
+      return defaultOverlapAnalysisApiState;
+    default:
+      return state;
+  }
+};
+
 
 const audienceSegmentsTable = combineReducers({
   audienceSegmentsApi,
   performanceReportApi,
   performanceReportSingleApi,
-  audienceSegmentsSingleApi
+  audienceSegmentsSingleApi,
+  overlapAnalysisApi
 });
 
 const AudienceSegmentsReducers = { audienceSegmentsTable };

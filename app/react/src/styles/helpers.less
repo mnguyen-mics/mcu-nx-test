@@ -1,24 +1,14 @@
-html, body {
-    height:100%;
-}
-
-.mcs-react-app {
-    height:100%;
-}
-
-div[data-reactroot] {
-    height:100%
-}
-
+// TODO mcs-menu not used anymore, check relevance.
+// see navigatormenu.less for current menu styling
 .ant-menu-root.ant-menu-inline.mcs-menu {
     height:100%;
     padding-top: 10px;
 }
 
-.mcs-menu,
-.mcs-layout-content {
-    border-top: @border-width-base @border-style-base @border-color-split;
-}
+// .mcs-menu,
+// .mcs-layout-content {
+//     border-top: @border-width-base @border-style-base @border-color-split;
+// }
 
 .ant-menu-inline.mcs-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-item {
     border-left: 5px solid transparent;
@@ -60,273 +50,59 @@ div[data-reactroot] {
     color: @info-color!important;
 }
 
-.mcs-menu-inline .ant-menu-item > a:hover {
-    color: @info-color!important;
-}
+// .mcs-menu-inline .ant-menu-item > a:hover {
+//     color: @info-color!important;
+// }
 
-.mcs-menu-inline .ant-menu-item-disabled.ant-menu-item.mcs-footer {
-    position: absolute; 
-    bottom: 0; 
-    left: 0; 
-    height: 95px; 
-    width: 100%; 
-    cursor: default;
-    padding: 0 24px;
-}
+// .mcs-menu-inline .ant-menu-item-disabled.ant-menu-item.mcs-footer {
+//     position: absolute; 
+//     bottom: 0; 
+//     left: 0; 
+//     height: 95px; 
+//     width: 100%; 
+//     cursor: default;
+//     padding: 0 24px;
+// }
 
-.mcs-footer-img {
-    width: 100%; 
-    margin-top:24px;
-}
+// TODO not in use, check relevance
+// .mcs-footer-img {
+//     width: 100%; 
+//     margin-top:24px;
+// }
 
-.mcs-scroll-view {
-    width: 100%;
-}
+// TODO not in use, check relevance
+// .mcs-main-layout {
+//     height: '100%';
+// }
 
-.mcs-main-layout {
-    height: '100%';
-}
-
-.mcs-loading-container {
+.mcs-centered-container {
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: @normal-color
 }
 
-.mcs-login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image: radial-gradient(circle at 49% 13%, #00a1df , #003056);
+// TODO not in use, check relevance
+// .mcs-sider-container {
+//     width:200px;
+//     background: #fff;
+//     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+//     z-index: 2;
+// }
 
-  .login-frame {
-    background-color: white;
-    max-width: 350px;
-    padding: 30px 50px 30px 50px;
-
-    .login-form {
-      max-width: 300px;
-
-      .login-logo {
-        padding-bottom:37px;
-        width: 100%;
-      }
-
-      .login-form-forgot {
-        float: right; 
-      }
-
-      .login-form-button {
-        width: 100%;
-      }
-    }
-
-  }
-
-}
-
-.mcs-sider-container {
-    width:200px;
-    background: #fff;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-    z-index: 2;
-}
-
-.mcs-input-label {
-    width: 78px;
-}
-
-.mcs-table-container {
-    /*border: @border-width-base @border-style-base @border-color-split;*/
-    border-radius: 2px;
-    padding: 20px 20px;
-    margin: 50px 40px;
-    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
-    background-color: #fff;
-}
-
-.mcs-table-container .mcs-search-input {
-    width: 100%;
-}
-
-.mcs-table-header {
-    margin-bottom: 14px;
-}
-
-.mcs-table-filters {
-    margin-bottom: 5px;
-}
-
-.mcs-table-nofilters {
-    margin-bottom: 27px;
-}
+// TODO not in use, check relevance
+// .mcs-input-label {
+//     width: 78px;
+// }
 
 .text-right {
     text-align: right;
 }
 
-body {
-    min-width: 1280px;
+.cursor-pointer {
+    cursor: pointer;
 }
 
-.ant-layout {
-    z-index: 1;
-}
-
-.ant-layout-content {
-    background-color: #f1f1f1;
-}
-
-.ant-table-thead > tr > th {
-    color: #919191!important;
-    background: none!important;
-    padding-top: 0px!important;
-}
-
-.ant-table-body > tr > th {
-    color: #373737!important;
-    background: none!important;
-}
-
-.mcs-list-item {
-    padding-left: 12px;
-}
-
-.mcs-filters-item {
-    margin-left: 8px;
-}
-
-
-.mcs-loading {
-    display: inline-block;
-    font-style: normal;
-    vertical-align: baseline;
-    text-align: center;
-    text-transform: none;
-    line-height: 1;
-    width: 100%;
-    max-width: 100px;
-    height: 8px;
-    border-radius: 10px;
-    background: linear-gradient(149deg, #dee4e8, #eceaea);
-    background-size: 400% 400%;
-    -webkit-animation: loadingAnimation 1s ease infinite;
-    -moz-animation: loadingAnimation 1s ease infinite;
-    -o-animation: loadingAnimation 1s ease infinite;
-    animation: loadingAnimation 1s ease infinite;
-}
-
-@-webkit-keyframes loadingAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-@-moz-keyframes loadingAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-@-o-keyframes loadingAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-@keyframes loadingAnimation { 
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
-
-a {
-    text-decoration: none;
-}
-
-.ant-dropdown-menu-item-group-title {
-    font-size: 0.8em;
-    color: @text-color-secondary;
-    padding: 10px;
-}
-
-.mcs-table-view-empty {
-    .logo {
-        width: 100px;
-        height: 100px;
-        border-radius: 50px;
-        margin: 0 auto;
-        background-color: #d8d8d8;
-        color: #fff;
-        line-height: 100px;
-        font-size: 3.5em;
-        display: table;
-        margin-bottom: 10px;
-        .icon {
-            display: table-cell;
-            vertical-align: middle;
-        }
-    }
-    font-size: 18px;
-	font-weight: bold;
-	text-align: center;
-	color: #9c9c9c;
-    margin-top:18%;
-}
-
-
-.ant-btn {
-    height: auto!important;
-}
-
-.mcs-card-title {
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  text-align: left;
-  color: #003056;
-  line-height: 40px;
-}
-
-.mcs-card-header {
-    padding-bottom: 9px;
-    border-bottom: 1px solid #e8e8e8;
-}
-
-.mcs-card-button {
-    float: right;
-}
-
-.mcs-no-data {
-    margin: 100px 0;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    color: #c2c2c2;
-    i {
-        font-size: 50px;
-    }
-}
-
-.mcs-table-image-col {
-    width: 100px;
-}
-
-.mics-small-thumbnail {
-    background-color: #fff;
-    background-image: linear-gradient(45deg,#e6e6e6 25%,transparent 0,transparent 75%,#e6e6e6 0,#e6e6e6),linear-gradient(45deg,#e6e6e6 25%,transparent 0,transparent 75%,#e6e6e6 0,#e6e6e6);
-    background-size: 20px 20px;
-    background-position: 0 0,30px 30px;
-}
-
-.thumbnail-helper {
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
-}
-
-.mics-small-thumbnail img {
-    max-width: 50px;
-    max-height: 50px;
-}
 
 .ant-breadcrumb-separator {
     font-size: 0.8em;
@@ -352,9 +128,3 @@ a {
 .ant-menu.ant-menu-vertical.ant-menu-sub.ant-menu-open {
     overflow-y: scroll;
 }
-
-  /*
-  * add style={this.state.collapsed ? {} : { overflow: 'auto' }} to <Sider> in Component Main Layout
-  * add padding: 24px; #mcs-main-layout .mcs-logo-placeholder .mcs-logo
-  *
-  */

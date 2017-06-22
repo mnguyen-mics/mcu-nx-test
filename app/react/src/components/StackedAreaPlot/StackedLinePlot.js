@@ -41,8 +41,11 @@ class StackedAreaPlot extends Component {
     } = this.props;
 
     const setMetadata = {};
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
     options.colors.forEach((color, i) => {
-      setMetadata[options.yKeys[i]] = color;
+      setMetadata[yKeys[i]] = color;
     });
 
     const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
@@ -71,8 +74,11 @@ class StackedAreaPlot extends Component {
     } = this.props;
 
     const setMetadata = {};
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
     options.colors.forEach((color, i) => {
-      setMetadata[options.yKeys[i]] = color;
+      setMetadata[yKeys[i]] = color;
     });
     this.pointers.forEach(point => {
       point.pointer.detachFrom(point.plot);
@@ -124,12 +130,16 @@ class StackedAreaPlot extends Component {
       this.plot.destroy();
     }
 
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
+
     const xScale = new Plottable.Scales.Time().padProportion(0);
     const yScale = new Plottable.Scales.Linear().addIncludedValuesProvider(() => { return [0]; }).addPaddingExceptionsProvider(() => { return [0]; }).padProportion(0.2);
 
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
-    colorScale.domain(options.yKeys);
+    colorScale.domain(yKeys);
 
     const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
     const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(false);
@@ -146,7 +156,7 @@ class StackedAreaPlot extends Component {
     pnts.push(guideline);
     if (dataset.length > 0) {
       Object.keys(dataset[0]).forEach(item => {
-        if (item !== options.xKey && options.yKeys.indexOf(item) > -1) {
+        if (item !== options.xKey && yKeys.indexOf(item) > -1) {
 
           const plot = new Plottable.Plots.Line()
             .addDataset(plottableDataSet)
@@ -273,9 +283,9 @@ class StackedAreaPlot extends Component {
       const entries = [];
       yKeys.forEach(item => {
         const entry = {
-          label: item,
-          color: navInfo.dataset.metadata()[item],
-          value: navInfo.datum[item]
+          label: item.message,
+          color: navInfo.dataset.metadata()[item.key],
+          value: navInfo.datum[item.key]
         };
         entries.push(entry);
       });
@@ -313,7 +323,7 @@ StackedAreaPlot.propTypes = {
     innerRadius: PropTypes.bool,
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
-    yKeys: PropTypes.arrayOf(PropTypes.string),
+    yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
     lookbackWindow: PropTypes.number,
   }).isRequired

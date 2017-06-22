@@ -2,12 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Row, Col } from 'antd';
+import { Row, Col, Button, Modal } from 'antd';
+import moment from 'moment';
+import { FormattedMessage } from 'react-intl';
 
-import { EmptyCharts } from '../../../../../components/EmptyCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { VerticalBarChart } from '../../../../../components/BarCharts';
 import { LegendChart } from '../../../../../components/LegendChart';
+import { McsIcons } from '../../../../../components/McsIcons';
+import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/actions';
+import { getDefaultDatamart } from '../../../../../state/Session/selectors';
 
 import { SEGMENT_QUERY_SETTINGS } from '../constants';
 
@@ -17,11 +22,32 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 
 import {
-  getSinglePerfView
+  getSinglePerfView,
+  getOverlapView
  } from '../../../../../state/Audience/Segments/selectors';
 
 
 class Overlap extends Component {
+
+  constructor(props) {
+    super(props);
+    this.renderModalExtend = this.renderModalExtend.bind(this);
+  }
+
+  componentDidMount() {
+    const {
+      defaultDatamart,
+      fetchOverlapAnalysis,
+      match: {
+        params: {
+          segmentId,
+          organisationId
+        }
+      },
+    } = this.props;
+    const datamartId = defaultDatamart(organisationId).id;
+    fetchOverlapAnalysis(segmentId, organisationId, datamartId);
+  }
 
   updateLocationSearch(params) {
     const {
@@ -72,25 +98,53 @@ class Overlap extends Component {
         search
       },
       dataSource,
-      hasFetchedAudienceStat
+      isFetchingOverlap,
+      segmentsInformation
     } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
 
     const { lookbackWindow } = filter;
 
-    const fakeData = [{ segment_source_id: '4237', segment_intersect_with: '3261', overlap_number: 8 }, { segment_source_id: '4237', segment_intersect_with: '3257', overlap_number: 59 }, { segment_source_id: '4237', segment_intersect_with: '3248', overlap_number: 12 }, { segment_source_id: '4237', segment_intersect_with: '3073', overlap_number: 45 }, { segment_source_id: '4237', segment_intersect_with: '3236', overlap_number: 3 }, { segment_source_id: '4237', segment_intersect_with: '3251', overlap_number: 38 }, { segment_source_id: '4237', segment_intersect_with: '3239', overlap_number: 0 }, { segment_source_id: '4237', segment_intersect_with: '2488', overlap_number: 3 }, { segment_source_id: '4237', segment_intersect_with: '3258', overlap_number: 116 }, { segment_source_id: '4237', segment_intersect_with: '3124', overlap_number: 0 }, { segment_source_id: '4237', segment_intersect_with: '3126', overlap_number: 27 }, { segment_source_id: '4237', segment_intersect_with: '3096', overlap_number: 6 }, { segment_source_id: '4237', segment_intersect_with: '3134', overlap_number: 167 }, { segment_source_id: '4237', segment_intersect_with: '3123', overlap_number: 0 }, { segment_source_id: '4237', segment_intersect_with: '3002', overlap_number: 2 }];
-    fakeData.sort((a, b) => {
-      return a.overlap_number > b.overlap_number ? -1 : 1;
-    });
+    const data = dataSource.data.slice(0, 20);
 
     const optionsForChart = {
-      xKey: 'segment_intersect_with',
-      yKeys: ['overlap_number'],
+      xKey: 'xKey',
+      yKeys: ['yKey'],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012']
+      colors: ['#2FBCF2']
     };
-    return hasFetchedAudienceStat ? (<VerticalBarChart identifier="StackedAreaChartEmailOverlap" dataset={fakeData} options={optionsForChart} />) : (<span>Loading</span>);
+    return !isFetchingOverlap ? (<VerticalBarChart identifier="StackedAreaChartEmailOverlap" dataset={data} options={optionsForChart} />) : (<LoadingChart />);
+  }
+
+  renderModalExtend() {
+    const {
+      createOverlapAnalysis,
+      defaultDatamart,
+      match: {
+        params: {
+          organisationId,
+          segmentId
+        }
+      }
+    } = this.props;
+    const datamartId = defaultDatamart(organisationId).id;
+
+    Modal.confirm({
+      title: 'Create an Overlap Analysis',
+      content: (
+        <div>
+          <p>By clicking on OK you will create an overlap of the selected segment</p>
+        </div>
+      ),
+      onOk() {
+        console.log(datamartId, segmentId);
+        createOverlapAnalysis(datamartId, segmentId);
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
   }
 
   render() {
@@ -98,26 +152,26 @@ class Overlap extends Component {
       translations,
       dataSource,
       hasFetchedAudienceStat,
+      isFetchingOverlap,
+      hasOverlap
     } = this.props;
 
     const options = {
-      domains: ['overlap_number'],
-      colors: ['#ff9012']
+      domains: [translations['overlap_number'.toUpperCase()]],
+      colors: ['#2FBCF2']
     };
 
     const chartArea = (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            { (dataSource.length === 0 && hasFetchedAudienceStat) ? <div /> : <LegendChart identifier="LegendOverlap" options={options} /> }
+            { (isFetchingOverlap && !hasFetchedAudienceStat && !hasOverlap) ? <div /> : <LegendChart identifier="LegendOverlap" options={options} /> }
           </Col>
-          <Col span={12}>
-            <span className="mcs-card-button">
-              { this.renderDatePicker() }
-            </span>
+          <Col span={12} className="text-right">
+            { (!isFetchingOverlap && hasFetchedAudienceStat && hasOverlap) && (<span className="generated">Generated { moment(dataSource.date).fromNow() }</span>) } {(!isFetchingOverlap && hasFetchedAudienceStat) && (<Button onClick={this.renderModalExtend}><McsIcons type="extend" /> { (hasOverlap) ? (<FormattedMessage id="REFRESH" defaultMessage="Refresh" />) : (<FormattedMessage id="EXTEND" defaultMessage="Extend" />) }</Button>)}
           </Col>
         </Row>
-        { (dataSource.length === 0 && hasFetchedAudienceStat) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderStackedAreaCharts() }
+        { (!hasOverlap && hasFetchedAudienceStat && !isFetchingOverlap) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderStackedAreaCharts() }
       </div>
     );
 
@@ -126,21 +180,41 @@ class Overlap extends Component {
 }
 
 Overlap.propTypes = {
-  translations: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasFetchedAudienceStat: PropTypes.bool.isRequired,
-  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
+  dataSource: PropTypes.shape({
+    date: PropTypes.number.isRequired,
+    data: PropTypes.arrayOf(PropTypes.object)
+  }).isRequired,
+  fetchOverlapAnalysis: PropTypes.func.isRequired,
+  isFetchingOverlap: PropTypes.bool.isRequired,
+  hasOverlap: PropTypes.bool.isRequired,
+  segmentsInformation: PropTypes.arrayOf(PropTypes.object).isRequired,
+  defaultDatamart: PropTypes.func.isRequired,
+  createOverlapAnalysis: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedAudienceStat: state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
-  dataSource: getSinglePerfView(state)
+  isFetchingOverlap: state.audienceSegmentsTable.overlapAnalysisApi.isFetching,
+  hasOverlap: state.audienceSegmentsTable.overlapAnalysisApi.hasOverlap,
+  dataSource: getOverlapView(state),
+  defaultDatamart: getDefaultDatamart(state),
+  segmentsInformation: state.audienceSegmentsTable.audienceSegmentsApi.data,
 });
 
+const mapDispatchToProps = {
+  fetchOverlapAnalysis: AudienceSegmentActions.fetchAudienceSegmentOverlap.request,
+  createOverlapAnalysis: AudienceSegmentActions.createAudienceSegmentOverlap.request,
+};
+
 Overlap = connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Overlap);
 
 Overlap = withRouter(Overlap);

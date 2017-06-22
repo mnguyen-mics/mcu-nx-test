@@ -71,7 +71,7 @@ class StackedBarChart extends Component {
 
   render() {
     const {
-      identifier
+      identifier,
     } = this.props;
 
     const {
@@ -86,10 +86,8 @@ class StackedBarChart extends Component {
       yTooltip,
       visibility
     };
-
     return (
       <div className="mcs-plot-container">
-
         <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg" />
         <ChartTooltip tooltipStyle={tooltipStyle}>
           <BasisTooltip content={content} />
@@ -108,12 +106,16 @@ class StackedBarChart extends Component {
       this.plot.destroy();
     }
 
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
+
     const xScale = new Plottable.Scales.Time().padProportion(0);
     const yScale = new Plottable.Scales.Linear().addIncludedValuesProvider(() => { return [0]; }).addPaddingExceptionsProvider(() => { return [0]; }).padProportion(0.2);
 
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
-    colorScale.domain(options.yKeys);
+    colorScale.domain(yKeys);
 
     const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
     const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(false);
@@ -129,7 +131,7 @@ class StackedBarChart extends Component {
     pnts.push(guideline);
     if (dataset.length > 0) {
       const datasets = {};
-      options.yKeys.forEach(yKey => {
+      yKeys.forEach(yKey => {
         const formatedDataset = [];
         dataset.forEach(dataObject => {
           const data = {
@@ -141,7 +143,7 @@ class StackedBarChart extends Component {
         datasets[yKey] = (formatedDataset);
       });
       const plot = new Plottable.Plots.StackedBar();
-      options.yKeys.forEach(yKey => {
+      yKeys.forEach(yKey => {
         plot.addDataset(new Plottable.Dataset(datasets[yKey]).metadata(yKey));
       });
       plot.x((d) => { return new Date(d.x); }, xScale)
@@ -179,7 +181,7 @@ class StackedBarChart extends Component {
         const nearestEntity = plot.entityNearest(p);
         const entities = plot.entitiesAt(nearestEntity.position);
         entities.forEach((entity, i) => {
-          nearestEntity.datum[options.yKeys[i]] = entity.datum.y;
+          nearestEntity.datum[yKeys[i]] = entity.datum.y;
         });
         line.hide();
         line.drawAt(nearestEntity.position, p, nearestEntity);
@@ -254,9 +256,9 @@ class StackedBarChart extends Component {
       const entries = [];
       yKeys.forEach((item, i) => {
         const entry = {
-          label: item,
+          label: item.message,
           color: colors[i],
-          value: navInfo.datum[item]
+          value: navInfo.datum[item.key]
         };
         entries.push(entry);
       });
@@ -293,7 +295,7 @@ StackedBarChart.propTypes = {
     innerRadius: PropTypes.bool,
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
-    yKeys: PropTypes.arrayOf(PropTypes.string),
+    yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
     lookbackWindow: PropTypes.number,
   }).isRequired

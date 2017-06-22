@@ -8,7 +8,9 @@ import {
   AUDIENCE_SEGMENT_SINGLE_LOAD_ALL,
   AUDIENCE_SEGMENT_SINGLE_FETCH,
   AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH,
-  AUDIENCE_SEGMENT_SINGLE_RESET
+  AUDIENCE_SEGMENT_SINGLE_RESET,
+  AUDIENCE_SEGMENT_CREATE_OVERLAP,
+  AUDIENCE_SEGMENT_RETRIEVE_OVERLAP
 } from '../../action-types';
 
 // ACTIONS FOR LIST
@@ -45,6 +47,18 @@ const fetchAudienceSegmentSinglePerformanceReport = {
 
 const loadAudienceSegmentSingleDataSource = (segmentId, organisationId, filter, isInitialRender = false) => createAction(AUDIENCE_SEGMENT_SINGLE_LOAD_ALL)({ segmentId, organisationId, filter, isInitialRender });
 
+const createAudienceSegmentOverlap = {
+  request: (datamartId, segmentId, filter = {}) => createAction(AUDIENCE_SEGMENT_CREATE_OVERLAP.REQUEST)({ datamartId, segmentId, filter }),
+  success: (response) => createAction(AUDIENCE_SEGMENT_CREATE_OVERLAP.SUCCESS)(response),
+  failure: (error) => createAction(AUDIENCE_SEGMENT_CREATE_OVERLAP.FAILURE)(error)
+};
+
+const fetchAudienceSegmentOverlap = {
+  request: (segmentId, organisationId, datamartId, filter = {}) => createAction(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.REQUEST)({ segmentId, organisationId, datamartId, filter }),
+  success: (response) => createAction(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.SUCCESS)(response),
+  failure: (error) => createAction(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.FAILURE)(error)
+};
+
 export {
   fetchAudienceSegmentList,
   fetchAudienceSegmentsPerformanceReport,
@@ -53,5 +67,7 @@ export {
   resetAudienceSegmentSingle,
   fetchAudienceSegmentSingle,
   fetchAudienceSegmentSinglePerformanceReport,
-  loadAudienceSegmentSingleDataSource
+  loadAudienceSegmentSingleDataSource,
+  createAudienceSegmentOverlap,
+  fetchAudienceSegmentOverlap
 };

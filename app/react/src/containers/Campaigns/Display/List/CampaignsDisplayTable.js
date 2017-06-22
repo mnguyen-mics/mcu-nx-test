@@ -5,7 +5,11 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal, Tooltip, Icon } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { TableView, EmptyTableView } from '../../../../components/TableView';
+import {
+  TableView,
+  TableViewFilters,
+  EmptyTableView
+ } from '../../../../components/TableView';
 import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsDisplayActions from '../../../../state/Campaigns/Display/actions';
@@ -190,7 +194,7 @@ class CampaignsDisplayTable extends Component {
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingCampaignsStat) {
-        return (<i className="mcs-loading" />); // (<span>loading...</span>);
+        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -298,17 +302,22 @@ class CampaignsDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (hasDisplayCampaigns) ? (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingCampaignsDisplay}
-      onChange={() => {}}
-      searchOptions={searchOptions}
-      dateRangePickerOptions={dateRangePickerOptions}
-      filtersOptions={filtersOptions}
-      columnsVisibilityOptions={columnsVisibilityOptions}
-      pagination={pagination}
-    />) : (<EmptyTableView iconType="display" text="EMPTY_DISPLAY" />);
+    return (hasDisplayCampaigns) ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+        searchOptions={searchOptions}
+        dateRangePickerOptions={dateRangePickerOptions}
+        filtersOptions={filtersOptions}
+        columnsVisibilityOptions={columnsVisibilityOptions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingCampaignsDisplay}
+          pagination={pagination}
+        />
+      </TableViewFilters>
+    ) : (<EmptyTableView iconType="display" text="EMPTY_DISPLAY" />);
 
   }
 

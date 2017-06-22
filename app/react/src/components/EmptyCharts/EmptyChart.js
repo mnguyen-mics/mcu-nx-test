@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { Row, Col, Icon } from 'antd';
+import { Row, Col } from 'antd';
+import { McsIcons } from '../McsIcons';
 
 class EmptyCharts extends Component {
 
@@ -11,9 +12,9 @@ class EmptyCharts extends Component {
     } = this.props;
 
     return (
-      <Row className="mcs-no-data">
+      <Row className="mcs-card-no-data">
         <Col span={24} className="">
-          <Icon type={icon} />
+          <McsIcons type={icon} />
         </Col>
         <Col span={24} className="">
           {title}
@@ -25,7 +26,7 @@ class EmptyCharts extends Component {
 }
 
 EmptyCharts.defaultProps = {
-  icon: 'exclamation-circle-o',
+  icon: 'warning',
 };
 
 EmptyCharts.propTypes = {

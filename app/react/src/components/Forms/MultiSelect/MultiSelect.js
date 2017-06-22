@@ -20,7 +20,8 @@ class MultiSelect extends Component {
   render() {
 
     const {
-      displayElement
+      displayElement,
+      buttonClass
     } = this.props;
 
     const {
@@ -31,7 +32,7 @@ class MultiSelect extends Component {
 
     return (
       <Dropdown overlay={menu} trigger={['click']} onVisibleChange={this.handleVisibleChange} visible={overlayVisible}>
-        <Button className="mcs-filters-item">
+        <Button className={buttonClass}>
           { displayElement }
         </Button>
       </Dropdown>
@@ -98,7 +99,7 @@ class MultiSelect extends Component {
           return (
             <Menu.Item key={item.value}>
               {isItemSelected && (<Icon type="check" />)}
-              <span className="mcs-list-item"><FormattedMessage id={item.key} /></span>
+              <span><FormattedMessage id={item.key} /></span>
             </Menu.Item>
           );
         })}
@@ -132,6 +133,10 @@ class MultiSelect extends Component {
 
 }
 
+MultiSelect.defaultProps = {
+  buttonClass: ''
+};
+
 MultiSelect.propTypes = {
   name: PropTypes.string.isRequired,
   displayElement: PropTypes.element.isRequired,
@@ -146,7 +151,8 @@ MultiSelect.propTypes = {
       key: PropTypes.string,
       value: PropTypes.string,
     }))
-  }).isRequired
+  }).isRequired,
+  buttonClass: PropTypes.string,
 };
 
 MultiSelect.defaultProps = {

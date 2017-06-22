@@ -58,8 +58,10 @@ class NavigatorMenu extends Component {
   }
 
   onClick = ({ key }) => {
+    // console.log('has clicked on item');
     const hasClickOnFirstLevelMenuItem = itemDefinitions.find(item => item.key === key);
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
+    // this.props.onMenuItemClick();
   }
 
   getAvailableItems() {
@@ -190,6 +192,7 @@ NavigatorMenu.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   organisationHasDatamarts: PropTypes.func.isRequired,
+  onMenuItemClick: PropTypes.func.isRequired,
   defaultDatamart: PropTypes.func.isRequired,
 };
 

@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Plottable from 'plottable';
+import { FormattedMessage } from 'react-intl';
 
 class LegendChart extends Component {
 

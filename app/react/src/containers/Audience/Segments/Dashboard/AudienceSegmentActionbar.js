@@ -9,9 +9,12 @@ import { Actionbar } from '../../../Actionbar';
 import { McsIcons } from '../../../../components/McsIcons';
 import { withTranslations } from '../../../Helpers';
 
+import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
+
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class AudienceSegmentActionbar extends Component {
+
 
   render() {
 
@@ -41,13 +44,13 @@ class AudienceSegmentActionbar extends Component {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/${organisationId}/campaigns/display/expert/edit/T1`}>
+        <Link key="1" to={`/${organisationId}/campaigns/display/expert/edit/T1`}>
           <Button className="mcs-primary" type="primary">
             <McsIcons type="bolt" />
             <FormattedMessage id="ACTIVATE" />
           </Button>
         </Link>
-        <Link to={`/o${organisationId}d${datamartId}/datamart/segments//${segmentId}`}>
+        <Link key="2" to={`/o${organisationId}d${datamartId}/datamart/segments//${segmentId}`}>
           <Button>
             <McsIcons type="pen" />
             <FormattedMessage id="EDIT" />
@@ -64,17 +67,24 @@ AudienceSegmentActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   defaultDatamart: PropTypes.func.isRequired,
-  segment: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  segment: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  createOverlapAnalysis: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   defaultDatamart: getDefaultDatamart(state),
-  segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment
+  segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
 });
 
+const mapDispatchToProps = {
+  createOverlapAnalysis: AudienceSegmentActions.createAudienceSegmentOverlap.request,
+};
+
 AudienceSegmentActionbar = connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(AudienceSegmentActionbar);
 
 AudienceSegmentActionbar = compose(

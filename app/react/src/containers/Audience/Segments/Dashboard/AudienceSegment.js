@@ -55,7 +55,8 @@ class AudienceSegment extends Component {
       },
       match: {
         params: {
-          segmentId
+          segmentId,
+          organisationId
         }
       },
       history,
@@ -74,9 +75,14 @@ class AudienceSegment extends Component {
         }
       }
     } = nextProps;
+    console.log(organisationId, nextOrganisationId);
 
-
-    if (!compareSearchs(search, nextSearch) || segmentId !== nextSegmentId) {
+    if (!compareSearchs(search, nextSearch) || (segmentId !== nextSegmentId) || (organisationId !== nextOrganisationId)) {
+      console.log("receives new props that don't match");
+      if (organisationId !== nextOrganisationId) {
+        console.log('redirect');
+        history.push(`/v2/o/${nextOrganisationId}/audience/segments`);
+      }
       if (!isSearchValid(nextSearch, SEGMENT_QUERY_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

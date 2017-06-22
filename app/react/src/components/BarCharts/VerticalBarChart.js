@@ -42,7 +42,6 @@ class VerticalBarChart extends Component {
 
     this.renderBarChart(dataset);
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
-    console.log(this.svgBoundingClientRect);
   }
 
   componentWillUnmount() {
@@ -104,10 +103,21 @@ class VerticalBarChart extends Component {
 
     return (
       <div className="mcs-plot-container">
+        <svg style={{ height: '0px', width: '0px' }}>
+          <defs>
+            <linearGradient
+              id="verticalGradientBlue"
+              x1="0" y1="0" x2="0" y2="100%"
+            >
+              <stop offset="0%" stopColor="#2FBCF2" />
+              <stop offset="100%" stopColor="#269CC9" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg overlap" />
 
-        <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg" />
         <ChartTooltip tooltipStyle={tooltipStyle}>
-          <OverlapTooltip content={contentOverlap} />
+          <OverlapTooltip content={content} />
         </ChartTooltip>
       </div>
     );
@@ -131,6 +141,9 @@ class VerticalBarChart extends Component {
     colorScale.domain(options.yKeys);
 
     const xAxis = new Plottable.Axes.Category(xScale, 'bottom');
+    xAxis.tickLabelAngle(-90)
+      .tickLabelMaxWidth(140)
+      .tickLabelMaxLines(2);
     const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(false);
 
     const plts = [];
@@ -161,8 +174,10 @@ class VerticalBarChart extends Component {
       plot.x((d) => { return d.x.toString(); }, xScale)
         .y((d) => { return d.y; }, yScale)
         .animated(true)
-        .attr('fill', (d, i, dset) => { return dset.metadata(); }, colorScale)
+        .attr('fill', 'url(#verticalGradientBlue)')
+        .attr('cursor', 'pointer')
         .attr('width', () => { return 50; });
+
       plts.push(plot);
     }
     const plots = new Plottable.Components.Group(plts.concat(pnts));
@@ -217,7 +232,7 @@ class VerticalBarChart extends Component {
       const tooltip = this.createTooltipCrosshair(plot);
       const interaction = new Plottable.Interactions.Click();
       interaction.onClick((point) => {
-        plot.selections().attr('fill', '#ff9012');
+        plot.selections().attr('fill', 'url(#verticalGradientBlue)');
         tooltip.hide();
         if (plot.entitiesAt(point).length) {
           const selection = plot.entitiesAt(point)[0].selection;
@@ -226,9 +241,8 @@ class VerticalBarChart extends Component {
           entities.forEach((entity, i) => {
             nearestEntity.datum[options.yKeys[i]] = entity.datum.y;
           });
-          console.log(nearestEntity);
           tooltip.drawAt(nearestEntity.position, point, nearestEntity);
-          selection.attr('fill', '#5279c7');
+          selection.attr('fill', '#ff9012');
         }
       });
       interaction.attachTo(plot);
@@ -247,7 +261,8 @@ class VerticalBarChart extends Component {
       options: {
         yKeys,
         colors
-      }
+      },
+      dataset
     } = this.props;
 
     const crosshair = {};
@@ -255,18 +270,25 @@ class VerticalBarChart extends Component {
 
     crosshair.drawAt = (p, mousePosition, navInfo) => {
 
-      const entries = [];
-      yKeys.forEach((item, i) => {
-        const entry = {
-          label: item,
-          color: colors[i],
-          value: navInfo.datum[item]
-        };
-        entries.push(entry);
+      const selectedData = dataset.find((data) => {
+        return data.xKey === navInfo.datum.x;
       });
+      const entries = {
+        segment_initial: {
+          name: selectedData.segment_source.name || '',
+          population: selectedData.segment_source.number
+        },
+        segment_overlaping: {
+          name: selectedData.segment_intersect_with.name || '',
+          population: selectedData.segment_intersect_with.number
+        },
+        overlap: {
+          population: selectedData.overlap_number.number
+        }
+      };
+
       const tooltipContent = {
-        xLabel: navInfo.datum.x,
-        entries: entries
+        ...entries
       };
 
       const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;

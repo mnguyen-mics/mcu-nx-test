@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal, Tooltip } from 'antd';
 
-import { TableView, EmptyTableView } from '../../../components/TableView';
+import {
+  TableView,
+  EmptyTableView,
+  TableViewFilters
+ } from '../../../components/TableView';
 import { McsIcons } from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
@@ -190,13 +194,16 @@ class AutomationsListTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (hasAutomations) ? (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingAutomationList}
-      onChange={() => {}}
-      pagination={pagination}
-    />) : (<EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />);
+    return (hasAutomations) ? (
+      <TableViewFilters>
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingAutomationList}
+          pagination={pagination}
+        />
+      </TableViewFilters>
+    ) : (<EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />);
 
   }
 

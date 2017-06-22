@@ -1,5 +1,5 @@
 import { takeLatest } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, all } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -20,7 +20,8 @@ function* loadAssetsFiles({ payload }) {
 
     const {
       organisationId,
-      filter
+      filter,
+      isInitialRender
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
@@ -29,7 +30,29 @@ function* loadAssetsFiles({ payload }) {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
     };
 
-    const response = yield call(AssetsFilesService.getAssetsFiles, organisationId, options);
+    const initialOptions = {
+      ...getPaginatedApiParam(1, 1)
+    };
+
+    let allCalls;
+
+    if (isInitialRender) {
+      allCalls = {
+        initialFetch: call(AssetsFilesService.getAssetsFiles, organisationId, initialOptions),
+        response: call(AssetsFilesService.getAssetsFiles, organisationId, options)
+      };
+    } else {
+      allCalls = {
+        response: call(AssetsFilesService.getAssetsFiles, organisationId, options)
+      };
+    }
+
+    const { initialFetch, response } = yield all(allCalls);
+
+    if (initialFetch) {
+      response.hasItems = initialFetch.count > 0;
+    }
+
     yield put(fetchAssetsFiles.success(response));
   } catch (error) {
     log.error(error);

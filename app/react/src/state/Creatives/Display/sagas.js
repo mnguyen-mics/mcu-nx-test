@@ -34,7 +34,7 @@ function* loadCreativeDisplay({ payload }) {
     const initialOptions = {
       ...getPaginatedApiParam(1, 1)
     };
-
+    console.log(isInitialRender);
     let allCalls;
 
     if (isInitialRender) {
