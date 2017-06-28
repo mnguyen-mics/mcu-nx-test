@@ -48,15 +48,17 @@ class Logo extends Component {
       logoBlob
     } = this.props;
 
-    const logoUrl = logoBlob ? URL.createObjectURL(logoBlob) : null;  // eslint-disable-line no-undef
-
+    let logoUrl = logoBlob ? URL.createObjectURL(logoBlob) : null;  // eslint-disable-line no-undef
+    if (global.window.localStorage.isDemo === 'true') {
+      logoUrl = global.window.localStorage.logo;
+    }
     return (
       <div className="mcs-logo-placeholder">
         { mode === 'inline' &&
           <div className="mcs-logo" >
             <Link to="/" id="logo">
               {!!logoBlob && <img alt="logo" src={logoUrl} />}
-              {!logoBlob && <img alt="logo" src={mediarithmicsLogo} />}
+              {!logoBlob && <img alt="logo" src={logoUrl ? logoUrl : mediarithmicsLogo} />}
             </Link>
           </div>
         }

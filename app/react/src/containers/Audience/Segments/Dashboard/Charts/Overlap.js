@@ -13,6 +13,7 @@ import { LegendChart } from '../../../../../components/LegendChart';
 import { McsIcons } from '../../../../../components/McsIcons';
 import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/actions';
 import { getDefaultDatamart } from '../../../../../state/Session/selectors';
+import messages from '../messages';
 
 import { SEGMENT_QUERY_SETTINGS } from '../constants';
 
@@ -22,7 +23,6 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 
 import {
-  getSinglePerfView,
   getOverlapView
  } from '../../../../../state/Audience/Segments/selectors';
 
@@ -99,7 +99,6 @@ class Overlap extends Component {
       },
       dataSource,
       isFetchingOverlap,
-      segmentsInformation
     } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
@@ -138,8 +137,7 @@ class Overlap extends Component {
         </div>
       ),
       onOk() {
-        console.log(datamartId, segmentId);
-        createOverlapAnalysis(datamartId, segmentId);
+        createOverlapAnalysis(datamartId, segmentId, organisationId);
       },
       onCancel() {
         console.log('Cancel');
@@ -168,7 +166,7 @@ class Overlap extends Component {
             { (isFetchingOverlap && !hasFetchedAudienceStat && !hasOverlap) ? <div /> : <LegendChart identifier="LegendOverlap" options={options} /> }
           </Col>
           <Col span={12} className="text-right">
-            { (!isFetchingOverlap && hasFetchedAudienceStat && hasOverlap) && (<span className="generated">Generated { moment(dataSource.date).fromNow() }</span>) } {(!isFetchingOverlap && hasFetchedAudienceStat) && (<Button onClick={this.renderModalExtend}><McsIcons type="extend" /> { (hasOverlap) ? (<FormattedMessage id="REFRESH" defaultMessage="Refresh" />) : (<FormattedMessage id="EXTEND" defaultMessage="Extend" />) }</Button>)}
+            { (!isFetchingOverlap && hasFetchedAudienceStat && hasOverlap) && (<span className="generated"><FormattedMessage {...messages.generated} /> { moment(dataSource.date).fromNow() }</span>) } {(!isFetchingOverlap && hasFetchedAudienceStat) && (<Button onClick={this.renderModalExtend}><McsIcons type="extend" /> { (hasOverlap) ? (<FormattedMessage {...messages.refresh} />) : (<FormattedMessage {...messages.createOverlap} />) }</Button>)}
           </Col>
         </Row>
         { (!hasOverlap && hasFetchedAudienceStat && !isFetchingOverlap) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderStackedAreaCharts() }

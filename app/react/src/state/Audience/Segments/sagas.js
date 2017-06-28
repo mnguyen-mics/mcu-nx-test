@@ -157,6 +157,7 @@ function* postAudienceSegmentOverlap({ payload }) {
     const {
       datamartId,
       segmentId,
+      organisationId,
       filter
     } = payload;
 
@@ -164,7 +165,7 @@ function* postAudienceSegmentOverlap({ payload }) {
 
     const response = yield call(AudienceSegmentService.createOverlap, datamartId, segmentId, filter);
     yield put(createAudienceSegmentOverlap.success(response));
-    yield put(fetchAudienceSegmentOverlap.request(segmentId));
+    yield put(fetchAudienceSegmentOverlap.request(segmentId, organisationId, datamartId));
   } catch (error) {
     log.error(error);
     yield put(createAudienceSegmentOverlap.failure(error));

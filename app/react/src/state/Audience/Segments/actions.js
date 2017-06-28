@@ -48,7 +48,7 @@ const fetchAudienceSegmentSinglePerformanceReport = {
 const loadAudienceSegmentSingleDataSource = (segmentId, organisationId, filter, isInitialRender = false) => createAction(AUDIENCE_SEGMENT_SINGLE_LOAD_ALL)({ segmentId, organisationId, filter, isInitialRender });
 
 const createAudienceSegmentOverlap = {
-  request: (datamartId, segmentId, filter = {}) => createAction(AUDIENCE_SEGMENT_CREATE_OVERLAP.REQUEST)({ datamartId, segmentId, filter }),
+  request: (datamartId, segmentId, organisationId, filter = {}) => createAction(AUDIENCE_SEGMENT_CREATE_OVERLAP.REQUEST)({ datamartId, segmentId, organisationId, filter }),
   success: (response) => createAction(AUDIENCE_SEGMENT_CREATE_OVERLAP.SUCCESS)(response),
   failure: (error) => createAction(AUDIENCE_SEGMENT_CREATE_OVERLAP.FAILURE)(error)
 };

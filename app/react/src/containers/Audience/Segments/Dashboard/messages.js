@@ -36,5 +36,17 @@ export default defineMessages({
   modalOverlapContentTitle: {
     id: 'overlap.modal.title',
     defaultMessage: 'Create an Overlap Analysis'
+  },
+  generated: {
+    id: 'overlap.time.generated',
+    defaultMessage: 'Generated'
+  },
+  refresh: {
+    id: 'overlap.button.refresh',
+    defaultMessage: 'Refresh'
+  },
+  createOverlap: {
+    id: 'overlap.button.create',
+    defaultMessage: 'Create Overlap Analysis'
   }
 });
