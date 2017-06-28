@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Form, Icon, Input, Button } from 'antd';
 import Alert from 'mcs-react-alert';
 import logoUrl from '../../assets/images/logo-mediarithmics.png';
 import { sendPassword, passwordForgotReset } from '../../state/ForgotPassword/actions';
+import messages from './messages';
 
 const FormItem = Form.Item;
 
@@ -25,17 +27,17 @@ class ForgotPassword extends Component {
   render() {
 
     const {
-      translations,
       form: {
         getFieldDecorator
       },
       isRequesting,
       hasError,
-      passwordSentSuccess
+      passwordSentSuccess,
+      intl: { formatMessage }
      } = this.props;
 
     const hasFieldError = this.props.form.getFieldError('email');
-    const errorMsg = !hasFieldError && hasError ? <Alert type="danger" text={<FormattedMessage id="LOG_IN_ERROR" />} /> : null;
+    const errorMsg = !hasFieldError && hasError ? <Alert type="danger" text={<FormattedMessage {...messages.resetPasswordTitle} />} /> : null;
 
     return (
       <div className="mcs-reset-password-container">
@@ -45,31 +47,32 @@ class ForgotPassword extends Component {
           <Form onSubmit={this.handleSubmit} className="reset-password-form">
             { errorMsg }
             <div className="reset-passwork-msg" >
-              <FormattedMessage id="RESET_PASSWORD" />
+              <FormattedMessage {...messages.resetPasswordTitle} />
             </div>
             <FormItem>
               { getFieldDecorator('email', {
-                rules: [{ type: 'email', required: true, message: translations.EMAL_REQUIRED }],
+                rules: [{ type: 'email', required: true, message: formatMessage(messages.resetPasswordEmailRequired) }],
               })(
-                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={translations.EMAIL_PLACEHOLDER} />
+                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={formatMessage(messages.resetPasswordEmail)} />
             )}
             </FormItem>
             <Button type="primary" htmlType="submit" className="reset-password-button" loading={isRequesting}>
-              <FormattedMessage id="RESET_PASSWORD_BUTTON" />
+              <FormattedMessage {...messages.resetPasswordSubmit} />
             </Button>
-            <Link className="back-to-login" to="/login"><FormattedMessage id="BACK_TO_LOGIN" /></Link>
+            <Link className="back-to-login" to="/login"><FormattedMessage {...messages.resetPasswordBack} /></Link>
           </Form>
         }
           { passwordSentSuccess &&
           <div>
             <div>
-              <FormattedMessage id="PASSWORD_SENT" />
+              <FormattedMessage {...messages.resetPasswordPasswordSent} />
               <br />
-              <FormattedMessage id="EMAIL_SPAM" />
+              <FormattedMessage {...messages.resetPasswordEmailSpan} />
             </div>
             <br />
-            <Button type="primary" htmlType="button" className="reset-password-button">
-              <Link to="/login"><FormattedMessage id="RETURN_TO_LOGIN" /></Link>
+            <Button type="primary" htmlType="button" className="reset-password-button">;
+
+              <Link to="/login"><FormattedMessage {...messages.resetPasswordReturnToLogin} /></Link>
             </Button>
           </div>
         }
@@ -95,18 +98,16 @@ class ForgotPassword extends Component {
 
 
 ForgotPassword.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   form: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasError: PropTypes.bool.isRequired,
   sendPasswordRequest: PropTypes.func.isRequired,
   passwordForgotReset: PropTypes.func.isRequired,
   isRequesting: PropTypes.bool.isRequired,
-  passwordSentSuccess: PropTypes.bool.isRequired
-
+  passwordSentSuccess: PropTypes.bool.isRequired,
+  intl: intlShape.isRequired
 };
 
 const mapStateToProps = state => ({
-  translations: state.translations,
   hasError: state.forgotPassword.hasError,
   isRequesting: state.forgotPassword.isRequesting,
   passwordSentSuccess: state.forgotPassword.passwordSentSuccess
@@ -123,6 +124,10 @@ ForgotPassword = connect(
 )(ForgotPassword);
 
 ForgotPassword = Form.create()(ForgotPassword);
+
+ForgotPassword = compose(
+  injectIntl,
+)(ForgotPassword);
 
 
 export default ForgotPassword;
