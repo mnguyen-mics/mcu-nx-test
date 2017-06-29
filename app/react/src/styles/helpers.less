@@ -109,15 +109,13 @@
 }
 
 
-// AJOUTER POUR LA REFONTE
-
 .ant-btn-primary.mcs-primary {
     color: #fff;
-    background-color: #00a1e1;
-    border-color: #00a1e1;
+    background-color: @info-color ;
+    border-color: @info-color ;
     &:active {
-        background-color: #00a1e1;
-        border-color: #00a1e1;
+        background-color: @info-color;
+        border-color: lighten(@info-color, 10%);
     }
     &:hover {
         background-color: rgba(0, 161, 225, 0.67);

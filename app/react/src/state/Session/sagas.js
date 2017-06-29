@@ -17,9 +17,6 @@ function* fetchOrganisationWorkspace({ payload }) {
   try {
     const organisationId = payload;
     const response = yield call(OrganisationService.getWorkspace, organisationId);
-    if (global.window.localStorage.isDemo === 'true') {
-      response.organisation_name = global.window.localStorage.organisation_name;
-    }
     yield put(getWorkspace.success(response));
   } catch (e) {
     log.error(e);
