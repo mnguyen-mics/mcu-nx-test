@@ -1,8 +1,7 @@
 import { combineReducers } from 'redux';
 
 import {
-  SAVE_PROFILE,
-  SAVE_ORGANISATION
+  SAVE_PROFILE
 } from '../../action-types';
 
 // TODO try to intruce a higher order reducer
@@ -31,29 +30,4 @@ const userAccountApi = (state = {}, action) => {
   }
 };
 
-const organisationAccountApi = (state = {}, action) => {
-  switch (action.type) {
-    case SAVE_ORGANISATION.REQUEST:
-      return {
-        ...state,
-        isFetching: true
-      };
-    case SAVE_ORGANISATION.SUCCESS:
-      return {
-        ...state,
-        isFetching: false,
-        ...action.payload
-      };
-    case SAVE_ORGANISATION.FAILURE:
-      return {
-        ...state,
-        isFetching: false
-      };
-    default:
-      return state;
-  }
-};
-
-const AccountSettingsReducers = combineReducers({ userAccountApi, organisationAccountApi });
-
-export default { AccountSettingsReducers };
+export default { userAccountApi };
