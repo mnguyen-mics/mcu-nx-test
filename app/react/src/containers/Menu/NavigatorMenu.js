@@ -163,7 +163,7 @@ class NavigatorMenu extends Component {
         const matched = matchPath(pathname, { path: `${basePath}${item.path}` });
         return matched; // && matched.isExact;
       });
-      return [currentItem.key];
+      return currentItem ? [currentItem.key] : null;
     };
 
     const getOpenKeysInMode = () => {
