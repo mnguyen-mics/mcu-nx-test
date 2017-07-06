@@ -126,3 +126,5 @@ export const CREATIVES_EMAILS_FETCH = createRequestTypes('CREATIVES_EMAILS_FETCH
 export const CREATIVES_EMAILS_TABLE_RESET = 'CREATIVES_EMAILS_TABLE_RESET';
 
 export const GET_LOGO = 'GET_LOGO';
+export const UPDATE_LOGO = createRequestTypes('UPDATE_LOGO');
+export const SAVE_PROFILE = createRequestTypes('SAVE_PROFILE');

@@ -3,13 +3,20 @@ import { createAction } from '../../utils/ReduxHelper';
 import {
   CONNECTED_USER,
   WORKSPACE,
-  GET_LOGO
+  GET_LOGO,
+  UPDATE_LOGO
 } from '../action-types';
 
 const getConnectedUser = {
   request: createAction(CONNECTED_USER.REQUEST),
   success: createAction(CONNECTED_USER.SUCCESS),
   failure: createAction(CONNECTED_USER.FAILURE)
+};
+
+const updateLogo = {
+  request: createAction(UPDATE_LOGO.REQUEST),
+  success: createAction(UPDATE_LOGO.SUCCESS),
+  failure: createAction(UPDATE_LOGO.FAILURE)
 };
 
 const getWorkspace = {
@@ -23,5 +30,6 @@ const getLogo = createAction(GET_LOGO);
 export {
   getConnectedUser,
   getWorkspace,
-  getLogo
+  getLogo,
+  updateLogo
 };
