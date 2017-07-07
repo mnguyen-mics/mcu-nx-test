@@ -8,9 +8,14 @@ const Dragger = Upload.Dragger;
 
 import { Logo } from './Logo';
 import { getWorkspace } from '../../state/Session/selectors';
-import { getLogo } from '../../state/Session/actions';
+import { getLogo, putLogo } from '../../state/Session/actions';
 
 import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
+
+function handleUpload(props, organisationId, uploadData, updateLogo) {
+  const file = uploadData.file;
+  props.putLogoRequest({organisationId, file, updateLogo});
+}
 
 class EditableLogo extends Component {
   componentDidMount() {
@@ -29,19 +34,30 @@ class EditableLogo extends Component {
       <p className="ant-upload-drag-icon">
         <Icon type="inbox" />
       </p>
-      <p className="ant-upload-text">Click or drag file to this area to upload</p>
-      <p className="ant-upload-hint">Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files</p>
+      <p className="ant-upload-text">Click or drag an image in this area to upload</p>
+      <p className="ant-upload-hint"></p>
     </div>);
   }
 
-  buildLogoImageWithUpload() {
-    return (<Modal visible={false} footer={null}>
-      <img alt="logo" src={logoUrl} />
-    </Modal>);
+  buildLogoImageWithUpload(logoUrl) {
+    return (<div>
+      <img alt="logo" src={logoUrl}/>
+      <span className="mcs-dropzone-overlay">
+        <label className="mcs-dropzone-overlay-label">Upload Logo</label>
+      </span>
+    </div>);
   }
 
   wrapInDraggerComponent(component) {
-    return ( <Dragger {...this.props}>
+    const {
+      match: {
+        params: { organisationId }
+      },
+      updateLogo
+    } = this.props;
+
+    return ( <Dragger {...this.props} showUploadList={false}
+      customRequest={(uploadData) => handleUpload(this.props, organisationId, uploadData, updateLogo)}>
       { component }
     </Dragger>);
   }
@@ -49,11 +65,12 @@ class EditableLogo extends Component {
   render() {
     const {
       mode,
-      logoBlob
+      logoBlob,
+      isUploadingLogo
     } = this.props;
 
     const logoUrl = logoBlob ? URL.createObjectURL(logoBlob) : null;  // eslint-disable-line no-undef
-    const insideComponent = (!logoBlob) ? this.buildDragLabel() : <img alt="logo" src={logoUrl} />;
+    const insideComponent = (!logoBlob) ? this.buildDragLabel() : this.buildLogoImageWithUpload(logoUrl);
     const uploadLogoComponent =  this.wrapInDraggerComponent(insideComponent);
 
     return (
@@ -61,6 +78,7 @@ class EditableLogo extends Component {
         { mode === 'inline' &&
           <div className="mcs-logo" >
             { uploadLogoComponent }
+            { isUploadingLogo && <div>Logo is Loading</div> }
           </div>
         }
       </div>
@@ -77,15 +95,19 @@ EditableLogo.propTypes = {
   logoBlob: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   getLogoRequest: PropTypes.func.isRequired,
-  updateLogo: PropTypes.func.isRequired
+  putLogoRequest: PropTypes.func.isRequired,
+  updateLogo: PropTypes.func.isRequired,
+  isUploadingLogo: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({
-  getWorkspaceByOrganisation: getWorkspace(state)
+  getWorkspaceByOrganisation: getWorkspace(state),
+  isUploadingLogo: state.session.isUploadingLogo
 });
 
 const mapDispatchToProps = {
-  getLogoRequest: getLogo
+  getLogoRequest: getLogo,
+  putLogoRequest: putLogo.request
 };
 
 EditableLogo = connect(

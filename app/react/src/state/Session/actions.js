@@ -4,7 +4,7 @@ import {
   CONNECTED_USER,
   WORKSPACE,
   GET_LOGO,
-  UPDATE_LOGO
+  PUT_LOGO
 } from '../action-types';
 
 const getConnectedUser = {
@@ -13,10 +13,10 @@ const getConnectedUser = {
   failure: createAction(CONNECTED_USER.FAILURE)
 };
 
-const updateLogo = {
-  request: createAction(UPDATE_LOGO.REQUEST),
-  success: createAction(UPDATE_LOGO.SUCCESS),
-  failure: createAction(UPDATE_LOGO.FAILURE)
+const putLogo = {
+  request: createAction(PUT_LOGO.REQUEST),
+  success: createAction(PUT_LOGO.SUCCESS),
+  failure: createAction(PUT_LOGO.FAILURE)
 };
 
 const getWorkspace = {
@@ -31,5 +31,5 @@ export {
   getConnectedUser,
   getWorkspace,
   getLogo,
-  updateLogo
+  putLogo
 };

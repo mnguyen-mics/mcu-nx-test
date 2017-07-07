@@ -18,7 +18,7 @@ class AccountSettings extends Component {
 
     return (<Row className="mcs-table-container">
       <Tabs
-          defaultActiveKey="1"
+          defaultActiveKey="2"
           tabPosition="left"
         >
           <TabPane tab={formatMessage(messages.userAccount)} key="1">

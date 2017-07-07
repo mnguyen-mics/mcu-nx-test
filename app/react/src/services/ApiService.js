@@ -35,16 +35,20 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
     }
   }
 
+  const bodyIsFormData = (body instanceof FormData);
+
   if (headers) {
     config.headers = Object.assign({}, config.headers, headers);
-  } else {
+  } else if (!bodyIsFormData) {
     config.headers = Object.assign({}, config.headers, {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     });
   }
 
-  if (body) {
+  if (bodyIsFormData) {
+    config.body = body; //body passed as a formdata object
+  } else if (body) {
     config.body = JSON.stringify(body);
   }
 

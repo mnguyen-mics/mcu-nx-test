@@ -6,11 +6,14 @@ import OrganisationService from '../../services/OrganisationService';
 
 import {
   WORKSPACE,
-  GET_LOGO
+  GET_LOGO,
+  PUT_LOGO
 } from '../action-types';
 
 import {
-  getWorkspace
+  getWorkspace,
+  putLogo,
+  getLogo
 } from './actions';
 
 function* fetchOrganisationWorkspace({ payload }) {
@@ -37,6 +40,27 @@ function* downloadLogo({ payload }) {
   }
 }
 
+function* uploadLogo({ payload }) {
+  try {
+    const {
+      organisationId,
+      file,
+      updateLogo
+    } = payload;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    yield call(OrganisationService.putLogo, organisationId, formData);
+  
+    yield put(putLogo.success());
+    yield put(getLogo({organisationId, updateLogo}));
+  
+  } catch (e) {
+    log.error('Error while putting logo: ', e);
+    yield put(putLogo.failure(e));
+  }
+}
+
 function* watchWorkspaceRequest() {
   yield* takeEvery(WORKSPACE.REQUEST, fetchOrganisationWorkspace);
 }
@@ -45,7 +69,12 @@ function* watchLogoDownloadRequest() {
   yield* takeEvery(GET_LOGO, downloadLogo);
 }
 
+function* watchLogoUploadRequest() {
+  yield* takeEvery(PUT_LOGO.REQUEST, uploadLogo);
+}
+
 export const sessionSagas = [
   fork(watchWorkspaceRequest),
-  fork(watchLogoDownloadRequest)
+  fork(watchLogoDownloadRequest),
+  fork(watchLogoUploadRequest)
 ];

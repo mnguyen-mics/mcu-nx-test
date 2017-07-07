@@ -30,4 +30,6 @@ const userAccountApi = (state = {}, action) => {
   }
 };
 
-export default { userAccountApi };
+AccountSettingsReducers = userAccountApi 
+
+export default { AccountSettingsReducers };

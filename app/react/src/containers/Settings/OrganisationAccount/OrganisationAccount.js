@@ -9,7 +9,7 @@ import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-i
 import {
   FormInput
 } from '../../../components/Form';
-import * as SessionActions from '../../../state/Session/actions';
+import { putLogo } from '../../../state/Session/actions';
 import LogoInput from './LogoInput';
 
 const required = value => (value ? undefined : 'Required');
@@ -55,17 +55,12 @@ render() {
 }
 
 OrganisationAccount.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
   intl: intlShape.isRequired
 };
 
 const mapStateToProps = state => ({
   organisation: getDefaultOrganisation(state.session.connectedUser)
 });
-
-const mapDispatchToProps = {
-  updateLogo: SessionActions.updateLogo.request
-};
 
 OrganisationAccount = compose(
   reduxForm({
@@ -75,8 +70,7 @@ OrganisationAccount = compose(
 )(OrganisationAccount);
 
 OrganisationAccount = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(OrganisationAccount);
 
 export default OrganisationAccount;
