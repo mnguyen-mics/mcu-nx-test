@@ -55,7 +55,7 @@ class Logo extends Component {
           <div className="mcs-logo" >
             <Link to="/" id="logo">
               {!!logoBlob && <img alt="logo" src={logoUrl} />}
-              {!logoBlob && <img alt="logo" src={logoUrl ? logoUrl : mediarithmicsLogo} />}
+              {!logoBlob && <img alt="logo" src={mediarithmicsLogo} />}
             </Link>
           </div>
         }

@@ -72,7 +72,7 @@ class AudienceSegmentsTable extends Component {
       },
       loadAudienceSegmentsDataSource
     } = this.props;
-    console.log('mounting');
+
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
       history.replace({
         pathname: pathname,

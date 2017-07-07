@@ -1,5 +1,5 @@
 import { takeLatest, delay } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put, all, take, race } from 'redux-saga/effects';
 import moment from 'moment';
 
 import log from '../../../utils/Logger';
@@ -244,6 +244,15 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
   }
 }
 
+function* raceOverlap(action) {
+
+  yield race({
+    task: call(retrieveAudienceSegmentOverlap, action),
+    cancel: take(AUDIENCE_SEGMENT_SINGLE_RESET)
+  });
+
+}
+
 function* loadSegmentsAndPerformance(action) {
   yield call(loadAudienceSegmentList, action);
   yield call(loadPerformanceReport, action);
@@ -275,7 +284,7 @@ function* watchCreateAudienceSegmentOverlap() {
 }
 
 function* watchRetrieveAudienceSegmentOverlap() {
-  yield* takeLatest(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.REQUEST, retrieveAudienceSegmentOverlap);
+  yield* takeLatest(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.REQUEST, raceOverlap);
 }
 
 export const segmentsSagas = [

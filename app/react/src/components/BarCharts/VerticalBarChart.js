@@ -175,8 +175,7 @@ class VerticalBarChart extends Component {
         .y((d) => { return d.y; }, yScale)
         .animated(true)
         .attr('fill', 'url(#verticalGradientBlue)')
-        .attr('cursor', 'pointer')
-        .attr('width', () => { return 50; });
+        .attr('cursor', 'pointer');
 
       plts.push(plot);
     }
@@ -197,36 +196,6 @@ class VerticalBarChart extends Component {
 
     table.renderTo(`#${identifier}`);
     this.plot = table;
-
-    /*
-    plts.forEach((plot) => {
-      // colorScale.range([plot.foreground().style('fill')]);
-      const line = this.createLineCrosshair(plot);
-      const pointer = new Plottable.Interactions.Pointer();
-      this.pointersAttached.push(pointer);
-      pointer.onPointerMove((p) => {
-        const nearestEntity = plot.entityNearest(p);
-        const entities = plot.entitiesAt(nearestEntity.position);
-        entities.forEach((entity, i) => {
-          nearestEntity.datum[options.yKeys[i]] = entity.datum.y;
-        });
-        line.hide();
-        line.drawAt(nearestEntity.position, p, nearestEntity);
-      });
-      pointer.onPointerExit(() => {
-        line.hide();
-        this.setTooltip({
-          visible: 'hidden'
-        });
-      });
-      pointer.attachTo(plot);
-      const point = {
-        pointer: pointer,
-        plot: plot
-      };
-      this.pointers.push(point);
-    });
-    */
 
     plts.forEach((plot) => {
       const tooltip = this.createTooltipCrosshair(plot);

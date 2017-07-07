@@ -39,26 +39,7 @@ class CardWithHeader extends Component {
 CardWithHeader.defaultProps = {
   buttons: <span />,
   hasHeader: true,
-  headerItems: [{
-    iconType: 'full-users',
-    translationKey: 'USERPOINTS',
-    number: '999,999,999'
-  },
-  {
-    iconType: 'email-inverted',
-    translationKey: 'EMAILS',
-    number: '3,654'
-  },
-  {
-    iconType: 'display',
-    translationKey: 'DISPLAY',
-    number: '65,876'
-  },
-  {
-    iconType: 'phone',
-    translationKey: 'PHONE',
-    number: '342'
-  }]
+  headerItems: []
 };
 
 CardWithHeader.propTypes = {

@@ -42,7 +42,7 @@ class CreativeDisplayTable extends Component {
       },
       fetchCreativeDisplay
     } = this.props;
-    console.log('components mounting');
+
     if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
@@ -51,7 +51,6 @@ class CreativeDisplayTable extends Component {
       });
     } else {
       const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-      console.log('components fetching');
       fetchCreativeDisplay(organisationId, filter, true);
     }
   }

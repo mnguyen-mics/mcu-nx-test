@@ -60,10 +60,10 @@ class NavigatorMenu extends Component {
   }
 
   onClick = ({ key }) => {
-    // console.log('has clicked on item');
+
     const hasClickOnFirstLevelMenuItem = itemDefinitions.find(item => item.key === key);
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
-    // this.props.onMenuItemClick();
+
   }
 
   getAvailableItems() {

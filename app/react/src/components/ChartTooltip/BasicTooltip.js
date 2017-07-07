@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-const BasisTooltip = (props) => {
+const BasicTooltip = (props) => {
   const buildStyle = (c) => {
     return {
       fill: c,
@@ -48,7 +48,7 @@ const BasisTooltip = (props) => {
   );
 };
 
-BasisTooltip.defaultProps = {
+BasicTooltip.defaultProps = {
   content: {
     xLabel: '',
     entries: [{
@@ -59,7 +59,7 @@ BasisTooltip.defaultProps = {
   }
 };
 
-BasisTooltip.propTypes = {
+BasicTooltip.propTypes = {
 
   content: PropTypes.shape({
     xLabel: React.PropTypes.oneOfType([
@@ -94,4 +94,4 @@ BasisTooltip.propTypes = {
 
 };
 
-export default BasisTooltip;
+export default BasicTooltip;

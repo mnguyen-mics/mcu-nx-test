@@ -18,15 +18,6 @@ import {
 
 class AudienceSegmentHeader extends Component {
 
-  componentDidMount() {
-  }
-
-  componentWillUnmount() {
-  }
-
-  updateQueryParams(params) {
-  }
-
   render() {
     const {
       segment,
