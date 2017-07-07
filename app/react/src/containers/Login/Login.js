@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 
@@ -62,7 +62,7 @@ class Login extends Component {
               })(
                 <Checkbox><FormattedMessage id="REMEMBER_ME" /></Checkbox>
               )}
-              <a className="login-form-forgot" href=""><FormattedMessage id="FORGOT_PASSWORD" /></a>
+              <Link className="login-form-forgot" to="/v2/forgot_password"><FormattedMessage id="FORGOT_PASSWORD" /></Link>
               <Button type="primary" htmlType="submit" className="login-form-button" loading={isRequesting}>
                 <FormattedMessage id="LOG_IN" />
               </Button>

@@ -113,6 +113,16 @@ const getConnectedUser = () => {
   return ApiService.getRequest(endpoint).then(res => res.data);
 };
 
+const sendPassword = (email) => {
+  const endpoint = 'authentication/send_password_reset_email';
+
+  const body = {
+    email
+  };
+
+  return ApiService.postRequest(endpoint, body, null, null, { authenticated: false });
+};
+
 export default {
   getAccessToken,
   getAccessTokenExpirationDate,
@@ -124,5 +134,6 @@ export default {
   createAccessToken,
   createRefreshToken,
   getConnectedUser,
-  deleteCredentials
+  deleteCredentials,
+  sendPassword
 };
