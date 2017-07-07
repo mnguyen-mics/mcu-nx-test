@@ -1,6 +1,7 @@
 import { takeEvery } from 'redux-saga';
 import { call, put, fork } from 'redux-saga/effects';
 
+import { addNotification } from '../Notifications/actions';
 import log from '../../utils/Logger';
 import OrganisationService from '../../services/OrganisationService';
 
@@ -34,9 +35,15 @@ function* downloadLogo({ payload }) {
       updateLogo
     } = payload;
     const response = yield call(OrganisationService.getLogo, organisationId);
-    updateLogo(response);
+    const logoUrl = URL.createObjectURL(response);
+    yield put(getLogo.success({ logoUrl }));
   } catch (e) {
     log.error('Error while getting logo: ', e);
+    yield put(addNotification({
+          type: 'error',
+          messageKey: 'NOTIFICATION_ERROR_TITLE',
+          descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
+      }));
   }
 }
 
@@ -51,13 +58,16 @@ function* uploadLogo({ payload }) {
     const formData = new FormData();
     formData.append('file', file);
     yield call(OrganisationService.putLogo, organisationId, formData);
-  
     yield put(putLogo.success());
-    yield put(getLogo({organisationId, updateLogo}));
-  
+    yield put(getLogo.request({organisationId}));
+
   } catch (e) {
     log.error('Error while putting logo: ', e);
-    yield put(putLogo.failure(e));
+    yield put(addNotification({
+          type: 'error',
+          messageKey: 'NOTIFICATION_ERROR_TITLE',
+          descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
+      }));
   }
 }
 
@@ -66,7 +76,7 @@ function* watchWorkspaceRequest() {
 }
 
 function* watchLogoDownloadRequest() {
-  yield* takeEvery(GET_LOGO, downloadLogo);
+  yield* takeEvery(GET_LOGO.REQUEST, downloadLogo);
 }
 
 function* watchLogoUploadRequest() {

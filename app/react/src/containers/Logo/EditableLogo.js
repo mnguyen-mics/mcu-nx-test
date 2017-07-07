@@ -12,9 +12,9 @@ import { getLogo, putLogo } from '../../state/Session/actions';
 
 import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
 
-function handleUpload(props, organisationId, uploadData, updateLogo) {
+function handleUpload(props, organisationId, uploadData) {
   const file = uploadData.file;
-  props.putLogoRequest({organisationId, file, updateLogo});
+  props.putLogoRequest({organisationId, file});
 }
 
 class EditableLogo extends Component {
@@ -26,7 +26,7 @@ class EditableLogo extends Component {
       updateLogo
     } = this.props;
 
-    this.props.getLogoRequest({ organisationId, updateLogo });
+    this.props.getLogoRequest({ organisationId });
   }
 
   buildDragLabel() {
@@ -57,7 +57,7 @@ class EditableLogo extends Component {
     } = this.props;
 
     return ( <Dragger {...this.props} showUploadList={false}
-      customRequest={(uploadData) => handleUpload(this.props, organisationId, uploadData, updateLogo)}>
+      customRequest={(uploadData) => handleUpload(this.props, organisationId, uploadData)}>
       { component }
     </Dragger>);
   }
@@ -65,12 +65,11 @@ class EditableLogo extends Component {
   render() {
     const {
       mode,
-      logoBlob,
-      isUploadingLogo
+      isUploadingLogo,
+      logoUrl
     } = this.props;
 
-    const logoUrl = logoBlob ? URL.createObjectURL(logoBlob) : null;  // eslint-disable-line no-undef
-    const insideComponent = (!logoBlob) ? this.buildDragLabel() : this.buildLogoImageWithUpload(logoUrl);
+    const insideComponent = (!logoUrl) ? this.buildDragLabel() : this.buildLogoImageWithUpload(logoUrl);
     const uploadLogoComponent =  this.wrapInDraggerComponent(insideComponent);
 
     return (
@@ -87,42 +86,33 @@ class EditableLogo extends Component {
 }
 
 EditableLogo.defaultProps = {
-  logoBlob: null
+  logoUrl: null
 };
 
 EditableLogo.propTypes = {
   mode: PropTypes.string.isRequired,
-  logoBlob: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   getLogoRequest: PropTypes.func.isRequired,
   putLogoRequest: PropTypes.func.isRequired,
-  updateLogo: PropTypes.func.isRequired,
-  isUploadingLogo: PropTypes.bool.isRequired
+  isUploadingLogo: PropTypes.bool.isRequired,
+  logoUrl: PropTypes.string
 };
 
 const mapStateToProps = state => ({
   getWorkspaceByOrganisation: getWorkspace(state),
-  isUploadingLogo: state.session.isUploadingLogo
+  isUploadingLogo: state.session.isUploadingLogo,
+  logoUrl: state.session.logoUrl
 });
 
 const mapDispatchToProps = {
-  getLogoRequest: getLogo,
+  getLogoRequest: getLogo.request,
   putLogoRequest: putLogo.request
 };
 
-EditableLogo = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditableLogo);
-
 EditableLogo = compose(
-  withState('logoBlob', 'setLogoBlob', null),
-  withHandlers({
-    updateLogo: ({ setLogoBlob }) => (logoBlob) => setLogoBlob(logoBlob)
-  }),
+  connect(mapStateToProps, mapDispatchToProps),
   withRouter
 )(EditableLogo);
 
-EditableLogo = withRouter(EditableLogo);
 
 export default EditableLogo;

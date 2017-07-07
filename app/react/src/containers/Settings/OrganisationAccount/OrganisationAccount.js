@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import { Field, reduxForm } from 'redux-form';
 import { Form, Row, Col, Button, Icon } from 'antd';
-import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 import {
   FormInput
@@ -14,16 +11,11 @@ import LogoInput from './LogoInput';
 
 const required = value => (value ? undefined : 'Required');
 
-function getDefaultOrganisation(user) {
-    return user.workspaces[user.default_workspace];
-}
-
 class OrganisationAccount extends Component {
 
 render() {
   const {
-      organisation,
-      intl: { formatMessage }
+      organisation_name
   } = this.props;
 
   const formMessages = defineMessages({ organisationName: { id: 'OrganisationName', defaultMessage: 'Organisation Name' },
@@ -36,7 +28,7 @@ render() {
     wrapperCol: { span: 10, offset: 1 }
   };
     
-  return (<Form>
+  return (<div>
     <div className="mcs-card-header mcs-card-title">
       <span className="mcs-card-title"><FormattedMessage id="OrganisationProfile" defaultMessage="Organisation Profile" /></span>
     </div>
@@ -46,31 +38,16 @@ render() {
             <label className="ant-form-item-label"><FormattedMessage id="OrganisationProfile" defaultMessage="Organisation Profile" /> :</label>
         </Col>
         <Col span={fieldGridConfig.wrapperCol.span} offset={fieldGridConfig.wrapperCol.offset}>
-            <label className="ant-form-item-label"> {organisation.organisation_name} </label>
+            <label className="ant-form-item-label"> {organisation_name} </label>
         </Col>
     </Row>
     <LogoInput fieldGridConfig={fieldGridConfig}/>
-  </Form>);
+  </div>);
   }
 }
 
 OrganisationAccount.propTypes = {
-  intl: intlShape.isRequired
+  organisation_name: PropTypes.string
 };
-
-const mapStateToProps = state => ({
-  organisation: getDefaultOrganisation(state.session.connectedUser)
-});
-
-OrganisationAccount = compose(
-  reduxForm({
-    form: 'userAccountEdit'
-  }),
-  injectIntl
-)(OrganisationAccount);
-
-OrganisationAccount = connect(
-  mapStateToProps
-)(OrganisationAccount);
 
 export default OrganisationAccount;

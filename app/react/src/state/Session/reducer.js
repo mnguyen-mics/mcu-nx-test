@@ -2,7 +2,8 @@ import {
   CONNECTED_USER,
   WORKSPACE,
   LOG_OUT,
-  PUT_LOGO
+  PUT_LOGO,
+  GET_LOGO
 } from '../action-types';
 
 const defaultSessionState = {
@@ -40,6 +41,11 @@ const session = (state = defaultSessionState, action) => {
       return {
         ...state,
         isFetchingWorkspace: false
+      };
+    case GET_LOGO.SUCCESS:
+      return {
+        ...state,
+        logoUrl: action.payload.logoUrl
       };
     case PUT_LOGO.REQUEST:
       return {
