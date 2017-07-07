@@ -98,3 +98,31 @@
 .text-right {
     text-align: right;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+
+.ant-breadcrumb-separator {
+    font-size: 0.8em;
+}
+
+
+.ant-btn-primary.mcs-primary {
+    color: #fff;
+    background-color: @info-color ;
+    border-color: @info-color ;
+    &:active {
+        background-color: @info-color;
+        border-color: lighten(@info-color, 10%);
+    }
+    &:hover {
+        background-color: rgba(0, 161, 225, 0.67);
+        border-color: rgba(0, 161, 225, 0.67);
+    }
+}
+
+.ant-menu.ant-menu-vertical.ant-menu-sub.ant-menu-open {
+    overflow-y: scroll;
+}

@@ -7,6 +7,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
 import { withTranslations } from '../../../Helpers';
+import { McsIcons } from '../../../../components/McsIcons';
 
 class KeywordActionbar extends Component {
 
@@ -26,8 +27,8 @@ class KeywordActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/${organisationId}/library/keywordslists/new`}>
-          <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_KEYWORD_LIST" />
+          <Button className="mcs-primary" type="primary">
+            <McsIcons type="plus" /> <FormattedMessage id="NEW_KEYWORD_LIST" />
           </Button>
         </Link>
       </Actionbar>

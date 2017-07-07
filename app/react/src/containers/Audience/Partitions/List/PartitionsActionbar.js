@@ -46,7 +46,7 @@ class PartitionsActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
-          <Button type="primary">
+          <Button className="mcs-primary" type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_PARTITION" />
           </Button>
         </Dropdown>

@@ -34,7 +34,7 @@ function* authorize(credentialsOrRefreshToken) {
 
 function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false, remember = false) {
   try {
-    log.debug('Authorize user with credentialsOrRefreshToken : ', credentialsOrRefreshToken);
+    log.debug('Authorize user with credentialsOrRefreshToken');
 
     let refreshToken = false;
     let expiresIn = null;

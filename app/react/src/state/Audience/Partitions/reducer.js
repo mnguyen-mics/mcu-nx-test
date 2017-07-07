@@ -13,7 +13,8 @@ import {
 const defaultAudiencePartitionsApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const audiencePartitionsApi = (state = defaultAudiencePartitionsApiState, action) => {

@@ -42,10 +42,12 @@ class NavigatorMenu extends Component {
 
   onOpenChange = (openKeys) => {
     const state = this.state;
-    const mode = this.props.mode;
+    const {
+      mode
+    } = this.props;
+
     if (mode === 'inline') {
       const latestOpenKey = openKeys.find(key => !(state.inlineOpenKeys.indexOf(key) > -1));
-
       let nextOpenKeys = [];
       if (latestOpenKey) {
         nextOpenKeys = [latestOpenKey];
@@ -58,8 +60,10 @@ class NavigatorMenu extends Component {
   }
 
   onClick = ({ key }) => {
+
     const hasClickOnFirstLevelMenuItem = itemDefinitions.find(item => item.key === key);
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
+
   }
 
   getAvailableItems() {
@@ -100,7 +104,8 @@ class NavigatorMenu extends Component {
       match: {
         params: { organisationId }
       },
-      defaultDatamart
+      defaultDatamart,
+      collapsed
     } = this.props;
 
     const baseUrl = `/v2/o/${organisationId}`;
@@ -109,7 +114,7 @@ class NavigatorMenu extends Component {
       const buildSubMenu = itemDef.subMenuItems && itemDef.subMenuItems.length > 0;
       if (buildSubMenu) {
         return (
-          <SubMenu key={itemDef.key} title={<span><McsIcons type={itemDef.iconType} /><span className="nav-text"><FormattedMessage id={itemDef.translationId} /></span></span>}>
+          <SubMenu key={itemDef.key} onTitleClick={() => { this.setState({ inlineOpenKeys: [itemDef.key] }); this.props.onMenuItemClick(); }} title={<span><McsIcons type={itemDef.iconType} /><span className="nav-text"><FormattedMessage id={itemDef.translationId} /></span></span>}>
             {
               itemDef.subMenuItems.map(subMenuItem => {
                 let linkUrl = `${baseUrl}${subMenuItem.path}`;
@@ -120,7 +125,7 @@ class NavigatorMenu extends Component {
                     linkUrl = `/${organisationId}${subMenuItem.path}`;
                   }
                 }
-                return (<Menu.Item key={subMenuItem.key}><Link to={linkUrl}><FormattedMessage id={subMenuItem.translationId} /></Link></Menu.Item>);
+                return (<Menu.Item style={collapsed === true ? { display: 'none' } : { display: 'block' }} key={subMenuItem.key}><Link to={linkUrl}><FormattedMessage id={subMenuItem.translationId} /></Link></Menu.Item>);
               })
             }
           </SubMenu>
@@ -187,9 +192,11 @@ class NavigatorMenu extends Component {
 
 NavigatorMenu.propTypes = {
   mode: PropTypes.string.isRequired,
+  collapsed: PropTypes.bool.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   organisationHasDatamarts: PropTypes.func.isRequired,
+  onMenuItemClick: PropTypes.func.isRequired,
   defaultDatamart: PropTypes.func.isRequired,
 };
 

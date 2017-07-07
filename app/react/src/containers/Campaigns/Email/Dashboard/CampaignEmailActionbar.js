@@ -67,13 +67,13 @@ class CampaignEmailActionbar extends Component {
     });
 
     const activeCampaignElement = (
-      <Button type="primary" onClick={() => onClickElement('ACTIVE')}>
+      <Button className="mcs-primary" type="primary" onClick={() => onClickElement('ACTIVE')}>
         <Icon type="play-circle-o" />
         <FormattedMessage id="ACTIVATE_CAMPAIGN" />
       </Button>
     );
     const pauseCampaignElement = (
-      <Button type="primary" onClick={() => onClickElement('PAUSED')}>
+      <Button className="mcs-primary" type="primary" onClick={() => onClickElement('PAUSED')}>
         <Icon type="pause-circle-o" />
         <FormattedMessage id="PAUSE_CAMPAIGN" />
       </Button>

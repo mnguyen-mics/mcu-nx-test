@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Menu, Dropdown, Icon, Button, message } from 'antd';
+import { Menu, Dropdown, Button, message } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
@@ -9,6 +9,7 @@ import lodash from 'lodash';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
+import { McsIcons } from '../../../../components/McsIcons';
 
 import ExportService from '../../../../services/ExportService';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
@@ -168,12 +169,12 @@ class SegmentsActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
-          <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
+          <Button className="mcs-primary" type="primary">
+            <McsIcons type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <Icon type="export" />}<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <McsIcons type="download" />}<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

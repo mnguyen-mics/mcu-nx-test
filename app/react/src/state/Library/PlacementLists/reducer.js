@@ -8,7 +8,8 @@ import {
 const defaultPlacementListApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const placementListsApi = (state = defaultPlacementListApiState, action) => {

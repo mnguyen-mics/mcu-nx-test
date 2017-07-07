@@ -1,101 +1,48 @@
-import React, { Component, PropTypes } from 'react';
-import TooltipContent from './TooltipContent';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-class ChartTooltip extends Component {
+const ChartTooltip = ({ tooltipStyle, children }) => {
 
-  render() {
-    const {
-      xTooltip,
-      yTooltip,
-      content,
-      visibility
-    } = this.props;
+  const style = {
+    left: tooltipStyle.xTooltip,
+    top: tooltipStyle.yTooltip,
+    visibility: tooltipStyle.visibility,
+    position: 'fixed'
+  };
 
-    const style = {
-      left: xTooltip,
-      top: yTooltip,
-      visibility,
-      position: 'fixed'
-    };
+  return (
+    <div style={style}>
+      { children }
+    </div>
+  );
 
-    if (content) {
-      return (
-        <div
-          style={style}
-        >
-          <TooltipContent xLabel={content.xLabel} contentTooltip={content.entries} />
-        </div>
-      );
-    }
-    return (
-      null
-    );
-  }
-}
+};
 
 ChartTooltip.defaultProps = {
-  xTooltip: 0,
-  yTooltip: 0,
-  content: {
-    xLabel: '',
-    entries: [{
-      label: '',
-      color: '',
-      value: 0
-    }]
-  },
-  visibility: 'hidden'
+  tooltipStyle: {
+    xTooltip: 0,
+    yTooltip: 0,
+    visibility: 'hidden'
+  }
 };
 
 ChartTooltip.propTypes = {
-  /*
+  tooltipStyle: PropTypes.shape({
+    /*
   * The X pixel where the tooltip will be displayed
   */
-  xTooltip: PropTypes.number,
+    xTooltip: PropTypes.number,
 
   /*
   * The Y pixel where the tooltip will be displayed
   */
-  yTooltip: PropTypes.number,
-
-  /*
-  * The content of the tooltip
-  */
-  content: PropTypes.shape({
-
-   /*
-   * The value of xAxis to display
-   */
-    xLabel: PropTypes.string,
-
-   /*
-    * Values of Y axises correspondent to the x value
-    */
-    entries: PropTypes.arrayOf(
-      PropTypes.shape({
-
-       /*
-        * The legend of the plot entry
-        */
-        label: PropTypes.string.isRequired,
-
-        /*
-        * The color of the plot entry
-        */
-        color: PropTypes.string.isRequired,
-
-        /*
-        * The value of the plot entry
-        */
-        value: PropTypes.number.isRequired
-      })
-    )
-  }),
+    yTooltip: PropTypes.number,
 
   /*
   * To show or not the tooltip
   */
-  visibility: React.PropTypes.string
+    visibility: React.PropTypes.string
+  }),
 };
 
 export default ChartTooltip;

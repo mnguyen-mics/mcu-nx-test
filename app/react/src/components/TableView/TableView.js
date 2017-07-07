@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { Dropdown, Icon, Menu, Table } from 'antd';
+import { Dropdown, Menu, Table } from 'antd';
+import { McsIcons } from '../McsIcons';
 
 const DEFAULT_PAGINATION_OPTION = {
   size: 'small',
@@ -34,7 +35,7 @@ class TableView extends Component {
     if (pagination) {
       newPagination = {
         ...DEFAULT_PAGINATION_OPTION,
-        pagination
+        ...pagination
       };
     }
 
@@ -109,7 +110,7 @@ class TableView extends Component {
         render: (text, record) => {
           return (<Dropdown overlay={this.renderActionsMenu(column.actions, record)} trigger={['click']}>
             <a className="ant-dropdown-link">
-              <Icon type="down" />
+              <McsIcons type="caret" />
             </a>
           </Dropdown>);
         }

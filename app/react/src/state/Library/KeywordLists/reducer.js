@@ -8,7 +8,8 @@ import {
 const defaultKeywordListApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const keywordListsApi = (state = defaultKeywordListApiState, action) => {
