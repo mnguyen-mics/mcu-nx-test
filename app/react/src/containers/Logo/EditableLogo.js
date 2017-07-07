@@ -30,7 +30,7 @@ class EditableLogo extends Component {
   }
 
   buildDragLabel() {
-    return (<div>
+    return (<div className="mcs-logo-dragger">
       <p className="ant-upload-drag-icon">
         <Icon type="inbox" />
       </p>
@@ -40,7 +40,7 @@ class EditableLogo extends Component {
   }
 
   buildLogoImageWithUpload(logoUrl) {
-    return (<div>
+    return (<div className="mcs-logo-dragger">
       <img alt="logo" src={logoUrl}/>
       <span className="mcs-dropzone-overlay">
         <label className="mcs-dropzone-overlay-label">Upload Logo</label>
