@@ -6,12 +6,9 @@ import { injectIntl, intlShape, defineMessages } from 'react-intl';
 
 import { UserAccount } from './UserAccount';
 import { OrganisationAccount } from './OrganisationAccount';
+import { getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
 
 const TabPane = Tabs.TabPane;
-
-function getDefaultOrganisation(user) {
-  return user.workspaces[user.default_workspace];
-}
 
 class AccountSettings extends Component {
   render() {
@@ -44,7 +41,7 @@ AccountSettings.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  organisationName: getDefaultOrganisation(state.session.connectedUser).organisation_name
+  organisationName: getDefaultWorspaceOrganisationId(state)
 });
 
 AccountSettings.propTypes = {
