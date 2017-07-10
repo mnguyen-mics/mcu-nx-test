@@ -36,7 +36,6 @@ class VerticalBarChart extends Component {
 
   componentDidMount() {
     const {
-      options,
       dataset
     } = this.props;
 
@@ -85,20 +84,6 @@ class VerticalBarChart extends Component {
       xTooltip,
       yTooltip,
       visibility
-    };
-
-    const contentOverlap = {
-      segment_initial: {
-        name: 'Test Initial',
-        population: 10927336
-      },
-      segment_overlaping: {
-        name: 'Test Overlaping',
-        population: 1237824
-      },
-      overlap: {
-        population: 112232
-      }
     };
 
     return (
@@ -198,7 +183,7 @@ class VerticalBarChart extends Component {
     this.plot = table;
 
     plts.forEach((plot) => {
-      const tooltip = this.createTooltipCrosshair(plot);
+      const tooltip = this.createTooltipCrosshair();
       const interaction = new Plottable.Interactions.Click();
       interaction.onClick((point) => {
         plot.selections().attr('fill', 'url(#verticalGradientBlue)');
@@ -225,17 +210,12 @@ class VerticalBarChart extends Component {
   }
 
 
-  createTooltipCrosshair(plot) {
+  createTooltipCrosshair() {
     const {
-      options: {
-        yKeys,
-        colors
-      },
       dataset
     } = this.props;
 
     const crosshair = {};
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
     crosshair.drawAt = (p, mousePosition, navInfo) => {
 

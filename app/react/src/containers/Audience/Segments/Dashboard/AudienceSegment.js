@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
-import lodash from 'lodash';
+import { withRouter } from 'react-router-dom';
 import AudienceSegmentHeader from './AudienceSegmentHeader';
 import AudienceSegmentDashboard from './AudienceSegmentDashboard';
 
@@ -11,7 +10,6 @@ import * as AudienceSegmentActions from '../../../../state/Audience/Segments/act
 import { SEGMENT_QUERY_SETTINGS } from './constants';
 
 import {
-  updateSearch,
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
@@ -75,12 +73,9 @@ class AudienceSegment extends Component {
         }
       }
     } = nextProps;
-    console.log(organisationId, nextOrganisationId);
 
     if (!compareSearchs(search, nextSearch) || (segmentId !== nextSegmentId) || (organisationId !== nextOrganisationId)) {
-      console.log("receives new props that don't match");
       if (organisationId !== nextOrganisationId) {
-        console.log('redirect');
         history.push(`/v2/o/${nextOrganisationId}/audience/segments`);
       }
       if (!isSearchValid(nextSearch, SEGMENT_QUERY_SETTINGS)) {
@@ -115,12 +110,11 @@ AudienceSegment.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   loadAudienceSegmentSingleDataSource: PropTypes.func.isRequired,
   resetAudienceSegmentSingle: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
   translations: state.translations,
 });
 

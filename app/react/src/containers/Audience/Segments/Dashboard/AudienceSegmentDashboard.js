@@ -1,24 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { CardWithHeader } from '../../../../components/Card';
 import { McsTabs } from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 
-import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
-
-import { SEGMENT_QUERY_SETTINGS } from './constants';
 import { formatMetric } from '../../../../utils/MetricHelper';
-
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearchs
-} from '../../../../utils/LocationSearchHelper';
-
 
 class AudienceSegmentDashboard extends Component {
 
@@ -73,14 +61,11 @@ class AudienceSegmentDashboard extends Component {
 }
 
 AudienceSegmentDashboard.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   segment: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   translations: state.translations,
   segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment
 });

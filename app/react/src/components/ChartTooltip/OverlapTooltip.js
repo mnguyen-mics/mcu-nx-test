@@ -56,7 +56,7 @@ const OverlapTooltip = (props) => {
         </tbody>
       </table>
       <div className="text-center">
-        <Button type="primary" onClick={() => { console.log('clicked'); }} >
+        <Button type="primary" >
           <McsIcons type="bolt" /><FormattedMessage id="ACTIVATE" defaultMessage="Activate" />
         </Button>
       </div>

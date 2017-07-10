@@ -8,7 +8,6 @@ import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { compose } from 'recompose';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { VerticalBarChart } from '../../../../../components/BarCharts';
 import { LegendChart } from '../../../../../components/LegendChart';
 import { McsIcons } from '../../../../../components/McsIcons';
@@ -19,7 +18,6 @@ import messages from '../messages';
 import { SEGMENT_QUERY_SETTINGS } from '../constants';
 
 import {
-  updateSearch,
   parseSearch
 } from '../../../../../utils/LocationSearchHelper';
 
@@ -139,7 +137,6 @@ Overlap.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasFetchedAudienceStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.shape({
     date: PropTypes.number.isRequired,
@@ -148,7 +145,6 @@ Overlap.propTypes = {
   fetchOverlapAnalysis: PropTypes.func.isRequired,
   isFetchingOverlap: PropTypes.bool.isRequired,
   hasOverlap: PropTypes.bool.isRequired,
-  segmentsInformation: PropTypes.arrayOf(PropTypes.object).isRequired,
   defaultDatamart: PropTypes.func.isRequired,
   createOverlapAnalysis: PropTypes.func.isRequired,
   intl: intlShape.isRequired
