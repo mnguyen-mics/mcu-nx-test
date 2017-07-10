@@ -39,7 +39,7 @@ class PieChart extends Component {
     }
 
     return options.isHalf ? (
-      <div className={classNameOuter}>
+      <div className={`${classNameOuter} donut`}>
         <div ref={svg => { this.svg = svg; }} id={identifier} className={classNameInner} />
         <div className="mcs-donut-chart-title" />
         <div className="mcs-chart-title">

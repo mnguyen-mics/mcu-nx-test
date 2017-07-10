@@ -121,7 +121,7 @@ class GoalsActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/${organisationId}/goals/`}>
-          <Button type="primary">
+          <Button className="mcs-primary" type="primary">
             <McsIcons type="plus" /><FormattedMessage id="NEW_GOAL" />
           </Button>
         </Link>

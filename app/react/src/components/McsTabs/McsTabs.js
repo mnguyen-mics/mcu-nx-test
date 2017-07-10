@@ -1,14 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import { Tabs } from 'antd';
 
-class CampaignDashboardTabs extends Component {
+class McsTabs extends Component {
 
   render() {
+
+    const {
+      isCard
+    } = this.props;
 
     const menuItems = this.buildMenuItems();
 
     return (
-      <div className="mcs-campaign-dashboard-tabs">
+      <div className={isCard ? 'mcs-campaign-dashboard-tabs card' : 'mcs-campaign-dashboard-tabs standalone'}>
         <Tabs
           defaultActiveKey="0"
           onChange={() => {}}
@@ -38,11 +42,16 @@ class CampaignDashboardTabs extends Component {
 
 }
 
-CampaignDashboardTabs.propTypes = {
+McsTabs.defaultProps = {
+  isCard: true
+};
+
+McsTabs.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string,
     display: PropTypes.element
-  })).isRequired
+  })).isRequired,
+  isCard: PropTypes.bool
 };
 
-export default CampaignDashboardTabs;
+export default McsTabs;

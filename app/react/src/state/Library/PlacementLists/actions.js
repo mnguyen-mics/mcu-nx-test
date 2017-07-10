@@ -8,7 +8,7 @@ import {
 const resetPlacementListsTable = createAction(PLACEMENT_LISTS_TABLE_RESET);
 
 const fetchPlacementLists = {
-  request: (organisationId, filter = {}) => createAction(PLACEMENT_LISTS_FETCH.REQUEST)({ organisationId, filter }),
+  request: (organisationId, filter = {}, isInitialRender = false) => createAction(PLACEMENT_LISTS_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
   success: (response) => createAction(PLACEMENT_LISTS_FETCH.SUCCESS)(response),
   failure: (error) => createAction(PLACEMENT_LISTS_FETCH.FAILURE)(error)
 };

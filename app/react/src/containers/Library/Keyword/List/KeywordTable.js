@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableView } from '../../../../components/TableView';
+import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
 
 import * as KeywordListsActions from '../../../../state/Library/KeywordLists/actions';
 
@@ -47,11 +47,12 @@ class KeywordListsTable extends Component {
     if (!isSearchValid(search, KEYWORDS_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, KEYWORDS_SEARCH_SETTINGS)
+        search: buildDefaultSearch(search, KEYWORDS_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
       });
     } else {
       const filter = parseSearch(search, KEYWORDS_SEARCH_SETTINGS);
-      fetchKeywordLists(organisationId, filter);
+      fetchKeywordLists(organisationId, filter, true);
     }
   }
 
@@ -72,7 +73,8 @@ class KeywordListsTable extends Component {
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch
+        search: nextSearch,
+        state
       },
       match: {
         params: {
@@ -81,15 +83,18 @@ class KeywordListsTable extends Component {
       }
     } = nextProps;
 
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
     if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, KEYWORDS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, KEYWORDS_SEARCH_SETTINGS)
+          search: buildDefaultSearch(nextSearch, KEYWORDS_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
         });
       } else {
         const filter = parseSearch(nextSearch, KEYWORDS_SEARCH_SETTINGS);
-        fetchKeywordLists(nextOrganisationId, filter);
+        fetchKeywordLists(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
@@ -127,7 +132,8 @@ class KeywordListsTable extends Component {
       },
       isFetchingKeywordLists,
       dataSource,
-      totalPlacements
+      totalPlacements,
+      hasKeywordLists
     } = this.props;
 
     const filter = parseSearch(search, KEYWORDS_SEARCH_SETTINGS);
@@ -174,13 +180,18 @@ class KeywordListsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingKeywordLists}
-      onChange={() => {}}
-      pagination={pagination}
-    />);
+    return hasKeywordLists ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingKeywordLists}
+          onChange={() => {}}
+          pagination={pagination}
+        />
+      </TableViewFilters>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_KEYWORD" />);
 
   }
 
@@ -240,7 +251,7 @@ KeywordListsTable.propTypes = {
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-
+  hasKeywordLists: PropTypes.bool.isRequired,
   isFetchingKeywordLists: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalPlacements: PropTypes.number.isRequired,
@@ -252,10 +263,10 @@ KeywordListsTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
-  isFetchingKeywordLists: state.placementListTable.placementListsApi.isFetching,
+  hasKeywordLists: state.keywordListTable.keywordListsApi.hasItems,
+  isFetchingKeywordLists: state.keywordListTable.keywordListsApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalPlacements: state.placementListTable.placementListsApi.total,
+  totalPlacements: state.keywordListTable.keywordListsApi.total,
 });
 
 const mapDispatchToProps = {

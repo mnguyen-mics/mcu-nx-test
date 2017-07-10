@@ -32,7 +32,7 @@ class ListActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/o${organisationId}d${datamartId}/library/scenarios/`}>
-          <Button type="primary">
+          <Button className="mcs-primary" type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
           </Button>
         </Link>

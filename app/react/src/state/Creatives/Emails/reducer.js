@@ -8,7 +8,8 @@ import {
 const defaultCreativeEmailsApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const creativeEmailsApi = (state = defaultCreativeEmailsApiState, action) => {

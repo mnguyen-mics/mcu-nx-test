@@ -4,10 +4,28 @@
 
 .mcs-plot-container {
     .mcs-area-plot-svg {
-        min-height: 500px;
+        height: 375px;
         width: 100%
     }
+    .mcs-area-plot-svg.overlap {
+      height: 500px;
+      width: 100%
+    }
     overflow: visible;
+    margin-bottom: 20px;
+}
+
+.mcs-plot-container.donut{
+    .mcs-area-plot-svg {
+        height: 400px;
+        width: 100%
+    }
+    .mcs-area-plot-svg.overlap {
+      height: 500px;
+      width: 100%
+    }
+    overflow: visible;
+    margin-bottom: 20px;
 }
 
 
@@ -16,7 +34,7 @@
 
   .mcs-plot-container-half {
       .mcs-area-plot-svg-half {
-          min-height: 200px;
+          height: 167px;
           width: 100%
       }
       overflow: visible;
@@ -29,7 +47,7 @@
   .mcs-plot-container-half {
       .mcs-area-plot-svg-half {
           margin-top: 20px;
-          min-height: 200px;
+          height: 167px;
           width: 100%
       }
       overflow: visible;
@@ -107,6 +125,10 @@
 
 .mcs-chart-header {
   padding-bottom: 15px;
+  .generated {
+    margin-right: 10px;
+    font-size: 0.8em;
+  }
 }
 
 .mcs-chart-gridline {
@@ -132,9 +154,7 @@
     z-index: 10000;
     display: block;
     text-align: left;
-    pointer-events: none;
     white-space: nowrap;
-    user-select: none;
     border-radius: 4px;
     transition: opacity 50ms linear;
     transition-delay: 200ms;
@@ -161,6 +181,10 @@
         background-color: #ffffff;
         color: #373737;
       }
+    }
+
+    .button {
+      margin-top: 10px;
     }
 
 }

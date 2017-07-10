@@ -17,6 +17,7 @@ class MainLayout extends Component {
       mode: 'inline'
     };
     this.onCollapse = this.onCollapse.bind(this);
+    this.onMenuItemClick = this.onMenuItemClick.bind(this);
   }
 
   onCollapse(collapsed) {
@@ -33,15 +34,24 @@ class MainLayout extends Component {
     return null;
   }
 
+  onMenuItemClick() {
+    if (this.state.collapsed === true) {
+      this.setState({
+        collapsed: false,
+        mode: 'inline'
+      });
+    }
+  }
+
   render() {
 
     const { contentComponent: ContentComponent } = this.props;
 
     return (
       <Layout id="mcs-main-layout" className="mcs-fullscreen">
-        <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
+        <Sider style={this.state.collapsed ? {} : { overflow: 'auto' }} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
           <Logo mode={this.state.mode} />
-          <NavigatorMenu mode={this.state.mode} />
+          <NavigatorMenu mode={this.state.mode} collapsed={this.state.collapsed} onMenuItemClick={this.onMenuItemClick} />
         </Sider>
         <Layout>
           <NavigatorHeader />

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableView } from '../../../../components/TableView';
+import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
 
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 
@@ -46,11 +46,12 @@ class CreativeDisplayTable extends Component {
     if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)
+        search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
+        state: { reloadDataSource: true }
       });
     } else {
       const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-      fetchCreativeDisplay(organisationId, filter);
+      fetchCreativeDisplay(organisationId, filter, true);
     }
   }
 
@@ -71,24 +72,28 @@ class CreativeDisplayTable extends Component {
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch
+        search: nextSearch,
+        state
       },
       match: {
         params: {
           organisationId: nextOrganisationId
         }
-      }
+      },
     } = nextProps;
+
+    const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)
+          search: buildDefaultSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId }
         });
       } else {
         const filter = parseSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-        fetchCreativeDisplay(nextOrganisationId, filter);
+        fetchCreativeDisplay(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
@@ -126,7 +131,8 @@ class CreativeDisplayTable extends Component {
       },
       isFetchingCreativeDisplay,
       dataSource,
-      totalCreativeDisplay
+      totalCreativeDisplay,
+      hasCreativeDisplay
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -192,12 +198,17 @@ class CreativeDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    return (<TableView
-      columnsDefinitions={columnsDefinitions}
-      dataSource={dataSource}
-      loading={isFetchingCreativeDisplay}
-      pagination={pagination}
-    />);
+    return hasCreativeDisplay ? (
+      <TableViewFilters
+        columnsDefinitions={columnsDefinitions}
+      >
+        <TableView
+          columnsDefinitions={columnsDefinitions}
+          dataSource={dataSource}
+          loading={isFetchingCreativeDisplay}
+          pagination={pagination}
+        />
+      </TableViewFilters>) : (<EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />);
 
   }
 
@@ -261,7 +272,7 @@ CreativeDisplayTable.propTypes = {
   isFetchingCreativeDisplay: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalCreativeDisplay: PropTypes.number.isRequired,
-
+  hasCreativeDisplay: PropTypes.bool.isRequired,
   fetchCreativeDisplay: PropTypes.func.isRequired,
   archiveCreativeDisplay: PropTypes.func.isRequired,
   resetCreativeDisplayTable: PropTypes.func.isRequired,
@@ -269,7 +280,7 @@ CreativeDisplayTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
+  hasCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.hasItems,
   isFetchingCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.isFetching,
   dataSource: getTableDataSource(state),
   totalCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.total,

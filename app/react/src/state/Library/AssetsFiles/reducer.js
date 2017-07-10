@@ -8,7 +8,8 @@ import {
 const defaultAssetsFilesApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
+  hasItems: true
 };
 
 const assetsFilesApi = (state = defaultAssetsFilesApiState, action) => {

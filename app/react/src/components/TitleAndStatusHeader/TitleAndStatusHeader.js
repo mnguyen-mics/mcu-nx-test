@@ -6,22 +6,37 @@ class TitleAndStatusHeader extends Component {
   constructor(props) {
     super(props);
     this.buildStatusElement = this.buildStatusElement.bind(this);
+    this.buildAttributesElement = this.buildAttributesElement.bind(this);
   }
 
   render() {
 
     const {
-      headerTitle
+      headerTitle,
+      headerStatus,
+      headerAttibutes
     } = this.props;
 
-    const statusElements = this.buildStatusElement();
+    let statusElements;
+    if (headerStatus !== null) {
+      statusElements = this.buildStatusElement();
+    } else {
+      statusElements = <div />;
+    }
+    let attibutesElement;
+    if (headerAttibutes !== []) {
+      attibutesElement = this.buildAttributesElement();
+    } else {
+      attibutesElement = <div />;
+    }
 
     return (
       <div className="mcs-title-status-header">
-        <span className="mcs-title-status-header-title">
-          {headerTitle}
-        </span>
+        {attibutesElement}
         {statusElements}
+        <div className="mcs-title-status-header-title">
+          {headerTitle}
+        </div>
       </div>
     );
 
@@ -46,14 +61,32 @@ class TitleAndStatusHeader extends Component {
     ) : null;
   }
 
+  buildAttributesElement() {
+    const {
+      headerAttibutes
+    } = this.props;
+
+    return (<div className="mcs-title-status-header-attributes">
+      {headerAttibutes.map((attribute) => {
+        return (<div key={attribute.toString()} >{attribute}</div>);
+      })}
+    </div>);
+  }
+
 }
+
+TitleAndStatusHeader.defaultProps = {
+  headerStatus: null,
+  headerAttibutes: []
+};
 
 TitleAndStatusHeader.propTypes = {
   headerTitle: PropTypes.string.isRequired,
   headerStatus: PropTypes.shape({
     translationKeyPrefix: PropTypes.string,
     value: PropTypes.string
-  }).isRequired
+  }),
+  headerAttibutes: PropTypes.arrayOf(PropTypes.element)
 };
 
 export default TitleAndStatusHeader;

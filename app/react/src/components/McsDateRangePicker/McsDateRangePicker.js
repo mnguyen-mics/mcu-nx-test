@@ -146,7 +146,7 @@ class McsDateRangePicker extends Component {
     return showRangePicker === true ? (<RangePicker
       allowClear={false}
       onChange={this.handleDatePickerMenuChange}
-      value={[values.from, values.to]}
+      defaultValue={[values.from, values.to]}
       disabledDate={current => this.disableFutureDates(current)}
       onOpenChange={this.onDatePickerOpenChange}
       open={showRangePicker}

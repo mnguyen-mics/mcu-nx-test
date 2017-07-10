@@ -9,7 +9,6 @@ import { Field, reduxForm } from 'redux-form'
 import { compose } from 'recompose';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
-// import EnhancedScrollspy from '../../../../components/EnhancedScrollspy';
 import { Actionbar } from '../../../Actionbar';
 import { McsIcons } from '../../../../components/McsIcons';
 import Drawer from '../../../../components/Drawer';
@@ -22,16 +21,10 @@ import CampaignEmailTable from '../../Email/Dashboard/CampaignEmailTable';
 import messages from './messages';
 
 const { Content, Sider } = Layout;
-// const CustomScrollspy = EnhancedScrollspy(Scrollspy);
 
 const required = value => (value ? undefined : 'Required')
 
 class EditEmail extends Component {
-
-  // componentDidMount() {
-  //   console.log('ref content', this.content);
-  //   document.querySelector('#emailCampaignSteps').addEventListener('scroll', () => { console.log('user scroll'); });
-  // }
 
   handleSubmit(values) {
     console.log('form submit');

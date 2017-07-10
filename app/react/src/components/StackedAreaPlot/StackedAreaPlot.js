@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Plottable from 'plottable';
-import { ChartTooltip } from '../ChartTooltip';
+import { ChartTooltip, BasicTooltip } from '../ChartTooltip';
 
 class StackedAreaPlot extends Component {
 
@@ -41,8 +41,13 @@ class StackedAreaPlot extends Component {
     } = this.props;
 
     const setMetadata = {};
+
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
+
     options.colors.forEach((color, i) => {
-      setMetadata[options.yKeys[i]] = color;
+      setMetadata[yKeys[i]] = color;
     });
 
     const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
@@ -71,8 +76,11 @@ class StackedAreaPlot extends Component {
     } = this.props;
 
     const setMetadata = {};
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
     options.colors.forEach((color, i) => {
-      setMetadata[options.yKeys[i]] = color;
+      setMetadata[yKeys[i]] = color;
     });
     this.pointers.forEach(point => {
       point.pointer.detachFrom(point.plot);
@@ -86,25 +94,42 @@ class StackedAreaPlot extends Component {
 
   render() {
     const {
-      identifier
+      identifier,
+      options
     } = this.props;
 
     const {
       xTooltip,
       yTooltip,
       content,
-      visibility
+      visibility,
     } = this.state;
+
+    const tooltipStyle = {
+      xTooltip,
+      yTooltip,
+      visibility
+    };
 
     return (
       <div className="mcs-plot-container">
-        <ChartTooltip
-          xTooltip={xTooltip}
-          yTooltip={yTooltip}
-          content={content}
-          visibility={visibility}
-        />
+        <svg style={{ height: '0px', width: '0px' }}>
+          <defs>
+            {options.colors.map((color, index) => {
+              return (<linearGradient key={options.yKeys[index].key} id={`${options.yKeys[index].key}${identifier}`} x1="0" y1="0" x2="0" y2="100%">
+                <stop stopOpacity="0.4" offset="50%" stopColor={color} />
+                <stop stopOpacity="0" offset="100%" stopColor="#FFFFFF" />
+              </linearGradient>);
+            })}
+            <filter id="shadow">
+              <feDropShadow dx="0" dy="0.5" opacity="0.5" stdDeviation="0.5" />
+            </filter>
+          </defs>
+        </svg>
         <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg" />
+        <ChartTooltip tooltipStyle={tooltipStyle}>
+          <BasicTooltip content={content} />
+        </ChartTooltip>
       </div>
     );
   }
@@ -120,12 +145,15 @@ class StackedAreaPlot extends Component {
       this.plot.destroy();
     }
 
+    const yKeys = options.yKeys.map((item) => {
+      return item.key;
+    });
     const xScale = new Plottable.Scales.Time().padProportion(0);
     const yScale = new Plottable.Scales.Linear().addIncludedValuesProvider(() => { return [0]; }).addPaddingExceptionsProvider(() => { return [0]; }).padProportion(0.2);
 
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
-    colorScale.domain(options.yKeys);
+    colorScale.domain(yKeys);
 
     const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
     const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(false);
@@ -142,14 +170,14 @@ class StackedAreaPlot extends Component {
     pnts.push(guideline);
     if (dataset.length > 0) {
       Object.keys(dataset[0]).forEach(item => {
-        if (item !== options.xKey && options.yKeys.indexOf(item) > -1) {
+        if (item !== options.xKey && yKeys.indexOf(item) > -1) {
 
           const plot = new Plottable.Plots.Area()
             .addDataset(plottableDataSet)
             .x((d) => { return new Date(d[options.xKey]); }, xScale)
             .y((d) => { return d[item]; }, yScale)
             .animated(true)
-            .attr('fill', () => { return item; }, colorScale)
+            .attr('fill', `url(#${item}${identifier})`)
             .attr('stroke', () => { return item; }, colorScale);
 
           const selectedPoint = new Plottable.Plots.Scatter()
@@ -184,7 +212,6 @@ class StackedAreaPlot extends Component {
     table.renderTo(`#${identifier}`);
     this.plot = table;
 
-
     plts.forEach((plot) => {
       // colorScale.range([plot.foreground().style('fill')]);
       const crosshair = this.createDotsCrosshair(plot);
@@ -201,6 +228,8 @@ class StackedAreaPlot extends Component {
         line.hide();
         crosshair.hide();
         this.setTooltip({
+          xTooltip: -100,
+          yTooltip: -100,
           visible: 'hidden'
         });
       });
@@ -226,6 +255,7 @@ class StackedAreaPlot extends Component {
 
     crosshair.circle = crosshairContainer.append('circle')
                       .attr('fill', 'white')
+                      .attr('filter', 'url(#shadow)')
                       .attr('r', 8);
     crosshair.drawAt = (p) => {
 
@@ -267,9 +297,9 @@ class StackedAreaPlot extends Component {
       const entries = [];
       yKeys.forEach(item => {
         const entry = {
-          label: item,
-          color: navInfo.dataset.metadata()[item],
-          value: navInfo.datum[item]
+          label: item.message,
+          color: navInfo.dataset.metadata()[item.key],
+          value: navInfo.datum[item.key]
         };
         entries.push(entry);
       });
@@ -282,7 +312,7 @@ class StackedAreaPlot extends Component {
       const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
       const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
       this.setTooltip({
-        xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 180,
+        xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 200,
         yTooltip: mousePosition.y + 120 < height ? this.svgBoundingClientRect.top + mousePosition.y : (this.svgBoundingClientRect.top + mousePosition.y) - 50,
         content: tooltipContent,
         visibility: 'visible'
@@ -307,7 +337,7 @@ StackedAreaPlot.propTypes = {
     innerRadius: PropTypes.bool,
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
-    yKeys: PropTypes.arrayOf(PropTypes.string),
+    yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
     lookbackWindow: PropTypes.number,
   }).isRequired

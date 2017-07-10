@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 
-import { CampaignDashboardTabs } from '../../../../components/CampaignDashboardTabs';
+import { McsTabs } from '../../../../components/McsTabs';
+import { Card } from '../../../../components/Card';
 import { EmailPieCharts, EmailStackedAreaChart } from './Charts';
 import { withTranslations } from '../../../Helpers';
 
@@ -25,7 +26,7 @@ class CampaignEmailDashboard extends Component {
       }
     ];
 
-    return <CampaignDashboardTabs items={items} />;
+    return <Card><McsTabs items={items} /></Card>;
   }
 
 }

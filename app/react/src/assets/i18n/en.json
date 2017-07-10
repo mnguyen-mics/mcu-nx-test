@@ -5,7 +5,6 @@
   "CATALOGS": "Catalogs",
   "CAMPAIGNS": "Campaigns",
   "DISPLAY": "Display",
-  "EMAILS": "Emails",
   "CREATIVES": "Creatives",
   "LIBRARY": "Library",
   "FILTERED_BY": "Filtered By",
@@ -23,7 +22,7 @@
   "LOG_IN": "Log in",
   "REMEMBER_ME": "Remember me",
   "LOG_IN_ERROR": "Incorrect email or password",
-  
+
   "RESET_PASSWORD": "To reset your password please enter your email address.",
   "YOUR_EMAIL_ADDRESS": "Your Email Address",
   "VALID_EMAIL": "Please enter a valid registered email address.",
@@ -105,6 +104,12 @@
   "EMPTY_GOALS": "There is no Goals created yet! Click on New to get started",
   "EMPTY_SEGMENTS": "There is no Segments created yet! Click on New to get started",
   "EMPTY_AUTOMATIONS": "There is no Automations created yet! Click on New to get started",
+  "EMPTY_PARTITIONS": "There is no Partitions created yet! Click on New to get started",
+  "EMPTY_CREATIVES_DISPLAY": "There is no Display Creatives created yet! Click on New to get started",
+  "EMPTY_CREATIVES_EMAIL": "There is no Email Creatives created yet! Click on New to get started",
+  "EMPTY_LIBRARY_ASSETS": "There is no Assets created yet! Click on New to get started",
+  "EMPTY_LIBRARY_PLACEMENT": "There is no Placement created yet! Click on New to get started",
+  "EMPTY_LIBRARY_KEYWORD": "There is no Keyword created yet! Click on New to get started",
 
   "TODAY": "Today",
   "YESTERDAY": "Yesterday",
@@ -168,7 +173,6 @@
   "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Placement List?",
   "PLACEMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this PLacement all it will stop campaign using it. Are you sure?",
 
-
   "NEW_KEYWORD_LIST": "New Keyword List",
   "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Keyword List?",
   "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Keyword all it will stop campaign using it. Are you sure?",
@@ -187,5 +191,16 @@
   "NEW_EMAIL_TEMPLATE": "New Email Template",
 
   "ACTIVATE_CAMPAIGN": "Activate Campaign",
-  "PAUSE_CAMPAIGN": "Pause Campaign"
+  "PAUSE_CAMPAIGN": "Pause Campaign",
+  "ACTIVATE": "Activate",
+  "USERPOINTS": "Userpoints",
+  "OVERLAP": "Overlap",
+  "OVERVIEW": "Overview",
+  "ADDITION_DELETION": "Addition Deletion",
+
+  "OVERLAP_NUMBER": "Overlap Number",
+  "USER_POINT_ADDITIONS": "Userpoint Additions",
+  "USER_POINT_DELETIONS": "Userpoint Deletions",
+  "DESKTOP_COOKIE_IDS": "Display Cookies",
+  "EXTEND": "Extend"
 }

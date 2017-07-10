@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
+import { injectIntl } from 'react-intl';
+import { compose } from 'recompose';
 
-import { EmptyCharts } from '../../../../../components/EmptyCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import * as CampaignEmailActions from '../../../../../state/Campaign/Email/actions';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';
+import messages from '../messages';
 
 import {
   updateSearch,
@@ -81,11 +84,11 @@ class EmailStackedAreaChart extends Component {
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: ['email_sent', 'clicks', 'impressions', 'email_hard_bounced'],
+      yKeys: [{ key: 'email_sent', message: messages.emailSent }, { key: 'clicks', message: messages.emailClicks }, { key: 'impressions', message: messages.emailImpressions }, { key: 'email_hard_bounced', message: messages.emailHardBounce }],
       lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
     };
-    return hasFetchedCampaignStat ? (<StackedAreaPlot identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />) : (<span>Loading</span>);
+    return hasFetchedCampaignStat ? (<StackedAreaPlot identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />) : (<LoadingChart />);
   }
 
   render() {
@@ -96,7 +99,7 @@ class EmailStackedAreaChart extends Component {
     } = this.props;
 
     const options = {
-      domains: ['email_sent', 'clicks', 'impressions', 'email_hard_bounced'],
+      domains: [translations['email_sent'.toUpperCase()], translations['clicks'.toUpperCase()], translations['impressions'.toUpperCase()], translations['email_hard_bounced'.toUpperCase()]],
       colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
     };
 
@@ -141,11 +144,16 @@ const mapDispatchToProps = {
   resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
 };
 
+
 EmailStackedAreaChart = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(EmailStackedAreaChart);
 
-EmailStackedAreaChart = withRouter(EmailStackedAreaChart);
+
+EmailStackedAreaChart = compose(
+  injectIntl,
+  withRouter
+)(EmailStackedAreaChart);
 
 export default EmailStackedAreaChart;

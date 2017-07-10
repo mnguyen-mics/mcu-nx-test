@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Button } from 'antd';
+import { Button } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
 import { withTranslations } from '../../../Helpers';
+import { McsIcons } from '../../../../components/McsIcons';
 
 class PlacementListsActionbar extends Component {
 
@@ -26,8 +27,8 @@ class PlacementListsActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/${organisationId}/library/keywordslists/new`}>
-          <Button type="primary">
-            <Icon type="plus" /> <FormattedMessage id="NEW_PLACEMENT_LIST" />
+          <Button className="mcs-primary" type="primary">
+            <McsIcons type="plus" /> <FormattedMessage id="NEW_PLACEMENT_LIST" />
           </Button>
         </Link>
       </Actionbar>

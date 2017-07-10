@@ -151,7 +151,7 @@ class CampaignsDisplayActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={newCampaignMenu} trigger={['click']}>
-          <Button type="primary">
+          <Button className="mcs-primary" type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
         </Dropdown>

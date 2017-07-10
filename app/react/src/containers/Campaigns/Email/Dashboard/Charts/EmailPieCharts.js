@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-import { EmptyCharts } from '../../../../../components/EmptyCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { PieChart } from '../../../../../components/PieChart';
 
@@ -148,10 +148,10 @@ class EmailPieCharts extends Component {
     return hasFetchedCampaignStat ? (
       <div>
         <Row>
-          <Col span={8}>
+          <Col span={7}>
             <PieChart identifier="pieDelivered1" dataset={generateData('delivered')} options={generateOptions(false, 'orange', 'DELIVERED', emailDelivered, emailSent)} />
           </Col>
-          <Col span={16}>
+          <Col span={17}>
             <Row>
               <Col span={12}>
                 <PieChart identifier="pieOpens1" dataset={generateData('opens')} options={generateOptions(true, 'blue', 'OPENS', emailOpened, emailSent)} />
@@ -170,7 +170,7 @@ class EmailPieCharts extends Component {
             </Row>
           </Col>
         </Row>
-      </div>) : (<span>Loading</span>);
+      </div>) : (<LoadingChart />);
   }
 
   render() {

@@ -3,6 +3,18 @@
   .ant-layout-sider{
     box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
     z-index: 2;
+
+    .ant-menu-submenu-title {
+      .icon {
+          vertical-align: middle;
+      }
+    }
+    .ant-menu-item {
+        .icon {
+            vertical-align: middle;
+        }
+    }
+
   }
 
   .ant-layout-sider-collapsed {
@@ -50,16 +62,15 @@
   .mcs-logo-placeholder {
     display: flex;
     min-height: 120px;
-
     .mcs-logo {
       display: flex;
       align-items: center;
       align-content: center;
       margin: 10px;
-
+      padding: 24px;
       img {
         max-height: 50px;
-        max-width: 180px;
+        max-width: 140px;
       }
 
     }

@@ -2,7 +2,7 @@
 
 .mcs-card-container {
   .mcs-content-element.container;
-  margin-top: 40px;
+  margin-bottom: 40px;
 
   hr {
     margin-bottom: 14px;
@@ -27,4 +27,41 @@
   float: right;
 }
 
+
+.mcs-table-container-full {
+    border-radius: 2px;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
+    background-color: #fff;
+
+    .mcs-table-header {
+        width: 100%;
+        background-color: @primary-color;
+        padding: 30px 10px;
+        border-radius: 2px;
+        margin-bottom: 0px;
+        .section {
+            color: white;
+            text-align: center;
+            .icon {
+                font-size: 5em;
+                color: @info-color;
+            }
+            .title {
+                font-size: 1.5em;
+                font-weight: normal;
+            }
+            .number {
+                font-size: 2.6em;
+                font-weight: bold;
+            }
+        }
+        .section.border {
+            border-right: 1px solid rgba(215, 215, 215, 0.49);
+        }
+    }
+
+    .mcs-table-body {
+        padding: 0px 10px 20px 10px;
+    }
+}
 

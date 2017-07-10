@@ -66,7 +66,7 @@ const automationsMenu = {
 
 const creativesMenu = {
   key: 'creatives',
-  iconType: 'automation',
+  iconType: 'creative',
   path: '/creatives',
   translationId: 'CREATIVES',
   subMenuItems: [
@@ -85,7 +85,7 @@ const creativesMenu = {
 
 const libraryMenu = {
   key: 'library',
-  iconType: 'automation',
+  iconType: 'library',
   path: '/library',
   translationId: 'LIBRARY',
   subMenuItems: [
