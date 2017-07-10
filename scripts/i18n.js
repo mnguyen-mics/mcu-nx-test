@@ -36,10 +36,11 @@ const compareKeys = (currentLang, otherLang) => {
 
   console.log('\n');
 
+  return size;
 };
 
 const compareWithOtherLang = (currentLang, otherLang) => {
-  compareKeys(
+  return compareKeys(
     {
       key: currentLang,
       data: fs.readFileSync(path.join(baseDir, currentLang))
@@ -59,12 +60,21 @@ const processFile = (dir, currentFile) => {
 
   return fs.readdirSync(dir)
         .filter(file => !file.includes(currentFile))
-        .map(otherLang => compareWithOtherLang(currentFile, otherLang));
+        .map(otherLang => compareWithOtherLang(currentFile, otherLang))
+        .reduce((acc, curr) => acc + curr);
 };
 
 const check = dir => {
   return fs.readdirSync(dir)
-        .map(file => processFile(dir, file));
+        .map(file => processFile(dir, file))
+        .reduce((acc, curr) => acc + curr);
 };
 
-check(baseDir);
+
+let numberOfDiff = check(baseDir);
+
+if (numberOfDiff === 0) {
+  process.exit(0);
+} else {
+  process.exit(1);
+}
