@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Select, Tooltip, Row, Col } from 'antd';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import { McsIcons } from '../../components/McsIcons';
 

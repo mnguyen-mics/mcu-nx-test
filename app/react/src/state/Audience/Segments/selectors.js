@@ -51,9 +51,6 @@ const getOverlapFormated = createSelector(
       const source = data.segments.find((segment) => {
         return segment.segment_id === overlap.segment_source_id;
       });
-      const intersect = data.segments.find((segment) => {
-        return segment.segment_id === overlap.segment_intersect_with;
-      });
       const returnFormat = {
         xKey: overlap.segment_intersect_with,
         yKey: (overlap.overlap_number / source.segment_size) * 100,

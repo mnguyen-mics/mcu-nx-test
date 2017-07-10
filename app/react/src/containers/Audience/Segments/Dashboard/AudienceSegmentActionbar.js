@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
+import { Button } from 'antd';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -66,14 +66,11 @@ class AudienceSegmentActionbar extends Component {
 AudienceSegmentActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   defaultDatamart: PropTypes.func.isRequired,
   segment: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  createOverlapAnalysis: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   defaultDatamart: getDefaultDatamart(state),
   segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
 });

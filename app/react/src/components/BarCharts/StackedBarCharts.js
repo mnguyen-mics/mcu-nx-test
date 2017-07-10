@@ -36,7 +36,6 @@ class StackedBarCharts extends Component {
 
   componentDidMount() {
     const {
-      options,
       dataset
     } = this.props;
 
