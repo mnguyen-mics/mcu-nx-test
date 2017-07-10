@@ -11,8 +11,6 @@ import {
 } from '../../../components/Form';
 import * as SettingsActions from '../../../state/Settings/actions';
 
-const required = value => (value ? undefined : 'Required');
-
 class UserAccount extends Component {
 
   buildSaveActionElement() {
@@ -39,14 +37,25 @@ class UserAccount extends Component {
       emailInputPlaceholder: { id: 'EmailPlaceHolder', defaultMessage: 'Email' },
     });
 
+    const invalidMessages = defineMessages({ invalidEmail: { id: 'settings.invalid_email', defaultMessage: 'Invalid email address' },
+      requiredField: { id: 'settings.required_field', defaultMessage: 'Required' }
+    });
+
+    const isRequired = value => (value ? undefined : formatMessage(invalidMessages.requiredField));
+
+    const emailValidation = value => {
+      return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ?
+      formatMessage(invalidMessages.invalidEmail) : undefined;
+    };
+
     const fieldGridConfig = {
       labelCol: { span: 3 },
       wrapperCol: { span: 10, offset: 1 }
     };
 
-    const userFields = [{ fieldName: 'first_name', label: formMessages.firstnameInputLabel, placeholder: formMessages.firstnameInputPlaceholder },
-                        { fieldName: 'last_name', label: formMessages.lastnameInputLabel, placeholder: formMessages.lastnameInputPlaceholder },
-                        { fieldName: 'email', label: formMessages.emailInputLabel, placeholder: formMessages.emailInputPlaceholder }];
+    const userFields = [{ fieldName: 'first_name', label: formMessages.firstnameInputLabel, placeholder: formMessages.firstnameInputPlaceholder, invalidCallback: isRequired },
+                        { fieldName: 'last_name', label: formMessages.lastnameInputLabel, placeholder: formMessages.lastnameInputPlaceholder, invalidCallback: isRequired },
+                        { fieldName: 'email', label: formMessages.emailInputLabel, placeholder: formMessages.emailInputPlaceholder, invalidCallback: emailValidation }];
     return (<Form onSubmit={handleSubmit(updateUserProfile)}>
       <div className="mcs-card-header mcs-card-title">
         <span className="mcs-card-title"><FormattedMessage id="UserProfile" defaultMessage="User Profile" /></span>
@@ -58,7 +67,7 @@ class UserAccount extends Component {
           key={userField.fieldName}
           name={userField.fieldName}
           component={FormInput}
-          validate={[required]}
+          validate={[userField.invalidCallback]}
           props={{
             formItemProps: {
               label: formatMessage(userField.label),
