@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar } from '../Actionbar';
-import { McsIcons } from '../../components/McsIcons';
 import { withTranslations } from '../Helpers';
 import { getDefaultDatamart } from '../../state/Session/selectors';
 
@@ -33,8 +32,7 @@ class AccountSettingsActionBar extends Component {
 
 AccountSettingsActionBar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({

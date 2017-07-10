@@ -31,19 +31,18 @@ function* fetchOrganisationWorkspace({ payload }) {
 function* downloadLogo({ payload }) {
   try {
     const {
-      organisationId,
-      updateLogo
+      organisationId
     } = payload;
     const response = yield call(OrganisationService.getLogo, organisationId);
-    const logoUrl = URL.createObjectURL(response);
+    const logoUrl = URL.createObjectURL(response); /* global URL */
     yield put(getLogo.success({ logoUrl }));
   } catch (e) {
     log.error('Error while getting logo: ', e);
     yield put(addNotification({
-          type: 'error',
-          messageKey: 'NOTIFICATION_ERROR_TITLE',
-          descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
-      }));
+      type: 'error',
+      messageKey: 'NOTIFICATION_ERROR_TITLE',
+      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
+    }));
   }
 }
 
@@ -51,23 +50,23 @@ function* uploadLogo({ payload }) {
   try {
     const {
       organisationId,
-      file,
-      updateLogo
+      file
     } = payload;
-    
-    const formData = new FormData();
+
+    const formData = new FormData(); /* global FormData */
     formData.append('file', file);
     yield call(OrganisationService.putLogo, organisationId, formData);
     yield put(putLogo.success());
-    yield put(getLogo.request({organisationId}));
+    yield put(getLogo.request({ organisationId }));
 
   } catch (e) {
     log.error('Error while putting logo: ', e);
+    yield put(putLogo.failure(e));
     yield put(addNotification({
-          type: 'error',
-          messageKey: 'NOTIFICATION_ERROR_TITLE',
-          descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
-      }));
+      type: 'error',
+      messageKey: 'NOTIFICATION_ERROR_TITLE',
+      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
+    }));
   }
 }
 

@@ -25,11 +25,11 @@ const getWorkspace = {
   failure: createAction(WORKSPACE.FAILURE)
 };
 
-const getLogo = { 
+const getLogo = {
   request: createAction(GET_LOGO.REQUEST),
   success: createAction(GET_LOGO.SUCCESS),
   failure: createAction(GET_LOGO.FAILURE)
-}
+};
 
 export {
   getConnectedUser,

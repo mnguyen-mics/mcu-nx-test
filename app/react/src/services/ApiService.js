@@ -35,7 +35,7 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
     }
   }
 
-  const bodyIsFormData = (body instanceof FormData);
+  const bodyIsFormData = (body instanceof FormData); /* global FormData */
 
   if (headers) {
     config.headers = Object.assign({}, config.headers, headers);
@@ -47,7 +47,7 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
   }
 
   if (bodyIsFormData) {
-    config.body = body; //body passed as a formdata object
+    config.body = body; // body passed as a formdata object
   } else if (body) {
     config.body = JSON.stringify(body);
   }

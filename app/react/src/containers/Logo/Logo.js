@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { compose, withState, withHandlers } from 'recompose';
+import { compose } from 'recompose';
 
 import { getWorkspace } from '../../state/Session/selectors';
 import { getLogo } from '../../state/Session/actions';
@@ -15,8 +15,7 @@ class Logo extends Component {
     const {
       match: {
         params: { organisationId }
-      },
-      updateLogo
+      }
     } = this.props;
 
     this.props.getLogoRequest({ organisationId });
@@ -26,8 +25,7 @@ class Logo extends Component {
     const {
       match: {
         params: { organisationId }
-      },
-      updateLogo
+      }
     } = this.props;
 
     const {
@@ -62,12 +60,15 @@ class Logo extends Component {
   }
 }
 
+Logo.defaultProps = {
+  logoUrl: '',
+};
+
 Logo.propTypes = {
   mode: PropTypes.string.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   logoUrl: PropTypes.string,
-  getLogoRequest: PropTypes.func.isRequired,
-  updateLogo: PropTypes.func.isRequired
+  getLogoRequest: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

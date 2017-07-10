@@ -1,29 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
-import { compose, withState, withHandlers } from 'recompose';
-import { Upload, Icon } from 'antd'
-const Dragger = Upload.Dragger;
+import { withRouter } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
+import { Upload, Icon } from 'antd';
 
-import { Logo } from './Logo';
 import { getWorkspace } from '../../state/Session/selectors';
 import { getLogo, putLogo } from '../../state/Session/actions';
 
-import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
-
-function handleUpload(props, organisationId, uploadData) {
-  const file = uploadData.file;
-  props.putLogoRequest({organisationId, file});
-}
+const Dragger = Upload.Dragger;
 
 class EditableLogo extends Component {
   componentDidMount() {
     const {
       match: {
         params: { organisationId }
-      },
-      updateLogo
+      }
     } = this.props;
 
     this.props.getLogoRequest({ organisationId });
@@ -34,30 +27,45 @@ class EditableLogo extends Component {
       <p className="ant-upload-drag-icon">
         <Icon type="inbox" />
       </p>
-      <p className="ant-upload-text">Click or drag an image in this area to upload</p>
-      <p className="ant-upload-hint"></p>
+      <p className="ant-upload-text">
+        <FormattedMessage id="DRAGGER_MESSAGE" defaultMessage="Click or drag an image in this area to upload" />
+      </p>
+      <p className="ant-upload-hint" />
     </div>);
   }
 
   buildLogoImageWithUpload(logoUrl) {
     return (<div className="mcs-logo-dragger">
-      <img alt="logo" src={logoUrl}/>
-      <span className="mcs-dropzone-overlay">
-        <label className="mcs-dropzone-overlay-label">Upload Logo</label>
+      <img alt="logo" src={logoUrl} />
+      <span id="logoDropzone" className="mcs-dropzone-overlay">
+        <label htmlFor="logoDropzone" className="mcs-dropzone-overlay-label">
+          <FormattedMessage id="UPLOAD_IMAGE_MESSAGE" defaultMessage="Upload image" />
+        </label>
       </span>
     </div>);
+  }
+
+  handleUpload(organisationId, uploadData) {
+    const {
+      putLogoRequest
+    } = this.props;
+
+    const file = uploadData.file;
+    putLogoRequest({ organisationId, file });
   }
 
   wrapInDraggerComponent(component) {
     const {
       match: {
         params: { organisationId }
-      },
-      updateLogo
+      }
     } = this.props;
 
-    return ( <Dragger {...this.props} showUploadList={false}
-      customRequest={(uploadData) => handleUpload(this.props, organisationId, uploadData)}>
+    return (<Dragger
+      {...this.props}
+      showUploadList={false}
+      customRequest={(uploadData) => this.handleUpload(organisationId, uploadData)}
+    >
       { component }
     </Dragger>);
   }
@@ -70,7 +78,7 @@ class EditableLogo extends Component {
     } = this.props;
 
     const insideComponent = (!logoUrl) ? this.buildDragLabel() : this.buildLogoImageWithUpload(logoUrl);
-    const uploadLogoComponent =  this.wrapInDraggerComponent(insideComponent);
+    const uploadLogoComponent = this.wrapInDraggerComponent(insideComponent);
 
     return (
       <div className="mcs-logo-placeholder">
