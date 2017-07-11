@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { Button } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape, defineMessages } from 'react-intl';
 
 import { Actionbar } from '../Actionbar';
-import { withTranslations } from '../Helpers';
-import { getDefaultDatamart } from '../../state/Session/selectors';
 
 class AccountSettingsActionBar extends Component {
   render() {
@@ -18,10 +15,12 @@ class AccountSettingsActionBar extends Component {
           organisationId
         }
       },
-      translations
+      intl: { formatMessage }
     } = this.props;
 
-    const breadcrumbPaths = [{ name: translations.USER_ACCOUNTS, url: `/v2/o/${organisationId}/settings/useraccount` }];
+    const breadcrumbMessages = defineMessages({ settings: { id: 'settings.settings', defaultMessage: 'Settings' } });
+
+    const breadcrumbPaths = [{ name: formatMessage(breadcrumbMessages.settings), url: `/v2/o/${organisationId}/settings/useraccount` }];
     return (<Actionbar path={breadcrumbPaths}>
       <Button type="primary">
         <i className="anticon anticon-lock" /> <FormattedMessage id="RESET_PASSWORD_BUTTON" />
@@ -31,21 +30,13 @@ class AccountSettingsActionBar extends Component {
 }
 
 AccountSettingsActionBar.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  intl: intlShape.isRequired
 };
 
-const mapStateToProps = state => ({
-  defaultDatamart: getDefaultDatamart(state)
-});
-
-AccountSettingsActionBar = connect(
-  mapStateToProps
-)(AccountSettingsActionBar);
-
 AccountSettingsActionBar = compose(
-  withTranslations,
-  withRouter
+  withRouter,
+  injectIntl
 )(AccountSettingsActionBar);
 
 export default AccountSettingsActionBar;

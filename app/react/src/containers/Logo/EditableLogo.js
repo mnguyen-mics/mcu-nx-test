@@ -6,7 +6,6 @@ import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Upload, Icon } from 'antd';
 
-import { getWorkspace } from '../../state/Session/selectors';
 import { getLogo, putLogo } from '../../state/Session/actions';
 
 const Dragger = Upload.Dragger;
@@ -85,7 +84,7 @@ class EditableLogo extends Component {
         { mode === 'inline' &&
           <div className="mcs-logo" >
             { uploadLogoComponent }
-            { isUploadingLogo && <div>Logo is Loading</div> }
+            { isUploadingLogo && <div><FormattedMessage id="settings.logo_loading" defaultMessage="Logo is loading" /></div> }
           </div>
         }
       </div>
@@ -107,7 +106,6 @@ EditableLogo.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  getWorkspaceByOrganisation: getWorkspace(state),
   isUploadingLogo: state.session.isUploadingLogo,
   logoUrl: state.session.logoUrl
 });

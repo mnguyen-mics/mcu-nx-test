@@ -22,15 +22,15 @@ function* updateRemoteProfile({ payload }) {
     yield put(saveProfile.success(response));
     yield put(getConnectedUser.request());
     yield put(addNotification({
-      type: 'error',
-      messageKey: 'NOTIFICATION_ERROR_TITLE',
-      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
+      type: 'success'
     }));
   } catch (e) {
     log.error(e);
     yield put(saveProfile.failure(e));
     yield put(addNotification({
-      type: 'success'
+      type: 'error',
+      messageKey: 'NOTIFICATION_ERROR_TITLE',
+      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
     }));
   }
 }

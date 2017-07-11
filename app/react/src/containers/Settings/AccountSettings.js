@@ -17,8 +17,8 @@ class AccountSettings extends Component {
       organisationName
     } = this.props;
 
-    const messages = defineMessages({ userAccount: { id: 'UserAccount', defaultMessage: 'User Account' },
-      organisationAccount: { id: 'OrganisationAccount', defaultMessage: 'Organisation Account' } });
+    const messages = defineMessages({ userAccount: { id: 'settings.tab.title.user_account', defaultMessage: 'User Account' },
+      organisationAccount: { id: 'settings.tab.title.organisation_account', defaultMessage: 'Organisation Account' } });
 
     return (<Row className="mcs-table-container">
       <Tabs
@@ -49,11 +49,8 @@ AccountSettings.propTypes = {
 };
 
 AccountSettings = compose(
+  connect(mapStateToProps),
   injectIntl
-)(AccountSettings);
-
-AccountSettings = connect(
-  mapStateToProps
 )(AccountSettings);
 
 export default AccountSettings;

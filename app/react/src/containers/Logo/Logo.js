@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import { getWorkspace } from '../../state/Session/selectors';
 import { getLogo } from '../../state/Session/actions';
 
 import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
@@ -72,7 +71,6 @@ Logo.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  getWorkspaceByOrganisation: getWorkspace(state),
   logoUrl: state.session.logoUrl
 });
 
