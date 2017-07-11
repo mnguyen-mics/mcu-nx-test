@@ -1,7 +1,9 @@
 import {
   CONNECTED_USER,
   WORKSPACE,
-  LOG_OUT
+  LOG_OUT,
+  PUT_LOGO,
+  GET_LOGO
 } from '../action-types';
 
 const defaultSessionState = {
@@ -12,7 +14,8 @@ const defaultSessionState = {
     workspaces: []
   },
   isFetchingWorkspace: false,
-  connectedUserLoaded: false
+  isUploadingLogo: false
+
 };
 
 const session = (state = defaultSessionState, action) => {
@@ -38,6 +41,26 @@ const session = (state = defaultSessionState, action) => {
       return {
         ...state,
         isFetchingWorkspace: false
+      };
+    case GET_LOGO.SUCCESS:
+      return {
+        ...state,
+        logoUrl: action.payload.logoUrl
+      };
+    case PUT_LOGO.REQUEST:
+      return {
+        ...state,
+        isUploadingLogo: true
+      };
+    case PUT_LOGO.FAILURE:
+      return {
+        ...state,
+        isUploadingLogo: false
+      };
+    case PUT_LOGO.SUCCESS:
+      return {
+        ...state,
+        isUploadingLogo: false
       };
     case LOG_OUT:
       return defaultSessionState;
