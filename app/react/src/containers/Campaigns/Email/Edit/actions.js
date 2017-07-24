@@ -1,14 +1,11 @@
 import { createAction } from 'redux-actions';
 import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
 import {
-  CAMPAIGN_EMAIL_CREATE,
-  EMAIL_EDITOR_INITIALIZE,
   EMAIL_EDITOR_NEW_BLAST_CREATED,
   EMAIL_EDITOR_NEW_BLAST_DELETED,
   EMAIL_EDITOR_NEW_BLAST_EDITED,
   EMAIL_EDITOR_EXISTING_BLAST_EDITED,
-  EMAIL_EDITOR_EXISTING_BLAST_DELETED,
-  EMAIL_EDITOR_RESET
+  EMAIL_EDITOR_EXISTING_BLAST_DELETED
 } from '../../../../state/action-types';
 
 const addBlast = (blast, emailTemplateIds = []) => {

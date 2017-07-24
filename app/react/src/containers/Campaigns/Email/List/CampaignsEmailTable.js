@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-import { Icon, Tooltip } from 'antd';
+import { Icon } from 'antd';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 
 import {
@@ -10,7 +10,6 @@ import {
   TableViewFilters,
   EmptyTableView
  } from '../../../../components/TableView';
-import { McsIcons } from '../../../../components/McsIcons';
 import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';

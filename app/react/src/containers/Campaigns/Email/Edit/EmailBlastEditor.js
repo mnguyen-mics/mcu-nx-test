@@ -10,7 +10,7 @@ import { Layout, Button, Form, Row } from 'antd';
 import { Actionbar } from '../../../Actionbar';
 import { McsIcons } from '../../../../components/McsIcons';
 import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
-import EmailTemplateSelection from './EmailTemplateSelection';
+// import EmailTemplateSelection from './EmailTemplateSelection';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
 
@@ -47,15 +47,15 @@ class EmailBlastEditor extends Component {
 
   render() {
     const {
-      match: { url, params: { organisationId } },
+      match: { url },
       intl: { formatMessage },
       isCreationMode,
       fieldValidators: { isRequired },
       handleSubmit,
       save,
       close,
-      closeNextDrawer,
-      openNextDrawer
+      // closeNextDrawer,
+      // openNextDrawer
     } = this.props;
 
     const { consents } = this.state;
@@ -291,8 +291,8 @@ EmailBlastEditor.propTypes = {
   fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   handleSubmit: PropTypes.func.isRequired,
   isCreationMode: PropTypes.bool,
-  openNextDrawer: PropTypes.func.isRequired,
-  closeNextDrawer: PropTypes.func.isRequired,
+  // openNextDrawer: PropTypes.func.isRequired,
+  // closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired
 };

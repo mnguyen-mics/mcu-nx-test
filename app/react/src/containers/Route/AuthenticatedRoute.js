@@ -37,9 +37,7 @@ class AuthenticatedRoute extends Component {
     const {
       computedMatch: {
         params: { organisationId }
-      },
-      getWorkspaceRequest,
-      hasWorkspaceLoaded
+      }
     } = this.props;
 
     const {

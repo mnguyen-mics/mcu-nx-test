@@ -1,8 +1,6 @@
-import { createSelector } from 'reselect';
-
 const getEmailEditorFormInitialValues = () => {};
 
-const getEmailEditorComputedBlastList = state => [];
+const getEmailEditorComputedBlastList = () => [];
 
 export {
   getEmailEditorFormInitialValues,

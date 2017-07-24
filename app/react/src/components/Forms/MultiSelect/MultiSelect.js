@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Dropdown, Menu, Button } from 'antd';
-import { FormattedMessage } from 'react-intl';
 
 class MultiSelect extends Component {
 

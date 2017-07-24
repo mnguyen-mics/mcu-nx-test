@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { compose, withProps } from 'recompose';
 import { injectIntl, defineMessages } from 'react-intl';
 

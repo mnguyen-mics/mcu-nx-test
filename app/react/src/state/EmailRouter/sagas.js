@@ -1,5 +1,5 @@
 import { takeEvery } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 

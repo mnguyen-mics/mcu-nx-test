@@ -111,19 +111,23 @@ class CampaignEmailListPage extends Component {
   handleArchiveCampaign(campaign) {
     const { organisationId, location: { search }, intl: { formatMessage } } = this.props;
 
-    // Modal.confirm({
-    //   title: <FormattedMessage {...messages.confirmArchiveModalTitle} />,
-    //   content: <FormattedMessage {...messages.confirmArchiveModalContent} />,
-    //   iconType: 'exclamation-circle',
-    //   okText: formatMessage(messages.confirmArchiveModalOk),
-    //   cancelText: formatMessage(messages.confirmArchiveModalCancel),
-    //   onOk() {
-    //     return CampaignService.archiveEmailCampaign(campaign.id).then(() => {
-    //       loadCampaignsEmailDataSource(organisationId, filter);
-    //     });
-    //   },
-    //   onCancel() { },
-    // });
+    console.log(organisationId);
+    console.log(search);
+    console.log(campaign);
+
+    Modal.confirm({
+      title: <FormattedMessage {...messages.confirmArchiveModalTitle} />,
+      content: <FormattedMessage {...messages.confirmArchiveModalContent} />,
+      iconType: 'exclamation-circle',
+      okText: formatMessage(messages.confirmArchiveModalOk),
+      cancelText: formatMessage(messages.confirmArchiveModalCancel),
+      onOk() {
+        // return CampaignService.archiveEmailCampaign(campaign.id).then(() => {
+        //   loadCampaignsEmailDataSource(organisationId, filter);
+        // });
+      },
+      onCancel() { },
+    });
   }
 
   handleEditCampaign(campaign) {

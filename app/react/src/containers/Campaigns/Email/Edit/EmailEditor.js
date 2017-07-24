@@ -7,7 +7,7 @@ import Scrollspy from 'react-scrollspy';
 import { Field, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
-import { Layout, Form, Icon, Row, Col, Button, Dropdown, Menu, Modal } from 'antd';
+import { Layout, Form, Row, Button } from 'antd';
 
 import { Actionbar } from '../../../Actionbar';
 import { McsIcons } from '../../../../components/McsIcons';
@@ -16,7 +16,6 @@ import { RecordElement, RelatedRecords } from '../../../../components/RelatedRec
 import messages from './messages';
 import EmailBlastEditor from './EmailBlastEditor';
 import * as actions from './actions';
-import { getEmailEditorComputedBlastList, getEmailEditorFormInitialValues } from './selectors';
 import EmailRouterService from '../../../../services/EmailRouterService';
 
 const { Content, Sider } = Layout;
@@ -337,7 +336,7 @@ EmailEditor.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   dirty: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
-  campaignId: PropTypes.string,
+  // campaignId: PropTypes.string,
   emailEditorState: PropTypes.shape({
     blastList: PropTypes.shape({
       allIds: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -353,7 +352,7 @@ EmailEditor.propTypes = {
   editBlast: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   // initialValues: getEmailEditorFormInitialValues(state),
   emailEditorState: state.campaignEmailEdit.emailEditorState
 });

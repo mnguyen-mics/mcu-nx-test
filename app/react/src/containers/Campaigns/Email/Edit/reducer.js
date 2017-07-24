@@ -1,11 +1,8 @@
 import { combineReducers } from 'redux';
 import { omit } from 'lodash';
 
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-
 import {
   CAMPAIGN_EMAIL_CREATE,
-  EMAIL_EDITOR_INITIALIZE,
   EMAIL_EDITOR_NEW_BLAST_CREATED,
   EMAIL_EDITOR_NEW_BLAST_DELETED,
   EMAIL_EDITOR_NEW_BLAST_EDITED,
@@ -40,11 +37,6 @@ const createEmailPage = (state = defaultCreateEmailPageState, action) => {
     default:
       return state;
   }
-};
-
-const defaultEditEmailPageState = {
-  isUpdating: false,
-  error: null
 };
 
 // const editEmailPage = (state = defaultEditEmailPageState, action) => {
