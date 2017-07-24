@@ -1,4 +1,4 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
 import {
   CAMPAIGN_EMAIL_ARCHIVE,
@@ -31,7 +31,7 @@ const archiveCampaignEmail = {
   failure: createAction(CAMPAIGN_EMAIL_ARCHIVE.FAILURE)
 };
 
-const updateCampaignEmail = {
+const updateEmailCampaign = {
   request: (campaignId, body) => createAction(CAMPAIGN_EMAIL_UPDATE.REQUEST)({ campaignId, body }),
   success: createAction(CAMPAIGN_EMAIL_UPDATE.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_UPDATE.FAILURE)
@@ -56,7 +56,7 @@ export {
   fetchCampaignEmailDeliveryReport,
   loadCampaignEmailAndDeliveryReport,
   archiveCampaignEmail,
-  updateCampaignEmail,
+  updateEmailCampaign,
   resetCampaignEmail,
   fetchAllEmailBlast,
   fetchAllEmailBlastPerformance

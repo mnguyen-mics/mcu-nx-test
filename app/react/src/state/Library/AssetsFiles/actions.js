@@ -1,11 +1,8 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
-import {
-  ASSETS_FILES_FETCH,
-  ASSETS_FILES_TABLE_RESET
-} from '../../action-types';
+import { ASSETS_FILES_FETCH, ASSETS_FILES_RESET } from '../../action-types';
 
-const resetAssetsFilesTable = createAction(ASSETS_FILES_TABLE_RESET);
+const resetAssetsFiles = createAction(ASSETS_FILES_RESET);
 
 const fetchAssetsFiles = {
   request: (organisationId, filter = {}, isInitialRender = false) => createAction(ASSETS_FILES_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
@@ -13,7 +10,4 @@ const fetchAssetsFiles = {
   failure: (error) => createAction(ASSETS_FILES_FETCH.FAILURE)(error)
 };
 
-export {
-  fetchAssetsFiles,
-  resetAssetsFilesTable
-};
+export { fetchAssetsFiles, resetAssetsFiles };

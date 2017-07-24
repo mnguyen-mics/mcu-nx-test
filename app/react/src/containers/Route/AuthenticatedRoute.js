@@ -48,9 +48,14 @@ class AuthenticatedRoute extends Component {
       }
     } = nextProps;
 
-    if (nextOrganisationId !== organisationId && !hasWorkspaceLoaded(nextOrganisationId)) {
-      getWorkspaceRequest(nextOrganisationId);
+    if (nextOrganisationId !== organisationId) {
+      window.location.href = `/v2/o/${nextOrganisationId}/campaigns/display`; // eslint-disable-line
+      window.location.reload(true); // eslint-disable-line
     }
+
+    // if (nextOrganisationId !== organisationId && !hasWorkspaceLoaded(nextOrganisationId)) {
+    //   getWorkspaceRequest(nextOrganisationId);
+    // }
   }
 
   render() {
@@ -72,13 +77,13 @@ class AuthenticatedRoute extends Component {
           if (authenticated) {
 
             if (accessGrantedToOrganisation(organisationId)) {
-              log.debug(`Access granted to ${props.match.url}`);
+              log.trace(`Access granted to ${props.match.url}`);
               return render(props);
             }
 
             return <NotFound />;
           }
-          log.debug(`Access denied to ${props.match.url}, redirect to login`);
+          log.error(`Access denied to ${props.match.url}, redirect to login`);
           return (<Redirect to={{ pathname: '/login', state: { from: props.location } }} />);
         }}
       />

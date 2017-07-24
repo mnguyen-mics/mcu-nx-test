@@ -1,62 +1,170 @@
 [
   {
-    "id": "editEmailForm.breadcrum.email_campaigns",
-    "defaultMessage": "Email"
+    "id": "message.loading.content.saving-in-progress",
+    "defaultMessage": "Saving in progress"
   },
   {
-    "id": "editEmailForm.breadcrum.new_email_campaign",
+    "id": "emailEditor.breadcrumb.title1",
+    "defaultMessage": "Email Campaigns"
+  },
+  {
+    "id": "emailEditor.breadcrumb.title2",
     "defaultMessage": "New Campaign"
   },
   {
-    "id": "editEmailForm.button.save_campaign",
+    "id": "emailEditor.button.save_campaign",
     "defaultMessage": "Save Campaign"
   },
   {
-    "id": "editEmailForm.step.title.general_information",
+    "id": "emailEditor.step.title.general_information",
     "defaultMessage": "General Information"
   },
   {
-    "id": "editEmailForm.step.subtitle.general_information",
+    "id": "emailEditor.step.subtitle.general_information",
     "defaultMessage": "Give your campaign a name and a technical name"
   },
   {
-    "id": "editEmailForm.step.input.label.campaign_name",
+    "id": "emailEditor.step.input.label.campaign_name",
     "defaultMessage": "Name"
   },
   {
-    "id": "editEmailForm.step.input.placeholder.campaign_name",
+    "id": "emailEditor.step.input.placeholder.campaign_name",
     "defaultMessage": "Give this campaign a name"
   },
   {
-    "id": "editEmailForm.step.input.label.campaign_technical_name",
+    "id": "emailEditor.step.input.label.campaign_technical_name",
     "defaultMessage": "Technical name"
   },
   {
-    "id": "editEmailForm.steps.general.name_placeholder",
+    "id": "emailEditor.steps.general.name_placeholder",
     "defaultMessage": "Give this campaign a name"
   },
   {
-    "id": "editEmailForm.step.title.router",
+    "id": "emailEditor.step.title.router",
     "defaultMessage": "Router"
   },
   {
-    "id": "editEmailForm.step.subtitle.router",
+    "id": "emailEditor.step.subtitle.router",
     "defaultMessage": "Configure router for your campaign"
   },
   {
-    "id": "editEmailForm.step.select.label.router",
+    "id": "emailEditor.step.select.label.router",
     "defaultMessage": "Router"
   },
   {
-    "id": "editEmailForm.step.select.label.provider",
+    "id": "emailEditor.step.select.label.provider",
     "defaultMessage": "Provider"
   },
   {
-    "id": "editEmailForm.step.title.email_blast",
+    "id": "emailEditor.step.title.email_blast",
     "defaultMessage": "Email Blasts"
   },
   {
-    "id": "editEmailForm.step.subtitle.email_blast",
+    "id": "emailEditor.step.subtitle.email_blast",
     "defaultMessage": "Configure blasts for your campaign"
+  },
+  {
+    "id": "emailBlastEditor.breadcrumb.title.new_blast",
+    "defaultMessage": "New blast"
+  },
+  {
+    "id": "emailBlastEditor.breadcrumb.title.edit_blast",
+    "defaultMessage": "Edit blast"
+  },
+  {
+    "id": "emailBlastEditor.stepper.general_information",
+    "defaultMessage": "General Information"
+  },
+  {
+    "id": "emailBlastEditor.stepper.blast_information",
+    "defaultMessage": "Blast Information"
+  },
+  {
+    "id": "emailBlastEditor.stepper.template_selection",
+    "defaultMessage": "Template Selection"
+  },
+  {
+    "id": "emailBlastEditor.step.title.general_information",
+    "defaultMessage": "General Information"
+  },
+  {
+    "id": "emailBlastEditor.step.subtitle.general_information",
+    "defaultMessage": "Provide blast name and a scheduled date of execution"
+  },
+  {
+    "id": "emailBlastEditor.input.label.blast_name",
+    "defaultMessage": "Blast name"
+  },
+  {
+    "id": "emailBlastEditor.input.placeholder.blast_name",
+    "defaultMessage": "Enter blast name"
+  },
+  {
+    "id": "emailBlastEditor.datepicker.label.send_date",
+    "defaultMessage": "Send date"
+  },
+  {
+    "id": "emailBlastEditor.datepicker.placeholder.send_date",
+    "defaultMessage": "Select date"
+  },
+  {
+    "id": "emailBlastEditor.step.title.blast_information",
+    "defaultMessage": "Blast Information"
+  },
+  {
+    "id": "emailBlastEditor.step.subtitle.blast_information",
+    "defaultMessage": "Provide configuration details"
+  },
+  {
+    "id": "emailBlastEditor.step.title.template_selection",
+    "defaultMessage": "Template Selection"
+  },
+  {
+    "id": "emailBlastEditor.step.subtitle.template_selection",
+    "defaultMessage": "Select an email template for your blast"
+  },
+  {
+    "id": "emailBlastEditor.input.label.subject_line",
+    "defaultMessage": "Subject"
+  },
+  {
+    "id": "emailBlastEditor.input.placeholder.subject_line",
+    "defaultMessage": "Enter email subject"
+  },
+  {
+    "id": "emailBlastEditor.input.label.from_email",
+    "defaultMessage": "From email"
+  },
+  {
+    "id": "emailBlastEditor.input.placeholder.from_email",
+    "defaultMessage": "Enter from email"
+  },
+  {
+    "id": "emailBlastEditor.input.label.from_name",
+    "defaultMessage": "From name"
+  },
+  {
+    "id": "emailBlastEditor.input.placeholder.from_name",
+    "defaultMessage": "Enter from name"
+  },
+  {
+    "id": "emailBlastEditor.input.label.reply_to",
+    "defaultMessage": "Reply to"
+  },
+  {
+    "id": "emailBlastEditor.input.placeholder.reply_to",
+    "defaultMessage": "Enter reply to"
+  },
+  {
+    "id": "emailTemplateSelection.button.select_template",
+    "defaultMessage": "Select Template"
+  },
+  {
+    "id": "emailTemplateSelection.empty",
+    "defaultMessage": "No template selected yet"
+  },
+  {
+    "id": "emailTemplateSelection.required",
+    "defaultMessage": "A template is required"
   }
 ]

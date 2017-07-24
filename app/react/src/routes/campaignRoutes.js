@@ -3,13 +3,11 @@ import {
   CampaignsDisplayTable
 } from '../containers/Campaigns/Display/List';
 
-import {
-   EditEmail
-} from '../containers/Campaigns/Email/Edit';
+import { CreateEmailPage } from '../containers/Campaigns/Email/Edit';
 
 import {
   CampaignsEmailActionbar,
-  CampaignsEmailTable
+  CampaignEmailListPage
 } from '../containers/Campaigns/Email/List';
 
 import {
@@ -17,10 +15,7 @@ import {
   CampaignEmail
 } from '../containers/Campaigns/Email/Dashboard';
 
-import {
-  GoalsActionbar,
-  GoalsTable
-} from '../containers/Campaigns/Goal/List';
+import { GoalsActionbar, GoalsTable } from '../containers/Campaigns/Goal/List';
 
 const campaignsRoutes = [
   {
@@ -32,19 +27,19 @@ const campaignsRoutes = [
   {
     path: '/campaigns/email',
     layout: 'main',
-    contentComponent: CampaignsEmailTable,
+    contentComponent: CampaignEmailListPage,
     actionBarComponent: CampaignsEmailActionbar
   },
   {
-    path: '/campaigns/email/:campaignId',
+    path: '/campaigns/email/create',
+    layout: 'edit',
+    editComponent: CreateEmailPage
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)',
     layout: 'main',
     contentComponent: CampaignEmail,
     actionBarComponent: CampaignEmailActionbar
-  },
-  {
-    path: '/campaigns/email/:campaignId(\\d+)/edit',
-    layout: 'edit',
-    editComponent: EditEmail
   },
   {
     path: '/campaigns/goal',

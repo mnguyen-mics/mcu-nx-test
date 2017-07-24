@@ -1,5 +1,3 @@
-import EditEmail from './EditEmail';
+import CreateEmailPage from './CreateEmailPage';
 
-export {
-  EditEmail
-};
+export { CreateEmailPage };

@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
-import { reducer as formReducer } from 'redux-form';
 
-// import { PersistentReducers } from './PersistentReducers';
+import FormReducer from './FormReducer';
 
 import AppReducer from '../state/App/reducer';
 import CampaignsDisplayReducers from '../state/Campaigns/Display/reducer';
 import CampaignEmailReducers from '../state/Campaign/Email/reducer';
 import CampaignsEmailReducers from '../state/Campaigns/Email/reducer';
+import CampaignsEmailEditReducers from '../containers/Campaigns/Email/Edit/reducer';
 import GoalsReducers from '../state/Campaigns/Goal/reducer';
 import GoalReducers from '../state/Campaign/Goal/reducer';
 import NotificationsReducers from '../state/Notifications/reducer';
@@ -21,23 +21,18 @@ import LabelsReducers from '../state/Labels/reducer';
 
 import PlacementListsReducers from '../state/Library/PlacementLists/reducer';
 import KeywordListsReducers from '../state/Library/KeywordLists/reducer';
-import creativeDisplayReducers from '../state/Creatives/Display/reducer';
-import creativeEmailsReducers from '../state/Creatives/Emails/reducer';
+import creativesReducer from '../state/Creatives/reducer';
 import AssetsFilesReducers from '../state/Library/AssetsFiles/reducer';
 
-const allReducers = Object.assign(
-  {},
+import emailRoutersReducer from '../state/EmailRouter/reducer';
 
-  // external reducers
-  {
-    form: formReducer
-  },
-
-  // PersistentReducers,
+const allReducers = Object.assign({},
+  FormReducer,
   AppReducer,
   CampaignsDisplayReducers,
   CampaignEmailReducers,
   CampaignsEmailReducers,
+  CampaignsEmailEditReducers,
   GoalsReducers,
   GoalReducers,
   NotificationsReducers,
@@ -52,8 +47,8 @@ const allReducers = Object.assign(
   PlacementListsReducers,
   KeywordListsReducers,
   AssetsFilesReducers,
-  creativeDisplayReducers,
-  creativeEmailsReducers
+  creativesReducer,
+  emailRoutersReducer
 );
 
 export default combineReducers(allReducers);

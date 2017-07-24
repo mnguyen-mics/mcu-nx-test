@@ -1,0 +1,52 @@
+import { createAction } from 'redux-actions';
+import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
+import {
+  CAMPAIGN_EMAIL_CREATE,
+  EMAIL_EDITOR_INITIALIZE,
+  EMAIL_EDITOR_NEW_BLAST_CREATED,
+  EMAIL_EDITOR_NEW_BLAST_DELETED,
+  EMAIL_EDITOR_NEW_BLAST_EDITED,
+  EMAIL_EDITOR_EXISTING_BLAST_EDITED,
+  EMAIL_EDITOR_EXISTING_BLAST_DELETED,
+  EMAIL_EDITOR_RESET
+} from '../../../../state/action-types';
+
+const addBlast = (blast, emailTemplateIds = []) => {
+  const fakeId = generateFakeId();
+  const playload = {
+    blastId: fakeId,
+    blast: {
+      ...blast,
+      id: fakeId
+    },
+    emailTemplateIds
+  };
+  return createAction(EMAIL_EDITOR_NEW_BLAST_CREATED)(playload);
+};
+
+const editBlast = (blast, emailTemplateIds = []) => {
+  if (blast.id) {
+
+    const payload = {
+      blastId: blast.id,
+      blast: {
+        ...blast
+      },
+      emailTemplateIds
+    };
+
+    return isFakeId(blast.id) ?
+      createAction(EMAIL_EDITOR_NEW_BLAST_EDITED)(payload) :
+      createAction(EMAIL_EDITOR_EXISTING_BLAST_EDITED)(payload);
+
+  }
+  return null;
+};
+
+const removeBlast = (blastId) => {
+  return isFakeId(blastId) ?
+    createAction(EMAIL_EDITOR_NEW_BLAST_DELETED)(blastId) :
+    createAction(EMAIL_EDITOR_EXISTING_BLAST_DELETED)(blastId);
+};
+
+export { addBlast, editBlast, removeBlast };

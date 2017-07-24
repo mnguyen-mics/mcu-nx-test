@@ -1,4 +1,4 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
 import {
   AUDIENCE_SEGMENTS_LOAD_ALL,

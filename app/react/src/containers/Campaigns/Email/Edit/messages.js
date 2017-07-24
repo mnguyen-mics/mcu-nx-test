@@ -1,64 +1,172 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-  emailCampaignBreadcrumName: {
-    id: 'editEmailForm.breadcrum.email_campaigns',
-    defaultMessage: 'Email'
+  emailSavingInProgress: {
+    id: 'message.loading.content.saving-in-progress',
+    defaultMessage: 'Saving in progress'
   },
-  newEmailCampaignBreadcrumName: {
-    id: 'editEmailForm.breadcrum.new_email_campaign',
+  emailEditorBreadcrumbTitle1: {
+    id: 'emailEditor.breadcrumb.title1',
+    defaultMessage: 'Email Campaigns'
+  },
+  emailEditorBreadcrumbTitle2: {
+    id: 'emailEditor.breadcrumb.title2',
     defaultMessage: 'New Campaign'
   },
-  saveCampaign: {
-    id: 'editEmailForm.button.save_campaign',
+  emailEditorSaveCampaign: {
+    id: 'emailEditor.button.save_campaign',
     defaultMessage: 'Save Campaign'
   },
-  generalInformationTitle: {
-    id: 'editEmailForm.step.title.general_information',
+  emailEditorGeneralInformationTitle: {
+    id: 'emailEditor.step.title.general_information',
     defaultMessage: 'General Information'
   },
-  generalInformationSubTitle: {
-    id: 'editEmailForm.step.subtitle.general_information',
+  emailEditorGeneralInformationSubTitle: {
+    id: 'emailEditor.step.subtitle.general_information',
     defaultMessage: 'Give your campaign a name and a technical name'
   },
-  nameInputLabel: {
-    id: 'editEmailForm.step.input.label.campaign_name',
-    defaultMessage: 'Name',
+  emailEditorNameInputLabel: {
+    id: 'emailEditor.step.input.label.campaign_name',
+    defaultMessage: 'Name'
   },
-  nameInputPlaceholder: {
-    id: 'editEmailForm.step.input.placeholder.campaign_name',
-    defaultMessage: 'Give this campaign a name',
+  emailEditorNameInputPlaceholder: {
+    id: 'emailEditor.step.input.placeholder.campaign_name',
+    defaultMessage: 'Give this campaign a name'
   },
-  technicalNameInputLabel: {
-    id: 'editEmailForm.step.input.label.campaign_technical_name',
-    defaultMessage: 'Technical name',
+  emailEditorTechnicalNameInputLabel: {
+    id: 'emailEditor.step.input.label.campaign_technical_name',
+    defaultMessage: 'Technical name'
   },
-  technicalNameInputPlaceholder: {
-    id: 'editEmailForm.steps.general.name_placeholder',
-    defaultMessage: 'Give this campaign a name',
+  emailEditorTechnicalNameInputPlaceholder: {
+    id: 'emailEditor.steps.general.name_placeholder',
+    defaultMessage: 'Give this campaign a name'
   },
-  routerTitle: {
-    id: 'editEmailForm.step.title.router',
-    defaultMessage: 'Router',
+  emailEditorRouterTitle: {
+    id: 'emailEditor.step.title.router',
+    defaultMessage: 'Router'
   },
-  routerSubTitle: {
-    id: 'editEmailForm.step.subtitle.router',
+  emailEditorRouterSubTitle: {
+    id: 'emailEditor.step.subtitle.router',
     defaultMessage: 'Configure router for your campaign'
   },
-  routerSelectLabel: {
-    id: 'editEmailForm.step.select.label.router',
-    defaultMessage: 'Router',
+  emailEditorRouterSelectLabel: {
+    id: 'emailEditor.step.select.label.router',
+    defaultMessage: 'Router'
   },
-  providerSelectLabel: {
-    id: 'editEmailForm.step.select.label.provider',
-    defaultMessage: 'Provider',
+  emailEditorProviderSelectLabel: {
+    id: 'emailEditor.step.select.label.provider',
+    defaultMessage: 'Provider'
   },
-  emailBlastTitle: {
-    id: 'editEmailForm.step.title.email_blast',
+  emailEditorEmailBlastTitle: {
+    id: 'emailEditor.step.title.email_blast',
     defaultMessage: 'Email Blasts'
   },
-  emailBlastSubTitle: {
-    id: 'editEmailForm.step.subtitle.email_blast',
+  emailEditorEmailBlastSubTitle: {
+    id: 'emailEditor.step.subtitle.email_blast',
     defaultMessage: 'Configure blasts for your campaign'
+  },
+  emailBlastEditorBreadcrumbTitleNewBlast: {
+    id: 'emailBlastEditor.breadcrumb.title.new_blast',
+    defaultMessage: 'New blast'
+  },
+  emailBlastEditorBreadcrumbTitleEditBlast: {
+    id: 'emailBlastEditor.breadcrumb.title.edit_blast',
+    defaultMessage: 'Edit blast'
+  },
+  emailBlastEditorStepperGeneralInformation: {
+    id: 'emailBlastEditor.stepper.general_information',
+    defaultMessage: 'General Information'
+  },
+  emailBlastEditorStepperBlastInformation: {
+    id: 'emailBlastEditor.stepper.blast_information',
+    defaultMessage: 'Blast Information'
+  },
+  emailBlastEditorStepperTemplateSelection: {
+    id: 'emailBlastEditor.stepper.template_selection',
+    defaultMessage: 'Template Selection'
+  },
+  emailBlastEditorStepTitleGeneralInformation: {
+    id: 'emailBlastEditor.step.title.general_information',
+    defaultMessage: 'General Information'
+  },
+  emailBlastEditorStepSubTitleGeneralInformation: {
+    id: 'emailBlastEditor.step.subtitle.general_information',
+    defaultMessage: 'Provide blast name and a scheduled date of execution'
+  },
+  emailBlastEditorInputLabelBlastName: {
+    id: 'emailBlastEditor.input.label.blast_name',
+    defaultMessage: 'Blast name'
+  },
+  emailBlastEditorInputPlaceholderBlastName: {
+    id: 'emailBlastEditor.input.placeholder.blast_name',
+    defaultMessage: 'Enter blast name'
+  },
+  emailBlastEditorDatePickerLabelSentDate: {
+    id: 'emailBlastEditor.datepicker.label.send_date',
+    defaultMessage: 'Send date'
+  },
+  emailBlastEditorDatePickerPlaceholderSentDate: {
+    id: 'emailBlastEditor.datepicker.placeholder.send_date',
+    defaultMessage: 'Select date'
+  },
+  emailBlastEditorStepTitleBlastInformation: {
+    id: 'emailBlastEditor.step.title.blast_information',
+    defaultMessage: 'Blast Information'
+  },
+  emailBlastEditorStepSubTitleBlastInformation: {
+    id: 'emailBlastEditor.step.subtitle.blast_information',
+    defaultMessage: 'Provide configuration details'
+  },
+  emailBlastEditorStepTitleTemplateSelection: {
+    id: 'emailBlastEditor.step.title.template_selection',
+    defaultMessage: 'Template Selection'
+  },
+  emailBlastEditorStepSubTitleTemplateSelection: {
+    id: 'emailBlastEditor.step.subtitle.template_selection',
+    defaultMessage: 'Select an email template for your blast'
+  },
+  emailBlastEditorInputLabelSubjectLine: {
+    id: 'emailBlastEditor.input.label.subject_line',
+    defaultMessage: 'Subject'
+  },
+  emailBlastEditorInputPlaceholderSubjectLine: {
+    id: 'emailBlastEditor.input.placeholder.subject_line',
+    defaultMessage: 'Enter email subject'
+  },
+  emailBlastEditorInputLabelFromEmail: {
+    id: 'emailBlastEditor.input.label.from_email',
+    defaultMessage: 'From email'
+  },
+  emailBlastEditorInputPlaceholderFromEmail: {
+    id: 'emailBlastEditor.input.placeholder.from_email',
+    defaultMessage: 'Enter from email'
+  },
+  emailBlastEditorInputLabelFromName: {
+    id: 'emailBlastEditor.input.label.from_name',
+    defaultMessage: 'From name'
+  },
+  emailBlastEditorInputPlaceholderFromName: {
+    id: 'emailBlastEditor.input.placeholder.from_name',
+    defaultMessage: 'Enter from name'
+  },
+  emailBlastEditorInputLabelReplyTo: {
+    id: 'emailBlastEditor.input.label.reply_to',
+    defaultMessage: 'Reply to'
+  },
+  emailBlastEditorInputPlaceholderReplyTo: {
+    id: 'emailBlastEditor.input.placeholder.reply_to',
+    defaultMessage: 'Enter reply to'
+  },
+  emailTemplateSelectionSelectButton: {
+    id: 'emailTemplateSelection.button.select_template',
+    defaultMessage: 'Select Template'
+  },
+  emailTemplateSelectionEmpty: {
+    id: 'emailTemplateSelection.empty',
+    defaultMessage: 'No template selected yet'
+  },
+  emailTemplateSelectionRequired: {
+    id: 'emailTemplateSelection.required',
+    defaultMessage: 'A template is required'
   }
 });

@@ -6,7 +6,7 @@ import log from '../../../utils/Logger';
 import {
   fetchCampaignEmail,
   fetchCampaignEmailDeliveryReport,
-  updateCampaignEmail,
+  updateEmailCampaign,
   fetchAllEmailBlast,
   fetchAllEmailBlastPerformance
 } from './actions';
@@ -31,7 +31,7 @@ function* loadCampaignEmail({ payload }) {
 
     if (!campaignId) throw new Error('Payload is invalid');
 
-    const response = yield call(CampaignService.getCampaignEmail, campaignId);
+    const response = yield call(CampaignService.getEmailCampaign, campaignId);
     yield put(fetchCampaignEmail.success(response));
   } catch (error) {
     log.error(error);
@@ -73,12 +73,12 @@ function* modifyCampaignEmail({ payload }) {
 
     if (!campaignId) throw new Error('Payload is invalid');
 
-    const response = yield call(CampaignService.updateCampaignEmail, campaignId, body);
-    yield put(updateCampaignEmail.success(response));
+    const response = yield call(CampaignService.updateEmailCampaign, campaignId, body);
+    yield put(updateEmailCampaign.success(response));
     yield put(fetchCampaignEmail.request(campaignId, body));
   } catch (error) {
     log.error(error);
-    yield put(updateCampaignEmail.failure(error));
+    yield put(updateEmailCampaign.failure(error));
   }
 }
 
@@ -90,7 +90,7 @@ function* loadAllEmailBlast({ payload }) {
     } = payload;
 
     if (!campaignId) throw new Error('Payload is invalid');
-    const response = yield call(CampaignService.getAllEmailBlast, campaignId);
+    const response = yield call(CampaignService.getEmailBlasts, campaignId);
     yield put(fetchAllEmailBlast.success(response));
   } catch (error) {
     log.error(error);

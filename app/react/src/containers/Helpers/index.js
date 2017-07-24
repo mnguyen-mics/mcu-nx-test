@@ -1,5 +1,4 @@
 import withTranslations from './withTranslations';
+import withMcsRouter from './withMcsRouter';
 
-export {
-  withTranslations
-};
+export { withTranslations, withMcsRouter };

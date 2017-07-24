@@ -99,7 +99,7 @@ class MultiSelect extends Component {
           return (
             <Menu.Item key={item.value}>
               {isItemSelected && (<Icon type="check" />)}
-              <span><FormattedMessage id={item.key} /></span>
+              <span>{item.key}</span>
             </Menu.Item>
           );
         })}
