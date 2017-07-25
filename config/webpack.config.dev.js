@@ -17,6 +17,10 @@ const devConfig = {
     publicPath: paths.publicPath
   },
 
+  node: {
+    fs: 'empty'
+  },
+
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
