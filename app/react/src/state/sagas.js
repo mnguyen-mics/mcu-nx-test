@@ -6,6 +6,7 @@ import { campaignsDisplaySagas } from './Campaigns/Display/sagas';
 import { campaignsEmailSagas } from './Campaigns/Email/sagas';
 import { campaignEmailSagas } from './Campaign/Email/sagas';
 import { goalsSagas } from './Campaigns/Goal/sagas';
+import { forgotPasswordSagas } from './ForgotPassword/sagas';
 import { automationsSagas } from './Automations/sagas';
 import { segmentsSagas } from './Audience/Segments/sagas';
 import { partitionsSagas } from './Audience/Partitions/sagas';
@@ -16,6 +17,7 @@ import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
 import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas';
+import { settingsSagas } from './Settings/sagas';
 
 export default function* sagas() {
   yield [
@@ -23,6 +25,7 @@ export default function* sagas() {
     ...translationsSagas,
     ...sessionSagas,
     ...loginSagas,
+    ...forgotPasswordSagas,
     ...campaignsDisplaySagas,
     ...campaignsEmailSagas,
     ...campaignEmailSagas,
@@ -36,6 +39,7 @@ export default function* sagas() {
     ...keywordListsSagas,
     ...assetsFilesSagas,
     ...creativeDisplaySagas,
-    ...creativeEmailsSagas
+    ...creativeEmailsSagas,
+    ...settingsSagas
   ];
 }

@@ -57,7 +57,7 @@ export const DATE_SEARCH_SETTINGS = [
   },
   {
     paramName: 'lookbackWindow',
-    defaultValue: moment.duration(7, 'days'),
+    defaultValue: moment.duration(8, 'days'),
     deserialize: query => moment.duration(parseInt(query.lookbackWindow, 0), 'seconds'),
     serialize: value => Math.ceil(value.asSeconds()),
     isValid: query => query.lookbackWindow
@@ -71,7 +71,7 @@ export const DATE_SEARCH_SETTINGS = [
   },
   {
     paramName: 'to',
-    defaultValue: moment(),
+    defaultValue: moment().add(1, 'days'),
     deserialize: query => moment(query.to, DATE_FORMAT),
     serialize: value => value.format(DATE_FORMAT),
     isValid: query => moment(query.to, DATE_FORMAT).isValid()

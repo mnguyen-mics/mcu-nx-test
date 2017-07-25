@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
@@ -128,8 +128,7 @@ EmailStackedAreaChart.propTypes = {
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
-  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  intl: intlShape.isRequired
+  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const mapStateToProps = state => ({

@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import Plottable from 'plottable';
-import { BasisTooltip, ChartTooltip } from '../ChartTooltip';
+import { BasicTooltip, ChartTooltip } from '../ChartTooltip';
 
-class StackedBarChart extends Component {
+class StackedBarCharts extends Component {
 
   constructor(props) {
     super(props);
@@ -36,7 +36,6 @@ class StackedBarChart extends Component {
 
   componentDidMount() {
     const {
-      options,
       dataset
     } = this.props;
 
@@ -90,7 +89,7 @@ class StackedBarChart extends Component {
       <div className="mcs-plot-container">
         <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg" />
         <ChartTooltip tooltipStyle={tooltipStyle}>
-          <BasisTooltip content={content} />
+          <BasicTooltip content={content} />
         </ChartTooltip>
       </div>
     );
@@ -206,6 +205,12 @@ class StackedBarChart extends Component {
       table.redraw();
     });
 
+    global.window.addEventListener('redraw', () => {
+      setTimeout(() => {
+        table.redraw();
+      }, 500);
+    });
+
   }
 
   createDotsCrosshair(plot) {
@@ -286,7 +291,7 @@ class StackedBarChart extends Component {
 
 }
 
-StackedBarChart.propTypes = {
+StackedBarCharts.propTypes = {
   identifier: PropTypes.string.isRequired,
   dataset: PropTypes.arrayOf(
     PropTypes.object // eslint-disable-line react/forbid-prop-types
@@ -301,4 +306,4 @@ StackedBarChart.propTypes = {
   }).isRequired
 };
 
-export default StackedBarChart;
+export default StackedBarCharts;

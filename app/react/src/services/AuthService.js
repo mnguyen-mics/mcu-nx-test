@@ -26,10 +26,12 @@ const isAuthenticated = () => {
   const isAccessTokenExpired = moment().isAfter(expirationDate);
   if (isAccessTokenNull) {
     log.debug('Access token not found');
+    return false;
   } else if (isAccessTokenExpired) {
     log.debug('Access token expired');
+    return false;
   }
-  return !(isAccessTokenNull || isAccessTokenExpired);
+  return true;
 };
 
 const getRefreshToken = () => {
@@ -113,6 +115,16 @@ const getConnectedUser = () => {
   return ApiService.getRequest(endpoint).then(res => res.data);
 };
 
+const sendPassword = (email) => {
+  const endpoint = 'authentication/send_password_reset_email';
+
+  const body = {
+    email
+  };
+
+  return ApiService.postRequest(endpoint, body, null, null, { authenticated: false });
+};
+
 export default {
   getAccessToken,
   getAccessTokenExpirationDate,
@@ -124,5 +136,6 @@ export default {
   createAccessToken,
   createRefreshToken,
   getConnectedUser,
-  deleteCredentials
+  deleteCredentials,
+  sendPassword
 };

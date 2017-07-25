@@ -23,6 +23,7 @@ import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { AuthenticatedRoute } from '../../containers/Route';
 import { Notifications } from '../../containers/Notifications';
+import { ForgotPassword } from '../ForgotPassword';
 import { Login } from '../Login';
 import { getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
 import routes from '../../routes/routes';
@@ -50,8 +51,6 @@ class Navigator extends Component {
 
     const basePath = '/v2/o/:organisationId(\\d+)';
     const homeUrl = `/v2/o/${defaultWorspaceOrganisationId}/campaigns/display`;
-    const authenticated = AuthService.isAuthenticated();
-
     return (
       <IntlProvider locale={locale} messages={translations}>
         <LocaleProvider locale={enUS}>
@@ -60,7 +59,7 @@ class Navigator extends Component {
             <Switch>
               <Route
                 exact path="/" render={({ match }) => {
-
+                  const authenticated = AuthService.isAuthenticated();
                   let redirectToUrl = '/login';
                   if (authenticated) {
                     redirectToUrl = homeUrl;
@@ -97,7 +96,9 @@ class Navigator extends Component {
 
               <Route
                 exact path="/login" render={() => {
+                  const authenticated = AuthService.isAuthenticated();
                   if (authenticated) return (<Redirect to={homeUrl} />);
+                  this.props.logOut();
                   return (<Login />);
                 }}
               />
@@ -110,9 +111,8 @@ class Navigator extends Component {
                   return (null);
                 }}
               />
-              { /*
-              <Route exact path='/forgot-password' component={ForgotPassword} />
-            */ }
+
+              <Route exact path="/v2/forgot_password" component={ForgotPassword} />
               <Route
                 render={() => {
                   return (<NotFound />);

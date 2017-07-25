@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col, Button, Modal } from 'antd';
 import moment from 'moment';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { compose } from 'recompose';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { VerticalBarChart } from '../../../../../components/BarCharts';
 import { LegendChart } from '../../../../../components/LegendChart';
 import { McsIcons } from '../../../../../components/McsIcons';
@@ -18,7 +18,6 @@ import messages from '../messages';
 import { SEGMENT_QUERY_SETTINGS } from '../constants';
 
 import {
-  updateSearch,
   parseSearch
 } from '../../../../../utils/LocationSearchHelper';
 
@@ -47,49 +46,6 @@ class Overlap extends Component {
     } = this.props;
     const datamartId = defaultDatamart(organisationId).id;
     fetchOverlapAnalysis(segmentId, organisationId, datamartId);
-  }
-
-  updateLocationSearch(params) {
-    const {
-      history,
-      location: {
-        search: currentSearch,
-        pathname
-      }
-    } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, SEGMENT_QUERY_SETTINGS)
-    };
-
-    history.push(nextLocation);
-  }
-
-  renderDatePicker() {
-    const {
-      location: {
-        search
-      }
-    } = this.props;
-
-    const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-
-    const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
-      from: filter.from,
-      to: filter.to
-    };
-
-    const onChange = (newValues) => this.updateLocationSearch({
-      rangeType: newValues.rangeType,
-      lookbackWindow: newValues.lookbackWindow,
-      from: newValues.from,
-      to: newValues.to,
-    });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
   }
 
   renderStackedAreaCharts() {
@@ -125,22 +81,22 @@ class Overlap extends Component {
           organisationId,
           segmentId
         }
-      }
+      },
+      intl: { formatMessage }
     } = this.props;
     const datamartId = defaultDatamart(organisationId).id;
 
     Modal.confirm({
-      title: 'Create an Overlap Analysis',
+      title: formatMessage(messages.modalOverlapContentTitle),
       content: (
         <div>
-          <p>By clicking on OK you will create an overlap of the selected segment</p>
+          <p>{formatMessage(messages.modalOverlapContentMessage)}</p>
         </div>
       ),
       onOk() {
         createOverlapAnalysis(datamartId, segmentId, organisationId);
       },
       onCancel() {
-        console.log('Cancel');
       },
     });
   }
@@ -181,7 +137,6 @@ Overlap.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasFetchedAudienceStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.shape({
     date: PropTypes.number.isRequired,
@@ -190,9 +145,9 @@ Overlap.propTypes = {
   fetchOverlapAnalysis: PropTypes.func.isRequired,
   isFetchingOverlap: PropTypes.bool.isRequired,
   hasOverlap: PropTypes.bool.isRequired,
-  segmentsInformation: PropTypes.arrayOf(PropTypes.object).isRequired,
   defaultDatamart: PropTypes.func.isRequired,
   createOverlapAnalysis: PropTypes.func.isRequired,
+  intl: intlShape.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -215,6 +170,9 @@ Overlap = connect(
   mapDispatchToProps
 )(Overlap);
 
-Overlap = withRouter(Overlap);
+Overlap = compose(
+  injectIntl,
+  withRouter
+)(Overlap);
 
 export default Overlap;

@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { notification as antNotification, Icon } from 'antd';
+import { injectIntl } from 'react-intl';
+import { compose } from 'recompose';
 
 import * as notificationsActions from '../../state/Notifications/actions';
 
 class Notifications extends Component {
 
-  componentDidMount() {
-    // start
-  }
 
   componentWillReceiveProps(nextProps) {
     const {
       notifications,
-      translations,
       removeNotification
     } = this.props;
 
@@ -27,12 +25,12 @@ class Notifications extends Component {
       const onReloadButton = () => window.location.reload(); // eslint-disable-line no-undef
 
       const reloadButton = <Icon type="reload" onClick={onReloadButton} />;
-
       const buildDefaultNotification = (notification, index) => ({
-        message: translations[notification.messageKey],
-        description: translations[notification.descriptionKey],
+        message: notification.messageKey,
+        description: notification.descriptionKey,
         key: index,
         duration: null,
+        btn: notification.btn ? notification.btn : null,
         onClose: () => removeNotification(index)
       });
 
@@ -43,7 +41,7 @@ class Notifications extends Component {
             case 'success':
               return antNotification.success({
                 ...buildDefaultNotification(notification, index),
-                duration: 4.5
+                duration: 3
               });
             case 'error':
               return antNotification.error({
@@ -78,14 +76,14 @@ class Notifications extends Component {
 }
 
 Notifications.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   notifications: PropTypes.arrayOf(PropTypes.shape({
     type: PropTypes.string,
     messageKey: PropTypes.string,
     descriptionKey: PropTypes.string,
+    btn: PropTypes.element.isRequired,
     values: PropTypes.object
   })).isRequired,
-  removeNotification: PropTypes.func.isRequired
+  removeNotification: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -100,6 +98,10 @@ const mapDispatchToProps = {
 Notifications = connect(
   mapStateToProps,
   mapDispatchToProps
+)(Notifications);
+
+Notifications = compose(
+  injectIntl
 )(Notifications);
 
 export default Notifications;

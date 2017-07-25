@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { compose, withState, withHandlers } from 'recompose';
+import { compose } from 'recompose';
 
-import { getWorkspace } from '../../state/Session/selectors';
 import { getLogo } from '../../state/Session/actions';
 
 import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
@@ -15,19 +14,17 @@ class Logo extends Component {
     const {
       match: {
         params: { organisationId }
-      },
-      updateLogo
+      }
     } = this.props;
 
-    this.props.getLogoRequest({ organisationId, updateLogo });
+    this.props.getLogoRequest({ organisationId });
   }
 
   componentWillReceiveProps(nextProps) {
     const {
       match: {
         params: { organisationId }
-      },
-      updateLogo
+      }
     } = this.props;
 
     const {
@@ -37,7 +34,7 @@ class Logo extends Component {
     } = nextProps;
 
     if (organisationId !== nextOrganisationId) {
-      this.props.getLogoRequest({ organisationId: nextOrganisationId, updateLogo });
+      this.props.getLogoRequest({ organisationId: nextOrganisationId });
     }
 
   }
@@ -45,17 +42,15 @@ class Logo extends Component {
   render() {
     const {
       mode,
-      logoBlob
+      logoUrl
     } = this.props;
 
-    const logoUrl = logoBlob ? URL.createObjectURL(logoBlob) : null;  // eslint-disable-line no-undef
     return (
       <div className="mcs-logo-placeholder">
         { mode === 'inline' &&
           <div className="mcs-logo" >
             <Link to="/" id="logo">
-              {!!logoBlob && <img alt="logo" src={logoUrl} />}
-              {!logoBlob && <img alt="logo" src={logoUrl ? logoUrl : mediarithmicsLogo} />}
+              <img alt="logo" src={logoUrl ? logoUrl : mediarithmicsLogo} />
             </Link>
           </div>
         }
@@ -65,38 +60,27 @@ class Logo extends Component {
 }
 
 Logo.defaultProps = {
-  logoBlob: null
+  logoUrl: '',
 };
 
 Logo.propTypes = {
   mode: PropTypes.string.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  logoBlob: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  getLogoRequest: PropTypes.func.isRequired,
-  updateLogo: PropTypes.func.isRequired
+  logoUrl: PropTypes.string,
+  getLogoRequest: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  getWorkspaceByOrganisation: getWorkspace(state)
+  logoUrl: state.session.logoUrl
 });
 
 const mapDispatchToProps = {
-  getLogoRequest: getLogo
+  getLogoRequest: getLogo.request
 };
 
-Logo = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Logo);
-
 Logo = compose(
-  withState('logoBlob', 'setLogoBlob', null),
-  withHandlers({
-    updateLogo: ({ setLogoBlob }) => (logoBlob) => setLogoBlob(logoBlob)
-  }),
+  connect(mapStateToProps, mapDispatchToProps),
   withRouter
 )(Logo);
-
-Logo = withRouter(Logo);
 
 export default Logo;

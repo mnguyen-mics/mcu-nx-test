@@ -5,7 +5,6 @@
   "CATALOGS": "Catalogs",
   "CAMPAIGNS": "Campaigns",
   "DISPLAY": "Display",
-  "EMAILS": "Emails",
   "CREATIVES": "Creatives",
   "LIBRARY": "Library",
   "FILTERED_BY": "Filtered By",
@@ -23,6 +22,16 @@
   "LOG_IN": "Log in",
   "REMEMBER_ME": "Remember me",
   "LOG_IN_ERROR": "Incorrect email or password",
+
+  "RESET_PASSWORD": "To reset your password please enter your email address.",
+  "YOUR_EMAIL_ADDRESS": "Your Email Address",
+  "VALID_EMAIL": "Please enter a valid registered email address.",
+  "RESET_PASSWORD_BUTTON": "Reset Password",
+  "BACK_TO_LOGIN": "Take me back to login",
+  "RETURN_TO_LOGIN": "Return to Login",
+  "PASSWORD_SENT": "We've sent you an email with a link to finish reseting your password.",
+  "EMAIL_SPAM": "Can't find the email ? try checking your  spam folder.",
+
   "CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Campaign?",
   "CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Campaign all its activities will be suspended. You'll be able to recover it from the archived campaign filter.",
   "GOAL_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this goal?",
@@ -127,6 +136,9 @@
   "CAMPAIGN_STATUS_ACTIVE": "Campaign Ongoing",
   "CAMPAIGN_STATUS_PAUSED": "Campaign Paused",
   "CAMPAIGN_STATUS_PENDING": "Campaign Pending",
+  "AD_GROUP_STATUS_ACTIVE": "Ad Group Active",
+  "AD_GROUP_STATUS_PAUSED": "Ad Group Paused",
+  "AD_GROUP_STATUS_PENDING": "Ad Group Pending",
   "CAMPAIGN_OVERVIEW": "Overview",
   "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
 
@@ -164,7 +176,6 @@
   "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Placement List?",
   "PLACEMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this PLacement all it will stop campaign using it. Are you sure?",
 
-
   "NEW_KEYWORD_LIST": "New Keyword List",
   "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Keyword List?",
   "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Keyword all it will stop campaign using it. Are you sure?",
@@ -194,5 +205,23 @@
   "USER_POINT_ADDITIONS": "Userpoint Additions",
   "USER_POINT_DELETIONS": "Userpoint Deletions",
   "DESKTOP_COOKIE_IDS": "Display Cookies",
-  "EXTEND": "Extend"
+  "EXTEND": "Extend",
+
+  "AD_GROUPS": "Ad Groups",
+  "NEW_AD_GROUP": "New Ad Group",
+  "TOP_SITES": "Top Sites",
+
+  "DISPLAY_NETWORK_NAME": "Display Network",
+  "AD_GROUP_UPDATE_ACTIVE_SUCCESS": "Ad Group Successfully Activated",
+  "AD_GROUP_UPDATE_ACTIVE_ERROR": "There was an error activating your Ad Group... Please try again...",
+  "AD_GROUP_UPDATE_PAUSE_SUCCESS": "Ad Group Successfully Paused",
+  "AD_GROUP_UPDATE_PAUSE_ERROR": "There was an error pausing your Ad Group... Please try again...",
+  "AD_UPDATE_ACTIVE_SUCCESS": "Ad Successfully Activated",
+  "AD_UPDATE_ACTIVE_ERROR": "There was an error activating your Ad... Please try again...",
+  "AD_UPDATE_PAUSE_SUCCESS": "Ad Successfully Paused",
+  "AD_UPDATE_PAUSE_ERROR": "There was an error pausing your Ad... Please try again...",
+  "NOTIFICATION_SUCCESS": "Success",
+  "NOTIFICATION_ERROR": "Error",
+  "AUDIT_SUCCESS": "Audit Successful",
+  "AUDIT_ERROR": "You need to pass the Audit first"
 }

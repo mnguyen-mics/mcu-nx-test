@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Plottable from 'plottable';
-import { ChartTooltip, BasisTooltip } from '../ChartTooltip';
+import { ChartTooltip, BasicTooltip } from '../ChartTooltip';
 
 class StackedAreaPlot extends Component {
 
@@ -128,7 +128,7 @@ class StackedAreaPlot extends Component {
         </svg>
         <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg" />
         <ChartTooltip tooltipStyle={tooltipStyle}>
-          <BasisTooltip content={content} />
+          <BasicTooltip content={content} />
         </ChartTooltip>
       </div>
     );
@@ -243,6 +243,12 @@ class StackedAreaPlot extends Component {
 
     global.window.addEventListener('resize', () => {
       table.redraw();
+    });
+
+    global.window.addEventListener('redraw', () => {
+      setTimeout(() => {
+        table.redraw();
+      }, 500);
     });
 
   }

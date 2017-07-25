@@ -54,7 +54,6 @@ class CampaignsDisplayTable extends Component {
       },
       loadCampaignsDisplayDataSource
     } = this.props;
-
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
@@ -211,7 +210,7 @@ class CampaignsDisplayTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/display/${record.id}`}>{text}</Link>
       },
       {
         translationKey: 'IMPRESSIONS',

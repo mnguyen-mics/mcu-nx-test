@@ -60,10 +60,10 @@ class NavigatorMenu extends Component {
   }
 
   onClick = ({ key }) => {
-    // console.log('has clicked on item');
+
     const hasClickOnFirstLevelMenuItem = itemDefinitions.find(item => item.key === key);
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
-    // this.props.onMenuItemClick();
+
   }
 
   getAvailableItems() {
@@ -168,7 +168,7 @@ class NavigatorMenu extends Component {
         const matched = matchPath(pathname, { path: `${basePath}${item.path}` });
         return matched; // && matched.isExact;
       });
-      return [currentItem.key];
+      return currentItem ? [currentItem.key] : null;
     };
 
     const getOpenKeysInMode = () => {

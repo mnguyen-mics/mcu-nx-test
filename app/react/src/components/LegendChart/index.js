@@ -1,5 +1,7 @@
 import LegendChart from './LegendChart';
+import LegendChartWithModal from './LegendChartWithModal';
 
 export {
-  LegendChart
+  LegendChart,
+  LegendChartWithModal
 };

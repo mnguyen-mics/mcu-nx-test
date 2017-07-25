@@ -4,6 +4,11 @@ import {
 } from '../containers/Campaigns/Display/List';
 
 import {
+  CampaignPage,
+  AdGroupPage
+} from '../containers/Campaigns/Display/Dashboard';
+
+import {
    EditEmail
 } from '../containers/Campaigns/Email/Edit';
 
@@ -28,6 +33,18 @@ const campaignsRoutes = [
     layout: 'main',
     contentComponent: CampaignsDisplayTable,
     actionBarComponent: CampaignsDisplayActionbar
+  },
+  {
+    path: '/campaigns/display/:campaignId',
+    layout: 'main',
+    contentComponent: CampaignPage,
+    actionBarComponent: null
+  },
+  {
+    path: '/campaigns/display/:campaignId/adgroup/:adGroupId',
+    layout: 'main',
+    contentComponent: AdGroupPage,
+    actionBarComponent: null
   },
   {
     path: '/campaigns/email',

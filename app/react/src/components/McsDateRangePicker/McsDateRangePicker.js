@@ -9,16 +9,16 @@ const { RangePicker } = DatePicker;
 
 const ranges = [{
   name: 'TODAY',
-  dateRange: [moment(), moment()]
+  dateRange: [moment(), moment().add(1, 'days')]
 }, {
   name: 'YESTERDAY',
-  dateRange: [moment().subtract(1, 'days'), moment()]
+  dateRange: [moment().subtract(1, 'days'), moment().add(1, 'days')]
 }, {
   name: 'LAST_7_DAYS',
-  dateRange: [moment().subtract(7, 'days'), moment()]
+  dateRange: [moment().subtract(7, 'days'), moment().add(1, 'days')]
 }, {
   name: 'LAST_30_DAYS',
-  dateRange: [moment().subtract(1, 'month'), moment()]
+  dateRange: [moment().subtract(1, 'month'), moment().add(1, 'days')]
 }];
 
 const format = 'YYYY-MM-DD';

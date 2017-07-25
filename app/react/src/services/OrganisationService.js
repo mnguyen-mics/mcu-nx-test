@@ -15,7 +15,13 @@ const getLogo = (organisationId) => {
   return ApiService.getRequest(endpoint, null, headers);
 };
 
+const putLogo = (organisationId, formData) => {
+  const endpoint = `organisations/${organisationId}/logo`;
+  return ApiService.putRequest(endpoint, formData);
+};
+
 export default {
   getWorkspace,
-  getLogo
+  getLogo,
+  putLogo
 };

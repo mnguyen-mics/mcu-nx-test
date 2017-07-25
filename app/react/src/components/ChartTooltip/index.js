@@ -1,9 +1,9 @@
 import ChartTooltip from './ChartTooltip';
-import BasisTooltip from './BasisTooltip';
+import BasicTooltip from './BasicTooltip';
 import OverlapTooltip from './OverlapTooltip';
 
 export {
   ChartTooltip,
-  BasisTooltip,
+  BasicTooltip,
   OverlapTooltip
 };

@@ -43,6 +43,14 @@ const getDefaultWorspaceOrganisationId = createSelector(
   }
 );
 
+const getDefaultWorspaceOrganisationName = createSelector(
+  getDefaultWorkspace,
+  (defaultWorkspace) => {
+    if (defaultWorkspace) return defaultWorkspace.organisation_id;
+    return 'none';
+  }
+);
+
 const getDefaultDatamart = state => organisationId => {
   const workspaces = getWorkspaces(state);
   return workspaces[organisationId].datamarts[0];
@@ -65,6 +73,7 @@ const hasAccessToOrganisation = state => organisationId => {
 
 export {
   getDefaultWorspaceOrganisationId,
+  getDefaultWorspaceOrganisationName,
   hasDatamarts,
   hasAccessToOrganisation,
   hasWorkspace,

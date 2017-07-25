@@ -22,7 +22,7 @@ const getSegment = (segmentId, options = {}) => {
   return ApiService.getRequest(endpoint, params);
 };
 
-const createOverlap = (datamartId, segmentId, filters = {}) => {
+const createOverlap = (datamartId, segmentId) => {
   const endpoint = `datamarts/${datamartId}/overlap_analysis`;
 
   const body = { first_party_overlap: { source: { type: 'segment_overlap', segment_id: segmentId, datamart_id: datamartId }, type: 'FIRST_PARTY_OVERLAP' } };

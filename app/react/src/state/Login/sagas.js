@@ -118,8 +118,9 @@ function* authentication() {
 
     if (signOutAction) {
       yield call(AuthService.deleteCredentials);
-      const { meta: { redirectCb } } = signOutAction;
-      redirectCb();
+      if (signOutAction.meta && signOutAction.meta.redirectCb) {
+        signOutAction.meta.redirectCb();
+      }
     }
 
   }

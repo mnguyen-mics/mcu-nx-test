@@ -27,6 +27,7 @@ const notifications = (state = emptyNotificationsArray, action) => {
           'type',
           'messageKey',
           'descriptionKey',
+          'btn',
           'values'
         ])
       ];

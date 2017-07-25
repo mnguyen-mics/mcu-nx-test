@@ -90,7 +90,7 @@ class TableView extends Component {
 
     const dataColumns = dataColumnsDefinition.map(dataColumn => {
       return {
-        title: <FormattedMessage id={dataColumn.translationKey} />,
+        title: dataColumn.translationKey ? <FormattedMessage id={dataColumn.translationKey} /> : '',
         dataIndex: dataColumn.key,
         key: dataColumn.key,
         render: dataColumn.render ? dataColumn.render : text => text,
@@ -110,7 +110,7 @@ class TableView extends Component {
         render: (text, record) => {
           return (<Dropdown overlay={this.renderActionsMenu(column.actions, record)} trigger={['click']}>
             <a className="ant-dropdown-link">
-              <McsIcons type="caret" />
+              <McsIcons type="chevron" />
             </a>
           </Dropdown>);
         }

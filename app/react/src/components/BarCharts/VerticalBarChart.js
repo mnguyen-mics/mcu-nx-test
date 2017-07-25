@@ -36,7 +36,6 @@ class VerticalBarChart extends Component {
 
   componentDidMount() {
     const {
-      options,
       dataset
     } = this.props;
 
@@ -87,20 +86,6 @@ class VerticalBarChart extends Component {
       visibility
     };
 
-    const contentOverlap = {
-      segment_initial: {
-        name: 'Test Initial',
-        population: 10927336
-      },
-      segment_overlaping: {
-        name: 'Test Overlaping',
-        population: 1237824
-      },
-      overlap: {
-        population: 112232
-      }
-    };
-
     return (
       <div className="mcs-plot-container">
         <svg style={{ height: '0px', width: '0px' }}>
@@ -134,8 +119,10 @@ class VerticalBarChart extends Component {
     }
 
     const xScale = new Plottable.Scales.Category();
-    const yScale = new Plottable.Scales.Linear().addIncludedValuesProvider(() => { return [0]; }).addPaddingExceptionsProvider(() => { return [0]; }).padProportion(0.2);
-
+    const yScale = new Plottable.Scales.Linear()
+      .addIncludedValuesProvider(() => { return [0]; })
+      .addPaddingExceptionsProvider(() => { return [0]; })
+      .padProportion(0.2);
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
     colorScale.domain(options.yKeys);
@@ -175,8 +162,7 @@ class VerticalBarChart extends Component {
         .y((d) => { return d.y; }, yScale)
         .animated(true)
         .attr('fill', 'url(#verticalGradientBlue)')
-        .attr('cursor', 'pointer')
-        .attr('width', () => { return 50; });
+        .attr('cursor', 'pointer');
 
       plts.push(plot);
     }
@@ -198,38 +184,8 @@ class VerticalBarChart extends Component {
     table.renderTo(`#${identifier}`);
     this.plot = table;
 
-    /*
     plts.forEach((plot) => {
-      // colorScale.range([plot.foreground().style('fill')]);
-      const line = this.createLineCrosshair(plot);
-      const pointer = new Plottable.Interactions.Pointer();
-      this.pointersAttached.push(pointer);
-      pointer.onPointerMove((p) => {
-        const nearestEntity = plot.entityNearest(p);
-        const entities = plot.entitiesAt(nearestEntity.position);
-        entities.forEach((entity, i) => {
-          nearestEntity.datum[options.yKeys[i]] = entity.datum.y;
-        });
-        line.hide();
-        line.drawAt(nearestEntity.position, p, nearestEntity);
-      });
-      pointer.onPointerExit(() => {
-        line.hide();
-        this.setTooltip({
-          visible: 'hidden'
-        });
-      });
-      pointer.attachTo(plot);
-      const point = {
-        pointer: pointer,
-        plot: plot
-      };
-      this.pointers.push(point);
-    });
-    */
-
-    plts.forEach((plot) => {
-      const tooltip = this.createTooltipCrosshair(plot);
+      const tooltip = this.createTooltipCrosshair();
       const interaction = new Plottable.Interactions.Click();
       interaction.onClick((point) => {
         plot.selections().attr('fill', 'url(#verticalGradientBlue)');
@@ -253,20 +209,21 @@ class VerticalBarChart extends Component {
       table.redraw();
     });
 
+    global.window.addEventListener('redraw', () => {
+      setTimeout(() => {
+        table.redraw();
+      }, 500);
+    });
+
   }
 
 
-  createTooltipCrosshair(plot) {
+  createTooltipCrosshair() {
     const {
-      options: {
-        yKeys,
-        colors
-      },
       dataset
     } = this.props;
 
     const crosshair = {};
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
     crosshair.drawAt = (p, mousePosition, navInfo) => {
 
