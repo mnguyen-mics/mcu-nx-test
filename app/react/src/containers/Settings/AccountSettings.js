@@ -49,6 +49,7 @@ class AccountSettings extends Component {
 AccountSettings.propTypes = {
   organisationName: PropTypes.string.isRequired,
   openCloseMenu: PropTypes.func.isRequired,
+  intl: intlShape.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -59,16 +60,12 @@ const mapDispatchToProps = {
   openCloseMenu: menuActions.openCloseMenu
 };
 
-AccountSettings.propTypes = {
-  intl: intlShape.isRequired
-};
-
 AccountSettings = compose(
+  injectIntl,
   connect(
     mapStateToProps,
     mapDispatchToProps
-  ),
-  injectIntl
+  )
 )(AccountSettings);
 
 export default AccountSettings;
