@@ -104,16 +104,18 @@ class CampaignDisplay extends Component {
     return (
       <div className="ant-layout">
         <CampaignDisplayActionbar campaignDisplay={campaign.items} updateCampaignDisplay={updateCampaign} archiveCampaignDisplay={() => {}} />
-        <Content className="mcs-content-container">
-          <CampaignDisplayHeader object={campaign.items} translationKey="CAMPAIGN" />
-          <CampaignDisplayDashboard isFetchingCampaignStat={dashboardPerformance.campaign.isLoading} hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched} campaignStat={dashboardPerformance.campaign.items} mediaStat={dashboardPerformance.media.items} isFetchingMediaStat={dashboardPerformance.media.isLoading} hasFetchedMediaStat={dashboardPerformance.media.hasFetched} />
-          <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
-            <CampaignDisplayAdGroupTable isFetchingStat={adGroups.isLoadingPerf} dataSet={adGroups.items} isFetching={adGroups.isLoadingList} updateAdGroup={updateAdGroup} />
-          </Card>
-          <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
-            <CampaignDisplayAdTable isFetchingStat={ads.isLoadingPerf} dataSet={ads.items} isFetching={ads.isLoadingList} updateAd={updateAd} />
-          </Card>
-        </Content>
+        <div className="ant-layout">
+          <Content className="mcs-content-container">
+            <CampaignDisplayHeader object={campaign.items} translationKey="CAMPAIGN" />
+            <CampaignDisplayDashboard isFetchingCampaignStat={dashboardPerformance.campaign.isLoading} hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched} campaignStat={dashboardPerformance.campaign.items} mediaStat={dashboardPerformance.media.items} isFetchingMediaStat={dashboardPerformance.media.isLoading} hasFetchedMediaStat={dashboardPerformance.media.hasFetched} />
+            <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
+              <CampaignDisplayAdGroupTable isFetchingStat={adGroups.isLoadingPerf} dataSet={adGroups.items} isFetching={adGroups.isLoadingList} updateAdGroup={updateAdGroup} />
+            </Card>
+            <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
+              <CampaignDisplayAdTable isFetchingStat={ads.isLoadingPerf} dataSet={ads.items} isFetching={ads.isLoadingList} updateAd={updateAd} />
+            </Card>
+          </Content>
+        </div>
       </div>
     );
   }

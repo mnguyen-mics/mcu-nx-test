@@ -60,9 +60,9 @@ class MainLayout extends Component {
         </Sider>
         <Layout>
           <NavigatorHeader />
+          { ActionBarComponent ? <ActionBarComponent /> : null }
           { ActionBarComponent ? (
             <div className="ant-layout">
-              <ActionBarComponent />
               <Content className="mcs-content-container">
                 <ContentComponent />
               </Content>
