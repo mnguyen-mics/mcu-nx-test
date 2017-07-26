@@ -24,7 +24,7 @@
     margin-bottom: 5px;
 }
 
-.mcs-table-nofilters {
+.mcs-table-no-filters {
     margin-bottom: 27px;
 }
 
@@ -87,17 +87,15 @@
     50%{background-position:100% 50%}
     100%{background-position:0% 50%}
 }
-@keyframes loadingAnimation { 
+@keyframes loadingAnimation {
     0%{background-position:0% 50%}
     50%{background-position:100% 50%}
     100%{background-position:0% 50%}
 }
 
 .mcs-table-cell-thumbnail {
-    background-color: #fff;
-    background-image: linear-gradient(45deg,#e6e6e6 25%,transparent 0,transparent 75%,#e6e6e6 0,#e6e6e6),linear-gradient(45deg,#e6e6e6 25%,transparent 0,transparent 75%,#e6e6e6 0,#e6e6e6);
     background-size: 20px 20px;
-    background-position: 0 0,30px 30px;
+    background: #fff linear-gradient(45deg, #e6e6e6 25%, transparent 0, transparent 75%, #e6e6e6 0, #e6e6e6), linear-gradient(45deg, #e6e6e6 25%, transparent 0, transparent 75%, #e6e6e6 0, #e6e6e6) 0 0, 30px 30px;
     margin: 0;
     padding: 0;
     border: 0;
@@ -121,19 +119,26 @@
     vertical-align: middle;
 }
 
+// Use this for flexbox vertical alignment
+.mcs-aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: inherit;
+}
+
 .mcs-table-view-empty {
-    .logo {
+  .logo {
         width: 100px;
         height: 100px;
         border-radius: 50px;
-        margin: 0 auto;
         background-color: #d8d8d8;
         color: #fff;
         line-height: 100px;
         font-size: 3.5em;
         display: table;
-        margin-bottom: 10px;
-        .icon {
+        margin: 0 auto 10px;
+    .icon {
             display: table-cell;
             vertical-align: middle;
         }
@@ -142,7 +147,6 @@
 	font-weight: bold;
 	text-align: center;
 	color: #9c9c9c;
-    margin-top:18%;
 }
 
 .mcs-table-filters-item {

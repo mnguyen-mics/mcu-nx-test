@@ -84,7 +84,7 @@ class SitesTable extends Component {
       defaultValue: filter.name
     };
 
-    return (noSiteYet) ? (<EmptyTableView iconType="copy" text="EMPTY_SITES" />) :
+    return (noSiteYet) ? (<EmptyTableView iconType="bolt" text="EMPTY_SITES" />) :
            (
              <TableViewFilters
                columnsDefinitions={columnsDefinitions}

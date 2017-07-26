@@ -21,7 +21,7 @@ const messages = defineMessages({
     id: 'mobile_application.edit',
     defaultMessage: 'Edit'
   },
-  archiveSite: {
+  archiveMobileApplication: {
     id: 'mobile_application.archive',
     defaultMessage: 'Archive'
   }

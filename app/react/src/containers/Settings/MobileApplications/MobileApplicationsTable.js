@@ -84,7 +84,7 @@ class MobileApplicationsTable extends Component {
       defaultValue: filter.name
     };
 
-    return (noMobileApplicationYet) ? (<EmptyTableView iconType="copy" text="EMPTY_MOBILE_APPLICATIONS" />) :
+    return (noMobileApplicationYet) ? (<EmptyTableView iconType="display" text="EMPTY_MOBILE_APPLICATIONS" />) :
            (
              <TableViewFilters
                columnsDefinitions={columnsDefinitions}
