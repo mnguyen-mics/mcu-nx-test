@@ -6,6 +6,7 @@ import { defineMessages, injectIntl, intlShape } from 'react-intl';
 
 import { withMcsRouter } from '../Helpers';
 import { SitesListPage } from './Sites';
+import { DatamartsListPage } from './Datamarts';
 import { UserAccount } from './UserAccount';
 import { OrganisationAccount } from './OrganisationAccount';
 import { getDefaultDatamart, getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
@@ -78,7 +79,8 @@ class AccountSettings extends Component {
     const messages = defineMessages({
       userAccount: { id: 'settings.tab.title.user_account', defaultMessage: 'User Account' },
       organisationAccount: { id: 'settings.tab.title.organisation_account', defaultMessage: 'Organisation Account' },
-      sites: { id: 'settings.tab.title.sites', defaultMessage: 'Sites' }
+      sites: { id: 'settings.tab.title.sites', defaultMessage: 'Sites' },
+      datamarts: { id: 'settings.tab.title.datamarts', defaultMessage: 'Datamarts' }
     });
 
     const urlParams = this.getUrlParameters();
@@ -95,6 +97,11 @@ class AccountSettings extends Component {
           {
             this.state.datamartId
               ? <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.state.datamartId} /></TabPane>
+              : null
+          }
+          {
+            this.state.datamartId
+              ? <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.state.datamartId} /></TabPane>
               : null
           }
         </Tabs>

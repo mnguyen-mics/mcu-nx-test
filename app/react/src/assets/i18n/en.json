@@ -210,8 +210,6 @@
   "NEW_SITE": "New Site",
   "EMPTY_SITES": "There are no sites set up. Click on 'New Site' to create one.",
 
-  "EXTEND": "Extend",
-
   "AD_GROUPS": "Ad Groups",
   "NEW_AD_GROUP": "New Ad Group",
   "TOP_SITES": "Top Sites",
@@ -228,5 +226,7 @@
   "NOTIFICATION_SUCCESS": "Success",
   "NOTIFICATION_ERROR": "Error",
   "AUDIT_SUCCESS": "Audit Successful",
-  "AUDIT_ERROR": "You need to pass the Audit first"
+  "AUDIT_ERROR": "You need to pass the Audit first",
+
+  "EMPTY_DATAMARTS": "There are no datamarts set up."
 }

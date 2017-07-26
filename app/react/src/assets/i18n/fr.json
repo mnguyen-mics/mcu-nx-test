@@ -136,9 +136,6 @@
   "CAMPAIGN_STATUS_ACTIVE": "Campaign en cours",
   "CAMPAIGN_STATUS_PAUSED": "Campaign en pause",
   "CAMPAIGN_STATUS_PENDING": "Campaign en attente",
-  "AD_GROUP_STATUS_ACTIVE": "Startegie En Cours",
-  "AD_GROUP_STATUS_PAUSED": "Strategie en Pause",
-  "AD_GROUP_STATUS_PENDING": "Strategie en Attente",
   "CAMPAIGN_OVERVIEW": "Overview",
   "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
 
@@ -208,8 +205,7 @@
   "EXTEND": "Etendre",
 
   "NEW_SITE": "Nouveau Site",
-
-  "EXTEND": "Etendre",
+  "EMPTY_SITES": "Il n'y a aucun Site de créé! Clickez sur Nouveau pour commencer.",
 
   "AD_GROUPS": "Element de Campagne",
   "NEW_AD_GROUP": "Nouveau Element de Campagne",
@@ -227,5 +223,7 @@
   "NOTIFICATION_SUCCESS": "Success",
   "NOTIFICATION_ERROR": "Error",
   "AUDIT_SUCCESS": "Audit Réussit",
-  "AUDIT_ERROR": "Vous devez passez l'Audit"
+  "AUDIT_ERROR": "Vous devez passez l'Audit",
+
+  "EMPTY_DATAMARTS": "Il n'y a aucun Datamart de créé! Clickez sur Nouveau pour commencer."
 }
