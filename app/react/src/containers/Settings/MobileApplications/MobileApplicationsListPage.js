@@ -8,47 +8,47 @@ import { defineMessages, FormattedMessage, injectIntl, intlShape } from 'react-i
 import { withMcsRouter } from '../../Helpers';
 import { ReactRouterPropTypes } from '../../../validators/proptypes';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
-import SiteService from '../../../services/SiteService';
+import MobileApplicationService from '../../../services/MobileApplicationService';
 import * as notifyActions from '../../../state/Notifications/actions';
 
-import SitesTable from './SitesTable';
+import MobileApplicationsTable from './MobileApplicationsTable';
 
 const messages = defineMessages({
   confirmArchiveModalTitle: {
-    id: 'site.archive.confirm_modal.title',
-    defaultMessage: 'Are you sure you want to archive this Site ?'
+    id: 'mobile_application.archive.confirm_modal.title',
+    defaultMessage: 'Are you sure you want to archive this Mobile Application?'
   },
   confirmArchiveModalContent: {
-    id: 'site.archive.confirm_modal.content',
-    defaultMessage: 'Archiving site'
+    id: 'mobile_application.archive.confirm_modal.content',
+    defaultMessage: 'Archiving mobile application'
   },
   confirmArchiveModalOk: {
-    id: 'site.archive.confirm_modal.ok',
+    id: 'mobile_application.archive.confirm_modal.ok',
     defaultMessage: 'Archive now'
   },
   confirmArchiveModalCancel: {
-    id: 'site.archive.confirm_modal.cancel',
+    id: 'mobile_application.archive.confirm_modal.cancel',
     defaultMessage: 'Cancel'
   }
 });
 
-class SitesListPage extends Component {
+class MobileApplicationsListPage extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      sites: [],
-      totalSites: 0,
-      isFetchingSites: true,
-      noSiteYet: false,
+      mobileApplications: [],
+      totalMobileApplications: 0,
+      isFetchingMobileApplications: true,
+      noMobileApplicationYet: false,
       filter: {
         currentPage: 1,
         pageSize: 10,
         name: ''
       }
     };
-    this.handleArchiveSite = this.handleArchiveSite.bind(this);
-    this.handleEditSite = this.handleEditSite.bind(this);
+    this.handleArchiveMobileApplication = this.handleArchiveMobileApplication.bind(this);
+    this.handleEditMobileApplication = this.handleEditMobileApplication.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
   }
 
@@ -58,14 +58,14 @@ class SitesListPage extends Component {
       datamartId
     } = this.props;
 
-    this.fetchSites(organisationId, datamartId, this.state.filter);
+    this.fetchMobileApplications(organisationId, datamartId, this.state.filter);
   }
 
   /**
    * Interaction
    */
 
-  handleArchiveSite(site) {
+  handleArchiveMobileApplication(mobileApplication) {
     const { organisationId, location: { search }, intl: { formatMessage } } = this.props;
 
     Modal.confirm({
@@ -79,14 +79,14 @@ class SitesListPage extends Component {
     });
   }
 
-  handleEditSite(site) {
+  handleEditMobileApplication(mobileApplication) {
     const {
       organisationId,
       history,
       datamartId
     } = this.props;
 
-    history.push(`/o${organisationId}d${datamartId}/settings/sites/edit/${site.id}`);
+    history.push(`/o${organisationId}d${datamartId}/settings/mobile_applications/edit/${mobileApplication.id}`);
   }
 
   handleFilterChange(newFilter) {
@@ -96,15 +96,15 @@ class SitesListPage extends Component {
     } = this.props;
 
     this.setState({ filter: newFilter });
-    this.fetchSites(organisationId, datamartId, newFilter);
+    this.fetchMobileApplications(organisationId, datamartId, newFilter);
   }
 
   /**
    * Data
    */
 
-  fetchSites(organisationId, datamartId, filter) {
-    const buildGetSitesOptions = () => {
+  fetchMobileApplications(organisationId, datamartId, filter) {
+    const buildGetMobileApplicationsOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
       };
@@ -113,24 +113,24 @@ class SitesListPage extends Component {
       return options;
     };
 
-    SiteService.getSites(organisationId, datamartId, buildGetSitesOptions()).then(response => {
+    MobileApplicationService.getMobileApplications(organisationId, datamartId, buildGetMobileApplicationsOptions()).then(response => {
       this.setState({
-        isFetchingSites: false,
-        noSiteYet: response && response.count === 0 && !filter.name,
-        sites: response.data,
-        totalSites: response.count
+        isFetchingMobileApplications: false,
+        noMobileApplicationYet: response && response.count === 0 && !filter.name,
+        mobileApplications: response.data,
+        totalMobileApplications: response.count
       });
     }).catch(error => {
-      this.setState({ isFetchingSites: false });
+      this.setState({ isFetchingMobileApplications: false });
       this.props.notifyError(error);
     });
   }
 
   static buildNewActionElement(organisationId, datamartId) {
     return (
-      <Link to={`/o${organisationId}d${datamartId}/settings/sites/new`}>
-        <Button key="NEW_SITE" type="primary" htmlType="submit">
-          <FormattedMessage id="NEW_SITE" defaultMessage="New Site" />
+      <Link to={`/o${organisationId}d${datamartId}/settings/mobileapplications/new`}>
+        <Button key="NEW_MOBILE_APPLICATION" type="primary" htmlType="submit">
+          <FormattedMessage id="NEW_MOBILE_APPLICATION" defaultMessage="New Mobile Application" />
         </Button>
       </Link>
     );
@@ -143,43 +143,43 @@ class SitesListPage extends Component {
     } = this.props;
 
     const {
-      isFetchingSites,
-      totalSites,
-      sites,
-      noSiteYet,
+      isFetchingMobileApplications,
+      totalMobileApplications,
+      mobileApplications,
+      noMobileApplicationYet,
       filter
     } = this.state;
 
-    const newButton = SitesListPage.buildNewActionElement(organisationId, datamartId);
+    const newButton = MobileApplicationsListPage.buildNewActionElement(organisationId, datamartId);
     const buttons = [newButton];
 
     return (
       <div>
         <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage id="SitesListPage" defaultMessage="Sites" /></span>
+          <span className="mcs-card-title"><FormattedMessage id="MobileApplicationsListPage" defaultMessage="Mobile Applications" /></span>
           <span className="mcs-card-button">{buttons}</span>
         </div>
         <hr className="mcs-separator" />
-        <SitesTable
-          dataSource={sites}
-          totalSites={totalSites}
-          isFetchingSites={isFetchingSites}
-          noSiteYet={noSiteYet}
+        <MobileApplicationsTable
+          dataSource={mobileApplications}
+          totalMobileApplications={totalMobileApplications}
+          isFetchingMobileApplications={isFetchingMobileApplications}
+          noMobileApplicationYet={noMobileApplicationYet}
           filter={filter}
           onFilterChange={this.handleFilterChange}
-          onArchiveSite={this.handleArchiveSite}
-          onEditSite={this.handleEditSite}
+          onArchiveMobileApplication={this.handleArchiveMobileApplication}
+          onEditMobileApplication={this.handleEditMobileApplication}
         />
       </div>
     );
   }
 }
 
-SitesListPage.defaultProps = {
+MobileApplicationsListPage.defaultProps = {
   notifyError: () => {}
 };
 
-SitesListPage.propTypes = {
+MobileApplicationsListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
@@ -195,4 +195,4 @@ export default compose(
     undefined,
     { notifyError: notifyActions.notifyError }
   )
-)(SitesListPage);
+)(MobileApplicationsListPage);

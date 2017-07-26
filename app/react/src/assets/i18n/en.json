@@ -210,6 +210,9 @@
   "NEW_SITE": "New Site",
   "EMPTY_SITES": "There are no sites set up. Click on 'New Site' to create one.",
 
+  "NEW_MOBILE_APPLICATION": "New Mobile Application",
+  "EMPTY_MOBILE_APPLICATIONS": "There are no mobile applications set up. Click on 'New Mobile Application' to create one.",
+
   "AD_GROUPS": "Ad Groups",
   "NEW_AD_GROUP": "New Ad Group",
   "TOP_SITES": "Top Sites",

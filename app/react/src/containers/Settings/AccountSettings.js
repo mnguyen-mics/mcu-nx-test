@@ -7,6 +7,7 @@ import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { withMcsRouter } from '../Helpers';
 import { SitesListPage } from './Sites';
 import { DatamartsListPage } from './Datamarts';
+import { MobileApplicationsListPage } from './MobileApplications';
 import { UserAccount } from './UserAccount';
 import { OrganisationAccount } from './OrganisationAccount';
 import { getDefaultDatamart, getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
@@ -21,7 +22,6 @@ class AccountSettings extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
     const {
       organisationId,
       defaultDatamart
@@ -29,7 +29,7 @@ class AccountSettings extends Component {
 
     const datamart = defaultDatamart(organisationId);
     if (datamart) {
-      this.state.datamartId = parseInt(datamart.id, 0);
+      this.datamartId = parseInt(datamart.id, 0);
     }
 
     this.switchTab = this.switchTab.bind(this);
@@ -80,6 +80,7 @@ class AccountSettings extends Component {
       userAccount: { id: 'settings.tab.title.user_account', defaultMessage: 'User Account' },
       organisationAccount: { id: 'settings.tab.title.organisation_account', defaultMessage: 'Organisation Account' },
       sites: { id: 'settings.tab.title.sites', defaultMessage: 'Sites' },
+      mobile_applications: { id: 'settings.tab.title.mobile_applications', defaultMessage: 'Mobile Applications' },
       datamarts: { id: 'settings.tab.title.datamarts', defaultMessage: 'Datamarts' }
     });
 
@@ -95,14 +96,16 @@ class AccountSettings extends Component {
             <OrganisationAccount organisationName={organisationName} />
           </TabPane>
           {
-            this.state.datamartId
-              ? <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.state.datamartId} /></TabPane>
-              : null
+            this.datamartId &&
+            <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.datamartId} /></TabPane>
           }
           {
-            this.state.datamartId
-              ? <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.state.datamartId} /></TabPane>
-              : null
+            this.datamartId &&
+            <TabPane tab={formatMessage(messages.mobile_applications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>
+          }
+          {
+            this.datamartId &&
+            <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.datamartId} /></TabPane>
           }
         </Tabs>
       </Row>

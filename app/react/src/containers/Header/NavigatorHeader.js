@@ -37,26 +37,25 @@ class NavigatorHeader extends Component {
 
     const popoverContent = (
       <div>
-        <p><Link to={{pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account'}} ><FormattedMessage id="ACCOUNT_SETTINGS" /></Link></p>
+        <p><Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account' }} ><FormattedMessage id="ACCOUNT_SETTINGS" /></Link></p>
         <p><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></p>
       </div>
     );
 
-    const hasMoreThanOneWorspace = Object.keys(workspaces).length > 1;
+    const hasMoreThanOneWorkspace = Object.keys(workspaces).length > 1;
 
-    const changeWorspace = ({ key }) => {
+    const changeWorkspace = ({ key }) => {
       const toPath = pathToRegexp.compile(path);
-      const newPath = toPath({
+      const fullUrl = toPath({
         ...params,
         organisationId: key
       });
-      const fullUrl = newPath;
-      log.debug(`Change worskapce, redirect to ${fullUrl}`);
+      log.debug(`Change workspace, redirect to ${fullUrl}`);
       history.push(fullUrl);
     };
 
     const menu = (
-      <Menu onClick={changeWorspace}>
+      <Menu onClick={changeWorkspace}>
         {
           Object.keys(workspaces).map(orgId => <Menu.Item key={orgId}>{workspaces[orgId].organisation_name}</Menu.Item>)
         }
@@ -68,7 +67,7 @@ class NavigatorHeader extends Component {
         <Row>
           <Col span={22}>
             <span className="organisation-name">{ organisationName }</span>
-            { hasMoreThanOneWorspace &&
+            { hasMoreThanOneWorkspace &&
               <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
                 <a className="cascader-menu">
                   <McsIcons type="chevron" />
@@ -79,7 +78,7 @@ class NavigatorHeader extends Component {
           <Col span={2}>
             <Row>
               <Col span={12} className="icon-right-aligned">
-                <Link to={{pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account'}}>
+                <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account' }}>
                   <McsIcons type="options" className="menu-icon" />
                 </Link>
               </Col>

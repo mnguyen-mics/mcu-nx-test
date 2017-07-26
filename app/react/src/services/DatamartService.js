@@ -1,7 +1,7 @@
 import ApiService from './ApiService';
 
 const getDatamarts = (organisationId, options = {}) => {
-  const endpoint = `datamarts`;
+  const endpoint = 'datamarts';
 
   const params = {
     organisation_id: organisationId,
