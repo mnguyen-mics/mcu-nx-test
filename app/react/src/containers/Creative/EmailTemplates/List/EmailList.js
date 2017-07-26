@@ -184,16 +184,18 @@ class CreativeEmailsTable extends Component {
     };
 
     return hasCreativeEmails ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingCreativeEmails}
-          pagination={pagination}
-        />
-      </TableViewFilters>) : (<EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />);
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingCreativeEmails}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>) : (<EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />);
 
   }
 

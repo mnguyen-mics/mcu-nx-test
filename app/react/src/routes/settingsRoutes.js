@@ -5,7 +5,7 @@ import {
 
 const settingsRoutes = [
   {
-    path: '/settings/useraccount',
+    path: '/settings',
     layout: 'main',
     contentComponent: AccountSettings,
     actionBarComponent: AccountSettingsActionBar

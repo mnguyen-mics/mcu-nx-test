@@ -157,17 +157,19 @@ class PlacementListsTable extends Component {
     };
 
     return hasAutomationList ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingAutomationList}
-          onChange={() => {}}
-          pagination={pagination}
-        />
-      </TableViewFilters>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_PLACEMENT" />);
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingAutomationList}
+            onChange={() => {}}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_PLACEMENT" />);
 
   }
 

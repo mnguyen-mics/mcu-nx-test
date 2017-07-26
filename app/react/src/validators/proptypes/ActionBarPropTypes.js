@@ -1,8 +1,13 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const PathPropTypes = PropTypes.arrayOf(
-  PropTypes.shape(
-    { name: PropTypes.string,
-      url: PropTypes.string }));
+  PropTypes.shape({
+    name: PropTypes.string,
+    url: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object
+    ]),
+  })
+);
 
 export default PathPropTypes;

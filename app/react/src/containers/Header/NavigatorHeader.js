@@ -37,7 +37,7 @@ class NavigatorHeader extends Component {
 
     const popoverContent = (
       <div>
-        <p><Link to={`/v2/o/${organisationId}/settings/useraccount`}><FormattedMessage id="ACCOUNT_SETTINGS" /></Link></p>
+        <p><Link to={{pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account'}} ><FormattedMessage id="ACCOUNT_SETTINGS" /></Link></p>
         <p><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></p>
       </div>
     );
@@ -79,7 +79,7 @@ class NavigatorHeader extends Component {
           <Col span={2}>
             <Row>
               <Col span={12} className="icon-right-aligned">
-                <Link to={`/v2/o/${organisationId}/settings/useraccount`}>
+                <Link to={{pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account'}}>
                   <McsIcons type="options" className="menu-icon" />
                 </Link>
               </Col>

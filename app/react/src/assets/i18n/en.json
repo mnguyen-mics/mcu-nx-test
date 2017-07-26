@@ -207,6 +207,11 @@
   "DESKTOP_COOKIE_IDS": "Display Cookies",
   "EXTEND": "Extend",
 
+  "NEW_SITE": "New Site",
+  "EMPTY_SITES": "There are no sites set up. Click on 'New Site' to create one.",
+
+  "EXTEND": "Extend",
+
   "AD_GROUPS": "Ad Groups",
   "NEW_AD_GROUP": "New Ad Group",
   "TOP_SITES": "Top Sites",

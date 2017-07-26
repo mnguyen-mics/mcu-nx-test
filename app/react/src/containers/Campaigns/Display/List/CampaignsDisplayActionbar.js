@@ -45,7 +45,7 @@ const fetchExportData = (organisationId, filter) => {
 
   const apiResults = Promise.all([
     CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getDisplayCampaignPerfomanceReport(organisationId, startDate, endDate, dimension)
+    ReportService.getDisplayCampaignPerformanceReport(organisationId, startDate, endDate, dimension)
   ]);
 
   return apiResults.then(results => {

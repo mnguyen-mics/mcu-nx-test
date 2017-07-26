@@ -45,9 +45,9 @@ class AudiencePartitionsTable extends Component {
         },
         serialize: value => value.join(','),
         isValid: query =>
-          query.datamarts &&
-          query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
+        query.datamarts &&
+        query.datamarts.split(',').length > 0 &&
+        lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
       }
     ];
   }
@@ -176,7 +176,6 @@ class AudiencePartitionsTable extends Component {
       defaultValue: filter.keywords
     };
 
-
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
@@ -234,17 +233,19 @@ class AudiencePartitionsTable extends Component {
     };
 
     return hasAudiencePartitions ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-        searchOptions={searchOptions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingAudiencePartitions}
-          pagination={pagination}
-        />
-      </TableViewFilters>
+          searchOptions={searchOptions}
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingAudiencePartitions}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>
     ) : (<EmptyTableView iconType="partitions" text="EMPTY_PARTITIONS" />);
 
   }
