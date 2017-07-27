@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Menu, Table } from 'antd';
+
 import { McsIcons } from '../McsIcons';
 
 const DEFAULT_PAGINATION_OPTION = {
