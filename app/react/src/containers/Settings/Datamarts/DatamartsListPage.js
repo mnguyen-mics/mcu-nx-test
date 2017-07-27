@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { withMcsRouter } from '../../Helpers';
 import { ReactRouterPropTypes } from '../../../validators/proptypes';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
@@ -125,10 +125,8 @@ DatamartsListPage.defaultProps = {
 DatamartsListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,
-  location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
+  notifyError: PropTypes.func.isRequired
 };
 
 export default compose(

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
-import { Button, Modal } from 'antd';
-import { defineMessages, FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { Button } from 'antd';
+import { FormattedMessage } from 'react-intl';
 import { withMcsRouter } from '../../Helpers';
 import { ReactRouterPropTypes } from '../../../validators/proptypes';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
@@ -12,25 +12,6 @@ import SiteService from '../../../services/SiteService';
 import * as notifyActions from '../../../state/Notifications/actions';
 
 import SitesTable from './SitesTable';
-
-const messages = defineMessages({
-  confirmArchiveModalTitle: {
-    id: 'site.archive.confirm_modal.title',
-    defaultMessage: 'Are you sure you want to archive this Site ?'
-  },
-  confirmArchiveModalContent: {
-    id: 'site.archive.confirm_modal.content',
-    defaultMessage: 'Archiving site'
-  },
-  confirmArchiveModalOk: {
-    id: 'site.archive.confirm_modal.ok',
-    defaultMessage: 'Archive now'
-  },
-  confirmArchiveModalCancel: {
-    id: 'site.archive.confirm_modal.cancel',
-    defaultMessage: 'Cancel'
-  }
-});
 
 class SitesListPage extends Component {
 
@@ -65,18 +46,7 @@ class SitesListPage extends Component {
    * Interaction
    */
 
-  handleArchiveSite(site) {
-    const { organisationId, location: { search }, intl: { formatMessage } } = this.props;
-
-    Modal.confirm({
-      title: <FormattedMessage {...messages.confirmArchiveModalTitle} />,
-      content: <FormattedMessage {...messages.confirmArchiveModalContent} />,
-      iconType: 'exclamation-circle',
-      okText: formatMessage(messages.confirmArchiveModalOk),
-      cancelText: formatMessage(messages.confirmArchiveModalCancel),
-      onOk() {},
-      onCancel() {},
-    });
+  handleArchiveSite() {
   }
 
   handleEditSite(site) {
@@ -182,14 +152,11 @@ SitesListPage.defaultProps = {
 SitesListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,
-  location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
+  notifyError: PropTypes.func.isRequired
 };
 
 export default compose(
-  injectIntl,
   withMcsRouter,
   connect(
     undefined,

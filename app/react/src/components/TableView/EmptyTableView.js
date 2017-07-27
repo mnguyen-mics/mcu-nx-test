@@ -29,10 +29,10 @@ class EmptyTableView extends Component {
     };
 
     return (
-      <div className='mcs-aligner'>
+      <div className="mcs-aligner">
         <Col span={24} className={className}>
           <div className="logo">
-            <McsIcons type={iconType}/>
+            <McsIcons type={iconType} />
           </div>
           <FormattedMessage {...formattedMessageProps} />
         </Col>

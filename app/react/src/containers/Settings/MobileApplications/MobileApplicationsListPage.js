@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
-import { Button, Modal } from 'antd';
-import { defineMessages, FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { Button } from 'antd';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { withMcsRouter } from '../../Helpers';
 import { ReactRouterPropTypes } from '../../../validators/proptypes';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
@@ -12,25 +12,6 @@ import MobileApplicationService from '../../../services/MobileApplicationService
 import * as notifyActions from '../../../state/Notifications/actions';
 
 import MobileApplicationsTable from './MobileApplicationsTable';
-
-const messages = defineMessages({
-  confirmArchiveModalTitle: {
-    id: 'mobile_application.archive.confirm_modal.title',
-    defaultMessage: 'Are you sure you want to archive this Mobile Application?'
-  },
-  confirmArchiveModalContent: {
-    id: 'mobile_application.archive.confirm_modal.content',
-    defaultMessage: 'Archiving mobile application'
-  },
-  confirmArchiveModalOk: {
-    id: 'mobile_application.archive.confirm_modal.ok',
-    defaultMessage: 'Archive now'
-  },
-  confirmArchiveModalCancel: {
-    id: 'mobile_application.archive.confirm_modal.cancel',
-    defaultMessage: 'Cancel'
-  }
-});
 
 class MobileApplicationsListPage extends Component {
 
@@ -65,18 +46,7 @@ class MobileApplicationsListPage extends Component {
    * Interaction
    */
 
-  handleArchiveMobileApplication(mobileApplication) {
-    const { organisationId, location: { search }, intl: { formatMessage } } = this.props;
-
-    Modal.confirm({
-      title: <FormattedMessage {...messages.confirmArchiveModalTitle} />,
-      content: <FormattedMessage {...messages.confirmArchiveModalContent} />,
-      iconType: 'exclamation-circle',
-      okText: formatMessage(messages.confirmArchiveModalOk),
-      cancelText: formatMessage(messages.confirmArchiveModalCancel),
-      onOk() {},
-      onCancel() {},
-    });
+  handleArchiveMobileApplication() {
   }
 
   handleEditMobileApplication(mobileApplication) {
@@ -182,10 +152,8 @@ MobileApplicationsListPage.defaultProps = {
 MobileApplicationsListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,
-  location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  notifyError: PropTypes.func.isRequired
 };
 
 export default compose(
