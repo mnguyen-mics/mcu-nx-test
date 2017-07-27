@@ -8,9 +8,7 @@ import { withMcsRouter } from '../Helpers';
 import { SitesListPage } from './Sites';
 import { DatamartsListPage } from './Datamarts';
 import { MobileApplicationsListPage } from './MobileApplications';
-import { UserAccount } from './UserAccount';
-import { OrganisationAccount } from './OrganisationAccount';
-import { getDefaultDatamart, getDefaultWorkspaceOrganisationId } from '../../state/Session/selectors';
+import { getDefaultDatamart } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
 import { parseSearch } from '../../utils/LocationSearchHelper';
 import { getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
@@ -18,7 +16,7 @@ import * as menuActions from '../../state/Menu/actions';
 
 const TabPane = Tabs.TabPane;
 
-class AccountSettings extends Component {
+class Settings extends Component {
   constructor(props) {
     super(props);
 
@@ -42,7 +40,7 @@ class AccountSettings extends Component {
     } = this.props;
 
     const parsed = parseSearch(search);
-    const tab = parsed.tab ? parsed.tab : 'user_account';
+    const tab = parsed.tab ? parsed.tab : 'sites';
 
     return {
       currentTab: tab
@@ -72,13 +70,10 @@ class AccountSettings extends Component {
 
   render() {
     const {
-      intl: { formatMessage },
-      organisationName
+      intl: { formatMessage }
     } = this.props;
 
     const messages = defineMessages({
-      userAccount: { id: 'settings.tab.title.user_account', defaultMessage: 'User Account' },
-      organisationAccount: { id: 'settings.tab.title.organisation_account', defaultMessage: 'Organisation Account' },
       sites: { id: 'settings.tab.title.sites', defaultMessage: 'Sites' },
       mobile_applications: { id: 'settings.tab.title.mobile_applications', defaultMessage: 'Mobile Applications' },
       datamarts: { id: 'settings.tab.title.datamarts', defaultMessage: 'Datamarts' }
@@ -87,34 +82,23 @@ class AccountSettings extends Component {
     const urlParams = this.getUrlParameters();
 
     return (
-      <Row className="mcs-table-container">
-        <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={(key) => this.switchTab(key)}>
-          <TabPane tab={formatMessage(messages.userAccount)} key="user_account">
-            <UserAccount />
-          </TabPane>
-          <TabPane tab={formatMessage(messages.organisationAccount)} key="organisation_account">
-            <OrganisationAccount organisationName={organisationName} />
-          </TabPane>
-          {
-            this.datamartId &&
-            <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.datamartId} /></TabPane>
-          }
-          {
-            this.datamartId &&
-            <TabPane tab={formatMessage(messages.mobile_applications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>
-          }
-          {
-            this.datamartId &&
-            <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.datamartId} /></TabPane>
-          }
-        </Tabs>
-      </Row>
+      <div>
+        {
+          this.datamartId &&
+          <Row className="mcs-table-container">
+            <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={(key) => this.switchTab(key)}>
+              <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.datamartId} /></TabPane>
+              <TabPane tab={formatMessage(messages.mobile_applications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>
+              <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.datamartId} /></TabPane>
+            </Tabs>
+          </Row>
+        }
+      </div>
     );
   }
 }
 
-AccountSettings.propTypes = {
-  organisationName: PropTypes.string.isRequired,
+Settings.propTypes = {
   organisationId: PropTypes.string.isRequired,
   defaultDatamart: PropTypes.func.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
@@ -124,7 +108,6 @@ AccountSettings.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  organisationName: getDefaultWorkspaceOrganisationId(state),
   defaultDatamart: getDefaultDatamart(state)
 });
 
@@ -132,13 +115,15 @@ const mapDispatchToProps = {
   openCloseMenu: menuActions.openCloseMenu
 };
 
-AccountSettings = compose(
+Settings = compose(
   withMcsRouter,
   injectIntl,
   connect(
     mapStateToProps,
     mapDispatchToProps
   )
-)(AccountSettings);
+)(Settings);
 
-export default AccountSettings;
+export
+default
+Settings;

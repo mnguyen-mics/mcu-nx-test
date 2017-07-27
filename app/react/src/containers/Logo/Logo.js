@@ -69,7 +69,7 @@ Logo.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   logoUrl: PropTypes.string,
   getLogoRequest: PropTypes.func.isRequired,
-  organisationId: PropTypes.number.isRequired
+  organisationId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({

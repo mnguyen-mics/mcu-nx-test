@@ -9,7 +9,7 @@ import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-i
 import {
   FormInput
 } from '../../../components/Form';
-import * as SettingsActions from '../../../state/Settings/actions';
+import * as AccountActions from '../../../state/Account/actions';
 
 class UserAccount extends Component {
 
@@ -37,8 +37,8 @@ class UserAccount extends Component {
       emailInputPlaceholder: { id: 'EmailPlaceHolder', defaultMessage: 'Email' },
     });
 
-    const invalidMessages = defineMessages({ invalidEmail: { id: 'settings.invalid_email', defaultMessage: 'Invalid email address' },
-      requiredField: { id: 'settings.required_field', defaultMessage: 'Required' }
+    const invalidMessages = defineMessages({ invalidEmail: { id: 'account.invalid_email', defaultMessage: 'Invalid email address' },
+      requiredField: { id: 'account.required_field', defaultMessage: 'Required' }
     });
 
     const isRequired = value => (value ? undefined : formatMessage(invalidMessages.requiredField));
@@ -96,7 +96,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  updateUserProfile: SettingsActions.saveProfile.request
+  updateUserProfile: AccountActions.saveProfile.request
 };
 
 UserAccount = compose(

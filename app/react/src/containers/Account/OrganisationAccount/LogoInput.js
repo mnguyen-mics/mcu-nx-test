@@ -14,7 +14,7 @@ class LogoInput extends Component {
     return (<Row>
       <Col span={fieldGridConfig.labelCol.span}>
         <label htmlFor="editable_logo" className="ant-form-item-label">
-          <FormattedMessage id="settings.organisation_tab.logo" defaultMessage="Logo" /> :
+          <FormattedMessage id="account.organisation_tab.logo" defaultMessage="Logo" /> :
         </label>
       </Col>
       <Col span={fieldGridConfig.wrapperCol.span} offset={fieldGridConfig.wrapperCol.offset}>

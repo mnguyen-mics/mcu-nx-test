@@ -32,12 +32,11 @@ class NavigatorHeader extends Component {
     } = this.props;
 
     const organisationId = params.organisationId;
-
     const organisationName = workspace(organisationId).organisation_name;
 
     const popoverContent = (
       <div>
-        <p><Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account' }} ><FormattedMessage id="ACCOUNT_SETTINGS" /></Link></p>
+        <p><Link to={{ pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }}><FormattedMessage id="ACCOUNT" /></Link></p>
         <p><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></p>
       </div>
     );
@@ -78,7 +77,7 @@ class NavigatorHeader extends Component {
           <Col span={2}>
             <Row>
               <Col span={12} className="icon-right-aligned">
-                <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: '&tab=user_account' }}>
+                <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: '&tab=sites' }}>
                   <McsIcons type="options" className="menu-icon" />
                 </Link>
               </Col>
@@ -100,7 +99,7 @@ NavigatorHeader.propTypes = {
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   workspace: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
   workspaces: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  userEmail: PropTypes.string.isRequired,
+  userEmail: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -109,13 +108,8 @@ const mapStateToProps = state => ({
   userEmail: state.session.connectedUser.email
 });
 
-const mapDispatchToProps = {
-
-};
-
 NavigatorHeader = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(NavigatorHeader);
 
 NavigatorHeader = withRouter(NavigatorHeader);
