@@ -1,0 +1,10 @@
+[
+  {
+    "id": "settings.tab.title.user_account",
+    "defaultMessage": "User Account"
+  },
+  {
+    "id": "settings.tab.title.organisation_account",
+    "defaultMessage": "Organisation Account"
+  }
+]

@@ -31,6 +31,12 @@ define(['./module'], function (module) {
         $log.info("display-ad:loaded");
         IabService.getAdSizes($scope.displayAd.subtype, $scope.organisationId).then(function(formats) {
           $scope.iabAdSizes = formats;
+          if (formats.indexOf($scope.displayAd.format) > -1) {
+            $scope.isCustomFormat = false;
+          } else {
+            $scope.isCustomFormat = true;
+          }
+          
         });
       });
 

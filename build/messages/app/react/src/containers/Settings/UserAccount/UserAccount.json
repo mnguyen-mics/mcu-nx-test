@@ -1,0 +1,42 @@
+[
+  {
+    "id": "SAVE",
+    "defaultMessage": "Save"
+  },
+  {
+    "id": "FirstName",
+    "defaultMessage": "First Name"
+  },
+  {
+    "id": "FirstNamePlaceHolder",
+    "defaultMessage": "First name"
+  },
+  {
+    "id": "LastName",
+    "defaultMessage": "Last Name"
+  },
+  {
+    "id": "LastNamePlaceHolder",
+    "defaultMessage": "Last name"
+  },
+  {
+    "id": "Email",
+    "defaultMessage": "Email"
+  },
+  {
+    "id": "EmailPlaceHolder",
+    "defaultMessage": "Email"
+  },
+  {
+    "id": "settings.invalid_email",
+    "defaultMessage": "Invalid email address"
+  },
+  {
+    "id": "settings.required_field",
+    "defaultMessage": "Required"
+  },
+  {
+    "id": "UserProfile",
+    "defaultMessage": "User Profile"
+  }
+]
