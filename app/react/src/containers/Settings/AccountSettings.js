@@ -10,7 +10,7 @@ import { DatamartsListPage } from './Datamarts';
 import { MobileApplicationsListPage } from './MobileApplications';
 import { UserAccount } from './UserAccount';
 import { OrganisationAccount } from './OrganisationAccount';
-import { getDefaultDatamart, getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
+import { getDefaultDatamart, getDefaultWorkspaceOrganisationId } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
 import { parseSearch } from '../../utils/LocationSearchHelper';
 import { getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
@@ -124,7 +124,7 @@ AccountSettings.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  organisationName: getDefaultWorspaceOrganisationId(state),
+  organisationName: getDefaultWorkspaceOrganisationId(state),
   defaultDatamart: getDefaultDatamart(state)
 });
 
