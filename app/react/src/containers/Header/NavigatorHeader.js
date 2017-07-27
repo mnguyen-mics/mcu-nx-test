@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { Layout, Menu, Dropdown, Popover, Row, Col } from 'antd';
+import { Layout, Menu, Dropdown, Row, Col } from 'antd';
 // installed by react-router
 import pathToRegexp from 'path-to-regexp'; // eslint-disable-line import/no-extraneous-dependencies
 
@@ -34,14 +34,16 @@ class NavigatorHeader extends Component {
     const organisationId = params.organisationId;
     const organisationName = workspace(organisationId).organisation_name;
 
-    const popoverContent = (
-      <div>
-        <p><Link to={{ pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }}><FormattedMessage id="ACCOUNT" /></Link></p>
-        <p><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></p>
-      </div>
-    );
-
     const hasMoreThanOneWorkspace = Object.keys(workspaces).length > 1;
+
+    const accountMenu = (
+      <Menu>
+        <Menu.Item key="email" disabled>{userEmail}</Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="account"><Link to={{ pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }}><FormattedMessage id="ACCOUNT" /></Link></Menu.Item>
+        <Menu.Item key="logout"><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></Menu.Item>
+      </Menu>
+    );
 
     const changeWorkspace = ({ key }) => {
       const toPath = pathToRegexp.compile(path);
@@ -65,26 +67,23 @@ class NavigatorHeader extends Component {
       <Header className="mcs-header">
         <Row>
           <Col span={22}>
-            <span className="organisation-name">{ organisationName }</span>
-            { hasMoreThanOneWorkspace &&
-              <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-                <a className="cascader-menu">
-                  <McsIcons type="chevron" />
-                </a>
-              </Dropdown>
+            {
+              hasMoreThanOneWorkspace
+                ? <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft"><a className="organisation-name">{ organisationName }&nbsp;<McsIcons type="chevron" /></a></Dropdown>
+                : <span className="organisation-name">{ organisationName }</span>
             }
           </Col>
           <Col span={2}>
-            <Row>
-              <Col span={12} className="icon-right-aligned">
+            <Row >
+              <Col span={12} className="icon-right-align">
                 <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: '&tab=sites' }}>
                   <McsIcons type="options" className="menu-icon" />
                 </Link>
               </Col>
-              <Col span={12} className="icon-right-aligned">
-                <Popover placement="bottomRight" trigger="click" title={userEmail} content={popoverContent}>
-                  <McsIcons type="user" className="menu-icon" />
-                </Popover>
+              <Col span={12} className="icon-right-align">
+                <Dropdown overlay={accountMenu} trigger={['click']} placement="bottomRight">
+                  <a><McsIcons type="user" className="menu-icon " /></a>
+                </Dropdown>
               </Col>
             </Row>
           </Col>

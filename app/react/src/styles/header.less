@@ -6,33 +6,29 @@
     color: white;
     font-size: 15px;
     font-weight: bold;
-  }
+    &:hover {
+      color: @normal-color;
+    }
 
-  .cascader-menu {
-    margin-left: 15px;
-    margin-right: 12px;
-    color: white;
-    vertical-align: middle;
+    i {
+      font-size: 12px;
+    }
   }
 
   .menu-icon {
     color: white;
     font-size: 20px;
     &:hover {
-      cursor: pointer;
+      color: @normal-color;
     }
   }
 
-
-  .icon-right-aligned {
-    display: flex;
-    justify-content: flex-end;
+  .icon-right-align {
+    text-align: right;
   }
 }
 
-
 // TODO check style usage of classes below
-
 
 .mcs-header-menu-icons {
   float: right;
@@ -84,17 +80,10 @@
   align-content: center;
 }
 
-.mcs-header-cascader-menu {
-  margin-left: 25px;
-  margin-right: 12px;
-  color: white;
-}
-
 .ant-cascader-menu {
   height: auto;
 }
 
-.mcs-header-cascader-menu,
 .mcs-header-logo-name,
 .ant-menu-item,
 .mcs-header-anticon,

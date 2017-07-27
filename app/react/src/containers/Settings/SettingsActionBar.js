@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
-import { Button } from 'antd';
-import { FormattedMessage, injectIntl, intlShape, defineMessages } from 'react-intl';
+import { injectIntl, intlShape, defineMessages } from 'react-intl';
 
 import { Actionbar } from '../Actionbar';
 
@@ -25,7 +24,7 @@ class SettingsActionBar extends Component {
       url: { pathname: `/v2/o/${organisationId}/settings`, search: '&tab=sites' }
     }];
     return (
-      <Actionbar path={breadcrumbPaths}></Actionbar>
+      <Actionbar path={breadcrumbPaths} />
     );
   }
 }
