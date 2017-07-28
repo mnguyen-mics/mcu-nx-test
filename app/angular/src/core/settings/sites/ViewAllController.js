@@ -2,8 +2,8 @@ define(['./module'], function (module) {
   'use strict';
 
   module.controller('core/settings/sites/ViewAllController', [
-    '$scope', '$log', '$location', '$state', '$stateParams', 'Restangular', 'core/common/auth/Session', 'lodash', '$filter',
-    function ($scope, $log, $location, $state, $stateParams, Restangular, Session, _, $filter) {
+    '$scope', '$log', '$location', '$state', '$stateParams', 'Restangular', 'core/common/auth/Session', 'lodash', '$filter', 'core/common/WarningService',
+    function ($scope, $log, $location, $state, $stateParams, Restangular, Session, _, $filter, WarningService) {
       $scope.datamartId = Session.getCurrentDatamartId();
       $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
       $scope.itemsPerPage = 20;
@@ -29,10 +29,12 @@ define(['./module'], function (module) {
         $location.path(Session.getWorkspacePrefixUrl() +  "/settings/sites/new");
       };
 
-      $scope.archive = function(site) {
-        Restangular.all("datamarts/" + $scope.datamartId + "/sites/" + site.id).remove({"organisation_id": $scope.organisationId}).then(function() {
-          $state.transitionTo($state.current, $stateParams, {
-            reload: true, inherit: true, notify: true
+      $scope.delete = function(site) {
+        WarningService.showWarningModal("Do you really want to delete this site?").then(function () {
+          Restangular.all("datamarts/" + $scope.datamartId + "/sites/" + site.id).remove({"organisation_id": $scope.organisationId}).then(function() {
+            $state.transitionTo($state.current, $stateParams, {
+              reload: true, inherit: true, notify: true
+            });
           });
         });
       };
