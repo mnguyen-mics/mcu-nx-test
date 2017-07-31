@@ -129,9 +129,7 @@ class CampaignsDisplayActionbar extends Component {
     const newCampaignMenu = (
       <Menu onClick={handleOnClick}>
         <Menu.Item key="DESKTOP_AND_MOBILE">
-          {/* <Link to={`/${organisationId}/campaigns/display/expert/edit/T1`}>*/}
           <FormattedMessage id="DESKTOP_AND_MOBILE" />
-          {/* </Link>*/}
         </Menu.Item>
         <Menu.Item key="SIMPLIFIED_KEYWORDS_TARGETING">
           <Link to={`/${organisationId}/campaigns/display/keywords`}>

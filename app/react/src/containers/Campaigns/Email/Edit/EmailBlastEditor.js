@@ -12,7 +12,7 @@ import { Actionbar } from '../../../Actionbar';
 import { McsIcons } from '../../../../components/McsIcons';
 import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
-import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
+import { isFakeId } from '../../../../utils/FakeIdHelper';
 import EmailTemplateSelection from './EmailTemplateSelection';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
@@ -409,9 +409,7 @@ EmailBlastEditor.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
-  blastName: PropTypes.string,
-  segments: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
+  close: PropTypes.func.isRequired
 };
 
 EmailBlastEditor = compose(

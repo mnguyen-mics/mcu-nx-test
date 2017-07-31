@@ -348,7 +348,6 @@ EmailEditor.defaultProps = {
 
 EmailEditor.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   dirty: PropTypes.bool.isRequired,

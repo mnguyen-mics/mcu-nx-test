@@ -1,6 +1,4 @@
-import {
-  SAVE_PROFILE
-} from '../action-types';
+import { SAVE_PROFILE } from '../action-types';
 
 // TODO try to intruce a higher order reducer
 // that handle isFetching base on type name (x.REQUEST, x.SUCCESS, ...)

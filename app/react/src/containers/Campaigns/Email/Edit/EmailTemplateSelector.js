@@ -47,11 +47,11 @@ class EmailTemplateSelector extends Component {
     }
 
     return CreativeService.getEmailTemplates(organisationId, options).then(response => {
-      this.setState(prevState => ({
+      this.setState({
         emailTemplates: response.data,
         isLoading: false,
         total: response.total
-      }));
+      });
       return response;
     });
   }

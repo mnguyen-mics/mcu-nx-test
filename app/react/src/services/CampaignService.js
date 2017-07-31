@@ -113,20 +113,20 @@ const getBlastSegments = (campaignId, blastId) => {
   return ApiService.getRequest(endpoint);
 };
 
-const updateBlastSegments = (campaignId, blastId, segmentId, segmentResource) => {
-  const endpoint = `email_campaigns/${campaignId}/email_blasts/${blastId}/email_consents`;
-  return ApiService.getRequest(endpoint);
-};
+// const updateBlastSegments = (campaignId, blastId, segmentId, segmentResource) => {
+//   const endpoint = `email_campaigns/${campaignId}/email_blasts/${blastId}/email_consents`;
+//   return ApiService.putRequest(endpoint);
+// };
 
-const createBlastSegment = (campaignId, blastId, segmentResource) => {
-  const endpoint = `email_campaigns/${campaignId}/email_blasts/${blastId}/email_consents`;
-  return ApiService.getRequest(endpoint);
-};
+// const createBlastSegment = (campaignId, blastId, segmentResource) => {
+//   const endpoint = `email_campaigns/${campaignId}/email_blasts/${blastId}/email_consents`;
+//   return ApiService.getRequest(endpoint);
+// };
 
-const deleteBlastSegment = (campaignId, blastId, segmentId) => {
-  const endpoint = `email_campaigns/${campaignId}/email_blasts/${blastId}/email_consents`;
-  return ApiService.getRequest(endpoint);
-};
+// const deleteBlastSegment = (campaignId, blastId, segmentId) => {
+//   const endpoint = `email_campaigns/${campaignId}/email_blasts/${blastId}/email_consents`;
+//   return ApiService.getRequest(endpoint);
+// };
 
 export default {
   getCampaigns,
@@ -142,7 +142,7 @@ export default {
   createEmailBlast,
   createEmailBlastConsent,
   createEmailBlastTemplate,
-  createBlastSegment,
+  // createBlastSegment,
 
   archiveEmailCampaign,
   updateEmailCampaign,
@@ -150,8 +150,8 @@ export default {
   updateEmailBlast,
   updateEmailBlastConsent,
   updateEmailBlastTemplate,
-  updateBlastSegments,
+  // updateBlastSegments,
 
   deleteEmailBlast,
-  deleteBlastSegment
+  // deleteBlastSegment
 };

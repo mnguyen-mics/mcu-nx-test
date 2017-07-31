@@ -79,8 +79,6 @@ class EditBlastPage extends Component {
         close={this.redirect}
         openNextDrawer={this.props.openNextDrawer}
         closeNextDrawer={this.props.closeNextDrawer}
-        initial={}
-        segments={}
       />
     );
   }

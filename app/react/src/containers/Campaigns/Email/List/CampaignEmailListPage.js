@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Modal } from 'antd';
-import { FormattedMessage, intlShape, injectIntl, defineMessages } from 'react-intl';
+// import { Modal } from 'antd';
+import { injectIntl, defineMessages } from 'react-intl';
 
 import CampaignsEmailTable from './CampaignsEmailTable';
 import { withMcsRouter } from '../../../Helpers';
@@ -118,26 +118,26 @@ class CampaignEmailListPage extends Component {
     }
   }
 
-  handleArchiveCampaign(campaign) {
-    const { organisationId, location: { search }, intl: { formatMessage } } = this.props;
+  handleArchiveCampaign() {
+    // const { organisationId, location: { search }, intl: { formatMessage } } = this.props;
 
-    console.log(organisationId);
-    console.log(search);
-    console.log(campaign);
+    // console.log(organisationId);
+    // console.log(search);
+    // console.log(campaign);
 
-    Modal.confirm({
-      title: <FormattedMessage {...messages.confirmArchiveModalTitle} />,
-      content: <FormattedMessage {...messages.confirmArchiveModalContent} />,
-      iconType: 'exclamation-circle',
-      okText: formatMessage(messages.confirmArchiveModalOk),
-      cancelText: formatMessage(messages.confirmArchiveModalCancel),
-      onOk() {
-        // return CampaignService.archiveEmailCampaign(campaign.id).then(() => {
-        //   loadCampaignsEmailDataSource(organisationId, filter);
-        // });
-      },
-      onCancel() { },
-    });
+    // Modal.confirm({
+    //   title: <FormattedMessage {...messages.confirmArchiveModalTitle} />,
+    //   content: <FormattedMessage {...messages.confirmArchiveModalContent} />,
+    //   iconType: 'exclamation-circle',
+    //   okText: formatMessage(messages.confirmArchiveModalOk),
+    //   cancelText: formatMessage(messages.confirmArchiveModalCancel),
+    //   onOk() {
+    //     // return CampaignService.archiveEmailCampaign(campaign.id).then(() => {
+    //     //   loadCampaignsEmailDataSource(organisationId, filter);
+    //     // });
+    //   },
+    //   onCancel() { },
+    // });
   }
 
   handleEditCampaign(campaign) {
@@ -258,7 +258,7 @@ CampaignEmailListPage.propTypes = {
   location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   notifyError: PropTypes.func,
-  intl: intlShape.isRequired
+  // intl: intlShape.isRequired
 };
 
 export default compose(
