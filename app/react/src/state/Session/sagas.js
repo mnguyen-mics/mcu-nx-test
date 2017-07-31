@@ -38,11 +38,7 @@ function* downloadLogo({ payload }) {
     yield put(getLogo.success({ logoUrl }));
   } catch (e) {
     log.error('Error while getting logo: ', e);
-    yield put(addNotification({
-      type: 'error',
-      messageKey: 'NOTIFICATION_ERROR_TITLE',
-      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
-    }));
+    yield put(getLogo.failure(e));
   }
 }
 
@@ -58,7 +54,6 @@ function* uploadLogo({ payload }) {
     yield call(OrganisationService.putLogo, organisationId, formData);
     yield put(putLogo.success());
     yield put(getLogo.request({ organisationId }));
-
   } catch (e) {
     log.error('Error while putting logo: ', e);
     yield put(putLogo.failure(e));

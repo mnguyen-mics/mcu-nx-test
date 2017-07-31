@@ -1,26 +1,74 @@
-// import React, { Component } from 'react';
-// // import Slider from 'react-slick';
+import React, { Component } from 'react';
+import lodash from 'lodash';
+import { Layout } from 'antd';
 
-// class Drawer extends Component {
-//   render() {
+import DrawerManager from './DrawerManager';
 
-//     const settings = {
-//     //   dots: true,
-//     //   infinite: true,
-//     //   speed: 500,
-//     //   slidesToShow: 1,
-//     //   slidesToScroll: 1,
-//     //   accessibility: true
-//       arrows: false
-//     };
+const DEFAULT_DRAWER_OPTIONS = {
+  additionalProps: {},
+  size: 'large', // or 'small'
+  isModal: false
+};
 
-//     return (
-//       <Slider {...settings}>
-//         <div><h3>1</h3></div>
-//         <div><h3>2</h3></div>
-//       </Slider>
-//     );
-//   }
-// }
+const withDrawer = WrappedComponent => {
+  return class extends Component {
+    constructor(props) {
+      super(props);
 
-// export default Drawer;
+      this.state = {
+        /* drawableContents shape :
+         * { component // rendered component,
+         *   additionalProps // props passed to component
+         *   size // 'large' or 'small',
+         *   isModal // true or false, whether the drawer is binded to clickOutside and Espace key
+         * }
+         */
+        drawableContents: []
+      };
+
+      this.handleOpenNewDrawer = this.handleOpenNewDrawer.bind(this);
+      this.closeForegroundDrawer = this.closeForegroundDrawer.bind(this);
+      this.closeForegroundDrawerIfPossible = this.closeForegroundDrawerIfPossible.bind(this);
+    }
+
+    handleOpenNewDrawer(component, options = DEFAULT_DRAWER_OPTIONS) {
+      const extendedOptions = {
+        ...DEFAULT_DRAWER_OPTIONS,
+        ...options,
+        openNextDrawer: this.handleOpenNewDrawer,
+        closeNextDrawer: this.closeForegroundDrawer
+      };
+
+      this.setState({
+        drawableContents: [...this.state.drawableContents, { component, ...extendedOptions }]
+      });
+    }
+
+    closeForegroundDrawerIfPossible() {
+      const { drawableContents } = this.state;
+      const foregroundDrawer = lodash.last(drawableContents);
+      if (!foregroundDrawer.isModal) this.closeForegroundDrawer();
+    }
+
+    closeForegroundDrawer() {
+      this.setState({
+        drawableContents: [...lodash.initial(this.state.drawableContents)]
+      });
+    }
+
+    render() {
+      return (
+        <Layout>
+          <DrawerManager
+            drawableContents={this.state.drawableContents}
+            onEscapeKeyDown={this.closeForegroundDrawerIfPossible}
+            onClickOnBackground={this.closeForegroundDrawerIfPossible}
+          />
+          <WrappedComponent {...this.props} openNextDrawer={this.handleOpenNewDrawer} closeNextDrawer={this.closeForegroundDrawer} />
+        </Layout>
+      );
+    }
+  };
+};
+
+export default withDrawer;

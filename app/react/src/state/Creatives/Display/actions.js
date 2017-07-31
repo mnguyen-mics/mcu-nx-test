@@ -1,11 +1,8 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
-import {
-  CREATIVES_DISPLAY_FETCH,
-  CREATIVES_DISPLAY_TABLE_RESET
-} from '../../action-types';
+import { CREATIVES_DISPLAY_FETCH, CREATIVES_DISPLAY_RESET } from '../../action-types';
 
-const resetCreativeDisplayTable = createAction(CREATIVES_DISPLAY_TABLE_RESET);
+const resetCreativeDisplay = createAction(CREATIVES_DISPLAY_RESET);
 
 const fetchCreativeDisplay = {
   request: (organisationId, filter = {}, isInitialRender = false) => createAction(CREATIVES_DISPLAY_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
@@ -13,7 +10,4 @@ const fetchCreativeDisplay = {
   failure: (error) => createAction(CREATIVES_DISPLAY_FETCH.FAILURE)(error)
 };
 
-export {
-  fetchCreativeDisplay,
-  resetCreativeDisplayTable
-};
+export { fetchCreativeDisplay, resetCreativeDisplay };

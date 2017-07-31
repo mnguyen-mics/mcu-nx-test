@@ -1,48 +1,53 @@
 import { combineReducers } from 'redux';
 
+import { createRequestMetadataReducer } from '../../../utils/ReduxHelper';
+import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+
 import {
-  CREATIVES_EMAILS_FETCH,
-  CREATIVES_EMAILS_TABLE_RESET
+  CREATIVES_EMAIL_FETCH,
+  CREATIVES_EMAIL_RESET,
 } from '../../action-types';
 
-const defaultCreativeEmailsApiState = {
-  isFetching: false,
-  data: [],
-  total: 0,
-  hasItems: true
-};
-
-const creativeEmailsApi = (state = defaultCreativeEmailsApiState, action) => {
+const emailTemplatesById = (state = {}, action) => {
   switch (action.type) {
-
-    case CREATIVES_EMAILS_FETCH.REQUEST:
-      return {
-        ...state,
-        isFetching: true
-      };
-    case CREATIVES_EMAILS_FETCH.SUCCESS:
-      return {
-        ...state,
-        isFetching: false,
-        ...action.payload
-      };
-    case CREATIVES_EMAILS_FETCH.FAILURE:
-      return {
-        ...state,
-        isFetching: false
-      };
-    case CREATIVES_EMAILS_TABLE_RESET:
-      return defaultCreativeEmailsApiState;
+    case CREATIVES_EMAIL_FETCH.SUCCESS:
+      return normalizeArrayOfObject(action.payload.data, 'id');
+    case CREATIVES_EMAIL_FETCH.FAILURE:
+    case CREATIVES_EMAIL_RESET:
+      return {};
     default:
       return state;
   }
 };
 
+const allEmailTemplates = (state = [], action) => {
+  switch (action.type) {
+    case CREATIVES_EMAIL_FETCH.SUCCESS:
+      return action.payload.data.map(emailTemplates => emailTemplates.id);
+    case CREATIVES_EMAIL_FETCH.FAILURE:
+    case CREATIVES_EMAIL_RESET:
+      return [];
+    default:
+      return state;
+  }
+};
 
-const creativeEmailsTable = combineReducers({
-  creativeEmailsApi
+const hasItems = (state = true, action) => {
+  switch (action.type) {
+    case CREATIVES_EMAIL_FETCH.SUCCESS:
+      return action.payload.hasItems || true;
+    case CREATIVES_EMAIL_RESET:
+      return true;
+    default:
+      return state;
+  }
+};
+
+const emailTemplates = combineReducers({
+  byId: emailTemplatesById,
+  allIds: allEmailTemplates,
+  metadata: createRequestMetadataReducer(CREATIVES_EMAIL_FETCH),
+  hasItems
 });
 
-const creativeEmailsReducers = { creativeEmailsTable };
-
-export default creativeEmailsReducers;
+export default emailTemplates;

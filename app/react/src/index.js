@@ -7,6 +7,17 @@ import { AppContainer } from 'react-hot-loader';
 
 import App from './App';
 
+// if (process.env.NODE_ENV !== 'production') {
+//   const {whyDidYouUpdate} = require('why-did-you-update')
+//   let createClass = React.createClass;
+//   Object.defineProperty(React, 'createClass', {
+//     set: (nextCreateClass) => {
+//       createClass = nextCreateClass;
+//     }
+//   });
+//   whyDidYouUpdate(React)
+// }
+
 render(
   <AppContainer>
       <App />

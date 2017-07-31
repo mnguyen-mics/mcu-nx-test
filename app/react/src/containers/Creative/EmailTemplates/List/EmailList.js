@@ -9,18 +9,11 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearchs
-} from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
 
-import { getTableDataSource } from '../../../../state/Creatives/Emails/selectors';
+import { getEmailTemplates, isFetchingEmailTemplates, hasEmailTemplates, getEmailTemplatesTotal } from '../../../../state/Creatives/Emails/selectors';
 
 class CreativeEmailsTable extends Component {
-
   constructor(props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -29,19 +22,7 @@ class CreativeEmailsTable extends Component {
   }
 
   componentDidMount() {
-    const {
-      history,
-      location: {
-        search,
-        pathname
-      },
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      fetchCreativeEmails
-    } = this.props;
+    const { history, location: { search, pathname }, match: { params: { organisationId } }, fetchCreativeEmails } = this.props;
 
     if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
       history.replace({
@@ -99,17 +80,11 @@ class CreativeEmailsTable extends Component {
   }
 
   componentWillUnmount() {
-    this.props.resetCreativeEmailsTable();
+    this.props.resetCreativeEmails();
   }
 
   updateLocationSearch(params) {
-    const {
-      history,
-      location: {
-        search: currentSearch,
-        pathname
-      }
-    } = this.props;
+    const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
       pathname,
@@ -141,14 +116,15 @@ class CreativeEmailsTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeEmails,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          pageSize: size
+        })
     };
-
 
     const dataColumns = [
       {
@@ -156,25 +132,33 @@ class CreativeEmailsTable extends Component {
         key: 'asset_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
+        render: (text, record) => (
+          <div className="mcs-table-cell-thumbnail">
+            <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
+              <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
+            </a>
+          </div>
+        )
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/email-template/default-editor/edit/${record.id}`}>{text}</Link>
+        render: (text, record) => (
+          <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/email-template/default-editor/edit/${record.id}`}>{text}</Link>
+        )
       },
       {
         translationKey: 'AUDIT_STATUS',
         key: 'audit_status',
         isHiddable: false,
-        render: (text) => <span>{text}</span>
+        render: text => <span>{text}</span>
       },
       {
         translationKey: 'PUBLISHED_VERSION',
         key: 'published_version',
         isHiddable: false,
-        render: (text) => <span>{text}</span>
+        render: text => <span>{text}</span>
       }
     ];
 
@@ -185,7 +169,8 @@ class CreativeEmailsTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCreativeEmails
-          }, {
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archiveCreativeEmails
           }
@@ -213,32 +198,13 @@ class CreativeEmailsTable extends Component {
   }
 
   editCreativeEmails(campaign) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      history
-    } = this.props;
+    const { match: { params: { organisationId } }, history } = this.props;
 
     history.push(`/${organisationId}/creatives/email-template/default-editor/edit/${campaign.id}`);
   }
 
   archiveCreativeEmails(campaign) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      location: {
-        search
-      },
-      archiveCreativeEmails,
-      fetchCreativeEmails,
-      translations
-    } = this.props;
+    const { match: { params: { organisationId } }, location: { search }, archiveCreativeEmails, fetchCreativeEmails, translations } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
@@ -253,14 +219,13 @@ class CreativeEmailsTable extends Component {
           fetchCreativeEmails(organisationId, filter);
         });
       },
-      onCancel() { },
+      onCancel() {}
     });
   }
-
 }
 
 CreativeEmailsTable.defaultProps = {
-  archiveCreativeEmails: () => { }
+  archiveCreativeEmails: () => {}
 };
 
 CreativeEmailsTable.propTypes = {
@@ -275,27 +240,24 @@ CreativeEmailsTable.propTypes = {
 
   fetchCreativeEmails: PropTypes.func.isRequired,
   archiveCreativeEmails: PropTypes.func.isRequired,
-  resetCreativeEmailsTable: PropTypes.func.isRequired,
+  resetCreativeEmails: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  hasCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.hasItems,
-  isFetchingCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalCreativeEmails: state.creativeEmailsTable.creativeEmailsApi.total,
+  hasCreativeEmails: hasEmailTemplates(state),
+  isFetchingCreativeEmails: isFetchingEmailTemplates(state),
+  dataSource: getEmailTemplates(state),
+  totalCreativeEmails: getEmailTemplatesTotal(state)
 });
 
 const mapDispatchToProps = {
   fetchCreativeEmails: CreativeEmailsActions.fetchCreativeEmails.request,
   // archiveCreativeEmails: CreativeEmailsActions.archiveCreativeEmails,
-  resetCreativeEmailsTable: CreativeEmailsActions.resetCreativeEmailsTable
+  resetCreativeEmails: CreativeEmailsActions.resetCreativeEmails
 };
 
-CreativeEmailsTable = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CreativeEmailsTable);
+CreativeEmailsTable = connect(mapStateToProps, mapDispatchToProps)(CreativeEmailsTable);
 
 CreativeEmailsTable = withRouter(CreativeEmailsTable);
 

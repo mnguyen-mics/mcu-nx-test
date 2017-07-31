@@ -50,7 +50,7 @@ class CampaignEmailTable extends Component {
       },
       {
         translationKey: 'NAME',
-        key: 'blastName',
+        key: 'blast_name',
         isHiddable: false,
         render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${record.id}`}>{text}</Link>
       },

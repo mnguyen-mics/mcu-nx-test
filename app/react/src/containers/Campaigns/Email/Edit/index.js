@@ -1,5 +1,11 @@
-import EditEmail from './EditEmail';
+import CreateEmailPage from './CreateEmailPage';
+import EditEmailPage from './EditEmailPage';
+import CreateBlastPage from './CreateBlastPage';
+import EditBlastPage from './EditBlastPage';
 
 export {
-  EditEmail
+  CreateEmailPage,
+  EditEmailPage,
+  CreateBlastPage,
+  EditBlastPage
 };

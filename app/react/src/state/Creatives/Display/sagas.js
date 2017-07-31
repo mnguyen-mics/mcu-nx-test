@@ -7,7 +7,7 @@ import {
     fetchCreativeDisplay
 } from './actions';
 
-import DisplayAdsService from '../../../services/Creatives/DisplayAds';
+import CreativeService from '../../../services/CreativeService';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
@@ -27,8 +27,7 @@ function* loadCreativeDisplay({ payload }) {
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-      creative_type: 'DISPLAY_AD'
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
     };
 
     const initialOptions = {
@@ -39,19 +38,19 @@ function* loadCreativeDisplay({ payload }) {
 
     if (isInitialRender) {
       allCalls = {
-        initialFetch: call(DisplayAdsService.getCreativeDisplay, organisationId, initialOptions),
-        response: call(DisplayAdsService.getCreativeDisplay, organisationId, options)
+        initialFetch: call(CreativeService.getDisplayAds, organisationId, initialOptions),
+        response: call(CreativeService.getDisplayAds, organisationId, options)
       };
     } else {
       allCalls = {
-        response: call(DisplayAdsService.getCreativeDisplay, organisationId, options)
+        response: call(CreativeService.getDisplayAds, organisationId, options)
       };
     }
 
     const { initialFetch, response } = yield all(allCalls);
 
     if (initialFetch) {
-      response.hasItems = initialFetch.count > 0;
+      response.hasItems = initialFetch.total > 0;
     }
 
     yield put(fetchCreativeDisplay.success(response));

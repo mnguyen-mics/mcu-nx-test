@@ -31,7 +31,9 @@ define(['./module'], function (module) {
 
         } /* ignore errors for now */);
       }
-      checkVersion();
+
+      // disable version check in angular because it is done in react now
+      // checkVersion();
 
       $resource("./angular/src/core/adblock/display-ads/beacon.html").get({}, function () {
       }, function () {

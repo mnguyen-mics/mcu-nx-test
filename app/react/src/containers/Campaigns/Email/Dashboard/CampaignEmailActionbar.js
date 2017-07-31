@@ -39,7 +39,7 @@ class CampaignEmailActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
-        <Link to={`/${organisationId}/campaigns/email/edit/${campaignId}`}>
+        <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>
             <Icon type="edit" />
             <FormattedMessage id="EDIT" />
@@ -58,10 +58,10 @@ class CampaignEmailActionbar extends Component {
   buildActionElement() {
     const {
       campaignEmail,
-      updateCampaignEmail
+      updateEmailCampaign
     } = this.props;
 
-    const onClickElement = status => updateCampaignEmail(campaignEmail.id, {
+    const onClickElement = status => updateEmailCampaign(campaignEmail.id, {
       status,
       type: 'EMAIL'
     });
@@ -130,7 +130,7 @@ CampaignEmailActionbar.propTypes = {
   translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  updateCampaignEmail: PropTypes.func.isRequired,
+  updateEmailCampaign: PropTypes.func.isRequired,
   archiveCampaignEmail: PropTypes.func.isRequired
 };
 
@@ -140,7 +140,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  updateCampaignEmail: CampaignEmailActions.updateCampaignEmail.request,
+  updateEmailCampaign: CampaignEmailActions.updateEmailCampaign.request,
   archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail.request
 };
 

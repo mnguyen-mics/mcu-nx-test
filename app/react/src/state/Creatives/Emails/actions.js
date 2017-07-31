@@ -1,19 +1,13 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
-import {
-  CREATIVES_EMAILS_FETCH,
-  CREATIVES_EMAILS_TABLE_RESET
-} from '../../action-types';
+import { CREATIVES_EMAIL_FETCH, CREATIVES_EMAIL_RESET } from '../../action-types';
 
-const resetCreativeEmailsTable = createAction(CREATIVES_EMAILS_TABLE_RESET);
+const resetCreativeEmails = createAction(CREATIVES_EMAIL_RESET);
 
 const fetchCreativeEmails = {
-  request: (organisationId, filter = {}, isInitialRender = false) => createAction(CREATIVES_EMAILS_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
-  success: (response) => createAction(CREATIVES_EMAILS_FETCH.SUCCESS)(response),
-  failure: (error) => createAction(CREATIVES_EMAILS_FETCH.FAILURE)(error)
+  request: (organisationId, filter = {}, isInitialRender = false) => createAction(CREATIVES_EMAIL_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
+  success: (response) => createAction(CREATIVES_EMAIL_FETCH.SUCCESS)(response),
+  failure: createAction(CREATIVES_EMAIL_FETCH.FAILURE)
 };
 
-export {
-  fetchCreativeEmails,
-  resetCreativeEmailsTable
-};
+export { fetchCreativeEmails, resetCreativeEmails };

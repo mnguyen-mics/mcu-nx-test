@@ -1,11 +1,8 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
-import {
-  PLACEMENT_LISTS_FETCH,
-  PLACEMENT_LISTS_TABLE_RESET
-} from '../../action-types';
+import { PLACEMENT_LISTS_FETCH, PLACEMENT_LISTS_RESET } from '../../action-types';
 
-const resetPlacementListsTable = createAction(PLACEMENT_LISTS_TABLE_RESET);
+const resetPlacementLists = createAction(PLACEMENT_LISTS_RESET);
 
 const fetchPlacementLists = {
   request: (organisationId, filter = {}, isInitialRender = false) => createAction(PLACEMENT_LISTS_FETCH.REQUEST)({ organisationId, filter, isInitialRender }),
@@ -13,7 +10,4 @@ const fetchPlacementLists = {
   failure: (error) => createAction(PLACEMENT_LISTS_FETCH.FAILURE)(error)
 };
 
-export {
-  fetchPlacementLists,
-  resetPlacementListsTable
-};
+export { fetchPlacementLists, resetPlacementLists };

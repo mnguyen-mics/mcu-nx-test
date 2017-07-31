@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Dropdown, Menu, Button } from 'antd';
-import { FormattedMessage } from 'react-intl';
 
 class MultiSelect extends Component {
 
@@ -99,7 +98,7 @@ class MultiSelect extends Component {
           return (
             <Menu.Item key={item.value}>
               {isItemSelected && (<Icon type="check" />)}
-              <span><FormattedMessage id={item.key} /></span>
+              <span>{item.key}</span>
             </Menu.Item>
           );
         })}

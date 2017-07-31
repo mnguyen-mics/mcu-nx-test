@@ -1,4 +1,4 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
 import {
   CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH,
