@@ -1,7 +1,18 @@
-const getCreativeDisplay = state => state.creativeDisplayTable.creativeDisplayApi.data;
+import { createSelector } from 'reselect';
 
-const getTableDataSource = getCreativeDisplay;
+const isFetchingDisplayCreatives = state => state.creatives.displayCreatives.metadata.isFetching;
+const hasDisplayCreatives = state => state.creatives.displayCreatives.hasItems;
+const getDisplayCreativesTotal = state => state.creatives.displayCreatives.metadata.total;
+
+const getDisplayCreatives = createSelector(
+  state => state.creatives.displayCreatives.allIds,
+  state => state.creatives.displayCreatives.byId,
+  (allDisplayCreatives, displayCreativesById) => allDisplayCreatives.map(id => displayCreativesById[id])
+);
 
 export {
-  getTableDataSource
+  getDisplayCreatives,
+  isFetchingDisplayCreatives,
+  hasDisplayCreatives,
+  getDisplayCreativesTotal
 };

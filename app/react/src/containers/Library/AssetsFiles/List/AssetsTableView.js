@@ -9,18 +9,11 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as AssetsFilesActions from '../../../../state/Library/AssetsFiles/actions';
 
 import { ASSETS_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearchs
-} from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/AssetsFiles/selectors';
 
 class AssetsFilesTable extends Component {
-
   constructor(props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -28,21 +21,8 @@ class AssetsFilesTable extends Component {
     this.editAsset = this.editAsset.bind(this);
   }
 
-
   componentDidMount() {
-    const {
-      history,
-      location: {
-        search,
-        pathname
-      },
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      fetchAssetsFiles
-    } = this.props;
+    const { history, location: { search, pathname }, match: { params: { organisationId } }, fetchAssetsFiles } = this.props;
 
     if (!isSearchValid(search, ASSETS_SEARCH_SETTINGS)) {
       history.replace({
@@ -100,17 +80,11 @@ class AssetsFilesTable extends Component {
   }
 
   componentWillUnmount() {
-    this.props.resetAssetsFilesTable();
+    this.props.resetAssetsFiles();
   }
 
   updateLocationSearch(params) {
-    const {
-      history,
-      location: {
-        search: currentSearch,
-        pathname
-      }
-    } = this.props;
+    const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
       pathname,
@@ -137,14 +111,15 @@ class AssetsFilesTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          pageSize: size
+        })
     };
-
 
     const dataColumns = [
       {
@@ -152,7 +127,13 @@ class AssetsFilesTable extends Component {
         key: 'file_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`} ><span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} /></a></div>
+        render: (text, record) => (
+          <div className="mcs-table-cell-thumbnail">
+            <a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`}>
+              <span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} />
+            </a>
+          </div>
+        )
       },
       {
         translationKey: 'NAME',
@@ -164,7 +145,7 @@ class AssetsFilesTable extends Component {
         translationKey: 'TYPE',
         key: 'mime_type',
         isHiddable: false,
-        render: (text) => <span>{text}</span>
+        render: text => <span>{text}</span>
       },
       {
         translationKey: 'DIMENSIONS',
@@ -206,32 +187,13 @@ class AssetsFilesTable extends Component {
   }
 
   editAsset(keyword) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      history
-    } = this.props;
+    const { match: { params: { organisationId } }, history } = this.props;
 
     history.push(`/${organisationId}/library/keywordslists/${keyword.id}`);
   }
 
   archiveAsset(keyword) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      location: {
-        search
-      },
-      archiveAssetList,
-      fetchAssetsFiles,
-      translations
-    } = this.props;
+    const { match: { params: { organisationId } }, location: { search }, archiveAssetList, fetchAssetsFiles, translations } = this.props;
 
     const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
 
@@ -246,14 +208,13 @@ class AssetsFilesTable extends Component {
           fetchAssetsFiles(organisationId, filter);
         });
       },
-      onCancel() { },
+      onCancel() {}
     });
   }
-
 }
 
 AssetsFilesTable.defaultProps = {
-  archiveAssetList: () => { }
+  archiveAssetList: () => {}
 };
 
 AssetsFilesTable.propTypes = {
@@ -269,7 +230,7 @@ AssetsFilesTable.propTypes = {
 
   fetchAssetsFiles: PropTypes.func.isRequired,
   archiveAssetList: PropTypes.func.isRequired,
-  resetAssetsFilesTable: PropTypes.func.isRequired,
+  resetAssetsFiles: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -277,19 +238,16 @@ const mapStateToProps = state => ({
   hasFetchingAssetsItems: state.assetsFilesTable.assetsFilesApi.hasItems,
   isFetchingAssetsFiles: state.assetsFilesTable.assetsFilesApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalPlacements: state.assetsFilesTable.assetsFilesApi.total,
+  totalPlacements: state.assetsFilesTable.assetsFilesApi.total
 });
 
 const mapDispatchToProps = {
   fetchAssetsFiles: AssetsFilesActions.fetchAssetsFiles.request,
   // archiveAssetList: CampaignEmailAction.archiveAssetList,
-  resetAssetsFilesTable: AssetsFilesActions.resetAssetsFilesTable
+  resetAssetsFiles: AssetsFilesActions.resetAssetsFiles
 };
 
-AssetsFilesTable = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AssetsFilesTable);
+AssetsFilesTable = connect(mapStateToProps, mapDispatchToProps)(AssetsFilesTable);
 
 AssetsFilesTable = withRouter(AssetsFilesTable);
 

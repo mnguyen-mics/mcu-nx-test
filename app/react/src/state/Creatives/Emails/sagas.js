@@ -3,17 +3,13 @@ import { call, fork, put, all } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
-import {
-    fetchCreativeEmails
-} from './actions';
+import { fetchCreativeEmails } from './actions';
 
-import DisplayAdsService from '../../../services/Creatives/DisplayAds';
+import CreativeService from '../../../services/CreativeService';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
-import {
-    CREATIVES_EMAILS_FETCH
-} from '../../action-types';
+import { CREATIVES_EMAIL_FETCH } from '../../action-types';
 
 function* loadCreativeEmails({ payload }) {
   try {
@@ -27,8 +23,7 @@ function* loadCreativeEmails({ payload }) {
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-      creative_type: 'EMAIL_TEMPLATE'
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
     };
 
     const initialOptions = {
@@ -39,19 +34,19 @@ function* loadCreativeEmails({ payload }) {
 
     if (isInitialRender) {
       allCalls = {
-        initialFetch: call(DisplayAdsService.getCreativeDisplay, organisationId, initialOptions),
-        response: call(DisplayAdsService.getCreativeDisplay, organisationId, options)
+        initialFetch: call(CreativeService.getEmailTemplates, organisationId, initialOptions),
+        response: call(CreativeService.getEmailTemplates, organisationId, options)
       };
     } else {
       allCalls = {
-        response: call(DisplayAdsService.getCreativeDisplay, organisationId, options)
+        response: call(CreativeService.getEmailTemplates, organisationId, options)
       };
     }
 
     const { initialFetch, response } = yield all(allCalls);
 
     if (initialFetch) {
-      response.hasItems = initialFetch.count > 0;
+      response.hasItems = initialFetch.total > 0;
     }
 
     yield put(fetchCreativeEmails.success(response));
@@ -62,9 +57,7 @@ function* loadCreativeEmails({ payload }) {
 }
 
 function* watchfetchCreativeEmails() {
-  yield* takeLatest(CREATIVES_EMAILS_FETCH.REQUEST, loadCreativeEmails);
+  yield* takeLatest(CREATIVES_EMAIL_FETCH.REQUEST, loadCreativeEmails);
 }
 
-export const creativeEmailsSagas = [
-  fork(watchfetchCreativeEmails)
-];
+export const creativeEmailsSagas = [fork(watchfetchCreativeEmails)];

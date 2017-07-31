@@ -9,18 +9,11 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as PlacementListsActions from '../../../../state/Library/PlacementLists/actions';
 
 import { PLACEMENTS_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearchs
-} from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/PlacementLists/selectors';
 
 class PlacementListsTable extends Component {
-
   constructor(props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -29,19 +22,7 @@ class PlacementListsTable extends Component {
   }
 
   componentDidMount() {
-    const {
-      history,
-      location: {
-        search,
-        pathname
-      },
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      fetchPlacementLists
-    } = this.props;
+    const { history, location: { search, pathname }, match: { params: { organisationId } }, fetchPlacementLists } = this.props;
 
     if (!isSearchValid(search, PLACEMENTS_SEARCH_SETTINGS)) {
       history.replace({
@@ -99,17 +80,11 @@ class PlacementListsTable extends Component {
   }
 
   componentWillUnmount() {
-    this.props.resetPlacementListsTable();
+    this.props.resetPlacementLists();
   }
 
   updateLocationSearch(params) {
-    const {
-      history,
-      location: {
-        search: currentSearch,
-        pathname
-      }
-    } = this.props;
+    const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
       pathname,
@@ -141,14 +116,15 @@ class PlacementListsTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          pageSize: size
+        })
     };
-
 
     const dataColumns = [
       {
@@ -166,7 +142,8 @@ class PlacementListsTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editPlacement
-          }, {
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archivePlacement
           }
@@ -195,32 +172,13 @@ class PlacementListsTable extends Component {
   }
 
   editPlacement(placement) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      history
-    } = this.props;
+    const { match: { params: { organisationId } }, history } = this.props;
 
     history.push(`/${organisationId}/library/placementlists/${placement.id}`);
   }
 
   archivePlacement(placement) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      location: {
-        search
-      },
-      archivePlacementList,
-      fetchPlacementLists,
-      translations
-    } = this.props;
+    const { match: { params: { organisationId } }, location: { search }, archivePlacementList, fetchPlacementLists, translations } = this.props;
 
     const filter = parseSearch(search, PLACEMENTS_SEARCH_SETTINGS);
 
@@ -235,14 +193,13 @@ class PlacementListsTable extends Component {
           fetchPlacementLists(organisationId, filter);
         });
       },
-      onCancel() { },
+      onCancel() {}
     });
   }
-
 }
 
 PlacementListsTable.defaultProps = {
-  archivePlacementList: () => { }
+  archivePlacementList: () => {}
 };
 
 PlacementListsTable.propTypes = {
@@ -257,7 +214,7 @@ PlacementListsTable.propTypes = {
 
   fetchPlacementLists: PropTypes.func.isRequired,
   archivePlacementList: PropTypes.func.isRequired,
-  resetPlacementListsTable: PropTypes.func.isRequired,
+  resetPlacementLists: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -265,19 +222,16 @@ const mapStateToProps = state => ({
   hasAutomationList: state.placementListTable.placementListsApi.hasItems,
   isFetchingAutomationList: state.placementListTable.placementListsApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalPlacements: state.placementListTable.placementListsApi.total,
+  totalPlacements: state.placementListTable.placementListsApi.total
 });
 
 const mapDispatchToProps = {
   fetchPlacementLists: PlacementListsActions.fetchPlacementLists.request,
   // archivePlacementList: CampaignEmailAction.archivePlacementList,
-  resetPlacementListsTable: PlacementListsActions.resetPlacementListsTable
+  resetPlacementLists: PlacementListsActions.resetPlacementLists
 };
 
-PlacementListsTable = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PlacementListsTable);
+PlacementListsTable = connect(mapStateToProps, mapDispatchToProps)(PlacementListsTable);
 
 PlacementListsTable = withRouter(PlacementListsTable);
 

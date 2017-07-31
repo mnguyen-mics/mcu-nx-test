@@ -21,7 +21,6 @@ import { EMAIL_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 
 const fetchExportData = (organisationId, filter) => {
-
   const campaignType = 'EMAIL';
 
   const buildOptionsForGetCampaigns = () => {
@@ -33,7 +32,9 @@ const fetchExportData = (organisationId, filter) => {
 
     const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
 
-    if (filter.keywords) { options.keywords = filter.keywords; }
+    if (filter.keywords) {
+      options.keywords = filter.keywords;
+    }
     if (apiStatuses.length > 0) {
       options.status = apiStatuses;
     }
@@ -45,8 +46,17 @@ const fetchExportData = (organisationId, filter) => {
   const dimension = 'campaign_id';
 
   const apiResults = Promise.all([
-    CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getEmailDeliveryReport(organisationId, startDate, endDate, dimension)
+    CampaignService.getCampaigns(
+      organisationId,
+      campaignType,
+      buildOptionsForGetCampaigns()
+    ),
+    ReportService.getEmailDeliveryReport(
+      organisationId,
+      startDate,
+      endDate,
+      dimension
+    )
   ]);
 
   return apiResults.then(results => {
@@ -56,7 +66,7 @@ const fetchExportData = (organisationId, filter) => {
       'campaign_id'
     );
 
-    const mergedData = Object.keys(campaignsDisplay).map((campaignId) => {
+    const mergedData = Object.keys(campaignsDisplay).map(campaignId => {
       return {
         ...campaignsDisplay[campaignId],
         ...performanceReport[campaignId]
@@ -68,7 +78,6 @@ const fetchExportData = (organisationId, filter) => {
 };
 
 class CampaignsEmailActionbar extends Component {
-
   constructor(props) {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
@@ -78,77 +87,77 @@ class CampaignsEmailActionbar extends Component {
   }
 
   handleRunExport() {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      translations,
-    } = this.props;
+    const { match: { params: { organisationId } }, translations } = this.props;
 
-    const filter = parseSearch(this.props.location.search, EMAIL_SEARCH_SETTINGS);
+    const filter = parseSearch(
+      this.props.location.search,
+      EMAIL_SEARCH_SETTINGS
+    );
 
     this.setState({ exportIsRunning: true });
-    const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
+    const hideExportLoadingMsg = message.loading(
+      translations.EXPORT_IN_PROGRESS,
+      0
+    );
 
-    fetchExportData(organisationId, filter).then(data => {
-      ExportService.exportCampaignsEmail(organisationId, data, filter, translations);
-      this.setState({
-        exportIsRunning: false
+    fetchExportData(organisationId, filter)
+      .then(data => {
+        ExportService.exportCampaignsEmail(
+          organisationId,
+          data,
+          filter,
+          translations
+        );
+        this.setState({
+          exportIsRunning: false
+        });
+        hideExportLoadingMsg();
+      })
+      .catch(() => {
+        // TODO notify error
+        this.setState({
+          exportIsRunning: false
+        });
+        hideExportLoadingMsg();
       });
-      hideExportLoadingMsg();
-    }).catch(() => {
-      // TODO notify error
-      this.setState({
-        exportIsRunning: false
-      });
-      hideExportLoadingMsg();
-    });
-
   }
 
   render() {
-
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      translations
-    } = this.props;
+    const { match: { params: { organisationId } }, translations } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
 
-    const breadcrumbPaths = [{ name: translations.EMAILS, url: `/v2/o/${organisationId}/campaigns/email` }];
+    const breadcrumbPaths = [
+      {
+        name: translations.EMAILS,
+        url: `/v2/o/${organisationId}/campaigns/email`
+      }
+    ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/v2/o/${organisationId}/campaigns/email/edit`}>
+        <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
           <Button type="primary" className="mcs-primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          { !exportIsRunning && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <McsIcons type="download" />}
+          <FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );
-
   }
-
 }
 
 CampaignsEmailActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
 };
 
-CampaignsEmailActionbar = compose(
-  withTranslations,
-  withRouter
-)(CampaignsEmailActionbar);
+CampaignsEmailActionbar = compose(withTranslations, withRouter)(
+  CampaignsEmailActionbar
+);
 
 export default CampaignsEmailActionbar;

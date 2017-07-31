@@ -11,6 +11,24 @@
     a {
       color: @border-color-split;
     }
+
+    .icon {
+      font-size: 1.4em;
+      vertical-align: middle;
+      font-weight: bold;
+      float: left;
+    }
+
+    .step-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      display: block;
+      white-space: nowrap;
+      height: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 140px;
+    }
   }
 
   .currentStep {
@@ -22,18 +40,10 @@
       color: @info-color;
     }
 
-  }
+    .step-title {
+      width: 135px;
+    }
 
-  .anticon {
-    margin-right: 10px;
-    font-size: 1.4em;
-    vertical-align: middle;
-    font-weight: bold;
-  }
-
-  .step-title {
-    font-size: 1.2em;
-    font-weight: bold;
   }
 
 }

@@ -5,19 +5,19 @@ import { Dropdown, Menu, Table } from 'antd';
 
 import { McsIcons } from '../McsIcons';
 
+import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
+
 const DEFAULT_PAGINATION_OPTION = {
   size: 'small',
   showSizeChanger: true
 };
 
 class TableView extends Component {
-
   constructor(props) {
     super(props);
     this.buildDataColumns = this.buildDataColumns.bind(this);
     this.buildActionsColumns = this.buildActionsColumns.bind(this);
   }
-
 
   render() {
     const {
@@ -25,10 +25,12 @@ class TableView extends Component {
       dataSource,
       pagination,
       loading,
-      onChange,
+      onChange
     } = this.props;
 
-    const actionsColumns = this.buildActionsColumns(columnsDefinitions.actionsColumnsDefinition);
+    const actionsColumns = this.buildActionsColumns(
+      columnsDefinitions.actionsColumnsDefinition
+    );
 
     const columns = this.buildDataColumns().concat(actionsColumns);
 
@@ -40,25 +42,33 @@ class TableView extends Component {
       };
     }
 
-
     return (
-      <Table columns={columns} dataSource={dataSource} onChange={onChange} loading={loading} pagination={newPagination} />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        onChange={onChange}
+        loading={loading}
+        pagination={newPagination}
+      />
     );
   }
 
   renderActionsMenu(actions, record) {
-
     const onClick = item => {
       actions[parseInt(item.key, 0)].callback(record);
     };
 
     return (
-      <Menu onClick={onClick}>
-        { actions.map((action, index) => {
+      <Menu onClick={onClick} className="mcs-dropdown-actions">
+        {actions.map((action, index) => {
           return (
             <Menu.Item key={index.toString()}>
               <a>
-                <FormattedMessage id={action.translationKey} />
+                {
+                  isValidFormattedMessageProps(action.intlMessage) ?
+                    <FormattedMessage {...action.intlMessage} /> :
+                    <FormattedMessage id={action.translationKey} />
+                }
               </a>
             </Menu.Item>
           );
@@ -81,29 +91,30 @@ class TableView extends Component {
   }
 
   buildDataColumns() {
-
-    const {
-      columnsDefinitions: {
-        dataColumnsDefinition
-      }
-    } = this.props;
-
+    const { columnsDefinitions: { dataColumnsDefinition } } = this.props;
 
     const dataColumns = dataColumnsDefinition.map(dataColumn => {
-      return {
-        title: dataColumn.translationKey ? <FormattedMessage id={dataColumn.translationKey} /> : '',
-        dataIndex: dataColumn.key,
-        key: dataColumn.key,
-        render: dataColumn.render ? dataColumn.render : text => text,
-        sorter: dataColumn.sorter ? dataColumn.sorter : false,
-      };
+      return Object.assign(
+        {},
+        isValidFormattedMessageProps(dataColumn.intlMessage)
+          ? // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
+            // spreading values...
+            { title: <FormattedMessage {...dataColumn.intlMessage} /> }
+          : dataColumn.translationKey
+              ? // support for legacy translation key constant (en/fr.json) ...
+                { title: <FormattedMessage id={dataColumn.translationKey} /> }
+              : null, // allow empty column title
+        { dataIndex: dataColumn.key },
+        { key: dataColumn.key },
+        { render: dataColumn.render ? dataColumn.render : text => text },
+        { sorter: dataColumn.sorter ? dataColumn.sorter : false }
+      );
     });
 
     return dataColumns;
   }
 
   buildActionsColumns(defaultActionsColumns) {
-
     const actionColumns = defaultActionsColumns.map(column => {
       return {
         key: column.key,
@@ -120,7 +131,6 @@ class TableView extends Component {
 
     return actionColumns;
   }
-
 }
 
 TableView.defaultProps = {

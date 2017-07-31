@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 import { Col } from 'antd';
 
 import { McsIcons } from '../McsIcons';
 
+const messages = defineMessages({
+  emptyMsg: {
+    id: 'generic.table.empty.information_message',
+    defaultMessage: 'No data found'
+  }
+});
 
 class EmptyTableView extends Component {
 
@@ -12,15 +18,22 @@ class EmptyTableView extends Component {
     const {
       className,
       iconType,
-      text
+      text,
+      intlMessage
     } = this.props;
+
+    // support new intl message obj and legacy translation key (en/fr.json)
+    const formattedMessageProps = {
+      id: intlMessage.id ? intlMessage.id : text ? text : messages.emptyMsg.id,
+      defaultMessage: intlMessage.defaultMessage ? intlMessage.defaultMessage : messages.emptyMsg.defaultMessage
+    };
 
     return (
       <Col span={24} className={className}>
         <div className="logo">
           <McsIcons type={iconType} />
         </div>
-        <FormattedMessage id={text} />
+        <FormattedMessage {...formattedMessageProps} />
       </Col>);
   }
 
@@ -28,11 +41,14 @@ class EmptyTableView extends Component {
 
 EmptyTableView.defaultProps = {
   iconType: 'exclamation',
-  className: 'mcs-table-view-empty'
+  className: 'mcs-table-view-empty',
+  intlMessage: {},
+  text: null
 };
 
 EmptyTableView.propTypes = {
-  text: PropTypes.string.isRequired,
+  text: PropTypes.string,
+  intlMessage: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   iconType: PropTypes.string,
   className: PropTypes.string
 };

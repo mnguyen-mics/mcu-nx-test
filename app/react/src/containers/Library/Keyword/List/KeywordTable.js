@@ -9,18 +9,11 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as KeywordListsActions from '../../../../state/Library/KeywordLists/actions';
 
 import { KEYWORDS_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearchs
-} from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/KeywordLists/selectors';
 
 class KeywordListsTable extends Component {
-
   constructor(props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -28,21 +21,8 @@ class KeywordListsTable extends Component {
     this.editKeyword = this.editKeyword.bind(this);
   }
 
-
   componentDidMount() {
-    const {
-      history,
-      location: {
-        search,
-        pathname
-      },
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      fetchKeywordLists
-    } = this.props;
+    const { history, location: { search, pathname }, match: { params: { organisationId } }, fetchKeywordLists } = this.props;
 
     if (!isSearchValid(search, KEYWORDS_SEARCH_SETTINGS)) {
       history.replace({
@@ -100,17 +80,11 @@ class KeywordListsTable extends Component {
   }
 
   componentWillUnmount() {
-    this.props.resetKeywordListsTable();
+    this.props.resetKeywordLists();
   }
 
   updateLocationSearch(params) {
-    const {
-      history,
-      location: {
-        search: currentSearch,
-        pathname
-      }
-    } = this.props;
+    const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
       pathname,
@@ -142,14 +116,15 @@ class KeywordListsTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          pageSize: size
+        })
     };
-
 
     const dataColumns = [
       {
@@ -167,7 +142,8 @@ class KeywordListsTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editKeyword
-          }, {
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archiveKeyword
           }
@@ -196,32 +172,13 @@ class KeywordListsTable extends Component {
   }
 
   editKeyword(keyword) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      history
-    } = this.props;
+    const { match: { params: { organisationId } }, history } = this.props;
 
     history.push(`/${organisationId}/library/keywordslists/${keyword.id}`);
   }
 
   archiveKeyword(keyword) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      location: {
-        search
-      },
-      archiveKeywordList,
-      fetchKeywordLists,
-      translations
-    } = this.props;
+    const { match: { params: { organisationId } }, location: { search }, archiveKeywordList, fetchKeywordLists, translations } = this.props;
 
     const filter = parseSearch(search, KEYWORDS_SEARCH_SETTINGS);
 
@@ -236,14 +193,13 @@ class KeywordListsTable extends Component {
           fetchKeywordLists(organisationId, filter);
         });
       },
-      onCancel() { },
+      onCancel() {}
     });
   }
-
 }
 
 KeywordListsTable.defaultProps = {
-  archiveKeywordList: () => { }
+  archiveKeywordList: () => {}
 };
 
 KeywordListsTable.propTypes = {
@@ -258,7 +214,7 @@ KeywordListsTable.propTypes = {
 
   fetchKeywordLists: PropTypes.func.isRequired,
   archiveKeywordList: PropTypes.func.isRequired,
-  resetKeywordListsTable: PropTypes.func.isRequired,
+  resetKeywordLists: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -272,13 +228,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   fetchKeywordLists: KeywordListsActions.fetchKeywordLists.request,
   // archiveKeywordList: CampaignEmailAction.archiveKeywordList,
-  resetKeywordListsTable: KeywordListsActions.resetKeywordListsTable
+  resetKeywordLists: KeywordListsActions.resetKeywordLists
 };
 
-KeywordListsTable = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(KeywordListsTable);
+KeywordListsTable = connect(mapStateToProps, mapDispatchToProps)(KeywordListsTable);
 
 KeywordListsTable = withRouter(KeywordListsTable);
 

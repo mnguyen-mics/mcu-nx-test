@@ -1,4 +1,4 @@
-import { createAction } from '../../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
 import {
   CAMPAIGNS_DISPLAY_LOAD_ALL,

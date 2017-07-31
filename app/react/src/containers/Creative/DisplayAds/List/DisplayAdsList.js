@@ -9,18 +9,11 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearchs
-} from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
 
-import { getTableDataSource } from '../../../../state/Creatives/Display/selectors';
+import { getDisplayCreatives, getDisplayCreativesTotal, hasDisplayCreatives, isFetchingDisplayCreatives } from '../../../../state/Creatives/Display/selectors';
 
 class CreativeDisplayTable extends Component {
-
   constructor(props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -29,19 +22,7 @@ class CreativeDisplayTable extends Component {
   }
 
   componentDidMount() {
-    const {
-      history,
-      location: {
-        search,
-        pathname
-      },
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      fetchCreativeDisplay
-    } = this.props;
+    const { history, location: { search, pathname }, match: { params: { organisationId } }, fetchCreativeDisplay } = this.props;
 
     if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
@@ -99,17 +80,11 @@ class CreativeDisplayTable extends Component {
   }
 
   componentWillUnmount() {
-    this.props.resetCreativeDisplayTable();
+    this.props.resetCreativeDisplay();
   }
 
   updateLocationSearch(params) {
-    const {
-      history,
-        location: {
-        search: currentSearch,
-          pathname
-      }
-    } = this.props;
+    const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
       pathname,
@@ -141,14 +116,15 @@ class CreativeDisplayTable extends Component {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeDisplay,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          pageSize: size
+        })
     };
-
 
     const dataColumns = [
       {
@@ -156,25 +132,33 @@ class CreativeDisplayTable extends Component {
         key: 'asset_path',
         isHiddable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => <div className="mcs-table-cell-thumbnail"><a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} ><span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} /></a></div>
+        render: (text, record) => (
+          <div className="mcs-table-cell-thumbnail">
+            <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
+              <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
+            </a>
+          </div>
+        )
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
+        render: (text, record) => (
+          <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
+        )
       },
       {
         translationKey: 'AUDIT_STATUS',
         key: 'audit_status',
         isHiddable: false,
-        render: (text) => <span>{text}</span>
+        render: text => <span>{text}</span>
       },
       {
         translationKey: 'PUBLISHED_VERSION',
         key: 'published_version',
         isHiddable: false,
-        render: (text) => <span>{text}</span>
+        render: text => <span>{text}</span>
       }
     ];
 
@@ -185,7 +169,8 @@ class CreativeDisplayTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCreativeDisplay
-          }, {
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archiveCreativeDisplay
           }
@@ -213,32 +198,13 @@ class CreativeDisplayTable extends Component {
   }
 
   editCreativeDisplay(campaign) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      history
-    } = this.props;
+    const { match: { params: { organisationId } }, history } = this.props;
 
     history.push(`/${organisationId}/creatives/display-ad/default-editor/edit/${campaign.id}`);
   }
 
   archiveCreativeDisplay(campaign) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      location: {
-        search
-      },
-      archiveCreativeDisplay,
-      fetchCreativeDisplay,
-      translations
-    } = this.props;
+    const { match: { params: { organisationId } }, location: { search }, archiveCreativeDisplay, fetchCreativeDisplay, translations } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
 
@@ -253,14 +219,13 @@ class CreativeDisplayTable extends Component {
           fetchCreativeDisplay(organisationId, filter);
         });
       },
-      onCancel() { },
+      onCancel() {}
     });
   }
-
 }
 
 CreativeDisplayTable.defaultProps = {
-  archiveCreativeDisplay: () => { }
+  archiveCreativeDisplay: () => {}
 };
 
 CreativeDisplayTable.propTypes = {
@@ -275,29 +240,25 @@ CreativeDisplayTable.propTypes = {
   hasCreativeDisplay: PropTypes.bool.isRequired,
   fetchCreativeDisplay: PropTypes.func.isRequired,
   archiveCreativeDisplay: PropTypes.func.isRequired,
-  resetCreativeDisplayTable: PropTypes.func.isRequired,
+  resetCreativeDisplay: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  hasCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.hasItems,
-  isFetchingCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalCreativeDisplay: state.creativeDisplayTable.creativeDisplayApi.total,
+  hasCreativeDisplay: hasDisplayCreatives(state),
+  isFetchingCreativeDisplay: isFetchingDisplayCreatives(state),
+  dataSource: getDisplayCreatives(state),
+  totalCreativeDisplay: getDisplayCreativesTotal(state)
 });
 
 const mapDispatchToProps = {
   fetchCreativeDisplay: CreativeDisplayActions.fetchCreativeDisplay.request,
   // archiveCreativeDisplay: CreativeDisplayActions.archiveCreativeDisplay,
-  resetCreativeDisplayTable: CreativeDisplayActions.resetCreativeDisplayTable
+  resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay
 };
 
-CreativeDisplayTable = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CreativeDisplayTable);
+CreativeDisplayTable = connect(mapStateToProps, mapDispatchToProps)(CreativeDisplayTable);
 
 CreativeDisplayTable = withRouter(CreativeDisplayTable);
 
 export default CreativeDisplayTable;
-

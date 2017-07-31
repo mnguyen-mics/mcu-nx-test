@@ -1,4 +1,4 @@
-import { createAction } from '../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
 import {
   APP_STARTUP
