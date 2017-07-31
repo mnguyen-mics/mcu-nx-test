@@ -1,8 +1,22 @@
-const getEmailEditorFormInitialValues = () => {};
+const getEmailEditorFormInitialValues = state => {
+  const { editEmailPage: { emailCampaign } } = state;
+  return {
+    campaign: emailCampaign
+  };
+};
 
-const getEmailEditorComputedBlastList = () => [];
+const getEmailBlastEditorFormInitialValues = state => blastId => {
+  const {
+    editEmailPage: {
+      emailEditorState: {
+        blastList: { byId }
+      }
+    }
+  } = state;
+  return byId[blastId];
+};
 
 export {
   getEmailEditorFormInitialValues,
-  getEmailEditorComputedBlastList
+  getEmailBlastEditorFormInitialValues
 };

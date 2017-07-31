@@ -1,83 +1,107 @@
 /* eslint-disajble */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import { Field, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Layout, Form, Row, Button } from 'antd';
 
+import { ReactRouterPropTypes } from '../../../../validators/proptypes';
+import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
 import { McsIcons } from '../../../../components/McsIcons';
-import { FormInput, FormTitle, FormSelect } from '../../../../components/Form';
+import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
 import messages from './messages';
 import EmailBlastEditor from './EmailBlastEditor';
-import * as actions from './actions';
 import EmailRouterService from '../../../../services/EmailRouterService';
 
 const { Content, Sider } = Layout;
 
-const required = value => (value ? undefined : 'Required');
-
 class EmailEditor extends Component {
   constructor(props) {
     super(props);
-    this.handleClickOnNewBlast = this.handleClickOnNewBlast.bind(this);
+    this.handleCliclOnNewBlast = this.handleCliclOnNewBlast.bind(this);
     this.handleClickOnEditBlast = this.handleClickOnEditBlast.bind(this);
     this.handleClickOnRemoveBlast = this.handleClickOnRemoveBlast.bind(this);
-    this.handleSaveBlast = this.handleSaveBlast.bind(this);
+    this.handleAddBlast = this.handleAddBlast.bind(this);
     this.handleEditBlast = this.handleEditBlast.bind(this);
     this.handleSaveEmailCampaign = this.handleSaveEmailCampaign.bind(this);
 
     this.state = {
-      emailRouters: []
+      routerOptions: [],
+      blasts: []
     };
   }
 
   componentDidMount() {
     const {
-      match: {
-        params: { organisationId }
-      }
+      match: { params: { organisationId } }
     } = this.props;
 
     EmailRouterService.getRouters(organisationId).then((response) => {
       this.setState({
-        emailRouters: response.data
+        routerOptions: response.data
       });
     });
   }
 
-  handleSaveBlast(blast) {
-    const { closeNextDrawer, addBlast } = this.props;
-    addBlast(blast);
+  componentWillReceiveProps(nextProps) {
+    const { blasts } = this.props;
+    const { blasts: nextBlasts } = nextProps;
+    if (nextBlasts.length !== blasts.length) {
+      this.setState({ blasts: nextBlasts });
+    }
+  }
+
+  handleAddBlast({ blast }) {
+    const { closeNextDrawer } = this.props;
+
+    const addedBlast = {
+      ...blast,
+      id: generateFakeId()
+    };
+
+    this.setState(prevState => {
+      return {
+        blasts: [
+          ...prevState.blasts,
+          addedBlast
+        ]
+      };
+    });
+
     closeNextDrawer();
   }
 
-  handleEditBlast(blast) {
-    const { closeNextDrawer, editBlast } = this.props;
-    editBlast(blast);
+  handleEditBlast({ blast }) {
+    const { closeNextDrawer } = this.props;
+
+    this.setState(prevState => {
+      return {
+        blasts: [
+          ...prevState.blasts.filter(b => b.id !== blast.id),
+          { ...blast, isEdited: !isFakeId(blast.id) }
+        ]
+      };
+    });
     closeNextDrawer();
   }
 
-  handleClickOnEditBlast(blastId) {
+  handleClickOnEditBlast(blast) {
     const {
       openNextDrawer,
-      closeNextDrawer,
-      emailEditorState: {
-        blastList: { byId: blastsById },
-        emailTemplatesByBlastId
-      }
+      closeNextDrawer
     } = this.props;
 
     const emailBlastEditorProps = {
       save: this.handleEditBlast,
       close: closeNextDrawer,
-      initialValues: blastsById[blastId],
-      selectedEmailTemplateIds: emailTemplatesByBlastId[blastId]
+      initialValues: { blast },
+      segments: blast.segments
     };
 
     const options = {
@@ -87,11 +111,11 @@ class EmailEditor extends Component {
     openNextDrawer(EmailBlastEditor, options);
   }
 
-  handleClickOnNewBlast() {
+  handleCliclOnNewBlast() {
     const { openNextDrawer, closeNextDrawer } = this.props;
 
     const emailBlastEditorProps = {
-      save: this.handleSaveBlast,
+      save: this.handleAddBlast,
       close: closeNextDrawer
     };
 
@@ -103,36 +127,39 @@ class EmailEditor extends Component {
     openNextDrawer(EmailBlastEditor, options);
   }
 
-  handleClickOnRemoveBlast(blastId) {
-    const { removeBlast } = this.props;
-    removeBlast(blastId);
+  handleClickOnRemoveBlast(blast) {
+    this.setState(prevState => {
+      if (isFakeId(blast.id)) {
+        return {
+          blasts: prevState.blasts.filter(b => b.id !== blast.id)
+        };
+      }
+      return {
+        blasts: [
+          ...prevState.blasts.filter(b => b.id !== blast.id),
+          { ...blast, isDeleted: true }
+        ]
+      };
+    });
   }
 
   getBlastRecords() {
-    const {
-      emailEditorState: {
-        blastList: {
-          allIds: allBlasts,
-          byId: blastsById
-        }
-      }
-    } = this.props;
+    const { blasts } = this.state;
 
-    const blastRecords = allBlasts.map(id => {
-      const blast = blastsById[id];
+    const blastRecords = blasts.filter(blast => !blast.isDeleted).map(blast => {
 
       return (
         <RecordElement
-          key={id}
+          key={blast.id}
           recordIconType={'email'}
-          title={blast.blastName}
+          title={blast.blast_name}
           actionButtons={[
-            { iconType: 'edit', onClick: () => this.handleClickOnEditBlast(id) },
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveBlast(id) }
+            { iconType: 'edit', onClick: () => this.handleClickOnEditBlast(blast) },
+            { iconType: 'delete', onClick: () => this.handleClickOnRemoveBlast(blast) }
           ]}
         >
           <span>
-            {blast.sendDate.format('DD/MM/YYYY HH:mm')}
+            {blast.send_date.format('DD/MM/YYYY HH:mm')}
           </span>
         </RecordElement>
       );
@@ -142,11 +169,12 @@ class EmailEditor extends Component {
   }
 
   handleSaveEmailCampaign(formValues) {
-    const { save, emailEditorState } = this.props;
+    const { save } = this.props;
+    const { blasts } = this.state;
 
     const emailEditorData = {
-      ...formValues,
-      blasts: emailEditorState.blastList
+      ...formValues.campaign,
+      blasts
     };
 
     save(emailEditorData);
@@ -156,15 +184,17 @@ class EmailEditor extends Component {
     const {
       match: {
         url,
-        params: { organisationId }
+        params: { organisationId, campaignId }
       },
       intl: { formatMessage },
       handleSubmit,
       submitting,
-      dirty
+      dirty,
+      fieldValidators: { isRequired },
+      campaignName
     } = this.props;
 
-    const { emailRouters } = this.state;
+    const { routerOptions } = this.state;
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
@@ -178,7 +208,7 @@ class EmailEditor extends Component {
         name: formatMessage(messages.emailEditorBreadcrumbTitle1),
         url: `/v2/o/${organisationId}/campaigns/email`
       },
-      { name: `${formatMessage(messages.emailEditorBreadcrumbTitle2)}${hasUnsavedChange ? '*' : ''}` }
+      { name: `${campaignId ? formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, { campaignName: campaignName }) : formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle)}${hasUnsavedChange ? '*' : ''}` }
     ];
 
     return (
@@ -226,7 +256,7 @@ class EmailEditor extends Component {
                   <Field
                     name="campaign.name"
                     component={FormInput}
-                    validate={[required]}
+                    validate={[isRequired]}
                     props={{
                       formItemProps: {
                         label: formatMessage(messages.emailEditorNameInputLabel),
@@ -242,9 +272,9 @@ class EmailEditor extends Component {
                     }}
                   />
                   <Field
-                    name="campaign.technicalName"
+                    name="campaign.technical_name"
                     component={FormInput}
-                    validate={[required]}
+                    validate={[isRequired]}
                     props={{
                       formItemProps: {
                         label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
@@ -270,14 +300,14 @@ class EmailEditor extends Component {
                   <Field
                     name="campaign.routers[0].email_router_id"
                     component={FormSelect}
-                    validate={[required]}
+                    validate={[isRequired]}
                     props={{
                       formItemProps: {
                         label: formatMessage(messages.emailEditorRouterSelectLabel),
                         required: true,
                         ...fieldGridConfig
                       },
-                      options: emailRouters.map(router => ({
+                      options: routerOptions.map(router => ({
                         key: router.id,
                         value: router.id,
                         text: router.name
@@ -293,24 +323,12 @@ class EmailEditor extends Component {
               <div id={'blasts'}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                   <FormTitle titleMessage={messages.emailEditorEmailBlastTitle} subTitleMessage={messages.emailEditorEmailBlastSubTitle} />
-                  <Button onClick={this.handleClickOnNewBlast}>
+                  <Button onClick={this.handleCliclOnNewBlast}>
                     New Blast
                   </Button>
-                  {/* <Dropdown
-                      trigger={['click']}
-                      overlay={(
-                        <Menu onClick={this.handleEmailBlastActionClick} className="mcs-dropdown-actions">
-                          <Menu.Item key="1">New</Menu.Item>
-                          <Menu.Item key="2">Add existing</Menu.Item>
-                        </Menu>
-                      )}>
-                      <Button>
-                        <McsIcons type="pen" /><McsIcons type="chevron" />
-                      </Button>
-                    </Dropdown>*/}
                 </Row>
                 <Row>
-                  <RelatedRecords emptyOption={{ message: 'Add a blast man !' }}>
+                  <RelatedRecords emptyOption={{ message: formatMessage(messages.emailEditorEmailBlastEmpty) }}>
                     {this.getBlastRecords()}
                   </RelatedRecords>
                 </Row>
@@ -324,52 +342,34 @@ class EmailEditor extends Component {
 }
 
 EmailEditor.defaultProps = {
-  campaignId: null
+  blasts: [],
+  campaignName: ''
 };
 
 EmailEditor.propTypes = {
-  match: PropTypes.shape({
-    url: PropTypes.string.isRequired
-  }).isRequired,
-  history: PropTypes.object.isRequired, // eslint-disable-line
+  match: ReactRouterPropTypes.match.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   dirty: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
-  // campaignId: PropTypes.string,
-  emailEditorState: PropTypes.shape({
-    blastList: PropTypes.shape({
-      allIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-      byId: PropTypes.object.isRequired, // eslint-disable-line
-    }).isRequired
-  }).isRequired,
+  fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
-  addBlast: PropTypes.func.isRequired,
-  removeBlast: PropTypes.func.isRequired,
-  editBlast: PropTypes.func.isRequired
-};
-
-const mapStateToProps = state => ({
-  // initialValues: getEmailEditorFormInitialValues(state),
-  emailEditorState: state.campaignEmailEdit.emailEditorState
-});
-
-const mapDispathToProps = {
-  addBlast: actions.addBlast,
-  removeBlast: actions.removeBlast,
-  editBlast: actions.editBlast
+  campaignName: PropTypes.string,
+  blasts: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
 };
 
 EmailEditor = compose(
-  connect(mapStateToProps, mapDispathToProps),
-  reduxForm({
-    form: 'emailEditor'
-  }),
   injectIntl,
-  withRouter
+  withMcsRouter,
+  reduxForm({
+    form: 'emailEditor',
+    enableReinitialize: true
+  }),
+  withValidators
 )(EmailEditor);
 
 export default EmailEditor;

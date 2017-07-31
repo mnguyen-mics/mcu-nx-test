@@ -7,18 +7,46 @@ import messages from './messages';
 import EmailTemplateSelector from './EmailTemplateSelector';
 import { FormTitle } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import CreativeService from '../../../../services/CreativeService';
 
 class EmailTemplateSelection extends Component {
 
   constructor(props) {
     super(props);
-    this.updateSelectedEmailTemplateIds = this.updateSelectedEmailTemplateIds.bind(this);
+    this.updateSelectedEmailTemplates = this.updateSelectedEmailTemplates.bind(this);
     this.handleClickOnSelectTemplate = this.handleClickOnSelectTemplate.bind(this);
+    this.loadEmailTemplateIfNeeded = this.loadEmailTemplateIfNeeded.bind(this);
+    this.state = {
+      emailTemplates: []
+    };
   }
 
-  updateSelectedEmailTemplateIds(emailTemplateIds) {
+  componentWillReceiveProps(nextProps) {
+    const { input: { value } } = nextProps;
+    (value || []).forEach(emailTemplateSelection => this.loadEmailTemplateIfNeeded(emailTemplateSelection.email_template_id));
+  }
+
+  loadEmailTemplateIfNeeded(templateId) {
+    const { emailTemplates } = this.state;
+    const found = emailTemplates.find(t => t.id === templateId);
+    if (!found) {
+      CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
+        this.setState(prevState => ({
+          emailTemplates: [
+            ...prevState.emailTemplates,
+            emailTemplate
+          ]
+        }));
+      });
+    }
+  }
+
+  updateSelectedEmailTemplates(emailTemplateSelections) {
     const { closeNextDrawer, input } = this.props;
-    input.onChange(emailTemplateIds);
+    const newSelections = input.value || [{}];
+    newSelections[0].email_template_id = emailTemplateSelections[0].email_template_id;
+    input.onChange(newSelections);
+    this.loadEmailTemplateIfNeeded(newSelections[0].email_template_id);
     closeNextDrawer();
   }
 
@@ -26,9 +54,9 @@ class EmailTemplateSelection extends Component {
     const { openNextDrawer, closeNextDrawer, input } = this.props;
 
     const emailTemplateSelectorProps = {
-      save: this.updateSelectedEmailTemplateIds,
+      save: this.updateSelectedEmailTemplates,
       close: closeNextDrawer,
-      selectedTemplates: input.value || []
+      emailTemplateSelections: input.value || []
     };
 
     const options = {
@@ -42,10 +70,11 @@ class EmailTemplateSelection extends Component {
   getEmailTemplateRecords() {
     const { input: { value } } = this.props;
 
-    return (value || []).map(emailTemplate => {
+    return (value || []).map(emailTemplateSelection => {
+      const emailTemplate = this.state.emailTemplates.find(t => t.id === emailTemplateSelection.email_template_id) || {};
       return (
         <RecordElement
-          key={emailTemplate.id}
+          key={emailTemplateSelection.email_template_id}
           recordIconType={'email'}
           title={emailTemplate.name}
         />

@@ -33,6 +33,10 @@ const messages = defineMessages({
   errorDescriptionWithErrorId: {
     id: 'notification.error.default_description_with_errorid',
     defaultMessage: 'Something went wrong, please contact your administrator with the following id:'
+  },
+  errorDescriptionCustomWithErrorId: {
+    id: 'notification.error.default_custom_description_with_errorid',
+    defaultMessage: 'Please contact your administrator with the following id:'
   }
 });
 
@@ -57,6 +61,12 @@ class Notifications extends Component {
       }
     };
 
+    // Functions bellow handle 'predifined' notification
+    // - simple intl object as strings for message and description
+    // - error (default error notif, display error_id)
+    // - new version (displayed when a new version is detected)
+    // order is important as message and description props are overriden
+
     // handle react-intl message and description props
     if (isValidFormattedMessageProps(notification.intlMessage)) {
       antNotifcationConfig.message = formatMessage(notification.intlMessage);
@@ -67,15 +77,28 @@ class Notifications extends Component {
 
     // handle Error
     if (notification.error) {
-      antNotifcationConfig.message = (
-        <span>{ formatMessage(messages.errorMessage) }</span>
-      );
+
+      if (!antNotifcationConfig.message) {
+        antNotifcationConfig.message = (
+          <span>{ formatMessage(messages.errorMessage) }</span>
+        );
+      }
 
       if (notification.error.error_id) {
-        antNotifcationConfig.description = (
-          <span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span>
-        );
-      } else {
+        if (!antNotifcationConfig.description) {
+          antNotifcationConfig.description = (
+            <span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span>
+          );
+        } else {
+          // append errorId message
+          antNotifcationConfig.description = (
+            <div>
+              { antNotifcationConfig.description }
+              <p><span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span></p>
+            </div>
+          );
+        }
+      } else if (!antNotifcationConfig.description) {
         antNotifcationConfig.description = (
           <span>{formatMessage(messages.errorDescription)}</span>
         );

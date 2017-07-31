@@ -5,12 +5,15 @@ import { compose } from 'recompose';
 import { Field, reduxForm } from 'redux-form';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import Scrollspy from 'react-scrollspy';
-import { Layout, Button, Form, Row } from 'antd';
+import { Layout, Button, Form, Row, Dropdown, Menu } from 'antd';
+import moment from 'moment';
 
 import { Actionbar } from '../../../Actionbar';
 import { McsIcons } from '../../../../components/McsIcons';
 import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
-// import EmailTemplateSelection from './EmailTemplateSelection';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
+import EmailTemplateSelection from './EmailTemplateSelection';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
 
@@ -23,15 +26,14 @@ class EmailBlastEditor extends Component {
     this.handleClickOnClose = this.handleClickOnClose.bind(this);
 
     this.state = {
-      consents: []
+      consents: [],
+      segments: []
     };
   }
 
   componentDidMount() {
     const {
-      match: {
-        params: { organisationId }
-      }
+      match: { params: { organisationId } },
     } = this.props;
 
     ConsentService.getConsents(organisationId).then((response) => {
@@ -41,9 +43,81 @@ class EmailBlastEditor extends Component {
     });
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   const { segments } = this.props;
+  //   const { segments: nextSegments } = nextProps;
+  //   if (nextSegments.length !== segments.length) {
+  //     this.setState({ segments: nextSegments });
+  //   }
+  // }
+
+  updateSegments(audienceSegments) {
+    const { segments } = this.state;
+
+    // we'll only need segment data here (hopefully)
+    const buildSegmentSelection = segment => ({
+      id: segment.id,
+      name: segment.name,
+      technical_name: segment.technical_name
+    });
+
+    const deselectedSegmentIds = segments.filter(segment => audienceSegments.map(s => s.id).indexOf(segment.id) < 0).map(s => s.id);
+    const newSegments = audienceSegments.filter(segment => segments.map(s => s.id).indexOf(segment.id) < 0);
+    this.setState(prevState => {
+      return {
+        segments: [
+          ...prevState.segments.filter(s => deselectedSegmentIds.indexOf(s.id) < 0),
+          ...newSegments.map(s => buildSegmentSelection(s))
+        ]
+      };
+    });
+  }
+
   handleClickOnClose() {
     this.props.close();
   }
+
+  handleClickOnRemoveSegment(segment) {
+    this.setState(prevState => {
+      if (isFakeId(segment.id)) {
+        return {
+          segments: prevState.segments.filter(s => s.id !== segment.id)
+        };
+      }
+      return {
+        segments: [
+          ...prevState.segments.filter(s => s.id !== segment.id),
+          { ...segment, isDeleted: true }
+        ]
+      };
+    });
+  }
+
+  getSegmentRecords() {
+    const { segments } = this.state;
+
+    const segmentRecords = segments.filter(segment => !segment.isDeleted).map(segment => {
+
+      return (
+        <RecordElement
+          key={segment.id}
+          recordIconType={'people'}
+          title={segment.name}
+          actionButtons={[
+            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) }
+          ]}
+        >
+          <span>
+            {segment.technical_name}
+          </span>
+        </RecordElement>
+      );
+    });
+
+    return segmentRecords;
+  }
+
+  handleSegmentActionClick() {}
 
   render() {
     const {
@@ -54,8 +128,8 @@ class EmailBlastEditor extends Component {
       handleSubmit,
       save,
       close,
-      // closeNextDrawer,
-      // openNextDrawer
+      closeNextDrawer,
+      openNextDrawer
     } = this.props;
 
     const { consents } = this.state;
@@ -65,6 +139,12 @@ class EmailBlastEditor extends Component {
       wrapperCol: { span: 10, offset: 1 }
     };
 
+    const isPastDate = current => {
+      const now = moment();
+      return current && current.isBefore(now);
+    };
+
+    // TODO move this as a props for contextual definition
     const breadcrumbPaths = [
       {
         name: formatMessage(isCreationMode ? messages.emailBlastEditorBreadcrumbTitleEditBlast : messages.emailBlastEditorBreadcrumbTitleNewBlast)
@@ -104,6 +184,14 @@ class EmailBlastEditor extends Component {
                     <McsIcons type="check-rounded-inverted" />
                     <span className="step-title">
                       <FormattedMessage {...messages.emailBlastEditorStepperTemplateSelection} />
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to={`${url}#segments`}>
+                    <McsIcons type="check-rounded-inverted" />
+                    <span className="step-title">
+                      <FormattedMessage {...messages.emailBlastEditorStepperSegmentSelection} />
                     </span>
                   </Link>
                 </li>
@@ -149,7 +237,8 @@ class EmailBlastEditor extends Component {
                       datePickerProps: {
                         format: 'DD/MM/YYYY HH:mm',
                         showTime: { format: 'HH:mm' },
-                        placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate)
+                        placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate),
+                        disabledDate: isPastDate
                       },
                       helpToolTipProps: {
                         title: 'Campaign technical name'
@@ -157,7 +246,7 @@ class EmailBlastEditor extends Component {
                     }}
                   />
                   <Field
-                    name="blast.emailConsents[0].provider_id"
+                    name="blast.consents[0].consent_id"
                     component={FormSelect}
                     validate={[isRequired]}
                     props={{
@@ -261,16 +350,40 @@ class EmailBlastEditor extends Component {
                   />
                 </Row>
               </div>
-              {/* <hr />
+              <hr />
               <div id={'template'}>
                 <Field
-                  name="blastEmailTemplates"
+                  name="blast.templates"
                   component={EmailTemplateSelection}
                   validate={[isRequired]}
                   openNextDrawer={openNextDrawer}
                   closeNextDrawer={closeNextDrawer}
                 />
-              </div>*/}
+              </div>
+              <hr />
+              <div id={'segments'}>
+                <Row type="flex" align="middle" justify="space-between" className="section-header">
+                  <FormTitle titleMessage={messages.emailEditorEmailBlastTitle} subTitleMessage={messages.emailEditorEmailBlastSubTitle} />
+                  <Dropdown
+                    trigger={['click']}
+                    overlay={(
+                      <Menu onClick={this.handleSegmentActionClick} className="mcs-dropdown-actions">
+                        <Menu.Item key="1">New segment</Menu.Item>
+                        <Menu.Item key="2">Choose existing segment</Menu.Item>
+                      </Menu>
+                      )}
+                  >
+                    <Button>
+                      <McsIcons type="pen" /><McsIcons type="chevron" />
+                    </Button>
+                  </Dropdown>
+                </Row>
+                <Row>
+                  <RelatedRecords emptyOption={{ message: 'No Segments Selected' }}>
+                    {this.getSegmentRecords()}
+                  </RelatedRecords>
+                </Row>
+              </div>
             </Content>
           </Layout>
         </Form>
@@ -280,7 +393,9 @@ class EmailBlastEditor extends Component {
 }
 
 EmailBlastEditor.defaultProps = {
-  isCreationMode: true
+  isCreationMode: true,
+  blastName: '',
+  segments: []
 };
 
 EmailBlastEditor.propTypes = {
@@ -291,19 +406,22 @@ EmailBlastEditor.propTypes = {
   fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   handleSubmit: PropTypes.func.isRequired,
   isCreationMode: PropTypes.bool,
-  // openNextDrawer: PropTypes.func.isRequired,
-  // closeNextDrawer: PropTypes.func.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
+  closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
+  blastName: PropTypes.string,
+  segments: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
 };
 
 EmailBlastEditor = compose(
+  injectIntl,
+  withRouter,
   reduxForm({
-    form: 'emailBlastEditor'
+    form: 'emailBlastEditor',
+    enableReinitialize: true
   }),
   withValidators,
-  injectIntl,
-  withRouter
 )(EmailBlastEditor);
 
 export default EmailBlastEditor;

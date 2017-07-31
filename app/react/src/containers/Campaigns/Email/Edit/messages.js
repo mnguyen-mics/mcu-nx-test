@@ -9,9 +9,13 @@ export default defineMessages({
     id: 'emailEditor.breadcrumb.title1',
     defaultMessage: 'Email Campaigns'
   },
-  emailEditorBreadcrumbTitle2: {
-    id: 'emailEditor.breadcrumb.title2',
+  emailEditorBreadcrumbNewCampaignTitle: {
+    id: 'emailEditor.breadcrumb.new-campaign',
     defaultMessage: 'New Campaign'
+  },
+  emailEditorBreadcrumbEditCampaignTitle: {
+    id: 'emailEditor.breadcrumb.edit-campaign',
+    defaultMessage: 'Edit {campaignName}'
   },
   emailEditorSaveCampaign: {
     id: 'emailEditor.button.save_campaign',
@@ -65,6 +69,10 @@ export default defineMessages({
     id: 'emailEditor.step.subtitle.email_blast',
     defaultMessage: 'Configure blasts for your campaign'
   },
+  emailEditorEmailBlastEmpty: {
+    id: 'emailEditor.email_blast.no-blast',
+    defaultMessage: 'No blast yet, please add a blast'
+  },
   emailBlastEditorBreadcrumbTitleNewBlast: {
     id: 'emailBlastEditor.breadcrumb.title.new_blast',
     defaultMessage: 'New blast'
@@ -84,6 +92,10 @@ export default defineMessages({
   emailBlastEditorStepperTemplateSelection: {
     id: 'emailBlastEditor.stepper.template_selection',
     defaultMessage: 'Template Selection'
+  },
+  emailBlastEditorStepperSegmentSelection: {
+    id: 'emailBlastEditor.stepper.segment_selection',
+    defaultMessage: 'Segment Selection'
   },
   emailBlastEditorStepTitleGeneralInformation: {
     id: 'emailBlastEditor.step.title.general_information',

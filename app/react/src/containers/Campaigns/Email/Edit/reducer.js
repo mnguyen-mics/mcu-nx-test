@@ -3,6 +3,7 @@ import { omit } from 'lodash';
 
 import {
   CAMPAIGN_EMAIL_CREATE,
+  CAMPAIGN_EMAIL_FETCH,
   EMAIL_EDITOR_NEW_BLAST_CREATED,
   EMAIL_EDITOR_NEW_BLAST_DELETED,
   EMAIL_EDITOR_NEW_BLAST_EDITED,
@@ -186,7 +187,7 @@ const newBlastsId = (state = [], action) => {
   }
 };
 
-const hasEmailEditionChanges = (state = false, action) => {
+const hasBlastChanges = (state = false, action) => {
   switch (action.type) {
     case EMAIL_EDITOR_NEW_BLAST_CREATED:
     case EMAIL_EDITOR_EXISTING_BLAST_EDITED:
@@ -199,7 +200,16 @@ const hasEmailEditionChanges = (state = false, action) => {
   }
 };
 
-const blastList = combineReducers({
+const emailCampaign = (state = {}, action) => {
+  switch (action.type) {
+    case CAMPAIGN_EMAIL_FETCH.SUCCESS:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+const blasts = combineReducers({
   byId: blastsById,
   allIds: allBlasts,
   editedIds: editedBlastById,
@@ -208,8 +218,18 @@ const blastList = combineReducers({
 });
 
 const emailEditorState = combineReducers({
-  blastList,
-  hasChanges: hasEmailEditionChanges
+  emailCampaign,
+  // routers,
+  blasts,
+  // consents,
+  // audienceSegments,
+  // emailTemplates,
+  hasChanges: hasBlastChanges
+});
+
+const editEmailPage = combineReducers({
+  emailCampaign,
+  emailEditorState
 });
 
 
@@ -233,13 +253,4 @@ const emailEditorState = combineReducers({
 //   }
 // };
 
-const campaignEmailEdit = combineReducers({
-  createEmailPage,
-  // createBlastPage,
-  // editEmailPage,
-  // editBlastPage,
-  emailEditorState
-  // blastEditor
-});
-
-export default { campaignEmailEdit };
+export default { editEmailPage };

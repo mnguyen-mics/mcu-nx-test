@@ -3,7 +3,12 @@ import {
   CampaignsDisplayTable
 } from '../containers/Campaigns/Display/List';
 
-import { CreateEmailPage } from '../containers/Campaigns/Email/Edit';
+import {
+  CreateEmailPage,
+  EditEmailPage,
+  CreateBlastPage,
+  EditBlastPage
+} from '../containers/Campaigns/Email/Edit';
 
 import {
   CampaignsEmailActionbar,
@@ -40,6 +45,21 @@ const campaignsRoutes = [
     layout: 'main',
     contentComponent: CampaignEmail,
     actionBarComponent: CampaignEmailActionbar
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: EditEmailPage
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)/blast/create',
+    layout: 'edit',
+    editComponent: CreateBlastPage
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)/blast/:blastId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: EditBlastPage
   },
   {
     path: '/campaigns/goal',

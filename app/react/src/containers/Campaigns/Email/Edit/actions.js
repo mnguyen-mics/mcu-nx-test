@@ -1,6 +1,7 @@
 import { createAction } from 'redux-actions';
 import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
 import {
+  CAMPAIGN_EMAIL_CREATE,
   EMAIL_EDITOR_NEW_BLAST_CREATED,
   EMAIL_EDITOR_NEW_BLAST_DELETED,
   EMAIL_EDITOR_NEW_BLAST_EDITED,
@@ -44,6 +45,15 @@ const removeBlast = (blastId) => {
   return isFakeId(blastId) ?
     createAction(EMAIL_EDITOR_NEW_BLAST_DELETED)(blastId) :
     createAction(EMAIL_EDITOR_EXISTING_BLAST_DELETED)(blastId);
+};
+
+const createEmail = {
+  request: (organisationId, emailCampaign) => {
+
+    return createAction(CAMPAIGN_EMAIL_CREATE.REQUEST);
+  },
+  success: createAction(CAMPAIGN_EMAIL_CREATE.SUCCESS),
+  failure: createAction(CAMPAIGN_EMAIL_CREATE.FAILURE)
 };
 
 export { addBlast, editBlast, removeBlast };

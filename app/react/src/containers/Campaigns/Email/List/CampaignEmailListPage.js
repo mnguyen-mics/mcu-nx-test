@@ -15,7 +15,7 @@ import {
   buildDefaultSearch,
   compareSearchs
 } from '../../../../utils/LocationSearchHelper';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
@@ -39,8 +39,18 @@ const messages = defineMessages({
   confirmArchiveModalCancel: {
     id: 'campaign.email.archive.confirm_modal.cancel',
     defaultMessage: 'Cancel'
+  },
+  fetchReportError: {
+    id: 'campaign.email.error.fetch-report',
+    defaultMessage: 'Cannot load campaign statistics'
+  },
+  fetchCampaignError: {
+    id: 'campaign.email.error.fetch-campaign',
+    defaultMessage: 'Cannot load campaign data'
   }
 });
+
+const getLatestDeliveryReport = takeLatest(ReportService.getEmailDeliveryReport);
 
 class CampaignEmailListPage extends Component {
 
@@ -179,17 +189,17 @@ class CampaignEmailListPage extends Component {
       });
     }).catch(error => {
       this.setState({ isFetchingCampaigns: false });
-      this.props.notifyError(error);
+      this.props.notifyError(error, { intlMessage: messages.fetchCampaignError });
     });
 
-    ReportService.getEmailDeliveryReport(organisationId, filter.from, filter.to, 'campaign_id').then(response => {
+    getLatestDeliveryReport(organisationId, filter.from, filter.to, 'campaign_id').then(response => {
       this.setState({
         isFetchingStats: false,
         deliveryReportByCampaignId: normalizeArrayOfObject(normalizeReportView(response.data.report_view), 'campaign_id')
       });
     }).catch(error => {
       this.setState({ isFetchingStats: false });
-      this.props.notifyError(error);
+      this.props.notifyError(error, { intlMessage: messages.fetchReportError });
     });
 
   }

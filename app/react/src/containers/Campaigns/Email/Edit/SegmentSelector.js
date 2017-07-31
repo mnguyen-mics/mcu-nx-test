@@ -16,16 +16,16 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 
 const { Content } = Layout;
 
-class EmailTemplateSelector extends Component {
+class SegmentSelector extends Component {
   constructor(props) {
     super(props);
     this.handleAdd = this.handleAdd.bind(this);
     this.fetchEmailTemplate = this.fetchEmailTemplate.bind(this);
 
     this.state = {
-      newEmailTemplateSelections: props.emailTemplateSelections,
-      emailTemplates: [],
-      hasEmailTemplates: true,
+      newSegmentSelections: props.emailSegmentSelections,
+      segments: [],
+      hasSegments: true,
       isLoading: true,
       total: 0,
       pageSize: 10,
@@ -48,6 +48,7 @@ class EmailTemplateSelector extends Component {
 
     return CreativeService.getEmailTemplates(organisationId, options).then(response => {
       this.setState(prevState => ({
+        ...prevState,
         emailTemplates: response.data,
         isLoading: false,
         total: response.total
@@ -106,8 +107,8 @@ class EmailTemplateSelector extends Component {
 
   handleAdd() {
     const { save } = this.props;
-    const { newEmailTemplateSelections } = this.state;
-    save(newEmailTemplateSelections);
+    const { selectedTemplates } = this.state;
+    save(selectedTemplates);
   }
 
   getColumnsDefinitions() {
@@ -117,20 +118,7 @@ class EmailTemplateSelector extends Component {
       dataColumnsDefinition: [
         {
           key: 'selected',
-          render: (text, record) => <Checkbox checked={selectedEmailTemplateIds.includes(record.id)} onChange={() => this.toggleTemplateSelection(record.id)}>{text}</Checkbox>
-        },
-        {
-          translationKey: 'PREVIEW',
-          key: 'asset_path',
-          isHiddable: false,
-          className: 'mcs-table-image-col',
-          render: (text, record) => (
-            <div className="mcs-table-cell-thumbnail">
-              <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
-                <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
-              </a>
-            </div>
-        )
+          render: (text, record) => <Checkbox checked={selectedEmailTemplateIds.includes(record.id)} onChange={this.toggleTemplateSelection(record.id)}>{text}</Checkbox>
         },
         {
           translationKey: 'NAME',
@@ -230,11 +218,11 @@ class EmailTemplateSelector extends Component {
   }
 }
 
-EmailTemplateSelector.defaultProps = {
+SegmentSelector.defaultProps = {
   emailTemplateSelections: []
 };
 
-EmailTemplateSelector.propTypes = {
+SegmentSelector.propTypes = {
   organisationId: PropTypes.string.isRequired,
   emailTemplateSelections: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
@@ -246,4 +234,4 @@ EmailTemplateSelector.propTypes = {
 
 export default compose(
   withMcsRouter
-)(EmailTemplateSelector);
+)(SegmentSelector);

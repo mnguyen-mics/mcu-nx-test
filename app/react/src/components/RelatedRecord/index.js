@@ -43,7 +43,7 @@ const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
       <Col span={1}>
         {actionButtons.map(({ iconType, onClick }) => {
           return (
-            <Button className="invisible-button" onClick={onClick}>
+            <Button key={Math.random()} className="invisible-button" onClick={onClick}>
               <Icon type={iconType} />
             </Button>
           );
@@ -54,12 +54,13 @@ const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
 };
 
 RecordElement.defaultProps = {
+  title: '',
   actionButtons: []
 };
 
 RecordElement.propTypes = {
   recordIconType: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   actionButtons: PropTypes.arrayOf(
     PropTypes.shape({
       iconType: PropTypes.string.isRequired,

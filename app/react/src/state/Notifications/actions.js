@@ -20,9 +20,10 @@ const removeNotification = key => {
 
 const resetNotifications = createAction(NOTIFICATIONS_RESET);
 
-const notifyError = error => {
+const notifyError = (error, notifConfig = {}) => {
   return addNotification({
     duration: 0,
+    ...notifConfig,
     error
   }, 'error');
 };

@@ -11,6 +11,11 @@ const getCreatives = (organisationId, options = {}) => {
   return ApiService.getRequest(endpoint, params);
 };
 
+const getCreative = creativeId => {
+  const endpoint = `creatives/${creativeId}`;
+  return ApiService.getRequest(endpoint).then(res => res.data);
+};
+
 const getDisplayAds = (organisationId, options = {}) => {
   return getCreatives(organisationId, { creative_type: 'DISPLAY_AD', ...options });
 };
@@ -19,9 +24,15 @@ const getEmailTemplates = (organisationId, options = {}) => {
   return getCreatives(organisationId, { creative_type: 'EMAIL_TEMPLATE', ...options });
 };
 
+const getEmailTemplate = templateId => {
+  return getCreative(templateId);
+};
+
 
 export default {
   getCreatives,
+  getCreative,
   getDisplayAds,
-  getEmailTemplates
+  getEmailTemplates,
+  getEmailTemplate
 };
