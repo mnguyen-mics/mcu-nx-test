@@ -33,7 +33,6 @@ class CampaignPage extends Component {
     this.updateAd = this.updateAd.bind(this);
     this.updateAdGroup = this.updateAdGroup.bind(this);
     this.updateCampaign = this.updateCampaign.bind(this);
-    this.handleNotification = this.handleNotification.bind(this);
     this.state = {
       campaign: {
         items: {
@@ -215,31 +214,11 @@ class CampaignPage extends Component {
     });
   }
 
-  handleNotification(type, message, undo = false, undoFunction) {
-    const {
-      addNotification
-    } = this.props;
-    if (undo) {
-      addNotification({
-        type: type,
-        messageKey: message.title,
-        descriptionKey: message.body,
-        btn: (
-          <Button type="primary" className="mcs-primary" size="small" onClick={undoFunction ? undoFunction : () => {}}>
-            Undo
-          </Button>
-        )
-      });
-    } else {
-      addNotification({
-        type: type,
-        messageKey: message.title,
-        descriptionKey: message.body,
-      });
-    }
-  }
-
   updateCampaign(campaignId, body, successMessage, errorMessage) {
+    const {
+      notifyError
+    } = this.props;
+
     CampaignService.updateCampaignDisplay(campaignId, body).then(response => {
       this.setState(prevState => {
         const nextState = {
@@ -247,13 +226,21 @@ class CampaignPage extends Component {
         };
         nextState.campaign.items.itemById = response.data;
       });
-      this.handleNotification('success', successMessage);
-    }).catch(() => {
-      this.handleNotification('error', errorMessage);
+    }).catch(error => {
+      notifyError(error, {
+        message: errorMessage.title,
+        description: errorMessage.body
+      });
     });
   }
 
   updateAdGroup(adGroupId, body, successMessage, errorMessage, undoBody) {
+    const {
+      notifySuccess,
+      notifyError,
+      removeNotification
+    } = this.props;
+
     this.setState(prevState => {
       const nextState = {
         ...prevState
@@ -261,7 +248,7 @@ class CampaignPage extends Component {
       nextState.adGroups.items.itemById[adGroupId].status = body.status;
       return nextState;
     });
-    CampaignService.updateAdGroup(this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id, adGroupId, body).then(response => {
+    return CampaignService.updateAdGroup(this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id, adGroupId, body).then(response => {
 
       this.setState(prevState => {
         const nextState = {
@@ -271,12 +258,25 @@ class CampaignPage extends Component {
       });
       if (successMessage || errorMessage) {
         const undo = () => {
-          this.updateAdGroup(adGroupId, undoBody);
+          this.updateAdGroup(adGroupId, undoBody).then(() => {
+            removeNotification(adGroupId);
+          });
         };
-        this.handleNotification('success', successMessage, true, undo);
+        notifySuccess({
+          uid: parseInt(adGroupId, 0),
+          message: successMessage.title,
+          description: successMessage.body,
+          btn: (<Button type="primary" size="small" onClick={undo} >
+            <span>Undo</span>
+          </Button>)
+        });
       }
-    }).catch(() => {
-      this.handleNotification('error', errorMessage);
+      return null;
+    }).catch(error => {
+      notifyError(error, {
+        message: errorMessage.title,
+        description: errorMessage.body
+      });
       this.setState(prevState => {
         const nextState = {
           ...prevState
@@ -288,13 +288,19 @@ class CampaignPage extends Component {
   }
 
   updateAd(adId, body, successMessage, errorMessage, undoBody) {
+    const {
+      notifySuccess,
+      notifyError,
+      removeNotification
+    } = this.props;
+
     this.setState(prevState => {
       const nextState = {
         ...prevState
       };
       nextState.ads.items.itemById[adId].status = body.status;
     });
-    CampaignService.updateAd(adId, this.state.ads.items.adAdGroup[adId].campaign_id, this.state.ads.items.adAdGroup[adId].ad_group_id, body).then(response => {
+    return CampaignService.updateAd(adId, this.state.ads.items.adAdGroup[adId].campaign_id, this.state.ads.items.adAdGroup[adId].ad_group_id, body).then(response => {
       this.setState(prevState => {
         const nextState = {
           ...prevState
@@ -302,13 +308,27 @@ class CampaignPage extends Component {
         nextState.ads.items.itemById[adId].status = response.data.status;
       });
       if (successMessage || errorMessage) {
+        const uid = Math.random();
         const undo = () => {
-          this.updateAd(adId, undoBody);
+          this.updateAd(adId, undoBody).then(() => {
+            removeNotification(uid);
+          });
         };
-        this.handleNotification('success', successMessage, true, undo);
+        notifySuccess({
+          uid,
+          message: successMessage.title,
+          description: successMessage.body,
+          btn: (<Button type="primary" size="small" onClick={undo} >
+            <span>Undo</span>
+          </Button>)
+        });
       }
-    }).catch(() => {
-      this.handleNotification('error', errorMessage);
+      return null;
+    }).catch(error => {
+      notifyError(error, {
+        message: errorMessage.title,
+        description: errorMessage.body
+      });
       this.setState(prevState => {
         const nextState = {
           ...prevState
@@ -445,7 +465,9 @@ CampaignPage.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  addNotification: PropTypes.func.isRequired,
+  notifySuccess: PropTypes.func.isRequired,
+  notifyError: PropTypes.func.isRequired,
+  removeNotification: PropTypes.func.isRequired,
 };
 
 CampaignPage = compose(
@@ -453,7 +475,9 @@ CampaignPage = compose(
   connect(
     undefined,
     {
-      addNotification: NotificationActions.addNotification,
+      notifyError: NotificationActions.notifyError,
+      notifySuccess: NotificationActions.notifySuccess,
+      removeNotification: NotificationActions.removeNotification,
     }),
 )(CampaignPage);
 

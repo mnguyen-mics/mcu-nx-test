@@ -168,5 +168,9 @@ export default defineMessages({
   notificationErrorGeneric: {
     id: 'notification.success.error.generic',
     defaultMessage: 'There was an error, please contact the administator with the following error id: {errorId}'
+  },
+  undo: {
+    id: 'notification.button.undo',
+    defaultMessage: 'Undo'
   }
 });

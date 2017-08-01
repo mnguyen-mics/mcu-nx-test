@@ -34,7 +34,6 @@ class AdGroupPage extends Component {
     this.fetchAllData = this.fetchAllData.bind(this);
     this.updateAd = this.updateAd.bind(this);
     this.updateAdGroup = this.updateAdGroup.bind(this);
-    this.handleNotification = this.handleNotification.bind(this);
     this.state = {
       campaign: {
         items: {
@@ -173,33 +172,9 @@ class AdGroupPage extends Component {
     });
   }
 
-  handleNotification(type, message, undo, undoFunction) {
-    const {
-      addNotification
-    } = this.props;
-    if (undo) {
-      addNotification({
-        type: type,
-        messageKey: message.title,
-        descriptionKey: message.body,
-        btn: (
-          <Button type="primary" className="mcs-primary" size="small" onClick={undoFunction ? undoFunction : () => {}}>
-            Undo
-          </Button>
-        )
-      });
-    } else {
-      addNotification({
-        type: type,
-        messageKey: message.title,
-        descriptionKey: message.body,
-      });
-    }
-  }
-
   updateAdGroup(adGroupId, body) {
     const {
-      intl: { formatMessage }
+      notifyError
     } = this.props;
     CampaignService.updateAdGroup(this.state.campaign.items.itemById.id, adGroupId, body).then(response => {
       this.setState(prevState => {
@@ -209,16 +184,16 @@ class AdGroupPage extends Component {
         nextState.adGroups.items.itemById = response.data;
       });
     }).catch(error => {
-      this.handleNotification('error', {
-        title: formatMessage(messages.notificationError),
-        descriptionKey: formatMessage(messages.notificationErrorGeneric, { errorId: error.id }),
-      });
+      notifyError(error);
     });
   }
 
   updateAd(adId, body, successMessage, errorMessage, undoBody) {
     const {
-      intl: { formatMessage }
+      intl: { formatMessage },
+      notifySuccess,
+      notifyError,
+      removeNotification
     } = this.props;
     this.setState(prevState => {
       const nextState = {
@@ -226,7 +201,7 @@ class AdGroupPage extends Component {
       };
       nextState.ads.items.itemById[adId].status = body.status;
     });
-    CampaignService.updateAd(adId, this.state.campaign.items.itemById.id, this.state.adGroups.items.itemById.id, body).then(response => {
+    return CampaignService.updateAd(adId, this.state.campaign.items.itemById.id, this.state.adGroups.items.itemById.id, body).then(response => {
       this.setState(prevState => {
         const nextState = {
           ...prevState
@@ -234,15 +209,28 @@ class AdGroupPage extends Component {
         nextState.ads.items.itemById[adId].status = response.data.status;
       });
       if (successMessage || errorMessage) {
+        const uid = Math.random();
         const undo = () => {
-          this.updateAd(adId, undoBody);
+          this.updateAd(adId, undoBody).then(() => {
+            removeNotification(uid);
+          });
         };
-        this.handleNotification('success', successMessage, true, undo);
+
+        notifySuccess({
+          uid,
+          message: successMessage.title,
+          description: successMessage.body,
+          btn: (<Button type="primary" size="small" onClick={undo} >
+            <span>{formatMessage(messages.undo)}</span>
+          </Button>)
+        });
+
       }
+      return null;
     }).catch(error => {
-      this.handleNotification('error', {
-        title: formatMessage(messages.notificationError),
-        descriptionKey: formatMessage(messages.notificationErrorGeneric, { errorId: error.id }),
+      notifyError(error, {
+        message: messages.notificationError,
+        description: messages.notificationErrorGeneric
       });
       this.setState(prevState => {
         const nextState = {
@@ -380,8 +368,10 @@ AdGroupPage.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  addNotification: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
+  notifyError: PropTypes.func.isRequired,
+  notifySuccess: PropTypes.func.isRequired,
+  removeNotification: PropTypes.func.isRequired,
 };
 
 AdGroupPage = compose(
@@ -390,7 +380,9 @@ AdGroupPage = compose(
   connect(
     undefined,
     {
-      addNotification: NotificationActions.addNotification,
+      notifyError: NotificationActions.notifyError,
+      notifySuccess: NotificationActions.notifySuccess,
+      removeNotification: NotificationActions.removeNotification
     }
   ),
 )(AdGroupPage);
