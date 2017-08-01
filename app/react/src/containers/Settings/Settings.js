@@ -11,7 +11,6 @@ import { MobileApplicationsListPage } from './MobileApplications';
 import { getDefaultDatamart } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
 import { parseSearch } from '../../utils/LocationSearchHelper';
-import { getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
 import * as menuActions from '../../state/Menu/actions';
 
 const TabPane = Tabs.TabPane;
@@ -32,6 +31,14 @@ class Settings extends Component {
 
     this.switchTab = this.switchTab.bind(this);
     this.getUrlParameters = this.getUrlParameters.bind(this);
+  }
+
+  componentWillMount() {
+    const { openCloseMenu } = this.props;
+    openCloseMenu({
+      collapsed: true,
+      mode: 'vertical'
+    });
   }
 
   getUrlParameters() {
@@ -56,15 +63,6 @@ class Settings extends Component {
     history.push({
       pathname: `/v2/o/${organisationId}/settings`,
       search: `?tab=${tabKey}`
-    });
-  }
-
-
-  componentWillMount() {
-    const { openCloseMenu } = this.props;
-    openCloseMenu({
-      collapsed: true,
-      mode: 'verlical'
     });
   }
 

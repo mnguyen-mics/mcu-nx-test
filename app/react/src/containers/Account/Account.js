@@ -10,6 +10,7 @@ import { OrganisationAccount } from './OrganisationAccount';
 import { getDefaultWorkspaceOrganisationId } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
 import { parseSearch } from '../../utils/LocationSearchHelper';
+import * as menuActions from '../../state/Menu/actions';
 
 const TabPane = Tabs.TabPane;
 
@@ -19,6 +20,14 @@ class Account extends Component {
 
     this.switchTab = this.switchTab.bind(this);
     this.getUrlParameters = this.getUrlParameters.bind(this);
+  }
+
+  componentWillMount() {
+    const { openCloseMenu } = this.props;
+    openCloseMenu({
+      collapsed: true,
+      mode: 'vertical'
+    });
   }
 
   getUrlParameters() {
@@ -74,6 +83,7 @@ Account.propTypes = {
   organisationName: PropTypes.string.isRequired,
   organisationId: PropTypes.string.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
+  openCloseMenu: PropTypes.func.isRequired,
   history: ReactRouterPropTypes.history.isRequired
 };
 
@@ -81,14 +91,21 @@ const mapStateToProps = (state) => ({
   organisationName: getDefaultWorkspaceOrganisationId(state)
 });
 
+const mapDispatchToProps = {
+  openCloseMenu: menuActions.openCloseMenu
+};
+
 Account.propTypes = {
   intl: intlShape.isRequired
 };
 
 Account = compose(
-  connect(mapStateToProps),
   withMcsRouter,
-  injectIntl
+  injectIntl,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Account);
 
 export default Account;
