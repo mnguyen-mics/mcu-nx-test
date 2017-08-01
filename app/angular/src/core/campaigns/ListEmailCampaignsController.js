@@ -18,7 +18,7 @@ define(['./module'], function (module) {
     'CampaignAnalyticsReportService', 'core/campaigns/CampaignPluginService', 'core/common/files/ExportService',
     function ($scope, $location, $uibModal, $log, Restangular, d3, moment, DisplayCampaignService, Session, CampaignAnalyticsReportService, CampaignPluginService, ExportService) {
       var currentWorkspace = Session.getCurrentWorkspace();
-
+      $scope.currentOrgId = Session.getCurrentWorkspace().organisation_id;
       $scope.currentPageEmailCampaign = 1;
       $scope.itemsPerPage = 10;
 
