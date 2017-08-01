@@ -69,7 +69,7 @@ class NavigatorHeader extends Component {
           <Col span={22}>
             {
               hasMoreThanOneWorkspace
-                ? <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft"><a className="organisation-name">{ organisationName }&nbsp;<McsIcons type="chevron" /></a></Dropdown>
+                ? <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft"><a className="organisation-name-clickable">{ organisationName }&nbsp;<McsIcons type="chevron" /></a></Dropdown>
                 : <span className="organisation-name">{ organisationName }</span>
             }
           </Col>

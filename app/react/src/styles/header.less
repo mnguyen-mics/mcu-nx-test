@@ -2,16 +2,23 @@
   height: @layout-header-height;
   background-color: @info-color;
 
+
   .organisation-name {
     color: white;
     font-size: 15px;
     font-weight: bold;
-    &:hover {
-      color: @normal-color;
-    }
+    cursor: default;
 
     i {
       font-size: 12px;
+    }
+  }
+
+  .organisation-name-clickable {
+    &:extend(.mcs-header .organisation-name all);
+    cursor: pointer;
+    &:hover {
+      color: @normal-color;
     }
   }
 
