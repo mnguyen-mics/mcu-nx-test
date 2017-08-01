@@ -146,7 +146,7 @@ const exportCampaignsDisplay = (organisationId, dataSource, filter, translations
 
   const sheets = [{
     name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
-    data: dataSheet
+    data: dataSheet,
   }];
 
   exportData(sheets, `${organisationId}_campaigns-display`, 'xlsx');
@@ -179,7 +179,7 @@ const exportCampaignsEmail = (organisationId, dataSource, filter, translations) 
     { name: 'email_hard_bounced', translation: translations.EMAIL_HARD_BOUNCED },
     { name: 'email_soft_bounced', translation: translations.EMAIL_SOFT_BOUNCED },
     { name: 'clicks', translation: translations.CLICKS },
-    { name: 'impressions', translation: translations.IMPRESSIONS }
+    { name: 'impressions', translation: translations.IMPRESSIONS },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -195,7 +195,7 @@ const exportCampaignsEmail = (organisationId, dataSource, filter, translations) 
 
   const sheets = [{
     name: translations.CAMPAIGNS_EMAIL_EXPORT_TITLE,
-    data: dataSheet
+    data: dataSheet,
   }];
 
   exportData(sheets, `${organisationId}_campaigns-email`, 'xlsx');
@@ -224,7 +224,7 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   const headersMap = [
     { name: 'name', translation: translations.NAME },
     { name: 'conversions', translation: translations.CONVERSIONS },
-    { name: 'value', translation: translations.CONVERSION_VALUE }
+    { name: 'value', translation: translations.CONVERSION_VALUE },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -240,7 +240,7 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
 
   const sheets = [{
     name: translations.GOALS_EXPORT_TITLE,
-    data: dataSheet
+    data: dataSheet,
   }];
 
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
@@ -273,7 +273,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
     { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
     { name: 'emails', translation: translations.EMAILS },
     { name: 'user_point_additions', translation: translations.ADDITION },
-    { name: 'user_point_deletions', translation: translations.DELETION }
+    { name: 'user_point_deletions', translation: translations.DELETION },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -289,7 +289,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
   const sheets = [{
     name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
-    data: dataSheet
+    data: dataSheet,
   }];
 
   exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
@@ -300,5 +300,5 @@ export default {
   exportCampaignsDisplay,
   exportCampaignsEmail,
   exportGoals,
-  exportAudienceSegments
+  exportAudienceSegments,
 };

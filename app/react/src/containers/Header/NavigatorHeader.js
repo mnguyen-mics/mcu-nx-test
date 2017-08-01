@@ -7,10 +7,10 @@ import { Layout, Menu, Dropdown, Popover, Row, Col } from 'antd';
 // installed by react-router
 import pathToRegexp from 'path-to-regexp'; // eslint-disable-line import/no-extraneous-dependencies
 
-import { McsIcons } from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons';
 import {
   getWorkspaces,
-  getWorkspace
+  getWorkspace,
 } from '../../state/Session/selectors';
 import log from '../../utils/Logger';
 
@@ -28,7 +28,7 @@ class NavigatorHeader extends Component {
       workspaces,
       workspace,
       userEmail,
-      history
+      history,
     } = this.props;
 
     const organisationId = params.organisationId;
@@ -48,7 +48,7 @@ class NavigatorHeader extends Component {
       const toPath = pathToRegexp.compile(path);
       const newPath = toPath({
         ...params,
-        organisationId: key
+        organisationId: key,
       });
       const fullUrl = newPath;
       log.debug(`Change worskapce, redirect to ${fullUrl}`);
@@ -107,7 +107,7 @@ NavigatorHeader.propTypes = {
 const mapStateToProps = state => ({
   workspaces: getWorkspaces(state),
   workspace: getWorkspace(state),
-  userEmail: state.session.connectedUser.email
+  userEmail: state.session.connectedUser.email,
 });
 
 const mapDispatchToProps = {
@@ -116,7 +116,7 @@ const mapDispatchToProps = {
 
 NavigatorHeader = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(NavigatorHeader);
 
 NavigatorHeader = withRouter(NavigatorHeader);

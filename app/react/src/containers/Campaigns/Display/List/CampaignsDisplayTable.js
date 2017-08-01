@@ -8,9 +8,9 @@ import { FormattedMessage } from 'react-intl';
 import {
   TableView,
   TableViewFilters,
-  EmptyTableView
+  EmptyTableView,
  } from '../../../../components/TableView';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 
 import * as CampaignsDisplayActions from '../../../../state/Campaigns/Display/actions';
 
@@ -21,14 +21,14 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs
+  compareSearchs,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 
 import {
-  getTableDataSource
+  getTableDataSource,
  } from '../../../../state/Campaigns/Display/selectors';
 
 class CampaignsDisplayTable extends Component {
@@ -45,20 +45,20 @@ class CampaignsDisplayTable extends Component {
       history,
       location: {
         search,
-        pathname
+        pathname,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      loadCampaignsDisplayDataSource
+      loadCampaignsDisplayDataSource,
     } = this.props;
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -69,28 +69,28 @@ class CampaignsDisplayTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      loadCampaignsDisplayDataSource
+      loadCampaignsDisplayDataSource,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -100,7 +100,7 @@ class CampaignsDisplayTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, DISPLAY_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, DISPLAY_SEARCH_SETTINGS);
@@ -118,13 +118,13 @@ class CampaignsDisplayTable extends Component {
       history,
       location: {
         search: currentSearch,
-        pathname
-      }
+        pathname,
+      },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, DISPLAY_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -134,18 +134,18 @@ class CampaignsDisplayTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       hasDisplayCampaigns,
       translations,
       isFetchingCampaignsDisplay,
       isFetchingCampaignsStat,
       dataSource,
-      totalCampaignsDisplay
+      totalCampaignsDisplay,
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -154,9 +154,9 @@ class CampaignsDisplayTable extends Component {
       isEnabled: true,
       placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
       onSearch: value => this.updateLocationSearch({
-        keywords: value
+        keywords: value,
       }),
-      defaultValue: filter.keywords
+      defaultValue: filter.keywords,
     };
 
     const dateRangePickerOptions = {
@@ -171,12 +171,12 @@ class CampaignsDisplayTable extends Component {
         rangeType: filter.rangeType,
         lookbackWindow: filter.lookbackWindow,
         from: filter.from,
-        to: filter.to
-      }
+        to: filter.to,
+      },
     };
 
     const columnsVisibilityOptions = {
-      isEnabled: true
+      isEnabled: true,
     };
 
     const pagination = {
@@ -184,11 +184,11 @@ class CampaignsDisplayTable extends Component {
       pageSize: filter.pageSize,
       total: totalCampaignsDisplay,
       onChange: (page) => this.updateLocationSearch({
-        currentPage: page
+        currentPage: page,
       }),
       onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+        pageSize: size,
+      }),
     };
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
@@ -204,27 +204,27 @@ class CampaignsDisplayTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
+        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>,
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/display/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/display/${record.id}`}>{text}</Link>,
       },
       {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'IMPRESSIONS_COST',
@@ -235,36 +235,36 @@ class CampaignsDisplayTable extends Component {
           // TODO find campaign currency (with getCampaignsDisplayById(record['campaign_id']))
           const campaignCurrency = 'EUR';
           return renderMetricData(text, '0,0.00', campaignCurrency);
-        }
+        },
       },
       {
         translationKey: 'CPM',
         key: 'cpm',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
         translationKey: 'CTR',
         key: 'ctr',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,00 %')
+        render: text => renderMetricData(text, '0,00 %'),
       },
       {
         translationKey: 'CPC',
         key: 'cpc',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
         translationKey: 'CPA',
         key: 'cpa',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
-      }
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      },
     ];
 
     const actionColumns = [
@@ -273,13 +273,13 @@ class CampaignsDisplayTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editCampaign
+            callback: this.editCampaign,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign
-          }
-        ]
-      }
+            callback: this.archiveCampaign,
+          },
+        ],
+      },
     ];
 
     const statusItems = campaignStatuses.map(status => ({ key: status, value: status }));
@@ -291,14 +291,14 @@ class CampaignsDisplayTable extends Component {
         menuItems: {
           handleMenuClick: value => this.updateLocationSearch({ statuses: value.status.map(item => item.value) }),
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
-          items: statusItems
-        }
-      }
+          items: statusItems,
+        },
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (hasDisplayCampaigns) ? (
@@ -324,10 +324,10 @@ class CampaignsDisplayTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      history
+      history,
     } = this.props;
 
     let editUrl;
@@ -352,15 +352,15 @@ class CampaignsDisplayTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       archiveCampaignDisplay,
       loadCampaignsDisplayDataSource,
-      translations
+      translations,
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -383,13 +383,13 @@ class CampaignsDisplayTable extends Component {
 }
 
 CampaignsDisplayTable.defaultProps = {
-  archiveCampaignDisplay: () => { }
+  archiveCampaignDisplay: () => { },
 };
 
 CampaignsDisplayTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 
   hasDisplayCampaigns: PropTypes.bool.isRequired,
@@ -416,12 +416,12 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   loadCampaignsDisplayDataSource: CampaignsDisplayActions.loadCampaignsDisplayDataSource,
   // archiveCampaignDisplay: CampaignEmailAction.archiveCampaignDisplay,
-  resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable
+  resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable,
 };
 
 CampaignsDisplayTable = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(CampaignsDisplayTable);
 
 CampaignsDisplayTable = withRouter(CampaignsDisplayTable);

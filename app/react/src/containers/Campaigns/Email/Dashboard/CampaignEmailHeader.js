@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { TitleAndStatusHeader } from '../../../../components/TitleAndStatusHeader';
+import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader';
 
 class CampaignEmailHeader extends Component {
 
@@ -11,13 +11,13 @@ class CampaignEmailHeader extends Component {
     const {
       campaignEmail: {
         name: campaignEmailName,
-        status: campaignEmailStatus
-      }
+        status: campaignEmailStatus,
+      },
     } = this.props;
 
     const campaignEmailStatusHeader = {
       value: campaignEmailStatus,
-      translationKeyPrefix: 'CAMPAIGN_STATUS'
+      translationKeyPrefix: 'CAMPAIGN_STATUS',
     };
 
     return campaignEmailName ? (
@@ -31,7 +31,7 @@ class CampaignEmailHeader extends Component {
 }
 
 CampaignEmailHeader.propTypes = {
-  campaignEmail: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({
@@ -39,7 +39,7 @@ const mapStateToProps = state => ({
 });
 
 CampaignEmailHeader = connect(
-  mapStateToProps
+  mapStateToProps,
 )(CampaignEmailHeader);
 
 export default CampaignEmailHeader;

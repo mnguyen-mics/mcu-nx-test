@@ -5,5 +5,5 @@ import OverlapTooltip from './OverlapTooltip';
 export {
   ChartTooltip,
   BasicTooltip,
-  OverlapTooltip
+  OverlapTooltip,
 };

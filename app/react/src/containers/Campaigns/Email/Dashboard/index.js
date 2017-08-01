@@ -3,5 +3,5 @@ import CampaignEmailActionbar from './CampaignEmailActionbar';
 
 export {
   CampaignEmailActionbar,
-  CampaignEmail
+  CampaignEmail,
 };

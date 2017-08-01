@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
 import { withTranslations } from '../../../Helpers';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 
 class AssetsActionbar extends Component {
 
@@ -16,10 +16,10 @@ class AssetsActionbar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      translations
+      translations,
     } = this.props;
 
     const breadcrumbPaths = [{ name: translations.ASSETS, url: `/v2/o/${organisationId}/library/assets` }];

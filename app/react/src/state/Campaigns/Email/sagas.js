@@ -5,7 +5,7 @@ import log from '../../../utils/Logger';
 
 import {
   fetchCampaignsEmailDeliveryReport,
-  fetchCampaignsEmailList
+  fetchCampaignsEmailList,
 } from './actions';
 
 import CampaignService from '../../../services/CampaignService';
@@ -16,7 +16,7 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import {
   CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH,
   CAMPAIGNS_EMAIL_LIST_FETCH,
-  CAMPAIGNS_EMAIL_LOAD_ALL
+  CAMPAIGNS_EMAIL_LOAD_ALL,
 } from '../../action-types';
 
 function* loadDeliveryReport({ payload }) {
@@ -24,7 +24,7 @@ function* loadDeliveryReport({ payload }) {
 
     const {
       organisationId,
-      filter
+      filter,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
@@ -48,7 +48,7 @@ function* loadCampaignsEmailList({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
@@ -57,7 +57,7 @@ function* loadCampaignsEmailList({ payload }) {
 
     const options = {
       archived: filter.statuses.includes('ARCHIVED'),
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
@@ -68,7 +68,7 @@ function* loadCampaignsEmailList({ payload }) {
     }
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -76,11 +76,11 @@ function* loadCampaignsEmailList({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(CampaignService.getCampaigns, organisationId, campaignType, initialOptions),
-        response: call(CampaignService.getCampaigns, organisationId, campaignType, options)
+        response: call(CampaignService.getCampaigns, organisationId, campaignType, options),
       };
     } else {
       allCalls = {
-        response: call(CampaignService.getCampaigns, organisationId, campaignType, options)
+        response: call(CampaignService.getCampaigns, organisationId, campaignType, options),
       };
     }
 
@@ -117,5 +117,5 @@ function* watchLoadCampaignsAndPerformance() {
 export const campaignsEmailSagas = [
   fork(watchFetchCampaignsEmail),
   fork(watchFetchDeliveryReport),
-  fork(watchLoadCampaignsAndPerformance)
+  fork(watchLoadCampaignsAndPerformance),
 ];

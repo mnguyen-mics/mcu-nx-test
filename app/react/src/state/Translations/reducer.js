@@ -1,5 +1,5 @@
 import {
-  LOAD_TRANSLATIONS
+  LOAD_TRANSLATIONS,
 } from '../action-types';
 
 const translations = (state = {}, action) => {
@@ -7,7 +7,7 @@ const translations = (state = {}, action) => {
   switch (action.type) {
     case LOAD_TRANSLATIONS.SUCCESS:
       return {
-        ...action.payload
+        ...action.payload,
       };
     default:
       return state;
@@ -16,7 +16,7 @@ const translations = (state = {}, action) => {
 };
 
 const TranslationsReducers = {
-  translations
+  translations,
 };
 
 export default TranslationsReducers;

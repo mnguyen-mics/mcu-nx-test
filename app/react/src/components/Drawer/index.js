@@ -7,11 +7,12 @@ import DrawerManager from './DrawerManager';
 const DEFAULT_DRAWER_OPTIONS = {
   additionalProps: {},
   size: 'large', // or 'small'
-  isModal: false
+  isModal: false,
 };
 
 const withDrawer = WrappedComponent => {
   return class extends Component {
+
     constructor(props) {
       super(props);
 
@@ -23,37 +24,39 @@ const withDrawer = WrappedComponent => {
          *   isModal // true or false, whether the drawer is binded to clickOutside and Espace key
          * }
          */
-        drawableContents: []
+        drawableContents: [],
       };
-
-      this.handleOpenNewDrawer = this.handleOpenNewDrawer.bind(this);
-      this.closeForegroundDrawer = this.closeForegroundDrawer.bind(this);
-      this.closeForegroundDrawerIfPossible = this.closeForegroundDrawerIfPossible.bind(this);
     }
 
-    handleOpenNewDrawer(component, options = DEFAULT_DRAWER_OPTIONS) {
+    handleOpenNewDrawer = (component, options = DEFAULT_DRAWER_OPTIONS) => {
       const extendedOptions = {
         ...DEFAULT_DRAWER_OPTIONS,
         ...options,
         openNextDrawer: this.handleOpenNewDrawer,
-        closeNextDrawer: this.closeForegroundDrawer
+        closeNextDrawer: this.closeForegroundDrawer,
       };
 
       this.setState({
-        drawableContents: [...this.state.drawableContents, { component, ...extendedOptions }]
+        drawableContents: [
+          ...this.state.drawableContents,
+          { component, ...extendedOptions },
+        ],
       });
     }
 
-    closeForegroundDrawerIfPossible() {
+    closeForegroundDrawer = () => {
+      this.setState({
+        drawableContents: [...lodash.initial(this.state.drawableContents)],
+      });
+    }
+
+    closeForegroundDrawerIfPossible = () => {
       const { drawableContents } = this.state;
       const foregroundDrawer = lodash.last(drawableContents);
-      if (!foregroundDrawer.isModal) this.closeForegroundDrawer();
-    }
 
-    closeForegroundDrawer() {
-      this.setState({
-        drawableContents: [...lodash.initial(this.state.drawableContents)]
-      });
+      if (!foregroundDrawer.isModal) {
+        this.closeForegroundDrawer();
+      }
     }
 
     render() {
@@ -64,7 +67,12 @@ const withDrawer = WrappedComponent => {
             onEscapeKeyDown={this.closeForegroundDrawerIfPossible}
             onClickOnBackground={this.closeForegroundDrawerIfPossible}
           />
-          <WrappedComponent {...this.props} openNextDrawer={this.handleOpenNewDrawer} closeNextDrawer={this.closeForegroundDrawer} />
+
+          <WrappedComponent
+            {...this.props}
+            openNextDrawer={this.handleOpenNewDrawer}
+            closeNextDrawer={this.closeForegroundDrawer}
+          />
         </Layout>
       );
     }

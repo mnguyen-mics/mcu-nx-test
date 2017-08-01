@@ -47,7 +47,7 @@ const displayCreatives = combineReducers({
   byId: displayCreativesById,
   allIds: allDisplayCreatives,
   metadata: createRequestMetadataReducer(CREATIVES_DISPLAY_FETCH),
-  hasItems
+  hasItems,
 });
 
 export default displayCreatives;

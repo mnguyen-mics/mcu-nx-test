@@ -14,8 +14,8 @@ class EditableLogo extends Component {
   componentDidMount() {
     const {
       match: {
-        params: { organisationId }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     this.props.getLogoRequest({ organisationId });
@@ -46,7 +46,7 @@ class EditableLogo extends Component {
 
   handleUpload(organisationId, uploadData) {
     const {
-      putLogoRequest
+      putLogoRequest,
     } = this.props;
 
     const file = uploadData.file;
@@ -56,8 +56,8 @@ class EditableLogo extends Component {
   wrapInDraggerComponent(component) {
     const {
       match: {
-        params: { organisationId }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     return (<Dragger
@@ -73,7 +73,7 @@ class EditableLogo extends Component {
     const {
       mode,
       isUploadingLogo,
-      logoUrl
+      logoUrl,
     } = this.props;
 
     const insideComponent = (!logoUrl) ? this.buildDragLabel() : this.buildLogoImageWithUpload(logoUrl);
@@ -93,7 +93,7 @@ class EditableLogo extends Component {
 }
 
 EditableLogo.defaultProps = {
-  logoUrl: null
+  logoUrl: null,
 };
 
 EditableLogo.propTypes = {
@@ -102,22 +102,22 @@ EditableLogo.propTypes = {
   getLogoRequest: PropTypes.func.isRequired,
   putLogoRequest: PropTypes.func.isRequired,
   isUploadingLogo: PropTypes.bool.isRequired,
-  logoUrl: PropTypes.string
+  logoUrl: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
   isUploadingLogo: state.session.isUploadingLogo,
-  logoUrl: state.session.logoUrl
+  logoUrl: state.session.logoUrl,
 });
 
 const mapDispatchToProps = {
   getLogoRequest: getLogo.request,
-  putLogoRequest: putLogo.request
+  putLogoRequest: putLogo.request,
 };
 
 EditableLogo = compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withRouter
+  withRouter,
 )(EditableLogo);
 
 

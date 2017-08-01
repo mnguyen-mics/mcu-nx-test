@@ -1,11 +1,11 @@
 import {
-  LOG_IN
+  LOG_IN,
 } from '../action-types';
 
 const defaultLoginState = {
   isRequesting: false,
   hasError: false,
-  error: {}
+  error: {},
 };
 
 const login = (state = defaultLoginState, action) => {
@@ -15,13 +15,13 @@ const login = (state = defaultLoginState, action) => {
     case LOG_IN.REQUEST:
       return {
         ...state,
-        isRequesting: true
+        isRequesting: true,
       };
     case LOG_IN.FAILURE:
       return {
         isRequesting: false,
         hasError: true,
-        error: action.payload
+        error: action.payload,
       };
     case LOG_IN.SUCCESS:
       return defaultLoginState;
@@ -32,7 +32,7 @@ const login = (state = defaultLoginState, action) => {
 };
 
 const LoginStateReducers = {
-  login
+  login,
 };
 
 export default LoginStateReducers;

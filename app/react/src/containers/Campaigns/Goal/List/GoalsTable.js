@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   TableView,
   TableViewFilters,
-  EmptyTableView
+  EmptyTableView,
  } from '../../../../components/TableView';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
@@ -20,13 +20,13 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs
+  compareSearchs,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
 
 import {
-  getTableDataSource
+  getTableDataSource,
  } from '../../../../state/Campaigns/Goal/selectors';
 
 
@@ -44,21 +44,21 @@ class GoalsTable extends Component {
       history,
       location: {
         search,
-        pathname
+        pathname,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      loadGoalsDataSource
+      loadGoalsDataSource,
     } = this.props;
 
     if (!isSearchValid(search, GOAL_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, GOAL_SEARCH_SETTINGS),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -69,28 +69,28 @@ class GoalsTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      loadGoalsDataSource
+      loadGoalsDataSource,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -100,7 +100,7 @@ class GoalsTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, GOAL_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, GOAL_SEARCH_SETTINGS);
@@ -118,13 +118,13 @@ class GoalsTable extends Component {
       history,
       location: {
         search: currentSearch,
-        pathname
-      }
+        pathname,
+      },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, GOAL_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, GOAL_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -134,18 +134,18 @@ class GoalsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       translations,
       isFetchingGoals,
       isFetchingGoalsStat,
       dataSource,
       totalGoals,
-      hasGoals
+      hasGoals,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -154,9 +154,9 @@ class GoalsTable extends Component {
       isEnabled: true,
       placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
       onSearch: value => this.updateLocationSearch({
-        keywords: value
+        keywords: value,
       }),
-      defaultValue: filter.keywords
+      defaultValue: filter.keywords,
     };
 
     const dateRangePickerOptions = {
@@ -171,12 +171,12 @@ class GoalsTable extends Component {
         rangeType: filter.rangeType,
         lookbackWindow: filter.lookbackWindow,
         from: filter.from,
-        to: filter.to
-      }
+        to: filter.to,
+      },
     };
 
     const columnsVisibilityOptions = {
-      isEnabled: true
+      isEnabled: true,
     };
 
     const pagination = {
@@ -184,11 +184,11 @@ class GoalsTable extends Component {
       pageSize: filter.pageSize,
       total: totalGoals,
       onChange: (page) => this.updateLocationSearch({
-        currentPage: page
+        currentPage: page,
       }),
       onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+        pageSize: size,
+      }),
     };
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
@@ -204,22 +204,22 @@ class GoalsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>,
       },
       {
         translationKey: 'CONVERSIONS',
         key: 'conversions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CONVERSION_VALUE',
         key: 'value',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
-      }
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      },
     ];
 
     const actionColumns = [
@@ -228,13 +228,13 @@ class GoalsTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.handleEditGoal
+            callback: this.handleEditGoal,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.handleArchiveGoal
-          }
-        ]
-      }
+            callback: this.handleArchiveGoal,
+          },
+        ],
+      },
     ];
 
     const filtersOptions = [
@@ -244,20 +244,20 @@ class GoalsTable extends Component {
         menuItems: {
           handleMenuClick: value => {
             this.updateLocationSearch({
-              statuses: value.status.map(item => item.value)
+              statuses: value.status.map(item => item.value),
             });
           },
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
           items: [
-            { key: 'ARCHIVED', value: 'ARCHIVED' }
-          ]
-        }
-      }
+            { key: 'ARCHIVED', value: 'ARCHIVED' },
+          ],
+        },
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (hasGoals) ? (
@@ -283,10 +283,10 @@ class GoalsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      history
+      history,
     } = this.props;
 
     history.push(`/${organisationId}/goals/${goal.id}`);
@@ -296,15 +296,15 @@ class GoalsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       archiveGoal,
       loadGoalsDataSource,
-      translations
+      translations,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -327,7 +327,7 @@ class GoalsTable extends Component {
 }
 
 GoalsTable.defaultProps = {
-  archiveGoal: () => {}
+  archiveGoal: () => {},
 };
 
 GoalsTable.propTypes = {
@@ -360,12 +360,12 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   loadGoalsDataSource: GoalsActions.loadGoalsDataSource,
   // archiveGoal: GoalActions.archiveGoal,
-  resetGoalsTable: GoalsActions.resetGoalsTable
+  resetGoalsTable: GoalsActions.resetGoalsTable,
 };
 
 GoalsTable = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(GoalsTable);
 
 GoalsTable = withRouter(GoalsTable);

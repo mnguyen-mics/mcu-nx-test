@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 
 import ExportService from '../../../../services/ExportService';
 import GoalService from '../../../../services/GoalService';
@@ -26,7 +26,7 @@ const fetchExportData = (organisationId, filter) => {
     const options = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
-      max_results: 2000
+      max_results: 2000,
     };
 
     if (filter.keywords) { options.keywords = filter.keywords; }
@@ -40,20 +40,20 @@ const fetchExportData = (organisationId, filter) => {
 
   const apiResults = Promise.all([
     GoalService.getGoals(organisationId, buildOptionsForGetGoals()),
-    ReportService.getConversionPerformanceReport(organisationId, startDate, endDate, dimension)
+    ReportService.getConversionPerformanceReport(organisationId, startDate, endDate, dimension),
   ]);
 
   return apiResults.then(results => {
     const goals = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
-      'goal_id'
+      'goal_id',
     );
 
     const mergedData = Object.keys(goals).map((goalId) => {
       return {
         ...goals[goalId],
-        ...performanceReport[goalId]
+        ...performanceReport[goalId],
       };
     });
 
@@ -67,7 +67,7 @@ class GoalsActionbar extends Component {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
     this.state = {
-      exportIsRunning: false
+      exportIsRunning: false,
     };
   }
 
@@ -75,8 +75,8 @@ class GoalsActionbar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       translations,
     } = this.props;
@@ -89,13 +89,13 @@ class GoalsActionbar extends Component {
     fetchExportData(organisationId, filter).then(data => {
       ExportService.exportGoals(organisationId, data, filter, translations);
       this.setState({
-        exportIsRunning: false
+        exportIsRunning: false,
       });
       hideExportLoadingMsg();
     }).catch(() => {
       // TODO notify error
       this.setState({
-        exportIsRunning: false
+        exportIsRunning: false,
       });
       hideExportLoadingMsg();
     });
@@ -107,10 +107,10 @@ class GoalsActionbar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      translations
+      translations,
     } = this.props;
 
 

@@ -11,26 +11,26 @@ const audienceMenu = {
     {
       key: 'audience_segments',
       path: '/audience/segments',
-      translationId: 'AUDIENCE_SEGMENTS'
+      translationId: 'AUDIENCE_SEGMENTS',
     },
     {
       key: 'audience_partitions',
       path: '/audience/partitions',
-      translationId: 'AUDIENCE_PARTITIONS'
+      translationId: 'AUDIENCE_PARTITIONS',
     },
     {
       key: 'audience_queries',
       path: '/datamart/queries',
       translationId: 'QUERY_TOOL',
-      legacyPath: true
+      legacyPath: true,
     },
     {
       key: 'audience_monitoring',
       path: '/datamart/monitoring',
       translationId: 'MONITORING',
-      legacyPath: true
-    }
-  ]
+      legacyPath: true,
+    },
+  ],
 };
 
 const campaignsMenu = {
@@ -42,26 +42,26 @@ const campaignsMenu = {
     {
       key: 'campaigns_display',
       path: '/campaigns/display',
-      translationId: 'DISPLAY'
+      translationId: 'DISPLAY',
     },
     {
       key: 'campaigns_emails',
       path: '/campaigns/email',
-      translationId: 'EMAILS'
+      translationId: 'EMAILS',
     },
     {
       key: 'campaigns_goals',
       path: '/campaigns/goal',
-      translationId: 'GOALS'
-    }
-  ]
+      translationId: 'GOALS',
+    },
+  ],
 };
 
 const automationsMenu = {
   key: 'automations',
   iconType: 'automation',
   path: '/automations',
-  translationId: 'AUTOMATIONS_LIST'
+  translationId: 'AUTOMATIONS_LIST',
 };
 
 const creativesMenu = {
@@ -73,14 +73,14 @@ const creativesMenu = {
     {
       key: 'creatives_display_ads',
       path: '/creatives/display',
-      translationId: 'DISPLAY'
+      translationId: 'DISPLAY',
     },
     {
       key: 'creatives_email_templates',
       path: '/creatives/email',
-      translationId: 'EMAILS'
-    }
-  ]
+      translationId: 'EMAILS',
+    },
+  ],
 };
 
 const libraryMenu = {
@@ -92,61 +92,61 @@ const libraryMenu = {
     {
       key: 'library_placements',
       path: '/library/placements',
-      translationId: 'PLACEMENT_LIST'
+      translationId: 'PLACEMENT_LIST',
     },
     {
       key: 'library_keywords',
       path: '/library/keywords',
-      translationId: 'KEYWORD_LIST'
+      translationId: 'KEYWORD_LIST',
     },
     {
       key: 'library_bidOptimizers',
       path: '/library/bidOptimizers',
       translationId: 'BID_OPTIMIZER',
-      legacyPath: true
+      legacyPath: true,
     },
     {
       key: 'library_attributionmodels',
       path: '/library/attributionmodels',
       translationId: 'ATTRIBUTION_MODEL',
-      legacyPath: true
+      legacyPath: true,
     },
     {
       key: 'library_visitanalysers',
       path: '/library/visitanalysers',
       translationId: 'VISIT_ANALYZER',
-      legacyPath: true
+      legacyPath: true,
     },
     {
       key: 'library_catalog',
       path: '/datamart/items',
       translationId: 'CATALOG',
-      legacyPath: true
+      legacyPath: true,
     },
     {
       key: 'library_adlayouts',
       path: '/library/adlayouts',
       translationId: 'AD_LAYOUTS',
-      legacyPath: true
+      legacyPath: true,
     },
     {
       key: 'library_stylesheets',
       path: '/library/stylesheets',
       translationId: 'STYLESHEETS',
-      legacyPath: true
+      legacyPath: true,
     },
     {
       key: 'library_assets',
       path: '/library/assets',
-      translationId: 'ASSETS'
+      translationId: 'ASSETS',
     },
     {
       key: 'library_exports',
       path: '/library/exports',
       translationId: 'EXPORTS',
-      legacyPath: true
+      legacyPath: true,
     },
-  ]
+  ],
 };
 
 export const itemDefinitions = [
@@ -154,5 +154,5 @@ export const itemDefinitions = [
   campaignsMenu,
   automationsMenu,
   creativesMenu,
-  libraryMenu
+  libraryMenu,
 ];

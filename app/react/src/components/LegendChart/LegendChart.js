@@ -1,10 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Plottable from 'plottable';
 
 class LegendChart extends Component {
 
   constructor(props) {
     super(props);
+
     this.legend = null;
   }
 
@@ -20,32 +22,22 @@ class LegendChart extends Component {
     this.legend.redraw();
   }
 
-  render() {
-    const {
-      identifier,
-    } = this.props;
-
-    return (
-      <div className="mcs-legend-container">
-        <div ref={svg => { this.svg = svg; }} id={identifier} className="mcs-legend-svg" />
-      </div>
-    );
-  }
-
   renderLegend() {
     const {
       identifier,
       options: {
         colors,
-        domains
-      }
+        domains,
+      },
     } = this.props;
 
     const cs = new Plottable.Scales.Color();
     cs.range(colors);
     cs.domain(domains);
+
     const legend = new Plottable.Components.Legend(cs);
     const circleFactory = Plottable.SymbolFactories.circle();
+
     legend.symbol(() => circleFactory);
     legend.xAlignment('left');
     legend.yAlignment('center');
@@ -57,6 +49,16 @@ class LegendChart extends Component {
       legend.redraw();
     });
   }
+
+  render() {
+    const { identifier } = this.props;
+
+    return (
+      <div className="mcs-legend-container">
+        <div ref={svg => { this.svg = svg; }} id={identifier} className="mcs-legend-svg" />
+      </div>
+    );
+  }
 }
 
 
@@ -64,8 +66,8 @@ LegendChart.propTypes = {
   identifier: PropTypes.string.isRequired,
   options: PropTypes.shape({
     colors: PropTypes.arrayOf(PropTypes.string),
-    domains: PropTypes.arrayOf(PropTypes.string)
-  }).isRequired
+    domains: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
 };
 
 export default LegendChart;

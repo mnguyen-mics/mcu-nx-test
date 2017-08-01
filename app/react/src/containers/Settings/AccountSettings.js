@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Row, Tabs } from 'antd';
@@ -17,14 +18,14 @@ class AccountSettings extends Component {
     const { openCloseMenu } = this.props;
     openCloseMenu({
       collapsed: true,
-      mode: 'verlical'
+      mode: 'verlical',
     });
   }
 
   render() {
     const {
       intl: { formatMessage },
-      organisationName
+      organisationName,
     } = this.props;
 
     const messages = defineMessages({ userAccount: { id: 'settings.tab.title.user_account', defaultMessage: 'User Account' },
@@ -49,23 +50,23 @@ class AccountSettings extends Component {
 AccountSettings.propTypes = {
   organisationName: PropTypes.string.isRequired,
   openCloseMenu: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  organisationName: getDefaultWorspaceOrganisationId(state)
+  organisationName: getDefaultWorspaceOrganisationId(state),
 });
 
 const mapDispatchToProps = {
-  openCloseMenu: menuActions.openCloseMenu
+  openCloseMenu: menuActions.openCloseMenu,
 };
 
 AccountSettings = compose(
   injectIntl,
   connect(
     mapStateToProps,
-    mapDispatchToProps
-  )
+    mapDispatchToProps,
+  ),
 )(AccountSettings);
 
 export default AccountSettings;

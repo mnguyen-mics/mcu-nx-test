@@ -1,21 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Row } from 'antd';
 import BreadcrumbBar from './BreadcrumbBar';
 
-class Actionbar extends Component {
+function Actionbar(props) {
 
-  render() {
-
-    return (
-      <Row type="flex" align="middle" justify="space-between" className="mcs-actionbar">
-        <BreadcrumbBar {...this.props} />
-        <div className="left-part-margin">
-          {this.props.children}
-        </div>
-      </Row>
-    );
-  }
-
+  return (
+    <Row type="flex" align="middle" justify="space-between" className="mcs-actionbar">
+      <BreadcrumbBar {...props} />
+      <div className="left-part-margin">
+        {props.children}
+      </div>
+    </Row>
+  );
 }
 
 export default Actionbar;

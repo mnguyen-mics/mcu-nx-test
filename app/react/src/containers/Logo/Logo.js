@@ -13,8 +13,8 @@ class Logo extends Component {
   componentDidMount() {
     const {
       match: {
-        params: { organisationId }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     this.props.getLogoRequest({ organisationId });
@@ -23,13 +23,13 @@ class Logo extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       match: {
-        params: { organisationId }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     const {
       match: {
-        params: { organisationId: nextOrganisationId }
+        params: { organisationId: nextOrganisationId },
       },
     } = nextProps;
 
@@ -42,7 +42,7 @@ class Logo extends Component {
   render() {
     const {
       mode,
-      logoUrl
+      logoUrl,
     } = this.props;
 
     return (
@@ -67,20 +67,20 @@ Logo.propTypes = {
   mode: PropTypes.string.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   logoUrl: PropTypes.string,
-  getLogoRequest: PropTypes.func.isRequired
+  getLogoRequest: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  logoUrl: state.session.logoUrl
+  logoUrl: state.session.logoUrl,
 });
 
 const mapDispatchToProps = {
-  getLogoRequest: getLogo.request
+  getLogoRequest: getLogo.request,
 };
 
 Logo = compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withRouter
+  withRouter,
 )(Logo);
 
 export default Logo;

@@ -11,27 +11,27 @@ const getEmailBlastReportView = state => state.campaignEmailSingle.emailBlastPer
 
 const getTableDataSource = createSelector(
   getEmailPerformanceData,
-  normalizeReportView
+  normalizeReportView,
 );
 
 const flattenData = createSelector(
   getTableDataSource,
-  formatNormalizeReportView
+  formatNormalizeReportView,
 );
 
 const getEmailBlastById = createSelector(
   getEmailBlast,
-  emailBlast => normalizeArrayOfObject(emailBlast, 'id')
+  emailBlast => normalizeArrayOfObject(emailBlast, 'id'),
 );
 
 const convertDeliveryReportToObjectArray = createSelector(
   getEmailBlastReportView,
-  (reportView) => normalizeReportView(reportView)
+  (reportView) => normalizeReportView(reportView),
 );
 
 const getStatByBlastId = createSelector(
   convertDeliveryReportToObjectArray,
-  (array) => normalizeArrayOfObject(array, 'blast_id')
+  (array) => normalizeArrayOfObject(array, 'blast_id'),
 );
 
 const getEmailBlastTableView = createSelector(
@@ -41,14 +41,14 @@ const getEmailBlastTableView = createSelector(
     return Object.keys(emailBlast).map((blastId) => {
       return {
         ...statistics[blastId],
-        ...emailBlast[blastId]
+        ...emailBlast[blastId],
       };
     });
-  }
+  },
 );
 
 export {
   getTableDataSource,
   flattenData,
-  getEmailBlastTableView
+  getEmailBlastTableView,
 };

@@ -7,7 +7,7 @@ import { Form, Button } from 'antd';
 import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-intl';
 
 import {
-  FormInput
+  FormInput,
 } from '../../../components/Form';
 import * as SettingsActions from '../../../state/Settings/actions';
 
@@ -23,7 +23,7 @@ class UserAccount extends Component {
     const {
         handleSubmit,
         updateUserProfile,
-        intl: { formatMessage }
+        intl: { formatMessage },
     } = this.props;
 
     const saveButton = this.buildSaveActionElement();
@@ -38,7 +38,7 @@ class UserAccount extends Component {
     });
 
     const invalidMessages = defineMessages({ invalidEmail: { id: 'settings.invalid_email', defaultMessage: 'Invalid email address' },
-      requiredField: { id: 'settings.required_field', defaultMessage: 'Required' }
+      requiredField: { id: 'settings.required_field', defaultMessage: 'Required' },
     });
 
     const isRequired = value => (value ? undefined : formatMessage(invalidMessages.requiredField));
@@ -50,7 +50,7 @@ class UserAccount extends Component {
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 }
+      wrapperCol: { span: 10, offset: 1 },
     };
 
     const userFields = [{ fieldName: 'first_name', label: formMessages.firstnameInputLabel, placeholder: formMessages.firstnameInputPlaceholder, invalidCallback: isRequired },
@@ -72,11 +72,11 @@ class UserAccount extends Component {
             formItemProps: {
               label: formatMessage(userField.label),
               required: true,
-              ...fieldGridConfig
+              ...fieldGridConfig,
             },
             inputProps: {
-              placeholder: formatMessage(userField.placeholder)
-            }
+              placeholder: formatMessage(userField.placeholder),
+            },
           }}
         />);
       })
@@ -88,27 +88,27 @@ class UserAccount extends Component {
 UserAccount.propTypes = {
   updateUserProfile: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = state => ({
-  initialValues: state.session.connectedUser
+  initialValues: state.session.connectedUser,
 });
 
 const mapDispatchToProps = {
-  updateUserProfile: SettingsActions.saveProfile.request
+  updateUserProfile: SettingsActions.saveProfile.request,
 };
 
 UserAccount = compose(
   reduxForm({
-    form: 'userAccountEdit'
+    form: 'userAccountEdit',
   }),
-  injectIntl
+  injectIntl,
 )(UserAccount);
 
 UserAccount = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(UserAccount);
 
 export default UserAccount;

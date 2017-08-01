@@ -4,8 +4,8 @@ import { injectIntl, defineMessages } from 'react-intl';
 const defaultErrorMessages = defineMessages({
   required: {
     id: 'common.form.field.error.required',
-    defaultMessage: 'required'
-  }
+    defaultMessage: 'required',
+  },
 });
 
 const isRequired = formatMessage => value => {
@@ -19,9 +19,9 @@ const withValidators = compose(
   injectIntl,
   withProps(({ intl: { formatMessage } }) => ({
     fieldValidators: {
-      isRequired: isRequired(formatMessage)
-    }
-  }))
+      isRequired: isRequired(formatMessage),
+    },
+  })),
 );
 
 export default withValidators;

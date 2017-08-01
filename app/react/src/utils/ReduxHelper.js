@@ -5,14 +5,14 @@ const FAILURE = 'FAILURE';
 export const createRequestTypes = base => {
   return [REQUEST, SUCCESS, FAILURE].reduce((acc, type) => ({
     ...acc,
-    [type]: `${base}_${type}`
+    [type]: `${base}_${type}`,
   }), {});
 };
 
 const defaultMetadata = {
   isFetching: false,
   error: false,
-  total: 0
+  total: 0,
 };
 
 export const createRequestMetadataReducer = requestTypes => (state = defaultMetadata, action) => {
@@ -20,21 +20,20 @@ export const createRequestMetadataReducer = requestTypes => (state = defaultMeta
     case requestTypes.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case requestTypes.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        total: action.payload.total
+        total: action.payload.total,
       };
     case requestTypes.FAILURE:
       return {
         ...state,
         isFetching: false,
-        error: action.payload
+        error: action.payload,
       };
     default: return state;
   }
 };
-

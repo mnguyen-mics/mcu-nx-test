@@ -5,5 +5,5 @@ import ReactRouterPropTypes from './ReactRouterPropTypes';
 export {
   PathPropTypes,
   GoalPropTypes,
-  ReactRouterPropTypes
+  ReactRouterPropTypes,
 };

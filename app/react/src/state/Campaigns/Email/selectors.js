@@ -8,17 +8,17 @@ const getDeliveryReportView = state => state.campaignsEmailTable.deliveryReportA
 
 const getCampaignsEmailById = createSelector(
   getCampaignsEmail,
-  campaignsEmail => normalizeArrayOfObject(campaignsEmail, 'id')
+  campaignsEmail => normalizeArrayOfObject(campaignsEmail, 'id'),
 );
 
 const convertDeliveryReportToObjectArray = createSelector(
   getDeliveryReportView,
-  (reportView) => normalizeReportView(reportView)
+  (reportView) => normalizeReportView(reportView),
 );
 
 const getStatByCampaignId = createSelector(
   convertDeliveryReportToObjectArray,
-  (array) => normalizeArrayOfObject(array, 'campaign_id')
+  (array) => normalizeArrayOfObject(array, 'campaign_id'),
 );
 
 const getTableDataSource = createSelector(
@@ -28,12 +28,12 @@ const getTableDataSource = createSelector(
     return Object.keys(campaignsEmail).map((campaignId) => {
       return {
         ...statistics[campaignId],
-        ...campaignsEmail[campaignId]
+        ...campaignsEmail[campaignId],
       };
     });
-  }
+  },
 );
 
 export {
-  getTableDataSource
+  getTableDataSource,
 };

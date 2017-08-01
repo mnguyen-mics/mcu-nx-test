@@ -11,7 +11,7 @@ import { Layout, Form, Row, Button } from 'antd';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
 import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
@@ -24,27 +24,21 @@ const { Content, Sider } = Layout;
 class EmailEditor extends Component {
   constructor(props) {
     super(props);
-    this.handleCliclOnNewBlast = this.handleCliclOnNewBlast.bind(this);
-    this.handleClickOnEditBlast = this.handleClickOnEditBlast.bind(this);
-    this.handleClickOnRemoveBlast = this.handleClickOnRemoveBlast.bind(this);
-    this.handleAddBlast = this.handleAddBlast.bind(this);
-    this.handleEditBlast = this.handleEditBlast.bind(this);
-    this.handleSaveEmailCampaign = this.handleSaveEmailCampaign.bind(this);
 
     this.state = {
       routerOptions: [],
-      blasts: []
+      blasts: [],
     };
   }
 
   componentDidMount() {
     const {
-      match: { params: { organisationId } }
+      match: { params: { organisationId } },
     } = this.props;
 
     EmailRouterService.getRouters(organisationId).then((response) => {
       this.setState({
-        routerOptions: response.data
+        routerOptions: response.data,
       });
     });
   }
@@ -57,88 +51,88 @@ class EmailEditor extends Component {
     }
   }
 
-  handleAddBlast({ blast }) {
+  handleAddBlast = ({ blast }) => {
     const { closeNextDrawer } = this.props;
 
     const addedBlast = {
       ...blast,
-      id: generateFakeId()
+      id: generateFakeId(),
     };
 
     this.setState(prevState => {
       return {
         blasts: [
           ...prevState.blasts,
-          addedBlast
-        ]
+          addedBlast,
+        ],
       };
     });
 
     closeNextDrawer();
   }
 
-  handleEditBlast({ blast }) {
+  handleEditBlast = ({ blast }) => {
     const { closeNextDrawer } = this.props;
 
     this.setState(prevState => {
       return {
         blasts: [
           ...prevState.blasts.filter(b => b.id !== blast.id),
-          { ...blast, isEdited: !isFakeId(blast.id) }
-        ]
+          { ...blast, isEdited: !isFakeId(blast.id) },
+        ],
       };
     });
     closeNextDrawer();
   }
 
-  handleClickOnEditBlast(blast) {
+  handleClickOnEditBlast = (blast) => {
     const {
       openNextDrawer,
-      closeNextDrawer
+      closeNextDrawer,
     } = this.props;
 
     const emailBlastEditorProps = {
       save: this.handleEditBlast,
       close: closeNextDrawer,
       initialValues: { blast },
-      segments: blast.segments
-    };
-
-    const options = {
-      additionalProps: emailBlastEditorProps
-    };
-
-    openNextDrawer(EmailBlastEditor, options);
-  }
-
-  handleCliclOnNewBlast() {
-    const { openNextDrawer, closeNextDrawer } = this.props;
-
-    const emailBlastEditorProps = {
-      save: this.handleAddBlast,
-      close: closeNextDrawer
+      segments: blast.segments,
     };
 
     const options = {
       additionalProps: emailBlastEditorProps,
-      isModal: true
     };
 
     openNextDrawer(EmailBlastEditor, options);
   }
 
-  handleClickOnRemoveBlast(blast) {
+  handleCliclOnNewBlast = () => {
+    const { openNextDrawer, closeNextDrawer } = this.props;
+
+    const emailBlastEditorProps = {
+      save: this.handleAddBlast,
+      close: closeNextDrawer,
+    };
+
+    const options = {
+      additionalProps: emailBlastEditorProps,
+      isModal: true,
+    };
+
+    openNextDrawer(EmailBlastEditor, options);
+  }
+
+  handleClickOnRemoveBlast = (blast) => {
     this.setState(prevState => {
       if (isFakeId(blast.id)) {
         return {
-          blasts: prevState.blasts.filter(b => b.id !== blast.id)
+          blasts: prevState.blasts.filter(b => b.id !== blast.id),
         };
       }
       return {
         blasts: [
           ...prevState.blasts.filter(b => b.id !== blast.id),
-          { ...blast, isDeleted: true }
-        ]
+          { ...blast, isDeleted: true },
+        ],
       };
     });
   }
@@ -155,7 +149,7 @@ class EmailEditor extends Component {
           title={blast.blast_name}
           actionButtons={[
             { iconType: 'edit', onClick: () => this.handleClickOnEditBlast(blast) },
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveBlast(blast) }
+            { iconType: 'delete', onClick: () => this.handleClickOnRemoveBlast(blast) },
           ]}
         >
           <span>
@@ -168,13 +162,13 @@ class EmailEditor extends Component {
     return blastRecords;
   }
 
-  handleSaveEmailCampaign(formValues) {
+  handleSaveEmailCampaign = (formValues) => {
     const { save } = this.props;
     const { blasts } = this.state;
 
     const emailEditorData = {
       ...formValues.campaign,
-      blasts
+      blasts,
     };
 
     save(emailEditorData);
@@ -184,21 +178,21 @@ class EmailEditor extends Component {
     const {
       match: {
         url,
-        params: { organisationId, campaignId }
+        params: { organisationId, campaignId },
       },
       intl: { formatMessage },
       handleSubmit,
       submitting,
       dirty,
       fieldValidators: { isRequired },
-      campaignName
+      campaignName,
     } = this.props;
 
     const { routerOptions } = this.state;
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 }
+      wrapperCol: { span: 10, offset: 1 },
     };
 
     const hasUnsavedChange = dirty; // dirty is for redux-form only, TODO handle wider email campaign modifiction (blasts)
@@ -206,24 +200,36 @@ class EmailEditor extends Component {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.emailEditorBreadcrumbTitle1),
-        url: `/v2/o/${organisationId}/campaigns/email`
+        url: `/v2/o/${organisationId}/campaigns/email`,
       },
-      { name: `${campaignId ? formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, { campaignName: campaignName }) : formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle)}${hasUnsavedChange ? '*' : ''}` }
+      { name: `${campaignId ? formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, { campaignName: campaignName }) : formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle)}${hasUnsavedChange ? '*' : ''}` },
     ];
 
     return (
       <Layout>
-        <Form className="edit-layout ant-layout" onSubmit={handleSubmit(this.handleSaveEmailCampaign)}>
+        <Form
+          className="edit-layout ant-layout"
+          onSubmit={handleSubmit(this.handleSaveEmailCampaign)}
+        >
           <Actionbar path={breadcrumbPaths}>
             <Button type="primary" htmlType="submit" disabled={submitting}>
               <McsIcons type="plus" />
               <FormattedMessage {...messages.emailEditorSaveCampaign} />
             </Button>
-            <McsIcons type="close" className="close-icon" style={{ cursor: 'pointer' }} onClick={this.props.close} />
+            <McsIcons
+              type="close"
+              className="close-icon"
+              style={{ cursor: 'pointer' }}
+              onClick={this.props.close}
+            />
           </Actionbar>
           <Layout>
             <Sider className="stepper">
-              <Scrollspy rootEl="#emailCampaignSteps" items={['general', 'router', 'blasts']} currentClassName="currentStep">
+              <Scrollspy
+                rootEl="#emailCampaignSteps"
+                items={['general', 'router', 'blasts']}
+                currentClassName="currentStep"
+              >
                 <li>
                   <Link to={`${url}#general`}>
                     <McsIcons type="check-rounded-inverted" />
@@ -244,9 +250,17 @@ class EmailEditor extends Component {
                 </li>
               </Scrollspy>
             </Sider>
-            <Content id={'emailCampaignSteps'} className="mcs-content-container mcs-form-container">
+            <Content
+              id={'emailCampaignSteps'}
+              className="mcs-content-container mcs-form-container"
+            >
               <div id={'general'}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
+                <Row
+                  type="flex"
+                  align="middle"
+                  justify="space-between"
+                  className="section-header"
+                >
                   <FormTitle
                     titleMessage={messages.emailEditorGeneralInformationTitle}
                     subTitleMessage={messages.emailEditorGeneralInformationSubTitle}
@@ -261,14 +275,14 @@ class EmailEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailEditorNameInputLabel),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: formatMessage(messages.emailEditorNameInputPlaceholder)
+                        placeholder: formatMessage(messages.emailEditorNameInputPlaceholder),
                       },
                       helpToolTipProps: {
-                        title: 'Campaign name'
-                      }
+                        title: 'Campaign name',
+                      },
                     }}
                   />
                   <Field
@@ -279,14 +293,14 @@ class EmailEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder)
+                        placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder),
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
-                      }
+                        title: 'Campaign technical name',
+                      },
                     }}
                   />
                 </Row>
@@ -294,7 +308,10 @@ class EmailEditor extends Component {
               <hr />
               <div id={'router'}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle titleMessage={messages.emailEditorRouterTitle} subTitleMessage={messages.emailEditorRouterSubTitle} />
+                  <FormTitle
+                    titleMessage={messages.emailEditorRouterTitle}
+                    subTitleMessage={messages.emailEditorRouterSubTitle}
+                  />
                 </Row>
                 <Row>
                   <Field
@@ -305,16 +322,16 @@ class EmailEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailEditorRouterSelectLabel),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       options: routerOptions.map(router => ({
                         key: router.id,
                         value: router.id,
-                        text: router.name
+                        text: router.name,
                       })),
                       helpToolTipProps: {
-                        title: 'Choose your route'
-                      }
+                        title: 'Choose your route',
+                      },
                     }}
                   />
                 </Row>
@@ -322,13 +339,18 @@ class EmailEditor extends Component {
               <hr />
               <div id={'blasts'}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle titleMessage={messages.emailEditorEmailBlastTitle} subTitleMessage={messages.emailEditorEmailBlastSubTitle} />
+                  <FormTitle
+                    titleMessage={messages.emailEditorEmailBlastTitle}
+                    subTitleMessage={messages.emailEditorEmailBlastSubTitle}
+                  />
                   <Button onClick={this.handleCliclOnNewBlast}>
                     New Blast
                   </Button>
                 </Row>
                 <Row>
-                  <RelatedRecords emptyOption={{ message: formatMessage(messages.emailEditorEmailBlastEmpty) }}>
+                  <RelatedRecords
+                    emptyOption={{ message: formatMessage(messages.emailEditorEmailBlastEmpty) }}
+                  >
                     {this.getBlastRecords()}
                   </RelatedRecords>
                 </Row>
@@ -343,7 +365,7 @@ class EmailEditor extends Component {
 
 EmailEditor.defaultProps = {
   blasts: [],
-  campaignName: ''
+  campaignName: '',
 };
 
 EmailEditor.propTypes = {
@@ -352,13 +374,13 @@ EmailEditor.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   dirty: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
-  fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  fieldValidators: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
   campaignName: PropTypes.string,
-  blasts: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
+  blasts: PropTypes.arrayOf(PropTypes.shape()),
 };
 
 EmailEditor = compose(
@@ -366,9 +388,9 @@ EmailEditor = compose(
   withMcsRouter,
   reduxForm({
     form: 'emailEditor',
-    enableReinitialize: true
+    enableReinitialize: true,
   }),
-  withValidators
+  withValidators,
 )(EmailEditor);
 
 export default EmailEditor;

@@ -9,12 +9,12 @@ class OrganisationAccount extends Component {
 
   render() {
     const {
-        organisationName
+        organisationName,
     } = this.props;
 
     const fieldGridConfig = {
       labelCol: { span: 4 },
-      wrapperCol: { span: 10, offset: 1 }
+      wrapperCol: { span: 10, offset: 1 },
     };
 
     return (<div>
@@ -38,7 +38,7 @@ class OrganisationAccount extends Component {
 }
 
 OrganisationAccount.propTypes = {
-  organisationName: PropTypes.string.isRequired
+  organisationName: PropTypes.string.isRequired,
 };
 
 export default OrganisationAccount;

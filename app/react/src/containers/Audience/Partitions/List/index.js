@@ -3,5 +3,5 @@ import PartitionsActionbar from './PartitionsActionbar';
 
 export {
   AudiencePartitionsTable,
-  PartitionsActionbar
+  PartitionsActionbar,
 };

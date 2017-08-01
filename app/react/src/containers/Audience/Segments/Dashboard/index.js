@@ -3,5 +3,5 @@ import AudienceSegment from './AudienceSegment';
 
 export {
     AudienceSegment,
-    AudienceSegmentActionbar
+    AudienceSegmentActionbar,
 };

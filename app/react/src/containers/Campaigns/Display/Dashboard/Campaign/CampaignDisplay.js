@@ -9,17 +9,16 @@ import CampaignDisplayHeader from '../Common/CampaignDisplayHeader';
 import CampaignDisplayDashboard from './CampaignDisplayDashboard';
 import CampaignDisplayAdGroupTable from './CampaignDisplayAdGroupTable';
 import CampaignDisplayAdTable from '../Common/CampaignDisplayAdTable';
-import { Card } from '../../../../../components/Card';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
+import Card from '../../../../../components/Card/Card';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import CampaignDisplayActionbar from './CampaignDisplayActionbar';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
-
 import {
   parseSearch,
-  updateSearch
+  updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
 const { Content } = Layout;
@@ -32,7 +31,7 @@ class CampaignDisplay extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -42,9 +41,9 @@ class CampaignDisplay extends Component {
     const {
       history: {
         location: {
-          search
-        }
-      }
+          search,
+        },
+      },
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -53,7 +52,7 @@ class CampaignDisplay extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
@@ -70,7 +69,7 @@ class CampaignDisplay extends Component {
 
     const {
       match: {
-        params: { organisationId }
+        params: { organisationId },
       },
       campaign,
       ads,
@@ -80,8 +79,8 @@ class CampaignDisplay extends Component {
       updateCampaign,
       dashboardPerformance,
       intl: {
-        formatMessage
-      }
+        formatMessage,
+      },
     } = this.props;
 
     const adGroupButtons = (
@@ -123,9 +122,9 @@ class CampaignDisplay extends Component {
 }
 
 CampaignDisplay.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   ads: PropTypes.shape({
     isLoadingList: PropTypes.bool,
     isLoadingPerf: PropTypes.bool,
@@ -151,17 +150,17 @@ CampaignDisplay.propTypes = {
       isLoading: PropTypes.bool,
       hasFetched: PropTypes.bool,
       items: PropTypes.arrayOf(PropTypes.object),
-    })
+    }),
   }).isRequired,
   updateCampaign: PropTypes.func.isRequired,
   updateAdGroup: PropTypes.func.isRequired,
   updateAd: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 CampaignDisplay = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(CampaignDisplay);
 
 export default CampaignDisplay;

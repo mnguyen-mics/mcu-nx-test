@@ -12,10 +12,10 @@ class AccountSettingsActionBar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const breadcrumbMessages = defineMessages({ settings: { id: 'settings.settings', defaultMessage: 'Settings' } });
@@ -31,12 +31,12 @@ class AccountSettingsActionBar extends Component {
 
 AccountSettingsActionBar.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 AccountSettingsActionBar = compose(
   withRouter,
-  injectIntl
+  injectIntl,
 )(AccountSettingsActionBar);
 
 export default AccountSettingsActionBar;

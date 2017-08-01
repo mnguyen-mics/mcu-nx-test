@@ -10,5 +10,5 @@ const getDatafileData = (dataFilePath) => {
 };
 
 export default {
-  getDatafileData
+  getDatafileData,
 };

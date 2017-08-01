@@ -5,7 +5,7 @@ import log from '../../../utils/Logger';
 
 import {
   fetchGoals,
-  fetchGoalsPerformanceReport
+  fetchGoalsPerformanceReport,
 } from './actions';
 
 import GoalService from '../../../services/GoalService';
@@ -16,7 +16,7 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import {
   GOALS_FETCH,
   GOALS_LOAD_ALL,
-  GOALS_PERFORMANCE_REPORT_FETCH
+  GOALS_PERFORMANCE_REPORT_FETCH,
 } from '../../action-types';
 
 function* loadPerformanceReport({ payload }) {
@@ -24,7 +24,7 @@ function* loadPerformanceReport({ payload }) {
 
     const {
       organisationId,
-      filter
+      filter,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
@@ -48,20 +48,20 @@ function* loadGoals({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
       archived: filter.statuses.includes('ARCHIVED'),
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     if (filter.keywords) { options.keywords = filter.keywords; }
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -69,11 +69,11 @@ function* loadGoals({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(GoalService.getGoals, organisationId, initialOptions),
-        response: call(GoalService.getGoals, organisationId, options)
+        response: call(GoalService.getGoals, organisationId, options),
       };
     } else {
       allCalls = {
-        response: call(GoalService.getGoals, organisationId, options)
+        response: call(GoalService.getGoals, organisationId, options),
       };
     }
 
@@ -110,5 +110,5 @@ function* watchLoadGoalsAndPerformance() {
 export const goalsSagas = [
   fork(watchFetchGoals),
   fork(watchFetchPerformanceReport),
-  fork(watchLoadGoalsAndPerformance)
+  fork(watchLoadGoalsAndPerformance),
 ];

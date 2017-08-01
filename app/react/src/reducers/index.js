@@ -46,7 +46,7 @@ const allReducers = Object.assign({},
   KeywordListsReducers,
   AssetsFilesReducers,
   MenuReducers,
-  creativesReducer
+  creativesReducer,
 );
 
 export default combineReducers(allReducers);

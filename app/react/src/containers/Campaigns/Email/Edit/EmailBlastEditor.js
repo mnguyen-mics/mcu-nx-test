@@ -9,7 +9,7 @@ import { Layout, Button, Form, Row, Dropdown, Menu } from 'antd';
 import moment from 'moment';
 
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
 import { isFakeId } from '../../../../utils/FakeIdHelper';
@@ -27,7 +27,7 @@ class EmailBlastEditor extends Component {
 
     this.state = {
       consents: [],
-      segments: []
+      segments: [],
     };
   }
 
@@ -38,7 +38,7 @@ class EmailBlastEditor extends Component {
 
     ConsentService.getConsents(organisationId).then((response) => {
       this.setState({
-        consents: response.data
+        consents: response.data,
       });
     });
   }
@@ -58,7 +58,7 @@ class EmailBlastEditor extends Component {
     const buildSegmentSelection = segment => ({
       id: segment.id,
       name: segment.name,
-      technical_name: segment.technical_name
+      technical_name: segment.technical_name,
     });
 
     const deselectedSegmentIds = segments.filter(segment => audienceSegments.map(s => s.id).indexOf(segment.id) < 0).map(s => s.id);
@@ -67,8 +67,8 @@ class EmailBlastEditor extends Component {
       return {
         segments: [
           ...prevState.segments.filter(s => deselectedSegmentIds.indexOf(s.id) < 0),
-          ...newSegments.map(s => buildSegmentSelection(s))
-        ]
+          ...newSegments.map(s => buildSegmentSelection(s)),
+        ],
       };
     });
   }
@@ -81,14 +81,14 @@ class EmailBlastEditor extends Component {
     this.setState(prevState => {
       if (isFakeId(segment.id)) {
         return {
-          segments: prevState.segments.filter(s => s.id !== segment.id)
+          segments: prevState.segments.filter(s => s.id !== segment.id),
         };
       }
       return {
         segments: [
           ...prevState.segments.filter(s => s.id !== segment.id),
-          { ...segment, isDeleted: true }
-        ]
+          { ...segment, isDeleted: true },
+        ],
       };
     });
   }
@@ -104,7 +104,7 @@ class EmailBlastEditor extends Component {
           recordIconType={'people'}
           title={segment.name}
           actionButtons={[
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) }
+            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) },
           ]}
         >
           <span>
@@ -129,14 +129,14 @@ class EmailBlastEditor extends Component {
       save,
       close,
       closeNextDrawer,
-      openNextDrawer
+      openNextDrawer,
     } = this.props;
 
     const { consents } = this.state;
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 }
+      wrapperCol: { span: 10, offset: 1 },
     };
 
     const isPastDate = current => {
@@ -147,8 +147,8 @@ class EmailBlastEditor extends Component {
     // TODO move this as a props for contextual definition
     const breadcrumbPaths = [
       {
-        name: formatMessage(isCreationMode ? messages.emailBlastEditorBreadcrumbTitleEditBlast : messages.emailBlastEditorBreadcrumbTitleNewBlast)
-      }
+        name: formatMessage(isCreationMode ? messages.emailBlastEditorBreadcrumbTitleEditBlast : messages.emailBlastEditorBreadcrumbTitleNewBlast),
+      },
     ];
 
     return (
@@ -214,14 +214,14 @@ class EmailBlastEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailBlastEditorInputLabelBlastName),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName)
+                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName),
                       },
                       helpToolTipProps: {
-                        title: 'Campaign name'
-                      }
+                        title: 'Campaign name',
+                      },
                     }}
                   />
                   <Field
@@ -232,17 +232,17 @@ class EmailBlastEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailBlastEditorDatePickerLabelSentDate),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       datePickerProps: {
                         format: 'DD/MM/YYYY HH:mm',
                         showTime: { format: 'HH:mm' },
                         placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate),
-                        disabledDate: isPastDate
+                        disabledDate: isPastDate,
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
-                      }
+                        title: 'Campaign technical name',
+                      },
                     }}
                   />
                   <Field
@@ -253,16 +253,16 @@ class EmailBlastEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailEditorProviderSelectLabel),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       options: consents.map(consent => ({
                         key: consent.id,
                         value: consent.id,
-                        text: `${consent.name} (${consent.purpose})`
+                        text: `${consent.name} (${consent.purpose})`,
                       })),
                       helpToolTipProps: {
-                        title: 'Choose your provider'
-                      }
+                        title: 'Choose your provider',
+                      },
                     }}
                   />
                 </Row>
@@ -284,14 +284,14 @@ class EmailBlastEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailBlastEditorInputLabelSubjectLine),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine)
+                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
                       },
                       helpToolTipProps: {
-                        title: 'Campaign name'
-                      }
+                        title: 'Campaign name',
+                      },
                     }}
                   />
                   <Field
@@ -302,14 +302,14 @@ class EmailBlastEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailBlastEditorInputLabelFromEmail),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail)
+                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
-                      }
+                        title: 'Campaign technical name',
+                      },
                     }}
                   />
                   <Field
@@ -320,14 +320,14 @@ class EmailBlastEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailBlastEditorInputLabelFromName),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName)
+                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
-                      }
+                        title: 'Campaign technical name',
+                      },
                     }}
                   />
                   <Field
@@ -338,14 +338,14 @@ class EmailBlastEditor extends Component {
                       formItemProps: {
                         label: formatMessage(messages.emailBlastEditorInputLabelReplyTo),
                         required: true,
-                        ...fieldGridConfig
+                        ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo)
+                        placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
-                      }
+                        title: 'Campaign technical name',
+                      },
                     }}
                   />
                 </Row>
@@ -395,12 +395,12 @@ class EmailBlastEditor extends Component {
 EmailBlastEditor.defaultProps = {
   isCreationMode: true,
   blastName: '',
-  segments: []
+  segments: [],
 };
 
 EmailBlastEditor.propTypes = {
   match: PropTypes.shape({
-    url: PropTypes.string.isRequired
+    url: PropTypes.string.isRequired,
   }).isRequired,
   intl: intlShape.isRequired,
   fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -409,7 +409,7 @@ EmailBlastEditor.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
 };
 
 EmailBlastEditor = compose(
@@ -417,7 +417,7 @@ EmailBlastEditor = compose(
   withRouter,
   reduxForm({
     form: 'emailBlastEditor',
-    enableReinitialize: true
+    enableReinitialize: true,
   }),
   withValidators,
 )(EmailBlastEditor);

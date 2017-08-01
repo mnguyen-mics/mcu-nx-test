@@ -9,7 +9,7 @@ import { compose } from 'recompose';
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
-import { LegendChart2 } from '../../../../../components/LegendChart';
+import { LegendChart } from '../../../../../components/LegendChart';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -19,21 +19,11 @@ import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHe
 class CampaignDisplayLiveChart extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       key1: 'impressions',
-      key2: 'clicks'
+      key2: 'clicks',
     };
-  }
-
-  updateLocationSearch(params) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
-    };
-
-    history.push(nextLocation);
   }
 
   createLegend() {
@@ -41,35 +31,46 @@ class CampaignDisplayLiveChart extends Component {
     const legends = [
       {
         key: 'impressions',
-        domain: translations['impressions'.toUpperCase()]
+        domain: translations['impressions'.toUpperCase()],
       },
       {
         key: 'clicks',
-        domain: translations['clicks'.toUpperCase()]
+        domain: translations['clicks'.toUpperCase()],
       },
       {
         key: 'ctr',
-        domain: translations['ctr'.toUpperCase()]
+        domain: translations['ctr'.toUpperCase()],
       },
       {
         key: 'cpa',
-        domain: translations['cpa'.toUpperCase()]
+        domain: translations['cpa'.toUpperCase()],
       },
       {
         key: 'impressions_cost',
-        domain: translations['impressions_cost'.toUpperCase()]
+        domain: translations['impressions_cost'.toUpperCase()],
       },
       {
         key: 'cpm',
-        domain: translations['cpm'.toUpperCase()]
+        domain: translations['cpm'.toUpperCase()],
       },
       {
         key: 'cpc',
-        domain: translations['cpc'.toUpperCase()]
-      }
+        domain: translations['cpc'.toUpperCase()],
+      },
     ];
 
     return legends;
+  }
+
+  updateLocationSearch(params) {
+    const { history, location: { search: currentSearch, pathname } } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+    };
+
+    history.push(nextLocation);
   }
 
   renderDatePicker() {
@@ -81,7 +82,7 @@ class CampaignDisplayLiveChart extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = newValues =>
@@ -89,7 +90,7 @@ class CampaignDisplayLiveChart extends Component {
         rangeType: newValues.rangeType,
         lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
-        to: newValues.to
+        to: newValues.to,
       });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -107,7 +108,7 @@ class CampaignDisplayLiveChart extends Component {
       xKey: 'day',
       yKeys: [{ key: key1, message: messages[key1] }, { key: key2, message: messages[key2] }],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012', '#00a1df']
+      colors: ['#ff9012', '#00a1df'],
     };
     return hasFetchedCampaignStat
       ? <StackedAreaPlotDoubleAxis identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />
@@ -121,13 +122,13 @@ class CampaignDisplayLiveChart extends Component {
       {
         key: key1,
         domain: translations[key1.toUpperCase()],
-        color: '#ff9012'
+        color: '#ff9012',
       },
       {
         key: key2,
         domain: translations[key2.toUpperCase()],
-        color: '#00a1df'
-      }
+        color: '#00a1df',
+      },
     ];
 
     const legends = this.createLegend();
@@ -138,7 +139,7 @@ class CampaignDisplayLiveChart extends Component {
           <Col span={12}>
             {dataSource.length === 0 && (hasFetchedCampaignStat && isFetchingCampaignStat)
               ? <div />
-              : <LegendChart2
+              : <LegendChart
                 identifier="chartLegend"
                 options={legendOptions}
                 legends={legends}
@@ -162,16 +163,16 @@ class CampaignDisplayLiveChart extends Component {
 }
 
 CampaignDisplayLiveChart.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   isFetchingCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const mapStateToProps = state => ({
-  translations: state.translations
+  translations: state.translations,
 });
 
 CampaignDisplayLiveChart = connect(mapStateToProps)(CampaignDisplayLiveChart);

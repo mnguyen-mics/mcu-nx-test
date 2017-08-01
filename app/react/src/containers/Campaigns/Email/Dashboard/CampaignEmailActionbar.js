@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
@@ -21,11 +22,11 @@ class CampaignEmailActionbar extends Component {
       match: {
         params: {
           organisationId,
-          campaignId
+          campaignId,
         },
       },
       campaignEmail,
-      translations
+      translations,
     } = this.props;
 
     const actionElement = this.buildActionElement();
@@ -58,12 +59,12 @@ class CampaignEmailActionbar extends Component {
   buildActionElement() {
     const {
       campaignEmail,
-      updateEmailCampaign
+      updateEmailCampaign,
     } = this.props;
 
     const onClickElement = status => updateEmailCampaign(campaignEmail.id, {
       status,
-      type: 'EMAIL'
+      type: 'EMAIL',
     });
 
     const activeCampaignElement = (
@@ -87,7 +88,7 @@ class CampaignEmailActionbar extends Component {
     const {
       translations,
       campaignEmail,
-      archiveCampaignEmail
+      archiveCampaignEmail,
     } = this.props;
 
     const handleArchiveGoal = campaignEmailId => {
@@ -131,22 +132,22 @@ CampaignEmailActionbar.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   updateEmailCampaign: PropTypes.func.isRequired,
-  archiveCampaignEmail: PropTypes.func.isRequired
+  archiveCampaignEmail: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail
+  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
 });
 
 const mapDispatchToProps = {
   updateEmailCampaign: CampaignEmailActions.updateEmailCampaign.request,
-  archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail.request
+  archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail.request,
 };
 
 CampaignEmailActionbar = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(CampaignEmailActionbar);
 
 CampaignEmailActionbar = withRouter(CampaignEmailActionbar);

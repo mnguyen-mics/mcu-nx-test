@@ -1,16 +1,16 @@
 import {
   AudienceSegmentsTable,
-  SegmentsActionbar
+  SegmentsActionbar,
 } from '../containers/Audience/Segments/List';
 
 import {
   AudienceSegment,
-  AudienceSegmentActionbar
+  AudienceSegmentActionbar,
 } from '../containers/Audience/Segments/Dashboard';
 
 import {
   AudiencePartitionsTable,
-  PartitionsActionbar
+  PartitionsActionbar,
 } from '../containers/Audience/Partitions/List';
 
 const audienceRoutes = [
@@ -18,20 +18,20 @@ const audienceRoutes = [
     path: '/audience/segments',
     layout: 'main',
     contentComponent: AudienceSegmentsTable,
-    actionBarComponent: SegmentsActionbar
+    actionBarComponent: SegmentsActionbar,
   },
   {
     path: '/audience/segments/:segmentId',
     layout: 'main',
     contentComponent: AudienceSegment,
-    actionBarComponent: AudienceSegmentActionbar
+    actionBarComponent: AudienceSegmentActionbar,
   },
   {
     path: '/audience/partitions',
     layout: 'main',
     contentComponent: AudiencePartitionsTable,
-    actionBarComponent: PartitionsActionbar
-  }
+    actionBarComponent: PartitionsActionbar,
+  },
 ];
 
 export default audienceRoutes;

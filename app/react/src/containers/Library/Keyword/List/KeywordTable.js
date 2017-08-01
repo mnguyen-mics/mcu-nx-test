@@ -28,7 +28,7 @@ class KeywordListsTable extends Component {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, KEYWORDS_SEARCH_SETTINGS),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, KEYWORDS_SEARCH_SETTINGS);
@@ -39,28 +39,28 @@ class KeywordListsTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      fetchKeywordLists
+      fetchKeywordLists,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -70,7 +70,7 @@ class KeywordListsTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, KEYWORDS_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, KEYWORDS_SEARCH_SETTINGS);
@@ -88,7 +88,7 @@ class KeywordListsTable extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, KEYWORDS_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, KEYWORDS_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -98,16 +98,16 @@ class KeywordListsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       isFetchingKeywordLists,
       dataSource,
       totalPlacements,
-      hasKeywordLists
+      hasKeywordLists,
     } = this.props;
 
     const filter = parseSearch(search, KEYWORDS_SEARCH_SETTINGS);
@@ -118,12 +118,12 @@ class KeywordListsTable extends Component {
       total: totalPlacements,
       onChange: page =>
         this.updateLocationSearch({
-          currentPage: page
+          currentPage: page,
         }),
       onShowSizeChange: (current, size) =>
         this.updateLocationSearch({
-          pageSize: size
-        })
+          pageSize: size,
+        }),
     };
 
     const dataColumns = [
@@ -131,8 +131,8 @@ class KeywordListsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/library/keywordslists/${record.id}`}>{text}</Link>
-      }
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/library/keywordslists/${record.id}`}>{text}</Link>,
+      },
     ];
 
     const actionColumns = [
@@ -141,19 +141,19 @@ class KeywordListsTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editKeyword
+            callback: this.editKeyword,
           },
           {
             translationKey: 'ARCHIVE',
-            callback: this.archiveKeyword
-          }
-        ]
-      }
+            callback: this.archiveKeyword,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return hasKeywordLists ? (
@@ -193,13 +193,13 @@ class KeywordListsTable extends Component {
           fetchKeywordLists(organisationId, filter);
         });
       },
-      onCancel() {}
+      onCancel() {},
     });
   }
 }
 
 KeywordListsTable.defaultProps = {
-  archiveKeywordList: () => {}
+  archiveKeywordList: () => {},
 };
 
 KeywordListsTable.propTypes = {
@@ -214,7 +214,7 @@ KeywordListsTable.propTypes = {
 
   fetchKeywordLists: PropTypes.func.isRequired,
   archiveKeywordList: PropTypes.func.isRequired,
-  resetKeywordLists: PropTypes.func.isRequired
+  resetKeywordLists: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -228,7 +228,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   fetchKeywordLists: KeywordListsActions.fetchKeywordLists.request,
   // archiveKeywordList: CampaignEmailAction.archiveKeywordList,
-  resetKeywordLists: KeywordListsActions.resetKeywordLists
+  resetKeywordLists: KeywordListsActions.resetKeywordLists,
 };
 
 KeywordListsTable = connect(mapStateToProps, mapDispatchToProps)(KeywordListsTable);

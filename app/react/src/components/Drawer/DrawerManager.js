@@ -1,17 +1,20 @@
-/* eslint-disable no-undef,jsx-a11y/no-static-element-interactions,react/no-array-index-key */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
+import generateGuid from '../../utils/generateGuid';
 
 const viewportDrawerRatio = 0.75;
 
 class DrawerManager extends Component {
+
   constructor(props) {
     super(props);
+
     this.state = {
       viewportWidth: window.innerWidth,
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio
+      drawerMaxWidth: window.innerWidth * viewportDrawerRatio,
     };
-    this.handleOnKeyDown = this.handleOnKeyDown.bind(this);
   }
 
   componentDidMount() {
@@ -29,24 +32,24 @@ class DrawerManager extends Component {
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  handleOnKeyDown(event) {
+  handleOnKeyDown = (event) => {
     if (event.key === 'Escape') {
       this.props.onEscapeKeyDown();
     }
   }
 
-  updateDimensions() {
-    this.setState({
-      viewportWidth: window.innerWidth,
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio
-    });
-  }
-
   getDrawerStyle(xPos) {
     return {
       transform: `translate(${xPos}px, 0px)`,
-      maxWidth: `${this.state.drawerMaxWidth}px`
+      maxWidth: `${this.state.drawerMaxWidth}px`,
     };
+  }
+
+  updateDimensions() {
+    this.setState({
+      viewportWidth: window.innerWidth,
+      drawerMaxWidth: window.innerWidth * viewportDrawerRatio,
+    });
   }
 
   render() {
@@ -55,9 +58,9 @@ class DrawerManager extends Component {
     const drawerStyles = {
       ready: this.getDrawerStyle(this.state.viewportWidth),
       foreground: this.getDrawerStyle(
-        this.state.viewportWidth - this.state.drawerMaxWidth
+        this.state.viewportWidth - this.state.drawerMaxWidth,
       ),
-      background: this.getDrawerStyle(0)
+      background: this.getDrawerStyle(0),
     };
 
     const drawersWithOverlay = drawableContents.map(({
@@ -68,20 +71,24 @@ class DrawerManager extends Component {
     }, index) => {
       const lastElement = index === drawableContents.length - 1;
       const displayInForeground = lastElement;
+
       return (
-        <div key={index}>
-          <div className={`drawer-overlay ${displayInForeground ? 'foreground' : ''}`} onClick={onClickOnBackground} />
+        <div key={generateGuid()}>
+          <div
+            className={`drawer-overlay ${displayInForeground ? 'foreground' : ''}`}
+            onClick={onClickOnBackground}
+          />
+
           <div
             ref={div => {
               this.drawerDiv = div;
             }}
             tabIndex={0}
             className={`drawer ${displayInForeground ? 'foreground' : ''}`}
-            style={
-            displayInForeground
+            style={displayInForeground
               ? drawerStyles.foreground
               : drawerStyles.background
-          }
+            }
           >
             <WrappedComponent {...additionalProps} {...others} />
           </div>
@@ -92,7 +99,7 @@ class DrawerManager extends Component {
       <div key={drawableContents.length}>
         <div className="drawer-overlay" />
         <div className="drawer" style={drawerStyles.ready} />
-      </div>
+      </div>,
     );
 
     return (
@@ -104,7 +111,7 @@ class DrawerManager extends Component {
 }
 
 DrawerManager.defaultProps = {
-  drawableContents: []
+  drawableContents: [],
 };
 
 DrawerManager.propTypes = {
@@ -114,11 +121,11 @@ DrawerManager.propTypes = {
       additionalProps: PropTypes.object,
       size: PropTypes.string.isRequired,
       openNextDrawer: PropTypes.func,
-      closeNextDrawer: PropTypes.func
-    })
+      closeNextDrawer: PropTypes.func,
+    }),
   ),
   onEscapeKeyDown: PropTypes.func.isRequired,
-  onClickOnBackground: PropTypes.func.isRequired
+  onClickOnBackground: PropTypes.func.isRequired,
 };
 
 export default DrawerManager;

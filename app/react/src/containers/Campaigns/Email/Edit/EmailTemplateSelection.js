@@ -17,7 +17,7 @@ class EmailTemplateSelection extends Component {
     this.handleClickOnSelectTemplate = this.handleClickOnSelectTemplate.bind(this);
     this.loadEmailTemplateIfNeeded = this.loadEmailTemplateIfNeeded.bind(this);
     this.state = {
-      emailTemplates: []
+      emailTemplates: [],
     };
   }
 
@@ -34,8 +34,8 @@ class EmailTemplateSelection extends Component {
         this.setState(prevState => ({
           emailTemplates: [
             ...prevState.emailTemplates,
-            emailTemplate
-          ]
+            emailTemplate,
+          ],
         }));
       });
     }
@@ -56,12 +56,12 @@ class EmailTemplateSelection extends Component {
     const emailTemplateSelectorProps = {
       save: this.updateSelectedEmailTemplates,
       close: closeNextDrawer,
-      emailTemplateSelections: input.value || []
+      emailTemplateSelections: input.value || [],
     };
 
     const options = {
       additionalProps: emailTemplateSelectorProps,
-      isModal: true
+      isModal: true,
     };
 
     openNextDrawer(EmailTemplateSelector, options);
@@ -93,7 +93,7 @@ class EmailTemplateSelection extends Component {
 
     const emptyOption = {
       message: showError ? formatMessage(messages.emailTemplateSelectionRequired) : formatMessage(messages.emailTemplateSelectionEmpty),
-      className: showError ? 'required' : ''
+      className: showError ? 'required' : '',
     };
 
     return (

@@ -1,6 +1,6 @@
 import {
   ListActionbar,
-  ListTable
+  ListTable,
 } from '../containers/Automations/List';
 
 const automationRoutes = [
@@ -8,8 +8,8 @@ const automationRoutes = [
     path: '/automations',
     layout: 'main',
     contentComponent: ListTable,
-    actionBarComponent: ListActionbar
-  }
+    actionBarComponent: ListActionbar,
+  },
 ];
 
 export default automationRoutes;

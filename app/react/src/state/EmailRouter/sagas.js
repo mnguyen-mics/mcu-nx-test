@@ -13,7 +13,7 @@ function* loadEmailRouters({ payload }) {
   try {
 
     const {
-      organisationId
+      organisationId,
     } = payload;
 
     const response = yield call(EmailRouterService.getRouters, organisationId);

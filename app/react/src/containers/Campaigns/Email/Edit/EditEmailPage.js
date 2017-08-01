@@ -26,14 +26,14 @@ class EditEmailPage extends Component {
 
     this.state = {
       emailCampaignContainer: {
-        blasts: []
-      }
+        blasts: [],
+      },
     };
   }
 
   componentDidMount() {
     const {
-      match: { params: { campaignId } }
+      match: { params: { campaignId } },
     } = this.props;
 
     this.loadEmailCampaign(campaignId);
@@ -41,11 +41,11 @@ class EditEmailPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      match: { params: { campaignId } }
+      match: { params: { campaignId } },
     } = this.props;
 
     const {
-      match: { params: { campaignId: nextCampaignId } }
+      match: { params: { campaignId: nextCampaignId } },
     } = nextProps;
 
     if (nextCampaignId !== campaignId) {
@@ -65,7 +65,7 @@ class EditEmailPage extends Component {
               return Promise.all([
                 CampaignService.getEmailBlastTemplates(campaignId, blast.id).then(res => res.data),
                 CampaignService.getEmailBlastConsents(campaignId, blast.id).then(res => res.data),
-                CampaignService.getBlastSegments(campaignId, blast.id).then(res => res.data)
+                CampaignService.getBlastSegments(campaignId, blast.id).then(res => res.data),
               ]).then(results => {
                 const [templates, consents, segments] = results;
                 return {
@@ -73,23 +73,23 @@ class EditEmailPage extends Component {
                   send_date: moment(blast.send_date),
                   templates,
                   consents,
-                  segments
+                  segments,
                 };
               });
             }));
-          })
+          }),
         ]).then(results => {
           const [routers, blasts] = results;
           return {
             ...emailCampaign,
             routers,
-            blasts
+            blasts,
           };
         });
       })
       .then(emailCampaignContainer => {
         this.setState({
-          emailCampaignContainer
+          emailCampaignContainer,
         });
       })
       .catch(error => {
@@ -101,21 +101,21 @@ class EditEmailPage extends Component {
   editEmailCampaign(campaign) {
     const {
       notifyError,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const hideSaveInProgress = message.loading(
       formatMessage(messages.emailSavingInProgress),
-      0
+      0,
     );
 
     const campaingResource = {
-      ...pick(campaign, ['name', 'technical_name', 'type'])
+      ...pick(campaign, ['name', 'technical_name', 'type']),
     };
 
     CampaignService.updateEmailCampaign(
       campaign.id,
-      campaingResource
+      campaingResource,
     ).then(() => {
 
       const newBlasts = campaign.blasts.filter(b => isFakeId(b.id));
@@ -128,13 +128,13 @@ class EditEmailPage extends Component {
         ...newBlasts.map(newBlast => {
           const blastResource = {
             ...pick(newBlast, ['blast_name', 'subject_line', 'from_email', 'from_name', 'reply_to']),
-            send_date: parseInt(newBlast.send_date.format('x'), 0)
+            send_date: parseInt(newBlast.send_date.format('x'), 0),
           };
           return CampaignService.createEmailBlast(campaign.id, blastResource).then(createdBlast => {
             const blastId = createdBlast.id;
             return Promise.all([
               CampaignService.createEmailBlastTemplate(campaign.id, blastId, newBlast.templates[0]),
-              CampaignService.createEmailBlastConsent(campaign.id, blastId, newBlast.consents[0])
+              CampaignService.createEmailBlastConsent(campaign.id, blastId, newBlast.consents[0]),
               // CampaignService.createEmailBlastSegment(campaignId, blastId, blast.consents[0])
             ]);
           });
@@ -142,16 +142,16 @@ class EditEmailPage extends Component {
         ...editedBlasts.map(editedBlast => {
           const blastResource = {
             ...pick(editedBlast, ['blast_name', 'subject_line', 'from_email', 'from_name', 'reply_to']),
-            send_date: parseInt(editedBlast.send_date.format('x'), 0)
+            send_date: parseInt(editedBlast.send_date.format('x'), 0),
           };
           return CampaignService.updateEmailBlast(campaign.id, editedBlast.id, blastResource).then(() => {
             return Promise.all([
               CampaignService.updateEmailBlastTemplate(campaign.id, editedBlast.id, editedBlast.templates[0].id, editedBlast.templates[0]),
-              CampaignService.updateEmailBlastConsent(campaign.id, editedBlast.id, editedBlast.consents[0].id, editedBlast.consents[0])
+              CampaignService.updateEmailBlastConsent(campaign.id, editedBlast.id, editedBlast.consents[0].id, editedBlast.consents[0]),
               // CampaignService.createEmailBlastSegment(campaignId, blastId, blast.consents[0])
             ]);
           });
-        })
+        }),
       ]);
     }).then(() => {
       hideSaveInProgress();
@@ -177,7 +177,7 @@ class EditEmailPage extends Component {
       emailCampaignContainer: {
         blasts,
         ...other
-      }
+      },
     } = this.state;
 
     const initialValues = { campaign: other };
@@ -204,7 +204,7 @@ EditEmailPage.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default compose(
@@ -212,7 +212,7 @@ export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: actions.notifyError }
+    { notifyError: actions.notifyError },
   ),
-  withDrawer
+  withDrawer,
 )(EditEmailPage);

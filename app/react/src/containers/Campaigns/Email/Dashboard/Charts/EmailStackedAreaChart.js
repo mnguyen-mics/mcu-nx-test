@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import * as CampaignEmailActions from '../../../../../state/Campaign/Email/actions';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
@@ -17,7 +17,7 @@ import messages from '../messages';
 
 import {
   updateSearch,
-  parseSearch
+  parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../../state/Campaign/Email/selectors';
@@ -29,13 +29,13 @@ class EmailStackedAreaChart extends Component {
       history,
       location: {
         search: currentSearch,
-        pathname
-      }
+        pathname,
+      },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, EMAIL_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, EMAIL_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -45,9 +45,9 @@ class EmailStackedAreaChart extends Component {
     const {
       history: {
         location: {
-          search
-        }
-      }
+          search,
+        },
+      },
     } = this.props;
 
     const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
@@ -56,7 +56,7 @@ class EmailStackedAreaChart extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
@@ -72,10 +72,10 @@ class EmailStackedAreaChart extends Component {
   renderStackedAreaCharts() {
     const {
       location: {
-        search
+        search,
       },
       dataSource,
-      hasFetchedCampaignStat
+      hasFetchedCampaignStat,
     } = this.props;
 
     const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
@@ -86,7 +86,7 @@ class EmailStackedAreaChart extends Component {
       xKey: 'day',
       yKeys: [{ key: 'email_sent', message: messages.emailSent }, { key: 'clicks', message: messages.emailClicks }, { key: 'impressions', message: messages.emailImpressions }, { key: 'email_hard_bounced', message: messages.emailHardBounce }],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
+      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
     };
     return hasFetchedCampaignStat ? (<StackedAreaPlot identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />) : (<LoadingChart />);
   }
@@ -100,7 +100,7 @@ class EmailStackedAreaChart extends Component {
 
     const options = {
       domains: [translations['email_sent'.toUpperCase()], translations['clicks'.toUpperCase()], translations['impressions'.toUpperCase()], translations['email_hard_bounced'.toUpperCase()]],
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
+      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
     };
 
     const chartArea = (
@@ -128,20 +128,20 @@ EmailStackedAreaChart.propTypes = {
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
-  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired
+  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
   isFetchingCampaignStat: state.campaignEmailSingle.campaignEmailPerformance.isFetching,
   hasFetchedCampaignStat: state.campaignEmailSingle.campaignEmailPerformance.hasFetched,
-  dataSource: getTableDataSource(state)
+  dataSource: getTableDataSource(state),
 });
 
 
 const mapDispatchToProps = {
   loadCampaignEmailAndDeliveryReport: CampaignEmailActions.loadCampaignEmailAndDeliveryReport,
-  resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
+  resetCampaignEmail: CampaignEmailActions.resetCampaignEmail,
 };
 
 
@@ -153,7 +153,7 @@ EmailStackedAreaChart = connect(
 
 EmailStackedAreaChart = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(EmailStackedAreaChart);
 
 export default EmailStackedAreaChart;

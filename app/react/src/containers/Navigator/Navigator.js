@@ -7,7 +7,7 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
 } from 'react-router-dom';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
@@ -18,9 +18,9 @@ import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 
 import { LayoutManager } from '../../components/Layout';
-import { NotFound } from '../../components/NotFound';
-import { Loading } from '../../components/Loading';
-import { Error } from '../../components/Error';
+import NotFound from '../../components/NotFound';
+import Loading from '../../components/Loading';
+import Error from '../../components/Error';
 import { AuthenticatedRoute } from '../../containers/Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../ForgotPassword';
@@ -43,7 +43,7 @@ class Navigator extends Component {
       translations,
       initialized,
       initializationError,
-      defaultWorspaceOrganisationId
+      defaultWorspaceOrganisationId,
     } = this.props;
 
     if (initializationError) return (<Error />);
@@ -145,16 +145,16 @@ const mapStateToProps = state => ({
   translations: state.translations,
   initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
-  defaultWorspaceOrganisationId: getDefaultWorspaceOrganisationId(state)
+  defaultWorspaceOrganisationId: getDefaultWorspaceOrganisationId(state),
 });
 
 const mapDispatchToProps = {
-  logOut: logOut
+  logOut: logOut,
 };
 
 Navigator = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Navigator);
 
 export default Navigator;

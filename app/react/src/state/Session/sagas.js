@@ -8,13 +8,13 @@ import OrganisationService from '../../services/OrganisationService';
 import {
   WORKSPACE,
   GET_LOGO,
-  PUT_LOGO
+  PUT_LOGO,
 } from '../action-types';
 
 import {
   getWorkspace,
   putLogo,
-  getLogo
+  getLogo,
 } from './actions';
 
 function* fetchOrganisationWorkspace({ payload }) {
@@ -31,7 +31,7 @@ function* fetchOrganisationWorkspace({ payload }) {
 function* downloadLogo({ payload }) {
   try {
     const {
-      organisationId
+      organisationId,
     } = payload;
     const response = yield call(OrganisationService.getLogo, organisationId);
     const logoUrl = URL.createObjectURL(response); /* global URL */
@@ -46,7 +46,7 @@ function* uploadLogo({ payload }) {
   try {
     const {
       organisationId,
-      file
+      file,
     } = payload;
 
     const formData = new FormData(); /* global FormData */
@@ -60,7 +60,7 @@ function* uploadLogo({ payload }) {
     yield put(addNotification({
       type: 'error',
       messageKey: 'NOTIFICATION_ERROR_TITLE',
-      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
+      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION',
     }));
   }
 }
@@ -80,5 +80,5 @@ function* watchLogoUploadRequest() {
 export const sessionSagas = [
   fork(watchWorkspaceRequest),
   fork(watchLogoDownloadRequest),
-  fork(watchLogoUploadRequest)
+  fork(watchLogoUploadRequest),
 ];

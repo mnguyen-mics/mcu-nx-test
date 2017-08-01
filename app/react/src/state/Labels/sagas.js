@@ -28,7 +28,7 @@ import {
   LABELS_PAIR,
   LABELS_UNPAIR,
   // LABELS_RESET,
-  LABELS_OBJECT_FETCH
+  LABELS_OBJECT_FETCH,
 } from '../action-types';
 
 function* loadLabels({ payload }) {
@@ -55,7 +55,7 @@ function* loadLabelsAttached({ payload }) {
     const {
       organisationId,
       labelableId,
-      labelableType
+      labelableType,
     } = payload;
 
     if (!(organisationId) || !(labelableId) || !(labelableType)) throw new Error('Payload is invalid');
@@ -113,7 +113,7 @@ function* pairLabelsWithObject({ payload }) {
       // labelId,
       labellableType,
       objectId,
-      organisationId
+      organisationId,
     } = payload;
 
     // const response = yield call(LabelsService.pairLabels, labelId, labellableType, objectId);
@@ -132,7 +132,7 @@ function* unPairLabelsWithObject({ payload }) {
       // labelId,
       labellableType,
       objectId,
-      organisationId
+      organisationId,
     } = payload;
 
     // const response = yield call(LabelsService.unPairLabels, labelId, labellableType, objectId);
@@ -176,5 +176,5 @@ export const labelsSagas = [
   fork(watchCreateLabels),
   fork(watchPairLabelWithObject),
   fork(watchUnPairLabelWithObject),
-  fork(watchFeatchAttachedLabels)
+  fork(watchFeatchAttachedLabels),
 ];

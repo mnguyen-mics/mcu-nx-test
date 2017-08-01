@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Button } from 'antd';
@@ -8,58 +8,53 @@ import { compose } from 'recompose';
 
 import { withTranslations } from '../../Helpers';
 import { Actionbar } from '../../Actionbar';
-import { McsIcons } from '../../../components/McsIcons';
+import McsIcons from '../../../components/McsIcons';
 import { getDefaultDatamart } from '../../../state/Session/selectors';
 
-class ListActionbar extends Component {
+function ListActionbar({
+  match: {
+    params: {
+      organisationId,
+    },
+  },
+  translations,
+  defaultDatamart,
+}) {
 
-  render() {
+  const breadcrumbPaths = [{
+    name: translations.AUTOMATIONS_LIST,
+    url: `/v2/o/${organisationId}/automations`,
+  }];
 
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      translations,
-      defaultDatamart
-    } = this.props;
+  const datamartId = defaultDatamart(organisationId).id;
 
-    const breadcrumbPaths = [{ name: translations.AUTOMATIONS_LIST, url: `/v2/o/${organisationId}/automations` }];
-
-    const datamartId = defaultDatamart(organisationId).id;
-
-    return (
-      <Actionbar path={breadcrumbPaths}>
-        <Link to={`/o${organisationId}d${datamartId}/library/scenarios/`}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
-          </Button>
-        </Link>
-      </Actionbar>
-    );
-
-  }
+  return (
+    <Actionbar path={breadcrumbPaths}>
+      <Link to={`/o${organisationId}d${datamartId}/library/scenarios/`}>
+        <Button className="mcs-primary" type="primary">
+          <McsIcons type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
+        </Button>
+      </Link>
+    </Actionbar>
+  );
 
 }
 
 ListActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
   defaultDatamart: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  defaultDatamart: getDefaultDatamart(state)
+  defaultDatamart: getDefaultDatamart(state),
 });
 
-ListActionbar = connect(
-  mapStateToProps
+const ConnectedListActionbar = connect(
+  mapStateToProps,
 )(ListActionbar);
 
-ListActionbar = compose(
+export default compose(
   withTranslations,
   withRouter,
-)(ListActionbar);
-
-export default ListActionbar;
+)(ConnectedListActionbar);

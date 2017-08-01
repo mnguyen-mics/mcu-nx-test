@@ -1,36 +1,34 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col } from 'antd';
 
-class Card extends Component {
+function Card(props) {
+  const { title, buttons, children } = props;
 
-  render() {
+  return (
+    <Row className="mcs-card-container">
+      { (title, buttons)
+        && <Row className="mcs-card-header">
+          <Col span={24}>
+            <span className="mcs-card-title">{title}</span>
+            <span className="mcs-card-button">{buttons}</span>
+          </Col>
+          <hr />
+        </Row>
+      }
 
-    const {
-      title,
-      buttons
-    } = this.props;
-
-    return (<Row className="mcs-card-container">
-      { (title, buttons) && (<Row className="mcs-card-header">
-        <Col span={24}>
-          <span className="mcs-card-title">{title}</span><span className="mcs-card-button">{buttons}</span>
-        </Col>
-        <hr />
-      </Row>) }
       <Row>
         <Col span={24}>
-          {this.props.children}
+          {children}
         </Col>
       </Row>
-    </Row>);
-  }
-
+    </Row>
+  );
 }
 
 Card.defaultProps = {
   buttons: null,
-  title: null
+  title: null,
 };
 
 Card.propTypes = {

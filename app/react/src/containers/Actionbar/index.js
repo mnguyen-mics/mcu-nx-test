@@ -3,5 +3,5 @@ import Editbar from './Editbar';
 
 export {
   Actionbar,
-  Editbar
+  Editbar,
 };

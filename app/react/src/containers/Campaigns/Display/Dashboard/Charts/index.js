@@ -3,5 +3,5 @@ import MediaPerformanceTable from './MediaPerformanceTable';
 
 export {
     DisplayStackedAreaChart,
-    MediaPerformanceTable
+    MediaPerformanceTable,
 };

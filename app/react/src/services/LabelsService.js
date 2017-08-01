@@ -5,7 +5,7 @@ const getLabels = (organisationId, options = {}) => {
 
   const params = {
     organisation_id: organisationId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -14,7 +14,7 @@ const getLabels = (organisationId, options = {}) => {
 const updateLabel = (labelId, name) => {
   const endpoint = `label/${labelId}`;
   const body = {
-    name
+    name,
   };
   return ApiService.putRequest(endpoint, body);
 };
@@ -24,7 +24,7 @@ const createLabel = (name, organisationId, options = {}) => {
   const params = {
     name,
     organisation_id: organisationId,
-    ...options
+    ...options,
   };
   return ApiService.postRequest(endpoint, params);
 };
@@ -50,5 +50,5 @@ export default {
   createLabel,
   deleteLabel,
   pairLabels,
-  unPairLabels
+  unPairLabels,
 };

@@ -1,44 +1,50 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import Plottable from 'plottable';
+
 import { BasicTooltip, ChartTooltip } from '../ChartTooltip';
 
 class StackedBarCharts extends Component {
 
   constructor(props) {
     super(props);
-    this.renderBarChart = this.renderBarChart.bind(this);
-    this.defineSvg = this.defineSvg.bind(this);
-    this.setTooltip = this.setTooltip.bind(this);
-    this.plot = null;
-    this.plotDataset = null;
-    this.pointers = [];
-    this.pointersAttached = [];
+
     this.state = {
       xTooltip: null,
       yTooltip: null,
       content: null,
-      visibility: 'hidden'
+      visibility: 'hidden',
     };
 
+    this.plot = null;
+    this.plotDataset = null;
+    this.pointers = [];
+    this.pointersAttached = [];
     this.svgBoundingClientRect = null;
-  }
-
-  setTooltip(chartTooltipProps) {
-    if (chartTooltipProps) {
-      this.setState({
-        xTooltip: chartTooltipProps.xTooltip,
-        yTooltip: chartTooltipProps.yTooltip,
-        content: chartTooltipProps.content,
-        visibility: chartTooltipProps.visibility
-      });
-    }
   }
 
   componentDidMount() {
     const {
-      dataset
+      dataset,
     } = this.props;
 
+    this.renderBarChart(dataset);
+    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+  }
+
+  componentDidUpdate() {
+    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      dataset,
+    } = nextProps;
+
+    this.pointers.forEach(point => {
+      point.pointer.detachFrom(point.plot);
+    });
     this.renderBarChart(dataset);
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
@@ -50,55 +56,105 @@ class StackedBarCharts extends Component {
     this.plot.destroy();
   }
 
-  componentDidUpdate() {
-    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+  createDotsCrosshair(plot) {
+
+    const crosshair = {};
+
+    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+
+    crosshair.circle = crosshairContainer.append('circle')
+                      .attr('fill', 'white')
+                      .attr('r', 8);
+    crosshair.drawAt = (p) => {
+
+      crosshair.circle.attr('cx', p.x);
+      crosshair.circle.attr('cy', p.y);
+
+      crosshairContainer.style('visibility', 'visible');
+    };
+    crosshair.hide = () => {
+      crosshairContainer.style('visibility', 'hidden');
+    };
+    return crosshair;
   }
 
-  componentWillReceiveProps(nextProps) {
+  createLineCrosshair(plot) {
     const {
-      dataset
-    } = nextProps;
+      options: {
+        yKeys,
+        colors,
+      },
+    } = this.props;
 
-    this.pointers.forEach(point => {
-      point.pointer.detachFrom(point.plot);
-    });
-    this.renderBarChart(dataset);
-    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+    const crosshair = {};
+    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+
+    crosshair.vLine = crosshairContainer.append('line')
+                      .attr('stroke', '#8ca0b3')
+                      .attr('opacity', 0.5)
+                      .attr('stroke-width', 1)
+                      .attr('stroke-dasharray', '5, 5')
+                      .attr('y1', 0)
+                      .attr('y2', plot.height());
+
+    crosshair.drawAt = (p, mousePosition, navInfo) => {
+
+      crosshair.vLine.attr('x1', p.x);
+      crosshair.vLine.attr('x2', p.x);
+      const entries = [];
+      yKeys.forEach((item, i) => {
+        const entry = {
+          label: item.message,
+          color: colors[i],
+          value: navInfo.datum[item.key],
+        };
+        entries.push(entry);
+      });
+      const tooltipContent = {
+        xLabel: navInfo.datum.x,
+        entries: entries,
+      };
+
+      const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
+      const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
+      this.setTooltip({
+        xTooltip: (mousePosition.x + 320 < width
+          ? this.svgBoundingClientRect.left + mousePosition.x + 80
+          : (this.svgBoundingClientRect.left + mousePosition.x) - 200
+        ),
+        yTooltip: (mousePosition.y + 120 < height
+          ? this.svgBoundingClientRect.top + mousePosition.y
+          : (this.svgBoundingClientRect.top + mousePosition.y) - 50
+        ),
+        content: tooltipContent,
+        visibility: 'visible',
+      });
+
+      crosshairContainer.style('visibility', 'visible');
+    };
+    crosshair.hide = () => {
+      crosshairContainer.style('visibility', 'hidden');
+    };
+    return crosshair;
   }
 
   defineSvg = svg => { this.svg = svg; };
 
-  render() {
-    const {
-      identifier,
-    } = this.props;
-
-    const {
-      xTooltip,
-      yTooltip,
-      content,
-      visibility
-    } = this.state;
-
-    const tooltipStyle = {
-      xTooltip,
-      yTooltip,
-      visibility
-    };
-    return (
-      <div className="mcs-plot-container">
-        <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg" />
-        <ChartTooltip tooltipStyle={tooltipStyle}>
-          <BasicTooltip content={content} />
-        </ChartTooltip>
-      </div>
-    );
+  setTooltip = (chartTooltipProps) => {
+    if (chartTooltipProps) {
+      this.setState({
+        xTooltip: chartTooltipProps.xTooltip,
+        yTooltip: chartTooltipProps.yTooltip,
+        content: chartTooltipProps.content,
+        visibility: chartTooltipProps.visibility,
+      });
+    }
   }
 
-  renderBarChart(dataset) {
+  renderBarChart = (dataset) => {
     const {
       identifier,
-      options
+      options,
     } = this.props;
 
     if (this.plot !== null) {
@@ -110,7 +166,10 @@ class StackedBarCharts extends Component {
     });
 
     const xScale = new Plottable.Scales.Time().padProportion(0);
-    const yScale = new Plottable.Scales.Linear().addIncludedValuesProvider(() => { return [0]; }).addPaddingExceptionsProvider(() => { return [0]; }).padProportion(0.2);
+    const yScale = new Plottable.Scales.Linear()
+      .addIncludedValuesProvider(() => { return [0]; })
+      .addPaddingExceptionsProvider(() => { return [0]; })
+      .padProportion(0.2);
 
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
@@ -125,7 +184,7 @@ class StackedBarCharts extends Component {
 
 
     const guideline = new Plottable.Components.GuideLineLayer(
-      Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL
+      Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL,
     ).scale(xScale);
     pnts.push(guideline);
     if (dataset.length > 0) {
@@ -164,7 +223,7 @@ class StackedBarCharts extends Component {
 
     const table = new Plottable.Components.Table([
       [yAxis, plots],
-      [null, xAxis]
+      [null, xAxis],
     ]);
 
     table.renderTo(`#${identifier}`);
@@ -190,13 +249,13 @@ class StackedBarCharts extends Component {
         this.setTooltip({
           xTooltip: -100,
           yTooltip: -100,
-          visible: 'hidden'
+          visible: 'hidden',
         });
       });
       pointer.attachTo(plot);
       const point = {
         pointer: pointer,
-        plot: plot
+        plot: plot,
       };
       this.pointers.push(point);
     });
@@ -213,88 +272,42 @@ class StackedBarCharts extends Component {
 
   }
 
-  createDotsCrosshair(plot) {
-
-    const crosshair = {};
-
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
-
-    crosshair.circle = crosshairContainer.append('circle')
-                      .attr('fill', 'white')
-                      .attr('r', 8);
-    crosshair.drawAt = (p) => {
-
-      crosshair.circle.attr('cx', p.x);
-      crosshair.circle.attr('cy', p.y);
-
-      crosshairContainer.style('visibility', 'visible');
-    };
-    crosshair.hide = () => {
-      crosshairContainer.style('visibility', 'hidden');
-    };
-    return crosshair;
-  }
-
-  createLineCrosshair(plot) {
+  render() {
     const {
-      options: {
-        yKeys,
-        colors
-      }
+      identifier,
     } = this.props;
 
-    const crosshair = {};
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+    const {
+      xTooltip,
+      yTooltip,
+      content,
+      visibility,
+    } = this.state;
 
-    crosshair.vLine = crosshairContainer.append('line')
-                      .attr('stroke', '#8ca0b3')
-                      .attr('opacity', 0.5)
-                      .attr('stroke-width', 1)
-                      .attr('stroke-dasharray', '5, 5')
-                      .attr('y1', 0)
-                      .attr('y2', plot.height());
-
-    crosshair.drawAt = (p, mousePosition, navInfo) => {
-
-      crosshair.vLine.attr('x1', p.x);
-      crosshair.vLine.attr('x2', p.x);
-      const entries = [];
-      yKeys.forEach((item, i) => {
-        const entry = {
-          label: item.message,
-          color: colors[i],
-          value: navInfo.datum[item.key]
-        };
-        entries.push(entry);
-      });
-      const tooltipContent = {
-        xLabel: navInfo.datum.x,
-        entries: entries
-      };
-
-      const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
-      const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
-      this.setTooltip({
-        xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 200,
-        yTooltip: mousePosition.y + 120 < height ? this.svgBoundingClientRect.top + mousePosition.y : (this.svgBoundingClientRect.top + mousePosition.y) - 50,
-        content: tooltipContent,
-        visibility: 'visible'
-      });
-
-      crosshairContainer.style('visibility', 'visible');
+    const tooltipStyle = {
+      xTooltip,
+      yTooltip,
+      visibility,
     };
-    crosshair.hide = () => {
-      crosshairContainer.style('visibility', 'hidden');
-    };
-    return crosshair;
+    return (
+      <div className="mcs-plot-container">
+        <div
+          id={identifier}
+          ref={svg => { this.svg = svg; }}
+          className="mcs-area-plot-svg"
+        />
+        <ChartTooltip tooltipStyle={tooltipStyle}>
+          <BasicTooltip content={content} />
+        </ChartTooltip>
+      </div>
+    );
   }
-
 }
 
 StackedBarCharts.propTypes = {
   identifier: PropTypes.string.isRequired,
   dataset: PropTypes.arrayOf(
-    PropTypes.object // eslint-disable-line react/forbid-prop-types
+    PropTypes.shape(),
   ).isRequired,
   options: PropTypes.shape({
     innerRadius: PropTypes.bool,
@@ -303,7 +316,7 @@ StackedBarCharts.propTypes = {
     yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
     lookbackWindow: PropTypes.number,
-  }).isRequired
+  }).isRequired,
 };
 
 export default StackedBarCharts;

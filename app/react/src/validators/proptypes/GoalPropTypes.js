@@ -8,7 +8,7 @@ const GoalPropTypes = PropTypes.shape({
   default_goal_value: PropTypes.number,
   goal_value_currency: PropTypes.string,
   new_query_id: PropTypes.string,
-  archived: PropTypes.bool
+  archived: PropTypes.bool,
 });
 
 export default GoalPropTypes;

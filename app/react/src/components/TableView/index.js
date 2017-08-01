@@ -5,5 +5,5 @@ import EmptyTableView from './EmptyTableView';
 export {
   TableViewFilters,
   TableView,
-  EmptyTableView
+  EmptyTableView,
 };

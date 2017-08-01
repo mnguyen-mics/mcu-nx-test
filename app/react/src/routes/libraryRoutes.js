@@ -1,16 +1,16 @@
 import {
   AssetsActionbar,
-  AssetsTableView
+  AssetsTableView,
 } from '../containers/Library/AssetsFiles/List';
 
 import {
   KeywordActionBar,
-  KeywordTable
+  KeywordTable,
 } from '../containers/Library/Keyword/List';
 
 import {
   PlacementActionBar,
-  PlacementTable
+  PlacementTable,
 } from '../containers/Library/Placement/List';
 
 const campaignsRoutes = [
@@ -18,20 +18,20 @@ const campaignsRoutes = [
     path: '/library/placements',
     layout: 'main',
     contentComponent: PlacementTable,
-    actionBarComponent: PlacementActionBar
+    actionBarComponent: PlacementActionBar,
   },
   {
     path: '/library/keywords',
     layout: 'main',
     contentComponent: KeywordTable,
-    actionBarComponent: KeywordActionBar
+    actionBarComponent: KeywordActionBar,
   },
   {
     path: '/library/assets',
     layout: 'main',
     contentComponent: AssetsTableView,
-    actionBarComponent: AssetsActionbar
-  }
+    actionBarComponent: AssetsActionbar,
+  },
 ];
 
 export default campaignsRoutes;

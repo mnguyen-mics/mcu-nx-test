@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 import moment from 'moment';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
 
@@ -22,7 +22,7 @@ class DisplayStackedAreaChart extends Component {
     super(props);
     this.state = {
       key1: 'impressions',
-      key2: 'clicks'
+      key2: 'clicks',
     };
   }
 
@@ -31,7 +31,7 @@ class DisplayStackedAreaChart extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -42,28 +42,28 @@ class DisplayStackedAreaChart extends Component {
     const legends = [
       {
         key: 'impressions',
-        domain: translations['impressions'.toUpperCase()]
+        domain: translations['impressions'.toUpperCase()],
       },
       {
         key: 'clicks',
-        domain: translations['clicks'.toUpperCase()]
+        domain: translations['clicks'.toUpperCase()],
       },
       {
         key: 'ctr',
-        domain: translations['ctr'.toUpperCase()]
+        domain: translations['ctr'.toUpperCase()],
       },
       {
         key: 'impressions_cost',
-        domain: translations.IMPRESSIONS_COST
+        domain: translations.IMPRESSIONS_COST,
       },
       {
         key: 'cpm',
-        domain: translations['cpm'.toUpperCase()]
+        domain: translations['cpm'.toUpperCase()],
       },
       {
         key: 'cpc',
-        domain: translations['cpc'.toUpperCase()]
-      }
+        domain: translations['cpc'.toUpperCase()],
+      },
     ];
 
     return legends;
@@ -78,7 +78,7 @@ class DisplayStackedAreaChart extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = newValues =>
@@ -86,7 +86,7 @@ class DisplayStackedAreaChart extends Component {
         rangeType: newValues.rangeType,
         lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
-        to: newValues.to
+        to: newValues.to,
       });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -106,7 +106,7 @@ class DisplayStackedAreaChart extends Component {
       lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#ff9012', '#00a1df'],
       isDraggable: true,
-      onDragEnd: (values) => { this.updateLocationSearch({ from: values[0], to: values[1], lookbackWindow: moment.duration(values[1] - values[0]), rangeType: 'absolute' }); }
+      onDragEnd: (values) => { this.updateLocationSearch({ from: values[0], to: values[1], lookbackWindow: moment.duration(values[1] - values[0]), rangeType: 'absolute' }); },
     };
     return (!isFetchingCampaignStat && hasFetchedCampaignStat)
       ? <StackedAreaPlotDoubleAxis identifier="StackedAreaChartDisplayOverview" dataset={dataSource} options={optionsForChart} />
@@ -121,13 +121,13 @@ class DisplayStackedAreaChart extends Component {
       {
         key: key1,
         domain: translations[key1.toUpperCase()],
-        color: '#ff9012'
+        color: '#ff9012',
       },
       {
         key: key2,
         domain: translations[key2.toUpperCase()],
-        color: '#00a1df'
-      }
+        color: '#00a1df',
+      },
     ];
     const legends = this.createLegend();
 
@@ -170,7 +170,7 @@ DisplayStackedAreaChart.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  translations: state.translations
+  translations: state.translations,
 });
 
 DisplayStackedAreaChart = connect(mapStateToProps)(DisplayStackedAreaChart);

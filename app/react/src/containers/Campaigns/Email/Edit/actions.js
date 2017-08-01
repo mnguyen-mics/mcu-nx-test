@@ -5,7 +5,7 @@ import {
   EMAIL_EDITOR_NEW_BLAST_DELETED,
   EMAIL_EDITOR_NEW_BLAST_EDITED,
   EMAIL_EDITOR_EXISTING_BLAST_EDITED,
-  EMAIL_EDITOR_EXISTING_BLAST_DELETED
+  EMAIL_EDITOR_EXISTING_BLAST_DELETED,
 } from '../../../../state/action-types';
 
 const addBlast = (blast, emailTemplateIds = []) => {
@@ -14,9 +14,9 @@ const addBlast = (blast, emailTemplateIds = []) => {
     blastId: fakeId,
     blast: {
       ...blast,
-      id: fakeId
+      id: fakeId,
     },
-    emailTemplateIds
+    emailTemplateIds,
   };
   return createAction(EMAIL_EDITOR_NEW_BLAST_CREATED)(playload);
 };
@@ -27,9 +27,9 @@ const editBlast = (blast, emailTemplateIds = []) => {
     const payload = {
       blastId: blast.id,
       blast: {
-        ...blast
+        ...blast,
       },
-      emailTemplateIds
+      emailTemplateIds,
     };
 
     return isFakeId(blast.id) ?

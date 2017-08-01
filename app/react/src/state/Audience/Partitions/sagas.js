@@ -22,20 +22,20 @@ function* loadAudiencePartitionsList({ payload }) {
       organisationId,
       datamartId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || datamartId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     if (filter.keywords) { options.name = filter.keywords; }
     if (filter.types) { options.types = filter.types; }
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -43,11 +43,11 @@ function* loadAudiencePartitionsList({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(AudiencePartitionsService.getPartitions, organisationId, datamartId, initialOptions),
-        response: call(AudiencePartitionsService.getPartitions, organisationId, datamartId, options)
+        response: call(AudiencePartitionsService.getPartitions, organisationId, datamartId, options),
       };
     } else {
       allCalls = {
-        response: call(AudiencePartitionsService.getPartitions, organisationId, datamartId, options)
+        response: call(AudiencePartitionsService.getPartitions, organisationId, datamartId, options),
       };
     }
 

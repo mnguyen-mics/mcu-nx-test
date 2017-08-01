@@ -36,7 +36,7 @@ const getCampaigns = (organisationId, campaignType, options = {}) => {
   const params = {
     organisation_id: organisationId,
     campaign_type: campaignType,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);

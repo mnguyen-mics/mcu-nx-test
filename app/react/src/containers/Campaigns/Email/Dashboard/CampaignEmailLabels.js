@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { LabelListView } from '../../../../components/LabelListView';
+import LabelListView from '../../../../components/LabelListView';
 
 import * as LabelsActions from '../../../../state/Labels/actions';
 import * as EmailsActions from '../../../../state/Campaign/Email/actions';
@@ -20,13 +20,13 @@ class CampaignEmailLabels extends Component {
   componentDidMount() {
     const {
       params: {
-        campaignId
+        campaignId,
       },
       activeWorkspace: {
         organisationId,
       },
       getLabels,
-      getLabelsOfObject
+      getLabelsOfObject,
     } = this.props;
     getLabels(organisationId);
     getLabelsOfObject(organisationId, 'EMAIL_CAMPAIGN', campaignId);
@@ -36,7 +36,7 @@ class CampaignEmailLabels extends Component {
 
     const {
       labels,
-      attachedLabels
+      attachedLabels,
     } = this.props;
 
     return (
@@ -77,7 +77,7 @@ class CampaignEmailLabels extends Component {
       },
       unPairLabelWithObject,
       params: {
-        campaignId
+        campaignId,
       },
     } = this.props;
     unPairLabelWithObject(label.id, organisationId, 'EMAIL_CAMPAIGN', campaignId);
@@ -90,7 +90,7 @@ class CampaignEmailLabels extends Component {
       },
       createLabels,
       campaignEmail,
-      pairLabelWithObject
+      pairLabelWithObject,
     } = this.props;
 
     if (value === 'CREATE_NEW') {
@@ -122,13 +122,13 @@ CampaignEmailLabels.propTypes = {
   }).isRequired,
   getLabelsOfObject: PropTypes.func.isRequired,
   params: PropTypes.shape({
-    campaignId: PropTypes.string
+    campaignId: PropTypes.string,
   }).isRequired,
   attachedLabels: PropTypes.arrayOf(PropTypes.shape({
     isFetching: PropTypes.string,
-    data: PropTypes.object // eslint-disable-line react/forbid-prop-types
+    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   })).isRequired,
-  unPairLabelWithObject: PropTypes.func.isRequired
+  unPairLabelWithObject: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -151,7 +151,7 @@ const mapDispatchToProps = {
 
 CampaignEmailLabels = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(CampaignEmailLabels);
 
 export default CampaignEmailLabels;

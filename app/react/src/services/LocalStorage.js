@@ -87,5 +87,5 @@ export default {
 
   getItem,
   setItem,
-  removeItem
+  removeItem,
 };

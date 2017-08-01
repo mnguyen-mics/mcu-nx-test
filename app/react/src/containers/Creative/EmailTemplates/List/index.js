@@ -3,5 +3,5 @@ import EmailList from './EmailList';
 
 export {
   EmailActionBar,
-  EmailList
+  EmailList,
 };

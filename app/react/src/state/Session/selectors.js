@@ -15,7 +15,7 @@ const getDefaultWorkspaceIndex = state => {
 const getDefaultWorkspace = createSelector(
   state => state.session.connectedUser.workspaces,
   getDefaultWorkspaceIndex,
-  (userWorkspaces, defaultWorkspaceIndex) => userWorkspaces[defaultWorkspaceIndex]
+  (userWorkspaces, defaultWorkspaceIndex) => userWorkspaces[defaultWorkspaceIndex],
 );
 
 const getWorkspaces = createSelector(
@@ -24,10 +24,10 @@ const getWorkspaces = createSelector(
   (userWorkspaces, additionnalWorkspace) => {
     const allWorspaces = [
       ...userWorkspaces,
-      additionnalWorkspace
+      additionnalWorkspace,
     ];
     return normalizeArrayOfObject(allWorspaces, 'organisation_id');
-  }
+  },
 );
 
 const getWorkspace = state => organisationId => {
@@ -40,7 +40,7 @@ const getDefaultWorspaceOrganisationId = createSelector(
   (defaultWorkspace) => {
     if (defaultWorkspace) return defaultWorkspace.organisation_id;
     return 'none';
-  }
+  },
 );
 
 const getDefaultWorspaceOrganisationName = createSelector(
@@ -48,7 +48,7 @@ const getDefaultWorspaceOrganisationName = createSelector(
   (defaultWorkspace) => {
     if (defaultWorkspace) return defaultWorkspace.organisation_id;
     return 'none';
-  }
+  },
 );
 
 const getDefaultDatamart = state => organisationId => {
@@ -79,5 +79,5 @@ export {
   hasWorkspace,
   getWorkspace,
   getWorkspaces,
-  getDefaultDatamart
+  getDefaultDatamart,
 };

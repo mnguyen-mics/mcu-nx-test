@@ -24,7 +24,7 @@ export default function configureStore() {
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line no-undef, no-underscore-dangle
 
   const store = createStore(rootReducer, /* preloadedState, */ composeEnhancers(
-    applyMiddleware(...middlewares)
+    applyMiddleware(...middlewares),
   ));
 
   sagaMiddleware.run(sagas);

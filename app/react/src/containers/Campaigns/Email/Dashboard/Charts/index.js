@@ -3,5 +3,5 @@ import EmailStackedAreaChart from './EmailStackedAreaChart';
 
 export {
     EmailPieCharts,
-    EmailStackedAreaChart
+    EmailStackedAreaChart,
 };

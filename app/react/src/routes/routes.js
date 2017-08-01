@@ -23,7 +23,7 @@ const routes = [
   ...audienceRoutes,
   ...creativeRoutes,
   ...libraryRoutes,
-  ...settingsRoutes
+  ...settingsRoutes,
 ];
 
 export default routes;

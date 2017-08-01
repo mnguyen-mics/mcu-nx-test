@@ -9,7 +9,7 @@ import lodash from 'lodash';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 
 import ExportService from '../../../../services/ExportService';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
@@ -27,7 +27,7 @@ const fetchExportData = (organisationId, datamartId, filter) => {
   const buildOptions = () => {
     const options = {
       first_result: 0,
-      max_results: 2000
+      max_results: 2000,
     };
 
     if (filter.keywords) { options.name = filter.keywords; }
@@ -43,20 +43,20 @@ const fetchExportData = (organisationId, datamartId, filter) => {
 
   const apiResults = Promise.all([
     AudienceSegmentService.getSegments(organisationId, datamartId, buildOptions()),
-    ReportService.getAudienceSegmentReport(organisationId, startDate, endDate, dimension)
+    ReportService.getAudienceSegmentReport(organisationId, startDate, endDate, dimension),
   ]);
 
   return apiResults.then(results => {
     const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
-      'audience_segment_id'
+      'audience_segment_id',
     );
 
     const mergedData = Object.keys(campaignsDisplay).map((segmentId) => {
       return {
         ...campaignsDisplay[segmentId],
-        ...performanceReport[segmentId]
+        ...performanceReport[segmentId],
       };
     });
 
@@ -75,9 +75,9 @@ class SegmentsActionbar extends Component {
   getSearchSetting() {
     const {
       match: {
-        params: { organisationId }
+        params: { organisationId },
       },
-      defaultDatamart
+      defaultDatamart,
     } = this.props;
 
     return [
@@ -95,8 +95,8 @@ class SegmentsActionbar extends Component {
         isValid: query =>
           query.datamarts &&
           query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
-      }
+          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
+      },
     ];
 
   }
@@ -105,8 +105,8 @@ class SegmentsActionbar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       translations,
     } = this.props;
@@ -134,11 +134,11 @@ class SegmentsActionbar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       translations,
-      defaultDatamart
+      defaultDatamart,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
@@ -164,7 +164,10 @@ class SegmentsActionbar extends Component {
       </Menu>
     );
 
-    const breadcrumbPaths = [{ name: translations.AUDIENCE_SEGMENTS, url: `/v2/o/${organisationId}/audience/segments` }];
+    const breadcrumbPaths = [{
+      name: translations.AUDIENCE_SEGMENTS,
+      url: `/v2/o/${organisationId}/audience/segments`,
+    }];
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -185,17 +188,17 @@ class SegmentsActionbar extends Component {
 
 SegmentsActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
   defaultDatamart: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  defaultDatamart: getDefaultDatamart(state)
+  defaultDatamart: getDefaultDatamart(state),
 });
 
 SegmentsActionbar = connect(
-  mapStateToProps
+  mapStateToProps,
 )(SegmentsActionbar);
 
 SegmentsActionbar = compose(

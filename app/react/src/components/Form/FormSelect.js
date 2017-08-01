@@ -3,20 +3,21 @@ import PropTypes from 'prop-types';
 import { Form, Select, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
-import { McsIcons } from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons';
 
 const Option = Select.Option;
 
 const defaultTooltipPlacement = 'right';
 
-const FormSelect = ({
+function FormSelect({
   input,
   meta,
   formItemProps,
   selectProps,
   options,
-  helpToolTipProps
-}) => {
+  helpToolTipProps,
+}) {
+
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
   if (meta.touched && meta.warning) validateStatus = 'warning';
@@ -25,7 +26,7 @@ const FormSelect = ({
 
   const mergedTooltipProps = {
     placement: defaultTooltipPlacement,
-    ...helpToolTipProps
+    ...helpToolTipProps,
   };
 
   return (
@@ -53,30 +54,30 @@ const FormSelect = ({
       </Row>
     </Form.Item>
   );
-};
+}
 
 FormSelect.defaultProps = {
   formItemProps: {},
   selectProps: {},
   options: [],
-  helpToolTipProps: {}
+  helpToolTipProps: {},
 };
 
 FormSelect.propTypes = {
   input: PropTypes.shape({
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
   }).isRequired,
   meta: PropTypes.shape({
-    error: PropTypes.string
+    error: PropTypes.string,
   }).isRequired,
   formItemProps: PropTypes.shape({
     required: PropTypes.bool,
     label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-    colon: PropTypes.bool
+    colon: PropTypes.bool,
   }),
   selectProps: PropTypes.shape({
     mode: PropTypes.oneOf(['multiple', 'tags', 'combobox']),
-    placeholder: PropTypes.string
+    placeholder: PropTypes.string,
   }),
   options: PropTypes.arrayOf(
     PropTypes.shape({
@@ -84,8 +85,8 @@ FormSelect.propTypes = {
       value: PropTypes.string,
       key: PropTypes.string,
       title: PropTypes.string,
-      text: PropTypes.string
-    })
+      text: PropTypes.string,
+    }),
   ),
   helpToolTipProps: PropTypes.shape({
     tile: PropTypes.string,
@@ -101,9 +102,9 @@ FormSelect.propTypes = {
       'leftTop',
       'leftBottom',
       'rightTop',
-      'rightBottom'
-    ])
-  })
+      'rightBottom',
+    ]),
+  }),
 };
 
 export default FormSelect;

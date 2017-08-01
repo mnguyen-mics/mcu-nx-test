@@ -3,5 +3,5 @@ import NavigationPrompt from './NavigationPrompt';
 
 export {
     AuthenticatedRoute,
-    NavigationPrompt
+    NavigationPrompt,
 };

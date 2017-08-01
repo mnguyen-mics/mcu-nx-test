@@ -17,7 +17,7 @@ function* getVersionLoop() {
       if (currentVersion !== newVersion.version) {
         currentVersion = response.version;
         yield put(notifyInfo({
-          newVersion: true
+          newVersion: true,
         }));
       }
 
@@ -31,5 +31,5 @@ function* getVersionLoop() {
 }
 
 export const versionSagas = [
-  fork(getVersionLoop)
+  fork(getVersionLoop),
 ];

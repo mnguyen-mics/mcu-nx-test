@@ -4,7 +4,7 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-    fetchKeywordLists
+    fetchKeywordLists,
 } from './actions';
 
 import KeywordListsService from '../../../services/Library/KeywordListsService';
@@ -12,7 +12,7 @@ import KeywordListsService from '../../../services/Library/KeywordListsService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 import {
-    KEYWORD_LISTS_FETCH
+    KEYWORD_LISTS_FETCH,
 } from '../../action-types';
 
 function* loadKeywordLists({ payload }) {
@@ -21,17 +21,17 @@ function* loadKeywordLists({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -39,11 +39,11 @@ function* loadKeywordLists({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(KeywordListsService.getKeywordLists, organisationId, initialOptions),
-        response: call(KeywordListsService.getKeywordLists, organisationId, options)
+        response: call(KeywordListsService.getKeywordLists, organisationId, options),
       };
     } else {
       allCalls = {
-        response: call(KeywordListsService.getKeywordLists, organisationId, options)
+        response: call(KeywordListsService.getKeywordLists, organisationId, options),
       };
     }
 
@@ -65,5 +65,5 @@ function* watchfetchKeywordLists() {
 }
 
 export const keywordListsSagas = [
-  fork(watchfetchKeywordLists)
+  fork(watchfetchKeywordLists),
 ];

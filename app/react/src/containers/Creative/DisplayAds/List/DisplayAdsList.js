@@ -28,7 +28,7 @@ class CreativeDisplayTable extends Component {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -39,27 +39,27 @@ class CreativeDisplayTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      fetchCreativeDisplay
+      fetchCreativeDisplay,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
+          organisationId: nextOrganisationId,
+        },
       },
     } = nextProps;
 
@@ -70,7 +70,7 @@ class CreativeDisplayTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -88,7 +88,7 @@ class CreativeDisplayTable extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, CREATIVE_DISPLAY_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, CREATIVE_DISPLAY_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -98,16 +98,16 @@ class CreativeDisplayTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       isFetchingCreativeDisplay,
       dataSource,
       totalCreativeDisplay,
-      hasCreativeDisplay
+      hasCreativeDisplay,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -118,12 +118,12 @@ class CreativeDisplayTable extends Component {
       total: totalCreativeDisplay,
       onChange: page =>
         this.updateLocationSearch({
-          currentPage: page
+          currentPage: page,
         }),
       onShowSizeChange: (current, size) =>
         this.updateLocationSearch({
-          pageSize: size
-        })
+          pageSize: size,
+        }),
     };
 
     const dataColumns = [
@@ -138,7 +138,7 @@ class CreativeDisplayTable extends Component {
               <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
             </a>
           </div>
-        )
+        ),
       },
       {
         translationKey: 'NAME',
@@ -146,20 +146,20 @@ class CreativeDisplayTable extends Component {
         isHiddable: false,
         render: (text, record) => (
           <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
-        )
+        ),
       },
       {
         translationKey: 'AUDIT_STATUS',
         key: 'audit_status',
         isHiddable: false,
-        render: text => <span>{text}</span>
+        render: text => <span>{text}</span>,
       },
       {
         translationKey: 'PUBLISHED_VERSION',
         key: 'published_version',
         isHiddable: false,
-        render: text => <span>{text}</span>
-      }
+        render: text => <span>{text}</span>,
+      },
     ];
 
     const actionColumns = [
@@ -168,19 +168,19 @@ class CreativeDisplayTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editCreativeDisplay
+            callback: this.editCreativeDisplay,
           },
           {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCreativeDisplay
-          }
-        ]
-      }
+            callback: this.archiveCreativeDisplay,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return hasCreativeDisplay ? (
@@ -219,13 +219,13 @@ class CreativeDisplayTable extends Component {
           fetchCreativeDisplay(organisationId, filter);
         });
       },
-      onCancel() {}
+      onCancel() {},
     });
   }
 }
 
 CreativeDisplayTable.defaultProps = {
-  archiveCreativeDisplay: () => {}
+  archiveCreativeDisplay: () => {},
 };
 
 CreativeDisplayTable.propTypes = {
@@ -240,7 +240,7 @@ CreativeDisplayTable.propTypes = {
   hasCreativeDisplay: PropTypes.bool.isRequired,
   fetchCreativeDisplay: PropTypes.func.isRequired,
   archiveCreativeDisplay: PropTypes.func.isRequired,
-  resetCreativeDisplay: PropTypes.func.isRequired
+  resetCreativeDisplay: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -248,13 +248,13 @@ const mapStateToProps = state => ({
   hasCreativeDisplay: hasDisplayCreatives(state),
   isFetchingCreativeDisplay: isFetchingDisplayCreatives(state),
   dataSource: getDisplayCreatives(state),
-  totalCreativeDisplay: getDisplayCreativesTotal(state)
+  totalCreativeDisplay: getDisplayCreativesTotal(state),
 });
 
 const mapDispatchToProps = {
   fetchCreativeDisplay: CreativeDisplayActions.fetchCreativeDisplay.request,
   // archiveCreativeDisplay: CreativeDisplayActions.archiveCreativeDisplay,
-  resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay
+  resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay,
 };
 
 CreativeDisplayTable = connect(mapStateToProps, mapDispatchToProps)(CreativeDisplayTable);

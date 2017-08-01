@@ -12,32 +12,32 @@ import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
 const messages = defineMessages({
   newVersionMessage: {
     id: 'notification.newVersion.message',
-    defaultMessage: 'New Version available'
+    defaultMessage: 'New Version available',
   },
   newVersionDescription: {
     id: 'notification.newVersion.description',
-    defaultMessage: 'Please reload the page'
+    defaultMessage: 'Please reload the page',
   },
   newVersionReloadBtn: {
     id: 'notification.newVersion.button.reload',
-    defaultMessage: 'Reload'
+    defaultMessage: 'Reload',
   },
   errorMessage: {
     id: 'notitication.error.default_message',
-    defaultMessage: 'Error'
+    defaultMessage: 'Error',
   },
   errorDescription: {
     id: 'notification.error.default_description',
-    defaultMessage: 'An error occured'
+    defaultMessage: 'An error occured',
   },
   errorDescriptionWithErrorId: {
     id: 'notification.error.default_description_with_errorid',
-    defaultMessage: 'Something went wrong, please contact your administrator with the following id:'
+    defaultMessage: 'Something went wrong, please contact your administrator with the following id:',
   },
   errorDescriptionCustomWithErrorId: {
     id: 'notification.error.default_custom_description_with_errorid',
-    defaultMessage: 'Please contact your administrator with the following id:'
-  }
+    defaultMessage: 'Please contact your administrator with the following id:',
+  },
 });
 
 class Notifications extends Component {
@@ -45,7 +45,7 @@ class Notifications extends Component {
   buildAntNotifConfig(notification) {
     const {
       intl: { formatMessage },
-      removeNotification
+      removeNotification,
     } = this.props;
 
     const antNotifcationConfig = {
@@ -58,7 +58,7 @@ class Notifications extends Component {
         if (typeof notification.onClose === 'function') {
           notification.onClose();
         }
-      }
+      },
     };
 
     // Functions bellow handle 'predifined' notification
@@ -180,13 +180,13 @@ Notifications.propTypes = {
     error: PropTypes.object,
   })).isRequired,
   removeNotification: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default compose(
   connect(
     state => ({ notifications: state.notifications }),
-    { removeNotification: notificationsActions.removeNotification }
+    { removeNotification: notificationsActions.removeNotification },
   ),
   injectIntl,
 )(Notifications);

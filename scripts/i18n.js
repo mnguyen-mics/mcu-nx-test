@@ -43,11 +43,11 @@ const compareWithOtherLang = (currentLang, otherLang) => {
   return compareKeys(
     {
       key: currentLang,
-      data: fs.readFileSync(path.join(baseDir, currentLang))
+      data: fs.readFileSync(path.join(baseDir, currentLang)),
     },
     {
       key: otherLang,
-      data: fs.readFileSync(path.join(baseDir, otherLang))
+      data: fs.readFileSync(path.join(baseDir, otherLang)),
     });
 };
 
@@ -71,7 +71,7 @@ const check = dir => {
 };
 
 
-let numberOfDiff = check(baseDir);
+const numberOfDiff = check(baseDir);
 
 if (numberOfDiff === 0) {
   process.exit(0);

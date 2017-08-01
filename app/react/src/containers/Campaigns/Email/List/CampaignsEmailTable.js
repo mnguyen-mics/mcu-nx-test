@@ -8,7 +8,7 @@ import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import {
   TableView,
   TableViewFilters,
-  EmptyTableView
+  EmptyTableView,
  } from '../../../../components/TableView';
 import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -27,16 +27,16 @@ class CampaignsEmailTable extends Component {
       onArchiveCampaign,
       onEditCampaign,
       intl: { formatMessage },
-      filter
+      filter,
     } = this.props;
 
     const searchOptions = {
       isEnabled: true,
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: value => onFilterChange({
-        keywords: value
+        keywords: value,
       }),
-      defaultValue: filter.keywords
+      defaultValue: filter.keywords,
     };
 
     const dateRangePickerOptions = {
@@ -51,12 +51,12 @@ class CampaignsEmailTable extends Component {
         rangeType: filter.rangeType,
         lookbackWindow: filter.lookbackWindow,
         from: filter.from,
-        to: filter.to
-      }
+        to: filter.to,
+      },
     };
 
     const columnsVisibilityOptions = {
-      isEnabled: true
+      isEnabled: true,
     };
 
     const pagination = {
@@ -64,12 +64,12 @@ class CampaignsEmailTable extends Component {
       pageSize: filter.pageSize,
       total: totalCampaigns,
       onChange: (page) => onFilterChange({
-        currentPage: page
+        currentPage: page,
       }),
       onShowSizeChange: (current, size) => onFilterChange({
         pageSize: size,
-        currentPage: 1
-      })
+        currentPage: 1,
+      }),
     };
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
@@ -92,43 +92,43 @@ class CampaignsEmailTable extends Component {
         intlMessage: messages.emailHeaderName,
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${record.organisation_id}/campaigns/email/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${record.organisation_id}/campaigns/email/${record.id}`}>{text}</Link>,
       },
       {
         intlMessage: messages.emailHeaderSent,
         key: 'email_sent',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         intlMessage: messages.emailHeaderHardBounced,
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         intlMessage: messages.emailHeaderSoftBounced,
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         intlMessage: messages.emailHeaderClicks,
         key: 'clicks',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         intlMessage: messages.emailHeaderImpressions,
         key: 'impressions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      }
+        render: text => renderMetricData(text, '0,0'),
+      },
     ];
 
     const actionColumns = [
@@ -137,13 +137,13 @@ class CampaignsEmailTable extends Component {
         actions: [
           {
             intlMessage: messages.editCampaign,
-            callback: onEditCampaign
+            callback: onEditCampaign,
           }, {
             intlMessage: messages.archiveCampaign,
-            callback: onArchiveCampaign
-          }
-        ]
-      }
+            callback: onArchiveCampaign,
+          },
+        ],
+      },
     ];
 
     const statusItems = campaignStatuses.map(status => ({ key: status, value: status }));
@@ -155,18 +155,18 @@ class CampaignsEmailTable extends Component {
         menuItems: {
           handleMenuClick: value => {
             onFilterChange({
-              statuses: value.status.map(item => item.value)
+              statuses: value.status.map(item => item.value),
             });
           },
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
-          items: statusItems
-        }
-      }
+          items: statusItems,
+        },
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (noCampaignYet) ? (<EmptyTableView iconType="email" text="EMPTY_EMAILS" />) :
@@ -199,7 +199,7 @@ CampaignsEmailTable.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
   onArchiveCampaign: PropTypes.func.isRequired,
   onEditCampaign: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default injectIntl(CampaignsEmailTable);

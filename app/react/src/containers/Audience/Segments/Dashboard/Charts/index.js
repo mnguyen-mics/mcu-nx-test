@@ -5,5 +5,5 @@ import Overlap from './Overlap';
 export {
   Overview,
   AdditionDeletion,
-  Overlap
+  Overlap,
 };

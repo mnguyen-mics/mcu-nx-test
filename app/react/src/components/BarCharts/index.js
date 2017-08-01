@@ -3,5 +3,5 @@ import VerticalBarChart from './VerticalBarChart';
 
 export {
     StackedBarCharts,
-    VerticalBarChart
+    VerticalBarChart,
 };

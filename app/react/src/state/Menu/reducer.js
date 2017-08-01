@@ -4,7 +4,7 @@ import {
 
 const openMenuDefaultState = {
   collapsed: false,
-  mode: 'inline'
+  mode: 'inline',
 };
 
 const menu = (state = openMenuDefaultState, action) => {
@@ -13,7 +13,7 @@ const menu = (state = openMenuDefaultState, action) => {
     case MENU_OPEN_CLOSE:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
 
     default:
@@ -23,8 +23,7 @@ const menu = (state = openMenuDefaultState, action) => {
 };
 
 const MenuReducers = {
-  menu
+  menu,
 };
 
 export default MenuReducers;
-

@@ -5,5 +5,5 @@ import LayoutManager from './LayoutManager';
 export {
     MainLayout,
     EditLayout,
-    LayoutManager
+    LayoutManager,
 };

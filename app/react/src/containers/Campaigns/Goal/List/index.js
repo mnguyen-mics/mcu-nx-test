@@ -3,5 +3,5 @@ import GoalsTable from './GoalsTable';
 
 export {
   GoalsActionbar,
-  GoalsTable
+  GoalsTable,
 };

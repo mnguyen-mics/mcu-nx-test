@@ -40,6 +40,6 @@ export default function* sagas() {
     ...assetsFilesSagas,
     ...creativeDisplaySagas,
     ...creativeEmailsSagas,
-    ...settingsSagas
+    ...settingsSagas,
   ];
 }

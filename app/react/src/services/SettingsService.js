@@ -5,12 +5,12 @@ const putProfile = (organisationId, userProfile) => {
   const endpoint = `users/${id}?organisation_id=${organisationId}`;
 
   const params = {
-    ...userProfile
+    ...userProfile,
   };
 
   return ApiService.putRequest(endpoint, params);
 };
 
 export default {
-  putProfile
+  putProfile,
 };

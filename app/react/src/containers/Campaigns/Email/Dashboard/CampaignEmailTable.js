@@ -16,12 +16,12 @@ class CampaignEmailTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       isFetchingBlasts,
       isFetchingBlastsStat,
-      dataSet
+      dataSet,
     } = this.props;
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
@@ -46,49 +46,49 @@ class CampaignEmailTable extends Component {
             status = 'SENT';
           }
           return (<span className={`mcs-campaigns-status-${status}`}><FormattedMessage id={status} /></span>);
-        }
+        },
       },
       {
         translationKey: 'NAME',
         key: 'blast_name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${record.id}`}>{text}</Link>,
       },
       {
         translationKey: 'EMAIL_SENT',
         key: 'email_sent',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'EMAIL_HARD_BOUNCED',
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'EMAIL_SOFT_BOUNCED',
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      }
+        render: text => renderMetricData(text, '0,0'),
+      },
     ];
 
     const actionColumns = [
@@ -97,18 +97,18 @@ class CampaignEmailTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editCampaign
+            callback: this.editCampaign,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign
-          }
-        ]
-      }
+            callback: this.archiveCampaign,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (
@@ -132,11 +132,11 @@ CampaignEmailTable.propTypes = {
 const mapStateToProps = state => ({
   isFetchingBlasts: state.campaignEmailSingle.emailBlastApi.isFetching,
   isFetchingBlastsStat: state.campaignEmailSingle.emailBlastPerformanceApi.isFetching,
-  dataSet: getEmailBlastTableView(state)
+  dataSet: getEmailBlastTableView(state),
 });
 
 CampaignEmailTable = connect(
-  mapStateToProps
+  mapStateToProps,
 )(CampaignEmailTable);
 
 CampaignEmailTable = withRouter(CampaignEmailTable);

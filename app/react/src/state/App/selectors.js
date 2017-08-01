@@ -3,5 +3,5 @@ const isAppInitialized = state => {
 };
 
 export {
-  isAppInitialized
+  isAppInitialized,
 };

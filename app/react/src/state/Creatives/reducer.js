@@ -5,7 +5,7 @@ import displayCreatives from './Display/reducer';
 
 const creatives = combineReducers({
   displayCreatives,
-  emailTemplates
+  emailTemplates,
 });
 
 export default { creatives };

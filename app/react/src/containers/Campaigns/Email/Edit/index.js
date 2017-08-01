@@ -7,5 +7,5 @@ export {
   CreateEmailPage,
   EditEmailPage,
   CreateBlastPage,
-  EditBlastPage
+  EditBlastPage,
 };

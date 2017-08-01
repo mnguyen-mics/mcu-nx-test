@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import {
   TableView,
   TableViewFilters,
-  EmptyTableView
+  EmptyTableView,
 } from '../../../../components/TableView';
 import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
@@ -19,7 +19,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs
+  compareSearchs,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -53,8 +53,8 @@ class AudienceSegmentsTable extends Component {
         isValid: query =>
           query.datamarts &&
           query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
-      }
+          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
+      },
     ];
   }
 
@@ -63,21 +63,21 @@ class AudienceSegmentsTable extends Component {
       history,
       location: {
         search,
-        pathname
+        pathname,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      loadAudienceSegmentsDataSource
+      loadAudienceSegmentsDataSource,
     } = this.props;
 
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, this.getSearchSetting(organisationId)),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, this.getSearchSetting(organisationId));
@@ -89,28 +89,28 @@ class AudienceSegmentsTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      loadAudienceSegmentsDataSource
+      loadAudienceSegmentsDataSource,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -119,7 +119,7 @@ class AudienceSegmentsTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, this.getSearchSetting(nextOrganisationId)),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, this.getSearchSetting(nextOrganisationId));
@@ -137,17 +137,17 @@ class AudienceSegmentsTable extends Component {
     const {
       history,
       match: {
-        params: { organisationId }
+        params: { organisationId },
       },
       location: {
         search: currentSearch,
-        pathname
-      }
+        pathname,
+      },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, this.getSearchSetting(organisationId))
+      search: updateSearch(currentSearch, params, this.getSearchSetting(organisationId)),
     };
 
     history.push(nextLocation);
@@ -157,18 +157,18 @@ class AudienceSegmentsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       translations,
       isFetchingAudienceSegments,
       isFetchingSegmentsStat,
       dataSource,
       totalAudienceSegments,
-      hasAudienceSegments
+      hasAudienceSegments,
     } = this.props;
 
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
@@ -177,9 +177,9 @@ class AudienceSegmentsTable extends Component {
       isEnabled: true,
       placeholder: translations.SEARCH_AUDIENCE_SEGMENTS,
       onSearch: value => this.updateLocationSearch({
-        keywords: value
+        keywords: value,
       }),
-      defaultValue: filter.keywords
+      defaultValue: filter.keywords,
     };
 
     const dateRangePickerOptions = {
@@ -194,12 +194,12 @@ class AudienceSegmentsTable extends Component {
         rangeType: filter.rangeType,
         lookbackWindow: filter.lookbackWindow,
         from: filter.from,
-        to: filter.to
-      }
+        to: filter.to,
+      },
     };
 
     const columnsVisibilityOptions = {
-      isEnabled: true
+      isEnabled: true,
     };
 
     const pagination = {
@@ -207,11 +207,11 @@ class AudienceSegmentsTable extends Component {
       pageSize: filter.pageSize,
       total: totalAudienceSegments,
       onChange: (page) => this.updateLocationSearch({
-        currentPage: page
+        currentPage: page,
       }),
       onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
+        pageSize: size,
+      }),
     };
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
@@ -238,62 +238,62 @@ class AudienceSegmentsTable extends Component {
             default:
               return (<Tooltip placement="top" title={translations[text]}><Icon type="database" /></Tooltip>);
           }
-        }
+        },
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>,
       },
       {
         translationKey: 'TECHNICAL_NAME',
         isVisibleByDefault: false,
         key: 'technical_name',
         isHiddable: true,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>,
       },
       {
         translationKey: 'USER_POINTS',
         key: 'user_points',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'USER_ACCOUNTS',
         key: 'user_accounts',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'EMAILS',
         key: 'emails',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'COOKIES',
         key: 'desktop_cookie_ids',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'ADDITION',
         key: 'user_point_additions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'DELETION',
         key: 'user_point_deletions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
     ];
 
@@ -303,13 +303,13 @@ class AudienceSegmentsTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editSegment
+            callback: this.editSegment,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveSegment
-          }
-        ]
-      }
+            callback: this.archiveSegment,
+          },
+        ],
+      },
     ];
 
     const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY'].map(type => ({ key: type, value: type }));
@@ -321,14 +321,14 @@ class AudienceSegmentsTable extends Component {
         menuItems: {
           handleMenuClick: value => this.updateLocationSearch({ types: value.types.map(item => item.value) }),
           selectedItems: filter.types.map(type => ({ key: type, value: type })),
-          items: typeItems
-        }
-      }
+          items: typeItems,
+        },
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (hasAudienceSegments) ? (
@@ -354,10 +354,10 @@ class AudienceSegmentsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      history
+      history,
     } = this.props;
 
     const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
@@ -369,15 +369,15 @@ class AudienceSegmentsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       archiveAudienceSegment,
       loadAudienceSegmentsDataSource,
-      translations
+      translations,
     } = this.props;
 
     const filter = parseSearch(search, this.getSearchSetting());
@@ -401,7 +401,7 @@ class AudienceSegmentsTable extends Component {
 }
 
 AudienceSegmentsTable.defaultProps = {
-  archiveAudienceSegment: () => { }
+  archiveAudienceSegment: () => { },
 };
 
 AudienceSegmentsTable.propTypes = {
@@ -431,18 +431,18 @@ const mapStateToProps = state => ({
   isFetchingSegmentsStat: state.audienceSegmentsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.total,
-  defaultDatamart: getDefaultDatamart(state)
+  defaultDatamart: getDefaultDatamart(state),
 });
 
 const mapDispatchToProps = {
   loadAudienceSegmentsDataSource: AudienceSegmentsActions.loadAudienceSegmentsDataSource,
   archiveAudienceSegment: AudienceSegmentsActions.archiveAudienceSegment,
-  resetAudienceSegmentsTable: AudienceSegmentsActions.resetAudienceSegmentsTable
+  resetAudienceSegmentsTable: AudienceSegmentsActions.resetAudienceSegmentsTable,
 };
 
 AudienceSegmentsTable = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AudienceSegmentsTable);
 
 AudienceSegmentsTable = withRouter(AudienceSegmentsTable);

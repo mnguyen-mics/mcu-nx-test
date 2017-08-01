@@ -6,7 +6,7 @@ const defaultPlacementListApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 
 const placementListsApi = (state = defaultPlacementListApiState, action) => {
@@ -14,18 +14,18 @@ const placementListsApi = (state = defaultPlacementListApiState, action) => {
     case PLACEMENT_LISTS_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case PLACEMENT_LISTS_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case PLACEMENT_LISTS_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case PLACEMENT_LISTS_RESET:
       return defaultPlacementListApiState;
@@ -35,7 +35,7 @@ const placementListsApi = (state = defaultPlacementListApiState, action) => {
 };
 
 const placementListTable = combineReducers({
-  placementListsApi
+  placementListsApi,
 });
 
 const PlacementListsReducers = { placementListTable };

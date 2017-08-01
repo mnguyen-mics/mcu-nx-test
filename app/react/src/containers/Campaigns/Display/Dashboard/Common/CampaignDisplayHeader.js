@@ -1,29 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { TitleAndStatusHeader } from '../../../../../components/TitleAndStatusHeader';
-
+import TitleAndStatusHeader from '../../../../../components/TitleAndStatusHeader';
 
 class CampaignDisplayHeader extends Component {
 
   render() {
-
     const {
       object: {
         name: campaignDisplayName,
-        status: campaignDisplayStatus
+        status: campaignDisplayStatus,
       },
-      translationKey
+      translationKey,
     } = this.props;
 
     const campaignDisplayStatusHeader = {
       value: campaignDisplayStatus,
-      translationKeyPrefix: `${translationKey}_STATUS`
+      translationKeyPrefix: `${translationKey}_STATUS`,
     };
 
     return campaignDisplayName ? (
       <div className="mcs-campaign-header">
-        <TitleAndStatusHeader headerTitle={campaignDisplayName} headerStatus={campaignDisplayStatusHeader} />
+        <TitleAndStatusHeader
+          headerTitle={campaignDisplayName}
+          headerStatus={campaignDisplayStatusHeader}
+        />
       </div>
     ) : (
       <div className="mcs-campaign-header">
@@ -35,8 +36,8 @@ class CampaignDisplayHeader extends Component {
 }
 
 CampaignDisplayHeader.propTypes = {
-  translationKey: PropTypes.string.isRequired, // eslint-disable-line react/forbid-prop-types
-  object: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  translationKey: PropTypes.string.isRequired,
+  object: PropTypes.shape().isRequired,
 };
 
 export default CampaignDisplayHeader;

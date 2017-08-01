@@ -8,7 +8,7 @@ const pkg = require('../package.json');
 
 const extractStyle = new ExtractTextPlugin({
   filename: '[name].[chunkhash].css',
-  disable: process.env.NODE_ENV === 'development'
+  disable: process.env.NODE_ENV === 'development',
 });
 
 const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
@@ -18,7 +18,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
     entry: {
       app: path.join(paths.reactAppSrc, '/index.js'),
       'style-less': paths.appStyleLess,
-      'react-vendors': Object.keys(pkg.dependencies)
+      'react-vendors': Object.keys(pkg.dependencies),
     },
 
     module: {
@@ -29,27 +29,27 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
           use: {
             loader: 'eslint-loader',
             query: {
-              failOnError: eslintFailOnError
-            }
+              failOnError: eslintFailOnError,
+            },
           },
-          enforce: 'pre'
+          enforce: 'pre',
         },
         {
           test: /\.js$/,
           include: paths.reactAppSrc,
           use: {
             loader: 'babel-loader',
-            options: babelOptions
-          }
+            options: babelOptions,
+          },
         },
         {
           test: /\.less$/,
           loader: extractStyle.extract({
             use: [
               'css-loader?sourceMap',
-              'less-loader'
-            ]
-          })
+              'less-loader',
+            ],
+          }),
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
@@ -57,8 +57,8 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
             {
               loader: 'file-loader',
               query: {
-                name: `${isProduction ? '/src/assets/images/' : ''}[name].[ext]`
-              }
+                name: `${isProduction ? '/src/assets/images/' : ''}[name].[ext]`,
+              },
             },
             {
               loader: 'image-webpack-loader',
@@ -69,37 +69,37 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
                 },
                 optipng: {
                   optimizationLevel: 7,
-                }
-              }
-            }
-          ]
+                },
+              },
+            },
+          ],
         },
         {
           test: /\.(eot|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
-          use: 'url-loader'
-        }
-      ]
+          use: 'url-loader',
+        },
+      ],
     },
 
     resolve: {
       alias: {
-        Containers: path.resolve(__dirname, 'app/react/src/containers/')
+        Containers: path.resolve(__dirname, 'app/react/src/containers/'),
       },
-      modules: [paths.appNodeModules]
+      modules: [paths.appNodeModules],
     },
 
     plugins: [
       extractStyle,
       new webpack.DefinePlugin({
-        PUBLIC_PATH: JSON.stringify('react')
+        PUBLIC_PATH: JSON.stringify('react'),
       }),
       new webpack.DefinePlugin({
-        PUBLIC_URL: JSON.stringify('/v2')
+        PUBLIC_URL: JSON.stringify('/v2'),
       }),
       new webpack.optimize.CommonsChunkPlugin({
-        names: ['react-vendors', 'manifest']
-      })
-    ]
+        names: ['react-vendors', 'manifest'],
+      }),
+    ],
   };
 
 };

@@ -1,6 +1,8 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Plottable from 'plottable';
 import moment from 'moment';
+
 import { ChartTooltip, BasicTooltip } from '../ChartTooltip';
 
 class StackedAreaPlotDoubleAxis extends Component {
@@ -17,7 +19,7 @@ class StackedAreaPlotDoubleAxis extends Component {
       xTooltip: null,
       yTooltip: null,
       content: null,
-      visibility: 'hidden'
+      visibility: 'hidden',
     };
 
     this.svgBoundingClientRect = null;
@@ -29,7 +31,7 @@ class StackedAreaPlotDoubleAxis extends Component {
         xTooltip: chartTooltipProps.xTooltip,
         yTooltip: chartTooltipProps.yTooltip,
         content: chartTooltipProps.content,
-        visibility: chartTooltipProps.visibility
+        visibility: chartTooltipProps.visibility,
       });
     }
   }
@@ -93,7 +95,7 @@ class StackedAreaPlotDoubleAxis extends Component {
     const tooltipStyle = {
       xTooltip,
       yTooltip,
-      visibility
+      visibility,
     };
     return (
       <div className="mcs-plot-container">
@@ -219,7 +221,7 @@ class StackedAreaPlotDoubleAxis extends Component {
         const xDomain = xScale.domain();
         dragBox.bounds({
           topLeft: { x: xScale.scale(xDomain[0]), y: null },
-          bottomRight: { x: xScale.scale(xDomain[1]), y: null }
+          bottomRight: { x: xScale.scale(xDomain[1]), y: null },
         });
       });
     }
@@ -256,7 +258,7 @@ class StackedAreaPlotDoubleAxis extends Component {
               () => {
                 return item;
               },
-              colorScale
+              colorScale,
             );
 
           const selectedPoint = new Plottable.Plots.Scatter()
@@ -280,7 +282,7 @@ class StackedAreaPlotDoubleAxis extends Component {
               () => {
                 return item;
               },
-              colorScale
+              colorScale,
             )
             .addDataset(plottableDataSet);
 
@@ -329,13 +331,13 @@ class StackedAreaPlotDoubleAxis extends Component {
         this.setTooltip({
           xTooltip: -100,
           yTooltip: -100,
-          visible: 'hidden'
+          visible: 'hidden',
         });
       });
       pointer.attachTo(plot);
       const point = {
         pointer: pointer,
-        plot: plot
+        plot: plot,
       };
       this.pointers.push(point);
     });
@@ -394,7 +396,7 @@ class StackedAreaPlotDoubleAxis extends Component {
         const entry = {
           label: item.message,
           color: navInfo.dataset.metadata()[item.key],
-          value: navInfo.datum[item.key]
+          value: navInfo.datum[item.key],
         };
         entries.push(entry);
       });
@@ -404,7 +406,7 @@ class StackedAreaPlotDoubleAxis extends Component {
       }
       const tooltipContent = {
         xLabel: xLabel,
-        entries: entries
+        entries: entries,
       };
 
       const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
@@ -417,7 +419,7 @@ class StackedAreaPlotDoubleAxis extends Component {
           ? this.svgBoundingClientRect.top + mousePosition.y
           : (this.svgBoundingClientRect.top + mousePosition.y) - 50,
         content: tooltipContent,
-        visibility: 'visible'
+        visibility: 'visible',
       });
 
       crosshairContainer.style('visibility', 'visible');
@@ -432,7 +434,7 @@ class StackedAreaPlotDoubleAxis extends Component {
 StackedAreaPlotDoubleAxis.propTypes = {
   identifier: PropTypes.string.isRequired,
   dataset: PropTypes.arrayOf(
-    PropTypes.object // eslint-disable-line react/forbid-prop-types
+    PropTypes.object, // eslint-disable-line react/forbid-prop-types
   ).isRequired,
   options: PropTypes.shape({
     color: PropTypes.string,

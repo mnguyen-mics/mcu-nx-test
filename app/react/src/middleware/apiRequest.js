@@ -16,13 +16,13 @@ export default store => next => action => {
   const { dispatch } = store;
   const options = {
     adminApi,
-    localUrl
+    localUrl,
   };
 
   const onRequest = (type) => {
     return {
       type,
-      others
+      others,
     };
   };
 
@@ -32,7 +32,7 @@ export default store => next => action => {
       response: payload,
       authenticated: true,
       body,
-      others
+      others,
     };
   };
 
@@ -40,7 +40,7 @@ export default store => next => action => {
     return {
       type,
       others,
-      response: error
+      response: error,
     };
   };
 

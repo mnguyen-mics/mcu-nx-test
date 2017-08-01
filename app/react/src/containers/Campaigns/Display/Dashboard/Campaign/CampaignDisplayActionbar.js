@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
@@ -6,7 +7,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../../Actionbar';
-import { McsIcons } from '../../../../../components/McsIcons';
+import McsIcons from '../../../../../components/McsIcons';
 import messages from '../messages';
 
 class CampaignDisplayActionbar extends Component {
@@ -23,11 +24,11 @@ class CampaignDisplayActionbar extends Component {
       match: {
         params: {
           organisationId,
-          campaignId
+          campaignId,
         },
       },
       campaignDisplay,
-      translations
+      translations,
     } = this.props;
 
     const actionElement = this.buildActionElement();
@@ -60,12 +61,12 @@ class CampaignDisplayActionbar extends Component {
   buildActionElement() {
     const {
       campaignDisplay,
-      updateCampaignDisplay
+      updateCampaignDisplay,
     } = this.props;
 
     const onClickElement = status => updateCampaignDisplay(campaignDisplay.id, {
       status,
-      type: 'EMAIL'
+      type: 'EMAIL',
     });
 
     const activeCampaignElement = (
@@ -89,7 +90,7 @@ class CampaignDisplayActionbar extends Component {
     const {
       translations,
       campaignDisplay,
-      archiveCampaignDisplay
+      archiveCampaignDisplay,
     } = this.props;
 
     const handleArchiveGoal = campaignDisplayId => {
@@ -129,9 +130,9 @@ class CampaignDisplayActionbar extends Component {
 }
 
 CampaignDisplayActionbar.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  campaignDisplay: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  match: PropTypes.shape().isRequired,
+  campaignDisplay: PropTypes.shape().isRequired,
   updateCampaignDisplay: PropTypes.func.isRequired,
   archiveCampaignDisplay: PropTypes.func.isRequired,
 };
@@ -145,13 +146,13 @@ const mapDispatchToProps = {
 
 CampaignDisplayActionbar = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(CampaignDisplayActionbar);
 
 
 CampaignDisplayActionbar = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(CampaignDisplayActionbar);
 
 export default CampaignDisplayActionbar;

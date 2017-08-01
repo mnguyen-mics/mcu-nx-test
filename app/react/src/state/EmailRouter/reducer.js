@@ -27,7 +27,7 @@ const allEmailRouters = (state = [], action) => {
 
 const emailRouters = combineReducers({
   byId: emailRoutersById,
-  allIds: allEmailRouters
+  allIds: allEmailRouters,
 });
 
 export default emailRouters;

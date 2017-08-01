@@ -14,20 +14,20 @@ const devConfig = {
   output: {
     filename: '[name].js',
     path: paths.appPath,
-    publicPath: paths.publicPath
+    publicPath: paths.publicPath,
   },
 
   node: {
-    fs: 'empty'
+    fs: 'empty',
   },
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
-      template: paths.appHtml
+      template: paths.appHtml,
     }),
-  ]
+  ],
 
 };
 

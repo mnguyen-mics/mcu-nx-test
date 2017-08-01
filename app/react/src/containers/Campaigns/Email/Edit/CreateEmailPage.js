@@ -27,21 +27,21 @@ class CreateEmailPage extends Component {
     const {
       organisationId,
       notifyError,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const hideSaveInProgress = message.loading(
       formatMessage(messages.emailSavingInProgress),
-      0
+      0,
     );
 
     const campaingResource = {
-      ...pick(campaign, ['name', 'technical_name'])
+      ...pick(campaign, ['name', 'technical_name']),
     };
 
     CampaignService.createEmailCampaign(
       organisationId,
-      campaingResource
+      campaingResource,
     ).then(createdCampaign => {
       const campaignId = createdCampaign.id;
 
@@ -50,17 +50,17 @@ class CreateEmailPage extends Component {
         ...campaign.blasts.map(blast => {
           const blastResource = {
             ...pick(blast, ['blast_name', 'subject_line', 'from_email', 'from_name', 'reply_to']),
-            send_date: parseInt(blast.send_date.format('x'), 0)
+            send_date: parseInt(blast.send_date.format('x'), 0),
           };
           return CampaignService.createEmailBlast(campaignId, blastResource).then(createdBlast => {
             const blastId = createdBlast.id;
             return Promise.all([
               CampaignService.createEmailBlastTemplate(campaignId, blastId, blast.templates[0]),
-              CampaignService.createEmailBlastConsent(campaignId, blastId, blast.consents[0])
+              CampaignService.createEmailBlastConsent(campaignId, blastId, blast.consents[0]),
               // CampaignService.createEmailBlastSegment(campaignId, blastId, blast.consents[0])
             ]);
           });
-        })
+        }),
       ]);
     }).then(() => {
       hideSaveInProgress();
@@ -98,7 +98,7 @@ CreateEmailPage.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default compose(
@@ -106,7 +106,7 @@ export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: actions.notifyError }
+    { notifyError: actions.notifyError },
   ),
   withDrawer,
 )(CreateEmailPage);

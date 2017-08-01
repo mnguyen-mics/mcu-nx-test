@@ -5,12 +5,12 @@ import {
   GOAL_UPDATE_REQUEST,
   GOAL_UPDATE_REQUEST_FAILURE,
   GOAL_UPDATE_REQUEST_SUCCESS,
-  GOAL_RESET
+  GOAL_RESET,
 } from '../../action-types';
 
 const defaultGoalState = {
   isUpdating: false,
-  isArchiving: false
+  isArchiving: false,
 };
 
 const goalState = (state = defaultGoalState, action) => {
@@ -18,32 +18,32 @@ const goalState = (state = defaultGoalState, action) => {
     case GOAL_UPDATE_REQUEST:
       return {
         ...state,
-        isUpdating: true
+        isUpdating: true,
       };
     case GOAL_ARCHIVE_REQUEST:
       return {
         ...state,
-        isArchiving: true
+        isArchiving: true,
       };
     case GOAL_UPDATE_REQUEST_FAILURE:
       return {
         ...state,
-        isUpdating: false
+        isUpdating: false,
       };
     case GOAL_ARCHIVE_REQUEST_FAILURE:
       return {
         ...state,
-        isArchiving: false
+        isArchiving: false,
       };
     case GOAL_UPDATE_REQUEST_SUCCESS:
       return {
         ...state,
-        isUpdating: false
+        isUpdating: false,
       };
     case GOAL_ARCHIVE_REQUEST_SUCCESS:
       return {
         ...state,
-        isArchiving: false
+        isArchiving: false,
       };
     case GOAL_RESET:
       return defaultGoalState;
@@ -53,7 +53,7 @@ const goalState = (state = defaultGoalState, action) => {
 };
 
 const GoalReducers = {
-  goalState
+  goalState,
 };
 
 export default GoalReducers;

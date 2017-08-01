@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
@@ -27,7 +27,7 @@ const fetchExportData = (organisationId, filter) => {
     const options = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
-      max_results: 2000
+      max_results: 2000,
     };
 
     const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
@@ -45,20 +45,20 @@ const fetchExportData = (organisationId, filter) => {
 
   const apiResults = Promise.all([
     CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getDisplayCampaignPerfomanceReport(organisationId, startDate, endDate, dimension)
+    ReportService.getDisplayCampaignPerfomanceReport(organisationId, startDate, endDate, dimension),
   ]);
 
   return apiResults.then(results => {
     const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
-      'campaign_id'
+      'campaign_id',
     );
 
     const mergedData = Object.keys(campaignsDisplay).map((campaignId) => {
       return {
         ...campaignsDisplay[campaignId],
-        ...performanceReport[campaignId]
+        ...performanceReport[campaignId],
       };
     });
 
@@ -78,8 +78,8 @@ class CampaignsDisplayActionbar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       translations,
     } = this.props;
@@ -106,11 +106,11 @@ class CampaignsDisplayActionbar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      translations
+      translations,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;

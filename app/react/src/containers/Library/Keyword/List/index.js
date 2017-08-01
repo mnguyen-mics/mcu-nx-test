@@ -3,5 +3,5 @@ import KeywordTable from './KeywordTable';
 
 export {
   KeywordActionBar,
-  KeywordTable
+  KeywordTable,
 };

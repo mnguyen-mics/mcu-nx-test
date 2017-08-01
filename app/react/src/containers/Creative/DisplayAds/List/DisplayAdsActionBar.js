@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import { withTranslations } from '../../../Helpers';
 
 class ListCreativesDisplay extends Component {
@@ -16,10 +16,10 @@ class ListCreativesDisplay extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      translations
+      translations,
     } = this.props;
 
     const breadcrumbPaths = [{ name: translations.DISPLAY_ADS, url: `/v2/o/${organisationId}/creatives/display` }];

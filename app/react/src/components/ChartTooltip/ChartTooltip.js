@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ChartTooltip = ({ tooltipStyle, children }) => {
+function ChartTooltip({ tooltipStyle, children }) {
 
   const style = {
     left: tooltipStyle.xTooltip,
     top: tooltipStyle.yTooltip,
     visibility: tooltipStyle.visibility,
-    position: 'fixed'
+    position: 'fixed',
   };
 
   return (
@@ -16,14 +16,14 @@ const ChartTooltip = ({ tooltipStyle, children }) => {
     </div>
   );
 
-};
+}
 
 ChartTooltip.defaultProps = {
   tooltipStyle: {
     xTooltip: 0,
     yTooltip: 0,
-    visibility: 'hidden'
-  }
+    visibility: 'hidden',
+  },
 };
 
 ChartTooltip.propTypes = {
@@ -41,7 +41,7 @@ ChartTooltip.propTypes = {
   /*
   * To show or not the tooltip
   */
-    visibility: React.PropTypes.string
+    visibility: React.PropTypes.string,
   }),
 };
 

@@ -1,6 +1,6 @@
 import {
   AccountSettings,
-  AccountSettingsActionBar
+  AccountSettingsActionBar,
 } from '../containers/Settings/index';
 
 const settingsRoutes = [
@@ -8,8 +8,8 @@ const settingsRoutes = [
     path: '/settings/useraccount',
     layout: 'main',
     contentComponent: AccountSettings,
-    actionBarComponent: AccountSettingsActionBar
-  }
+    actionBarComponent: AccountSettingsActionBar,
+  },
 ];
 
 export default settingsRoutes;

@@ -4,7 +4,7 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-    fetchAssetsFiles
+    fetchAssetsFiles,
 } from './actions';
 
 import AssetsFilesService from '../../../services/Library/AssetsFilesService';
@@ -12,7 +12,7 @@ import AssetsFilesService from '../../../services/Library/AssetsFilesService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 import {
-    ASSETS_FILES_FETCH
+    ASSETS_FILES_FETCH,
 } from '../../action-types';
 
 function* loadAssetsFiles({ payload }) {
@@ -21,17 +21,17 @@ function* loadAssetsFiles({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -39,11 +39,11 @@ function* loadAssetsFiles({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(AssetsFilesService.getAssetsFiles, organisationId, initialOptions),
-        response: call(AssetsFilesService.getAssetsFiles, organisationId, options)
+        response: call(AssetsFilesService.getAssetsFiles, organisationId, options),
       };
     } else {
       allCalls = {
-        response: call(AssetsFilesService.getAssetsFiles, organisationId, options)
+        response: call(AssetsFilesService.getAssetsFiles, organisationId, options),
       };
     }
 
@@ -65,5 +65,5 @@ function* watchfetchAssetsFiles() {
 }
 
 export const assetsFilesSagas = [
-  fork(watchfetchAssetsFiles)
+  fork(watchfetchAssetsFiles),
 ];

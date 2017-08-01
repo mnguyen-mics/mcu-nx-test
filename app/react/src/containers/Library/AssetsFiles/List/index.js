@@ -3,5 +3,5 @@ import AssetsTableView from './AssetsTableView';
 
 export {
   AssetsActionbar,
-  AssetsTableView
+  AssetsTableView,
 };
