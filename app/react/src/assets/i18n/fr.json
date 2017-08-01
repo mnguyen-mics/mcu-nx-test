@@ -208,6 +208,9 @@
   "NEW_SITE": "Nouveau Site",
   "EMPTY_SITES": "Il n'y a aucun Site de créé! Clickez sur Nouveau pour commencer.",
 
+  "NEW_MOBILE_APPLICATION": "Nouvelle Application Mobile",
+  "EMPTY_MOBILE_APPLICATIONS": "Il n'y a aucune Application Mobile de créée! Clickez sur Nouveau pour commencer.",
+
   "AD_GROUPS": "Element de Campagne",
   "NEW_AD_GROUP": "Nouveau Element de Campagne",
   "TOP_SITES": "Top Sites",
