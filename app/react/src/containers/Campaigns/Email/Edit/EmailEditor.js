@@ -267,7 +267,7 @@ class EmailEditor extends Component {
                         placeholder: formatMessage(messages.emailEditorNameInputPlaceholder)
                       },
                       helpToolTipProps: {
-                        title: 'Campaign name'
+                        title: formatMessage(messages.emailEditorNameInputHelper)
                       }
                     }}
                   />
@@ -278,14 +278,14 @@ class EmailEditor extends Component {
                     props={{
                       formItemProps: {
                         label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
-                        required: true,
+                        required: false,
                         ...fieldGridConfig
                       },
                       inputProps: {
                         placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder)
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
+                        title: formatMessage(messages.emailEditorTechnicalNameInputHelper)
                       }
                     }}
                   />
@@ -313,7 +313,7 @@ class EmailEditor extends Component {
                         text: router.name
                       })),
                       helpToolTipProps: {
-                        title: 'Choose your route'
+                        title: formatMessage(messages.emailEditorRouterSelectHelper)
                       }
                     }}
                   />
