@@ -1,0 +1,174 @@
+[
+  {
+    "id": "display.dashboard.overview",
+    "defaultMessage": "Overview"
+  },
+  {
+    "id": "display.dashboard.topSites",
+    "defaultMessage": "Top Sites"
+  },
+  {
+    "id": "display.dashboard.Live",
+    "defaultMessage": "Delivery Analysis"
+  },
+  {
+    "id": "display.card.adGroup",
+    "defaultMessage": "Ad Groups"
+  },
+  {
+    "id": "display.card.newAdGroup",
+    "defaultMessage": "New Ad Group"
+  },
+  {
+    "id": "display.card.creatives",
+    "defaultMessage": "Creatives"
+  },
+  {
+    "id": "display.card.newCreatives",
+    "defaultMessage": "New Creative"
+  },
+  {
+    "id": "display.adGroup.actionBar.pauseAdGroup",
+    "defaultMessage": "Pause Ad Group"
+  },
+  {
+    "id": "display.adGroup.actionBar.activateAdGroup",
+    "defaultMessage": "Activate Ad Group"
+  },
+  {
+    "id": "display.campaign.actionBar.pauseCampaign",
+    "defaultMessage": "Pause Campaign"
+  },
+  {
+    "id": "display.campaign.actionBar.activateCampaign",
+    "defaultMessage": "Activate Campaign"
+  },
+  {
+    "id": "display.campaign.header.campaignActive",
+    "defaultMessage": "Campaign Active"
+  },
+  {
+    "id": "display.campaign.header.adGroupActive",
+    "defaultMessage": "Ad Group Active"
+  },
+  {
+    "id": "display.campaign.header.campaignPaused",
+    "defaultMessage": "Campaign Paused"
+  },
+  {
+    "id": "display.campaign.header.adGroupPaused",
+    "defaultMessage": "Ad Group Paused"
+  },
+  {
+    "id": "display.campaign.header.campaignPending",
+    "defaultMessage": "Campaign Pending"
+  },
+  {
+    "id": "display.campaign.header.adGroupPending",
+    "defaultMessage": "Ad Group Pending"
+  },
+  {
+    "id": "display.campaign.actionBar.editCampaign",
+    "defaultMessage": "Edit"
+  },
+  {
+    "id": "display.adGroup.actionBar.editAdGroup",
+    "defaultMessage": "Edit"
+  },
+  {
+    "id": "display.campaign.actionBar.archiveCampaign",
+    "defaultMessage": "Archive"
+  },
+  {
+    "id": "display.adGroup.actionBar.archiveAdGroup",
+    "defaultMessage": "Archive"
+  },
+  {
+    "id": "display.campaign.actionBar.display",
+    "defaultMessage": "Display"
+  },
+  {
+    "id": "display.metrics.impressions",
+    "defaultMessage": "Imp."
+  },
+  {
+    "id": "display.metrics.cpm",
+    "defaultMessage": "CPM"
+  },
+  {
+    "id": "display.metrics.cpa",
+    "defaultMessage": "CPA"
+  },
+  {
+    "id": "display.metrics.ctr",
+    "defaultMessage": "CTR"
+  },
+  {
+    "id": "display.metrics.cpc",
+    "defaultMessage": "CPC"
+  },
+  {
+    "id": "display.metrics.impressions_cost",
+    "defaultMessage": "Spent"
+  },
+  {
+    "id": "display.metrics.clicks",
+    "defaultMessage": "Clicks"
+  },
+  {
+    "id": "display.notifications.adgroup.activation.success",
+    "defaultMessage": "Ad Group {name} Successfully Activated"
+  },
+  {
+    "id": "display.notifications.adgroup.activation.error",
+    "defaultMessage": "There was an error activating your Ad Group {name}... Please try again..."
+  },
+  {
+    "id": "display.notifications.adgroup.pause.success",
+    "defaultMessage": "Ad Group {name} Successfully Paused"
+  },
+  {
+    "id": "display.notifications.adgroup.pause.error",
+    "defaultMessage": "There was an error pausing your Ad Group {name}... Please try again..."
+  },
+  {
+    "id": "display.notifications.ad.activation.success",
+    "defaultMessage": "Ad {name} Successfully Activated"
+  },
+  {
+    "id": "display.notifications.ad.activation.error",
+    "defaultMessage": "There was an error activating your Ad {name}... Please try again..."
+  },
+  {
+    "id": "display.notifications.ad.pause.success",
+    "defaultMessage": "Ad {name} Successfully Paused"
+  },
+  {
+    "id": "display.notifications.ad.pause.error",
+    "defaultMessage": "There was an error pausing your Ad {name}... Please try again..."
+  },
+  {
+    "id": "display.ad.audit.success",
+    "defaultMessage": "Audit Successful"
+  },
+  {
+    "id": "display.ad.audit.error",
+    "defaultMessage": "You need to pass the Audit first"
+  },
+  {
+    "id": "notification.success.title",
+    "defaultMessage": "Success"
+  },
+  {
+    "id": "notification.success.error",
+    "defaultMessage": "Error"
+  },
+  {
+    "id": "notification.success.error.generic",
+    "defaultMessage": "There was an error, please contact the administator with the following error id: {errorId}"
+  },
+  {
+    "id": "notification.button.undo",
+    "defaultMessage": "Undo"
+  }
+]

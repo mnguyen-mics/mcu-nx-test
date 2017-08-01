@@ -107,10 +107,6 @@ module.exports = function (grunt) {
           livereload: true
         }
       },
-      jsTest: {
-        files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
-      },
       compass: { 
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'], 
         tasks: ['compass:server', 'autoprefixer'] 
@@ -526,13 +522,6 @@ module.exports = function (grunt) {
     //   }
     // },
 
-    // Test settings
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
-    },
 
     genRequireJsFiles: {
       config: {
@@ -624,8 +613,7 @@ module.exports = function (grunt) {
     'jshint:all',
     'genRequireJsFiles:config',
     'concurrent:test',
-    'connect:test',
-    'karma'
+    'connect:test'
   ]);
 
   grunt.registerTask('build', [

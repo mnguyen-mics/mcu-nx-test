@@ -51,8 +51,6 @@ class Navigator extends Component {
 
     const basePath = '/v2/o/:organisationId(\\d+)';
     const homeUrl = `/v2/o/${defaultWorspaceOrganisationId}/campaigns/display`;
-    const authenticated = AuthService.isAuthenticated();
-
     return (
       <IntlProvider locale={locale} messages={translations}>
         <LocaleProvider locale={enUS}>
@@ -61,7 +59,7 @@ class Navigator extends Component {
             <Switch>
               <Route
                 exact path="/" render={({ match }) => {
-
+                  const authenticated = AuthService.isAuthenticated();
                   let redirectToUrl = '/login';
                   if (authenticated) {
                     redirectToUrl = homeUrl;
@@ -98,7 +96,9 @@ class Navigator extends Component {
 
               <Route
                 exact path="/login" render={() => {
+                  const authenticated = AuthService.isAuthenticated();
                   if (authenticated) return (<Redirect to={homeUrl} />);
+                  this.props.logOut();
                   return (<Login />);
                 }}
               />

@@ -18,12 +18,12 @@ import AudiencePartitionsReducers from '../state/Audience/Partitions/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
 import LabelsReducers from '../state/Labels/reducer';
 
+import MenuReducers from '../state/Menu/reducer';
+
 import PlacementListsReducers from '../state/Library/PlacementLists/reducer';
 import KeywordListsReducers from '../state/Library/KeywordLists/reducer';
 import creativesReducer from '../state/Creatives/reducer';
 import AssetsFilesReducers from '../state/Library/AssetsFiles/reducer';
-
-import emailRoutersReducer from '../state/EmailRouter/reducer';
 
 const allReducers = Object.assign({},
   FormReducer,
@@ -45,8 +45,8 @@ const allReducers = Object.assign({},
   PlacementListsReducers,
   KeywordListsReducers,
   AssetsFilesReducers,
-  creativesReducer,
-  emailRoutersReducer
+  MenuReducers,
+  creativesReducer
 );
 
 export default combineReducers(allReducers);

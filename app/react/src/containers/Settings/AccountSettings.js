@@ -7,10 +7,20 @@ import { injectIntl, intlShape, defineMessages } from 'react-intl';
 import { UserAccount } from './UserAccount';
 import { OrganisationAccount } from './OrganisationAccount';
 import { getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
+import * as menuActions from '../../state/Menu/actions';
 
 const TabPane = Tabs.TabPane;
 
 class AccountSettings extends Component {
+
+  componentWillMount() {
+    const { openCloseMenu } = this.props;
+    openCloseMenu({
+      collapsed: true,
+      mode: 'verlical'
+    });
+  }
+
   render() {
     const {
       intl: { formatMessage },
@@ -37,20 +47,25 @@ class AccountSettings extends Component {
 }
 
 AccountSettings.propTypes = {
-  organisationName: PropTypes.string.isRequired
+  organisationName: PropTypes.string.isRequired,
+  openCloseMenu: PropTypes.func.isRequired,
+  intl: intlShape.isRequired
 };
 
 const mapStateToProps = (state) => ({
   organisationName: getDefaultWorspaceOrganisationId(state)
 });
 
-AccountSettings.propTypes = {
-  intl: intlShape.isRequired
+const mapDispatchToProps = {
+  openCloseMenu: menuActions.openCloseMenu
 };
 
 AccountSettings = compose(
-  connect(mapStateToProps),
-  injectIntl
+  injectIntl,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(AccountSettings);
 
 export default AccountSettings;

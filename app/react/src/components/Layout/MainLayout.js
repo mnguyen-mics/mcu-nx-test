@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { Layout } from 'antd';
+import { connect } from 'react-redux';
 
 import { NavigatorHeader } from '../../containers/Header';
 import { NavigatorMenu } from '../../containers/Menu';
 import { Logo } from '../../containers/Logo';
+import * as MenuActions from '../../state/Menu/actions';
 
 const { Content, Sider } = Layout;
 
@@ -12,19 +15,23 @@ class MainLayout extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      collapsed: false,
-      mode: 'inline'
-    };
+
     this.onCollapse = this.onCollapse.bind(this);
     this.onMenuItemClick = this.onMenuItemClick.bind(this);
   }
 
   onCollapse(collapsed) {
-    this.setState({
+
+    const {
+      openCloseMenu
+    } = this.props;
+    openCloseMenu({
       collapsed,
-      mode: collapsed ? 'vertical' : 'inline',
+      mode: collapsed ? 'vertical' : 'inline'
     });
+
+    const event = new Event('redraw'); // eslint-disable-line no-undef
+    global.window.dispatchEvent(event);
   }
 
   getActionBar() {
@@ -35,40 +42,71 @@ class MainLayout extends Component {
   }
 
   onMenuItemClick() {
-    if (this.state.collapsed === true) {
-      this.setState({
-        collapsed: false,
-        mode: 'inline'
-      });
+    const { collapsed } = this.props;
+    if (collapsed === true) {
+      this.onCollapse(false);
     }
   }
 
   render() {
 
-    const { contentComponent: ContentComponent } = this.props;
+    const { contentComponent: ContentComponent, actionBarComponent: ActionBarComponent, collapsed, mode } = this.props;
 
     return (
       <Layout id="mcs-main-layout" className="mcs-fullscreen">
-        <Sider style={this.state.collapsed ? {} : { overflow: 'auto' }} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-          <Logo mode={this.state.mode} />
-          <NavigatorMenu mode={this.state.mode} collapsed={this.state.collapsed} onMenuItemClick={this.onMenuItemClick} />
+        <Sider style={collapsed ? {} : { overflow: 'auto' }} collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
+          <Logo mode={mode} />
+          <NavigatorMenu mode={mode} collapsed={collapsed} onMenuItemClick={this.onMenuItemClick} />
         </Sider>
         <Layout>
           <NavigatorHeader />
-          { this.getActionBar() }
-          <Content className="mcs-content-container">
+          { ActionBarComponent ? <ActionBarComponent /> : null }
+          { ActionBarComponent ? (
+            <div className="ant-layout">
+              <Content className="mcs-content-container">
+                <ContentComponent />
+              </Content>
+            </div>
+          ) : (
             <ContentComponent />
-          </Content>
+          ) }
         </Layout>
       </Layout>
     );
   }
 }
 
+MainLayout.defaultProps = {
+  actionBarComponent: null,
+  collapsed: false,
+  mode: 'inline',
+  openCloseMenu: () => {}
+};
+
 MainLayout.propTypes = {
   contentComponent: PropTypes.func.isRequired,
-  actionBarComponent: PropTypes.func.isRequired
+  actionBarComponent: PropTypes.func,
+  collapsed: PropTypes.bool,
+  mode: PropTypes.string,
+  openCloseMenu: PropTypes.func,
 };
+
+const mapStateToProps = (state) => ({
+  collapsed: state.menu.collapsed,
+  mode: state.menu.mode
+});
+
+const mapDispatchToProps = {
+  openCloseMenu: MenuActions.openCloseMenu
+};
+
+
+MainLayout = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MainLayout);
+
+MainLayout = withRouter(MainLayout);
 
 export default MainLayout;
 

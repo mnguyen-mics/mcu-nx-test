@@ -18,6 +18,10 @@ const prodConfig = {
     publicPath: paths.publicDistPath
   },
 
+  node: {
+    fs: 'empty'
+  },
+
   plugins: [
     new HtmlWebpackPlugin({
       inject: true,

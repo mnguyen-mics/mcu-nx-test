@@ -22,7 +22,7 @@ class AccountSettingsActionBar extends Component {
 
     const breadcrumbPaths = [{ name: formatMessage(breadcrumbMessages.settings), url: `/v2/o/${organisationId}/settings/useraccount` }];
     return (<Actionbar path={breadcrumbPaths}>
-      <Button type="primary">
+      <Button type="primary" className="mcs-primary">
         <i className="anticon anticon-lock" /> <FormattedMessage id="RESET_PASSWORD_BUTTON" />
       </Button>
     </Actionbar>);

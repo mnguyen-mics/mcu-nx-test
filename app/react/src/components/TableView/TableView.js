@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Menu, Table } from 'antd';
+
 import { McsIcons } from '../McsIcons';
 
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
@@ -121,7 +122,7 @@ class TableView extends Component {
         render: (text, record) => {
           return (<Dropdown overlay={this.renderActionsMenu(column.actions, record)} trigger={['click']}>
             <a className="ant-dropdown-link">
-              <McsIcons type="caret" />
+              <McsIcons type="chevron" />
             </a>
           </Dropdown>);
         }

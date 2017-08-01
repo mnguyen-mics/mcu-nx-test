@@ -26,10 +26,12 @@ const isAuthenticated = () => {
   const isAccessTokenExpired = moment().isAfter(expirationDate);
   if (isAccessTokenNull) {
     log.debug('Access token not found');
+    return false;
   } else if (isAccessTokenExpired) {
     log.debug('Access token expired');
+    return false;
   }
-  return !(isAccessTokenNull || isAccessTokenExpired);
+  return true;
 };
 
 const getRefreshToken = () => {
