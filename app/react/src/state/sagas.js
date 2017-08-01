@@ -16,7 +16,7 @@ import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
 import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas';
-import { settingsSagas } from './Settings/sagas';
+import { settingsSagas } from './Account/sagas';
 
 export default function* sagas() {
   yield [

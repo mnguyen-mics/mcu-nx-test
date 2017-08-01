@@ -127,7 +127,7 @@ class EmailTemplateSelector extends Component {
           render: (text, record) => (
             <div className="mcs-table-cell-thumbnail">
               <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
-                <span className="thumbnail-helper"/><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name}/>
+                <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
               </a>
             </div>
           )
@@ -199,7 +199,7 @@ class EmailTemplateSelector extends Component {
         <div className="edit-layout ant-layout">
           <Actionbar path={[{ name: 'Add an existing template' }]}>
             <Button type="primary" onClick={this.handleAdd}>
-              <McsIcons type="plus"/><span>Add</span>
+              <McsIcons type="plus" /><span>Add</span>
             </Button>
             <McsIcons
               type="close"
@@ -212,16 +212,16 @@ class EmailTemplateSelector extends Component {
             <Content className="mcs-content-container">
               {hasEmailTemplates
                 ? <div className="mcs-table-container">
-                 <TableViewFilters searchOptions={this.getSearchOptions()}>
-                   <TableView
-                     columnsDefinitions={this.getColumnsDefinitions()}
-                     dataSource={emailTemplates}
-                     loading={isLoading}
-                     pagination={pagination}
-                   />
-                 </TableViewFilters>
-               </div>
-                : <EmptyTableView iconType="file"/>}
+                  <TableViewFilters searchOptions={this.getSearchOptions()}>
+                    <TableView
+                      columnsDefinitions={this.getColumnsDefinitions()}
+                      dataSource={emailTemplates}
+                      loading={isLoading}
+                      pagination={pagination}
+                    />
+                  </TableViewFilters>
+                </div>
+                : <EmptyTableView iconType="file" />}
             </Content>
           </Layout>
         </div>
