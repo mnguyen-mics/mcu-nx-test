@@ -5,13 +5,11 @@ import { Layout } from 'antd';
 import { NavigatorHeader } from '../../containers/Header';
 
 class EditLayout extends Component {
-
   render() {
-
     const { editComponent: EditComponent } = this.props;
 
     return (
-      <Layout id="mcs-edit-layout" className="mcs-fullscreen">
+      <Layout className="mcs-fullscreen">
         <NavigatorHeader />
         <EditComponent />
       </Layout>

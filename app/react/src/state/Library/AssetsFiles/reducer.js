@@ -1,9 +1,6 @@
 import { combineReducers } from 'redux';
 
-import {
-  ASSETS_FILES_FETCH,
-  ASSETS_FILES_TABLE_RESET
-} from '../../action-types';
+import { ASSETS_FILES_FETCH, ASSETS_FILES_RESET } from '../../action-types';
 
 const defaultAssetsFilesApiState = {
   isFetching: false,
@@ -14,7 +11,6 @@ const defaultAssetsFilesApiState = {
 
 const assetsFilesApi = (state = defaultAssetsFilesApiState, action) => {
   switch (action.type) {
-
     case ASSETS_FILES_FETCH.REQUEST:
       return {
         ...state,
@@ -31,13 +27,12 @@ const assetsFilesApi = (state = defaultAssetsFilesApiState, action) => {
         ...state,
         isFetching: false
       };
-    case ASSETS_FILES_TABLE_RESET:
+    case ASSETS_FILES_RESET:
       return defaultAssetsFilesApiState;
     default:
       return state;
   }
 };
-
 
 const assetsFilesTable = combineReducers({
   assetsFilesApi

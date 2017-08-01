@@ -59,6 +59,7 @@ class LegendChart extends Component {
   }
 }
 
+
 LegendChart.propTypes = {
   identifier: PropTypes.string.isRequired,
   options: PropTypes.shape({

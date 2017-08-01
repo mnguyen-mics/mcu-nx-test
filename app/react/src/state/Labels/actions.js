@@ -1,4 +1,4 @@
-import { createAction } from '../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
 import {
   LABELS_OBJECT_FETCH,

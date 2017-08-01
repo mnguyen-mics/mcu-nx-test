@@ -1,4 +1,5 @@
 import 'whatwg-fetch';
+import { isEmpty } from 'lodash';
 
 import AuthService from './AuthService';
 
@@ -35,40 +36,48 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
     }
   }
 
-  if (headers) {
+  const bodyIsFormData = (body instanceof FormData); /* global FormData */
+
+  if (headers && !isEmpty(headers)) {
     config.headers = Object.assign({}, config.headers, headers);
-  } else {
+  } else if (!bodyIsFormData) {
     config.headers = Object.assign({}, config.headers, {
-      Accept: 'application/json',
+      'Accept': 'application/json', // eslint-disable-line
       'Content-Type': 'application/json'
     });
   }
 
-  if (body) {
+  if (bodyIsFormData) {
+    config.body = body; // body passed as a formdata object
+  } else if (body) {
     config.body = JSON.stringify(body);
   }
 
-  const parseResponse = response => {
+  const checkAndParse = response => {
     const contentType = response.headers.get('Content-Type');
-    if (contentType && contentType === 'image/png') {
-      return response.blob();
-    }
-    return response.json();
-  };
+    if (contentType && contentType.indexOf('image/png') !== -1) {
+      return response.blob().then(blob => {
+        if (!response.ok) {
+          Promise.reject(blob);
+        }
 
-  const checkStatus = response => {
-    if (!response.ok) {
-      return Promise.reject(response);
+        return blob;
+      });
     }
-    return Promise.resolve(response);
+
+    // Considered as a json response by default
+    return response.json().then(json => {
+      if (!response.ok) {
+        return Promise.reject(json);
+      }
+
+      return json;
+    });
+
   };
 
   return fetch(url, config) // eslint-disable-line no-undef
-    .then(checkStatus)
-    .then(parseResponse)
-    .catch(response => {
-      throw response.error ? response : { error: `Error on fetch ${url}` };
-    });
+    .then(checkAndParse);
 };
 
 const getRequest = (endpoint, params = {}, headers = {}, options = {}) => {

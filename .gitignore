@@ -21,6 +21,7 @@ app/version*
 .DS_Store
 Icon?
 .eslintcache
+build/
 
 
 

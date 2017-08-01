@@ -17,15 +17,18 @@ class LayoutManager extends Component {
       actionBarComponent
     } = this.props;
 
-    log.debug(`Render ${layout} layout with component`, contentComponent);
+    log.trace(`Render ${layout} layout with component`, contentComponent);
 
     switch (layout) {
       case 'main':
         return (<MainLayout contentComponent={contentComponent} actionBarComponent={actionBarComponent} />);
       case 'edit':
         return (<EditLayout editComponent={editComponent} />);
-      default:
-        throw new Error(`Unhandled layout ${layout}`);
+      default: {
+        const errMsg = `Unhandled layout ${layout}`;
+        log.error(errMsg);
+        throw new Error(errMsg);
+      }
     }
   }
 }

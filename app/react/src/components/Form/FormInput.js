@@ -42,7 +42,7 @@ const FormInput = (
           />
         </Col>
         {displayHelpToolTip &&
-          <Col span={2} className="form-tooltip">
+          <Col span={2} className="field-tooltip">
             <Tooltip {...mergedTooltipProps}>
               <McsIcons type="info" />
             </Tooltip>

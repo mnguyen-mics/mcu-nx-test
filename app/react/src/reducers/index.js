@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
-import { reducer as formReducer } from 'redux-form';
 
-// import { PersistentReducers } from './PersistentReducers';
+import FormReducer from './FormReducer';
 
 import AppReducer from '../state/App/reducer';
 import CampaignsDisplayReducers from '../state/Campaigns/Display/reducer';
@@ -19,21 +18,15 @@ import AudiencePartitionsReducers from '../state/Audience/Partitions/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
 import LabelsReducers from '../state/Labels/reducer';
 
+import MenuReducers from '../state/Menu/reducer';
+
 import PlacementListsReducers from '../state/Library/PlacementLists/reducer';
 import KeywordListsReducers from '../state/Library/KeywordLists/reducer';
-import creativeDisplayReducers from '../state/Creatives/Display/reducer';
-import creativeEmailsReducers from '../state/Creatives/Emails/reducer';
+import creativesReducer from '../state/Creatives/reducer';
 import AssetsFilesReducers from '../state/Library/AssetsFiles/reducer';
 
-const allReducers = Object.assign(
-  {},
-
-  // external reducers
-  {
-    form: formReducer
-  },
-
-  // PersistentReducers,
+const allReducers = Object.assign({},
+  FormReducer,
   AppReducer,
   CampaignsDisplayReducers,
   CampaignEmailReducers,
@@ -52,8 +45,8 @@ const allReducers = Object.assign(
   PlacementListsReducers,
   KeywordListsReducers,
   AssetsFilesReducers,
-  creativeDisplayReducers,
-  creativeEmailsReducers
+  MenuReducers,
+  creativesReducer
 );
 
 export default combineReducers(allReducers);

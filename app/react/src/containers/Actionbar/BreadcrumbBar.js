@@ -12,13 +12,14 @@ class BreadcrumbBar extends Component {
       path
     } = this.props;
 
-    const buildItem = elt => {
-      const item = elt.url ? <Link to={elt.url}>{elt.name}</Link> : elt.name;
-      return <Breadcrumb.Item key={elt.name} >{item}</Breadcrumb.Item>;
+    const buildItem = (elt) => {
+      const formatedElt = elt.name ? (elt.name.substr(0, 27) !== elt.name ? `${elt.name.substr(0, 27)}\u2026` : elt.name) : null;
+      const item = elt.url ? <Link to={elt.url} key={elt.key}>{formatedElt}</Link> : formatedElt;
+      return <Breadcrumb.Item key={elt.key} >{item}</Breadcrumb.Item>;
     };
     const sep = <McsIcons type="chevron-right" />;
     return (
-      <Breadcrumb separator={sep} {...this.props}>
+      <Breadcrumb key="breadcrumb" separator={sep} {...this.props} >
         {path.map(buildItem)}
       </Breadcrumb>);
   }

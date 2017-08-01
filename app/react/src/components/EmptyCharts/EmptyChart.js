@@ -1,15 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col } from 'antd';
+
 import { McsIcons } from '../McsIcons';
 
 class EmptyCharts extends Component {
-
   render() {
-
-    const {
-      title,
-      icon
-    } = this.props;
+    const { title, icon } = this.props;
 
     return (
       <Row className="mcs-card-no-data">
@@ -22,7 +19,6 @@ class EmptyCharts extends Component {
       </Row>
     );
   }
-
 }
 
 EmptyCharts.defaultProps = {
@@ -31,7 +27,7 @@ EmptyCharts.defaultProps = {
 
 EmptyCharts.propTypes = {
   title: PropTypes.string.isRequired,
-  icon: PropTypes.string,
+  icon: PropTypes.string
 };
 
 export default EmptyCharts;

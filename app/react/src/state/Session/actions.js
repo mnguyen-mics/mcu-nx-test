@@ -1,9 +1,10 @@
-import { createAction } from '../../utils/ReduxHelper';
+import { createAction } from 'redux-actions';
 
 import {
   CONNECTED_USER,
   WORKSPACE,
-  GET_LOGO
+  GET_LOGO,
+  PUT_LOGO
 } from '../action-types';
 
 const getConnectedUser = {
@@ -12,16 +13,27 @@ const getConnectedUser = {
   failure: createAction(CONNECTED_USER.FAILURE)
 };
 
+const putLogo = {
+  request: createAction(PUT_LOGO.REQUEST),
+  success: createAction(PUT_LOGO.SUCCESS),
+  failure: createAction(PUT_LOGO.FAILURE)
+};
+
 const getWorkspace = {
   request: createAction(WORKSPACE.REQUEST),
   success: createAction(WORKSPACE.SUCCESS),
   failure: createAction(WORKSPACE.FAILURE)
 };
 
-const getLogo = createAction(GET_LOGO);
+const getLogo = {
+  request: createAction(GET_LOGO.REQUEST),
+  success: createAction(GET_LOGO.SUCCESS),
+  failure: createAction(GET_LOGO.FAILURE)
+};
 
 export {
   getConnectedUser,
   getWorkspace,
-  getLogo
+  getLogo,
+  putLogo
 };

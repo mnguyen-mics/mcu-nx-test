@@ -136,6 +136,9 @@
   "CAMPAIGN_STATUS_ACTIVE": "Campaign en cours",
   "CAMPAIGN_STATUS_PAUSED": "Campaign en pause",
   "CAMPAIGN_STATUS_PENDING": "Campaign en attente",
+  "AD_GROUP_STATUS_ACTIVE": "Startegie En Cours",
+  "AD_GROUP_STATUS_PAUSED": "Strategie en Pause",
+  "AD_GROUP_STATUS_PENDING": "Strategie en Attente",
   "CAMPAIGN_OVERVIEW": "Overview",
   "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
 
@@ -202,5 +205,23 @@
   "USER_POINT_ADDITIONS": "Ajout de Userpoint",
   "USER_POINT_DELETIONS": "Suppression de Userpoint",
   "DESKTOP_COOKIE_IDS": "Display Cookies",
-  "EXTEND": "Etendre"
+  "EXTEND": "Etendre",
+
+  "AD_GROUPS": "Element de Campagne",
+  "NEW_AD_GROUP": "Nouveau Element de Campagne",
+  "TOP_SITES": "Top Sites",
+
+  "DISPLAY_NETWORK_NAME": "Display Network",
+  "AD_GROUP_UPDATE_ACTIVE_SUCCESS": "Stratégie Activée avec Succès",
+  "AD_GROUP_UPDATE_ACTIVE_ERROR": "Une erreur est survenue lors de l'activation de la Stratégie... Merci de réessayer...",
+  "AD_GROUP_UPDATE_PAUSE_SUCCESS": "Stratégie mise en Pause avec Succès",
+  "AD_GROUP_UPDATE_PAUSE_ERROR": "Une erreur est survenue lors de la mise en pause de la Stratégie... Merci de réessayer...",
+  "AD_UPDATE_ACTIVE_SUCCESS": "Ad Activée avec Succès",
+  "AD_UPDATE_ACTIVE_ERROR": "Une erreur est survenue lors de l'activation de l'Ad... Merci de réessayer...",
+  "AD_UPDATE_PAUSE_SUCCESS": "Ad mise en Pause avec Succès",
+  "AD_UPDATE_PAUSE_ERROR": "Une erreur est survenue lors de la mise en pause de la Ad... Merci de réessayer...",
+  "NOTIFICATION_SUCCESS": "Success",
+  "NOTIFICATION_ERROR": "Error",
+  "AUDIT_SUCCESS": "Audit Réussit",
+  "AUDIT_ERROR": "Vous devez passez l'Audit"
 }

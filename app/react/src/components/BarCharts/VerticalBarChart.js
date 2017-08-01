@@ -119,8 +119,10 @@ class VerticalBarChart extends Component {
     }
 
     const xScale = new Plottable.Scales.Category();
-    const yScale = new Plottable.Scales.Linear().addIncludedValuesProvider(() => { return [0]; }).addPaddingExceptionsProvider(() => { return [0]; }).padProportion(0.2);
-
+    const yScale = new Plottable.Scales.Linear()
+      .addIncludedValuesProvider(() => { return [0]; })
+      .addPaddingExceptionsProvider(() => { return [0]; })
+      .padProportion(0.2);
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
     colorScale.domain(options.yKeys);
@@ -205,6 +207,12 @@ class VerticalBarChart extends Component {
 
     global.window.addEventListener('resize', () => {
       table.redraw();
+    });
+
+    global.window.addEventListener('redraw', () => {
+      setTimeout(() => {
+        table.redraw();
+      }, 500);
     });
 
   }

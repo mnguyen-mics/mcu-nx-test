@@ -36,6 +36,78 @@ const getEmailDeliveryReport = (organisationId, startDate, endDate, dimension, m
   return ApiService.getRequest(endpoint, params);
 };
 
+const getSingleDisplayDeliveryReport = (organisationId, campaignId, startDate, endDate, dimension, metrics, options = {}) => {
+  const endpoint = 'reports/display_campaign_performance_report';
+  const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'];
+
+
+  const params = {
+    organisation_id: organisationId,
+    filters: `campaign_id==${campaignId}`,
+    start_date: startDate.format(DATE_FORMAT),
+    end_date: endDate.format(DATE_FORMAT),
+    dimension,
+    metrics: metrics || DEFAULT_METRICS,
+    ...options
+  };
+
+  return ApiService.getRequest(endpoint, params);
+};
+
+const getAdGroupDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
+  const endpoint = 'reports/ad_group_performance_report';
+  const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+
+
+  const params = {
+    organisation_id: organisationId,
+    filters: `${objectType}==${objectId}`,
+    start_date: startDate.format(DATE_FORMAT),
+    end_date: endDate.format(DATE_FORMAT),
+    dimension,
+    metrics: metrics || DEFAULT_METRICS,
+    ...options
+  };
+
+  return ApiService.getRequest(endpoint, params);
+};
+
+const getAdDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
+  const endpoint = 'reports/ad_performance_report';
+  const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+
+
+  const params = {
+    organisation_id: organisationId,
+    filters: `${objectType}==${objectId}`,
+    start_date: startDate.format(DATE_FORMAT),
+    end_date: endDate.format(DATE_FORMAT),
+    dimension,
+    metrics: metrics || DEFAULT_METRICS,
+    ...options
+  };
+
+  return ApiService.getRequest(endpoint, params);
+};
+
+const getMediaDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
+  const endpoint = 'reports/media_performance_report';
+  const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+  const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
+
+  const params = {
+    organisation_id: organisationId,
+    filters: `${objectType}==${objectId}`,
+    start_date: startDate.format(DATE_FORMAT),
+    end_date: endDate.format(DATE_FORMAT),
+    dimension: dimension || DEFAULT_DIMENSIONS,
+    metrics: metrics || DEFAULT_METRICS,
+    ...options
+  };
+
+  return ApiService.getRequest(endpoint, params);
+};
+
 const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/delivery_report';
   const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions', 'email_unsubscribed', 'email_complaints', 'uniq_impressions', 'uniq_clicks', 'uniq_email_sent', 'uniq_email_unsubscribed', 'uniq_email_hard_bounced', 'uniq_email_soft_bounced', 'uniq_email_complaints'];
@@ -127,5 +199,9 @@ export default {
   getConversionPerformanceReport,
   getAudienceSegmentReport,
   getSingleEmailDeliveryReport,
-  getAllEmailBlastPerformance
+  getAllEmailBlastPerformance,
+  getSingleDisplayDeliveryReport,
+  getAdGroupDeliveryReport,
+  getAdDeliveryReport,
+  getMediaDeliveryReport
 };

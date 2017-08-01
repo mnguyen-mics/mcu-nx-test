@@ -1,9 +1,6 @@
 import { combineReducers } from 'redux';
 
-import {
-  PLACEMENT_LISTS_FETCH,
-  PLACEMENT_LISTS_TABLE_RESET
-} from '../../action-types';
+import { PLACEMENT_LISTS_FETCH, PLACEMENT_LISTS_RESET } from '../../action-types';
 
 const defaultPlacementListApiState = {
   isFetching: false,
@@ -14,7 +11,6 @@ const defaultPlacementListApiState = {
 
 const placementListsApi = (state = defaultPlacementListApiState, action) => {
   switch (action.type) {
-
     case PLACEMENT_LISTS_FETCH.REQUEST:
       return {
         ...state,
@@ -31,13 +27,12 @@ const placementListsApi = (state = defaultPlacementListApiState, action) => {
         ...state,
         isFetching: false
       };
-    case PLACEMENT_LISTS_TABLE_RESET:
+    case PLACEMENT_LISTS_RESET:
       return defaultPlacementListApiState;
     default:
       return state;
   }
 };
-
 
 const placementListTable = combineReducers({
   placementListsApi

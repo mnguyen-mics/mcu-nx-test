@@ -7,8 +7,8 @@ html, body {
     height:100%;
 }
 
-div[data-reactroot] {
-    height:100%
+.mcs-react-app > div {
+    height:100%;
 }
 
 .mcs-fullscreen {
@@ -33,6 +33,7 @@ a {
 
 .ant-layout {
     z-index: 1;
+    overflow: auto;
 }
 
 .ant-layout-content {
@@ -52,4 +53,37 @@ a {
     font-size: 0.8em;
     color: @text-color-secondary;
     padding: 10px;
+}
+
+.ant-table-wrapper {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.ant-table {
+    margin-bottom: 20px;
+}
+
+.ant-spin-dot i:first-child {
+    background-color: @info-color!important;
+    opacity: 1!important;
+}
+
+.ant-spin-dot i:nth-child(2) {
+    background-color: @warning-color!important;
+    opacity: 1!important;
+}
+
+.ant-spin-dot i:nth-child(3) {
+    background-color: @success-color!important;
+    opacity: 1!important;
+}
+
+.ant-spin-dot i:first-child {
+    background-color: @error-color!important;
+    opacity: 1!important;
+}
+
+.mcs-dropdown-actions {
+    min-width: 100px;
 }

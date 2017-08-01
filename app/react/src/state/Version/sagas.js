@@ -2,7 +2,7 @@
 import { delay } from 'redux-saga';
 import { call, fork, put } from 'redux-saga/effects';
 
-import { addNotification } from '../Notifications/actions';
+import { notifyInfo } from '../Notifications/actions';
 import NavigatorService from '../../services/NavigatorService';
 import log from '../../utils/Logger';
 
@@ -16,10 +16,8 @@ function* getVersionLoop() {
       const newVersion = yield call(NavigatorService.getVersion);
       if (currentVersion !== newVersion.version) {
         currentVersion = response.version;
-        yield put(addNotification({
-          type: 'reload',
-          messageKey: 'NOTIFICATION_NEW_VERSION_TITLE',
-          descriptionKey: 'NOTIFICATION_NEW_VERSION_DESCRIPTION'
+        yield put(notifyInfo({
+          newVersion: true
         }));
       }
 

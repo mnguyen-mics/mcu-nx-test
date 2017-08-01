@@ -205,6 +205,12 @@ class StackedBarCharts extends Component {
       table.redraw();
     });
 
+    global.window.addEventListener('redraw', () => {
+      setTimeout(() => {
+        table.redraw();
+      }, 500);
+    });
+
   }
 
   createDotsCrosshair(plot) {

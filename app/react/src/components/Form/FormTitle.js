@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
 const FormTitle = ({ titleMessage, subTitleMessage }) => (
-  <div className="form-title-container">
+  <div className="title-container">
     <div className="title">
     <FormattedMessage
       {...titleMessage}

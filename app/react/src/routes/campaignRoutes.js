@@ -4,12 +4,20 @@ import {
 } from '../containers/Campaigns/Display/List';
 
 import {
-   EditEmail
+  CampaignPage,
+  AdGroupPage
+} from '../containers/Campaigns/Display/Dashboard';
+
+import {
+  CreateEmailPage,
+  EditEmailPage,
+  CreateBlastPage,
+  EditBlastPage
 } from '../containers/Campaigns/Email/Edit';
 
 import {
   CampaignsEmailActionbar,
-  CampaignsEmailTable
+  CampaignEmailListPage
 } from '../containers/Campaigns/Email/List';
 
 import {
@@ -30,13 +38,28 @@ const campaignsRoutes = [
     actionBarComponent: CampaignsDisplayActionbar
   },
   {
+    path: '/campaigns/display/:campaignId(\\d+)',
+    layout: 'main',
+    contentComponent: CampaignPage
+  },
+  {
+    path: '/campaigns/display/:campaignId(\\d+)/adgroup/:adGroupId(\\d+)',
+    layout: 'main',
+    contentComponent: AdGroupPage
+  },
+  {
     path: '/campaigns/email',
     layout: 'main',
-    contentComponent: CampaignsEmailTable,
+    contentComponent: CampaignEmailListPage,
     actionBarComponent: CampaignsEmailActionbar
   },
   {
-    path: '/campaigns/email/:campaignId',
+    path: '/campaigns/email/create',
+    layout: 'edit',
+    editComponent: CreateEmailPage
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)',
     layout: 'main',
     contentComponent: CampaignEmail,
     actionBarComponent: CampaignEmailActionbar
@@ -44,7 +67,17 @@ const campaignsRoutes = [
   {
     path: '/campaigns/email/:campaignId(\\d+)/edit',
     layout: 'edit',
-    editComponent: EditEmail
+    editComponent: EditEmailPage
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)/blast/create',
+    layout: 'edit',
+    editComponent: CreateBlastPage
+  },
+  {
+    path: '/campaigns/email/:campaignId(\\d+)/blast/:blastId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: EditBlastPage
   },
   {
     path: '/campaigns/goal',
