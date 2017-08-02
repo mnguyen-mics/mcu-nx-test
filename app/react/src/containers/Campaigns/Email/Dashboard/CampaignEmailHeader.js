@@ -1,45 +1,43 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader';
 
-class CampaignEmailHeader extends Component {
+function CampaignEmailHeader({
+  campaignEmail: {
+    name: campaignEmailName,
+    status: campaignEmailStatus,
+  },
+}) {
 
-  render() {
+  const campaignEmailStatusHeader = {
+    value: campaignEmailStatus,
+    translationKeyPrefix: 'CAMPAIGN_STATUS',
+  };
 
-    const {
-      campaignEmail: {
-        name: campaignEmailName,
-        status: campaignEmailStatus,
-      },
-    } = this.props;
-
-    const campaignEmailStatusHeader = {
-      value: campaignEmailStatus,
-      translationKeyPrefix: 'CAMPAIGN_STATUS',
-    };
-
-    return campaignEmailName ? (
+  return (campaignEmailName
+    ? (
       <div className="mcs-campaign-header">
-        <TitleAndStatusHeader headerTitle={campaignEmailName} headerStatus={campaignEmailStatusHeader} />
+        <TitleAndStatusHeader
+          headerTitle={campaignEmailName}
+          headerStatus={campaignEmailStatusHeader}
+        />
       </div>
-    ) : null;
-
-  }
+    )
+    : null
+  );
 
 }
 
 CampaignEmailHeader.propTypes = {
-  campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  campaignEmail: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
 });
 
-CampaignEmailHeader = connect(
+export default connect(
   mapStateToProps,
 )(CampaignEmailHeader);
-
-export default CampaignEmailHeader;

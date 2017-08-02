@@ -84,11 +84,24 @@ class EmailStackedAreaChart extends Component {
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: [{ key: 'email_sent', message: messages.emailSent }, { key: 'clicks', message: messages.emailClicks }, { key: 'impressions', message: messages.emailImpressions }, { key: 'email_hard_bounced', message: messages.emailHardBounce }],
+      yKeys: [
+        { key: 'email_sent', message: messages.emailSent },
+        { key: 'clicks', message: messages.emailClicks },
+        { key: 'impressions', message: messages.emailImpressions },
+        { key: 'email_hard_bounced', message: messages.emailHardBounce },
+      ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
     };
-    return hasFetchedCampaignStat ? (<StackedAreaPlot identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />) : (<LoadingChart />);
+    return hasFetchedCampaignStat
+      ? (
+        <StackedAreaPlot
+          identifier="StackedAreaChartEmailOverview"
+          dataset={dataSource}
+          options={optionsForChart}
+        />
+      )
+      : <LoadingChart />;
   }
 
   render() {
@@ -99,7 +112,12 @@ class EmailStackedAreaChart extends Component {
     } = this.props;
 
     const options = {
-      domains: [translations['email_sent'.toUpperCase()], translations['clicks'.toUpperCase()], translations['impressions'.toUpperCase()], translations['email_hard_bounced'.toUpperCase()]],
+      domains: [
+        translations['email_sent'.toUpperCase()],
+        translations['clicks'.toUpperCase()],
+        translations['impressions'.toUpperCase()],
+        translations['email_hard_bounced'.toUpperCase()],
+      ],
       colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
     };
 
@@ -107,7 +125,10 @@ class EmailStackedAreaChart extends Component {
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            { (dataSource.length === 0 && hasFetchedCampaignStat) ? <div /> : <LegendChart identifier="chartLegend" options={options} /> }
+            {dataSource.length === 0 && hasFetchedCampaignStat
+              ? <div />
+              : <LegendChart identifier="chartLegend" options={options} />
+            }
           </Col>
           <Col span={12}>
             <span className="mcs-card-button">
@@ -115,7 +136,10 @@ class EmailStackedAreaChart extends Component {
             </span>
           </Col>
         </Row>
-        { (dataSource.length === 0 && hasFetchedCampaignStat) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderStackedAreaCharts() }
+        {dataSource.length === 0 && hasFetchedCampaignStat
+          ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
+          : this.renderStackedAreaCharts()
+        }
       </div>
     );
 
@@ -124,9 +148,9 @@ class EmailStackedAreaChart extends Component {
 }
 
 EmailStackedAreaChart.propTypes = {
-  translations: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

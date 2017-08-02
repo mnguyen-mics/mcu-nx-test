@@ -22,7 +22,6 @@ import { parseSearch } from '../../../../utils/LocationSearchHelper';
 const fetchExportData = (organisationId, filter) => {
 
   const campaignType = 'DISPLAY';
-
   const buildOptionsForGetCampaigns = () => {
     const options = {
       archived: filter.statuses.includes('ARCHIVED'),
@@ -36,6 +35,7 @@ const fetchExportData = (organisationId, filter) => {
     if (apiStatuses.length > 0) {
       options.status = apiStatuses;
     }
+
     return options;
   };
 
@@ -44,8 +44,17 @@ const fetchExportData = (organisationId, filter) => {
   const dimension = '';
 
   const apiResults = Promise.all([
-    CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getDisplayCampaignPerfomanceReport(organisationId, startDate, endDate, dimension),
+    CampaignService.getCampaigns(
+      organisationId,
+      campaignType,
+      buildOptionsForGetCampaigns(),
+    ),
+    ReportService.getDisplayCampaignPerfomanceReport(
+      organisationId,
+      startDate,
+      endDate,
+      dimension,
+    ),
   ]);
 
   return apiResults.then(results => {
@@ -70,11 +79,11 @@ class CampaignsDisplayActionbar extends Component {
 
   constructor(props) {
     super(props);
-    this.handleRunExport = this.handleRunExport.bind(this);
+
     this.state = { exportIsRunning: false };
   }
 
-  handleRunExport() {
+  handleRunExport = () => {
     const {
       match: {
         params: {
@@ -102,7 +111,6 @@ class CampaignsDisplayActionbar extends Component {
   }
 
   render() {
-
     const {
       match: {
         params: {
@@ -144,7 +152,10 @@ class CampaignsDisplayActionbar extends Component {
       </Menu>
     );
 
-    const breadcrumbPaths = [{ name: translations.DISPLAY, url: `/v2/o/${organisationId}/campaigns/display` }];
+    const breadcrumbPaths = [{
+      name: translations.DISPLAY,
+      url: `/v2/o/${organisationId}/campaigns/display`,
+    }];
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -154,7 +165,8 @@ class CampaignsDisplayActionbar extends Component {
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          { !exportIsRunning && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
+          { !exportIsRunning && <McsIcons type="download" /> }
+          <FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );
@@ -165,9 +177,9 @@ class CampaignsDisplayActionbar extends Component {
 
 CampaignsDisplayActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
 };
 
 CampaignsDisplayActionbar = compose(

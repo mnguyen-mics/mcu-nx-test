@@ -29,10 +29,7 @@ class CampaignPage extends Component {
 
   constructor(props) {
     super(props);
-    this.fetchAllData = this.fetchAllData.bind(this);
-    this.updateAd = this.updateAd.bind(this);
-    this.updateAdGroup = this.updateAdGroup.bind(this);
-    this.updateCampaign = this.updateCampaign.bind(this);
+
     this.state = {
       campaign: {
         items: {
@@ -87,256 +84,6 @@ class CampaignPage extends Component {
         },
       },
     };
-  }
-
-  formatReportView(reportView, key) {
-    const format = normalizeReportView(reportView);
-    return normalizeArrayOfObject(format, key);
-  }
-
-  fetchAllData(organisationId, campaignId, filter) {
-
-    const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGoupAndAd = () => CampaignService.getCampaignDisplay(campaignId);
-    const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(organisationId, campaignId, filter.from, filter.to, dimensions);
-    const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(organisationId, 'campaign_id', campaignId, filter.from, filter.to, '');
-    const getAdPerf = () => ReportService.getAdDeliveryReport(organisationId, 'campaign_id', campaignId, filter.from, filter.to, '');
-    const getMediaPerf = () => ReportService.getMediaDeliveryReport(organisationId, 'campaign_id', campaignId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 });
-
-    this.setState((prevState) => {
-      const nextState = {
-        ...prevState,
-      };
-      nextState.campaign.items.isLoading = true;
-      nextState.adGroups.items.isLoading = true;
-      nextState.ads.items.isLoading = true;
-      nextState.campaign.performance.isLoading = true;
-      nextState.campaign.mediaPerformance.isLoading = true;
-      nextState.adGroups.performance.isLoading = true;
-      nextState.ads.performance.isLoading = true;
-      return nextState;
-    });
-
-    getCampaignAdGoupAndAd().then(reponse => {
-      const data = reponse.data;
-      const campaign = {
-        ...data,
-      };
-      delete campaign.ad_groups;
-      const adGroups = [...data.ad_groups];
-      const formattedAdGoups = adGroups.map(item => {
-        const formatedItem = {
-          ...item,
-        };
-        delete formatedItem.ads;
-        return formatedItem;
-      });
-      const adGroupCampaign = adGroups.map(item => {
-        const newitem = {
-          ad_group_id: item.id,
-          campaign_id: campaign.id,
-        };
-        return newitem;
-      });
-      const ads = [];
-      const adAdGroup = [];
-      data.ad_groups.forEach(adGroup => {
-        adGroup.ads.forEach(ad => {
-          ads.push(ad);
-          adAdGroup.push({
-            ad_id: ad.id,
-            ad_group_id: adGroup.id,
-            campaign_id: campaign.id,
-          });
-        });
-      });
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.campaign.items.isLoading = false;
-        nextState.adGroups.items.isLoading = false;
-        nextState.ads.items.isLoading = false;
-        nextState.campaign.items.hasFetched = true;
-        nextState.adGroups.items.hasFetched = true;
-        nextState.ads.items.hasFetched = true;
-        nextState.campaign.items.itemById = campaign;
-        nextState.adGroups.items.itemById = normalizeArrayOfObject(formattedAdGoups, 'id');
-        nextState.adGroups.items.adGroupCampaign = normalizeArrayOfObject(adGroupCampaign, 'ad_group_id');
-        nextState.ads.items.itemById = normalizeArrayOfObject(ads, 'id');
-        nextState.ads.items.adAdGroup = normalizeArrayOfObject(adAdGroup, 'ad_id');
-        return nextState;
-      });
-    });
-    getCampaignPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.campaign.performance.isLoading = false;
-        nextState.campaign.performance.hasFetched = true;
-        nextState.campaign.performance.performance = normalizeReportView(response.data.report_view);
-        return nextState;
-      });
-    });
-    getAdGroupPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.adGroups.performance.isLoading = false;
-        nextState.adGroups.performance.hasFetched = true;
-        nextState.adGroups.performance.performanceById = this.formatReportView(response.data.report_view, 'ad_group_id');
-        return nextState;
-      });
-    });
-    getAdPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.ads.performance.isLoading = false;
-        nextState.ads.performance.hasFetched = true;
-        nextState.ads.performance.performanceById = this.formatReportView(response.data.report_view, 'ad_id');
-        return nextState;
-      });
-    });
-    getMediaPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.campaign.mediaPerformance.isLoading = false;
-        nextState.campaign.mediaPerformance.hasFetched = true;
-        nextState.campaign.mediaPerformance.performance = normalizeReportView(response.data.report_view, 'media_id');
-        return nextState;
-      });
-    });
-  }
-
-  updateCampaign(campaignId, body, successMessage, errorMessage) {
-    const {
-      notifyError,
-    } = this.props;
-
-    CampaignService.updateCampaignDisplay(campaignId, body).then(response => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.campaign.items.itemById = response.data;
-      });
-    }).catch(error => {
-      notifyError(error, {
-        message: errorMessage.title,
-        description: errorMessage.body,
-      });
-    });
-  }
-
-  updateAdGroup(adGroupId, body, successMessage, errorMessage, undoBody) {
-    const {
-      notifySuccess,
-      notifyError,
-      removeNotification,
-    } = this.props;
-
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState,
-      };
-      nextState.adGroups.items.itemById[adGroupId].status = body.status;
-      return nextState;
-    });
-    return CampaignService.updateAdGroup(this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id, adGroupId, body).then(response => {
-
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.adGroups.items.itemById[adGroupId] = response.data;
-      });
-      if (successMessage || errorMessage) {
-        const undo = () => {
-          this.updateAdGroup(adGroupId, undoBody).then(() => {
-            removeNotification(adGroupId);
-          });
-        };
-        notifySuccess({
-          uid: parseInt(adGroupId, 0),
-          message: successMessage.title,
-          description: successMessage.body,
-          btn: (<Button type="primary" size="small" onClick={undo} >
-            <span>Undo</span>
-          </Button>),
-        });
-      }
-      return null;
-    }).catch(error => {
-      notifyError(error, {
-        message: errorMessage.title,
-        description: errorMessage.body,
-      });
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.adGroups.items.itemById[adGroupId].status = undoBody.status;
-        return nextState;
-      });
-    });
-  }
-
-  updateAd(adId, body, successMessage, errorMessage, undoBody) {
-    const {
-      notifySuccess,
-      notifyError,
-      removeNotification,
-    } = this.props;
-
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState,
-      };
-      nextState.ads.items.itemById[adId].status = body.status;
-    });
-    return CampaignService.updateAd(adId, this.state.ads.items.adAdGroup[adId].campaign_id, this.state.ads.items.adAdGroup[adId].ad_group_id, body).then(response => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.ads.items.itemById[adId].status = response.data.status;
-      });
-      if (successMessage || errorMessage) {
-        const uid = Math.random();
-        const undo = () => {
-          this.updateAd(adId, undoBody).then(() => {
-            removeNotification(uid);
-          });
-        };
-        notifySuccess({
-          uid,
-          message: successMessage.title,
-          description: successMessage.body,
-          btn: (<Button type="primary" size="small" onClick={undo} >
-            <span>Undo</span>
-          </Button>),
-        });
-      }
-      return null;
-    }).catch(error => {
-      notifyError(error, {
-        message: errorMessage.title,
-        description: errorMessage.body,
-      });
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.ads.items.itemById[adId].status = undoBody.status;
-        return nextState;
-      });
-    });
   }
 
   componentDidMount() {
@@ -404,6 +151,169 @@ class CampaignPage extends Component {
     }
   }
 
+
+  fetchAllData = (organisationId, campaignId, filter) => {
+
+    const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
+    const getCampaignAdGoupAndAd = () => CampaignService.getCampaignDisplay(campaignId);
+    const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
+      organisationId,
+      campaignId,
+      filter.from,
+      filter.to,
+      dimensions,
+    );
+    const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(
+      organisationId,
+      'campaign_id',
+      campaignId,
+      filter.from,
+      filter.to,
+      '',
+    );
+    const getAdPerf = () => ReportService.getAdDeliveryReport(
+      organisationId,
+      'campaign_id',
+      campaignId,
+      filter.from,
+      filter.to,
+      '',
+    );
+    const getMediaPerf = () => ReportService.getMediaDeliveryReport(
+      organisationId,
+      'campaign_id',
+      campaignId,
+      filter.from,
+      filter.to,
+      '',
+      '',
+      { sort: '-clicks', limit: 30 },
+    );
+
+    this.setState((prevState) => {
+      const nextState = {
+        ...prevState,
+      };
+      nextState.campaign.items.isLoading = true;
+      nextState.adGroups.items.isLoading = true;
+      nextState.ads.items.isLoading = true;
+      nextState.campaign.performance.isLoading = true;
+      nextState.campaign.mediaPerformance.isLoading = true;
+      nextState.adGroups.performance.isLoading = true;
+      nextState.ads.performance.isLoading = true;
+      return nextState;
+    });
+
+    getCampaignAdGoupAndAd().then(reponse => {
+      const data = reponse.data;
+      const campaign = {
+        ...data,
+      };
+      delete campaign.ad_groups;
+      const adGroups = [...data.ad_groups];
+      const formattedAdGoups = adGroups.map(item => {
+        const formatedItem = {
+          ...item,
+        };
+        delete formatedItem.ads;
+        return formatedItem;
+      });
+      const adGroupCampaign = adGroups.map(item => {
+        const newitem = {
+          ad_group_id: item.id,
+          campaign_id: campaign.id,
+        };
+        return newitem;
+      });
+      const ads = [];
+      const adAdGroup = [];
+      data.ad_groups.forEach(adGroup => {
+        adGroup.ads.forEach(ad => {
+          ads.push(ad);
+          adAdGroup.push({
+            ad_id: ad.id,
+            ad_group_id: adGroup.id,
+            campaign_id: campaign.id,
+          });
+        });
+      });
+
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+
+        nextState.campaign.items.isLoading = false;
+        nextState.adGroups.items.isLoading = false;
+        nextState.ads.items.isLoading = false;
+        nextState.campaign.items.hasFetched = true;
+        nextState.adGroups.items.hasFetched = true;
+        nextState.ads.items.hasFetched = true;
+        nextState.campaign.items.itemById = campaign;
+        nextState.adGroups.items.itemById = normalizeArrayOfObject(formattedAdGoups, 'id');
+        nextState.adGroups.items.adGroupCampaign = normalizeArrayOfObject(adGroupCampaign, 'ad_group_id');
+        nextState.ads.items.itemById = normalizeArrayOfObject(ads, 'id');
+        nextState.ads.items.adAdGroup = normalizeArrayOfObject(adAdGroup, 'ad_id');
+
+        return nextState;
+      });
+    });
+    getCampaignPerf().then(response => {
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState.campaign.performance.isLoading = false;
+        nextState.campaign.performance.hasFetched = true;
+        nextState.campaign.performance.performance = normalizeReportView(response.data.report_view);
+        return nextState;
+      });
+    });
+    getAdGroupPerf().then(response => {
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState.adGroups.performance.isLoading = false;
+        nextState.adGroups.performance.hasFetched = true;
+        nextState.adGroups.performance.performanceById = this.formatReportView(
+          response.data.report_view,
+          'ad_group_id',
+        );
+
+        return nextState;
+      });
+    });
+    getAdPerf().then(response => {
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState.ads.performance.isLoading = false;
+        nextState.ads.performance.hasFetched = true;
+        nextState.ads.performance.performanceById = this.formatReportView(
+          response.data.report_view,
+          'ad_id',
+        );
+        return nextState;
+      });
+    });
+    getMediaPerf().then(response => {
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState.campaign.mediaPerformance.isLoading = false;
+        nextState.campaign.mediaPerformance.hasFetched = true;
+        nextState.campaign.mediaPerformance.performance = normalizeReportView(
+          response.data.report_view,
+          'media_id',
+        );
+        return nextState;
+      });
+    });
+  }
+
   formatListview(a, b) {
     if (a) {
       return Object.keys(a).map((c) => {
@@ -414,6 +324,150 @@ class CampaignPage extends Component {
       });
     }
     return [];
+  }
+
+  formatReportView(reportView, key) {
+    const format = normalizeReportView(reportView);
+    return normalizeArrayOfObject(format, key);
+  }
+
+  updateAd = (adId, body, successMessage, errorMessage, undoBody) => {
+    const {
+      notifySuccess,
+      notifyError,
+      removeNotification,
+    } = this.props;
+
+    this.setState(prevState => {
+      const nextState = {
+        ...prevState,
+      };
+      nextState.ads.items.itemById[adId].status = body.status;
+    });
+    return CampaignService
+      .updateAd(
+        adId,
+        this.state.ads.items.adAdGroup[adId].campaign_id,
+        this.state.ads.items.adAdGroup[adId].ad_group_id,
+        body,
+      )
+      .then(response => {
+        this.setState(prevState => {
+          const nextState = {
+            ...prevState,
+          };
+          nextState.ads.items.itemById[adId].status = response.data.status;
+        });
+        if (successMessage || errorMessage) {
+          const uid = Math.random();
+          const undo = () => {
+            this.updateAd(adId, undoBody).then(() => {
+              removeNotification(uid);
+            });
+          };
+          notifySuccess({
+            uid,
+            message: successMessage.title,
+            description: successMessage.body,
+            btn: (<Button type="primary" size="small" onClick={undo} >
+              <span>Undo</span>
+            </Button>),
+          });
+        }
+        return null;
+      })
+      .catch(error => {
+        notifyError(error, {
+          message: errorMessage.title,
+          description: errorMessage.body,
+        });
+        this.setState(prevState => {
+          const nextState = {
+            ...prevState,
+          };
+          nextState.ads.items.itemById[adId].status = undoBody.status;
+          return nextState;
+        });
+      });
+  }
+
+  updateAdGroup = (adGroupId, body, successMessage, errorMessage, undoBody) => {
+    const {
+      notifySuccess,
+      notifyError,
+      removeNotification,
+    } = this.props;
+
+    this.setState(prevState => {
+      const nextState = {
+        ...prevState,
+      };
+      nextState.adGroups.items.itemById[adGroupId].status = body.status;
+      return nextState;
+    });
+
+    return CampaignService
+      .updateAdGroup(
+        this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id,
+        adGroupId, body,
+      )
+      .then(response => {
+        this.setState(prevState => {
+          const nextState = {
+            ...prevState,
+          };
+          nextState.adGroups.items.itemById[adGroupId] = response.data;
+        });
+        if (successMessage || errorMessage) {
+          const undo = () => {
+            this.updateAdGroup(adGroupId, undoBody).then(() => {
+              removeNotification(adGroupId);
+            });
+          };
+          notifySuccess({
+            uid: parseInt(adGroupId, 0),
+            message: successMessage.title,
+            description: successMessage.body,
+            btn: (<Button type="primary" size="small" onClick={undo} >
+              <span>Undo</span>
+            </Button>),
+          });
+        }
+        return null;
+      })
+      .catch(error => {
+        notifyError(error, {
+          message: errorMessage.title,
+          description: errorMessage.body,
+        });
+        this.setState(prevState => {
+          const nextState = {
+            ...prevState,
+          };
+          nextState.adGroups.items.itemById[adGroupId].status = undoBody.status;
+          return nextState;
+        });
+      });
+  }
+
+  updateCampaign = (campaignId, body, successMessage, errorMessage) => {
+    const {
+      notifyError,
+    } = this.props;
+
+    CampaignService.updateCampaignDisplay(campaignId, body).then(response => {
+      this.setState(prevState => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState.campaign.items.itemById = response.data;
+      });
+    }).catch(error => {
+      notifyError(error, {
+        message: errorMessage.title,
+        description: errorMessage.body,
+      });
+    });
   }
 
   render() {
@@ -427,13 +481,19 @@ class CampaignPage extends Component {
     const adGroups = {
       isLoadingList: this.state.adGroups.items.isLoading,
       isLoadingPerf: this.state.adGroups.performance.isLoading,
-      items: this.formatListview(this.state.adGroups.items.itemById, this.state.adGroups.performance.performanceById),
+      items: this.formatListview(
+        this.state.adGroups.items.itemById,
+        this.state.adGroups.performance.performanceById,
+      ),
     };
 
     const ads = {
       isLoadingList: this.state.ads.items.isLoading,
       isLoadingPerf: this.state.ads.performance.isLoading,
-      items: this.formatListview(this.state.ads.items.itemById, this.state.ads.performance.performanceById),
+      items: this.formatListview(
+        this.state.ads.items.itemById,
+        this.state.ads.performance.performanceById,
+      ),
     };
 
     const dashboardPerformance = {
@@ -449,22 +509,24 @@ class CampaignPage extends Component {
       },
     };
 
-    return (<CampaignDisplay
-      updateAd={this.updateAd}
-      updateAdGroup={this.updateAdGroup}
-      updateCampaign={this.updateCampaign}
-      campaign={campaign}
-      adGroups={adGroups}
-      ads={ads}
-      dashboardPerformance={dashboardPerformance}
-    />);
+    return (
+      <CampaignDisplay
+        updateAd={this.updateAd}
+        updateAdGroup={this.updateAdGroup}
+        updateCampaign={this.updateCampaign}
+        campaign={campaign}
+        adGroups={adGroups}
+        ads={ads}
+        dashboardPerformance={dashboardPerformance}
+      />
+    );
   }
 }
 
 CampaignPage.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   notifySuccess: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
   removeNotification: PropTypes.func.isRequired,

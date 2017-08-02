@@ -103,7 +103,6 @@ class CampaignEmail extends Component {
   }
 
   render() {
-
     const {
       match: {
         params: { organisationId },
@@ -134,9 +133,9 @@ class CampaignEmail extends Component {
 
 CampaignEmail.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   loadCampaignEmailAndDeliveryReport: PropTypes.func.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
   fetchAllEmailBlastPerformance: PropTypes.func.isRequired,

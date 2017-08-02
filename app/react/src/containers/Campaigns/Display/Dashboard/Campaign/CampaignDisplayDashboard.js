@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
@@ -10,36 +10,42 @@ import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 
 import messages from '../messages';
 
-class CampaignDisplayDashboard extends Component {
+function CampaignDisplayDashboard({
+  isFetchingCampaignStat,
+  hasFetchedCampaignStat,
+  campaignStat,
+  isFetchingMediaStat,
+  hasFetchedMediaStat,
+  mediaStat,
+  intl: {
+    formatMessage,
+  },
+}) {
 
-  render() {
+  const items = [
+    {
+      title: formatMessage(messages.dashboardOverview),
+      display: (
+        <DisplayStackedAreaChart
+          isFetchingCampaignStat={isFetchingCampaignStat}
+          hasFetchedCampaignStat={hasFetchedCampaignStat}
+          dataSource={campaignStat}
+        />
+        ),
+    },
+    {
+      title: formatMessage(messages.dashboardTopSites),
+      display: (
+        <MediaPerformanceTable
+          isFetchingMediaStat={isFetchingMediaStat}
+          hasFetchedMediaStat={hasFetchedMediaStat}
+          dataSet={mediaStat}
+        />
+        ),
+    },
+  ];
 
-    const {
-      isFetchingCampaignStat,
-      hasFetchedCampaignStat,
-      campaignStat,
-      isFetchingMediaStat,
-      hasFetchedMediaStat,
-      mediaStat,
-      intl: {
-        formatMessage,
-      },
-    } = this.props;
-
-    const items = [
-      {
-        title: formatMessage(messages.dashboardOverview),
-        display: <DisplayStackedAreaChart isFetchingCampaignStat={isFetchingCampaignStat} hasFetchedCampaignStat={hasFetchedCampaignStat} dataSource={campaignStat} />,
-      },
-      {
-        title: formatMessage(messages.dashboardTopSites),
-        display: <MediaPerformanceTable isFetchingMediaStat={isFetchingMediaStat} hasFetchedMediaStat={hasFetchedMediaStat} dataSet={mediaStat} />,
-      },
-    ];
-
-    return <Card><McsTabs items={items} /></Card>;
-  }
-
+  return <Card><McsTabs items={items} /></Card>;
 }
 
 CampaignDisplayDashboard.propTypes = {
@@ -53,9 +59,7 @@ CampaignDisplayDashboard.propTypes = {
 };
 
 
-CampaignDisplayDashboard = compose(
+export default compose(
   injectIntl,
   withRouter,
 )(CampaignDisplayDashboard);
-
-export default CampaignDisplayDashboard;

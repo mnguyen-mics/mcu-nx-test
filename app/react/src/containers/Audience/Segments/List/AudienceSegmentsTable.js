@@ -28,36 +28,6 @@ import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class AudienceSegmentsTable extends Component {
 
-  constructor(props) {
-    super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archiveSegment = this.archiveSegment.bind(this);
-    this.editSegment = this.editSegment.bind(this);
-  }
-
-  getSearchSetting(organisationId) {
-    const { defaultDatamart } = this.props;
-
-    return [
-      ...SEGMENTS_SEARCH_SETTINGS,
-      {
-        paramName: 'datamarts',
-        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
-        deserialize: query => {
-          if (query.datamarts) {
-            return query.datamarts.split(',').map((d) => parseInt(d, 0));
-          }
-          return [];
-        },
-        serialize: value => value.join(','),
-        isValid: query =>
-          query.datamarts &&
-          query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
-      },
-    ];
-  }
-
   componentDidMount() {
     const {
       history,
@@ -133,7 +103,78 @@ class AudienceSegmentsTable extends Component {
     this.props.resetAudienceSegmentsTable();
   }
 
-  updateLocationSearch(params) {
+  archiveSegment = (segment) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      location: {
+        search,
+      },
+      archiveAudienceSegment,
+      loadAudienceSegmentsDataSource,
+      translations,
+    } = this.props;
+
+    const filter = parseSearch(search, this.getSearchSetting());
+
+    Modal.confirm({
+      title: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY,
+      iconType: 'exclamation-circle',
+      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
+      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      onOk() {
+        return archiveAudienceSegment(segment.id).then(() => {
+          const datamartId = filter.datamarts[0];
+          loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
+        });
+      },
+      onCancel() { },
+    });
+  }
+
+  editSegment = (segment) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
+
+    history.push(editUrl);
+  }
+
+  getSearchSetting(organisationId) {
+    const { defaultDatamart } = this.props;
+
+    return [
+      ...SEGMENTS_SEARCH_SETTINGS,
+      {
+        paramName: 'datamarts',
+        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
+        deserialize: query => {
+          if (query.datamarts) {
+            return query.datamarts.split(',').map((d) => parseInt(d, 0));
+          }
+          return [];
+        },
+        serialize: value => value.join(','),
+        isValid: query =>
+          query.datamarts &&
+          query.datamarts.split(',').length > 0 &&
+          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
+      },
+    ];
+  }
+
+  updateLocationSearch = (params) => {
     const {
       history,
       match: {
@@ -218,7 +259,9 @@ class AudienceSegmentsTable extends Component {
       if (isFetchingSegmentsStat) {
         return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
       }
+
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
+
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
@@ -230,13 +273,29 @@ class AudienceSegmentsTable extends Component {
         render: (text) => {
           switch (text) {
             case 'USER_ACTIVATION':
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="rocket" /></Tooltip>);
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="rocket" />
+                </Tooltip>
+              );
             case 'USER_QUERY':
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="database" /></Tooltip>);
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="database" />
+                </Tooltip>
+              );
             case 'USER_LIST':
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="solution" /></Tooltip>);
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="solution" />
+                </Tooltip>
+              );
             default:
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="database" /></Tooltip>);
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="database" />
+                </Tooltip>
+              );
           }
         },
       },
@@ -244,14 +303,26 @@ class AudienceSegmentsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>,
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
+          >{text}
+          </Link>
+        ),
       },
       {
         translationKey: 'TECHNICAL_NAME',
         isVisibleByDefault: false,
         key: 'technical_name',
         isHiddable: true,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>,
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
+          >{text}
+          </Link>
+        ),
       },
       {
         translationKey: 'USER_POINTS',
@@ -312,14 +383,17 @@ class AudienceSegmentsTable extends Component {
       },
     ];
 
-    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY'].map(type => ({ key: type, value: type }));
+    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY']
+      .map(type => ({ key: type, value: type }));
 
     const filtersOptions = [
       {
         name: 'types',
-        displayElement: (<div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>),
+        displayElement: <div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>,
         menuItems: {
-          handleMenuClick: value => this.updateLocationSearch({ types: value.types.map(item => item.value) }),
+          handleMenuClick: (value => this.updateLocationSearch({
+            types: value.types.map(item => item.value),
+          })),
           selectedItems: filter.types.map(type => ({ key: type, value: type })),
           items: typeItems,
         },
@@ -349,55 +423,6 @@ class AudienceSegmentsTable extends Component {
     ) : (<EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />);
 
   }
-
-  editSegment(segment) {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      history,
-    } = this.props;
-
-    const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
-
-    history.push(editUrl);
-  }
-
-  archiveSegment(segment) {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
-      archiveAudienceSegment,
-      loadAudienceSegmentsDataSource,
-      translations,
-    } = this.props;
-
-    const filter = parseSearch(search, this.getSearchSetting());
-
-    Modal.confirm({
-      title: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY,
-      iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
-      onOk() {
-        return archiveAudienceSegment(segment.id).then(() => {
-          const datamartId = filter.datamarts[0];
-          loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
-        });
-      },
-      onCancel() { },
-    });
-  }
-
 }
 
 AudienceSegmentsTable.defaultProps = {
@@ -405,9 +430,9 @@ AudienceSegmentsTable.defaultProps = {
 };
 
 AudienceSegmentsTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 
   hasAudienceSegments: PropTypes.bool.isRequired,

@@ -5,5 +5,5 @@ import StackedAreaPlotDoubleAxis from './StackedAreaPlotDoubleAxis';
 export {
   StackedAreaPlot,
   StackedLinePlot,
-  StackedAreaPlotDoubleAxis
+  StackedAreaPlotDoubleAxis,
 };

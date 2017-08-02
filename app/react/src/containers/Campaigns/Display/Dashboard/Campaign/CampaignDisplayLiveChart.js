@@ -106,17 +106,30 @@ class CampaignDisplayLiveChart extends Component {
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: [{ key: key1, message: messages[key1] }, { key: key2, message: messages[key2] }],
+      yKeys: [
+        { key: key1, message: messages[key1] },
+        { key: key2, message: messages[key2] },
+      ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#ff9012', '#00a1df'],
     };
     return hasFetchedCampaignStat
-      ? <StackedAreaPlotDoubleAxis identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />
+      ? (
+        <StackedAreaPlotDoubleAxis
+          identifier="StackedAreaChartEmailOverview"
+          dataset={dataSource} options={optionsForChart}
+        />
+      )
       : <LoadingChart />;
   }
 
   render() {
-    const { translations, dataSource, hasFetchedCampaignStat, isFetchingCampaignStat } = this.props;
+    const {
+      translations,
+      dataSource,
+      hasFetchedCampaignStat,
+      isFetchingCampaignStat,
+    } = this.props;
     const { key1, key2 } = this.state;
     const legendOptions = [
       {
@@ -137,7 +150,7 @@ class CampaignDisplayLiveChart extends Component {
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {dataSource.length === 0 && (hasFetchedCampaignStat && isFetchingCampaignStat)
+            {dataSource.length === 0 && hasFetchedCampaignStat && isFetchingCampaignStat
               ? <div />
               : <LegendChart
                 identifier="chartLegend"
@@ -152,7 +165,7 @@ class CampaignDisplayLiveChart extends Component {
             </span>
           </Col>
         </Row>
-        {dataSource.length === 0 && (hasFetchedCampaignStat && isFetchingCampaignStat)
+        {dataSource.length === 0 && hasFetchedCampaignStat && isFetchingCampaignStat
           ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
           : this.renderStackedAreaCharts()}
       </div>

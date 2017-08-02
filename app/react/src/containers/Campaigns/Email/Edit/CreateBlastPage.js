@@ -17,13 +17,8 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 
 class CreateBlastPage extends Component {
-  constructor(props) {
-    super(props);
-    this.createBlast = this.createBlast.bind(this);
-    this.redirect = this.redirect.bind(this);
-  }
 
-  createBlast(blast) {
+  createBlast = (blast) => {
     const {
       match: { params: { campaignId } },
       notifyError,
@@ -60,7 +55,7 @@ class CreateBlastPage extends Component {
     });
   }
 
-  redirect() {
+  redirect = () => {
     const {
       organisationId,
       match: { params: { campaignId } },

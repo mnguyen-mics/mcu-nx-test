@@ -1,4 +1,3 @@
-/* eslint-disajble */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -71,20 +70,6 @@ class EmailEditor extends Component {
     closeNextDrawer();
   }
 
-  handleEditBlast = ({ blast }) => {
-    const { closeNextDrawer } = this.props;
-
-    this.setState(prevState => {
-      return {
-        blasts: [
-          ...prevState.blasts.filter(b => b.id !== blast.id),
-          { ...blast, isEdited: !isFakeId(blast.id) },
-        ],
-      };
-    });
-    closeNextDrawer();
-  }
-
   handleClickOnEditBlast = (blast) => {
     const {
       openNextDrawer,
@@ -137,6 +122,32 @@ class EmailEditor extends Component {
     });
   }
 
+  handleEditBlast = ({ blast }) => {
+    const { closeNextDrawer } = this.props;
+
+    this.setState(prevState => {
+      return {
+        blasts: [
+          ...prevState.blasts.filter(b => b.id !== blast.id),
+          { ...blast, isEdited: !isFakeId(blast.id) },
+        ],
+      };
+    });
+    closeNextDrawer();
+  }
+
+  handleSaveEmailCampaign = (formValues) => {
+    const { save } = this.props;
+    const { blasts } = this.state;
+
+    const emailEditorData = {
+      ...formValues.campaign,
+      blasts,
+    };
+
+    save(emailEditorData);
+  }
+
   getBlastRecords() {
     const { blasts } = this.state;
 
@@ -160,18 +171,6 @@ class EmailEditor extends Component {
     });
 
     return blastRecords;
-  }
-
-  handleSaveEmailCampaign = (formValues) => {
-    const { save } = this.props;
-    const { blasts } = this.state;
-
-    const emailEditorData = {
-      ...formValues.campaign,
-      blasts,
-    };
-
-    save(emailEditorData);
   }
 
   render() {

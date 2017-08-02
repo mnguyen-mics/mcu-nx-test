@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 
@@ -7,36 +7,26 @@ import { Card } from '../../../../components/Card';
 import { EmailPieCharts, EmailStackedAreaChart } from './Charts';
 import { withTranslations } from '../../../Helpers';
 
-class CampaignEmailDashboard extends Component {
+function CampaignEmailDashboard({ translations }) {
 
-  render() {
+  const items = [
+    {
+      title: translations.CAMPAIGN_OVERVIEW,
+      display: <EmailPieCharts />,
+    },
+    {
+      title: translations.CAMPAIGN_DELIVERY_ANALYSIS,
+      display: <EmailStackedAreaChart />,
+    },
+  ];
 
-    const {
-      translations,
-    } = this.props;
-
-    const items = [
-      {
-        title: translations.CAMPAIGN_OVERVIEW,
-        display: <EmailPieCharts />,
-      },
-      {
-        title: translations.CAMPAIGN_DELIVERY_ANALYSIS,
-        display: <EmailStackedAreaChart />,
-      },
-    ];
-
-    return <Card><McsTabs items={items} /></Card>;
-  }
-
+  return <Card><McsTabs items={items} /></Card>;
 }
 
 CampaignEmailDashboard.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
-CampaignEmailDashboard = compose(
+export default compose(
   withTranslations,
 )(CampaignEmailDashboard);
-
-export default CampaignEmailDashboard;

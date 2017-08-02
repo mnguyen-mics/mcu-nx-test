@@ -20,21 +20,11 @@ import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHe
 class DisplayStackedAreaChart extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       key1: 'impressions',
       key2: 'clicks',
     };
-  }
-
-  updateLocationSearch(params) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
-    };
-
-    history.push(nextLocation);
   }
 
   createLegend() {
@@ -69,6 +59,17 @@ class DisplayStackedAreaChart extends Component {
     return legends;
   }
 
+  updateLocationSearch(params) {
+    const { history, location: { search: currentSearch, pathname } } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+    };
+
+    history.push(nextLocation);
+  }
+
   renderDatePicker() {
     const { history: { location: { search } } } = this.props;
 
@@ -93,7 +94,12 @@ class DisplayStackedAreaChart extends Component {
   }
 
   renderStackedAreaCharts() {
-    const { location: { search }, dataSource, hasFetchedCampaignStat, isFetchingCampaignStat } = this.props;
+    const {
+      location: { search },
+      dataSource,
+      hasFetchedCampaignStat,
+      isFetchingCampaignStat,
+    } = this.props;
     const { key1, key2 } = this.state;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -102,14 +108,30 @@ class DisplayStackedAreaChart extends Component {
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: [{ key: key1, message: messages[key1] }, { key: key2, message: messages[key2] }],
+      yKeys: [
+        { key: key1, message: messages[key1] },
+        { key: key2, message: messages[key2] },
+      ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#ff9012', '#00a1df'],
       isDraggable: true,
-      onDragEnd: (values) => { this.updateLocationSearch({ from: values[0], to: values[1], lookbackWindow: moment.duration(values[1] - values[0]), rangeType: 'absolute' }); },
+      onDragEnd: (values) => {
+        this.updateLocationSearch({
+          from: values[0],
+          to: values[1],
+          lookbackWindow: moment.duration(values[1] - values[0]),
+          rangeType: 'absolute',
+        });
+      },
     };
     return (!isFetchingCampaignStat && hasFetchedCampaignStat)
-      ? <StackedAreaPlotDoubleAxis identifier="StackedAreaChartDisplayOverview" dataset={dataSource} options={optionsForChart} />
+      ? (
+        <StackedAreaPlotDoubleAxis
+          identifier="StackedAreaChartDisplayOverview"
+          dataset={dataSource}
+          options={optionsForChart}
+        />
+      )
       : <LoadingChart />;
   }
 
@@ -161,9 +183,9 @@ class DisplayStackedAreaChart extends Component {
 }
 
 DisplayStackedAreaChart.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   isFetchingCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,

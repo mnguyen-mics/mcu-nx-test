@@ -10,13 +10,6 @@ import * as EmailsActions from '../../../../state/Campaign/Email/actions';
 
 class CampaignEmailLabels extends Component {
 
-  constructor(props) {
-    super(props);
-    this.buildFilters = this.buildFilters.bind(this);
-    this.onClickOnCloseLabel = this.onClickOnCloseLabel.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
   componentDidMount() {
     const {
       params: {
@@ -33,7 +26,6 @@ class CampaignEmailLabels extends Component {
   }
 
   render() {
-
     const {
       labels,
       attachedLabels,
@@ -53,8 +45,7 @@ class CampaignEmailLabels extends Component {
 
   }
 
-  buildFilters() {
-
+  buildFilters = () => {
     // const {
     //   campaignEmail
     // } = this.props;
@@ -70,7 +61,7 @@ class CampaignEmailLabels extends Component {
     };
   }
 
-  onClickOnCloseLabel(label) {
+  onClickOnCloseLabel = (label) => {
     const {
       activeWorkspace: {
         organisationId,
@@ -83,7 +74,7 @@ class CampaignEmailLabels extends Component {
     unPairLabelWithObject(label.id, organisationId, 'EMAIL_CAMPAIGN', campaignId);
   }
 
-  onSubmit(value) {
+  onSubmit = (value) => {
     const {
       activeWorkspace: {
         organisationId,
@@ -103,8 +94,8 @@ class CampaignEmailLabels extends Component {
 }
 
 CampaignEmailLabels.propTypes = {
-  campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  campaignEmail: PropTypes.shape().isRequired,
+  activeWorkspace: PropTypes.shape().isRequired,
   getLabels: PropTypes.func.isRequired,
   createLabels: PropTypes.func.isRequired,
   pairLabelWithObject: PropTypes.func.isRequired,
@@ -126,7 +117,7 @@ CampaignEmailLabels.propTypes = {
   }).isRequired,
   attachedLabels: PropTypes.arrayOf(PropTypes.shape({
     isFetching: PropTypes.string,
-    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    data: PropTypes.shape(),
   })).isRequired,
   unPairLabelWithObject: PropTypes.func.isRequired,
 };

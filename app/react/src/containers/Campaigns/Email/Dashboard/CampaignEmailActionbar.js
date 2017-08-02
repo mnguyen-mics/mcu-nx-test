@@ -10,53 +10,7 @@ import * as CampaignEmailActions from '../../../../state/Campaign/Email/actions'
 
 class CampaignEmailActionbar extends Component {
 
-  constructor(props) {
-    super(props);
-    this.buildActionElement = this.buildActionElement.bind(this);
-    this.buildMenu = this.buildMenu.bind(this);
-  }
-
-  render() {
-
-    const {
-      match: {
-        params: {
-          organisationId,
-          campaignId,
-        },
-      },
-      campaignEmail,
-      translations,
-    } = this.props;
-
-    const actionElement = this.buildActionElement();
-    const menu = this.buildMenu();
-
-    const breadcrumbPaths = [
-      { name: translations.EMAIL_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/email` },
-      { name: campaignEmail.name },
-    ];
-
-    return (
-      <Actionbar path={breadcrumbPaths}>
-        { actionElement }
-        <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
-          <Button>
-            <Icon type="edit" />
-            <FormattedMessage id="EDIT" />
-          </Button>
-        </Link>
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button>
-            <Icon type="ellipsis" />
-          </Button>
-        </Dropdown>
-      </Actionbar>
-    );
-
-  }
-
-  buildActionElement() {
+  buildActionElement = () => {
     const {
       campaignEmail,
       updateEmailCampaign,
@@ -80,11 +34,17 @@ class CampaignEmailActionbar extends Component {
       </Button>
     );
 
-    return campaignEmail.id ? ((campaignEmail.status === 'PAUSED' || campaignEmail.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement) : null;
+    if (!campaignEmail.id) {
+      return null;
+    }
+
+    return (campaignEmail.status === 'PAUSED' || campaignEmail.status === 'PENDING'
+      ? activeCampaignElement
+      : pauseCampaignElement
+    );
   }
 
-  buildMenu() {
-
+  buildMenu = () => {
     const {
       translations,
       campaignEmail,
@@ -125,12 +85,50 @@ class CampaignEmailActionbar extends Component {
     return addMenu;
   }
 
+  render() {
+    const {
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+        },
+      },
+      campaignEmail,
+      translations,
+    } = this.props;
+
+    const actionElement = this.buildActionElement();
+    const menu = this.buildMenu();
+
+    const breadcrumbPaths = [
+      { name: translations.EMAIL_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/email` },
+      { name: campaignEmail.name },
+    ];
+
+    return (
+      <Actionbar path={breadcrumbPaths}>
+        { actionElement }
+        <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
+          <Button>
+            <Icon type="edit" />
+            <FormattedMessage id="EDIT" />
+          </Button>
+        </Link>
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button>
+            <Icon type="ellipsis" />
+          </Button>
+        </Dropdown>
+      </Actionbar>
+    );
+
+  }
 }
 
 CampaignEmailActionbar.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  match: PropTypes.shape().isRequired,
+  campaignEmail: PropTypes.shape().isRequired,
   updateEmailCampaign: PropTypes.func.isRequired,
   archiveCampaignEmail: PropTypes.func.isRequired,
 };

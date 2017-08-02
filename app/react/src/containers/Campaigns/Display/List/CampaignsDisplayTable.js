@@ -33,13 +33,6 @@ import {
 
 class CampaignsDisplayTable extends Component {
 
-  constructor(props) {
-    super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archiveCampaign = this.archiveCampaign.bind(this);
-    this.editCampaign = this.editCampaign.bind(this);
-  }
-
   componentDidMount() {
     const {
       history,
@@ -113,7 +106,67 @@ class CampaignsDisplayTable extends Component {
     this.props.resetCampaignsDisplayTable();
   }
 
-  updateLocationSearch(params) {
+  archiveCampaign = (campaign) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      location: {
+        search,
+      },
+      archiveCampaignDisplay,
+      loadCampaignsDisplayDataSource,
+      translations,
+    } = this.props;
+
+    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+
+    Modal.confirm({
+      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      iconType: 'exclamation-circle',
+      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
+      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      onOk() {
+        return archiveCampaignDisplay(campaign.id).then(() => {
+          loadCampaignsDisplayDataSource(organisationId, filter);
+        });
+      },
+      onCancel() { },
+    });
+  }
+
+  editCampaign = (campaign) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    let editUrl;
+    switch (campaign.editor_artifact_id) {
+      case 'default-editor':
+        editUrl = `/${organisationId}/campaigns/display/expert/edit/${campaign.id}`;
+        break;
+      case 'external-campaign-editor':
+        editUrl = `/${organisationId}/campaigns/display/external/edit/${campaign.id}`;
+        break;
+      case 'keywords-targeting-editor':
+        editUrl = `/${organisationId}/campaigns/display/keywords/${campaign.id}`;
+        break;
+      default:
+        break;
+    }
+
+    history.push(editUrl);
+  }
+
+  updateLocationSearch = (params) => {
     const {
       history,
       location: {
@@ -204,13 +257,25 @@ class CampaignsDisplayTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>,
+        render: text => (
+          <Tooltip placement="top" title={translations[text]}>
+            <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
+              <McsIcons type="status" />
+            </span>
+          </Tooltip>
+        ),
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/display/${record.id}`}>{text}</Link>,
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/campaigns/display/${record.id}`}
+          >{text}
+          </Link>
+        ),
       },
       {
         translationKey: 'IMPRESSIONS',
@@ -289,7 +354,9 @@ class CampaignsDisplayTable extends Component {
         name: 'status',
         displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
         menuItems: {
-          handleMenuClick: value => this.updateLocationSearch({ statuses: value.status.map(item => item.value) }),
+          handleMenuClick: value => this.updateLocationSearch({
+            statuses: value.status.map(item => item.value),
+          }),
           selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
           items: statusItems,
         },
@@ -301,7 +368,8 @@ class CampaignsDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns,
     };
 
-    return (hasDisplayCampaigns) ? (
+    return (hasDisplayCampaigns)
+    ? (
       <TableViewFilters
         columnsDefinitions={columnsDefinitions}
         searchOptions={searchOptions}
@@ -316,70 +384,10 @@ class CampaignsDisplayTable extends Component {
           pagination={pagination}
         />
       </TableViewFilters>
-    ) : (<EmptyTableView iconType="display" text="EMPTY_DISPLAY" />);
+    )
+    : <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />;
 
   }
-
-  editCampaign(campaign) {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      history,
-    } = this.props;
-
-    let editUrl;
-    switch (campaign.editor_artifact_id) {
-      case 'default-editor':
-        editUrl = `/${organisationId}/campaigns/display/expert/edit/${campaign.id}`;
-        break;
-      case 'external-campaign-editor':
-        editUrl = `/${organisationId}/campaigns/display/external/edit/${campaign.id}`;
-        break;
-      case 'keywords-targeting-editor':
-        editUrl = `/${organisationId}/campaigns/display/keywords/${campaign.id}`;
-        break;
-      default:
-        break;
-    }
-
-    history.push(editUrl);
-  }
-
-  archiveCampaign(campaign) {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
-      archiveCampaignDisplay,
-      loadCampaignsDisplayDataSource,
-      translations,
-    } = this.props;
-
-    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
-
-    Modal.confirm({
-      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
-      iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
-      onOk() {
-        return archiveCampaignDisplay(campaign.id).then(() => {
-          loadCampaignsDisplayDataSource(organisationId, filter);
-        });
-      },
-      onCancel() { },
-    });
-  }
-
 }
 
 CampaignsDisplayTable.defaultProps = {

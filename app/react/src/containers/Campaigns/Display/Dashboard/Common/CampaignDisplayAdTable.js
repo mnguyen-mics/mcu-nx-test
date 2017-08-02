@@ -55,7 +55,15 @@ class CampaignDisplayAdTable extends Component {
     };
 
     const renderPopover = (recordId, recordName) => {
-      return (<div className="mcs-ad-popover" ><span className="mcs-ad-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${recordId}`} alt={recordName} /></div>);
+      return (
+        <div className="mcs-ad-popover">
+          <span className="mcs-ad-helper" />
+          <img
+            src={`https://ads.mediarithmics.com/ads/screenshot?rid=${recordId}`}
+            alt={recordName}
+          />
+        </div>
+      );
     };
 
     const sorter = (a, b, key) => {
@@ -78,8 +86,26 @@ class CampaignDisplayAdTable extends Component {
 
       const status = checked ? 'ACTIVE' : 'PAUSED';
       const initialStatus = checked ? 'PAUSED' : 'ACTIVE';
-      const successMessage = checked ? { title: formatMessage(messages.notificationSuccess), body: formatMessage(messages.notificationAdActivationSuccess, { name: record.name }) } : { title: formatMessage(messages.notificationSuccess), body: formatMessage(messages.notificationAdPauseSuccess, { name: record.name }) };
-      const errorMessage = checked ? { title: formatMessage(messages.notificationError), body: formatMessage(messages.notificationAdActivationError, { name: record.name }) } : { title: formatMessage(messages.notificationError), body: formatMessage(messages.notificationAdPauseError, { name: record.name }) };
+      const successMessage = (checked
+        ? {
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdActivationSuccess, { name: record.name }),
+        }
+        : {
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdPauseSuccess, { name: record.name }),
+        }
+      );
+      const errorMessage = (checked
+        ? {
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdActivationError, { name: record.name }),
+        }
+        : {
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdPauseError, { name: record.name }),
+        }
+      );
       updateAd(
         record.id,
         {
@@ -99,20 +125,54 @@ class CampaignDisplayAdTable extends Component {
       {
         key: 'creative_audit_status',
         isHiddable: false,
-        render: (text) => <Tooltip title={text === 'AUDIT_PASSED' ? formatMessage(messages.adAuditSuccess) : formatMessage(messages.adAuditError)}><McsIcons className={text === 'AUDIT_PASSED' ? 'font-success' : 'font-error'} type={text === 'AUDIT_PASSED' ? 'check' : 'close'} /></Tooltip>,
+        render: (text) => (
+          <Tooltip
+            title={text === 'AUDIT_PASSED'
+              ? formatMessage(messages.adAuditSuccess)
+              : formatMessage(messages.adAuditError)
+            }
+          >
+            <McsIcons
+              className={text === 'AUDIT_PASSED' ? 'font-success' : 'font-error'}
+              type={text === 'AUDIT_PASSED' ? 'check' : 'close'}
+            />
+          </Tooltip>
+        ),
         width: 10,
       },
       {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: (text, record) => <span><Switch disabled={record.creative_audit_status !== 'AUDIT_PASSED'} className="mcs-table-switch" checked={text === 'ACTIVE'} onChange={(checked) => changeAdStatus(record, checked)} checkedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="play" />} unCheckedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="pause" />} /></span>,
+        render: (text, record) => (
+          <span>
+            <Switch
+              disabled={record.creative_audit_status !== 'AUDIT_PASSED'}
+              className="mcs-table-switch"
+              checked={text === 'ACTIVE'}
+              onChange={(checked) => changeAdStatus(record, checked)}
+              checkedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="play" />}
+              unCheckedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="pause" />}
+            />
+          </span>
+        ),
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Popover content={renderPopover(record.creative_id, text)} title={text}><Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.creative_id}`}>{text}</Link></Popover>,
+        render: (text, record) => (
+          <Popover
+            content={renderPopover(record.creative_id, text)}
+            title={text}
+          >
+            <Link
+              className="mcs-campaigns-link"
+              to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.creative_id}`}
+            >{text}
+            </Link>
+          </Popover>
+        ),
       },
       {
         translationKey: 'IMPRESSIONS',
@@ -204,8 +264,8 @@ class CampaignDisplayAdTable extends Component {
 }
 
 CampaignDisplayAdTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   isFetching: PropTypes.bool.isRequired,
   isFetchingStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
