@@ -70,12 +70,12 @@ const campaignsRoutes = [
     editComponent: EditEmailPage
   },
   {
-    path: '/campaigns/email/:campaignId(\\d+)/blast/create',
+    path: '/campaigns/email/:campaignId(\\d+)/blasts/create',
     layout: 'edit',
     editComponent: CreateBlastPage
   },
   {
-    path: '/campaigns/email/:campaignId(\\d+)/blast/:blastId(\\d+)/edit',
+    path: '/campaigns/email/:campaignId(\\d+)/blasts/:blastId(\\d+)/edit',
     layout: 'edit',
     editComponent: EditBlastPage
   },

@@ -90,10 +90,13 @@ function* loadAudienceSegmentSingle({ payload }) {
     } = payload;
     if (!(segmentId)) throw new Error('Payload is invalid');
 
-    const response = yield call(AudienceSegmentService.getSegment, segmentId);
+    const segment = yield call(AudienceSegmentService.getSegment, segmentId);
     const perfResponse = yield call(ReportService.getAudienceSegmentReport, organisationId, moment().subtract(1, 'days'), moment(), 'day', ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'], { filters: `audience_segment_id==${segmentId}` });
-    response.data.report_view = normalizeReportView(perfResponse.data.report_view);
-    yield put(fetchAudienceSegmentSingle.success(response));
+    const reportView = normalizeReportView(perfResponse.data.report_view);
+    yield put(fetchAudienceSegmentSingle.success({
+      ...segment,
+      report_view: reportView
+    }));
   } catch (error) {
     log.error(error);
     // TODO add meta data in order to show error in global notification

@@ -8,7 +8,7 @@ import { Button } from 'antd';
 import CampaignEmailHeader from './CampaignEmailHeader';
 import CampaignEmailDashboard from './CampaignEmailDashboard';
 import { Card } from '../../../../components/Card';
-import CampaignEmailTable from './CampaignEmailTable';
+import BlastTable from './BlastTable';
 import * as CampaignEmailActions from '../../../../state/Campaign/Email/actions';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from './constants';
@@ -106,13 +106,13 @@ class CampaignEmail extends Component {
 
     const {
       match: {
-        params: { organisationId }
+        params: { organisationId, campaignId }
       },
       translations
     } = this.props;
 
     const buttons = (
-      <Link to={`/${organisationId}/campaigns/email/edit/`}>
+      <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/create`}>
         <Button type="primary">
           <FormattedMessage id="NEW_EMAIL_BLAST" />
         </Button>
@@ -124,7 +124,7 @@ class CampaignEmail extends Component {
         <CampaignEmailHeader />
         <CampaignEmailDashboard />
         <Card title={translations.EMAIL_BLASTS} buttons={buttons}>
-          <CampaignEmailTable />
+          <BlastTable />
         </Card>
       </div>
     );

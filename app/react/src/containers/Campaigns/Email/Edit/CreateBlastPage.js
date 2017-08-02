@@ -10,20 +10,15 @@ import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';
 import EmailBlastEditor from './EmailBlastEditor';
 import messages from './messages';
-import CampaignService from '../../../../services/CampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService';
 import * as actions from '../../../../state/Notifications/actions';
 import log from '../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 
 class CreateBlastPage extends Component {
-  constructor(props) {
-    super(props);
-    this.createBlast = this.createBlast.bind(this);
-    this.redirect = this.redirect.bind(this);
-  }
 
-  createBlast(blast) {
+  createBlast = (blast) => {
     const {
       match: { params: { campaignId } },
       notifyError,
@@ -40,15 +35,21 @@ class CreateBlastPage extends Component {
       send_date: parseInt(blast.send_date.format('x'), 0)
     };
 
-    CampaignService.createEmailBlast(
-      campaignId,
-      blastResource
-    ).then(createdBlast => {
+    EmailCampaignService.createBlast(campaignId, blastResource).then(createdBlast => {
       const blastId = createdBlast.id;
       return Promise.all([
-        CampaignService.createEmailBlastTemplate(campaignId, blastId, blast.templates[0]),
-        CampaignService.createEmailBlastConsent(campaignId, blastId, blast.consents[0])
-              // CampaignService.createEmailBlastSegment(campaignId, blastId, blast.consents[0])
+        ...blast.templates.map(template => {
+          const templateResource = pick(template, ['email_template_id']);
+          return EmailCampaignService.addEmailTemplate(campaignId, blastId, templateResource);
+        }),
+        ...blast.consents.map(consent => {
+          const consentResource = pick(consent, ['consent_id']);
+          return EmailCampaignService.addConsent(campaignId, blastId, consentResource);
+        }),
+        ...blast.segments.map(segment => {
+          const segmentResource = pick(segment, ['audience_segment_id']);
+          return EmailCampaignService.addSegment(campaignId, blastId, segmentResource);
+        })
       ]);
     }).then(() => {
       hideSaveInProgress();
@@ -60,7 +61,7 @@ class CreateBlastPage extends Component {
     });
   }
 
-  redirect() {
+  redirect = () => {
     const {
       organisationId,
       match: { params: { campaignId } },

@@ -1,15 +1,27 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { FormattedMessage } from 'react-intl';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { TableView } from '../../../../components/TableView';
 import { formatMetric } from '../../../../utils/MetricHelper';
-
+import { ReactRouterPropTypes } from '../../../../validators/proptypes';
+import { withMcsRouter } from '../../../Helpers';
 import { getEmailBlastTableView } from '../../../../state/Campaign/Email/selectors';
 
-class CampaignEmailTable extends Component {
+class BlastTable extends Component {
+
+  editBlast = (blast) => {
+    const {
+      organisationId,
+      match: { params: { campaignId } },
+      history
+    } = this.props;
+
+    history.push(`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${blast.id}/edit`);
+  }
 
   render() {
 
@@ -97,10 +109,10 @@ class CampaignEmailTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editCampaign
+            callback: this.editBlast
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign
+            callback: this.archiveBlast
           }
         ]
       }
@@ -122,23 +134,22 @@ class CampaignEmailTable extends Component {
 
 }
 
-CampaignEmailTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+BlastTable.propTypes = {
+  organisationId: PropTypes.string.isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
   isFetchingBlasts: PropTypes.bool.isRequired,
   isFetchingBlastsStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const mapStateToProps = state => ({
-  isFetchingBlasts: state.campaignEmailSingle.emailBlastApi.isFetching,
-  isFetchingBlastsStat: state.campaignEmailSingle.emailBlastPerformanceApi.isFetching,
-  dataSet: getEmailBlastTableView(state)
-});
-
-CampaignEmailTable = connect(
-  mapStateToProps
-)(CampaignEmailTable);
-
-CampaignEmailTable = withRouter(CampaignEmailTable);
-
-export default CampaignEmailTable;
+export default compose(
+  withMcsRouter,
+  connect(
+    state => ({
+      isFetchingBlasts: state.campaignEmailSingle.emailBlastApi.isFetching,
+      isFetchingBlastsStat: state.campaignEmailSingle.emailBlastPerformanceApi.isFetching,
+      dataSet: getEmailBlastTableView(state)
+    })
+  )
+)(BlastTable);

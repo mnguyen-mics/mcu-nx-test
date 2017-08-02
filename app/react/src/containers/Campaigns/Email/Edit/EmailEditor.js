@@ -57,7 +57,7 @@ class EmailEditor extends Component {
     }
   }
 
-  handleAddBlast({ blast }) {
+  handleAddBlast(blast) {
     const { closeNextDrawer } = this.props;
 
     const addedBlast = {
@@ -77,7 +77,7 @@ class EmailEditor extends Component {
     closeNextDrawer();
   }
 
-  handleEditBlast({ blast }) {
+  handleEditBlast(blast) {
     const { closeNextDrawer } = this.props;
 
     this.setState(prevState => {
@@ -244,96 +244,98 @@ class EmailEditor extends Component {
                 </li>
               </Scrollspy>
             </Sider>
-            <Content id={'emailCampaignSteps'} className="mcs-content-container mcs-form-container">
-              <div id={'general'}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle
-                    titleMessage={messages.emailEditorGeneralInformationTitle}
-                    subTitleMessage={messages.emailEditorGeneralInformationSubTitle}
-                  />
-                </Row>
-                <Row>
-                  <Field
-                    name="campaign.name"
-                    component={FormInput}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.emailEditorNameInputLabel),
-                        required: true,
-                        ...fieldGridConfig
-                      },
-                      inputProps: {
-                        placeholder: formatMessage(messages.emailEditorNameInputPlaceholder)
-                      },
-                      helpToolTipProps: {
-                        title: formatMessage(messages.emailEditorNameInputHelper)
-                      }
-                    }}
-                  />
-                  <Field
-                    name="campaign.technical_name"
-                    component={FormInput}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
-                        required: false,
-                        ...fieldGridConfig
-                      },
-                      inputProps: {
-                        placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder)
-                      },
-                      helpToolTipProps: {
-                        title: formatMessage(messages.emailEditorTechnicalNameInputHelper)
-                      }
-                    }}
-                  />
-                </Row>
-              </div>
-              <hr />
-              <div id={'router'}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle titleMessage={messages.emailEditorRouterTitle} subTitleMessage={messages.emailEditorRouterSubTitle} />
-                </Row>
-                <Row>
-                  <Field
-                    name="campaign.routers[0].email_router_id"
-                    component={FormSelect}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.emailEditorRouterSelectLabel),
-                        required: true,
-                        ...fieldGridConfig
-                      },
-                      options: routerOptions.map(router => ({
-                        key: router.id,
-                        value: router.id,
-                        text: router.name
-                      })),
-                      helpToolTipProps: {
-                        title: formatMessage(messages.emailEditorRouterSelectHelper)
-                      }
-                    }}
-                  />
-                </Row>
-              </div>
-              <hr />
-              <div id={'blasts'}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle titleMessage={messages.emailEditorEmailBlastTitle} subTitleMessage={messages.emailEditorEmailBlastSubTitle} />
-                  <Button onClick={this.handleCliclOnNewBlast}>
-                    New Blast
-                  </Button>
-                </Row>
-                <Row>
-                  <RelatedRecords emptyOption={{ message: formatMessage(messages.emailEditorEmailBlastEmpty) }}>
-                    {this.getBlastRecords()}
-                  </RelatedRecords>
-                </Row>
-              </div>
-            </Content>
+            <Layout>
+              <Content id={'emailCampaignSteps'} className="mcs-content-container mcs-form-container">
+                <div id={'general'}>
+                  <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <FormTitle
+                      titleMessage={messages.emailEditorGeneralInformationTitle}
+                      subTitleMessage={messages.emailEditorGeneralInformationSubTitle}
+                    />
+                  </Row>
+                  <Row>
+                    <Field
+                      name="campaign.name"
+                      component={FormInput}
+                      validate={[isRequired]}
+                      props={{
+                        formItemProps: {
+                          label: formatMessage(messages.emailEditorNameInputLabel),
+                          required: true,
+                          ...fieldGridConfig
+                        },
+                        inputProps: {
+                          placeholder: formatMessage(messages.emailEditorNameInputPlaceholder)
+                        },
+                        helpToolTipProps: {
+                          title: formatMessage(messages.emailEditorNameInputHelper)
+                        }
+                      }}
+                    />
+                    <Field
+                      name="campaign.technical_name"
+                      component={FormInput}
+                      validate={[isRequired]}
+                      props={{
+                        formItemProps: {
+                          label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
+                          required: true,
+                          ...fieldGridConfig
+                        },
+                        inputProps: {
+                          placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder)
+                        },
+                        helpToolTipProps: {
+                          title: formatMessage(messages.emailEditorTechnicalNameInputHelper)
+                        }
+                      }}
+                    />
+                  </Row>
+                </div>
+                <hr />
+                <div id={'router'}>
+                  <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <FormTitle titleMessage={messages.emailEditorRouterTitle} subTitleMessage={messages.emailEditorRouterSubTitle} />
+                  </Row>
+                  <Row>
+                    <Field
+                      name="campaign.routers[0].email_router_id"
+                      component={FormSelect}
+                      validate={[isRequired]}
+                      props={{
+                        formItemProps: {
+                          label: formatMessage(messages.emailEditorRouterSelectLabel),
+                          required: true,
+                          ...fieldGridConfig
+                        },
+                        options: routerOptions.map(router => ({
+                          key: router.id,
+                          value: router.id,
+                          text: router.name
+                        })),
+                        helpToolTipProps: {
+                          title: formatMessage(messages.emailEditorRouterSelectHelper)
+                        }
+                      }}
+                    />
+                  </Row>
+                </div>
+                <hr />
+                <div id={'blasts'}>
+                  <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <FormTitle titleMessage={messages.emailEditorEmailBlastTitle} subTitleMessage={messages.emailEditorEmailBlastSubTitle} />
+                    <Button onClick={this.handleCliclOnNewBlast}>
+                      New Blast
+                    </Button>
+                  </Row>
+                  <Row>
+                    <RelatedRecords emptyOption={{ message: formatMessage(messages.emailEditorEmailBlastEmpty) }}>
+                      {this.getBlastRecords()}
+                    </RelatedRecords>
+                  </Row>
+                </div>
+              </Content>
+            </Layout>
           </Layout>
         </Form>
       </Layout>

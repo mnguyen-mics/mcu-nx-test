@@ -10,7 +10,7 @@ import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';
 import EmailEditor from './EmailEditor';
 import messages from './messages';
-import CampaignService from '../../../../services/CampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService';
 import * as actions from '../../../../state/Notifications/actions';
 import log from '../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
@@ -31,7 +31,7 @@ class CreateEmailPage extends Component {
     } = this.props;
 
     const hideSaveInProgress = message.loading(
-      formatMessage(messages.emailSavingInProgress),
+      formatMessage(messages.savingInProgress),
       0
     );
 
@@ -39,25 +39,37 @@ class CreateEmailPage extends Component {
       ...pick(campaign, ['name', 'technical_name'])
     };
 
-    CampaignService.createEmailCampaign(
+    EmailCampaignService.createEmailCampaign(
       organisationId,
       campaingResource
     ).then(createdCampaign => {
       const campaignId = createdCampaign.id;
 
       return Promise.all([
-        CampaignService.createEmailRouter(campaignId, campaign.routers[0]),
+        ...campaign.routers.map(router => {
+          const routerResource = pick(router, ['email_router_id']);
+          return EmailCampaignService.addRouter(campaignId, routerResource);
+        }),
         ...campaign.blasts.map(blast => {
           const blastResource = {
             ...pick(blast, ['blast_name', 'subject_line', 'from_email', 'from_name', 'reply_to']),
             send_date: parseInt(blast.send_date.format('x'), 0)
           };
-          return CampaignService.createEmailBlast(campaignId, blastResource).then(createdBlast => {
+          return EmailCampaignService.createBlast(campaignId, blastResource).then(createdBlast => {
             const blastId = createdBlast.id;
             return Promise.all([
-              CampaignService.createEmailBlastTemplate(campaignId, blastId, blast.templates[0]),
-              CampaignService.createEmailBlastConsent(campaignId, blastId, blast.consents[0])
-              // CampaignService.createEmailBlastSegment(campaignId, blastId, blast.consents[0])
+              ...blast.templates.map(template => {
+                const templateResource = pick(template, ['email_template_id']);
+                return EmailCampaignService.addEmailTemplate(campaignId, blastId, templateResource);
+              }),
+              ...blast.consents.map(consent => {
+                const consentResource = pick(consent, ['consent_id']);
+                return EmailCampaignService.addConsent(campaignId, blastId, consentResource);
+              }),
+              ...blast.segments.map(segment => {
+                const segmentResource = pick(segment, ['audience_segment_id']);
+                return EmailCampaignService.addSegment(campaignId, blastId, segmentResource);
+              })
             ]);
           });
         })
