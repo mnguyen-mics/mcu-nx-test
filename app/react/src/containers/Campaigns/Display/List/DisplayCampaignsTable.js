@@ -6,19 +6,30 @@ import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { EmptyTableView, TableViewFilters } from '../../../../components/TableView';
+import {
+  TableViewFilters,
+  EmptyTableView,
+ } from '../../../../components/TableView';
 import McsIcons from '../../../../components/McsIcons';
 
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
-import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  updateSearch,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearches,
+} from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 
-import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
+import {
+  getTableDataSource,
+ } from '../../../../state/Campaigns/Display/selectors';
 
 class DisplayCampaignsTable extends Component {
 
@@ -34,7 +45,7 @@ class DisplayCampaignsTable extends Component {
           organisationId,
         },
       },
-      loadDisplayCampaignsDataSource
+      loadDisplayCampaignsDataSource,
     } = this.props;
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
@@ -59,7 +70,7 @@ class DisplayCampaignsTable extends Component {
         },
       },
       history,
-      loadDisplayCampaignsDataSource
+      loadDisplayCampaignsDataSource,
     } = this.props;
 
     const {
@@ -187,7 +198,7 @@ class DisplayCampaignsTable extends Component {
       isFetchingDisplayCampaigns,
       isFetchingCampaignsStat,
       dataSource,
-      totalDisplayCampaigns
+      totalDisplayCampaigns,
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -417,6 +428,6 @@ export default compose(
   withRouter,
   connect(
     mapStateToProps,
-    mapDispatchToProps
-  )
+    mapDispatchToProps,
+  ),
 )(DisplayCampaignsTable);

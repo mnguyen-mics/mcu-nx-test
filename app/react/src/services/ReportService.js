@@ -124,7 +124,7 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
     'uniq_email_unsubscribed',
     'uniq_email_hard_bounced',
     'uniq_email_soft_bounced',
-    'uniq_email_complaints'
+    'uniq_email_complaints',
   ];
 
   const params = {
@@ -208,7 +208,7 @@ const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endD
     'uniq_email_unsubscribed',
     'uniq_email_hard_bounced',
     'uniq_email_soft_bounced',
-    'uniq_email_complaints'
+    'uniq_email_complaints',
   ];
 
   const params = {

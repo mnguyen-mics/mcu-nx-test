@@ -1,12 +1,16 @@
 import {
   DisplayCampaignsActionbar,
-  DisplayCampaignsTable
+  DisplayCampaignsTable,
 } from '../containers/Campaigns/Display/List';
 
 import {
   DisplayCampaignPage,
   AdGroupPage,
 } from '../containers/Campaigns/Display/Dashboard';
+
+import {
+  CreateAdBlockPage,
+} from '../containers/Campaigns/Display/Edit';
 
 import {
   CreateEmailPage,
@@ -17,11 +21,11 @@ import {
 
 import {
   EmailCampaignsActionbar,
-  EmailCampaignListPage
+  EmailCampaignListPage,
 } from '../containers/Campaigns/Email/List';
 
 import {
-  EmailCampaign
+  EmailCampaign,
 } from '../containers/Campaigns/Email/Dashboard';
 
 import {
@@ -34,7 +38,7 @@ const campaignsRoutes = [
     path: '/campaigns/display',
     layout: 'main',
     contentComponent: DisplayCampaignsTable,
-    actionBarComponent: DisplayCampaignsActionbar
+    actionBarComponent: DisplayCampaignsActionbar,
   },
   {
     path: '/campaigns/display/:campaignId(\\d+)',
@@ -42,15 +46,20 @@ const campaignsRoutes = [
     contentComponent: DisplayCampaignPage,
   },
   {
-    path: '/campaigns/display/:campaignId(\\d+)/adgroup/:adGroupId(\\d+)',
+    path: '/campaigns/display/:campaignId(\\d+)/adgroups/:adGroupId(\\d+)',
     layout: 'main',
     contentComponent: AdGroupPage,
+  },
+  {
+    path: '/campaigns/display/:campaignId(\\d+)/adgroups/create',
+    layout: 'edit',
+    editComponent: CreateAdBlockPage,
   },
   {
     path: '/campaigns/email',
     layout: 'main',
     contentComponent: EmailCampaignListPage,
-    actionBarComponent: EmailCampaignsActionbar
+    actionBarComponent: EmailCampaignsActionbar,
   },
   {
     path: '/campaigns/email/create',
@@ -60,7 +69,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/email/:campaignId(\\d+)',
     layout: 'main',
-    contentComponent: EmailCampaign
+    contentComponent: EmailCampaign,
   },
   {
     path: '/campaigns/email/:campaignId(\\d+)/edit',

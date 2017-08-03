@@ -40,7 +40,7 @@ class TableView extends Component {
   buildDataColumns = () => {
     const {
       columnsDefinitions: { dataColumnsDefinition },
-      visibilitySelectedColumns
+      visibilitySelectedColumns,
     } = this.props;
 
     const visibilitySelectedColumnsValues = [];
@@ -111,7 +111,7 @@ class TableView extends Component {
       pagination,
       loading,
       onChange,
-      columnsDefinitions
+      columnsDefinitions,
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
@@ -143,7 +143,7 @@ class TableView extends Component {
 TableView.defaultProps = {
   pagination: false,
   onChange: () => {},
-  visibilitySelectedColumns: []
+  visibilitySelectedColumns: [],
 };
 
 TableView.propTypes = {

@@ -18,7 +18,7 @@ import messages from '../messages';
 
 import {
   parseSearch,
-  updateSearch
+  updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
 const { Content } = Layout;
@@ -30,7 +30,7 @@ class DisplayCampaign extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -40,9 +40,9 @@ class DisplayCampaign extends Component {
     const {
       history: {
         location: {
-          search
-        }
-      }
+          search,
+        },
+      },
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -51,14 +51,14 @@ class DisplayCampaign extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
       rangeType: newValues.rangeType,
       lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
-      to: newValues.to
+      to: newValues.to,
     });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -78,8 +78,8 @@ class DisplayCampaign extends Component {
       updateCampaign,
       dashboardPerformance,
       intl: {
-        formatMessage
-      }
+        formatMessage,
+      },
     } = this.props;
 
     const adGroupButtons = (
@@ -182,17 +182,17 @@ DisplayCampaign.propTypes = {
       isLoading: PropTypes.bool,
       hasFetched: PropTypes.bool,
       items: PropTypes.arrayOf(PropTypes.object),
-    })
+    }),
   }).isRequired,
   updateCampaign: PropTypes.func.isRequired,
   updateAdGroup: PropTypes.func.isRequired,
   updateAd: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 DisplayCampaign = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(DisplayCampaign);
 
 export default DisplayCampaign;
