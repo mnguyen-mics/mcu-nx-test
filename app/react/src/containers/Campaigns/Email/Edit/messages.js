@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-  emailSavingInProgress: {
+  savingInProgress: {
     id: 'message.loading.content.saving-in-progress',
     defaultMessage: 'Saving in progress'
   },
@@ -89,13 +89,25 @@ export default defineMessages({
     id: 'emailEditor.email_blast.no-blast',
     defaultMessage: 'No blast yet, please add a blast'
   },
+  segmentSelectionTitle: {
+    id: 'emailBlastEditor.title.segment',
+    defaultMessage: 'Audience Segments'
+  },
+  segmentSelectionSubTitle: {
+    id: 'emailBlastEditor.subtitle.segment',
+    defaultMessage: 'Configure segments for your campaign'
+  },
+  segmentSelectionChooseExisting: {
+    id: 'emailBlastEditor.segment.choose_existing',
+    defaultMessage: 'Choose existing'
+  },
   emailBlastEditorBreadcrumbTitleNewBlast: {
     id: 'emailBlastEditor.breadcrumb.title.new_blast',
     defaultMessage: 'New blast'
   },
   emailBlastEditorBreadcrumbTitleEditBlast: {
     id: 'emailBlastEditor.breadcrumb.title.edit_blast',
-    defaultMessage: 'Edit blast'
+    defaultMessage: 'Edit {blastName}'
   },
   emailBlastEditorStepperGeneralInformation: {
     id: 'emailBlastEditor.stepper.general_information',
@@ -209,16 +221,24 @@ export default defineMessages({
     id: 'emailBlastEditor.input.placeholder.reply_to',
     defaultMessage: 'Enter reply to'
   },
-  emailTemplateSelectionSelectButton: {
-    id: 'emailTemplateSelection.button.select_template',
+  blastTemplateSelectionSelectButton: {
+    id: 'blastTemplateSelection.button.select_template',
     defaultMessage: 'Select Template'
   },
-  emailTemplateSelectionEmpty: {
-    id: 'emailTemplateSelection.empty',
+  blastTemplateSelectionEmpty: {
+    id: 'blastTemplateSelection.empty',
     defaultMessage: 'No template selected yet'
   },
-  emailTemplateSelectionRequired: {
-    id: 'emailTemplateSelection.required',
+  blastTemplateSelectionRequired: {
+    id: 'blastTemplateSelection.required',
     defaultMessage: 'A template is required'
+  },
+  blastSegmentSelectionEmpty: {
+    id: 'blastSegmentSelection.empty',
+    defaultMessage: 'No Segment selected yet'
+  },
+  blastSegmentSelectionRequired: {
+    id: 'blastSegmentSelection.required',
+    defaultMessage: 'At least one segment is required'
   }
 });

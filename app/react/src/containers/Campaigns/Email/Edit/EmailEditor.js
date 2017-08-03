@@ -57,7 +57,7 @@ class EmailEditor extends Component {
     }
   }
 
-  handleAddBlast({ blast }) {
+  handleAddBlast(blast) {
     const { closeNextDrawer } = this.props;
 
     const addedBlast = {
@@ -77,7 +77,7 @@ class EmailEditor extends Component {
     closeNextDrawer();
   }
 
-  handleEditBlast({ blast }) {
+  handleEditBlast(blast) {
     const { closeNextDrawer } = this.props;
 
     this.setState(prevState => {
@@ -94,29 +94,41 @@ class EmailEditor extends Component {
   handleClickOnEditBlast(blast) {
     const {
       openNextDrawer,
-      closeNextDrawer
+      closeNextDrawer,
+      intl: { formatMessage }
     } = this.props;
 
     const emailBlastEditorProps = {
       save: this.handleEditBlast,
       close: closeNextDrawer,
       initialValues: { blast },
-      segments: blast.segments
+      segments: blast.segments,
+      breadcrumbPaths: [{
+        name: formatMessage(messages.emailBlastEditorBreadcrumbTitleEditBlast, { blastName: blast.blast_name })
+      }]
     };
 
     const options = {
-      additionalProps: emailBlastEditorProps
+      additionalProps: emailBlastEditorProps,
+      isModal: true
     };
 
     openNextDrawer(EmailBlastEditor, options);
   }
 
   handleCliclOnNewBlast() {
-    const { openNextDrawer, closeNextDrawer } = this.props;
+    const {
+      openNextDrawer,
+      closeNextDrawer,
+      intl: { formatMessage }
+    } = this.props;
 
     const emailBlastEditorProps = {
       save: this.handleAddBlast,
-      close: closeNextDrawer
+      close: closeNextDrawer,
+      breadcrumbPaths: [{
+        name: formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast)
+      }]
     };
 
     const options = {
@@ -182,16 +194,12 @@ class EmailEditor extends Component {
 
   render() {
     const {
-      match: {
-        url,
-        params: { organisationId, campaignId }
-      },
+      match: { url },
       intl: { formatMessage },
       handleSubmit,
       submitting,
-      dirty,
       fieldValidators: { isRequired },
-      campaignName
+      breadcrumbPaths
     } = this.props;
 
     const { routerOptions } = this.state;
@@ -201,15 +209,7 @@ class EmailEditor extends Component {
       wrapperCol: { span: 10, offset: 1 }
     };
 
-    const hasUnsavedChange = dirty; // dirty is for redux-form only, TODO handle wider email campaign modifiction (blasts)
-
-    const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.emailEditorBreadcrumbTitle1),
-        url: `/v2/o/${organisationId}/campaigns/email`
-      },
-      { name: `${campaignId ? formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, { campaignName: campaignName }) : formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle)}${hasUnsavedChange ? '*' : ''}` }
-    ];
+    // const hasUnsavedChange = dirty; // dirty is for redux-form only, TODO handle wider email campaign modifiction (blasts)
 
     return (
       <Layout>
@@ -244,96 +244,96 @@ class EmailEditor extends Component {
                 </li>
               </Scrollspy>
             </Sider>
-            <Content id={'emailCampaignSteps'} className="mcs-content-container mcs-form-container">
-              <div id={'general'}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle
-                    titleMessage={messages.emailEditorGeneralInformationTitle}
-                    subTitleMessage={messages.emailEditorGeneralInformationSubTitle}
-                  />
-                </Row>
-                <Row>
-                  <Field
-                    name="campaign.name"
-                    component={FormInput}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.emailEditorNameInputLabel),
-                        required: true,
-                        ...fieldGridConfig
-                      },
-                      inputProps: {
-                        placeholder: formatMessage(messages.emailEditorNameInputPlaceholder)
-                      },
-                      helpToolTipProps: {
-                        title: formatMessage(messages.emailEditorNameInputHelper)
-                      }
-                    }}
-                  />
-                  <Field
-                    name="campaign.technical_name"
-                    component={FormInput}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
-                        required: false,
-                        ...fieldGridConfig
-                      },
-                      inputProps: {
-                        placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder)
-                      },
-                      helpToolTipProps: {
-                        title: formatMessage(messages.emailEditorTechnicalNameInputHelper)
-                      }
-                    }}
-                  />
-                </Row>
-              </div>
-              <hr />
-              <div id={'router'}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle titleMessage={messages.emailEditorRouterTitle} subTitleMessage={messages.emailEditorRouterSubTitle} />
-                </Row>
-                <Row>
-                  <Field
-                    name="campaign.routers[0].email_router_id"
-                    component={FormSelect}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.emailEditorRouterSelectLabel),
-                        required: true,
-                        ...fieldGridConfig
-                      },
-                      options: routerOptions.map(router => ({
-                        key: router.id,
-                        value: router.id,
-                        text: router.name
-                      })),
-                      helpToolTipProps: {
-                        title: formatMessage(messages.emailEditorRouterSelectHelper)
-                      }
-                    }}
-                  />
-                </Row>
-              </div>
-              <hr />
-              <div id={'blasts'}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
-                  <FormTitle titleMessage={messages.emailEditorEmailBlastTitle} subTitleMessage={messages.emailEditorEmailBlastSubTitle} />
-                  <Button onClick={this.handleCliclOnNewBlast}>
-                    New Blast
-                  </Button>
-                </Row>
-                <Row>
-                  <RelatedRecords emptyOption={{ message: formatMessage(messages.emailEditorEmailBlastEmpty) }}>
-                    {this.getBlastRecords()}
-                  </RelatedRecords>
-                </Row>
-              </div>
-            </Content>
+            <Layout>
+              <Content id={'emailCampaignSteps'} className="mcs-content-container mcs-form-container">
+                <div id={'general'}>
+                  <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <FormTitle
+                      titleMessage={messages.emailEditorGeneralInformationTitle}
+                      subTitleMessage={messages.emailEditorGeneralInformationSubTitle}
+                    />
+                  </Row>
+                  <Row>
+                    <Field
+                      name="campaign.name"
+                      component={FormInput}
+                      validate={[isRequired]}
+                      props={{
+                        formItemProps: {
+                          label: formatMessage(messages.emailEditorNameInputLabel),
+                          required: true,
+                          ...fieldGridConfig
+                        },
+                        inputProps: {
+                          placeholder: formatMessage(messages.emailEditorNameInputPlaceholder)
+                        },
+                        helpToolTipProps: {
+                          title: formatMessage(messages.emailEditorNameInputHelper)
+                        }
+                      }}
+                    />
+                    <Field
+                      name="campaign.technical_name"
+                      component={FormInput}
+                      props={{
+                        formItemProps: {
+                          label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
+                          ...fieldGridConfig
+                        },
+                        inputProps: {
+                          placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder)
+                        },
+                        helpToolTipProps: {
+                          title: formatMessage(messages.emailEditorTechnicalNameInputHelper)
+                        }
+                      }}
+                    />
+                  </Row>
+                </div>
+                <hr />
+                <div id={'router'}>
+                  <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <FormTitle titleMessage={messages.emailEditorRouterTitle} subTitleMessage={messages.emailEditorRouterSubTitle} />
+                  </Row>
+                  <Row>
+                    <Field
+                      name="campaign.routers[0].email_router_id"
+                      component={FormSelect}
+                      validate={[isRequired]}
+                      props={{
+                        formItemProps: {
+                          label: formatMessage(messages.emailEditorRouterSelectLabel),
+                          required: true,
+                          ...fieldGridConfig
+                        },
+                        options: routerOptions.map(router => ({
+                          key: router.id,
+                          value: router.id,
+                          text: router.name
+                        })),
+                        helpToolTipProps: {
+                          title: formatMessage(messages.emailEditorRouterSelectHelper)
+                        }
+                      }}
+                    />
+                  </Row>
+                </div>
+                <hr />
+                <div id={'blasts'}>
+                  <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <FormTitle titleMessage={messages.emailEditorEmailBlastTitle} subTitleMessage={messages.emailEditorEmailBlastSubTitle} />
+                    <Button onClick={this.handleCliclOnNewBlast}>
+                      New Blast
+                    </Button>
+                  </Row>
+                  <Row>
+                    <RelatedRecords emptyOption={{ message: formatMessage(messages.emailEditorEmailBlastEmpty) }}>
+                      {this.getBlastRecords()}
+                    </RelatedRecords>
+                  </Row>
+                </div>
+              </Content>
+            </Layout>
           </Layout>
         </Form>
       </Layout>
@@ -350,14 +350,16 @@ EmailEditor.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
   intl: intlShape.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  dirty: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
-  campaignName: PropTypes.string,
+  breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    url: PropTypes.string,
+  })).isRequired,
   blasts: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
 };
 

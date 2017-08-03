@@ -92,7 +92,7 @@ class EmailTemplateSelection extends Component {
     const showError = meta.touched && meta.error;
 
     const emptyOption = {
-      message: showError ? formatMessage(messages.emailTemplateSelectionRequired) : formatMessage(messages.emailTemplateSelectionEmpty),
+      message: showError ? formatMessage(messages.blastTemplateSelectionRequired) : formatMessage(messages.blastTemplateSelectionEmpty),
       className: showError ? 'required' : ''
     };
 
@@ -104,7 +104,7 @@ class EmailTemplateSelection extends Component {
             subTitleMessage={messages.emailBlastEditorStepSubTitleTemplateSelection}
           />
           <Button onClick={this.handleClickOnSelectTemplate}>
-            {formatMessage(messages.emailTemplateSelectionSelectButton)}
+            {formatMessage(messages.blastTemplateSelectionSelectButton)}
           </Button>
         </Row>
         <Row>

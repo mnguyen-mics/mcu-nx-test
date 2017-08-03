@@ -10,7 +10,7 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import CampaignDisplay from './CampaignDisplay';
 
 import ReportService from '../../../../../services/ReportService';
-import CampaignService from '../../../../../services/CampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import {
   normalizeReportView,
@@ -97,7 +97,7 @@ class CampaignPage extends Component {
   fetchAllData(organisationId, campaignId, filter) {
 
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGoupAndAd = () => CampaignService.getCampaignDisplay(campaignId);
+    const getCampaignAdGoupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId);
     const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(organisationId, campaignId, filter.from, filter.to, dimensions);
     const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(organisationId, 'campaign_id', campaignId, filter.from, filter.to, '');
     const getAdPerf = () => ReportService.getAdDeliveryReport(organisationId, 'campaign_id', campaignId, filter.from, filter.to, '');
@@ -219,7 +219,7 @@ class CampaignPage extends Component {
       notifyError
     } = this.props;
 
-    CampaignService.updateCampaignDisplay(campaignId, body).then(response => {
+    DisplayCampaignService.updateCampaignDisplay(campaignId, body).then(response => {
       this.setState(prevState => {
         const nextState = {
           ...prevState
@@ -248,7 +248,7 @@ class CampaignPage extends Component {
       nextState.adGroups.items.itemById[adGroupId].status = body.status;
       return nextState;
     });
-    return CampaignService.updateAdGroup(this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id, adGroupId, body).then(response => {
+    return DisplayCampaignService.updateAdGroup(this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id, adGroupId, body).then(response => {
 
       this.setState(prevState => {
         const nextState = {
@@ -300,7 +300,7 @@ class CampaignPage extends Component {
       };
       nextState.ads.items.itemById[adId].status = body.status;
     });
-    return CampaignService.updateAd(adId, this.state.ads.items.adAdGroup[adId].campaign_id, this.state.ads.items.adAdGroup[adId].ad_group_id, body).then(response => {
+    return DisplayCampaignService.updateAd(adId, this.state.ads.items.adAdGroup[adId].campaign_id, this.state.ads.items.adAdGroup[adId].ad_group_id, body).then(response => {
       this.setState(prevState => {
         const nextState = {
           ...prevState
