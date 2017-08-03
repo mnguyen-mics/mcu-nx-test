@@ -15,7 +15,7 @@ function* getVersionLoop() {
 
       const newVersion = yield call(NavigatorService.getVersion);
       if (currentVersion !== newVersion.version) {
-        currentVersion = response.version;
+        currentVersion = newVersion.version;
         yield put(notifyInfo({
           newVersion: true,
         }));

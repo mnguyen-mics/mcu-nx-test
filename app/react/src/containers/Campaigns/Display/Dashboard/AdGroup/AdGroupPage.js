@@ -11,7 +11,7 @@ import messages from '../messages';
 import AdGroup from './AdGroup';
 
 import ReportService from '../../../../../services/ReportService';
-import CampaignService from '../../../../../services/CampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import {
   normalizeReportView,
@@ -91,7 +91,7 @@ class AdGroupPage extends Component {
 
   fetchAllData(organisationId, campaignId, adGroupId, filter) {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGoupAndAd = () => CampaignService.getCampaignDisplay(campaignId);
+    const getCampaignAdGoupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId);
     const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions);
     const getAdPerf = () => ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '');
     const getMediaPerf = () => ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 });
@@ -176,7 +176,7 @@ class AdGroupPage extends Component {
     const {
       notifyError,
     } = this.props;
-    CampaignService.updateAdGroup(this.state.campaign.items.itemById.id, adGroupId, body).then(response => {
+    DisplayCampaignService.updateAdGroup(this.state.campaign.items.itemById.id, adGroupId, body).then(response => {
       this.setState(prevState => {
         const nextState = {
           ...prevState,
@@ -201,7 +201,7 @@ class AdGroupPage extends Component {
       };
       nextState.ads.items.itemById[adId].status = body.status;
     });
-    return CampaignService.updateAd(adId, this.state.campaign.items.itemById.id, this.state.adGroups.items.itemById.id, body).then(response => {
+    return DisplayCampaignService.updateAd(adId, this.state.campaign.items.itemById.id, this.state.adGroups.items.itemById.id, body).then(response => {
       this.setState(prevState => {
         const nextState = {
           ...prevState,

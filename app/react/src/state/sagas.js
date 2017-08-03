@@ -3,7 +3,6 @@ import { translationsSagas } from './Translations/sagas';
 import { loginSagas } from './Login/sagas';
 import { sessionSagas } from './Session/sagas';
 import { campaignsDisplaySagas } from './Campaigns/Display/sagas';
-import { campaignsEmailSagas } from './Campaigns/Email/sagas';
 import { campaignEmailSagas } from './Campaign/Email/sagas';
 import { goalsSagas } from './Campaigns/Goal/sagas';
 import { forgotPasswordSagas } from './ForgotPassword/sagas';
@@ -27,7 +26,6 @@ export default function* sagas() {
     ...loginSagas,
     ...forgotPasswordSagas,
     ...campaignsDisplaySagas,
-    ...campaignsEmailSagas,
     ...campaignEmailSagas,
     ...goalsSagas,
     ...automationsSagas,

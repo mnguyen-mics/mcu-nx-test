@@ -103,7 +103,7 @@ const audienceSegmentsSingleApi = (state = defaultAudienceSegmentSingleApiState,
       return {
         ...state,
         isFetching: false,
-        audienceSegment: action.payload.data,
+        audienceSegment: action.payload,
       };
     case AUDIENCE_SEGMENT_SINGLE_FETCH.FAILURE:
       return {

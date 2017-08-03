@@ -13,9 +13,7 @@ class EmailTemplateSelection extends Component {
 
   constructor(props) {
     super(props);
-    this.updateSelectedEmailTemplates = this.updateSelectedEmailTemplates.bind(this);
-    this.handleClickOnSelectTemplate = this.handleClickOnSelectTemplate.bind(this);
-    this.loadEmailTemplateIfNeeded = this.loadEmailTemplateIfNeeded.bind(this);
+
     this.state = {
       emailTemplates: [],
     };
@@ -23,34 +21,27 @@ class EmailTemplateSelection extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { input: { value } } = nextProps;
+
     (value || []).forEach(emailTemplateSelection => this.loadEmailTemplateIfNeeded(emailTemplateSelection.email_template_id));
   }
 
-  loadEmailTemplateIfNeeded(templateId) {
-    const { emailTemplates } = this.state;
-    const found = emailTemplates.find(t => t.id === templateId);
-    if (!found) {
-      CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
-        this.setState(prevState => ({
-          emailTemplates: [
-            ...prevState.emailTemplates,
-            emailTemplate,
-          ],
-        }));
-      });
-    }
+  getEmailTemplateRecords() {
+    const { input: { value } } = this.props;
+
+    return (value || []).map(emailTemplateSelection => {
+      const emailTemplate = this.state.emailTemplates
+        .find(t => t.id === emailTemplateSelection.email_template_id) || {};
+      return (
+        <RecordElement
+          key={emailTemplateSelection.email_template_id}
+          recordIconType={'email'}
+          title={emailTemplate.name}
+        />
+      );
+    });
   }
 
-  updateSelectedEmailTemplates(emailTemplateSelections) {
-    const { closeNextDrawer, input } = this.props;
-    const newSelections = input.value || [{}];
-    newSelections[0].email_template_id = emailTemplateSelections[0].email_template_id;
-    input.onChange(newSelections);
-    this.loadEmailTemplateIfNeeded(newSelections[0].email_template_id);
-    closeNextDrawer();
-  }
-
-  handleClickOnSelectTemplate() {
+  handleClickOnSelectTemplate = () => {
     const { openNextDrawer, closeNextDrawer, input } = this.props;
 
     const emailTemplateSelectorProps = {
@@ -67,23 +58,31 @@ class EmailTemplateSelection extends Component {
     openNextDrawer(EmailTemplateSelector, options);
   }
 
-  getEmailTemplateRecords() {
-    const { input: { value } } = this.props;
+  loadEmailTemplateIfNeeded = (templateId) => {
+    const { emailTemplates } = this.state;
+    const found = emailTemplates.find(t => t.id === templateId);
+    if (!found) {
+      CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
+        this.setState(prevState => ({
+          emailTemplates: [
+            ...prevState.emailTemplates,
+            emailTemplate,
+          ],
+        }));
+      });
+    }
+  }
 
-    return (value || []).map(emailTemplateSelection => {
-      const emailTemplate = this.state.emailTemplates.find(t => t.id === emailTemplateSelection.email_template_id) || {};
-      return (
-        <RecordElement
-          key={emailTemplateSelection.email_template_id}
-          recordIconType={'email'}
-          title={emailTemplate.name}
-        />
-      );
-    });
+  updateSelectedEmailTemplates = (emailTemplateSelections) => {
+    const { closeNextDrawer, input } = this.props;
+    const newSelections = input.value || [{}];
+    newSelections[0].email_template_id = emailTemplateSelections[0].email_template_id;
+    input.onChange(newSelections);
+    this.loadEmailTemplateIfNeeded(newSelections[0].email_template_id);
+    closeNextDrawer();
   }
 
   render() {
-
     const {
       meta,
       intl: { formatMessage },
@@ -92,7 +91,10 @@ class EmailTemplateSelection extends Component {
     const showError = meta.touched && meta.error;
 
     const emptyOption = {
-      message: showError ? formatMessage(messages.emailTemplateSelectionRequired) : formatMessage(messages.emailTemplateSelectionEmpty),
+      message: (showError
+        ? formatMessage(messages.blastTemplateSelectionRequired)
+        : formatMessage(messages.blastTemplateSelectionEmpty)
+      ),
       className: showError ? 'required' : '',
     };
 
@@ -104,7 +106,7 @@ class EmailTemplateSelection extends Component {
             subTitleMessage={messages.emailBlastEditorStepSubTitleTemplateSelection}
           />
           <Button onClick={this.handleClickOnSelectTemplate}>
-            {formatMessage(messages.emailTemplateSelectionSelectButton)}
+            {formatMessage(messages.blastTemplateSelectionSelectButton)}
           </Button>
         </Row>
         <Row>
@@ -118,8 +120,8 @@ class EmailTemplateSelection extends Component {
 }
 
 EmailTemplateSelection.propTypes = {
-  input: PropTypes.object.isRequired, // eslint-disable-line
-  meta: PropTypes.object.isRequired, // eslint-disable-line
+  input: PropTypes.shape().isRequired,
+  meta: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   intl: intlShape.isRequired,

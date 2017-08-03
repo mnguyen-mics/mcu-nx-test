@@ -43,7 +43,7 @@ class TitleAndStatusHeader extends Component {
     } = this.props;
     let statusElements;
 
-    if (headerStatus !== null) {
+    if (headerStatus.value !== null) {
       statusElements = this.buildStatusElement();
     } else {
       statusElements = <div />;
@@ -71,7 +71,7 @@ class TitleAndStatusHeader extends Component {
 }
 
 TitleAndStatusHeader.defaultProps = {
-  headerStatus: null,
+  headerStatus: { value: null },
   headerAttibutes: [],
 };
 

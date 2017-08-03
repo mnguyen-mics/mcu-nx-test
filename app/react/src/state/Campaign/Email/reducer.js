@@ -25,7 +25,7 @@ const campaignEmailApi = (state = defaultCampaignEmailState, action) => {
     case CAMPAIGN_EMAIL_FETCH.SUCCESS:
       return {
         ...state,
-        campaignEmail: action.payload.data,
+        campaignEmail: action.payload,
         isFetching: false,
       };
     case CAMPAIGN_EMAIL_FETCH.FAILURE:

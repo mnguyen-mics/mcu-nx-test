@@ -10,7 +10,7 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import CampaignDisplay from './CampaignDisplay';
 
 import ReportService from '../../../../../services/ReportService';
-import CampaignService from '../../../../../services/CampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import {
   normalizeReportView,
@@ -108,6 +108,7 @@ class CampaignPage extends Component {
       });
     } else {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+
       this.fetchAllData(organisationId, campaignId, filter);
     }
   }
@@ -146,16 +147,15 @@ class CampaignPage extends Component {
         });
       } else {
         const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+
         this.fetchAllData(nextOrganisationId, nextCampaignId, filter);
       }
     }
   }
 
-
   fetchAllData = (organisationId, campaignId, filter) => {
-
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGoupAndAd = () => CampaignService.getCampaignDisplay(campaignId);
+    const getCampaignAdGoupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId);
     const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
@@ -194,6 +194,7 @@ class CampaignPage extends Component {
       const nextState = {
         ...prevState,
       };
+
       nextState.campaign.items.isLoading = true;
       nextState.adGroups.items.isLoading = true;
       nextState.ads.items.isLoading = true;
@@ -201,6 +202,7 @@ class CampaignPage extends Component {
       nextState.campaign.mediaPerformance.isLoading = true;
       nextState.adGroups.performance.isLoading = true;
       nextState.ads.performance.isLoading = true;
+
       return nextState;
     });
 
@@ -209,24 +211,32 @@ class CampaignPage extends Component {
       const campaign = {
         ...data,
       };
+
       delete campaign.ad_groups;
+
       const adGroups = [...data.ad_groups];
       const formattedAdGoups = adGroups.map(item => {
         const formatedItem = {
           ...item,
         };
+
         delete formatedItem.ads;
+
         return formatedItem;
       });
+
       const adGroupCampaign = adGroups.map(item => {
         const newitem = {
           ad_group_id: item.id,
           campaign_id: campaign.id,
         };
+
         return newitem;
       });
+
       const ads = [];
       const adAdGroup = [];
+
       data.ad_groups.forEach(adGroup => {
         adGroup.ads.forEach(ad => {
           ads.push(ad);
@@ -258,22 +268,27 @@ class CampaignPage extends Component {
         return nextState;
       });
     });
+
     getCampaignPerf().then(response => {
       this.setState((prevState) => {
         const nextState = {
           ...prevState,
         };
+
         nextState.campaign.performance.isLoading = false;
         nextState.campaign.performance.hasFetched = true;
         nextState.campaign.performance.performance = normalizeReportView(response.data.report_view);
+
         return nextState;
       });
     });
+
     getAdGroupPerf().then(response => {
       this.setState((prevState) => {
         const nextState = {
           ...prevState,
         };
+
         nextState.adGroups.performance.isLoading = false;
         nextState.adGroups.performance.hasFetched = true;
         nextState.adGroups.performance.performanceById = this.formatReportView(
@@ -289,12 +304,14 @@ class CampaignPage extends Component {
         const nextState = {
           ...prevState,
         };
+
         nextState.ads.performance.isLoading = false;
         nextState.ads.performance.hasFetched = true;
         nextState.ads.performance.performanceById = this.formatReportView(
           response.data.report_view,
           'ad_id',
         );
+
         return nextState;
       });
     });
@@ -303,12 +320,14 @@ class CampaignPage extends Component {
         const nextState = {
           ...prevState,
         };
+
         nextState.campaign.mediaPerformance.isLoading = false;
         nextState.campaign.mediaPerformance.hasFetched = true;
         nextState.campaign.mediaPerformance.performance = normalizeReportView(
           response.data.report_view,
           'media_id',
         );
+
         return nextState;
       });
     });
@@ -328,6 +347,7 @@ class CampaignPage extends Component {
 
   formatReportView(reportView, key) {
     const format = normalizeReportView(reportView);
+
     return normalizeArrayOfObject(format, key);
   }
 
@@ -344,7 +364,7 @@ class CampaignPage extends Component {
       };
       nextState.ads.items.itemById[adId].status = body.status;
     });
-    return CampaignService
+    return DisplayCampaignService
       .updateAd(
         adId,
         this.state.ads.items.adAdGroup[adId].campaign_id,
@@ -365,6 +385,7 @@ class CampaignPage extends Component {
               removeNotification(uid);
             });
           };
+
           notifySuccess({
             uid,
             message: successMessage.title,
@@ -374,6 +395,7 @@ class CampaignPage extends Component {
             </Button>),
           });
         }
+
         return null;
       })
       .catch(error => {
@@ -381,11 +403,13 @@ class CampaignPage extends Component {
           message: errorMessage.title,
           description: errorMessage.body,
         });
+
         this.setState(prevState => {
           const nextState = {
             ...prevState,
           };
           nextState.ads.items.itemById[adId].status = undoBody.status;
+
           return nextState;
         });
       });
@@ -405,11 +429,11 @@ class CampaignPage extends Component {
       nextState.adGroups.items.itemById[adGroupId].status = body.status;
       return nextState;
     });
-
-    return CampaignService
+    return DisplayCampaignService
       .updateAdGroup(
         this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id,
-        adGroupId, body,
+        adGroupId,
+        body,
       )
       .then(response => {
         this.setState(prevState => {
@@ -418,12 +442,14 @@ class CampaignPage extends Component {
           };
           nextState.adGroups.items.itemById[adGroupId] = response.data;
         });
+
         if (successMessage || errorMessage) {
           const undo = () => {
             this.updateAdGroup(adGroupId, undoBody).then(() => {
               removeNotification(adGroupId);
             });
           };
+
           notifySuccess({
             uid: parseInt(adGroupId, 0),
             message: successMessage.title,
@@ -433,6 +459,7 @@ class CampaignPage extends Component {
             </Button>),
           });
         }
+
         return null;
       })
       .catch(error => {
@@ -445,6 +472,7 @@ class CampaignPage extends Component {
             ...prevState,
           };
           nextState.adGroups.items.itemById[adGroupId].status = undoBody.status;
+
           return nextState;
         });
       });
@@ -455,19 +483,21 @@ class CampaignPage extends Component {
       notifyError,
     } = this.props;
 
-    CampaignService.updateCampaignDisplay(campaignId, body).then(response => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.campaign.items.itemById = response.data;
+    DisplayCampaignService.updateCampaignDisplay(campaignId, body)
+      .then(response => {
+        this.setState(prevState => {
+          const nextState = {
+            ...prevState,
+          };
+          nextState.campaign.items.itemById = response.data;
+        });
+      })
+      .catch(error => {
+        notifyError(error, {
+          message: errorMessage.title,
+          description: errorMessage.body,
+        });
       });
-    }).catch(error => {
-      notifyError(error, {
-        message: errorMessage.title,
-        description: errorMessage.body,
-      });
-    });
   }
 
   render() {
@@ -509,17 +539,15 @@ class CampaignPage extends Component {
       },
     };
 
-    return (
-      <CampaignDisplay
-        updateAd={this.updateAd}
-        updateAdGroup={this.updateAdGroup}
-        updateCampaign={this.updateCampaign}
-        campaign={campaign}
-        adGroups={adGroups}
-        ads={ads}
-        dashboardPerformance={dashboardPerformance}
-      />
-    );
+    return (<CampaignDisplay
+      updateAd={this.updateAd}
+      updateAdGroup={this.updateAdGroup}
+      updateCampaign={this.updateCampaign}
+      campaign={campaign}
+      adGroups={adGroups}
+      ads={ads}
+      dashboardPerformance={dashboardPerformance}
+    />);
   }
 }
 
