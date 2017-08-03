@@ -220,7 +220,7 @@ class EmailBlastEditor extends Component {
                         placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName)
                       },
                       helpToolTipProps: {
-                        title: 'Campaign name'
+                        title: formatMessage(messages.emailBlastEditorInputHelperBlastName)
                       }
                     }}
                   />
@@ -241,7 +241,7 @@ class EmailBlastEditor extends Component {
                         disabledDate: isPastDate
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
+                        title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate)
                       }
                     }}
                   />
@@ -261,7 +261,7 @@ class EmailBlastEditor extends Component {
                         text: `${consent.name} (${consent.purpose})`
                       })),
                       helpToolTipProps: {
-                        title: 'Choose your provider'
+                        title: formatMessage(messages.emailEditorProviderSelectHelper),
                       }
                     }}
                   />
@@ -290,7 +290,7 @@ class EmailBlastEditor extends Component {
                         placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine)
                       },
                       helpToolTipProps: {
-                        title: 'Campaign name'
+                        title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine)
                       }
                     }}
                   />
@@ -308,7 +308,7 @@ class EmailBlastEditor extends Component {
                         placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail)
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
+                        title: formatMessage(messages.emailBlastEditorInputHelperFromEmail)
                       }
                     }}
                   />
@@ -326,7 +326,7 @@ class EmailBlastEditor extends Component {
                         placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName)
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
+                        title: formatMessage(messages.emailBlastEditorInputHelperFromName)
                       }
                     }}
                   />
@@ -344,7 +344,7 @@ class EmailBlastEditor extends Component {
                         placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo)
                       },
                       helpToolTipProps: {
-                        title: 'Campaign technical name'
+                        title: formatMessage(messages.emailBlastEditorInputHelperReplyTo)
                       }
                     }}
                   />
