@@ -28,18 +28,19 @@ define(['./module', 'angular', 'lodash'], function (module, angular, _) {
       var campaignCtn = {};
       CampaignPluginService.getCampaignEditor("com.mediarithmics.campaign.email", "default-editor").then(function (template) {
         campaignCtn = new EmailCampaignContainer(template.editor_version_id);
-        if (!campaignId) {
-          $scope.campaignCtn = campaignCtn;
-        } else {
-          campaignCtn.load(campaignId).then(function () {
-            $scope.campaignCtn = campaignCtn;
-            $log.debug("campaignCtn",$scope.campaignCtn);
-            if (campaignCtn.emailTemplates.length > 0) {
-              $scope.templateId = campaignCtn.emailTemplates[0].email_template_id;
-            }
+        $scope.campaignCtn = campaignCtn;
+        // if (!campaignId) {
+        //   $scope.campaignCtn = campaignCtn;
+        // } else {
+        //   campaignCtn.load(campaignId).then(function () {
+        //     $scope.campaignCtn = campaignCtn;
+        //     $log.debug("campaignCtn",$scope.campaignCtn);
+        //     if (campaignCtn.emailTemplates.length > 0) {
+        //       $scope.templateId = campaignCtn.emailTemplates[0].email_template_id;
+        //     }
 
-          });
-        }
+        //   });
+        // }
       });
 
       function loadEmailTemplate(emailTemplateId) {
@@ -146,24 +147,25 @@ define(['./module', 'angular', 'lodash'], function (module, angular, _) {
        * Email Campaign Data
        */
 
-      EmailCampaignService.getDeepCampaignView($stateParams.campaign_id).then(function (campaign) {
-        $scope.campaign = campaign;
+      $scope.campaign = {};
+      // EmailCampaignService.getDeepCampaignView($stateParams.campaign_id).then(function (campaign) {
+      //   $scope.campaign = campaign;
 
-        fetchEmailStat($scope.campaign.id);
+      //   fetchEmailStat($scope.campaign.id);
 
-      });
+      // });
 
       /**
        * Campaigns Management
        */
 
-      $scope.$watch('campaign', function (campaign) {
-        if (campaign !== undefined) {
-          CampaignPluginService.getCampaignEditorFromVersionId($scope.campaign.editor_version_id).then(function (template) {
-            $scope.template = template;
-          });
-        }
-      });
+      // $scope.$watch('campaign', function (campaign) {
+      //   if (campaign !== undefined) {
+      //     CampaignPluginService.getCampaignEditorFromVersionId($scope.campaign.editor_version_id).then(function (template) {
+      //       $scope.template = template;
+      //     });
+      //   }
+      // });
 
       $scope.editCampaign = function (campaign) {
         if ($scope.template) {
@@ -183,13 +185,13 @@ define(['./module', 'angular', 'lodash'], function (module, angular, _) {
         });
       };
 
-      $scope.$watchGroup(['date.reportDateRange'], function (values) {
+      // $scope.$watchGroup(['date.reportDateRange'], function (values) {
 
-        if (values && $scope.campaign){
-          CampaignAnalyticsReportService.setDateRange($scope.date.reportDateRange);
-          fetchEmailStat($scope.campaign.id);
-        }
-      });
+      //   if (values && $scope.campaign){
+      //     CampaignAnalyticsReportService.setDateRange($scope.date.reportDateRange);
+      //     fetchEmailStat($scope.campaign.id);
+      //   }
+      // });
 
     }
   ]);

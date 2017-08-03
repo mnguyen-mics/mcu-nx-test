@@ -18,7 +18,7 @@ define(['./module'], function (module) {
     'CampaignAnalyticsReportService', 'core/campaigns/CampaignPluginService', 'core/common/files/ExportService',
     function ($scope, $location, $uibModal, $log, Restangular, d3, moment, DisplayCampaignService, Session, CampaignAnalyticsReportService, CampaignPluginService, ExportService) {
       var currentWorkspace = Session.getCurrentWorkspace();
-
+      $scope.currentOrgId = Session.getCurrentWorkspace().organisation_id;
       $scope.currentPageEmailCampaign = 1;
       $scope.itemsPerPage = 10;
 
@@ -35,13 +35,14 @@ define(['./module'], function (module) {
         params = {administration_id: currentWorkspace.organisation_id};
       }
 
-      Restangular.all('email_campaigns').getList(params).then(function (emailCampaigns) {
-        $scope.emailCampaigns = emailCampaigns;
-      });
+      $scope.emailCampaigns = [];
+      // Restangular.all('email_campaigns').getList(params).then(function (emailCampaigns) {
+      //   $scope.emailCampaigns = emailCampaigns;
+      // });
 
-      $scope.$watch('reportDateRange', function () {
-        updateStatistics($scope, CampaignAnalyticsReportService, currentWorkspace.organisation_id);
-      });
+      // $scope.$watch('reportDateRange', function () {
+      //   updateStatistics($scope, CampaignAnalyticsReportService, currentWorkspace.organisation_id);
+      // });
 
       var buildAllCampaignsExportHeaders = function (report) {
         var headers = ["Status", "Name"];
