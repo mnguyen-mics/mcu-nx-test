@@ -35,13 +35,14 @@ define(['./module'], function (module) {
         params = {administration_id: currentWorkspace.organisation_id};
       }
 
-      Restangular.all('email_campaigns').getList(params).then(function (emailCampaigns) {
-        $scope.emailCampaigns = emailCampaigns;
-      });
+      $scope.emailCampaigns = [];
+      // Restangular.all('email_campaigns').getList(params).then(function (emailCampaigns) {
+      //   $scope.emailCampaigns = emailCampaigns;
+      // });
 
-      $scope.$watch('reportDateRange', function () {
-        updateStatistics($scope, CampaignAnalyticsReportService, currentWorkspace.organisation_id);
-      });
+      // $scope.$watch('reportDateRange', function () {
+      //   updateStatistics($scope, CampaignAnalyticsReportService, currentWorkspace.organisation_id);
+      // });
 
       var buildAllCampaignsExportHeaders = function (report) {
         var headers = ["Status", "Name"];
