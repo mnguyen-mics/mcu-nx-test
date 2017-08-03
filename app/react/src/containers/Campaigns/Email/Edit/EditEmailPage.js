@@ -203,15 +203,23 @@ class EditEmailPage extends Component {
     });
   }
 
-  redirect() {
-    const { history, organisationId } = this.props;
+  redirect = () => {
+    const {
+      history,
+      organisationId,
+      match: { params: { campaignId } }
+    } = this.props;
 
-    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email`;
-
+    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email/${campaignId}`;
     history.push(emailCampaignListUrl);
   }
 
   render() {
+
+    const {
+      organisationId,
+      intl: { formatMessage }
+    } = this.props;
 
     const {
       loadedEmailCampaign: {
@@ -223,15 +231,23 @@ class EditEmailPage extends Component {
     const initialValues = { campaign: other };
     const campaignName = other.name;
 
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.emailEditorBreadcrumbTitle1),
+        url: `/v2/o/${organisationId}/campaigns/email`
+      },
+      { name: formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, { campaignName }) }
+    ];
+
     return (
       <EmailEditor
         initialValues={initialValues}
-        campaignName={campaignName}
         blasts={blasts}
         save={this.editEmailCampaign}
         close={this.redirect}
         openNextDrawer={this.props.openNextDrawer}
         closeNextDrawer={this.props.closeNextDrawer}
+        breadcrumbPaths={breadcrumbPaths}
       />
     );
   }

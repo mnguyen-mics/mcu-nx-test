@@ -17,13 +17,8 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 
 class CreateEmailPage extends Component {
-  constructor(props) {
-    super(props);
-    this.createEmailCampaign = this.createEmailCampaign.bind(this);
-    this.redirect = this.redirect.bind(this);
-  }
 
-  createEmailCampaign(campaign) {
+  createEmailCampaign = campaign => {
     const {
       organisationId,
       notifyError,
@@ -73,10 +68,10 @@ class CreateEmailPage extends Component {
             ]);
           });
         })
-      ]);
-    }).then(() => {
+      ]).then(() => campaignId);
+    }).then(campaignId => {
       hideSaveInProgress();
-      this.redirect();
+      this.redirect(campaignId);
     }).catch(error => {
       log.error('Error while creating email campagain', error);
       hideSaveInProgress();
@@ -84,21 +79,34 @@ class CreateEmailPage extends Component {
     });
   }
 
-  redirect() {
+  redirect = campaignId => {
     const { history, organisationId } = this.props;
-
-    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email`;
-
+    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email/${campaignId}`;
     history.push(emailCampaignListUrl);
   }
 
   render() {
+
+    const {
+      organisationId,
+      intl: { formatMessage }
+    } = this.props;
+
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.emailEditorBreadcrumbTitle1),
+        url: `/v2/o/${organisationId}/campaigns/email`
+      },
+      { name: formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle) }
+    ];
+
     return (
       <EmailEditor
         save={this.createEmailCampaign}
         close={this.redirect}
         openNextDrawer={this.props.openNextDrawer}
         closeNextDrawer={this.props.closeNextDrawer}
+        breadcrumbPaths={breadcrumbPaths}
       />
     );
   }

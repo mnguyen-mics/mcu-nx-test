@@ -137,12 +137,12 @@ class EmailBlastEditor extends Component {
     const {
       match: { url },
       intl: { formatMessage },
-      isCreationMode,
+      breadcrumbPaths,
       fieldValidators: { isRequired, isValidEmail },
       handleSubmit,
       close,
       closeNextDrawer,
-      openNextDrawer
+      openNextDrawer,
     } = this.props;
 
     const { consents, segmentRequired } = this.state;
@@ -161,13 +161,6 @@ class EmailBlastEditor extends Component {
       message: segmentRequired ? formatMessage(messages.blastSegmentSelectionRequired) : formatMessage(messages.blastSegmentSelectionEmpty),
       className: segmentRequired ? 'required' : ''
     };
-
-    // TODO move this as a props for contextual definition
-    const breadcrumbPaths = [
-      {
-        name: formatMessage(isCreationMode ? messages.emailBlastEditorBreadcrumbTitleEditBlast : messages.emailBlastEditorBreadcrumbTitleNewBlast)
-      }
-    ];
 
     return (
       <Layout>
@@ -424,12 +417,15 @@ EmailBlastEditor.propTypes = {
   }).isRequired,
   intl: intlShape.isRequired,
   fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    url: PropTypes.string,
+  })).isRequired,
   segments: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     audience_segment_id: PropTypes.string.isRequired
   })),
   handleSubmit: PropTypes.func.isRequired,
-  isCreationMode: PropTypes.bool,
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,

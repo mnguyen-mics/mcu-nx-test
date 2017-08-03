@@ -17,6 +17,38 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 
 class CreateBlastPage extends Component {
+  state = {
+    emailCampaign: ''
+  }
+
+  componentDidMount() {
+    const {
+      match: { params: { campaignId } }
+    } = this.props;
+
+    this.loadCampaign(campaignId);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      match: { params: { campaignId } }
+    } = this.props;
+
+    const {
+      match: { params: { campaignId: nextCampaignId } }
+    } = nextProps;
+
+    if (campaignId !== nextCampaignId) {
+      this.loadCampaign(nextCampaignId);
+    }
+  }
+
+  loadCampaign = campaignId => {
+    EmailCampaignService.getEmailCampaign(campaignId).then(result => {
+      this.setState({ emailCampaign: result });
+    });
+
+  }
 
   createBlast = (blast) => {
     const {
@@ -74,12 +106,29 @@ class CreateBlastPage extends Component {
   }
 
   render() {
+    const {
+      organisationId,
+      intl: { formatMessage },
+      match: { params: { campaignId } }
+    } = this.props;
+
+    const { emailCampaign } = this.state;
+
+    const breadcrumbPaths = [
+      {
+        name: emailCampaign.name,
+        url: `/v2/o/${organisationId}/campaigns/email/${campaignId}`
+      },
+      { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast) }
+    ];
+
     return (
       <EmailBlastEditor
         save={this.createBlast}
         close={this.redirect}
         openNextDrawer={this.props.openNextDrawer}
         closeNextDrawer={this.props.closeNextDrawer}
+        breadcrumbPaths={breadcrumbPaths}
       />
     );
   }

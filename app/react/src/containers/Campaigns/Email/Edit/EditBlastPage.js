@@ -19,6 +19,9 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 class EditBlastPage extends Component {
   state = {
+    emailCampaign: {
+      name: ''
+    },
     loadedBlast: {
       consents: [],
       templates: [],
@@ -51,26 +54,30 @@ class EditBlastPage extends Component {
   loadBlast = (campaignId, blastId) => {
     const { notifyError } = this.props;
 
-    EmailCampaignService.getBlast(campaignId, blastId).then(blast => {
-      Promise.all([
-        EmailCampaignService.getEmailTemplates(campaignId, blast.id).then(res => res.data),
-        EmailCampaignService.getConsents(campaignId, blast.id).then(res => res.data),
-        EmailCampaignService.getSegments(campaignId, blast.id).then(res => res.data)
-      ]).then(results => {
-        const [templates, consents, segments] = results;
-        return {
-          ...blast,
-          send_date: moment(blast.send_date),
-          templates,
-          consents,
-          segments
-        };
-      }).then(loadedBlast => {
-        this.setState({ loadedBlast });
-      }).catch(error => {
-        log.error(error);
-        notifyError(error);
-      });
+    Promise.all([
+      EmailCampaignService.getEmailCampaign(campaignId),
+      EmailCampaignService.getBlast(campaignId, blastId).then(blast => {
+        return Promise.all([
+          EmailCampaignService.getEmailTemplates(campaignId, blast.id).then(res => res.data),
+          EmailCampaignService.getConsents(campaignId, blast.id).then(res => res.data),
+          EmailCampaignService.getSegments(campaignId, blast.id).then(res => res.data)
+        ]).then(results => {
+          const [templates, consents, segments] = results;
+          return {
+            ...blast,
+            send_date: moment(blast.send_date),
+            templates,
+            consents,
+            segments
+          };
+        });
+      })
+    ]).then(results => {
+      const [emailCampaign, loadedBlast] = results;
+      this.setState({ emailCampaign, loadedBlast });
+    }).catch(error => {
+      log.error(error);
+      notifyError(error);
     });
   }
 
@@ -146,14 +153,30 @@ class EditBlastPage extends Component {
   render() {
 
     const {
+      emailCampaign,
       loadedBlast: {
         segments,
         ...other
       }
     } = this.state;
 
+    const {
+      organisationId,
+      intl: { formatMessage },
+      match: { params: { campaignId } }
+    } = this.props;
+
     const initialValues = { blast: other };
     const blastName = other.blast_name;
+
+    const breadcrumbPaths = [
+      {
+        name: emailCampaign.name,
+        url: `/v2/o/${organisationId}/campaigns/email/${campaignId}`
+      },
+      { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleEditBlast, { blastName }) }
+    ];
+
 
     return (
       <EmailBlastEditor
@@ -164,6 +187,7 @@ class EditBlastPage extends Component {
         close={this.redirect}
         openNextDrawer={this.props.openNextDrawer}
         closeNextDrawer={this.props.closeNextDrawer}
+        breadcrumbPaths={breadcrumbPaths}
       />
     );
   }

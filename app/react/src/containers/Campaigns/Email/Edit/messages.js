@@ -107,7 +107,7 @@ export default defineMessages({
   },
   emailBlastEditorBreadcrumbTitleEditBlast: {
     id: 'emailBlastEditor.breadcrumb.title.edit_blast',
-    defaultMessage: 'Edit blast'
+    defaultMessage: 'Edit {blastName}'
   },
   emailBlastEditorStepperGeneralInformation: {
     id: 'emailBlastEditor.stepper.general_information',
