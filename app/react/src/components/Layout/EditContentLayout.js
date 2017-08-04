@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Form } from 'antd';
+import { Layout } from 'antd';
 
 import SidebarWrapper from '../Partials/SidebarWrapper';
 import ActionbarWrapper from '../Partials/ActionbarWrapper';
@@ -9,6 +9,7 @@ import ActionbarWrapper from '../Partials/ActionbarWrapper';
 function EditContentLayout({
   breadcrumbPaths,
   children,
+  scrollId,
   sidebarItems,
   submitMetadata,
   url
@@ -16,18 +17,15 @@ function EditContentLayout({
 
   return (
     <Layout>
-      <Form className="edit-layout ant-layout" onSubmit={submitMetadata.onSubmit}>
-        <ActionbarWrapper
-          {...submitMetadata}
-          breadcrumbPaths={breadcrumbPaths}
-        />
+      <ActionbarWrapper
+        {...submitMetadata}
+        breadcrumbPaths={breadcrumbPaths}
+      />
 
-        <Layout>
-          <SidebarWrapper items={sidebarItems} url={url} />
-          <Layout>{children}</Layout>
-        </Layout>
-
-      </Form>
+      <Layout>
+        <SidebarWrapper items={sidebarItems} scrollId={scrollId} url={url} />
+        <Layout>{children}</Layout>
+      </Layout>
     </Layout>
   );
 }
@@ -39,6 +37,10 @@ EditContentLayout.propTypes = {
   })).isRequired,
 
   children: PropTypes.node.isRequired,
+  /* scrollId must be the same id as in the scrollable stuff
+   * ex. at EmailForm: <Form id="emailCampaignSteps" />
+   */
+  scrollId: PropTypes.string.isRequired,
   sidebarItems: PropTypes.shape(PropTypes.string.isRequired).isRequired,
 
   submitMetadata: PropTypes.shape({

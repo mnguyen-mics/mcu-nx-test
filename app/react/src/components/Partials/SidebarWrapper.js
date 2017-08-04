@@ -8,7 +8,7 @@ import { McsIcons } from '../McsIcons';
 
 const { Sider } = Layout;
 
-function SidebarWrapper({ items, url }) {
+function SidebarWrapper({ items, scrollId, url }) {
 
   const scrollItems = Object.keys(items);
   const options = scrollItems.map((name) => (
@@ -23,7 +23,7 @@ function SidebarWrapper({ items, url }) {
   return (
     <Sider className="stepper">
       <Scrollspy
-        rootEl="#adBlockCampaignSteps"
+        rootEl={`#${scrollId}`}
         items={scrollItems}
         currentClassName="currentStep"
       >
@@ -41,6 +41,7 @@ SidebarWrapper.__ANT_LAYOUT_SIDER = true; // eslint-disable-line
 
 SidebarWrapper.propTypes = {
   items: PropTypes.shape(PropTypes.string.isRequired).isRequired,
+  scrollId: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
 };
 

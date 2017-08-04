@@ -64,6 +64,7 @@ class CreateAdGroupPage extends Component {
     return (
       <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
+        scrollId="adBlockCampaignSteps"
         sidebarItems={sidebarItems}
         submitMetadata={submitMetadata}
         url={url}
@@ -72,7 +73,6 @@ class CreateAdGroupPage extends Component {
           <div id="general">pouet</div>
         </Content>
       </EditContentLayout>
-
     );
   }
 }

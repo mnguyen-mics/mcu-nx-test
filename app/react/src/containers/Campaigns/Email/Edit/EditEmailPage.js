@@ -7,9 +7,11 @@ import { injectIntl, intlShape } from 'react-intl';
 import moment from 'moment';
 import { pick } from 'lodash';
 
+import EditContentLayout from '../../../../components/Layout/EditContentLayout';
+import EmailForm from './EmailForm';
 import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';
-import EmailEditor from './EmailEditor';
+
 import messages from './messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import * as actions from '../../../../state/Notifications/actions';
@@ -18,19 +20,14 @@ import { isFakeId } from '../../../../utils/FakeIdHelper';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 class EditEmailPage extends Component {
-  constructor(props) {
-    super(props);
-    this.editEmailCampaign = this.editEmailCampaign.bind(this);
-    this.loadEmailCampaign = this.loadEmailCampaign.bind(this);
-    this.redirect = this.redirect.bind(this);
 
-    this.state = {
-      loadedEmailCampaign: {
-        routers: [],
-        blasts: [],
-      },
-    };
-  }
+  state = {
+    disabled: true,
+    loadedEmailCampaign: {
+      routers: [],
+      blasts: []
+    }
+  };
 
   componentDidMount() {
     const {
@@ -214,10 +211,15 @@ class EditEmailPage extends Component {
     history.push(emailCampaignListUrl);
   }
 
+  sendDisableStatusToParent = disabled => {
+    this.setState({ disabled });
+  }
+
   render() {
     const {
-      organisationId,
       intl: { formatMessage },
+      match: { url },
+      organisationId,
     } = this.props;
 
     const {
@@ -238,16 +240,35 @@ class EditEmailPage extends Component {
       { name: formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, { campaignName }) },
     ];
 
+    const sidebarItems = {
+      general: 'General Information',
+      router: 'Router Config',
+      blasts: 'Email Blasts',
+    };
+
+    const submitMetadata = {
+      disabled: this.state.disabled,
+      onClick: this.redirect,
+      message: messages.emailEditorSaveCampaign,
+    };
+
     return (
-      <EmailEditor
-        initialValues={initialValues}
-        blasts={blasts}
-        save={this.editEmailCampaign}
-        close={this.redirect}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
+      <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
-      />
+        scrollId="emailCampaignSteps"
+        sidebarItems={sidebarItems}
+        submitMetadata={submitMetadata}
+        url={url}
+      >
+        <EmailForm
+          blasts={blasts}
+          closeNextDrawer={this.props.closeNextDrawer}
+          initialValues={initialValues}
+          openNextDrawer={this.props.openNextDrawer}
+          save={this.editEmailCampaign}
+          sendDisableStatusToParent={this.sendDisableStatusToParent}
+        />
+      </EditContentLayout>
     );
   }
 }
