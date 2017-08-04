@@ -80,7 +80,7 @@ class DatamartsTable extends Component {
       defaultValue: filter.id
     };
 
-    return (noDatamartYet) ? (<EmptyTableView iconType="full-users" text="EMPTY_DATAMARTS" />) :
+    return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyDatamarts} />) :
            (
              <TableViewFilters
                columnsDefinitions={columnsDefinitions}

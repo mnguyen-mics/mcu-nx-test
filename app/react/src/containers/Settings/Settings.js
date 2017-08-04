@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Row, Tabs } from 'antd';
-import { defineMessages, injectIntl, intlShape } from 'react-intl';
+import { injectIntl, intlShape } from 'react-intl';
 
 import { withMcsRouter } from '../Helpers';
 import { SitesListPage } from './Sites';
@@ -12,6 +12,8 @@ import { getDefaultDatamart } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
 import { parseSearch } from '../../utils/LocationSearchHelper';
 import * as menuActions from '../../state/Menu/actions';
+
+import messages from './messages';
 
 const TabPane = Tabs.TabPane;
 
@@ -71,12 +73,6 @@ class Settings extends Component {
       intl: { formatMessage }
     } = this.props;
 
-    const messages = defineMessages({
-      sites: { id: 'settings.tab.title.sites', defaultMessage: 'Sites' },
-      mobile_applications: { id: 'settings.tab.title.mobile_applications', defaultMessage: 'Mobile Applications' },
-      datamarts: { id: 'settings.tab.title.datamarts', defaultMessage: 'Datamarts' }
-    });
-
     const urlParams = this.getUrlParameters();
 
     return (
@@ -86,7 +82,7 @@ class Settings extends Component {
           <Row className="mcs-table-container">
             <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={(key) => this.switchTab(key)}>
               <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.datamartId} /></TabPane>
-              <TabPane tab={formatMessage(messages.mobile_applications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>
+              <TabPane tab={formatMessage(messages.mobileApplications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>
               <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.datamartId} /></TabPane>
             </Tabs>
           </Row>

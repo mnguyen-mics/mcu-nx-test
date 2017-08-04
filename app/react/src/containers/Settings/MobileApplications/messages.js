@@ -17,6 +17,10 @@ const messages = defineMessages({
     id: 'mobile_application.creation_date',
     defaultMessage: 'Creation Date'
   },
+  newMobileApplication: {
+    id: 'mobile_application.new',
+    defaultMessage: 'New Mobile Application'
+  },
   editMobileApplication: {
     id: 'mobile_application.edit',
     defaultMessage: 'Edit'
@@ -24,6 +28,10 @@ const messages = defineMessages({
   archiveMobileApplication: {
     id: 'mobile_application.archive',
     defaultMessage: 'Archive'
+  },
+  emptyMobileApplications: {
+    id: 'mobile_application.empty',
+    defaultMessage: "There are no mobile apps set up. Click on 'New Mobile Application' to create one."
   }
 });
 

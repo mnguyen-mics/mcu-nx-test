@@ -9,6 +9,8 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import DatamartService from '../../../services/DatamartService';
 import * as notifyActions from '../../../state/Notifications/actions';
 
+import settingsMessages from '../messages';
+
 import DatamartsTable from './DatamartsTable';
 
 class DatamartsListPage extends Component {
@@ -101,7 +103,7 @@ class DatamartsListPage extends Component {
     return (
       <div>
         <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage id="DatamartsListPage" defaultMessage="Datamarts" /></span>
+          <span className="mcs-card-title"><FormattedMessage {...settingsMessages.datamarts} /></span>
         </div>
         <hr className="mcs-separator" />
         <DatamartsTable

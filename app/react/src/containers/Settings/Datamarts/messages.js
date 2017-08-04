@@ -20,6 +20,10 @@ const messages = defineMessages({
   editDatamart: {
     id: 'datamart.edit',
     defaultMessage: 'Edit'
+  },
+  emptyDatamarts: {
+    id: 'datamart.empty',
+    defaultMessage: 'There are no datamarts set up.'
   }
 });
 

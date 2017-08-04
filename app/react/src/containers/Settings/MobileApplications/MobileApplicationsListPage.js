@@ -11,6 +11,9 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import MobileApplicationService from '../../../services/MobileApplicationService';
 import * as notifyActions from '../../../state/Notifications/actions';
 
+import messages from './messages';
+import settingsMessages from '../messages';
+
 import MobileApplicationsTable from './MobileApplicationsTable';
 
 class MobileApplicationsListPage extends Component {
@@ -98,9 +101,9 @@ class MobileApplicationsListPage extends Component {
 
   static buildNewActionElement(organisationId, datamartId) {
     return (
-      <Link to={`/o${organisationId}d${datamartId}/settings/mobileapplications/new`}>
-        <Button key="NEW_MOBILE_APPLICATION" type="primary" htmlType="submit">
-          <FormattedMessage id="NEW_MOBILE_APPLICATION" defaultMessage="New Mobile Application" />
+      <Link key={messages.newMobileApplication.id} to={`/o${organisationId}d${datamartId}/settings/mobileapplications/new`}>
+        <Button key={messages.newMobileApplication.id} type="primary" htmlType="submit">
+          <FormattedMessage {...messages.newMobileApplication} />
         </Button>
       </Link>
     );
@@ -126,7 +129,7 @@ class MobileApplicationsListPage extends Component {
     return (
       <div>
         <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage id="MobileApplicationsListPage" defaultMessage="Mobile Applications" /></span>
+          <span className="mcs-card-title"><FormattedMessage {...settingsMessages.mobileApplications} /></span>
           <span className="mcs-card-button">{buttons}</span>
         </div>
         <hr className="mcs-separator" />

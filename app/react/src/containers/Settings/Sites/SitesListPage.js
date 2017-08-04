@@ -11,6 +11,9 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import SiteService from '../../../services/SiteService';
 import * as notifyActions from '../../../state/Notifications/actions';
 
+import settingsMessages from '../messages';
+import messages from './messages';
+
 import SitesTable from './SitesTable';
 
 class SitesListPage extends Component {
@@ -98,9 +101,9 @@ class SitesListPage extends Component {
 
   static buildNewActionElement(organisationId, datamartId) {
     return (
-      <Link to={`/o${organisationId}d${datamartId}/settings/sites/new`}>
-        <Button key="NEW_SITE" type="primary" htmlType="submit">
-          <FormattedMessage id="NEW_SITE" defaultMessage="New Site" />
+      <Link key={messages.newSite.id} to={`/o${organisationId}d${datamartId}/settings/sites/new`}>
+        <Button key={messages.newSite.id} type="primary" htmlType="submit">
+          <FormattedMessage {...messages.newSite} />
         </Button>
       </Link>
     );
@@ -126,7 +129,7 @@ class SitesListPage extends Component {
     return (
       <div>
         <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage id="SitesListPage" defaultMessage="Sites" /></span>
+          <span className="mcs-card-title"><FormattedMessage {...settingsMessages.sites} /></span>
           <span className="mcs-card-button">{buttons}</span>
         </div>
         <hr className="mcs-separator" />

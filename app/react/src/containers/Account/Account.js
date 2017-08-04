@@ -12,6 +12,11 @@ import { ReactRouterPropTypes } from '../../validators/proptypes';
 import { parseSearch } from '../../utils/LocationSearchHelper';
 import * as menuActions from '../../state/Menu/actions';
 
+const messages = defineMessages({
+  userAccount: { id: 'account.tab.title.user_account', defaultMessage: 'User Account' },
+  organisationAccount: { id: 'account.tab.title.organisation_account', defaultMessage: 'Organisation Account' }
+});
+
 const TabPane = Tabs.TabPane;
 
 class Account extends Component {
@@ -60,11 +65,6 @@ class Account extends Component {
       intl: { formatMessage },
       organisationName
     } = this.props;
-
-    const messages = defineMessages({
-      userAccount: { id: 'account.tab.title.user_account', defaultMessage: 'User Account' },
-      organisationAccount: { id: 'account.tab.title.organisation_account', defaultMessage: 'Organisation Account' }
-    });
 
     const urlParams = this.getUrlParameters();
 
