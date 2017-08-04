@@ -10,7 +10,7 @@
     ],
     "parser": "babel-eslint",
     "rules": {
-        "comma-dangle": "error",
+        "comma-dangle": "off",
         "max-len": "off",
         "padded-blocks": "off",
         "no-unused-vars": [
