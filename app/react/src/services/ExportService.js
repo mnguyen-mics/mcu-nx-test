@@ -98,12 +98,15 @@ const exportData = (sheets, fileName, extension) => {
   }
 
   const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
-  saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream'}), `${fileName}.${newExtension}`); // eslint-disable-line
+  saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
 };
 
-const exportCampaignsDisplay = (organisationId, dataSource, filter, translations) => {
+/**
+ * Display Campaigns
+ */
+const exportDisplayCampaigns = (organisationId, dataSource, filter, translations) => {
 
-  const titleLine = [translations.CAMPAIGNS_DISPAY_EXPORT_TITLE];
+  const titleLine = [translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE];
   const blankLine = [];
 
   const dataSheet = [];
@@ -122,15 +125,15 @@ const exportCampaignsDisplay = (organisationId, dataSource, filter, translations
   dataSheet.push(blankLine);
 
   const headersMap = [
-      { name: 'status', translation: translations.STATUS },
-      { name: 'name', translation: translations.NAME },
-      { name: 'impressions', translation: translations.IMPRESSIONS },
-      { name: 'clicks', translation: translations.CLICKS },
-      { name: 'cpm', translation: translations.CPM },
-      { name: 'ctr', translation: translations.CTR },
-      { name: 'cpc', translation: translations.CPC },
-      { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
-      { name: 'cpa', translation: translations.CPA },
+    { name: 'status', translation: translations.STATUS },
+    { name: 'name', translation: translations.NAME },
+    { name: 'impressions', translation: translations.IMPRESSIONS },
+    { name: 'clicks', translation: translations.CLICKS },
+    { name: 'cpm', translation: translations.CPM },
+    { name: 'ctr', translation: translations.CTR },
+    { name: 'cpc', translation: translations.CPC },
+    { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
+    { name: 'cpa', translation: translations.CPA },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -145,13 +148,74 @@ const exportCampaignsDisplay = (organisationId, dataSource, filter, translations
   });
 
   const sheets = [{
-    name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
+    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
     data: dataSheet,
   }];
 
-  exportData(sheets, `${organisationId}_campaigns-display`, 'xlsx');
+  exportData(sheets, `${organisationId}_display-campaigns`, 'xlsx');
 };
 
+/**
+ * Display Campaign Dashboard
+ */
+const exportDisplayCampaignDashboard = (organisationId, campaignData, adGroupsData, adsData, filter, translations) => {
+  const blankLine = [];
+
+  const headersMap = [
+    { name: 'status', translation: translations.STATUS },
+    { name: 'name', translation: translations.NAME },
+    { name: 'impressions', translation: translations.IMPRESSIONS },
+    { name: 'clicks', translation: translations.CLICKS },
+    { name: 'cpm', translation: translations.CPM },
+    { name: 'ctr', translation: translations.CTR },
+    { name: 'cpc', translation: translations.CPC },
+    { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
+    { name: 'cpa', translation: translations.CPA },
+  ];
+  const headersLine = headersMap.map(header => header.translation);
+
+  function buildSheet(data, title, filter) {
+    const titleLine = [title];
+    const sheet = [];
+
+    sheet.push(titleLine);
+    sheet.push([`${translations.FROM} ${filter.from} ${translations.TO} ${filter.to}`]);
+
+    sheet.push(blankLine);
+    sheet.push(headersLine);
+
+    data.forEach(row => {
+      const dataLine = headersMap.map(header => {
+        return row[header.name];
+      });
+      sheet.push(dataLine);
+    });
+
+    return sheet;
+  }
+
+  const campaignSheet = buildSheet(campaignData, translations.DISPLAY_CAMPAIGN_EXPORT_TITLE, filter);
+  const adGroupsSheet = buildSheet(adGroupsData, translations.AD_GROUPS_EXPORT_TITLE, filter);
+  const adsSheet = buildSheet(adsData, translations.ADS_EXPORT_TITLE, filter);
+
+  const sheets = [{
+    name: translations.DISPLAY_CAMPAIGN_EXPORT_TITLE,
+    data: campaignSheet
+  }, {
+    name: translations.AD_GROUPS_EXPORT_TITLE,
+    data: adGroupsSheet
+  }, {
+    name: translations.ADS_EXPORT_TITLE,
+    data: adsSheet
+  }];
+
+  console.log("SHEETS", sheets);
+  exportData(sheets, `${organisationId}_display-campaign`, 'xlsx');
+};
+
+/**
+ * Email Campaigns
+ */
 const exportCampaignsEmail = (organisationId, dataSource, filter, translations) => {
 
   const titleLine = [translations.CAMPAIGNS_EMAIL_EXPORT_TITLE];
@@ -201,6 +265,9 @@ const exportCampaignsEmail = (organisationId, dataSource, filter, translations) 
   exportData(sheets, `${organisationId}_campaigns-email`, 'xlsx');
 };
 
+/**
+ * Goals
+ */
 const exportGoals = (organisationId, dataSource, filter, translations) => {
 
   const titleLine = [translations.GOALS_EXPORT_TITLE];
@@ -246,6 +313,9 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
 };
 
+/**
+ * Audience Segments
+ */
 const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, translations) => {
 
   const titleLine = [translations.AUDIENCE_SEGMENTS_EXPORT_TITLE];
@@ -288,7 +358,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   });
 
   const sheets = [{
-    name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
+    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
     data: dataSheet,
   }];
 
@@ -297,8 +367,9 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
 export default {
   exportData,
-  exportCampaignsDisplay,
-  exportCampaignsEmail,
   exportGoals,
+  exportCampaignsEmail,
   exportAudienceSegments,
+  exportDisplayCampaigns,
+  exportDisplayCampaignDashboard
 };

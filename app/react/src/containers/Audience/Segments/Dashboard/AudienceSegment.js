@@ -126,7 +126,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   loadAudienceSegmentSingleDataSource: AudienceSegmentActions.loadAudienceSegmentSingleDataSource,
-  // archiveCampaignEmail: CampaignEmailAction.archiveCampaignEmail,
+  // archiveEmailCampaign: EmailCampaignAction.archiveEmailCampaign,
   resetAudienceSegmentSingle: AudienceSegmentActions.resetAudienceSegmentSingle,
 };
 

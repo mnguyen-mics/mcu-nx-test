@@ -4,8 +4,8 @@ import { call, fork, put } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-  fetchCampaignEmail,
-  fetchCampaignEmailDeliveryReport,
+  fetchEmailCampaign,
+  fetchEmailCampaignDeliveryReport,
   updateEmailCampaign,
   fetchAllEmailBlast,
   fetchAllEmailBlastPerformance,
@@ -22,7 +22,7 @@ import {
     CAMPAIGN_EMAIL_LOAD_ALL,
 } from '../../action-types';
 
-function* loadCampaignEmail({ payload }) {
+function* loadEmailCampaign({ payload }) {
   try {
 
     const {
@@ -32,10 +32,10 @@ function* loadCampaignEmail({ payload }) {
     if (!campaignId) throw new Error('Payload is invalid');
 
     const response = yield call(EmailCampaignService.getEmailCampaign, campaignId);
-    yield put(fetchCampaignEmail.success(response));
+    yield put(fetchEmailCampaign.success(response));
   } catch (error) {
     log.error(error);
-    yield put(fetchCampaignEmail.failure(error));
+    yield put(fetchEmailCampaign.failure(error));
   }
 }
 
@@ -55,15 +55,15 @@ function* loadDeliveryReport({ payload }) {
     const dimension = 'day';
 
     const response = yield call(ReportService.getSingleEmailDeliveryReport, organisationId, campaignId, startDate, endDate, dimension);
-    yield put(fetchCampaignEmailDeliveryReport.success(response));
+    yield put(fetchEmailCampaignDeliveryReport.success(response));
   } catch (error) {
     log.error(error);
     // TODO add meta data in order to show error in global notification
-    yield put(fetchCampaignEmailDeliveryReport.failure(error));
+    yield put(fetchEmailCampaignDeliveryReport.failure(error));
   }
 }
 
-function* modifyCampaignEmail({ payload }) {
+function* modifyEmailCampaign({ payload }) {
   try {
 
     const {
@@ -75,7 +75,7 @@ function* modifyCampaignEmail({ payload }) {
 
     const response = yield call(EmailCampaignService.updateEmailCampaign, campaignId, body);
     yield put(updateEmailCampaign.success(response));
-    yield put(fetchCampaignEmail.request(campaignId, body));
+    yield put(fetchEmailCampaign.request(campaignId, body));
   } catch (error) {
     log.error(error);
     yield put(updateEmailCampaign.failure(error));
@@ -122,24 +122,24 @@ function* loadAllEmailBlastPErformance({ payload }) {
 }
 
 function* loadCampaignAndPerformance(action) {
-  yield call(loadCampaignEmail, action);
+  yield call(loadEmailCampaign, action);
   yield call(loadDeliveryReport, action);
 }
 
-function* watchFetchCampaignEmail() {
-  yield* takeLatest(CAMPAIGN_EMAIL_FETCH.REQUEST, loadCampaignEmail);
+function* watchFetchEmailCampaign() {
+  yield* takeLatest(CAMPAIGN_EMAIL_FETCH.REQUEST, loadEmailCampaign);
 }
 
 function* watchFetchDeliveryReport() {
   yield* takeLatest(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
 }
 
-function* watchUpdateCampaignEmail() {
-  yield* takeLatest(CAMPAIGN_EMAIL_UPDATE.REQUEST, modifyCampaignEmail);
+function* watchUpdateEmailCampaign() {
+  yield* takeLatest(CAMPAIGN_EMAIL_UPDATE.REQUEST, modifyEmailCampaign);
 }
 
-function* watchArchiveCampaignEmail() {
-  yield* takeLatest(CAMPAIGN_EMAIL_ARCHIVE.REQUEST, modifyCampaignEmail);
+function* watchArchiveEmailCampaign() {
+  yield* takeLatest(CAMPAIGN_EMAIL_ARCHIVE.REQUEST, modifyEmailCampaign);
 }
 
 function* watchLoadCampaignAndPerformance() {
@@ -155,10 +155,10 @@ function* watchLoadBlastPerformance() {
 }
 
 export const campaignEmailSagas = [
-  fork(watchFetchCampaignEmail),
+  fork(watchFetchEmailCampaign),
   fork(watchFetchDeliveryReport),
-  fork(watchUpdateCampaignEmail),
-  fork(watchArchiveCampaignEmail),
+  fork(watchUpdateEmailCampaign),
+  fork(watchArchiveEmailCampaign),
   fork(watchLoadCampaignAndPerformance),
   fork(watchLoadBlast),
   fork(watchLoadBlastPerformance),

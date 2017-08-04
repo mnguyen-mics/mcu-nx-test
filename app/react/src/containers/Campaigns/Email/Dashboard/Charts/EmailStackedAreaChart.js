@@ -7,7 +7,7 @@ import { injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import * as CampaignEmailActions from '../../../../../state/Campaign/Email/actions';
+import * as EmailCampaignActions from '../../../../../state/Campaign/Email/actions';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
@@ -164,8 +164,8 @@ const mapStateToProps = state => ({
 
 
 const mapDispatchToProps = {
-  loadCampaignEmailAndDeliveryReport: CampaignEmailActions.loadCampaignEmailAndDeliveryReport,
-  resetCampaignEmail: CampaignEmailActions.resetCampaignEmail,
+  loadEmailCampaignAndDeliveryReport: EmailCampaignActions.loadEmailCampaignAndDeliveryReport,
+  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign,
 };
 
 

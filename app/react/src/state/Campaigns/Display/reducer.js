@@ -12,7 +12,7 @@ import {
   CAMPAIGNS_DISPLAY_TABLE_RESET,
 } from '../../action-types';
 
-const defaultCampaignsDisplayApiState = {
+const defaultDisplayCampaignsApiState = {
   isFetching: false,
   data: [],
   total: 0,
@@ -22,7 +22,7 @@ const defaultCampaignsDisplayApiState = {
 // TODO try to intruce a higher order reducer
 // that handle isFetching base on type name (x.REQUEST, x.SUCCESS, ...)
 
-const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) => {
+const campaignsDisplayApi = (state = defaultDisplayCampaignsApiState, action) => {
   switch (action.type) {
     case CAMPAIGNS_DISPLAY_LOAD_ALL:
     case CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST:
@@ -42,7 +42,7 @@ const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) =>
         isFetching: false,
       };
     case CAMPAIGNS_DISPLAY_TABLE_RESET:
-      return defaultCampaignsDisplayApiState;
+      return defaultDisplayCampaignsApiState;
     default:
       return state;
   }
@@ -88,6 +88,6 @@ const campaignsDisplayTable = combineReducers({
   performanceReportApi,
 });
 
-const CampaignsDisplayReducers = { campaignsDisplayTable };
+const DisplayCampaignsReducers = { campaignsDisplayTable };
 
-export default CampaignsDisplayReducers;
+export default DisplayCampaignsReducers;

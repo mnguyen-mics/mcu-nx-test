@@ -8,7 +8,7 @@ import * as LabelsActions from '../../../../state/Labels/actions';
 import * as EmailsActions from '../../../../state/Campaign/Email/actions';
 
 
-class CampaignEmailLabels extends Component {
+class EmailCampaignLabels extends Component {
 
   componentDidMount() {
     const {
@@ -93,7 +93,7 @@ class CampaignEmailLabels extends Component {
 
 }
 
-CampaignEmailLabels.propTypes = {
+EmailCampaignLabels.propTypes = {
   campaignEmail: PropTypes.shape().isRequired,
   activeWorkspace: PropTypes.shape().isRequired,
   getLabels: PropTypes.func.isRequired,
@@ -136,13 +136,13 @@ const mapDispatchToProps = {
   createLabels: LabelsActions.createLabels.request,
   pairLabelWithObject: LabelsActions.pairLabelWithObject.request,
   unPairLabelWithObject: LabelsActions.unPairLabelWithObject.request,
-  fetchCampaignEmail: EmailsActions.fetchCampaignEmail.request,
+  fetchEmailCampaign: EmailsActions.fetchEmailCampaign.request,
   getLabelsOfObject: LabelsActions.fetchLabelsOfObjects.request,
 };
 
-CampaignEmailLabels = connect(
+EmailCampaignLabels = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CampaignEmailLabels);
+)(EmailCampaignLabels);
 
-export default CampaignEmailLabels;
+export default EmailCampaignLabels;

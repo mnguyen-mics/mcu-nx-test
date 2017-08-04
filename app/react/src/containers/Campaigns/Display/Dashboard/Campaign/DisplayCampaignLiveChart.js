@@ -16,7 +16,7 @@ import messages from '../messages';
 
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 
-class CampaignDisplayLiveChart extends Component {
+class DisplayCampaignLiveChart extends Component {
   constructor(props) {
     super(props);
 
@@ -175,7 +175,7 @@ class CampaignDisplayLiveChart extends Component {
   }
 }
 
-CampaignDisplayLiveChart.propTypes = {
+DisplayCampaignLiveChart.propTypes = {
   translations: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
@@ -188,8 +188,8 @@ const mapStateToProps = state => ({
   translations: state.translations,
 });
 
-CampaignDisplayLiveChart = connect(mapStateToProps)(CampaignDisplayLiveChart);
+DisplayCampaignLiveChart = connect(mapStateToProps)(DisplayCampaignLiveChart);
 
-CampaignDisplayLiveChart = compose(injectIntl, withRouter)(CampaignDisplayLiveChart);
+DisplayCampaignLiveChart = compose(injectIntl, withRouter)(DisplayCampaignLiveChart);
 
-export default CampaignDisplayLiveChart;
+export default DisplayCampaignLiveChart;

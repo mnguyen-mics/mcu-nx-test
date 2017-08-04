@@ -6,9 +6,9 @@ import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
 import { Actionbar } from '../../../Actionbar';
-import * as CampaignEmailActions from '../../../../state/Campaign/Email/actions';
+import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
 
-class CampaignEmailActionbar extends Component {
+class EmailCampaignActionbar extends Component {
 
   buildActionElement = () => {
     const {
@@ -48,7 +48,7 @@ class CampaignEmailActionbar extends Component {
     const {
       translations,
       campaignEmail,
-      archiveCampaignEmail,
+      archiveEmailCampaign,
     } = this.props;
 
     const handleArchiveGoal = campaignEmailId => {
@@ -59,7 +59,7 @@ class CampaignEmailActionbar extends Component {
         okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
         cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
         onOk() {
-          return archiveCampaignEmail(campaignEmailId);
+          return archiveEmailCampaign(campaignEmailId);
         },
         onCancel() { },
       });
@@ -125,12 +125,12 @@ class CampaignEmailActionbar extends Component {
   }
 }
 
-CampaignEmailActionbar.propTypes = {
+EmailCampaignActionbar.propTypes = {
   translations: PropTypes.shape().isRequired,
   match: PropTypes.shape().isRequired,
   campaignEmail: PropTypes.shape().isRequired,
   updateEmailCampaign: PropTypes.func.isRequired,
-  archiveCampaignEmail: PropTypes.func.isRequired,
+  archiveEmailCampaign: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -139,15 +139,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  updateEmailCampaign: CampaignEmailActions.updateEmailCampaign.request,
-  archiveCampaignEmail: CampaignEmailActions.archiveCampaignEmail.request,
+  updateEmailCampaign: EmailCampaignActions.updateEmailCampaign.request,
+  archiveEmailCampaign: EmailCampaignActions.archiveEmailCampaign.request,
 };
 
-CampaignEmailActionbar = connect(
+EmailCampaignActionbar = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CampaignEmailActionbar);
+)(EmailCampaignActionbar);
 
-CampaignEmailActionbar = withRouter(CampaignEmailActionbar);
+EmailCampaignActionbar = withRouter(EmailCampaignActionbar);
 
-export default CampaignEmailActionbar;
+export default EmailCampaignActionbar;

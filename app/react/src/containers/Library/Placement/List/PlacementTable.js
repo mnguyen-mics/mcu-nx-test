@@ -229,7 +229,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchPlacementLists: PlacementListsActions.fetchPlacementLists.request,
-  // archivePlacementList: CampaignEmailAction.archivePlacementList,
+  // archivePlacementList: EmailCampaignAction.archivePlacementList,
   resetPlacementLists: PlacementListsActions.resetPlacementLists,
 };
 

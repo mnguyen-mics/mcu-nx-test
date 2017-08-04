@@ -40,7 +40,7 @@ const campaignsMenu = {
   translationId: 'CAMPAIGNS',
   subMenuItems: [
     {
-      key: 'campaigns_display',
+      key: 'display_campaigns',
       path: '/campaigns/display',
       translationId: 'DISPLAY',
     },

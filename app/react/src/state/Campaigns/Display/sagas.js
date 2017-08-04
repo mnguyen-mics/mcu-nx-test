@@ -4,8 +4,8 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-  fetchCampaignsDisplayList,
-  fetchCampaignsDisplayPerformanceReport,
+  fetchDisplayCampaignsList,
+  fetchDisplayCampaignsPerformanceReport
 } from './actions';
 
 import CampaignService from '../../../services/CampaignService';
@@ -34,15 +34,15 @@ function* loadPerformanceReport({ payload }) {
     const dimension = '';
 
     const response = yield call(ReportService.getDisplayCampaignPerformanceReport, organisationId, startDate, endDate, dimension);
-    yield put(fetchCampaignsDisplayPerformanceReport.success(response));
+    yield put(fetchDisplayCampaignsPerformanceReport.success(response));
   } catch (error) {
     log.error(error);
     // TODO add meta data in order to show error in global notification
-    yield put(fetchCampaignsDisplayPerformanceReport.failure(error));
+    yield put(fetchDisplayCampaignsPerformanceReport.failure(error));
   }
 }
 
-function* loadCampaignsDisplayList({ payload }) {
+function* loadDisplayCampaignsList({ payload }) {
   try {
 
     const {
@@ -90,20 +90,20 @@ function* loadCampaignsDisplayList({ payload }) {
       response.hasItems = initialFetch.count > 0;
     }
 
-    yield put(fetchCampaignsDisplayList.success(response));
+    yield put(fetchDisplayCampaignsList.success(response));
   } catch (error) {
     log.error(error);
-    yield put(fetchCampaignsDisplayList.failure(error));
+    yield put(fetchDisplayCampaignsList.failure(error));
   }
 }
 
 function* loadCampaignsAndPerformance(action) {
-  yield call(loadCampaignsDisplayList, action);
+  yield call(loadDisplayCampaignsList, action);
   yield call(loadPerformanceReport, action);
 }
 
-function* watchFetchCampaignsDisplay() {
-  yield* takeLatest(CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST, loadCampaignsDisplayList);
+function* watchFetchDisplayCampaigns() {
+  yield* takeLatest(CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST, loadDisplayCampaignsList);
 }
 
 function* watchFetchPerformanceReport() {
@@ -115,7 +115,7 @@ function* watchLoadCampaignsAndPerformance() {
 }
 
 export const campaignsDisplaySagas = [
-  fork(watchFetchCampaignsDisplay),
+  fork(watchFetchDisplayCampaigns),
   fork(watchFetchPerformanceReport),
   fork(watchLoadCampaignsAndPerformance),
 ];

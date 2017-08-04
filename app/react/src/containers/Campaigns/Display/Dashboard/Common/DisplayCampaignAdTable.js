@@ -10,7 +10,7 @@ import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsIcons from '../../../../../components/McsIcons';
 import messages from '../messages';
 
-class CampaignDisplayAdTable extends Component {
+class DisplayCampaignAdTable extends Component {
 
   constructor(props) {
     super(props);
@@ -263,7 +263,7 @@ class CampaignDisplayAdTable extends Component {
 
 }
 
-CampaignDisplayAdTable.propTypes = {
+DisplayCampaignAdTable.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   isFetching: PropTypes.bool.isRequired,
@@ -273,9 +273,9 @@ CampaignDisplayAdTable.propTypes = {
   intl: intlShape.isRequired,
 };
 
-CampaignDisplayAdTable = compose(
+DisplayCampaignAdTable = compose(
   injectIntl,
   withRouter,
-)(CampaignDisplayAdTable);
+)(DisplayCampaignAdTable);
 
-export default CampaignDisplayAdTable;
+export default DisplayCampaignAdTable;

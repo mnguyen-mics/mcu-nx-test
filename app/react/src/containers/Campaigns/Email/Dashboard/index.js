@@ -1,7 +1,7 @@
-import CampaignEmail from './CampaignEmail';
-import CampaignEmailActionbar from './CampaignEmailActionbar';
+import EmailCampaign from './EmailCampaign';
+import EmailCampaignActionbar from './EmailCampaignActionbar';
 
 export {
-  CampaignEmailActionbar,
-  CampaignEmail,
+  EmailCampaignActionbar,
+  EmailCampaign,
 };

@@ -55,18 +55,16 @@ const fetchExportData = (organisationId, filter) => {
       'campaign_id',
     );
 
-    const mergedData = Object.keys(campaignsDisplay).map((campaignId) => {
+    return Object.keys(campaignsDisplay).map((campaignId) => {
       return {
         ...campaignsDisplay[campaignId],
         ...performanceReport[campaignId],
       };
     });
-
-    return mergedData;
   });
 };
 
-class CampaignsDisplayActionbar extends Component {
+class DisplayCampaignsActionbar extends Component {
 
   constructor(props) {
     super(props);
@@ -90,7 +88,7 @@ class CampaignsDisplayActionbar extends Component {
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
 
     fetchExportData(organisationId, filter).then(data => {
-      ExportService.exportCampaignsDisplay(organisationId, data, filter, translations);
+      ExportService.exportDisplayCampaigns(organisationId, data, filter, translations);
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
     }).catch(() => {
@@ -166,16 +164,16 @@ class CampaignsDisplayActionbar extends Component {
 
 }
 
-CampaignsDisplayActionbar.propTypes = {
+DisplayCampaignsActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
 };
 
-CampaignsDisplayActionbar = compose(
-  withTranslations,
+DisplayCampaignsActionbar = compose(
   withRouter,
-)(CampaignsDisplayActionbar);
+  withTranslations
+)(DisplayCampaignsActionbar);
 
-export default CampaignsDisplayActionbar;
+export default DisplayCampaignsActionbar;

@@ -11,7 +11,7 @@ import { TableView } from '../../../../../components/TableView';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsIcons from '../../../../../components/McsIcons';
 
-class CampaignDisplayAdGroupTable extends Component {
+class DisplayCampaignAdGroupTable extends Component {
 
   editCampaign = (adgroup) => {
     const {
@@ -204,7 +204,7 @@ class CampaignDisplayAdGroupTable extends Component {
 
 }
 
-CampaignDisplayAdGroupTable.propTypes = {
+DisplayCampaignAdGroupTable.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   isFetching: PropTypes.bool.isRequired,
@@ -215,10 +215,10 @@ CampaignDisplayAdGroupTable.propTypes = {
 };
 
 
-CampaignDisplayAdGroupTable = compose(
+DisplayCampaignAdGroupTable = compose(
   injectIntl,
   withRouter,
-)(CampaignDisplayAdGroupTable);
+)(DisplayCampaignAdGroupTable);
 
 
-export default CampaignDisplayAdGroupTable;
+export default DisplayCampaignAdGroupTable;

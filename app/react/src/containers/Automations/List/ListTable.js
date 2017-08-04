@@ -291,7 +291,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   fetchAutomationList: AutomationsListActions.fetchAutomations.request,
-  // archiveAutomationList: CampaignEmailAction.archiveAutomationList,
+  // archiveAutomationList: EmailCampaignAction.archiveAutomationList,
   resetAutomationsTable: AutomationsListActions.resetAutomationsTable,
 };
 

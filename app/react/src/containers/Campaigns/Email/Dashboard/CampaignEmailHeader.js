@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader';
 
-function CampaignEmailHeader({
+function EmailCampaignHeader({
   campaignEmail: {
     name: campaignEmailName,
     status: campaignEmailStatus,
@@ -30,7 +30,7 @@ function CampaignEmailHeader({
 
 }
 
-CampaignEmailHeader.propTypes = {
+EmailCampaignHeader.propTypes = {
   campaignEmail: PropTypes.shape().isRequired,
 };
 
@@ -40,4 +40,4 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-)(CampaignEmailHeader);
+)(EmailCampaignHeader);

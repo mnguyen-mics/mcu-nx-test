@@ -8,14 +8,14 @@ import {
   EMAIL_BLAST_FETCH_PERFORMANCE,
 } from '../../action-types';
 
-const defaultCampaignEmailState = {
+const defaultEmailCampaignState = {
   campaignEmail: {},
   isFetching: false,
   isUpdating: false,
   isArchiving: false,
 };
 
-const campaignEmailApi = (state = defaultCampaignEmailState, action) => {
+const campaignEmailApi = (state = defaultEmailCampaignState, action) => {
   switch (action.type) {
     case CAMPAIGN_EMAIL_FETCH.REQUEST:
       return {
@@ -29,16 +29,16 @@ const campaignEmailApi = (state = defaultCampaignEmailState, action) => {
         isFetching: false,
       };
     case CAMPAIGN_EMAIL_FETCH.FAILURE:
-      return defaultCampaignEmailState;
+      return defaultEmailCampaignState;
 
     case CAMPAIGN_EMAIL_RESET:
-      return defaultCampaignEmailState;
+      return defaultEmailCampaignState;
     default:
       return state;
   }
 };
 
-const defaultCampaignEmailReportState = {
+const defaultEmailCampaignReportState = {
   isFetching: false,
   hasFetched: false,
   report_view: {
@@ -49,7 +49,7 @@ const defaultCampaignEmailReportState = {
   },
 };
 
-const campaignEmailPerformance = (state = defaultCampaignEmailReportState, action) => {
+const campaignEmailPerformance = (state = defaultEmailCampaignReportState, action) => {
   switch (action.type) {
     case CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST:
       return {
@@ -71,7 +71,7 @@ const campaignEmailPerformance = (state = defaultCampaignEmailReportState, actio
       };
 
     case CAMPAIGN_EMAIL_RESET:
-      return defaultCampaignEmailReportState;
+      return defaultEmailCampaignReportState;
     default:
       return state;
   }
@@ -155,8 +155,8 @@ const campaignEmailSingle = combineReducers({
   emailBlastPerformanceApi,
 });
 
-const CampaignEmailReducers = {
+const EmailCampaignReducers = {
   campaignEmailSingle,
 };
 
-export default CampaignEmailReducers;
+export default EmailCampaignReducers;

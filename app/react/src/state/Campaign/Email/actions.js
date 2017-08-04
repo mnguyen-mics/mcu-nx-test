@@ -11,21 +11,21 @@ import {
   EMAIL_BLAST_FETCH_PERFORMANCE,
 } from '../../action-types';
 
-const fetchCampaignEmail = {
+const fetchEmailCampaign = {
   request: campaignId => createAction(CAMPAIGN_EMAIL_FETCH.REQUEST)({ campaignId }),
   success: createAction(CAMPAIGN_EMAIL_FETCH.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_FETCH.FAILURE),
 };
 
-const fetchCampaignEmailDeliveryReport = {
+const fetchEmailCampaignDeliveryReport = {
   request: (organisationId, campaignId, filter = {}) => createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST)({ organisationId, campaignId, filter }),
   success: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.FAILURE),
 };
 
-const loadCampaignEmailAndDeliveryReport = (organisationId, campaignId, filter) => createAction(CAMPAIGN_EMAIL_LOAD_ALL)({ organisationId, campaignId, filter });
+const loadEmailCampaignAndDeliveryReport = (organisationId, campaignId, filter) => createAction(CAMPAIGN_EMAIL_LOAD_ALL)({ organisationId, campaignId, filter });
 
-const archiveCampaignEmail = {
+const archiveEmailCampaign = {
   request: (campaignId, body) => createAction(CAMPAIGN_EMAIL_ARCHIVE.REQUEST)({ campaignId, body }),
   success: createAction(CAMPAIGN_EMAIL_ARCHIVE.SUCCESS),
   failure: createAction(CAMPAIGN_EMAIL_ARCHIVE.FAILURE),
@@ -37,7 +37,7 @@ const updateEmailCampaign = {
   failure: createAction(CAMPAIGN_EMAIL_UPDATE.FAILURE),
 };
 
-const resetCampaignEmail = createAction(CAMPAIGN_EMAIL_RESET);
+const resetEmailCampaign = createAction(CAMPAIGN_EMAIL_RESET);
 
 const fetchAllEmailBlast = {
   request: campaignId => createAction(EMAIL_BLAST_FETCH_ALL.REQUEST)({ campaignId }),
@@ -52,12 +52,12 @@ const fetchAllEmailBlastPerformance = {
 };
 
 export {
-  fetchCampaignEmail,
-  fetchCampaignEmailDeliveryReport,
-  loadCampaignEmailAndDeliveryReport,
-  archiveCampaignEmail,
+  fetchEmailCampaign,
+  fetchEmailCampaignDeliveryReport,
+  loadEmailCampaignAndDeliveryReport,
+  archiveEmailCampaign,
   updateEmailCampaign,
-  resetCampaignEmail,
+  resetEmailCampaign,
   fetchAllEmailBlast,
   fetchAllEmailBlastPerformance,
 };

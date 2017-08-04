@@ -245,7 +245,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchAssetsFiles: AssetsFilesActions.fetchAssetsFiles.request,
-  // archiveAssetList: CampaignEmailAction.archiveAssetList,
+  // archiveAssetList: EmailCampaignAction.archiveAssetList,
   resetAssetsFiles: AssetsFilesActions.resetAssetsFiles,
 };
 

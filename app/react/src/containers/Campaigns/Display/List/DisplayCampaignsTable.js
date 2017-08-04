@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal, Tooltip, Icon } from 'antd';
 import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 
 import {
   TableView,
@@ -12,7 +13,7 @@ import {
 } from '../../../../components/TableView';
 import McsIcons from '../../../../components/McsIcons';
 
-import * as CampaignsDisplayActions from '../../../../state/Campaigns/Display/actions';
+import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
@@ -31,7 +32,7 @@ import {
   getTableDataSource,
 } from '../../../../state/Campaigns/Display/selectors';
 
-class CampaignsDisplayTable extends Component {
+class DisplayCampaignsTable extends Component {
 
   componentDidMount() {
     const {
@@ -45,7 +46,7 @@ class CampaignsDisplayTable extends Component {
           organisationId,
         },
       },
-      loadCampaignsDisplayDataSource,
+      loadDisplayCampaignsDataSource
     } = this.props;
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
@@ -55,7 +56,7 @@ class CampaignsDisplayTable extends Component {
       });
     } else {
       const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
-      loadCampaignsDisplayDataSource(organisationId, filter, true);
+      loadDisplayCampaignsDataSource(organisationId, filter, true);
     }
   }
 
@@ -70,7 +71,7 @@ class CampaignsDisplayTable extends Component {
         },
       },
       history,
-      loadCampaignsDisplayDataSource,
+      loadDisplayCampaignsDataSource
     } = this.props;
 
     const {
@@ -97,13 +98,13 @@ class CampaignsDisplayTable extends Component {
         });
       } else {
         const filter = parseSearch(nextSearch, DISPLAY_SEARCH_SETTINGS);
-        loadCampaignsDisplayDataSource(nextOrganisationId, filter, checkEmptyDataSource);
+        loadDisplayCampaignsDataSource(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
 
   componentWillUnmount() {
-    this.props.resetCampaignsDisplayTable();
+    this.props.resetDisplayCampaignsTable();
   }
 
   archiveCampaign = (campaign) => {
@@ -116,8 +117,8 @@ class CampaignsDisplayTable extends Component {
       location: {
         search,
       },
-      archiveCampaignDisplay,
-      loadCampaignsDisplayDataSource,
+      archiveDisplayCampaign,
+      loadDisplayCampaignsDataSource,
       translations,
     } = this.props;
 
@@ -130,8 +131,8 @@ class CampaignsDisplayTable extends Component {
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return archiveCampaignDisplay(campaign.id).then(() => {
-          loadCampaignsDisplayDataSource(organisationId, filter);
+        return archiveDisplayCampaign(campaign.id).then(() => {
+          loadDisplayCampaignsDataSource(organisationId, filter);
         });
       },
       onCancel() { },
@@ -195,10 +196,10 @@ class CampaignsDisplayTable extends Component {
       },
       hasDisplayCampaigns,
       translations,
-      isFetchingCampaignsDisplay,
+      isFetchingDisplayCampaigns,
       isFetchingCampaignsStat,
       dataSource,
-      totalCampaignsDisplay,
+      totalDisplayCampaigns
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -235,7 +236,7 @@ class CampaignsDisplayTable extends Component {
     const pagination = {
       currentPage: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalCampaignsDisplay,
+      total: totalDisplayCampaigns,
       onChange: (page) => this.updateLocationSearch({
         currentPage: page,
       }),
@@ -297,7 +298,7 @@ class CampaignsDisplayTable extends Component {
         isVisibleByDefault: true,
         isHiddable: true,
         render: (text) => {
-          // TODO find campaign currency (with getCampaignsDisplayById(record['campaign_id']))
+          // TODO find campaign currency (with getDisplayCampaignsById(record['campaign_id']))
           const campaignCurrency = 'EUR';
           return renderMetricData(text, '0,0.00', campaignCurrency);
         },
@@ -381,7 +382,7 @@ class CampaignsDisplayTable extends Component {
             <TableView
               columnsDefinitions={columnsDefinitions}
               dataSource={dataSource}
-              loading={isFetchingCampaignsDisplay}
+              loading={isFetchingDisplayCampaigns}
               pagination={pagination}
             />
           </TableViewFilters>
@@ -392,48 +393,46 @@ class CampaignsDisplayTable extends Component {
   }
 }
 
-CampaignsDisplayTable.defaultProps = {
-  archiveCampaignDisplay: () => { },
+DisplayCampaignsTable.defaultProps = {
+  archiveDisplayCampaign: () => { },
 };
 
-CampaignsDisplayTable.propTypes = {
+DisplayCampaignsTable.propTypes = {
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 
   hasDisplayCampaigns: PropTypes.bool.isRequired,
-  isFetchingCampaignsDisplay: PropTypes.bool.isRequired,
+  isFetchingDisplayCampaigns: PropTypes.bool.isRequired,
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  totalCampaignsDisplay: PropTypes.number.isRequired,
+  totalDisplayCampaigns: PropTypes.number.isRequired,
 
-  loadCampaignsDisplayDataSource: PropTypes.func.isRequired,
-  archiveCampaignDisplay: PropTypes.func.isRequired,
-  resetCampaignsDisplayTable: PropTypes.func.isRequired,
+  loadDisplayCampaignsDataSource: PropTypes.func.isRequired,
+  archiveDisplayCampaign: PropTypes.func.isRequired,
+  resetDisplayCampaignsTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   translations: state.translations,
 
   hasDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.hasItems,
-  isFetchingCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
+  isFetchingDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
   isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalCampaignsDisplay: state.campaignsDisplayTable.campaignsDisplayApi.total,
+  totalDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.total,
 });
 
 const mapDispatchToProps = {
-  loadCampaignsDisplayDataSource: CampaignsDisplayActions.loadCampaignsDisplayDataSource,
-  // archiveCampaignDisplay: CampaignEmailAction.archiveCampaignDisplay,
-  resetCampaignsDisplayTable: CampaignsDisplayActions.resetCampaignsDisplayTable,
+  loadDisplayCampaignsDataSource: DisplayCampaignsActions.loadDisplayCampaignsDataSource,
+  // archiveDisplayCampaign: EmailCampaignAction.archiveDisplayCampaign,
+  resetDisplayCampaignsTable: DisplayCampaignsActions.resetDisplayCampaignsTable,
 };
 
-CampaignsDisplayTable = connect(
+DisplayCampaignsTable = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CampaignsDisplayTable);
+)(DisplayCampaignsTable);
 
-CampaignsDisplayTable = withRouter(CampaignsDisplayTable);
-
-export default CampaignsDisplayTable;
+export default DisplayCampaignsTable;

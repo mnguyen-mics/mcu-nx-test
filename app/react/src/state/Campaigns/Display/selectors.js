@@ -3,11 +3,11 @@ import { createSelector } from 'reselect';
 import { normalizeReportView } from '../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 
-const getCampaignsDisplay = state => state.campaignsDisplayTable.campaignsDisplayApi.data;
+const getDisplayCampaigns = state => state.campaignsDisplayTable.campaignsDisplayApi.data;
 const getPerformanceReportView = state => state.campaignsDisplayTable.performanceReportApi.report_view;
 
-const getCampaignsDisplayById = createSelector(
-  getCampaignsDisplay,
+const getDisplayCampaignsById = createSelector(
+  getDisplayCampaigns,
   campaignsDisplay => normalizeArrayOfObject(campaignsDisplay, 'id'),
 );
 
@@ -22,7 +22,7 @@ const getStatByCampaignId = createSelector(
 );
 
 const getTableDataSource = createSelector(
-  getCampaignsDisplayById,
+  getDisplayCampaignsById,
   getStatByCampaignId,
   (campaignsDisplay, statistics) => {
     return Object.keys(campaignsDisplay).map((campaignId) => {

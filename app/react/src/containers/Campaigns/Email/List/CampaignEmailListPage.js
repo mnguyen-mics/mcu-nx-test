@@ -52,7 +52,7 @@ const messages = defineMessages({
 
 const getLatestDeliveryReport = takeLatest(ReportService.getEmailDeliveryReport);
 
-class CampaignEmailListPage extends Component {
+class EmailCampaignListPage extends Component {
 
   constructor(props) {
     super(props);
@@ -249,11 +249,11 @@ class CampaignEmailListPage extends Component {
   }
 }
 
-CampaignEmailListPage.defaultProps = {
+EmailCampaignListPage.defaultProps = {
   notifyError: () => {},
 };
 
-CampaignEmailListPage.propTypes = {
+EmailCampaignListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
@@ -268,4 +268,4 @@ export default compose(
     undefined,
     { notifyError: notifyActions.notifyError },
   ),
-)(CampaignEmailListPage);
+)(EmailCampaignListPage);

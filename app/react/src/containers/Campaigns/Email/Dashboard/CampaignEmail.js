@@ -5,11 +5,11 @@ import { FormattedMessage } from 'react-intl';
 import { withRouter, Link } from 'react-router-dom';
 import { Button } from 'antd';
 
-import CampaignEmailHeader from './CampaignEmailHeader';
-import CampaignEmailDashboard from './CampaignEmailDashboard';
+import EmailCampaignHeader from './EmailCampaignHeader';
+import EmailCampaignDashboard from './EmailCampaignDashboard';
 import { Card } from '../../../../components/Card';
 import BlastTable from './BlastTable';
-import * as CampaignEmailActions from '../../../../state/Campaign/Email/actions';
+import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from './constants';
 
@@ -20,7 +20,7 @@ import {
   compareSearchs,
 } from '../../../../utils/LocationSearchHelper';
 
-class CampaignEmail extends Component {
+class EmailCampaign extends Component {
 
   componentDidMount() {
     const {
@@ -35,7 +35,7 @@ class CampaignEmail extends Component {
           campaignId,
         },
       },
-      loadCampaignEmailAndDeliveryReport,
+      loadEmailCampaignAndDeliveryReport,
       fetchAllEmailBlast,
       fetchAllEmailBlastPerformance,
     } = this.props;
@@ -49,7 +49,7 @@ class CampaignEmail extends Component {
       const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
       fetchAllEmailBlast(campaignId);
       fetchAllEmailBlastPerformance(campaignId, filter);
-      loadCampaignEmailAndDeliveryReport(organisationId, campaignId, filter);
+      loadEmailCampaignAndDeliveryReport(organisationId, campaignId, filter);
     }
   }
 
@@ -64,7 +64,7 @@ class CampaignEmail extends Component {
         },
       },
       history,
-      loadCampaignEmailAndDeliveryReport,
+      loadEmailCampaignAndDeliveryReport,
       fetchAllEmailBlast,
       fetchAllEmailBlastPerformance,
     } = this.props;
@@ -93,13 +93,13 @@ class CampaignEmail extends Component {
         const filter = parseSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS);
         fetchAllEmailBlast(nextCampaignId);
         fetchAllEmailBlastPerformance(nextCampaignId, filter);
-        loadCampaignEmailAndDeliveryReport(nextOrganisationId, nextCampaignId, filter);
+        loadEmailCampaignAndDeliveryReport(nextOrganisationId, nextCampaignId, filter);
       }
     }
   }
 
   componentWillUnmount() {
-    this.props.resetCampaignEmail();
+    this.props.resetEmailCampaign();
   }
 
   render() {
@@ -120,8 +120,8 @@ class CampaignEmail extends Component {
 
     return (
       <div>
-        <CampaignEmailHeader />
-        <CampaignEmailDashboard />
+        <EmailCampaignHeader />
+        <EmailCampaignDashboard />
         <Card title={translations.EMAIL_BLASTS} buttons={buttons}>
           <BlastTable />
         </Card>
@@ -131,15 +131,15 @@ class CampaignEmail extends Component {
 
 }
 
-CampaignEmail.propTypes = {
+EmailCampaign.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
-  loadCampaignEmailAndDeliveryReport: PropTypes.func.isRequired,
+  loadEmailCampaignAndDeliveryReport: PropTypes.func.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
   fetchAllEmailBlastPerformance: PropTypes.func.isRequired,
-  resetCampaignEmail: PropTypes.func.isRequired,
+  resetEmailCampaign: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -147,17 +147,17 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  fetchAllEmailBlast: CampaignEmailActions.fetchAllEmailBlast.request,
-  fetchAllEmailBlastPerformance: CampaignEmailActions.fetchAllEmailBlastPerformance.request,
-  loadCampaignEmailAndDeliveryReport: CampaignEmailActions.loadCampaignEmailAndDeliveryReport,
-  resetCampaignEmail: CampaignEmailActions.resetCampaignEmail,
+  fetchAllEmailBlast: EmailCampaignActions.fetchAllEmailBlast.request,
+  fetchAllEmailBlastPerformance: EmailCampaignActions.fetchAllEmailBlastPerformance.request,
+  loadEmailCampaignAndDeliveryReport: EmailCampaignActions.loadEmailCampaignAndDeliveryReport,
+  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign,
 };
 
-CampaignEmail = connect(
+EmailCampaign = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CampaignEmail);
+)(EmailCampaign);
 
-CampaignEmail = withRouter(CampaignEmail);
+EmailCampaign = withRouter(EmailCampaign);
 
-export default CampaignEmail;
+export default EmailCampaign;

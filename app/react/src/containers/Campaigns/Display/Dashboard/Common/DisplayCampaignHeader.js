@@ -3,24 +3,24 @@ import PropTypes from 'prop-types';
 
 import TitleAndStatusHeader from '../../../../../components/TitleAndStatusHeader';
 
-function CampaignDisplayHeader({
+function DisplayCampaignHeader({
   object: {
-    name: campaignDisplayName,
-    status: campaignDisplayStatus,
+    name: displayCampaignName,
+    status: displayCampaignStatus,
   },
   translationKey,
 }) {
 
-  const campaignDisplayStatusHeader = {
-    value: campaignDisplayStatus,
+  const displayCampaignStatusHeader = {
+    value: displayCampaignStatus,
     translationKeyPrefix: `${translationKey}_STATUS`,
   };
 
-  return campaignDisplayName ? (
+  return displayCampaignName ? (
     <div className="mcs-campaign-header">
       <TitleAndStatusHeader
-        headerTitle={campaignDisplayName}
-        headerStatus={campaignDisplayStatusHeader}
+        headerTitle={displayCampaignName}
+        headerStatus={displayCampaignStatusHeader}
       />
     </div>
     ) : (
@@ -30,9 +30,9 @@ function CampaignDisplayHeader({
 
 }
 
-CampaignDisplayHeader.propTypes = {
+DisplayCampaignHeader.propTypes = {
   translationKey: PropTypes.string.isRequired,
   object: PropTypes.shape().isRequired,
 };
 
-export default CampaignDisplayHeader;
+export default DisplayCampaignHeader;

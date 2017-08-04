@@ -7,7 +7,7 @@ import { Button } from 'antd';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
-import CampaignDisplay from './CampaignDisplay';
+import DisplayCampaign from './DisplayCampaign';
 
 import ReportService from '../../../../../services/ReportService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -155,7 +155,7 @@ class CampaignPage extends Component {
 
   fetchAllData = (organisationId, campaignId, filter) => {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGoupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId);
+    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaign(campaignId);
     const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
@@ -206,8 +206,8 @@ class CampaignPage extends Component {
       return nextState;
     });
 
-    getCampaignAdGoupAndAd().then(reponse => {
-      const data = reponse.data;
+    getCampaignAdGroupAndAd().then(response => {
+      const data = response.data;
       const campaign = {
         ...data,
       };
@@ -215,7 +215,7 @@ class CampaignPage extends Component {
       delete campaign.ad_groups;
 
       const adGroups = [...data.ad_groups];
-      const formattedAdGoups = adGroups.map(item => {
+      const formattedAdGroups = adGroups.map(item => {
         const formatedItem = {
           ...item,
         };
@@ -226,12 +226,10 @@ class CampaignPage extends Component {
       });
 
       const adGroupCampaign = adGroups.map(item => {
-        const newitem = {
+        return {
           ad_group_id: item.id,
           campaign_id: campaign.id,
         };
-
-        return newitem;
       });
 
       const ads = [];
@@ -260,7 +258,7 @@ class CampaignPage extends Component {
         nextState.adGroups.items.hasFetched = true;
         nextState.ads.items.hasFetched = true;
         nextState.campaign.items.itemById = campaign;
-        nextState.adGroups.items.itemById = normalizeArrayOfObject(formattedAdGoups, 'id');
+        nextState.adGroups.items.itemById = normalizeArrayOfObject(formattedAdGroups, 'id');
         nextState.adGroups.items.adGroupCampaign = normalizeArrayOfObject(adGroupCampaign, 'ad_group_id');
         nextState.ads.items.itemById = normalizeArrayOfObject(ads, 'id');
         nextState.ads.items.adAdGroup = normalizeArrayOfObject(adAdGroup, 'ad_id');
@@ -291,11 +289,10 @@ class CampaignPage extends Component {
 
         nextState.adGroups.performance.isLoading = false;
         nextState.adGroups.performance.hasFetched = true;
-        nextState.adGroups.performance.performanceById = this.formatReportView(
+        nextState.adGroups.performance.performanceById = CampaignPage.formatReportView(
           response.data.report_view,
           'ad_group_id',
         );
-
         return nextState;
       });
     });
@@ -307,11 +304,10 @@ class CampaignPage extends Component {
 
         nextState.ads.performance.isLoading = false;
         nextState.ads.performance.hasFetched = true;
-        nextState.ads.performance.performanceById = this.formatReportView(
+        nextState.ads.performance.performanceById = CampaignPage.formatReportView(
           response.data.report_view,
           'ad_id',
         );
-
         return nextState;
       });
     });
@@ -483,7 +479,7 @@ class CampaignPage extends Component {
       notifyError,
     } = this.props;
 
-    DisplayCampaignService.updateCampaignDisplay(campaignId, body)
+    DisplayCampaignService.updateDisplayCampaign(campaignId, body)
       .then(response => {
         this.setState(prevState => {
           const nextState = {
@@ -511,7 +507,7 @@ class CampaignPage extends Component {
     const adGroups = {
       isLoadingList: this.state.adGroups.items.isLoading,
       isLoadingPerf: this.state.adGroups.performance.isLoading,
-      items: this.formatListview(
+      items: this.formatListView(
         this.state.adGroups.items.itemById,
         this.state.adGroups.performance.performanceById,
       ),
@@ -520,7 +516,7 @@ class CampaignPage extends Component {
     const ads = {
       isLoadingList: this.state.ads.items.isLoading,
       isLoadingPerf: this.state.ads.performance.isLoading,
-      items: this.formatListview(
+      items: this.formatListView(
         this.state.ads.items.itemById,
         this.state.ads.performance.performanceById,
       ),
@@ -539,7 +535,7 @@ class CampaignPage extends Component {
       },
     };
 
-    return (<CampaignDisplay
+    return (<DisplayCampaign
       updateAd={this.updateAd}
       updateAdGroup={this.updateAdGroup}
       updateCampaign={this.updateCampaign}
