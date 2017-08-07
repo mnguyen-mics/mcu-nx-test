@@ -6,13 +6,9 @@ import { FormattedMessage } from 'react-intl';
 import { Layout, Menu, Dropdown, Row, Col } from 'antd';
 // installed by react-router
 import pathToRegexp from 'path-to-regexp'; // eslint-disable-line import/no-extraneous-dependencies
-import * as SessionHelper from '../../state/Session/selectors';
 
+import * as SessionHelper from '../../state/Session/selectors';
 import { McsIcons } from '../../components/McsIcons';
-import {
-  getWorkspaces,
-  getWorkspace
-} from '../../state/Session/selectors';
 import log from '../../utils/Logger';
 import messages from './messages';
 
@@ -44,7 +40,7 @@ class NavigatorHeader extends Component {
         <Menu.Item key="email" disabled>{userEmail}</Menu.Item>
         <Menu.Divider />
         <Menu.Item key="account"><Link to={{ pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }}><FormattedMessage {...messages.account} /></Link></Menu.Item>
-        <Menu.Item key="logout"><Link to="/logout"><FormattedMessage id="LOGOUT"/></Link></Menu.Item>
+        <Menu.Item key="logout"><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></Menu.Item>
       </Menu>
     );
 
@@ -72,7 +68,7 @@ class NavigatorHeader extends Component {
           <Col span={22}>
             {
               hasMoreThanOneWorkspace
-                ? <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft"><a className="organisation-name-clickable">{ organisationName }&nbsp;<McsIcons type="chevron"/></a></Dropdown>
+                ? <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft"><a className="organisation-name-clickable">{ organisationName }&nbsp;<McsIcons type="chevron" /></a></Dropdown>
                 : <span className="organisation-name">{ organisationName }</span>
             }
           </Col>
@@ -82,13 +78,13 @@ class NavigatorHeader extends Component {
                 {
                   hasDatamarts(organisationId) &&
                   <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: 'tab=sites' }}>
-                    <McsIcons type="options" className="menu-icon"/>
+                    <McsIcons type="options" className="menu-icon" />
                   </Link>
                 }
               </Col>
               <Col span={12} className="icon-right-align">
                 <Dropdown overlay={accountMenu} trigger={['click']} placement="bottomRight">
-                  <a><McsIcons type="user" className="menu-icon "/></a>
+                  <a><McsIcons type="user" className="menu-icon" /></a>
                 </Dropdown>
               </Col>
             </Row>
@@ -109,8 +105,8 @@ NavigatorHeader.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  workspaces: getWorkspaces(state),
-  workspace: getWorkspace(state),
+  workspaces: SessionHelper.getWorkspaces(state),
+  workspace: SessionHelper.getWorkspace(state),
   userEmail: state.session.connectedUser.email,
   hasDatamarts: SessionHelper.hasDatamarts(state)
 });
