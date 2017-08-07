@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { Layout, Menu, Dropdown, Row, Col } from 'antd';
 // installed by react-router
 import pathToRegexp from 'path-to-regexp'; // eslint-disable-line import/no-extraneous-dependencies
+import * as SessionHelper from '../../state/Session/selectors';
 
 import { McsIcons } from '../../components/McsIcons';
 import {
@@ -29,7 +30,8 @@ class NavigatorHeader extends Component {
       workspaces,
       workspace,
       userEmail,
-      history
+      history,
+      hasDatamarts
     } = this.props;
 
     const organisationId = params.organisationId;
@@ -42,7 +44,7 @@ class NavigatorHeader extends Component {
         <Menu.Item key="email" disabled>{userEmail}</Menu.Item>
         <Menu.Divider />
         <Menu.Item key="account"><Link to={{ pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }}><FormattedMessage {...messages.account} /></Link></Menu.Item>
-        <Menu.Item key="logout"><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></Menu.Item>
+        <Menu.Item key="logout"><Link to="/logout"><FormattedMessage id="LOGOUT"/></Link></Menu.Item>
       </Menu>
     );
 
@@ -70,20 +72,23 @@ class NavigatorHeader extends Component {
           <Col span={22}>
             {
               hasMoreThanOneWorkspace
-                ? <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft"><a className="organisation-name-clickable">{ organisationName }&nbsp;<McsIcons type="chevron" /></a></Dropdown>
+                ? <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft"><a className="organisation-name-clickable">{ organisationName }&nbsp;<McsIcons type="chevron"/></a></Dropdown>
                 : <span className="organisation-name">{ organisationName }</span>
             }
           </Col>
           <Col span={2}>
             <Row >
               <Col span={12} className="icon-right-align">
-                <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: '&tab=sites' }}>
-                  <McsIcons type="options" className="menu-icon" />
-                </Link>
+                {
+                  hasDatamarts(organisationId) &&
+                  <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: 'tab=sites' }}>
+                    <McsIcons type="options" className="menu-icon"/>
+                  </Link>
+                }
               </Col>
               <Col span={12} className="icon-right-align">
                 <Dropdown overlay={accountMenu} trigger={['click']} placement="bottomRight">
-                  <a><McsIcons type="user" className="menu-icon " /></a>
+                  <a><McsIcons type="user" className="menu-icon "/></a>
                 </Dropdown>
               </Col>
             </Row>
@@ -99,13 +104,15 @@ NavigatorHeader.propTypes = {
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   workspace: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
   workspaces: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  userEmail: PropTypes.string.isRequired
+  userEmail: PropTypes.string.isRequired,
+  hasDatamarts: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({
   workspaces: getWorkspaces(state),
   workspace: getWorkspace(state),
-  userEmail: state.session.connectedUser.email
+  userEmail: state.session.connectedUser.email,
+  hasDatamarts: SessionHelper.hasDatamarts(state)
 });
 
 NavigatorHeader = connect(
