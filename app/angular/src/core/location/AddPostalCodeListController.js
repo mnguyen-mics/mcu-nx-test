@@ -24,22 +24,40 @@ define(['./module'], function (module) {
 
       $scope.formatCountry = function(country) {
         switch (country) {
-          case 'FR':
-            return 'France';
-          case 'DE':
-            return 'Germany';
-          case 'IT':
-            return 'Italy';
-          case 'NL':
-            return 'Netherlands';
-          case 'SE':
-            return 'Sweden';
+          case 'AT':
+            return 'Austria';
+          case 'BE':
+            return 'Belgium';
           case 'CH':
             return 'Switzerland';
+          case 'CZ':
+            return 'Czech Republic';  
+          case 'DE':
+            return 'Germany';
+          case 'DK':
+            return 'Denmark';  
+          case 'ES':
+            return 'Spain';
+          case 'FR':
+            return 'France';  
           case 'GB':
-            return 'United Kingdom';
+            return 'United Kingdom';        
+          case 'GR':
+            return 'Greece';
+          case 'HU':
+            return 'Hungary';
+          case 'IE':
+            return 'Ireland';  
+          case 'IT':
+            return 'Italy';  
+          case 'NL':
+            return 'Netherlands';
+          case 'PT':
+            return 'Portugal';
+          case 'SE':
+            return 'Sweden';  
           case 'US':
-            return 'United States';
+            return 'United States'; 
         }
       };
 
