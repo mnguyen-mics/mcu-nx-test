@@ -31,33 +31,33 @@ define(['./module'], function (module) {
           case 'CH':
             return 'Switzerland';
           case 'CZ':
-            return 'Czech Republic';  
+            return 'Czech Republic';
           case 'DE':
             return 'Germany';
           case 'DK':
-            return 'Denmark';  
+            return 'Denmark';
           case 'ES':
             return 'Spain';
           case 'FR':
-            return 'France';  
+            return 'France';
           case 'GB':
-            return 'United Kingdom';        
+            return 'United Kingdom';
           case 'GR':
             return 'Greece';
           case 'HU':
             return 'Hungary';
           case 'IE':
-            return 'Ireland';  
+            return 'Ireland';
           case 'IT':
-            return 'Italy';  
+            return 'Italy';
           case 'NL':
             return 'Netherlands';
           case 'PT':
             return 'Portugal';
           case 'SE':
-            return 'Sweden';  
+            return 'Sweden';
           case 'US':
-            return 'United States'; 
+            return 'United States';
         }
       };
 
