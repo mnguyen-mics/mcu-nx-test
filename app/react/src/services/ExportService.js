@@ -158,7 +158,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
 /**
  * Display Campaign Dashboard
  */
-const exportDisplayCampaignDashboard = (organisationId, campaignData, adGroupsData, adsData, filter, translations) => {
+const exportDisplayCampaignDashboard = (organisationId, campaignData, mediasData, adGroupsData, adsData, filter, translations) => {
   const blankLine = [];
 
   const headersMap = [
@@ -195,12 +195,16 @@ const exportDisplayCampaignDashboard = (organisationId, campaignData, adGroupsDa
   }
 
   const campaignSheet = buildSheet(campaignData, translations.DISPLAY_CAMPAIGN_EXPORT_TITLE, filter);
+  const mediasSheet = buildSheet(mediasData, translations.MEDIAS_EXPORT_TITLE, filter);
   const adGroupsSheet = buildSheet(adGroupsData, translations.AD_GROUPS_EXPORT_TITLE, filter);
   const adsSheet = buildSheet(adsData, translations.ADS_EXPORT_TITLE, filter);
 
   const sheets = [{
     name: translations.DISPLAY_CAMPAIGN_EXPORT_TITLE,
     data: campaignSheet
+  }, {
+    name: translations.MEDIAS_EXPORT_TITLE,
+    data: mediasSheet
   }, {
     name: translations.AD_GROUPS_EXPORT_TITLE,
     data: adGroupsSheet
@@ -209,7 +213,6 @@ const exportDisplayCampaignDashboard = (organisationId, campaignData, adGroupsDa
     data: adsSheet
   }];
 
-  console.log("SHEETS", sheets);
   exportData(sheets, `${organisationId}_display-campaign`, 'xlsx');
 };
 

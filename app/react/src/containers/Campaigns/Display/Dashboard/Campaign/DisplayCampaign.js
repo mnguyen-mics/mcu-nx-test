@@ -106,6 +106,7 @@ class DisplayCampaign extends Component {
           archiveCampaign={() => {}}
           isFetchingStats={dashboardPerformance.campaign.isLoading && adGroups.isLoadingPerf && ads.isLoadingPerf}
           campaignStats={dashboardPerformance.campaign.items}
+          mediasStats={dashboardPerformance.media.items}
           adGroupsStats={adGroups.items}
           adsStats={ads.items} />
         <div className="ant-layout">

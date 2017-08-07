@@ -24,12 +24,13 @@ class DisplayCampaignActionbar extends Component {
       },
       translations,
       campaignStats,
+      mediasStats,
       adGroupsStats,
       adsStats
     } = this.props;
 
     const filter = parseSearch(this.props.location.search);
-    ExportService.exportDisplayCampaignDashboard(organisationId, campaignStats, adGroupsStats, adsStats, filter, translations);
+    ExportService.exportDisplayCampaignDashboard(organisationId, campaignStats, mediasStats, adGroupsStats, adsStats, filter, translations);
   }
 
   render() {
@@ -165,6 +166,7 @@ DisplayCampaignActionbar.propTypes = {
   archiveCampaign: PropTypes.func.isRequired,
   isFetchingStats: PropTypes.bool.isRequired,
   campaignStats: PropTypes.array.isRequired,
+  mediasStats: PropTypes.array.isRequired,
   adGroupsStats: PropTypes.array.isRequired,
   adsStats: PropTypes.array.isRequired
 };
