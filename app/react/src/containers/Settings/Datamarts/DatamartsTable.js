@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import moment from 'moment';
 
-import { EmptyTableView, TableView, TableViewFilters } from '../../../components/TableView';
+import { EmptyTableView, TableView } from '../../../components/TableView';
 import messages from './messages';
 
 class DatamartsTable extends Component {
@@ -16,8 +16,7 @@ class DatamartsTable extends Component {
       noDatamartYet,
       onFilterChange,
       onEditDatamart,
-      filter,
-      intl: { formatMessage }
+      filter
     } = this.props;
 
     const pagination = {
@@ -71,28 +70,14 @@ class DatamartsTable extends Component {
       actionsColumnsDefinition: actionColumns
     };
 
-    const searchOptions = {
-      isEnabled: true,
-      placeholder: formatMessage(messages.searchPlaceholder),
-      onSearch: value => onFilterChange({
-        id: value
-      }),
-      defaultValue: filter.id
-    };
-
     return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyDatamarts} />) :
            (
-             <TableViewFilters
+             <TableView
                columnsDefinitions={columnsDefinitions}
-               searchOptions={searchOptions}
-             >
-               <TableView
-                 columnsDefinitions={columnsDefinitions}
-                 dataSource={dataSource}
-                 loading={isFetchingDatamarts}
-                 pagination={pagination}
-               />
-             </TableViewFilters>
+               dataSource={dataSource}
+               loading={isFetchingDatamarts}
+               pagination={pagination}
+             />
            );
   }
 }
@@ -108,8 +93,7 @@ DatamartsTable.propTypes = {
     id: PropTypes.string
   }).isRequired, // eslint-disable-line
   onFilterChange: PropTypes.func.isRequired,
-  onEditDatamart: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  onEditDatamart: PropTypes.func.isRequired
 };
 
 export default injectIntl(DatamartsTable);

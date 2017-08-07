@@ -24,12 +24,10 @@ class DatamartsListPage extends Component {
       noDatamartYet: false,
       filter: {
         currentPage: 1,
-        pageSize: 10,
-        id: ''
+        pageSize: 10
       }
     };
     this.handleEditDatamart = this.handleEditDatamart.bind(this);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
   }
 
   componentDidMount() {
@@ -54,34 +52,22 @@ class DatamartsListPage extends Component {
     history.push(`/o${organisationId}d${datamartId}/settings/datamarts/edit/${datamart.id}`);
   }
 
-  handleFilterChange(newFilter) {
-    const {
-      organisationId
-    } = this.props;
-
-    this.setState({ filter: newFilter });
-    this.fetchDatamarts(organisationId, newFilter);
-  }
-
   /**
    * Data
    */
 
   fetchDatamarts(organisationId, filter) {
     const buildGetDatamartsOptions = () => {
-      const options = {
+      return {
         allow_administrator: true,
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
       };
-
-      if (filter.id) { options.id = filter.id; }
-      return options;
     };
 
     DatamartService.getDatamarts(organisationId, buildGetDatamartsOptions()).then(response => {
       this.setState({
         isFetchingDatamarts: false,
-        noDatamartYet: response && response.count === 0 && !filter.id,
+        noDatamartYet: response && response.count === 0,
         datamarts: response.data,
         totalDatamarts: response.count
       });
@@ -119,10 +105,6 @@ class DatamartsListPage extends Component {
     );
   }
 }
-
-DatamartsListPage.defaultProps = {
-  notifyError: () => {}
-};
 
 DatamartsListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,

@@ -148,10 +148,6 @@ class SitesListPage extends Component {
   }
 }
 
-SitesListPage.defaultProps = {
-  notifyError: () => {}
-};
-
 SitesListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,

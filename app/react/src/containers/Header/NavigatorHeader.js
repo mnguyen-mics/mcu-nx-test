@@ -13,6 +13,7 @@ import {
   getWorkspace
 } from '../../state/Session/selectors';
 import log from '../../utils/Logger';
+import messages from './messages';
 
 const { Header } = Layout;
 
@@ -40,7 +41,7 @@ class NavigatorHeader extends Component {
       <Menu>
         <Menu.Item key="email" disabled>{userEmail}</Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="account"><Link to={{ pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }}><FormattedMessage id="ACCOUNT" /></Link></Menu.Item>
+        <Menu.Item key="account"><Link to={{ pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }}><FormattedMessage {...messages.account} /></Link></Menu.Item>
         <Menu.Item key="logout"><Link to="/logout"><FormattedMessage id="LOGOUT" /></Link></Menu.Item>
       </Menu>
     );
