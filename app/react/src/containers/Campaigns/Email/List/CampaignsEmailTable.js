@@ -9,7 +9,7 @@ import {
   TableView,
   TableViewFilters,
   EmptyTableView
- } from '../../../../components/TableView';
+} from '../../../../components/TableView';
 import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
@@ -170,20 +170,24 @@ class CampaignsEmailTable extends Component {
     };
 
     return (noCampaignYet) ? (<EmptyTableView iconType="email" text="EMPTY_EMAILS" />) :
-      (<TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-        searchOptions={searchOptions}
-        dateRangePickerOptions={dateRangePickerOptions}
-        filtersOptions={filtersOptions}
-        columnsVisibilityOptions={columnsVisibilityOptions}
-      >
-        <TableView
-          columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingCampaigns}
-          pagination={pagination}
-        />
-      </TableViewFilters>);
+           (
+             <div className="mcs-table-container">
+               <TableViewFilters
+                 columnsDefinitions={columnsDefinitions}
+                 searchOptions={searchOptions}
+                 dateRangePickerOptions={dateRangePickerOptions}
+                 filtersOptions={filtersOptions}
+                 columnsVisibilityOptions={columnsVisibilityOptions}
+               >
+                 <TableView
+                   columnsDefinitions={columnsDefinitions}
+                   dataSource={dataSource}
+                   loading={isFetchingCampaigns}
+                   pagination={pagination}
+                 />
+               </TableViewFilters>
+             </div>
+           );
 
   }
 

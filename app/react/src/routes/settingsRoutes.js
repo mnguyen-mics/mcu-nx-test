@@ -1,14 +1,14 @@
 import {
-  AccountSettings,
-  AccountSettingsActionBar
+  Settings,
+  SettingsActionBar
 } from '../containers/Settings/index';
 
 const settingsRoutes = [
   {
-    path: '/settings/useraccount',
+    path: '/settings',
     layout: 'main',
-    contentComponent: AccountSettings,
-    actionBarComponent: AccountSettingsActionBar
+    contentComponent: Settings,
+    actionBarComponent: SettingsActionBar
   }
 ];
 

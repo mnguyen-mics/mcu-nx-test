@@ -2,9 +2,9 @@ define(['./module', 'jquery'], function(module, $) {
   'use strict';
 
   module.controller('core/settings/datamarts/EditOneController', [
-    '$scope', '$log', '$location', '$state', '$stateParams', '$uibModal', '$filter', '$q', 'Restangular', 'core/common/auth/Session', 'lodash',
+    '$scope', '$rootScope', '$log', '$location', '$state', '$stateParams', '$uibModal', '$filter', '$q', 'Restangular', 'core/common/auth/Session', 'lodash',
     'core/common/ErrorService', 'core/common/WarningService',
-    function($scope, $log, $location, $state, $stateParams, $uibModal, $filter, $q, Restangular, Session, _, ErrorService, WarningService) {
+    function($scope, $rootScope, $log, $location, $state, $stateParams, $uibModal, $filter, $q, Restangular, Session, _, ErrorService, WarningService) {
       var datamartId = $stateParams.datamartId;
       var organisationId = Session.getCurrentWorkspace().organisation_id;
       $scope.editMode = true;
@@ -94,7 +94,7 @@ define(['./module', 'jquery'], function(module, $) {
           })
           .catch(handleDatamartError)
         ])).then(function() {
-          $location.path(Session.getWorkspacePrefixUrl() +  "/settings/datamarts");
+          $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'datamarts');
         }).catch(function(e) {
           ErrorService.showErrorModal(e);
         });
@@ -104,7 +104,7 @@ define(['./module', 'jquery'], function(module, $) {
       // ---------------- DATAMART ----------------
 
       $scope.cancel = function() {
-        $location.path(Session.getWorkspacePrefixUrl() + "/settings/datamarts");
+        $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'datamarts');
       };
 
       $scope.done = function() {
@@ -130,7 +130,7 @@ define(['./module', 'jquery'], function(module, $) {
 
           }, handleDatamartError)
           .then(function () {
-            $location.path(Session.getWorkspacePrefixUrl() +  "/settings/datamarts");
+            $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'datamarts');
           });
         }
       };

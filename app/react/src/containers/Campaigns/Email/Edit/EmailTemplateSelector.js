@@ -130,7 +130,7 @@ class EmailTemplateSelector extends Component {
                 <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
               </a>
             </div>
-        )
+          )
         },
         {
           translationKey: 'NAME',
@@ -211,16 +211,16 @@ class EmailTemplateSelector extends Component {
           <Layout>
             <Content className="mcs-content-container">
               {hasEmailTemplates
-                ? <TableViewFilters
-                  searchOptions={this.getSearchOptions()}
-                >
-                  <TableView
-                    columnsDefinitions={this.getColumnsDefinitions()}
-                    dataSource={emailTemplates}
-                    loading={isLoading}
-                    pagination={pagination}
-                  />
-                </TableViewFilters>
+                ? <div className="mcs-table-container">
+                  <TableViewFilters searchOptions={this.getSearchOptions()}>
+                    <TableView
+                      columnsDefinitions={this.getColumnsDefinitions()}
+                      dataSource={emailTemplates}
+                      loading={isLoading}
+                      pagination={pagination}
+                    />
+                  </TableViewFilters>
+                </div>
                 : <EmptyTableView iconType="file" />}
             </Content>
           </Layout>

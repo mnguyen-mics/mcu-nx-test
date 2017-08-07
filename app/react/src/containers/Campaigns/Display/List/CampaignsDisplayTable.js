@@ -9,7 +9,7 @@ import {
   TableView,
   TableViewFilters,
   EmptyTableView
- } from '../../../../components/TableView';
+} from '../../../../components/TableView';
 import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsDisplayActions from '../../../../state/Campaigns/Display/actions';
@@ -29,7 +29,7 @@ import { campaignStatuses } from '../../constants';
 
 import {
   getTableDataSource
- } from '../../../../state/Campaigns/Display/selectors';
+} from '../../../../state/Campaigns/Display/selectors';
 
 class CampaignsDisplayTable extends Component {
 
@@ -302,20 +302,22 @@ class CampaignsDisplayTable extends Component {
     };
 
     return (hasDisplayCampaigns) ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-        searchOptions={searchOptions}
-        dateRangePickerOptions={dateRangePickerOptions}
-        filtersOptions={filtersOptions}
-        columnsVisibilityOptions={columnsVisibilityOptions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingCampaignsDisplay}
-          pagination={pagination}
-        />
-      </TableViewFilters>
+          searchOptions={searchOptions}
+          dateRangePickerOptions={dateRangePickerOptions}
+          filtersOptions={filtersOptions}
+          columnsVisibilityOptions={columnsVisibilityOptions}
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingCampaignsDisplay}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>
     ) : (<EmptyTableView iconType="display" text="EMPTY_DISPLAY" />);
 
   }

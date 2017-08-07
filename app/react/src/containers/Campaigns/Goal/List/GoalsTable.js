@@ -9,7 +9,7 @@ import {
   TableView,
   TableViewFilters,
   EmptyTableView
- } from '../../../../components/TableView';
+} from '../../../../components/TableView';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 
@@ -27,8 +27,7 @@ import { formatMetric } from '../../../../utils/MetricHelper';
 
 import {
   getTableDataSource
- } from '../../../../state/Campaigns/Goal/selectors';
-
+} from '../../../../state/Campaigns/Goal/selectors';
 
 class GoalsTable extends Component {
 
@@ -261,20 +260,22 @@ class GoalsTable extends Component {
     };
 
     return (hasGoals) ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-        searchOptions={searchOptions}
-        dateRangePickerOptions={dateRangePickerOptions}
-        filtersOptions={filtersOptions}
-        columnsVisibilityOptions={columnsVisibilityOptions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingGoals}
-          pagination={pagination}
-        />
-      </TableViewFilters>
+          searchOptions={searchOptions}
+          dateRangePickerOptions={dateRangePickerOptions}
+          filtersOptions={filtersOptions}
+          columnsVisibilityOptions={columnsVisibilityOptions}
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingGoals}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>
     ) : (<EmptyTableView iconType="goals" text="EMPTY_GOALS" />);
 
   }

@@ -29,12 +29,15 @@ class EmptyTableView extends Component {
     };
 
     return (
-      <Col span={24} className={className}>
-        <div className="logo">
-          <McsIcons type={iconType} />
-        </div>
-        <FormattedMessage {...formattedMessageProps} />
-      </Col>);
+      <div className="mcs-aligner">
+        <Col span={24} className={className}>
+          <div className="logo">
+            <McsIcons type={iconType} />
+          </div>
+          <FormattedMessage {...formattedMessageProps} />
+        </Col>
+      </div>
+    );
   }
 
 }
@@ -52,6 +55,5 @@ EmptyTableView.propTypes = {
   iconType: PropTypes.string,
   className: PropTypes.string
 };
-
 
 export default EmptyTableView;

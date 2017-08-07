@@ -7,7 +7,7 @@ import { FormattedMessage, injectIntl, intlShape, defineMessages } from 'react-i
 
 import { Actionbar } from '../Actionbar';
 
-class AccountSettingsActionBar extends Component {
+class AccountActionBar extends Component {
   render() {
     const {
       match: {
@@ -18,9 +18,12 @@ class AccountSettingsActionBar extends Component {
       intl: { formatMessage }
     } = this.props;
 
-    const breadcrumbMessages = defineMessages({ settings: { id: 'settings.settings', defaultMessage: 'Settings' } });
+    const breadcrumbMessages = defineMessages({ account: { id: 'account.account', defaultMessage: 'Account' } });
 
-    const breadcrumbPaths = [{ name: formatMessage(breadcrumbMessages.settings), url: `/v2/o/${organisationId}/settings/useraccount` }];
+    const breadcrumbPaths = [{
+      name: formatMessage(breadcrumbMessages.account),
+      url: { pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }
+    }];
     return (<Actionbar path={breadcrumbPaths}>
       <Button type="primary" className="mcs-primary">
         <i className="anticon anticon-lock" /> <FormattedMessage id="RESET_PASSWORD_BUTTON" />
@@ -29,14 +32,14 @@ class AccountSettingsActionBar extends Component {
   }
 }
 
-AccountSettingsActionBar.propTypes = {
+AccountActionBar.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   intl: intlShape.isRequired
 };
 
-AccountSettingsActionBar = compose(
+AccountActionBar = compose(
   withRouter,
   injectIntl
-)(AccountSettingsActionBar);
+)(AccountActionBar);
 
-export default AccountSettingsActionBar;
+export default AccountActionBar;

@@ -184,16 +184,18 @@ class CreativeDisplayTable extends Component {
     };
 
     return hasCreativeDisplay ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingCreativeDisplay}
-          pagination={pagination}
-        />
-      </TableViewFilters>) : (<EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />);
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingCreativeDisplay}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>) : (<EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />);
 
   }
 

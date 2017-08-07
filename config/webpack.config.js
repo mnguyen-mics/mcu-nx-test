@@ -47,7 +47,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
           loader: extractStyle.extract({
             use: [
               'css-loader?sourceMap',
-              'less-loader'
+              'less-loader?sourceMap'
             ]
           })
         },
