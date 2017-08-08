@@ -368,11 +368,77 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
 };
 
+/**
+ * Audience Segments
+ */
+const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, translations) => {
+  const blankLine = [];
+
+  function buildSheet(headers, data, title, filter) {
+    const titleLine = [title];
+    const sheet = [];
+
+    sheet.push(titleLine);
+    sheet.push([`${translations.FROM} ${filter.from} ${translations.TO} ${filter.to}`]);
+
+    sheet.push(blankLine);
+    const headersLine = headers.map(header => header.translation);
+    sheet.push(headersLine);
+
+    data.forEach(row => {
+      const dataLine = headers.map(header => {
+        return row[header.name];
+      });
+      sheet.push(dataLine);
+    });
+
+    return sheet;
+  }
+
+  const overviewHeaders = [
+    { name: 'day', translation: translations.DAY },
+    { name: 'user_points', translation: translations.USER_POINTS },
+    { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
+    { name: 'emails', translation: translations.EMAILS },
+    { name: 'desktop_cookie_ids', translation: translations.DESKTOP_COOKIE_IDS },
+  ];
+  const overviewSheet = buildSheet(overviewHeaders, segmentData, translations.AUDIENCE_SEGMENT_OVERVIEW_EXPORT_TITLE, filter);
+  const additionDeletionHeaders = [
+    { name: 'day', translation: translations.DAY },
+    { name: 'user_point_additions', translation: translations.ADDITION },
+    { name: 'user_point_deletions', translation: translations.DELETION }
+  ];
+  const additionDeletionSheet = buildSheet(additionDeletionHeaders, segmentData, translations.AUDIENCE_SEGMENT_ADDITION_DELETION_EXPORT_TITLE, filter);
+
+  const sheets = [{
+    name: translations.AUDIENCE_SEGMENT_OVERVIEW_EXPORT_TITLE,
+    data: overviewSheet
+  }, {
+    name: translations.AUDIENCE_SEGMENT_ADDITION_DELETION_EXPORT_TITLE,
+    data: additionDeletionSheet
+  }];
+
+  if (overlapData.length) {
+    const overlapHeaders = [
+      { name: 'xKey', translation: translations.OVERLAP },
+      { name: 'yKey', translation: translations.OVERLAP_NUMBER }
+    ];
+    const overlapSheet = buildSheet(overlapHeaders, overlapData, translations.AUDIENCE_SEGMENT_OVERLAP_EXPORT_TITLE, filter);
+    sheets.push({
+      name: translations.AUDIENCE_SEGMENT_OVERLAP_EXPORT_TITLE,
+      data: overlapSheet
+    });
+  }
+
+  exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
+};
+
 export default {
   exportData,
   exportGoals,
   exportCampaignsEmail,
   exportAudienceSegments,
   exportDisplayCampaigns,
-  exportDisplayCampaignDashboard
+  exportDisplayCampaignDashboard,
+  exportAudienceSegmentDashboard
 };

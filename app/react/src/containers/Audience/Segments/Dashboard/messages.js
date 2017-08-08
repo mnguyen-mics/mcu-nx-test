@@ -7,7 +7,7 @@ export default defineMessages({
   },
   userPoints: {
     id: 'segmentMetric.user_points',
-    defaultMessage: 'Userpoints',
+    defaultMessage: 'User Points',
   },
   userAccounts: {
     id: 'segmentMetric.user_accounts',
@@ -47,6 +47,14 @@ export default defineMessages({
   },
   createOverlap: {
     id: 'overlap.button.create',
-    defaultMessage: 'Create Overlap Analysis',
+    defaultMessage: 'Create Overlap Analysis'
   },
+  exportErrorNotificationTitle: {
+    id: 'export.error.title',
+    defaultMessage: 'Export Error'
+  },
+  exportErrorNotificationMessage: {
+    id: 'export.error.message',
+    defaultMessage: 'There was an export error'
+  }
 });

@@ -106,11 +106,11 @@ const mapDispatchToProps = {
   openCloseMenu: MenuActions.openCloseMenu,
 };
 
-MainLayout = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(MainLayout);
-
-MainLayout = withRouter(MainLayout);
+// MainLayout = connect(
+//   mapStateToProps,
+//   mapDispatchToProps,
+// )(MainLayout);
+//
+// MainLayout = withRouter(MainLayout);
 
 export default MainLayout;
