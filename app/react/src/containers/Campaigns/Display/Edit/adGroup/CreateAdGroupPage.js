@@ -5,17 +5,14 @@ import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
 // import { pick } from 'lodash';
 // import { Link } from 'react-router-dom';
-import { Form, Layout, Row } from 'antd';
 // import { injectIntl, intlShape } from 'react-intl';
 
 import EditContentLayout from '../../../../../components/Layout/EditContentLayout';
-import AdGroupEditor from './AdGroupEditor';
+import AdGroupForm from './AdGroupForm';
 import { withMcsRouter } from '../../../../Helpers';
 
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
-
-const { Content } = Layout;
 
 
 class CreateAdGroupPage extends Component {
@@ -70,7 +67,7 @@ class CreateAdGroupPage extends Component {
         buttonMetadata={buttonMetadata}
         url={url}
       >
-        <AdGroupEditor />
+        <AdGroupForm />
       </EditContentLayout>
     );
   }

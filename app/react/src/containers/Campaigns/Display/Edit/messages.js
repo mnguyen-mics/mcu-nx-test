@@ -21,6 +21,20 @@ export default defineMessages({
     defaultMessage: 'New Ad Group',
   },
 
+  /* Dropdown options */
+  dropdownNew: {
+    id: 'adGroupEditor.dropdown.new',
+    defaultMessage: 'New',
+  },
+  dropdownAdd: {
+    id: 'adGroupEditor.dropdown.add',
+    defaultMessage: 'Add',
+  },
+  dropdownAddExisting: {
+    id: 'adGroupEditor.dropdown.addExisting',
+    defaultMessage: 'Add existing',
+  },
+
   /* Section titles */
   sectionTitle1: {
     id: 'adGroupEditor.section.title1',
@@ -94,15 +108,5 @@ export default defineMessages({
   sectionSubtitle9: {
     id: 'adGroupEditor.section.subtitle9',
     defaultMessage: 'Before submitting, please review the configuration of your ad group',
-  },
-
-  /* Dropdown options */
-  dropdownAudience1: {
-    id: 'adGroupEditor.dropdown.audience1',
-    defaultMessage: 'New',
-  },
-  dropdownAudience2: {
-    id: 'adGroupEditor.dropdown.audience2',
-    defaultMessage: 'Add existing',
   },
 });
