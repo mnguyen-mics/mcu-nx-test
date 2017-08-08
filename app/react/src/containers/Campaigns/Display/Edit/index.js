@@ -1,5 +1,5 @@
-import AdGroupEditor from './AdGroupEditor';
-import CreateAdGroupPage from './CreateAdGroupPage';
+import AdGroupEditor from './adGroup/AdGroupEditor';
+import CreateAdGroupPage from './adGroup/CreateAdGroupPage';
 import messages from './messages';
 
 export {

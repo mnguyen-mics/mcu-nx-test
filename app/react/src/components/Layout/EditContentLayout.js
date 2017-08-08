@@ -11,14 +11,14 @@ function EditContentLayout({
   children,
   scrollId,
   sidebarItems,
-  submitMetadata,
+  buttonMetadata,
   url
 }) {
 
   return (
     <Layout>
       <ActionbarWrapper
-        {...submitMetadata}
+        {...buttonMetadata}
         breadcrumbPaths={breadcrumbPaths}
       />
 
@@ -32,7 +32,7 @@ function EditContentLayout({
 
 EditContentLayout.propTypes = {
   breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
     url: PropTypes.string,
   })).isRequired,
 
@@ -41,15 +41,15 @@ EditContentLayout.propTypes = {
    * ex. at EmailForm: <Form id="emailCampaignSteps" />
    */
   scrollId: PropTypes.string.isRequired,
-  sidebarItems: PropTypes.shape(PropTypes.string.isRequired).isRequired,
+  sidebarItems: PropTypes.shape().isRequired,
 
-  submitMetadata: PropTypes.shape({
+  buttonMetadata: PropTypes.shape({
     disabled: PropTypes.bool,
     message: PropTypes.shape({
       id: PropTypes.string.isRequired,
       defaultMessage: PropTypes.string.isRequired,
     }).isRequired,
-    onSubmit: PropTypes.func,
+    onClick: PropTypes.func,
   }).isRequired,
 
   url: PropTypes.string.isRequired,

@@ -10,7 +10,7 @@ function ActionbarWrapper({
   breadcrumbPaths,
   disabled,
   message,
-  onSubmit
+  onClick,
  }) {
 
   return (
@@ -24,7 +24,7 @@ function ActionbarWrapper({
         type="close"
         className="close-icon"
         style={{ cursor: 'pointer' }}
-        onClick={onSubmit}
+        onClick={onClick}
       />
     </Actionbar>
   );
@@ -32,12 +32,12 @@ function ActionbarWrapper({
 
 ActionbarWrapper.defaultProps = {
   disabled: false,
-  onSubmit: () => {}
+  onClick: () => {}
 };
 
 ActionbarWrapper.propTypes = {
   breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
     url: PropTypes.string,
   })).isRequired,
 
@@ -48,7 +48,7 @@ ActionbarWrapper.propTypes = {
     defaultMessage: PropTypes.string.isRequired,
   }).isRequired,
 
-  onSubmit: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 export default ActionbarWrapper;

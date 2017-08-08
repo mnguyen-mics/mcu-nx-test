@@ -17,10 +17,6 @@ export default defineMessages({
     id: 'emailEditor.breadcrumb.edit-campaign',
     defaultMessage: 'Edit {campaignName}',
   },
-  emailEditorSaveCampaign: {
-    id: 'emailEditor.button.save_campaign',
-    defaultMessage: 'Save Campaign',
-  },
   emailEditorGeneralInformationTitle: {
     id: 'emailEditor.step.title.general_information',
     defaultMessage: 'General Information',
@@ -40,6 +36,14 @@ export default defineMessages({
   emailEditorNameInputHelper: {
     id: 'emailEditor.step.input.helper.campaign_name',
     defaultMessage: 'Give your Campaign a name and make it as memorable as you can. It will be displayed accorss all the screens.',
+  },
+  emailEditorSave: {
+    id: 'emailEditor.button.save',
+    defaultMessage: 'Save'
+  },
+  emailEditorSaveCampaign: {
+    id: 'emailEditor.button.save_campaign',
+    defaultMessage: 'Save Campaign'
   },
   emailEditorTechnicalNameInputLabel: {
     id: 'emailEditor.step.input.label.campaign_technical_name',

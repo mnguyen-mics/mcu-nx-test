@@ -5,14 +5,15 @@ import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
 // import { pick } from 'lodash';
 // import { Link } from 'react-router-dom';
-import { Layout, Form } from 'antd';
+import { Form, Layout, Row } from 'antd';
 // import { injectIntl, intlShape } from 'react-intl';
 
-import EditContentLayout from '../../../../components/Layout/EditContentLayout';
-import { withMcsRouter } from '../../../Helpers';
+import EditContentLayout from '../../../../../components/Layout/EditContentLayout';
+import AdGroupEditor from './AdGroupEditor';
+import { withMcsRouter } from '../../../../Helpers';
 
-import { ReactRouterPropTypes } from '../../../../validators/proptypes';
-import messages from './messages';
+import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
+import messages from '../messages';
 
 const { Content } = Layout;
 
@@ -55,7 +56,7 @@ class CreateAdGroupPage extends Component {
       summary: 'Summary',
     };
 
-    const submitMetadata = {
+    const buttonMetadata = {
       disabled: false,
       onClick: () => {},
       message: messages.saveAdGroup,
@@ -66,12 +67,10 @@ class CreateAdGroupPage extends Component {
         breadcrumbPaths={breadcrumbPaths}
         scrollId="adBlockCampaignSteps"
         sidebarItems={sidebarItems}
-        submitMetadata={submitMetadata}
+        buttonMetadata={buttonMetadata}
         url={url}
       >
-        <Content id="adBlockCampaignSteps">
-          <div id="general">pouet</div>
-        </Content>
+        <AdGroupEditor />
       </EditContentLayout>
     );
   }

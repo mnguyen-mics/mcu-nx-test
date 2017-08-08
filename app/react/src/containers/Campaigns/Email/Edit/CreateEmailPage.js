@@ -114,7 +114,7 @@ class CreateEmailPage extends Component {
       blasts: 'Email Blasts',
     };
 
-    const submitMetadata = {
+    const buttonMetadata = {
       disabled: this.state.disabled,
       onClick: this.redirect,
       message: messages.emailEditorSaveCampaign,
@@ -126,7 +126,7 @@ class CreateEmailPage extends Component {
         breadcrumbPaths={breadcrumbPaths}
         scrollId="emailCampaignSteps"
         sidebarItems={sidebarItems}
-        submitMetadata={submitMetadata}
+        buttonMetadata={buttonMetadata}
         url={url}
       >
         <EmailForm

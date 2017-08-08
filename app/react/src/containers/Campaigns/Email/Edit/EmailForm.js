@@ -3,33 +3,26 @@ import PropTypes from 'prop-types';
 import { Field, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
-import { Layout, Form, Row, Button } from 'antd';
+import { Layout, Form, Row } from 'antd';
 
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { withMcsRouter } from '../../../Helpers';
-import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../components/Form';
+import { FormInput, FormSelect, withValidators } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import FormSection from '../../../../components/Partials/FormSection';
+
 import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
 import messages from './messages';
-import EmailBlastEditor from './EmailBlastEditor';
+import EmailBlastContent from './EmailBlastContent';
 import EmailRouterService from '../../../../services/EmailRouterService';
 
 const { Content } = Layout;
 
 class EmailForm extends Component {
-  constructor(props) {
-    super(props);
-    this.handleCliclOnNewBlast = this.handleCliclOnNewBlast.bind(this);
-    this.handleClickOnEditBlast = this.handleClickOnEditBlast.bind(this);
-    this.handleClickOnRemoveBlast = this.handleClickOnRemoveBlast.bind(this);
-    this.handleAddBlast = this.handleAddBlast.bind(this);
-    this.handleEditBlast = this.handleEditBlast.bind(this);
-    this.handleSaveEmailCampaign = this.handleSaveEmailCampaign.bind(this);
 
-    this.state = {
-      routerOptions: [],
-      blasts: []
-    };
+  state = {
+    routerOptions: [],
+    blasts: []
   }
 
   componentDidMount() {
@@ -56,7 +49,7 @@ class EmailForm extends Component {
     }
   }
 
-  handleAddBlast(blast) {
+  handleAddBlast = (blast) => {
     const { closeNextDrawer } = this.props;
 
     const addedBlast = {
@@ -76,7 +69,7 @@ class EmailForm extends Component {
     closeNextDrawer();
   }
 
-  handleEditBlast(blast) {
+  handleEditBlast = (blast) => {
     const { closeNextDrawer } = this.props;
 
     this.setState(prevState => {
@@ -90,7 +83,7 @@ class EmailForm extends Component {
     closeNextDrawer();
   }
 
-  handleClickOnEditBlast(blast) {
+  handleClickOnEditBlast = (blast) => {
     const {
       openNextDrawer,
       closeNextDrawer,
@@ -98,16 +91,19 @@ class EmailForm extends Component {
     } = this.props;
 
     const emailBlastEditorProps = {
-      save: this.handleEditBlast,
-      close: closeNextDrawer,
-      initialValues: { blast },
-      segments: blast.segments,
+      blast,
       breadcrumbPaths: [{
         name: formatMessage(
           messages.emailBlastEditorBreadcrumbTitleEditBlast,
           { blastName: blast.blast_name }
         )
-      }]
+      }],
+      handlers: {
+        closeNextDrawer,
+        openNextDrawer,
+        redirect: closeNextDrawer,
+        save: this.handleEditBlast,
+      },
     };
 
     const options = {
@@ -115,10 +111,10 @@ class EmailForm extends Component {
       isModal: true
     };
 
-    openNextDrawer(EmailBlastEditor, options);
+    openNextDrawer(EmailBlastContent, options);
   }
 
-  handleCliclOnNewBlast() {
+  handleCliclOnNewBlast = () => {
     const {
       openNextDrawer,
       closeNextDrawer,
@@ -126,11 +122,15 @@ class EmailForm extends Component {
     } = this.props;
 
     const emailBlastEditorProps = {
-      save: this.handleAddBlast,
-      close: closeNextDrawer,
       breadcrumbPaths: [{
         name: formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast)
-      }]
+      }],
+      handlers: {
+        closeNextDrawer,
+        openNextDrawer,
+        redirect: closeNextDrawer,
+        save: this.handleAddBlast,
+      }
     };
 
     const options = {
@@ -138,10 +138,10 @@ class EmailForm extends Component {
       isModal: true
     };
 
-    openNextDrawer(EmailBlastEditor, options);
+    openNextDrawer(EmailBlastContent, options);
   }
 
-  handleClickOnRemoveBlast(blast) {
+  handleClickOnRemoveBlast = (blast) => {
     this.setState(prevState => {
       if (isFakeId(blast.id)) {
         return {
@@ -182,7 +182,7 @@ class EmailForm extends Component {
     return blastRecords;
   }
 
-  handleSaveEmailCampaign(formValues) {
+  handleSaveEmailCampaign = (formValues) => {
     const { save } = this.props;
     const { blasts } = this.state;
 
@@ -214,23 +214,17 @@ class EmailForm extends Component {
 
     return (
       <Form
-        id="emailCampaignSteps"
         className="edit-layout ant-layout"
+        id="emailCampaignSteps"
         onSubmit={handleSubmit(this.handleSaveEmailCampaign)}
       >
         <Content className="mcs-content-container mcs-form-container">
-          <div id={'general'}>
-            <Row
-              type="flex"
-              align="middle"
-              justify="space-between"
-              className="section-header"
-            >
-              <FormTitle
-                titleMessage={messages.emailEditorGeneralInformationTitle}
-                subTitleMessage={messages.emailEditorGeneralInformationSubTitle}
-              />
-            </Row>
+          <div id="general">
+            <FormSection
+              subtitle={messages.emailEditorGeneralInformationSubTitle}
+              title={messages.emailEditorGeneralInformationTitle}
+            />
+
             <Row>
               <Field
                 name="campaign.name"
@@ -269,18 +263,12 @@ class EmailForm extends Component {
             </Row>
           </div>
           <hr />
-          <div id={'router'}>
-            <Row
-              type="flex"
-              align="middle"
-              justify="space-between"
-              className="section-header"
-            >
-              <FormTitle
-                titleMessage={messages.emailEditorRouterTitle}
-                subTitleMessage={messages.emailEditorRouterSubTitle}
-              />
-            </Row>
+          <div id="router">
+            <FormSection
+              subtitle={messages.emailEditorRouterSubTitle}
+              title={messages.emailEditorRouterTitle}
+            />
+
             <Row>
               <Field
                 name="campaign.routers[0].email_router_id"
@@ -305,21 +293,16 @@ class EmailForm extends Component {
             </Row>
           </div>
           <hr />
-          <div id={'blasts'}>
-            <Row
-              type="flex"
-              align="middle"
-              justify="space-between"
-              className="section-header"
-            >
-              <FormTitle
-                titleMessage={messages.emailEditorEmailBlastTitle}
-                subTitleMessage={messages.emailEditorEmailBlastSubTitle}
-              />
-              <Button onClick={this.handleCliclOnNewBlast}>
-                      New Blast
-                    </Button>
-            </Row>
+          <div id="blasts">
+            <FormSection
+              button={{
+                message: 'New Blast',
+                onClick: this.handleCliclOnNewBlast,
+              }}
+              subtitle={messages.emailEditorEmailBlastSubTitle}
+              title={messages.emailEditorEmailBlastTitle}
+            />
+
             <Row>
               <RelatedRecords
                 emptyOption={{

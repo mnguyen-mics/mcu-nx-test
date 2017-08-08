@@ -15,7 +15,7 @@ function SidebarWrapper({ items, scrollId, url }) {
     <li key={name}>
       <Link to={`${url}#${name}`}>
         <McsIcons type="check-rounded-inverted" />
-        <span className="step-title">{items[name]}</span>
+        <span className="step-title">{items[name].defaultMessage}</span>
       </Link>
     </li>
   ));
@@ -23,9 +23,9 @@ function SidebarWrapper({ items, scrollId, url }) {
   return (
     <Sider className="stepper">
       <Scrollspy
-        rootEl={`#${scrollId}`}
-        items={scrollItems}
         currentClassName="currentStep"
+        items={scrollItems}
+        rootEl={`#${scrollId}`}
       >
         {options}
       </Scrollspy>
