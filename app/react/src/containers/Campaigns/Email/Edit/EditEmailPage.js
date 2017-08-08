@@ -241,9 +241,9 @@ class EditEmailPage extends Component {
     ];
 
     const sidebarItems = {
-      general: 'General Information',
-      router: 'Router Config',
-      blasts: 'Email Blasts',
+      general: messages.emailEditorSectionTitle1,
+      router: messages.emailEditorSectionTitle2,
+      blasts: messages.emailEditorSectionTitle3,
     };
 
     const buttonMetadata = {

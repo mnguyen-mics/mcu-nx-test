@@ -45,15 +45,15 @@ class CreateAdGroupPage extends Component {
     ];
 
     const sidebarItems = {
-      general: 'General Settings',
-      audience: 'Audience',
-      device: 'Device Targeting',
-      location: 'Location Targeting',
-      publisher: 'Publisher',
-      media: 'Media Content',
-      optimization: 'Optimization',
-      ads: 'Ads',
-      summary: 'Summary',
+      general: messages.sectionTitle1,
+      audience: messages.sectionTitle2,
+      device: messages.sectionTitle3,
+      location: messages.sectionTitle4,
+      publisher: messages.sectionTitle5,
+      media: messages.sectionTitle6,
+      optimization: messages.sectionTitle7,
+      ads: messages.sectionTitle8,
+      summary: messages.sectionTitle9,
     };
 
     const buttonMetadata = {

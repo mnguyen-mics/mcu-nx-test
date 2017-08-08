@@ -45,6 +45,20 @@ export default defineMessages({
     id: 'emailEditor.button.save_campaign',
     defaultMessage: 'Save Campaign'
   },
+
+  emailEditorSectionTitle1: {
+    id: 'emailEditor.section.title1',
+    defaultMessage: 'General Information'
+  },
+  emailEditorSectionTitle2: {
+    id: 'emailEditor.breadcrumb.title2',
+    defaultMessage: 'Router Config'
+  },
+  emailEditorSectionTitle3: {
+    id: 'emailEditor.breadcrumb.title3',
+    defaultMessage: 'Email Blasts'
+  },
+
   emailEditorTechnicalNameInputLabel: {
     id: 'emailEditor.step.input.label.campaign_technical_name',
     defaultMessage: 'Technical name',
