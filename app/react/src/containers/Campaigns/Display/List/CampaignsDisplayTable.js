@@ -9,8 +9,8 @@ import {
   TableView,
   TableViewFilters,
   EmptyTableView,
- } from '../../../../components/TableView';
-import McsIcons from '../../../../components/McsIcons';
+} from '../../../../components/TableView';
+import { McsIcons } from '../../../../components/McsIcons';
 
 import * as CampaignsDisplayActions from '../../../../state/Campaigns/Display/actions';
 
@@ -29,7 +29,7 @@ import { campaignStatuses } from '../../constants';
 
 import {
   getTableDataSource,
- } from '../../../../state/Campaigns/Display/selectors';
+} from '../../../../state/Campaigns/Display/selectors';
 
 class CampaignsDisplayTable extends Component {
 
@@ -368,25 +368,27 @@ class CampaignsDisplayTable extends Component {
       actionsColumnsDefinition: actionColumns,
     };
 
-    return (hasDisplayCampaigns)
-    ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-        searchOptions={searchOptions}
-        dateRangePickerOptions={dateRangePickerOptions}
-        filtersOptions={filtersOptions}
-        columnsVisibilityOptions={columnsVisibilityOptions}
-      >
-        <TableView
-          columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingCampaignsDisplay}
-          pagination={pagination}
-        />
-      </TableViewFilters>
+    return (hasDisplayCampaigns
+      ? (
+        <div className="mcs-table-container">
+          <TableViewFilters
+            columnsDefinitions={columnsDefinitions}
+            searchOptions={searchOptions}
+            dateRangePickerOptions={dateRangePickerOptions}
+            filtersOptions={filtersOptions}
+            columnsVisibilityOptions={columnsVisibilityOptions}
+          >
+            <TableView
+              columnsDefinitions={columnsDefinitions}
+              dataSource={dataSource}
+              loading={isFetchingCampaignsDisplay}
+              pagination={pagination}
+            />
+          </TableViewFilters>
+        </div>
     )
-    : <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />;
-
+    : <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
+    );
   }
 }
 

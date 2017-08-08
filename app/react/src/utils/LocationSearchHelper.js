@@ -133,7 +133,7 @@ export const updateSearch = (search, params, settings) => {
 
 /**
  * @param {String} search location.search
- * @param {Array} settings (optionnal) type settings
+ * @param {Array} settings (optional) type settings
  * @returns the parsed search string into object
  */
 export const parseSearch = (search, settings) => {

@@ -9,7 +9,7 @@ import {
   TableView,
   TableViewFilters,
   EmptyTableView,
- } from '../../../../components/TableView';
+} from '../../../../components/TableView';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 
@@ -27,17 +27,9 @@ import { formatMetric } from '../../../../utils/MetricHelper';
 
 import {
   getTableDataSource,
- } from '../../../../state/Campaigns/Goal/selectors';
-
+} from '../../../../state/Campaigns/Goal/selectors';
 
 class GoalsTable extends Component {
-
-  constructor(props) {
-    super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.handleArchiveGoal = this.handleArchiveGoal.bind(this);
-    this.handleEditGoal = this.handleEditGoal.bind(this);
-  }
 
   componentDidMount() {
     const {
@@ -113,7 +105,52 @@ class GoalsTable extends Component {
     this.props.resetGoalsTable();
   }
 
-  updateLocationSearch(params) {
+  handleArchiveGoal = (goal) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      location: {
+        search,
+      },
+      archiveGoal,
+      loadGoalsDataSource,
+      translations,
+    } = this.props;
+
+    const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
+
+    Modal.confirm({
+      title: translations.GOAL_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.GOAL_MODAL_CONFIRM_ARCHIVED_BODY,
+      iconType: 'exclamation-circle',
+      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
+      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      onOk() {
+        return archiveGoal(goal.id).then(() => {
+          loadGoalsDataSource(organisationId, filter);
+        });
+      },
+      onCancel() { },
+    });
+  }
+
+  handleEditGoal = (goal) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    history.push(`/${organisationId}/goals/${goal.id}`);
+  }
+
+  updateLocationSearch = (params) => {
     const {
       history,
       location: {
@@ -204,7 +241,13 @@ class GoalsTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}>{text}</Link>,
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}
+          >{text}
+          </Link>
+        ),
       },
       {
         translationKey: 'CONVERSIONS',
@@ -261,69 +304,25 @@ class GoalsTable extends Component {
     };
 
     return (hasGoals) ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-        searchOptions={searchOptions}
-        dateRangePickerOptions={dateRangePickerOptions}
-        filtersOptions={filtersOptions}
-        columnsVisibilityOptions={columnsVisibilityOptions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingGoals}
-          pagination={pagination}
-        />
-      </TableViewFilters>
+          searchOptions={searchOptions}
+          dateRangePickerOptions={dateRangePickerOptions}
+          filtersOptions={filtersOptions}
+          columnsVisibilityOptions={columnsVisibilityOptions}
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingGoals}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>
     ) : (<EmptyTableView iconType="goals" text="EMPTY_GOALS" />);
 
   }
-
-  handleEditGoal(goal) {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      history,
-    } = this.props;
-
-    history.push(`/${organisationId}/goals/${goal.id}`);
-  }
-
-  handleArchiveGoal(goal) {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
-      archiveGoal,
-      loadGoalsDataSource,
-      translations,
-    } = this.props;
-
-    const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
-
-    Modal.confirm({
-      title: translations.GOAL_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.GOAL_MODAL_CONFIRM_ARCHIVED_BODY,
-      iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
-      onOk() {
-        return archiveGoal(goal.id).then(() => {
-          loadGoalsDataSource(organisationId, filter);
-        });
-      },
-      onCancel() { },
-    });
-  }
-
 }
 
 GoalsTable.defaultProps = {
@@ -331,9 +330,9 @@ GoalsTable.defaultProps = {
 };
 
 GoalsTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 
   hasGoals: PropTypes.bool.isRequired,

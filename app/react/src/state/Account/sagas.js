@@ -39,6 +39,6 @@ function* watchSaveProfileRequest() {
   yield* takeEvery(SAVE_PROFILE.REQUEST, updateRemoteProfile);
 }
 
-export const settingsSagas = [
+export const accountSagas = [
   fork(watchSaveProfileRequest),
 ];

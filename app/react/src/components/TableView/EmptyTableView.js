@@ -13,13 +13,13 @@ const messages = defineMessages({
 });
 
 function EmptyTableView({
-  className,
-  iconType,
-  text,
-  intlMessage,
-}) {
+    className,
+    iconType,
+    text,
+    intlMessage,
+  }) {
 
-  // support new intl message obj and legacy translation key (en/fr.json)
+  /* Support new intl message obj and legacy translation key (en/fr.json) */
   const formattedMessageProps = {
     id: intlMessage.id ? intlMessage.id : text ? text : messages.emptyMsg.id,
     defaultMessage: (intlMessage.defaultMessage
@@ -29,12 +29,15 @@ function EmptyTableView({
   };
 
   return (
-    <Col span={24} className={className}>
-      <div className="logo">
-        <McsIcons type={iconType} />
-      </div>
-      <FormattedMessage {...formattedMessageProps} />
-    </Col>);
+    <div className="mcs-aligner">
+      <Col span={24} className={className}>
+        <div className="logo">
+          <McsIcons type={iconType} />
+        </div>
+        <FormattedMessage {...formattedMessageProps} />
+      </Col>
+    </div>
+  );
 }
 
 EmptyTableView.defaultProps = {

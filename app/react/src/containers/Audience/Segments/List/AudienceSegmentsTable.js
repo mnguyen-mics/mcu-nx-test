@@ -167,9 +167,9 @@ class AudienceSegmentsTable extends Component {
         },
         serialize: value => value.join(','),
         isValid: query =>
-          query.datamarts &&
-          query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
+        query.datamarts &&
+        query.datamarts.split(',').length > 0 &&
+        lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
       },
     ];
   }
@@ -405,23 +405,27 @@ class AudienceSegmentsTable extends Component {
       actionsColumnsDefinition: actionColumns,
     };
 
-    return (hasAudienceSegments) ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-        searchOptions={searchOptions}
-        dateRangePickerOptions={dateRangePickerOptions}
-        filtersOptions={filtersOptions}
-        columnsVisibilityOptions={columnsVisibilityOptions}
-      >
-        <TableView
-          columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingAudienceSegments}
-          pagination={pagination}
-        />
-      </TableViewFilters>
-    ) : (<EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />);
-
+    return (hasAudienceSegments
+      ? (
+        <div className="mcs-table-container">
+          <TableViewFilters
+            columnsDefinitions={columnsDefinitions}
+            searchOptions={searchOptions}
+            dateRangePickerOptions={dateRangePickerOptions}
+            filtersOptions={filtersOptions}
+            columnsVisibilityOptions={columnsVisibilityOptions}
+          >
+            <TableView
+              columnsDefinitions={columnsDefinitions}
+              dataSource={dataSource}
+              loading={isFetchingAudienceSegments}
+              pagination={pagination}
+            />
+          </TableViewFilters>
+        </div>
+      )
+      : <EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />
+    );
   }
 }
 

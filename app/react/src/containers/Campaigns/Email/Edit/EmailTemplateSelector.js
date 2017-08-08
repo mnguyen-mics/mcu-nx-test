@@ -17,10 +17,9 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 const { Content } = Layout;
 
 class EmailTemplateSelector extends Component {
+
   constructor(props) {
     super(props);
-    this.handleAdd = this.handleAdd.bind(this);
-    this.fetchEmailTemplate = this.fetchEmailTemplate.bind(this);
 
     this.state = {
       newEmailTemplateSelections: props.emailTemplateSelections,
@@ -34,7 +33,7 @@ class EmailTemplateSelector extends Component {
     };
   }
 
-  fetchEmailTemplate() {
+  fetchEmailTemplate = () => {
     const { organisationId } = this.props;
     const { pageSize, currentPage, keywords } = this.state;
 
@@ -104,7 +103,7 @@ class EmailTemplateSelector extends Component {
     });
   }
 
-  handleAdd() {
+  handleAdd = () => {
     const { save } = this.props;
     const { newEmailTemplateSelections } = this.state;
     save(newEmailTemplateSelections);
@@ -112,12 +111,20 @@ class EmailTemplateSelector extends Component {
 
   getColumnsDefinitions() {
     const { newEmailTemplateSelections } = this.state;
-    const selectedEmailTemplateIds = newEmailTemplateSelections.map(templateSelection => templateSelection.email_template_id);
+    const selectedEmailTemplateIds = newEmailTemplateSelections
+      .map(templateSelection => templateSelection.email_template_id);
+
     return {
       dataColumnsDefinition: [
         {
           key: 'selected',
-          render: (text, record) => <Checkbox checked={selectedEmailTemplateIds.includes(record.id)} onChange={() => this.toggleTemplateSelection(record.id)}>{text}</Checkbox>,
+          render: (text, record) => (
+            <Checkbox
+              checked={selectedEmailTemplateIds.includes(record.id)}
+              onChange={() => this.toggleTemplateSelection(record.id)}
+            >{text}
+            </Checkbox>
+          ),
         },
         {
           translationKey: 'PREVIEW',
@@ -126,11 +133,19 @@ class EmailTemplateSelector extends Component {
           className: 'mcs-table-image-col',
           render: (text, record) => (
             <div className="mcs-table-cell-thumbnail">
-              <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
-                <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
+              <a
+                target="_blank"
+                rel="noreferrer noopener"
+                href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}
+              >
+                <span className="thumbnail-helper" />
+                <img
+                  src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}
+                  alt={record.name}
+                />
               </a>
             </div>
-        ),
+          ),
         },
         {
           translationKey: 'NAME',
@@ -211,16 +226,16 @@ class EmailTemplateSelector extends Component {
           <Layout>
             <Content className="mcs-content-container">
               {hasEmailTemplates
-                ? <TableViewFilters
-                  searchOptions={this.getSearchOptions()}
-                >
-                  <TableView
-                    columnsDefinitions={this.getColumnsDefinitions()}
-                    dataSource={emailTemplates}
-                    loading={isLoading}
-                    pagination={pagination}
-                  />
-                </TableViewFilters>
+                ? <div className="mcs-table-container">
+                  <TableViewFilters searchOptions={this.getSearchOptions()}>
+                    <TableView
+                      columnsDefinitions={this.getColumnsDefinitions()}
+                      dataSource={emailTemplates}
+                      loading={isLoading}
+                      pagination={pagination}
+                    />
+                  </TableViewFilters>
+                </div>
                 : <EmptyTableView iconType="file" />}
             </Content>
           </Layout>

@@ -9,7 +9,7 @@ import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-i
 import {
   FormInput,
 } from '../../../components/Form';
-import * as SettingsActions from '../../../state/Settings/actions';
+import * as AccountActions from '../../../state/Account/actions';
 
 class UserAccount extends Component {
 
@@ -29,7 +29,8 @@ class UserAccount extends Component {
     const saveButton = this.buildSaveActionElement();
     const buttons = [saveButton];
 
-    const formMessages = defineMessages({ firstnameInputLabel: { id: 'FirstName', defaultMessage: 'First Name' },
+    const formMessages = defineMessages({
+      firstnameInputLabel: { id: 'FirstName', defaultMessage: 'First Name' },
       firstnameInputPlaceholder: { id: 'FirstNamePlaceHolder', defaultMessage: 'First name' },
       lastnameInputLabel: { id: 'LastName', defaultMessage: 'Last Name' },
       lastnameInputPlaceholder: { id: 'LastNamePlaceHolder', defaultMessage: 'Last name' },
@@ -37,8 +38,9 @@ class UserAccount extends Component {
       emailInputPlaceholder: { id: 'EmailPlaceHolder', defaultMessage: 'Email' },
     });
 
-    const invalidMessages = defineMessages({ invalidEmail: { id: 'settings.invalid_email', defaultMessage: 'Invalid email address' },
-      requiredField: { id: 'settings.required_field', defaultMessage: 'Required' },
+    const invalidMessages = defineMessages({
+      invalidEmail: { id: 'account.invalid_email', defaultMessage: 'Invalid email address' },
+      requiredField: { id: 'account.required_field', defaultMessage: 'Required' },
     });
 
     const isRequired = value => (value ? undefined : formatMessage(invalidMessages.requiredField));
@@ -53,12 +55,32 @@ class UserAccount extends Component {
       wrapperCol: { span: 10, offset: 1 },
     };
 
-    const userFields = [{ fieldName: 'first_name', label: formMessages.firstnameInputLabel, placeholder: formMessages.firstnameInputPlaceholder, invalidCallback: isRequired },
-                        { fieldName: 'last_name', label: formMessages.lastnameInputLabel, placeholder: formMessages.lastnameInputPlaceholder, invalidCallback: isRequired },
-                        { fieldName: 'email', label: formMessages.emailInputLabel, placeholder: formMessages.emailInputPlaceholder, invalidCallback: emailValidation }];
+    const userFields = [
+      {
+        fieldName: 'first_name',
+        label: formMessages.firstnameInputLabel,
+        placeholder: formMessages.firstnameInputPlaceholder,
+        invalidCallback: isRequired,
+      },
+      {
+        fieldName: 'last_name',
+        label: formMessages.lastnameInputLabel,
+        placeholder: formMessages.lastnameInputPlaceholder,
+        invalidCallback: isRequired,
+      },
+      {
+        fieldName: 'email',
+        label: formMessages.emailInputLabel,
+        placeholder: formMessages.emailInputPlaceholder,
+        invalidCallback: emailValidation,
+      },
+    ];
+
     return (<Form onSubmit={handleSubmit(updateUserProfile)}>
       <div className="mcs-card-header mcs-card-title">
-        <span className="mcs-card-title"><FormattedMessage id="UserProfile" defaultMessage="User Profile" /></span>
+        <span className="mcs-card-title">
+          <FormattedMessage id="UserProfile" defaultMessage="User Profile" />
+        </span>
         <span className="mcs-card-button">{buttons}</span>
       </div>
       <hr className="mcs-separator" />
@@ -96,7 +118,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  updateUserProfile: SettingsActions.saveProfile.request,
+  updateUserProfile: AccountActions.saveProfile.request,
 };
 
 UserAccount = compose(

@@ -157,17 +157,19 @@ class KeywordListsTable extends Component {
     };
 
     return hasKeywordLists ? (
-      <TableViewFilters
-        columnsDefinitions={columnsDefinitions}
-      >
-        <TableView
+      <div className="mcs-table-container">
+        <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isFetchingKeywordLists}
-          onChange={() => {}}
-          pagination={pagination}
-        />
-      </TableViewFilters>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_KEYWORD" />);
+        >
+          <TableView
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingKeywordLists}
+            onChange={() => {}}
+            pagination={pagination}
+          />
+        </TableViewFilters>
+      </div>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_KEYWORD" />);
 
   }
 

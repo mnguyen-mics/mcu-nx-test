@@ -10,7 +10,6 @@
   "FILTERED_BY": "Filtered By",
   "LOGIN": "Login",
   "LOGOUT": "Logout",
-  "ACCOUNT_SETTINGS": "Account & Settings",
 
   "EMAIL_ADDRESS": "Email Address",
   "EMAIL_PLACEHOLDER": "Email",
@@ -136,9 +135,6 @@
   "CAMPAIGN_STATUS_ACTIVE": "Campaign Ongoing",
   "CAMPAIGN_STATUS_PAUSED": "Campaign Paused",
   "CAMPAIGN_STATUS_PENDING": "Campaign Pending",
-  "AD_GROUP_STATUS_ACTIVE": "Ad Group Active",
-  "AD_GROUP_STATUS_PAUSED": "Ad Group Paused",
-  "AD_GROUP_STATUS_PENDING": "Ad Group Pending",
   "CAMPAIGN_OVERVIEW": "Overview",
   "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
 
@@ -207,6 +203,12 @@
   "DESKTOP_COOKIE_IDS": "Display Cookies",
   "EXTEND": "Extend",
 
+  "NEW_SITE": "New Site",
+  "EMPTY_SITES": "There are no sites set up. Click on 'New Site' to create one.",
+
+  "NEW_MOBILE_APPLICATION": "New Mobile Application",
+  "EMPTY_MOBILE_APPLICATIONS": "There are no mobile applications set up. Click on 'New Mobile Application' to create one.",
+
   "AD_GROUPS": "Ad Groups",
   "NEW_AD_GROUP": "New Ad Group",
   "TOP_SITES": "Top Sites",
@@ -223,5 +225,7 @@
   "NOTIFICATION_SUCCESS": "Success",
   "NOTIFICATION_ERROR": "Error",
   "AUDIT_SUCCESS": "Audit Successful",
-  "AUDIT_ERROR": "You need to pass the Audit first"
+  "AUDIT_ERROR": "You need to pass the Audit first",
+
+  "EMPTY_DATAMARTS": "There are no datamarts set up."
 }

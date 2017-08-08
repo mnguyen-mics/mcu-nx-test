@@ -20,7 +20,7 @@ const isRequired = formatMessage => value => {
 };
 
 const isValidEmail = formatMessage => value => {
-  return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ?
+  return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
 };
 

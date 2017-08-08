@@ -113,7 +113,7 @@ class TableViewFilters extends Component {
       : null;
 
     return (
-      <Row className="mcs-table-container">
+      <Row>
         <Row className="mcs-table-header">
           {searchInput}
           <Col span={18} className="text-right" >

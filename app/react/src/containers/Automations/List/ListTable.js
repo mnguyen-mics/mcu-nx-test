@@ -8,8 +8,8 @@ import {
   TableView,
   EmptyTableView,
   TableViewFilters,
- } from '../../../components/TableView';
-import McsIcons from '../../../components/McsIcons';
+} from '../../../components/TableView';
+import { McsIcons } from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 
@@ -25,7 +25,7 @@ import {
 
 import {
   getTableDataSource,
- } from '../../../state/Automations/selectors';
+} from '../../../state/Automations/selectors';
 
 class AutomationsListTable extends Component {
 
@@ -135,7 +135,7 @@ class AutomationsListTable extends Component {
     });
   }
 
-  editAutomation = (record) => {
+  editAutomation(record) {
     const {
       match: {
         params: {
@@ -196,7 +196,6 @@ class AutomationsListTable extends Component {
       }),
     };
 
-
     const dataColumns = [
       {
         translationKey: 'STATUS',
@@ -246,14 +245,16 @@ class AutomationsListTable extends Component {
 
     return (hasAutomations
       ? (
-        <TableViewFilters>
-          <TableView
-            columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingAutomationList}
-            pagination={pagination}
-          />
-        </TableViewFilters>
+        <div className="mcs-table-container">
+          <TableViewFilters>
+            <TableView
+              columnsDefinitions={columnsDefinitions}
+              dataSource={dataSource}
+              loading={isFetchingAutomationList}
+              pagination={pagination}
+            />
+          </TableViewFilters>
+        </div>
       )
       : <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
     );

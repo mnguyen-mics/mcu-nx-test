@@ -4,6 +4,7 @@ import audienceRoutes from './audienceRoutes';
 import creativeRoutes from './creativeRoutes';
 import libraryRoutes from './libraryRoutes';
 import settingsRoutes from './settingsRoutes';
+import accountRoutes from './accountRoutes';
 
 /**
  * Route object definition
@@ -24,6 +25,7 @@ const routes = [
   ...creativeRoutes,
   ...libraryRoutes,
   ...settingsRoutes,
+  ...accountRoutes,
 ];
 
 export default routes;

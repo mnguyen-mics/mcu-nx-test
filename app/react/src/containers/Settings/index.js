@@ -1,7 +1,7 @@
-import AccountSettings from './AccountSettings';
-import AccountSettingsActionBar from './AccountSettingsActionBar';
+import Settings from './Settings';
+import SettingsActionBar from './SettingsActionBar';
 
 export {
-  AccountSettings,
-  AccountSettingsActionBar,
+  Settings,
+  SettingsActionBar,
 };

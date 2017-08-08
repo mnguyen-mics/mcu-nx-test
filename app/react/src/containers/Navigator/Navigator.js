@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -25,7 +23,7 @@ import { AuthenticatedRoute } from '../../containers/Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../ForgotPassword';
 import { Login } from '../Login';
-import { getDefaultWorspaceOrganisationId } from '../../state/Session/selectors';
+import { getDefaultWorkspaceOrganisationId } from '../../state/Session/selectors';
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
@@ -43,14 +41,14 @@ class Navigator extends Component {
       translations,
       initialized,
       initializationError,
-      defaultWorspaceOrganisationId,
+      defaultWorkspaceOrganisationId,
     } = this.props;
 
     if (initializationError) return (<Error />);
     if (!initialized) return (<Loading />); // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
     const basePath = '/v2/o/:organisationId(\\d+)';
-    const homeUrl = `/v2/o/${defaultWorspaceOrganisationId}/campaigns/display`;
+    const homeUrl = `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
     return (
       <IntlProvider locale={locale} messages={translations}>
         <LocaleProvider locale={enUS}>
@@ -137,7 +135,7 @@ Navigator.propTypes = {
   initialized: PropTypes.bool.isRequired,
   initializationError: PropTypes.bool.isRequired,
   translations: PropTypes.objectOf(PropTypes.string),
-  defaultWorspaceOrganisationId: PropTypes.string.isRequired,
+  defaultWorkspaceOrganisationId: PropTypes.string.isRequired,
   logOut: PropTypes.func.isRequired,
 };
 
@@ -145,7 +143,7 @@ const mapStateToProps = state => ({
   translations: state.translations,
   initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
-  defaultWorspaceOrganisationId: getDefaultWorspaceOrganisationId(state),
+  defaultWorkspaceOrganisationId: getDefaultWorkspaceOrganisationId(state),
 });
 
 const mapDispatchToProps = {

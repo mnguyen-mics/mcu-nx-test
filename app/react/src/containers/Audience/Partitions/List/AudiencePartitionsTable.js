@@ -22,6 +22,13 @@ import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class AudiencePartitionsTable extends Component {
 
+  constructor(props) {
+    super(props);
+    this.updateLocationSearch = this.updateLocationSearch.bind(this);
+    this.archivePartition = this.archivePartition.bind(this);
+    this.editPartition = this.editPartition.bind(this);
+  }
+
   componentDidMount() {
     const {
       history,
@@ -157,16 +164,16 @@ class AudiencePartitionsTable extends Component {
         paramName: 'datamarts',
         defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
         deserialize: query => {
-          return (query.datamarts
-            ? query.datamarts.split(',').map((d) => parseInt(d, 0))
-            : []
-          );
+          if (query.datamarts) {
+            return query.datamarts.split(',').map((d) => parseInt(d, 0));
+          }
+          return [];
         },
         serialize: value => value.join(','),
         isValid: query =>
-          query.datamarts &&
-          query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
+        query.datamarts &&
+        query.datamarts.split(',').length > 0 &&
+        lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
       },
     ];
   }
@@ -218,7 +225,6 @@ class AudiencePartitionsTable extends Component {
       }),
       defaultValue: filter.keywords,
     };
-
 
     const pagination = {
       currentPage: filter.currentPage,
@@ -283,21 +289,24 @@ class AudiencePartitionsTable extends Component {
       actionsColumnsDefinition: actionColumns,
     };
 
-    return hasAudiencePartitions
+    return (hasAudiencePartitions
       ? (
-        <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
-          searchOptions={searchOptions}
-        >
-          <TableView
+        <div className="mcs-table-container">
+          <TableViewFilters
             columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingAudiencePartitions}
-            pagination={pagination}
-          />
-        </TableViewFilters>
-    )
-    : <EmptyTableView iconType="partitions" text="EMPTY_PARTITIONS" />;
+            searchOptions={searchOptions}
+          >
+            <TableView
+              columnsDefinitions={columnsDefinitions}
+              dataSource={dataSource}
+              loading={isFetchingAudiencePartitions}
+              pagination={pagination}
+            />
+          </TableViewFilters>
+        </div>
+      )
+      : <EmptyTableView iconType="partitions" text="EMPTY_PARTITIONS" />
+    );
   }
 }
 
