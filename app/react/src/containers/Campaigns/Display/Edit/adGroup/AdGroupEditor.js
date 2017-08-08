@@ -47,6 +47,18 @@ class AdGroupEditor extends Component {
 
           <div id="audience">
             <FormSection
+              dropdownItems={[
+                {
+                  id: messages.dropdownAudience1.id,
+                  message: messages.dropdownAudience1,
+                  onClick: () => {},
+                },
+                {
+                  id: messages.dropdownAudience2.id,
+                  message: messages.dropdownAudience2,
+                  onClick: () => {},
+                },
+              ]}
               subtitle={messages.sectionSubtitle2}
               title={messages.sectionTitle2}
             />
@@ -77,6 +89,7 @@ class AdGroupEditor extends Component {
 
           <div id="publisher">
             <FormSection
+              dropdownItems={[]}
               subtitle={messages.sectionSubtitle5}
               title={messages.sectionTitle5}
             />
@@ -87,6 +100,7 @@ class AdGroupEditor extends Component {
 
           <div id="media">
             <FormSection
+              dropdownItems={[]}
               subtitle={messages.sectionSubtitle6}
               title={messages.sectionTitle6}
             />
@@ -97,6 +111,7 @@ class AdGroupEditor extends Component {
 
           <div id="optimization">
             <FormSection
+              dropdownItems={[]}
               subtitle={messages.sectionSubtitle7}
               title={messages.sectionTitle7}
             />
@@ -107,6 +122,7 @@ class AdGroupEditor extends Component {
 
           <div id="ads">
             <FormSection
+              dropdownItems={[]}
               subtitle={messages.sectionSubtitle8}
               title={messages.sectionTitle8}
             />

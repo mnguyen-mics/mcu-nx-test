@@ -1,11 +1,13 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+  /* Buttons */
   saveAdGroup: {
     id: 'message.submit.adGroup',
     defaultMessage: 'SAVE',
   },
 
+  /* Breadcrumb titles */
   breadcrumbTitle1: {
     id: 'adGroupEditor.breadcrumb.title1',
     defaultMessage: 'Display',
@@ -19,6 +21,7 @@ export default defineMessages({
     defaultMessage: 'New Ad Group',
   },
 
+  /* Section titles */
   sectionTitle1: {
     id: 'adGroupEditor.section.title1',
     defaultMessage: 'General Information',
@@ -91,5 +94,15 @@ export default defineMessages({
   sectionSubtitle9: {
     id: 'adGroupEditor.section.subtitle9',
     defaultMessage: 'Before submitting, please review the configuration of your ad group',
+  },
+
+  /* Dropdown options */
+  dropdownAudience1: {
+    id: 'adGroupEditor.dropdown.audience1',
+    defaultMessage: 'New',
+  },
+  dropdownAudience2: {
+    id: 'adGroupEditor.dropdown.audience2',
+    defaultMessage: 'Add existing',
   },
 });
