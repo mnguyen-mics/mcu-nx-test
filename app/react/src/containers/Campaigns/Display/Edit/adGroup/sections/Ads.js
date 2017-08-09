@@ -21,8 +21,8 @@ function Ads() {
             onClick: () => {},
           },
         ]}
-        subtitle={messages.sectionSubtitle8}
-        title={messages.sectionTitle8}
+        subtitle={messages.sectionSubtitle7}
+        title={messages.sectionTitle7}
       />
       <Row />
     </div>

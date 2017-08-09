@@ -16,8 +16,8 @@ function Optimization() {
             onClick: () => {},
           },
         ]}
-        subtitle={messages.sectionSubtitle7}
-        title={messages.sectionTitle7}
+        subtitle={messages.sectionSubtitle6}
+        title={messages.sectionTitle6}
       />
       <Row />
     </div>

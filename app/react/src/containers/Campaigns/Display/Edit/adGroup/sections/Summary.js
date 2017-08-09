@@ -9,8 +9,8 @@ function Summary() {
   return (
     <div id="summary">
       <FormSection
-        subtitle={messages.sectionSubtitle9}
-        title={messages.sectionTitle9}
+        subtitle={messages.sectionSubtitle8}
+        title={messages.sectionTitle8}
       />
       <Row />
     </div>

@@ -8,13 +8,13 @@ import McsIcons from '../../components/McsIcons';
 const defaultTooltipPlacement = 'right';
 
 function FormDatePicker({
+  datePickerProps,
+  formItemProps: { endDate, ...otherFormItemProps },
+  helpToolTipProps,
   input: { value, ...otherInputProps },
   meta,
-  formItemProps,
-  datePickerProps,
-  helpToolTipProps,
+  secondDatePickerProps,
 }) {
-
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
   if (meta.touched && meta.warning) validateStatus = 'warning';
@@ -38,50 +38,56 @@ function FormDatePicker({
     <Form.Item
       help={meta.touched && (meta.warning || meta.error)}
       validateStatus={validateStatus}
-      {...formItemProps}
+      {...otherFormItemProps}
     >
 
-      <Row align="middle" type="flex">
-        <Col span={22}>
+      <Row align="middle">
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <DatePicker
             id={correctedInput.name}
             {...correctedInput}
             {...datePickerProps}
           />
-        </Col>
-        {displayHelpToolTip &&
-          <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
-              <McsIcons type="info" />
-            </Tooltip>
-          </Col>}
+          { endDate && <p style={{ fontWeight: 'bold', margin: '15px 15px' }}>-</p> }
+          { endDate &&
+            <DatePicker
+              id={correctedInput.name}
+              {...correctedInput}
+              {...secondDatePickerProps}
+            />
+          }
+          {displayHelpToolTip &&
+            <Col span={2} className="field-tooltip">
+              <Tooltip {...mergedTooltipProps}>
+                <McsIcons type="info" />
+              </Tooltip>
+            </Col>
+          }
+        </div>
       </Row>
     </Form.Item>
   );
 }
 
 FormDatePicker.defaultProps = {
-  formItemProps: {},
   datePickerProps: {},
+  formItemProps: {},
   helpToolTipProps: {},
+  input: {},
+  meta: {},
+  secondDatePickerProps: {},
 };
 
 FormDatePicker.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  meta: PropTypes.shape({
-    error: PropTypes.string,
-  }).isRequired,
-  formItemProps: PropTypes.shape({
-    required: PropTypes.bool,
-    label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-    colon: PropTypes.bool,
-  }),
   datePickerProps: PropTypes.shape({
     format: PropTypes.string,
     showTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     placeholder: PropTypes.stringz,
+  }),
+  formItemProps: PropTypes.shape({
+    required: PropTypes.bool,
+    label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
+    colon: PropTypes.bool
   }),
   helpToolTipProps: PropTypes.shape({
     tile: PropTypes.string,
@@ -97,8 +103,19 @@ FormDatePicker.propTypes = {
       'leftTop',
       'leftBottom',
       'rightTop',
-      'rightBottom',
-    ]),
+      'rightBottom'
+    ])
+  }),
+  input: PropTypes.shape({
+    name: PropTypes.string
+  }),
+  meta: PropTypes.shape({
+    error: PropTypes.string
+  }),
+  secondDatePickerProps: PropTypes.shape({
+    format: PropTypes.string,
+    showTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+    placeholder: PropTypes.stringz
   }),
 };
 

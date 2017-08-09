@@ -5,7 +5,6 @@ import { compose } from 'recompose';
 import { Field, reduxForm } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Form, Row } from 'antd';
-import moment from 'moment';
 
 import { withValidators, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
@@ -14,6 +13,7 @@ import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
+import { isPastDate } from '../../../../utils/DateHelper';
 
 const { Content } = Layout;
 
@@ -137,10 +137,6 @@ class EmailBlastForm extends Component {
       wrapperCol: { span: 10, offset: 1 }
     };
 
-    const isPastDate = current => {
-      const now = moment();
-      return current && current.isBefore(now);
-    };
 
     const emptySegmentOption = {
       message: segmentRequired ? formatMessage(messages.blastSegmentSelectionRequired) : formatMessage(messages.blastSegmentSelectionEmpty),

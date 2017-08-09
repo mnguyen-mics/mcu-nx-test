@@ -16,8 +16,8 @@ function Publisher() {
             onClick: () => {},
           },
         ]}
-        subtitle={messages.sectionSubtitle5}
-        title={messages.sectionTitle5}
+        subtitle={messages.sectionSubtitle4}
+        title={messages.sectionTitle4}
       />
       <Row />
     </div>

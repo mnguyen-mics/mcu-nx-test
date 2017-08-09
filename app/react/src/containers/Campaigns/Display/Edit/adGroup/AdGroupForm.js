@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 // import { Link } from 'react-router-dom';
 // import Scrollspy from 'react-scrollspy';
 // import { Field, reduxForm } from 'redux-form';
@@ -34,6 +34,12 @@ const { Content } = Layout;
 class AdGroupForm extends Component {
 
   render() {
+    const {
+      form: {
+        getFieldDecorator
+      }
+    } = this.props;
+
     return (
       <Form
         id="adBlockCampaignSteps"
@@ -41,7 +47,7 @@ class AdGroupForm extends Component {
         onSubmit={() => {}}
       >
         <Content className="mcs-content-container mcs-form-container">
-          <General />
+          <General getFieldDecorator={getFieldDecorator} />
           <hr />
           <Audience />
           <hr />
@@ -61,5 +67,13 @@ class AdGroupForm extends Component {
     );
   }
 }
+
+AdGroupForm.propTypes = {
+  form: PropTypes.shape({
+    getFieldDecorator: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+AdGroupForm = Form.create()(AdGroupForm);
 
 export default AdGroupForm;

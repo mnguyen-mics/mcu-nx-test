@@ -97,13 +97,13 @@ class Login extends Component {
 
 Login.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  form: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  form: PropTypes.shape().isRequired,
   hasError: PropTypes.bool.isRequired,
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.shape().isRequired,
   logInRequest: PropTypes.func.isRequired,
   isRequesting: PropTypes.bool.isRequired,
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types,
+  history: PropTypes.shape().isRequired,
+  match: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({

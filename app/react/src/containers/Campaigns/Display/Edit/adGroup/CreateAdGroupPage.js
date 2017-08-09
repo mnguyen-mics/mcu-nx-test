@@ -45,11 +45,11 @@ class CreateAdGroupPage extends Component {
       general: messages.sectionTitle1,
       audience: messages.sectionTitle2,
       deviceAndLocation: messages.sectionTitle3,
-      publisher: messages.sectionTitle5,
-      media: messages.sectionTitle6,
-      optimization: messages.sectionTitle7,
-      ads: messages.sectionTitle8,
-      summary: messages.sectionTitle9,
+      publisher: messages.sectionTitle4,
+      media: messages.sectionTitle5,
+      optimization: messages.sectionTitle6,
+      ads: messages.sectionTitle7,
+      summary: messages.sectionTitle8,
     };
 
     const buttonMetadata = {

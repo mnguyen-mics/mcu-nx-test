@@ -55,17 +55,13 @@ function FormInput(
 
 FormInput.defaultProps = {
   formItemProps: {},
-  inputProps: {},
   helpToolTipProps: {},
+  input: {},
+  inputProps: {},
+  meta: {},
 };
 
 FormInput.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  meta: PropTypes.shape({
-    error: PropTypes.string,
-  }).isRequired,
   formItemProps: PropTypes.shape({
     required: PropTypes.bool,
     label: PropTypes.oneOfType([
@@ -74,17 +70,23 @@ FormInput.propTypes = {
     ]),
     colon: PropTypes.bool,
   }),
+  helpToolTipProps: PropTypes.shape({
+    tile: PropTypes.string,
+    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
+      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
+      'leftTop', 'leftBottom', 'rightTop', 'rightBottom'])
+  }),
+  input: PropTypes.shape({
+    name: PropTypes.string,
+  }),
   inputProps: PropTypes.shape({
     type: PropTypes.string,
     placeholder: PropTypes.string,
     size: PropTypes.oneOf(['small', 'default', 'large']),
     className: PropTypes.string,
   }),
-  helpToolTipProps: PropTypes.shape({
-    tile: PropTypes.string,
-    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
-      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
-      'leftTop', 'leftBottom', 'rightTop', 'rightBottom']),
+  meta: PropTypes.shape({
+    error: PropTypes.string,
   }),
 };
 

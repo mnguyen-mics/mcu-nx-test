@@ -16,8 +16,8 @@ function Media() {
             onClick: () => {},
           },
         ]}
-        subtitle={messages.sectionSubtitle6}
-        title={messages.sectionTitle6}
+        subtitle={messages.sectionSubtitle5}
+        title={messages.sectionTitle5}
       />
       <Row />
     </div>
