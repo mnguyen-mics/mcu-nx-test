@@ -5,7 +5,7 @@ const getSites = (organisationId, datamartId, options = {}) => {
 
   const params = {
     organisation_id: organisationId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -33,7 +33,7 @@ const createSite = (organisationId, datamartId, name, token) => {
   const body = {
     organisation_id: organisationId,
     name: name,
-    token: token
+    token: token,
   };
 
   return ApiService.postRequest(endpoint, body, params);

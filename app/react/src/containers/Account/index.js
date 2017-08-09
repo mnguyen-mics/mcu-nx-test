@@ -3,5 +3,5 @@ import AccountActionBar from './AccountActionBar';
 
 export {
   Account,
-  AccountActionBar
+  AccountActionBar,
 };

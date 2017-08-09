@@ -11,17 +11,17 @@ class SettingsActionBar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const breadcrumbMessages = defineMessages({ settings: { id: 'settings.settings', defaultMessage: 'Settings' } });
 
     const breadcrumbPaths = [{
       name: formatMessage(breadcrumbMessages.settings),
-      url: { pathname: `/v2/o/${organisationId}/settings`, search: '&tab=sites' }
+      url: { pathname: `/v2/o/${organisationId}/settings`, search: '&tab=sites' },
     }];
     return (
       <Actionbar path={breadcrumbPaths} />
@@ -31,12 +31,12 @@ class SettingsActionBar extends Component {
 
 SettingsActionBar.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 SettingsActionBar = compose(
   withRouter,
-  injectIntl
+  injectIntl,
 )(SettingsActionBar);
 
 export default SettingsActionBar;

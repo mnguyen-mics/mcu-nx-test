@@ -1,6 +1,6 @@
 import {
   Account,
-  AccountActionBar
+  AccountActionBar,
 } from '../containers/Account/index';
 
 const accountRoutes = [
@@ -8,8 +8,8 @@ const accountRoutes = [
     path: '/account',
     layout: 'main',
     contentComponent: Account,
-    actionBarComponent: AccountActionBar
-  }
+    actionBarComponent: AccountActionBar,
+  },
 ];
 
 export default accountRoutes;

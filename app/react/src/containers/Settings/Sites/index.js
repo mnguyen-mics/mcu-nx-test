@@ -3,5 +3,5 @@ import SitesTable from './SitesTable';
 
 export {
   SitesListPage,
-  SitesTable
+  SitesTable,
 };

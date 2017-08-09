@@ -18,7 +18,7 @@ class SitesTable extends Component {
       onArchiveSite,
       onEditSite,
       filter,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const pagination = {
@@ -26,19 +26,19 @@ class SitesTable extends Component {
       pageSize: filter.pageSize,
       total: totalSites,
       onChange: (page) => onFilterChange({
-        currentPage: page
+        currentPage: page,
       }),
       onShowSizeChange: (current, size) => onFilterChange({
         pageSize: size,
-        currentPage: 1
-      })
+        currentPage: 1,
+      }),
     };
 
     const dataColumns = [
       {
         intlMessage: messages.siteName,
         key: 'name',
-        isHiddable: false
+        isHiddable: false,
       },
       {
         intlMessage: messages.siteToken,
@@ -51,8 +51,8 @@ class SitesTable extends Component {
         key: 'creation_ts',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: ts => moment(ts).format('DD/MM/YYYY')
-      }
+        render: ts => moment(ts).format('DD/MM/YYYY'),
+      },
     ];
 
     const actionColumns = [
@@ -61,27 +61,27 @@ class SitesTable extends Component {
         actions: [
           {
             intlMessage: messages.editSite,
-            callback: onEditSite
+            callback: onEditSite,
           }, {
             intlMessage: messages.archiveSite,
-            callback: onArchiveSite
-          }
-        ]
-      }
+            callback: onArchiveSite,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     const searchOptions = {
       isEnabled: true,
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: value => onFilterChange({
-        name: value
+        name: value,
       }),
-      defaultValue: filter.name
+      defaultValue: filter.name,
     };
 
     return (noSiteYet) ? (<EmptyTableView iconType="bolt" intlMessage={messages.emptySites} />) :
@@ -109,12 +109,12 @@ SitesTable.propTypes = {
   filter: PropTypes.shape({
     currentPage: PropTypes.number,
     pageSize: PropTypes.number,
-    name: PropTypes.string
+    name: PropTypes.string,
   }).isRequired, // eslint-disable-line
   onFilterChange: PropTypes.func.isRequired,
   onArchiveSite: PropTypes.func.isRequired,
   onEditSite: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default injectIntl(SitesTable);

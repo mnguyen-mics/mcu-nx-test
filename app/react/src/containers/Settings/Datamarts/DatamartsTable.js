@@ -16,7 +16,7 @@ class DatamartsTable extends Component {
       noDatamartYet,
       onFilterChange,
       onEditDatamart,
-      filter
+      filter,
     } = this.props;
 
     const pagination = {
@@ -24,19 +24,19 @@ class DatamartsTable extends Component {
       pageSize: filter.pageSize,
       total: totalDatamarts,
       onChange: (page) => onFilterChange({
-        currentPage: page
+        currentPage: page,
       }),
       onShowSizeChange: (current, size) => onFilterChange({
         pageSize: size,
-        currentPage: 1
-      })
+        currentPage: 1,
+      }),
     };
 
     const dataColumns = [
       {
         intlMessage: messages.datamartId,
         key: 'id',
-        isHiddable: false
+        isHiddable: false,
       },
       {
         intlMessage: messages.datamartToken,
@@ -49,8 +49,8 @@ class DatamartsTable extends Component {
         key: 'creation_ts',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: ts => moment(ts).format('DD/MM/YYYY')
-      }
+        render: ts => moment(ts).format('DD/MM/YYYY'),
+      },
     ];
 
     const actionColumns = [
@@ -59,15 +59,15 @@ class DatamartsTable extends Component {
         actions: [
           {
             intlMessage: messages.editDatamart,
-            callback: onEditDatamart
-          }
-        ]
-      }
+            callback: onEditDatamart,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyDatamarts} />) :
@@ -90,10 +90,10 @@ DatamartsTable.propTypes = {
   filter: PropTypes.shape({
     currentPage: PropTypes.number,
     pageSize: PropTypes.number,
-    id: PropTypes.string
+    id: PropTypes.string,
   }).isRequired, // eslint-disable-line
   onFilterChange: PropTypes.func.isRequired,
-  onEditDatamart: PropTypes.func.isRequired
+  onEditDatamart: PropTypes.func.isRequired,
 };
 
 export default injectIntl(DatamartsTable);

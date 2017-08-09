@@ -28,8 +28,8 @@ class SitesListPage extends Component {
       filter: {
         currentPage: 1,
         pageSize: 10,
-        name: ''
-      }
+        name: '',
+      },
     };
     this.handleArchiveSite = this.handleArchiveSite.bind(this);
     this.handleEditSite = this.handleEditSite.bind(this);
@@ -39,7 +39,7 @@ class SitesListPage extends Component {
   componentDidMount() {
     const {
       organisationId,
-      datamartId
+      datamartId,
     } = this.props;
 
     this.fetchSites(organisationId, datamartId, this.state.filter);
@@ -56,7 +56,7 @@ class SitesListPage extends Component {
     const {
       organisationId,
       history,
-      datamartId
+      datamartId,
     } = this.props;
 
     history.push(`/o${organisationId}d${datamartId}/settings/sites/edit/${site.id}`);
@@ -65,7 +65,7 @@ class SitesListPage extends Component {
   handleFilterChange(newFilter) {
     const {
       organisationId,
-      datamartId
+      datamartId,
     } = this.props;
 
     this.setState({ filter: newFilter });
@@ -79,7 +79,7 @@ class SitesListPage extends Component {
   fetchSites(organisationId, datamartId, filter) {
     const buildGetSitesOptions = () => {
       const options = {
-        ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+        ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
 
       if (filter.name) { options.name = filter.name; }
@@ -91,7 +91,7 @@ class SitesListPage extends Component {
         isFetchingSites: false,
         noSiteYet: response && response.count === 0 && !filter.name,
         sites: response.data,
-        totalSites: response.count
+        totalSites: response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingSites: false });
@@ -112,7 +112,7 @@ class SitesListPage extends Component {
   render() {
     const {
       organisationId,
-      datamartId
+      datamartId,
     } = this.props;
 
     const {
@@ -120,7 +120,7 @@ class SitesListPage extends Component {
       totalSites,
       sites,
       noSiteYet,
-      filter
+      filter,
     } = this.state;
 
     const newButton = SitesListPage.buildNewActionElement(organisationId, datamartId);
@@ -152,13 +152,13 @@ SitesListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired
+  notifyError: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: notifyActions.notifyError }
-  )
+    { notifyError: notifyActions.notifyError },
+  ),
 )(SitesListPage);
