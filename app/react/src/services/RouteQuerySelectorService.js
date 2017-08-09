@@ -8,15 +8,15 @@ const PAGINATION_QUERY_SETTINGS = [
     defaultValue: 1,
     deserialize: query => parseInt(query.currentPage, 0),
     serialize: value => value.toString(),
-    isValid: query => query.currentPage && !isNaN(parseInt(query.currentPage, 0))
+    isValid: query => query.currentPage && !isNaN(parseInt(query.currentPage, 0)),
   },
   {
     paramName: 'pageSize',
     defaultValue: 10,
     deserialize: query => parseInt(query.pageSize, 0),
     serialize: value => value.toString(),
-    isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0))
-  }
+    isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0)),
+  },
 ];
 
 const FILTERS_QUERY_SETTINGS = [
@@ -25,7 +25,7 @@ const FILTERS_QUERY_SETTINGS = [
     defaultValue: '',
     deserialize: query => query.keywords,
     serialize: value => value,
-    isValid: () => true
+    isValid: () => true,
   },
   {
     paramName: 'statuses',
@@ -37,8 +37,8 @@ const FILTERS_QUERY_SETTINGS = [
       return [];
     },
     serialize: value => value.join(','),
-    isValid: query => !query.statuses || query.statuses.split(',').length > 0
-  }
+    isValid: query => !query.statuses || query.statuses.split(',').length > 0,
+  },
 ];
 
 const DATE_QUERY_SETTINGS = [
@@ -47,29 +47,29 @@ const DATE_QUERY_SETTINGS = [
     defaultValue: 'relative',
     deserialize: query => query.rangeType,
     serialize: value => value,
-    isValid: query => query.rangeType
+    isValid: query => query.rangeType,
   },
   {
     paramName: 'lookbackWindow',
     defaultValue: moment.duration(7, 'days'),
     deserialize: query => moment.duration(parseInt(query.lookbackWindow, 0), 'seconds'),
     serialize: value => Math.ceil(value.asSeconds()),
-    isValid: query => query.lookbackWindow
+    isValid: query => query.lookbackWindow,
   },
   {
     paramName: 'from',
     defaultValue: moment().subtract(7, 'days'),
     deserialize: query => moment(query.from, DATE_FORMAT),
     serialize: value => value.format(DATE_FORMAT),
-    isValid: query => moment(query.from, DATE_FORMAT).isValid()
+    isValid: query => moment(query.from, DATE_FORMAT).isValid(),
   },
   {
     paramName: 'to',
     defaultValue: moment(),
     deserialize: query => moment(query.to, DATE_FORMAT),
     serialize: value => value.format(DATE_FORMAT),
-    isValid: query => moment(query.to, DATE_FORMAT).isValid()
-  }
+    isValid: query => moment(query.to, DATE_FORMAT).isValid(),
+  },
 ];
 
 const isQueryValid = (query = {}, settings) => {
@@ -86,7 +86,7 @@ const buildDefaultQuery = (existingQuery = {}, settings) => {
     const paramValue = setting.isValid(existingQuery) ? existingQuery[setting.paramName] : setting.serialize(setting.defaultValue);
     return {
       ...acc,
-      [setting.paramName]: paramValue
+      [setting.paramName]: paramValue,
     };
   }, {});
 };
@@ -98,14 +98,14 @@ const updateQueryWithParams = (query, params, settings) => {
     if (setting) {
       return {
         ...acc,
-        [paramName]: setting.serialize(params[paramName])
+        [paramName]: setting.serialize(params[paramName]),
       };
     }
     return acc;
   }, {});
   return {
     ...query,
-    ...serializedParams
+    ...serializedParams,
   };
 };
 
@@ -113,7 +113,7 @@ const updateQueryWithParams = (query, params, settings) => {
 const deserializeQuery = (query, settings) => {
   return settings.reduce((acc, setting) => ({
     ...acc,
-    [setting.paramName]: setting.deserialize(query)
+    [setting.paramName]: setting.deserialize(query),
   }), {});
 };
 
@@ -125,5 +125,5 @@ export {
   isQueryValid,
   buildDefaultQuery,
   updateQueryWithParams,
-  deserializeQuery
+  deserializeQuery,
 };

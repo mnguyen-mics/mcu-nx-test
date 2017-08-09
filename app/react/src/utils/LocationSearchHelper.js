@@ -10,15 +10,15 @@ export const PAGINATION_SEARCH_SETTINGS = [
     defaultValue: 1,
     deserialize: query => parseInt(query.currentPage, 0),
     serialize: value => value.toString(),
-    isValid: query => query.currentPage && !isNaN(parseInt(query.currentPage, 0))
+    isValid: query => query.currentPage && !isNaN(parseInt(query.currentPage, 0)),
   },
   {
     paramName: 'pageSize',
     defaultValue: 10,
     deserialize: query => parseInt(query.pageSize, 0),
     serialize: value => value.toString(),
-    isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0))
-  }
+    isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0)),
+  },
 ];
 
 export const KEYWORD_SEARCH_SETTINGS = [
@@ -27,8 +27,8 @@ export const KEYWORD_SEARCH_SETTINGS = [
     defaultValue: '',
     deserialize: query => query.keywords,
     serialize: value => value,
-    isValid: () => true
-  }
+    isValid: () => true,
+  },
 ];
 
 export const FILTERS_SEARCH_SETTINGS = [
@@ -42,9 +42,9 @@ export const FILTERS_SEARCH_SETTINGS = [
       return [];
     },
     serialize: value => value.join(','),
-    isValid: query => !query.statuses || query.statuses.split(',').length > 0
+    isValid: query => !query.statuses || query.statuses.split(',').length > 0,
   },
-  ...KEYWORD_SEARCH_SETTINGS
+  ...KEYWORD_SEARCH_SETTINGS,
 ];
 
 export const DATE_SEARCH_SETTINGS = [
@@ -53,29 +53,29 @@ export const DATE_SEARCH_SETTINGS = [
     defaultValue: 'relative',
     deserialize: query => query.rangeType,
     serialize: value => value,
-    isValid: query => query.rangeType
+    isValid: query => query.rangeType,
   },
   {
     paramName: 'lookbackWindow',
     defaultValue: moment.duration(8, 'days'),
     deserialize: query => moment.duration(parseInt(query.lookbackWindow, 0), 'seconds'),
     serialize: value => Math.ceil(value.asSeconds()),
-    isValid: query => query.lookbackWindow
+    isValid: query => query.lookbackWindow,
   },
   {
     paramName: 'from',
     defaultValue: moment().subtract(7, 'days'),
     deserialize: query => moment(query.from, DATE_FORMAT),
     serialize: value => value.format(DATE_FORMAT),
-    isValid: query => moment(query.from, DATE_FORMAT).isValid()
+    isValid: query => moment(query.from, DATE_FORMAT).isValid(),
   },
   {
     paramName: 'to',
     defaultValue: moment().add(1, 'days'),
     deserialize: query => moment(query.to, DATE_FORMAT),
     serialize: value => value.format(DATE_FORMAT),
-    isValid: query => moment(query.to, DATE_FORMAT).isValid()
-  }
+    isValid: query => moment(query.to, DATE_FORMAT).isValid(),
+  },
 ];
 
 export const isSearchValid = (search, settings) => {
@@ -112,7 +112,7 @@ export const updateSearch = (search, params, settings) => {
     // No settings provided, basic search string constuction
     return queryString.stringify({
       ...query,
-      ...params
+      ...params,
     });
   }
 
@@ -126,7 +126,7 @@ export const updateSearch = (search, params, settings) => {
   }, {});
   return queryString.stringify({
     ...query,
-    ...serializedParams
+    ...serializedParams,
   });
 
 };
@@ -141,7 +141,7 @@ export const parseSearch = (search, settings) => {
   if (!settings) return query;
   return settings.reduce((acc, setting) => ({
     ...acc,
-    [setting.paramName]: setting.deserialize(query)
+    [setting.paramName]: setting.deserialize(query),
   }), {});
 };
 
@@ -157,6 +157,6 @@ export const parseSearch = (search, settings) => {
 export const compareSearchs = (currentSearch, nextSearch) => {
   return lodash.isEqual(
         queryString.parse(currentSearch),
-        queryString.parse(nextSearch)
+        queryString.parse(nextSearch),
     );
 };

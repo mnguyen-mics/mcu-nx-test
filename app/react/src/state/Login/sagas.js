@@ -9,7 +9,7 @@ import AuthService from '../../services/AuthService';
 import {
   LOG_IN,
   LOG_OUT,
-  CONNECTED_USER
+  CONNECTED_USER,
 } from '../action-types';
 
 import { logIn } from './actions';
@@ -103,17 +103,17 @@ function* authentication() {
 
       credentialsOrRefreshToken = {
         email: payload.email,
-        password: payload.password
+        password: payload.password,
       };
     } else {
       credentialsOrRefreshToken = {
-        refreshToken: storedRefreshToken
+        refreshToken: storedRefreshToken,
       };
     }
 
     const { signOutAction } = yield race({
       signOutAction: take(LOG_OUT),
-      authorizeLoop: call(authorizeLoop, credentialsOrRefreshToken, isAuthenticated, remember)
+      authorizeLoop: call(authorizeLoop, credentialsOrRefreshToken, isAuthenticated, remember),
     });
 
     if (signOutAction) {
@@ -136,5 +136,5 @@ function* redirectAfterLogin() {
 
 export const loginSagas = [
   fork(redirectAfterLogin),
-  fork(authentication)
+  fork(authentication),
 ];

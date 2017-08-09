@@ -3,5 +3,5 @@ import ListTable from './ListTable';
 
 export {
   ListActionbar,
-  ListTable
+  ListTable,
 };

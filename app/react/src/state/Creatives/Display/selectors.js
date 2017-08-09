@@ -7,12 +7,12 @@ const getDisplayCreativesTotal = state => state.creatives.displayCreatives.metad
 const getDisplayCreatives = createSelector(
   state => state.creatives.displayCreatives.allIds,
   state => state.creatives.displayCreatives.byId,
-  (allDisplayCreatives, displayCreativesById) => allDisplayCreatives.map(id => displayCreativesById[id])
+  (allDisplayCreatives, displayCreativesById) => allDisplayCreatives.map(id => displayCreativesById[id]),
 );
 
 export {
   getDisplayCreatives,
   isFetchingDisplayCreatives,
   hasDisplayCreatives,
-  getDisplayCreativesTotal
+  getDisplayCreativesTotal,
 };

@@ -9,7 +9,7 @@ import { Layout, Button, Form, Row, Dropdown, Menu } from 'antd';
 import moment from 'moment';
 
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
 import EmailTemplateSelection from './EmailTemplateSelection';
@@ -30,7 +30,7 @@ class EmailBlastEditor extends Component {
       consents: [],
       segments: this.props.segments,
       segmentRequired: false,
-      userEmailCount: 0
+      userEmailCount: 0,
     };
   }
 
@@ -41,7 +41,7 @@ class EmailBlastEditor extends Component {
 
     ConsentService.getConsents(organisationId).then((response) => {
       this.setState({
-        consents: response.data
+        consents: response.data,
       });
     });
   }
@@ -54,55 +54,20 @@ class EmailBlastEditor extends Component {
     }
   }
 
-  updateSegments = (selectedAudienceSegments) => {
-    const { closeNextDrawer } = this.props;
-
-    const buildSegmentSelection = segment => ({
-      audience_segment_id: segment.id,
-      name: segment.name
-    });
-
-    this.setState(prevState => ({
-      segments: selectedAudienceSegments.map(buildSegmentSelection),
-      segmentRequired: !prevState.segmentRequired
-    }));
-    closeNextDrawer();
-  }
-
   handleClickOnClose() {
     this.props.close();
   }
 
   handleClickOnRemoveSegment(segment) {
     this.setState(prevState => ({
-      segments: prevState.segments.filter(s => s.audience_segment_id !== segment.audience_segment_id)
+      segments: prevState.segments.filter(s => s.audience_segment_id !== segment.audience_segment_id),
     }));
-  }
-
-  getSegmentRecords() {
-    const { segments } = this.state;
-
-    const segmentRecords = segments.filter(segment => !segment.isDeleted).map(segment => {
-
-      return (
-        <RecordElement
-          key={segment.audience_segment_id}
-          recordIconType={'users'}
-          title={segment.name}
-          actionButtons={[
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) }
-          ]}
-        />
-      );
-    });
-
-    return segmentRecords;
   }
 
   handleSegmentActionClick = () => {
     const {
       openNextDrawer,
-      closeNextDrawer
+      closeNextDrawer,
     } = this.props;
 
     const { segments } = this.state;
@@ -110,11 +75,11 @@ class EmailBlastEditor extends Component {
     const segmentSelectorProps = {
       save: this.updateSegments,
       close: closeNextDrawer,
-      selectedSegmentIds: segments.map(s => s.audience_segment_id)
+      selectedSegmentIds: segments.map(s => s.audience_segment_id),
     };
 
     const options = {
-      additionalProps: segmentSelectorProps
+      additionalProps: segmentSelectorProps,
     };
 
     openNextDrawer(SegmentSelector, options);
@@ -128,9 +93,44 @@ class EmailBlastEditor extends Component {
     } else {
       save({
         ...formValues.blast,
-        segments
+        segments,
       });
     }
+  }
+
+  getSegmentRecords() {
+    const { segments } = this.state;
+
+    const segmentRecords = segments.filter(segment => !segment.isDeleted).map(segment => {
+
+      return (
+        <RecordElement
+          key={segment.audience_segment_id}
+          recordIconType={'users'}
+          title={segment.name}
+          actionButtons={[
+            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) },
+          ]}
+        />
+      );
+    });
+
+    return segmentRecords;
+  }
+
+  updateSegments = (selectedAudienceSegments) => {
+    const { closeNextDrawer } = this.props;
+
+    const buildSegmentSelection = segment => ({
+      audience_segment_id: segment.id,
+      name: segment.name,
+    });
+
+    this.setState(prevState => ({
+      segments: selectedAudienceSegments.map(buildSegmentSelection),
+      segmentRequired: !prevState.segmentRequired,
+    }));
+    closeNextDrawer();
   }
 
   render() {
@@ -149,7 +149,7 @@ class EmailBlastEditor extends Component {
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 }
+      wrapperCol: { span: 10, offset: 1 },
     };
 
     const isPastDate = current => {
@@ -158,8 +158,11 @@ class EmailBlastEditor extends Component {
     };
 
     const emptySegmentOption = {
-      message: segmentRequired ? formatMessage(messages.blastSegmentSelectionRequired) : formatMessage(messages.blastSegmentSelectionEmpty),
-      className: segmentRequired ? 'required' : ''
+      message: (segmentRequired
+        ? formatMessage(messages.blastSegmentSelectionRequired)
+        : formatMessage(messages.blastSegmentSelectionEmpty)
+      ),
+      className: segmentRequired ? 'required' : '',
     };
 
     return (
@@ -169,11 +172,20 @@ class EmailBlastEditor extends Component {
             <Button type="primary" htmlType="submit">
               <McsIcons type="plus" /><span>Save</span>
             </Button>
-            <McsIcons type="close" className="close-icon" style={{ cursor: 'pointer' }} onClick={close} />
+            <McsIcons
+              type="close"
+              className="close-icon"
+              style={{ cursor: 'pointer' }}
+              onClick={close}
+            />
           </Actionbar>
           <Layout>
             <Sider className="stepper">
-              <Scrollspy rootEl="#blastSteps" items={['general', 'blast', 'template']} currentClassName="currentStep">
+              <Scrollspy
+                rootEl="#blastSteps"
+                items={['general', 'blast', 'template']}
+                currentClassName="currentStep"
+              >
                 <li>
                   <Link to={`${url}#general`}>
                     <McsIcons type="check-rounded-inverted" />
@@ -226,14 +238,14 @@ class EmailBlastEditor extends Component {
                         formItemProps: {
                           label: formatMessage(messages.emailBlastEditorInputLabelBlastName),
                           required: true,
-                          ...fieldGridConfig
+                          ...fieldGridConfig,
                         },
                         inputProps: {
-                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName)
+                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName),
                         },
                         helpToolTipProps: {
-                          title: formatMessage(messages.emailBlastEditorInputHelperBlastName)
-                        }
+                          title: formatMessage(messages.emailBlastEditorInputHelperBlastName),
+                        },
                       }}
                     />
                     <Field
@@ -244,17 +256,17 @@ class EmailBlastEditor extends Component {
                         formItemProps: {
                           label: formatMessage(messages.emailBlastEditorDatePickerLabelSentDate),
                           required: true,
-                          ...fieldGridConfig
+                          ...fieldGridConfig,
                         },
                         datePickerProps: {
                           format: 'DD/MM/YYYY HH:mm',
                           showTime: { format: 'HH:mm' },
                           placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate),
-                          disabledDate: isPastDate
+                          disabledDate: isPastDate,
                         },
                         helpToolTipProps: {
-                          title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate)
-                        }
+                          title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate),
+                        },
                       }}
                     />
                     <Field
@@ -265,16 +277,16 @@ class EmailBlastEditor extends Component {
                         formItemProps: {
                           label: formatMessage(messages.emailEditorProviderSelectLabel),
                           required: true,
-                          ...fieldGridConfig
+                          ...fieldGridConfig,
                         },
                         options: consents.map(consent => ({
                           key: consent.id,
                           value: consent.id,
-                          text: `${consent.name} (${consent.purpose})`
+                          text: `${consent.name} (${consent.purpose})`,
                         })),
                         helpToolTipProps: {
                           title: formatMessage(messages.emailEditorProviderSelectHelper),
-                        }
+                        },
                       }}
                     />
                   </Row>
@@ -296,14 +308,14 @@ class EmailBlastEditor extends Component {
                         formItemProps: {
                           label: formatMessage(messages.emailBlastEditorInputLabelSubjectLine),
                           required: true,
-                          ...fieldGridConfig
+                          ...fieldGridConfig,
                         },
                         inputProps: {
-                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine)
+                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
                         },
                         helpToolTipProps: {
-                          title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine)
-                        }
+                          title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
+                        },
                       }}
                     />
                     <Field
@@ -314,14 +326,14 @@ class EmailBlastEditor extends Component {
                         formItemProps: {
                           label: formatMessage(messages.emailBlastEditorInputLabelFromEmail),
                           required: true,
-                          ...fieldGridConfig
+                          ...fieldGridConfig,
                         },
                         inputProps: {
-                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail)
+                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
                         },
                         helpToolTipProps: {
-                          title: formatMessage(messages.emailBlastEditorInputHelperFromEmail)
-                        }
+                          title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
+                        },
                       }}
                     />
                     <Field
@@ -332,14 +344,14 @@ class EmailBlastEditor extends Component {
                         formItemProps: {
                           label: formatMessage(messages.emailBlastEditorInputLabelFromName),
                           required: true,
-                          ...fieldGridConfig
+                          ...fieldGridConfig,
                         },
                         inputProps: {
-                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName)
+                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
                         },
                         helpToolTipProps: {
-                          title: formatMessage(messages.emailBlastEditorInputHelperFromName)
-                        }
+                          title: formatMessage(messages.emailBlastEditorInputHelperFromName),
+                        },
                       }}
                     />
                     <Field
@@ -350,14 +362,14 @@ class EmailBlastEditor extends Component {
                         formItemProps: {
                           label: formatMessage(messages.emailBlastEditorInputLabelReplyTo),
                           required: true,
-                          ...fieldGridConfig
+                          ...fieldGridConfig,
                         },
                         inputProps: {
-                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo)
+                          placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
                         },
                         helpToolTipProps: {
-                          title: formatMessage(messages.emailBlastEditorInputHelperReplyTo)
-                        }
+                          title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),
+                        },
                       }}
                     />
                   </Row>
@@ -375,13 +387,18 @@ class EmailBlastEditor extends Component {
                 <hr />
                 <div id={'segments'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
-                    <FormTitle titleMessage={messages.segmentSelectionTitle} subTitleMessage={messages.segmentSelectionSubTitle} />
+                    <FormTitle
+                      titleMessage={messages.segmentSelectionTitle}
+                      subTitleMessage={messages.segmentSelectionSubTitle}
+                    />
                     <Dropdown
                       trigger={['click']}
                       overlay={(
                         <Menu onClick={this.handleSegmentActionClick} className="mcs-dropdown-actions">
                           { /* <Menu.Item key="1">New segment</Menu.Item> */}
-                          <Menu.Item key="2"><FormattedMessage {...messages.segmentSelectionChooseExisting} /></Menu.Item>
+                          <Menu.Item key="2">
+                            <FormattedMessage {...messages.segmentSelectionChooseExisting} />
+                          </Menu.Item>
                         </Menu>
                         )}
                     >
@@ -408,28 +425,28 @@ class EmailBlastEditor extends Component {
 EmailBlastEditor.defaultProps = {
   isCreationMode: true,
   blastName: '',
-  segments: []
+  segments: [],
 };
 
 EmailBlastEditor.propTypes = {
   match: PropTypes.shape({
-    url: PropTypes.string.isRequired
+    url: PropTypes.string.isRequired,
   }).isRequired,
   intl: intlShape.isRequired,
-  fieldValidators: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  fieldValidators: PropTypes.shape().isRequired,
   breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string,
   })).isRequired,
   segments: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    audience_segment_id: PropTypes.string.isRequired
+    audience_segment_id: PropTypes.string.isRequired,
   })),
   handleSubmit: PropTypes.func.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
 };
 
 EmailBlastEditor = compose(
@@ -437,7 +454,7 @@ EmailBlastEditor = compose(
   withRouter,
   reduxForm({
     form: 'emailBlastEditor',
-    enableReinitialize: true
+    enableReinitialize: true,
   }),
   withValidators,
 )(EmailBlastEditor);

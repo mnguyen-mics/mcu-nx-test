@@ -14,7 +14,7 @@ import * as menuActions from '../../state/Menu/actions';
 
 const messages = defineMessages({
   userAccount: { id: 'account.tab.title.user_account', defaultMessage: 'User Account' },
-  organisationAccount: { id: 'account.tab.title.organisation_account', defaultMessage: 'Organisation Account' }
+  organisationAccount: { id: 'account.tab.title.organisation_account', defaultMessage: 'Organisation Account' },
 });
 
 const TabPane = Tabs.TabPane;
@@ -31,39 +31,39 @@ class Account extends Component {
     const { openCloseMenu } = this.props;
     openCloseMenu({
       collapsed: true,
-      mode: 'vertical'
+      mode: 'vertical',
     });
   }
 
   getUrlParameters() {
     const {
-      location: { search }
+      location: { search },
     } = this.props;
 
     const parsed = parseSearch(search);
     const tab = parsed.tab ? parsed.tab : 'user_account';
 
     return {
-      currentTab: tab
+      currentTab: tab,
     };
   }
 
   switchTab(tabKey) {
     const {
       organisationId,
-      history
+      history,
     } = this.props;
 
     history.push({
       pathname: `/v2/o/${organisationId}/account`,
-      search: `?tab=${tabKey}`
+      search: `?tab=${tabKey}`,
     });
   }
 
   render() {
     const {
       intl: { formatMessage },
-      organisationName
+      organisationName,
     } = this.props;
 
     const urlParams = this.getUrlParameters();
@@ -84,19 +84,19 @@ Account.propTypes = {
   organisationId: PropTypes.string.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
   openCloseMenu: PropTypes.func.isRequired,
-  history: ReactRouterPropTypes.history.isRequired
+  history: ReactRouterPropTypes.history.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  organisationName: getDefaultWorkspaceOrganisationId(state)
+  organisationName: getDefaultWorkspaceOrganisationId(state),
 });
 
 const mapDispatchToProps = {
-  openCloseMenu: menuActions.openCloseMenu
+  openCloseMenu: menuActions.openCloseMenu,
 };
 
 Account.propTypes = {
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 Account = compose(
@@ -104,8 +104,8 @@ Account = compose(
   injectIntl,
   connect(
     mapStateToProps,
-    mapDispatchToProps
-  )
+    mapDispatchToProps,
+  ),
 )(Account);
 
 export default Account;

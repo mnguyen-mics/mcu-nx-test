@@ -25,7 +25,7 @@ const routes = [
   ...creativeRoutes,
   ...libraryRoutes,
   ...settingsRoutes,
-  ...accountRoutes
+  ...accountRoutes,
 ];
 
 export default routes;

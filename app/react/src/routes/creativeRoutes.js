@@ -1,11 +1,11 @@
 import {
   DisplayAdsActionBar,
-  DisplayAdsList
+  DisplayAdsList,
 } from '../containers/Creative/DisplayAds/List';
 
 import {
   EmailActionBar,
-  EmailList
+  EmailList,
 } from '../containers/Creative/EmailTemplates/List';
 
 const creativesRoutes = [
@@ -13,14 +13,14 @@ const creativesRoutes = [
     path: '/creatives/display',
     layout: 'main',
     contentComponent: DisplayAdsList,
-    actionBarComponent: DisplayAdsActionBar
+    actionBarComponent: DisplayAdsActionBar,
   },
   {
     path: '/creatives/email',
     layout: 'main',
     contentComponent: EmailList,
-    actionBarComponent: EmailActionBar
-  }
+    actionBarComponent: EmailActionBar,
+  },
 ];
 
 export default creativesRoutes;

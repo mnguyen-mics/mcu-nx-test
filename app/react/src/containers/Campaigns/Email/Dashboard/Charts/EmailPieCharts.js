@@ -5,19 +5,19 @@ import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
-import { PieChart } from '../../../../../components/PieChart';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import PieChart from '../../../../../components/PieChart';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
 import {
   updateSearch,
-  parseSearch
+  parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
 import {
   getTableDataSource,
-  flattenData
+  flattenData,
  } from '../../../../../state/Campaign/Email/selectors';
 
 class EmailPieCharts extends Component {
@@ -27,13 +27,13 @@ class EmailPieCharts extends Component {
       history,
       location: {
         search: currentSearch,
-        pathname
-      }
+        pathname,
+      },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, EMAIL_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, EMAIL_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -43,9 +43,9 @@ class EmailPieCharts extends Component {
     const {
       history: {
         location: {
-          search
-        }
-      }
+          search,
+        },
+      },
     } = this.props;
 
     const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
@@ -54,7 +54,7 @@ class EmailPieCharts extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
@@ -71,7 +71,7 @@ class EmailPieCharts extends Component {
     const {
       translations,
       hasFetchedCampaignStat,
-      flatData
+      flatData,
     } = this.props;
 
     const emailDelivered = flatData.uniq_email_sent - flatData.uniq_email_hard_bounced - flatData.uniq_email_soft_bounced;
@@ -91,27 +91,27 @@ class EmailPieCharts extends Component {
         case 'delivered':
           return [
             { key: 'delivered', val: emailDelivered ? emailDelivered : 0, color: '#ff9012' },
-            { key: 'rest', val: (emailDelivered === 0) ? 100 : Math.abs(emailSent - emailDelivered), color: '#eaeaea' }
+            { key: 'rest', val: (emailDelivered === 0) ? 100 : Math.abs(emailSent - emailDelivered), color: '#eaeaea' },
           ];
         case 'opens':
           return [
             { key: 'delivered', val: emailOpened ? emailOpened : 0 },
-            { key: 'rest', val: emailOpened === 0 ? 100 : Math.abs(emailSent - emailOpened) }
+            { key: 'rest', val: emailOpened === 0 ? 100 : Math.abs(emailSent - emailOpened) },
           ];
         case 'clicks2open':
           return [
             { key: 'clicks', val: emailClicks ? emailClicks : 0 },
-            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailOpened - emailClicks) }
+            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailOpened - emailClicks) },
           ];
         case 'clicks':
           return [
             { key: 'clicks', val: emailClicks ? emailClicks : 0 },
-            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailSent - emailClicks) }
+            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailSent - emailClicks) },
           ];
         case 'unsubscribe':
           return [
             { key: 'unsubscribe', val: emailUnsubscribe ? emailUnsubscribe : 0 },
-            { key: 'rest', val: emailUnsubscribe === 0 ? 100 : Math.abs(emailSent - emailUnsubscribe) }
+            { key: 'rest', val: emailUnsubscribe === 0 ? 100 : Math.abs(emailSent - emailUnsubscribe) },
           ];
         default:
           return [];
@@ -132,9 +132,12 @@ class EmailPieCharts extends Component {
         innerRadius: true,
         isHalf: isHalf,
         text: {
-          value: (ratioValeB === 0 || ratioValeA === 0) ? '0%' : generateRatio(ratioValeA, ratioValeB),
-          text: translations[translationKey]
-        }
+          value: (ratioValeB === 0 || ratioValeA === 0
+            ? '0%'
+            : generateRatio(ratioValeA, ratioValeB)
+          ),
+          text: translations[translationKey],
+        },
       };
       if (isHalf === true) {
         options.colors = [colorFormated, gray];
@@ -145,39 +148,62 @@ class EmailPieCharts extends Component {
       return options;
     };
 
-    return hasFetchedCampaignStat ? (
-      <div>
-        <Row>
-          <Col span={7}>
-            <PieChart identifier="pieDelivered1" dataset={generateData('delivered')} options={generateOptions(false, 'orange', 'DELIVERED', emailDelivered, emailSent)} />
-          </Col>
-          <Col span={17}>
-            <Row>
-              <Col span={12}>
-                <PieChart identifier="pieOpens1" dataset={generateData('opens')} options={generateOptions(true, 'blue', 'OPENS', emailOpened, emailSent)} />
-              </Col>
-              <Col span={12}>
-                <PieChart identifier="pieClicks1" dataset={generateData('clicks')} options={generateOptions(true, 'blue', 'CLICKS', emailClicks, emailSent)} />
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <PieChart identifier="pieClicks2Opens1" dataset={generateData('clicks2open')} options={generateOptions(true, 'blue', 'CLICKS_TO_OPENS', emailClicks, emailOpened)} />
-              </Col>
-              <Col span={12}>
-                <PieChart identifier="pieUnsubscribe1" dataset={generateData('unsubscribe')} options={generateOptions(true, 'blue', 'UNSUBSCRIBE', emailUnsubscribe, emailSent)} />
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </div>) : (<LoadingChart />);
+    return hasFetchedCampaignStat
+      ? (
+        <div>
+          <Row>
+            <Col span={7}>
+              <PieChart
+                identifier="pieDelivered1"
+                dataset={generateData('delivered')}
+                options={generateOptions(false, 'orange', 'DELIVERED', emailDelivered, emailSent)}
+              />
+            </Col>
+            <Col span={17}>
+              <Row>
+                <Col span={12}>
+                  <PieChart
+                    identifier="pieOpens1"
+                    dataset={generateData('opens')}
+                    options={generateOptions(true, 'blue', 'OPENS', emailOpened, emailSent)}
+                  />
+                </Col>
+                <Col span={12}>
+                  <PieChart
+                    identifier="pieClicks1"
+                    dataset={generateData('clicks')}
+                    options={generateOptions(true, 'blue', 'CLICKS', emailClicks, emailSent)}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <PieChart
+                    identifier="pieClicks2Opens1"
+                    dataset={generateData('clicks2open')}
+                    options={generateOptions(true, 'blue', 'CLICKS_TO_OPENS', emailClicks, emailOpened)}
+                  />
+                </Col>
+                <Col span={12}>
+                  <PieChart
+                    identifier="pieUnsubscribe1"
+                    dataset={generateData('unsubscribe')}
+                    options={generateOptions(true, 'blue', 'UNSUBSCRIBE', emailUnsubscribe, emailSent)}
+                  />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </div>
+      )
+      : <LoadingChart />;
   }
 
   render() {
     const {
       translations,
       dataSource,
-      hasFetchedCampaignStat
+      hasFetchedCampaignStat,
     } = this.props;
 
     const chartArea = (
@@ -189,7 +215,10 @@ class EmailPieCharts extends Component {
             </span>
           </Col>
         </Row>
-        { (dataSource.length === 0 && hasFetchedCampaignStat) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderPieCharts() }
+        {dataSource.length === 0 && hasFetchedCampaignStat
+          ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
+          : this.renderPieCharts()
+        }
       </div>
     );
 
@@ -197,24 +226,24 @@ class EmailPieCharts extends Component {
   }
 }
 EmailPieCharts.propTypes = {
-  translations: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  flatData: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
+  flatData: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedCampaignStat: state.campaignEmailSingle.campaignEmailPerformance.hasFetched,
   dataSource: getTableDataSource(state),
-  flatData: flattenData(state)
+  flatData: flattenData(state),
 });
 
 
 EmailPieCharts = connect(
-  mapStateToProps
+  mapStateToProps,
 )(EmailPieCharts);
 
 EmailPieCharts = withRouter(EmailPieCharts);

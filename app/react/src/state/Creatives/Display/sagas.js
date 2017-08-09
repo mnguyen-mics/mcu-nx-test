@@ -4,7 +4,7 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-    fetchCreativeDisplay
+    fetchCreativeDisplay,
 } from './actions';
 
 import CreativeService from '../../../services/CreativeService';
@@ -12,7 +12,7 @@ import CreativeService from '../../../services/CreativeService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 import {
-    CREATIVES_DISPLAY_FETCH
+    CREATIVES_DISPLAY_FETCH,
 } from '../../action-types';
 
 function* loadCreativeDisplay({ payload }) {
@@ -21,17 +21,17 @@ function* loadCreativeDisplay({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -39,11 +39,11 @@ function* loadCreativeDisplay({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(CreativeService.getDisplayAds, organisationId, initialOptions),
-        response: call(CreativeService.getDisplayAds, organisationId, options)
+        response: call(CreativeService.getDisplayAds, organisationId, options),
       };
     } else {
       allCalls = {
-        response: call(CreativeService.getDisplayAds, organisationId, options)
+        response: call(CreativeService.getDisplayAds, organisationId, options),
       };
     }
 
@@ -65,5 +65,5 @@ function* watchfetchCreativeDisplay() {
 }
 
 export const creativeDisplaySagas = [
-  fork(watchfetchCreativeDisplay)
+  fork(watchfetchCreativeDisplay),
 ];

@@ -10,7 +10,7 @@ const defaultGoalsApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 const goalsApi = (state = defaultGoalsApiState, action) => {
   switch (action.type) {
@@ -18,13 +18,13 @@ const goalsApi = (state = defaultGoalsApiState, action) => {
     case GOALS_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case GOALS_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case GOALS_FETCH.FAILURE:
       return {
@@ -44,8 +44,8 @@ const defaultPerformanceReportApiState = {
     items_per_page: 0,
     total_items: 0,
     columns_headers: [],
-    rows: []
-  }
+    rows: [],
+  },
 };
 const performanceReportApi = (state = defaultPerformanceReportApiState, action) => {
   switch (action.type) {
@@ -53,18 +53,18 @@ const performanceReportApi = (state = defaultPerformanceReportApiState, action) 
     case GOALS_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case GOALS_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload.data
+        ...action.payload.data,
       };
     case GOALS_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case GOALS_TABLE_RESET:
       return defaultPerformanceReportApiState;
@@ -75,7 +75,7 @@ const performanceReportApi = (state = defaultPerformanceReportApiState, action) 
 
 const goalsTable = combineReducers({
   goalsApi,
-  performanceReportApi
+  performanceReportApi,
 });
 
 const GoalsReducers = { goalsTable };

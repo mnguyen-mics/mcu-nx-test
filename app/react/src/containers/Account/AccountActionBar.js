@@ -12,17 +12,25 @@ class AccountActionBar extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
-    const breadcrumbMessages = defineMessages({ account: { id: 'account.account', defaultMessage: 'Account' } });
+    const breadcrumbMessages = defineMessages({
+      account: {
+        id: 'account.account',
+        defaultMessage: 'Account',
+      },
+    });
 
     const breadcrumbPaths = [{
       name: formatMessage(breadcrumbMessages.account),
-      url: { pathname: `/v2/o/${organisationId}/account`, search: '&tab=user_account' }
+      url: {
+        pathname: `/v2/o/${organisationId}/account`,
+        search: '&tab=user_account',
+      },
     }];
     return (<Actionbar path={breadcrumbPaths}>
       <Button type="primary" className="mcs-primary">
@@ -33,13 +41,13 @@ class AccountActionBar extends Component {
 }
 
 AccountActionBar.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  intl: intlShape.isRequired
+  match: PropTypes.shape().isRequired,
+  intl: intlShape.isRequired,
 };
 
 AccountActionBar = compose(
   withRouter,
-  injectIntl
+  injectIntl,
 )(AccountActionBar);
 
 export default AccountActionBar;

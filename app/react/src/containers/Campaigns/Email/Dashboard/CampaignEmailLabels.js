@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { LabelListView } from '../../../../components/LabelListView';
+import LabelListView from '../../../../components/LabelListView';
 
 import * as LabelsActions from '../../../../state/Labels/actions';
 import * as EmailsActions from '../../../../state/Campaign/Email/actions';
@@ -10,33 +10,25 @@ import * as EmailsActions from '../../../../state/Campaign/Email/actions';
 
 class CampaignEmailLabels extends Component {
 
-  constructor(props) {
-    super(props);
-    this.buildFilters = this.buildFilters.bind(this);
-    this.onClickOnCloseLabel = this.onClickOnCloseLabel.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
   componentDidMount() {
     const {
       params: {
-        campaignId
+        campaignId,
       },
       activeWorkspace: {
         organisationId,
       },
       getLabels,
-      getLabelsOfObject
+      getLabelsOfObject,
     } = this.props;
     getLabels(organisationId);
     getLabelsOfObject(organisationId, 'EMAIL_CAMPAIGN', campaignId);
   }
 
   render() {
-
     const {
       labels,
-      attachedLabels
+      attachedLabels,
     } = this.props;
 
     return (
@@ -53,8 +45,7 @@ class CampaignEmailLabels extends Component {
 
   }
 
-  buildFilters() {
-
+  buildFilters = () => {
     // const {
     //   campaignEmail
     // } = this.props;
@@ -70,27 +61,27 @@ class CampaignEmailLabels extends Component {
     };
   }
 
-  onClickOnCloseLabel(label) {
+  onClickOnCloseLabel = (label) => {
     const {
       activeWorkspace: {
         organisationId,
       },
       unPairLabelWithObject,
       params: {
-        campaignId
+        campaignId,
       },
     } = this.props;
     unPairLabelWithObject(label.id, organisationId, 'EMAIL_CAMPAIGN', campaignId);
   }
 
-  onSubmit(value) {
+  onSubmit = (value) => {
     const {
       activeWorkspace: {
         organisationId,
       },
       createLabels,
       campaignEmail,
-      pairLabelWithObject
+      pairLabelWithObject,
     } = this.props;
 
     if (value === 'CREATE_NEW') {
@@ -103,8 +94,8 @@ class CampaignEmailLabels extends Component {
 }
 
 CampaignEmailLabels.propTypes = {
-  campaignEmail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  activeWorkspace: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  campaignEmail: PropTypes.shape().isRequired,
+  activeWorkspace: PropTypes.shape().isRequired,
   getLabels: PropTypes.func.isRequired,
   createLabels: PropTypes.func.isRequired,
   pairLabelWithObject: PropTypes.func.isRequired,
@@ -122,13 +113,13 @@ CampaignEmailLabels.propTypes = {
   }).isRequired,
   getLabelsOfObject: PropTypes.func.isRequired,
   params: PropTypes.shape({
-    campaignId: PropTypes.string
+    campaignId: PropTypes.string,
   }).isRequired,
   attachedLabels: PropTypes.arrayOf(PropTypes.shape({
     isFetching: PropTypes.string,
-    data: PropTypes.object // eslint-disable-line react/forbid-prop-types
+    data: PropTypes.shape(),
   })).isRequired,
-  unPairLabelWithObject: PropTypes.func.isRequired
+  unPairLabelWithObject: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -151,7 +142,7 @@ const mapDispatchToProps = {
 
 CampaignEmailLabels = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(CampaignEmailLabels);
 
 export default CampaignEmailLabels;

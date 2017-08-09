@@ -3,5 +3,5 @@ import SegmentsActionbar from './SegmentsActionbar';
 
 export {
   AudienceSegmentsTable,
-  SegmentsActionbar
+  SegmentsActionbar,
 };

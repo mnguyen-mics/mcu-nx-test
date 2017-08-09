@@ -14,5 +14,5 @@ module.exports = {
   appPath: resolve('app'),
   appDistPath: resolve('dist/react'),
   publicPath: '/',
-  publicDistPath: '/react'
+  publicDistPath: '/react',
 };

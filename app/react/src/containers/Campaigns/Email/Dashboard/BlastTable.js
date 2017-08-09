@@ -17,7 +17,7 @@ class BlastTable extends Component {
     const {
       organisationId,
       match: { params: { campaignId } },
-      history
+      history,
     } = this.props;
 
     history.push(`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${blast.id}/edit`);
@@ -28,12 +28,12 @@ class BlastTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       isFetchingBlasts,
       isFetchingBlastsStat,
-      dataSet
+      dataSet,
     } = this.props;
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
@@ -58,49 +58,49 @@ class BlastTable extends Component {
             status = 'SENT';
           }
           return (<span className={`mcs-campaigns-status-${status}`}><FormattedMessage id={status} /></span>);
-        }
+        },
       },
       {
         translationKey: 'NAME',
         key: 'blast_name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${record.id}`}>{text}</Link>
+        render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${record.id}`}>{text}</Link>,
       },
       {
         translationKey: 'EMAIL_SENT',
         key: 'email_sent',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'EMAIL_HARD_BOUNCED',
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'EMAIL_SOFT_BOUNCED',
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      }
+        render: text => renderMetricData(text, '0,0'),
+      },
     ];
 
     const actionColumns = [
@@ -109,18 +109,18 @@ class BlastTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editBlast
+            callback: this.editBlast,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveBlast
-          }
-        ]
-      }
+            callback: this.archiveBlast,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (
@@ -149,7 +149,7 @@ export default compose(
     state => ({
       isFetchingBlasts: state.campaignEmailSingle.emailBlastApi.isFetching,
       isFetchingBlastsStat: state.campaignEmailSingle.emailBlastPerformanceApi.isFetching,
-      dataSet: getEmailBlastTableView(state)
-    })
-  )
+      dataSet: getEmailBlastTableView(state),
+    }),
+  ),
 )(BlastTable);

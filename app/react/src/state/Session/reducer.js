@@ -3,18 +3,18 @@ import {
   WORKSPACE,
   LOG_OUT,
   PUT_LOGO,
-  GET_LOGO
+  GET_LOGO,
 } from '../action-types';
 
 const defaultSessionState = {
   workspace: {
-    datamarts: []
+    datamarts: [],
   },
   connectedUser: {
-    workspaces: []
+    workspaces: [],
   },
   isFetchingWorkspace: false,
-  isUploadingLogo: false
+  isUploadingLogo: false,
 
 };
 
@@ -24,43 +24,43 @@ const session = (state = defaultSessionState, action) => {
       return {
         ...state,
         connectedUserLoaded: true,
-        connectedUser: { ...action.payload }
+        connectedUser: { ...action.payload },
       };
     case WORKSPACE.REQUEST:
       return {
         ...state,
-        isFetchingWorkspace: true
+        isFetchingWorkspace: true,
       };
     case WORKSPACE.SUCCESS:
       return {
         ...state,
         isFetchingWorkspace: false,
-        workspace: { ...action.payload }
+        workspace: { ...action.payload },
       };
     case WORKSPACE.FAILURE:
       return {
         ...state,
-        isFetchingWorkspace: false
+        isFetchingWorkspace: false,
       };
     case GET_LOGO.SUCCESS:
       return {
         ...state,
-        logoUrl: action.payload.logoUrl
+        logoUrl: action.payload.logoUrl,
       };
     case PUT_LOGO.REQUEST:
       return {
         ...state,
-        isUploadingLogo: true
+        isUploadingLogo: true,
       };
     case PUT_LOGO.FAILURE:
       return {
         ...state,
-        isUploadingLogo: false
+        isUploadingLogo: false,
       };
     case PUT_LOGO.SUCCESS:
       return {
         ...state,
-        isUploadingLogo: false
+        isUploadingLogo: false,
       };
     case LOG_OUT:
       return defaultSessionState;
@@ -70,7 +70,7 @@ const session = (state = defaultSessionState, action) => {
 };
 
 const SessionReducers = {
-  session
+  session,
 };
 
 export default SessionReducers;

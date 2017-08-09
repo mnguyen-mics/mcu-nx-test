@@ -23,5 +23,5 @@ const putLogo = (organisationId, formData) => {
 export default {
   getWorkspace,
   getLogo,
-  putLogo
+  putLogo,
 };

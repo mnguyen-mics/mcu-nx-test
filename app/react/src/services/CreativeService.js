@@ -5,7 +5,7 @@ const getCreatives = (organisationId, options = {}) => {
 
   const params = {
     organisation_id: organisationId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -34,5 +34,5 @@ export default {
   getCreative,
   getDisplayAds,
   getEmailTemplates,
-  getEmailTemplate
+  getEmailTemplate,
 };

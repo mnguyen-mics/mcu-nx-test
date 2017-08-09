@@ -7,14 +7,14 @@ export function persistedState(store = {}, action) { // eslint-disable-line no-u
 
   return {
     access_token,
-    refresh_token
+    refresh_token,
   };
 }
 
 const PersistentReducers = {
-  persistedState
+  persistedState,
 };
 
 export {
-  PersistentReducers
+  PersistentReducers,
 };

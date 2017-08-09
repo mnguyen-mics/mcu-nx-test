@@ -28,7 +28,7 @@ class AssetsFilesTable extends Component {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, ASSETS_SEARCH_SETTINGS),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
@@ -39,28 +39,28 @@ class AssetsFilesTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      fetchAssetsFiles
+      fetchAssetsFiles,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -70,7 +70,7 @@ class AssetsFilesTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, ASSETS_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, ASSETS_SEARCH_SETTINGS);
@@ -88,7 +88,7 @@ class AssetsFilesTable extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, ASSETS_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, ASSETS_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -97,12 +97,12 @@ class AssetsFilesTable extends Component {
   render() {
     const {
       location: {
-        search
+        search,
       },
       isFetchingAssetsFiles,
       dataSource,
       totalPlacements,
-      hasFetchingAssetsItems
+      hasFetchingAssetsItems,
     } = this.props;
 
     const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
@@ -113,12 +113,12 @@ class AssetsFilesTable extends Component {
       total: totalPlacements,
       onChange: page =>
         this.updateLocationSearch({
-          currentPage: page
+          currentPage: page,
         }),
       onShowSizeChange: (current, size) =>
         this.updateLocationSearch({
-          pageSize: size
-        })
+          pageSize: size,
+        }),
     };
 
     const dataColumns = [
@@ -133,26 +133,26 @@ class AssetsFilesTable extends Component {
               <span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} />
             </a>
           </div>
-        )
+        ),
       },
       {
         translationKey: 'NAME',
         key: 'original_filename',
         isHiddable: false,
-        render: (text, record) => <a href={`https://assets.mediarithmics.com${record.file_path}`} target="_blank" rel="noreferrer noopener">{text}</a>
+        render: (text, record) => <a href={`https://assets.mediarithmics.com${record.file_path}`} target="_blank" rel="noreferrer noopener">{text}</a>,
       },
       {
         translationKey: 'TYPE',
         key: 'mime_type',
         isHiddable: false,
-        render: text => <span>{text}</span>
+        render: text => <span>{text}</span>,
       },
       {
         translationKey: 'DIMENSIONS',
         key: 'width',
         isHiddable: false,
-        render: (text, record) => <span>{text}x{record.height}</span>
-      }
+        render: (text, record) => <span>{text}x{record.height}</span>,
+      },
     ];
 
     const actionColumns = [
@@ -161,15 +161,15 @@ class AssetsFilesTable extends Component {
         actions: [
           {
             translationKey: 'ARCHIVE',
-            callback: this.archiveAsset
-          }
-        ]
-      }
+            callback: this.archiveAsset,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return hasFetchingAssetsItems ? (
@@ -210,13 +210,13 @@ class AssetsFilesTable extends Component {
           fetchAssetsFiles(organisationId, filter);
         });
       },
-      onCancel() {}
+      onCancel() {},
     });
   }
 }
 
 AssetsFilesTable.defaultProps = {
-  archiveAssetList: () => {}
+  archiveAssetList: () => {},
 };
 
 AssetsFilesTable.propTypes = {
@@ -232,7 +232,7 @@ AssetsFilesTable.propTypes = {
 
   fetchAssetsFiles: PropTypes.func.isRequired,
   archiveAssetList: PropTypes.func.isRequired,
-  resetAssetsFiles: PropTypes.func.isRequired
+  resetAssetsFiles: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -240,13 +240,13 @@ const mapStateToProps = state => ({
   hasFetchingAssetsItems: state.assetsFilesTable.assetsFilesApi.hasItems,
   isFetchingAssetsFiles: state.assetsFilesTable.assetsFilesApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalPlacements: state.assetsFilesTable.assetsFilesApi.total
+  totalPlacements: state.assetsFilesTable.assetsFilesApi.total,
 });
 
 const mapDispatchToProps = {
   fetchAssetsFiles: AssetsFilesActions.fetchAssetsFiles.request,
   // archiveAssetList: CampaignEmailAction.archiveAssetList,
-  resetAssetsFiles: AssetsFilesActions.resetAssetsFiles
+  resetAssetsFiles: AssetsFilesActions.resetAssetsFiles,
 };
 
 AssetsFilesTable = connect(mapStateToProps, mapDispatchToProps)(AssetsFilesTable);

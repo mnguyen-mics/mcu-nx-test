@@ -20,7 +20,7 @@ function* fetchTranslations(userLocale) {
     const params = {};
     const options = {
       authenticated: false,
-      localUrl: true
+      localUrl: true,
     };
     const transations = yield call(ApiService.getRequest, `react/src/assets/i18n/${locale}.json`, params, null, options);
     yield put(loadTranslations.success(transations));
@@ -36,5 +36,5 @@ function* watchLoadTranslations() {
 
 export const translationsSagas = [
   fork(watchLoadTranslations),
-  fork(fetchTranslations)
+  fork(fetchTranslations),
 ];

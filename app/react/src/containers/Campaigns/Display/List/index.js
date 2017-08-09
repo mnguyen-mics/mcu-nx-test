@@ -3,5 +3,5 @@ import CampaignsDisplayTable from './CampaignsDisplayTable';
 
 export {
     CampaignsDisplayActionbar,
-    CampaignsDisplayTable
+    CampaignsDisplayTable,
 };

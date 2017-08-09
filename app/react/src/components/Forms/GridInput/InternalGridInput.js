@@ -1,33 +1,29 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Input } from 'antd';
 
-class InternalGridInput extends Component {
-  render() {
+function InternalGridInput({
+  input,
+  meta: { error, touched },
+  className,
+  ...other
+}) {
 
-    const {
-      input,
-      meta: { error, touched },
-      className,
-      ...other
-    } = this.props;
+  const classValue = (touched && error) ? 'mics-gridinput-input-error' : className;
 
-    const classValue = (touched && error) ? 'mics-gridinput-input-error' : className;
-
-    return (
-      <div> <Input {...input} className={classValue} type="text" {...other} /> </div>
-    );
-  }
+  return (
+    <div> <Input {...input} className={classValue} type="text" {...other} /> </div>
+  );
 }
 
 InternalGridInput.defaultProps = {
-  input: ['form-control']
+  input: ['form-control'],
 };
 
 InternalGridInput.propTypes = {
-  input: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  meta: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  className: PropTypes.string.isRequired
+  input: PropTypes.shape(),
+  meta: PropTypes.shape().isRequired,
+  className: PropTypes.string.isRequired,
 };
 
 export default InternalGridInput;

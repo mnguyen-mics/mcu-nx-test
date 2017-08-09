@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
@@ -27,7 +27,7 @@ const fetchExportData = (organisationId, filter) => {
     const options = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
-      max_results: 2000
+      max_results: 2000,
     };
 
     const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
@@ -49,27 +49,27 @@ const fetchExportData = (organisationId, filter) => {
     CampaignService.getCampaigns(
       organisationId,
       campaignType,
-      buildOptionsForGetCampaigns()
+      buildOptionsForGetCampaigns(),
     ),
     ReportService.getEmailDeliveryReport(
       organisationId,
       startDate,
       endDate,
-      dimension
-    )
+      dimension,
+    ),
   ]);
 
   return apiResults.then(results => {
     const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
-      'campaign_id'
+      'campaign_id',
     );
 
     const mergedData = Object.keys(campaignsDisplay).map(campaignId => {
       return {
         ...campaignsDisplay[campaignId],
-        ...performanceReport[campaignId]
+        ...performanceReport[campaignId],
       };
     });
 
@@ -82,7 +82,7 @@ class CampaignsEmailActionbar extends Component {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
     this.state = {
-      exportIsRunning: false
+      exportIsRunning: false,
     };
   }
 
@@ -91,13 +91,13 @@ class CampaignsEmailActionbar extends Component {
 
     const filter = parseSearch(
       this.props.location.search,
-      EMAIL_SEARCH_SETTINGS
+      EMAIL_SEARCH_SETTINGS,
     );
 
     this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(
       translations.EXPORT_IN_PROGRESS,
-      0
+      0,
     );
 
     fetchExportData(organisationId, filter)
@@ -106,17 +106,17 @@ class CampaignsEmailActionbar extends Component {
           organisationId,
           data,
           filter,
-          translations
+          translations,
         );
         this.setState({
-          exportIsRunning: false
+          exportIsRunning: false,
         });
         hideExportLoadingMsg();
       })
       .catch(() => {
         // TODO notify error
         this.setState({
-          exportIsRunning: false
+          exportIsRunning: false,
         });
         hideExportLoadingMsg();
       });
@@ -130,8 +130,8 @@ class CampaignsEmailActionbar extends Component {
     const breadcrumbPaths = [
       {
         name: translations.EMAILS,
-        url: `/v2/o/${organisationId}/campaigns/email`
-      }
+        url: `/v2/o/${organisationId}/campaigns/email`,
+      },
     ];
 
     return (
@@ -153,11 +153,11 @@ class CampaignsEmailActionbar extends Component {
 CampaignsEmailActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 CampaignsEmailActionbar = compose(withTranslations, withRouter)(
-  CampaignsEmailActionbar
+  CampaignsEmailActionbar,
 );
 
 export default CampaignsEmailActionbar;

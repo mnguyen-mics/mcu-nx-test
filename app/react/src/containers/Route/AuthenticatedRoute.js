@@ -4,16 +4,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   Route,
-  Redirect
+  Redirect,
 } from 'react-router-dom';
 
-import { NotFound } from '../../components/NotFound';
+import NotFound from '../../components/NotFound';
 import AuthService from '../../services/AuthService';
 import log from '../../utils/Logger';
 import { getWorkspace } from '../../state/Session/actions';
 import {
   hasAccessToOrganisation,
-  hasWorkspace
+  hasWorkspace,
  } from '../../state/Session/selectors';
 
 class AuthenticatedRoute extends Component {
@@ -21,10 +21,10 @@ class AuthenticatedRoute extends Component {
   componentDidMount() {
     const {
       computedMatch: {
-        params: { organisationId }
+        params: { organisationId },
       },
       getWorkspaceRequest,
-      hasWorkspaceLoaded
+      hasWorkspaceLoaded,
     } = this.props;
 
     if (!hasWorkspaceLoaded(organisationId)) {
@@ -36,14 +36,14 @@ class AuthenticatedRoute extends Component {
 
     const {
       computedMatch: {
-        params: { organisationId }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     const {
       computedMatch: {
-        params: { organisationId: nextOrganisationId }
-      }
+        params: { organisationId: nextOrganisationId },
+      },
     } = nextProps;
 
     if (nextOrganisationId !== organisationId) {
@@ -60,10 +60,10 @@ class AuthenticatedRoute extends Component {
     const {
       render,
       computedMatch: {
-        params: { organisationId }
+        params: { organisationId },
       },
       accessGrantedToOrganisation,
-      connectedUserLoaded
+      connectedUserLoaded,
     } = this.props;
 
     const authenticated = AuthService.isAuthenticated() && connectedUserLoaded; // if access token is present in local storage and valid
@@ -95,22 +95,22 @@ AuthenticatedRoute.propTypes = {
   getWorkspaceRequest: PropTypes.func.isRequired,
   accessGrantedToOrganisation: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
   hasWorkspaceLoaded: PropTypes.func.isRequired,
-  connectedUserLoaded: PropTypes.bool.isRequired
+  connectedUserLoaded: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   accessGrantedToOrganisation: hasAccessToOrganisation(state),
   hasWorkspaceLoaded: hasWorkspace(state),
-  connectedUserLoaded: state.session.connectedUserLoaded
+  connectedUserLoaded: state.session.connectedUserLoaded,
 });
 
 const mapDispatchToProps = {
-  getWorkspaceRequest: getWorkspace.request
+  getWorkspaceRequest: getWorkspace.request,
 };
 
 AuthenticatedRoute = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AuthenticatedRoute);
 
 export default AuthenticatedRoute;

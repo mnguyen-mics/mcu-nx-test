@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Spin } from 'antd';
 
-const LoadingChart = () => {
+function LoadingChart() {
 
   return (
     <Row className="mcs-card-no-data">
@@ -10,7 +10,6 @@ const LoadingChart = () => {
       </Col>
     </Row>
   );
-
-};
+}
 
 export default LoadingChart;

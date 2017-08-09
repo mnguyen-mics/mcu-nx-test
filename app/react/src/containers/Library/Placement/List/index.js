@@ -3,5 +3,5 @@ import PlacementTable from './PlacementTable';
 
 export {
   PlacementActionBar,
-  PlacementTable
+  PlacementTable,
 };

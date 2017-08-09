@@ -1,5 +1,5 @@
 import NavigatorMenu from './NavigatorMenu';
 
 export {
-  NavigatorMenu
+  NavigatorMenu,
 };

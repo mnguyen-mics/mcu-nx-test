@@ -1,13 +1,13 @@
 import {
   PASSWORD_FORGOT,
-  PASSWORD_FORGOT_RESET
+  PASSWORD_FORGOT_RESET,
 } from '../action-types';
 
 const defaultForgotPasswordState = {
   isRequesting: false,
   hasError: false,
   passwordSentSuccess: false,
-  error: {}
+  error: {},
 };
 
 const forgotPassword = (state = defaultForgotPasswordState, action) => {
@@ -17,19 +17,19 @@ const forgotPassword = (state = defaultForgotPasswordState, action) => {
     case PASSWORD_FORGOT.REQUEST:
       return {
         ...state,
-        isRequesting: true
+        isRequesting: true,
       };
     case PASSWORD_FORGOT.FAILURE:
       return {
         ...state,
         isRequesting: false,
         hasError: true,
-        error: action.payload
+        error: action.payload,
       };
     case PASSWORD_FORGOT.SUCCESS:
       return {
         ...state,
-        passwordSentSuccess: true
+        passwordSentSuccess: true,
       };
     case PASSWORD_FORGOT_RESET:
       return defaultForgotPasswordState;
@@ -40,7 +40,7 @@ const forgotPassword = (state = defaultForgotPasswordState, action) => {
 };
 
 const ForgotPasswordReducers = {
-  forgotPassword
+  forgotPassword,
 };
 
 export default ForgotPasswordReducers;

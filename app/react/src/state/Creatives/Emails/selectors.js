@@ -7,12 +7,12 @@ const getEmailTemplatesTotal = state => state.creatives.emailTemplates.metadata.
 const getEmailTemplates = createSelector(
   state => state.creatives.emailTemplates.allIds,
   state => state.creatives.emailTemplates.byId,
-  (allEmailTemplates, emailTemplatesById) => allEmailTemplates.map(id => emailTemplatesById[id])
+  (allEmailTemplates, emailTemplatesById) => allEmailTemplates.map(id => emailTemplatesById[id]),
 );
 
 export {
   getEmailTemplates,
   isFetchingEmailTemplates,
   hasEmailTemplates,
-  getEmailTemplatesTotal
+  getEmailTemplatesTotal,
 };

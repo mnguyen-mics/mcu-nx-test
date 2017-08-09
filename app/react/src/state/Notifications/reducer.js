@@ -1,7 +1,7 @@
 import {
   NOTIFICATIONS_ADD,
   NOTIFICATIONS_REMOVE,
-  NOTIFICATIONS_RESET
+  NOTIFICATIONS_RESET,
 } from '../action-types';
 
 const notifications = (state = [], action) => {
@@ -9,7 +9,7 @@ const notifications = (state = [], action) => {
     case NOTIFICATIONS_ADD:
       return [
         ...state,
-        action.payload
+        action.payload,
       ];
     case NOTIFICATIONS_REMOVE:
       return state.filter(notification => {
@@ -23,4 +23,3 @@ const notifications = (state = [], action) => {
 };
 
 export default { notifications };
-

@@ -5,12 +5,12 @@ const getConsents = (organisationId, options = {}) => {
 
   const params = {
     organisation_id: organisationId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
 };
 
 export default {
-  getConsents
+  getConsents,
 };

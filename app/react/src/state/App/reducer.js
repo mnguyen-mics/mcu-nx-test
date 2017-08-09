@@ -1,22 +1,22 @@
 import {
-  APP_STARTUP
+  APP_STARTUP,
 } from '../action-types';
 
 const app = (state = {
   initialized: false,
-  initializationError: false
+  initializationError: false,
 }, action) => {
   switch (action.type) {
     case APP_STARTUP.SUCCESS:
       return {
         ...state,
-        initialized: true
+        initialized: true,
       };
     case APP_STARTUP.FAILURE:
       return {
         ...state,
         initializationError: true,
-        error: action.payload
+        error: action.payload,
       };
     default:
       return state;
@@ -24,7 +24,7 @@ const app = (state = {
 };
 
 const AppReducer = {
-  app
+  app,
 };
 
 export default AppReducer;

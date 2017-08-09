@@ -8,7 +8,7 @@ import {
   fetchCampaignEmailDeliveryReport,
   updateEmailCampaign,
   fetchAllEmailBlast,
-  fetchAllEmailBlastPerformance
+  fetchAllEmailBlastPerformance,
 } from './actions';
 
 import EmailCampaignService from '../../../services/EmailCampaignService';
@@ -19,14 +19,14 @@ import {
     CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
     CAMPAIGN_EMAIL_ARCHIVE,
     CAMPAIGN_EMAIL_UPDATE,
-    CAMPAIGN_EMAIL_LOAD_ALL
+    CAMPAIGN_EMAIL_LOAD_ALL,
 } from '../../action-types';
 
 function* loadCampaignEmail({ payload }) {
   try {
 
     const {
-      campaignId
+      campaignId,
     } = payload;
 
     if (!campaignId) throw new Error('Payload is invalid');
@@ -45,7 +45,7 @@ function* loadDeliveryReport({ payload }) {
     const {
       organisationId,
       campaignId,
-      filter
+      filter,
     } = payload;
 
     if (!(organisationId || campaignId || filter)) throw new Error('Payload is invalid');
@@ -68,7 +68,7 @@ function* modifyCampaignEmail({ payload }) {
 
     const {
       campaignId,
-      body
+      body,
     } = payload;
 
     if (!campaignId) throw new Error('Payload is invalid');
@@ -86,7 +86,7 @@ function* loadAllEmailBlast({ payload }) {
   try {
 
     const {
-      campaignId
+      campaignId,
     } = payload;
 
     if (!campaignId) throw new Error('Payload is invalid');
@@ -104,7 +104,7 @@ function* loadAllEmailBlastPErformance({ payload }) {
     const {
       organisationId,
       campaignId,
-      filter
+      filter,
     } = payload;
 
     if (!(organisationId || campaignId || filter)) throw new Error('Payload is invalid');
@@ -161,5 +161,5 @@ export const campaignEmailSagas = [
   fork(watchArchiveCampaignEmail),
   fork(watchLoadCampaignAndPerformance),
   fork(watchLoadBlast),
-  fork(watchLoadBlastPerformance)
+  fork(watchLoadBlastPerformance),
 ];

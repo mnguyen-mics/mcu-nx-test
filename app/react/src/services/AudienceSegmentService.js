@@ -6,7 +6,7 @@ const getSegments = (organisationId, datamartId, options = {}) => {
   const params = {
     organisation_id: organisationId,
     datamart_id: datamartId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -16,10 +16,10 @@ const getSegment = (segmentId, options = {}) => {
   const endpoint = `audience_segments/${segmentId}`;
 
   const params = {
-    ...options
+    ...options,
   };
 
-  return ApiService.getRequest(endpoint, params).map(res => res.data);
+  return ApiService.getRequest(endpoint, params).then(res => res.data);
 };
 
 const createOverlap = (datamartId, segmentId) => {
@@ -35,7 +35,7 @@ const retrieveOverlap = (segmentId, firstResult, maxResult) => {
   const params = {
     audienceSegmentId: segmentId,
     first_result: firstResult,
-    max_results: maxResult
+    max_results: maxResult,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -56,5 +56,5 @@ export default {
   getSegment,
   getEmailCount,
   createOverlap,
-  retrieveOverlap
+  retrieveOverlap,
 };

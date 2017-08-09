@@ -6,12 +6,12 @@ const getPartitions = (organisationId, datamartId, options = {}) => {
   const params = {
     organisation_id: organisationId,
     datamart_id: datamartId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
 };
 
 export default {
-  getPartitions
+  getPartitions,
 };

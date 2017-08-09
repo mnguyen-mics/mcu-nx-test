@@ -8,17 +8,17 @@ const getPerformanceReportView = state => state.campaignsDisplayTable.performanc
 
 const getCampaignsDisplayById = createSelector(
   getCampaignsDisplay,
-  campaignsDisplay => normalizeArrayOfObject(campaignsDisplay, 'id')
+  campaignsDisplay => normalizeArrayOfObject(campaignsDisplay, 'id'),
 );
 
 const convertPerformanceReportToObjectArray = createSelector(
   getPerformanceReportView,
-  (reportView) => normalizeReportView(reportView)
+  (reportView) => normalizeReportView(reportView),
 );
 
 const getStatByCampaignId = createSelector(
   convertPerformanceReportToObjectArray,
-  (array) => normalizeArrayOfObject(array, 'campaign_id')
+  (array) => normalizeArrayOfObject(array, 'campaign_id'),
 );
 
 const getTableDataSource = createSelector(
@@ -28,12 +28,12 @@ const getTableDataSource = createSelector(
     return Object.keys(campaignsDisplay).map((campaignId) => {
       return {
         ...statistics[campaignId],
-        ...campaignsDisplay[campaignId]
+        ...campaignsDisplay[campaignId],
       };
     });
-  }
+  },
 );
 
 export {
-  getTableDataSource
+  getTableDataSource,
 };

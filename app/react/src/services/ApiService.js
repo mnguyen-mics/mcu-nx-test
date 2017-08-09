@@ -23,13 +23,13 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
   const token = AuthService.getAccessToken();
 
   const config = {
-    method
+    method,
   };
 
   if (!options.localUrl && authenticated) {
     if (token) {
       config.headers = {
-        Authorization: token
+        Authorization: token,
       };
     } else {
       throw new Error(`Error. Authenticated without token, endpoint:${endpoint}`);
@@ -43,7 +43,7 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
   } else if (!bodyIsFormData) {
     config.headers = Object.assign({}, config.headers, {
       'Accept': 'application/json', // eslint-disable-line
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
   }
 
@@ -105,5 +105,5 @@ export default {
   getRequest,
   postRequest,
   putRequest,
-  deleteRequest
+  deleteRequest,
 };

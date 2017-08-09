@@ -16,7 +16,7 @@ class NavigationPrompt extends Component {
       if (this.props.when) {
         this.setState({
           openModal: true,
-          nextLocation: nextLocation
+          nextLocation: nextLocation,
         });
       }
       return !this.props.when;
@@ -47,7 +47,7 @@ class NavigationPrompt extends Component {
       Modal.confirm({
         ...this.props.modalProps,
         onOk() { return self.onConfirm(); },
-        onCancel() { return self.onCancel(); }
+        onCancel() { return self.onCancel(); },
       });
     }
   }
@@ -63,8 +63,8 @@ NavigationPrompt.defaultProps = {
     content: 'Do you want to close anyway ?',
     iconType: 'exclamation-circle',
     okText: 'Ok',
-    cancelText: 'Cancel'
-  }
+    cancelText: 'Cancel',
+  },
 };
 
 NavigationPrompt.propTypes = {

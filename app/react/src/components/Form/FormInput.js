@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
-import { McsIcons } from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons';
 
 const defaultTooltipPlacement = 'right';
 
-const FormInput = (
+function FormInput(
   { input,
     meta,
     formItemProps,
     inputProps,
-    helpToolTipProps
-  }) => {
+    helpToolTipProps,
+  }) {
 
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
@@ -23,7 +23,7 @@ const FormInput = (
 
   const mergedTooltipProps = {
     placement: defaultTooltipPlacement,
-    ...helpToolTipProps
+    ...helpToolTipProps,
   };
 
   return (
@@ -51,12 +51,12 @@ const FormInput = (
       </Row>
     </Form.Item>
   );
-};
+}
 
 FormInput.defaultProps = {
   formItemProps: {},
   inputProps: {},
-  helpToolTipProps: {}
+  helpToolTipProps: {},
 };
 
 FormInput.propTypes = {
@@ -72,19 +72,19 @@ FormInput.propTypes = {
       PropTypes.element,
       PropTypes.string,
     ]),
-    colon: PropTypes.bool
+    colon: PropTypes.bool,
   }),
   inputProps: PropTypes.shape({
     type: PropTypes.string,
     placeholder: PropTypes.string,
     size: PropTypes.oneOf(['small', 'default', 'large']),
-    className: PropTypes.string
+    className: PropTypes.string,
   }),
   helpToolTipProps: PropTypes.shape({
     tile: PropTypes.string,
     placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
       'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
-      'leftTop', 'leftBottom', 'rightTop', 'rightBottom'])
+      'leftTop', 'leftBottom', 'rightTop', 'rightBottom']),
   }),
 };
 

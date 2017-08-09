@@ -7,7 +7,7 @@ import {
   GOAL_UPDATE_REQUEST,
   GOAL_UPDATE_REQUEST_FAILURE,
   GOAL_UPDATE_REQUEST_SUCCESS,
-  GOAL_RESET
+  GOAL_RESET,
 } from '../../action-types';
 
 const updateGoal = (id, body) => {
@@ -25,8 +25,8 @@ const updateGoal = (id, body) => {
         endpoint: `goals/${id}`,
         body,
         authenticated: true,
-        types: [GOAL_UPDATE_REQUEST, GOAL_UPDATE_REQUEST_FAILURE, GOAL_UPDATE_REQUEST_SUCCESS]
-      }
+        types: [GOAL_UPDATE_REQUEST, GOAL_UPDATE_REQUEST_FAILURE, GOAL_UPDATE_REQUEST_SUCCESS],
+      },
     });
   };
 };
@@ -40,7 +40,7 @@ const archiveGoal = (id) => {
     }
 
     const body = {
-      archived: true
+      archived: true,
     };
 
     dispatch({ type: GOAL_ARCHIVE_REQUEST });
@@ -55,7 +55,7 @@ const archiveGoal = (id) => {
 const resetGoal = () => {
   return (dispatch) => {
     return dispatch({
-      type: GOAL_RESET
+      type: GOAL_RESET,
     });
   };
 };
@@ -63,5 +63,5 @@ const resetGoal = () => {
 export {
   archiveGoal,
   updateGoal,
-  resetGoal
+  resetGoal,
 };

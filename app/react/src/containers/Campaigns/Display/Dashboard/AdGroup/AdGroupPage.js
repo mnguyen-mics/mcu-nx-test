@@ -42,8 +42,8 @@ class AdGroupPage extends Component {
           isUpdating: false,
           isArchiving: false,
           hasItems: true,
-          hasFetched: false
-        }
+          hasFetched: false,
+        },
       },
       adGroups: {
         items: {
@@ -52,17 +52,17 @@ class AdGroupPage extends Component {
           isUpdating: false,
           isArchiving: false,
           hasItems: true,
-          hasFetched: false
+          hasFetched: false,
         },
         performance: {
           performance: [],
           isLoading: false,
-          hasFetched: false
+          hasFetched: false,
         },
         mediaPerformance: {
           performance: [],
           isLoading: false,
-          hasFetched: false
+          hasFetched: false,
         },
       },
       ads: {
@@ -73,14 +73,14 @@ class AdGroupPage extends Component {
           isUpdating: false,
           isArchiving: false,
           hasItems: true,
-          hasFetched: false
+          hasFetched: false,
         },
         performance: {
           performanceById: {},
           isLoading: false,
-          hasFetched: false
-        }
-      }
+          hasFetched: false,
+        },
+      },
     };
   }
 
@@ -98,7 +98,7 @@ class AdGroupPage extends Component {
 
     this.setState((prevState) => {
       const nextState = {
-        ...prevState
+        ...prevState,
       };
       nextState.campaign.items.isLoading = true;
       nextState.adGroups.items.isLoading = true;
@@ -123,7 +123,7 @@ class AdGroupPage extends Component {
       delete adGroup.ads;
       this.setState((prevState) => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.campaign.items.isLoading = false;
         nextState.adGroups.items.isLoading = false;
@@ -140,7 +140,7 @@ class AdGroupPage extends Component {
     getAdGroupPerf().then(response => {
       this.setState((prevState) => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.adGroups.performance.isLoading = false;
         nextState.adGroups.performance.hasFetched = true;
@@ -151,7 +151,7 @@ class AdGroupPage extends Component {
     getAdPerf().then(response => {
       this.setState((prevState) => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.ads.performance.isLoading = false;
         nextState.ads.performance.hasFetched = true;
@@ -162,7 +162,7 @@ class AdGroupPage extends Component {
     getMediaPerf().then(response => {
       this.setState((prevState) => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.adGroups.mediaPerformance.isLoading = false;
         nextState.adGroups.mediaPerformance.hasFetched = true;
@@ -174,12 +174,12 @@ class AdGroupPage extends Component {
 
   updateAdGroup(adGroupId, body) {
     const {
-      notifyError
+      notifyError,
     } = this.props;
     DisplayCampaignService.updateAdGroup(this.state.campaign.items.itemById.id, adGroupId, body).then(response => {
       this.setState(prevState => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.adGroups.items.itemById = response.data;
       });
@@ -193,18 +193,18 @@ class AdGroupPage extends Component {
       intl: { formatMessage },
       notifySuccess,
       notifyError,
-      removeNotification
+      removeNotification,
     } = this.props;
     this.setState(prevState => {
       const nextState = {
-        ...prevState
+        ...prevState,
       };
       nextState.ads.items.itemById[adId].status = body.status;
     });
     return DisplayCampaignService.updateAd(adId, this.state.campaign.items.itemById.id, this.state.adGroups.items.itemById.id, body).then(response => {
       this.setState(prevState => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.ads.items.itemById[adId].status = response.data.status;
       });
@@ -222,7 +222,7 @@ class AdGroupPage extends Component {
           description: successMessage.body,
           btn: (<Button type="primary" size="small" onClick={undo} >
             <span>{formatMessage(messages.undo)}</span>
-          </Button>)
+          </Button>),
         });
 
       }
@@ -230,11 +230,11 @@ class AdGroupPage extends Component {
     }).catch(error => {
       notifyError(error, {
         message: messages.notificationError,
-        description: messages.notificationErrorGeneric
+        description: messages.notificationErrorGeneric,
       });
       this.setState(prevState => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.ads.items.itemById[adId].status = undoBody.status;
       });
@@ -246,20 +246,20 @@ class AdGroupPage extends Component {
       history,
       location: {
         search,
-        pathname
+        pathname,
       },
       match: {
         params: {
           organisationId,
           campaignId,
-          adGroupId
-        }
+          adGroupId,
+        },
       },
     } = this.props;
     if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+        search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -270,14 +270,14 @@ class AdGroupPage extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
           organisationId,
           campaignId,
-          adGroupId
-        }
+          adGroupId,
+        },
       },
       history,
     } = this.props;
@@ -285,22 +285,22 @@ class AdGroupPage extends Component {
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch
+        search: nextSearch,
       },
       match: {
         params: {
           campaignId: nextCampaignId,
           organisationId: nextOrganisationId,
-          adGroupId: nextAdGroupId
-        }
-      }
+          adGroupId: nextAdGroupId,
+        },
+      },
     } = nextProps;
 
     if (!compareSearchs(search, nextSearch) || campaignId !== nextCampaignId || adGroupId !== nextAdGroupId || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+          search: buildDefaultSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
         });
       } else {
         const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -314,7 +314,7 @@ class AdGroupPage extends Component {
       return Object.keys(a).map((c) => {
         return {
           ...b[c],
-          ...a[c]
+          ...a[c],
         };
       });
     }
@@ -344,13 +344,13 @@ class AdGroupPage extends Component {
       media: {
         isLoading: this.state.adGroups.mediaPerformance.isLoading,
         hasFetched: this.state.adGroups.mediaPerformance.hasFetched,
-        items: this.state.adGroups.mediaPerformance.performance
+        items: this.state.adGroups.mediaPerformance.performance,
       },
       adGroups: {
         isLoading: this.state.adGroups.performance.isLoading,
         hasFetched: this.state.adGroups.performance.hasFetched,
-        items: this.state.adGroups.performance.performance
-      }
+        items: this.state.adGroups.performance.performance,
+      },
     };
 
     return (<AdGroup
@@ -382,8 +382,8 @@ AdGroupPage = compose(
     {
       notifyError: NotificationActions.notifyError,
       notifySuccess: NotificationActions.notifySuccess,
-      removeNotification: NotificationActions.removeNotification
-    }
+      removeNotification: NotificationActions.removeNotification,
+    },
   ),
 )(AdGroupPage);
 

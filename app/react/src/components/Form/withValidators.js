@@ -4,12 +4,12 @@ import { injectIntl, defineMessages } from 'react-intl';
 const defaultErrorMessages = defineMessages({
   required: {
     id: 'common.form.field.error.required',
-    defaultMessage: 'required'
+    defaultMessage: 'required',
   },
   invalidEmail: {
     id: 'common.form.field.error.invalid_email',
-    defaultMessage: 'invalid email address'
-  }
+    defaultMessage: 'invalid email address',
+  },
 });
 
 const isRequired = formatMessage => value => {
@@ -29,9 +29,9 @@ const withValidators = compose(
   withProps(({ intl: { formatMessage } }) => ({
     fieldValidators: {
       isRequired: isRequired(formatMessage),
-      isValidEmail: isValidEmail(formatMessage)
-    }
-  }))
+      isValidEmail: isValidEmail(formatMessage),
+    },
+  })),
 );
 
 export default withValidators;

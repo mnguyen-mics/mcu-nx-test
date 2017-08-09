@@ -32,7 +32,7 @@ export const normalizeReportView = (reportView) => {
   return rows.map(row => {
     return headers.reduce((acc, header, index) => ({
       ...acc,
-      [header]: row[index]
+      [header]: row[index],
     }), {});
   });
 };

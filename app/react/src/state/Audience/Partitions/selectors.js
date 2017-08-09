@@ -3,5 +3,5 @@ const getAudiencePartitions = state => state.audiencePartitionsTable.audiencePar
 const getTableDataSource = getAudiencePartitions;
 
 export {
-  getTableDataSource
+  getTableDataSource,
 };

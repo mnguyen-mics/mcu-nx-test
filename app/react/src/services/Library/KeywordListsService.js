@@ -5,12 +5,12 @@ const getKeywordLists = (organisationId, options = {}) => {
 
   const params = {
     organisation_id: organisationId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
 };
 
 export default {
-  getKeywordLists
+  getKeywordLists,
 };

@@ -5,5 +5,5 @@ import CampaignEmailListPage from './CampaignEmailListPage';
 export {
   CampaignsEmailActionbar,
   CampaignsEmailTable,
-  CampaignEmailListPage
+  CampaignEmailListPage,
 };

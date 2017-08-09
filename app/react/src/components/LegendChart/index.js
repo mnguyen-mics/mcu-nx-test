@@ -3,5 +3,5 @@ import LegendChartWithModal from './LegendChartWithModal';
 
 export {
   LegendChart,
-  LegendChartWithModal
+  LegendChartWithModal,
 };

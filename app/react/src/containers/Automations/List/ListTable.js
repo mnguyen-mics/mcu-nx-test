@@ -7,9 +7,9 @@ import { Modal, Tooltip } from 'antd';
 import {
   TableView,
   EmptyTableView,
-  TableViewFilters
+  TableViewFilters,
 } from '../../../components/TableView';
-import { McsIcons } from '../../../components/McsIcons';
+import McsIcons from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 
@@ -20,42 +20,35 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs
+  compareSearchs,
 } from '../../../utils/LocationSearchHelper';
 
 import {
-  getTableDataSource
+  getTableDataSource,
 } from '../../../state/Automations/selectors';
 
 class AutomationsListTable extends Component {
-
-  constructor(props) {
-    super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archiveScenario = this.archiveScenario.bind(this);
-    this.editAutomation = this.editAutomation.bind(this);
-  }
 
   componentDidMount() {
     const {
       history,
       location: {
         search,
-        pathname
+        pathname,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      fetchAutomationList
+      fetchAutomationList,
     } = this.props;
 
     if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
@@ -66,28 +59,28 @@ class AutomationsListTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      fetchAutomationList
+      fetchAutomationList,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -97,7 +90,7 @@ class AutomationsListTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, SCENARIOS_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, SCENARIOS_SEARCH_SETTINGS);
@@ -110,130 +103,19 @@ class AutomationsListTable extends Component {
     this.props.resetAutomationsTable();
   }
 
-  updateLocationSearch(params) {
-    const {
-      history,
-      location: {
-        search: currentSearch,
-        pathname
-      }
-    } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, SCENARIOS_SEARCH_SETTINGS)
-    };
-
-    history.push(nextLocation);
-  }
-
-  render() {
+  archiveScenario = (campaign) => {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
-      },
-      isFetchingAutomationList,
-      dataSource,
-      totalAutomations,
-      translations,
-      hasAutomations
-    } = this.props;
-
-    const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
-
-    const pagination = {
-      currentPage: filter.currentPage,
-      pageSize: filter.pageSize,
-      total: totalAutomations,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
-    };
-
-    const dataColumns = [
-      {
-        translationKey: 'STATUS',
-        key: 'status',
-        isHiddable: false,
-        render: text => <Tooltip placement="top" title={translations[text]}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
-      },
-      {
-        translationKey: 'NAME',
-        key: 'name',
-        isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`}>{text}</Link>
-      }
-    ];
-
-    const actionColumns = [
-      {
-        key: 'action',
-        actions: [
-          {
-            translationKey: 'EDIT',
-            callback: this.editAutomation
-          }, {
-            translationKey: 'ARCHIVE',
-            callback: this.archiveScenario
-          }
-        ]
-      }
-    ];
-
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
-    };
-
-    return (hasAutomations) ? (
-      <div className="mcs-table-container">
-        <TableViewFilters>
-          <TableView
-            columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingAutomationList}
-            pagination={pagination}
-          />
-        </TableViewFilters>
-      </div>
-    ) : (<EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />);
-
-  }
-
-  editAutomation(record) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      history
-    } = this.props;
-
-    history.push(`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`);
-  }
-
-  archiveScenario(campaign) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      location: {
-        search
+        search,
       },
       archiveAutomationList,
       fetchAutomationList,
-      translations
+      translations,
     } = this.props;
 
     const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
@@ -253,16 +135,140 @@ class AutomationsListTable extends Component {
     });
   }
 
+  editAutomation(record) {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    history.push(`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`);
+  }
+
+  updateLocationSearch = (params) => {
+    const {
+      history,
+      location: {
+        search: currentSearch,
+        pathname,
+      },
+    } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, SCENARIOS_SEARCH_SETTINGS),
+    };
+
+    history.push(nextLocation);
+  }
+
+  render() {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      location: {
+        search,
+      },
+      isFetchingAutomationList,
+      dataSource,
+      totalAutomations,
+      translations,
+      hasAutomations,
+    } = this.props;
+
+    const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
+
+    const pagination = {
+      currentPage: filter.currentPage,
+      pageSize: filter.pageSize,
+      total: totalAutomations,
+      onChange: (page) => this.updateLocationSearch({
+        currentPage: page,
+      }),
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
+        pageSize: size,
+      }),
+    };
+
+    const dataColumns = [
+      {
+        translationKey: 'STATUS',
+        key: 'status',
+        isHiddable: false,
+        render: text => (
+          <Tooltip placement="top" title={translations[text]}>
+            <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
+              <McsIcons type="status" />
+            </span>
+          </Tooltip>
+        ),
+      },
+      {
+        translationKey: 'NAME',
+        key: 'name',
+        isHiddable: false,
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`}
+          >{text}
+          </Link>
+        ),
+      },
+    ];
+
+    const actionColumns = [
+      {
+        key: 'action',
+        actions: [
+          {
+            translationKey: 'EDIT',
+            callback: this.editAutomation,
+          }, {
+            translationKey: 'ARCHIVE',
+            callback: this.archiveScenario,
+          },
+        ],
+      },
+    ];
+
+    const columnsDefinitions = {
+      dataColumnsDefinition: dataColumns,
+      actionsColumnsDefinition: actionColumns,
+    };
+
+    return (hasAutomations
+      ? (
+        <div className="mcs-table-container">
+          <TableViewFilters>
+            <TableView
+              columnsDefinitions={columnsDefinitions}
+              dataSource={dataSource}
+              loading={isFetchingAutomationList}
+              pagination={pagination}
+            />
+          </TableViewFilters>
+        </div>
+      )
+      : <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
+    );
+  }
 }
 
 AutomationsListTable.defaultProps = {
-  archiveAutomationList: () => { }
+  archiveAutomationList: () => { },
 };
 
 AutomationsListTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 
   hasAutomations: PropTypes.bool.isRequired,
@@ -286,12 +292,12 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   fetchAutomationList: AutomationsListActions.fetchAutomations.request,
   // archiveAutomationList: CampaignEmailAction.archiveAutomationList,
-  resetAutomationsTable: AutomationsListActions.resetAutomationsTable
+  resetAutomationsTable: AutomationsListActions.resetAutomationsTable,
 };
 
 AutomationsListTable = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AutomationsListTable);
 
 AutomationsListTable = withRouter(AutomationsListTable);

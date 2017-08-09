@@ -3,5 +3,5 @@ const getPlacementLists = state => state.placementListTable.placementListsApi.da
 const getTableDataSource = getPlacementLists;
 
 export {
-  getTableDataSource
+  getTableDataSource,
 };

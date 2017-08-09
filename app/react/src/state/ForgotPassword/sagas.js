@@ -6,18 +6,18 @@ import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
 
 import {
-  sendPassword
+  sendPassword,
 } from './actions';
 
 import {
-  PASSWORD_FORGOT
+  PASSWORD_FORGOT,
 } from '../action-types';
 
 function* sendPasswordLoop({ payload }) {
 
   try {
     const {
-      email
+      email,
     } = payload;
 
     if (!email) throw new Error('Payload is invalid :\'(');
@@ -36,5 +36,5 @@ function* watchSendPasswordLoop() {
 }
 
 export const forgotPasswordSagas = [
-  fork(watchSendPasswordLoop)
+  fork(watchSendPasswordLoop),
 ];

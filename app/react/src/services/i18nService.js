@@ -2,7 +2,7 @@ import LocalStorage from './LocalStorage';
 
 const AVAILABLE_LANGUAGES = {
   FR: 'fr',
-  EN: 'en'
+  EN: 'en',
 };
 const DEFAULT_LANGUAGE = process.env.DEFAULT_LANGUAGE || getNavigatorLanguage(); // eslint-disable-line no-use-before-define
 const DEFAULT_PART = process.env.DEFAULT_PART;
@@ -13,7 +13,7 @@ const getLanguage = () => {
 
 const setLanguage = (language) => {
   const item = {
-    [LocalStorage.LANGUAGE_KEY]: language
+    [LocalStorage.LANGUAGE_KEY]: language,
   };
   return LocalStorage.setItem(item);
 };
@@ -43,5 +43,5 @@ export default {
   initI18n,
   getContent,
   getLanguage,
-  setLanguage
+  setLanguage,
 };

@@ -7,14 +7,14 @@ import {
 
   AUDIENCE_PARTITIONS_LOAD_ALL,
   AUDIENCE_PARTITIONS_LIST_FETCH,
-  AUDIENCE_PARTITIONS_TABLE_RESET
+  AUDIENCE_PARTITIONS_TABLE_RESET,
 } from '../../action-types';
 
 const defaultAudiencePartitionsApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 
 const audiencePartitionsApi = (state = defaultAudiencePartitionsApiState, action) => {
@@ -23,18 +23,18 @@ const audiencePartitionsApi = (state = defaultAudiencePartitionsApiState, action
     case AUDIENCE_PARTITIONS_LIST_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case AUDIENCE_PARTITIONS_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case AUDIENCE_PARTITIONS_LIST_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case AUDIENCE_PARTITIONS_TABLE_RESET:
       return defaultAudiencePartitionsApiState;
@@ -45,7 +45,7 @@ const audiencePartitionsApi = (state = defaultAudiencePartitionsApiState, action
 
 
 const audiencePartitionsTable = combineReducers({
-  audiencePartitionsApi
+  audiencePartitionsApi,
 });
 
 const AudiencePartitionsReducers = { audiencePartitionsTable };

@@ -4,8 +4,8 @@ import { compose, withProps } from 'recompose';
 const withMcsRouter = compose(
   withRouter,
   withProps(({ match }) => ({
-    organisationId: match.params.organisationId
-  }))
+    organisationId: match.params.organisationId,
+  })),
 );
 
 export default withMcsRouter;

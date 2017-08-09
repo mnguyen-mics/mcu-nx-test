@@ -5,11 +5,11 @@ import { Layout, Button, Checkbox } from 'antd';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
   TableView,
-  TableViewFilters
+  TableViewFilters,
 } from '../../../../components/TableView';
 import CreativeService from '../../../../services/CreativeService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
@@ -17,10 +17,9 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 const { Content } = Layout;
 
 class EmailTemplateSelector extends Component {
+
   constructor(props) {
     super(props);
-    this.handleAdd = this.handleAdd.bind(this);
-    this.fetchEmailTemplate = this.fetchEmailTemplate.bind(this);
 
     this.state = {
       newEmailTemplateSelections: props.emailTemplateSelections,
@@ -30,11 +29,11 @@ class EmailTemplateSelector extends Component {
       total: 0,
       pageSize: 10,
       currentPage: 1,
-      keywords: ''
+      keywords: '',
     };
   }
 
-  fetchEmailTemplate() {
+  fetchEmailTemplate = () => {
     const { organisationId } = this.props;
     const { pageSize, currentPage, keywords } = this.state;
 
@@ -50,7 +49,7 @@ class EmailTemplateSelector extends Component {
       this.setState({
         emailTemplates: response.data,
         isLoading: false,
-        total: response.total
+        total: response.total,
       });
       return response;
     });
@@ -61,7 +60,7 @@ class EmailTemplateSelector extends Component {
       if (response.total === 0) {
         this.setState(prevState => ({
           ...prevState,
-          hasEmailTemplates: false
+          hasEmailTemplates: false,
         }));
       }
     });
@@ -71,12 +70,12 @@ class EmailTemplateSelector extends Component {
     const {
       currentPage,
       pageSize,
-      keywords
+      keywords,
     } = this.state;
     const {
       currentPage: prevCurrentPage,
       pageSize: prevPageSize,
-      keywords: prevKeywords
+      keywords: prevKeywords,
     } = prevState;
 
     if (currentPage !== prevCurrentPage || pageSize !== prevPageSize || keywords !== prevKeywords) {
@@ -95,16 +94,16 @@ class EmailTemplateSelector extends Component {
     if (existingSelection) {
       newSelection = {
         ...existingSelection,
-        ...newSelection
+        ...newSelection,
       };
     }
 
     this.setState({
-      newEmailTemplateSelections: [newSelection]
+      newEmailTemplateSelections: [newSelection],
     });
   }
 
-  handleAdd() {
+  handleAdd = () => {
     const { save } = this.props;
     const { newEmailTemplateSelections } = this.state;
     save(newEmailTemplateSelections);
@@ -112,12 +111,20 @@ class EmailTemplateSelector extends Component {
 
   getColumnsDefinitions() {
     const { newEmailTemplateSelections } = this.state;
-    const selectedEmailTemplateIds = newEmailTemplateSelections.map(templateSelection => templateSelection.email_template_id);
+    const selectedEmailTemplateIds = newEmailTemplateSelections
+      .map(templateSelection => templateSelection.email_template_id);
+
     return {
       dataColumnsDefinition: [
         {
           key: 'selected',
-          render: (text, record) => <Checkbox checked={selectedEmailTemplateIds.includes(record.id)} onChange={() => this.toggleTemplateSelection(record.id)}>{text}</Checkbox>
+          render: (text, record) => (
+            <Checkbox
+              checked={selectedEmailTemplateIds.includes(record.id)}
+              onChange={() => this.toggleTemplateSelection(record.id)}
+            >{text}
+            </Checkbox>
+          ),
         },
         {
           translationKey: 'PREVIEW',
@@ -126,32 +133,40 @@ class EmailTemplateSelector extends Component {
           className: 'mcs-table-image-col',
           render: (text, record) => (
             <div className="mcs-table-cell-thumbnail">
-              <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
-                <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
+              <a
+                target="_blank"
+                rel="noreferrer noopener"
+                href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}
+              >
+                <span className="thumbnail-helper" />
+                <img
+                  src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}
+                  alt={record.name}
+                />
               </a>
             </div>
-          )
+          ),
         },
         {
           translationKey: 'NAME',
           key: 'name',
           isHiddable: false,
-          render: text => <span>{text}</span>
+          render: text => <span>{text}</span>,
         },
         {
           translationKey: 'AUDIT_STATUS',
           key: 'audit_status',
           isHiddable: false,
-          render: text => <span>{text}</span>
+          render: text => <span>{text}</span>,
         },
         {
           translationKey: 'PUBLISHED_VERSION',
           key: 'published_version',
           isHiddable: false,
-          render: text => <span>{text}</span>
-        }
+          render: text => <span>{text}</span>,
+        },
       ],
-      actionsColumnsDefinition: []
+      actionsColumnsDefinition: [],
     };
   }
 
@@ -162,9 +177,9 @@ class EmailTemplateSelector extends Component {
       onSearch: value => {
         this.setState(prevState => ({
           ...prevState,
-          keywords: value
+          keywords: value,
         }));
-      }
+      },
     };
   }
 
@@ -175,7 +190,7 @@ class EmailTemplateSelector extends Component {
       currentPage,
       total,
       pageSize,
-      hasEmailTemplates
+      hasEmailTemplates,
     } = this.state;
 
     const pagination = {
@@ -185,13 +200,13 @@ class EmailTemplateSelector extends Component {
       onChange: page =>
         this.setState(prevState => ({
           ...prevState,
-          currentPage: page
+          currentPage: page,
         })),
       onShowSizeChange: (current, size) =>
         this.setState(prevState => ({
           ...prevState,
-          pageSize: size
-        }))
+          pageSize: size,
+        })),
     };
 
     return (
@@ -231,7 +246,7 @@ class EmailTemplateSelector extends Component {
 }
 
 EmailTemplateSelector.defaultProps = {
-  emailTemplateSelections: []
+  emailTemplateSelections: [],
 };
 
 EmailTemplateSelector.propTypes = {
@@ -241,9 +256,9 @@ EmailTemplateSelector.propTypes = {
     email_template_id: PropTypes.string.isRequired,
   })),
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
 };
 
 export default compose(
-  withMcsRouter
+  withMcsRouter,
 )(EmailTemplateSelector);

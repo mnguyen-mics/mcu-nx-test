@@ -3,5 +3,5 @@ import DatamartsTable from './DatamartsTable';
 
 export {
   DatamartsListPage,
-  DatamartsTable
+  DatamartsTable,
 };

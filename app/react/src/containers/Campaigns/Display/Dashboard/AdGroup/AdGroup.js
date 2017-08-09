@@ -24,7 +24,7 @@ class AdGroup extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -39,7 +39,7 @@ class AdGroup extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = newValues =>
@@ -47,7 +47,7 @@ class AdGroup extends Component {
         rangeType: newValues.rangeType,
         lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
-        to: newValues.to
+        to: newValues.to,
       });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -57,8 +57,8 @@ class AdGroup extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       translations,
       adGroups,
@@ -66,7 +66,7 @@ class AdGroup extends Component {
       campaign,
       updateAdGroup,
       dashboardPerformance,
-      updateAd
+      updateAd,
     } = this.props;
 
     const adButtons = (
@@ -82,12 +82,29 @@ class AdGroup extends Component {
 
     return (
       <div className="ant-layout">
-        <AdGroupActionbar adGroup={adGroups.items} displayCampaign={campaign.items} updateAdGroup={updateAdGroup} archiveAdGroup={() => {}} />
+        <AdGroupActionbar
+          adGroup={adGroups.items}
+          displayCampaign={campaign.items}
+          updateAdGroup={updateAdGroup}
+          archiveAdGroup={() => {}}
+        />
         <Content className="mcs-content-container">
           <AdGroupHeader object={adGroups.items} translationKey="AD_GROUP" />
-          <AdGroupsDashboard isFetchingMediaStat={dashboardPerformance.media.isLoading} mediaStat={dashboardPerformance.media.items} hasFetchedMediaStat={dashboardPerformance.media.hasFetched} adGroupStat={dashboardPerformance.adGroups.items} isFetchingAdGroupStat={dashboardPerformance.adGroups.isLoading} hasFetchedAdGroupStat={dashboardPerformance.adGroups.hasFetched} />
+          <AdGroupsDashboard
+            isFetchingMediaStat={dashboardPerformance.media.isLoading}
+            mediaStat={dashboardPerformance.media.items}
+            hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
+            adGroupStat={dashboardPerformance.adGroups.items}
+            isFetchingAdGroupStat={dashboardPerformance.adGroups.isLoading}
+            hasFetchedAdGroupStat={dashboardPerformance.adGroups.hasFetched}
+          />
           <Card title={translations.CREATIVES} buttons={adButtons}>
-            <AdGroupAdTable dataSet={ads.items} isFetching={ads.isLoadingList} isFetchingStat={ads.isLoadingPerf} updateAd={updateAd} />
+            <AdGroupAdTable
+              dataSet={ads.items}
+              isFetching={ads.isLoadingList}
+              isFetchingStat={ads.isLoadingPerf}
+              updateAd={updateAd}
+            />
           </Card>
         </Content>
       </div>
@@ -97,9 +114,9 @@ class AdGroup extends Component {
 
 AdGroup.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   ads: PropTypes.shape({
     isLoadingList: PropTypes.bool.isRequired,
     isLoadingPerf: PropTypes.bool.isRequired,
@@ -134,10 +151,7 @@ const mapStateToProps = state => ({
   translations: state.translations,
 });
 
-const mapDispatchToProps = {
-};
-
-AdGroup = connect(mapStateToProps, mapDispatchToProps)(AdGroup);
+AdGroup = connect(mapStateToProps)(AdGroup);
 
 AdGroup = withRouter(AdGroup);
 

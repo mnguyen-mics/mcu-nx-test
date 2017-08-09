@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
@@ -10,66 +11,15 @@ import messages from '../messages';
 
 class AdGroupActionbar extends Component {
 
-  constructor(props) {
-    super(props);
-    this.buildActionElement = this.buildActionElement.bind(this);
-    this.buildMenu = this.buildMenu.bind(this);
-  }
-
-  render() {
-
-    const {
-      match: {
-        params: {
-          organisationId,
-          campaignId,
-          adGroupId
-        },
-      },
-      adGroup,
-      displayCampaign,
-      intl: {
-        formatMessage
-      }
-    } = this.props;
-
-    const actionElement = this.buildActionElement();
-    const menu = this.buildMenu();
-
-    const breadcrumbPaths = [
-      { name: formatMessage(messages.display), url: `/v2/o/${organisationId}/campaigns/display`, key: formatMessage(messages.display) },
-      { name: displayCampaign.name, url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`, key: displayCampaign.id, },
-      { name: adGroup.name, key: adGroup.id, },
-    ];
-
-    return (
-      <Actionbar path={breadcrumbPaths}>
-        { actionElement }
-        <Link to={`/${organisationId}/campaigns/display/edit/${campaignId}/adgroup/${adGroupId}`}>
-          <Button>
-            <Icon type="edit" />
-            <FormattedMessage {...messages.editAdGroup} />
-          </Button>
-        </Link>
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button>
-            <Icon type="ellipsis" />
-          </Button>
-        </Dropdown>
-      </Actionbar>
-    );
-
-  }
-
-  buildActionElement() {
+  buildActionElement = () => {
     const {
       adGroup,
-      updateAdGroup
+      updateAdGroup,
     } = this.props;
 
     const onClickElement = status => updateAdGroup(adGroup.id, {
       status,
-      type: 'DISPLAY'
+      type: 'DISPLAY',
     });
 
     const activeCampaignElement = (
@@ -88,12 +38,12 @@ class AdGroupActionbar extends Component {
     return adGroup.id ? ((adGroup.status === 'PAUSED' || adGroup.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement) : null;
   }
 
-  buildMenu() {
+  buildMenu = () => {
 
     const {
       translations,
       adGroup,
-      archiveAdGroup
+      archiveAdGroup,
     } = this.props;
 
     const handleArchiveGoal = campaignDisplayId => {
@@ -130,16 +80,60 @@ class AdGroupActionbar extends Component {
     return addMenu;
   }
 
+  render() {
+
+    const {
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+          adGroupId,
+        },
+      },
+      adGroup,
+      displayCampaign,
+      intl: {
+        formatMessage,
+      },
+    } = this.props;
+
+    const actionElement = this.buildActionElement();
+    const menu = this.buildMenu();
+
+    const breadcrumbPaths = [
+      { name: formatMessage(messages.display), url: `/v2/o/${organisationId}/campaigns/display`, key: formatMessage(messages.display) },
+      { name: displayCampaign.name, url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`, key: displayCampaign.id },
+      { name: adGroup.name, key: adGroup.id },
+    ];
+
+    return (
+      <Actionbar path={breadcrumbPaths}>
+        { actionElement }
+        <Link to={`/${organisationId}/campaigns/display/edit/${campaignId}/adgroup/${adGroupId}`}>
+          <Button>
+            <Icon type="edit" />
+            <FormattedMessage {...messages.editAdGroup} />
+          </Button>
+        </Link>
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button>
+            <Icon type="ellipsis" />
+          </Button>
+        </Dropdown>
+      </Actionbar>
+    );
+
+  }
 }
 
 AdGroupActionbar.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  adGroup: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  displayCampaign: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  match: PropTypes.shape().isRequired,
+  adGroup: PropTypes.shape().isRequired,
+  displayCampaign: PropTypes.shape().isRequired,
   updateAdGroup: PropTypes.func.isRequired,
   archiveAdGroup: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -151,12 +145,12 @@ const mapDispatchToProps = {
 
 AdGroupActionbar = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AdGroupActionbar);
 
 AdGroupActionbar = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(AdGroupActionbar);
 
 export default AdGroupActionbar;

@@ -47,7 +47,7 @@ const emailTemplates = combineReducers({
   byId: emailTemplatesById,
   allIds: allEmailTemplates,
   metadata: createRequestMetadataReducer(CREATIVES_EMAIL_FETCH),
-  hasItems
+  hasItems,
 });
 
 export default emailTemplates;

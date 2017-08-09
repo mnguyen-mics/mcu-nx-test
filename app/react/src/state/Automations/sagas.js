@@ -4,7 +4,7 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../utils/Logger';
 
 import {
-    fetchAutomations
+    fetchAutomations,
 } from './actions';
 
 import ScenarioService from '../../services/ScenarioService';
@@ -12,7 +12,7 @@ import ScenarioService from '../../services/ScenarioService';
 import { getPaginatedApiParam } from '../../utils/ApiHelper';
 
 import {
-    AUTOMATIONS_LIST_FETCH
+    AUTOMATIONS_LIST_FETCH,
 } from '../action-types';
 
 function* loadAutomations({ payload }) {
@@ -21,17 +21,17 @@ function* loadAutomations({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -39,11 +39,11 @@ function* loadAutomations({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(ScenarioService.getScenarios, organisationId, initialOptions),
-        response: call(ScenarioService.getScenarios, organisationId, options)
+        response: call(ScenarioService.getScenarios, organisationId, options),
       };
     } else {
       allCalls = {
-        response: call(ScenarioService.getScenarios, organisationId, options)
+        response: call(ScenarioService.getScenarios, organisationId, options),
       };
     }
 
@@ -65,5 +65,5 @@ function* watchFetchAutomations() {
 }
 
 export const automationsSagas = [
-  fork(watchFetchAutomations)
+  fork(watchFetchAutomations),
 ];

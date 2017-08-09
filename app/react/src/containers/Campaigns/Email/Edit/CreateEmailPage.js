@@ -22,21 +22,21 @@ class CreateEmailPage extends Component {
     const {
       organisationId,
       notifyError,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const hideSaveInProgress = message.loading(
       formatMessage(messages.savingInProgress),
-      0
+      0,
     );
 
     const campaingResource = {
-      ...pick(campaign, ['name', 'technical_name'])
+      ...pick(campaign, ['name', 'technical_name']),
     };
 
     EmailCampaignService.createEmailCampaign(
       organisationId,
-      campaingResource
+      campaingResource,
     ).then(createdCampaign => {
       const campaignId = createdCampaign.id;
 
@@ -48,7 +48,7 @@ class CreateEmailPage extends Component {
         ...campaign.blasts.map(blast => {
           const blastResource = {
             ...pick(blast, ['blast_name', 'subject_line', 'from_email', 'from_name', 'reply_to']),
-            send_date: parseInt(blast.send_date.format('x'), 0)
+            send_date: parseInt(blast.send_date.format('x'), 0),
           };
           return EmailCampaignService.createBlast(campaignId, blastResource).then(createdBlast => {
             const blastId = createdBlast.id;
@@ -64,10 +64,10 @@ class CreateEmailPage extends Component {
               ...blast.segments.map(segment => {
                 const segmentResource = pick(segment, ['audience_segment_id']);
                 return EmailCampaignService.addSegment(campaignId, blastId, segmentResource);
-              })
+              }),
             ]);
           });
-        })
+        }),
       ]).then(() => campaignId);
     }).then(campaignId => {
       hideSaveInProgress();
@@ -89,15 +89,15 @@ class CreateEmailPage extends Component {
 
     const {
       organisationId,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.emailEditorBreadcrumbTitle1),
-        url: `/v2/o/${organisationId}/campaigns/email`
+        url: `/v2/o/${organisationId}/campaigns/email`,
       },
-      { name: formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle) }
+      { name: formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle) },
     ];
 
     return (
@@ -118,7 +118,7 @@ CreateEmailPage.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default compose(
@@ -126,7 +126,7 @@ export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: actions.notifyError }
+    { notifyError: actions.notifyError },
   ),
   withDrawer,
 )(CreateEmailPage);

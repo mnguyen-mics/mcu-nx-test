@@ -9,7 +9,7 @@ class InternalSelect extends Component {
     const {
       input: { onChange },
       defaultValue,
-      children
+      children,
     } = this.props;
 
     const firstValue = defaultValue ? defaultValue : children[0].props.value;
@@ -18,13 +18,11 @@ class InternalSelect extends Component {
   }
 
   render() {
-
     const {
       input: { onChange },
       children,
       ...other
     } = this.props;
-
 
     return (
       <Select type="text" {...other} onSelect={value => onChange(value)} >
@@ -36,13 +34,13 @@ class InternalSelect extends Component {
 
 InternalSelect.defaultProps = {
   defaultValue: undefined,
-  input: ['form-control']
+  input: ['form-control'],
 };
 
 InternalSelect.propTypes = {
   defaultValue: PropTypes.string,
-  input: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  meta: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
+  input: PropTypes.shape(),
+  meta: PropTypes.shape().isRequired,
 };
 
 export default InternalSelect;

@@ -8,10 +8,10 @@ import { FormattedMessage } from 'react-intl';
 import {
   hasDatamarts,
   getDefaultDatamart } from '../../state/Session/selectors';
-import { McsIcons } from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons';
 import {
   itemDefinitions,
-  itemDisplayedOnlyIfDatamart
+  itemDisplayedOnlyIfDatamart,
 } from './menuDefinitions';
 
 const { SubMenu } = Menu;
@@ -24,13 +24,13 @@ class NavigatorMenu extends Component {
     super(props);
     this.state = {
       inlineOpenKeys: [],
-      vecticalOpenKeys: []
+      vecticalOpenKeys: [],
     };
   }
 
   componentDidMount() {
     const {
-      location: { pathname }
+      location: { pathname },
      } = this.props;
 
     const currentOpenSubMenu = itemDefinitions
@@ -43,7 +43,7 @@ class NavigatorMenu extends Component {
   onOpenChange = (openKeys) => {
     const state = this.state;
     const {
-      mode
+      mode,
     } = this.props;
 
     if (mode === 'inline') {
@@ -69,9 +69,9 @@ class NavigatorMenu extends Component {
   getAvailableItems() {
     const {
       match: {
-        params: { organisationId }
+        params: { organisationId },
       },
-      organisationHasDatamarts
+      organisationHasDatamarts,
     } = this.props;
 
     const isAvailable = key => {
@@ -85,14 +85,14 @@ class NavigatorMenu extends Component {
           if (isAvailable(subMenuItem.key)) {
             return [
               ...subAcc,
-              subMenuItem
+              subMenuItem,
             ];
           }
           return subAcc;
         }, []);
         return [
           ...acc,
-          { ...item, subMenuItems }
+          { ...item, subMenuItems },
         ];
       }
       return acc;
@@ -102,10 +102,10 @@ class NavigatorMenu extends Component {
   buildItems() {
     const {
       match: {
-        params: { organisationId }
+        params: { organisationId },
       },
       defaultDatamart,
-      collapsed
+      collapsed,
     } = this.props;
 
     const baseUrl = `/v2/o/${organisationId}`;
@@ -142,16 +142,16 @@ class NavigatorMenu extends Component {
         return [
           ...subAcc,
           { key: subItem.key,
-            path: subItem.path
-          }
+            path: subItem.path,
+          },
         ];
       }, []);
       return [
         ...acc,
         ...subMenuKeys,
         { key: item.key,
-          path: item.path
-        }
+          path: item.path,
+        },
       ];
     }, []);
   }
@@ -160,7 +160,7 @@ class NavigatorMenu extends Component {
 
     const {
       mode,
-      location: { pathname }
+      location: { pathname },
     } = this.props;
 
     const getSelectedKeys = () => {
@@ -202,14 +202,14 @@ NavigatorMenu.propTypes = {
 
 const mapStateToProps = state => ({
   organisationHasDatamarts: hasDatamarts(state),
-  defaultDatamart: getDefaultDatamart(state)
+  defaultDatamart: getDefaultDatamart(state),
 });
 
 const mapDispatchToProps = {};
 
 NavigatorMenu = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(NavigatorMenu);
 
 NavigatorMenu = withRouter(NavigatorMenu);

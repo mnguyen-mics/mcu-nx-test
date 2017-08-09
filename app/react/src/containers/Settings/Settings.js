@@ -23,7 +23,7 @@ class Settings extends Component {
 
     const {
       organisationId,
-      defaultDatamart
+      defaultDatamart,
     } = this.props;
 
     const datamart = defaultDatamart(organisationId);
@@ -39,38 +39,38 @@ class Settings extends Component {
     const { openCloseMenu } = this.props;
     openCloseMenu({
       collapsed: true,
-      mode: 'vertical'
+      mode: 'vertical',
     });
   }
 
   getUrlParameters() {
     const {
-      location: { search }
+      location: { search },
     } = this.props;
 
     const parsed = parseSearch(search);
     const tab = parsed.tab ? parsed.tab : 'sites';
 
     return {
-      currentTab: tab
+      currentTab: tab,
     };
   }
 
   switchTab(tabKey) {
     const {
       organisationId,
-      history
+      history,
     } = this.props;
 
     history.push({
       pathname: `/v2/o/${organisationId}/settings`,
-      search: `?tab=${tabKey}`
+      search: `?tab=${tabKey}`,
     });
   }
 
   render() {
     const {
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const urlParams = this.getUrlParameters();
@@ -98,15 +98,15 @@ Settings.propTypes = {
   location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   openCloseMenu: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  defaultDatamart: getDefaultDatamart(state)
+  defaultDatamart: getDefaultDatamart(state),
 });
 
 const mapDispatchToProps = {
-  openCloseMenu: menuActions.openCloseMenu
+  openCloseMenu: menuActions.openCloseMenu,
 };
 
 Settings = compose(
@@ -114,8 +114,8 @@ Settings = compose(
   injectIntl,
   connect(
     mapStateToProps,
-    mapDispatchToProps
-  )
+    mapDispatchToProps,
+  ),
 )(Settings);
 
 export

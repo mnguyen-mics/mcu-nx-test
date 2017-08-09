@@ -28,8 +28,8 @@ class MobileApplicationsListPage extends Component {
       filter: {
         currentPage: 1,
         pageSize: 10,
-        name: ''
-      }
+        name: '',
+      },
     };
     this.handleArchiveMobileApplication = this.handleArchiveMobileApplication.bind(this);
     this.handleEditMobileApplication = this.handleEditMobileApplication.bind(this);
@@ -39,7 +39,7 @@ class MobileApplicationsListPage extends Component {
   componentDidMount() {
     const {
       organisationId,
-      datamartId
+      datamartId,
     } = this.props;
 
     this.fetchMobileApplications(organisationId, datamartId, this.state.filter);
@@ -56,7 +56,7 @@ class MobileApplicationsListPage extends Component {
     const {
       organisationId,
       history,
-      datamartId
+      datamartId,
     } = this.props;
 
     history.push(`/o${organisationId}d${datamartId}/settings/mobile_applications/edit/${mobileApplication.id}`);
@@ -65,7 +65,7 @@ class MobileApplicationsListPage extends Component {
   handleFilterChange(newFilter) {
     const {
       organisationId,
-      datamartId
+      datamartId,
     } = this.props;
 
     this.setState({ filter: newFilter });
@@ -79,7 +79,7 @@ class MobileApplicationsListPage extends Component {
   fetchMobileApplications(organisationId, datamartId, filter) {
     const buildGetMobileApplicationsOptions = () => {
       const options = {
-        ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+        ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
 
       if (filter.name) { options.name = filter.name; }
@@ -91,7 +91,7 @@ class MobileApplicationsListPage extends Component {
         isFetchingMobileApplications: false,
         noMobileApplicationYet: response && response.count === 0 && !filter.name,
         mobileApplications: response.data,
-        totalMobileApplications: response.count
+        totalMobileApplications: response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingMobileApplications: false });
@@ -112,7 +112,7 @@ class MobileApplicationsListPage extends Component {
   render() {
     const {
       organisationId,
-      datamartId
+      datamartId,
     } = this.props;
 
     const {
@@ -120,7 +120,7 @@ class MobileApplicationsListPage extends Component {
       totalMobileApplications,
       mobileApplications,
       noMobileApplicationYet,
-      filter
+      filter,
     } = this.state;
 
     const newButton = MobileApplicationsListPage.buildNewActionElement(organisationId, datamartId);
@@ -149,14 +149,14 @@ class MobileApplicationsListPage extends Component {
 }
 
 MobileApplicationsListPage.defaultProps = {
-  notifyError: () => {}
+  notifyError: () => {},
 };
 
 MobileApplicationsListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired
+  notifyError: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -164,6 +164,6 @@ export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: notifyActions.notifyError }
-  )
+    { notifyError: notifyActions.notifyError },
+  ),
 )(MobileApplicationsListPage);

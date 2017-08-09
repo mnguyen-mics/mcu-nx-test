@@ -3,28 +3,28 @@ import { defineMessages } from 'react-intl';
 const messages = defineMessages({
   searchPlaceholder: {
     id: 'datamart.search.placeholder',
-    defaultMessage: 'Search Datamarts'
+    defaultMessage: 'Search Datamarts',
   },
   datamartId: {
     id: 'datamart.id',
-    defaultMessage: 'Id'
+    defaultMessage: 'Id',
   },
   datamartToken: {
     id: 'datamart.token',
-    defaultMessage: 'Token'
+    defaultMessage: 'Token',
   },
   datamartCreationDate: {
     id: 'datamart.creation_date',
-    defaultMessage: 'Creation Date'
+    defaultMessage: 'Creation Date',
   },
   editDatamart: {
     id: 'datamart.edit',
-    defaultMessage: 'Edit'
+    defaultMessage: 'Edit',
   },
   emptyDatamarts: {
     id: 'datamart.empty',
-    defaultMessage: 'There are no datamarts set up.'
-  }
+    defaultMessage: 'There are no datamarts set up.',
+  },
 });
 
 export default messages;

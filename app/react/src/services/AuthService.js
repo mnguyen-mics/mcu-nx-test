@@ -40,7 +40,7 @@ const getRefreshToken = () => {
 
 const setAccessToken = (token) => {
   LocalStorage.setItem({
-    [ACCESS_TOKEN]: token
+    [ACCESS_TOKEN]: token,
   });
 };
 
@@ -48,13 +48,13 @@ const setAccessTokenExpirationDate = (expireIn) => {
   let expirationDate = moment().add(1, 'hours');
   if (expireIn) expirationDate = moment().add(expireIn, 'seconds');
   LocalStorage.setItem({
-    [ACCESS_TOKEN_EXPIRATION_DATE]: expirationDate.format('x')
+    [ACCESS_TOKEN_EXPIRATION_DATE]: expirationDate.format('x'),
   });
 };
 
 const setRefreshToken = (refreshToken) => {
   LocalStorage.setItem({
-    [REFRESH_TOKEN]: refreshToken
+    [REFRESH_TOKEN]: refreshToken,
   });
 };
 
@@ -68,13 +68,13 @@ const createAccessToken = (credentialsOrRefreshToken) => {
   const {
     email,
     password,
-    refreshToken
+    refreshToken,
   } = credentialsOrRefreshToken;
 
   const body = {
     refresh_token: refreshToken,
     email,
-    password
+    password,
   };
 
   const endpoint = 'authentication/access_tokens';
@@ -85,7 +85,7 @@ const createAccessToken = (credentialsOrRefreshToken) => {
       const keyInCamelCase = lodash.camelCase(key);
       return {
         ...acc,
-        [keyInCamelCase]: data[key]
+        [keyInCamelCase]: data[key],
       };
     }, {});
   });
@@ -94,12 +94,12 @@ const createAccessToken = (credentialsOrRefreshToken) => {
 const createRefreshToken = (credentials) => {
   const {
       email,
-      password
+      password,
   } = credentials;
 
   const body = {
     email,
-    password
+    password,
   };
 
   const endpoint = 'authentication/refresh_tokens';
@@ -119,7 +119,7 @@ const sendPassword = (email) => {
   const endpoint = 'authentication/send_password_reset_email';
 
   const body = {
-    email
+    email,
   };
 
   return ApiService.postRequest(endpoint, body, null, null, { authenticated: false });
@@ -137,5 +137,5 @@ export default {
   createRefreshToken,
   getConnectedUser,
   deleteCredentials,
-  sendPassword
+  sendPassword,
 };

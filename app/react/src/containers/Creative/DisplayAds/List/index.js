@@ -3,5 +3,5 @@ import DisplayAdsList from './DisplayAdsList';
 
 export {
   DisplayAdsActionBar,
-  DisplayAdsList
+  DisplayAdsList,
 };

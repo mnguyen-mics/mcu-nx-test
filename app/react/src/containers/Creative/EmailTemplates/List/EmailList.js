@@ -28,7 +28,7 @@ class CreativeEmailsTable extends Component {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -39,28 +39,28 @@ class CreativeEmailsTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      fetchCreativeEmails
+      fetchCreativeEmails,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -70,7 +70,7 @@ class CreativeEmailsTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -88,7 +88,7 @@ class CreativeEmailsTable extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, CREATIVE_EMAIL_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, CREATIVE_EMAIL_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -98,16 +98,16 @@ class CreativeEmailsTable extends Component {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
+        search,
       },
       isFetchingCreativeEmails,
       dataSource,
       totalCreativeEmails,
-      hasCreativeEmails
+      hasCreativeEmails,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -118,12 +118,12 @@ class CreativeEmailsTable extends Component {
       total: totalCreativeEmails,
       onChange: page =>
         this.updateLocationSearch({
-          currentPage: page
+          currentPage: page,
         }),
       onShowSizeChange: (current, size) =>
         this.updateLocationSearch({
-          pageSize: size
-        })
+          pageSize: size,
+        }),
     };
 
     const dataColumns = [
@@ -138,7 +138,7 @@ class CreativeEmailsTable extends Component {
               <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
             </a>
           </div>
-        )
+        ),
       },
       {
         translationKey: 'NAME',
@@ -146,20 +146,20 @@ class CreativeEmailsTable extends Component {
         isHiddable: false,
         render: (text, record) => (
           <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/email-template/default-editor/edit/${record.id}`}>{text}</Link>
-        )
+        ),
       },
       {
         translationKey: 'AUDIT_STATUS',
         key: 'audit_status',
         isHiddable: false,
-        render: text => <span>{text}</span>
+        render: text => <span>{text}</span>,
       },
       {
         translationKey: 'PUBLISHED_VERSION',
         key: 'published_version',
         isHiddable: false,
-        render: text => <span>{text}</span>
-      }
+        render: text => <span>{text}</span>,
+      },
     ];
 
     const actionColumns = [
@@ -168,19 +168,19 @@ class CreativeEmailsTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editCreativeEmails
+            callback: this.editCreativeEmails,
           },
           {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCreativeEmails
-          }
-        ]
-      }
+            callback: this.archiveCreativeEmails,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return hasCreativeEmails ? (
@@ -221,13 +221,13 @@ class CreativeEmailsTable extends Component {
           fetchCreativeEmails(organisationId, filter);
         });
       },
-      onCancel() {}
+      onCancel() {},
     });
   }
 }
 
 CreativeEmailsTable.defaultProps = {
-  archiveCreativeEmails: () => {}
+  archiveCreativeEmails: () => {},
 };
 
 CreativeEmailsTable.propTypes = {
@@ -242,7 +242,7 @@ CreativeEmailsTable.propTypes = {
 
   fetchCreativeEmails: PropTypes.func.isRequired,
   archiveCreativeEmails: PropTypes.func.isRequired,
-  resetCreativeEmails: PropTypes.func.isRequired
+  resetCreativeEmails: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -250,13 +250,13 @@ const mapStateToProps = state => ({
   hasCreativeEmails: hasEmailTemplates(state),
   isFetchingCreativeEmails: isFetchingEmailTemplates(state),
   dataSource: getEmailTemplates(state),
-  totalCreativeEmails: getEmailTemplatesTotal(state)
+  totalCreativeEmails: getEmailTemplatesTotal(state),
 });
 
 const mapDispatchToProps = {
   fetchCreativeEmails: CreativeEmailsActions.fetchCreativeEmails.request,
   // archiveCreativeEmails: CreativeEmailsActions.archiveCreativeEmails,
-  resetCreativeEmails: CreativeEmailsActions.resetCreativeEmails
+  resetCreativeEmails: CreativeEmailsActions.resetCreativeEmails,
 };
 
 CreativeEmailsTable = connect(mapStateToProps, mapDispatchToProps)(CreativeEmailsTable);

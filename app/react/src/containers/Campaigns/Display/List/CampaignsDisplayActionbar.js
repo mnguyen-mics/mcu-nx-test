@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
@@ -22,12 +22,11 @@ import { parseSearch } from '../../../../utils/LocationSearchHelper';
 const fetchExportData = (organisationId, filter) => {
 
   const campaignType = 'DISPLAY';
-
   const buildOptionsForGetCampaigns = () => {
     const options = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
-      max_results: 2000
+      max_results: 2000,
     };
 
     const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
@@ -36,6 +35,7 @@ const fetchExportData = (organisationId, filter) => {
     if (apiStatuses.length > 0) {
       options.status = apiStatuses;
     }
+
     return options;
   };
 
@@ -45,20 +45,20 @@ const fetchExportData = (organisationId, filter) => {
 
   const apiResults = Promise.all([
     CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getDisplayCampaignPerformanceReport(organisationId, startDate, endDate, dimension)
+    ReportService.getDisplayCampaignPerformanceReport(organisationId, startDate, endDate, dimension),
   ]);
 
   return apiResults.then(results => {
     const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
-      'campaign_id'
+      'campaign_id',
     );
 
     const mergedData = Object.keys(campaignsDisplay).map((campaignId) => {
       return {
         ...campaignsDisplay[campaignId],
-        ...performanceReport[campaignId]
+        ...performanceReport[campaignId],
       };
     });
 
@@ -70,16 +70,16 @@ class CampaignsDisplayActionbar extends Component {
 
   constructor(props) {
     super(props);
-    this.handleRunExport = this.handleRunExport.bind(this);
+
     this.state = { exportIsRunning: false };
   }
 
-  handleRunExport() {
+  handleRunExport = () => {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       translations,
     } = this.props;
@@ -102,15 +102,14 @@ class CampaignsDisplayActionbar extends Component {
   }
 
   render() {
-
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      translations
+      translations,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
@@ -144,7 +143,10 @@ class CampaignsDisplayActionbar extends Component {
       </Menu>
     );
 
-    const breadcrumbPaths = [{ name: translations.DISPLAY, url: `/v2/o/${organisationId}/campaigns/display` }];
+    const breadcrumbPaths = [{
+      name: translations.DISPLAY,
+      url: `/v2/o/${organisationId}/campaigns/display`,
+    }];
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -154,7 +156,8 @@ class CampaignsDisplayActionbar extends Component {
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          { !exportIsRunning && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
+          { !exportIsRunning && <McsIcons type="download" /> }
+          <FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );
@@ -165,9 +168,9 @@ class CampaignsDisplayActionbar extends Component {
 
 CampaignsDisplayActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
 };
 
 CampaignsDisplayActionbar = compose(

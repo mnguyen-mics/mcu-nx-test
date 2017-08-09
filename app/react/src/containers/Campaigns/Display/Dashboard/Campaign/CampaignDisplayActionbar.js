@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
@@ -6,90 +7,58 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../../Actionbar';
-import { McsIcons } from '../../../../../components/McsIcons';
+import McsIcons from '../../../../../components/McsIcons';
 import messages from '../messages';
 
 class CampaignDisplayActionbar extends Component {
 
-  constructor(props) {
-    super(props);
-    this.buildActionElement = this.buildActionElement.bind(this);
-    this.buildMenu = this.buildMenu.bind(this);
-  }
-
-  render() {
-
-    const {
-      match: {
-        params: {
-          organisationId,
-          campaignId
-        },
-      },
-      campaignDisplay,
-      translations
-    } = this.props;
-
-    const actionElement = this.buildActionElement();
-    const menu = this.buildMenu();
-
-    const breadcrumbPaths = [
-      { name: translations.DISPLAY_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/display` },
-      { name: campaignDisplay.name },
-    ];
-
-    return (
-      <Actionbar path={breadcrumbPaths}>
-        { actionElement }
-        <Link to={`/${organisationId}/campaigns/display/expert/edit/${campaignId}`}>
-          <Button>
-            <McsIcons type="pen" />
-            <FormattedMessage {...messages.editCampaign} />
-          </Button>
-        </Link>
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button>
-            <Icon type="ellipsis" />
-          </Button>
-        </Dropdown>
-      </Actionbar>
-    );
-
-  }
-
-  buildActionElement() {
+  buildActionElement = () => {
     const {
       campaignDisplay,
-      updateCampaignDisplay
+      updateCampaignDisplay,
     } = this.props;
 
     const onClickElement = status => updateCampaignDisplay(campaignDisplay.id, {
       status,
-      type: 'EMAIL'
+      type: 'EMAIL',
     });
 
     const activeCampaignElement = (
-      <Button className="mcs-primary" type="primary" onClick={() => onClickElement('ACTIVE')}>
+      <Button
+        className="mcs-primary"
+        type="primary"
+        onClick={() => onClickElement('ACTIVE')}
+      >
         <McsIcons type="play" />
         <FormattedMessage {...messages.activateCampaign} />
       </Button>
     );
     const pauseCampaignElement = (
-      <Button className="mcs-primary" type="primary" onClick={() => onClickElement('PAUSED')}>
+      <Button
+        className="mcs-primary"
+        type="primary"
+        onClick={() => onClickElement('PAUSED')}
+      >
         <McsIcons type="pause" />
         <FormattedMessage {...messages.pauseCampaign} />
       </Button>
     );
 
-    return campaignDisplay.id ? ((campaignDisplay.status === 'PAUSED' || campaignDisplay.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement) : null;
+    if (!campaignDisplay.id) {
+      return null;
+    }
+
+    return ((campaignDisplay.status === 'PAUSED' || campaignDisplay.status === 'PENDING')
+      ? activeCampaignElement
+      : pauseCampaignElement
+    );
   }
 
-  buildMenu() {
-
+  buildMenu = () => {
     const {
       translations,
       campaignDisplay,
-      archiveCampaignDisplay
+      archiveCampaignDisplay,
     } = this.props;
 
     const handleArchiveGoal = campaignDisplayId => {
@@ -126,12 +95,53 @@ class CampaignDisplayActionbar extends Component {
     return addMenu;
   }
 
+  render() {
+    const {
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+        },
+      },
+      campaignDisplay,
+      translations,
+    } = this.props;
+
+    const actionElement = this.buildActionElement();
+    const menu = this.buildMenu();
+
+    const breadcrumbPaths = [
+      {
+        name: translations.DISPLAY_CAMPAIGNS,
+        url: `/v2/o/${organisationId}/campaigns/display`,
+      },
+      { name: campaignDisplay.name },
+    ];
+
+    return (
+      <Actionbar path={breadcrumbPaths}>
+        { actionElement }
+        <Link to={`/${organisationId}/campaigns/display/expert/edit/${campaignId}`}>
+          <Button>
+            <McsIcons type="pen" />
+            <FormattedMessage {...messages.editCampaign} />
+          </Button>
+        </Link>
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button>
+            <Icon type="ellipsis" />
+          </Button>
+        </Dropdown>
+      </Actionbar>
+    );
+
+  }
 }
 
 CampaignDisplayActionbar.propTypes = {
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  campaignDisplay: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  match: PropTypes.shape().isRequired,
+  campaignDisplay: PropTypes.shape().isRequired,
   updateCampaignDisplay: PropTypes.func.isRequired,
   archiveCampaignDisplay: PropTypes.func.isRequired,
 };
@@ -145,13 +155,13 @@ const mapDispatchToProps = {
 
 CampaignDisplayActionbar = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(CampaignDisplayActionbar);
 
 
 CampaignDisplayActionbar = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(CampaignDisplayActionbar);
 
 export default CampaignDisplayActionbar;

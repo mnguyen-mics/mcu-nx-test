@@ -6,7 +6,7 @@ const defaultKeywordListApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 
 const keywordListsApi = (state = defaultKeywordListApiState, action) => {
@@ -14,18 +14,18 @@ const keywordListsApi = (state = defaultKeywordListApiState, action) => {
     case KEYWORD_LISTS_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case KEYWORD_LISTS_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case KEYWORD_LISTS_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case KEYWORD_LISTS_RESET:
       return defaultKeywordListApiState;
@@ -35,7 +35,7 @@ const keywordListsApi = (state = defaultKeywordListApiState, action) => {
 };
 
 const keywordListTable = combineReducers({
-  keywordListsApi
+  keywordListsApi,
 });
 
 const KeywordListsReducers = { keywordListTable };

@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 const withTranslations = (WrappedComponent) => {
 
   const mapStateToProps = (state) => ({
-    translations: state.translations
+    translations: state.translations,
   });
 
   return connect(
-    mapStateToProps
+    mapStateToProps,
   )(WrappedComponent);
 };
 

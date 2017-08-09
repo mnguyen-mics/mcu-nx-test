@@ -5,7 +5,7 @@ const getDatamarts = (organisationId, options = {}) => {
 
   const params = {
     organisation_id: organisationId,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -18,5 +18,5 @@ const getDatamart = (datamartId) => {
 
 export default {
   getDatamarts,
-  getDatamart
+  getDatamart,
 };

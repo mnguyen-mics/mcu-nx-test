@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
@@ -10,36 +10,42 @@ import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 
 import messages from '../messages';
 
-class AdGroupDashboard extends Component {
+function AdGroupDashboard({
+  isFetchingAdGroupStat,
+  hasFetchedAdGroupStat,
+  adGroupStat,
+  isFetchingMediaStat,
+  hasFetchedMediaStat,
+  mediaStat,
+  intl: {
+    formatMessage,
+  },
+}) {
 
-  render() {
+  const items = [
+    {
+      title: formatMessage(messages.dashboardOverview),
+      display: (
+        <DisplayStackedAreaChart
+          isFetchingCampaignStat={isFetchingAdGroupStat}
+          hasFetchedCampaignStat={hasFetchedAdGroupStat}
+          dataSource={adGroupStat}
+        />
+        ),
+    },
+    {
+      title: formatMessage(messages.dashboardTopSites),
+      display: (
+        <MediaPerformanceTable
+          isFetchingMediaStat={isFetchingMediaStat}
+          hasFetchedMediaStat={hasFetchedMediaStat}
+          dataSet={mediaStat}
+        />
+        ),
+    },
+  ];
 
-    const {
-      isFetchingAdGroupStat,
-      hasFetchedAdGroupStat,
-      adGroupStat,
-      isFetchingMediaStat,
-      hasFetchedMediaStat,
-      mediaStat,
-      intl: {
-        formatMessage
-      }
-    } = this.props;
-
-    const items = [
-      {
-        title: formatMessage(messages.dashboardOverview),
-        display: <DisplayStackedAreaChart isFetchingCampaignStat={isFetchingAdGroupStat} hasFetchedCampaignStat={hasFetchedAdGroupStat} dataSource={adGroupStat} />
-      },
-      {
-        title: formatMessage(messages.dashboardTopSites),
-        display: <MediaPerformanceTable isFetchingMediaStat={isFetchingMediaStat} hasFetchedMediaStat={hasFetchedMediaStat} dataSet={mediaStat} />
-      }
-    ];
-
-    return <Card><McsTabs items={items} /></Card>;
-  }
-
+  return <Card><McsTabs items={items} /></Card>;
 }
 
 AdGroupDashboard.propTypes = {
@@ -49,13 +55,11 @@ AdGroupDashboard.propTypes = {
   mediaStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   isFetchingMediaStat: PropTypes.bool.isRequired,
   hasFetchedMediaStat: PropTypes.bool.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 
-AdGroupDashboard = compose(
+export default compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(AdGroupDashboard);
-
-export default AdGroupDashboard;

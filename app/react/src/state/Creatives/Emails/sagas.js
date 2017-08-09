@@ -17,17 +17,17 @@ function* loadCreativeEmails({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -35,11 +35,11 @@ function* loadCreativeEmails({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(CreativeService.getEmailTemplates, organisationId, initialOptions),
-        response: call(CreativeService.getEmailTemplates, organisationId, options)
+        response: call(CreativeService.getEmailTemplates, organisationId, options),
       };
     } else {
       allCalls = {
-        response: call(CreativeService.getEmailTemplates, organisationId, options)
+        response: call(CreativeService.getEmailTemplates, organisationId, options),
       };
     }
 

@@ -6,11 +6,11 @@ import { Layout, Button, Checkbox } from 'antd';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
   TableView,
-  TableViewFilters
+  TableViewFilters,
 } from '../../../../components/TableView';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
@@ -30,8 +30,35 @@ class SegmentSelector extends Component {
     total: 0,
     pageSize: 10,
     currentPage: 1,
-    keywords: ''
+    keywords: '',
   };
+
+  componentDidMount() {
+    this.fetchAudienceSegments().then(response => {
+      if (response.total === 0) {
+        this.setState({
+          noSegment: true,
+        });
+      }
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {
+      currentPage,
+      pageSize,
+      keywords,
+    } = this.state;
+    const {
+      currentPage: prevCurrentPage,
+      pageSize: prevPageSize,
+      keywords: prevKeywords,
+    } = prevState;
+
+    if (currentPage !== prevCurrentPage || pageSize !== prevPageSize || keywords !== prevKeywords) {
+      this.fetchAudienceSegments();
+    }
+  }
 
   fetchAudienceSegments = () => {
     const { organisationId, defaultDatamart, selectedSegmentIds } = this.props;
@@ -60,7 +87,7 @@ class SegmentSelector extends Component {
               return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
             }
             return acc;
-          }, {})
+          }, {}),
         };
 
         return {
@@ -68,38 +95,55 @@ class SegmentSelector extends Component {
           audienceSegmentById,
           selectedSegmentById,
           isLoading: false,
-          total: response.total
+          total: response.total,
         };
       });
       return response;
     });
   }
 
-  componentDidMount() {
-    this.fetchAudienceSegments().then(response => {
-      if (response.total === 0) {
-        this.setState({
-          noSegment: true
-        });
-      }
-    });
+  getColumnsDefinitions = () => {
+    const { selectedSegmentById } = this.state;
+    return {
+      dataColumnsDefinition: [
+        {
+          key: 'selected',
+          render: (text, record) => (
+            <Checkbox
+              checked={!!selectedSegmentById[record.id]}
+              onChange={() => this.toggleSegmentSelection(record.id)}
+            >{text}
+            </Checkbox>
+          ),
+        },
+        {
+          translationKey: 'NAME',
+          key: 'name',
+          isHiddable: false,
+          render: text => <span>{text}</span>,
+        },
+      ],
+      actionsColumnsDefinition: [],
+    };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const {
-      currentPage,
-      pageSize,
-      keywords
-    } = this.state;
-    const {
-      currentPage: prevCurrentPage,
-      pageSize: prevPageSize,
-      keywords: prevKeywords
-    } = prevState;
+  getSearchOptions() {
+    return {
+      isEnabled: true,
+      placeholder: 'Search a template',
+      onSearch: value => {
+        this.setState({
+          keywords: value,
+        });
+      },
+    };
+  }
 
-    if (currentPage !== prevCurrentPage || pageSize !== prevPageSize || keywords !== prevKeywords) {
-      this.fetchAudienceSegments();
-    }
+  handleAdd = () => {
+    const { save } = this.props;
+    const { selectedSegmentById } = this.state;
+    const selectedSegments = Object.keys(selectedSegmentById).map(id => selectedSegmentById[id]);
+    save(selectedSegments);
   }
 
   toggleSegmentSelection = (segmentId) => {
@@ -112,55 +156,17 @@ class SegmentSelector extends Component {
             .filter(id => id !== segmentId)
             .reduce((acc, id) => {
               return { ...acc, [id]: prevState.selectedSegmentById[id] };
-            }, {})
+            }, {}),
         };
       }
 
       return {
         selectedSegmentById: {
           ...prevState.selectedSegmentById,
-          [segmentId]: prevState.audienceSegmentById[segmentId]
-        }
+          [segmentId]: prevState.audienceSegmentById[segmentId],
+        },
       };
     });
-  }
-
-  handleAdd = () => {
-    const { save } = this.props;
-    const { selectedSegmentById } = this.state;
-    const selectedSegments = Object.keys(selectedSegmentById).map(id => selectedSegmentById[id]);
-    save(selectedSegments);
-  }
-
-  getColumnsDefinitions = () => {
-    const { selectedSegmentById } = this.state;
-    return {
-      dataColumnsDefinition: [
-        {
-          key: 'selected',
-          render: (text, record) => <Checkbox checked={!!selectedSegmentById[record.id]} onChange={() => this.toggleSegmentSelection(record.id)}>{text}</Checkbox>
-        },
-        {
-          translationKey: 'NAME',
-          key: 'name',
-          isHiddable: false,
-          render: text => <span>{text}</span>
-        }
-      ],
-      actionsColumnsDefinition: []
-    };
-  }
-
-  getSearchOptions() {
-    return {
-      isEnabled: true,
-      placeholder: 'Search a template',
-      onSearch: value => {
-        this.setState({
-          keywords: value
-        });
-      }
-    };
   }
 
   render() {
@@ -171,7 +177,7 @@ class SegmentSelector extends Component {
       currentPage,
       total,
       pageSize,
-      noSegment
+      noSegment,
     } = this.state;
 
     const pagination = {
@@ -179,7 +185,7 @@ class SegmentSelector extends Component {
       pageSize,
       total,
       onChange: page => this.setState({ currentPage: page }),
-      onShowSizeChange: (current, size) => this.setState({ pageSize: size })
+      onShowSizeChange: (current, size) => this.setState({ pageSize: size }),
     };
 
     const datasource = allAudienceSegmentIds.map(id => audienceSegmentById[id]);
@@ -222,7 +228,7 @@ class SegmentSelector extends Component {
 }
 
 SegmentSelector.defaultProps = {
-  selectedSegmentIds: []
+  selectedSegmentIds: [],
 };
 
 SegmentSelector.propTypes = {
@@ -230,14 +236,14 @@ SegmentSelector.propTypes = {
   selectedSegmentIds: PropTypes.arrayOf(PropTypes.string),
   defaultDatamart: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   connect(
     state => ({
-      defaultDatamart: getDefaultDatamart(state)
-    })
-  )
+      defaultDatamart: getDefaultDatamart(state),
+    }),
+  ),
 )(SegmentSelector);

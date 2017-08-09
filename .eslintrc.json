@@ -1,12 +1,16 @@
 {
     "extends": "airbnb",
+    "globals": {
+      "window": true,
+      "Event": true
+    },
     "plugins": [
         "react",
         "import"
     ],
     "parser": "babel-eslint",
     "rules": {
-        "comma-dangle": "off",
+        "comma-dangle": "error",
         "max-len": "off",
         "padded-blocks": "off",
         "no-unused-vars": [

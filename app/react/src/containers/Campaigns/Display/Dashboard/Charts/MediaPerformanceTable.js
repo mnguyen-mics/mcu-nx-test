@@ -6,12 +6,12 @@ import { Row, Col } from 'antd';
 
 import { TableView } from '../../../../../components/TableView';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
 import {
   parseSearch,
-  updateSearch
+  updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
 class MediaPerformanceTable extends Component {
@@ -21,7 +21,7 @@ class MediaPerformanceTable extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -36,7 +36,7 @@ class MediaPerformanceTable extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = newValues =>
@@ -44,7 +44,7 @@ class MediaPerformanceTable extends Component {
         rangeType: newValues.rangeType,
         lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
-        to: newValues.to
+        to: newValues.to,
       });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -80,13 +80,13 @@ class MediaPerformanceTable extends Component {
         translationKey: 'DISPLAY_NETWORK_NAME',
         key: 'display_network_name',
         isHiddable: false,
-        render: text => <span>{text}</span>
+        render: text => <span>{text}</span>,
       },
       {
         translationKey: 'NAME',
         key: 'media_id',
         isHiddable: false,
-        render: (text) => <span>{text}</span>
+        render: (text) => <span>{text}</span>,
       },
       {
         translationKey: 'IMPRESSIONS',
@@ -143,13 +143,13 @@ class MediaPerformanceTable extends Component {
         isHiddable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'cpa'),
-      }
+      },
     ];
 
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: []
+      actionsColumnsDefinition: [],
     };
 
     return (
@@ -171,8 +171,8 @@ class MediaPerformanceTable extends Component {
 }
 
 MediaPerformanceTable.propTypes = {
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   isFetchingMediaStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

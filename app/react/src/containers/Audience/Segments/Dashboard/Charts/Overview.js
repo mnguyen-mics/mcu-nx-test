@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
@@ -13,11 +13,11 @@ import { SEGMENT_QUERY_SETTINGS } from '../constants';
 
 import {
   updateSearch,
-  parseSearch
+  parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
 import {
-  getSinglePerfView
+  getSinglePerfView,
  } from '../../../../../state/Audience/Segments/selectors';
 
 import messages from '../messages';
@@ -30,13 +30,13 @@ class Overview extends Component {
       history,
       location: {
         search: currentSearch,
-        pathname
-      }
+        pathname,
+      },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, SEGMENT_QUERY_SETTINGS)
+      search: updateSearch(currentSearch, params, SEGMENT_QUERY_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -45,8 +45,8 @@ class Overview extends Component {
   renderDatePicker() {
     const {
       location: {
-        search
-      }
+        search,
+      },
     } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
@@ -55,7 +55,7 @@ class Overview extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
@@ -71,10 +71,10 @@ class Overview extends Component {
   renderStackedAreaCharts() {
     const {
       location: {
-        search
+        search,
       },
       dataSource,
-      hasFetchedAudienceStat
+      hasFetchedAudienceStat,
     } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
@@ -83,11 +83,25 @@ class Overview extends Component {
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: [{ key: 'user_points', message: messages.userPoints }, { key: 'user_accounts', message: messages.userAccounts }, { key: 'emails', message: messages.emails }, { key: 'desktop_cookie_ids', message: messages.desktopCookieId }],
+      yKeys: [
+        { key: 'user_points', message: messages.userPoints },
+        { key: 'user_accounts', message: messages.userAccounts },
+        { key: 'emails', message: messages.emails },
+        { key: 'desktop_cookie_ids', message: messages.desktopCookieId },
+      ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
+      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
     };
-    return hasFetchedAudienceStat ? (<StackedAreaPlot identifier="StackedAreaChartEmailOverview" dataset={dataSource} options={optionsForChart} />) : (<LoadingChart />);
+    return (hasFetchedAudienceStat
+      ? (
+        <StackedAreaPlot
+          identifier="StackedAreaChartEmailOverview"
+          dataset={dataSource}
+          options={optionsForChart}
+        />
+      )
+      : <LoadingChart />
+    );
   }
 
   render() {
@@ -98,15 +112,23 @@ class Overview extends Component {
     } = this.props;
 
     const options = {
-      domains: [translations['user_points'.toUpperCase()], translations['user_accounts'.toUpperCase()], translations['emails'.toUpperCase()], translations['desktop_cookie_ids'.toUpperCase()]],
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f']
+      domains: [
+        translations['user_points'.toUpperCase()],
+        translations['user_accounts'.toUpperCase()],
+        translations['emails'.toUpperCase()],
+        translations['desktop_cookie_ids'.toUpperCase()],
+      ],
+      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
     };
 
     const chartArea = (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            { (dataSource.length === 0 && hasFetchedAudienceStat) ? <div /> : <LegendChart identifier="LegendOverview" options={options} /> }
+            {dataSource.length === 0 && hasFetchedAudienceStat
+              ? <div />
+              : <LegendChart identifier="LegendOverview" options={options} />
+            }
           </Col>
           <Col span={12}>
             <span className="mcs-card-button">
@@ -114,7 +136,10 @@ class Overview extends Component {
             </span>
           </Col>
         </Row>
-        { (dataSource.length === 0 && hasFetchedAudienceStat) ? <EmptyCharts title={translations.NO_EMAIL_STATS} /> : this.renderStackedAreaCharts() }
+        { dataSource.length === 0 && hasFetchedAudienceStat
+          ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
+          : this.renderStackedAreaCharts()
+        }
       </div>
     );
 
@@ -123,9 +148,9 @@ class Overview extends Component {
 }
 
 Overview.propTypes = {
-  translations: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   hasFetchedAudienceStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
@@ -133,13 +158,10 @@ Overview.propTypes = {
 const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedAudienceStat: state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
-  dataSource: getSinglePerfView(state)
+  dataSource: getSinglePerfView(state),
 });
 
-Overview = connect(
-  mapStateToProps
-)(Overview);
-
+Overview = connect(mapStateToProps)(Overview);
 Overview = withRouter(Overview);
 
 export default Overview;

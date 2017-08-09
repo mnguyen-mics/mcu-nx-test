@@ -28,12 +28,12 @@ class ForgotPassword extends Component {
 
     const {
       form: {
-        getFieldDecorator
+        getFieldDecorator,
       },
       isRequesting,
       hasError,
       passwordSentSuccess,
-      intl: { formatMessage }
+      intl: { formatMessage },
      } = this.props;
 
     const hasFieldError = this.props.form.getFieldError('email');
@@ -53,7 +53,7 @@ class ForgotPassword extends Component {
               { getFieldDecorator('email', {
                 rules: [{ type: 'email', required: true, message: formatMessage(messages.resetPasswordEmailRequired) }],
               })(
-                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={formatMessage(messages.resetPasswordEmail)} />
+                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={formatMessage(messages.resetPasswordEmail)} />,
             )}
             </FormItem>
             <Button type="primary" htmlType="submit" className="reset-password-button" loading={isRequesting}>
@@ -104,23 +104,23 @@ ForgotPassword.propTypes = {
   passwordForgotReset: PropTypes.func.isRequired,
   isRequesting: PropTypes.bool.isRequired,
   passwordSentSuccess: PropTypes.bool.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = state => ({
   hasError: state.forgotPassword.hasError,
   isRequesting: state.forgotPassword.isRequesting,
-  passwordSentSuccess: state.forgotPassword.passwordSentSuccess
+  passwordSentSuccess: state.forgotPassword.passwordSentSuccess,
 });
 
 const mapDispatchToProps = {
   sendPasswordRequest: sendPassword.request,
-  passwordForgotReset: passwordForgotReset
+  passwordForgotReset: passwordForgotReset,
 };
 
 ForgotPassword = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(ForgotPassword);
 
 ForgotPassword = Form.create()(ForgotPassword);

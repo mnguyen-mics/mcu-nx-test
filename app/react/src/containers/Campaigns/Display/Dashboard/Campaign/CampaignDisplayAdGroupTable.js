@@ -4,28 +4,24 @@ import { injectIntl, intlShape } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
+
 import messages from '../messages';
 
 import { TableView } from '../../../../../components/TableView';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import { McsIcons } from '../../../../../components/McsIcons';
+import McsIcons from '../../../../../components/McsIcons';
 
 class CampaignDisplayAdGroupTable extends Component {
 
-  constructor(props) {
-    super(props);
-    this.editCampaign = this.editCampaign.bind(this);
-  }
-
-  editCampaign(adgroup) {
+  editCampaign = (adgroup) => {
     const {
       match: {
         params: {
           organisationId,
-          campaignId
-        }
+          campaignId,
+        },
       },
-      history
+      history,
     } = this.props;
 
     const editUrl = `/${organisationId}/campaigns/display/expert/edit/${campaignId}/edit-ad-group/${adgroup.id}`;
@@ -34,13 +30,12 @@ class CampaignDisplayAdGroupTable extends Component {
   }
 
   render() {
-
     const {
       match: {
         params: {
           organisationId,
-          campaignId
-        }
+          campaignId,
+        },
       },
       isFetching,
       isFetchingStat,
@@ -58,24 +53,42 @@ class CampaignDisplayAdGroupTable extends Component {
     const changeAdGroupStatus = (record, checked) => {
       const {
         updateAdGroup,
-        intl: { formatMessage }
+        intl: { formatMessage },
       } = this.props;
       const status = checked ? 'ACTIVE' : 'PAUSED';
       const initialStatus = checked ? 'PAUSED' : 'ACTIVE';
-      const successMessage = checked ? { title: formatMessage(messages.notificationSuccess), body: formatMessage(messages.notificationAdGroupActivationSuccess, { name: record.name }) } : { title: formatMessage(messages.notificationSuccess), body: formatMessage(messages.notificationAdGroupPauseSuccess, { name: record.name }) };
-      const errorMessage = checked ? { title: formatMessage(messages.notificationError), body: formatMessage(messages.notificationAdGroupActivationError, { name: record.name }) } : { title: formatMessage(messages.notificationError), body: formatMessage(messages.notificationAdGroupPauseError, { name: record.name }) };
+      const successMessage = (checked
+        ? {
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdGroupActivationSuccess, { name: record.name }),
+        }
+        : {
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdGroupPauseSuccess, { name: record.name }),
+        }
+      );
+      const errorMessage = (checked
+        ? {
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdGroupActivationError, { name: record.name }),
+        }
+        : {
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdGroupPauseError, { name: record.name }),
+        }
+      );
 
       updateAdGroup(
         record.id,
         {
           status,
-          type: 'DISPLAY'
+          type: 'DISPLAY',
         },
         successMessage,
         errorMessage,
         {
           status: initialStatus,
-          type: 'DISPLAY'
+          type: 'DISPLAY',
         });
     };
 
@@ -85,63 +98,79 @@ class CampaignDisplayAdGroupTable extends Component {
         translationKey: 'STATUS',
         key: 'status',
         isHiddable: false,
-        render: (text, record) => <span><Switch className="mcs-table-switch" checked={text === 'ACTIVE'} onChange={(checked) => changeAdGroupStatus(record, checked)} checkedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="play" />} unCheckedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="pause" />} /></span>
+        render: (text, record) => (
+          <span>
+            <Switch
+              className="mcs-table-switch"
+              checked={text === 'ACTIVE'}
+              onChange={(checked) => changeAdGroupStatus(record, checked)}
+              checkedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="play" />}
+              unCheckedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="pause" />}
+            />
+          </span>
+        ),
       },
       {
         translationKey: 'NAME',
         key: 'name',
         isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroup/${record.id}`}>{text}</Link>
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroup/${record.id}`}
+          >{text}
+          </Link>
+        ),
       },
       {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
+        render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CPM',
         key: 'cpm',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
         translationKey: 'CTR',
         key: 'ctr',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,00 %')
+        render: text => renderMetricData(text, '0,00 %'),
       },
       {
         translationKey: 'CPC',
         key: 'cpc',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
         translationKey: 'IMPRESSIONS_COST',
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
         translationKey: 'CPA',
         key: 'cpa',
         isVisibleByDefault: true,
         isHiddable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR')
-      }
+        render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      },
     ];
 
     const actionColumns = [
@@ -150,18 +179,18 @@ class CampaignDisplayAdGroupTable extends Component {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editCampaign
+            callback: this.editCampaign,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign
-          }
-        ]
-      }
+            callback: this.archiveCampaign,
+          },
+        ],
+      },
     ];
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
+      actionsColumnsDefinition: actionColumns,
     };
 
     return (
@@ -176,19 +205,19 @@ class CampaignDisplayAdGroupTable extends Component {
 }
 
 CampaignDisplayAdGroupTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   isFetching: PropTypes.bool.isRequired,
   isFetchingStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
   updateAdGroup: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 
 CampaignDisplayAdGroupTable = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(CampaignDisplayAdGroupTable);
 
 

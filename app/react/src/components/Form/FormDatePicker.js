@@ -3,17 +3,18 @@ import PropTypes from 'prop-types';
 import { Form, DatePicker, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
-import { McsIcons } from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons';
 
 const defaultTooltipPlacement = 'right';
 
-const FormDatePicker = ({
+function FormDatePicker({
   input: { value, ...otherInputProps },
   meta,
   formItemProps,
   datePickerProps,
-  helpToolTipProps
-}) => {
+  helpToolTipProps,
+}) {
+
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
   if (meta.touched && meta.warning) validateStatus = 'warning';
@@ -22,17 +23,16 @@ const FormDatePicker = ({
 
   const mergedTooltipProps = {
     placement: defaultTooltipPlacement,
-    ...helpToolTipProps
+    ...helpToolTipProps,
   };
 
   // By default, input.value is initialised to '' by redux-form
   // But antd DatePicker doesn't like that
   // So we don't pass this props if equal to ''
-  const correctedInput = value === ''
-    ? {
-      ...otherInputProps
-    }
-    : { ...otherInputProps, value };
+  const correctedInput = (value === ''
+    ? { ...otherInputProps }
+    : { ...otherInputProps, value }
+  );
 
   return (
     <Form.Item
@@ -58,30 +58,30 @@ const FormDatePicker = ({
       </Row>
     </Form.Item>
   );
-};
+}
 
 FormDatePicker.defaultProps = {
   formItemProps: {},
   datePickerProps: {},
-  helpToolTipProps: {}
+  helpToolTipProps: {},
 };
 
 FormDatePicker.propTypes = {
   input: PropTypes.shape({
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
   }).isRequired,
   meta: PropTypes.shape({
-    error: PropTypes.string
+    error: PropTypes.string,
   }).isRequired,
   formItemProps: PropTypes.shape({
     required: PropTypes.bool,
     label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-    colon: PropTypes.bool
+    colon: PropTypes.bool,
   }),
   datePickerProps: PropTypes.shape({
     format: PropTypes.string,
     showTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    placeholder: PropTypes.stringz
+    placeholder: PropTypes.stringz,
   }),
   helpToolTipProps: PropTypes.shape({
     tile: PropTypes.string,
@@ -97,9 +97,9 @@ FormDatePicker.propTypes = {
       'leftTop',
       'leftBottom',
       'rightTop',
-      'rightBottom'
-    ])
-  })
+      'rightBottom',
+    ]),
+  }),
 };
 
 export default FormDatePicker;

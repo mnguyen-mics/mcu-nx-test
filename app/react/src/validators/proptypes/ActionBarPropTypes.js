@@ -5,9 +5,9 @@ const PathPropTypes = PropTypes.arrayOf(
     name: PropTypes.string,
     url: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.object
+      PropTypes.object,
     ]),
-  })
+  }),
 );
 
 export default PathPropTypes;

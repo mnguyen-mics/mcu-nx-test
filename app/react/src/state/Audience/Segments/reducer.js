@@ -13,14 +13,14 @@ import {
   AUDIENCE_SEGMENT_SINGLE_FETCH,
   AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH,
   AUDIENCE_SEGMENT_SINGLE_RESET,
-  AUDIENCE_SEGMENT_RETRIEVE_OVERLAP
+  AUDIENCE_SEGMENT_RETRIEVE_OVERLAP,
 } from '../../action-types';
 
 const defaultAudienceSegmentsApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 
 const audienceSegmentsApi = (state = defaultAudienceSegmentsApiState, action) => {
@@ -29,18 +29,18 @@ const audienceSegmentsApi = (state = defaultAudienceSegmentsApiState, action) =>
     case AUDIENCE_SEGMENTS_LIST_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case AUDIENCE_SEGMENTS_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case AUDIENCE_SEGMENTS_LIST_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case AUDIENCE_SEGMENTS_TABLE_RESET:
       return defaultAudienceSegmentsApiState;
@@ -55,8 +55,8 @@ const defaultPerformanceReportApiState = {
     items_per_page: 0,
     total_items: 0,
     columns_headers: [],
-    rows: []
-  }
+    rows: [],
+  },
 };
 const performanceReportApi = (state = defaultPerformanceReportApiState, action) => {
   switch (action.type) {
@@ -64,18 +64,18 @@ const performanceReportApi = (state = defaultPerformanceReportApiState, action) 
     case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload.data
+        ...action.payload.data,
       };
     case AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case AUDIENCE_SEGMENTS_TABLE_RESET:
       return defaultPerformanceReportApiState;
@@ -88,7 +88,7 @@ const defaultAudienceSegmentSingleApiState = {
   audienceSegment: {},
   isFetching: false,
   isUpdating: false,
-  isArchiving: false
+  isArchiving: false,
 };
 
 const audienceSegmentsSingleApi = (state = defaultAudienceSegmentSingleApiState, action) => {
@@ -97,7 +97,7 @@ const audienceSegmentsSingleApi = (state = defaultAudienceSegmentSingleApiState,
     case AUDIENCE_SEGMENT_SINGLE_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case AUDIENCE_SEGMENT_SINGLE_FETCH.SUCCESS:
       return {
@@ -108,7 +108,7 @@ const audienceSegmentsSingleApi = (state = defaultAudienceSegmentSingleApiState,
     case AUDIENCE_SEGMENT_SINGLE_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case AUDIENCE_SEGMENT_SINGLE_RESET:
       return defaultAudienceSegmentSingleApiState;
@@ -124,8 +124,8 @@ const defaultPerformanceReportSingleApiState = {
     items_per_page: 0,
     total_items: 0,
     columns_headers: [],
-    rows: []
-  }
+    rows: [],
+  },
 };
 const performanceReportSingleApi = (state = defaultPerformanceReportSingleApiState, action) => {
   switch (action.type) {
@@ -133,19 +133,19 @@ const performanceReportSingleApi = (state = defaultPerformanceReportSingleApiSta
     case AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
         hasFetched: true,
-        ...action.payload.data
+        ...action.payload.data,
       };
     case AUDIENCE_SEGMENT_SINGLE_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case AUDIENCE_SEGMENT_SINGLE_RESET:
       return defaultPerformanceReportSingleApiState;
@@ -160,8 +160,8 @@ const defaultOverlapAnalysisApiState = {
   data: {
     date: 0,
     segments: [],
-    overlaps: []
-  }
+    overlaps: [],
+  },
 };
 
 const overlapAnalysisApi = (state = defaultOverlapAnalysisApiState, action) => {
@@ -169,19 +169,19 @@ const overlapAnalysisApi = (state = defaultOverlapAnalysisApiState, action) => {
     case AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.SUCCESS:
       return {
         ...state,
         isFetching: false,
         hasOverlap: action.payload.hasOverlap,
-        data: action.payload
+        data: action.payload,
       };
     case AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case AUDIENCE_SEGMENT_SINGLE_RESET:
       return defaultOverlapAnalysisApiState;
@@ -196,7 +196,7 @@ const audienceSegmentsTable = combineReducers({
   performanceReportApi,
   performanceReportSingleApi,
   audienceSegmentsSingleApi,
-  overlapAnalysisApi
+  overlapAnalysisApi,
 });
 
 const AudienceSegmentsReducers = { audienceSegmentsTable };

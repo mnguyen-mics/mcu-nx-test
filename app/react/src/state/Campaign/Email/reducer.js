@@ -5,14 +5,14 @@ import {
   CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
   CAMPAIGN_EMAIL_RESET,
   EMAIL_BLAST_FETCH_ALL,
-  EMAIL_BLAST_FETCH_PERFORMANCE
+  EMAIL_BLAST_FETCH_PERFORMANCE,
 } from '../../action-types';
 
 const defaultCampaignEmailState = {
   campaignEmail: {},
   isFetching: false,
   isUpdating: false,
-  isArchiving: false
+  isArchiving: false,
 };
 
 const campaignEmailApi = (state = defaultCampaignEmailState, action) => {
@@ -20,13 +20,13 @@ const campaignEmailApi = (state = defaultCampaignEmailState, action) => {
     case CAMPAIGN_EMAIL_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case CAMPAIGN_EMAIL_FETCH.SUCCESS:
       return {
         ...state,
         campaignEmail: action.payload,
-        isFetching: false
+        isFetching: false,
       };
     case CAMPAIGN_EMAIL_FETCH.FAILURE:
       return defaultCampaignEmailState;
@@ -45,8 +45,8 @@ const defaultCampaignEmailReportState = {
     items_per_page: 0,
     total_items: 0,
     columns_headers: [],
-    rows: []
-  }
+    rows: [],
+  },
 };
 
 const campaignEmailPerformance = (state = defaultCampaignEmailReportState, action) => {
@@ -54,20 +54,20 @@ const campaignEmailPerformance = (state = defaultCampaignEmailReportState, actio
     case CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         ...action.payload.data,
         isFetching: false,
-        hasFetched: true
+        hasFetched: true,
       };
     case CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false,
-        hasFetched: true
+        hasFetched: true,
       };
 
     case CAMPAIGN_EMAIL_RESET:
@@ -81,7 +81,7 @@ const defaultEmailBlastState = {
   isFetching: false,
   hasFetched: false,
   data: [],
-  total: 0
+  total: 0,
 };
 
 const emailBlastApi = (state = defaultEmailBlastState, action) => {
@@ -89,14 +89,14 @@ const emailBlastApi = (state = defaultEmailBlastState, action) => {
     case EMAIL_BLAST_FETCH_ALL.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case EMAIL_BLAST_FETCH_ALL.SUCCESS:
       return {
         ...state,
         data: action.payload.data,
         isFetching: false,
-        hasFetched: true
+        hasFetched: true,
       };
     case EMAIL_BLAST_FETCH_ALL.FAILURE:
       return defaultEmailBlastState;
@@ -115,8 +115,8 @@ const emailBlastPerformanceState = {
     items_per_page: 0,
     total_items: 0,
     columns_headers: [],
-    rows: []
-  }
+    rows: [],
+  },
 };
 
 const emailBlastPerformanceApi = (state = emailBlastPerformanceState, action) => {
@@ -124,20 +124,20 @@ const emailBlastPerformanceApi = (state = emailBlastPerformanceState, action) =>
     case EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case EMAIL_BLAST_FETCH_PERFORMANCE.SUCCESS:
       return {
         ...state,
         ...action.payload.data,
         isFetching: false,
-        hasFetched: true
+        hasFetched: true,
       };
     case EMAIL_BLAST_FETCH_PERFORMANCE.FAILURE:
       return {
         ...state,
         isFetching: false,
-        hasFetched: true
+        hasFetched: true,
       };
 
     case CAMPAIGN_EMAIL_RESET:
@@ -152,11 +152,11 @@ const campaignEmailSingle = combineReducers({
   campaignEmailApi,
   campaignEmailPerformance,
   emailBlastApi,
-  emailBlastPerformanceApi
+  emailBlastPerformanceApi,
 });
 
 const CampaignEmailReducers = {
-  campaignEmailSingle
+  campaignEmailSingle,
 };
 
 export default CampaignEmailReducers;

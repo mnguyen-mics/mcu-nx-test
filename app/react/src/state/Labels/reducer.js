@@ -7,13 +7,13 @@ import {
   // LABELS_PAIR,
   // LABELS_UNPAIR,
   LABELS_RESET,
-  LABELS_OBJECT_FETCH
+  LABELS_OBJECT_FETCH,
 } from '../action-types';
 
 const defaultLabelsApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
 };
 
 const labelsApi = (state = defaultLabelsApiState, action) => {
@@ -21,18 +21,18 @@ const labelsApi = (state = defaultLabelsApiState, action) => {
     case LABELS_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case LABELS_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case LABELS_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case LABELS_RESET:
       return defaultLabelsApiState;
@@ -44,7 +44,7 @@ const labelsApi = (state = defaultLabelsApiState, action) => {
 const defaultLabelsAttachedApiState = {
   isFetching: false,
   data: [],
-  total: 0
+  total: 0,
 };
 
 const labelsAttachedApi = (state = defaultLabelsAttachedApiState, action) => {
@@ -52,18 +52,18 @@ const labelsAttachedApi = (state = defaultLabelsAttachedApiState, action) => {
     case LABELS_OBJECT_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case LABELS_OBJECT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case LABELS_OBJECT_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case LABELS_RESET:
       return defaultLabelsApiState;
@@ -74,7 +74,7 @@ const labelsAttachedApi = (state = defaultLabelsAttachedApiState, action) => {
 
 const labels = combineReducers({
   labelsApi,
-  labelsAttachedApi
+  labelsAttachedApi,
 });
 
 const LabelsReducers = { labels };

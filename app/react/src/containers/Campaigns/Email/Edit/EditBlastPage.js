@@ -20,18 +20,18 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 class EditBlastPage extends Component {
   state = {
     emailCampaign: {
-      name: ''
+      name: '',
     },
     loadedBlast: {
       consents: [],
       templates: [],
-      segments: []
-    }
+      segments: [],
+    },
   }
 
   componentDidMount() {
     const {
-      match: { params: { campaignId, blastId } }
+      match: { params: { campaignId, blastId } },
     } = this.props;
 
     this.loadBlast(campaignId, blastId);
@@ -39,11 +39,11 @@ class EditBlastPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      match: { params: { campaignId, blastId } }
+      match: { params: { campaignId, blastId } },
     } = this.props;
 
     const {
-      match: { params: { campaignId: nextCampaignId, blastId: nextBlastId } }
+      match: { params: { campaignId: nextCampaignId, blastId: nextBlastId } },
     } = nextProps;
 
     if (nextCampaignId !== campaignId || nextBlastId !== blastId) {
@@ -60,7 +60,7 @@ class EditBlastPage extends Component {
         return Promise.all([
           EmailCampaignService.getEmailTemplates(campaignId, blast.id).then(res => res.data),
           EmailCampaignService.getConsents(campaignId, blast.id).then(res => res.data),
-          EmailCampaignService.getSegments(campaignId, blast.id).then(res => res.data)
+          EmailCampaignService.getSegments(campaignId, blast.id).then(res => res.data),
         ]).then(results => {
           const [templates, consents, segments] = results;
           return {
@@ -68,10 +68,10 @@ class EditBlastPage extends Component {
             send_date: moment(blast.send_date),
             templates,
             consents,
-            segments
+            segments,
           };
         });
-      })
+      }),
     ]).then(results => {
       const [emailCampaign, loadedBlast] = results;
       this.setState({ emailCampaign, loadedBlast });
@@ -85,25 +85,25 @@ class EditBlastPage extends Component {
     const {
       match: { params: { campaignId, blastId } },
       notifyError,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const { loadedBlast } = this.state;
 
     const hideSaveInProgress = message.loading(
       formatMessage(messages.savingInProgress),
-      0
+      0,
     );
 
     const blastResource = {
       ...pick(updatedBlast, ['blast_name', 'subject_line', 'from_email', 'from_name', 'reply_to']),
-      send_date: parseInt(updatedBlast.send_date.format('x'), 0)
+      send_date: parseInt(updatedBlast.send_date.format('x'), 0),
     };
 
     EmailCampaignService.updateBlast(
       campaignId,
       blastId,
-      blastResource
+      blastResource,
     ).then(() => {
       Promise.all([
         ...updatedBlast.templates.map(template => {
@@ -126,7 +126,7 @@ class EditBlastPage extends Component {
         }),
         ...loadedBlast.segments.map(segment => {
           return EmailCampaignService.removeSegment(campaignId, blastId, segment.id);
-        })
+        }),
       ]);
     }).then(() => {
       hideSaveInProgress();
@@ -157,13 +157,13 @@ class EditBlastPage extends Component {
       loadedBlast: {
         segments,
         ...other
-      }
+      },
     } = this.state;
 
     const {
       organisationId,
       intl: { formatMessage },
-      match: { params: { campaignId } }
+      match: { params: { campaignId } },
     } = this.props;
 
     const initialValues = { blast: other };
@@ -172,9 +172,9 @@ class EditBlastPage extends Component {
     const breadcrumbPaths = [
       {
         name: emailCampaign.name,
-        url: `/v2/o/${organisationId}/campaigns/email/${campaignId}`
+        url: `/v2/o/${organisationId}/campaigns/email/${campaignId}`,
       },
-      { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleEditBlast, { blastName }) }
+      { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleEditBlast, { blastName }) },
     ];
 
 
@@ -200,7 +200,7 @@ EditBlastPage.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default compose(
@@ -208,7 +208,7 @@ export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: actions.notifyError }
+    { notifyError: actions.notifyError },
   ),
   withDrawer,
 )(EditBlastPage);

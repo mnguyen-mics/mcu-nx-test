@@ -1,6 +1,6 @@
 import {
   Settings,
-  SettingsActionBar
+  SettingsActionBar,
 } from '../containers/Settings/index';
 
 const settingsRoutes = [
@@ -8,8 +8,8 @@ const settingsRoutes = [
     path: '/settings',
     layout: 'main',
     contentComponent: Settings,
-    actionBarComponent: SettingsActionBar
-  }
+    actionBarComponent: SettingsActionBar,
+  },
 ];
 
 export default settingsRoutes;

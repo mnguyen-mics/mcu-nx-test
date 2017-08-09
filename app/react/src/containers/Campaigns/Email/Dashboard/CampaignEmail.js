@@ -17,7 +17,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs
+  compareSearchs,
 } from '../../../../utils/LocationSearchHelper';
 
 class CampaignEmail extends Component {
@@ -27,23 +27,23 @@ class CampaignEmail extends Component {
       history,
       location: {
         search,
-        pathname
+        pathname,
       },
       match: {
         params: {
           organisationId,
-          campaignId
-        }
+          campaignId,
+        },
       },
       loadCampaignEmailAndDeliveryReport,
       fetchAllEmailBlast,
-      fetchAllEmailBlastPerformance
+      fetchAllEmailBlastPerformance,
     } = this.props;
 
     if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)
+        search: buildDefaultSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
       const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
@@ -56,30 +56,30 @@ class CampaignEmail extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          campaignId
-        }
+          campaignId,
+        },
       },
       history,
       loadCampaignEmailAndDeliveryReport,
       fetchAllEmailBlast,
-      fetchAllEmailBlastPerformance
+      fetchAllEmailBlastPerformance,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch
+        search: nextSearch,
       },
       match: {
         params: {
           campaignId: nextCampaignId,
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
 
@@ -87,7 +87,7 @@ class CampaignEmail extends Component {
       if (!isSearchValid(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)
+          search: buildDefaultSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS),
         });
       } else {
         const filter = parseSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS);
@@ -103,12 +103,11 @@ class CampaignEmail extends Component {
   }
 
   render() {
-
     const {
       match: {
-        params: { organisationId, campaignId }
+        params: { organisationId, campaignId },
       },
-      translations
+      translations,
     } = this.props;
 
     const buttons = (
@@ -134,29 +133,29 @@ class CampaignEmail extends Component {
 
 CampaignEmail.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   loadCampaignEmailAndDeliveryReport: PropTypes.func.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
   fetchAllEmailBlastPerformance: PropTypes.func.isRequired,
-  resetCampaignEmail: PropTypes.func.isRequired
+  resetCampaignEmail: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  translations: state.translations
+  translations: state.translations,
 });
 
 const mapDispatchToProps = {
   fetchAllEmailBlast: CampaignEmailActions.fetchAllEmailBlast.request,
   fetchAllEmailBlastPerformance: CampaignEmailActions.fetchAllEmailBlastPerformance.request,
   loadCampaignEmailAndDeliveryReport: CampaignEmailActions.loadCampaignEmailAndDeliveryReport,
-  resetCampaignEmail: CampaignEmailActions.resetCampaignEmail
+  resetCampaignEmail: CampaignEmailActions.resetCampaignEmail,
 };
 
 CampaignEmail = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(CampaignEmail);
 
 CampaignEmail = withRouter(CampaignEmail);

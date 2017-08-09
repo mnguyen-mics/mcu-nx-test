@@ -1,5 +1,5 @@
 import UserAccount from './UserAccount';
 
 export {
-  UserAccount
+  UserAccount,
 };

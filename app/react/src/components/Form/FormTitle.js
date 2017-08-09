@@ -3,22 +3,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-const FormTitle = ({ titleMessage, subTitleMessage }) => (
-  <div className="title-container">
-    <div className="title">
-    <FormattedMessage
-      {...titleMessage}
-    />
-    </div>
-    {!!subTitleMessage &&
-      <div className="subtitle">
+function FormTitle({ titleMessage, subTitleMessage }) {
+  
+  return (
+    <div className="title-container">
+      <div className="title">
       <FormattedMessage
-        {...subTitleMessage}
+        {...titleMessage}
       />
       </div>
-    }
-  </div>
-);
+      {!!subTitleMessage &&
+        <div className="subtitle">
+        <FormattedMessage
+          {...subTitleMessage}
+        />
+        </div>
+      }
+    </div>
+  )
+};
 
 FormTitle.defaultProps = {
   subTitleMessage: null

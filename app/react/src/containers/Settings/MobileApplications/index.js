@@ -3,5 +3,5 @@ import MobileApplicationsTable from './MobileApplicationsTable';
 
 export {
   MobileApplicationsListPage,
-  MobileApplicationsTable
+  MobileApplicationsTable,
 };

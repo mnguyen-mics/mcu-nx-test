@@ -3,5 +3,5 @@ import SettingsActionBar from './SettingsActionBar';
 
 export {
   Settings,
-  SettingsActionBar
+  SettingsActionBar,
 };

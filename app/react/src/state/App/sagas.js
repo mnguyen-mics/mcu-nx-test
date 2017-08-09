@@ -7,7 +7,7 @@ import { appStartup } from './actions';
 import {
   LOAD_TRANSLATIONS,
   LOG_IN,
-  CONNECTED_USER
+  CONNECTED_USER,
 } from '../action-types';
 
 function* watchInitializationSuccess() {
@@ -30,7 +30,7 @@ function* watchInitializationFailure() {
 function* watchInitializationComplete() {
   const { failure } = yield race({
     success: call(watchInitializationSuccess),
-    failure: call(watchInitializationFailure)
+    failure: call(watchInitializationFailure),
   });
 
   if (failure) {
@@ -42,5 +42,5 @@ function* watchInitializationComplete() {
 }
 
 export const appSagas = [
-  fork(watchInitializationComplete)
+  fork(watchInitializationComplete),
 ];

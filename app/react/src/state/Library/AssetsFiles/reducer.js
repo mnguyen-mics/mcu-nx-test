@@ -6,7 +6,7 @@ const defaultAssetsFilesApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 
 const assetsFilesApi = (state = defaultAssetsFilesApiState, action) => {
@@ -14,18 +14,18 @@ const assetsFilesApi = (state = defaultAssetsFilesApiState, action) => {
     case ASSETS_FILES_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case ASSETS_FILES_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case ASSETS_FILES_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case ASSETS_FILES_RESET:
       return defaultAssetsFilesApiState;
@@ -35,7 +35,7 @@ const assetsFilesApi = (state = defaultAssetsFilesApiState, action) => {
 };
 
 const assetsFilesTable = combineReducers({
-  assetsFilesApi
+  assetsFilesApi,
 });
 
 const AssetsFilesReducers = { assetsFilesTable };

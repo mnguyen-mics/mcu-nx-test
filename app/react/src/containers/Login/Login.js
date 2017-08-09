@@ -27,10 +27,10 @@ class Login extends Component {
     const {
       translations,
       form: {
-        getFieldDecorator
+        getFieldDecorator,
       },
       isRequesting,
-      hasError
+      hasError,
      } = this.props;
 
     const errorMsg = hasError ? <Alert type="danger" text={<FormattedMessage id="LOG_IN_ERROR" />} /> : null;
@@ -45,14 +45,14 @@ class Login extends Component {
               {getFieldDecorator('email', {
                 rules: [{ required: true, message: translations.EMAL_REQUIRED }],
               })(
-                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={translations.EMAIL_PLACEHOLDER} />
+                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={translations.EMAIL_PLACEHOLDER} />,
               )}
             </FormItem>
             <FormItem>
               {getFieldDecorator('password', {
                 rules: [{ required: true, message: translations.PASSWORD_REQURED }],
               })(
-                <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder={translations.PASSWORD_PLACEHOLDER} />
+                <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder={translations.PASSWORD_PLACEHOLDER} />,
               )}
             </FormItem>
             <FormItem>
@@ -60,7 +60,7 @@ class Login extends Component {
                 valuePropName: 'checked',
                 initialValue: false,
               })(
-                <Checkbox><FormattedMessage id="REMEMBER_ME" /></Checkbox>
+                <Checkbox><FormattedMessage id="REMEMBER_ME" /></Checkbox>,
               )}
               <Link className="login-form-forgot" to="/v2/forgot_password"><FormattedMessage id="FORGOT_PASSWORD" /></Link>
               <Button type="primary" htmlType="submit" className="login-form-button" loading={isRequesting}>
@@ -88,7 +88,7 @@ class Login extends Component {
         this.props.logInRequest({
           email: values.email,
           password: values.password,
-          remember: values.remember
+          remember: values.remember,
         }, { redirect });
       }
     });
@@ -109,18 +109,18 @@ Login.propTypes = {
 const mapStateToProps = state => ({
   translations: state.translations,
   hasError: state.login.hasError,
-  isRequesting: state.login.isRequesting
+  isRequesting: state.login.isRequesting,
 });
 
 const mapDispatchToProps = {
-  logInRequest: logIn.request
+  logInRequest: logIn.request,
 };
 
 Login = withRouter(Login);
 
 Login = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Login);
 
 Login = Form.create()(Login);

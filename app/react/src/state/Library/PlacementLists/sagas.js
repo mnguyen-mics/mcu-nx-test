@@ -4,7 +4,7 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-    fetchPlacementLists
+    fetchPlacementLists,
 } from './actions';
 
 import PlacementListsService from '../../../services/Library/PlacementListsService';
@@ -12,7 +12,7 @@ import PlacementListsService from '../../../services/Library/PlacementListsServi
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 import {
-    PLACEMENT_LISTS_FETCH
+    PLACEMENT_LISTS_FETCH,
 } from '../../action-types';
 
 function* loadPlacementLists({ payload }) {
@@ -21,17 +21,17 @@ function* loadPlacementLists({ payload }) {
     const {
       organisationId,
       filter,
-      isInitialRender
+      isInitialRender,
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     const initialOptions = {
-      ...getPaginatedApiParam(1, 1)
+      ...getPaginatedApiParam(1, 1),
     };
 
     let allCalls;
@@ -39,11 +39,11 @@ function* loadPlacementLists({ payload }) {
     if (isInitialRender) {
       allCalls = {
         initialFetch: call(PlacementListsService.getPlacementLists, organisationId, initialOptions),
-        response: call(PlacementListsService.getPlacementLists, organisationId, options)
+        response: call(PlacementListsService.getPlacementLists, organisationId, options),
       };
     } else {
       allCalls = {
-        response: call(PlacementListsService.getPlacementLists, organisationId, options)
+        response: call(PlacementListsService.getPlacementLists, organisationId, options),
       };
     }
 
@@ -65,5 +65,5 @@ function* watchfetchPlacementLists() {
 }
 
 export const placementListsSagas = [
-  fork(watchfetchPlacementLists)
+  fork(watchfetchPlacementLists),
 ];

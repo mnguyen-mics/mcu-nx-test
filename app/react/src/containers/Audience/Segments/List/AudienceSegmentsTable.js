@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import {
   TableView,
   TableViewFilters,
-  EmptyTableView
+  EmptyTableView,
 } from '../../../../components/TableView';
 import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
@@ -19,7 +19,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs
+  compareSearchs,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -28,56 +28,26 @@ import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class AudienceSegmentsTable extends Component {
 
-  constructor(props) {
-    super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archiveSegment = this.archiveSegment.bind(this);
-    this.editSegment = this.editSegment.bind(this);
-  }
-
-  getSearchSetting(organisationId) {
-    const { defaultDatamart } = this.props;
-
-    return [
-      ...SEGMENTS_SEARCH_SETTINGS,
-      {
-        paramName: 'datamarts',
-        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
-        deserialize: query => {
-          if (query.datamarts) {
-            return query.datamarts.split(',').map((d) => parseInt(d, 0));
-          }
-          return [];
-        },
-        serialize: value => value.join(','),
-        isValid: query =>
-        query.datamarts &&
-        query.datamarts.split(',').length > 0 &&
-        lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0)))
-      }
-    ];
-  }
-
   componentDidMount() {
     const {
       history,
       location: {
         search,
-        pathname
+        pathname,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
-      loadAudienceSegmentsDataSource
+      loadAudienceSegmentsDataSource,
     } = this.props;
 
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, this.getSearchSetting(organisationId)),
-        state: { reloadDataSource: true }
+        state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, this.getSearchSetting(organisationId));
@@ -89,28 +59,28 @@ class AudienceSegmentsTable extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search
+        search,
       },
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       history,
-      loadAudienceSegmentsDataSource
+      loadAudienceSegmentsDataSource,
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
         search: nextSearch,
-        state
+        state,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId
-        }
-      }
+          organisationId: nextOrganisationId,
+        },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -119,7 +89,7 @@ class AudienceSegmentsTable extends Component {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, this.getSearchSetting(nextOrganisationId)),
-          state: { reloadDataSource: organisationId !== nextOrganisationId }
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const filter = parseSearch(nextSearch, this.getSearchSetting(nextOrganisationId));
@@ -133,253 +103,19 @@ class AudienceSegmentsTable extends Component {
     this.props.resetAudienceSegmentsTable();
   }
 
-  updateLocationSearch(params) {
-    const {
-      history,
-      match: {
-        params: { organisationId }
-      },
-      location: {
-        search: currentSearch,
-        pathname
-      }
-    } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, this.getSearchSetting(organisationId))
-    };
-
-    history.push(nextLocation);
-  }
-
-  render() {
+  archiveSegment = (segment) => {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
-        search
-      },
-      translations,
-      isFetchingAudienceSegments,
-      isFetchingSegmentsStat,
-      dataSource,
-      totalAudienceSegments,
-      hasAudienceSegments
-    } = this.props;
-
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
-
-    const searchOptions = {
-      isEnabled: true,
-      placeholder: translations.SEARCH_AUDIENCE_SEGMENTS,
-      onSearch: value => this.updateLocationSearch({
-        keywords: value
-      }),
-      defaultValue: filter.keywords
-    };
-
-    const dateRangePickerOptions = {
-      isEnabled: true,
-      onChange: (values) => this.updateLocationSearch({
-        rangeType: values.rangeType,
-        lookbackWindow: values.lookbackWindow,
-        from: values.from,
-        to: values.to,
-      }),
-      values: {
-        rangeType: filter.rangeType,
-        lookbackWindow: filter.lookbackWindow,
-        from: filter.from,
-        to: filter.to
-      }
-    };
-
-    const columnsVisibilityOptions = {
-      isEnabled: true
-    };
-
-    const pagination = {
-      currentPage: filter.currentPage,
-      pageSize: filter.pageSize,
-      total: totalAudienceSegments,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size
-      })
-    };
-
-    const renderMetricData = (value, numeralFormat, currency = '') => {
-      if (isFetchingSegmentsStat) {
-        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
-      }
-      const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
-      return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
-    };
-
-    const dataColumns = [
-      {
-        translationKey: 'TYPE',
-        key: 'type',
-        isHiddable: false,
-        render: (text) => {
-          switch (text) {
-            case 'USER_ACTIVATION':
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="rocket" /></Tooltip>);
-            case 'USER_QUERY':
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="database" /></Tooltip>);
-            case 'USER_LIST':
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="solution" /></Tooltip>);
-            default:
-              return (<Tooltip placement="top" title={translations[text]}><Icon type="database" /></Tooltip>);
-          }
-        }
-      },
-      {
-        translationKey: 'NAME',
-        key: 'name',
-        isHiddable: false,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>
-      },
-      {
-        translationKey: 'TECHNICAL_NAME',
-        isVisibleByDefault: false,
-        key: 'technical_name',
-        isHiddable: true,
-        render: (text, record) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/audience/segments/${record.id}`}>{text}</Link>
-      },
-      {
-        translationKey: 'USER_POINTS',
-        key: 'user_points',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      },
-      {
-        translationKey: 'USER_ACCOUNTS',
-        key: 'user_accounts',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      },
-      {
-        translationKey: 'EMAILS',
-        key: 'emails',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      },
-      {
-        translationKey: 'COOKIES',
-        key: 'desktop_cookie_ids',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      },
-      {
-        translationKey: 'ADDITION',
-        key: 'user_point_additions',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      },
-      {
-        translationKey: 'DELETION',
-        key: 'user_point_deletions',
-        isVisibleByDefault: true,
-        isHiddable: true,
-        render: text => renderMetricData(text, '0,0')
-      },
-    ];
-
-    const actionColumns = [
-      {
-        key: 'action',
-        actions: [
-          {
-            translationKey: 'EDIT',
-            callback: this.editSegment
-          }, {
-            translationKey: 'ARCHIVE',
-            callback: this.archiveSegment
-          }
-        ]
-      }
-    ];
-
-    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY'].map(type => ({ key: type, value: type }));
-
-    const filtersOptions = [
-      {
-        name: 'types',
-        displayElement: (<div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>),
-        menuItems: {
-          handleMenuClick: value => this.updateLocationSearch({ types: value.types.map(item => item.value) }),
-          selectedItems: filter.types.map(type => ({ key: type, value: type })),
-          items: typeItems
-        }
-      }
-    ];
-
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns
-    };
-
-    return (hasAudienceSegments) ? (
-      <div className="mcs-table-container">
-        <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
-          searchOptions={searchOptions}
-          dateRangePickerOptions={dateRangePickerOptions}
-          filtersOptions={filtersOptions}
-          columnsVisibilityOptions={columnsVisibilityOptions}
-        >
-          <TableView
-            columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingAudienceSegments}
-            pagination={pagination}
-          />
-        </TableViewFilters>
-      </div>
-    ) : (<EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />);
-
-  }
-
-  editSegment(segment) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      history
-    } = this.props;
-
-    const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
-
-    history.push(editUrl);
-  }
-
-  archiveSegment(segment) {
-    const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      location: {
-        search
+        search,
       },
       archiveAudienceSegment,
       loadAudienceSegmentsDataSource,
-      translations
+      translations,
     } = this.props;
 
     const filter = parseSearch(search, this.getSearchSetting());
@@ -400,16 +136,307 @@ class AudienceSegmentsTable extends Component {
     });
   }
 
+  editSegment = (segment) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
+
+    history.push(editUrl);
+  }
+
+  getSearchSetting(organisationId) {
+    const { defaultDatamart } = this.props;
+
+    return [
+      ...SEGMENTS_SEARCH_SETTINGS,
+      {
+        paramName: 'datamarts',
+        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
+        deserialize: query => {
+          if (query.datamarts) {
+            return query.datamarts.split(',').map((d) => parseInt(d, 0));
+          }
+          return [];
+        },
+        serialize: value => value.join(','),
+        isValid: query =>
+        query.datamarts &&
+        query.datamarts.split(',').length > 0 &&
+        lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
+      },
+    ];
+  }
+
+  updateLocationSearch = (params) => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+      location: {
+        search: currentSearch,
+        pathname,
+      },
+    } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, this.getSearchSetting(organisationId)),
+    };
+
+    history.push(nextLocation);
+  }
+
+  render() {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      location: {
+        search,
+      },
+      translations,
+      isFetchingAudienceSegments,
+      isFetchingSegmentsStat,
+      dataSource,
+      totalAudienceSegments,
+      hasAudienceSegments,
+    } = this.props;
+
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+
+    const searchOptions = {
+      isEnabled: true,
+      placeholder: translations.SEARCH_AUDIENCE_SEGMENTS,
+      onSearch: value => this.updateLocationSearch({
+        keywords: value,
+      }),
+      defaultValue: filter.keywords,
+    };
+
+    const dateRangePickerOptions = {
+      isEnabled: true,
+      onChange: (values) => this.updateLocationSearch({
+        rangeType: values.rangeType,
+        lookbackWindow: values.lookbackWindow,
+        from: values.from,
+        to: values.to,
+      }),
+      values: {
+        rangeType: filter.rangeType,
+        lookbackWindow: filter.lookbackWindow,
+        from: filter.from,
+        to: filter.to,
+      },
+    };
+
+    const columnsVisibilityOptions = {
+      isEnabled: true,
+    };
+
+    const pagination = {
+      currentPage: filter.currentPage,
+      pageSize: filter.pageSize,
+      total: totalAudienceSegments,
+      onChange: (page) => this.updateLocationSearch({
+        currentPage: page,
+      }),
+      onShowSizeChange: (current, size) => this.updateLocationSearch({
+        pageSize: size,
+      }),
+    };
+
+    const renderMetricData = (value, numeralFormat, currency = '') => {
+      if (isFetchingSegmentsStat) {
+        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
+      }
+
+      const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
+
+      return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
+    };
+
+    const dataColumns = [
+      {
+        translationKey: 'TYPE',
+        key: 'type',
+        isHiddable: false,
+        render: (text) => {
+          switch (text) {
+            case 'USER_ACTIVATION':
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="rocket" />
+                </Tooltip>
+              );
+            case 'USER_QUERY':
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="database" />
+                </Tooltip>
+              );
+            case 'USER_LIST':
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="solution" />
+                </Tooltip>
+              );
+            default:
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="database" />
+                </Tooltip>
+              );
+          }
+        },
+      },
+      {
+        translationKey: 'NAME',
+        key: 'name',
+        isHiddable: false,
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
+          >{text}
+          </Link>
+        ),
+      },
+      {
+        translationKey: 'TECHNICAL_NAME',
+        isVisibleByDefault: false,
+        key: 'technical_name',
+        isHiddable: true,
+        render: (text, record) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
+          >{text}
+          </Link>
+        ),
+      },
+      {
+        translationKey: 'USER_POINTS',
+        key: 'user_points',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0'),
+      },
+      {
+        translationKey: 'USER_ACCOUNTS',
+        key: 'user_accounts',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0'),
+      },
+      {
+        translationKey: 'EMAILS',
+        key: 'emails',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0'),
+      },
+      {
+        translationKey: 'COOKIES',
+        key: 'desktop_cookie_ids',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0'),
+      },
+      {
+        translationKey: 'ADDITION',
+        key: 'user_point_additions',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0'),
+      },
+      {
+        translationKey: 'DELETION',
+        key: 'user_point_deletions',
+        isVisibleByDefault: true,
+        isHiddable: true,
+        render: text => renderMetricData(text, '0,0'),
+      },
+    ];
+
+    const actionColumns = [
+      {
+        key: 'action',
+        actions: [
+          {
+            translationKey: 'EDIT',
+            callback: this.editSegment,
+          }, {
+            translationKey: 'ARCHIVE',
+            callback: this.archiveSegment,
+          },
+        ],
+      },
+    ];
+
+    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY']
+      .map(type => ({ key: type, value: type }));
+
+    const filtersOptions = [
+      {
+        name: 'types',
+        displayElement: <div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>,
+        menuItems: {
+          handleMenuClick: (value => this.updateLocationSearch({
+            types: value.types.map(item => item.value),
+          })),
+          selectedItems: filter.types.map(type => ({ key: type, value: type })),
+          items: typeItems,
+        },
+      },
+    ];
+
+    const columnsDefinitions = {
+      dataColumnsDefinition: dataColumns,
+      actionsColumnsDefinition: actionColumns,
+    };
+
+    return (hasAudienceSegments
+      ? (
+        <div className="mcs-table-container">
+          <TableViewFilters
+            columnsDefinitions={columnsDefinitions}
+            searchOptions={searchOptions}
+            dateRangePickerOptions={dateRangePickerOptions}
+            filtersOptions={filtersOptions}
+            columnsVisibilityOptions={columnsVisibilityOptions}
+          >
+            <TableView
+              columnsDefinitions={columnsDefinitions}
+              dataSource={dataSource}
+              loading={isFetchingAudienceSegments}
+              pagination={pagination}
+            />
+          </TableViewFilters>
+        </div>
+      )
+      : <EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />
+    );
+  }
 }
 
 AudienceSegmentsTable.defaultProps = {
-  archiveAudienceSegment: () => { }
+  archiveAudienceSegment: () => { },
 };
 
 AudienceSegmentsTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 
   hasAudienceSegments: PropTypes.bool.isRequired,
@@ -433,18 +460,18 @@ const mapStateToProps = state => ({
   isFetchingSegmentsStat: state.audienceSegmentsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.total,
-  defaultDatamart: getDefaultDatamart(state)
+  defaultDatamart: getDefaultDatamart(state),
 });
 
 const mapDispatchToProps = {
   loadAudienceSegmentsDataSource: AudienceSegmentsActions.loadAudienceSegmentsDataSource,
   archiveAudienceSegment: AudienceSegmentsActions.archiveAudienceSegment,
-  resetAudienceSegmentsTable: AudienceSegmentsActions.resetAudienceSegmentsTable
+  resetAudienceSegmentsTable: AudienceSegmentsActions.resetAudienceSegmentsTable,
 };
 
 AudienceSegmentsTable = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AudienceSegmentsTable);
 
 AudienceSegmentsTable = withRouter(AudienceSegmentsTable);

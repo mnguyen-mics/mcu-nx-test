@@ -14,7 +14,7 @@ const getDisplayCampaignPerformanceReport = (organisationId, startDate, endDate,
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -30,7 +30,7 @@ const getEmailDeliveryReport = (organisationId, startDate, endDate, dimension, m
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -48,7 +48,7 @@ const getSingleDisplayDeliveryReport = (organisationId, campaignId, startDate, e
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -66,7 +66,7 @@ const getAdGroupDeliveryReport = (organisationId, objectType, objectId, startDat
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -84,7 +84,7 @@ const getAdDeliveryReport = (organisationId, objectType, objectId, startDate, en
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -102,7 +102,7 @@ const getMediaDeliveryReport = (organisationId, objectType, objectId, startDate,
     end_date: endDate.format(DATE_FORMAT),
     dimension: dimension || DEFAULT_DIMENSIONS,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -119,7 +119,7 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params).then(response => {
@@ -155,7 +155,7 @@ const getConversionPerformanceReport = (organisationId, startDate, endDate, dime
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -171,7 +171,7 @@ const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension,
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -187,7 +187,7 @@ const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endD
     end_date: endDate.format(DATE_FORMAT),
     dimension,
     metrics: metrics || DEFAULT_METRICS,
-    ...options
+    ...options,
   };
 
   return ApiService.getRequest(endpoint, params);
@@ -203,5 +203,5 @@ export default {
   getSingleDisplayDeliveryReport,
   getAdGroupDeliveryReport,
   getAdDeliveryReport,
-  getMediaDeliveryReport
+  getMediaDeliveryReport,
 };

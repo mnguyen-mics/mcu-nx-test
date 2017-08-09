@@ -8,18 +8,18 @@ const userAccountApi = (state = {}, action) => {
     case SAVE_PROFILE.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case SAVE_PROFILE.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case SAVE_PROFILE.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     default:
       return state;

@@ -3,5 +3,5 @@ import logoutListener from './logoutListener';
 
 export {
     apiRequest,
-    logoutListener
+    logoutListener,
 };

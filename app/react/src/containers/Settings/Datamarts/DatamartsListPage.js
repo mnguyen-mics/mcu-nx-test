@@ -24,15 +24,15 @@ class DatamartsListPage extends Component {
       noDatamartYet: false,
       filter: {
         currentPage: 1,
-        pageSize: 10
-      }
+        pageSize: 10,
+      },
     };
     this.handleEditDatamart = this.handleEditDatamart.bind(this);
   }
 
   componentDidMount() {
     const {
-      organisationId
+      organisationId,
     } = this.props;
 
     this.fetchDatamarts(organisationId, this.state.filter);
@@ -46,7 +46,7 @@ class DatamartsListPage extends Component {
     const {
       organisationId,
       history,
-      datamartId
+      datamartId,
     } = this.props;
 
     history.push(`/o${organisationId}d${datamartId}/settings/datamarts/edit/${datamart.id}`);
@@ -60,7 +60,7 @@ class DatamartsListPage extends Component {
     const buildGetDatamartsOptions = () => {
       return {
         allow_administrator: true,
-        ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+        ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
     };
 
@@ -69,7 +69,7 @@ class DatamartsListPage extends Component {
         isFetchingDatamarts: false,
         noDatamartYet: response && response.count === 0,
         datamarts: response.data,
-        totalDatamarts: response.count
+        totalDatamarts: response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingDatamarts: false });
@@ -83,7 +83,7 @@ class DatamartsListPage extends Component {
       totalDatamarts,
       datamarts,
       noDatamartYet,
-      filter
+      filter,
     } = this.state;
 
     return (
@@ -110,7 +110,7 @@ DatamartsListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   datamartId: PropTypes.number.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired
+  notifyError: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -118,6 +118,6 @@ export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: notifyActions.notifyError }
-  )
+    { notifyError: notifyActions.notifyError },
+  ),
 )(DatamartsListPage);

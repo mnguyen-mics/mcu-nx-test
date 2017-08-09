@@ -3,35 +3,35 @@ import { defineMessages } from 'react-intl';
 const messages = defineMessages({
   searchPlaceholder: {
     id: 'site.search.placeholder',
-    defaultMessage: 'Search Sites'
+    defaultMessage: 'Search Sites',
   },
   siteName: {
     id: 'site.name',
-    defaultMessage: 'Name'
+    defaultMessage: 'Name',
   },
   siteToken: {
     id: 'site.token',
-    defaultMessage: 'Token'
+    defaultMessage: 'Token',
   },
   siteCreationDate: {
     id: 'site.creation_date',
-    defaultMessage: 'Creation Date'
+    defaultMessage: 'Creation Date',
   },
   newSite: {
     id: 'site.new',
-    defaultMessage: 'New Site'
+    defaultMessage: 'New Site',
   },
   editSite: {
     id: 'site.edit',
-    defaultMessage: 'Edit'
+    defaultMessage: 'Edit',
   },
   archiveSite: {
     id: 'site.archive',
-    defaultMessage: 'Archive'
+    defaultMessage: 'Archive',
   },
   emptySites: {
     id: 'site.empty',
-    defaultMessage: "There are no sites set up. Click on 'New Site' to create one."
+    defaultMessage: "There are no sites set up. Click on 'New Site' to create one.",
   },
 });
 

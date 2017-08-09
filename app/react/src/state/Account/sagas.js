@@ -7,11 +7,11 @@ import { getConnectedUser } from '../Session/actions';
 import log from '../../utils/Logger';
 
 import {
-  SAVE_PROFILE
+  SAVE_PROFILE,
 } from '../action-types';
 
 import {
-  saveProfile
+  saveProfile,
 } from './actions';
 
 function* updateRemoteProfile({ payload }) {
@@ -22,7 +22,7 @@ function* updateRemoteProfile({ payload }) {
     yield put(saveProfile.success(response));
     yield put(getConnectedUser.request());
     yield put(addNotification({
-      type: 'success'
+      type: 'success',
     }));
   } catch (e) {
     log.error(e);
@@ -30,7 +30,7 @@ function* updateRemoteProfile({ payload }) {
     yield put(addNotification({
       type: 'error',
       messageKey: 'NOTIFICATION_ERROR_TITLE',
-      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION'
+      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION',
     }));
   }
 }
@@ -40,5 +40,5 @@ function* watchSaveProfileRequest() {
 }
 
 export const accountSagas = [
-  fork(watchSaveProfileRequest)
+  fork(watchSaveProfileRequest),
 ];

@@ -1,44 +1,49 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Plottable from 'plottable';
+
 import { OverlapTooltip, ChartTooltip } from '../ChartTooltip';
 
 class VerticalBarChart extends Component {
 
   constructor(props) {
     super(props);
-    this.renderBarChart = this.renderBarChart.bind(this);
-    this.defineSvg = this.defineSvg.bind(this);
-    this.setTooltip = this.setTooltip.bind(this);
-    this.plot = null;
-    this.plotDataset = null;
-    this.pointers = [];
-    this.pointersAttached = [];
+
     this.state = {
       xTooltip: null,
       yTooltip: null,
       content: null,
-      visibility: 'hidden'
+      visibility: 'hidden',
     };
 
+    this.plot = null;
+    this.plotDataset = null;
+    this.pointers = [];
+    this.pointersAttached = [];
     this.svgBoundingClientRect = null;
-  }
-
-  setTooltip(chartTooltipProps) {
-    if (chartTooltipProps) {
-      this.setState({
-        xTooltip: chartTooltipProps.xTooltip,
-        yTooltip: chartTooltipProps.yTooltip,
-        content: chartTooltipProps.content,
-        visibility: chartTooltipProps.visibility
-      });
-    }
   }
 
   componentDidMount() {
     const {
-      dataset
+      dataset,
     } = this.props;
 
+    this.renderBarChart(dataset);
+    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+  }
+
+  componentDidUpdate() {
+    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      dataset,
+    } = nextProps;
+
+    this.pointers.forEach(point => {
+      point.pointer.detachFrom(point.plot);
+    });
     this.renderBarChart(dataset);
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
@@ -50,68 +55,70 @@ class VerticalBarChart extends Component {
     this.plot.destroy();
   }
 
-  componentDidUpdate() {
-    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
-  }
-
-  componentWillReceiveProps(nextProps) {
+  createTooltipCrosshair() {
     const {
-      dataset
-    } = nextProps;
+      dataset,
+    } = this.props;
 
-    this.pointers.forEach(point => {
-      point.pointer.detachFrom(point.plot);
-    });
-    this.renderBarChart(dataset);
-    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+    const crosshair = {};
+
+    crosshair.drawAt = (p, mousePosition, navInfo) => {
+
+      const selectedData = dataset.find((data) => {
+        return data.xKey === navInfo.datum.x;
+      });
+      const entries = {
+        segment_initial: {
+          name: selectedData.segment_source.name || '',
+          population: selectedData.segment_source.number,
+        },
+        segment_overlaping: {
+          name: selectedData.segment_intersect_with.name || '',
+          population: selectedData.segment_intersect_with.number,
+        },
+        overlap: {
+          population: selectedData.overlap_number.number,
+        },
+      };
+
+      const tooltipContent = {
+        ...entries,
+      };
+
+      const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
+      const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
+      this.setTooltip({
+        xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 200,
+        yTooltip: mousePosition.y + 120 < height ? this.svgBoundingClientRect.top + mousePosition.y : (this.svgBoundingClientRect.top + mousePosition.y) - 50,
+        content: tooltipContent,
+        visibility: 'visible',
+      });
+    };
+    crosshair.hide = () => {
+      this.setTooltip({
+        visibility: 'hidden',
+      });
+    };
+    return crosshair;
   }
 
   defineSvg = svg => { this.svg = svg; };
 
-  render() {
-    const {
-      identifier
-    } = this.props;
-
-    const {
-      xTooltip,
-      yTooltip,
-      content,
-      visibility
-    } = this.state;
-
-    const tooltipStyle = {
-      xTooltip,
-      yTooltip,
-      visibility
-    };
-
-    return (
-      <div className="mcs-plot-container">
-        <svg style={{ height: '0px', width: '0px' }}>
-          <defs>
-            <linearGradient
-              id="verticalGradientBlue"
-              x1="0" y1="0" x2="0" y2="100%"
-            >
-              <stop offset="0%" stopColor="#2FBCF2" />
-              <stop offset="100%" stopColor="#269CC9" />
-            </linearGradient>
-          </defs>
-        </svg>
-        <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg overlap" />
-
-        <ChartTooltip tooltipStyle={tooltipStyle}>
-          <OverlapTooltip content={content} />
-        </ChartTooltip>
-      </div>
-    );
+  setTooltip = (chartTooltipProps) => {
+    if (chartTooltipProps) {
+      this.setState({
+        xTooltip: chartTooltipProps.xTooltip,
+        yTooltip: chartTooltipProps.yTooltip,
+        content: chartTooltipProps.content,
+        visibility: chartTooltipProps.visibility,
+      });
+    }
   }
 
-  renderBarChart(dataset) {
+  renderBarChart = (dataset) => {
     const {
       identifier,
-      options
+      options,
     } = this.props;
 
     if (this.plot !== null) {
@@ -138,7 +145,7 @@ class VerticalBarChart extends Component {
 
 
     const guideline = new Plottable.Components.GuideLineLayer(
-      Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL
+      Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL,
     ).scale(xScale);
     pnts.push(guideline);
     if (dataset.length > 0) {
@@ -178,7 +185,7 @@ class VerticalBarChart extends Component {
 
     const table = new Plottable.Components.Table([
       [yAxis, plots],
-      [null, xAxis]
+      [null, xAxis],
     ]);
 
     table.renderTo(`#${identifier}`);
@@ -217,60 +224,51 @@ class VerticalBarChart extends Component {
 
   }
 
-
-  createTooltipCrosshair() {
+  render() {
     const {
-      dataset
+      identifier,
     } = this.props;
 
-    const crosshair = {};
+    const {
+      xTooltip,
+      yTooltip,
+      content,
+      visibility,
+    } = this.state;
 
-    crosshair.drawAt = (p, mousePosition, navInfo) => {
-
-      const selectedData = dataset.find((data) => {
-        return data.xKey === navInfo.datum.x;
-      });
-      const entries = {
-        segment_initial: {
-          name: selectedData.segment_source.name || '',
-          population: selectedData.segment_source.number
-        },
-        segment_overlaping: {
-          name: selectedData.segment_intersect_with.name || '',
-          population: selectedData.segment_intersect_with.number
-        },
-        overlap: {
-          population: selectedData.overlap_number.number
-        }
-      };
-
-      const tooltipContent = {
-        ...entries
-      };
-
-      const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
-      const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
-      this.setTooltip({
-        xTooltip: mousePosition.x + 320 < width ? this.svgBoundingClientRect.left + mousePosition.x + 80 : (this.svgBoundingClientRect.left + mousePosition.x) - 200,
-        yTooltip: mousePosition.y + 120 < height ? this.svgBoundingClientRect.top + mousePosition.y : (this.svgBoundingClientRect.top + mousePosition.y) - 50,
-        content: tooltipContent,
-        visibility: 'visible'
-      });
+    const tooltipStyle = {
+      xTooltip,
+      yTooltip,
+      visibility,
     };
-    crosshair.hide = () => {
-      this.setTooltip({
-        visibility: 'hidden'
-      });
-    };
-    return crosshair;
+
+    return (
+      <div className="mcs-plot-container">
+        <svg style={{ height: '0px', width: '0px' }}>
+          <defs>
+            <linearGradient
+              id="verticalGradientBlue"
+              x1="0" y1="0" x2="0" y2="100%"
+            >
+              <stop offset="0%" stopColor="#2FBCF2" />
+              <stop offset="100%" stopColor="#269CC9" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div id={identifier} ref={svg => { this.svg = svg; }} className="mcs-area-plot-svg overlap" />
+
+        <ChartTooltip tooltipStyle={tooltipStyle}>
+          <OverlapTooltip content={content} />
+        </ChartTooltip>
+      </div>
+    );
   }
-
 }
 
 VerticalBarChart.propTypes = {
   identifier: PropTypes.string.isRequired,
   dataset: PropTypes.arrayOf(
-    PropTypes.object // eslint-disable-line react/forbid-prop-types
+    PropTypes.shape(),
   ).isRequired,
   options: PropTypes.shape({
     innerRadius: PropTypes.bool,
@@ -279,7 +277,7 @@ VerticalBarChart.propTypes = {
     yKeys: PropTypes.arrayOf(PropTypes.string),
     xKey: PropTypes.string,
     lookbackWindow: PropTypes.number,
-  }).isRequired
+  }).isRequired,
 };
 
 export default VerticalBarChart;

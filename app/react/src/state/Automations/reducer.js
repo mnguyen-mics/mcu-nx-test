@@ -2,14 +2,14 @@ import { combineReducers } from 'redux';
 
 import {
   AUTOMATIONS_LIST_FETCH,
-  AUTOMATIONS_LIST_TABLE_RESET
+  AUTOMATIONS_LIST_TABLE_RESET,
 } from '../action-types';
 
 const defaultAutomationsApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 
 const automationsApi = (state = defaultAutomationsApiState, action) => {
@@ -18,18 +18,18 @@ const automationsApi = (state = defaultAutomationsApiState, action) => {
     case AUTOMATIONS_LIST_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case AUTOMATIONS_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case AUTOMATIONS_LIST_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case AUTOMATIONS_LIST_TABLE_RESET:
       return defaultAutomationsApiState;
@@ -40,7 +40,7 @@ const automationsApi = (state = defaultAutomationsApiState, action) => {
 
 
 const automationsTable = combineReducers({
-  automationsApi
+  automationsApi,
 });
 
 const AutomationsReducers = { automationsTable };

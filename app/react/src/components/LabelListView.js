@@ -9,36 +9,49 @@ class LabelListView extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       inputVisible: false,
       inputValue: '',
       data: this.props.listItems.map(item => {
         const filter = {
           value: item.id,
-          text: item.name
+          text: item.name,
         };
         return filter;
-      })
+      }),
     };
-    this.handleMenuClick = this.handleMenuClick.bind(this);
   }
 
-  showInput = () => {
-    this.setState({ inputVisible: true }, () => { this.inputElement.focus(); });
+  buildFilterItems() {
+    const { filters, translations } = this.props;
+    const items = [];
+
+    Object.keys(filters).forEach(filter => {
+      return filters[filter].data.forEach(value => {
+        items.push({
+          id: value,
+          type: filter,
+          value: translations[value],
+          isClosable: filters[filter].closable,
+        });
+      });
+    });
+
+    return items;
+  }
+
+  handleInputBlur = () => {
+    this.setState({ inputVisible: false });
   }
 
   handleInputChange = (e) => {
     this.setState({ inputValue: e.target.value });
   }
 
-  handleInputBlur = () => {
-    this.setState({
-      inputVisible: false
-    });
-  }
-
   handleInputConfirm = () => {
     const { inputValue } = this.state;
+
     if (inputValue !== '') {
       this.props.onInputSubmit(inputValue);
     }
@@ -49,73 +62,46 @@ class LabelListView extends Component {
     });
   }
 
-  buildFilterItems() {
-
-    const {
-      filters,
-      translations
-    } = this.props;
-
-    const items = [];
-
-    Object.keys(filters).forEach(filter => {
-      return filters[filter].data.forEach(value => {
-        items.push({
-          id: value,
-          type: filter,
-          value: translations[value],
-          isClosable: filters[filter].closable
-        });
-      });
-    });
-
-    return items;
-
-  }
-
-  handleMenuClick = (e) => {
-    this.setState({
-      inputVisible: false
-    });
-    this.props.onInputSubmit(e.key, true);
-  }
-
   handleClick = (e) => {
     this.inputElement.focus(e);
   };
 
+  handleMenuClick = (e) => {
+    this.setState({ inputVisible: false });
+    this.props.onInputSubmit(e.key, true);
+  }
+
   handleSearch = (value) => {
-    this.setState({
-      data: this.setData(value)
-    });
+    this.setState({ data: this.setData(value) });
   }
 
   setData = (value) => {
     if (value) {
-      return this.state.data.filter(element => {
-        return element.text.indexOf(value) > -1;
-      });
+      return this.state.data.filter(element => element.text.indexOf(value) > -1);
     }
 
     return this.props.listItems.map(item => {
       const filter = {
         value: item.id,
-        text: item.name
+        text: item.name,
       };
+
       return filter;
     });
+  }
 
+  showInput = () => {
+    this.setState({ inputVisible: true }, () => { this.inputElement.focus(); });
   }
 
   render() {
-
     const {
       isInputVisible,
       onClickOnClose,
       label,
       className,
       listItems,
-      filters
+      filters,
     } = this.props;
 
     const items = filters;
@@ -123,27 +109,33 @@ class LabelListView extends Component {
     const selectedTags = listItems.map(item => {
       const filter = {
         value: item.id,
-        text: item.name
+        text: item.name,
       };
+
       return filter;
     });
 
     const { inputVisible } = this.state;
 
-    const onClickCloseTag = (tag) => {
-      return onClickOnClose(tag);
-    };
+    const onClickCloseTag = (tag) => onClickOnClose(tag);
 
-    const displayContent = (item) => {
-      return item.icon ? (<span><Icon type={item.icon} /> {item.name}</span>) : (<span>{item.name}</span>);
-    };
-
+    const displayContent = (item) => (item.icon
+      ? <span><Icon type={item.icon} /> {item.name}</span>
+      : <span>{item.name}</span>
+    );
 
     const generateTag = (item) => {
       const isLongTag = item.name.length > 20;
-      const tagElem = (<Tag closable key={item.id} afterClose={() => { onClickCloseTag(item); }} >{ displayContent(item) }</Tag>);
-      return isLongTag ? <Tooltip title={item.name}>{tagElem}</Tooltip> : tagElem;
+      const tagElem = (
+        <Tag
+          closable
+          key={item.id}
+          afterClose={() => { onClickCloseTag(item); }}
+        >{ displayContent(item) }
+        </Tag>
+      );
 
+      return isLongTag ? <Tooltip title={item.name}>{tagElem}</Tooltip> : tagElem;
     };
 
     return (
@@ -167,7 +159,12 @@ class LabelListView extends Component {
           </AutoComplete>
         )}
           {isInputVisible && !inputVisible && (
-            <Button size="small" type="dashed" onClick={e => { this.showInput(e); this.handleClick(e); }}>Add New Tag</Button>
+            <Button
+              size="small"
+              type="dashed"
+              onClick={e => { this.showInput(e); this.handleClick(e); }}
+            >Add New Tag
+            </Button>
           )}
         </Col>
       </Row>
@@ -180,36 +177,37 @@ LabelListView.defaultProps = {
   onInputSubmit: () => {},
   label: '',
   isInputVisible: false,
-  className: ''
+  className: '',
 };
 
 LabelListView.propTypes = {
   label: PropTypes.string,
-  translations: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  translations: PropTypes.shape().isRequired,
+  filters: PropTypes.shape().isRequired,
   isInputVisible: PropTypes.bool,
   onClickOnClose: PropTypes.func.isRequired,
   onInputSubmit: PropTypes.func,
   className: PropTypes.string,
   listItems: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
-    name: PropTypes.string
+    name: PropTypes.string,
   })).isRequired,
 };
 
 const mapStateToProps = state => ({
-  translations: state.translations
+  translations: state.translations,
 });
 
-const mapDispatchToProps = {};
-
-LabelListView = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LabelListView);
+LabelListView = connect(mapStateToProps)(LabelListView);
 /*
 * EXAMPLE :
-<LabelListView filters={filters} label="Filtered by:" onClickOnClose={returnFunc} isInputVisible onInputSubmit={returnFunc} />
+  <LabelListView
+    filters={filters}
+    label="Filtered by:"
+    onClickOnClose={returnFunc}
+    isInputVisible
+    onInputSubmit={returnFunc}
+  />
 */
 
 

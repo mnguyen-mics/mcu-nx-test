@@ -9,14 +9,14 @@ import {
   CAMPAIGNS_DISPLAY_LIST_FETCH,
   CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH,
 
-  CAMPAIGNS_DISPLAY_TABLE_RESET
+  CAMPAIGNS_DISPLAY_TABLE_RESET,
 } from '../../action-types';
 
 const defaultCampaignsDisplayApiState = {
   isFetching: false,
   data: [],
   total: 0,
-  hasItems: true
+  hasItems: true,
 };
 
 // TODO try to intruce a higher order reducer
@@ -28,13 +28,13 @@ const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) =>
     case CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case CAMPAIGNS_DISPLAY_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload
+        ...action.payload,
       };
     case CAMPAIGNS_DISPLAY_LIST_FETCH.FAILURE:
       return {
@@ -54,8 +54,8 @@ const defaultPerformanceReportApiState = {
     items_per_page: 0,
     total_items: 0,
     columns_headers: [],
-    rows: []
-  }
+    rows: [],
+  },
 };
 const performanceReportApi = (state = defaultPerformanceReportApiState, action) => {
   switch (action.type) {
@@ -63,18 +63,18 @@ const performanceReportApi = (state = defaultPerformanceReportApiState, action) 
     case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
-        isFetching: true
+        isFetching: true,
       };
     case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
-        ...action.payload.data
+        ...action.payload.data,
       };
     case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
-        isFetching: false
+        isFetching: false,
       };
     case CAMPAIGNS_DISPLAY_TABLE_RESET:
       return defaultPerformanceReportApiState;
@@ -85,7 +85,7 @@ const performanceReportApi = (state = defaultPerformanceReportApiState, action) 
 
 const campaignsDisplayTable = combineReducers({
   campaignsDisplayApi,
-  performanceReportApi
+  performanceReportApi,
 });
 
 const CampaignsDisplayReducers = { campaignsDisplayTable };

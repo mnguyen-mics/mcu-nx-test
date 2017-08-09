@@ -3,5 +3,5 @@ import LoadingChart from './LoadingChart';
 
 export {
   EmptyCharts,
-  LoadingChart
+  LoadingChart,
 };

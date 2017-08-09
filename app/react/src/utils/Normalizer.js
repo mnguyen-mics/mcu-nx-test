@@ -20,7 +20,7 @@ export const normalizeArrayOfObject = (arr, key) => {
     if (!keyValue) return acc;
     return {
       ...acc,
-      [keyValue]: object
+      [keyValue]: object,
     };
   }, {});
 };

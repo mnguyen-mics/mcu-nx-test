@@ -18,12 +18,12 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 class CreateBlastPage extends Component {
   state = {
-    emailCampaign: ''
+    emailCampaign: '',
   }
 
   componentDidMount() {
     const {
-      match: { params: { campaignId } }
+      match: { params: { campaignId } },
     } = this.props;
 
     this.loadCampaign(campaignId);
@@ -31,11 +31,11 @@ class CreateBlastPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      match: { params: { campaignId } }
+      match: { params: { campaignId } },
     } = this.props;
 
     const {
-      match: { params: { campaignId: nextCampaignId } }
+      match: { params: { campaignId: nextCampaignId } },
     } = nextProps;
 
     if (campaignId !== nextCampaignId) {
@@ -54,17 +54,17 @@ class CreateBlastPage extends Component {
     const {
       match: { params: { campaignId } },
       notifyError,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const hideSaveInProgress = message.loading(
       formatMessage(messages.savingInProgress),
-      0
+      0,
     );
 
     const blastResource = {
       ...pick(blast, ['blast_name', 'subject_line', 'from_email', 'from_name', 'reply_to']),
-      send_date: parseInt(blast.send_date.format('x'), 0)
+      send_date: parseInt(blast.send_date.format('x'), 0),
     };
 
     EmailCampaignService.createBlast(campaignId, blastResource).then(createdBlast => {
@@ -81,7 +81,7 @@ class CreateBlastPage extends Component {
         ...blast.segments.map(segment => {
           const segmentResource = pick(segment, ['audience_segment_id']);
           return EmailCampaignService.addSegment(campaignId, blastId, segmentResource);
-        })
+        }),
       ]);
     }).then(() => {
       hideSaveInProgress();
@@ -109,7 +109,7 @@ class CreateBlastPage extends Component {
     const {
       organisationId,
       intl: { formatMessage },
-      match: { params: { campaignId } }
+      match: { params: { campaignId } },
     } = this.props;
 
     const { emailCampaign } = this.state;
@@ -117,9 +117,9 @@ class CreateBlastPage extends Component {
     const breadcrumbPaths = [
       {
         name: emailCampaign.name,
-        url: `/v2/o/${organisationId}/campaigns/email/${campaignId}`
+        url: `/v2/o/${organisationId}/campaigns/email/${campaignId}`,
       },
-      { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast) }
+      { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast) },
     ];
 
     return (
@@ -141,7 +141,7 @@ CreateBlastPage.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 export default compose(
@@ -149,7 +149,7 @@ export default compose(
   withMcsRouter,
   connect(
     undefined,
-    { notifyError: actions.notifyError }
+    { notifyError: actions.notifyError },
   ),
   withDrawer,
 )(CreateBlastPage);
