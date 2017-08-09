@@ -14,7 +14,7 @@ import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 
-function CampaignsEmailTable({
+function EmailCampaignsTable({
   isFetchingCampaigns,
   isFetchingStats,
   dataSource,
@@ -24,7 +24,7 @@ function CampaignsEmailTable({
   onArchiveCampaign,
   onEditCampaign,
   intl: { formatMessage },
-  filter,
+  filter
 }) {
 
   const searchOptions = {
@@ -199,7 +199,7 @@ function CampaignsEmailTable({
      );
 }
 
-CampaignsEmailTable.propTypes = {
+EmailCampaignsTable.propTypes = {
   noCampaignYet: PropTypes.bool.isRequired,
   isFetchingCampaigns: PropTypes.bool.isRequired,
   isFetchingStats: PropTypes.bool.isRequired,
@@ -212,4 +212,4 @@ CampaignsEmailTable.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(CampaignsEmailTable);
+export default injectIntl(EmailCampaignsTable);

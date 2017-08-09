@@ -189,7 +189,7 @@ class GoalsTable extends Component {
 
     const searchOptions = {
       isEnabled: true,
-      placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
+      placeholder: translations.SEARCH_DISPLAY_CAMPAIGNS,
       onSearch: value => this.updateLocationSearch({
         keywords: value,
       }),

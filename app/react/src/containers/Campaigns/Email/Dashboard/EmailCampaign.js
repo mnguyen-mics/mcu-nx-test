@@ -150,7 +150,7 @@ const mapDispatchToProps = {
   fetchAllEmailBlast: EmailCampaignActions.fetchAllEmailBlast.request,
   fetchAllEmailBlastPerformance: EmailCampaignActions.fetchAllEmailBlastPerformance.request,
   loadEmailCampaignAndDeliveryReport: EmailCampaignActions.loadEmailCampaignAndDeliveryReport,
-  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign,
+  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign
 };
 
 EmailCampaign = connect(

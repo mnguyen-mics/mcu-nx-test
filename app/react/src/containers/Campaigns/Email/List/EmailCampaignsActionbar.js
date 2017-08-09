@@ -60,15 +60,15 @@ const fetchExportData = (organisationId, filter) => {
   ]);
 
   return apiResults.then(results => {
-    const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
+    const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
       'campaign_id',
     );
 
-    const mergedData = Object.keys(campaignsDisplay).map(campaignId => {
+    const mergedData = Object.keys(displayCampaigns).map(campaignId => {
       return {
-        ...campaignsDisplay[campaignId],
+        ...displayCampaigns[campaignId],
         ...performanceReport[campaignId],
       };
     });
@@ -77,7 +77,7 @@ const fetchExportData = (organisationId, filter) => {
   });
 };
 
-class CampaignsEmailActionbar extends Component {
+class EmailCampaignsActionbar extends Component {
   constructor(props) {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
@@ -102,7 +102,7 @@ class CampaignsEmailActionbar extends Component {
 
     fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportCampaignsEmail(
+        ExportService.exportEmailCampaigns(
           organisationId,
           data,
           filter,
@@ -150,14 +150,14 @@ class CampaignsEmailActionbar extends Component {
   }
 }
 
-CampaignsEmailActionbar.propTypes = {
+EmailCampaignsActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-CampaignsEmailActionbar = compose(withTranslations, withRouter)(
-  CampaignsEmailActionbar,
+EmailCampaignsActionbar = compose(withTranslations, withRouter)(
+  EmailCampaignsActionbar
 );
 
-export default CampaignsEmailActionbar;
+export default EmailCampaignsActionbar;

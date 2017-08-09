@@ -12,46 +12,85 @@ class EmailCampaignActionbar extends Component {
 
   buildActionElement = () => {
     const {
-      campaignEmail,
-      updateEmailCampaign,
+      match: {
+        params: {
+          organisationId,
+          campaignId
+        },
+      },
+      emailCampaign,
+      translations
     } = this.props;
 
-    const onClickElement = status => updateEmailCampaign(campaignEmail.id, {
+    const actionElement = this.buildActionElement();
+    const menu = this.buildMenu();
+
+    const breadcrumbPaths = [
+      { name: translations.EMAIL_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/email` },
+      { name: emailCampaign.name },
+    ];
+
+    return (
+      <Actionbar path={breadcrumbPaths}>
+        { actionElement }
+        <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
+          <Button>
+            <Icon type="edit"/>
+            <FormattedMessage id="EDIT"/>
+          </Button>
+        </Link>
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button>
+            <Icon type="ellipsis"/>
+          </Button>
+        </Dropdown>
+      </Actionbar>
+    );
+
+  }
+
+  buildActionElement() {
+    const {
+      emailCampaign,
+      updateEmailCampaign
+    } = this.props;
+
+    const onClickElement = status => updateEmailCampaign(emailCampaign.id, {
       status,
       type: 'EMAIL',
     });
 
     const activeCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('ACTIVE')}>
-        <Icon type="play-circle-o" />
-        <FormattedMessage id="ACTIVATE_CAMPAIGN" />
+        <Icon type="play-circle-o"/>
+        <FormattedMessage id="ACTIVATE_CAMPAIGN"/>
       </Button>
     );
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('PAUSED')}>
-        <Icon type="pause-circle-o" />
-        <FormattedMessage id="PAUSE_CAMPAIGN" />
+        <Icon type="pause-circle-o"/>
+        <FormattedMessage id="PAUSE_CAMPAIGN"/>
       </Button>
     );
 
-    if (!campaignEmail.id) {
+    if (!emailCampaign.id) {
       return null;
     }
 
-    return (campaignEmail.status === 'PAUSED' || campaignEmail.status === 'PENDING'
-      ? activeCampaignElement
-      : pauseCampaignElement
+    return (emailCampaign.status === 'PAUSED' || emailCampaign.status === 'PENDING'
+        ? activeCampaignElement
+        : pauseCampaignElement
     );
   }
 
   buildMenu = () => {
     const {
       translations,
-      campaignEmail,
-      archiveEmailCampaign,
+      emailCampaign,
+      archiveEmailCampaign
     } = this.props;
 
-    const handleArchiveGoal = campaignEmailId => {
+    const handleArchiveGoal = emailCampaignId => {
       Modal.confirm({
         title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
         content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
@@ -59,7 +98,7 @@ class EmailCampaignActionbar extends Component {
         okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
         cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
         onOk() {
-          return archiveEmailCampaign(campaignEmailId);
+          return archiveEmailCampaign(emailCampaignId);
         },
         onCancel() { },
       });
@@ -68,7 +107,7 @@ class EmailCampaignActionbar extends Component {
     const onClick = event => {
       switch (event.key) {
         case 'ARCHIVED':
-          return handleArchiveGoal(campaignEmail.id);
+          return handleArchiveGoal(emailCampaign.id);
         default:
           return () => {};
       }
@@ -128,14 +167,14 @@ class EmailCampaignActionbar extends Component {
 EmailCampaignActionbar.propTypes = {
   translations: PropTypes.shape().isRequired,
   match: PropTypes.shape().isRequired,
-  campaignEmail: PropTypes.shape().isRequired,
+  emailCampaign: PropTypes.shape().isRequired,
   updateEmailCampaign: PropTypes.func.isRequired,
   archiveEmailCampaign: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
+  emailCampaign: state.emailCampaignSingle.emailCampaignApi.emailCampaign
 });
 
 const mapDispatchToProps = {

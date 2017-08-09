@@ -15,11 +15,11 @@ import EmailCampaignService from '../../../services/EmailCampaignService';
 import ReportService from '../../../services/ReportService';
 
 import {
-    CAMPAIGN_EMAIL_FETCH,
-    CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH,
-    CAMPAIGN_EMAIL_ARCHIVE,
-    CAMPAIGN_EMAIL_UPDATE,
-    CAMPAIGN_EMAIL_LOAD_ALL,
+    EMAIL_CAMPAIGN_FETCH,
+    EMAIL_CAMPAIGN_DELIVERY_REPORT_FETCH,
+    EMAIL_CAMPAIGN_ARCHIVE,
+    EMAIL_CAMPAIGN_UPDATE,
+    EMAIL_CAMPAIGN_LOAD_ALL
 } from '../../action-types';
 
 function* loadEmailCampaign({ payload }) {
@@ -127,34 +127,34 @@ function* loadCampaignAndPerformance(action) {
 }
 
 function* watchFetchEmailCampaign() {
-  yield* takeLatest(CAMPAIGN_EMAIL_FETCH.REQUEST, loadEmailCampaign);
+  yield* takeLatest(EMAIL_CAMPAIGN_FETCH.REQUEST, loadEmailCampaign);
 }
 
 function* watchFetchDeliveryReport() {
-  yield* takeLatest(CAMPAIGN_EMAIL_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
+  yield* takeLatest(EMAIL_CAMPAIGN_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
 }
 
 function* watchUpdateEmailCampaign() {
-  yield* takeLatest(CAMPAIGN_EMAIL_UPDATE.REQUEST, modifyEmailCampaign);
+  yield* takeLatest(EMAIL_CAMPAIGN_UPDATE.REQUEST, modifyEmailCampaign);
 }
 
 function* watchArchiveEmailCampaign() {
-  yield* takeLatest(CAMPAIGN_EMAIL_ARCHIVE.REQUEST, modifyEmailCampaign);
+  yield* takeLatest(EMAIL_CAMPAIGN_ARCHIVE.REQUEST, modifyEmailCampaign);
 }
 
 function* watchLoadCampaignAndPerformance() {
-  yield* takeLatest(CAMPAIGN_EMAIL_LOAD_ALL, loadCampaignAndPerformance);
+  yield* takeLatest(EMAIL_CAMPAIGN_LOAD_ALL, loadCampaignAndPerformance);
 }
 
 function* watchLoadBlast() {
-  yield* takeLatest(CAMPAIGN_EMAIL_LOAD_ALL, loadAllEmailBlast);
+  yield* takeLatest(EMAIL_CAMPAIGN_LOAD_ALL, loadAllEmailBlast);
 }
 
 function* watchLoadBlastPerformance() {
-  yield* takeLatest(CAMPAIGN_EMAIL_LOAD_ALL, loadAllEmailBlastPErformance);
+  yield* takeLatest(EMAIL_CAMPAIGN_LOAD_ALL, loadAllEmailBlastPErformance);
 }
 
-export const campaignEmailSagas = [
+export const emailCampaignSagas = [
   fork(watchFetchEmailCampaign),
   fork(watchFetchDeliveryReport),
   fork(watchUpdateEmailCampaign),

@@ -1,9 +1,9 @@
-import CampaignsEmailActionbar from './CampaignsEmailActionbar';
-import CampaignsEmailTable from './CampaignsEmailTable';
+import EmailCampaignsActionbar from './EmailCampaignsActionbar';
+import EmailCampaignsTable from './EmailCampaignsTable';
 import EmailCampaignListPage from './EmailCampaignListPage';
 
 export {
-  CampaignsEmailActionbar,
-  CampaignsEmailTable,
-  EmailCampaignListPage,
+  EmailCampaignsActionbar,
+  EmailCampaignsTable,
+  EmailCampaignListPage
 };

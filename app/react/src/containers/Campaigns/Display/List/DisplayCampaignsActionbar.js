@@ -49,15 +49,15 @@ const fetchExportData = (organisationId, filter) => {
   ]);
 
   return apiResults.then(results => {
-    const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
+    const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
       'campaign_id',
     );
 
-    return Object.keys(campaignsDisplay).map((campaignId) => {
+    return Object.keys(displayCampaigns).map((campaignId) => {
       return {
-        ...campaignsDisplay[campaignId],
+        ...displayCampaigns[campaignId],
         ...performanceReport[campaignId],
       };
     });

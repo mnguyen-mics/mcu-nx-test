@@ -206,7 +206,7 @@ class DisplayCampaignsTable extends Component {
 
     const searchOptions = {
       isEnabled: true,
-      placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
+      placeholder: translations.SEARCH_DISPLAY_CAMPAIGNS,
       onSearch: value => this.updateLocationSearch({
         keywords: value,
       }),
@@ -417,11 +417,11 @@ DisplayCampaignsTable.propTypes = {
 const mapStateToProps = (state) => ({
   translations: state.translations,
 
-  hasDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.hasItems,
-  isFetchingDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.isFetching,
-  isFetchingCampaignsStat: state.campaignsDisplayTable.performanceReportApi.isFetching,
+  hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
+  isFetchingDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.isFetching,
+  isFetchingCampaignsStat: state.displayCampaignsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalDisplayCampaigns: state.campaignsDisplayTable.campaignsDisplayApi.total,
+  totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
 });
 
 const mapDispatchToProps = {

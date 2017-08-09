@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 // import { Modal } from 'antd';
 import { injectIntl, defineMessages } from 'react-intl';
 
-import CampaignsEmailTable from './CampaignsEmailTable';
+import EmailCampaignsTable from './EmailCampaignsTable';
 import { withMcsRouter } from '../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import {
@@ -133,7 +133,7 @@ class EmailCampaignListPage extends Component {
     //   cancelText: formatMessage(messages.confirmArchiveModalCancel),
     //   onOk() {
     //     // return CampaignService.archiveEmailCampaign(campaign.id).then(() => {
-    //     //   loadCampaignsEmailDataSource(organisationId, filter);
+    //     //   loadEmailCampaignsDataSource(organisationId, filter);
     //     // });
     //   },
     //   onCancel() { },
@@ -233,7 +233,7 @@ class EmailCampaignListPage extends Component {
     } = this.props;
 
     return (
-      <CampaignsEmailTable
+      <EmailCampaignsTable
         dataSource={this.buildTableDataSource()}
         totalCampaigns={totalCampaigns}
         isFetchingCampaigns={isFetchingCampaigns}

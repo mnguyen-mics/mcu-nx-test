@@ -224,9 +224,9 @@ const exportDisplayCampaignDashboard = (organisationId, campaignData, mediasData
 /**
  * Email Campaigns
  */
-const exportCampaignsEmail = (organisationId, dataSource, filter, translations) => {
+const exportEmailCampaigns = (organisationId, dataSource, filter, translations) => {
 
-  const titleLine = [translations.CAMPAIGNS_EMAIL_EXPORT_TITLE];
+  const titleLine = [translations.EMAIL_CAMPAIGNS_EXPORT_TITLE];
   const blankLine = [];
 
   const dataSheet = [];
@@ -266,11 +266,11 @@ const exportCampaignsEmail = (organisationId, dataSource, filter, translations) 
   });
 
   const sheets = [{
-    name: translations.CAMPAIGNS_EMAIL_EXPORT_TITLE,
+    name: translations.EMAIL_CAMPAIGNS_EXPORT_TITLE,
     data: dataSheet,
   }];
 
-  exportData(sheets, `${organisationId}_campaigns-email`, 'xlsx');
+  exportData(sheets, `${organisationId}_email-campaigns`, 'xlsx');
 };
 
 /**
@@ -410,7 +410,7 @@ const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData,
 export default {
   exportData,
   exportGoals,
-  exportCampaignsEmail,
+  exportEmailCampaigns,
   exportAudienceSegments,
   exportDisplayCampaigns,
   exportDisplayCampaignDashboard,

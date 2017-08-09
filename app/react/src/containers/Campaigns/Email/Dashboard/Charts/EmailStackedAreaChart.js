@@ -157,15 +157,15 @@ EmailStackedAreaChart.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  isFetchingCampaignStat: state.campaignEmailSingle.campaignEmailPerformance.isFetching,
-  hasFetchedCampaignStat: state.campaignEmailSingle.campaignEmailPerformance.hasFetched,
+  isFetchingCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.isFetching,
+  hasFetchedCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.hasFetched,
   dataSource: getTableDataSource(state),
 });
 
 
 const mapDispatchToProps = {
   loadEmailCampaignAndDeliveryReport: EmailCampaignActions.loadEmailCampaignAndDeliveryReport,
-  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign,
+  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign
 };
 
 

@@ -16,13 +16,13 @@ import {
 } from '../containers/Campaigns/Email/Edit';
 
 import {
-  CampaignsEmailActionbar,
-  EmailCampaignListPage,
+  EmailCampaignsActionbar,
+  EmailCampaignListPage
 } from '../containers/Campaigns/Email/List';
 
 import {
   EmailCampaignActionbar,
-  EmailCampaign,
+  EmailCampaign
 } from '../containers/Campaigns/Email/Dashboard';
 
 import {
@@ -51,7 +51,7 @@ const campaignsRoutes = [
     path: '/campaigns/email',
     layout: 'main',
     contentComponent: EmailCampaignListPage,
-    actionBarComponent: CampaignsEmailActionbar,
+    actionBarComponent: EmailCampaignsActionbar
   },
   {
     path: '/campaigns/email/create',
@@ -62,7 +62,7 @@ const campaignsRoutes = [
     path: '/campaigns/email/:campaignId(\\d+)',
     layout: 'main',
     contentComponent: EmailCampaign,
-    actionBarComponent: EmailCampaignActionbar,
+    actionBarComponent: EmailCampaignActionbar
   },
   {
     path: '/campaigns/email/:campaignId(\\d+)/edit',

@@ -190,8 +190,8 @@ export default compose(
   withMcsRouter,
   connect(
     state => ({
-      isFetchingBlasts: state.campaignEmailSingle.emailBlastApi.isFetching,
-      isFetchingBlastsStat: state.campaignEmailSingle.emailBlastPerformanceApi.isFetching,
+      isFetchingBlasts: state.emailCampaignSingle.emailBlastApi.isFetching,
+      isFetchingBlastsStat: state.emailCampaignSingle.emailBlastPerformanceApi.isFetching,
       dataSet: getEmailBlastTableView(state),
     }),
   ),

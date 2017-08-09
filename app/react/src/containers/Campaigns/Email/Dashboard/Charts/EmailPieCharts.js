@@ -236,7 +236,7 @@ EmailPieCharts.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  hasFetchedCampaignStat: state.campaignEmailSingle.campaignEmailPerformance.hasFetched,
+  hasFetchedCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.hasFetched,
   dataSource: getTableDataSource(state),
   flatData: flattenData(state),
 });

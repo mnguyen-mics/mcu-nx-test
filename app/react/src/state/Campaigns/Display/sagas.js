@@ -14,9 +14,9 @@ import ReportService from '../../../services/ReportService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 import {
-    CAMPAIGNS_DISPLAY_LIST_FETCH,
-    CAMPAIGNS_DISPLAY_LOAD_ALL,
-    CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH,
+    DISPLAY_CAMPAIGNS_LIST_FETCH,
+    DISPLAY_CAMPAIGNS_LOAD_ALL,
+    DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH
 } from '../../action-types';
 
 function* loadPerformanceReport({ payload }) {
@@ -103,18 +103,18 @@ function* loadCampaignsAndPerformance(action) {
 }
 
 function* watchFetchDisplayCampaigns() {
-  yield* takeLatest(CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST, loadDisplayCampaignsList);
+  yield* takeLatest(DISPLAY_CAMPAIGNS_LIST_FETCH.REQUEST, loadDisplayCampaignsList);
 }
 
 function* watchFetchPerformanceReport() {
-  yield* takeLatest(CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
+  yield* takeLatest(DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
 }
 
 function* watchLoadCampaignsAndPerformance() {
-  yield* takeLatest(CAMPAIGNS_DISPLAY_LOAD_ALL, loadCampaignsAndPerformance);
+  yield* takeLatest(DISPLAY_CAMPAIGNS_LOAD_ALL, loadCampaignsAndPerformance);
 }
 
-export const campaignsDisplaySagas = [
+export const displayCampaignsSagas = [
   fork(watchFetchDisplayCampaigns),
   fork(watchFetchPerformanceReport),
   fork(watchLoadCampaignsAndPerformance),
