@@ -1,8 +1,7 @@
 import Ads from './Ads';
 import Audience from './Audience';
-import Device from './Device';
+import DeviceAndLocation from './DeviceAndLocation';
 import General from './General';
-import Location from './Location';
 import Media from './Media';
 import Optimization from './Optimization';
 import Publisher from './Publisher';
@@ -11,9 +10,8 @@ import Summary from './Summary';
 export {
   Ads,
   Audience,
-  Device,
+  DeviceAndLocation,
   General,
-  Location,
   Media,
   Publisher,
   Optimization,

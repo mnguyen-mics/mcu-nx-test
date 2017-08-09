@@ -10,9 +10,8 @@ import { Form, Layout } from 'antd';
 import {
   Ads,
   Audience,
-  Device,
+  DeviceAndLocation,
   General,
-  Location,
   Media,
   Optimization,
   Publisher,
@@ -46,9 +45,7 @@ class AdGroupForm extends Component {
           <hr />
           <Audience />
           <hr />
-          <Device />
-          <hr />
-          <Location />
+          <DeviceAndLocation />
           <hr />
           <Publisher />
           <hr />

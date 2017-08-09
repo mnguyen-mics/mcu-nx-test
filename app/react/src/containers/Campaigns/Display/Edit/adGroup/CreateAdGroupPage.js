@@ -44,8 +44,7 @@ class CreateAdGroupPage extends Component {
     const sidebarItems = {
       general: messages.sectionTitle1,
       audience: messages.sectionTitle2,
-      device: messages.sectionTitle3,
-      location: messages.sectionTitle4,
+      deviceAndLocation: messages.sectionTitle3,
       publisher: messages.sectionTitle5,
       media: messages.sectionTitle6,
       optimization: messages.sectionTitle7,

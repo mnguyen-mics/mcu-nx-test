@@ -4,10 +4,10 @@ import { Row } from 'antd';
 import FormSection from '../../../../../../components/Partials/FormSection';
 import messages from '../../messages';
 
-function Device() {
+function DeviceAndLocation() {
 
   return (
-    <div id="device">
+    <div id="deviceAndLocation">
       <FormSection
         subtitle={messages.sectionSubtitle3}
         title={messages.sectionTitle3}
@@ -17,4 +17,4 @@ function Device() {
   );
 }
 
-export default Device;
+export default DeviceAndLocation;
