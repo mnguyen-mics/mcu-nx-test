@@ -6,7 +6,7 @@ import { Layout, Button, Checkbox } from 'antd';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import { McsIcons } from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
   TableView,

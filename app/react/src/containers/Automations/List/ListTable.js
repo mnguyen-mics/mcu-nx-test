@@ -9,7 +9,7 @@ import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../components/TableView';
-import { McsIcons } from '../../../components/McsIcons';
+import McsIcons from '../../../components/McsIcons';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 

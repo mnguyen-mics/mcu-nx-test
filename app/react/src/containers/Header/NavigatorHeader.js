@@ -8,7 +8,7 @@ import { Layout, Menu, Dropdown, Row, Col } from 'antd';
 import pathToRegexp from 'path-to-regexp'; // eslint-disable-line import/no-extraneous-dependencies
 
 import * as SessionHelper from '../../state/Session/selectors';
-import { McsIcons } from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons';
 import log from '../../utils/Logger';
 import messages from './messages';
 
@@ -28,7 +28,6 @@ function NavigatorHeader({
 
   const organisationId = params.organisationId;
   const organisationName = workspace(organisationId).organisation_name;
-
   const hasMoreThanOneWorkspace = Object.keys(workspaces).length > 1;
 
   const accountMenu = (
@@ -120,7 +119,7 @@ NavigatorHeader.propTypes = {
   workspace: PropTypes.func.isRequired,
   workspaces: PropTypes.shape().isRequired,
   userEmail: PropTypes.string.isRequired,
-  hasDatamarts: PropTypes.bool.isRequired,
+  hasDatamarts: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
