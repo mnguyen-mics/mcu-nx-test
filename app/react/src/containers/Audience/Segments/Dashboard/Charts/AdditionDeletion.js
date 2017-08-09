@@ -61,7 +61,7 @@ class AdditionDeletion extends Component {
       to: newValues.to,
     });
 
-    return <McsDateRangePicker values={values} onChange={onChange}/>;
+    return <McsDateRangePicker values={values} onChange={onChange} />;
   }
 
   renderStackedAreaCharts() {
@@ -127,7 +127,7 @@ class AdditionDeletion extends Component {
           <Col span={12}>
             { (dataSource.length === 0 && hasFetchedAudienceStat)
               ? <div />
-              : <LegendChart identifier="LegendAdditionDeletion" options={options}/>
+              : <LegendChart identifier="LegendAdditionDeletion" options={options} />
             }
           </Col>
           <Col span={12}>
@@ -137,7 +137,7 @@ class AdditionDeletion extends Component {
           </Col>
         </Row>
         { (dataSource.length === 0 && hasFetchedAudienceStat)
-          ? <EmptyCharts title={translations.NO_EMAIL_STATS}/>
+          ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
           : this.renderStackedAreaCharts()
         }
       </div>

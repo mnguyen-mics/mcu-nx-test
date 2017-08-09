@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Dropdown, Icon, Menu, Modal, message } from 'antd';
-import { connect } from 'react-redux';
+import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
+import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
+import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons';
 import ExportService from '../../../../../services/ExportService';
@@ -22,15 +23,16 @@ class DisplayCampaignActionbar extends Component {
           organisationId
         }
       },
-      translations,
+      intl: { formatMessage },
+      location: { search },
       campaignStats,
       mediasStats,
       adGroupsStats,
       adsStats
     } = this.props;
 
-    const filter = parseSearch(this.props.location.search);
-    ExportService.exportDisplayCampaignDashboard(organisationId, campaignStats, mediasStats, adGroupsStats, adsStats, filter, translations);
+    const filter = parseSearch(search, null);
+    ExportService.exportDisplayCampaignDashboard(organisationId, campaignStats, mediasStats, adGroupsStats, adsStats, filter, formatMessage);
   }
 
   render() {
@@ -41,8 +43,8 @@ class DisplayCampaignActionbar extends Component {
           campaignId
         },
       },
+      intl: { formatMessage },
       campaign,
-      translations,
       isFetchingStats
     } = this.props;
 
@@ -50,26 +52,25 @@ class DisplayCampaignActionbar extends Component {
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: translations.DISPLAY_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/display` },
-      { name: campaign.name },
+      { name: formatMessage(messages.display), url: `/v2/o/${organisationId}/campaigns/display` },
+      { name: campaign.name }
     ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
-        <Button onClick={this.handleRunExport
-        }>
-          { !isFetchingStats && <McsIcons type="download"/> }<FormattedMessage id="EXPORT"/>
+        <Button onClick={this.handleRunExport}>
+          { !isFetchingStats && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
         </Button>
         <Link to={`/${organisationId}/campaigns/display/expert/edit/${campaignId}`}>
           <Button>
-            <McsIcons type="pen"/>
+            <McsIcons type="pen" />
             <FormattedMessage {...messages.editCampaign} />
           </Button>
         </Link>
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
-            <Icon type="ellipsis"/>
+            <Icon type="ellipsis" />
           </Button>
         </Dropdown>
       </Actionbar>
@@ -93,7 +94,7 @@ class DisplayCampaignActionbar extends Component {
         type="primary"
         onClick={() => onClickElement('ACTIVE')}
       >
-        <McsIcons type="play"/>
+        <McsIcons type="play" />
         <FormattedMessage {...messages.activateCampaign} />
       </Button>
     );
@@ -103,7 +104,7 @@ class DisplayCampaignActionbar extends Component {
         type="primary"
         onClick={() => onClickElement('PAUSED')}
       >
-        <McsIcons type="pause"/>
+        <McsIcons type="pause" />
         <FormattedMessage {...messages.pauseCampaign} />
       </Button>
     );
@@ -120,18 +121,18 @@ class DisplayCampaignActionbar extends Component {
 
   buildMenu = () => {
     const {
-      translations,
       campaign,
-      archiveCampaign
+      archiveCampaign,
+      intl: { formatMessage }
     } = this.props;
 
     const handleArchiveGoal = displayCampaignId => {
       Modal.confirm({
-        title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-        content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+        title: formatMessage(modalMessages.archiveCampaignConfirm),
+        content: formatMessage(modalMessages.archiveCampaignMessage),
         iconType: 'exclamation-circle',
-        okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-        cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+        okText: formatMessage(modalMessages.confirm),
+        cancelText: formatMessage(modalMessages.cancel),
         onOk() {
           return archiveCampaign(displayCampaignId);
         },
@@ -159,28 +160,18 @@ class DisplayCampaignActionbar extends Component {
 }
 
 DisplayCampaignActionbar.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired, // eslint-disable-line react/forbid-prop-types
+  intl: intlShape.isRequired,
+  location: ReactRouterPropTypes.location.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   campaign: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   updateCampaign: PropTypes.func.isRequired,
   archiveCampaign: PropTypes.func.isRequired,
   isFetchingStats: PropTypes.bool.isRequired,
-  campaignStats: PropTypes.array.isRequired,
-  mediasStats: PropTypes.array.isRequired,
-  adGroupsStats: PropTypes.array.isRequired,
-  adsStats: PropTypes.array.isRequired
+  campaignStats: PropTypes.arrayOf(PropTypes.object).isRequired,
+  mediasStats: PropTypes.arrayOf(PropTypes.object).isRequired,
+  adGroupsStats: PropTypes.arrayOf(PropTypes.object).isRequired,
+  adsStats: PropTypes.arrayOf(PropTypes.object).isRequired
 };
-
-const mapStateToProps = state => ({
-  translations: state.translations,
-});
-
-const mapDispatchToProps = {};
-
-DisplayCampaignActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(DisplayCampaignActionbar);
 
 DisplayCampaignActionbar = compose(
   withRouter,

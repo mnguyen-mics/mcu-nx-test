@@ -127,7 +127,7 @@ class Overview extends Component {
           <Col span={12}>
             {dataSource.length === 0 && hasFetchedAudienceStat
               ? <div />
-              : <LegendChart identifier="LegendOverview" options={options}/>
+              : <LegendChart identifier="LegendOverview" options={options} />
             }
           </Col>
           <Col span={12}>
@@ -137,7 +137,7 @@ class Overview extends Component {
           </Col>
         </Row>
         { dataSource.length === 0 && hasFetchedAudienceStat
-          ? <EmptyCharts title={translations.NO_EMAIL_STATS}/>
+          ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
           : this.renderStackedAreaCharts()
         }
       </div>

@@ -1,3 +1,8 @@
+import displayCampaignMessages from '../containers/Campaigns/Display/messages';
+import segmentMessages from '../containers/Audience/Segments/Dashboard/messages';
+import dateMessages from '../common/messages/dateMessages';
+import exportMessages from '../common/messages/exportMessages';
+
 const datenum = (v, date1904) => {
   let newV = v;
   if (date1904) {
@@ -15,6 +20,39 @@ const s2ab = s => {
   }
   return buf;
 };
+
+function buildSheet(title, data, headers, filter, formatMessage) {
+  const titleLine = [title];
+  const sheet = [];
+  const blankLine = [];
+
+  sheet.push(titleLine);
+  sheet.push([`${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${filter.to}`]);
+  sheet.push(blankLine);
+  sheet.push(headers.map(h => h.translation));
+
+  data.forEach(row => {
+    const dataLine = headers.map(header => {
+      return row[header.name];
+    });
+    sheet.push(dataLine);
+  });
+
+  return sheet;
+}
+
+function addSheet(title, data, headers, filter, formatMessage) {
+  const formattedTitle = formatMessage(title);
+  if (data.length) {
+    const sheet = buildSheet(formattedTitle, data, headers, filter, formatMessage);
+    return {
+      name: formattedTitle,
+      data: sheet
+    };
+  }
+  return undefined;
+}
+
 
 /**
  * Export Specific Methods
@@ -158,62 +196,29 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
 /**
  * Display Campaign Dashboard
  */
-const exportDisplayCampaignDashboard = (organisationId, campaignData, mediasData, adGroupsData, adsData, filter, translations) => {
-  const blankLine = [];
-
-  const headersMap = [
-    { name: 'status', translation: translations.STATUS },
-    { name: 'name', translation: translations.NAME },
-    { name: 'impressions', translation: translations.IMPRESSIONS },
-    { name: 'clicks', translation: translations.CLICKS },
-    { name: 'cpm', translation: translations.CPM },
-    { name: 'ctr', translation: translations.CTR },
-    { name: 'cpc', translation: translations.CPC },
-    { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
-    { name: 'cpa', translation: translations.CPA },
+const exportDisplayCampaignDashboard = (organisationId, campaignData, mediasData, adGroupsData, adsData, filter, formatMessage) => {
+  const headers = [
+    { name: 'status', translation: formatMessage(displayCampaignMessages.status) },
+    { name: 'name', translation: formatMessage(displayCampaignMessages.name) },
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impression_cost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
   ];
-  const headersLine = headersMap.map(header => header.translation);
 
-  function buildSheet(data, title, filter) {
-    const titleLine = [title];
-    const sheet = [];
+  const sheets = [
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, headers, filter, formatMessage),
+    addSheet(exportMessages.mediasExportTitle, mediasData, headers, filter, formatMessage),
+    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, headers, filter, formatMessage),
+    addSheet(exportMessages.adsExportTitle, adsData, headers, filter, formatMessage)
+  ].filter(x => x);
 
-    sheet.push(titleLine);
-    sheet.push([`${translations.FROM} ${filter.from} ${translations.TO} ${filter.to}`]);
-
-    sheet.push(blankLine);
-    sheet.push(headersLine);
-
-    data.forEach(row => {
-      const dataLine = headersMap.map(header => {
-        return row[header.name];
-      });
-      sheet.push(dataLine);
-    });
-
-    return sheet;
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_display-campaign`, 'xlsx');
   }
-
-  const campaignSheet = buildSheet(campaignData, translations.DISPLAY_CAMPAIGN_EXPORT_TITLE, filter);
-  const mediasSheet = buildSheet(mediasData, translations.MEDIAS_EXPORT_TITLE, filter);
-  const adGroupsSheet = buildSheet(adGroupsData, translations.AD_GROUPS_EXPORT_TITLE, filter);
-  const adsSheet = buildSheet(adsData, translations.ADS_EXPORT_TITLE, filter);
-
-  const sheets = [{
-    name: translations.DISPLAY_CAMPAIGN_EXPORT_TITLE,
-    data: campaignSheet
-  }, {
-    name: translations.MEDIAS_EXPORT_TITLE,
-    data: mediasSheet
-  }, {
-    name: translations.AD_GROUPS_EXPORT_TITLE,
-    data: adGroupsSheet
-  }, {
-    name: translations.ADS_EXPORT_TITLE,
-    data: adsSheet
-  }];
-
-  exportData(sheets, `${organisationId}_display-campaign`, 'xlsx');
 };
 
 /**
@@ -369,68 +374,37 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 };
 
 /**
- * Audience Segments
+ * Audience Segment Dashboard
  */
-const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, translations) => {
-  const blankLine = [];
-
-  function buildSheet(headers, data, title, filter) {
-    const titleLine = [title];
-    const sheet = [];
-
-    sheet.push(titleLine);
-    sheet.push([`${translations.FROM} ${filter.from} ${translations.TO} ${filter.to}`]);
-
-    sheet.push(blankLine);
-    const headersLine = headers.map(header => header.translation);
-    sheet.push(headersLine);
-
-    data.forEach(row => {
-      const dataLine = headers.map(header => {
-        return row[header.name];
-      });
-      sheet.push(dataLine);
-    });
-
-    return sheet;
-  }
-
+const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, formatMessage) => {
   const overviewHeaders = [
-    { name: 'day', translation: translations.DAY },
-    { name: 'user_points', translation: translations.USER_POINTS },
-    { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
-    { name: 'emails', translation: translations.EMAILS },
-    { name: 'desktop_cookie_ids', translation: translations.DESKTOP_COOKIE_IDS },
+    { name: 'day', translation: formatMessage(dateMessages.day) },
+    { name: 'user_points', translation: formatMessage(segmentMessages.userPoints) },
+    { name: 'user_accounts', translation: formatMessage(segmentMessages.userAccounts) },
+    { name: 'emails', translation: formatMessage(segmentMessages.emails) },
+    { name: 'desktop_cookie_ids', translation: formatMessage(segmentMessages.desktopCookieId) },
   ];
-  const overviewSheet = buildSheet(overviewHeaders, segmentData, translations.AUDIENCE_SEGMENT_OVERVIEW_EXPORT_TITLE, filter);
+
   const additionDeletionHeaders = [
-    { name: 'day', translation: translations.DAY },
-    { name: 'user_point_additions', translation: translations.ADDITION },
-    { name: 'user_point_deletions', translation: translations.DELETION }
+    { name: 'day', translation: dateMessages.day.defaultMessage },
+    { name: 'user_point_additions', translation: formatMessage(segmentMessages.userPointAddition) },
+    { name: 'user_point_deletions', translation: formatMessage(segmentMessages.userPointDeletion) }
   ];
-  const additionDeletionSheet = buildSheet(additionDeletionHeaders, segmentData, translations.AUDIENCE_SEGMENT_ADDITION_DELETION_EXPORT_TITLE, filter);
 
-  const sheets = [{
-    name: translations.AUDIENCE_SEGMENT_OVERVIEW_EXPORT_TITLE,
-    data: overviewSheet
-  }, {
-    name: translations.AUDIENCE_SEGMENT_ADDITION_DELETION_EXPORT_TITLE,
-    data: additionDeletionSheet
-  }];
+  const overlapHeaders = [
+    { name: 'xKey', translation: formatMessage(segmentMessages.overlap) },
+    { name: 'yKey', translation: formatMessage(segmentMessages.overlapNumber) }
+  ];
 
-  if (overlapData.length) {
-    const overlapHeaders = [
-      { name: 'xKey', translation: translations.OVERLAP },
-      { name: 'yKey', translation: translations.OVERLAP_NUMBER }
-    ];
-    const overlapSheet = buildSheet(overlapHeaders, overlapData, translations.AUDIENCE_SEGMENT_OVERLAP_EXPORT_TITLE, filter);
-    sheets.push({
-      name: translations.AUDIENCE_SEGMENT_OVERLAP_EXPORT_TITLE,
-      data: overlapSheet
-    });
+  const sheets = [
+    addSheet(exportMessages.audienceSegmentOverviewExportTitle, segmentData, overviewHeaders, filter, formatMessage),
+    addSheet(exportMessages.audienceSegmentAdditionsDeletionsExportTitle, segmentData, additionDeletionHeaders, filter, formatMessage),
+    addSheet(exportMessages.overlapExportTitle, overlapData, overlapHeaders, filter, formatMessage)
+  ].filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
   }
-
-  exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
 };
 
 export default {

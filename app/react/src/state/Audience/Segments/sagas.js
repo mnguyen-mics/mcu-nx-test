@@ -15,7 +15,7 @@ import {
   exportAudienceSegmentDashboard
 } from './actions';
 
-import { notifyError }from '../../Notifications/actions';
+import { notifyError } from '../../Notifications/actions';
 import AudienceSegmentService from '../../../services/AudienceSegmentService';
 import DataFileService from '../../../services/DataFileService';
 import ReportService from '../../../services/ReportService';

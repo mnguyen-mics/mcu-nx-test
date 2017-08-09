@@ -36,7 +36,7 @@ class AudienceSegmentDashboard extends Component {
     ];
   }
 
-  static  buildItems(translations) {
+  static buildItems(translations) {
     return [
       {
         title: translations.OVERVIEW,
@@ -63,7 +63,7 @@ class AudienceSegmentDashboard extends Component {
     const items = AudienceSegmentDashboard.buildItems(translations);
     return (
       <CardWithHeader title="test" headerItems={itemsHeaders}>
-        <McsTabs items={items} isCard={false}/>
+        <McsTabs items={items} isCard={false} />
       </CardWithHeader>
     );
   }
