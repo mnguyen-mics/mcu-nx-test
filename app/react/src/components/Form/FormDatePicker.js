@@ -41,30 +41,24 @@ function FormDatePicker({
       {...otherFormItemProps}
     >
 
-      <Row align="middle">
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <DatePicker
-            id={correctedInput.name}
-            {...correctedInput}
-            {...datePickerProps}
-          />
-          { endDate && <p style={{ fontWeight: 'bold', margin: '15px 15px' }}>-</p> }
-          { endDate &&
-            <DatePicker
-              id={correctedInput.name}
-              {...correctedInput}
-              {...secondDatePickerProps}
-            />
-          }
-          {displayHelpToolTip &&
-            <Col span={2} className="field-tooltip">
-              <Tooltip {...mergedTooltipProps}>
-                <McsIcons type="info" />
-              </Tooltip>
-            </Col>
-          }
-        </div>
-      </Row>
+      {/* <Row align="middle"> */}
+      <div>
+        <DatePicker
+          id={correctedInput.name}
+          {...correctedInput}
+          {...datePickerProps}
+        />
+        {/* endDate && <p style={{ fontWeight: 'bold', margin: '15px 15px' }}>-</p> */}
+        {/* endDate &&
+        <DatePicker
+          id={correctedInput.name}
+          {...correctedInput}
+          {...secondDatePickerProps}
+        />
+          */}
+
+      </div>
+      {/* </Row> */}
     </Form.Item>
   );
 }

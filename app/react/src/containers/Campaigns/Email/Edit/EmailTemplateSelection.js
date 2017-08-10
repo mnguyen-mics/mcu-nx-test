@@ -6,7 +6,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import messages from './messages';
 import EmailTemplateSelector from './EmailTemplateSelector';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
-import FormSection from '../../../../components/Partials/FormSection';
+import { FormSection } from '../../../../components/Form';
 import CreativeService from '../../../../services/CreativeService';
 
 class EmailTemplateSelection extends Component {

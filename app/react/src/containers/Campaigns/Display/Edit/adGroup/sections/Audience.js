@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row } from 'antd';
 
-import FormSection from '../../../../../../components/Partials/FormSection';
+import { FormSection } from '../../../../../../components/Form';
 import messages from '../../messages';
 
 function Audience() {

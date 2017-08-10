@@ -9,7 +9,7 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { withMcsRouter } from '../../../Helpers';
 import { FormInput, FormSelect, withValidators } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
-import FormSection from '../../../../components/Partials/FormSection';
+import { FormSection } from '../../../../components/Form';
 
 import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
 import messages from './messages';

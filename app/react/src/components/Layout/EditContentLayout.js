@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Layout } from 'antd';
 
-import SidebarWrapper from '../Partials/SidebarWrapper';
-import ActionbarWrapper from '../Partials/ActionbarWrapper';
-
+import { ActionbarWrapper, SidebarWrapper } from '../Layout';
 
 function EditContentLayout({
   breadcrumbPaths,

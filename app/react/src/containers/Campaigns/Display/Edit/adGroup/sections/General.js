@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
-import { Row, Select } from 'antd';
+import { Col, Form, Row, Select, Tooltip } from 'antd';
 
-import FormSection from '../../../../../../components/Partials/FormSection';
-import { FormDatePicker, FormInput } from '../../../../../../components/Form';
+import { FormDatePicker, FormInput, FormSection } from '../../../../../../components/Form';
 import messages from '../../messages';
 import { isPastDate } from '../../../../../../utils/DateHelper';
+import { McsIcons } from '../../../../../../components/McsIcons';
 
 const { Option } = Select;
 
@@ -89,31 +89,58 @@ function General({
       </Row>
 
       <Row>
-        <FormDatePicker
-          formItemProps={{
-            endDate: true,
-            label: formatMessage(messages.contentSection1Row4Label),
-            required: true,
-            ...fieldGridConfig
-          }}
-          datePickerProps={{
-            format: 'DD/MM/YYYY HH:mm',
-            showTime: { format: 'HH:mm' },
-            placeholder: formatMessage(messages.contentSection1Row4Placeholder1),
-            disabledDate: isPastDate,
-            style: { width: '50%' },
-          }}
-          helpToolTipProps={{
-            title: formatMessage(messages.contentSection1Row4Tooltip)
-          }}
-          secondDatePickerProps={{
-            format: 'DD/MM/YYYY HH:mm',
-            showTime: { format: 'HH:mm' },
-            placeholder: formatMessage(messages.contentSection1Row4Placeholder2),
-            disabledDate: isPastDate,
-            style: { width: '50%' },
-          }}
-        />
+        <Form.Item
+          style={{ paddingBottom: '2%' }}
+          label={formatMessage(messages.contentSection1Row4Label)}
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 10, offset: 1 }}
+          // labelCol={{
+          //   xs: { span: 24 },
+          //   sm: { span: 5 },
+          // }}
+          required
+          // wrapperCol={{
+          //   xs: { span: 24 },
+          //   sm: { span: 19 },
+          // }}
+          help
+        >
+          <Col span={10}>
+            <FormDatePicker
+              formItemProps={{}}
+              datePickerProps={{
+                format: 'DD/MM/YYYY HH:mm',
+                showTime: { format: 'HH:mm' },
+                placeholder: formatMessage(messages.contentSection1Row4Placeholder1),
+                disabledDate: isPastDate,
+                style: { width: '100%' },
+              }}
+            />
+          </Col>
+          <Col span={2}>
+            <p className="ant-form-split">-</p>
+          </Col>
+          <Col span={10}>
+            <FormDatePicker
+              formItemProps={{}}
+              datePickerProps={{
+                format: 'DD/MM/YYYY HH:mm',
+                showTime: { format: 'HH:mm' },
+                placeholder: formatMessage(messages.contentSection1Row4Placeholder2),
+                disabledDate: isPastDate,
+                style: { width: '100%' },
+              }}
+              helpToolTipProps={{
+                title: formatMessage(messages.contentSection1Row4Tooltip)
+              }}
+            />
+          </Col>
+          <Col span={2} className="field-tooltip">
+            <Tooltip placement="right" title={formatMessage(messages.contentSection1Row4Tooltip)}>
+              <McsIcons type="info" />
+            </Tooltip>
+          </Col>
+        </Form.Item>
       </Row>
 
       <Row>

@@ -7,7 +7,7 @@ import { injectIntl, intlShape } from 'react-intl';
 // import { Link } from 'react-router-dom';
 // import { injectIntl, intlShape } from 'react-intl';
 
-import EditContentLayout from '../../../../../components/Layout/EditContentLayout';
+import { EditContentLayout } from '../../../../../components/Layout';
 import AdGroupForm from './AdGroupForm';
 import { withMcsRouter } from '../../../../Helpers';
 
