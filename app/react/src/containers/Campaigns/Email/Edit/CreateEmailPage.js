@@ -79,9 +79,9 @@ class CreateEmailPage extends Component {
     });
   }
 
-  redirect = campaignId => {
+  redirect = () => {
     const { history, organisationId } = this.props;
-    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email/${campaignId}`;
+    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email`;
     history.push(emailCampaignListUrl);
   }
 

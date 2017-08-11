@@ -21,14 +21,11 @@ import EmailRouterService from '../../../../services/EmailRouterService';
 const { Content, Sider } = Layout;
 
 class EmailEditor extends Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      routerOptions: [],
-      blasts: [],
-    };
-  }
+  state = {
+    routerOptions: [],
+    blasts: [],
+  };
 
   componentDidMount() {
     const {
@@ -50,7 +47,7 @@ class EmailEditor extends Component {
     }
   }
 
-  handleAddBlast(blast) {
+  handleAddBlast = blast => {
     const { closeNextDrawer } = this.props;
 
     const addedBlast = {
@@ -70,7 +67,7 @@ class EmailEditor extends Component {
     closeNextDrawer();
   }
 
-  handleClickOnEditBlast(blast) {
+  handleClickOnEditBlast = blast => {
     const {
       openNextDrawer,
       closeNextDrawer,
@@ -98,7 +95,7 @@ class EmailEditor extends Component {
     openNextDrawer(EmailBlastEditor, options);
   }
 
-  handleCliclOnNewBlast() {
+  handleClickOnNewBlast = () => {
     const {
       openNextDrawer,
       closeNextDrawer,
@@ -121,7 +118,7 @@ class EmailEditor extends Component {
     openNextDrawer(EmailBlastEditor, options);
   }
 
-  handleClickOnRemoveBlast = (blast) => {
+  handleClickOnRemoveBlast = blast => {
     this.setState(prevState => {
       if (isFakeId(blast.id)) {
         return {
@@ -137,7 +134,7 @@ class EmailEditor extends Component {
     });
   }
 
-  handleEditBlast(blast) {
+  handleEditBlast = blast => {
     const { closeNextDrawer } = this.props;
 
     this.setState(prevState => {
@@ -151,7 +148,7 @@ class EmailEditor extends Component {
     closeNextDrawer();
   }
 
-  handleSaveEmailCampaign = (formValues) => {
+  handleSaveEmailCampaign = formValues => {
     const { save } = this.props;
     const { blasts } = this.state;
 
@@ -163,7 +160,7 @@ class EmailEditor extends Component {
     save(emailEditorData);
   }
 
-  getBlastRecords() {
+  getBlastRecords = () => {
     const { blasts } = this.state;
 
     const blastRecords = blasts.filter(blast => !blast.isDeleted).map(blast => {
@@ -337,7 +334,7 @@ class EmailEditor extends Component {
                       titleMessage={messages.emailEditorEmailBlastTitle}
                       subTitleMessage={messages.emailEditorEmailBlastSubTitle}
                     />
-                    <Button onClick={this.handleCliclOnNewBlast}>
+                    <Button onClick={this.handleClickOnNewBlast}>
                       New Blast
                     </Button>
                   </Row>
