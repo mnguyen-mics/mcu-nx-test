@@ -108,18 +108,21 @@ class DisplayCampaign extends Component {
           campaignStats={dashboardPerformance.campaign.items}
           mediasStats={dashboardPerformance.media.items}
           adGroupsStats={adGroups.items}
-          adsStats={ads.items} />
+          adsStats={ads.items}
+        />
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <DisplayCampaignHeader object={campaign.items} translationKey="CAMPAIGN" />
             <DisplayCampaignDashboard isFetchingCampaignStat={dashboardPerformance.campaign.isLoading} hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched} campaignStat={dashboardPerformance.campaign.items} mediaStat={dashboardPerformance.media.items} isFetchingMediaStat={dashboardPerformance.media.isLoading} hasFetchedMediaStat={dashboardPerformance.media.hasFetched} />
             <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
               <DisplayCampaignAdGroupTable
-                isFetching={adGroups.isLoadingList} isFetchingStat={adGroups.isLoadingPerf} dataSet={adGroups.items}  updateAdGroup={updateAdGroup} />
+                isFetching={adGroups.isLoadingList} isFetchingStat={adGroups.isLoadingPerf} dataSet={adGroups.items} updateAdGroup={updateAdGroup}
+              />
             </Card>
             <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
               <DisplayCampaignAdTable
-                isFetching={ads.isLoadingList} isFetchingStat={ads.isLoadingPerf} dataSet={ads.items}  updateAd={updateAd} />
+                isFetching={ads.isLoadingList} isFetchingStat={ads.isLoadingPerf} dataSet={ads.items} updateAd={updateAd}
+              />
             </Card>
           </Content>
         </div>

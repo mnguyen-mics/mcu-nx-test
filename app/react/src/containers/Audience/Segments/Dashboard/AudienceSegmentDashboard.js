@@ -8,9 +8,9 @@ import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { formatMetric } from '../../../../utils/MetricHelper';
 
-class AudienceSegmentDashboard extends Component {
+function AudienceSegmentDashboard({ segment, translations }) {
 
-  static buildItemHeaders(segment) {
+  function buildItemHeaders() {
     const report = segment.report_view ? segment.report_view[0] : undefined;
     return [
       {
@@ -36,7 +36,7 @@ class AudienceSegmentDashboard extends Component {
     ];
   }
 
-  static buildItems(translations) {
+  function buildItems() {
     return [
       {
         title: translations.OVERVIEW,
@@ -53,30 +53,23 @@ class AudienceSegmentDashboard extends Component {
     ];
   }
 
-  render() {
-    const {
-      segment,
-      translations
-    } = this.props;
-
-    const itemsHeaders = AudienceSegmentDashboard.buildItemHeaders(segment);
-    const items = AudienceSegmentDashboard.buildItems(translations);
-    return (
-      <CardWithHeader title="test" headerItems={itemsHeaders}>
-        <McsTabs items={items} isCard={false} />
-      </CardWithHeader>
-    );
-  }
+  const itemsHeaders = buildItemHeaders();
+  const items = buildItems();
+  return (
+    <CardWithHeader title="test" headerItems={itemsHeaders}>
+      <McsTabs items={items} isCard={false} />
+    </CardWithHeader>
+  );
 }
 
 AudienceSegmentDashboard.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  segment: PropTypes.shape().isRequired,
+  segment: PropTypes.shape().isRequired
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
+  segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment
 });
 
 const ConnectedAudienceSegmentDashboard = connect(mapStateToProps)(AudienceSegmentDashboard);

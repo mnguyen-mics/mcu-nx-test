@@ -12,64 +12,26 @@ class EmailCampaignActionbar extends Component {
 
   buildActionElement = () => {
     const {
-      match: {
-        params: {
-          organisationId,
-          campaignId
-        },
-      },
-      emailCampaign,
-      translations
-    } = this.props;
-
-    const actionElement = this.buildActionElement();
-    const menu = this.buildMenu();
-
-    const breadcrumbPaths = [
-      { name: translations.EMAIL_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/email` },
-      { name: emailCampaign.name },
-    ];
-
-    return (
-      <Actionbar path={breadcrumbPaths}>
-        { actionElement }
-        <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
-          <Button>
-            <Icon type="edit"/>
-            <FormattedMessage id="EDIT"/>
-          </Button>
-        </Link>
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button>
-            <Icon type="ellipsis"/>
-          </Button>
-        </Dropdown>
-      </Actionbar>
-    );
-
-  }
-
-  buildActionElement() {
-    const {
       emailCampaign,
       updateEmailCampaign
     } = this.props;
 
     const onClickElement = status => updateEmailCampaign(emailCampaign.id, {
       status,
-      type: 'EMAIL',
+      type: 'EMAIL'
     });
 
     const activeCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('ACTIVE')}>
-        <Icon type="play-circle-o"/>
-        <FormattedMessage id="ACTIVATE_CAMPAIGN"/>
+        <Icon type="play-circle-o" />
+        <FormattedMessage id="ACTIVATE_CAMPAIGN" />
       </Button>
     );
+
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('PAUSED')}>
-        <Icon type="pause-circle-o"/>
-        <FormattedMessage id="PAUSE_CAMPAIGN"/>
+        <Icon type="pause-circle-o" />
+        <FormattedMessage id="PAUSE_CAMPAIGN" />
       </Button>
     );
 
@@ -81,7 +43,7 @@ class EmailCampaignActionbar extends Component {
         ? activeCampaignElement
         : pauseCampaignElement
     );
-  }
+  };
 
   buildMenu = () => {
     const {
@@ -113,16 +75,14 @@ class EmailCampaignActionbar extends Component {
       }
     };
 
-    const addMenu = (
+    return (
       <Menu onClick={onClick}>
         <Menu.Item key="ARCHIVED">
           <FormattedMessage id="ARCHIVED" />
         </Menu.Item>
       </Menu>
     );
-
-    return addMenu;
-  }
+  };
 
   render() {
     const {
@@ -132,7 +92,7 @@ class EmailCampaignActionbar extends Component {
           campaignId,
         },
       },
-      campaignEmail,
+      emailCampaign,
       translations,
     } = this.props;
 
@@ -141,7 +101,7 @@ class EmailCampaignActionbar extends Component {
 
     const breadcrumbPaths = [
       { name: translations.EMAIL_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/email` },
-      { name: campaignEmail.name },
+      { name: emailCampaign.name },
     ];
 
     return (
@@ -160,7 +120,6 @@ class EmailCampaignActionbar extends Component {
         </Dropdown>
       </Actionbar>
     );
-
   }
 }
 
@@ -169,7 +128,7 @@ EmailCampaignActionbar.propTypes = {
   match: PropTypes.shape().isRequired,
   emailCampaign: PropTypes.shape().isRequired,
   updateEmailCampaign: PropTypes.func.isRequired,
-  archiveEmailCampaign: PropTypes.func.isRequired,
+  archiveEmailCampaign: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -179,12 +138,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   updateEmailCampaign: EmailCampaignActions.updateEmailCampaign.request,
-  archiveEmailCampaign: EmailCampaignActions.archiveEmailCampaign.request,
+  archiveEmailCampaign: EmailCampaignActions.archiveEmailCampaign.request
 };
 
 EmailCampaignActionbar = connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(EmailCampaignActionbar);
 
 EmailCampaignActionbar = withRouter(EmailCampaignActionbar);

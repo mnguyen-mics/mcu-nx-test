@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Modal, Tooltip, Icon } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { compose } from 'recompose';
 
 import {
   TableView,
@@ -137,7 +136,7 @@ class DisplayCampaignsTable extends Component {
       },
       onCancel() { },
     });
-  }
+  };
 
   editCampaign = (campaign) => {
     const {
@@ -165,7 +164,7 @@ class DisplayCampaignsTable extends Component {
     }
 
     history.push(editUrl);
-  }
+  };
 
   updateLocationSearch = (params) => {
     const {
@@ -182,7 +181,7 @@ class DisplayCampaignsTable extends Component {
     };
 
     history.push(nextLocation);
-  }
+  };
 
   render() {
     const {

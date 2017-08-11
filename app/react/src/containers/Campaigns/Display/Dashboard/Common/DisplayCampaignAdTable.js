@@ -12,12 +12,7 @@ import messages from '../messages';
 
 class DisplayCampaignAdTable extends Component {
 
-  constructor(props) {
-    super(props);
-    this.editCampaign = this.editCampaign.bind(this);
-  }
-
-  editCampaign(ad) {
+  editCampaign = (ad) => {
     const {
       match: {
         params: {
@@ -30,7 +25,7 @@ class DisplayCampaignAdTable extends Component {
     const editUrl = `/${organisationId}/creatives/display-ad/default-editor/edit/${ad.id}`;
 
     history.push(editUrl);
-  }
+  };
 
   render() {
 
@@ -260,7 +255,6 @@ class DisplayCampaignAdTable extends Component {
       />
     );
   }
-
 }
 
 DisplayCampaignAdTable.propTypes = {
