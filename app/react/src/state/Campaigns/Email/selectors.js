@@ -3,12 +3,12 @@ import { createSelector } from 'reselect';
 import { normalizeReportView } from '../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 
-const getCampaignsEmail = state => state.campaignsEmailTable.campaignsEmailApi.data;
-const getDeliveryReportView = state => state.campaignsEmailTable.deliveryReportApi.report_view;
+const getEmailCampaigns = state => state.emailCampaignsTable.emailCampaignsApi.data;
+const getDeliveryReportView = state => state.emailCampaignsTable.deliveryReportApi.report_view;
 
-const getCampaignsEmailById = createSelector(
-  getCampaignsEmail,
-  campaignsEmail => normalizeArrayOfObject(campaignsEmail, 'id'),
+const getEmailCampaignsById = createSelector(
+  getEmailCampaigns,
+  emailCampaigns => normalizeArrayOfObject(emailCampaigns, 'id'),
 );
 
 const convertDeliveryReportToObjectArray = createSelector(
@@ -22,13 +22,13 @@ const getStatByCampaignId = createSelector(
 );
 
 const getTableDataSource = createSelector(
-  getCampaignsEmailById,
+  getEmailCampaignsById,
   getStatByCampaignId,
-  (campaignsEmail, statistics) => {
-    return Object.keys(campaignsEmail).map((campaignId) => {
+  (emailCampaigns, statistics) => {
+    return Object.keys(emailCampaigns).map((campaignId) => {
       return {
         ...statistics[campaignId],
-        ...campaignsEmail[campaignId],
+        ...emailCampaigns[campaignId],
       };
     });
   },
