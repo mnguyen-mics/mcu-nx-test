@@ -1,35 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Modal, Tooltip, Icon } from 'antd';
+import { compose } from 'recompose';
+import { Link, withRouter } from 'react-router-dom';
+import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import {
-  TableView,
-  TableViewFilters,
-  EmptyTableView,
-} from '../../../../components/TableView';
+import { EmptyTableView, TableView, TableViewFilters } from '../../../../components/TableView';
 import McsIcons from '../../../../components/McsIcons';
 
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearchs,
-} from '../../../../utils/LocationSearchHelper';
+import { buildDefaultSearch, compareSearchs, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 
-import {
-  getTableDataSource,
-} from '../../../../state/Campaigns/Display/selectors';
+import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 
 class DisplayCampaignsTable extends Component {
 
@@ -413,9 +402,8 @@ DisplayCampaignsTable.propTypes = {
   resetDisplayCampaignsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   translations: state.translations,
-
   hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
   isFetchingDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.isFetching,
   isFetchingCampaignsStat: state.displayCampaignsTable.performanceReportApi.isFetching,
@@ -429,9 +417,10 @@ const mapDispatchToProps = {
   resetDisplayCampaignsTable: DisplayCampaignsActions.resetDisplayCampaignsTable,
 };
 
-DisplayCampaignsTable = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(DisplayCampaignsTable);
-
-export default DisplayCampaignsTable;

@@ -216,13 +216,13 @@ class CampaignPage extends Component {
 
       const adGroups = [...data.ad_groups];
       const formattedAdGroups = adGroups.map(item => {
-        const formatedItem = {
+        const formattedItem = {
           ...item,
         };
 
-        delete formatedItem.ads;
+        delete formattedItem.ads;
 
-        return formatedItem;
+        return formattedItem;
       });
 
       const adGroupCampaign = adGroups.map(item => {
@@ -268,7 +268,7 @@ class CampaignPage extends Component {
     });
 
     getCampaignPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
@@ -282,7 +282,7 @@ class CampaignPage extends Component {
     });
 
     getAdGroupPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
@@ -296,8 +296,9 @@ class CampaignPage extends Component {
         return nextState;
       });
     });
+
     getAdPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
@@ -311,8 +312,9 @@ class CampaignPage extends Component {
         return nextState;
       });
     });
+
     getMediaPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
@@ -320,16 +322,15 @@ class CampaignPage extends Component {
         nextState.campaign.mediaPerformance.isLoading = false;
         nextState.campaign.mediaPerformance.hasFetched = true;
         nextState.campaign.mediaPerformance.performance = normalizeReportView(
-          response.data.report_view,
-          'media_id',
+          response.data.report_view
         );
 
         return nextState;
       });
     });
-  }
+  };
 
-  formatListview(a, b) {
+  formatListView(a, b) {
     if (a) {
       return Object.keys(a).map((c) => {
         return {
@@ -341,9 +342,8 @@ class CampaignPage extends Component {
     return [];
   }
 
-  formatReportView(reportView, key) {
+  static formatReportView(reportView, key) {
     const format = normalizeReportView(reportView);
-
     return normalizeArrayOfObject(format, key);
   }
 
@@ -386,9 +386,11 @@ class CampaignPage extends Component {
             uid,
             message: successMessage.title,
             description: successMessage.body,
-            btn: (<Button type="primary" size="small" onClick={undo} >
-              <span>Undo</span>
-            </Button>),
+            btn: (
+              <Button type="primary" size="small" onClick={undo}>
+                <span>Undo</span>
+              </Button>
+            ),
           });
         }
 
@@ -409,7 +411,7 @@ class CampaignPage extends Component {
           return nextState;
         });
       });
-  }
+  };
 
   updateAdGroup = (adGroupId, body, successMessage, errorMessage, undoBody) => {
     const {
@@ -450,7 +452,7 @@ class CampaignPage extends Component {
             uid: parseInt(adGroupId, 0),
             message: successMessage.title,
             description: successMessage.body,
-            btn: (<Button type="primary" size="small" onClick={undo} >
+            btn: (<Button type="primary" size="small" onClick={undo}>
               <span>Undo</span>
             </Button>),
           });
@@ -472,14 +474,14 @@ class CampaignPage extends Component {
           return nextState;
         });
       });
-  }
+  };
 
   updateCampaign = (campaignId, body, successMessage, errorMessage) => {
     const {
       notifyError,
     } = this.props;
 
-    DisplayCampaignService.updateDisplayCampaign(campaignId, body)
+    DisplayCampaignService.updateCampaign(campaignId, body)
       .then(response => {
         this.setState(prevState => {
           const nextState = {
@@ -494,7 +496,7 @@ class CampaignPage extends Component {
           description: errorMessage.body,
         });
       });
-  }
+  };
 
   render() {
 
@@ -526,7 +528,7 @@ class CampaignPage extends Component {
       media: {
         isLoading: this.state.campaign.mediaPerformance.isLoading,
         hasFetched: this.state.campaign.mediaPerformance.hasFetched,
-        items: this.state.campaign.mediaPerformance.performance,
+        items: this.state.campaign.mediaPerformance.performance
       },
       campaign: {
         isLoading: this.state.campaign.performance.isLoading,
@@ -535,15 +537,17 @@ class CampaignPage extends Component {
       },
     };
 
-    return (<DisplayCampaign
-      updateAd={this.updateAd}
-      updateAdGroup={this.updateAdGroup}
-      updateCampaign={this.updateCampaign}
-      campaign={campaign}
-      adGroups={adGroups}
-      ads={ads}
-      dashboardPerformance={dashboardPerformance}
-    />);
+    return (
+      <DisplayCampaign
+        updateAd={this.updateAd}
+        updateAdGroup={this.updateAdGroup}
+        updateCampaign={this.updateCampaign}
+        campaign={campaign}
+        adGroups={adGroups}
+        ads={ads}
+        dashboardPerformance={dashboardPerformance}
+      />
+    );
   }
 }
 

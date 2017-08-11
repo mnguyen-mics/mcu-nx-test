@@ -68,7 +68,6 @@ class DisplayCampaignsActionbar extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = { exportIsRunning: false };
   }
 
@@ -97,7 +96,7 @@ class DisplayCampaignsActionbar extends Component {
       hideExportLoadingMsg();
     });
 
-  }
+  };
 
   render() {
     const {
@@ -159,16 +158,14 @@ class DisplayCampaignsActionbar extends Component {
         </Button>
       </Actionbar>
     );
-
   }
-
 }
 
 DisplayCampaignsActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired
 };
 
 DisplayCampaignsActionbar = compose(
