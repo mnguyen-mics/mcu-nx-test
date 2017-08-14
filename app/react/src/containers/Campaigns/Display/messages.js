@@ -29,7 +29,7 @@ export default defineMessages({
     id: 'display.metrics.cpc',
     defaultMessage: 'CPC'
   },
-  impression_cost: {
+  impressionCost: {
     id: 'display.metrics.impressions_cost',
     defaultMessage: 'Spent'
   },

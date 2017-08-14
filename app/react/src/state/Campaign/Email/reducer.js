@@ -119,7 +119,7 @@ const emailBlastPerformanceState = {
   },
 };
 
-const emailBlastPerformanceApi = (state = emailBlastPerformanceState, action) => {
+const emailBlastPerformance = (state = emailBlastPerformanceState, action) => {
   switch (action.type) {
     case EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST:
       return {
@@ -152,7 +152,7 @@ const emailCampaignSingle = combineReducers({
   emailCampaignApi,
   emailCampaignPerformance,
   emailBlastApi,
-  emailBlastPerformanceApi,
+  emailBlastPerformance,
 });
 
 const EmailCampaignReducers = {

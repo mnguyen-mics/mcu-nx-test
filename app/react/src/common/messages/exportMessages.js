@@ -33,18 +33,26 @@ export default defineMessages({
   },
   displayCampaignExportTitle: {
     id: 'export.title.display.campaign',
-    defaultMessage: 'Display Campaign Export'
+    defaultMessage: 'Display Campaign'
   },
   mediasExportTitle: {
     id: 'export.title.medias',
-    defaultMessage: 'Medias Export'
+    defaultMessage: 'Medias'
   },
   adGroupsExportTitle: {
     id: 'export.title.ad_groups',
-    defaultMessage: 'Ad Groups Export'
+    defaultMessage: 'Ad Groups'
   },
   adsExportTitle: {
     id: 'export.title.ads',
     defaultMessage: 'Ads Export'
-  }
+  },
+  emailCampaignExportTitle: {
+    id: 'export.title.email.campaign',
+    defaultMessage: 'Email Campaign'
+  },
+  emailCampaignBlastExportTitle: {
+    id: 'export.title.email.campaign.blast',
+    defaultMessage: 'Email Campaign Blast'
+  },
 });

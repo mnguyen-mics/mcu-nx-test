@@ -4,7 +4,7 @@ import {
 } from '../containers/Campaigns/Display/List';
 
 import {
-  CampaignPage,
+  DisplayCampaignPage,
   AdGroupPage,
 } from '../containers/Campaigns/Display/Dashboard';
 
@@ -21,7 +21,6 @@ import {
 } from '../containers/Campaigns/Email/List';
 
 import {
-  EmailCampaignActionbar,
   EmailCampaign
 } from '../containers/Campaigns/Email/Dashboard';
 
@@ -40,7 +39,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/display/:campaignId(\\d+)',
     layout: 'main',
-    contentComponent: CampaignPage,
+    contentComponent: DisplayCampaignPage,
   },
   {
     path: '/campaigns/display/:campaignId(\\d+)/adgroup/:adGroupId(\\d+)',
@@ -61,8 +60,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/email/:campaignId(\\d+)',
     layout: 'main',
-    contentComponent: EmailCampaign,
-    actionBarComponent: EmailCampaignActionbar
+    contentComponent: EmailCampaign
   },
   {
     path: '/campaigns/email/:campaignId(\\d+)/edit',

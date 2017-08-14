@@ -3,20 +3,43 @@ import PropTypes from 'prop-types';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 
+import messages from '../messages';
+import modalMessages from '../../../../common/messages/modalMessages';
+import ExportService from '../../../../services/ExportService';
 import { Actionbar } from '../../../Actionbar';
 import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import McsIcons from '../../../../components/McsIcons';
 
 class EmailCampaignActionbar extends Component {
 
-  buildActionElement = () => {
+  handleRunExport = () => {
     const {
-      emailCampaign,
-      updateEmailCampaign
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      intl: { formatMessage },
+      location: { search },
+      campaign,
+      blastsStats
     } = this.props;
 
-    const onClickElement = status => updateEmailCampaign(emailCampaign.id, {
+    const filter = parseSearch(search, null);
+    ExportService.exportEmailCampaignDashboard(organisationId, [campaign], blastsStats, filter, formatMessage);
+  };
+
+  buildActionElement = () => {
+    const {
+      campaign,
+      updateCampaign
+    } = this.props;
+
+    const onClickElement = status => updateCampaign(campaign.id, {
       status,
       type: 'EMAIL'
     });
@@ -35,11 +58,11 @@ class EmailCampaignActionbar extends Component {
       </Button>
     );
 
-    if (!emailCampaign.id) {
+    if (!campaign.id) {
       return null;
     }
 
-    return (emailCampaign.status === 'PAUSED' || emailCampaign.status === 'PENDING'
+    return (campaign.status === 'PAUSED' || campaign.status === 'PENDING'
         ? activeCampaignElement
         : pauseCampaignElement
     );
@@ -47,20 +70,20 @@ class EmailCampaignActionbar extends Component {
 
   buildMenu = () => {
     const {
-      translations,
-      emailCampaign,
-      archiveEmailCampaign
+      campaign,
+      archiveCampaign,
+      intl: { formatMessage }
     } = this.props;
 
-    const handleArchiveGoal = emailCampaignId => {
+    const handleArchiveGoal = displayCampaignId => {
       Modal.confirm({
-        title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-        content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+        title: formatMessage(modalMessages.archiveCampaignConfirm),
+        content: formatMessage(modalMessages.archiveCampaignMessage),
         iconType: 'exclamation-circle',
-        okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-        cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+        okText: formatMessage(modalMessages.confirm),
+        cancelText: formatMessage(modalMessages.cancel),
         onOk() {
-          return archiveEmailCampaign(emailCampaignId);
+          return archiveCampaign(displayCampaignId);
         },
         onCancel() { },
       });
@@ -69,7 +92,7 @@ class EmailCampaignActionbar extends Component {
     const onClick = event => {
       switch (event.key) {
         case 'ARCHIVED':
-          return handleArchiveGoal(emailCampaign.id);
+          return handleArchiveGoal(campaign.id);
         default:
           return () => {};
       }
@@ -92,21 +115,25 @@ class EmailCampaignActionbar extends Component {
           campaignId,
         },
       },
-      emailCampaign,
-      translations,
+      intl: { formatMessage },
+      campaign,
+      isFetchingStats
     } = this.props;
 
     const actionElement = this.buildActionElement();
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: translations.EMAIL_CAMPAIGNS, url: `/v2/o/${organisationId}/campaigns/email` },
-      { name: emailCampaign.name },
+      { name: formatMessage(messages.email), url: `/v2/o/${organisationId}/campaigns/email` },
+      { name: campaign.name },
     ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
+        <Button onClick={this.handleRunExport}>
+          { !isFetchingStats && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
+        </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>
             <Icon type="edit" />
@@ -124,28 +151,29 @@ class EmailCampaignActionbar extends Component {
 }
 
 EmailCampaignActionbar.propTypes = {
-  translations: PropTypes.shape().isRequired,
+  intl: intlShape.isRequired,
   match: PropTypes.shape().isRequired,
-  emailCampaign: PropTypes.shape().isRequired,
-  updateEmailCampaign: PropTypes.func.isRequired,
-  archiveEmailCampaign: PropTypes.func.isRequired
+  campaign: PropTypes.shape().isRequired,
+  archiveCampaign: PropTypes.func.isRequired,
+  isFetchingStats: PropTypes.bool.isRequired,
+  blastsStats: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const mapStateToProps = state => ({
-  translations: state.translations,
-  emailCampaign: state.emailCampaignSingle.emailCampaignApi.emailCampaign
 });
 
 const mapDispatchToProps = {
-  updateEmailCampaign: EmailCampaignActions.updateEmailCampaign.request,
-  archiveEmailCampaign: EmailCampaignActions.archiveEmailCampaign.request
+  updateCampaign: EmailCampaignActions.updateEmailCampaign.request,
+  archiveCampaign: EmailCampaignActions.archiveEmailCampaign.request
 };
 
-EmailCampaignActionbar = connect(
-  mapStateToProps,
-  mapDispatchToProps
+EmailCampaignActionbar = compose(
+  withRouter,
+  injectIntl,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(EmailCampaignActionbar);
-
-EmailCampaignActionbar = withRouter(EmailCampaignActionbar);
 
 export default EmailCampaignActionbar;

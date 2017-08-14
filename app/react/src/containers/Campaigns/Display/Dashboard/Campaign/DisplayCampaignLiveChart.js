@@ -7,7 +7,7 @@ import { injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 

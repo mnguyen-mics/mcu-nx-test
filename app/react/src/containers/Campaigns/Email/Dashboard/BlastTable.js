@@ -191,7 +191,7 @@ export default compose(
   connect(
     state => ({
       isFetchingBlasts: state.emailCampaignSingle.emailBlastApi.isFetching,
-      isFetchingBlastsStat: state.emailCampaignSingle.emailBlastPerformanceApi.isFetching,
+      isFetchingBlastsStat: state.emailCampaignSingle.emailBlastPerformance.isFetching,
       dataSet: getEmailBlastTableView(state),
     }),
   ),

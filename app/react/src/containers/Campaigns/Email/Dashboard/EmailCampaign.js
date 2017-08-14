@@ -1,17 +1,25 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
 import { withRouter, Link } from 'react-router-dom';
-import { Button } from 'antd';
+import { Layout, Button } from 'antd';
 
+import EmailCampaignActionbar from './EmailCampaignActionbar';
 import EmailCampaignHeader from './EmailCampaignHeader';
 import EmailCampaignDashboard from './EmailCampaignDashboard';
 import { Card } from '../../../../components/Card';
 import BlastTable from './BlastTable';
 import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
+import messages from './messages';
+import {
+  getEmailBlastTableView,
+  normalizedEmailPerformance,
+} from '../../../../state/Campaign/Email/selectors';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from './constants';
+const { Content } = Layout;
 
 import {
   parseSearch,
@@ -27,17 +35,17 @@ class EmailCampaign extends Component {
       history,
       location: {
         search,
-        pathname,
+        pathname
       },
       match: {
         params: {
           organisationId,
-          campaignId,
-        },
+          campaignId
+        }
       },
       loadEmailCampaignAndDeliveryReport,
       fetchAllEmailBlast,
-      fetchAllEmailBlastPerformance,
+      fetchAllEmailBlastPerformance
     } = this.props;
 
     if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
@@ -56,32 +64,31 @@ class EmailCampaign extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       location: {
-        search,
+        search
       },
       match: {
         params: {
-          campaignId,
-        },
+          campaignId
+        }
       },
       history,
       loadEmailCampaignAndDeliveryReport,
       fetchAllEmailBlast,
-      fetchAllEmailBlastPerformance,
+      fetchAllEmailBlastPerformance
     } = this.props;
 
     const {
       location: {
         pathname: nextPathname,
-        search: nextSearch,
+        search: nextSearch
       },
       match: {
         params: {
           campaignId: nextCampaignId,
-          organisationId: nextOrganisationId,
-        },
-      },
+          organisationId: nextOrganisationId
+        }
+      }
     } = nextProps;
-
 
     if (!compareSearchs(search, nextSearch) || campaignId !== nextCampaignId) {
       if (!isSearchValid(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
@@ -107,44 +114,59 @@ class EmailCampaign extends Component {
       match: {
         params: { organisationId, campaignId },
       },
-      translations,
+      intl: { formatMessage },
+      emailBlasts,
+      emailCampaign,
+      isFetchingEmailBlastsStat,
+      isFetchingCampaignStat
     } = this.props;
 
     const buttons = (
       <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/create`}>
         <Button type="primary">
-          <FormattedMessage id="NEW_EMAIL_BLAST" />
+          <FormattedMessage id="NEW_EMAIL_BLAST"/>
         </Button>
       </Link>
     );
 
     return (
-      <div>
-        <EmailCampaignHeader />
-        <EmailCampaignDashboard />
-        <Card title={translations.EMAIL_BLASTS} buttons={buttons}>
-          <BlastTable />
-        </Card>
+      <div className="ant-layout">
+        <EmailCampaignActionbar
+          campaign={emailCampaign}
+          archiveCampaign={() => {}}
+          isFetchingStats={isFetchingEmailBlastsStat && isFetchingCampaignStat}
+          blastsStats={emailBlasts}
+        />
+        <div className="ant-layout">
+          <Content className="mcs-content-container">
+            <EmailCampaignHeader />
+            <EmailCampaignDashboard />
+            <Card title={formatMessage(messages.emailBlast)} buttons={buttons}>
+              <BlastTable />
+            </Card>
+          </Content>
+        </div>
       </div>
     );
   }
-
 }
 
 EmailCampaign.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  intl: intlShape.isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
+  // email campaign
+  isFetchingCampaignStat: PropTypes.bool.isRequired,
+  resetEmailCampaign: PropTypes.func.isRequired,
   loadEmailCampaignAndDeliveryReport: PropTypes.func.isRequired,
+  emailCampaign: PropTypes.object.isRequired,
+  // email blasts
+  isFetchingEmailBlastsStat: PropTypes.bool.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
   fetchAllEmailBlastPerformance: PropTypes.func.isRequired,
-  resetEmailCampaign: PropTypes.func.isRequired,
+  emailBlasts: PropTypes.arrayOf(PropTypes.object).isRequired
 };
-
-const mapStateToProps = state => ({
-  translations: state.translations,
-});
 
 const mapDispatchToProps = {
   fetchAllEmailBlast: EmailCampaignActions.fetchAllEmailBlast.request,
@@ -153,11 +175,20 @@ const mapDispatchToProps = {
   resetEmailCampaign: EmailCampaignActions.resetEmailCampaign
 };
 
-EmailCampaign = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(EmailCampaign);
+const mapStateToProps = state => ({
+  emailBlasts: getEmailBlastTableView(state),
+  emailCampaign: normalizedEmailPerformance(state),
+  isFetchingEmailBlastsStat: state.emailCampaignSingle.emailBlastPerformance.isFetching,
+  isFetchingCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.isFetching
+});
 
-EmailCampaign = withRouter(EmailCampaign);
+EmailCampaign = compose(
+  withRouter,
+  injectIntl,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+)(EmailCampaign);
 
 export default EmailCampaign;

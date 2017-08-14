@@ -73,7 +73,7 @@ function* modifyEmailCampaign({ payload }) {
 
     if (!campaignId) throw new Error('Payload is invalid');
 
-    const response = yield call(EmailCampaignService.updateEmailCampaign, campaignId, body);
+    const response = yield call(EmailCampaignService.updateCampaign, campaignId, body);
     yield put(updateEmailCampaign.success(response));
     yield put(fetchEmailCampaign.request(campaignId, body));
   } catch (error) {

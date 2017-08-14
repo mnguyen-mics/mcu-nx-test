@@ -40,7 +40,7 @@
   "STATUS":"Status",
   "NAME":"Name",
   "IMPRESSIONS":"Imp.",
-  "CLICKS":"Clicks.",
+  "CLICKS":"Clicks",
   "IMPRESSIONS_COST": "Spent",
   "CPM":"CPM",
   "CTR":"CTR",
@@ -139,9 +139,9 @@
   "NOTIFICATION_NEW_VERSION_TITLE": "New Version",
   "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page",
 
-  "CAMPAIGN_STATUS_ACTIVE": "Campaign Ongoing",
-  "CAMPAIGN_STATUS_PAUSED": "Campaign Paused",
-  "CAMPAIGN_STATUS_PENDING": "Campaign Pending",
+  "CAMPAIGN_STATUS_ACTIVE": "Active",
+  "CAMPAIGN_STATUS_PAUSED": "Paused",
+  "CAMPAIGN_STATUS_PENDING": "Pending",
   "CAMPAIGN_OVERVIEW": "Overview",
   "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
 
@@ -152,9 +152,9 @@
   "CREATE_NEW_TAG": "Create New",
 
   "DELIVERED": "Delivered",
-  "OPENS": "Opens",
-  "CLICKS_TO_OPENS": "Clicks To Opens",
-  "UNSUBSCRIBE": "Unsubscribe",
+  "OPENS": "Opened",
+  "CLICKS_TO_OPENS": "Opening Clicks",
+  "UNSUBSCRIBE": "Unsubscribed",
 
   "PART_COUNT": "Part Count",
   "NEW_PARTITION": "New Partition",

@@ -1,4 +1,5 @@
 import displayCampaignMessages from '../containers/Campaigns/Display/messages';
+import emailCampaignMessages from '../containers/Campaigns/Email/messages';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages';
 import dateMessages from '../common/messages/dateMessages';
 import exportMessages from '../common/messages/exportMessages';
@@ -205,7 +206,7 @@ const exportDisplayCampaignDashboard = (organisationId, campaignData, mediasData
     { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
     { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
     { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
-    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impression_cost) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
     { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
   ];
 
@@ -272,6 +273,49 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
 
   exportData(sheets, `${organisationId}_email-campaigns`, 'xlsx');
 };
+
+const exportEmailCampaignDashboard = (organisationId, campaignData, blastData, filter, formatMessage) => {
+  const emailHeaders = [
+    { name: 'day', translation: formatMessage(emailCampaignMessages.day) },
+    { name: 'email_sent', translation: formatMessage(emailCampaignMessages.emailSent) },
+    { name: 'email_hard_bounced', translation: formatMessage(emailCampaignMessages.emailHardBounced) },
+    { name: 'email_soft_bounced', translation: formatMessage(emailCampaignMessages.emailSoftBounced) },
+    { name: 'clicks', translation: formatMessage(emailCampaignMessages.clicks) },
+    { name: 'impressions', translation: formatMessage(emailCampaignMessages.impressions) },
+    { name: 'email_unsubscribed', translation: formatMessage(emailCampaignMessages.emailUnsubscribed) },
+    { name: 'email_complaints', translation: formatMessage(emailCampaignMessages.emailComplaints) },
+    { name: 'uniq_impressions', translation: formatMessage(emailCampaignMessages.uniqImpressions) },
+    { name: 'uniq_clicks', translation: formatMessage(emailCampaignMessages.uniqClicks) },
+    { name: 'uniq_email_sent', translation: formatMessage(emailCampaignMessages.uniqEmailSent) },
+    { name: 'uniq_email_unsubscribed', translation: formatMessage(emailCampaignMessages.uniqEmailUnsubscribed) },
+    { name: 'uniq_email_hard_bounced', translation: formatMessage(emailCampaignMessages.uniqEmailHardBounced) },
+    { name: 'uniq_email_soft_bounced', translation: formatMessage(emailCampaignMessages.uniqEmailSoftBounced) },
+    { name: 'uniq_email_complaints', translation: formatMessage(emailCampaignMessages.uniqEmailComplaints) }
+  ];
+
+  const emailBlastHeaders = [
+    { name: 'id', translation: formatMessage(emailCampaignMessages.id) },
+    { name: 'batch_size', translation: formatMessage(emailCampaignMessages.batchSize) },
+    { name: 'blast_name', translation: formatMessage(emailCampaignMessages.blastName) },
+    { name: 'from_email', translation: formatMessage(emailCampaignMessages.fromEmail) },
+    { name: 'from_name', translation: formatMessage(emailCampaignMessages.fromName) },
+    { name: 'number_mail_not_send', translation: formatMessage(emailCampaignMessages.numberEmailNotSent) },
+    { name: 'reply_to', translation: formatMessage(emailCampaignMessages.replyTo) },
+    { name: 'send_date', translation: formatMessage(emailCampaignMessages.sendDate) },
+    { name: 'status', translation: formatMessage(emailCampaignMessages.status) },
+    { name: 'subject_line', translation: formatMessage(emailCampaignMessages.subjectLine) },
+  ];
+
+  const sheets = [
+    addSheet(exportMessages.emailCampaignExportTitle, campaignData, emailHeaders, filter, formatMessage),
+    addSheet(exportMessages.emailCampaignBlastExportTitle, blastData, emailBlastHeaders, filter, formatMessage)
+  ].filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_email-campaign`, 'xlsx');
+  }
+};
+
 
 /**
  * Goals
@@ -411,8 +455,9 @@ export default {
   exportData,
   exportGoals,
   exportEmailCampaigns,
+  exportEmailCampaignDashboard,
   exportAudienceSegments,
   exportDisplayCampaigns,
   exportDisplayCampaignDashboard,
   exportAudienceSegmentDashboard
-};
+}

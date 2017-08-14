@@ -18,7 +18,7 @@ import messages from '../messages';
 
 import {
   parseSearch,
-  updateSearch,
+  updateSearch
 } from '../../../../../utils/LocationSearchHelper';
 
 const { Content } = Layout;
@@ -30,7 +30,7 @@ class DisplayCampaign extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
     };
 
     history.push(nextLocation);
@@ -40,9 +40,9 @@ class DisplayCampaign extends Component {
     const {
       history: {
         location: {
-          search,
-        },
-      },
+          search
+        }
+      }
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -51,14 +51,14 @@ class DisplayCampaign extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to,
+      to: filter.to
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
       rangeType: newValues.rangeType,
       lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
-      to: newValues.to,
+      to: newValues.to
     });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -78,8 +78,8 @@ class DisplayCampaign extends Component {
       updateCampaign,
       dashboardPerformance,
       intl: {
-        formatMessage,
-      },
+        formatMessage
+      }
     } = this.props;
 
     const adGroupButtons = (
@@ -92,17 +92,18 @@ class DisplayCampaign extends Component {
         {this.renderDatePicker()}
       </span>
     );
+
     const adButtons = (
       <span>
         {this.renderDatePicker()}
       </span>
     );
 
-
     return (
       <div className="ant-layout">
         <DisplayCampaignActionbar
-          campaign={campaign.items} updateCampaign={updateCampaign}
+          campaign={campaign.items}
+          updateCampaign={updateCampaign}
           archiveCampaign={() => {}}
           isFetchingStats={dashboardPerformance.campaign.isLoading && adGroups.isLoadingPerf && ads.isLoadingPerf}
           campaignStats={dashboardPerformance.campaign.items}
@@ -113,15 +114,28 @@ class DisplayCampaign extends Component {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <DisplayCampaignHeader object={campaign.items} translationKey="CAMPAIGN" />
-            <DisplayCampaignDashboard isFetchingCampaignStat={dashboardPerformance.campaign.isLoading} hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched} campaignStat={dashboardPerformance.campaign.items} mediaStat={dashboardPerformance.media.items} isFetchingMediaStat={dashboardPerformance.media.isLoading} hasFetchedMediaStat={dashboardPerformance.media.hasFetched} />
+            <DisplayCampaignDashboard
+              isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
+              hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}
+              campaignStat={dashboardPerformance.campaign.items}
+              mediaStat={dashboardPerformance.media.items}
+              isFetchingMediaStat={dashboardPerformance.media.isLoading}
+              hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
+            />
             <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
               <DisplayCampaignAdGroupTable
-                isFetching={adGroups.isLoadingList} isFetchingStat={adGroups.isLoadingPerf} dataSet={adGroups.items} updateAdGroup={updateAdGroup}
+                isFetching={adGroups.isLoadingList}
+                isFetchingStat={adGroups.isLoadingPerf}
+                dataSet={adGroups.items}
+                updateAdGroup={updateAdGroup}
               />
             </Card>
             <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
               <DisplayCampaignAdTable
-                isFetching={ads.isLoadingList} isFetchingStat={ads.isLoadingPerf} dataSet={ads.items} updateAd={updateAd}
+                isFetching={ads.isLoadingList}
+                isFetchingStat={ads.isLoadingPerf}
+                dataSet={ads.items}
+                updateAd={updateAd}
               />
             </Card>
           </Content>
@@ -129,7 +143,6 @@ class DisplayCampaign extends Component {
       </div>
     );
   }
-
 }
 
 DisplayCampaign.propTypes = {
@@ -161,17 +174,17 @@ DisplayCampaign.propTypes = {
       isLoading: PropTypes.bool,
       hasFetched: PropTypes.bool,
       items: PropTypes.arrayOf(PropTypes.object),
-    }),
+    })
   }).isRequired,
   updateCampaign: PropTypes.func.isRequired,
   updateAdGroup: PropTypes.func.isRequired,
   updateAd: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
+  intl: intlShape.isRequired
 };
 
 DisplayCampaign = compose(
   injectIntl,
-  withRouter,
+  withRouter
 )(DisplayCampaign);
 
 export default DisplayCampaign;

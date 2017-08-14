@@ -25,7 +25,7 @@ import {
 
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 
-class CampaignPage extends Component {
+class DisplayCampaignPage extends Component {
 
   constructor(props) {
     super(props);
@@ -289,7 +289,7 @@ class CampaignPage extends Component {
 
         nextState.adGroups.performance.isLoading = false;
         nextState.adGroups.performance.hasFetched = true;
-        nextState.adGroups.performance.performanceById = CampaignPage.formatReportView(
+        nextState.adGroups.performance.performanceById = DisplayCampaignPage.formatReportView(
           response.data.report_view,
           'ad_group_id',
         );
@@ -305,7 +305,7 @@ class CampaignPage extends Component {
 
         nextState.ads.performance.isLoading = false;
         nextState.ads.performance.hasFetched = true;
-        nextState.ads.performance.performanceById = CampaignPage.formatReportView(
+        nextState.ads.performance.performanceById = DisplayCampaignPage.formatReportView(
           response.data.report_view,
           'ad_id',
         );
@@ -551,7 +551,7 @@ class CampaignPage extends Component {
   }
 }
 
-CampaignPage.propTypes = {
+DisplayCampaignPage.propTypes = {
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
@@ -560,7 +560,7 @@ CampaignPage.propTypes = {
   removeNotification: PropTypes.func.isRequired,
 };
 
-CampaignPage = compose(
+DisplayCampaignPage = compose(
   withRouter,
   connect(
     undefined,
@@ -569,6 +569,6 @@ CampaignPage = compose(
       notifySuccess: NotificationActions.notifySuccess,
       removeNotification: NotificationActions.removeNotification,
     }),
-)(CampaignPage);
+)(DisplayCampaignPage);
 
-export default CampaignPage;
+export default DisplayCampaignPage;

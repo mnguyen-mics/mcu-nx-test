@@ -17,7 +17,7 @@ import {
 
 import {
   getTableDataSource,
-  flattenData,
+  normalizedEmailPerformance,
  } from '../../../../../state/Campaign/Email/selectors';
 
 class EmailPieCharts extends Component {
@@ -225,6 +225,7 @@ class EmailPieCharts extends Component {
     return chartArea;
   }
 }
+
 EmailPieCharts.propTypes = {
   translations: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
@@ -238,7 +239,7 @@ const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.hasFetched,
   dataSource: getTableDataSource(state),
-  flatData: flattenData(state),
+  flatData: normalizedEmailPerformance(state),
 });
 
 

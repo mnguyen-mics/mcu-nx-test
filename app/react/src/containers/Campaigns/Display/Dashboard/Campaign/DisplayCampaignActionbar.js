@@ -33,7 +33,7 @@ class DisplayCampaignActionbar extends Component {
 
     const filter = parseSearch(search, null);
     ExportService.exportDisplayCampaignDashboard(organisationId, campaignStats, mediasStats, adGroupsStats, adsStats, filter, formatMessage);
-  }
+  };
 
   render() {
     const {
@@ -117,7 +117,7 @@ class DisplayCampaignActionbar extends Component {
         ? activeCampaignElement
         : pauseCampaignElement
     );
-  }
+  };
 
   buildMenu = () => {
     const {
