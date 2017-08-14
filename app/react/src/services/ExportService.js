@@ -460,4 +460,4 @@ export default {
   exportDisplayCampaigns,
   exportDisplayCampaignDashboard,
   exportAudienceSegmentDashboard
-}
+};

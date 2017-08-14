@@ -19,7 +19,6 @@ import {
 } from '../../../../state/Campaign/Email/selectors';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from './constants';
-const { Content } = Layout;
 
 import {
   parseSearch,
@@ -27,6 +26,8 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
+
+const { Content } = Layout;
 
 class EmailCampaign extends Component {
 
@@ -124,7 +125,7 @@ class EmailCampaign extends Component {
     const buttons = (
       <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/create`}>
         <Button type="primary">
-          <FormattedMessage id="NEW_EMAIL_BLAST"/>
+          <FormattedMessage id="NEW_EMAIL_BLAST" />
         </Button>
       </Link>
     );
@@ -160,7 +161,7 @@ EmailCampaign.propTypes = {
   isFetchingCampaignStat: PropTypes.bool.isRequired,
   resetEmailCampaign: PropTypes.func.isRequired,
   loadEmailCampaignAndDeliveryReport: PropTypes.func.isRequired,
-  emailCampaign: PropTypes.object.isRequired,
+  emailCampaign: PropTypes.shape().isRequired,
   // email blasts
   isFetchingEmailBlastsStat: PropTypes.bool.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,

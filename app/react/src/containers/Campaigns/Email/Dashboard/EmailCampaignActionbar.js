@@ -7,6 +7,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import messages from '../messages';
+import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import modalMessages from '../../../../common/messages/modalMessages';
 import ExportService from '../../../../services/ExportService';
 import { Actionbar } from '../../../Actionbar';
@@ -153,14 +154,13 @@ class EmailCampaignActionbar extends Component {
 EmailCampaignActionbar.propTypes = {
   intl: intlShape.isRequired,
   match: PropTypes.shape().isRequired,
+  location: ReactRouterPropTypes.location.isRequired,
   campaign: PropTypes.shape().isRequired,
+  updateCampaign: PropTypes.func.isRequired,
   archiveCampaign: PropTypes.func.isRequired,
   isFetchingStats: PropTypes.bool.isRequired,
   blastsStats: PropTypes.arrayOf(PropTypes.object).isRequired
 };
-
-const mapStateToProps = state => ({
-});
 
 const mapDispatchToProps = {
   updateCampaign: EmailCampaignActions.updateEmailCampaign.request,
@@ -171,7 +171,7 @@ EmailCampaignActionbar = compose(
   withRouter,
   injectIntl,
   connect(
-    mapStateToProps,
+    undefined,
     mapDispatchToProps
   )
 )(EmailCampaignActionbar);
