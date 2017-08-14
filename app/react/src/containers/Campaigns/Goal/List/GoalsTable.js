@@ -240,7 +240,7 @@ class GoalsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
@@ -253,14 +253,14 @@ class GoalsTable extends Component {
         translationKey: 'CONVERSIONS',
         key: 'conversions',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CONVERSION_VALUE',
         key: 'value',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
     ];

@@ -93,7 +93,7 @@ class BlastTable extends Component {
       {
         translationKey: 'STATUS',
         key: 'status',
-        isHiddable: false,
+        isHideable: false,
         render: (status, blast) => (
           <Dropdown overlay={this.getStatusMenu(blast)} trigger={['click']}>
             <a className="ant-dropdown-link">
@@ -106,42 +106,42 @@ class BlastTable extends Component {
       {
         translationKey: 'NAME',
         key: 'blast_name',
-        isHiddable: false,
+        isHideable: false,
         render: (blastName, blast) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${blast.id}`}>{blastName}</Link>,
       },
       {
         translationKey: 'EMAIL_SENT',
         key: 'email_sent',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: emailSent => renderMetricData(emailSent, '0,0'),
       },
       {
         translationKey: 'EMAIL_HARD_BOUNCED',
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: emailHardBounced => renderMetricData(emailHardBounced, '0,0'),
       },
       {
         translationKey: 'EMAIL_SOFT_BOUNCED',
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: emailSoftBounced => renderMetricData(emailSoftBounced, '0,0'),
       },
       {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: clicks => renderMetricData(clicks, '0,0'),
       },
       {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: impressions => renderMetricData(impressions, '0,0'),
       },
     ];

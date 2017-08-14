@@ -81,14 +81,14 @@ function EmailCampaignsTable({
       // {
       //   intlMessage: messages.emailHeaderStatus,
       //   key: 'status',
-      //   isHiddable: false,
+      //   isHideable: false,
       //   // title={formatMessage(messages[text])}
       //   render: text => <Tooltip placement="top" title={text}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       // },
     {
       intlMessage: messages.emailHeaderName,
       key: 'name',
-      isHiddable: false,
+      isHideable: false,
       render: (text, record) => (
         <Link
           className="mcs-campaigns-link"
@@ -101,35 +101,35 @@ function EmailCampaignsTable({
       intlMessage: messages.emailHeaderSent,
       key: 'email_sent',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderHardBounced,
       key: 'email_hard_bounced',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderSoftBounced,
       key: 'email_soft_bounced',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderClicks,
       key: 'clicks',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderImpressions,
       key: 'impressions',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
   ];

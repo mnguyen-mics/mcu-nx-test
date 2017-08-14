@@ -130,7 +130,7 @@ class CreativeDisplayTable extends Component {
       {
         translationKey: 'PREVIEW',
         key: 'asset_path',
-        isHiddable: false,
+        isHideable: false,
         className: 'mcs-table-image-col',
         render: (text, record) => (
           <div className="mcs-table-cell-thumbnail">
@@ -143,7 +143,7 @@ class CreativeDisplayTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.id}`}>{text}</Link>
         ),
@@ -151,13 +151,13 @@ class CreativeDisplayTable extends Component {
       {
         translationKey: 'AUDIT_STATUS',
         key: 'audit_status',
-        isHiddable: false,
+        isHideable: false,
         render: text => <span>{text}</span>,
       },
       {
         translationKey: 'PUBLISHED_VERSION',
         key: 'published_version',
-        isHiddable: false,
+        isHideable: false,
         render: text => <span>{text}</span>,
       },
     ];

@@ -130,7 +130,7 @@ class PlacementListsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/library/placementlists/${record.id}`}>{text}</Link>,
       },
     ];

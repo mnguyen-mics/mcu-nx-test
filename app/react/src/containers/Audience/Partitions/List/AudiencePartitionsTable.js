@@ -253,7 +253,7 @@ class AudiencePartitionsTable extends Component {
       {
         translationKey: 'TYPE',
         key: 'type',
-        isHiddable: false,
+        isHideable: false,
         render: (text) => <span>{text}</span>,
       },
       {

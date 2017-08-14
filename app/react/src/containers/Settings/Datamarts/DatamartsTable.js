@@ -36,19 +36,19 @@ class DatamartsTable extends Component {
       {
         intlMessage: messages.datamartId,
         key: 'id',
-        isHiddable: false,
+        isHideable: false,
       },
       {
         intlMessage: messages.datamartToken,
         key: 'token',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
       },
       {
         intlMessage: messages.datamartCreationDate,
         key: 'creation_ts',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: ts => moment(ts).format('DD/MM/YYYY'),
       },
     ];

@@ -129,7 +129,7 @@ class EmailTemplateSelector extends Component {
         {
           translationKey: 'PREVIEW',
           key: 'asset_path',
-          isHiddable: false,
+          isHideable: false,
           className: 'mcs-table-image-col',
           render: (text, record) => (
             <div className="mcs-table-cell-thumbnail">
@@ -150,19 +150,19 @@ class EmailTemplateSelector extends Component {
         {
           translationKey: 'NAME',
           key: 'name',
-          isHiddable: false,
+          isHideable: false,
           render: text => <span>{text}</span>,
         },
         {
           translationKey: 'AUDIT_STATUS',
           key: 'audit_status',
-          isHiddable: false,
+          isHideable: false,
           render: text => <span>{text}</span>,
         },
         {
           translationKey: 'PUBLISHED_VERSION',
           key: 'published_version',
-          isHiddable: false,
+          isHideable: false,
           render: text => <span>{text}</span>,
         },
       ],

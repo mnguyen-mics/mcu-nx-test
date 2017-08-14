@@ -200,7 +200,7 @@ class AutomationsListTable extends Component {
       {
         translationKey: 'STATUS',
         key: 'status',
-        isHiddable: false,
+        isHideable: false,
         render: text => (
           <Tooltip placement="top" title={translations[text]}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
@@ -212,7 +212,7 @@ class AutomationsListTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"

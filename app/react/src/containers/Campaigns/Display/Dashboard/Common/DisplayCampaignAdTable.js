@@ -119,7 +119,7 @@ class DisplayCampaignAdTable extends Component {
     const dataColumns = [
       {
         key: 'creative_audit_status',
-        isHiddable: false,
+        isHideable: false,
         render: (text) => (
           <Tooltip
             title={text === 'AUDIT_PASSED'
@@ -138,7 +138,7 @@ class DisplayCampaignAdTable extends Component {
       {
         translationKey: 'STATUS',
         key: 'status',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <span>
             <Switch
@@ -155,7 +155,7 @@ class DisplayCampaignAdTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Popover
             content={renderPopover(record.creative_id, text)}
@@ -173,7 +173,7 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
         sorter: (a, b) => sorter(a, b, 'impressions'),
       },
@@ -181,7 +181,7 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
         sorter: (a, b) => sorter(a, b, 'clicks'),
       },
@@ -189,7 +189,7 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'CPM',
         key: 'cpm',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'cpm'),
       },
@@ -197,7 +197,7 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'CTR',
         key: 'ctr',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,00 %'),
         sorter: (a, b) => sorter(a, b, 'ctr'),
       },
@@ -205,7 +205,7 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'CPC',
         key: 'cpc',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'cpc'),
       },
@@ -213,7 +213,7 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'IMPRESSIONS_COST',
         key: 'impressions_cost',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'impressions_cost'),
       },
@@ -221,7 +221,7 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'CPA',
         key: 'cpa',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'cpa'),
       },

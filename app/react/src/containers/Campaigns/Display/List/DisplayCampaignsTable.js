@@ -245,7 +245,7 @@ class DisplayCampaignsTable extends Component {
       {
         translationKey: 'STATUS',
         key: 'status',
-        isHiddable: false,
+        isHideable: false,
         render: text => (
           <Tooltip placement="top" title={translations[text]}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
@@ -257,7 +257,7 @@ class DisplayCampaignsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
@@ -270,21 +270,21 @@ class DisplayCampaignsTable extends Component {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CLICKS',
         key: 'clicks',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'IMPRESSIONS_COST',
         key: 'impressions_cost',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: (text) => {
           // TODO find campaign currency (with getDisplayCampaignsById(record['campaign_id']))
           const campaignCurrency = 'EUR';
@@ -295,28 +295,28 @@ class DisplayCampaignsTable extends Component {
         translationKey: 'CPM',
         key: 'cpm',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
         translationKey: 'CTR',
         key: 'ctr',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,00 %'),
       },
       {
         translationKey: 'CPC',
         key: 'cpc',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
         translationKey: 'CPA',
         key: 'cpa',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
     ];

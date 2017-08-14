@@ -44,7 +44,7 @@ function buildSheet(title, data, headers, filter, formatMessage) {
 
 function addSheet(title, data, headers, filter, formatMessage) {
   const formattedTitle = formatMessage(title);
-  if (data.length) {
+  if (data && data.length) {
     const sheet = buildSheet(formattedTitle, data, headers, filter, formatMessage);
     return {
       name: formattedTitle,

@@ -38,19 +38,19 @@ class MobileApplicationsTable extends Component {
       {
         intlMessage: messages.mobileApplicationName,
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
       },
       {
         intlMessage: messages.mobileApplicationToken,
         key: 'token',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
       },
       {
         intlMessage: messages.mobileApplicationCreationDate,
         key: 'creation_ts',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: ts => moment(ts).format('DD/MM/YYYY'),
       },
     ];
