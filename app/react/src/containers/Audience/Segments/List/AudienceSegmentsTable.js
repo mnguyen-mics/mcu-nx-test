@@ -19,7 +19,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -84,7 +84,7 @@ class AudienceSegmentsTable extends Component {
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
         history.replace({
           pathname: nextPathname,

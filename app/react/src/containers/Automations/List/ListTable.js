@@ -20,7 +20,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../utils/LocationSearchHelper';
 
 import {
@@ -85,7 +85,7 @@ class AutomationsListTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, SCENARIOS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

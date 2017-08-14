@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as AssetsFilesActions from '../../../../state/Library/AssetsFiles/actions';
 
 import { ASSETS_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/AssetsFiles/selectors';
 
@@ -65,7 +65,7 @@ class AssetsFilesTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, ASSETS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

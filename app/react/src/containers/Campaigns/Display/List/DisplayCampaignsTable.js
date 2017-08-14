@@ -13,7 +13,7 @@ import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/ac
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
-import { buildDefaultSearch, compareSearchs, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
@@ -77,7 +77,7 @@ class DisplayCampaignsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

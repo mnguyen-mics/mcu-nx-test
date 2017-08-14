@@ -13,7 +13,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -104,7 +104,7 @@ class EmailCampaignListPage extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

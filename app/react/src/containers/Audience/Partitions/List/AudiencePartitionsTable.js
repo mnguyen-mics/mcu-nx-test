@@ -14,7 +14,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state/Audience/Partitions/selectors';
@@ -87,7 +87,7 @@ class AudiencePartitionsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
         history.replace({
           pathname: nextPathname,

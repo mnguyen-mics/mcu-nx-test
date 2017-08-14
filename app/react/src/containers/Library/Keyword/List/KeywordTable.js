@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as KeywordListsActions from '../../../../state/Library/KeywordLists/actions';
 
 import { KEYWORDS_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/KeywordLists/selectors';
 
@@ -65,7 +65,7 @@ class KeywordListsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, KEYWORDS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

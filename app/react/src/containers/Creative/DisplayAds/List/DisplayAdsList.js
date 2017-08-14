@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getDisplayCreatives, getDisplayCreativesTotal, hasDisplayCreatives, isFetchingDisplayCreatives } from '../../../../state/Creatives/Display/selectors';
 
@@ -65,7 +65,7 @@ class CreativeDisplayTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

@@ -25,7 +25,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
 class EmailCampaign extends Component {
@@ -90,7 +90,7 @@ class EmailCampaign extends Component {
       }
     } = nextProps;
 
-    if (!compareSearchs(search, nextSearch) || campaignId !== nextCampaignId) {
+    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
       if (!isSearchValid(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

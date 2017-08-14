@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as PlacementListsActions from '../../../../state/Library/PlacementLists/actions';
 
 import { PLACEMENTS_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/PlacementLists/selectors';
 
@@ -65,7 +65,7 @@ class PlacementListsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, PLACEMENTS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

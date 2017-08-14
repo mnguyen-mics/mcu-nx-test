@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getEmailTemplates, isFetchingEmailTemplates, hasEmailTemplates, getEmailTemplatesTotal } from '../../../../state/Creatives/Emails/selectors';
 
@@ -65,7 +65,7 @@ class CreativeEmailsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
