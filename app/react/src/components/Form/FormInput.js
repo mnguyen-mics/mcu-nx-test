@@ -25,7 +25,6 @@ function FormInput(
     placement: defaultTooltipPlacement,
     ...helpToolTipProps,
   };
-
   return (
     <Form.Item
       help={meta.touched && (meta.warning || meta.error)}
@@ -56,9 +55,7 @@ function FormInput(
 FormInput.defaultProps = {
   formItemProps: {},
   helpToolTipProps: {},
-  input: {},
   inputProps: {},
-  meta: {},
 };
 
 FormInput.propTypes = {
@@ -78,7 +75,7 @@ FormInput.propTypes = {
   }),
   input: PropTypes.shape({
     name: PropTypes.string,
-  }),
+  }).isRequired,
   inputProps: PropTypes.shape({
     type: PropTypes.string,
     placeholder: PropTypes.string,
@@ -87,7 +84,7 @@ FormInput.propTypes = {
   }),
   meta: PropTypes.shape({
     error: PropTypes.string,
-  }),
+  }).isRequired,
 };
 
 export default FormInput;

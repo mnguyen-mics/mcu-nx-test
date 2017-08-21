@@ -20,6 +20,7 @@ function EmailBlastContent({
 }) {
 
   const { segments, ...blastMetadata } = blast;
+  const formId = 'emailBlastForm';
   const initialValues = { blast: blastMetadata };
 
   const sidebarItems = {
@@ -29,20 +30,23 @@ function EmailBlastContent({
     segments: messages.emailBlastEditorStepperSegmentSelection,
   };
 
+  const buttonMetadata = {
+    formId,
+    message: messages.emailEditorSave,
+    onClose: redirect,
+  };
+
   return (
     <EditContentLayout
       breadcrumbPaths={breadcrumbPaths}
-      scrollId="blastSteps"
       sidebarItems={sidebarItems}
-      buttonMetadata={{
-        onClick: redirect,
-        message: messages.emailEditorSave
-      }}
+      buttonMetadata={buttonMetadata}
       url={url}
     >
       <EmailBlastForm
         blastName={blastMetadata.blast_name}
         closeNextDrawer={closeNextDrawer}
+        formId={formId}
         initialValues={initialValues}
         openNextDrawer={openNextDrawer}
         segments={segments}
@@ -75,7 +79,7 @@ EmailBlastContent.propTypes = {
   }).isRequired,
 
   match: PropTypes.shape({
-    url: PropTypes.string.isRequired
+    url: PropTypes.string.isRequired,
   }).isRequired,
 };
 

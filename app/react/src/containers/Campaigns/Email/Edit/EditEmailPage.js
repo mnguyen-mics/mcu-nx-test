@@ -22,7 +22,6 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 class EditEmailPage extends Component {
 
   state = {
-    disabled: true,
     loadedEmailCampaign: {
       routers: [],
       blasts: []
@@ -211,10 +210,6 @@ class EditEmailPage extends Component {
     history.push(emailCampaignListUrl);
   }
 
-  sendDisableStatusToParent = disabled => {
-    this.setState({ disabled });
-  }
-
   render() {
     const {
       intl: { formatMessage },
@@ -229,6 +224,7 @@ class EditEmailPage extends Component {
       },
     } = this.state;
 
+    const formId = 'emailForm';
     const initialValues = { campaign: other };
     const campaignName = other.name;
 
@@ -247,15 +243,14 @@ class EditEmailPage extends Component {
     };
 
     const buttonMetadata = {
-      disabled: this.state.disabled,
-      onClick: this.redirect,
+      formId,
       message: messages.emailEditorSaveCampaign,
+      onClose: this.redirect,
     };
 
     return (
       <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
-        scrollId="emailCampaignSteps"
         sidebarItems={sidebarItems}
         buttonMetadata={buttonMetadata}
         url={url}
@@ -263,10 +258,10 @@ class EditEmailPage extends Component {
         <EmailForm
           blasts={blasts}
           closeNextDrawer={this.props.closeNextDrawer}
+          formId={formId}
           initialValues={initialValues}
           openNextDrawer={this.props.openNextDrawer}
           save={this.editEmailCampaign}
-          sendDisableStatusToParent={this.sendDisableStatusToParent}
         />
       </EditContentLayout>
     );

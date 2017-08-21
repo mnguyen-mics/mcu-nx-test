@@ -7,10 +7,9 @@ import { ActionbarWrapper, SidebarWrapper } from '../Layout';
 function EditContentLayout({
   breadcrumbPaths,
   children,
-  scrollId,
   sidebarItems,
   buttonMetadata,
-  url
+  url,
 }) {
 
   return (
@@ -21,7 +20,16 @@ function EditContentLayout({
       />
 
       <Layout>
-        <SidebarWrapper items={sidebarItems} scrollId={scrollId} url={url} />
+        <SidebarWrapper
+          items={sidebarItems}
+          scrollId={
+            /* scrollId must be the same id as in the scrollable stuff
+             * ex. at EmailForm: <Form id="emailForm" />
+             */
+            buttonMetadata.formId
+          }
+          url={url}
+        />
         <Layout>{children}</Layout>
       </Layout>
     </Layout>
@@ -35,10 +43,6 @@ EditContentLayout.propTypes = {
   })).isRequired,
 
   children: PropTypes.node.isRequired,
-  /* scrollId must be the same id as in the scrollable stuff
-   * ex. at EmailForm: <Form id="emailCampaignSteps" />
-   */
-  scrollId: PropTypes.string.isRequired,
   sidebarItems: PropTypes.shape().isRequired,
 
   buttonMetadata: PropTypes.shape({

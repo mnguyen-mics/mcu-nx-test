@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-// import { connect } from 'react-redux';
 import { injectIntl, intlShape } from 'react-intl';
-// import { pick } from 'lodash';
-// import { Link } from 'react-router-dom';
-// import { injectIntl, intlShape } from 'react-intl';
 
 import { EditContentLayout } from '../../../../../components/Layout';
 import AdGroupForm from './AdGroupForm';
@@ -16,27 +12,22 @@ import messages from '../messages';
 
 
 class CreateAdGroupPage extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.createEmailCampaign = this.createEmailCampaign.bind(this);
-  //   this.redirect = this.redirect.bind(this);
-  // }
 
   render() {
     const {
       match: { url },
       // organisationId,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.breadcrumbTitle1),
-        url: '/v2/o/1218/campaigns/email' // TODO
+        url: '/v2/o/1218/campaigns/email', // TODO
       },
       {
         name: formatMessage(messages.breadcrumbTitle2),
-        url: '/v2/o/1218/campaigns/email' // TODO
+        url: '/v2/o/1218/campaigns/email', // TODO
       },
       { name: formatMessage(messages.breadcrumbTitle3) },
     ];
@@ -52,32 +43,29 @@ class CreateAdGroupPage extends Component {
       summary: messages.sectionTitle8,
     };
 
+    const formId = 'adGroupForm';
+
     const buttonMetadata = {
-      disabled: false,
-      onClick: () => {},
+      formId,
       message: messages.saveAdGroup,
+      onClose: () => {},
     };
+
 
     return (
       <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
-        scrollId="adBlockCampaignSteps"
         sidebarItems={sidebarItems}
         buttonMetadata={buttonMetadata}
         url={url}
       >
-        <AdGroupForm />
+        <AdGroupForm formId={formId} />
       </EditContentLayout>
     );
   }
 }
 
 CreateAdGroupPage.propTypes = {
-  // organisationId: PropTypes.string.isRequired,
-  // // history: ReactRouterPropTypes.history.isRequired,
-  // openNextDrawer: PropTypes.func.isRequired,
-  // closeNextDrawer: PropTypes.func.isRequired,
-  // notifyError: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
 };
@@ -85,9 +73,4 @@ CreateAdGroupPage.propTypes = {
 export default compose(
   injectIntl,
   withMcsRouter,
-  // connect(
-  //   undefined,
-  //   { notifyError: actions.notifyError }
-  // ),
-  // withDrawer,
 )(CreateAdGroupPage);

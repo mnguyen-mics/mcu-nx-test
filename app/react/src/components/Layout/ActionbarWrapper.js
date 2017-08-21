@@ -1,21 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { isInvalid, submit } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'antd';
 
 import { McsIcons } from '../McsIcons';
 import { Actionbar } from '../../containers/Actionbar';
 
+/* Redux-form allows us to use submit buttons removed from their normal form components.
+ * This component includes a remote submit button.
+ * See example at http://redux-form.com/6.8.0/examples/remoteSubmit/
+ */
 function ActionbarWrapper({
   breadcrumbPaths,
   disabled,
+  dispatch,
+  formId,
   message,
-  onClick,
+  onClose,
  }) {
+
+  const submitButtonProps = {
+    disabled,
+    htmlType: 'submit',
+    onClick: () => dispatch(submit(formId)),
+    type: 'primary',
+  };
 
   return (
     <Actionbar path={breadcrumbPaths}>
-      <Button type="primary" htmlType="submit" disabled={disabled}>
+      <Button {...submitButtonProps}>
         <McsIcons type="plus" />
         <FormattedMessage {...message} />
       </Button>
@@ -24,15 +39,20 @@ function ActionbarWrapper({
         type="close"
         className="close-icon"
         style={{ cursor: 'pointer' }}
-        onClick={onClick}
+        onClick={onClose}
       />
     </Actionbar>
   );
 }
 
 ActionbarWrapper.defaultProps = {
+<<<<<<< HEAD
   disabled: false,
   onClick: () => {}
+=======
+  disabled: null,
+  onClose: () => {},
+>>>>>>> [FEAT/FIX] added redux form features for submit button and other stuff
 };
 
 ActionbarWrapper.propTypes = {
@@ -42,13 +62,22 @@ ActionbarWrapper.propTypes = {
   })).isRequired,
 
   disabled: PropTypes.bool,
+  dispatch: PropTypes.func.isRequired,
+  formId: PropTypes.string.isRequired,
 
   message: PropTypes.shape({
     id: PropTypes.string.isRequired,
     defaultMessage: PropTypes.string.isRequired,
   }).isRequired,
 
-  onClick: PropTypes.func,
+  onClose: PropTypes.func,
 };
 
-export default ActionbarWrapper;
+export default connect(
+  (state, ownProps) => ({
+    /* For additional redux-form selectors, such as "pristine" or "form errors",
+     * check http://redux-form.com/6.8.0/docs/api/Selectors.md/
+     */
+    disabled: isInvalid(ownProps.formId)(state),
+  }),
+)(ActionbarWrapper);

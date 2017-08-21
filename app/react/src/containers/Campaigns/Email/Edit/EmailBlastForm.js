@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-import { Field, reduxForm } from 'redux-form';
+import { Field, Form, reduxForm } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
-import { Layout, Form, Row } from 'antd';
+import { Layout, Row } from 'antd';
 
 import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
@@ -22,7 +22,7 @@ class EmailBlastForm extends Component {
     consents: [],
     segments: this.props.segments,
     segmentRequired: false,
-    userEmailCount: 0
+    userEmailCount: 0,
   }
 
   componentDidMount() {
@@ -32,7 +32,7 @@ class EmailBlastForm extends Component {
 
     ConsentService.getConsents(organisationId).then((response) => {
       this.setState({
-        consents: response.data
+        consents: response.data,
       });
     });
   }
@@ -50,19 +50,19 @@ class EmailBlastForm extends Component {
 
     const buildSegmentSelection = segment => ({
       audience_segment_id: segment.id,
-      name: segment.name
+      name: segment.name,
     });
 
     this.setState(prevState => ({
       segments: selectedAudienceSegments.map(buildSegmentSelection),
-      segmentRequired: !prevState.segmentRequired
+      segmentRequired: !prevState.segmentRequired,
     }));
     closeNextDrawer();
   }
 
   handleClickOnRemoveSegment(segment) {
     this.setState(prevState => ({
-      segments: prevState.segments.filter(s => s.audience_segment_id !== segment.audience_segment_id)
+      segments: prevState.segments.filter(s => s.audience_segment_id !== segment.audience_segment_id),
     }));
   }
 
@@ -77,7 +77,7 @@ class EmailBlastForm extends Component {
           recordIconType={'users'}
           title={segment.name}
           actionButtons={[
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) }
+            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) },
           ]}
         />
       );
@@ -89,7 +89,7 @@ class EmailBlastForm extends Component {
   handleSegmentActionClick = () => {
     const {
       openNextDrawer,
-      closeNextDrawer
+      closeNextDrawer,
     } = this.props;
 
     const { segments } = this.state;
@@ -97,11 +97,11 @@ class EmailBlastForm extends Component {
     const segmentSelectorProps = {
       save: this.updateSegments,
       close: closeNextDrawer,
-      selectedSegmentIds: segments.map(s => s.audience_segment_id)
+      selectedSegmentIds: segments.map(s => s.audience_segment_id),
     };
 
     const options = {
-      additionalProps: segmentSelectorProps
+      additionalProps: segmentSelectorProps,
     };
 
     openNextDrawer(SegmentSelector, options);
@@ -115,7 +115,7 @@ class EmailBlastForm extends Component {
     } else {
       save({
         ...formValues.blast,
-        segments
+        segments,
       });
     }
   }
@@ -124,6 +124,7 @@ class EmailBlastForm extends Component {
     const {
       intl: { formatMessage },
       fieldValidators: { isRequired, isValidEmail },
+      formId,
       handleSubmit,
       closeNextDrawer,
       openNextDrawer,
@@ -133,19 +134,22 @@ class EmailBlastForm extends Component {
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 }
+      wrapperCol: { span: 10, offset: 1 },
     };
 
 
     const emptySegmentOption = {
-      message: segmentRequired ? formatMessage(messages.blastSegmentSelectionRequired) : formatMessage(messages.blastSegmentSelectionEmpty),
-      className: segmentRequired ? 'required' : ''
+      message: (segmentRequired
+        ? formatMessage(messages.blastSegmentSelectionRequired)
+        : formatMessage(messages.blastSegmentSelectionEmpty)
+      ),
+      className: segmentRequired ? 'required' : '',
     };
 
     return (
       <Form
         className="edit-layout ant-layout"
-        id="blastSteps"
+        id={formId}
         onSubmit={handleSubmit(this.handleSave)}
       >
         <Content className="mcs-content-container mcs-form-container">
@@ -164,14 +168,14 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelBlastName),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   },
                   inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName)
+                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName),
                   },
                   helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperBlastName)
-                  }
+                    title: formatMessage(messages.emailBlastEditorInputHelperBlastName),
+                  },
                 }}
               />
               <Field
@@ -182,17 +186,17 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorDatePickerLabelSentDate),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   },
                   datePickerProps: {
                     format: 'DD/MM/YYYY HH:mm',
                     showTime: { format: 'HH:mm' },
                     placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate),
-                    disabledDate: isPastDate
+                    disabledDate: isPastDate,
                   },
                   helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate)
-                  }
+                    title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate),
+                  },
                 }}
               />
               <Field
@@ -203,16 +207,16 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailEditorProviderSelectLabel),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   },
                   options: consents.map(consent => ({
                     key: consent.id,
                     value: consent.id,
-                    text: `${consent.name} (${consent.purpose})`
+                    text: `${consent.name} (${consent.purpose})`,
                   })),
                   helpToolTipProps: {
                     title: formatMessage(messages.emailEditorProviderSelectHelper),
-                  }
+                  },
                 }}
               />
             </Row>
@@ -233,14 +237,14 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelSubjectLine),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   },
                   inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine)
+                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
                   },
                   helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine)
-                  }
+                    title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
+                  },
                 }}
               />
               <Field
@@ -251,14 +255,14 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelFromEmail),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   },
                   inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail)
+                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
                   },
                   helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperFromEmail)
-                  }
+                    title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
+                  },
                 }}
               />
               <Field
@@ -269,14 +273,14 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelFromName),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   },
                   inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName)
+                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
                   },
                   helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperFromName)
-                  }
+                    title: formatMessage(messages.emailBlastEditorInputHelperFromName),
+                  },
                 }}
               />
               <Field
@@ -287,14 +291,14 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelReplyTo),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   },
                   inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo)
+                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
                   },
                   helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperReplyTo)
-                  }
+                    title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),
+                  },
                 }}
               />
             </Row>
@@ -317,7 +321,7 @@ class EmailBlastForm extends Component {
                   id: '2',
                   message: messages.segmentSelectionChooseExisting,
                   onClick: this.handleSegmentActionClick,
-                }
+                },
               ]}
               subtitle={messages.segmentSelectionSubTitle}
               title={messages.segmentSelectionTitle}
@@ -337,7 +341,7 @@ class EmailBlastForm extends Component {
 EmailBlastForm.defaultProps = {
   isCreationMode: true,
   blastName: '',
-  segments: []
+  segments: [],
 };
 
 EmailBlastForm.propTypes = {
@@ -347,12 +351,13 @@ EmailBlastForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   fieldValidators: PropTypes.shape().isRequired,
+  formId: PropTypes.string.isRequired,
   match: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   segments: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    audience_segment_id: PropTypes.string.isRequired
+    audience_segment_id: PropTypes.string.isRequired,
   })),
 };
 
@@ -360,8 +365,8 @@ EmailBlastForm = compose(
   injectIntl,
   withRouter,
   reduxForm({
-    form: 'emailBlastEditor',
-    enableReinitialize: true
+    form: 'emailBlastForm',
+    enableReinitialize: true,
   }),
   withValidators,
 )(EmailBlastForm);
