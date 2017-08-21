@@ -270,11 +270,11 @@ class EmailForm extends Component {
               <Field
                 name="campaign.routers[0].email_router_id"
                 component={FormSelect}
-                validate={[/* isRequired */]}
+                validate={[isRequired]}
                 props={{
                   formItemProps: {
                     label: formatMessage(messages.emailEditorRouterSelectLabel),
-                    // required: true,
+                    required: true,
                     ...fieldGridConfig,
                   },
                   options: routerOptions.map(router => ({
