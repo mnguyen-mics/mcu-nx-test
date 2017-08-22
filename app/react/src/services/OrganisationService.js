@@ -7,6 +7,11 @@ const getWorkspace = (organisationId) => {
   return ApiService.getRequest(endpoint).then(res => res.data);
 };
 
+const getCookies = () => {
+  const endpoint = 'my_cookies';
+  return ApiService.getRequest(endpoint, {}, {}, { withCredentials: true }).then(res => res.data);
+};
+
 const getLogo = (organisationId) => {
   const endpoint = `organisations/${organisationId}/logo`;
 
@@ -23,5 +28,6 @@ const putLogo = (organisationId, formData) => {
 export default {
   getWorkspace,
   getLogo,
+  getCookies,
   putLogo,
 };

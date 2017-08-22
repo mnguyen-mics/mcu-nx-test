@@ -107,11 +107,11 @@ class TableView extends Component {
       onChange,
     } = this.props;
 
-    const actionsColumns = this.buildActionsColumns(
+    const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
       columnsDefinitions.actionsColumnsDefinition,
-    );
+    ) : null;
 
-    const columns = this.buildDataColumns().concat(actionsColumns);
+    const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
     const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
 
     let newPagination = pagination;

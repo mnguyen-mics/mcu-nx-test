@@ -47,6 +47,10 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
     });
   }
 
+  if (options.withCredentials) {
+    config.credentials = 'include';
+  }
+
   if (bodyIsFormData) {
     config.body = body; // body passed as a formdata object
   } else if (body) {

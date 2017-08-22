@@ -26,9 +26,8 @@ const audienceMenu = {
     },
     {
       key: 'audience_monitoring',
-      path: '/datamart/monitoring',
+      path: '/audience/timeline',
       translationId: 'MONITORING',
-      legacyPath: true,
     },
   ],
 };

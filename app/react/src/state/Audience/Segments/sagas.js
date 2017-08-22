@@ -94,7 +94,7 @@ function* loadAudienceSegmentSingle({ payload }) {
     const perfResponse = yield call(ReportService.getAudienceSegmentReport, organisationId, moment().subtract(1, 'days'), moment(), 'day', ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'], { filters: `audience_segment_id==${segmentId}` });
     const reportView = normalizeReportView(perfResponse.data.report_view);
     yield put(fetchAudienceSegmentSingle.success({
-      ...segment,
+      ...segment.data,
       report_view: reportView,
     }));
   } catch (error) {

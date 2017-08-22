@@ -2,6 +2,7 @@ import {
   CONNECTED_USER,
   WORKSPACE,
   LOG_OUT,
+  FETCH_COOKIES,
   PUT_LOGO,
   GET_LOGO,
 } from '../action-types';
@@ -13,6 +14,12 @@ const defaultSessionState = {
   connectedUser: {
     workspaces: [],
   },
+  cookies: {
+    mics_lts: '',
+    mics_uaid: '',
+    mics_vid: '',
+  },
+  isFechingCookies: true,
   isFetchingWorkspace: false,
   isUploadingLogo: false,
 
@@ -41,6 +48,23 @@ const session = (state = defaultSessionState, action) => {
       return {
         ...state,
         isFetchingWorkspace: false,
+      };
+    case FETCH_COOKIES.REQUEST:
+      return {
+        ...state,
+        isFechingCookies: true,
+      };
+    case FETCH_COOKIES.SUCCESS:
+      return {
+        ...state,
+        isFechingCookies: false,
+        cookies: { ...action.payload.cookies },
+      };
+    case FETCH_COOKIES.FAILURE:
+      return {
+        ...state,
+        isFechingCookies: false,
+        cookies: { ...action.payload },
       };
     case GET_LOGO.SUCCESS:
       return {
