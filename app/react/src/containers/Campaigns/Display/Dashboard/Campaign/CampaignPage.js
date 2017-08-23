@@ -40,6 +40,11 @@ class CampaignPage extends Component {
           hasItems: true,
           hasFetched: false,
         },
+        overallPerformance: {
+          performance: [],
+          isLoading: false,
+          hasFetched: false,
+        },
         performance: {
           performance: [],
           isLoading: false,
@@ -163,6 +168,13 @@ class CampaignPage extends Component {
       filter.to,
       dimensions,
     );
+    const getOverallCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
+      organisationId,
+      campaignId,
+      filter.from,
+      filter.to,
+      '',
+    );
     const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(
       organisationId,
       'campaign_id',
@@ -200,6 +212,7 @@ class CampaignPage extends Component {
       nextState.ads.items.isLoading = true;
       nextState.campaign.performance.isLoading = true;
       nextState.campaign.mediaPerformance.isLoading = true;
+      nextState.campaign.overallPerformance.isLoading = true;
       nextState.adGroups.performance.isLoading = true;
       nextState.ads.performance.isLoading = true;
 
@@ -326,6 +339,22 @@ class CampaignPage extends Component {
         nextState.campaign.mediaPerformance.performance = normalizeReportView(
           response.data.report_view,
           'media_id',
+        );
+
+        return nextState;
+      });
+    });
+    getOverallCampaignPerf().then(response => {
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+
+        nextState.campaign.overallPerformance.isLoading = false;
+        nextState.campaign.overallPerformance.hasFetched = true;
+        nextState.campaign.overallPerformance.performance = normalizeReportView(
+          response.data.report_view,
+          'campaign_id',
         );
 
         return nextState;
@@ -531,6 +560,11 @@ class CampaignPage extends Component {
         isLoading: this.state.campaign.mediaPerformance.isLoading,
         hasFetched: this.state.campaign.mediaPerformance.hasFetched,
         items: this.state.campaign.mediaPerformance.performance,
+      },
+      overall: {
+        isLoading: this.state.campaign.overallPerformance.isLoading,
+        hasFetched: this.state.campaign.overallPerformance.hasFetched,
+        items: this.state.campaign.overallPerformance.performance,
       },
       campaign: {
         isLoading: this.state.campaign.performance.isLoading,
