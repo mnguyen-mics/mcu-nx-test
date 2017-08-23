@@ -7,7 +7,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Row, Col, Icon, Timeline, Layout, Spin } from 'antd';
 
 import McsIcons from '../../../components/McsIcons';
-import MonitoringActionbar from './MonitoringActionbar';
+import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
 import SegmentsCard from './SingleView/SegmentsCard';
 import AccountIdCard from './SingleView/AccountIdCard';
