@@ -105,7 +105,7 @@ class DisplayCampaign extends Component {
           campaign={campaign.items}
           updateCampaign={updateCampaign}
           archiveCampaign={() => {}}
-          isFetchingStats={dashboardPerformance.campaign.isLoading && adGroups.isLoadingPerf && ads.isLoadingPerf}
+          isFetchingStats={dashboardPerformance.campaign.isLoading && adGroups.isLoadingPerf && ads.isLoadingPerf && dashboardPerformance.media.isLoading}
           campaignStats={dashboardPerformance.campaign.items}
           mediasStats={dashboardPerformance.media.items}
           adGroupsStats={adGroups.items}

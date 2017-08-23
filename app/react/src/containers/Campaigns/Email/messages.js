@@ -10,65 +10,61 @@ export default defineMessages({
     defaultMessage: 'Email',
   },
   // Email Campaign
-  day: {
-    id: 'email.metrics.day',
-    defaultMessage: 'Status'
-  },
   emailSent: {
     id: 'email.metrics.email_sent',
-    defaultMessage: 'Email Sent'
+    defaultMessage: 'Sent'
   },
   emailHardBounced: {
     id: 'email.metrics.email_hard_bounced',
-    defaultMessage: 'Email Hard Bounced'
+    defaultMessage: 'Hard Bounced'
   },
   emailSoftBounced: {
     id: 'email.metrics.email_soft_bounced',
-    defaultMessage: 'CPM'
+    defaultMessage: 'Soft Bounced'
   },
   clicks: {
     id: 'email.metrics.clicks',
-    defaultMessage: 'CPA'
+    defaultMessage: 'Clicks'
   },
   impressions: {
     id: 'email.metrics.impressions',
-    defaultMessage: 'CTR'
+    defaultMessage: 'Impressions'
   },
   emailUnsubscribed: {
     id: 'email.metrics.email_unsubscribed',
-    defaultMessage: 'CPC'
+    defaultMessage: 'Unsubscribed'
   },
   emailComplaints: {
     id: 'email.metrics.email_complaints',
-    defaultMessage: 'CPC'
+    defaultMessage: 'Complaints'
   },
   uniqImpressions: {
-    id: 'email.metrics.uniq_impressions',
-    defaultMessage: 'Spent'
+    id: 'email.metrics.unique_impressions',
+    defaultMessage: 'Unique Impressions'
   },
   uniqClicks: {
-    id: 'email.metrics.uniq_clicks',
-    defaultMessage: 'Clicks'
+    id: 'email.metrics.unique_clicks',
+    defaultMessage: 'Unique Clicks'
   },
   uniqEmailSent: {
-    id: 'email.metrics.uniq_email_sent',
-    defaultMessage: 'Clicks'
+    id: 'email.metrics.unique_email_sent',
+    defaultMessage: 'Unique Sent'
   },
   uniqEmailUnsubscribed: {
-    id: 'email.metrics.uniq_email_unsubscribed',
-    defaultMessage: 'Clicks'
+    id: 'email.metrics.unique_email_unsubscribed',
+    defaultMessage: 'Unique Unsubscribed'
   },
   uniqEmailHardBounced: {
-    id: 'email.metrics.uniq_email_hard_bounced',
-    defaultMessage: 'Clicks'
+    id: 'email.metrics.unique_email_hard_bounced',
+    defaultMessage: 'Unique Hard Bounced'
   },
   uniqEmailSoftBounced: {
-    id: 'email.metrics.uniq_email_soft_bounced',
-    defaultMessage: 'Clicks'
+    id: 'email.metrics.unique_email_soft_bounced',
+    defaultMessage: 'Unique Soft Bounced'
   },
   uniqEmailComplaints: {
-    id: 'email.metrics.uniq_email_complaints',
-    defaultMessage: 'Clicks'
+    id: 'email.metrics.unique_email_complaints',
+    defaultMessage: 'Unique Complaints'
   },
   // Email Blast
   batchSize: {

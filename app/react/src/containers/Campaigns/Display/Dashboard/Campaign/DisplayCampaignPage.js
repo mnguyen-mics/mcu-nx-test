@@ -252,11 +252,15 @@ class DisplayCampaignPage extends Component {
         };
 
         nextState.campaign.items.isLoading = false;
+        nextState.campaign.mediaPerformance.isLoading = false;
         nextState.adGroups.items.isLoading = false;
         nextState.ads.items.isLoading = false;
+
         nextState.campaign.items.hasFetched = true;
+        nextState.campaign.mediaPerformance.hasFetched = true;
         nextState.adGroups.items.hasFetched = true;
         nextState.ads.items.hasFetched = true;
+
         nextState.campaign.items.itemById = campaign;
         nextState.adGroups.items.itemById = normalizeArrayOfObject(formattedAdGroups, 'id');
         nextState.adGroups.items.adGroupCampaign = normalizeArrayOfObject(adGroupCampaign, 'ad_group_id');

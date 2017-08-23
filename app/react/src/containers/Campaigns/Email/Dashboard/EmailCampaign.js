@@ -117,7 +117,8 @@ class EmailCampaign extends Component {
       },
       intl: { formatMessage },
       emailBlasts,
-      emailCampaign,
+      campaign,
+      emailCampaignStats,
       isFetchingEmailBlastsStat,
       isFetchingCampaignStat
     } = this.props;
@@ -133,7 +134,8 @@ class EmailCampaign extends Component {
     return (
       <div className="ant-layout">
         <EmailCampaignActionbar
-          campaign={emailCampaign}
+          campaign={campaign}
+          campaignStats={emailCampaignStats}
           archiveCampaign={() => {}}
           isFetchingStats={isFetchingEmailBlastsStat && isFetchingCampaignStat}
           blastsStats={emailBlasts}
@@ -157,11 +159,12 @@ EmailCampaign.propTypes = {
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
+  campaign: PropTypes.shape().isRequired,
   // email campaign
   isFetchingCampaignStat: PropTypes.bool.isRequired,
   resetEmailCampaign: PropTypes.func.isRequired,
   loadEmailCampaignAndDeliveryReport: PropTypes.func.isRequired,
-  emailCampaign: PropTypes.shape().isRequired,
+  emailCampaignStats: PropTypes.shape().isRequired,
   // email blasts
   isFetchingEmailBlastsStat: PropTypes.bool.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
@@ -177,8 +180,9 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = state => ({
+  campaign: state.emailCampaignSingle.emailCampaignApi.emailCampaign,
   emailBlasts: getEmailBlastTableView(state),
-  emailCampaign: normalizedEmailPerformance(state),
+  emailCampaignStats: normalizedEmailPerformance(state),
   isFetchingEmailBlastsStat: state.emailCampaignSingle.emailBlastPerformance.isFetching,
   isFetchingCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.isFetching
 });

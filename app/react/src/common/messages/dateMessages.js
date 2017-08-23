@@ -9,6 +9,10 @@ export default defineMessages({
     id: 'date.to',
     defaultMessage: 'To'
   },
+  hour: {
+    id: 'date.hour',
+    defaultMessage: 'Hour'
+  },
   day: {
     id: 'date.day',
     defaultMessage: 'Day'

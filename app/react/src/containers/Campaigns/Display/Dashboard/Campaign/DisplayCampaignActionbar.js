@@ -25,6 +25,7 @@ class DisplayCampaignActionbar extends Component {
       },
       intl: { formatMessage },
       location: { search },
+      campaign,
       campaignStats,
       mediasStats,
       adGroupsStats,
@@ -32,7 +33,7 @@ class DisplayCampaignActionbar extends Component {
     } = this.props;
 
     const filter = parseSearch(search, null);
-    ExportService.exportDisplayCampaignDashboard(organisationId, campaignStats, mediasStats, adGroupsStats, adsStats, filter, formatMessage);
+    ExportService.exportDisplayCampaignDashboard(organisationId, campaign, campaignStats, mediasStats, adGroupsStats, adsStats, filter, formatMessage);
   };
 
   render() {

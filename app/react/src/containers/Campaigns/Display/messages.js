@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+  id: {
+    id: 'display.metrics.id',
+    defaultMessage: 'Id'
+  },
   status: {
     id: 'display.metrics.status',
     defaultMessage: 'Status'
@@ -36,5 +40,9 @@ export default defineMessages({
   clicks: {
     id: 'display.metrics.clicks',
     defaultMessage: 'Clicks'
+  },
+  display_network_name: {
+    id: 'display.metrics.display_network_name',
+    defaultMessage: 'Display Network Name'
   }
 });

@@ -42,18 +42,27 @@ function buildSheet(title, data, headers, filter, formatMessage) {
   return sheet;
 }
 
-function addSheet(title, data, headers, filter, formatMessage) {
-  const formattedTitle = formatMessage(title);
+/**
+ * @param tabTitle      The title of the tab
+ * @param data          Data used to generate the export
+ * @param headers       Headers matching the data
+ * @param filter        Date filters containing from and to
+ * @param formatMessage Internationalization method
+ * @param title         [OPTIONAL] Title at the top of the page, if undefined use tabTitle
+ * @returns {*}
+ */
+function addSheet(tabTitle, data, headers, filter, formatMessage, title) {
+  const formattedTabTitle = formatMessage(tabTitle);
+  const sheetTitle = title ? title : tabTitle;
   if (data && data.length) {
-    const sheet = buildSheet(formattedTitle, data, headers, filter, formatMessage);
+    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage);
     return {
-      name: formattedTitle,
+      name: formattedTabTitle,
       data: sheet
     };
   }
   return undefined;
 }
-
 
 /**
  * Export Specific Methods
@@ -197,8 +206,35 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
 /**
  * Display Campaign Dashboard
  */
-const exportDisplayCampaignDashboard = (organisationId, campaignData, mediasData, adGroupsData, adsData, filter, formatMessage) => {
-  const headers = [
+const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, mediasData, adGroupsData, adsData, filter, formatMessage) => {
+  const campaignPageTitle = `${campaign.name} - ${campaign.id}`;
+  const hourlyPrecision = (datenum(filter.to) - datenum(filter.from)) <= 1;
+  const dateHeader = hourlyPrecision ? { name: 'hour_of_day', translation: formatMessage(dateMessages.hour) } : { name: 'day', translation: formatMessage(dateMessages.day) };
+  const campaignHeaders = [
+    dateHeader,
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
+  ];
+
+  const mediaHeaders = [
+    { name: 'media_id', translation: formatMessage(displayCampaignMessages.id) },
+    { name: 'display_network_name', translation: formatMessage(displayCampaignMessages.display_network_name) },
+    { name: 'name', translation: formatMessage(displayCampaignMessages.name) },
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
+  ];
+
+  const adsAdGroupsHeaders = [
     { name: 'status', translation: formatMessage(displayCampaignMessages.status) },
     { name: 'name', translation: formatMessage(displayCampaignMessages.name) },
     { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
@@ -211,10 +247,10 @@ const exportDisplayCampaignDashboard = (organisationId, campaignData, mediasData
   ];
 
   const sheets = [
-    addSheet(exportMessages.displayCampaignExportTitle, campaignData, headers, filter, formatMessage),
-    addSheet(exportMessages.mediasExportTitle, mediasData, headers, filter, formatMessage),
-    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, headers, filter, formatMessage),
-    addSheet(exportMessages.adsExportTitle, adsData, headers, filter, formatMessage)
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle),
+    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage),
+    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage),
+    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage)
   ].filter(x => x);
 
   if (sheets.length) {
@@ -274,9 +310,10 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
   exportData(sheets, `${organisationId}_email-campaigns`, 'xlsx');
 };
 
-const exportEmailCampaignDashboard = (organisationId, campaignData, blastData, filter, formatMessage) => {
+const exportEmailCampaignDashboard = (organisationId, campaign, campaignData, blastData, filter, formatMessage) => {
+  const campaignPageTitle = `${campaign.name} - ${campaign.id}`;
   const emailHeaders = [
-    { name: 'day', translation: formatMessage(emailCampaignMessages.day) },
+    { name: 'day', translation: formatMessage(dateMessages.day) },
     { name: 'email_sent', translation: formatMessage(emailCampaignMessages.emailSent) },
     { name: 'email_hard_bounced', translation: formatMessage(emailCampaignMessages.emailHardBounced) },
     { name: 'email_soft_bounced', translation: formatMessage(emailCampaignMessages.emailSoftBounced) },
@@ -307,7 +344,7 @@ const exportEmailCampaignDashboard = (organisationId, campaignData, blastData, f
   ];
 
   const sheets = [
-    addSheet(exportMessages.emailCampaignExportTitle, campaignData, emailHeaders, filter, formatMessage),
+    addSheet(exportMessages.emailCampaignExportTitle, campaignData, emailHeaders, filter, formatMessage, campaignPageTitle),
     addSheet(exportMessages.emailCampaignBlastExportTitle, blastData, emailBlastHeaders, filter, formatMessage)
   ].filter(x => x);
 
@@ -315,7 +352,6 @@ const exportEmailCampaignDashboard = (organisationId, campaignData, blastData, f
     exportData(sheets, `${organisationId}_email-campaign`, 'xlsx');
   }
 };
-
 
 /**
  * Goals

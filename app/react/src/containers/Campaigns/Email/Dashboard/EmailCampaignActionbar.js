@@ -27,11 +27,12 @@ class EmailCampaignActionbar extends Component {
       intl: { formatMessage },
       location: { search },
       campaign,
+      campaignStats,
       blastsStats
     } = this.props;
 
     const filter = parseSearch(search, null);
-    ExportService.exportEmailCampaignDashboard(organisationId, [campaign], blastsStats, filter, formatMessage);
+    ExportService.exportEmailCampaignDashboard(organisationId, campaign, [campaignStats], blastsStats, filter, formatMessage);
   };
 
   buildActionElement = () => {
@@ -156,6 +157,7 @@ EmailCampaignActionbar.propTypes = {
   match: PropTypes.shape().isRequired,
   location: ReactRouterPropTypes.location.isRequired,
   campaign: PropTypes.shape().isRequired,
+  campaignStats: PropTypes.shape().isRequired,
   updateCampaign: PropTypes.func.isRequired,
   archiveCampaign: PropTypes.func.isRequired,
   isFetchingStats: PropTypes.bool.isRequired,
