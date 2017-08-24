@@ -47,6 +47,8 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
     });
   }
 
+  config.headers['X-Requested-By'] = 'mediarithmics-navigator';
+
   if (bodyIsFormData) {
     config.body = body; // body passed as a formdata object
   } else if (body) {
