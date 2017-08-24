@@ -36,22 +36,22 @@ const getTableDataSource = createSelector(
   },
 );
 
-const getSinglePerfView = createSelector(
+const getAudienceSegmentPerformance = createSelector(
   getAudienceSegmentSinglePerformance,
   (array) => normalizeReportView(array),
 );
 
-const getOverlapFormated = createSelector(
+const getOverlapFormatted = createSelector(
   getOverlapAnalysis,
   (data) => {
     if (data.length === 0) {
       return { date: 0, data: [] };
     }
-    const formatedData = data.overlaps.map(overlap => {
+    const formattedData = data.overlaps.map(overlap => {
       const source = data.segments.find((segment) => {
         return segment.segment_id === overlap.segment_source_id;
       });
-      const returnFormat = {
+      return {
         xKey: overlap.segment_intersect_with,
         yKey: (overlap.overlap_number / source.segment_size) * 100,
         segment_source: {
@@ -67,17 +67,16 @@ const getOverlapFormated = createSelector(
           number: source.segment_size,
         },
       };
-      return returnFormat;
     });
     return {
       date: data.date,
-      data: formatedData,
+      data: formattedData
     };
   },
 );
 
 const getOverlapSorted = createSelector(
-  getOverlapFormated,
+  getOverlapFormatted,
   (data) => {
     const sortedData = data.data.sort((a, b) => {
       return a.overlap_number.percentage > b.overlap_number.percentage ? -1 : 1;
@@ -98,11 +97,10 @@ const getOverlapView = createSelector(
         return s.id.toString() === o.segment_intersect_with.id.toString();
       });
       const xKey = se ? se.name : o.segment_intersect_with.id;
-      const ret = {
+      return {
         ...o,
         xKey: xKey,
       };
-      return ret;
     });
     return {
       ...overlap,
@@ -113,6 +111,6 @@ const getOverlapView = createSelector(
 
 export {
   getTableDataSource,
-  getSinglePerfView,
+  getAudienceSegmentPerformance,
   getOverlapView,
 };

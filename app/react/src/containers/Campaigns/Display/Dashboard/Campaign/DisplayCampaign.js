@@ -5,32 +5,32 @@ import { withRouter, Link } from 'react-router-dom';
 import { Layout, Button } from 'antd';
 import { compose } from 'recompose';
 
-import CampaignDisplayHeader from '../Common/CampaignDisplayHeader';
-import CampaignDisplayDashboard from './CampaignDisplayDashboard';
-import CampaignDisplayAdGroupTable from './CampaignDisplayAdGroupTable';
-import CampaignDisplayAdTable from '../Common/CampaignDisplayAdTable';
+import DisplayCampaignHeader from '../Common/DisplayCampaignHeader';
+import DisplayCampaignDashboard from './DisplayCampaignDashboard';
+import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
+import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
 import Card from '../../../../../components/Card/Card';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
-import CampaignDisplayActionbar from './CampaignDisplayActionbar';
+import DisplayCampaignActionbar from './DisplayCampaignActionbar';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
 import {
   parseSearch,
-  updateSearch,
+  updateSearch
 } from '../../../../../utils/LocationSearchHelper';
 
 const { Content } = Layout;
 
-class CampaignDisplay extends Component {
+class DisplayCampaign extends Component {
 
   updateLocationSearch(params) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
     };
 
     history.push(nextLocation);
@@ -40,9 +40,9 @@ class CampaignDisplay extends Component {
     const {
       history: {
         location: {
-          search,
-        },
-      },
+          search
+        }
+      }
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -51,14 +51,14 @@ class CampaignDisplay extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to,
+      to: filter.to
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
       rangeType: newValues.rangeType,
       lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
-      to: newValues.to,
+      to: newValues.to
     });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -78,8 +78,8 @@ class CampaignDisplay extends Component {
       updateCampaign,
       dashboardPerformance,
       intl: {
-        formatMessage,
-      },
+        formatMessage
+      }
     } = this.props;
 
     const adGroupButtons = (
@@ -92,24 +92,29 @@ class CampaignDisplay extends Component {
         {this.renderDatePicker()}
       </span>
     );
+
     const adButtons = (
       <span>
         {this.renderDatePicker()}
       </span>
     );
 
-
     return (
       <div className="ant-layout">
-        <CampaignDisplayActionbar
-          campaignDisplay={campaign.items}
-          updateCampaignDisplay={updateCampaign}
-          archiveCampaignDisplay={() => {}}
+        <DisplayCampaignActionbar
+          campaign={campaign.items}
+          updateCampaign={updateCampaign}
+          archiveCampaign={() => {}}
+          isFetchingStats={dashboardPerformance.campaign.isLoading && adGroups.isLoadingPerf && ads.isLoadingPerf && dashboardPerformance.media.isLoading}
+          campaignStats={dashboardPerformance.campaign.items}
+          mediasStats={dashboardPerformance.media.items}
+          adGroupsStats={adGroups.items}
+          adsStats={ads.items}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <CampaignDisplayHeader object={campaign.items} translationKey="CAMPAIGN" />
-            <CampaignDisplayDashboard
+            <DisplayCampaignHeader object={campaign.items} translationKey="CAMPAIGN" />
+            <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}
               campaignStat={dashboardPerformance.campaign.items}
@@ -118,18 +123,18 @@ class CampaignDisplay extends Component {
               hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
             />
             <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
-              <CampaignDisplayAdGroupTable
+              <DisplayCampaignAdGroupTable
+                isFetching={adGroups.isLoadingList}
                 isFetchingStat={adGroups.isLoadingPerf}
                 dataSet={adGroups.items}
-                isFetching={adGroups.isLoadingList}
                 updateAdGroup={updateAdGroup}
               />
             </Card>
             <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
-              <CampaignDisplayAdTable
+              <DisplayCampaignAdTable
+                isFetching={ads.isLoadingList}
                 isFetchingStat={ads.isLoadingPerf}
                 dataSet={ads.items}
-                isFetching={ads.isLoadingList}
                 updateAd={updateAd}
               />
             </Card>
@@ -138,10 +143,9 @@ class CampaignDisplay extends Component {
       </div>
     );
   }
-
 }
 
-CampaignDisplay.propTypes = {
+DisplayCampaign.propTypes = {
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
@@ -170,17 +174,17 @@ CampaignDisplay.propTypes = {
       isLoading: PropTypes.bool,
       hasFetched: PropTypes.bool,
       items: PropTypes.arrayOf(PropTypes.object),
-    }),
+    })
   }).isRequired,
   updateCampaign: PropTypes.func.isRequired,
   updateAdGroup: PropTypes.func.isRequired,
   updateAd: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
+  intl: intlShape.isRequired
 };
 
-CampaignDisplay = compose(
+DisplayCampaign = compose(
   injectIntl,
-  withRouter,
-)(CampaignDisplay);
+  withRouter
+)(DisplayCampaign);
 
-export default CampaignDisplay;
+export default DisplayCampaign;

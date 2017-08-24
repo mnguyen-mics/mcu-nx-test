@@ -5,8 +5,8 @@ import { FormattedMessage } from 'react-intl';
 import { withRouter, Link } from 'react-router-dom';
 import { Button, Layout } from 'antd';
 
-import AdGroupHeader from '../Common/CampaignDisplayHeader';
-import AdGroupAdTable from '../Common/CampaignDisplayAdTable';
+import AdGroupHeader from '../Common/DisplayCampaignHeader';
+import AdGroupAdTable from '../Common/DisplayCampaignAdTable';
 import AdGroupsDashboard from './AdGroupsDashboard';
 import AdGroupActionbar from './AdGroupActionbar';
 import { Card } from '../../../../../components/Card';

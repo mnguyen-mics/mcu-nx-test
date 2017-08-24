@@ -1,7 +1,7 @@
-import CampaignsDisplayActionbar from './CampaignsDisplayActionbar';
-import CampaignsDisplayTable from './CampaignsDisplayTable';
+import DisplayCampaignsActionbar from './DisplayCampaignsActionbar';
+import DisplayCampaignsTable from './DisplayCampaignsTable';
 
 export {
-    CampaignsDisplayActionbar,
-    CampaignsDisplayTable,
+    DisplayCampaignsActionbar,
+    DisplayCampaignsTable
 };

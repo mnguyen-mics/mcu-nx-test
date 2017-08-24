@@ -154,7 +154,7 @@ export const parseSearch = (search, settings) => {
  * @param {String} nextSearch
  * @returns true if two objects are equals
  */
-export const compareSearchs = (currentSearch, nextSearch) => {
+export const compareSearches = (currentSearch, nextSearch) => {
   return lodash.isEqual(
         queryString.parse(currentSearch),
         queryString.parse(nextSearch),

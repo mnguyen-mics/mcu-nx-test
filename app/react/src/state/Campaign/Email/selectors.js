@@ -3,10 +3,10 @@ import { createSelector } from 'reselect';
 import { normalizeReportView, formatNormalizeReportView } from '../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 
-const getEmailPerformanceData = state => state.campaignEmailSingle.campaignEmailPerformance.report_view;
+const getEmailPerformanceData = state => state.emailCampaignSingle.emailCampaignPerformance.report_view;
 
-const getEmailBlast = state => state.campaignEmailSingle.emailBlastApi.data;
-const getEmailBlastReportView = state => state.campaignEmailSingle.emailBlastPerformanceApi.report_view;
+const getEmailBlast = state => state.emailCampaignSingle.emailBlastApi.data;
+const getEmailBlastReportView = state => state.emailCampaignSingle.emailBlastPerformance.report_view;
 
 
 const getTableDataSource = createSelector(
@@ -14,7 +14,7 @@ const getTableDataSource = createSelector(
   normalizeReportView,
 );
 
-const flattenData = createSelector(
+const normalizedEmailPerformance = createSelector(
   getTableDataSource,
   formatNormalizeReportView,
 );
@@ -49,6 +49,6 @@ const getEmailBlastTableView = createSelector(
 
 export {
   getTableDataSource,
-  flattenData,
+  normalizedEmailPerformance,
   getEmailBlastTableView,
 };

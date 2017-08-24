@@ -38,19 +38,19 @@ class SitesTable extends Component {
       {
         intlMessage: messages.siteName,
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
       },
       {
         intlMessage: messages.siteToken,
         key: 'token',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
       },
       {
         intlMessage: messages.siteCreationDate,
         key: 'creation_ts',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: ts => moment(ts).format('DD/MM/YYYY'),
       },
     ];

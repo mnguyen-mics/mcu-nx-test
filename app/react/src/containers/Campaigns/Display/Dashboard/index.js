@@ -1,8 +1,8 @@
-import CampaignPage from './Campaign/CampaignPage';
+import DisplayCampaignPage from './Campaign/DisplayCampaignPage';
 
 import AdGroupPage from './AdGroup/AdGroupPage';
 
 export {
-  CampaignPage,
+  DisplayCampaignPage,
   AdGroupPage,
 };

@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as AssetsFilesActions from '../../../../state/Library/AssetsFiles/actions';
 
 import { ASSETS_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/AssetsFiles/selectors';
 
@@ -65,7 +65,7 @@ class AssetsFilesTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, ASSETS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -125,7 +125,7 @@ class AssetsFilesTable extends Component {
       {
         translationKey: 'PREVIEW',
         key: 'file_path',
-        isHiddable: false,
+        isHideable: false,
         className: 'mcs-table-image-col',
         render: (text, record) => (
           <div className="mcs-table-cell-thumbnail">
@@ -138,19 +138,19 @@ class AssetsFilesTable extends Component {
       {
         translationKey: 'NAME',
         key: 'original_filename',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => <a href={`https://assets.mediarithmics.com${record.file_path}`} target="_blank" rel="noreferrer noopener">{text}</a>,
       },
       {
         translationKey: 'TYPE',
         key: 'mime_type',
-        isHiddable: false,
+        isHideable: false,
         render: text => <span>{text}</span>,
       },
       {
         translationKey: 'DIMENSIONS',
         key: 'width',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => <span>{text}x{record.height}</span>,
       },
     ];
@@ -245,7 +245,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchAssetsFiles: AssetsFilesActions.fetchAssetsFiles.request,
-  // archiveAssetList: CampaignEmailAction.archiveAssetList,
+  // archiveAssetList: EmailCampaignAction.archiveAssetList,
   resetAssetsFiles: AssetsFilesActions.resetAssetsFiles,
 };
 

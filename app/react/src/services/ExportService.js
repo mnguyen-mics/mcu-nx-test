@@ -1,3 +1,9 @@
+import displayCampaignMessages from '../containers/Campaigns/Display/messages';
+import emailCampaignMessages from '../containers/Campaigns/Email/messages';
+import segmentMessages from '../containers/Audience/Segments/Dashboard/messages';
+import dateMessages from '../common/messages/dateMessages';
+import exportMessages from '../common/messages/exportMessages';
+
 const datenum = (v, date1904) => {
   let newV = v;
   if (date1904) {
@@ -15,6 +21,48 @@ const s2ab = s => {
   }
   return buf;
 };
+
+function buildSheet(title, data, headers, filter, formatMessage) {
+  const titleLine = typeof title === 'string' ? [title] : [formatMessage(title)];
+  const sheet = [];
+  const blankLine = [];
+
+  sheet.push(titleLine);
+  sheet.push([`${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${filter.to}`]);
+  sheet.push(blankLine);
+  sheet.push(headers.map(h => h.translation));
+
+  data.forEach(row => {
+    const dataLine = headers.map(header => {
+      return row[header.name];
+    });
+    sheet.push(dataLine);
+  });
+
+  return sheet;
+}
+
+/**
+ * @param tabTitle      The title of the tab
+ * @param data          Data used to generate the export
+ * @param headers       Headers matching the data
+ * @param filter        Date filters containing from and to
+ * @param formatMessage Internationalization method
+ * @param title         [OPTIONAL] Title at the top of the page, if undefined use tabTitle
+ * @returns {*}
+ */
+function addSheet(tabTitle, data, headers, filter, formatMessage, title) {
+  const formattedTabTitle = formatMessage(tabTitle);
+  const sheetTitle = title ? title : tabTitle;
+  if (data && data.length) {
+    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage);
+    return {
+      name: formattedTabTitle,
+      data: sheet
+    };
+  }
+  return undefined;
+}
 
 /**
  * Export Specific Methods
@@ -98,12 +146,15 @@ const exportData = (sheets, fileName, extension) => {
   }
 
   const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
-  saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream'}), `${fileName}.${newExtension}`); // eslint-disable-line
+  saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
 };
 
-const exportCampaignsDisplay = (organisationId, dataSource, filter, translations) => {
+/**
+ * Display Campaigns
+ */
+const exportDisplayCampaigns = (organisationId, dataSource, filter, translations) => {
 
-  const titleLine = [translations.CAMPAIGNS_DISPAY_EXPORT_TITLE];
+  const titleLine = [translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE];
   const blankLine = [];
 
   const dataSheet = [];
@@ -122,15 +173,15 @@ const exportCampaignsDisplay = (organisationId, dataSource, filter, translations
   dataSheet.push(blankLine);
 
   const headersMap = [
-      { name: 'status', translation: translations.STATUS },
-      { name: 'name', translation: translations.NAME },
-      { name: 'impressions', translation: translations.IMPRESSIONS },
-      { name: 'clicks', translation: translations.CLICKS },
-      { name: 'cpm', translation: translations.CPM },
-      { name: 'ctr', translation: translations.CTR },
-      { name: 'cpc', translation: translations.CPC },
-      { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
-      { name: 'cpa', translation: translations.CPA },
+    { name: 'status', translation: translations.STATUS },
+    { name: 'name', translation: translations.NAME },
+    { name: 'impressions', translation: translations.IMPRESSIONS },
+    { name: 'clicks', translation: translations.CLICKS },
+    { name: 'cpm', translation: translations.CPM },
+    { name: 'ctr', translation: translations.CTR },
+    { name: 'cpc', translation: translations.CPC },
+    { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
+    { name: 'cpa', translation: translations.CPA },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -145,16 +196,74 @@ const exportCampaignsDisplay = (organisationId, dataSource, filter, translations
   });
 
   const sheets = [{
-    name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
+    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
     data: dataSheet,
   }];
 
-  exportData(sheets, `${organisationId}_campaigns-display`, 'xlsx');
+  exportData(sheets, `${organisationId}_display-campaigns`, 'xlsx');
 };
 
-const exportCampaignsEmail = (organisationId, dataSource, filter, translations) => {
+/**
+ * Display Campaign Dashboard
+ */
+const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, mediasData, adGroupsData, adsData, filter, formatMessage) => {
+  const campaignPageTitle = `${campaign.name} - ${campaign.id}`;
+  const hourlyPrecision = (datenum(filter.to) - datenum(filter.from)) <= 1;
+  const dateHeader = hourlyPrecision ? { name: 'hour_of_day', translation: formatMessage(dateMessages.hour) } : { name: 'day', translation: formatMessage(dateMessages.day) };
+  const campaignHeaders = [
+    dateHeader,
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
+  ];
 
-  const titleLine = [translations.CAMPAIGNS_EMAIL_EXPORT_TITLE];
+  const mediaHeaders = [
+    { name: 'media_id', translation: formatMessage(displayCampaignMessages.id) },
+    { name: 'display_network_name', translation: formatMessage(displayCampaignMessages.display_network_name) },
+    { name: 'name', translation: formatMessage(displayCampaignMessages.name) },
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
+  ];
+
+  const adsAdGroupsHeaders = [
+    { name: 'status', translation: formatMessage(displayCampaignMessages.status) },
+    { name: 'name', translation: formatMessage(displayCampaignMessages.name) },
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
+  ];
+
+  const sheets = [
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle),
+    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage),
+    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage),
+    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage)
+  ].filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_display-campaign`, 'xlsx');
+  }
+};
+
+/**
+ * Email Campaigns
+ */
+const exportEmailCampaigns = (organisationId, dataSource, filter, translations) => {
+
+  const titleLine = [translations.EMAIL_CAMPAIGNS_EXPORT_TITLE];
   const blankLine = [];
 
   const dataSheet = [];
@@ -194,13 +303,59 @@ const exportCampaignsEmail = (organisationId, dataSource, filter, translations) 
   });
 
   const sheets = [{
-    name: translations.CAMPAIGNS_EMAIL_EXPORT_TITLE,
+    name: translations.EMAIL_CAMPAIGNS_EXPORT_TITLE,
     data: dataSheet,
   }];
 
-  exportData(sheets, `${organisationId}_campaigns-email`, 'xlsx');
+  exportData(sheets, `${organisationId}_email-campaigns`, 'xlsx');
 };
 
+const exportEmailCampaignDashboard = (organisationId, campaign, campaignData, blastData, filter, formatMessage) => {
+  const campaignPageTitle = `${campaign.name} - ${campaign.id}`;
+  const emailHeaders = [
+    { name: 'day', translation: formatMessage(dateMessages.day) },
+    { name: 'email_sent', translation: formatMessage(emailCampaignMessages.emailSent) },
+    { name: 'email_hard_bounced', translation: formatMessage(emailCampaignMessages.emailHardBounced) },
+    { name: 'email_soft_bounced', translation: formatMessage(emailCampaignMessages.emailSoftBounced) },
+    { name: 'clicks', translation: formatMessage(emailCampaignMessages.clicks) },
+    { name: 'impressions', translation: formatMessage(emailCampaignMessages.impressions) },
+    { name: 'email_unsubscribed', translation: formatMessage(emailCampaignMessages.emailUnsubscribed) },
+    { name: 'email_complaints', translation: formatMessage(emailCampaignMessages.emailComplaints) },
+    { name: 'uniq_impressions', translation: formatMessage(emailCampaignMessages.uniqImpressions) },
+    { name: 'uniq_clicks', translation: formatMessage(emailCampaignMessages.uniqClicks) },
+    { name: 'uniq_email_sent', translation: formatMessage(emailCampaignMessages.uniqEmailSent) },
+    { name: 'uniq_email_unsubscribed', translation: formatMessage(emailCampaignMessages.uniqEmailUnsubscribed) },
+    { name: 'uniq_email_hard_bounced', translation: formatMessage(emailCampaignMessages.uniqEmailHardBounced) },
+    { name: 'uniq_email_soft_bounced', translation: formatMessage(emailCampaignMessages.uniqEmailSoftBounced) },
+    { name: 'uniq_email_complaints', translation: formatMessage(emailCampaignMessages.uniqEmailComplaints) }
+  ];
+
+  const emailBlastHeaders = [
+    { name: 'id', translation: formatMessage(emailCampaignMessages.id) },
+    { name: 'batch_size', translation: formatMessage(emailCampaignMessages.batchSize) },
+    { name: 'blast_name', translation: formatMessage(emailCampaignMessages.blastName) },
+    { name: 'from_email', translation: formatMessage(emailCampaignMessages.fromEmail) },
+    { name: 'from_name', translation: formatMessage(emailCampaignMessages.fromName) },
+    { name: 'number_mail_not_send', translation: formatMessage(emailCampaignMessages.numberEmailNotSent) },
+    { name: 'reply_to', translation: formatMessage(emailCampaignMessages.replyTo) },
+    { name: 'send_date', translation: formatMessage(emailCampaignMessages.sendDate) },
+    { name: 'status', translation: formatMessage(emailCampaignMessages.status) },
+    { name: 'subject_line', translation: formatMessage(emailCampaignMessages.subjectLine) },
+  ];
+
+  const sheets = [
+    addSheet(exportMessages.emailCampaignExportTitle, campaignData, emailHeaders, filter, formatMessage, campaignPageTitle),
+    addSheet(exportMessages.emailCampaignBlastExportTitle, blastData, emailBlastHeaders, filter, formatMessage)
+  ].filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_email-campaign`, 'xlsx');
+  }
+};
+
+/**
+ * Goals
+ */
 const exportGoals = (organisationId, dataSource, filter, translations) => {
 
   const titleLine = [translations.GOALS_EXPORT_TITLE];
@@ -246,6 +401,9 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
 };
 
+/**
+ * Audience Segments
+ */
 const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, translations) => {
 
   const titleLine = [translations.AUDIENCE_SEGMENTS_EXPORT_TITLE];
@@ -288,17 +446,54 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   });
 
   const sheets = [{
-    name: translations.CAMPAIGNS_DISPAY_EXPORT_TITLE,
+    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
     data: dataSheet,
   }];
 
   exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
 };
 
+/**
+ * Audience Segment Dashboard
+ */
+const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, formatMessage) => {
+  const overviewHeaders = [
+    { name: 'day', translation: formatMessage(dateMessages.day) },
+    { name: 'user_points', translation: formatMessage(segmentMessages.userPoints) },
+    { name: 'user_accounts', translation: formatMessage(segmentMessages.userAccounts) },
+    { name: 'emails', translation: formatMessage(segmentMessages.emails) },
+    { name: 'desktop_cookie_ids', translation: formatMessage(segmentMessages.desktopCookieId) },
+  ];
+
+  const additionDeletionHeaders = [
+    { name: 'day', translation: dateMessages.day.defaultMessage },
+    { name: 'user_point_additions', translation: formatMessage(segmentMessages.userPointAddition) },
+    { name: 'user_point_deletions', translation: formatMessage(segmentMessages.userPointDeletion) }
+  ];
+
+  const overlapHeaders = [
+    { name: 'xKey', translation: formatMessage(segmentMessages.overlap) },
+    { name: 'yKey', translation: formatMessage(segmentMessages.overlapNumber) }
+  ];
+
+  const sheets = [
+    addSheet(exportMessages.audienceSegmentOverviewExportTitle, segmentData, overviewHeaders, filter, formatMessage),
+    addSheet(exportMessages.audienceSegmentAdditionsDeletionsExportTitle, segmentData, additionDeletionHeaders, filter, formatMessage),
+    addSheet(exportMessages.overlapExportTitle, overlapData, overlapHeaders, filter, formatMessage)
+  ].filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
+  }
+};
+
 export default {
   exportData,
-  exportCampaignsDisplay,
-  exportCampaignsEmail,
   exportGoals,
+  exportEmailCampaigns,
+  exportEmailCampaignDashboard,
   exportAudienceSegments,
+  exportDisplayCampaigns,
+  exportDisplayCampaignDashboard,
+  exportAudienceSegmentDashboard
 };

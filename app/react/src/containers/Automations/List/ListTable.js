@@ -20,7 +20,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../utils/LocationSearchHelper';
 
 import {
@@ -85,7 +85,7 @@ class AutomationsListTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, SCENARIOS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -200,7 +200,7 @@ class AutomationsListTable extends Component {
       {
         translationKey: 'STATUS',
         key: 'status',
-        isHiddable: false,
+        isHideable: false,
         render: text => (
           <Tooltip placement="top" title={translations[text]}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
@@ -212,7 +212,7 @@ class AutomationsListTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
@@ -291,7 +291,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   fetchAutomationList: AutomationsListActions.fetchAutomations.request,
-  // archiveAutomationList: CampaignEmailAction.archiveAutomationList,
+  // archiveAutomationList: EmailCampaignAction.archiveAutomationList,
   resetAutomationsTable: AutomationsListActions.resetAutomationsTable,
 };
 

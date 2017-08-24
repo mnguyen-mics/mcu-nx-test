@@ -20,7 +20,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -87,7 +87,7 @@ class GoalsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, GOAL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -189,7 +189,7 @@ class GoalsTable extends Component {
 
     const searchOptions = {
       isEnabled: true,
-      placeholder: translations.SEARCH_CAMPAIGNS_DISPLAY,
+      placeholder: translations.SEARCH_DISPLAY_CAMPAIGNS,
       onSearch: value => this.updateLocationSearch({
         keywords: value,
       }),
@@ -240,7 +240,7 @@ class GoalsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
@@ -253,14 +253,14 @@ class GoalsTable extends Component {
         translationKey: 'CONVERSIONS',
         key: 'conversions',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'CONVERSION_VALUE',
         key: 'value',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
     ];

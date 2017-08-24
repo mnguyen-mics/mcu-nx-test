@@ -106,7 +106,6 @@ const mapDispatchToProps = {
   openCloseMenu: MenuActions.openCloseMenu,
 };
 
-
 MainLayout = connect(
   mapStateToProps,
   mapDispatchToProps,

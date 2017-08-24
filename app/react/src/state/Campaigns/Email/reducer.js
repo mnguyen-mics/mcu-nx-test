@@ -1,38 +1,38 @@
 import { combineReducers } from 'redux';
 
 import {
-  CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH,
-  CAMPAIGNS_EMAIL_LIST_FETCH,
-  CAMPAIGNS_EMAIL_LOAD_ALL,
-  CAMPAIGNS_EMAIL_TABLE_RESET,
+  EMAIL_CAMPAIGNS_DELIVERY_REPORT_FETCH,
+  EMAIL_CAMPAIGNS_LIST_FETCH,
+  EMAIL_CAMPAIGNS_LOAD_ALL,
+  EMAIL_CAMPAIGNS_TABLE_RESET,
 } from '../../action-types';
 
-const defaultCampaignsEmailApiState = {
+const defaultEmailCampaignsApiState = {
   isFetching: false,
   data: [],
   total: 0,
   hasItems: true,
 };
-const campaignsEmailApi = (state = defaultCampaignsEmailApiState, action) => {
+const emailCampaignsApi = (state = defaultEmailCampaignsApiState, action) => {
   switch (action.type) {
-    case CAMPAIGNS_EMAIL_LOAD_ALL:
-    case CAMPAIGNS_EMAIL_LIST_FETCH.REQUEST:
+    case EMAIL_CAMPAIGNS_LOAD_ALL:
+    case EMAIL_CAMPAIGNS_LIST_FETCH.REQUEST:
       return {
         ...state,
       };
-    case CAMPAIGNS_EMAIL_LIST_FETCH.SUCCESS:
+    case EMAIL_CAMPAIGNS_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
         ...action.payload,
       };
-    case CAMPAIGNS_EMAIL_LIST_FETCH.FAILURE:
+    case EMAIL_CAMPAIGNS_LIST_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false,
       };
-    case CAMPAIGNS_EMAIL_TABLE_RESET:
-      return defaultCampaignsEmailApiState;
+    case EMAIL_CAMPAIGNS_TABLE_RESET:
+      return defaultEmailCampaignsApiState;
     default:
       return state;
   }
@@ -49,35 +49,35 @@ const defaultDeliveryReportApiState = {
 };
 const deliveryReportApi = (state = defaultDeliveryReportApiState, action) => {
   switch (action.type) {
-    case CAMPAIGNS_EMAIL_LOAD_ALL:
-    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.REQUEST:
+    case EMAIL_CAMPAIGNS_LOAD_ALL:
+    case EMAIL_CAMPAIGNS_DELIVERY_REPORT_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true,
       };
-    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.SUCCESS:
+    case EMAIL_CAMPAIGNS_DELIVERY_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
         ...action.payload.data,
       };
-    case CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.FAILURE:
+    case EMAIL_CAMPAIGNS_DELIVERY_REPORT_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false,
       };
-    case CAMPAIGNS_EMAIL_TABLE_RESET:
+    case EMAIL_CAMPAIGNS_TABLE_RESET:
       return defaultDeliveryReportApiState;
     default:
       return state;
   }
 };
 
-const campaignsEmailTable = combineReducers({
-  campaignsEmailApi,
+const emailCampaignsTable = combineReducers({
+  emailCampaignsApi,
   deliveryReportApi,
 });
 
-const CampaignsEmailReducers = { campaignsEmailTable };
+const EmailCampaignsReducers = { emailCampaignsTable };
 
-export default CampaignsEmailReducers;
+export default EmailCampaignsReducers;

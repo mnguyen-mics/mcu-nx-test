@@ -47,15 +47,15 @@ const fetchExportData = (organisationId, datamartId, filter) => {
   ]);
 
   return apiResults.then(results => {
-    const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
+    const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
       'audience_segment_id',
     );
 
-    const mergedData = Object.keys(campaignsDisplay).map((segmentId) => {
+    const mergedData = Object.keys(displayCampaigns).map((segmentId) => {
       return {
-        ...campaignsDisplay[segmentId],
+        ...displayCampaigns[segmentId],
         ...performanceReport[segmentId],
       };
     });

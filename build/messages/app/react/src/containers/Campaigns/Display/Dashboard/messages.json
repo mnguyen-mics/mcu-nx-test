@@ -88,34 +88,6 @@
     "defaultMessage": "Display"
   },
   {
-    "id": "display.metrics.impressions",
-    "defaultMessage": "Imp."
-  },
-  {
-    "id": "display.metrics.cpm",
-    "defaultMessage": "CPM"
-  },
-  {
-    "id": "display.metrics.cpa",
-    "defaultMessage": "CPA"
-  },
-  {
-    "id": "display.metrics.ctr",
-    "defaultMessage": "CTR"
-  },
-  {
-    "id": "display.metrics.cpc",
-    "defaultMessage": "CPC"
-  },
-  {
-    "id": "display.metrics.impressions_cost",
-    "defaultMessage": "Spent"
-  },
-  {
-    "id": "display.metrics.clicks",
-    "defaultMessage": "Clicks"
-  },
-  {
     "id": "display.notifications.adgroup.activation.success",
     "defaultMessage": "Ad Group {name} Successfully Activated"
   },
@@ -165,7 +137,7 @@
   },
   {
     "id": "notification.success.error.generic",
-    "defaultMessage": "There was an error, please contact the administator with the following error id: {errorId}"
+    "defaultMessage": "There was an error, please contact the administrator with the following error id: {errorId}"
   },
   {
     "id": "notification.button.undo",
