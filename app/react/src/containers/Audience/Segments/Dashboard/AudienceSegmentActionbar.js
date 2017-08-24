@@ -43,6 +43,7 @@ class AudienceSegmentActionbar extends Component {
     this.hideExportLoadingMsg();
     const datamartId = defaultDatamart(organisationId).id;
     const overlapData = overlapView ? overlapView.data : [];
+
     // Overlap job may still be pending. In which case we dont include it in the export.
     ExportService.exportAudienceSegmentDashboard(organisationId, datamartId, segmentData, overlapData, filter, intl.formatMessage);
   };

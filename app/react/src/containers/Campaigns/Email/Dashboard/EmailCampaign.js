@@ -16,6 +16,7 @@ import messages from './messages';
 import {
   getEmailBlastTableView,
   normalizedEmailPerformance,
+  getTableDataSource,
 } from '../../../../state/Campaign/Email/selectors';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from './constants';
@@ -118,7 +119,7 @@ class EmailCampaign extends Component {
       intl: { formatMessage },
       emailBlasts,
       campaign,
-      emailCampaignStats,
+      emailExportStats,
       isFetchingEmailBlastsStat,
       isFetchingCampaignStat
     } = this.props;
@@ -135,7 +136,7 @@ class EmailCampaign extends Component {
       <div className="ant-layout">
         <EmailCampaignActionbar
           campaign={campaign}
-          campaignStats={emailCampaignStats}
+          campaignStats={emailExportStats}
           archiveCampaign={() => {}}
           isFetchingStats={isFetchingEmailBlastsStat && isFetchingCampaignStat}
           blastsStats={emailBlasts}
@@ -164,7 +165,7 @@ EmailCampaign.propTypes = {
   isFetchingCampaignStat: PropTypes.bool.isRequired,
   resetEmailCampaign: PropTypes.func.isRequired,
   loadEmailCampaignAndDeliveryReport: PropTypes.func.isRequired,
-  emailCampaignStats: PropTypes.shape().isRequired,
+  emailExportStats: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   // email blasts
   isFetchingEmailBlastsStat: PropTypes.bool.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
@@ -183,6 +184,7 @@ const mapStateToProps = state => ({
   campaign: state.emailCampaignSingle.emailCampaignApi.emailCampaign,
   emailBlasts: getEmailBlastTableView(state),
   emailCampaignStats: normalizedEmailPerformance(state),
+  emailExportStats: getTableDataSource(state),
   isFetchingEmailBlastsStat: state.emailCampaignSingle.emailBlastPerformance.isFetching,
   isFetchingCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.isFetching
 });

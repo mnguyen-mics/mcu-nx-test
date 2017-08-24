@@ -32,7 +32,7 @@ class EmailCampaignActionbar extends Component {
     } = this.props;
 
     const filter = parseSearch(search, null);
-    ExportService.exportEmailCampaignDashboard(organisationId, campaign, [campaignStats], blastsStats, filter, formatMessage);
+    ExportService.exportEmailCampaignDashboard(organisationId, campaign, campaignStats, blastsStats, filter, formatMessage);
   };
 
   buildActionElement = () => {
@@ -157,7 +157,7 @@ EmailCampaignActionbar.propTypes = {
   match: PropTypes.shape().isRequired,
   location: ReactRouterPropTypes.location.isRequired,
   campaign: PropTypes.shape().isRequired,
-  campaignStats: PropTypes.shape().isRequired,
+  campaignStats: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
   updateCampaign: PropTypes.func.isRequired,
   archiveCampaign: PropTypes.func.isRequired,
   isFetchingStats: PropTypes.bool.isRequired,

@@ -23,7 +23,7 @@ const s2ab = s => {
 };
 
 function buildSheet(title, data, headers, filter, formatMessage) {
-  const titleLine = [title];
+  const titleLine = typeof title === 'string' ? [title] : [formatMessage(title)];
   const sheet = [];
   const blankLine = [];
 
