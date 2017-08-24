@@ -1,6 +1,7 @@
 define(['./module'], function (module) {
   'use strict';
 
+  // TODO remove this method, use fetch-plugin-version-properties.
   module.directive('fetchPluginProperties', [
     "Restangular",
     function (Restangular) {
@@ -31,6 +32,44 @@ define(['./module'], function (module) {
         ],
         link: function(scope, element, attrs, myCtrl) {
           myCtrl.setup(attrs.fetchPluginProperties);
+        }
+      };
+    }
+  ]);
+
+  module.directive('fetchPluginVersionProperties', [
+    "Restangular",
+    function (Restangular) {
+      return {
+        restrict: 'EA',
+        controller : [
+          "$scope",
+          function ($scope) {
+            this.setup = function(fetchPluginVersionProperties) {
+              var asString = fetchPluginVersionProperties;
+              var match = asString.match(/^\s*(.+)\s+as\s+(.*?)$/);
+              var pluginVersionIdExpr = match[1];
+              var exposedVar = match[2];
+              $scope.$watch(pluginVersionIdExpr, function (newValue, oldValue, scope) {
+                if (!newValue) {
+                  return;
+                }
+                // TODO use the properties of the instance instead ? They already get the PLUGIN_STATIC properties
+                Restangular.one("plugins").one("version", newValue).get().then(function (plugin) {
+                  return Restangular.one("plugins", plugin.id).one("versions", newValue).all("properties").getList();
+                }).then(function (props) {
+                  $scope[exposedVar] = {};
+                  for(var i = 0; i < props.length; i++) {
+                    var prop = props[i];
+                    $scope[exposedVar][prop.technical_name] = prop.value;
+                  }
+                });
+              });
+            };
+          }
+        ],
+        link: function(scope, element, attrs, myCtrl) {
+          myCtrl.setup(attrs.fetchPluginVersionProperties);
         }
       };
     }
@@ -98,6 +137,7 @@ define(['./module'], function (module) {
     }
   ]);
 
+  // TODO remove this method, use fetch-plugin-version-properties.
   module.directive('fetchPluginPropertiesFromVersion', [
     "Restangular",
     function(Restangular) {

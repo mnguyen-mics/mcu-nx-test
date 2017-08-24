@@ -23,13 +23,15 @@ define(['./module'], function (module) {
             return prop.technical_name === "overriding_model_id" && prop.value.value;
           })[0];
 
-          var modelId = (overriding || latest).value.value;
-          var modelExists = models.filter(function (model) {
-            return model.id === modelId;
-          })[0];
+          if (overriding || latest) {
+            var modelId = (overriding || latest).value.value;
+            var modelExists = models.filter(function (model) {
+              return model.id === modelId;
+            })[0];
 
-          if (modelExists) {
-            bidOptimizersUsedModel[bidOptimizerId] = modelId;
+            if (modelExists) {
+              bidOptimizersUsedModel[bidOptimizerId] = modelId;
+            }
           }
         });
 
