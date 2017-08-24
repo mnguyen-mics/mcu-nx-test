@@ -14,7 +14,7 @@ import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 
-function CampaignsEmailTable({
+function EmailCampaignsTable({
   isFetchingCampaigns,
   isFetchingStats,
   dataSource,
@@ -24,7 +24,7 @@ function CampaignsEmailTable({
   onArchiveCampaign,
   onEditCampaign,
   intl: { formatMessage },
-  filter,
+  filter
 }) {
 
   const searchOptions = {
@@ -81,14 +81,14 @@ function CampaignsEmailTable({
       // {
       //   intlMessage: messages.emailHeaderStatus,
       //   key: 'status',
-      //   isHiddable: false,
+      //   isHideable: false,
       //   // title={formatMessage(messages[text])}
       //   render: text => <Tooltip placement="top" title={text}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
       // },
     {
       intlMessage: messages.emailHeaderName,
       key: 'name',
-      isHiddable: false,
+      isHideable: false,
       render: (text, record) => (
         <Link
           className="mcs-campaigns-link"
@@ -101,35 +101,35 @@ function CampaignsEmailTable({
       intlMessage: messages.emailHeaderSent,
       key: 'email_sent',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderHardBounced,
       key: 'email_hard_bounced',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderSoftBounced,
       key: 'email_soft_bounced',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderClicks,
       key: 'clicks',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
     {
       intlMessage: messages.emailHeaderImpressions,
       key: 'impressions',
       isVisibleByDefault: true,
-      isHiddable: true,
+      isHideable: true,
       render: text => renderMetricData(text, '0,0'),
     },
   ];
@@ -199,7 +199,7 @@ function CampaignsEmailTable({
      );
 }
 
-CampaignsEmailTable.propTypes = {
+EmailCampaignsTable.propTypes = {
   noCampaignYet: PropTypes.bool.isRequired,
   isFetchingCampaigns: PropTypes.bool.isRequired,
   isFetchingStats: PropTypes.bool.isRequired,
@@ -212,4 +212,4 @@ CampaignsEmailTable.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(CampaignsEmailTable);
+export default injectIntl(EmailCampaignsTable);

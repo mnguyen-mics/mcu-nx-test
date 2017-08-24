@@ -22,7 +22,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../../utils/LocationSearchHelper';
 
 import * as NotificationActions from '../../../../../state/Notifications/actions';
@@ -91,7 +91,7 @@ class AdGroupPage extends Component {
 
   fetchAllData(organisationId, campaignId, adGroupId, filter) {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGoupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId);
+    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaign(campaignId);
     const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions);
     const getAdPerf = () => ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '');
     const getMediaPerf = () => ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 });
@@ -109,7 +109,7 @@ class AdGroupPage extends Component {
       return nextState;
     });
 
-    getCampaignAdGoupAndAd().then(reponse => {
+    getCampaignAdGroupAndAd().then(reponse => {
       const data = reponse.data;
       const campaign = {
         ...data,
@@ -296,7 +296,7 @@ class AdGroupPage extends Component {
       },
     } = nextProps;
 
-    if (!compareSearchs(search, nextSearch) || campaignId !== nextCampaignId || adGroupId !== nextAdGroupId || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId || adGroupId !== nextAdGroupId || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

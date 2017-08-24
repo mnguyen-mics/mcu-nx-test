@@ -7,7 +7,7 @@ import { Card } from '../../../../components/Card';
 import { EmailPieCharts, EmailStackedAreaChart } from './Charts';
 import { withTranslations } from '../../../Helpers';
 
-function CampaignEmailDashboard({ translations }) {
+function EmailCampaignDashboard({ translations }) {
 
   const items = [
     {
@@ -23,10 +23,10 @@ function CampaignEmailDashboard({ translations }) {
   return <Card><McsTabs items={items} /></Card>;
 }
 
-CampaignEmailDashboard.propTypes = {
+EmailCampaignDashboard.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 export default compose(
   withTranslations,
-)(CampaignEmailDashboard);
+)(EmailCampaignDashboard);

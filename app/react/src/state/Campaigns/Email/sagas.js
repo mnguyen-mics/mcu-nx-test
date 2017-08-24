@@ -4,8 +4,8 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-  fetchCampaignsEmailDeliveryReport,
-  fetchCampaignsEmailList,
+  fetchEmailCampaignsDeliveryReport,
+  fetchEmailCampaignsList,
 } from './actions';
 
 import CampaignService from '../../../services/CampaignService';
@@ -14,9 +14,9 @@ import ReportService from '../../../services/ReportService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 import {
-  CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH,
-  CAMPAIGNS_EMAIL_LIST_FETCH,
-  CAMPAIGNS_EMAIL_LOAD_ALL,
+  EMAIL_CAMPAIGNS_DELIVERY_REPORT_FETCH,
+  EMAIL_CAMPAIGNS_LIST_FETCH,
+  EMAIL_CAMPAIGNS_LOAD_ALL,
 } from '../../action-types';
 
 function* loadDeliveryReport({ payload }) {
@@ -34,15 +34,15 @@ function* loadDeliveryReport({ payload }) {
     const dimension = 'campaign_id';
 
     const response = yield call(ReportService.getEmailDeliveryReport, organisationId, startDate, endDate, dimension);
-    yield put(fetchCampaignsEmailDeliveryReport.success(response));
+    yield put(fetchEmailCampaignsDeliveryReport.success(response));
   } catch (error) {
     log.error(error);
     // TODO add meta data in order to show error in global notification
-    yield put(fetchCampaignsEmailDeliveryReport.failure(error));
+    yield put(fetchEmailCampaignsDeliveryReport.failure(error));
   }
 }
 
-function* loadCampaignsEmailList({ payload }) {
+function* loadEmailCampaignsList({ payload }) {
   try {
 
     const {
@@ -90,32 +90,32 @@ function* loadCampaignsEmailList({ payload }) {
       response.hasItems = initialFetch.count > 0;
     }
 
-    yield put(fetchCampaignsEmailList.success(response));
+    yield put(fetchEmailCampaignsList.success(response));
   } catch (error) {
     log.error(error);
-    yield put(fetchCampaignsEmailList.failure(error));
+    yield put(fetchEmailCampaignsList.failure(error));
   }
 }
 
 function* loadCampaignsAndPerformance(action) {
-  yield call(loadCampaignsEmailList, action);
+  yield call(loadEmailCampaignsList, action);
   yield call(loadDeliveryReport, action);
 }
 
-function* watchFetchCampaignsEmail() {
-  yield* takeLatest(CAMPAIGNS_EMAIL_LIST_FETCH.REQUEST, loadCampaignsEmailList);
+function* watchFetchEmailCampaigns() {
+  yield* takeLatest(EMAIL_CAMPAIGNS_LIST_FETCH.REQUEST, loadEmailCampaignsList);
 }
 
 function* watchFetchDeliveryReport() {
-  yield* takeLatest(CAMPAIGNS_EMAIL_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
+  yield* takeLatest(EMAIL_CAMPAIGNS_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
 }
 
 function* watchLoadCampaignsAndPerformance() {
-  yield* takeLatest(CAMPAIGNS_EMAIL_LOAD_ALL, loadCampaignsAndPerformance);
+  yield* takeLatest(EMAIL_CAMPAIGNS_LOAD_ALL, loadCampaignsAndPerformance);
 }
 
-export const campaignsEmailSagas = [
-  fork(watchFetchCampaignsEmail),
+export const emailCampaignsSagas = [
+  fork(watchFetchEmailCampaigns),
   fork(watchFetchDeliveryReport),
   fork(watchLoadCampaignsAndPerformance),
 ];

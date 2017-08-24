@@ -4,8 +4,8 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-  fetchCampaignsDisplayList,
-  fetchCampaignsDisplayPerformanceReport,
+  fetchDisplayCampaignsList,
+  fetchDisplayCampaignsPerformanceReport
 } from './actions';
 
 import CampaignService from '../../../services/CampaignService';
@@ -14,9 +14,9 @@ import ReportService from '../../../services/ReportService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 import {
-    CAMPAIGNS_DISPLAY_LIST_FETCH,
-    CAMPAIGNS_DISPLAY_LOAD_ALL,
-    CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH,
+    DISPLAY_CAMPAIGNS_LIST_FETCH,
+    DISPLAY_CAMPAIGNS_LOAD_ALL,
+    DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH
 } from '../../action-types';
 
 function* loadPerformanceReport({ payload }) {
@@ -34,15 +34,15 @@ function* loadPerformanceReport({ payload }) {
     const dimension = '';
 
     const response = yield call(ReportService.getDisplayCampaignPerformanceReport, organisationId, startDate, endDate, dimension);
-    yield put(fetchCampaignsDisplayPerformanceReport.success(response));
+    yield put(fetchDisplayCampaignsPerformanceReport.success(response));
   } catch (error) {
     log.error(error);
     // TODO add meta data in order to show error in global notification
-    yield put(fetchCampaignsDisplayPerformanceReport.failure(error));
+    yield put(fetchDisplayCampaignsPerformanceReport.failure(error));
   }
 }
 
-function* loadCampaignsDisplayList({ payload }) {
+function* loadDisplayCampaignsList({ payload }) {
   try {
 
     const {
@@ -90,32 +90,32 @@ function* loadCampaignsDisplayList({ payload }) {
       response.hasItems = initialFetch.count > 0;
     }
 
-    yield put(fetchCampaignsDisplayList.success(response));
+    yield put(fetchDisplayCampaignsList.success(response));
   } catch (error) {
     log.error(error);
-    yield put(fetchCampaignsDisplayList.failure(error));
+    yield put(fetchDisplayCampaignsList.failure(error));
   }
 }
 
 function* loadCampaignsAndPerformance(action) {
-  yield call(loadCampaignsDisplayList, action);
+  yield call(loadDisplayCampaignsList, action);
   yield call(loadPerformanceReport, action);
 }
 
-function* watchFetchCampaignsDisplay() {
-  yield* takeLatest(CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST, loadCampaignsDisplayList);
+function* watchFetchDisplayCampaigns() {
+  yield* takeLatest(DISPLAY_CAMPAIGNS_LIST_FETCH.REQUEST, loadDisplayCampaignsList);
 }
 
 function* watchFetchPerformanceReport() {
-  yield* takeLatest(CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
+  yield* takeLatest(DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
 }
 
 function* watchLoadCampaignsAndPerformance() {
-  yield* takeLatest(CAMPAIGNS_DISPLAY_LOAD_ALL, loadCampaignsAndPerformance);
+  yield* takeLatest(DISPLAY_CAMPAIGNS_LOAD_ALL, loadCampaignsAndPerformance);
 }
 
-export const campaignsDisplaySagas = [
-  fork(watchFetchCampaignsDisplay),
+export const displayCampaignsSagas = [
+  fork(watchFetchDisplayCampaigns),
   fork(watchFetchPerformanceReport),
   fork(watchLoadCampaignsAndPerformance),
 ];

@@ -10,55 +10,53 @@ import { formatMetric } from '../../../../utils/MetricHelper';
 
 function AudienceSegmentDashboard({ segment, translations }) {
 
-  const headerItems = [{
-    iconType: 'full-users',
-    translationKey: 'USERPOINTS',
-    number: (segment.report_view
-        ? formatMetric(segment.report_view[0].user_points, '0,0')
-        : '--'
-      ),
-  },
-  {
-    iconType: 'users',
-    translationKey: 'USER_ACCOUNTS',
-    number: (segment.report_view
-        ? formatMetric(segment.report_view[0].user_accounts, '0,0')
-        : '--'
-      ),
-  },
-  {
-    iconType: 'display',
-    translationKey: 'DISPLAY',
-    number: (segment.report_view
-        ? formatMetric(segment.report_view[0].desktop_cookie_ids, '0,0')
-        : '--'
-      ),
-  },
-  {
-    iconType: 'email-inverted',
-    translationKey: 'EMAILS',
-    number: (segment.report_view
-        ? formatMetric(segment.report_view[0].emails, '0,0')
-        : '--'
-      ),
-  }];
+  function buildItemHeaders() {
+    const report = segment.report_view ? segment.report_view[0] : undefined;
+    return [
+      {
+        iconType: 'full-users',
+        translationKey: 'USER_POINTS',
+        number: report ? formatMetric(report.user_points, '0,0') : '--'
+      },
+      {
+        iconType: 'users',
+        translationKey: 'USER_ACCOUNTS',
+        number: report ? formatMetric(report.user_accounts, '0,0') : '--'
+      },
+      {
+        iconType: 'display',
+        translationKey: 'DISPLAY',
+        number: report ? formatMetric(report.desktop_cookie_ids, '0,0') : '--'
+      },
+      {
+        iconType: 'email-inverted',
+        translationKey: 'EMAILS',
+        number: report ? formatMetric(report.emails, '0,0') : '--'
+      }
+    ];
+  }
 
-  const items = [
-    {
-      title: translations.OVERVIEW,
-      display: <Overview />,
-    },
-    {
-      title: translations.ADDITION_DELETION,
-      display: <AdditionDeletion />,
-    },
-    {
-      title: translations.OVERLAP,
-      display: <Overlap />,
-    },
-  ];
+  function buildItems() {
+    return [
+      {
+        title: translations.OVERVIEW,
+        display: <Overview />,
+      },
+      {
+        title: translations.ADDITION_DELETION,
+        display: <AdditionDeletion />,
+      },
+      {
+        title: translations.OVERLAP,
+        display: <Overlap />,
+      },
+    ];
+  }
+
+  const itemsHeaders = buildItemHeaders();
+  const items = buildItems();
   return (
-    <CardWithHeader title="test" headerItems={headerItems}>
+    <CardWithHeader title="test" headerItems={itemsHeaders}>
       <McsTabs items={items} isCard={false} />
     </CardWithHeader>
   );
@@ -66,12 +64,12 @@ function AudienceSegmentDashboard({ segment, translations }) {
 
 AudienceSegmentDashboard.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  segment: PropTypes.shape().isRequired,
+  segment: PropTypes.shape().isRequired
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
+  segment: state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment
 });
 
 const ConnectedAudienceSegmentDashboard = connect(mapStateToProps)(AudienceSegmentDashboard);

@@ -1,18 +1,18 @@
 import { combineReducers } from 'redux';
 
 import {
-  // CAMPAIGNS_DISPLAY_DELETE_REQUEST,
-  // CAMPAIGNS_DISPLAY_DELETE_REQUEST_FAILURE,
-  // CAMPAIGNS_DISPLAY_DELETE_REQUEST_SUCCESS,
+  // DISPLAY_CAMPAIGNS_DELETE_REQUEST,
+  // DISPLAY_CAMPAIGNS_DELETE_REQUEST_FAILURE,
+  // DISPLAY_CAMPAIGNS_DELETE_REQUEST_SUCCESS,
 
-  CAMPAIGNS_DISPLAY_LOAD_ALL,
-  CAMPAIGNS_DISPLAY_LIST_FETCH,
-  CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH,
+  DISPLAY_CAMPAIGNS_LOAD_ALL,
+  DISPLAY_CAMPAIGNS_LIST_FETCH,
+  DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH,
 
-  CAMPAIGNS_DISPLAY_TABLE_RESET,
+  DISPLAY_CAMPAIGNS_TABLE_RESET
 } from '../../action-types';
 
-const defaultCampaignsDisplayApiState = {
+const defaultDisplayCampaignsApiState = {
   isFetching: false,
   data: [],
   total: 0,
@@ -22,27 +22,27 @@ const defaultCampaignsDisplayApiState = {
 // TODO try to intruce a higher order reducer
 // that handle isFetching base on type name (x.REQUEST, x.SUCCESS, ...)
 
-const campaignsDisplayApi = (state = defaultCampaignsDisplayApiState, action) => {
+const displayCampaignsApi = (state = defaultDisplayCampaignsApiState, action) => {
   switch (action.type) {
-    case CAMPAIGNS_DISPLAY_LOAD_ALL:
-    case CAMPAIGNS_DISPLAY_LIST_FETCH.REQUEST:
+    case DISPLAY_CAMPAIGNS_LOAD_ALL:
+    case DISPLAY_CAMPAIGNS_LIST_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true,
       };
-    case CAMPAIGNS_DISPLAY_LIST_FETCH.SUCCESS:
+    case DISPLAY_CAMPAIGNS_LIST_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
         ...action.payload,
       };
-    case CAMPAIGNS_DISPLAY_LIST_FETCH.FAILURE:
+    case DISPLAY_CAMPAIGNS_LIST_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false,
       };
-    case CAMPAIGNS_DISPLAY_TABLE_RESET:
-      return defaultCampaignsDisplayApiState;
+    case DISPLAY_CAMPAIGNS_TABLE_RESET:
+      return defaultDisplayCampaignsApiState;
     default:
       return state;
   }
@@ -59,35 +59,35 @@ const defaultPerformanceReportApiState = {
 };
 const performanceReportApi = (state = defaultPerformanceReportApiState, action) => {
   switch (action.type) {
-    case CAMPAIGNS_DISPLAY_LOAD_ALL:
-    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.REQUEST:
+    case DISPLAY_CAMPAIGNS_LOAD_ALL:
+    case DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH.REQUEST:
       return {
         ...state,
         isFetching: true,
       };
-    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.SUCCESS:
+    case DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH.SUCCESS:
       return {
         ...state,
         isFetching: false,
         ...action.payload.data,
       };
-    case CAMPAIGNS_DISPLAY_PERFORMANCE_REPORT_FETCH.FAILURE:
+    case DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH.FAILURE:
       return {
         ...state,
         isFetching: false,
       };
-    case CAMPAIGNS_DISPLAY_TABLE_RESET:
+    case DISPLAY_CAMPAIGNS_TABLE_RESET:
       return defaultPerformanceReportApiState;
     default:
       return state;
   }
 };
 
-const campaignsDisplayTable = combineReducers({
-  campaignsDisplayApi,
+const displayCampaignsTable = combineReducers({
+  displayCampaignsApi,
   performanceReportApi,
 });
 
-const CampaignsDisplayReducers = { campaignsDisplayTable };
+const DisplayCampaignsReducers = { displayCampaignsTable };
 
-export default CampaignsDisplayReducers;
+export default DisplayCampaignsReducers;

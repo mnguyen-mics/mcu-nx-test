@@ -72,7 +72,7 @@ class EditEmailPage extends Component {
       ...pick(updatedEmailCampaign, ['name', 'technical_name', 'type']),
     };
 
-    EmailCampaignService.updateEmailCampaign(
+    EmailCampaignService.updateCampaign(
       campaignId,
       campaingResource,
     ).then(() => {

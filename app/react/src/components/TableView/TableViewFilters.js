@@ -14,7 +14,7 @@ class TableViewFilters extends Component {
     super(props);
 
     this.state = {
-      visibilitySelectedColumns: (this.getHiddableColumns()
+      visibilitySelectedColumns: (this.getHideableColumns()
         .filter(column => column.isVisibleByDefault)
         .map(column => ({ key: column.translationKey, value: column.key }))
       ),
@@ -36,14 +36,14 @@ class TableViewFilters extends Component {
     if (onChange) onChange(selectedColumns);
   }
 
-  getHiddableColumns = () => {
+  getHideableColumns = () => {
     const {
         columnsDefinitions: {
           dataColumnsDefinition,
         },
       } = this.props;
 
-    return dataColumnsDefinition.filter(column => column.isHiddable);
+    return dataColumnsDefinition.filter(column => column.isHideable);
   }
 
   render() {
@@ -103,7 +103,7 @@ class TableViewFilters extends Component {
           menuItems={({
             handleMenuClick: this.changeColumnVisibility,
             selectedItems: visibilitySelectedColumns,
-            items: this.getHiddableColumns().map(column => ({
+            items: this.getHideableColumns().map(column => ({
               key: column.translationKey,
               value: column.key,
             })),

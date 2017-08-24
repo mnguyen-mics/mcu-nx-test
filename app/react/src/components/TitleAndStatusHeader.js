@@ -21,25 +21,25 @@ class TitleAndStatusHeader extends Component {
       )
       : null
     );
-  }
+  };
 
   buildAttributesElement = () => {
-    const { headerAttibutes } = this.props;
+    const { headerAttributes } = this.props;
 
     return (
       <div className="mcs-title-status-header-attributes">
-        {headerAttibutes.map((attribute) => {
+        {headerAttributes.map((attribute) => {
           return <div key={attribute.toString()} >{attribute}</div>;
         })}
       </div>
     );
-  }
+  };
 
   render() {
     const {
       headerTitle,
       headerStatus,
-      headerAttibutes,
+      headerAttributes,
     } = this.props;
     let statusElements;
 
@@ -51,7 +51,7 @@ class TitleAndStatusHeader extends Component {
 
     let attibutesElement;
 
-    if (headerAttibutes !== []) {
+    if (headerAttributes !== []) {
       attibutesElement = this.buildAttributesElement();
     } else {
       attibutesElement = <div />;
@@ -72,7 +72,7 @@ class TitleAndStatusHeader extends Component {
 
 TitleAndStatusHeader.defaultProps = {
   headerStatus: { value: null },
-  headerAttibutes: [],
+  headerAttributes: [],
 };
 
 TitleAndStatusHeader.propTypes = {
@@ -81,7 +81,7 @@ TitleAndStatusHeader.propTypes = {
     translationKeyPrefix: PropTypes.string,
     value: PropTypes.string,
   }),
-  headerAttibutes: PropTypes.arrayOf(PropTypes.element),
+  headerAttributes: PropTypes.arrayOf(PropTypes.element),
 };
 
 export default TitleAndStatusHeader;

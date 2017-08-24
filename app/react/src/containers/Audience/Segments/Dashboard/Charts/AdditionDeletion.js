@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { StackedBarCharts } from '../../../../../components/BarCharts';
@@ -18,10 +17,7 @@ import {
   parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
-import {
-  getSinglePerfView,
- } from '../../../../../state/Audience/Segments/selectors';
-
+import { getAudienceSegmentPerformance } from '../../../../../state/Audience/Segments/selectors';
 
 class AdditionDeletion extends Component {
 
@@ -81,12 +77,11 @@ class AdditionDeletion extends Component {
 
     const { lookbackWindow } = filter;
 
-    const formatedDataSource = dataSource.map(item => {
-      const formatedItem = {
+    const formattedDataSource = dataSource.map(item => {
+      return {
         ...item,
         user_point_deletions: -item.user_point_deletions,
       };
-      return formatedItem;
     });
 
     const optionsForChart = {
@@ -102,7 +97,7 @@ class AdditionDeletion extends Component {
     ? (
       <StackedBarCharts
         identifier="StackedBarCharAdditionDeletion"
-        dataset={formatedDataSource}
+        dataset={formattedDataSource}
         options={optionsForChart}
       />
       )
@@ -126,7 +121,7 @@ class AdditionDeletion extends Component {
       colors: ['#00ad68', '#ff5959'],
     };
 
-    const chartArea = (
+    return (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
@@ -147,8 +142,6 @@ class AdditionDeletion extends Component {
         }
       </div>
     );
-
-    return chartArea;
   }
 }
 
@@ -163,7 +156,7 @@ AdditionDeletion.propTypes = {
 const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedAudienceStat: state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
-  dataSource: getSinglePerfView(state),
+  dataSource: getAudienceSegmentPerformance(state),
 });
 
 AdditionDeletion = connect(mapStateToProps)(AdditionDeletion);

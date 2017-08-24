@@ -76,13 +76,13 @@ const addSegment = (campaignId, blastId, segmentResource) => {
 };
 
 
-const updateEmailCampaign = (campaignId, campaignResource) => {
+const updateCampaign = (campaignId, campaignResource) => {
   const endpoint = `email_campaigns/${campaignId}`;
   return ApiService.putRequest(endpoint, campaignResource);
 };
 
-const archiveEmailCampaign = campaignId => {
-  return updateEmailCampaign(campaignId, { archived: true });
+const archiveCampaign = campaignId => {
+  return updateCampaign(campaignId, { archived: true });
 };
 
 const updateBlast = (campaignId, blastId, blastResource) => {
@@ -131,8 +131,8 @@ export default {
   addEmailTemplate,
   addSegment,
 
-  updateEmailCampaign,
-  archiveEmailCampaign,
+  updateCampaign,
+  archiveCampaign,
   updateBlast,
 
   deleteBlast,

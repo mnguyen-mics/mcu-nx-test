@@ -119,7 +119,7 @@ class SegmentSelector extends Component {
         {
           translationKey: 'NAME',
           key: 'name',
-          isHiddable: false,
+          isHideable: false,
           render: text => <span>{text}</span>,
         },
       ],
