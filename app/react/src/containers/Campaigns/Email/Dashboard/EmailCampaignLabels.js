@@ -8,7 +8,7 @@ import * as LabelsActions from '../../../../state/Labels/actions';
 import * as EmailsActions from '../../../../state/Campaign/Email/actions';
 
 
-class CampaignEmailLabels extends Component {
+class EmailCampaignLabels extends Component {
 
   componentDidMount() {
     const {
@@ -47,7 +47,7 @@ class CampaignEmailLabels extends Component {
 
   buildFilters = () => {
     // const {
-    //   campaignEmail
+    //   emailCampaign
     // } = this.props;
 
     return {
@@ -80,21 +80,21 @@ class CampaignEmailLabels extends Component {
         organisationId,
       },
       createLabels,
-      campaignEmail,
+      emailCampaign,
       pairLabelWithObject,
     } = this.props;
 
     if (value === 'CREATE_NEW') {
       createLabels(value, organisationId);
     } else {
-      pairLabelWithObject(value, organisationId, 'EMAIL_CAMPAIGN', campaignEmail.id);
+      pairLabelWithObject(value, organisationId, 'EMAIL_CAMPAIGN', emailCampaign.id);
     }
   }
 
 }
 
-CampaignEmailLabels.propTypes = {
-  campaignEmail: PropTypes.shape().isRequired,
+EmailCampaignLabels.propTypes = {
+  emailCampaign: PropTypes.shape().isRequired,
   activeWorkspace: PropTypes.shape().isRequired,
   getLabels: PropTypes.func.isRequired,
   createLabels: PropTypes.func.isRequired,
@@ -126,7 +126,7 @@ const mapStateToProps = (state, ownProps) => ({
   params: ownProps.router.params,
   query: ownProps.router.location.query,
   activeWorkspace: state.sessionState.activeWorkspace,
-  campaignEmail: state.campaignEmailSingle.campaignEmailApi.campaignEmail,
+  emailCampaign: state.emailCampaignSingle.emailCampaignApi.emailCampaign,
   labels: state.labels.labelsApi,
   attachedLabels: state.labels.labelsAttachedApi,
 });
@@ -136,13 +136,13 @@ const mapDispatchToProps = {
   createLabels: LabelsActions.createLabels.request,
   pairLabelWithObject: LabelsActions.pairLabelWithObject.request,
   unPairLabelWithObject: LabelsActions.unPairLabelWithObject.request,
-  fetchCampaignEmail: EmailsActions.fetchCampaignEmail.request,
+  fetchEmailCampaign: EmailsActions.fetchEmailCampaign.request,
   getLabelsOfObject: LabelsActions.fetchLabelsOfObjects.request,
 };
 
-CampaignEmailLabels = connect(
+EmailCampaignLabels = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CampaignEmailLabels);
+)(EmailCampaignLabels);
 
-export default CampaignEmailLabels;
+export default EmailCampaignLabels;

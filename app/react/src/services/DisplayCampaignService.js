@@ -15,7 +15,7 @@ const getAds = (campaignId, adGroupId) => {
   return ApiService.getRequest(endpoint);
 };
 
-const updateCampaignDisplay = (campaignId, body) => {
+const updateCampaign = (campaignId, body) => {
   const endpoint = `display_campaigns/${campaignId}`;
   return ApiService.putRequest(endpoint, body);
 };
@@ -34,7 +34,7 @@ export default {
   getCampaignDisplay,
   getAdGroup,
   getAds,
-  updateCampaignDisplay,
+  updateCampaign,
   updateAdGroup,
   updateAd,
 };

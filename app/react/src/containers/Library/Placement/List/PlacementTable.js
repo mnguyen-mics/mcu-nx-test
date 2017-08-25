@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as PlacementListsActions from '../../../../state/Library/PlacementLists/actions';
 
 import { PLACEMENTS_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/PlacementLists/selectors';
 
@@ -65,7 +65,7 @@ class PlacementListsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, PLACEMENTS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -130,7 +130,7 @@ class PlacementListsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/library/placementlists/${record.id}`}>{text}</Link>,
       },
     ];
@@ -229,7 +229,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchPlacementLists: PlacementListsActions.fetchPlacementLists.request,
-  // archivePlacementList: CampaignEmailAction.archivePlacementList,
+  // archivePlacementList: EmailCampaignAction.archivePlacementList,
   resetPlacementLists: PlacementListsActions.resetPlacementLists,
 };
 

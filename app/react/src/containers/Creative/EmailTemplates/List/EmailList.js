@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getEmailTemplates, isFetchingEmailTemplates, hasEmailTemplates, getEmailTemplatesTotal } from '../../../../state/Creatives/Emails/selectors';
 
@@ -65,7 +65,7 @@ class CreativeEmailsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -130,7 +130,7 @@ class CreativeEmailsTable extends Component {
       {
         translationKey: 'PREVIEW',
         key: 'asset_path',
-        isHiddable: false,
+        isHideable: false,
         className: 'mcs-table-image-col',
         render: (text, record) => (
           <div className="mcs-table-cell-thumbnail">
@@ -143,7 +143,7 @@ class CreativeEmailsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/email-template/default-editor/edit/${record.id}`}>{text}</Link>
         ),
@@ -151,13 +151,13 @@ class CreativeEmailsTable extends Component {
       {
         translationKey: 'AUDIT_STATUS',
         key: 'audit_status',
-        isHiddable: false,
+        isHideable: false,
         render: text => <span>{text}</span>,
       },
       {
         translationKey: 'PUBLISHED_VERSION',
         key: 'published_version',
-        isHiddable: false,
+        isHideable: false,
         render: text => <span>{text}</span>,
       },
     ];

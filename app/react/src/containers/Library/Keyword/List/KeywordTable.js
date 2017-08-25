@@ -9,7 +9,7 @@ import { TableViewFilters, TableView, EmptyTableView } from '../../../../compone
 import * as KeywordListsActions from '../../../../state/Library/KeywordLists/actions';
 
 import { KEYWORDS_SEARCH_SETTINGS } from './constants';
-import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearchs } from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getTableDataSource } from '../../../../state//Library/KeywordLists/selectors';
 
@@ -65,7 +65,7 @@ class KeywordListsTable extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, KEYWORDS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -130,7 +130,7 @@ class KeywordListsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => <Link className="mcs-campaigns-link" to={`/${organisationId}/library/keywordslists/${record.id}`}>{text}</Link>,
       },
     ];
@@ -229,7 +229,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchKeywordLists: KeywordListsActions.fetchKeywordLists.request,
-  // archiveKeywordList: CampaignEmailAction.archiveKeywordList,
+  // archiveKeywordList: EmailCampaignAction.archiveKeywordList,
   resetKeywordLists: KeywordListsActions.resetKeywordLists,
 };
 

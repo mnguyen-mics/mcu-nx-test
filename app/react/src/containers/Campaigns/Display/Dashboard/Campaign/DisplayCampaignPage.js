@@ -7,7 +7,7 @@ import { Button } from 'antd';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
-import CampaignDisplay from './CampaignDisplay';
+import DisplayCampaign from './DisplayCampaign';
 
 import ReportService from '../../../../../services/ReportService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -20,12 +20,12 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../../utils/LocationSearchHelper';
 
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 
-class CampaignPage extends Component {
+class DisplayCampaignPage extends Component {
 
   constructor(props) {
     super(props);
@@ -144,7 +144,7 @@ class CampaignPage extends Component {
       },
     } = nextProps;
 
-    if (!compareSearchs(search, nextSearch) || campaignId !== nextCampaignId) {
+    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
       if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -220,31 +220,29 @@ class CampaignPage extends Component {
       return nextState;
     });
 
-    getCampaignAdGoupAndAd().then(reponse => {
-      const data = reponse.data;
+    getCampaignAdGroupAndAd().then(response => {
+      const data = response.data;
       const campaign = {
         ...data,
       };
       delete campaign.ad_groups;
 
       const adGroups = [...data.ad_groups];
-      const formattedAdGoups = adGroups.map(item => {
-        const formatedItem = {
+      const formattedAdGroups = adGroups.map(item => {
+        const formattedItem = {
           ...item,
         };
 
-        delete formatedItem.ads;
+        delete formattedItem.ads;
 
-        return formatedItem;
+        return formattedItem;
       });
 
       const adGroupCampaign = adGroups.map(item => {
-        const newitem = {
+        return {
           ad_group_id: item.id,
           campaign_id: campaign.id,
         };
-
-        return newitem;
       });
 
       const ads = [];
@@ -267,13 +265,17 @@ class CampaignPage extends Component {
         };
 
         nextState.campaign.items.isLoading = false;
+        nextState.campaign.mediaPerformance.isLoading = false;
         nextState.adGroups.items.isLoading = false;
         nextState.ads.items.isLoading = false;
+
         nextState.campaign.items.hasFetched = true;
+        nextState.campaign.mediaPerformance.hasFetched = true;
         nextState.adGroups.items.hasFetched = true;
         nextState.ads.items.hasFetched = true;
+
         nextState.campaign.items.itemById = campaign;
-        nextState.adGroups.items.itemById = normalizeArrayOfObject(formattedAdGoups, 'id');
+        nextState.adGroups.items.itemById = normalizeArrayOfObject(formattedAdGroups, 'id');
         nextState.adGroups.items.adGroupCampaign = normalizeArrayOfObject(adGroupCampaign, 'ad_group_id');
         nextState.ads.items.itemById = normalizeArrayOfObject(ads, 'id');
         nextState.ads.items.adAdGroup = normalizeArrayOfObject(adAdGroup, 'ad_id');
@@ -283,7 +285,7 @@ class CampaignPage extends Component {
     });
 
     getCampaignPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
@@ -297,39 +299,39 @@ class CampaignPage extends Component {
     });
 
     getAdGroupPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
 
         nextState.adGroups.performance.isLoading = false;
         nextState.adGroups.performance.hasFetched = true;
-        nextState.adGroups.performance.performanceById = this.formatReportView(
+        nextState.adGroups.performance.performanceById = DisplayCampaignPage.formatReportView(
           response.data.report_view,
           'ad_group_id',
         );
-
         return nextState;
       });
     });
+
     getAdPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
 
         nextState.ads.performance.isLoading = false;
         nextState.ads.performance.hasFetched = true;
-        nextState.ads.performance.performanceById = this.formatReportView(
+        nextState.ads.performance.performanceById = DisplayCampaignPage.formatReportView(
           response.data.report_view,
           'ad_id',
         );
-
         return nextState;
       });
     });
+
     getMediaPerf().then(response => {
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
@@ -337,8 +339,7 @@ class CampaignPage extends Component {
         nextState.campaign.mediaPerformance.isLoading = false;
         nextState.campaign.mediaPerformance.hasFetched = true;
         nextState.campaign.mediaPerformance.performance = normalizeReportView(
-          response.data.report_view,
-          'media_id',
+          response.data.report_view
         );
 
         return nextState;
@@ -362,7 +363,7 @@ class CampaignPage extends Component {
     });
   }
 
-  formatListview(a, b) {
+  formatListView(a, b) {
     if (a) {
       return Object.keys(a).map((c) => {
         return {
@@ -374,9 +375,8 @@ class CampaignPage extends Component {
     return [];
   }
 
-  formatReportView(reportView, key) {
+  static formatReportView(reportView, key) {
     const format = normalizeReportView(reportView);
-
     return normalizeArrayOfObject(format, key);
   }
 
@@ -419,9 +419,11 @@ class CampaignPage extends Component {
             uid,
             message: successMessage.title,
             description: successMessage.body,
-            btn: (<Button type="primary" size="small" onClick={undo} >
-              <span>Undo</span>
-            </Button>),
+            btn: (
+              <Button type="primary" size="small" onClick={undo}>
+                <span>Undo</span>
+              </Button>
+            ),
           });
         }
 
@@ -442,7 +444,7 @@ class CampaignPage extends Component {
           return nextState;
         });
       });
-  }
+  };
 
   updateAdGroup = (adGroupId, body, successMessage, errorMessage, undoBody) => {
     const {
@@ -483,7 +485,7 @@ class CampaignPage extends Component {
             uid: parseInt(adGroupId, 0),
             message: successMessage.title,
             description: successMessage.body,
-            btn: (<Button type="primary" size="small" onClick={undo} >
+            btn: (<Button type="primary" size="small" onClick={undo}>
               <span>Undo</span>
             </Button>),
           });
@@ -505,14 +507,14 @@ class CampaignPage extends Component {
           return nextState;
         });
       });
-  }
+  };
 
   updateCampaign = (campaignId, body, successMessage, errorMessage) => {
     const {
       notifyError,
     } = this.props;
 
-    DisplayCampaignService.updateCampaignDisplay(campaignId, body)
+    DisplayCampaignService.updateCampaign(campaignId, body)
       .then(response => {
         this.setState(prevState => {
           const nextState = {
@@ -527,7 +529,7 @@ class CampaignPage extends Component {
           description: errorMessage.body,
         });
       });
-  }
+  };
 
   render() {
 
@@ -540,7 +542,7 @@ class CampaignPage extends Component {
     const adGroups = {
       isLoadingList: this.state.adGroups.items.isLoading,
       isLoadingPerf: this.state.adGroups.performance.isLoading,
-      items: this.formatListview(
+      items: this.formatListView(
         this.state.adGroups.items.itemById,
         this.state.adGroups.performance.performanceById,
       ),
@@ -549,7 +551,7 @@ class CampaignPage extends Component {
     const ads = {
       isLoadingList: this.state.ads.items.isLoading,
       isLoadingPerf: this.state.ads.performance.isLoading,
-      items: this.formatListview(
+      items: this.formatListView(
         this.state.ads.items.itemById,
         this.state.ads.performance.performanceById,
       ),
@@ -559,7 +561,7 @@ class CampaignPage extends Component {
       media: {
         isLoading: this.state.campaign.mediaPerformance.isLoading,
         hasFetched: this.state.campaign.mediaPerformance.hasFetched,
-        items: this.state.campaign.mediaPerformance.performance,
+        items: this.state.campaign.mediaPerformance.performance
       },
       overall: {
         isLoading: this.state.campaign.overallPerformance.isLoading,
@@ -572,7 +574,7 @@ class CampaignPage extends Component {
         items: this.state.campaign.performance.performance,
       },
     };
-    return (<CampaignDisplay
+    return (<DisplayCampaign
       updateAd={this.updateAd}
       updateAdGroup={this.updateAdGroup}
       updateCampaign={this.updateCampaign}
@@ -584,7 +586,7 @@ class CampaignPage extends Component {
   }
 }
 
-CampaignPage.propTypes = {
+DisplayCampaignPage.propTypes = {
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
@@ -593,7 +595,7 @@ CampaignPage.propTypes = {
   removeNotification: PropTypes.func.isRequired,
 };
 
-CampaignPage = compose(
+DisplayCampaignPage = compose(
   withRouter,
   connect(
     undefined,
@@ -602,6 +604,6 @@ CampaignPage = compose(
       notifySuccess: NotificationActions.notifySuccess,
       removeNotification: NotificationActions.removeNotification,
     }),
-)(CampaignPage);
+)(DisplayCampaignPage);
 
-export default CampaignPage;
+export default DisplayCampaignPage;

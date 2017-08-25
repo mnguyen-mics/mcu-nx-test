@@ -46,7 +46,7 @@ class AdGroupActionbar extends Component {
       archiveAdGroup,
     } = this.props;
 
-    const handleArchiveGoal = campaignDisplayId => {
+    const handleArchiveGoal = displayCampaignId => {
       Modal.confirm({
         title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
         content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
@@ -54,7 +54,7 @@ class AdGroupActionbar extends Component {
         okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
         cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
         onOk() {
-          return archiveAdGroup(campaignDisplayId);
+          return archiveAdGroup(displayCampaignId);
         },
         onCancel() { },
       });

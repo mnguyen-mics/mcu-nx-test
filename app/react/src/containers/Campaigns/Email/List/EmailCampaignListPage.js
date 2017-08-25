@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 // import { Modal } from 'antd';
 import { injectIntl, defineMessages } from 'react-intl';
 
-import CampaignsEmailTable from './CampaignsEmailTable';
+import EmailCampaignsTable from './EmailCampaignsTable';
 import { withMcsRouter } from '../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import {
@@ -13,7 +13,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -52,7 +52,7 @@ const messages = defineMessages({
 
 const getLatestDeliveryReport = takeLatest(ReportService.getEmailDeliveryReport);
 
-class CampaignEmailListPage extends Component {
+class EmailCampaignListPage extends Component {
 
   constructor(props) {
     super(props);
@@ -104,7 +104,7 @@ class CampaignEmailListPage extends Component {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -133,7 +133,7 @@ class CampaignEmailListPage extends Component {
     //   cancelText: formatMessage(messages.confirmArchiveModalCancel),
     //   onOk() {
     //     // return CampaignService.archiveEmailCampaign(campaign.id).then(() => {
-    //     //   loadCampaignsEmailDataSource(organisationId, filter);
+    //     //   loadEmailCampaignsDataSource(organisationId, filter);
     //     // });
     //   },
     //   onCancel() { },
@@ -233,7 +233,7 @@ class CampaignEmailListPage extends Component {
     } = this.props;
 
     return (
-      <CampaignsEmailTable
+      <EmailCampaignsTable
         dataSource={this.buildTableDataSource()}
         totalCampaigns={totalCampaigns}
         isFetchingCampaigns={isFetchingCampaigns}
@@ -249,11 +249,11 @@ class CampaignEmailListPage extends Component {
   }
 }
 
-CampaignEmailListPage.defaultProps = {
+EmailCampaignListPage.defaultProps = {
   notifyError: () => {},
 };
 
-CampaignEmailListPage.propTypes = {
+EmailCampaignListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
@@ -268,4 +268,4 @@ export default compose(
     undefined,
     { notifyError: notifyActions.notifyError },
   ),
-)(CampaignEmailListPage);
+)(EmailCampaignListPage);

@@ -49,28 +49,25 @@ const fetchExportData = (organisationId, filter) => {
   ]);
 
   return apiResults.then(results => {
-    const campaignsDisplay = normalizeArrayOfObject(results[0].data, 'id');
+    const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
       'campaign_id',
     );
 
-    const mergedData = Object.keys(campaignsDisplay).map((campaignId) => {
+    return Object.keys(displayCampaigns).map((campaignId) => {
       return {
-        ...campaignsDisplay[campaignId],
+        ...displayCampaigns[campaignId],
         ...performanceReport[campaignId],
       };
     });
-
-    return mergedData;
   });
 };
 
-class CampaignsDisplayActionbar extends Component {
+class DisplayCampaignsActionbar extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = { exportIsRunning: false };
   }
 
@@ -90,7 +87,7 @@ class CampaignsDisplayActionbar extends Component {
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
 
     fetchExportData(organisationId, filter).then(data => {
-      ExportService.exportCampaignsDisplay(organisationId, data, filter, translations);
+      ExportService.exportDisplayCampaigns(organisationId, data, filter, translations);
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
     }).catch(() => {
@@ -99,7 +96,7 @@ class CampaignsDisplayActionbar extends Component {
       hideExportLoadingMsg();
     });
 
-  }
+  };
 
   render() {
     const {
@@ -161,21 +158,19 @@ class CampaignsDisplayActionbar extends Component {
         </Button>
       </Actionbar>
     );
-
   }
-
 }
 
-CampaignsDisplayActionbar.propTypes = {
+DisplayCampaignsActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired
 };
 
-CampaignsDisplayActionbar = compose(
-  withTranslations,
+DisplayCampaignsActionbar = compose(
   withRouter,
-)(CampaignsDisplayActionbar);
+  withTranslations
+)(DisplayCampaignsActionbar);
 
-export default CampaignsDisplayActionbar;
+export default DisplayCampaignsActionbar;

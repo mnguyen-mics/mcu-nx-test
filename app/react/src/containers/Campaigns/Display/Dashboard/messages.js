@@ -89,34 +89,6 @@ export default defineMessages({
     id: 'display.campaign.actionBar.display',
     defaultMessage: 'Display',
   },
-  impressions: {
-    id: 'display.metrics.impressions',
-    defaultMessage: 'Imp.',
-  },
-  cpm: {
-    id: 'display.metrics.cpm',
-    defaultMessage: 'CPM',
-  },
-  cpa: {
-    id: 'display.metrics.cpa',
-    defaultMessage: 'CPA',
-  },
-  ctr: {
-    id: 'display.metrics.ctr',
-    defaultMessage: 'CTR',
-  },
-  cpc: {
-    id: 'display.metrics.cpc',
-    defaultMessage: 'CPC',
-  },
-  impression_cost: {
-    id: 'display.metrics.impressions_cost',
-    defaultMessage: 'Spent',
-  },
-  clicks: {
-    id: 'display.metrics.clicks',
-    defaultMessage: 'Clicks',
-  },
   notificationAdGroupActivationSuccess: {
     id: 'display.notifications.adgroup.activation.success',
     defaultMessage: 'Ad Group {name} Successfully Activated',
@@ -167,7 +139,7 @@ export default defineMessages({
   },
   notificationErrorGeneric: {
     id: 'notification.success.error.generic',
-    defaultMessage: 'There was an error, please contact the administator with the following error id: {errorId}',
+    defaultMessage: 'There was an error, please contact the administrator with the following error id: {errorId}',
   },
   undo: {
     id: 'notification.button.undo',

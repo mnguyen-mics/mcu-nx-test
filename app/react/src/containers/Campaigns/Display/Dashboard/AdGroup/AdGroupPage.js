@@ -22,7 +22,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../../utils/LocationSearchHelper';
 
 import * as NotificationActions from '../../../../../state/Notifications/actions';
@@ -322,7 +322,7 @@ class AdGroupPage extends Component {
       },
     } = nextProps;
 
-    if (!compareSearchs(search, nextSearch) || campaignId !== nextCampaignId || adGroupId !== nextAdGroupId || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId || adGroupId !== nextAdGroupId || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,

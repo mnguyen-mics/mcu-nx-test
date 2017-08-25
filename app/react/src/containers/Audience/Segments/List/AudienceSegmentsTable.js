@@ -19,7 +19,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -84,7 +84,7 @@ class AudienceSegmentsTable extends Component {
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
-    if (!compareSearchs(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
       if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
         history.replace({
           pathname: nextPathname,
@@ -269,7 +269,7 @@ class AudienceSegmentsTable extends Component {
       {
         translationKey: 'TYPE',
         key: 'type',
-        isHiddable: false,
+        isHideable: false,
         render: (text) => {
           switch (text) {
             case 'USER_ACTIVATION':
@@ -302,7 +302,7 @@ class AudienceSegmentsTable extends Component {
       {
         translationKey: 'NAME',
         key: 'name',
-        isHiddable: false,
+        isHideable: false,
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
@@ -315,7 +315,7 @@ class AudienceSegmentsTable extends Component {
         translationKey: 'TECHNICAL_NAME',
         isVisibleByDefault: false,
         key: 'technical_name',
-        isHiddable: true,
+        isHideable: true,
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
@@ -328,42 +328,42 @@ class AudienceSegmentsTable extends Component {
         translationKey: 'USER_POINTS',
         key: 'user_points',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'USER_ACCOUNTS',
         key: 'user_accounts',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'EMAILS',
         key: 'emails',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'COOKIES',
         key: 'desktop_cookie_ids',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'ADDITION',
         key: 'user_point_additions',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
       {
         translationKey: 'DELETION',
         key: 'user_point_deletions',
         isVisibleByDefault: true,
-        isHiddable: true,
+        isHideable: true,
         render: text => renderMetricData(text, '0,0'),
       },
     ];

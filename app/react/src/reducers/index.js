@@ -3,8 +3,8 @@ import { combineReducers } from 'redux';
 import FormReducer from './FormReducer';
 
 import AppReducer from '../state/App/reducer';
-import CampaignsDisplayReducers from '../state/Campaigns/Display/reducer';
-import CampaignEmailReducers from '../state/Campaign/Email/reducer';
+import DisplayCampaignsReducers from '../state/Campaigns/Display/reducer';
+import EmailCampaignReducers from '../state/Campaign/Email/reducer';
 import GoalsReducers from '../state/Campaigns/Goal/reducer';
 import GoalReducers from '../state/Campaign/Goal/reducer';
 import NotificationsReducers from '../state/Notifications/reducer';
@@ -27,8 +27,8 @@ import AssetsFilesReducers from '../state/Library/AssetsFiles/reducer';
 const allReducers = Object.assign({},
   FormReducer,
   AppReducer,
-  CampaignsDisplayReducers,
-  CampaignEmailReducers,
+  DisplayCampaignsReducers,
+  EmailCampaignReducers,
   GoalsReducers,
   GoalReducers,
   NotificationsReducers,

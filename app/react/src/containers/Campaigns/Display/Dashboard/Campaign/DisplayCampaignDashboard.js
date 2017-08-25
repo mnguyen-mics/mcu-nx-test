@@ -10,20 +10,21 @@ import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 
 import messages from '../messages';
 
-function CampaignDisplayDashboard({
-  isFetchingCampaignStat,
-  hasFetchedCampaignStat,
-  campaignStat,
-  isFetchingMediaStat,
-  hasFetchedMediaStat,
-  mediaStat,
-  overallStat,
-  hasFetchedOverallStat,
-  isFetchingOverallStat,
-  intl: {
-    formatMessage,
-  },
-}) {
+
+function DisplayCampaignDashboard({
+      isFetchingCampaignStat,
+      hasFetchedCampaignStat,
+      campaignStat,
+      isFetchingMediaStat,
+      hasFetchedMediaStat,
+      mediaStat,
+      overallStat,
+      hasFetchedOverallStat,
+      isFetchingOverallStat,
+      intl: {
+        formatMessage
+      }
+    }) {
 
   const items = [
     {
@@ -55,7 +56,7 @@ function CampaignDisplayDashboard({
   return <Card><McsTabs items={items} /></Card>;
 }
 
-CampaignDisplayDashboard.propTypes = {
+DisplayCampaignDashboard.propTypes = {
   isFetchingCampaignStat: PropTypes.bool.isRequired,
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   campaignStat: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -72,4 +73,4 @@ CampaignDisplayDashboard.propTypes = {
 export default compose(
   injectIntl,
   withRouter,
-)(CampaignDisplayDashboard);
+)(DisplayCampaignDashboard);

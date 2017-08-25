@@ -14,7 +14,7 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearchs,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
 
@@ -76,7 +76,7 @@ class AudienceSegment extends Component {
     } = nextProps;
 
     if (
-      !compareSearchs(search, nextSearch)
+      !compareSearches(search, nextSearch)
       || (segmentId !== nextSegmentId)
       || (organisationId !== nextOrganisationId)
     ) {
@@ -126,7 +126,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   loadAudienceSegmentSingleDataSource: AudienceSegmentActions.loadAudienceSegmentSingleDataSource,
-  // archiveCampaignEmail: CampaignEmailAction.archiveCampaignEmail,
+  // archiveEmailCampaign: EmailCampaignAction.archiveEmailCampaign,
   resetAudienceSegmentSingle: AudienceSegmentActions.resetAudienceSegmentSingle,
 };
 

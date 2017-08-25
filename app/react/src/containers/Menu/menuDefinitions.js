@@ -1,4 +1,4 @@
-export const itemDisplayedOnlyIfDatamart = ['audience', 'library_catalog', 'automations', 'campaigns_emails'];
+export const itemDisplayedOnlyIfDatamart = ['audience', 'library_catalog', 'automations', 'email_campaigns'];
 
 
 // ATTENTION : ALL KEYS MUST BE UNIQUE !
@@ -40,12 +40,12 @@ const campaignsMenu = {
   translationId: 'CAMPAIGNS',
   subMenuItems: [
     {
-      key: 'campaigns_display',
+      key: 'display_campaigns',
       path: '/campaigns/display',
       translationId: 'DISPLAY',
     },
     {
-      key: 'campaigns_emails',
+      key: 'email_campaigns',
       path: '/campaigns/email',
       translationId: 'EMAILS',
     },

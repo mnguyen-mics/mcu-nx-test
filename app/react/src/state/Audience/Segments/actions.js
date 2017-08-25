@@ -11,6 +11,7 @@ import {
   AUDIENCE_SEGMENT_SINGLE_RESET,
   AUDIENCE_SEGMENT_CREATE_OVERLAP,
   AUDIENCE_SEGMENT_RETRIEVE_OVERLAP,
+  AUDIENCE_SEGMENT_DASHBOARD_EXPORT
 } from '../../action-types';
 
 // ACTIONS FOR LIST
@@ -59,6 +60,12 @@ const fetchAudienceSegmentOverlap = {
   failure: (error) => createAction(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.FAILURE)(error),
 };
 
+const exportAudienceSegmentDashboard = {
+  request: createAction(AUDIENCE_SEGMENT_DASHBOARD_EXPORT.REQUEST, undefined, (_, meta) => meta),
+  success: createAction(AUDIENCE_SEGMENT_DASHBOARD_EXPORT.SUCCESS),
+  failure: createAction(AUDIENCE_SEGMENT_DASHBOARD_EXPORT.FAILURE)
+};
+
 export {
   fetchAudienceSegmentList,
   fetchAudienceSegmentsPerformanceReport,
@@ -70,4 +77,5 @@ export {
   loadAudienceSegmentSingleDataSource,
   createAudienceSegmentOverlap,
   fetchAudienceSegmentOverlap,
+  exportAudienceSegmentDashboard
 };

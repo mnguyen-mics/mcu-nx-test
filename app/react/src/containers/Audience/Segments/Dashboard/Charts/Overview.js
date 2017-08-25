@@ -17,8 +17,8 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 
 import {
-  getSinglePerfView,
- } from '../../../../../state/Audience/Segments/selectors';
+  getAudienceSegmentPerformance
+} from '../../../../../state/Audience/Segments/selectors';
 
 import messages from '../messages';
 
@@ -121,7 +121,7 @@ class Overview extends Component {
       colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
     };
 
-    const chartArea = (
+    return (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
@@ -142,8 +142,6 @@ class Overview extends Component {
         }
       </div>
     );
-
-    return chartArea;
   }
 }
 
@@ -158,7 +156,7 @@ Overview.propTypes = {
 const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedAudienceStat: state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
-  dataSource: getSinglePerfView(state),
+  dataSource: getAudienceSegmentPerformance(state),
 });
 
 Overview = connect(mapStateToProps)(Overview);

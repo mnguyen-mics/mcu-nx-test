@@ -110,7 +110,22 @@ const getMediaDeliveryReport = (organisationId, objectType, objectId, startDate,
 
 const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/delivery_report';
-  const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions', 'email_unsubscribed', 'email_complaints', 'uniq_impressions', 'uniq_clicks', 'uniq_email_sent', 'uniq_email_unsubscribed', 'uniq_email_hard_bounced', 'uniq_email_soft_bounced', 'uniq_email_complaints'];
+  const DEFAULT_METRICS = [
+    'email_sent',
+    'email_hard_bounced',
+    'email_soft_bounced',
+    'clicks',
+    'impressions',
+    'email_unsubscribed',
+    'email_complaints',
+    'uniq_impressions',
+    'uniq_clicks',
+    'uniq_email_sent',
+    'uniq_email_unsubscribed',
+    'uniq_email_hard_bounced',
+    'uniq_email_soft_bounced',
+    'uniq_email_complaints'
+  ];
 
   const params = {
     organisation_id: organisationId,
@@ -179,7 +194,22 @@ const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension,
 
 const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/delivery_report';
-  const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions', 'email_unsubscribed', 'email_complaints', 'uniq_impressions', 'uniq_clicks', 'uniq_email_sent', 'uniq_email_unsubscribed', 'uniq_email_hard_bounced', 'uniq_email_soft_bounced', 'uniq_email_complaints'];
+  const DEFAULT_METRICS = [
+    'email_sent',
+    'email_hard_bounced',
+    'email_soft_bounced',
+    'clicks',
+    'impressions',
+    'email_unsubscribed',
+    'email_complaints',
+    'uniq_impressions',
+    'uniq_clicks',
+    'uniq_email_sent',
+    'uniq_email_unsubscribed',
+    'uniq_email_hard_bounced',
+    'uniq_email_soft_bounced',
+    'uniq_email_complaints'
+  ];
 
   const params = {
     organisation_id: organisationId,
