@@ -227,5 +227,9 @@
   "AUDIT_SUCCESS": "Audit Réussit",
   "AUDIT_ERROR": "Vous devez passez l'Audit",
 
-  "EMPTY_DATAMARTS": "Il n'y a aucun Datamart de créé! Clickez sur Nouveau pour commencer."
+  "EMPTY_DATAMARTS": "Il n'y a aucun Datamart de créé! Clickez sur Nouveau pour commencer.",
+
+  "AD_GROUP_STATUS_ACTIVE": "Ad Group Actif",
+  "AD_GROUP_STATUS_PENDING": "Ad Group En Attente",
+  "AD_GROUP_STATUS_PAUSED": "Ad Group En Pause"
 }

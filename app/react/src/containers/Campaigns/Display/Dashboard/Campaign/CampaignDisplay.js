@@ -98,7 +98,6 @@ class CampaignDisplay extends Component {
       </span>
     );
 
-
     return (
       <div className="ant-layout">
         <CampaignDisplayActionbar
@@ -116,7 +115,7 @@ class CampaignDisplay extends Component {
               mediaStat={dashboardPerformance.media.items}
               isFetchingMediaStat={dashboardPerformance.media.isLoading}
               hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
-              isFetchingOverallStat={dashboardPerformance.overall.isFetching}
+              isFetchingOverallStat={dashboardPerformance.overall.isLoading}
               hasFetchedOverallStat={dashboardPerformance.overall.hasFetched}
               overallStat={dashboardPerformance.overall.items}
             />

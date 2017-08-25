@@ -10,7 +10,7 @@ import AdGroupAdTable from '../Common/CampaignDisplayAdTable';
 import AdGroupsDashboard from './AdGroupsDashboard';
 import AdGroupActionbar from './AdGroupActionbar';
 import { Card } from '../../../../../components/Card';
-import { McsDateRangePicker } from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -97,6 +97,9 @@ class AdGroup extends Component {
             adGroupStat={dashboardPerformance.adGroups.items}
             isFetchingAdGroupStat={dashboardPerformance.adGroups.isLoading}
             hasFetchedAdGroupStat={dashboardPerformance.adGroups.hasFetched}
+            isFetchingOverallStat={dashboardPerformance.overallPerformance.isLoading}
+            hasFetchedOverallStat={dashboardPerformance.overallPerformance.hasFetched}
+            overallStat={dashboardPerformance.overallPerformance.items}
           />
           <Card title={translations.CREATIVES} buttons={adButtons}>
             <AdGroupAdTable

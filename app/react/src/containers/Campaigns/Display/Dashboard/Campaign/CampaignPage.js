@@ -160,7 +160,7 @@ class CampaignPage extends Component {
 
   fetchAllData = (organisationId, campaignId, filter) => {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGoupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId);
+    const getCampaignAdGoupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
     const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
@@ -174,6 +174,7 @@ class CampaignPage extends Component {
       filter.from,
       filter.to,
       '',
+      ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
     );
     const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(
       organisationId,
@@ -224,7 +225,6 @@ class CampaignPage extends Component {
       const campaign = {
         ...data,
       };
-
       delete campaign.ad_groups;
 
       const adGroups = [...data.ad_groups];
@@ -572,7 +572,6 @@ class CampaignPage extends Component {
         items: this.state.campaign.performance.performance,
       },
     };
-
     return (<CampaignDisplay
       updateAd={this.updateAd}
       updateAdGroup={this.updateAdGroup}

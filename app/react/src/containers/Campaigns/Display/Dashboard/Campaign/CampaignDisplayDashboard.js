@@ -17,6 +17,9 @@ function CampaignDisplayDashboard({
   isFetchingMediaStat,
   hasFetchedMediaStat,
   mediaStat,
+  overallStat,
+  hasFetchedOverallStat,
+  isFetchingOverallStat,
   intl: {
     formatMessage,
   },
@@ -30,6 +33,10 @@ function CampaignDisplayDashboard({
           isFetchingCampaignStat={isFetchingCampaignStat}
           hasFetchedCampaignStat={hasFetchedCampaignStat}
           dataSource={campaignStat}
+          overallStat={overallStat}
+          hasFetchedOverallStat={hasFetchedOverallStat}
+          isFetchingOverallStat={isFetchingOverallStat}
+          renderCampaignProgress
         />
         ),
     },
@@ -55,6 +62,9 @@ CampaignDisplayDashboard.propTypes = {
   mediaStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   isFetchingMediaStat: PropTypes.bool.isRequired,
   hasFetchedMediaStat: PropTypes.bool.isRequired,
+  isFetchingOverallStat: PropTypes.bool.isRequired,
+  hasFetchedOverallStat: PropTypes.bool.isRequired,
+  overallStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   intl: intlShape.isRequired,
 };
 

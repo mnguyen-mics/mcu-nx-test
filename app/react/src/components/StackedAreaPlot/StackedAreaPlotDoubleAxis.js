@@ -98,7 +98,7 @@ class StackedAreaPlotDoubleAxis extends Component {
       visibility,
     };
     return (
-      <div className="mcs-plot-container">
+      <div className="mcs-plot-container" style={{ ...this.props.style }}>
         <svg style={{ height: '0px', width: '0px' }}>
           <defs>
             {options.colors.map((color, index) => {
@@ -444,6 +444,7 @@ StackedAreaPlotDoubleAxis.propTypes = {
     isDraggable: PropTypes.bool,
     onDragEnd: PropTypes.func,
   }).isRequired,
+  style: PropTypes.shape().isRequired,
 };
 
 export default StackedAreaPlotDoubleAxis;

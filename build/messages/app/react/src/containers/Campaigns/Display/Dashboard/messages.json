@@ -170,5 +170,21 @@
   {
     "id": "notification.button.undo",
     "defaultMessage": "Undo"
+  },
+  {
+    "id": "progress.budget.total",
+    "defaultMessage": "Total Budget Consumption"
+  },
+  {
+    "id": "progress.budget.daily",
+    "defaultMessage": "Daily Budget Consumption"
+  },
+  {
+    "id": "progress.budget.weekly",
+    "defaultMessage": "Weekly Budget Consumption"
+  },
+  {
+    "id": "progress.budget.monthly",
+    "defaultMessage": "Monthly Budget Consumption"
   }
 ]
