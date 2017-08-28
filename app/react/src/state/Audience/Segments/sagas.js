@@ -107,7 +107,7 @@ function* loadAudienceSegmentSingle({ payload }) {
 
     const reportView = normalizeReportView(perfResponse.data.report_view);
     yield put(fetchAudienceSegmentSingle.success({
-      ...segment.data,
+      ...segment,
       report_view: reportView,
     }));
   } catch (error) {

@@ -19,7 +19,7 @@ const getSegment = (segmentId, options = {}) => {
     ...options,
   };
 
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getRequest(endpoint, params).then(res => res.data);
 };
 
 const createOverlap = (datamartId, segmentId) => {

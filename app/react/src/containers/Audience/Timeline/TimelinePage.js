@@ -61,6 +61,8 @@ class TimelinePage extends Component {
           identifierId,
         },
       },
+      history,
+      cookies,
     } = this.props;
 
     const {
@@ -73,7 +75,13 @@ class TimelinePage extends Component {
       },
     } = nextProps;
 
-    if ((organisationId !== nextOrganisationId) || (identifierType !== nextIdentifierType) || (identifierId !== nextIdentifierId)) {
+    if ((nextIdentifierType === undefined || nextIdentifierId === undefined) && (cookies.mics_vid || cookies.mics_uaid)) {
+      if (cookies.mics_vid) {
+        history.push(`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`);
+      } else if (cookies.mics_uaid) {
+        history.push(`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`);
+      }
+    } else if ((organisationId !== nextOrganisationId) || (identifierType !== nextIdentifierType) || (identifierId !== nextIdentifierId)) {
       const cb = () => this.fetchAllData(organisationId, defaultDatamart(nextOrganisationId).id, nextIdentifierType, nextIdentifierId);
       this.resetTimelineData(cb());
     }

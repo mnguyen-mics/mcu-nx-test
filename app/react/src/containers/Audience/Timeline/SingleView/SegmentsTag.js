@@ -18,7 +18,7 @@ class SegmentsTag extends Component {
   fetchSegmentData = (segmentId) => {
     AudienceSegmentService.getSegment(segmentId).then((response) => {
       this.setState({
-        segment: response.data,
+        segment: response,
       });
     });
   }
