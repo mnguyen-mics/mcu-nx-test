@@ -63,7 +63,10 @@ class DrawerManager extends Component {
       background: this.getDrawerStyle(0),
     };
 
-    const drawersWithOverlay = drawableContents.map(({
+    // TODO fix react unique key issue
+    const drawersWithOverlay = [];
+
+    drawableContents.forEach(({
       component: WrappedComponent,
       additionalProps,
       size,
@@ -72,35 +75,30 @@ class DrawerManager extends Component {
       const lastElement = index === drawableContents.length - 1;
       const displayInForeground = lastElement;
 
-      return (
-        <div key={generateGuid()}>
-          <div
-            className={`drawer-overlay ${displayInForeground ? 'foreground' : ''}`}
-            onClick={onClickOnBackground}
-          />
+      drawersWithOverlay.push(<div
+        className={'drawer-overlay'}
+        onClick={onClickOnBackground}
+      />);
 
-          <div
-            ref={div => {
-              this.drawerDiv = div;
-            }}
-            tabIndex={0}
-            className={`drawer ${displayInForeground ? 'foreground' : ''}`}
-            style={displayInForeground
-              ? drawerStyles.foreground
-              : drawerStyles.background
-            }
-          >
-            <WrappedComponent {...additionalProps} {...others} />
-          </div>
-        </div>);
+      drawersWithOverlay.push(
+        <div
+          ref={div => {
+            this.drawerDiv = div;
+          }}
+          tabIndex={0}
+          className={'drawer'}
+          style={displayInForeground
+            ? drawerStyles.foreground
+            : drawerStyles.background
+          }
+        >
+          <WrappedComponent {...additionalProps} {...others} />
+        </div>
+      );
     });
 
-    drawersWithOverlay.push(
-      <div key={drawableContents.length}>
-        <div className="drawer-overlay" />
-        <div className="drawer" style={drawerStyles.ready} />
-      </div>,
-    );
+    drawersWithOverlay.push(<div className="drawer-overlay" />);
+    drawersWithOverlay.push(<div className="drawer" style={drawerStyles.ready} />);
 
     return (
       <div onKeyDown={this.handleOnKeyDown} className="drawer-container">
