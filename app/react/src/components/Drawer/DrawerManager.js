@@ -2,8 +2,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import generateGuid from '../../utils/generateGuid';
-
 const viewportDrawerRatio = 0.75;
 
 class DrawerManager extends Component {

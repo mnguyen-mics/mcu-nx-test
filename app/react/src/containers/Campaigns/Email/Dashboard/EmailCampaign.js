@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, Link } from 'react-router-dom';
-import { Layout, Button } from 'antd';
+import { Layout, Button, message } from 'antd';
 
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import EmailCampaignHeader from './EmailCampaignHeader';
@@ -27,6 +27,10 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
+
+import EmailCampaignService from '../../../../services/EmailCampaignService';
+
+import * as NotificationActions from '../../../../state/Notifications/actions';
 
 const { Content } = Layout;
 
@@ -107,6 +111,25 @@ class EmailCampaign extends Component {
     }
   }
 
+  updateBlastStatus = (blastId, nextStatus) => {
+    const {
+      match: {
+        params: {
+          campaignId
+        }
+      },
+      updateBlast,
+      notifyError,
+      intl: { formatMessage },
+    } = this.props;
+
+    EmailCampaignService.updateBlast(campaignId, blastId, { status: nextStatus }).then(blast => {
+      // reload blast
+      updateBlast(blast);
+      message.success(formatMessage(messages.blastUpdateSuccess));
+    }).catch(error => notifyError(error));
+  }
+
   componentWillUnmount() {
     this.props.resetEmailCampaign();
   }
@@ -146,7 +169,7 @@ class EmailCampaign extends Component {
             <EmailCampaignHeader />
             <EmailCampaignDashboard />
             <Card title={formatMessage(messages.emailBlast)} buttons={buttons}>
-              <BlastTable />
+              <BlastTable updateBlastStatus={this.updateBlastStatus} />
             </Card>
           </Content>
         </div>
@@ -170,14 +193,18 @@ EmailCampaign.propTypes = {
   isFetchingEmailBlastsStat: PropTypes.bool.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
   fetchAllEmailBlastPerformance: PropTypes.func.isRequired,
-  emailBlasts: PropTypes.arrayOf(PropTypes.object).isRequired
+  emailBlasts: PropTypes.arrayOf(PropTypes.object).isRequired,
+  updateBlast: PropTypes.func.isRequired,
+  notifyError: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
   fetchAllEmailBlast: EmailCampaignActions.fetchAllEmailBlast.request,
   fetchAllEmailBlastPerformance: EmailCampaignActions.fetchAllEmailBlastPerformance.request,
   loadEmailCampaignAndDeliveryReport: EmailCampaignActions.loadEmailCampaignAndDeliveryReport,
-  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign
+  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign,
+  updateBlast: EmailCampaignActions.updateBlast,
+  notifyError: NotificationActions.notifyError,
 };
 
 const mapStateToProps = state => ({

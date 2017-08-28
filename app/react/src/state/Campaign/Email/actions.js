@@ -9,6 +9,7 @@ import {
   EMAIL_CAMPAIGN_RESET,
   EMAIL_BLAST_FETCH_ALL,
   EMAIL_BLAST_FETCH_PERFORMANCE,
+  EMAIL_BLAST_UPDATE
 } from '../../action-types';
 
 const fetchEmailCampaign = {
@@ -37,6 +38,8 @@ const updateEmailCampaign = {
   failure: createAction(EMAIL_CAMPAIGN_UPDATE.FAILURE),
 };
 
+const updateBlast = createAction(EMAIL_BLAST_UPDATE);
+
 const resetEmailCampaign = createAction(EMAIL_CAMPAIGN_RESET);
 
 const fetchAllEmailBlast = {
@@ -60,4 +63,5 @@ export {
   resetEmailCampaign,
   fetchAllEmailBlast,
   fetchAllEmailBlastPerformance,
+  updateBlast
 };

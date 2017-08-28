@@ -43,6 +43,7 @@ export const EMAIL_CAMPAIGN_UPDATE = createRequestTypes('EMAIL_CAMPAIGN_UPDATE')
 
 export const EMAIL_BLAST_FETCH_ALL = createRequestTypes('EMAIL_BLAST_FETCH_ALL');
 export const EMAIL_BLAST_FETCH_PERFORMANCE = createRequestTypes('EMAIL_BLAST_FETCH_PERFORMANCE');
+export const EMAIL_BLAST_UPDATE = 'EMAIL_BLAST_UPDATE';
 
 export const GOAL_ARCHIVE = createRequestTypes('GOAL_ARCHIVE');
 export const GOAL_UPDATE = createRequestTypes('GOAL_UPDATE');
