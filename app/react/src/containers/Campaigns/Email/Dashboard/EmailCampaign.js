@@ -28,6 +28,10 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
+import EmailCampaignService from '../../../../services/EmailCampaignService';
+
+import * as NotificationActions from '../../../../state/Notifications/actions';
+
 const { Content } = Layout;
 
 class EmailCampaign extends Component {
@@ -107,6 +111,28 @@ class EmailCampaign extends Component {
     }
   }
 
+  updateBlastStatus = (blastId, nextStatus) => {
+    const {
+      match: {
+        params: {
+          campaignId
+        }
+      },
+      updateBlast,
+      notifyError,
+      notifySuccess,
+    } = this.props;
+
+    EmailCampaignService.updateBlast(campaignId, blastId, { status: nextStatus }).then(blast => {
+      // reload blast
+      updateBlast(blast);
+      notifySuccess({
+        intlMessage: messages.blastStatusUpdateSuccessMessage,
+        intlDescription: messages.blastStatusUpdateSuccessDescription
+      });
+    }).catch(error => notifyError(error, { intlMessage: messages.blastStatusUpdateFailure }));
+  }
+
   componentWillUnmount() {
     this.props.resetEmailCampaign();
   }
@@ -146,7 +172,7 @@ class EmailCampaign extends Component {
             <EmailCampaignHeader />
             <EmailCampaignDashboard />
             <Card title={formatMessage(messages.emailBlast)} buttons={buttons}>
-              <BlastTable />
+              <BlastTable updateBlastStatus={this.updateBlastStatus} />
             </Card>
           </Content>
         </div>
@@ -170,14 +196,20 @@ EmailCampaign.propTypes = {
   isFetchingEmailBlastsStat: PropTypes.bool.isRequired,
   fetchAllEmailBlast: PropTypes.func.isRequired,
   fetchAllEmailBlastPerformance: PropTypes.func.isRequired,
-  emailBlasts: PropTypes.arrayOf(PropTypes.object).isRequired
+  emailBlasts: PropTypes.arrayOf(PropTypes.object).isRequired,
+  updateBlast: PropTypes.func.isRequired,
+  notifyError: PropTypes.func.isRequired,
+  notifySuccess: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
   fetchAllEmailBlast: EmailCampaignActions.fetchAllEmailBlast.request,
   fetchAllEmailBlastPerformance: EmailCampaignActions.fetchAllEmailBlastPerformance.request,
   loadEmailCampaignAndDeliveryReport: EmailCampaignActions.loadEmailCampaignAndDeliveryReport,
-  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign
+  resetEmailCampaign: EmailCampaignActions.resetEmailCampaign,
+  updateBlast: EmailCampaignActions.updateBlast,
+  notifyError: NotificationActions.notifyError,
+  notifySuccess: NotificationActions.notifySuccess,
 };
 
 const mapStateToProps = state => ({

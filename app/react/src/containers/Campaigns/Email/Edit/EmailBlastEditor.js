@@ -29,7 +29,6 @@ class EmailBlastEditor extends Component {
     this.state = {
       consents: [],
       segments: this.props.segments,
-      segmentRequired: false,
       userEmailCount: 0,
     };
   }
@@ -88,14 +87,10 @@ class EmailBlastEditor extends Component {
   handleSave = (formValues) => {
     const { save } = this.props;
     const { segments } = this.state;
-    if (segments.length === 0) {
-      this.setState({ segmentRequired: true });
-    } else {
-      save({
-        ...formValues.blast,
-        segments,
-      });
-    }
+    save({
+      ...formValues.blast,
+      segments,
+    });
   }
 
   getSegmentRecords() {
@@ -126,10 +121,9 @@ class EmailBlastEditor extends Component {
       name: segment.name,
     });
 
-    this.setState(prevState => ({
-      segments: selectedAudienceSegments.map(buildSegmentSelection),
-      segmentRequired: !prevState.segmentRequired,
-    }));
+    this.setState({
+      segments: selectedAudienceSegments.map(buildSegmentSelection)
+    });
     closeNextDrawer();
   }
 
@@ -145,7 +139,7 @@ class EmailBlastEditor extends Component {
       openNextDrawer,
     } = this.props;
 
-    const { consents, segmentRequired } = this.state;
+    const { consents } = this.state;
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
@@ -158,11 +152,7 @@ class EmailBlastEditor extends Component {
     };
 
     const emptySegmentOption = {
-      message: (segmentRequired
-        ? formatMessage(messages.blastSegmentSelectionRequired)
-        : formatMessage(messages.blastSegmentSelectionEmpty)
-      ),
-      className: segmentRequired ? 'required' : '',
+      message: formatMessage(messages.blastSegmentSelectionEmpty)
     };
 
     return (

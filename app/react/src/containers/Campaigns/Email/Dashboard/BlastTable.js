@@ -54,6 +54,8 @@ class BlastTable extends Component {
   }
 
   getStatusMenu = (blast) => {
+    const { updateBlastStatus } = this.props;
+
     const menuItems = (availableStatusTransition[blast.status] || []).map(status =>
       <Menu.Item key={`${blast.id}-${status}`}>
         <FormattedMessage {...blastStatusMessage[status.toLowerCase()]} />
@@ -61,7 +63,7 @@ class BlastTable extends Component {
     );
 
     return (
-      <Menu onClick={() => {}}>
+      <Menu onClick={item => updateBlastStatus(blast.id, item.key.split('-')[1])}>
         {menuItems}
       </Menu>
     );
@@ -184,6 +186,7 @@ BlastTable.propTypes = {
   isFetchingBlasts: PropTypes.bool.isRequired,
   isFetchingBlastsStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
+  updateBlastStatus: PropTypes.func.isRequired,
 };
 
 export default compose(
