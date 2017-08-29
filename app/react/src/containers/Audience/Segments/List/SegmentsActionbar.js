@@ -7,7 +7,6 @@ import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import lodash from 'lodash';
 
-import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 
@@ -22,6 +21,7 @@ import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
+
 const fetchExportData = (organisationId, datamartId, filter) => {
 
   const buildOptions = () => {
@@ -31,7 +31,7 @@ const fetchExportData = (organisationId, datamartId, filter) => {
     };
 
     if (filter.keywords) { options.name = filter.keywords; }
-    if (filter.types.length > 0) {
+    if (filter.types && filter.types.length > 0) {
       options.types = filter.types;
     }
     return options;
@@ -101,6 +101,7 @@ class SegmentsActionbar extends Component {
 
   }
 
+
   handleRunExport() {
     const {
       match: {
@@ -117,6 +118,7 @@ class SegmentsActionbar extends Component {
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
 
     const datamartId = filter.datamarts[0];
+
     fetchExportData(organisationId, datamartId, filter).then(data => {
       ExportService.exportAudienceSegments(organisationId, datamartId, data, filter, translations);
       this.setState({ exportIsRunning: false });
@@ -137,8 +139,8 @@ class SegmentsActionbar extends Component {
           organisationId,
         },
       },
-      translations,
       defaultDatamart,
+      translations,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
@@ -187,23 +189,23 @@ class SegmentsActionbar extends Component {
 }
 
 SegmentsActionbar.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   defaultDatamart: PropTypes.func.isRequired,
+  translations: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
+  translations: state.translations,
   defaultDatamart: getDefaultDatamart(state),
 });
 
-SegmentsActionbar = connect(
-  mapStateToProps,
-)(SegmentsActionbar);
 
 SegmentsActionbar = compose(
-  withTranslations,
   withRouter,
+  connect(
+    mapStateToProps,
+  ),
 )(SegmentsActionbar);
 
 export default SegmentsActionbar;
