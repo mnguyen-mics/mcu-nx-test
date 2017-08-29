@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, Link } from 'react-router-dom';
-import { Layout, Button, message } from 'antd';
+import { Layout, Button } from 'antd';
 
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import EmailCampaignHeader from './EmailCampaignHeader';
@@ -120,14 +120,17 @@ class EmailCampaign extends Component {
       },
       updateBlast,
       notifyError,
-      intl: { formatMessage },
+      notifySuccess,
     } = this.props;
 
     EmailCampaignService.updateBlast(campaignId, blastId, { status: nextStatus }).then(blast => {
       // reload blast
       updateBlast(blast);
-      message.success(formatMessage(messages.blastUpdateSuccess));
-    }).catch(error => notifyError(error));
+      notifySuccess({
+        intlMessage: messages.blastStatusUpdateSuccessMessage,
+        intlDescription: messages.blastStatusUpdateSuccessDescription
+      });
+    }).catch(error => notifyError(error, { intlMessage: messages.blastStatusUpdateFailure }));
   }
 
   componentWillUnmount() {
@@ -196,6 +199,7 @@ EmailCampaign.propTypes = {
   emailBlasts: PropTypes.arrayOf(PropTypes.object).isRequired,
   updateBlast: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
+  notifySuccess: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
@@ -205,6 +209,7 @@ const mapDispatchToProps = {
   resetEmailCampaign: EmailCampaignActions.resetEmailCampaign,
   updateBlast: EmailCampaignActions.updateBlast,
   notifyError: NotificationActions.notifyError,
+  notifySuccess: NotificationActions.notifySuccess,
 };
 
 const mapStateToProps = state => ({

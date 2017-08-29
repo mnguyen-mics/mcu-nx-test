@@ -21,8 +21,16 @@ export default defineMessages({
     id: 'emailMetric.email_hard_bounced',
     defaultMessage: 'Hard Bounce'
   },
-  blastUpdateSuccess: {
-    id: 'email.blast.update.success',
+  blastStatusUpdateSuccessMessage: {
+    id: 'email.blast.status.update.success.message',
     defaultMessage: 'Success'
-  }
+  },
+  blastStatusUpdateSuccessDescription: {
+    id: 'email.blast.status.update.success.description',
+    defaultMessage: 'Blast Status Successfully Updated'
+  },
+  blastStatusUpdateFailure: {
+    id: 'email.blast.status.update.failure',
+    defaultMessage: 'Blast Not Updated'
+  },
 });
