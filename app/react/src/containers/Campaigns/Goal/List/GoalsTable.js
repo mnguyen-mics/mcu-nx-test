@@ -244,7 +244,7 @@ class GoalsTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/${organisationId}/campaigns/display/report/${record.id}/basic`}
+            to={`/${organisationId}/goals/${record.id}/report`}
           >{text}
           </Link>
         ),

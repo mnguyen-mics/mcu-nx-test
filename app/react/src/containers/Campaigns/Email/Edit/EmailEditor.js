@@ -211,8 +211,8 @@ class EmailEditor extends Component {
           className="edit-layout ant-layout"
           onSubmit={handleSubmit(this.handleSaveEmailCampaign)}
         >
-          <Actionbar path={breadcrumbPaths}>
-            <Button type="primary" htmlType="submit" disabled={submitting}>
+          <Actionbar path={breadcrumbPaths} edition>
+            <Button type="primary mcs-primary" htmlType="submit" disabled={submitting}>
               <McsIcons type="plus" />
               <FormattedMessage {...messages.emailEditorSaveCampaign} />
             </Button>
