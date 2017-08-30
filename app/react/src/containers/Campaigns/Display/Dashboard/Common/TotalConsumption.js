@@ -43,7 +43,7 @@ class TotalConsumption extends Component {
       to: nextTo,
     } = nextProps;
 
-    if (id !== nextId || organisationId !== nextOrganisationId || objectType !== nextObjectType || from !== nextFrom || to !== nextTo) {
+    if (id !== nextId || organisationId !== nextOrganisationId || objectType !== nextObjectType || from.isSame(nextFrom) || to.isSame(nextTo)) {
       this.fetchAll(organisationId, id, objectType, from, to);
     }
 
@@ -63,7 +63,11 @@ class TotalConsumption extends Component {
           const nextState = {
             ...prevState,
           };
-          nextState.consumedBudget = response.data.report_view.rows[0][1];
+          if (response.data && response.data.report_view && response.data.report_view.rows && response.data.report_view.rows[0]) {
+            nextState.consumedBudget = response.data.report_view.rows[0][1];
+          } else {
+            nextState.consumedBudget = 0;
+          }
           nextState.isLoading = false;
           return nextState;
         });

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function MetricsFocus(props) {
+function MetricsColumn(props) {
 
   const {
     metrics,
@@ -12,23 +12,23 @@ function MetricsFocus(props) {
   const cellHeight = height / nbOfVal;
 
   return (
-    <div className="" style={{ paddingRight: '20px' }}>
+    <div className="p-r-20 mcs-metrics-column">
       {metrics.map(metric => {
         return (
           <div key={metric.name} style={{ height: `${cellHeight}px` }}>
-            <div style={{ fontSize: '0.9em', textAlign: 'left', color: '#919191' }}>{metric.name}</div>
-            <div style={{ fontSize: '2em', fontWeight: 'bold', textAlign: 'left', color: 'rgba(0, 0, 0, 0.65)', lineHeight: '1.25' }}>{isLoading ? <i className="mcs-table-cell-loading" style={{ width: '130px' }} /> : metric.value}</div>
+            <div className="title">{metric.name}</div>
+            <div className="metric">{isLoading ? <i className="mcs-table-cell-loading" style={{ width: '130px' }} /> : metric.value}</div>
           </div>);
       })}
     </div>
   );
 }
 
-MetricsFocus.defaultProps = {
+MetricsColumn.defaultProps = {
   isLoading: false,
 };
 
-MetricsFocus.propTypes = {
+MetricsColumn.propTypes = {
   metrics: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     value: PropTypes.string,
@@ -36,4 +36,4 @@ MetricsFocus.propTypes = {
   isLoading: PropTypes.bool,
 };
 
-export default MetricsFocus;
+export default MetricsColumn;
