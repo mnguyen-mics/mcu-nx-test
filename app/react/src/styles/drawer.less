@@ -11,12 +11,12 @@
     z-index: 41;
   }
 
-  .drawer-overlay {
+  .drawer-overlay:nth-last-of-type(2) {
     opacity: 0;
     visibility: hidden;
   }
 
-  .drawer-overlay.foreground {
+  .drawer-overlay:nth-last-of-type(4) {
     opacity: .12;
     visibility: visible;
   }
@@ -37,7 +37,7 @@
     z-index: 41;
   }
 
-  .drawer.foreground {
+  .drawer:nth-last-of-type(3) {
     box-shadow: 0 0 10px -5px rgba(0,0,0,0.2), 0 0 24px 2px rgba(0,0,0,0.14), 0 0 30px 5px rgba(0,0,0,0.12);
   }
   
