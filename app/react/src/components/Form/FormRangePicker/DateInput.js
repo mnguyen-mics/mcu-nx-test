@@ -2,29 +2,37 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DatePicker } from 'antd';
 
-function DateInput({ input, inputProps }) {
+function DateInput({ input, ...otherProps }) {
+
+  const { value, ...rest } = input;
+  const correctedInput = (value === '' ? rest : { ...rest, value });
 
   return (
-    <DatePicker
-      {...input}
-      {...inputProps}
-    />
+    <div>
+      <DatePicker
+        {...correctedInput}
+        {...otherProps}
+        allowClear={false}
+        id={input.name}
+      />
+    </div>
   );
 }
 
 DateInput.defaultProps = {
-  input: {}, // TODO à enlever
+  format: 'DD/MM/YYYY',
+  placeholder: '',
+  showTime: null,
 };
 
 DateInput.propTypes = {
-  inputProps: PropTypes.shape({
-    format: PropTypes.string,
-    id: PropTypes.string.isRequired,
-    placeholder: PropTypes.string,
-    showTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+  input: PropTypes.shape({
+    name: PropTypes.string.isRequired,
   }).isRequired,
 
-  input: PropTypes.shape().isRequired, /* Redux-form props */
+  format: PropTypes.string,
+  placeholder: PropTypes.string.isRequired,
+  showTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 };
 
 export default DateInput;

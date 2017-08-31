@@ -2,35 +2,52 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
+import { Field } from 'redux-form';
 
 import McsIcons from '../../../components/McsIcons';
 import DateInput from './DateInput';
-
-const correctedInput = (input) => {
-  const { value, ...otherInputProps } = input;
-
-  return (value === ''
-    ? { ...otherInputProps, id: 'otherInputProps.name1' }
-    : { ...otherInputProps, id: 'otherInputProps.name2', value }
-  );
-};
+import { isPastDate } from '../../../utils/DateHelper';
 
 function FormRangePicker({
   formItemProps,
   startProps,
   endProps,
+  values,
+  fieldValidators,
   helpToolTipProps,
 }) {
 
-  const correctedStartProps = correctedInput(startProps);
-  const correctedEndProps = correctedInput(endProps);
-  const displayHelpToolTip = !isEmpty(helpToolTipProps);
+  const disabledDate = (isStart) => (currentDate) => {
+    const { startDate, endDate } = values;
+    const dateToCompare = (isStart ? endDate : startDate);
+
+    if (isPastDate(currentDate)) {
+      return true;
+    }
+
+    if (!currentDate || !dateToCompare) {
+      return false;
+    }
+
+    return (isStart
+      ? currentDate.valueOf() > dateToCompare.valueOf()
+      : currentDate.valueOf() <= dateToCompare.valueOf()
+    );
+  };
 
   return (
     <Form.Item {...formItemProps}>
       <Row align="middle" type="flex">
         <Col span={10}>
-          <DateInput inputProps={correctedStartProps} />
+          <Field
+            name={startProps.name}
+            component={DateInput}
+            validate={fieldValidators.start}
+            props={{
+              ...startProps,
+              disabledDate: disabledDate(true),
+            }}
+          />
         </Col>
 
         <Col span={2}>
@@ -38,10 +55,18 @@ function FormRangePicker({
         </Col>
 
         <Col span={10}>
-          <DateInput inputProps={correctedEndProps} />
+          <Field
+            name={endProps.name}
+            component={DateInput}
+            validate={fieldValidators.end}
+            props={{
+              ...endProps,
+              disabledDate: disabledDate(false),
+            }}
+          />
         </Col>
 
-        {displayHelpToolTip
+        {!isEmpty(helpToolTipProps)
           ? (
             <Col span={2} className="field-tooltip">
               <Tooltip {...helpToolTipProps}>
@@ -57,6 +82,7 @@ function FormRangePicker({
 }
 
 FormRangePicker.defaultProps = {
+  fieldValidators: { start: [], end: [] },
   formItemProps: {},
   startProps: {},
   endProps: {},
@@ -64,6 +90,11 @@ FormRangePicker.defaultProps = {
 };
 
 FormRangePicker.propTypes = {
+  fieldValidators: PropTypes.shape({
+    start: PropTypes.arrayOf(PropTypes.func.isRequired),
+    end: PropTypes.arrayOf(PropTypes.func.isRequired),
+  }),
+
   formItemProps: PropTypes.shape({
     label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
     labelCol: PropTypes.shape().isRequired,
@@ -84,6 +115,11 @@ FormRangePicker.propTypes = {
     placeholder: PropTypes.string,
     showTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   }),
+
+  values: PropTypes.shape({
+    startDate: PropTypes.Moment,
+    endDate: PropTypes.Moment,
+  }).isRequired,
 
   helpToolTipProps: PropTypes.shape({
     placement: PropTypes.oneOf([

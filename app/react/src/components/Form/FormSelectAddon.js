@@ -5,17 +5,16 @@ import { Select } from 'antd';
 const { Option } = Select;
 
 function FormSelectAddon({ input, options, style }) {
-  const { name, onChange /* , value */ } = input;
-  // const filteredOptions = options.filter(option => option !== value);
-  const optionsToDisplay = options.map(option => (
+  const value = input.value || options[0];
+  const filteredOptions = options.filter(option => option !== value);
+  const optionsToDisplay = filteredOptions.map(option => (
     <Option key={option} value={option}>{option}</Option>
-  ));
+    ));
 
   return (
     <Select
-      defaultValue="Per Day"
-      onChange={onChange(name)}
       style={{ display: 'flex', justifyContent: 'center', ...style }}
+      {...input}
     >
       {optionsToDisplay}
     </Select>

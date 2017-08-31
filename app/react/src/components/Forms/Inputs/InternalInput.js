@@ -11,7 +11,7 @@ function InternalInput({
 }) {
 
   return (
-    <div >
+    <div>
       <Input {...input} type="text" {...other} />
       {(touched && error && <Alert type="danger" text={error} />) ||
         (warning && <Alert type="warning" text={warning} />)}

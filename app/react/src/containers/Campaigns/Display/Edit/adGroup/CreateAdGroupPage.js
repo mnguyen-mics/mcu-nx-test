@@ -51,6 +51,10 @@ class CreateAdGroupPage extends Component {
       onClose: () => {},
     };
 
+    const initialValues = {
+      adGroupBudgetSplitPeriod: 'Per Day',
+    };
+
 
     return (
       <EditContentLayout
@@ -59,7 +63,7 @@ class CreateAdGroupPage extends Component {
         buttonMetadata={buttonMetadata}
         url={url}
       >
-        <AdGroupForm formId={formId} />
+        <AdGroupForm formId={formId} initialValues={initialValues} />
       </EditContentLayout>
     );
   }

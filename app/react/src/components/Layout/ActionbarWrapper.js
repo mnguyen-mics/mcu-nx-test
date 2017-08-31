@@ -46,13 +46,8 @@ function ActionbarWrapper({
 }
 
 ActionbarWrapper.defaultProps = {
-<<<<<<< HEAD
-  disabled: false,
-  onClick: () => {}
-=======
   disabled: null,
   onClose: () => {},
->>>>>>> [FEAT/FIX] added redux form features for submit button and other stuff
 };
 
 ActionbarWrapper.propTypes = {
