@@ -13,6 +13,10 @@ import {
   PartitionsActionbar,
 } from '../containers/Audience/Partitions/List';
 
+import {
+  TimelinePage,
+} from '../containers/Audience/Timeline';
+
 const audienceRoutes = [
   {
     path: '/audience/segments',
@@ -31,6 +35,11 @@ const audienceRoutes = [
     layout: 'main',
     contentComponent: AudiencePartitionsTable,
     actionBarComponent: PartitionsActionbar,
+  },
+  {
+    path: '/audience/timeline/:identifierType?/:identifierId?',
+    layout: 'main',
+    contentComponent: TimelinePage,
   },
 ];
 

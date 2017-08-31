@@ -6,6 +6,7 @@ import {
   EMAIL_CAMPAIGN_RESET,
   EMAIL_BLAST_FETCH_ALL,
   EMAIL_BLAST_FETCH_PERFORMANCE,
+  EMAIL_BLAST_UPDATE
 } from '../../action-types';
 
 const defaultEmailCampaignState = {
@@ -97,6 +98,16 @@ const emailBlastApi = (state = defaultEmailBlastState, action) => {
         data: action.payload.data,
         isFetching: false,
         hasFetched: true,
+      };
+    case EMAIL_BLAST_UPDATE:
+      return {
+        ...state,
+        data: state.data.map(blast => {
+          if (blast.id === action.payload.id) {
+            return action.payload;
+          }
+          return blast;
+        })
       };
     case EMAIL_BLAST_FETCH_ALL.FAILURE:
       return defaultEmailBlastState;

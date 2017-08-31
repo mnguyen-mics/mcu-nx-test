@@ -26,7 +26,7 @@ function AudienceSegmentHeader({ segment, translations }) {
     <div className="mcs-campaign-header">
       <TitleAndStatusHeader
         headerTitle={segment.name || ''}
-        headerAttibutes={attributes}
+        headerAttributes={attributes}
       />
     </div>
   );
