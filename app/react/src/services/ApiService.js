@@ -47,6 +47,9 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
     });
   }
 
+  if (options.withCredentials) {
+    config.credentials = 'include';
+  }
   config.headers['X-Requested-By'] = 'mediarithmics-navigator';
 
   if (bodyIsFormData) {

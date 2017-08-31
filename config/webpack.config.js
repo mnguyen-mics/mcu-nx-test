@@ -79,11 +79,14 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
           use: 'url-loader',
         },
       ],
+      noParse: /(mapbox-gl)\.js$/,
     },
 
     resolve: {
       alias: {
         Containers: path.resolve(__dirname, 'app/react/src/containers/'),
+        webworkify: 'webworkify-webpack-dropin',
+        'mapbox-gl$': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js'),
       },
       modules: [paths.appNodeModules],
     },
@@ -99,6 +102,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
       new webpack.optimize.CommonsChunkPlugin({
         names: ['react-vendors', 'manifest'],
       }),
+      new webpack.EnvironmentPlugin(['MapboxAccessToken']),
     ],
   };
 

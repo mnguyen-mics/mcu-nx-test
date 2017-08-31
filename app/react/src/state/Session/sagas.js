@@ -8,11 +8,13 @@ import OrganisationService from '../../services/OrganisationService';
 import {
   WORKSPACE,
   GET_LOGO,
+  FETCH_COOKIES,
   PUT_LOGO,
 } from '../action-types';
 
 import {
   getWorkspace,
+  getCookies,
   putLogo,
   getLogo,
 } from './actions';
@@ -22,9 +24,20 @@ function* fetchOrganisationWorkspace({ payload }) {
     const organisationId = payload;
     const response = yield call(OrganisationService.getWorkspace, organisationId);
     yield put(getWorkspace.success(response));
+    yield put(getCookies.request());
   } catch (e) {
     log.error(e);
     yield put(getWorkspace.failure(e));
+  }
+}
+
+function* fetchUserCookies() {
+  try {
+    const response = yield call(OrganisationService.getCookies);
+    yield put(getCookies.success(response));
+  } catch (e) {
+    log.error(e);
+    yield put(getCookies.failure(e));
   }
 }
 
@@ -69,6 +82,10 @@ function* watchWorkspaceRequest() {
   yield* takeEvery(WORKSPACE.REQUEST, fetchOrganisationWorkspace);
 }
 
+function* watchCookiesRequest() {
+  yield* takeEvery(FETCH_COOKIES.REQUEST, fetchUserCookies);
+}
+
 function* watchLogoDownloadRequest() {
   yield* takeEvery(GET_LOGO.REQUEST, downloadLogo);
 }
@@ -80,5 +97,6 @@ function* watchLogoUploadRequest() {
 export const sessionSagas = [
   fork(watchWorkspaceRequest),
   fork(watchLogoDownloadRequest),
+  fork(watchCookiesRequest),
   fork(watchLogoUploadRequest),
 ];
