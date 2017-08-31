@@ -12,7 +12,8 @@ define(['./module'], function (module) {
         {name: "Flash file (.swf)", groupId: "com.mediarithmics.creative.display", artifactId: "flash-iframe"},
         {name: "Dynamic template", groupId: "com.mediarithmics.creative.display", artifactId: "dynamic-template"},
         {name: "External ad server", groupId: "com.mediarithmics.creative.display", artifactId: "external-display-ad-renderer"},
-        {name: "Ividence template", groupId: "com.ividence", artifactId: "display-ad-renderer"}
+        {name: "Ividence template", groupId: "com.ividence", artifactId: "display-ad-renderer"},
+        {name: "Quantum native JS Tag", groupId: "com.mediarithmics.creative.display", artifactId: "quantum-native-script"}        
       ];
       // TODO handle multiple groups / artifacts renderers according to the organisation
       if ($scope.organisationId === "1147") {
