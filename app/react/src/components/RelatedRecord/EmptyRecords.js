@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Icon } from 'antd';
+import { Row, Col } from 'antd';
+import McsIcons from '../McsIcons';
 
 function EmptyRecords({ iconType, message, className }) {
   return (
     <Row className={`empty-related-records ${className}`}>
       <Col span={24}>
-        <Icon type={iconType} />
+        <McsIcons type={iconType} />
       </Col>
       <Col span={24}>
         {message}
@@ -16,7 +17,7 @@ function EmptyRecords({ iconType, message, className }) {
 }
 
 EmptyRecords.defaultProps = {
-  iconType: 'exclamation-circle-o',
+  iconType: 'warning',
   className: '',
 };
 
