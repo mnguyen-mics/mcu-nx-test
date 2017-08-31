@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { injectIntl, intlShape } from 'react-intl';
 
-import { McsTabs } from '../../../../../components/McsTabs';
+import McsTabs from '../../../../../components/McsTabs';
 import { Card } from '../../../../../components/Card';
 import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 
@@ -17,6 +17,9 @@ function AdGroupDashboard({
   isFetchingMediaStat,
   hasFetchedMediaStat,
   mediaStat,
+  isFetchingOverallStat,
+  hasFetchedOverallStat,
+  overallStat,
   intl: {
     formatMessage,
   },
@@ -30,6 +33,9 @@ function AdGroupDashboard({
           isFetchingCampaignStat={isFetchingAdGroupStat}
           hasFetchedCampaignStat={hasFetchedAdGroupStat}
           dataSource={adGroupStat}
+          isFetchingOverallStat={isFetchingOverallStat}
+          hasFetchedOverallStat={hasFetchedOverallStat}
+          overallStat={overallStat}
         />
         ),
     },
@@ -55,6 +61,9 @@ AdGroupDashboard.propTypes = {
   mediaStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   isFetchingMediaStat: PropTypes.bool.isRequired,
   hasFetchedMediaStat: PropTypes.bool.isRequired,
+  isFetchingOverallStat: PropTypes.bool.isRequired,
+  hasFetchedOverallStat: PropTypes.bool.isRequired,
+  overallStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   intl: intlShape.isRequired,
 };
 

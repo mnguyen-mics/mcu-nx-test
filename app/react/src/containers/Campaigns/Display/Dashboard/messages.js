@@ -145,4 +145,20 @@ export default defineMessages({
     id: 'notification.button.undo',
     defaultMessage: 'Undo',
   },
+  totalBudgetConsumption: {
+    id: 'progress.budget.total',
+    defaultMessage: 'Total Budget Consumption',
+  },
+  dailyBudgetConsumption: {
+    id: 'progress.budget.daily',
+    defaultMessage: 'Daily Budget Consumption',
+  },
+  weeklyBudgetConsumption: {
+    id: 'progress.budget.weekly',
+    defaultMessage: 'Weekly Budget Consumption',
+  },
+  monthlyBudgetConsumption: {
+    id: 'progress.budget.monthly',
+    defaultMessage: 'Monthly Budget Consumption',
+  },
 });

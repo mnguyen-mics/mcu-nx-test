@@ -10,6 +10,7 @@ import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 
 import messages from '../messages';
 
+
 function DisplayCampaignDashboard({
       isFetchingCampaignStat,
       hasFetchedCampaignStat,
@@ -17,6 +18,9 @@ function DisplayCampaignDashboard({
       isFetchingMediaStat,
       hasFetchedMediaStat,
       mediaStat,
+      overallStat,
+      hasFetchedOverallStat,
+      isFetchingOverallStat,
       intl: {
         formatMessage
       }
@@ -30,6 +34,10 @@ function DisplayCampaignDashboard({
           isFetchingCampaignStat={isFetchingCampaignStat}
           hasFetchedCampaignStat={hasFetchedCampaignStat}
           dataSource={campaignStat}
+          overallStat={overallStat}
+          hasFetchedOverallStat={hasFetchedOverallStat}
+          isFetchingOverallStat={isFetchingOverallStat}
+          renderCampaignProgress
         />
         ),
     },
@@ -55,6 +63,9 @@ DisplayCampaignDashboard.propTypes = {
   mediaStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   isFetchingMediaStat: PropTypes.bool.isRequired,
   hasFetchedMediaStat: PropTypes.bool.isRequired,
+  isFetchingOverallStat: PropTypes.bool.isRequired,
+  hasFetchedOverallStat: PropTypes.bool.isRequired,
+  overallStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   intl: intlShape.isRequired,
 };
 

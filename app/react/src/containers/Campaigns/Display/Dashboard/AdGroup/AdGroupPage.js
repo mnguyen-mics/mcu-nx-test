@@ -54,6 +54,11 @@ class AdGroupPage extends Component {
           hasItems: true,
           hasFetched: false,
         },
+        overallPerformance: {
+          performance: [],
+          isLoading: false,
+          hasFetched: false,
+        },
         performance: {
           performance: [],
           isLoading: false,
@@ -91,11 +96,19 @@ class AdGroupPage extends Component {
 
   fetchAllData(organisationId, campaignId, adGroupId, filter) {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaign(campaignId);
+    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
     const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions);
     const getAdPerf = () => ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '');
     const getMediaPerf = () => ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 });
-
+    const getOverallAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(
+      organisationId,
+      'ad_group_id',
+      adGroupId,
+      filter.from,
+      filter.to,
+      '',
+      ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
+    );
     this.setState((prevState) => {
       const nextState = {
         ...prevState,
@@ -105,6 +118,7 @@ class AdGroupPage extends Component {
       nextState.ads.items.isLoading = true;
       nextState.adGroups.mediaPerformance.isLoading = true;
       nextState.adGroups.performance.isLoading = true;
+      nextState.adGroups.overallPerformance.isLoading = true;
       nextState.ads.performance.isLoading = true;
       return nextState;
     });
@@ -134,6 +148,18 @@ class AdGroupPage extends Component {
         nextState.campaign.items.itemById = campaign;
         nextState.adGroups.items.itemById = adGroup;
         nextState.ads.items.itemById = normalizeArrayOfObject(ads, 'id');
+        return nextState;
+      });
+    });
+
+    getOverallAdGroupPerf().then(response => {
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState.adGroups.overallPerformance.isLoading = false;
+        nextState.adGroups.overallPerformance.hasFetched = true;
+        nextState.adGroups.overallPerformance.performance = normalizeReportView(response.data.report_view);
         return nextState;
       });
     });
@@ -350,6 +376,11 @@ class AdGroupPage extends Component {
         isLoading: this.state.adGroups.performance.isLoading,
         hasFetched: this.state.adGroups.performance.hasFetched,
         items: this.state.adGroups.performance.performance,
+      },
+      overallPerformance: {
+        isLoading: this.state.adGroups.overallPerformance.isLoading,
+        hasFetched: this.state.adGroups.overallPerformance.hasFetched,
+        items: this.state.adGroups.overallPerformance.performance,
       },
     };
 

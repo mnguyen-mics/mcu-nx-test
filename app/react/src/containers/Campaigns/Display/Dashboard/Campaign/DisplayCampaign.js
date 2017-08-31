@@ -121,6 +121,9 @@ class DisplayCampaign extends Component {
               mediaStat={dashboardPerformance.media.items}
               isFetchingMediaStat={dashboardPerformance.media.isLoading}
               hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
+              isFetchingOverallStat={dashboardPerformance.overall.isLoading}
+              hasFetchedOverallStat={dashboardPerformance.overall.hasFetched}
+              overallStat={dashboardPerformance.overall.items}
             />
             <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
               <DisplayCampaignAdGroupTable
@@ -166,6 +169,11 @@ DisplayCampaign.propTypes = {
   }).isRequired,
   dashboardPerformance: PropTypes.shape({
     media: PropTypes.shape({
+      isLoading: PropTypes.bool,
+      hasFetched: PropTypes.bool,
+      items: PropTypes.arrayOf(PropTypes.object),
+    }),
+    overall: PropTypes.shape({
       isLoading: PropTypes.bool,
       hasFetched: PropTypes.bool,
       items: PropTypes.arrayOf(PropTypes.object),

@@ -40,6 +40,11 @@ class DisplayCampaignPage extends Component {
           hasItems: true,
           hasFetched: false,
         },
+        overallPerformance: {
+          performance: [],
+          isLoading: false,
+          hasFetched: false,
+        },
         performance: {
           performance: [],
           isLoading: false,
@@ -155,13 +160,21 @@ class DisplayCampaignPage extends Component {
 
   fetchAllData = (organisationId, campaignId, filter) => {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaign(campaignId);
+    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
     const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
       filter.from,
       filter.to,
       dimensions,
+    );
+    const getOverallCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
+      organisationId,
+      campaignId,
+      filter.from,
+      filter.to,
+      '',
+      ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
     );
     const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(
       organisationId,
@@ -200,6 +213,7 @@ class DisplayCampaignPage extends Component {
       nextState.ads.items.isLoading = true;
       nextState.campaign.performance.isLoading = true;
       nextState.campaign.mediaPerformance.isLoading = true;
+      nextState.campaign.overallPerformance.isLoading = true;
       nextState.adGroups.performance.isLoading = true;
       nextState.ads.performance.isLoading = true;
 
@@ -211,7 +225,6 @@ class DisplayCampaignPage extends Component {
       const campaign = {
         ...data,
       };
-
       delete campaign.ad_groups;
 
       const adGroups = [...data.ad_groups];
@@ -332,7 +345,23 @@ class DisplayCampaignPage extends Component {
         return nextState;
       });
     });
-  };
+    getOverallCampaignPerf().then(response => {
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+
+        nextState.campaign.overallPerformance.isLoading = false;
+        nextState.campaign.overallPerformance.hasFetched = true;
+        nextState.campaign.overallPerformance.performance = normalizeReportView(
+          response.data.report_view,
+          'campaign_id',
+        );
+
+        return nextState;
+      });
+    });
+  }
 
   formatListView(a, b) {
     if (a) {
@@ -534,24 +563,26 @@ class DisplayCampaignPage extends Component {
         hasFetched: this.state.campaign.mediaPerformance.hasFetched,
         items: this.state.campaign.mediaPerformance.performance
       },
+      overall: {
+        isLoading: this.state.campaign.overallPerformance.isLoading,
+        hasFetched: this.state.campaign.overallPerformance.hasFetched,
+        items: this.state.campaign.overallPerformance.performance,
+      },
       campaign: {
         isLoading: this.state.campaign.performance.isLoading,
         hasFetched: this.state.campaign.performance.hasFetched,
         items: this.state.campaign.performance.performance,
       },
     };
-
-    return (
-      <DisplayCampaign
-        updateAd={this.updateAd}
-        updateAdGroup={this.updateAdGroup}
-        updateCampaign={this.updateCampaign}
-        campaign={campaign}
-        adGroups={adGroups}
-        ads={ads}
-        dashboardPerformance={dashboardPerformance}
-      />
-    );
+    return (<DisplayCampaign
+      updateAd={this.updateAd}
+      updateAdGroup={this.updateAdGroup}
+      updateCampaign={this.updateCampaign}
+      campaign={campaign}
+      adGroups={adGroups}
+      ads={ads}
+      dashboardPerformance={dashboardPerformance}
+    />);
   }
 }
 

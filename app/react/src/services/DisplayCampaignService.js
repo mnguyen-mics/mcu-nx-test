@@ -1,8 +1,8 @@
 import ApiService from './ApiService';
 
-const getCampaign = (campaignId) => {
-  const endpoint = `display_campaigns/${campaignId}?view=deep`;
-  return ApiService.getRequest(endpoint);
+const getCampaignDisplay = (campaignId, params = '') => {
+  const endpoint = `display_campaigns/${campaignId}`;
+  return ApiService.getRequest(endpoint, params);
 };
 
 const getAdGroup = (campaignId, adGroupId) => {
@@ -31,7 +31,7 @@ const updateAd = (adId, campaignId, adGroupId, body) => {
 };
 
 export default {
-  getCampaign,
+  getCampaignDisplay,
   getAdGroup,
   getAds,
   updateCampaign,

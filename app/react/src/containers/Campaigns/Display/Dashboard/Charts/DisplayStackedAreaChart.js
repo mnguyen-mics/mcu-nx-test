@@ -11,11 +11,14 @@ import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
+import MetricsColumn from '../../../../../components/MetricsColumn';
+import CampaignDisplayProgress from './CampaignDisplayProgress';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
+import { formatMetric } from '../../../../../utils/MetricHelper';
 
 class DisplayStackedAreaChart extends Component {
   constructor(props) {
@@ -99,6 +102,9 @@ class DisplayStackedAreaChart extends Component {
       dataSource,
       hasFetchedCampaignStat,
       isFetchingCampaignStat,
+      hasFetchedOverallStat,
+      isFetchingOverallStat,
+      overallStat,
     } = this.props;
     const { key1, key2 } = this.state;
 
@@ -124,19 +130,41 @@ class DisplayStackedAreaChart extends Component {
         });
       },
     };
+
+    const metrics = [{
+      name: 'CPA',
+      value: hasFetchedOverallStat ? formatMetric(overallStat[0].cpa, '0,0[.]00', '', '€') : null,
+    }, {
+      name: 'CPC',
+      value: hasFetchedOverallStat ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€') : null,
+    }, {
+      name: 'CTR',
+      value: hasFetchedOverallStat ? formatMetric(overallStat[0].ctr, '0.000%') : null,
+    }, {
+      name: 'CPM',
+      value: hasFetchedOverallStat ? formatMetric(overallStat[0].ctr, '0,0[.]00', '', '€') : null,
+    }, {
+      name: 'Spent',
+      value: hasFetchedOverallStat ? formatMetric(overallStat[0].impressions_cost, '0,0[.]00', '', '€') : null,
+    }];
+
     return (!isFetchingCampaignStat && hasFetchedCampaignStat)
       ? (
-        <StackedAreaPlotDoubleAxis
-          identifier="StackedAreaChartDisplayOverview"
-          dataset={dataSource}
-          options={optionsForChart}
-        />
+        <div style={{ display: 'flex' }}>
+          <MetricsColumn metrics={metrics} isLoading={isFetchingOverallStat || !hasFetchedOverallStat} style={{ float: 'left' }} />
+          <StackedAreaPlotDoubleAxis
+            identifier="StackedAreaChartDisplayOverview"
+            dataset={dataSource}
+            options={optionsForChart}
+            style={{ flex: '1' }}
+          />
+        </div>
       )
       : <LoadingChart />;
   }
 
   render() {
-    const { translations, dataSource, hasFetchedCampaignStat } = this.props;
+    const { translations, dataSource, hasFetchedCampaignStat, renderCampaignProgress } = this.props;
     const { key1, key2 } = this.state;
 
     const legendOptions = [
@@ -155,6 +183,8 @@ class DisplayStackedAreaChart extends Component {
 
     const chartArea = (
       <div>
+        { renderCampaignProgress ? <CampaignDisplayProgress /> : null }
+        { renderCampaignProgress ? <hr /> : null}
         <Row className="mcs-chart-header">
           <Col span={12}>
             {dataSource.length === 0 && (hasFetchedCampaignStat)
@@ -174,13 +204,17 @@ class DisplayStackedAreaChart extends Component {
         </Row>
         {dataSource.length === 0 && (hasFetchedCampaignStat)
           ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
-          : this.renderStackedAreaCharts()}
+          : <Row gutter={20}><Col span={24}>{this.renderStackedAreaCharts()}</Col></Row>}
       </div>
     );
 
     return chartArea;
   }
 }
+
+DisplayStackedAreaChart.defaultProps = {
+  renderCampaignProgress: false,
+};
 
 DisplayStackedAreaChart.propTypes = {
   translations: PropTypes.shape().isRequired,
@@ -189,6 +223,10 @@ DisplayStackedAreaChart.propTypes = {
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   isFetchingCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isFetchingOverallStat: PropTypes.bool.isRequired,
+  hasFetchedOverallStat: PropTypes.bool.isRequired,
+  overallStat: PropTypes.arrayOf(PropTypes.object).isRequired,
+  renderCampaignProgress: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
