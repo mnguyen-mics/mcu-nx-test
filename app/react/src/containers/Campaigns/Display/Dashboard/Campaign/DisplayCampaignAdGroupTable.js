@@ -148,7 +148,7 @@ class DisplayCampaignAdGroupTable extends Component {
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,00 %'),
+        render: text => renderMetricData(text / 100, '0,00 %'),
       },
       {
         translationKey: 'CPC',

@@ -158,8 +158,8 @@ class EmailBlastEditor extends Component {
     return (
       <Layout>
         <Form className="edit-layout ant-layout" onSubmit={handleSubmit(this.handleSave)}>
-          <Actionbar path={breadcrumbPaths}>
-            <Button type="primary" htmlType="submit">
+          <Actionbar path={breadcrumbPaths} edition>
+            <Button type="primary mcs-primary" htmlType="submit">
               <McsIcons type="plus" /><span>Save</span>
             </Button>
             <McsIcons

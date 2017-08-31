@@ -18,6 +18,43 @@
 
 }
 
+.mcs-actionbar-edit {
+  min-height: 60px;
+  padding: 0px 40px;
+  box-shadow: 2px 4px 4px 0 rgba(200, 200, 200, 0.14);
+  z-index: 10;
+  background-color: @primary-color;
+
+  .left-part-margin > * {
+    margin-left: 10px;
+  }
+
+  .close-icon {
+    color: @text-color-dark ;
+    transition: 0.5s;
+  }
+  .close-icon:hover {
+    color: fade(@text-color-dark, 80%);
+  }
+
+  .mcs-breadcrumb-edit.ant-breadcrumb {
+    a {
+      transition: color .3s;
+      color: @text-color-dark!important;
+    }
+    a:hover {
+      color: fade(@text-color-dark, 80%)!important;
+    }
+    .ant-breadcrumb-link {
+      color: @text-color-dark!important;
+    }
+    .ant-breadcrumb-separator {
+      margin: 0 8px;
+      color: @text-color-dark!important;
+    }
+  }
+}
+
 // .mcs-actionbar-secondary {
 //   border-top: solid 1px @border-color-split;
 //   margin-top: -1px;
