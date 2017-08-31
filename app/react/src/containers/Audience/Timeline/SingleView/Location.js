@@ -34,7 +34,7 @@ class LocationHelper extends Component {
             interactive={false}
             attributionControl={false}
             preventStyleDiffing
-            mapboxApiAccessToken="pk.eyJ1Ijoiem9iaW9uZTE0MyIsImEiOiJjajZtMHZpYngxcm4yMndvMXVibXJwZGx3In0.9s_vDS6h2pU5ampVcydvCA"
+            mapboxApiAccessToken={global.window.MCS_CONSTANTS.MAPBOX_TOKEN}
           >
             <Marker
               latitude={latitude}

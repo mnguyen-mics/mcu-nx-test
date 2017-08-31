@@ -8,10 +8,10 @@ import lodash from 'lodash';
 import moment from 'moment';
 import { getDefaultDatamart } from '../../../state/Session/selectors';
 
-import * as NotificationActions from '../../../state/Notifications/actions';
+import * as actions from '../../../state/Notifications/actions';
 import Monitoring from './Monitoring';
 
-import TimelineService from '../../../services/TimelineService';
+import UserDataService from '../../../services/UserDataService';
 import initialState from './initialState';
 
 class TimelinePage extends Component {
@@ -38,8 +38,6 @@ class TimelinePage extends Component {
 
     if ((identifierType === undefined || identifierId === undefined) && (cookies.mics_vid || cookies.mics_uaid)) {
       if (cookies.mics_vid) {
-        history.push(`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`);
-      } else if (cookies.mics_uaid) {
         history.push(`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`);
       }
     } else if ((identifierType === undefined || identifierId === undefined) && (cookies.mics_vid === '' || cookies.mics_uaid === '') && (isFechingCookies === false)) {
@@ -78,8 +76,6 @@ class TimelinePage extends Component {
     if ((nextIdentifierType === undefined || nextIdentifierId === undefined) && (cookies.mics_vid || cookies.mics_uaid)) {
       if (cookies.mics_vid) {
         history.push(`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`);
-      } else if (cookies.mics_uaid) {
-        history.push(`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`);
       }
     } else if ((organisationId !== nextOrganisationId) || (identifierType !== nextIdentifierType) || (identifierId !== nextIdentifierId)) {
       const cb = () => this.fetchAllData(organisationId, defaultDatamart(nextOrganisationId).id, nextIdentifierType, nextIdentifierId);
@@ -94,6 +90,15 @@ class TimelinePage extends Component {
         ...prevState,
         activities: {
           ...initialState.activities,
+        },
+        identifiers: {
+          ...initialState.identifiers,
+        },
+        profile: {
+          ...initialState.profile,
+        },
+        segments: {
+          ...initialState.segments,
         },
       };
       return nextState;
@@ -116,7 +121,7 @@ class TimelinePage extends Component {
         },
       };
       return nextState;
-    }, () => TimelineService.getProfile(organisationId, datamartId, identifierType, identifierId)
+    }, () => UserDataService.getProfile(organisationId, datamartId, identifierType, identifierId)
       .then((response) => {
         this.setState((prevState) => {
           const nextState = {
@@ -132,7 +137,8 @@ class TimelinePage extends Component {
           return nextState;
         });
       })
-      .catch(() => {
+      .catch((err) => {
+        this.props.notifyError(err);
         this.setState(prevState => {
           const nextState = {
             ...prevState,
@@ -159,7 +165,7 @@ class TimelinePage extends Component {
       };
       nextState.segments.isLoading = true;
       return nextState;
-    }, () => TimelineService.getSegments(organisationId, datamartId, identifierType, identifierId)
+    }, () => UserDataService.getSegments(organisationId, datamartId, identifierType, identifierId)
       .then((response) => {
         this.setState((prevState) => {
           const nextState = {
@@ -170,7 +176,8 @@ class TimelinePage extends Component {
           nextState.segments.items = response.data;
           return nextState;
         });
-      }).catch(() => {
+      }).catch((err) => {
+        this.props.notifyError(err);
         this.setState(prevState => {
           const nextState = {
             ...prevState,
@@ -195,7 +202,7 @@ class TimelinePage extends Component {
         },
       };
       return nextState;
-    }, () => TimelineService.getIdentifiers(organisationId, datamartId, identifierType, identifierId)
+    }, () => UserDataService.getIdentifiers(organisationId, datamartId, identifierType, identifierId)
       .then((response) => {
         this.setState((prevState) => {
           const nextState = {
@@ -210,7 +217,8 @@ class TimelinePage extends Component {
           return nextState;
         });
 
-      }).catch(() => {
+      }).catch((err) => {
+        this.props.notifyError(err);
         this.setState(prevState => {
           const nextState = {
             ...prevState,
@@ -237,7 +245,7 @@ class TimelinePage extends Component {
         },
       };
       return nextState;
-    }, () => TimelineService.getActivities(organisationId, datamartId, identifierType, identifierId, params)
+    }, () => UserDataService.getActivities(organisationId, datamartId, identifierType, identifierId, params)
       .then((response) => {
         this.setState((prevState) => {
           const nextState = {
@@ -254,7 +262,8 @@ class TimelinePage extends Component {
           };
           return nextState;
         });
-      }).catch(() => {
+      }).catch((err) => {
+        this.props.notifyError(err);
         this.setState(prevState => {
           const nextState = {
             ...prevState,
@@ -312,6 +321,7 @@ TimelinePage.propTypes = {
     mics_uaid: PropTypes.string,
     mics_vid: PropTypes.string,
   }).isRequired,
+  notifyError: PropTypes.func.isRequired,
   isFechingCookies: PropTypes.bool.isRequired,
 };
 
@@ -324,9 +334,7 @@ TimelinePage = compose(
       cookies: state.session.cookies,
       isFechingCookies: state.session.isFechingCookies,
     }),
-    {
-      addNotification: NotificationActions.addNotification,
-    },
+    { notifyError: actions.notifyError },
   ),
 )(TimelinePage);
 

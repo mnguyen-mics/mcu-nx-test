@@ -5,26 +5,25 @@ import { FormattedMessage } from 'react-intl';
 
 import messages from '../messages';
 
+const renderLine = (key, subKey, value) => {
+  return (
+    <Row key={key + subKey + value}>
+      <Col className="" span={8}>
+        <span>{key}</span>
+      </Col>
+      <Col className="" span={8}>
+        <span>{subKey}</span>
+      </Col>
+      <Col className="" span={8}>
+        <span>{value}</span>
+      </Col>
+    </Row>);
+};
+
 const Topics = (props) => {
   const {
     topics,
   } = props;
-
-
-  const renderLine = (key, subKey, value) => {
-    return (
-      <Row key={key + subKey + value}>
-        <Col className="" span={8}>
-          <span>{key}</span>
-        </Col>
-        <Col className="" span={8}>
-          <span>{subKey}</span>
-        </Col>
-        <Col className="" span={8}>
-          <span>{value}</span>
-        </Col>
-      </Row>);
-  };
 
   return (topics && Object.keys(topics).length) ? (
     <Row gutter={10} className="section table-line border-top">

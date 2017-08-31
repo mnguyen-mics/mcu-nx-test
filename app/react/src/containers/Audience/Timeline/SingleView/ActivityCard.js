@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Icon } from 'antd';
 import moment from 'moment';
+import { intlShape, injectIntl } from 'react-intl';
 
 import { Card } from '../../../../components/Card';
 import EventActivity from './EventActivity';
@@ -9,7 +10,9 @@ import Device from './Device';
 import Origin from './Origin';
 import Location from './Location';
 import Topics from './Topics';
-import TimelineService from '../../../../services/TimelineService';
+import UserDataService from '../../../../services/UserDataService';
+
+import messages from '../messages';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 
@@ -25,10 +28,10 @@ class ActivityCard extends Component {
 
   getChannelInformation(activity) {
 
-    if (needToDisplayDurationFor.indexOf(activity.$type) > -1 && activity) {
+    if (activity && needToDisplayDurationFor.indexOf(activity.$type) > -1) {
       const id = activity.$site_id ? activity.$site_id : activity.$app_id;
       const prefix = activity.$site_id ? 'Site' : 'App';
-      TimelineService.getChannel(this.state.datamartId, id).then(response => {
+      UserDataService.getChannel(this.state.datamartId, id).then(response => {
         this.setState(prevState => {
           const nextState = {
             ...prevState,
@@ -102,14 +105,20 @@ class ActivityCard extends Component {
     const hours = moment.duration(activity.$session_duration, 'seconds').hours();
     const days = moment.duration(activity.$session_duration, 'seconds').days();
 
+    const {
+      intl: {
+        formatMessage,
+      }
+    } = this.props;
+
     if (days > 1) {
-      return `${days} days ${hours} hours ${min} minutes ${secs} seconds`;
+      return `${days} ${formatMessage(messages.day)} ${hours} ${formatMessage(messages.hours)} ${min} ${formatMessage(messages.minutes)} ${secs} ${formatMessage(messages.seconds)}`;
     } else if (hours >= 1) {
-      return `${hours} hours ${min} minutes ${secs} seconds`;
+      return `${hours} ${formatMessage(messages.hours)} ${min} ${formatMessage(messages.minutes)} ${secs} ${formatMessage(messages.seconds)}`;
     } else if (min >= 1) {
-      return `${min} minutes ${secs} seconds`;
+      return `${min} ${formatMessage(messages.minutes)} ${secs} ${formatMessage(messages.seconds)}`;
     }
-    return `${secs} seconds`;
+    return `${secs} ${formatMessage(messages.seconds)}`;
   }
 
 
@@ -170,6 +179,9 @@ ActivityCard.propTypes = {
     hasItems: PropTypes.bool.isRequired,
     items: PropTypes.object.isRequired,
   }).isRequired,
+  intl: intlShape.isRequired,
 };
+
+ActivityCard = injectIntl(ActivityCard);
 
 export default ActivityCard;

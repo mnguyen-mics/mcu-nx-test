@@ -197,4 +197,20 @@ export default defineMessages({
     id: 'timeline.actionbar.modal.email',
     defaultMessage: 'Email Hash',
   },
+  day: {
+    id: 'timeline.activity.visit.duration.day',
+    defaultMessage: 'days',
+  },
+  hours: {
+    id: 'timeline.activity.visit.duration.hours',
+    defaultMessage: 'hours',
+  },
+  minutes: {
+    id: 'timeline.activity.visit.duration.minutes',
+    defaultMessage: 'minutes',
+  },
+  seconds: {
+    id: 'timeline.activity.visit.duration.seconds',
+    defaultMessage: 'seconds',
+  },
 });

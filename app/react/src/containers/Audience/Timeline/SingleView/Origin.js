@@ -6,22 +6,22 @@ import { Row, Col, Tooltip } from 'antd';
 
 import messages from '../messages';
 
+const renderLine = (key, value) => {
+  return (
+    <div key={key}>
+      <Col className="table-left" span={12}>
+        <span><Tooltip title={key}>{key}</Tooltip></span>
+      </Col>
+      <Col className="table-right" span={12}>
+        <span><Tooltip title={key === '$ts' ? moment(value).format('YYYY MM DD, hh:mm:ss') : value}>{key === '$ts' ? moment(value).format('YYYY MM DD, hh:mm:ss') : value}</Tooltip></span>
+      </Col>
+    </div>);
+};
+
 function Origin(props) {
   const {
     origin,
   } = props;
-
-  const renderLine = (key, value) => {
-    return (
-      <div key={key}>
-        <Col className="table-left" span={12}>
-          <span><Tooltip title={key}>{key}</Tooltip></span>
-        </Col>
-        <Col className="table-right" span={12}>
-          <span><Tooltip title={key === '$ts' ? moment(value).format('YYYY MM DD, hh:mm:ss') : value}>{key === '$ts' ? moment(value).format('YYYY MM DD, hh:mm:ss') : value}</Tooltip></span>
-        </Col>
-      </div>);
-  };
 
 
   return (
