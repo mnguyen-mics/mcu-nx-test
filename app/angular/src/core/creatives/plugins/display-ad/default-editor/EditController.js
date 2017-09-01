@@ -39,7 +39,7 @@ define(['./module'], function (module) {
           
         });
 
-        var quantumTagProp = _.find($scope.properties, function(prop) { return prop.value.technical_name === "quantum_tag" });          
+        var quantumTagProp = _.find($scope.properties, function(prop) { return prop.value.technical_name === "quantum_tag"; });          
         var quantumHash = quantumTagProp.value.value.value.match(/ah: "(.*?)"/)[1];
         $scope.quantumAdPreviewUrl = "http://s3.amazonaws.com/static.elasticad.net/nativedemo/apxcreativepreview.html?ean-test-native=true&ean-testall-native=true&ean-isinpreview=1&ean-test-hash=" + quantumHash;
 
