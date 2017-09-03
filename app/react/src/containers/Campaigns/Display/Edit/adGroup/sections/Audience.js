@@ -2,7 +2,36 @@ import React from 'react';
 import { Row } from 'antd';
 
 import { FormSection } from '../../../../../../components/Form';
+import AdGroupTable from '../AdGroupTable';
 import messages from '../../messages';
+
+// TODO: Remove mock data
+const mockDataSource = [
+  {
+    type: {
+      image: 'users',
+      text: 'Sunday Visitors',
+    },
+    data: ['850k User Points', '850k Desktop', '850k Mobile'],
+    switchButton: true,
+  },
+  {
+    type: {
+      image: 'users',
+      text: 'Frequent Visitor',
+    },
+    data: ['850k User Points', '850k Desktop', '850k Mobile'],
+    switchButton: true,
+  },
+  {
+    type: {
+      image: 'users',
+      text: 'Frequent Buyer',
+    },
+    data: ['850k User Points', '850k Desktop', '850k Mobile'],
+    switchButton: false,
+  },
+];
 
 function Audience() {
 
@@ -24,7 +53,10 @@ function Audience() {
         subtitle={messages.sectionSubtitle2}
         title={messages.sectionTitle2}
       />
-      <Row />
+
+      <Row>
+        <AdGroupTable dataSource={mockDataSource} />
+      </Row>
     </div>
   );
 }

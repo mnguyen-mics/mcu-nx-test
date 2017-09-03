@@ -7,6 +7,17 @@ import FormSelectAddon from './FormSelectAddon';
 import FormTitle from './FormTitle';
 import withValidators from './withValidators';
 
+export default {
+  FormDatePicker,
+  FormInput,
+  FormRangePicker,
+  FormSection,
+  FormSelect,
+  FormSelectAddon,
+  FormTitle,
+  withValidators,
+};
+
 export {
   FormDatePicker,
   FormInput,

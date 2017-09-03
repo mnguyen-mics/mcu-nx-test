@@ -173,6 +173,18 @@ export default defineMessages({
     id: 'adGroupEditor.section1.row2.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
+  contentSection1Row2Option1: {
+    id: 'adGroupEditor.section1.row2.option1',
+    defaultMessage: 'Per Day',
+  },
+  contentSection1Row2Option2: {
+    id: 'adGroupEditor.section1.row2.option2',
+    defaultMessage: 'Per Week',
+  },
+  contentSection1Row2Option3: {
+    id: 'adGroupEditor.section1.row2.option13',
+    defaultMessage: 'Per Month',
+  },
 
   /* Row 3 */
   contentSection1Row3Label: {
@@ -206,6 +218,13 @@ export default defineMessages({
     defaultMessage: 'Lorem ipsum',
   },
 
+  /* Advanced part */
+
+  contentSection1AdvancedPartTitle: {
+    id: 'adGroupEditor.section1.advancedPart.title',
+    defaultMessage: 'Advanced',
+  },
+
   /* Row 5 */
   contentSection1Row5Label: {
     id: 'adGroupEditor.section1.row5.label',
@@ -232,6 +251,34 @@ export default defineMessages({
   contentSection1Row6Tooltip: {
     id: 'adGroupEditor.section1.row6.tooltip',
     defaultMessage: 'Lorem ipsum',
+  },
+
+  /* ------------------------------- SECTION 2 ------------------------------ */
+
+  contentSection2Audience1: {
+    id: 'adGroupEditor.section2.audience1',
+    defaultMessage: 'Sunday Visitors',
+  },
+  contentSection2Audience2: {
+    id: 'adGroupEditor.section2.audience2',
+    defaultMessage: 'Frequent Visitor',
+  },
+  contentSection2Audience3: {
+    id: 'adGroupEditor.section2.audience3',
+    defaultMessage: 'Frequent Buyer',
+  },
+
+  contentSection2Medium1: {
+    id: 'adGroupEditor.section2.medium1',
+    defaultMessage: 'User Points',
+  },
+  contentSection2Medium2: {
+    id: 'adGroupEditor.section2.medium2',
+    defaultMessage: 'Desktop',
+  },
+  contentSection2Medium3: {
+    id: 'adGroupEditor.section2.medium3',
+    defaultMessage: 'Mobile',
   },
 
   /* ------------------------------- SECTION 3 ------------------------------ */
@@ -328,34 +375,38 @@ export default defineMessages({
   },
   contentSection8Line2: {
     id: 'adGroupEditor.section8.part2',
-    defaultMessage: 'Your ad will be visible for the following segments\n{segments}'
+    defaultMessage: 'Your ad will be visible for the following segments\n{segments}',
   },
   contentSection8Line3: {
     id: 'adGroupEditor.section8.part3',
-    defaultMessage: 'Your ad will not be published for people inside the following segment\n{segment}'
+    defaultMessage: 'Your ad will not be published for people inside the following segment\n{segment}',
   },
   contentSection8Line4: {
     id: 'adGroupEditor.section8.part4',
-    defaultMessage: 'Your ad will target the following devices\n{devices}'
+    defaultMessage: 'Your ad will target the following devices\n{devices}',
   },
   contentSection8Line5: {
     id: 'adGroupEditor.section8.part5',
-    defaultMessage: 'Your ad will target the following areas\n{areas}'
+    defaultMessage: 'Your ad will target the following areas\n{areas}',
   },
   contentSection8Line6: {
     id: 'adGroupEditor.section8.part6',
-    defaultMessage: 'Your ad will be published on the following networks\n{networks}'
+    defaultMessage: 'Your ad will be published on the following networks\n{networks}',
   },
   contentSection8Line7: {
     id: 'adGroupEditor.section8.part7',
-    defaultMessage: 'Your ad will target the following keywords\n{keywords}'
+    defaultMessage: 'Your ad will target the following keywords\n{keywords}',
   },
   contentSection8Line8: {
     id: 'adGroupEditor.section8.part8',
-    defaultMessage: 'Your ad is using the following bid optimizer\n{optimizer}'
+    defaultMessage: 'Your ad is using the following bid optimizer\n{optimizer}',
   },
   contentSection8Line9: {
     id: 'adGroupEditor.section8.part9',
-    defaultMessage: 'You have {number} creatives attached to your ad'
+    defaultMessage: 'You have {number} creatives attached to your ad',
   },
 });
+
+/*
+   ============> PART 2 : AUDIENCE
+*/
