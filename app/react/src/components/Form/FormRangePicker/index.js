@@ -1,8 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
-import { Field } from 'redux-form';
+import { Field, getFormSyncErrors } from 'redux-form';
 
 import McsIcons from '../../../components/McsIcons';
 import DateInput from './DateInput';
@@ -36,7 +37,7 @@ function FormRangePicker({
   };
 
   return (
-    <Form.Item {...formItemProps}>
+    <Form.Item help={'required'} {...formItemProps} validateStatus={'error'} required>
       <Row align="middle" type="flex">
         <Col span={10}>
           <Field
@@ -141,4 +142,11 @@ FormRangePicker.propTypes = {
   }),
 };
 
-export default FormRangePicker;
+export default connect(
+  (state, ownProps) => ({
+    /* For additional redux-form selectors, such as "pristine" or "form errors",
+     * check http://redux-form.com/6.8.0/docs/api/Selectors.md/
+     */
+    syncErrors: getFormSyncErrors(ownProps.formId)(state),
+  }),
+)(FormRangePicker);

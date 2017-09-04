@@ -124,6 +124,8 @@ class General extends Component {
 
         <Row>
           <FormRangePicker
+            formId="adGroupForm"
+
             formItemProps={{
               label: formatMessage(messages.contentSection1Row4Label),
               labelCol: { span: 3 },

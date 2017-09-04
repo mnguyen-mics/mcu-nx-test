@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
 import { FormSection } from '../../../../../../components/Form';
@@ -33,7 +34,7 @@ const mockDataSource = [
   },
 ];
 
-function Audience() {
+function Audience({ openWindow }) {
 
   return (
     <div id="audience">
@@ -47,7 +48,7 @@ function Audience() {
           {
             id: messages.dropdownAddExisting.id,
             message: messages.dropdownAddExisting,
-            onClick: () => {},
+            onClick: openWindow,
           },
         ]}
         subtitle={messages.sectionSubtitle2}
@@ -60,5 +61,9 @@ function Audience() {
     </div>
   );
 }
+
+Audience.propTypes = {
+  openWindow: PropTypes.func.isRequired,
+};
 
 export default Audience;
