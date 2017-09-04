@@ -205,7 +205,7 @@ class SegmentSelector extends Component {
             />
           </Actionbar>
           <Layout>
-            <Content className="mcs-content-container">
+            <Content className="mcs-table-edit-container">
               {noSegment
                 ? <EmptyTableView iconType="file" />
                 : <TableViewFilters

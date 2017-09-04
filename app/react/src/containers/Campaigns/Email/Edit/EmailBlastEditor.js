@@ -416,6 +416,7 @@ EmailBlastEditor.defaultProps = {
   isCreationMode: true,
   blastName: '',
   segments: [],
+  breadcrumbPaths: [],
 };
 
 EmailBlastEditor.propTypes = {
@@ -427,7 +428,7 @@ EmailBlastEditor.propTypes = {
   breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string,
-  })).isRequired,
+  })),
   segments: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     audience_segment_id: PropTypes.string.isRequired,
