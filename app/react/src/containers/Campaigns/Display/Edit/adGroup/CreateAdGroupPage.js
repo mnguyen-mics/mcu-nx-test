@@ -53,6 +53,7 @@ class CreateAdGroupPage extends Component {
 
     const initialValues = {
       adGroupBudgetSplitPeriod: 'Per Day',
+      blast: {},
     };
 
 

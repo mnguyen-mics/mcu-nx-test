@@ -178,7 +178,7 @@ const getConversionPerformanceReport = (organisationId, startDate, endDate, dime
 
 const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/audience_segment_report';
-  const DEFAULT_METRICS = ['user_points', 'user_accounts', 'emails,desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'];
+  const DEFAULT_METRICS = ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'];
 
   const params = {
     organisation_id: organisationId,
