@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Button, Dropdown, Menu } from 'antd';
 
-import { McsIcons } from './McsIcons';
+import McsIcons from './McsIcons';
 
 class DropdownButton extends Component {
 

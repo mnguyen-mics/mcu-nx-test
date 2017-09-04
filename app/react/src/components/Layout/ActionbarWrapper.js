@@ -5,7 +5,7 @@ import { isInvalid, submit } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'antd';
 
-import { McsIcons } from '../McsIcons';
+import McsIcons from '../McsIcons';
 import { Actionbar } from '../../containers/Actionbar';
 
 /* Redux-form allows us to use submit buttons removed from their normal form components.
