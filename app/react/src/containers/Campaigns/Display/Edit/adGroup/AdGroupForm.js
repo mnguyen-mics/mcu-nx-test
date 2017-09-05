@@ -23,7 +23,7 @@ import SegmentSelector from '../../../Email/Edit/SegmentSelector';
 import withDrawer from '../../../../../components/Drawer';
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
-
+// import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 
 // import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 // import { withMcsRouter } from '../../../../Helpers';
@@ -39,7 +39,10 @@ const { Content } = Layout;
 
 class AdGroupForm extends Component {
 
-  state = { segments: this.props.segments };
+  state = {
+    segmentRequired: false,
+    segments: this.props.segments,
+  };
 
   onSubmit = (finalValues) => {
     console.log('finalValues = ', finalValues);
@@ -67,7 +70,7 @@ class AdGroupForm extends Component {
     const segmentSelectorProps = {
       save: this.updateSegments,
       close: closeNextDrawer,
-      selectedSegmentIds: segments.map(s => s.audience_segment_id),
+      selectedSegmentIds: segments.map(segment => segment.audience_segment_id),
     };
 
     const options = {
@@ -78,15 +81,29 @@ class AdGroupForm extends Component {
   }
 
   updateSegments = (selectedAudienceSegments) => {
-    const { closeNextDrawer } = this.props;
-
+    const {
+      closeNextDrawer,
+      // match: {
+      //   params: {
+      //     campaignId,
+      //     adGroupId,
+      //   },
+      // },
+    } = this.props;
+    // console.log('this.props.match = ', this.props);
     const buildSegmentSelection = segment => ({
       audience_segment_id: segment.id,
+      desktop_cookie_ids: segment.desktop_cookie_ids,
       name: segment.name,
+      user_points: segment.user_points,
     });
 
+    const segments = selectedAudienceSegments.map(buildSegmentSelection);
+    // const segmentsWithMetadata = DisplayCampaignService.getSegment(campaignId, adGroupId);
+    // console.log('YOOO segmentsWithMetadata = ', segmentsWithMetadata);
+
     this.setState(prevState => ({
-      segments: selectedAudienceSegments.map(buildSegmentSelection),
+      segments,
       segmentRequired: !prevState.segmentRequired,
     }));
     closeNextDrawer();
@@ -115,7 +132,10 @@ class AdGroupForm extends Component {
             displaySegmentSelector &&
             <div>
               <hr />
-              <Audience openWindow={this.openWindow('segments')} />
+              <Audience
+                openWindow={this.openWindow('segments')}
+                segments={this.state.segments}
+              />
             </div>
           }
           <hr />
@@ -147,6 +167,12 @@ AdGroupForm.propTypes = {
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+
+  match: PropTypes.shape({
+    campaignId: PropTypes.string,
+    adGroupId: PropTypes.string,
+  }).isRequired,
+
   openNextDrawer: PropTypes.func.isRequired,
   segments: PropTypes.arrayOf(PropTypes.shape()),
   hasDatamarts: PropTypes.func.isRequired,

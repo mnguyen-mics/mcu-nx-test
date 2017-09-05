@@ -6,35 +6,17 @@ import { FormSection } from '../../../../../../components/Form';
 import AdGroupTable from '../AdGroupTable';
 import messages from '../../messages';
 
-// TODO: Remove mock data
-const mockDataSource = [
-  {
-    type: {
-      image: 'users',
-      text: 'Sunday Visitors',
-    },
-    data: ['850k User Points', '850k Desktop', '850k Mobile'],
-    switchButton: true,
-  },
-  {
-    type: {
-      image: 'users',
-      text: 'Frequent Visitor',
-    },
-    data: ['850k User Points', '850k Desktop', '850k Mobile'],
-    switchButton: true,
-  },
-  {
-    type: {
-      image: 'users',
-      text: 'Frequent Buyer',
-    },
-    data: ['850k User Points', '850k Desktop', '850k Mobile'],
-    switchButton: false,
-  },
-];
+const formatSegments = (segments) => {
+  return segments.map(segment => ({
+    type: { image: 'users', text: segment.name },
+    data: [`${segment.user_points} User Points`, `${segment.desktop_cookie_ids} Desktop`],
+    switchButton: true, // TODO: set switchButton
+  }));
+};
 
-function Audience({ openWindow }) {
+function Audience({ openWindow, segments }) {
+
+  const dataSource = formatSegments(segments);
 
   return (
     <div id="audience">
@@ -56,14 +38,24 @@ function Audience({ openWindow }) {
       />
 
       <Row>
-        <AdGroupTable dataSource={mockDataSource} />
+        <AdGroupTable dataSource={dataSource} />
       </Row>
     </div>
   );
 }
 
+Audience.defaultProps = {
+  segments: [],
+};
+
 Audience.propTypes = {
   openWindow: PropTypes.func.isRequired,
+  segments: PropTypes.arrayOf(PropTypes.shape({
+    audience_segment_id: PropTypes.string.isRequired,
+    desktop_cookie_ids: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    user_points: PropTypes.number.isRequired,
+  }.isRequired))
 };
 
 export default Audience;

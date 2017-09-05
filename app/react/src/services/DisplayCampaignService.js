@@ -15,6 +15,13 @@ const getAds = (campaignId, adGroupId) => {
   return ApiService.getRequest(endpoint);
 };
 
+// ---------
+const getSegment = (campaignId, adGroupId) => {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
+  return ApiService.getRequest(endpoint);
+};
+// ---------
+
 const updateCampaign = (campaignId, body) => {
   const endpoint = `display_campaigns/${campaignId}`;
   return ApiService.putRequest(endpoint, body);
@@ -34,6 +41,7 @@ export default {
   getCampaignDisplay,
   getAdGroup,
   getAds,
+  getSegment,
   updateCampaign,
   updateAdGroup,
   updateAd,

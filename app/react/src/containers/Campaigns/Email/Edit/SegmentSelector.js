@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Layout, Button, Checkbox } from 'antd';
+import moment from 'moment';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
@@ -12,9 +13,11 @@ import {
   TableViewFilters,
 } from '../../../../components/TableView';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import ReportService from '../../../../services/ReportService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
 
 const { Content } = Layout;
 
@@ -74,35 +77,58 @@ class SegmentSelector extends Component {
     const datamartId = defaultDatamart(organisationId).id;
 
     return AudienceSegmentService.getSegments(organisationId, datamartId, options).then(response => {
-      const allAudienceSegmentIds = response.data.map(segment => segment.id);
-      const audienceSegmentById = normalizeArrayOfObject(response.data, 'id');
 
-      this.setState(prevState => {
+      return ReportService.getAudienceSegmentReport(
+        organisationId,
+        moment().subtract(1, 'days'),
+        moment(),
+        'audience_segment_id',
+      ).then(results => {
+        const segments = response.data;
+        const metadata = normalizeArrayOfObject(
+          normalizeReportView(results.data.report_view),
+          'audience_segment_id',
+        );
 
-        const selectedSegmentById = {
-          ...prevState.selectedSegmentById,
-          ...selectedSegmentIds.reduce((acc, segmentId) => {
-            if (!prevState.selectedSegmentById[segmentId]) {
-              return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
-            }
-            return acc;
-          }, {}),
-        };
+        const segmentsWithAdditionalMetadata = segments.map(segment => {
+          const { user_points, desktop_cookie_ids } = metadata[segment.id];
 
-        return {
-          allAudienceSegmentIds,
-          audienceSegmentById,
-          selectedSegmentById,
-          isLoading: false,
-          total: response.total,
-        };
+          return { ...segment, user_points, desktop_cookie_ids };
+        });
+
+        const allAudienceSegmentIds = segmentsWithAdditionalMetadata.map(segment => segment.id);
+        const audienceSegmentById = normalizeArrayOfObject(segmentsWithAdditionalMetadata, 'id');
+
+        this.setState(prevState => {
+          const selectedSegmentById = {
+            ...prevState.selectedSegmentById,
+            ...selectedSegmentIds.reduce((acc, segmentId) => {
+              if (!prevState.selectedSegmentById[segmentId]) {
+                return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
+              }
+              return acc;
+            }, {}),
+          };
+
+          return {
+            allAudienceSegmentIds,
+            audienceSegmentById,
+            selectedSegmentById,
+            isLoading: false,
+            total: response.total,
+          };
+        });
+
+
+        return response;
       });
-      return response;
+
     });
   }
 
   getColumnsDefinitions = () => {
     const { selectedSegmentById } = this.state;
+
     return {
       dataColumnsDefinition: [
         {
@@ -118,6 +144,18 @@ class SegmentSelector extends Component {
         {
           translationKey: 'NAME',
           key: 'name',
+          isHideable: false,
+          render: text => <span>{text}</span>,
+        },
+        {
+          translationKey: 'User Points',
+          key: 'user_points',
+          isHideable: false,
+          render: text => <span>{text}</span>,
+        },
+        {
+          translationKey: 'DESKTOP COOKIE IDS',
+          key: 'desktop_cookie_ids',
           isHideable: false,
           render: text => <span>{text}</span>,
         },

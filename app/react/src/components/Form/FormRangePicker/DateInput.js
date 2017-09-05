@@ -3,19 +3,16 @@ import PropTypes from 'prop-types';
 import { DatePicker } from 'antd';
 
 function DateInput({ input, ...otherProps }) {
-
   const { value, ...rest } = input;
   const correctedInput = (value === '' ? rest : { ...rest, value });
 
   return (
-    <div>
-      <DatePicker
-        {...correctedInput}
-        {...otherProps}
-        allowClear={false}
-        id={input.name}
-      />
-    </div>
+    <DatePicker
+      {...correctedInput}
+      {...otherProps}
+      allowClear={false}
+      id={input.name}
+    />
   );
 }
 

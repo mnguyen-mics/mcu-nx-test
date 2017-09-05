@@ -229,6 +229,7 @@ General.propTypes = {
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,
   }).isRequired,
+
   intl: intlShape.isRequired,
 
   values: PropTypes.shape(),

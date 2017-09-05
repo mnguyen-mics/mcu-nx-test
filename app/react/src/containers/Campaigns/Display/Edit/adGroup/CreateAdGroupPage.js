@@ -16,7 +16,6 @@ class CreateAdGroupPage extends Component {
   render() {
     const {
       match: { url },
-      // organisationId,
       intl: { formatMessage },
     } = this.props;
 
