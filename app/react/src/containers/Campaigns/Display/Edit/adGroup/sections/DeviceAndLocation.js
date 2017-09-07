@@ -12,6 +12,7 @@ function DeviceAndLocation() {
         subtitle={messages.sectionSubtitle3}
         title={messages.sectionTitle3}
       />
+
       <Row />
     </div>
   );

@@ -255,19 +255,6 @@ export default defineMessages({
 
   /* ------------------------------- SECTION 2 ------------------------------ */
 
-  contentSection2Audience1: {
-    id: 'adGroupEditor.section2.audience1',
-    defaultMessage: 'Sunday Visitors',
-  },
-  contentSection2Audience2: {
-    id: 'adGroupEditor.section2.audience2',
-    defaultMessage: 'Frequent Visitor',
-  },
-  contentSection2Audience3: {
-    id: 'adGroupEditor.section2.audience3',
-    defaultMessage: 'Frequent Buyer',
-  },
-
   contentSection2Medium1: {
     id: 'adGroupEditor.section2.medium1',
     defaultMessage: 'User Points',
@@ -276,9 +263,10 @@ export default defineMessages({
     id: 'adGroupEditor.section2.medium2',
     defaultMessage: 'Desktop',
   },
-  contentSection2Medium3: {
-    id: 'adGroupEditor.section2.medium3',
-    defaultMessage: 'Mobile',
+
+  contentSection2EmptyTitle: {
+    id: 'adGroupEditor.section2.emptyTitle',
+    defaultMessage: 'Click on the pen to add an audience to your ad group',
   },
 
   /* ------------------------------- SECTION 3 ------------------------------ */
@@ -358,11 +346,30 @@ export default defineMessages({
     defaultMessage: 'Lorem ipsum',
   },
 
+  contentSection4EmptyTitle: {
+    id: 'adGroupEditor.section4.emptyTitle',
+    defaultMessage: 'Click on the pen to add a network to your ad group',
+  },
+
   /* ------------------------------- SECTION 5 ------------------------------ */
 
-  contentSection5Message: {
-    id: 'adGroupEditor.section5.message',
+  contentSection5EmptyTitle: {
+    id: 'adGroupEditor.section5.emptyTitle',
     defaultMessage: 'Click on the pen to add a placement to your ad group',
+  },
+
+  /* ------------------------------- SECTION 6 ------------------------------ */
+
+  contentSection6EmptyTitle: {
+    id: 'adGroupEditor.section6.emptyTitle',
+    defaultMessage: 'Click on the pen to add an optimization to your ad group',
+  },
+
+  /* ------------------------------- SECTION 7 ------------------------------ */
+
+  contentSection7EmptyTitle: {
+    id: 'adGroupEditor.section7.emptyTitle',
+    defaultMessage: 'Click on the pen to add an ad to your ad group',
   },
 
   /* ------------------------------- SECTION 8 ------------------------------ */

@@ -6,6 +6,7 @@ import generateGuid from '../../utils/generateGuid';
 
 const viewportDrawerRatio = 0.75;
 
+// TODO : remove generateGuid!!!!!
 class DrawerManager extends Component {
 
   constructor(props) {

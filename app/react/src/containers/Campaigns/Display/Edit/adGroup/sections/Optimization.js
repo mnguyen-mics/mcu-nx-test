@@ -1,9 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form';
+import { EmptyRecords, Form } from '../../../../../../components';
 import AdGroupTable from '../AdGroupTable';
 import messages from '../../messages';
+
+const { FormSection } = Form;
 
 // TODO: Remove mock data
 const mockDataSource = [
@@ -16,7 +19,7 @@ const mockDataSource = [
   },
 ];
 
-function Optimization() {
+function Optimization({ formatMessage }) {
 
   return (
     <div id="optimization">
@@ -33,10 +36,20 @@ function Optimization() {
       />
 
       <Row>
-        <AdGroupTable dataSource={mockDataSource} />
+        {/* mockDataSource.length
+          ? <AdGroupTable dataSource={mockDataSource} tableName="optimizationTable" />
+          : */<EmptyRecords
+            iconType="plus"
+            message={formatMessage(messages.contentSection6EmptyTitle)}
+          />
+        }
       </Row>
     </div>
   );
 }
+
+Optimization.propTypes = {
+  formatMessage: PropTypes.func.isRequired,
+};
 
 export default Optimization;

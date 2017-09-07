@@ -4,6 +4,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Layout, Button, Checkbox } from 'antd';
 import moment from 'moment';
+import { injectIntl, intlShape } from 'react-intl';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
@@ -18,6 +19,7 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
+import messages from './messages';
 
 const { Content } = Layout;
 
@@ -128,6 +130,7 @@ class SegmentSelector extends Component {
 
   getColumnsDefinitions = () => {
     const { selectedSegmentById } = this.state;
+    const { intl: { formatMessage } } = this.props;
 
     return {
       dataColumnsDefinition: [
@@ -142,19 +145,20 @@ class SegmentSelector extends Component {
           ),
         },
         {
-          translationKey: 'NAME',
+          intlMessage: formatMessage(messages.segmentTitleColumn1),
           key: 'name',
           isHideable: false,
           render: text => <span>{text}</span>,
         },
         {
-          translationKey: 'User Points',
+          intlMessage: formatMessage(messages.segmentTitleColumn2),
           key: 'user_points',
           isHideable: false,
           render: text => <span>{text}</span>,
         },
         {
-          translationKey: 'DESKTOP COOKIE IDS',
+          intlMessage: formatMessage(messages.segmentTitleColumn3),
+
           key: 'desktop_cookie_ids',
           isHideable: false,
           render: text => <span>{text}</span>,
@@ -266,15 +270,17 @@ SegmentSelector.defaultProps = {
 };
 
 SegmentSelector.propTypes = {
+  close: PropTypes.func.isRequired,
+  defaultDatamart: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
   organisationId: PropTypes.string.isRequired,
   selectedSegmentIds: PropTypes.arrayOf(PropTypes.string),
-  defaultDatamart: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
+  injectIntl,
   connect(
     state => ({
       defaultDatamart: getDefaultDatamart(state),

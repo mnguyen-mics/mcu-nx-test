@@ -1,10 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form';
+import { EmptyRecords, Form } from '../../../../../../components';
 import messages from '../../messages';
 
-function Ads() {
+const { FormSection } = Form;
+
+function Ads({ formatMessage }) {
 
   return (
     <div id="ads">
@@ -24,9 +27,19 @@ function Ads() {
         subtitle={messages.sectionSubtitle7}
         title={messages.sectionTitle7}
       />
-      <Row />
+
+      <Row>
+        <EmptyRecords
+          iconType="plus"
+          message={formatMessage(messages.contentSection7EmptyTitle)}
+        />
+      </Row>
     </div>
   );
 }
+
+Ads.propTypes = {
+  formatMessage: PropTypes.func.isRequired,
+};
 
 export default Ads;

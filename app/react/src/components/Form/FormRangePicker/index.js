@@ -42,7 +42,6 @@ function FormRangePicker({
     fields
     && fields[date]
     && fields[date].touched
-    // && fields[date].visited
   );
 
   const error = (
@@ -51,12 +50,6 @@ function FormRangePicker({
     || ''
   );
 
-  /*
-   * AntDesign's DatePicker doesn't currently permits onBlur events.
-   * Also it isn't compatible with redux-form.
-   * Therefore we can't display date picker errors right now.
-   * See at https://github.com/ant-design/ant-design/issues/7263
-  */
   return (
     <Form.Item
       {...formItemProps}

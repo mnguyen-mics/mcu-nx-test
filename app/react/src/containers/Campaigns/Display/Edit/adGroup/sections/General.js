@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import { injectIntl, intlShape } from 'react-intl';
 import { Row } from 'antd';
 import { Field, getFormValues } from 'redux-form';
 
@@ -27,7 +25,7 @@ class General extends Component {
   render() {
     const {
       fieldValidators: { isRequired },
-      intl: { formatMessage },
+      formatMessage,
       values,
     } = this.props;
 
@@ -230,8 +228,7 @@ General.propTypes = {
     isRequired: PropTypes.func.isRequired,
   }).isRequired,
 
-  intl: intlShape.isRequired,
-
+  formatMessage: PropTypes.func.isRequired,
   values: PropTypes.shape(),
 };
 
@@ -241,6 +238,4 @@ const ConnectedGeneral = connect(
   }),
 )(General);
 
-export default compose(
-  injectIntl,
-)(ConnectedGeneral);
+export default ConnectedGeneral;

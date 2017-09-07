@@ -12,6 +12,17 @@ function DateInput({ input, ...otherProps }) {
       {...otherProps}
       allowClear={false}
       id={input.name}
+      onOpenChange={windowIsOpen => {
+        /*
+         * Because antd DatePicker doesn't support onBlur,
+         * and because redux-form needs onBlur to handle errors,
+         * we need to bind redux-form's onBlur method to antd's onOpenChange artificially.
+         */
+        return (windowIsOpen
+          ? input.onFocus()
+          : input.onBlur()
+        );
+      }}
     />
   );
 }

@@ -270,5 +270,17 @@ export default defineMessages({
   blastSegmentSelectionRequired: {
     id: 'blastSegmentSelection.required',
     defaultMessage: 'At least one segment is required',
-  }
+  },
+  segmentTitleColumn1: {
+    id: 'segment.title.column1',
+    defaultMessage: 'Name',
+  },
+  segmentTitleColumn2: {
+    id: 'segment.title.column2',
+    defaultMessage: 'User Points',
+  },
+  segmentTitleColumn3: {
+    id: 'segment.title.column3',
+    defaultMessage: 'Desktop Cookie Ids',
+  },
 });

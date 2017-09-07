@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
 
@@ -52,6 +51,7 @@ class CreateAdGroupPage extends Component {
 
     const initialValues = {
       adGroupBudgetSplitPeriod: 'Per Day',
+      // audienceTable
     };
 
 

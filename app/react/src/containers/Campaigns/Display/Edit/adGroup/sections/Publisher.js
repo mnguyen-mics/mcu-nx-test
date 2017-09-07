@@ -1,9 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form';
+import { EmptyRecords, Form } from '../../../../../../components';
 import AdGroupTable from '../AdGroupTable';
 import messages from '../../messages';
+
+const { FormSection } = Form;
 
 // TODO: Remove mock data
 const mockDataSource = [
@@ -33,7 +36,7 @@ const mockDataSource = [
   },
 ];
 
-function Publisher() {
+function Publisher({ formatMessage }) {
 
   return (
     <div id="publisher">
@@ -50,10 +53,20 @@ function Publisher() {
       />
 
       <Row>
-        <AdGroupTable dataSource={mockDataSource} />
+        {/* mockDataSource.length
+          ? <AdGroupTable dataSource={mockDataSource} tableName="publisherTable" />
+          : */<EmptyRecords
+            iconType="plus"
+            message={formatMessage(messages.contentSection4EmptyTitle)}
+          />
+        }
       </Row>
     </div>
   );
 }
+
+Publisher.propTypes = {
+  formatMessage: PropTypes.func.isRequired,
+};
 
 export default Publisher;

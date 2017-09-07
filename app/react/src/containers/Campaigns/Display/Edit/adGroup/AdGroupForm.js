@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import { Link } from 'react-router-dom';
-// import Scrollspy from 'react-scrollspy';
-import { Form, reduxForm } from 'redux-form';
+import { arrayPush, Form, formValueSelector, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-// import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
+import { injectIntl, intlShape } from 'react-intl';
+import moment from 'moment';
 
 import {
   Ads,
@@ -23,66 +22,45 @@ import SegmentSelector from '../../../Email/Edit/SegmentSelector';
 import withDrawer from '../../../../../components/Drawer';
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
-// import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-
-// import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-// import { withMcsRouter } from '../../../../Helpers';
-// import { Actionbar } from '../../../../Actionbar';
-// import McsIcons from '../../../../../components/McsIcons';
-// import { RecordElement, RelatedRecords } from '../../../../../components/RelatedRecord';
-// import { generateFakeId, isFakeId } from '../../../../../utils/FakeIdHelper';
-// import messages from '../messages';
-// // import EmailBlastForm from './EmailBlastForm';
-// import EmailRouterService from '../../../../../services/EmailRouterService';
+import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
+import ReportService from '../../../../../services/ReportService';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
 
 const { Content } = Layout;
 
+// const segmentsWithMetadata = DisplayCampaignService.getSegment(campaignId, adGroupId);
+// console.log('YOOO segmentsWithMetadata = ', segmentsWithMetadata);
 class AdGroupForm extends Component {
-
-  state = {
-    segmentRequired: false,
-    segments: this.props.segments,
-  };
 
   onSubmit = (finalValues) => {
     console.log('finalValues = ', finalValues);
-
-    // const { save } = this.props;
-    // const { segments } = this.state;
-    // if (segments.length === 0) {
-    //   this.setState({ segmentRequired: true });
-    // } else {
-    //   save({
-    //     ...formValues.blast,
-    //     segments,
-    //   });
-    // }
   }
 
   openWindow = (/* type */) => () => {
     const {
       openNextDrawer,
       closeNextDrawer,
+      formValues,
     } = this.props;
 
-    const { segments } = this.state;
-
-    const segmentSelectorProps = {
-      save: this.updateSegments,
+    const selectedSegmentIds = (formValues.audienceTable
+      ? formValues.audienceTable.map(segment => segment.audience_segment_id)
+      : []
+    );
+    const additionalProps = {
       close: closeNextDrawer,
-      selectedSegmentIds: segments.map(segment => segment.audience_segment_id),
+      selectedSegmentIds,
+      save: this.updateSegments,
     };
 
-    const options = {
-      additionalProps: segmentSelectorProps,
-    };
-
-    openNextDrawer(SegmentSelector, options);
+    openNextDrawer(SegmentSelector, { additionalProps });
   }
 
-  updateSegments = (selectedAudienceSegments) => {
+  updateSegments = (selectedSegmentsIds) => {
     const {
       closeNextDrawer,
+      organisationId,
       // match: {
       //   params: {
       //     campaignId,
@@ -90,36 +68,80 @@ class AdGroupForm extends Component {
       //   },
       // },
     } = this.props;
-    // console.log('this.props.match = ', this.props);
+
     const buildSegmentSelection = segment => ({
       audience_segment_id: segment.id,
       desktop_cookie_ids: segment.desktop_cookie_ids,
       name: segment.name,
       user_points: segment.user_points,
+      target: true,
+      isDeleted: false,
     });
 
-    const segments = selectedAudienceSegments.map(buildSegmentSelection);
-    // const segmentsWithMetadata = DisplayCampaignService.getSegment(campaignId, adGroupId);
-    // console.log('YOOO segmentsWithMetadata = ', segmentsWithMetadata);
+    Promise.all(selectedSegmentsIds.map(segmentId => {
+      return AudienceSegmentService.getSegment(segmentId).then(segment => {
+        return buildSegmentSelection(segment);
+      });
+    })).then(selectedSegments => {
+      return {
+        metadata: ReportService.getAudienceSegmentReport(
+          organisationId,
+          moment().subtract(1, 'days'),
+          moment(),
+          'audience_segment_id',
+        ),
+        selectedSegments,
+      };
+    }).then(results => {
+      const metadata = normalizeArrayOfObject(
+          normalizeReportView(results.metadata.data.report_view),
+          'audience_segment_id',
+        );
 
-    this.setState(prevState => ({
-      segments,
-      segmentRequired: !prevState.segmentRequired,
-    }));
+      return results.selectedSegments.map(segment => {
+        const { user_points, desktop_cookie_ids } = metadata[segment.id];
+
+        return { ...segment, user_points, desktop_cookie_ids };
+      });
+    }).then(selectedSegments => {
+      selectedSegments.forEach(segment => {
+        this.props.arrayPush('adGroupForm', 'audienceTable', segment);
+      });
+    });
+
+    // selectedSegments.forEach(segment => {
+    //   const params = {
+    //     audience_segment_id: segment.id,
+    //     desktop_cookie_ids: segment.desktop_cookie_ids,
+    //     name: segment.name,
+    //     user_points: segment.user_points,
+    //   };
+    //
+    //   this.props.arrayPush('adGroupForm', `audienceTable.#${segment.id}`, params);
+    // });
+
     closeNextDrawer();
   }
 
   render() {
     const {
+      formValues,
       fieldValidators,
       formId,
       handleSubmit,
       hasDatamarts,
+      intl: { formatMessage },
       organisationId,
     } = this.props;
 
     const displaySegmentSelector = hasDatamarts(organisationId);
+    const commonProps = {
+      formatMessage
+    };
 
+    console.log('formValues.audienceTable = ', formValues.audienceTable);
+
+    /* TODO: remove empty array line 151 */
     return (
       <Form
         className="edit-layout ant-layout"
@@ -127,29 +149,30 @@ class AdGroupForm extends Component {
         onSubmit={handleSubmit(this.onSubmit)}
       >
         <Content className="mcs-content-container mcs-form-container">
-          <General fieldValidators={fieldValidators} />
+          <General {...commonProps} fieldValidators={fieldValidators} />
           {
             displaySegmentSelector &&
             <div>
               <hr />
               <Audience
+                {...commonProps}
                 openWindow={this.openWindow('segments')}
-                segments={this.state.segments}
+                segments={formValues.audienceTable}
               />
             </div>
           }
           <hr />
-          <DeviceAndLocation />
+          <DeviceAndLocation {...commonProps} />
           <hr />
-          <Publisher />
+          <Publisher {...commonProps} />
           <hr />
-          <Media />
+          <Media {...commonProps} />
           <hr />
-          <Optimization />
+          <Optimization {...commonProps} />
           <hr />
-          <Ads />
+          <Ads {...commonProps} />
           <hr />
-          <Summary />
+          <Summary {...commonProps} />
         </Content>
       </Form>
     );
@@ -158,25 +181,38 @@ class AdGroupForm extends Component {
 
 AdGroupForm.defaultProps = {
   fieldValidators: {},
-  segments: [],
 };
 
 AdGroupForm.propTypes = {
-  organisationId: PropTypes.string.isRequired,
+  arrayPush: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
 
-  match: PropTypes.shape({
-    campaignId: PropTypes.string,
-    adGroupId: PropTypes.string,
+  formValues: PropTypes.shape({
+    audienceTable: PropTypes.arrayOf(PropTypes.shape()),
   }).isRequired,
 
-  openNextDrawer: PropTypes.func.isRequired,
-  segments: PropTypes.arrayOf(PropTypes.shape()),
+  handleSubmit: PropTypes.func.isRequired,
   hasDatamarts: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
+  organisationId: PropTypes.string.isRequired,
 };
+
+
+function mapStateToProps(state) {
+  const formSelector = formValueSelector('adGroupForm');
+
+  return {
+    formValues: {
+      audienceTable: formSelector(state, 'audienceTable'),
+    },
+    hasDatamarts: SessionHelper.hasDatamarts(state),
+  };
+}
+
+const mapDispatchToProps = { arrayPush };
 
 const ConnectedAdGroupForm = compose(
   withMcsRouter,
@@ -186,11 +222,9 @@ const ConnectedAdGroupForm = compose(
   }),
   withDrawer,
   withValidators,
-  connect(
-    state => ({
-      hasDatamarts: SessionHelper.hasDatamarts(state),
-    }),
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
 )(AdGroupForm);
 
-export default ConnectedAdGroupForm;
+export default compose(
+  injectIntl,
+)(ConnectedAdGroupForm);

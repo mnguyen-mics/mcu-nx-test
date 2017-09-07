@@ -5,6 +5,7 @@ import FormSection from './FormSection';
 import FormSelect from './FormSelect';
 import FormSelectAddon from './FormSelectAddon';
 import FormTitle from './FormTitle';
+import SwitchInput from './SwitchInput';
 import withValidators from './withValidators';
 
 export default {
@@ -15,6 +16,7 @@ export default {
   FormSelect,
   FormSelectAddon,
   FormTitle,
+  SwitchInput,
   withValidators,
 };
 
@@ -26,5 +28,6 @@ export {
   FormSelect,
   FormSelectAddon,
   FormTitle,
+  SwitchInput,
   withValidators,
 };

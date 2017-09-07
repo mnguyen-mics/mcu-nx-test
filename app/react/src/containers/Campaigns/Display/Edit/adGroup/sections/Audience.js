@@ -2,21 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form';
+import { EmptyRecords, Form } from '../../../../../../components';
 import AdGroupTable from '../AdGroupTable';
 import messages from '../../messages';
 
-const formatSegments = (segments) => {
-  return segments.map(segment => ({
-    type: { image: 'users', text: segment.name },
-    data: [`${segment.user_points} User Points`, `${segment.desktop_cookie_ids} Desktop`],
-    switchButton: true, // TODO: set switchButton
-  }));
-};
+const { FormSection } = Form;
 
-function Audience({ openWindow, segments }) {
+function Audience({
+  formatMessage,
+  openWindow,
+  segments
+}) {
 
-  const dataSource = formatSegments(segments);
+  // const dataSource = segments.map(segment => {
+  //   console.log('>>>> segment = ', segment);
+  //
+  //   return ({
+  //     type: { image: 'users', text: segment.name },
+  //     data: [
+  //       `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
+  //       `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
+  //     ],
+  //     switchButton: { id: segment.audience_segment_id },
+  //     deleteButton: { id: segment.audience_segment_id },
+  //   });
+  // });
 
   return (
     <div id="audience">
@@ -38,7 +48,20 @@ function Audience({ openWindow, segments }) {
       />
 
       <Row>
-        <AdGroupTable dataSource={dataSource} />
+        {segments.length
+          ? (
+            <AdGroupTable
+              segments={segments}
+              tableName="audienceTable"
+            />
+          )
+          : (
+            <EmptyRecords
+              iconType="plus"
+              message={formatMessage(messages.contentSection2EmptyTitle)}
+            />
+          )
+        }
       </Row>
     </div>
   );
@@ -49,7 +72,9 @@ Audience.defaultProps = {
 };
 
 Audience.propTypes = {
+  formatMessage: PropTypes.func.isRequired,
   openWindow: PropTypes.func.isRequired,
+
   segments: PropTypes.arrayOf(PropTypes.shape({
     audience_segment_id: PropTypes.string.isRequired,
     desktop_cookie_ids: PropTypes.number.isRequired,
