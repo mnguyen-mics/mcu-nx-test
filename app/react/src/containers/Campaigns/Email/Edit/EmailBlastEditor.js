@@ -16,7 +16,7 @@ import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
-// import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 
 const { Content, Sider } = Layout;
 
@@ -113,7 +113,7 @@ class EmailBlastEditor extends Component {
     return segmentRecords;
   }
 
-  updateSegments = (selectedAudienceSegments) => {
+  updateSegments = (selectedAudienceSegmentIds) => {
     const { closeNextDrawer } = this.props;
 
     const buildSegmentSelection = segment => ({
@@ -121,9 +121,16 @@ class EmailBlastEditor extends Component {
       name: segment.name,
     });
 
-    this.setState({
-      segments: selectedAudienceSegments.map(buildSegmentSelection)
+    Promise.all(selectedAudienceSegmentIds.map(segmentId => {
+      return AudienceSegmentService.getSegment(segmentId).then(segment => {
+        return buildSegmentSelection(segment);
+      });
+    })).then(segmentSelections => {
+      this.setState({
+        segments: segmentSelections
+      });
     });
+
     closeNextDrawer();
   }
 

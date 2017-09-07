@@ -142,7 +142,7 @@ class SegmentSelector extends Component {
   handleAdd = () => {
     const { save } = this.props;
     const { selectedSegmentById } = this.state;
-    const selectedSegments = Object.keys(selectedSegmentById).map(id => selectedSegmentById[id]);
+    const selectedSegments = Object.keys(selectedSegmentById);
     save(selectedSegments);
   }
 
