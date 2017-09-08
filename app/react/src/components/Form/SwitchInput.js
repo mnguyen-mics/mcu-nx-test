@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { Switch } from 'antd';
 
 function SwitchInput({ className, input }) {
+  console.log('input = ', input);
   return (
     <Switch
       className={className}
       checked={input.value}
+      type="checkbox"
     />
   );
 }

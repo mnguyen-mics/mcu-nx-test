@@ -16,20 +16,6 @@ import { normalizeReportView } from '../../../../../../utils/MetricHelper';
 
 const { FormSection } = Form;
 
-// const dataSource = segments.map(segment => {
-//   console.log('>>>> segment = ', segment);
-//
-//   return ({
-//     type: { image: 'users', text: segment.name },
-//     data: [
-//       `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
-//       `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
-//     ],
-//     switchButton: { id: segment.audience_segment_id },
-//     deleteButton: { id: segment.audience_segment_id },
-//   });
-// });
-
 class Audience extends Component {
 
   openWindow = () => {
@@ -59,6 +45,7 @@ class Audience extends Component {
       const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
         return AudienceSegmentService.getSegment(segmentId).then(segment => ({
           audience_segment_id: segment.id,
+          key: segment.id,
           id: segment.id,
           name: segment.id,
           text: segment.name,
@@ -102,6 +89,22 @@ class Audience extends Component {
   render() {
     const { formatMessage, formValues } = this.props;
 
+    // console.log('formValues = ', formValues);
+
+    const dataSource = formValues.map(segment => {
+      // console.log('>>>> segment = ', segment);
+
+      return ({
+        type: { image: 'users', text: segment.text },
+        data: [
+          `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
+          `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
+        ],
+        switchButton: segment.target,
+        deleteButton: segment.isSelected,
+      });
+    });
+
     return (
       <div id="audience">
         <FormSection
@@ -125,7 +128,7 @@ class Audience extends Component {
           {formValues.length
           ? (
             <AdGroupTable
-              segments={formValues}
+              dataSource={dataSource}
               tableName="audienceTable"
             />
           )
