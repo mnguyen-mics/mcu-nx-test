@@ -11,38 +11,6 @@ const { SwitchInput } = Form;
 function AdGroupTableWrapper({ segments, tableName }) {
 
   class AdGroupTable extends Component {
-    // componentDidMount() {
-    //   this.populateFields();
-    // }
-
-    // populateFields = () => {
-    //   const { fields } = this.props;
-    //   let fieldValues = this.props.fields.getAll();
-    //   const segmentIds = segments.map(segment => segment.audience_segment_id);
-    //
-    //   segments.forEach(elem => {
-    //     if (!fields.length || !fieldValues.find(field => field.id === elem.audience_segment_id)) {
-    //       const { audience_segment_id, name, ...other } = elem;
-    //
-    //       fields.push({
-    //         id: audience_segment_id,
-    //         name: audience_segment_id,
-    //         text: name,
-    //         ...other,
-    //       });
-    //     }
-    //   });
-    //
-    //   fieldValues = this.props.fields.getAll();
-    //
-    //   if (fields.length) {
-    //     fieldValues.forEach((field, index) => {
-    //       if (!segmentIds.includes(field.id)) {
-    //         fields.remove(index);
-    //       }
-    //     });
-    //   }
-    // }
 
     render() {
 
