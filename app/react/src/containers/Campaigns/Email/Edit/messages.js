@@ -240,5 +240,5 @@ export default defineMessages({
   blastSegmentSelectionRequired: {
     id: 'blastSegmentSelection.required',
     defaultMessage: 'At least one segment is required',
-  },
+  }
 });
