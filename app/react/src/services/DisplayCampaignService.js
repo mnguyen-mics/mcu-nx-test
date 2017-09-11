@@ -1,5 +1,10 @@
 import ApiService from './ApiService';
 
+const createAdGroup = (campaignId, body) => {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups`;
+  return ApiService.postRequest(endpoint, body);
+};
+
 const getCampaignDisplay = (campaignId, params = '') => {
   const endpoint = `display_campaigns/${campaignId}`;
   return ApiService.getRequest(endpoint, params);
@@ -38,6 +43,7 @@ const updateAd = (adId, campaignId, adGroupId, body) => {
 };
 
 export default {
+  createAdGroup,
   getCampaignDisplay,
   getAdGroup,
   getAds,

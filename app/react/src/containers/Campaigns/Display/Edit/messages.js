@@ -239,20 +239,6 @@ export default defineMessages({
     defaultMessage: 'Lorem ipsum',
   },
 
-  /* Row 6 */
-  contentSection1Row6Label: {
-    id: 'adGroupEditor.section1.row6.label',
-    defaultMessage: 'KPI',
-  },
-  contentSection1Row6Placeholder: {
-    id: 'adGroupEditor.section1.row6.placeholder',
-    defaultMessage: 'This is an ad group',
-  },
-  contentSection1Row6Tooltip: {
-    id: 'adGroupEditor.section1.row6.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-
   /* ------------------------------- SECTION 2 ------------------------------ */
 
   contentSection2Medium1: {

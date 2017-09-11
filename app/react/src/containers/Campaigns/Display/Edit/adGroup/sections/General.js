@@ -169,7 +169,7 @@ class General extends Component {
             <McsIcons type="chevron" />
           </ButtonStyleless>
 
-          { this.state.advancedSectionDisplayed
+          {this.state.advancedSectionDisplayed
           ? (
             <div>
               <Row>
@@ -186,25 +186,6 @@ class General extends Component {
                     },
                     helpToolTipProps: {
                       title: formatMessage(messages.contentSection1Row5Tooltip),
-                    },
-                  }}
-                />
-              </Row>
-
-              <Row>
-                <Field
-                  name="adGroupKPI"
-                  component={FormInput}
-                  props={{
-                    formItemProps: {
-                      label: formatMessage(messages.contentSection1Row6Label),
-                      ...fieldGridConfig,
-                    },
-                    inputProps: {
-                      placeholder: formatMessage(messages.contentSection1Row6Placeholder),
-                    },
-                    helpToolTipProps: {
-                      title: formatMessage(messages.contentSection1Row6Tooltip),
                     },
                   }}
                 />

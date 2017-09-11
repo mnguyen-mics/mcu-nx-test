@@ -28,6 +28,7 @@ import { withValidators } from '../../../../../components/Form';
 import withDrawer from '../../../../../components/Drawer';
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
@@ -39,7 +40,29 @@ class AdGroupForm extends Component {
   }
 
   onSubmit = (finalValues) => {
+    const maxBudgetPeriod = {
+      'Per day': 'DAY',
+      'Per week': 'WEEK',
+      'Per month': 'MONTH',
+    };
+
+    const body = {
+      end_date: finalValues.adGroupBudgetEndDate.valueOf(),
+      max_budget_per_period: finalValues.adGroupBudgetSplit,
+      max_budget_period: maxBudgetPeriod[finalValues.adGroupBudgetSplitPeriod],
+      name: finalValues.adGroupName,
+      start_date: finalValues.adGroupBudgetStartDate.valueOf(),
+      // time_zone: 'Europe/Paris',
+      total_budget: finalValues.adGroupBudgetTotal,
+    };
+
     console.log('finalValues = ', finalValues);
+    console.log('body = ', body);
+
+    DisplayCampaignService.createAdGroup(
+      this.props.match.params.campaignId,
+      body,
+    );
   }
 
   updateTableFieldStatus = ({ index, isSelected = false, tableName }) => () => {
@@ -146,6 +169,9 @@ AdGroupForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   hasDatamarts: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+
+  match: PropTypes.shape().isRequired,
+
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
 };
@@ -159,6 +185,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = { arrayInsert, arrayPush, arrayRemove };
 
 export default compose(
+  // withRouter,
   withMcsRouter,
   reduxForm({
     form: FORM_NAME,
