@@ -224,18 +224,16 @@ class EmailTemplateSelector extends Component {
             />
           </Actionbar>
           <Layout>
-            <Content className="mcs-content-container">
+            <Content className="mcs-table-edit-container">
               {hasEmailTemplates
-                ? <div className="mcs-table-container">
-                  <TableViewFilters searchOptions={this.getSearchOptions()}>
-                    <TableView
-                      columnsDefinitions={this.getColumnsDefinitions()}
-                      dataSource={emailTemplates}
-                      loading={isLoading}
-                      pagination={pagination}
-                    />
-                  </TableViewFilters>
-                </div>
+                ? <TableViewFilters searchOptions={this.getSearchOptions()}>
+                  <TableView
+                    columnsDefinitions={this.getColumnsDefinitions()}
+                    dataSource={emailTemplates}
+                    loading={isLoading}
+                    pagination={pagination}
+                  />
+                </TableViewFilters>
                 : <EmptyTableView iconType="file" />}
             </Content>
           </Layout>
