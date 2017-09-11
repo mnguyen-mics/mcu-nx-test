@@ -8,7 +8,7 @@ import generateGuid from '../../../../../utils/generateGuid';
 
 const { SwitchInput } = Form;
 
-function AdGroupTableWrapper({ dataSource, tableName }) {
+function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) {
 
   function AdGroupTable() {
 
@@ -31,9 +31,9 @@ function AdGroupTableWrapper({ dataSource, tableName }) {
       },
       {
         colSpan: 6,
-        dataIndex: 'data',
-        key: 'data',
-        render: (data) => {
+        dataIndex: 'info',
+        key: 'info',
+        render: (info) => {
           const elemToDisplay = (elem) => (elem.image
               ? (
                 <div className="display-row" key={generateGuid()}>
@@ -46,46 +46,39 @@ function AdGroupTableWrapper({ dataSource, tableName }) {
 
           return (
             <div className="display-row data-content row-height">
-              {data.map(elem => elemToDisplay(elem))}
+              {info.map(elem => elemToDisplay(elem))}
             </div>
           );
         },
       },
       {
         colSpan: 9,
-        dataIndex: 'switchButton',
-        key: 'switchButton',
-        render: (bool) => {
-          console.log('bool = ', bool);
-
+        dataIndex: 'target',
+        key: 'target',
+        render: (data) => {
           return (
             <div>
-              {bool !== undefined
-                ? (
-                  <div className="display-row align-left">
-                    <Field
-                      component={SwitchInput}
-                      name={`${tableName}.switch`}
-                      type="checkbox"
-                    />
+              <div className="display-row align-left">
+                <Field
+                  component={SwitchInput}
+                  name={`${tableName}[${data.index}].target`}
+                  type="checkbox"
+                />
 
-                    <p className="switch-title-padding">
-                      {bool ? 'Target' : 'Exclude'}
-                    </p>
-                  </div>
-                )
-                : null
-              }
+                <p className="switch-title-padding">
+                  {data.bool ? 'Target' : 'Exclude'}
+                </p>
+              </div>
             </div>
           );
         },
       },
       {
         colSpan: 1,
-        dataIndex: 'deleteButton',
-        key: 'deleteButton',
-        render: (bool) => (
-          <ButtonStyleless>
+        dataIndex: 'isSelected',
+        key: 'isSelected',
+        render: (index) => (
+          <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
             <McsIcons type="delete" style={{ fontSize: 20 }} />
           </ButtonStyleless>
       ),
@@ -105,10 +98,6 @@ function AdGroupTableWrapper({ dataSource, tableName }) {
     );
   }
 
-  AdGroupTable.defaultProps = {
-    // fields: [],
-  };
-
   AdGroupTable.propTypes = {
     fields: PropTypes.shape().isRequired,
   };
@@ -118,6 +107,7 @@ function AdGroupTableWrapper({ dataSource, tableName }) {
 
 AdGroupTableWrapper.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
+  updateTableFieldStatus: PropTypes.func.isRequired,
   tableName: PropTypes.string.isRequired,
 };
 

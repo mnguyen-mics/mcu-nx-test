@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
 import { Row } from 'antd';
 import moment from 'moment';
 
@@ -13,6 +11,7 @@ import AudienceSegmentService from '../../../../../../services/AudienceSegmentSe
 import ReportService from '../../../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
+import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
 
 const { FormSection } = Form;
 
@@ -37,7 +36,6 @@ class Audience extends Component {
   updateData = (callback) => {
     return (selectedSegmentIds) => {
       const {
-        formValues,
         handlers: { updateTableFields },
         organisationId,
       } = this.props;
@@ -45,8 +43,10 @@ class Audience extends Component {
       const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
         return AudienceSegmentService.getSegment(segmentId).then(segment => ({
           audience_segment_id: segment.id,
-          key: segment.id,
-          id: segment.id,
+          id: generateFakeId(), /*
+                                 * TODO: in edition mode: use id from server;
+                                 * in creation mode: use generateFakeId()
+                                 */
           name: segment.id,
           text: segment.name,
           target: true,
@@ -54,11 +54,11 @@ class Audience extends Component {
       }));
 
       const fetchMetadata = ReportService.getAudienceSegmentReport(
-      organisationId,
-      moment().subtract(1, 'days'),
-      moment(),
-      'audience_segment_id',
-    );
+        organisationId,
+        moment().subtract(1, 'days'),
+        moment(),
+        'audience_segment_id',
+      );
 
       Promise.all([fetchSelectedSegments, fetchMetadata])
       .then(results => {
@@ -69,41 +69,43 @@ class Audience extends Component {
         );
 
         return selectedSegments.map(segment => {
-          const { user_points, desktop_cookie_ids } = metadata[segment.id];
+          const { user_points, desktop_cookie_ids } = metadata[segment.audience_segment_id];
 
           return { ...segment, user_points, desktop_cookie_ids };
         });
       })
       .then(results => {
         updateTableFields({
-          prevFields: formValues,
           newFields: results,
           tableName: 'audienceTable'
         });
-      });
 
-      callback();
+        callback();
+      });
     };
   }
 
   render() {
-    const { formatMessage, formValues } = this.props;
+    const { formatMessage, formValues, handlers } = this.props;
 
-    // console.log('formValues = ', formValues);
-
-    const dataSource = formValues.map(segment => {
-      // console.log('>>>> segment = ', segment);
-
-      return ({
-        type: { image: 'users', text: segment.text },
-        data: [
-          `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
-          `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
-        ],
-        switchButton: segment.target,
-        deleteButton: segment.isSelected,
-      });
-    });
+    const dataSource = formValues.reduce((tableData, segment, index) => {
+      return (segment.isSelected
+        ? [
+          ...tableData,
+          {
+            key: segment.id,
+            type: { image: 'users', text: segment.text },
+            info: [
+              `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
+              `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
+            ],
+            target: { bool: segment.target, index },
+            isSelected: index,
+          }
+        ]
+        : tableData
+      );
+    }, []);
 
     return (
       <div id="audience">
@@ -125,10 +127,11 @@ class Audience extends Component {
         />
 
         <Row>
-          {formValues.length
+          {dataSource.length
           ? (
             <AdGroupTable
               dataSource={dataSource}
+              updateTableFieldStatus={handlers.updateTableFieldStatus}
               tableName="audienceTable"
             />
           )
@@ -154,6 +157,7 @@ Audience.propTypes = {
 
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
+    updateTableFieldStatus: PropTypes.func.isRequired,
     openNextDrawer: PropTypes.func.isRequired,
     updateTableFields: PropTypes.func.isRequired,
   }).isRequired,
@@ -162,10 +166,4 @@ Audience.propTypes = {
   formValues: PropTypes.arrayOf(PropTypes.shape()),
 };
 
-function mapStateToProps(state) {
-  const formSelector = formValueSelector('adGroupForm');
-
-  return { formValues: formSelector(state, 'audienceTable') };
-}
-
-export default connect(mapStateToProps)(Audience);
+export default Audience;

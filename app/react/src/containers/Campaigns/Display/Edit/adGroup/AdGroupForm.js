@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { arrayInsert, arrayPush, arrayRemove, Form, reduxForm } from 'redux-form';
+import {
+  arrayInsert,
+  arrayPush,
+  arrayRemove,
+  Form,
+  getFormValues,
+  reduxForm
+} from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
+import { isEqual } from 'lodash';
 
 import {
   Ads,
@@ -26,30 +34,40 @@ const FORM_NAME = 'adGroupForm';
 
 class AdGroupForm extends Component {
 
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(nextProps.formValues, this.props.formValues);
+  }
+
   onSubmit = (finalValues) => {
     console.log('finalValues = ', finalValues);
   }
 
-  updateTableFields = ({ prevFields, newFields, tableName }) => {
-    newFields.forEach(segment => {
-      if (!prevFields.length || !prevFields.find(field => field.id === segment.id)) {
-        this.props.arrayPush(FORM_NAME, tableName, { ...segment, isSelected: true });
-      }
-    });
+  updateTableFieldStatus = ({ index, isSelected = false, tableName }) => () => {
+    const updatedField = { ...this.props.formValues[tableName][index], isSelected };
 
-    const newFieldIds = newFields.map(field => field.id);
+    this.props.arrayRemove(FORM_NAME, tableName, index);
+    this.props.arrayInsert(FORM_NAME, tableName, index, updatedField);
+  }
+
+  updateTableFields = ({ newFields, tableName }) => {
+    const newFieldIds = newFields.map(field => field.audience_segment_id);
+    const prevFields = this.props.formValues[tableName] || [];
 
     if (prevFields.length) {
       prevFields.forEach((field, index) => {
-        const updatedField = {
-          ...field,
-          isSelected: newFieldIds.includes(field.id)
-        };
+        const isSelected = newFieldIds.includes(field.audience_segment_id);
 
-        this.props.arrayRemove(FORM_NAME, tableName, index);
-        this.props.arrayInsert(FORM_NAME, tableName, index, updatedField);
+        this.updateTableFieldStatus({ index, isSelected, tableName })();
       });
     }
+
+    newFields.forEach((segment) => {
+      if (!prevFields.length
+        || !prevFields.find(field => (field.audience_segment_id === segment.audience_segment_id))
+      ) {
+        this.props.arrayPush(FORM_NAME, `${tableName}`, { ...segment, isSelected: true });
+      }
+    });
   }
 
   render() {
@@ -57,6 +75,7 @@ class AdGroupForm extends Component {
       closeNextDrawer,
       fieldValidators,
       formId,
+      formValues,
       handleSubmit,
       hasDatamarts,
       intl: { formatMessage },
@@ -69,11 +88,13 @@ class AdGroupForm extends Component {
       formatMessage,
       handlers: {
         closeNextDrawer,
+        updateTableFieldStatus: this.updateTableFieldStatus,
         openNextDrawer,
         updateTableFields: this.updateTableFields,
       },
       organisationId,
     };
+    const { audienceTable } = formValues;
 
     return (
       <Form
@@ -87,7 +108,7 @@ class AdGroupForm extends Component {
             displaySegmentSelector &&
             <div>
               <hr />
-              <Audience {...commonProps} />
+              <Audience {...commonProps} formValues={audienceTable} />
             </div>
           }
           <hr />
@@ -119,6 +140,9 @@ AdGroupForm.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
+
+  formValues: PropTypes.shape().isRequired,
+
   handleSubmit: PropTypes.func.isRequired,
   hasDatamarts: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
@@ -128,12 +152,13 @@ AdGroupForm.propTypes = {
 
 
 const mapStateToProps = (state) => ({
-  hasDatamarts: SessionHelper.hasDatamarts(state)
+  formValues: getFormValues(FORM_NAME)(state),
+  hasDatamarts: SessionHelper.hasDatamarts(state),
 });
 
 const mapDispatchToProps = { arrayInsert, arrayPush, arrayRemove };
 
-const ConnectedAdGroupForm = compose(
+export default compose(
   withMcsRouter,
   reduxForm({
     form: FORM_NAME,
@@ -142,8 +167,5 @@ const ConnectedAdGroupForm = compose(
   withDrawer,
   withValidators,
   connect(mapStateToProps, mapDispatchToProps),
+  injectIntl
 )(AdGroupForm);
-
-export default compose(
-  injectIntl,
-)(ConnectedAdGroupForm);
