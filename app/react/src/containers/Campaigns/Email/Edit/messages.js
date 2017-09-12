@@ -233,6 +233,18 @@ export default defineMessages({
     id: 'blastTemplateSelection.required',
     defaultMessage: 'A template is required',
   },
+  blastTemplateAddButton: {
+    id: 'blastTemplate.addButton',
+    defaultMessage: 'Add',
+  },
+  blastTemplateSelectButton: {
+    id: 'blastTemplate.selectButton',
+    defaultMessage: 'Select',
+  },
+  blastTemplateSelectedButton: {
+    id: 'blastTemplate.selectedButton',
+    defaultMessage: 'Selected !',
+  },
   blastSegmentSelectionEmpty: {
     id: 'blastSegmentSelection.empty',
     defaultMessage: 'No Segment selected yet',
