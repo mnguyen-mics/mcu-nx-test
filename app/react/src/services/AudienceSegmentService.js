@@ -24,9 +24,18 @@ const getSegment = (segmentId, options = {}) => {
 
 const createOverlap = (datamartId, segmentId) => {
   const endpoint = `datamarts/${datamartId}/overlap_analysis`;
-
-  const body = { first_party_overlap: { source: { type: 'segment_overlap', segment_id: segmentId, datamart_id: datamartId }, type: 'FIRST_PARTY_OVERLAP' } };
   const header = { 'Content-Type': 'application/json' };
+  const body = {
+    first_party_overlap: {
+      source: {
+        type: 'segment_overlap',
+        segment_id: segmentId,
+        datamart_id: datamartId
+      },
+      type: 'FIRST_PARTY_OVERLAP'
+    }
+  };
+
   return ApiService.postRequest(endpoint, body, {}, header);
 };
 

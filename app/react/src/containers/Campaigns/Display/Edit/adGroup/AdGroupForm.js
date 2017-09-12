@@ -29,6 +29,8 @@ import withDrawer from '../../../../../components/Drawer';
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import { isFakeId } from '../../../../../utils/FakeIdHelper';
+import * as actions from '../../../../../state/Notifications/actions';
 import messages from '../messages';
 
 const { Content } = Layout;
@@ -44,9 +46,8 @@ class AdGroupForm extends Component {
     const {
       editionMode,
       intl: { formatMessage },
-      match: {
-        params: { adGroupId, campaignId },
-      },
+      match: { params: { adGroupId, campaignId } },
+      notifyError,
     } = this.props;
 
     const formatBudgetPeriod = {
@@ -55,7 +56,7 @@ class AdGroupForm extends Component {
       [formatMessage(messages.contentSection1Row2Option3)]: 'MONTH',
     };
 
-    const body = {
+    const adGroupBody = {
       end_date: finalValues.adGroupBudgetEndDate.valueOf(),
       max_budget_per_period: finalValues.adGroupBudgetSplit,
       max_budget_period: formatBudgetPeriod[finalValues.adGroupBudgetSplitPeriod],
@@ -65,15 +66,56 @@ class AdGroupForm extends Component {
       total_budget: finalValues.adGroupBudgetTotal,
     };
 
+    let asyncOperations = null;
+
     if (!editionMode) {
-      DisplayCampaignService.createAdGroup(campaignId, body);
+      asyncOperations = DisplayCampaignService.createAdGroup(campaignId, adGroupBody)
+        .then((result) => {
+          return this.updateAudienceSegments(result.data.id);
+        });
     } else {
-      DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body);
+      asyncOperations = DisplayCampaignService.updateAdGroup(campaignId, adGroupId, adGroupBody);
     }
+
+    asyncOperations.catch(error => notifyError(error));
   }
 
-  updateTableFieldStatus = ({ index, isSelected = false, tableName }) => () => {
-    const updatedField = { ...this.props.formValues[tableName][index], isSelected };
+  updateAudienceSegments = (newAdGroupId) => {
+    const {
+      formValues: { audienceTable },
+      match: { params: { campaignId, ...rest } },
+    } = this.props;
+
+    const adGroupId = rest.adGroupId || newAdGroupId;
+
+    return audienceTable.reduce((promise, segment) => {
+      const { audience_segment_id, id, toBeRemoved, target } = segment;
+      const body = { audience_segment_id, exclude: !target };
+
+      /* In case of a new adGroup */
+      return promise.then(() => {
+        let newPromise;
+
+        if (isFakeId(id)) {
+          newPromise = DisplayCampaignService.createSegment(campaignId, adGroupId, body)
+            .then((seg) => seg);
+        } else {
+          /* In case the adGroup exists already */
+          newPromise = (!toBeRemoved
+            ? DisplayCampaignService.updateSegment(campaignId, adGroupId, id, body)
+              .then(seg => seg)
+            : DisplayCampaignService.deleteSegment(campaignId, adGroupId, id)
+              .then(seg => seg)
+          );
+        }
+
+        return newPromise;
+      });
+    }, Promise.resolve());
+  };
+
+  updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => () => {
+    const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
 
     this.props.arrayRemove(FORM_NAME, tableName, index);
     this.props.arrayInsert(FORM_NAME, tableName, index, updatedField);
@@ -85,9 +127,9 @@ class AdGroupForm extends Component {
 
     if (prevFields.length) {
       prevFields.forEach((field, index) => {
-        const isSelected = newFieldIds.includes(field.audience_segment_id);
+        const toBeRemoved = !newFieldIds.includes(field.audience_segment_id);
 
-        this.updateTableFieldStatus({ index, isSelected, tableName })();
+        this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
       });
     }
 
@@ -95,7 +137,7 @@ class AdGroupForm extends Component {
       if (!prevFields.length
         || !prevFields.find(field => (field.audience_segment_id === segment.audience_segment_id))
       ) {
-        this.props.arrayPush(FORM_NAME, `${tableName}`, { ...segment, isSelected: true });
+        this.props.arrayPush(FORM_NAME, `${tableName}`, { ...segment, toBeRemoved: false });
       }
     });
   }
@@ -183,6 +225,8 @@ AdGroupForm.propTypes = {
 
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
+
+  notifyError: PropTypes.func.isRequired,
 };
 
 
@@ -191,7 +235,12 @@ const mapStateToProps = (state) => ({
   hasDatamarts: SessionHelper.hasDatamarts(state),
 });
 
-const mapDispatchToProps = { arrayInsert, arrayPush, arrayRemove };
+const mapDispatchToProps = {
+  arrayInsert,
+  arrayPush,
+  arrayRemove,
+  notifyError: actions.notifyError
+};
 
 export default compose(
   withMcsRouter,

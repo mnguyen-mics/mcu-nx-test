@@ -21,7 +21,7 @@ class Audience extends Component {
     const { formValues, handlers } = this.props;
 
     const selectedSegmentIds = formValues
-      .filter(segment => segment.isSelected)
+      .filter(segment => !segment.toBeRemoved)
       .map(segment => segment.audience_segment_id);
 
     const additionalProps = {
@@ -89,7 +89,7 @@ class Audience extends Component {
     const { formatMessage, formValues, handlers } = this.props;
 
     const dataSource = formValues.reduce((tableData, segment, index) => {
-      return (segment.isSelected
+      return (!segment.toBeRemoved
         ? [
           ...tableData,
           {
@@ -100,7 +100,7 @@ class Audience extends Component {
               `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
             ],
             target: { bool: segment.target, index },
-            isSelected: index,
+            toBeRemoved: index,
           }
         ]
         : tableData

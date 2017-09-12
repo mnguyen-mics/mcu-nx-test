@@ -75,8 +75,8 @@ function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) 
       },
       {
         colSpan: 1,
-        dataIndex: 'isSelected',
-        key: 'isSelected',
+        dataIndex: 'toBeRemoved',
+        key: 'toBeRemoved',
         render: (index) => (
           <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
             <McsIcons type="delete" style={{ fontSize: 20 }} />
