@@ -29,6 +29,7 @@ import withDrawer from '../../../../../components/Drawer';
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import messages from '../messages';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
@@ -40,29 +41,35 @@ class AdGroupForm extends Component {
   }
 
   onSubmit = (finalValues) => {
-    const maxBudgetPeriod = {
-      'Per day': 'DAY',
-      'Per week': 'WEEK',
-      'Per month': 'MONTH',
+    const {
+      editionMode,
+      intl: { formatMessage },
+      match: {
+        params: { adGroupId, campaignId },
+      },
+    } = this.props;
+
+    const formatBudgetPeriod = {
+      [formatMessage(messages.contentSection1Row2Option1)]: 'DAY',
+      [formatMessage(messages.contentSection1Row2Option2)]: 'WEEK',
+      [formatMessage(messages.contentSection1Row2Option3)]: 'MONTH',
     };
 
     const body = {
       end_date: finalValues.adGroupBudgetEndDate.valueOf(),
       max_budget_per_period: finalValues.adGroupBudgetSplit,
-      max_budget_period: maxBudgetPeriod[finalValues.adGroupBudgetSplitPeriod],
+      max_budget_period: formatBudgetPeriod[finalValues.adGroupBudgetSplitPeriod],
       name: finalValues.adGroupName,
       start_date: finalValues.adGroupBudgetStartDate.valueOf(),
-      // time_zone: 'Europe/Paris',
+      technical_name: finalValues.adGroupTechnicalName,
       total_budget: finalValues.adGroupBudgetTotal,
     };
 
-    console.log('finalValues = ', finalValues);
-    console.log('body = ', body);
-
-    DisplayCampaignService.createAdGroup(
-      this.props.match.params.campaignId,
-      body,
-    );
+    if (!editionMode) {
+      DisplayCampaignService.createAdGroup(campaignId, body);
+    } else {
+      DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body);
+    }
   }
 
   updateTableFieldStatus = ({ index, isSelected = false, tableName }) => () => {
@@ -153,6 +160,7 @@ class AdGroupForm extends Component {
 }
 
 AdGroupForm.defaultProps = {
+  editionMode: false,
   fieldValidators: {},
 };
 
@@ -161,6 +169,7 @@ AdGroupForm.propTypes = {
   arrayPush: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
+  editionMode: PropTypes.bool,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
 
@@ -185,7 +194,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = { arrayInsert, arrayPush, arrayRemove };
 
 export default compose(
-  // withRouter,
   withMcsRouter,
   reduxForm({
     form: FORM_NAME,

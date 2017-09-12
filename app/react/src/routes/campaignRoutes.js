@@ -10,6 +10,7 @@ import {
 
 import {
   CreateAdGroupPage,
+  EditAdGroupPage,
 } from '../containers/Campaigns/Display/Edit';
 
 import {
@@ -54,6 +55,11 @@ const campaignsRoutes = [
     path: '/campaigns/display/:campaignId(\\d+)/adgroups/create',
     layout: 'edit',
     editComponent: CreateAdGroupPage,
+  },
+  {
+    path: '/campaigns/display/:campaignId(\\d+)/adgroups/edit/:adGroupId(\\d+)',
+    layout: 'edit',
+    editComponent: EditAdGroupPage,
   },
   {
     path: '/campaigns/email',
