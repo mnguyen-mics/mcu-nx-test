@@ -130,7 +130,6 @@ class SegmentSelector extends Component {
 
   getColumnsDefinitions = () => {
     const { selectedSegmentById } = this.state;
-    const { intl: { formatMessage } } = this.props;
 
     return {
       dataColumnsDefinition: [
@@ -145,20 +144,19 @@ class SegmentSelector extends Component {
           ),
         },
         {
-          intlMessage: formatMessage(messages.segmentTitleColumn1),
+          intlMessage: messages.segmentTitleColumn1,
           key: 'name',
           isHideable: false,
           render: text => <span>{text}</span>,
         },
         {
-          intlMessage: formatMessage(messages.segmentTitleColumn2),
+          intlMessage: messages.segmentTitleColumn2,
           key: 'user_points',
           isHideable: false,
           render: text => <span>{text}</span>,
         },
         {
-          intlMessage: formatMessage(messages.segmentTitleColumn3),
-
+          intlMessage: messages.segmentTitleColumn3,
           key: 'desktop_cookie_ids',
           isHideable: false,
           render: text => <span>{text}</span>,

@@ -50,14 +50,13 @@ class TableView extends Component {
     const dataColumns = dataColumnsDefinition.filter(column => !column.isHideable || visibilitySelectedColumnsValues.includes(column.key)).map(dataColumn => {
       return Object.assign(
         {},
-        isValidFormattedMessageProps(dataColumn.intlMessage)
-          ? // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
-            // spreading values...
-            { title: <FormattedMessage {...dataColumn.intlMessage} /> }
-          : dataColumn.translationKey
-              ? // support for legacy translation key constant (en/fr.json) ...
-                { title: <FormattedMessage id={dataColumn.translationKey} /> }
-              : null, // allow empty column title
+        { title: (isValidFormattedMessageProps(dataColumn.intlMessage)
+          ? <FormattedMessage {...dataColumn.intlMessage} />
+          : (dataColumn.translationKey // support for legacy translation key constant (en/fr.json) ...
+            ? <FormattedMessage id={dataColumn.translationKey} />
+            : null
+          )
+        ) },
         { dataIndex: dataColumn.key },
         { key: dataColumn.key },
         { render: dataColumn.render ? dataColumn.render : text => text },
@@ -128,6 +127,7 @@ class TableView extends Component {
         ...pagination,
       };
     }
+
     return (
       <Table
         columns={columns}
