@@ -6,7 +6,6 @@ import { Icon, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
 import {
-  TableView,
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView';
@@ -311,14 +310,10 @@ class GoalsTable extends Component {
           dateRangePickerOptions={dateRangePickerOptions}
           filtersOptions={filtersOptions}
           columnsVisibilityOptions={columnsVisibilityOptions}
-        >
-          <TableView
-            columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingGoals}
-            pagination={pagination}
-          />
-        </TableViewFilters>
+          dataSource={dataSource}
+          loading={isFetchingGoals}
+          pagination={pagination}
+        />
       </div>
     ) : (<EmptyTableView iconType="goals" text="EMPTY_GOALS" />);
 

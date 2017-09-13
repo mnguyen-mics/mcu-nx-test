@@ -8,7 +8,6 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
-  TableView,
   TableViewFilters,
 } from '../../../../components/TableView';
 import CreativeService from '../../../../services/CreativeService';
@@ -226,14 +225,13 @@ class EmailTemplateSelector extends Component {
           <Layout>
             <Content className="mcs-table-edit-container">
               {hasEmailTemplates
-                ? <TableViewFilters searchOptions={this.getSearchOptions()}>
-                  <TableView
-                    columnsDefinitions={this.getColumnsDefinitions()}
-                    dataSource={emailTemplates}
-                    loading={isLoading}
-                    pagination={pagination}
-                  />
-                </TableViewFilters>
+                ? <TableViewFilters
+                  searchOptions={this.getSearchOptions()}
+                  columnsDefinitions={this.getColumnsDefinitions()}
+                  dataSource={emailTemplates}
+                  loading={isLoading}
+                  pagination={pagination}
+                />
                 : <EmptyTableView iconType="file" />}
             </Content>
           </Layout>

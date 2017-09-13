@@ -114,21 +114,17 @@ class TableView extends Component {
 
     const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
 
-    const columsToFilter = columns.slice(2, columns.length - 1);
-
     const visibilitySelectedColumnsValues = [];
     visibilitySelectedColumns.forEach((el) => {
       visibilitySelectedColumnsValues.push(el.value);
     });
 
     const columnsToDisplay = [];
-    columsToFilter.forEach((el) => {
-      if (visibilitySelectedColumnsValues.includes(el.key)) {
+    columns.forEach((el) => {
+      if (visibilitySelectedColumnsValues.includes(el.key) || el.key === 'name' || el.key === 'status') {
         columnsToDisplay.push(el);
       }
     });
-
-    columnsToDisplay.unshift(columns[0], columns[1]);
 
     const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
 

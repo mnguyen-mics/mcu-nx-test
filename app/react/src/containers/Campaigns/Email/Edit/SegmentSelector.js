@@ -9,7 +9,6 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
-  TableView,
   TableViewFilters,
 } from '../../../../components/TableView';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
@@ -210,14 +209,11 @@ class SegmentSelector extends Component {
                 ? <EmptyTableView iconType="file" />
                 : <TableViewFilters
                   searchOptions={this.getSearchOptions()}
-                >
-                  <TableView
-                    columnsDefinitions={this.getColumnsDefinitions()}
-                    dataSource={datasource}
-                    loading={isLoading}
-                    pagination={pagination}
-                  />
-                </TableViewFilters>
+                  columnsDefinitions={this.getColumnsDefinitions()}
+                  dataSource={datasource}
+                  loading={isLoading}
+                  pagination={pagination}
+                />
               }
             </Content>
           </Layout>
