@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-import { Field, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import Scrollspy from 'react-scrollspy';
 import { Layout, Button, Form, Row, Dropdown, Menu } from 'antd';
@@ -13,6 +14,7 @@ import McsIcons from '../../../../components/McsIcons';
 import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
 import EmailTemplateSelection from './EmailTemplateSelection';
+import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
@@ -144,9 +146,10 @@ class EmailBlastEditor extends Component {
       close,
       closeNextDrawer,
       openNextDrawer,
+      selectedConsentId
     } = this.props;
 
-    const { consents } = this.state;
+    const { consents, segments } = this.state;
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
@@ -161,6 +164,9 @@ class EmailBlastEditor extends Component {
     const emptySegmentOption = {
       message: formatMessage(messages.blastSegmentSelectionEmpty)
     };
+
+    const segmentIds = segments.map(s => s.audience_segment_id);
+    const providerTechnicalNames = selectedConsentId ? consents.filter(c => c.id === selectedConsentId).map(c => c.technical_name) : [];
 
     return (
       <Layout>
@@ -279,7 +285,7 @@ class EmailBlastEditor extends Component {
                         options: consents.map(consent => ({
                           key: consent.id,
                           value: consent.id,
-                          text: `${consent.name} (${consent.purpose})`,
+                          text: `${consent.technical_name}`,
                         })),
                         helpToolTipProps: {
                           title: formatMessage(messages.emailEditorProviderSelectHelper),
@@ -409,6 +415,9 @@ class EmailBlastEditor extends Component {
                       {this.getSegmentRecords()}
                     </RelatedRecords>
                   </Row>
+                  <Row className="section-footer">
+                    <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
+                  </Row>
                 </div>
               </Content>
             </Layout>
@@ -424,6 +433,7 @@ EmailBlastEditor.defaultProps = {
   blastName: '',
   segments: [],
   breadcrumbPaths: [],
+  selectedConsentId: null
 };
 
 EmailBlastEditor.propTypes = {
@@ -433,7 +443,7 @@ EmailBlastEditor.propTypes = {
   intl: intlShape.isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
     url: PropTypes.string,
   })),
   segments: PropTypes.arrayOf(PropTypes.shape({
@@ -445,6 +455,7 @@ EmailBlastEditor.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
+  selectedConsentId: PropTypes.string,
 };
 
 EmailBlastEditor = compose(
@@ -455,6 +466,11 @@ EmailBlastEditor = compose(
     enableReinitialize: true,
   }),
   withValidators,
+  connect(
+    state => ({
+      selectedConsentId: formValueSelector('emailBlastEditor')(state, 'blast.consents[0].consent_id')
+    })
+  )
 )(EmailBlastEditor);
 
 export default EmailBlastEditor;

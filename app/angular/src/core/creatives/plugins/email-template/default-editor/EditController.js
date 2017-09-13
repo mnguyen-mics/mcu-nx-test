@@ -89,11 +89,18 @@ define(['./module', 'ui.ace'], function (module) {
         $scope.previewHeight = 667;
       };
 
+      function takeScreenshot(creativeId) {
+        Restangular.one('creatives', creativeId).all('screenshots').post([], { organisation_id: $scope.organisationId }).then(function (response) {
+          $log.debug("Screenshot was taken!" + response);
+        });
+      }
+
       $scope.save = function () {
         WaitingService.showWaitingModal();
-        var promise = $scope.emailTemplateCtn.save();
-
-        promise.then(function success() {
+        Promise.all([
+          $scope.emailTemplateCtn.save(),
+          takeScreenshot($stateParams.creative_id)
+        ]).then(function success() {
           WaitingService.hideWaitingModal();
           $location.path(Session.getWorkspacePrefixUrl() + '/creatives/email-template');
         }, function failure(reason) {
@@ -106,9 +113,10 @@ define(['./module', 'ui.ace'], function (module) {
 
       $scope.saveAndRefresh = function () {
         WaitingService.showWaitingModal();
-        var promise = $scope.emailTemplateCtn.save();
-
-        promise.then(function success() {
+        Promise.all([
+          $scope.emailTemplateCtn.save(),
+          takeScreenshot($stateParams.creative_id)
+        ]).then(function success() {
           WaitingService.hideWaitingModal();
           loadPreview($stateParams.creative_id);
         }, function failure(reason) {

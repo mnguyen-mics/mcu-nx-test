@@ -115,6 +115,17 @@ const removeSegment = (campaignId, blastId, segmentId) => {
   return ApiService.deleteRequest(endpoint);
 };
 
+const computeSegmentReach = (datamartId, segmentIds, providerTechnicalNames) => {
+  const endpoint = `datamarts/${datamartId}/email_blast_query`;
+
+  const params = {
+    segment_ids: segmentIds,
+    provider_technical_names: providerTechnicalNames
+  };
+
+  return ApiService.getRequest(endpoint, params).then(res => res.count);
+};
+
 export default {
   getEmailCampaign,
   getRouters,
@@ -140,4 +151,6 @@ export default {
   removeConsent,
   removeEmailTemplate,
   removeSegment,
+
+  computeSegmentReach
 };
