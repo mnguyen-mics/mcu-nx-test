@@ -366,14 +366,10 @@ class DisplayCampaignsTable extends Component {
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}
             columnsVisibilityOptions={columnsVisibilityOptions}
-          >
-            <TableView
-              columnsDefinitions={columnsDefinitions}
-              dataSource={dataSource}
-              loading={isFetchingDisplayCampaigns}
-              pagination={pagination}
-            />
-          </TableViewFilters>
+            dataSource={dataSource}
+            loading={isFetchingDisplayCampaigns}
+            pagination={pagination}
+          />
         </div>
     )
     : <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />

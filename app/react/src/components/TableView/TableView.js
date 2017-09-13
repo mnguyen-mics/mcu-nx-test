@@ -105,6 +105,7 @@ class TableView extends Component {
       pagination,
       loading,
       onChange,
+      visibilitySelectedColumns,
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
@@ -112,6 +113,23 @@ class TableView extends Component {
     ) : null;
 
     const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
+
+    const columsToFilter = columns.slice(2, columns.length - 1);
+
+    const visibilitySelectedColumnsValues = [];
+    visibilitySelectedColumns.forEach((el) => {
+      visibilitySelectedColumnsValues.push(el.value);
+    });
+
+    const columnsToDisplay = [];
+    columsToFilter.forEach((el) => {
+      if (visibilitySelectedColumnsValues.includes(el.key)) {
+        columnsToDisplay.push(el);
+      }
+    });
+
+    columnsToDisplay.unshift(columns[0], columns[1]);
+
     const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
 
     let newPagination = pagination;
@@ -123,11 +141,12 @@ class TableView extends Component {
     }
     return (
       <Table
-        columns={columns}
+        columns={columnsToDisplay}
         dataSource={dataSourceWithIds}
         onChange={onChange}
         loading={loading}
         pagination={newPagination}
+        visibilitySelectedColumns={this.props.visibilitySelectedColumns}
       />
     );
   }
@@ -136,6 +155,7 @@ class TableView extends Component {
 TableView.defaultProps = {
   pagination: false,
   onChange: () => {},
+  visibilitySelectedColumns: []
 };
 
 TableView.propTypes = {
@@ -147,6 +167,7 @@ TableView.propTypes = {
   loading: PropTypes.bool.isRequired,
   pagination: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   onChange: PropTypes.func,
+  visibilitySelectedColumns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 export default TableView;
