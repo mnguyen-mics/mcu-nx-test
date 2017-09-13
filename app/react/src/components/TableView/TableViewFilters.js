@@ -4,61 +4,57 @@ import { Icon, Row, Col, Input } from 'antd';
 
 import McsDateRangePicker from '../McsDateRangePicker';
 import { MultiSelect } from '../Forms';
+import TableView from './TableView';
 
 const Search = Input.Search;
 const DEFAULT_RANGE_PICKER_DATE_FORMAT = 'DD/MM/YYYY';
 
-class TableViewFilters extends Component {
+function withFilters(TableViewComponent) {
 
-  constructor(props) {
-    super(props);
+  class TableViewComponentWithFilters extends Component {
 
-    this.state = {
-      visibilitySelectedColumns: (this.getHideableColumns()
-        .filter(column => column.isVisibleByDefault)
-        .map(column => ({ key: column.translationKey, value: column.key }))
-      ),
-      waiting: true,
-    };
-  }
-
-  changeColumnVisibility(selectedColumns) {
-    const {
-        columnsVisibilityOptions: {
-          onChange,
-        },
-      } = this.props;
-
-    this.setState({
-      visibilitySelectedColumns: selectedColumns.columns,
-    });
-
-    if (onChange) onChange(selectedColumns);
-  }
-
-  getHideableColumns = () => {
-    const {
+    getHideableColumns = () => {
+      const {
         columnsDefinitions: {
           dataColumnsDefinition,
         },
       } = this.props;
 
-    return dataColumnsDefinition.filter(column => column.isHideable);
-  }
+      return dataColumnsDefinition.filter(column => column.isHideable);
+    }
 
-  render() {
-    const {
-      searchOptions,
-      dateRangePickerOptions,
-      filtersOptions,
-      columnsVisibilityOptions,
-    } = this.props;
+    state = {
+      visibilitySelectedColumns: (this.getHideableColumns()
+      .filter(column => column.isVisibleByDefault)
+      .map(column => ({ key: column.translationKey, value: column.key }))
+      ),
+      waiting: true,
+    }
 
-    const {
-      visibilitySelectedColumns,
-    } = this.state;
+    changeColumnVisibility = (selectedColumns) => {
+      const {
+        columnsVisibilityOptions: {
+          onChange,
+        },
+      } = this.props;
 
-    const searchInput = searchOptions.isEnabled
+      this.setState({
+        visibilitySelectedColumns: selectedColumns.columns,
+      });
+
+      if (onChange) onChange(selectedColumns);
+    }
+
+    render() {
+
+      const {
+        searchOptions,
+        dateRangePickerOptions,
+        filtersOptions,
+        columnsVisibilityOptions,
+      } = this.props;
+
+      const searchInput = searchOptions.isEnabled
       ? (
         <Col span={6}>
           <Search
@@ -71,7 +67,7 @@ class TableViewFilters extends Component {
       )
       : null;
 
-    const dateRangePicker = dateRangePickerOptions.isEnabled
+      const dateRangePicker = dateRangePickerOptions.isEnabled
       ? (
         <McsDateRangePicker
           values={dateRangePickerOptions.values}
@@ -82,19 +78,19 @@ class TableViewFilters extends Component {
       )
       : null;
 
-    const filtersMultiSelect = filtersOptions.map(filterOptions => {
-      return (
-        <MultiSelect
-          key={filterOptions.name}
-          name={filterOptions.name}
-          displayElement={filterOptions.displayElement}
-          buttonClass={'mcs-table-filters-item'}
-          menuItems={filterOptions.menuItems}
-        />
-      );
-    });
+      const filtersMultiSelect = filtersOptions.map(filterOptions => {
+        return (
+          <MultiSelect
+            key={filterOptions.name}
+            name={filterOptions.name}
+            displayElement={filterOptions.displayElement}
+            buttonClass={'mcs-table-filters-item'}
+            menuItems={filterOptions.menuItems}
+          />
+        );
+      });
 
-    const visibilityMultiSelect = columnsVisibilityOptions.isEnabled
+      const visibilityMultiSelect = columnsVisibilityOptions.isEnabled
       ? (
         <MultiSelect
           name="columns"
@@ -102,7 +98,7 @@ class TableViewFilters extends Component {
           buttonClass={'mcs-table-filters-item'}
           menuItems={({
             handleMenuClick: this.changeColumnVisibility,
-            selectedItems: visibilitySelectedColumns,
+            selectedItems: this.state.visibilitySelectedColumns,
             items: this.getHideableColumns().map(column => ({
               key: column.translationKey,
               value: column.key,
@@ -112,89 +108,93 @@ class TableViewFilters extends Component {
       )
       : null;
 
-    return (
-      <Row>
-        <Row className="mcs-table-header">
-          {searchInput}
-          <Col span={18} className="text-right" >
-            {dateRangePicker}
-            {filtersMultiSelect}
-            {visibilityMultiSelect}
-          </Col>
+      return (
+        <Row>
+          <Row className="mcs-table-header">
+            {searchInput}
+            <Col span={18} className="text-right" >
+              {dateRangePicker}
+              {filtersMultiSelect}
+              {visibilityMultiSelect}
+            </Col>
+          </Row>
+          <Row className="mcs-table-body">
+            <Col span={24}>
+              <TableViewComponent {...this.props} visibilitySelectedColumns={this.state.visibilitySelectedColumns} />
+            </Col>
+          </Row>
         </Row>
-        <Row className="mcs-table-body">
-          <Col span={24}>
+      );
+    }
 
-            {React.Children.only(this.props.children)}
-
-          </Col>
-        </Row>
-      </Row>
-    );
   }
+
+  TableViewComponentWithFilters.defaultProps = {
+    searchOptions: {
+      isEnabled: false,
+    },
+    dateRangePickerOptions: {
+      isEnabled: false,
+      format: DEFAULT_RANGE_PICKER_DATE_FORMAT,
+      disabled: false,
+    },
+    pagination: {},
+    filtersOptions: [],
+    columnsVisibilityOptions: {
+      isEnabled: false,
+      onChange: () => {},
+    },
+    columnsDefinitions: { dataColumnsDefinition: [] },
+    visibilitySelectedColumns: [],
+  };
+
+  TableViewComponentWithFilters.propTypes = {
+    searchOptions: PropTypes.shape({
+      isEnabled: PropTypes.bool,
+      placeholder: PropTypes.string,
+      defaultValue: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+      ]),
+      onSearch: PropTypes.func,
+    }),
+    dateRangePickerOptions: PropTypes.shape({
+      isEnabled: PropTypes.bool,
+      from: PropTypes.shape(), // momentjs
+      to: PropTypes.shape(), // momentjs
+      format: PropTypes.string,
+      onChange: PropTypes.func,
+      disabled: PropTypes.bool,
+    }),
+    filtersOptions: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      displayElement: PropTypes.element.isRequired,
+      onCloseMenu: PropTypes.func,
+      menuItems: PropTypes.shape({
+        handleMenuClick: PropTypes.func,
+        selectedItems: PropTypes.arrayOf(PropTypes.shape({
+          key: PropTypes.string,
+          value: PropTypes.string,
+        })),
+        items: PropTypes.arrayOf(PropTypes.shape({
+          key: PropTypes.string,
+          value: PropTypes.string,
+        })),
+      }),
+    })),
+    columnsDefinitions: PropTypes.shape({
+      dataColumnsDefinition: PropTypes.array,
+      actionsColumnsDefinition: PropTypes.array,
+    }),
+    columnsVisibilityOptions: PropTypes.shape({
+      isEnabled: PropTypes.bool.isRequired,
+      onChange: PropTypes.func,
+    }),
+  };
+
+  return TableViewComponentWithFilters;
 }
 
-
-TableViewFilters.defaultProps = {
-  searchOptions: {
-    isEnabled: false,
-  },
-  dateRangePickerOptions: {
-    isEnabled: false,
-    format: DEFAULT_RANGE_PICKER_DATE_FORMAT,
-    disabled: false,
-  },
-  pagination: {},
-  filtersOptions: [],
-  columnsVisibilityOptions: {
-    isEnabled: false,
-    onChange: () => {},
-  },
-  columnsDefinitions: { dataColumnsDefinition: [] },
-};
-
-TableViewFilters.propTypes = {
-  searchOptions: PropTypes.shape({
-    isEnabled: PropTypes.bool,
-    placeholder: PropTypes.string,
-    defaultValue: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-    onSearch: PropTypes.func,
-  }),
-  dateRangePickerOptions: PropTypes.shape({
-    isEnabled: PropTypes.bool,
-    from: PropTypes.shape(), // momentjs
-    to: PropTypes.shape(), // momentjs
-    format: PropTypes.string,
-    onChange: PropTypes.func,
-    disabled: PropTypes.bool,
-  }),
-  filtersOptions: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    displayElement: PropTypes.element.isRequired,
-    onCloseMenu: PropTypes.func,
-    menuItems: PropTypes.shape({
-      handleMenuClick: PropTypes.func,
-      selectedItems: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string,
-        value: PropTypes.string,
-      })),
-      items: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string,
-        value: PropTypes.string,
-      })),
-    }),
-  })),
-  columnsDefinitions: PropTypes.shape({
-    dataColumnsDefinition: PropTypes.array,
-    actionsColumnsDefinition: PropTypes.array,
-  }),
-  columnsVisibilityOptions: PropTypes.shape({
-    isEnabled: PropTypes.bool.isRequired,
-    onChange: PropTypes.func,
-  }),
-};
+const TableViewFilters = withFilters(TableView);
 
 export default TableViewFilters;
