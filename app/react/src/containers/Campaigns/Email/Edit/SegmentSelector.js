@@ -78,53 +78,46 @@ class SegmentSelector extends Component {
     const datamartId = defaultDatamart(organisationId).id;
 
     return AudienceSegmentService.getSegments(organisationId, datamartId, options).then(response => {
+      return AudienceSegmentService.getSegmentMetaData(organisationId)
+        .then(results => {
+          const segments = response.data;
 
-      return ReportService.getAudienceSegmentReport(
-        organisationId,
-        moment().subtract(1, 'days'),
-        moment(),
-        'audience_segment_id',
-      ).then(results => {
-        const segments = response.data;
+          const metadata = normalizeArrayOfObject(
+            normalizeReportView(results),
+            'audience_segment_id',
+          );
 
-        const metadata = normalizeArrayOfObject(
-          normalizeReportView(results.data.report_view),
-          'audience_segment_id',
-        );
+          const segmentsWithAdditionalMetadata = segments.map(segment => {
+            const { user_points, desktop_cookie_ids } = metadata[segment.id];
 
-        const segmentsWithAdditionalMetadata = segments.map(segment => {
-          const { user_points, desktop_cookie_ids } = metadata[segment.id];
+            return { ...segment, user_points, desktop_cookie_ids };
+          });
 
-          return { ...segment, user_points, desktop_cookie_ids };
+          const allAudienceSegmentIds = segmentsWithAdditionalMetadata.map(segment => segment.id);
+          const audienceSegmentById = normalizeArrayOfObject(segmentsWithAdditionalMetadata, 'id');
+
+          this.setState(prevState => {
+            const selectedSegmentById = {
+              ...prevState.selectedSegmentById,
+              ...selectedSegmentIds.reduce((acc, segmentId) => {
+                if (!prevState.selectedSegmentById[segmentId]) {
+                  return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
+                }
+                return acc;
+              }, {}),
+            };
+
+            return {
+              allAudienceSegmentIds,
+              audienceSegmentById,
+              selectedSegmentById,
+              isLoading: false,
+              total: response.total,
+            };
+          });
+
+          return response;
         });
-
-        const allAudienceSegmentIds = segmentsWithAdditionalMetadata.map(segment => segment.id);
-        const audienceSegmentById = normalizeArrayOfObject(segmentsWithAdditionalMetadata, 'id');
-
-        this.setState(prevState => {
-          const selectedSegmentById = {
-            ...prevState.selectedSegmentById,
-            ...selectedSegmentIds.reduce((acc, segmentId) => {
-              if (!prevState.selectedSegmentById[segmentId]) {
-                return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
-              }
-              return acc;
-            }, {}),
-          };
-
-          return {
-            allAudienceSegmentIds,
-            audienceSegmentById,
-            selectedSegmentById,
-            isLoading: false,
-            total: response.total,
-          };
-        });
-
-
-        return response;
-      });
-
     });
   }
 

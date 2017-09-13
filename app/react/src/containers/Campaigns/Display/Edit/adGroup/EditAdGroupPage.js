@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import moment from 'moment';
 import { injectIntl, intlShape } from 'react-intl';
+import moment from 'moment';
 
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
+import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import ReportService from '../../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
@@ -19,11 +20,25 @@ class EditAdGroupPage extends Component {
   }
 
   componentDidMount() {
-    let initialSegments;
+    Promise.all([
+      this.getGeneralInfo(),
+      this.getSegments()
+    ])
+      .then((results) => {
+        const initialValues = results.reduce((acc, result) => ({
+          ...acc,
+          ...result
+        }), {});
+
+        this.setState({ initialValues });
+      });
+  }
+
+  getGeneralInfo() {
     const {
       intl: { formatMessage },
       match: {
-        params: { adGroupId, campaignId, organisationId },
+        params: { adGroupId, campaignId },
       },
     } = this.props;
 
@@ -33,40 +48,41 @@ class EditAdGroupPage extends Component {
       MONTH: formatMessage(messages.contentSection1Row2Option3),
     };
 
-    DisplayCampaignService.getAdGroup(campaignId, adGroupId)
+    return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
       .then(({ data }) => {
-        return this.setState({
-          initialValues: {
-            adGroupName: data.name,
-            adGroupBudgetSplit: data.max_budget_per_period,
-            adGroupBudgetSplitPeriod: formatBudgetPeriod[data.max_budget_period],
-            adGroupBudgetTotal: data.total_budget,
-            adGroupBudgetStartDate: moment(data.start_date),
-            adGroupBudgetEndDate: moment(data.end_date),
-            adGroupTechnicalName: data.technical_name || '',
-          }
-        });
-      })
-      .then(() => {
-        return DisplayCampaignService.getSegments(campaignId, adGroupId);
-      })
+        return {
+          adGroupName: data.name,
+          adGroupBudgetSplit: data.max_budget_per_period,
+          adGroupBudgetSplitPeriod: formatBudgetPeriod[data.max_budget_period],
+          adGroupBudgetTotal: data.total_budget,
+          adGroupBudgetStartDate: moment(data.start_date),
+          adGroupBudgetEndDate: moment(data.end_date),
+          adGroupTechnicalName: data.technical_name || '',
+        };
+      });
+  }
+
+  getSegments() {
+    let initialSegments;
+    const {
+      match: {
+        params: { adGroupId, campaignId, organisationId },
+      },
+    } = this.props;
+
+    return DisplayCampaignService.getSegments(campaignId, adGroupId)
       .then((segments) => {
         initialSegments = segments;
 
-        return ReportService.getAudienceSegmentReport(
-          organisationId,
-          moment().subtract(1, 'days'),
-          moment(),
-          'audience_segment_id',
-        );
+        return AudienceSegmentService.getSegmentMetaData(organisationId);
       })
       .then((results) => {
         const metadata = normalizeArrayOfObject(
-          normalizeReportView(results.data.report_view),
+          normalizeReportView(results),
           'audience_segment_id',
         );
 
-        const segmentsWithAdditionalMetadata = initialSegments.map(segment => {
+        const audienceTable = initialSegments.map(segment => {
           const { user_points, desktop_cookie_ids } = metadata[segment.audience_segment_id];
           const { technical_name, exclude, ...relevantData } = segment;
 
@@ -79,12 +95,7 @@ class EditAdGroupPage extends Component {
           };
         });
 
-        return this.setState({
-          initialValues: {
-            ...this.state.initialValues,
-            audienceTable: segmentsWithAdditionalMetadata
-          }
-        });
+        return { audienceTable };
       });
   }
 

@@ -1,4 +1,6 @@
+import moment from 'moment';
 import ApiService from './ApiService';
+import ReportService from './ReportService';
 
 const getSegments = (organisationId, datamartId, options = {}) => {
   const endpoint = 'audience_segments';
@@ -20,6 +22,15 @@ const getSegment = (segmentId, options = {}) => {
   };
 
   return ApiService.getRequest(endpoint, params).then(res => { return res.data; });
+};
+
+const getSegmentMetaData = (organisationId) => {
+  return ReportService.getAudienceSegmentReport(
+    organisationId,
+    moment().subtract(1, 'days'),
+    moment(),
+    'audience_segment_id',
+  ).then(res => res.data.report_view);
 };
 
 const createOverlap = (datamartId, segmentId) => {
@@ -61,8 +72,9 @@ const getEmailCount = (datamartId, segmentIds = [], providerTns = []) => {
 };
 
 export default {
-  getSegments,
   getSegment,
+  getSegmentMetaData,
+  getSegments,
   getEmailCount,
   createOverlap,
   retrieveOverlap,
