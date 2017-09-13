@@ -88,7 +88,7 @@ function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) 
     return (
       <div className="adGroup-table">
         <Table
-          className="border-style"
+          className={dataSource.length ? 'border-style' : 'hide-section'}
           dataSource={dataSource}
           columns={columns}
           pagination={false}

@@ -29,7 +29,6 @@ import withDrawer from '../../../../../components/Drawer';
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import { isFakeId } from '../../../../../utils/FakeIdHelper';
 import * as actions from '../../../../../state/Notifications/actions';
 import messages from '../messages';
 
@@ -69,20 +68,21 @@ class AdGroupForm extends Component {
     let asyncOperations = null;
 
     if (!editionMode) {
-      asyncOperations = DisplayCampaignService.createAdGroup(campaignId, adGroupBody)
-        .then((result) => {
-          return this.updateAudienceSegments(result.data.id);
-        });
+      asyncOperations = DisplayCampaignService.createAdGroup(campaignId, adGroupBody);
     } else {
       asyncOperations = DisplayCampaignService.updateAdGroup(campaignId, adGroupId, adGroupBody);
     }
 
-    asyncOperations.catch(error => notifyError(error));
+    asyncOperations
+      .then((result) => {
+        return this.updateAudienceSegments(result.data.id);
+      })
+      .catch(error => notifyError(error));
   }
 
   updateAudienceSegments = (newAdGroupId) => {
     const {
-      formValues: { audienceTable },
+      formValues: { audienceTable = [] },
       match: { params: { campaignId, ...rest } },
     } = this.props;
 
@@ -165,8 +165,6 @@ class AdGroupForm extends Component {
       organisationId,
     };
     const { audienceTable } = formValues;
-
-    console.log('formValues = ', formValues);
 
     return (
       <Form

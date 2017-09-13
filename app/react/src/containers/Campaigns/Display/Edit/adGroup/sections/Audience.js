@@ -44,7 +44,6 @@ class Audience extends Component {
       const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
         return AudienceSegmentService.getSegment(segmentId).then(segment => ({
           audience_segment_id: segment.id,
-          // name: segment.id,
           name: segment.name,
           target: true,
         }));
@@ -119,21 +118,19 @@ class Audience extends Component {
         />
 
         <Row>
-          {dataSource.length
-          ? (
-            <AdGroupTable
-              dataSource={dataSource}
-              tableName="audienceTable"
-              updateTableFieldStatus={handlers.updateTableFieldStatus}
-            />
-          )
-          : (
-            <EmptyRecords
+          <AdGroupTable
+            dataSource={dataSource}
+            tableName="audienceTable"
+            updateTableFieldStatus={handlers.updateTableFieldStatus}
+          />
+
+          {!dataSource.length
+            ? <EmptyRecords
               iconType="plus"
               message={formatMessage(messages.contentSection2EmptyTitle)}
             />
-          )
-        }
+            : null
+          }
         </Row>
       </div>
     );
