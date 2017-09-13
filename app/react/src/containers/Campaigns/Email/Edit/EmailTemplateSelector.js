@@ -10,9 +10,10 @@ import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
   TableViewFilters,
-  CardTableView,
+  CollectionView,
 } from '../../../../components/TableView';
 import CreativeService from '../../../../services/CreativeService';
+import CreativeCard from './CreativeCard';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import messages from './messages';
 
@@ -111,18 +112,13 @@ class EmailTemplateSelector extends Component {
     save(newEmailTemplateSelections);
   }
 
+
   getColumnsDefinitions() {
     const { newEmailTemplateSelections } = this.state;
     const selectedEmailTemplateIds = newEmailTemplateSelections
       .map(templateSelection => templateSelection.email_template_id);
 
     return {
-      cover: {
-        key: 'id',
-        render: (text, record) => {
-          return `https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`;
-        }
-      },
       title: {
         key: 'name',
         render: (text) => {
@@ -136,6 +132,16 @@ class EmailTemplateSelector extends Component {
         }
       }
     };
+  }
+
+  buildCollectionItems = (dataSource) => {
+    const columnDef = this.getColumnsDefinitions();
+    if (dataSource) {
+      return dataSource.map(data => {
+        return <CreativeCard item={data} title={columnDef.title} footer={columnDef.footer} />;
+      });
+    }
+    return null;
   }
 
   getSearchOptions() {
@@ -199,9 +205,8 @@ class EmailTemplateSelector extends Component {
             <Content className="mcs-edit-container">
               {hasEmailTemplates ?
                 <TableViewFilters searchOptions={this.getSearchOptions()}>
-                  <CardTableView
-                    dataDefinition={this.getColumnsDefinitions()}
-                    dataSource={emailTemplates}
+                  <CollectionView
+                    collectionItems={this.buildCollectionItems(emailTemplates)}
                     loading={isLoading}
                     pagination={pagination}
                   />

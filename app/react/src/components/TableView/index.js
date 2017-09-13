@@ -1,11 +1,11 @@
 import TableViewFilters from './TableViewFilters';
 import TableView from './TableView';
 import EmptyTableView from './EmptyTableView';
-import CardTableView from './CardTableView';
+import CollectionView from './CollectionView';
 
 export {
   TableViewFilters,
   TableView,
   EmptyTableView,
-  CardTableView,
+  CollectionView,
 };
