@@ -169,31 +169,24 @@ class General extends Component {
             <McsIcons type="chevron" />
           </ButtonStyleless>
 
-          {this.state.advancedSectionDisplayed
-          ? (
-            <div>
-              <Row>
-                <Field
-                  name="adGroupTechnicalName"
-                  component={FormInput}
-                  props={{
-                    formItemProps: {
-                      label: formatMessage(messages.contentSection1Row5Label),
-                      ...fieldGridConfig,
-                    },
-                    inputProps: {
-                      placeholder: formatMessage(messages.contentSection1Row5Placeholder),
-                    },
-                    helpToolTipProps: {
-                      title: formatMessage(messages.contentSection1Row5Tooltip),
-                    },
-                  }}
-                />
-              </Row>
-            </div>
-          )
-          : null
-        }
+          <Row className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
+            <Field
+              name="adGroupTechnicalName"
+              component={FormInput}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.contentSection1Row5Label),
+                  ...fieldGridConfig,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.contentSection1Row5Placeholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.contentSection1Row5Tooltip),
+                },
+              }}
+            />
+          </Row>
         </div>
       </div>
     );

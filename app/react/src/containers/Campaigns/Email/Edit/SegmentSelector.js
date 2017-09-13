@@ -4,7 +4,6 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Layout, Button, Checkbox } from 'antd';
 import moment from 'moment';
-import { injectIntl, intlShape } from 'react-intl';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
@@ -87,6 +86,7 @@ class SegmentSelector extends Component {
         'audience_segment_id',
       ).then(results => {
         const segments = response.data;
+
         const metadata = normalizeArrayOfObject(
           normalizeReportView(results.data.report_view),
           'audience_segment_id',
@@ -182,6 +182,7 @@ class SegmentSelector extends Component {
     const { save } = this.props;
     const { selectedSegmentById } = this.state;
     const selectedSegments = Object.keys(selectedSegmentById);
+
     save(selectedSegments);
   }
 
@@ -270,7 +271,6 @@ SegmentSelector.defaultProps = {
 SegmentSelector.propTypes = {
   close: PropTypes.func.isRequired,
   defaultDatamart: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
   organisationId: PropTypes.string.isRequired,
   selectedSegmentIds: PropTypes.arrayOf(PropTypes.string),
   save: PropTypes.func.isRequired,
@@ -278,7 +278,6 @@ SegmentSelector.propTypes = {
 
 export default compose(
   withMcsRouter,
-  injectIntl,
   connect(
     state => ({
       defaultDatamart: getDefaultDatamart(state),

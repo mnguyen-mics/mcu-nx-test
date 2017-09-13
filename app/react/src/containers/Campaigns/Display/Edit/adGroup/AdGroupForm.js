@@ -92,20 +92,18 @@ class AdGroupForm extends Component {
       const { audience_segment_id, id, toBeRemoved, target } = segment;
       const body = { audience_segment_id, exclude: !target };
 
-      /* In case of a new adGroup */
       return promise.then(() => {
         let newPromise;
 
-        if (isFakeId(id)) {
+        if (!id) {
           newPromise = DisplayCampaignService.createSegment(campaignId, adGroupId, body)
-            .then((seg) => seg);
+            .then((newSegment) => newSegment);
         } else {
-          /* In case the adGroup exists already */
           newPromise = (!toBeRemoved
             ? DisplayCampaignService.updateSegment(campaignId, adGroupId, id, body)
-              .then(seg => seg)
+              .then(newSegment => newSegment)
             : DisplayCampaignService.deleteSegment(campaignId, adGroupId, id)
-              .then(seg => seg)
+              .then(newSegment => newSegment)
           );
         }
 
@@ -167,6 +165,8 @@ class AdGroupForm extends Component {
       organisationId,
     };
     const { audienceTable } = formValues;
+
+    console.log('formValues = ', formValues);
 
     return (
       <Form

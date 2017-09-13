@@ -16,9 +16,9 @@ const mockDataSource = [
       text: 'Google Ad Network',
     },
     data: [
-      { image: 'check', text: 'Display' },
-      { image: 'check', text: 'Video' },
-      { image: 'check', text: 'Mobile' },
+      { image: 'check', name: 'Display' },
+      { image: 'check', name: 'Video' },
+      { image: 'check', name: 'Mobile' },
     ],
     switchButton: true,
   },
@@ -28,15 +28,15 @@ const mockDataSource = [
       text: 'LinkedIn',
     },
     data: [
-      { image: 'check', text: 'Display' },
-      { image: 'close-big', text: 'Video' },
-      { image: 'check', text: 'Mobile' },
+      { image: 'check', name: 'Display' },
+      { image: 'close-big', name: 'Video' },
+      { image: 'check', name: 'Mobile' },
     ],
     switchButton: true,
   },
 ];
 
-function Publisher({ formatMessage }) {
+function Publisher({ formatMessage, handlers }) {
 
   return (
     <div id="publisher">
@@ -54,11 +54,19 @@ function Publisher({ formatMessage }) {
 
       <Row>
         {/* mockDataSource.length
-          ? <AdGroupTable dataSource={mockDataSource} tableName="publisherTable" />
-          : */<EmptyRecords
-            iconType="plus"
-            message={formatMessage(messages.contentSection4EmptyTitle)}
-          />
+          ? (
+            <AdGroupTable
+              dataSource={mockDataSource}
+              tableName="publisherTable"
+              updateTableFieldStatus={handlers.updateTableFieldStatus}
+            />
+          )
+          : */(
+            <EmptyRecords
+              iconType="plus"
+              message={formatMessage(messages.contentSection4EmptyTitle)}
+            />
+          )
         }
       </Row>
     </div>
@@ -67,6 +75,10 @@ function Publisher({ formatMessage }) {
 
 Publisher.propTypes = {
   formatMessage: PropTypes.func.isRequired,
+
+  handlers: PropTypes.shape({
+    updateTableFieldStatus: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default Publisher;

@@ -13,13 +13,13 @@ const mockDataSource = [
   {
     type: {
       image: 'question',
-      text: 'PreBid - Retargeting',
+      name: 'PreBid - Retargeting',
     },
     data: ['Click Prediction (DTLR)'],
   },
 ];
 
-function Optimization({ formatMessage }) {
+function Optimization({ formatMessage, handlers }) {
 
   return (
     <div id="optimization">
@@ -37,11 +37,19 @@ function Optimization({ formatMessage }) {
 
       <Row>
         {/* mockDataSource.length
-          ? <AdGroupTable dataSource={mockDataSource} tableName="optimizationTable" />
-          : */<EmptyRecords
-            iconType="plus"
-            message={formatMessage(messages.contentSection6EmptyTitle)}
-          />
+          ? (
+            <AdGroupTable
+              dataSource={mockDataSource}
+              tableName="optimizationTable"
+              updateTableFieldStatus={handlers.updateTableFieldStatus}
+            />
+          )
+          : */ (
+            <EmptyRecords
+              iconType="plus"
+              message={formatMessage(messages.contentSection6EmptyTitle)}
+            />
+          )
         }
       </Row>
     </div>
@@ -50,6 +58,9 @@ function Optimization({ formatMessage }) {
 
 Optimization.propTypes = {
   formatMessage: PropTypes.func.isRequired,
+  handlers: PropTypes.shape({
+    updateTableFieldStatus: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default Optimization;

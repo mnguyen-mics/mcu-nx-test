@@ -25,7 +25,7 @@ function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) 
                 style={{ color: '#00a1df', fontSize: 24, margin: 'auto' }}
               />
             </div>
-            {type.text}
+            {type.name}
           </div>
       ),
       },
@@ -38,7 +38,7 @@ function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) 
               ? (
                 <div className="display-row" key={generateGuid()}>
                   <McsIcons type={elem.image} style={{ fontSize: 20 }} />
-                  <p>{elem.text}</p>
+                  <p>{elem.name}</p>
                 </div>
               )
               : <p key={generateGuid()}>{elem}</p>

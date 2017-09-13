@@ -7,6 +7,9 @@ import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import ReportService from '../../../../../services/ReportService';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import messages from '../messages';
 
 class EditAdGroupPage extends Component {
@@ -16,10 +19,11 @@ class EditAdGroupPage extends Component {
   }
 
   componentDidMount() {
+    let initialSegments;
     const {
       intl: { formatMessage },
       match: {
-        params: { adGroupId, campaignId },
+        params: { adGroupId, campaignId, organisationId },
       },
     } = this.props;
 
@@ -31,7 +35,7 @@ class EditAdGroupPage extends Component {
 
     DisplayCampaignService.getAdGroup(campaignId, adGroupId)
       .then(({ data }) => {
-        this.setState({
+        return this.setState({
           initialValues: {
             adGroupName: data.name,
             adGroupBudgetSplit: data.max_budget_per_period,
@@ -40,6 +44,45 @@ class EditAdGroupPage extends Component {
             adGroupBudgetStartDate: moment(data.start_date),
             adGroupBudgetEndDate: moment(data.end_date),
             adGroupTechnicalName: data.technical_name || '',
+          }
+        });
+      })
+      .then(() => {
+        return DisplayCampaignService.getSegments(campaignId, adGroupId);
+      })
+      .then((segments) => {
+        initialSegments = segments;
+
+        return ReportService.getAudienceSegmentReport(
+          organisationId,
+          moment().subtract(1, 'days'),
+          moment(),
+          'audience_segment_id',
+        );
+      })
+      .then((results) => {
+        const metadata = normalizeArrayOfObject(
+          normalizeReportView(results.data.report_view),
+          'audience_segment_id',
+        );
+
+        const segmentsWithAdditionalMetadata = initialSegments.map(segment => {
+          const { user_points, desktop_cookie_ids } = metadata[segment.audience_segment_id];
+          const { technical_name, exclude, ...relevantData } = segment;
+
+          return {
+            ...relevantData,
+            desktop_cookie_ids,
+            target: !exclude,
+            toBeRemoved: false,
+            user_points,
+          };
+        });
+
+        return this.setState({
+          initialValues: {
+            ...this.state.initialValues,
+            audienceTable: segmentsWithAdditionalMetadata
           }
         });
       });
@@ -62,5 +105,5 @@ EditAdGroupPage.propTypes = {
 
 export default compose(
   withMcsRouter,
-  injectIntl
+  injectIntl,
 )(EditAdGroupPage);

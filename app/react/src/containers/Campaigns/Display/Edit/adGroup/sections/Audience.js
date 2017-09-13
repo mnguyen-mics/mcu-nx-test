@@ -11,7 +11,6 @@ import AudienceSegmentService from '../../../../../../services/AudienceSegmentSe
 import ReportService from '../../../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
-import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
 
 const { FormSection } = Form;
 
@@ -35,6 +34,8 @@ class Audience extends Component {
 
   updateData = (callback) => {
     return (selectedSegmentIds) => {
+      callback();
+
       const {
         handlers: { updateTableFields },
         organisationId,
@@ -43,12 +44,8 @@ class Audience extends Component {
       const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
         return AudienceSegmentService.getSegment(segmentId).then(segment => ({
           audience_segment_id: segment.id,
-          id: generateFakeId(), /*
-                                 * TODO: in edition mode: use id from server;
-                                 * in creation mode: use generateFakeId()
-                                 */
-          name: segment.id,
-          text: segment.name,
+          // name: segment.id,
+          name: segment.name,
           target: true,
         }));
       }));
@@ -74,13 +71,8 @@ class Audience extends Component {
           return { ...segment, user_points, desktop_cookie_ids };
         });
       })
-      .then(results => {
-        updateTableFields({
-          newFields: results,
-          tableName: 'audienceTable'
-        });
-
-        callback();
+      .then(newFields => {
+        updateTableFields({ newFields, tableName: 'audienceTable' });
       });
     };
   }
@@ -93,8 +85,8 @@ class Audience extends Component {
         ? [
           ...tableData,
           {
-            key: segment.id,
-            type: { image: 'users', text: segment.text },
+            key: segment.audience_segment_id,
+            type: { image: 'users', name: segment.name },
             info: [
               `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
               `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
@@ -131,8 +123,8 @@ class Audience extends Component {
           ? (
             <AdGroupTable
               dataSource={dataSource}
-              updateTableFieldStatus={handlers.updateTableFieldStatus}
               tableName="audienceTable"
+              updateTableFieldStatus={handlers.updateTableFieldStatus}
             />
           )
           : (

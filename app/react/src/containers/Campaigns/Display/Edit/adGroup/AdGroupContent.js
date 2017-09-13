@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
@@ -6,66 +6,80 @@ import { injectIntl, intlShape } from 'react-intl';
 import { EditContentLayout } from '../../../../../components/Layout';
 import AdGroupForm from './AdGroupForm';
 import { withMcsRouter } from '../../../../Helpers';
-
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
 
+class AdGroupContent extends Component {
 
-function AdGroupContent({
-  editionMode,
-  initialValues,
-  intl: { formatMessage },
-  match: {
-    params: { campaignId, organisationId },
-    url,
-  },
-}) {
+  state = {
+    campaignName: '',
+  }
 
-  const breadcrumbPaths = [
-    {
-      name: formatMessage(messages.breadcrumbTitle1),
-      url: `/v2/o/${organisationId}/campaigns/display`,
+  componentDidMount() {
+    DisplayCampaignService.getCampaignName(this.props.match.params.campaignId)
+      .then((campaignName) => {
+        this.setState({ campaignName });
+      });
+  }
+
+  render() {
+    const {
+    editionMode,
+    initialValues,
+    intl: { formatMessage },
+    match: {
+      params: { campaignId, organisationId },
+      url,
     },
-    {
-      name: formatMessage(messages.breadcrumbTitle2), // TODO: add title (now: XXXXXXXXXX)
-      url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
-    },
-      { name: formatMessage(messages.breadcrumbTitle3) },
-  ];
+  } = this.props;
 
-  const sidebarItems = {
-    general: messages.sectionTitle1,
-    audience: messages.sectionTitle2,
-    deviceAndLocation: messages.sectionTitle3,
-    publisher: messages.sectionTitle4,
-    media: messages.sectionTitle5,
-    optimization: messages.sectionTitle6,
-    ads: messages.sectionTitle7,
-    summary: messages.sectionTitle8,
-  };
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.breadcrumbTitle1),
+        url: `/v2/o/${organisationId}/campaigns/display`,
+      },
+      {
+        name: this.state.campaignName,
+        url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
+      },
+      { name: formatMessage(messages.breadcrumbTitle2) },
+    ];
 
-  const formId = 'adGroupForm';
+    const sidebarItems = {
+      general: messages.sectionTitle1,
+      audience: messages.sectionTitle2,
+      deviceAndLocation: messages.sectionTitle3,
+      publisher: messages.sectionTitle4,
+      media: messages.sectionTitle5,
+      optimization: messages.sectionTitle6,
+      ads: messages.sectionTitle7,
+      summary: messages.sectionTitle8,
+    };
 
-  const buttonMetadata = {
-    formId,
-    message: messages.saveAdGroup,
-    onClose: () => {},
-  };
+    const formId = 'adGroupForm';
 
-  return (
-    <EditContentLayout
-      breadcrumbPaths={breadcrumbPaths}
-      sidebarItems={sidebarItems}
-      buttonMetadata={buttonMetadata}
-      url={url}
-    >
-      <AdGroupForm
-        editionMode={editionMode}
-        formId={formId}
-        initialValues={initialValues}
-      />
-    </EditContentLayout>
-  );
+    const buttonMetadata = {
+      formId,
+      message: messages.saveAdGroup,
+      onClose: () => {},
+    };
+
+    return (
+      <EditContentLayout
+        breadcrumbPaths={breadcrumbPaths}
+        sidebarItems={sidebarItems}
+        buttonMetadata={buttonMetadata}
+        url={url}
+      >
+        <AdGroupForm
+          editionMode={editionMode}
+          formId={formId}
+          initialValues={initialValues}
+        />
+      </EditContentLayout>
+    );
+  }
 }
 
 AdGroupContent.defaultProps = {

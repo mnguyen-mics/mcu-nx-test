@@ -23,10 +23,6 @@ export default defineMessages({
   },
   breadcrumbTitle2: {
     id: 'adGroupEditor.breadcrumb.title2',
-    defaultMessage: 'XXXXXXXXXXXXX',
-  },
-  breadcrumbTitle3: {
-    id: 'adGroupEditor.breadcrumb.title3',
     defaultMessage: 'New Ad Group',
   },
 
