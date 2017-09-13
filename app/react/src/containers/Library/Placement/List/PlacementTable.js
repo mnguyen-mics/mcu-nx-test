@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
+import { TableViewFilters, EmptyTableView } from '../../../../components/TableView';
 
 import * as PlacementListsActions from '../../../../state/Library/PlacementLists/actions';
 
@@ -160,15 +160,11 @@ class PlacementListsTable extends Component {
       <div className="mcs-table-container">
         <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-        >
-          <TableView
-            columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingAutomationList}
-            onChange={() => {}}
-            pagination={pagination}
-          />
-        </TableViewFilters>
+          dataSource={dataSource}
+          loading={isFetchingAutomationList}
+          onChange={() => {}}
+          pagination={pagination}
+        />
       </div>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_PLACEMENT" />);
 
   }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
+import { TableViewFilters, EmptyTableView } from '../../../../components/TableView';
 
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 
@@ -187,14 +187,10 @@ class CreativeDisplayTable extends Component {
       <div className="mcs-table-container">
         <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-        >
-          <TableView
-            columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingCreativeDisplay}
-            pagination={pagination}
-          />
-        </TableViewFilters>
+          dataSource={dataSource}
+          loading={isFetchingCreativeDisplay}
+          pagination={pagination}
+        />
       </div>) : (<EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />);
 
   }
