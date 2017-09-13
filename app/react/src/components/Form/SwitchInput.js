@@ -5,8 +5,8 @@ import { Switch } from 'antd';
 function SwitchInput({ className, input }) {
   return (
     <Switch
-      className={className}
       {...input}
+      className={className}
     />
   );
 }

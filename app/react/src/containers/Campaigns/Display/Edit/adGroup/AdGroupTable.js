@@ -53,15 +53,15 @@ function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) 
       },
       {
         colSpan: 9,
-        dataIndex: 'target',
-        key: 'target',
+        dataIndex: 'include',
+        key: 'include',
         render: (data) => {
           return (
             <div>
               <div className="display-row align-left">
                 <Field
                   component={SwitchInput}
-                  name={`${tableName}[${data.index}].target`}
+                  name={`${tableName}[${data.index}].include`}
                   type="checkbox"
                 />
 

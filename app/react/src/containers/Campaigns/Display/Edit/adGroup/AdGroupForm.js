@@ -5,6 +5,7 @@ import {
   arrayPush,
   arrayRemove,
   Form,
+  getFormInitialValues,
   getFormValues,
   reduxForm
 } from 'redux-form';
@@ -55,7 +56,7 @@ class AdGroupForm extends Component {
       [formatMessage(messages.contentSection1Row2Option3)]: 'MONTH',
     };
 
-    const adGroupBody = {
+    const generalBody = {
       end_date: finalValues.adGroupBudgetEndDate.valueOf(),
       max_budget_per_period: finalValues.adGroupBudgetSplit,
       max_budget_period: formatBudgetPeriod[finalValues.adGroupBudgetSplitPeriod],
@@ -68,9 +69,9 @@ class AdGroupForm extends Component {
     let asyncOperations = null;
 
     if (!editionMode) {
-      asyncOperations = DisplayCampaignService.createAdGroup(campaignId, adGroupBody);
+      asyncOperations = DisplayCampaignService.createAdGroup(campaignId, generalBody);
     } else {
-      asyncOperations = DisplayCampaignService.updateAdGroup(campaignId, adGroupId, adGroupBody);
+      asyncOperations = DisplayCampaignService.updateAdGroup(campaignId, adGroupId, generalBody);
     }
 
     asyncOperations
@@ -82,29 +83,47 @@ class AdGroupForm extends Component {
 
   updateAudienceSegments = (newAdGroupId) => {
     const {
+      formInitialValues,
       formValues: { audienceTable = [] },
       match: { params: { campaignId, ...rest } },
     } = this.props;
 
+
     const adGroupId = rest.adGroupId || newAdGroupId;
 
     return audienceTable.reduce((promise, segment) => {
-      const { audience_segment_id, id, toBeRemoved, target } = segment;
-      const body = { audience_segment_id, exclude: !target };
+      const { audience_segment_id, id, include, toBeRemoved } = segment;
+      const body = { audience_segment_id, exclude: !include };
 
       return promise.then(() => {
         let newPromise;
 
-        if (!id) {
-          newPromise = DisplayCampaignService.createSegment(campaignId, adGroupId, body)
+        if (!toBeRemoved) {
+          /* In case we want to add or update a segment */
+
+          if (!id) {
+            /* creation */
+            newPromise = DisplayCampaignService.createSegment(campaignId, adGroupId, body)
             .then((newSegment) => newSegment);
+          } else {
+            const needsUpdating = formInitialValues.audienceTable.find(seg => (
+              seg.id === id && seg.include !== include
+            ));
+
+            /* update if modified segment */
+            if (needsUpdating) {
+              newPromise = DisplayCampaignService.updateSegment(campaignId, adGroupId, id, body)
+                .then(newSegment => newSegment);
+            }
+
+            newPromise = Promise.resolve();
+          }
+        } else if (id) {
+          /* In case we want to delete an existing segment */
+          DisplayCampaignService.deleteSegment(campaignId, adGroupId, id)
+            .then(newSegment => newSegment);
         } else {
-          newPromise = (!toBeRemoved
-            ? DisplayCampaignService.updateSegment(campaignId, adGroupId, id, body)
-              .then(newSegment => newSegment)
-            : DisplayCampaignService.deleteSegment(campaignId, adGroupId, id)
-              .then(newSegment => newSegment)
-          );
+          newPromise = Promise.resolve();
         }
 
         return newPromise;
@@ -212,13 +231,11 @@ AdGroupForm.propTypes = {
   editionMode: PropTypes.bool,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
-
+  formInitialValues: PropTypes.shape().isRequired,
   formValues: PropTypes.shape().isRequired,
-
   handleSubmit: PropTypes.func.isRequired,
   hasDatamarts: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-
   match: PropTypes.shape().isRequired,
 
   openNextDrawer: PropTypes.func.isRequired,
@@ -229,6 +246,7 @@ AdGroupForm.propTypes = {
 
 
 const mapStateToProps = (state) => ({
+  formInitialValues: getFormInitialValues(FORM_NAME)(state),
   formValues: getFormValues(FORM_NAME)(state),
   hasDatamarts: SessionHelper.hasDatamarts(state),
 });

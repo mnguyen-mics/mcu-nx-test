@@ -73,7 +73,7 @@ class EditAdGroupPage extends Component {
           return {
             ...relevantData,
             desktop_cookie_ids,
-            target: !exclude,
+            include: !exclude,
             toBeRemoved: false,
             user_points,
           };

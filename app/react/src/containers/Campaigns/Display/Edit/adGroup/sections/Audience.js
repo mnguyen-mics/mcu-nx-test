@@ -45,7 +45,7 @@ class Audience extends Component {
         return AudienceSegmentService.getSegment(segmentId).then(segment => ({
           audience_segment_id: segment.id,
           name: segment.name,
-          target: true,
+          include: true,
         }));
       }));
 
@@ -90,7 +90,7 @@ class Audience extends Component {
               `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
               `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
             ],
-            target: { bool: segment.target, index },
+            include: { bool: segment.include, index },
             toBeRemoved: index,
           }
         ]
