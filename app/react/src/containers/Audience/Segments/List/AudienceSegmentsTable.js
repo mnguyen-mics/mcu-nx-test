@@ -413,6 +413,9 @@ class AudienceSegmentsTable extends Component {
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}
             columnsVisibilityOptions={columnsVisibilityOptions}
+            dataSource={dataSource}
+            loading={isFetchingAudienceSegments}
+            pagination={pagination}
           />
         </div>
       )
