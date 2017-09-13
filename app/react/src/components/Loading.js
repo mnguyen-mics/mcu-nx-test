@@ -1,9 +1,9 @@
 import React from 'react';
 import { Spin } from 'antd';
 
-function Loading() {
+function Loading(props) {
   return (
-    <div className="mcs-centered-container">
+    <div className="mcs-centered-container" {...props}>
       <Spin size="large" />
     </div>
   );

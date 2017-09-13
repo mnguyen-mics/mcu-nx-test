@@ -7,13 +7,13 @@ import McsIcons from '../../components/McsIcons';
 
 const defaultTooltipPlacement = 'right';
 
-function FormInput(
-  { input,
-    meta,
-    formItemProps,
-    inputProps,
-    helpToolTipProps,
-  }) {
+function FormInput({
+  input,
+  meta,
+  formItemProps,
+  inputProps,
+  helpToolTipProps,
+}) {
 
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
@@ -42,12 +42,12 @@ function FormInput(
           />
         </Col>
         {displayHelpToolTip &&
-          <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
-              <McsIcons type="info" />
-            </Tooltip>
-          </Col>
-        }
+        <Col span={2} className="field-tooltip">
+          <Tooltip {...mergedTooltipProps}>
+            <McsIcons type="info" />
+          </Tooltip>
+        </Col>
+          }
       </Row>
     </Form.Item>
   );

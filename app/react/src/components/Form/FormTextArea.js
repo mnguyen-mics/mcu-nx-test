@@ -1,22 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Tooltip, Row, Col } from 'antd';
+import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
 import McsIcons from '../../components/McsIcons';
 
-const Option = Select.Option;
-
 const defaultTooltipPlacement = 'right';
 
-function FormSelect({
-  input,
-  meta,
-  formItemProps,
-  selectProps,
-  options,
-  helpToolTipProps,
-}) {
+function FormTextArea(
+  { input,
+    meta,
+    formItemProps,
+    inputProps,
+    helpToolTipProps,
+  }) {
 
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
@@ -37,33 +34,32 @@ function FormSelect({
     >
 
       <Row align="middle" type="flex">
-        <Col span={22}>
-          <Select {...input} {...selectProps}>
-            {options.map(({ disabled, value, key, title, text }) => (
-              <Option {...{ disabled, value, key, title }}>{text}</Option>
-            ))}
-          </Select>
+        <Col span={22} >
+          <Input.TextArea
+            id={input.name}
+            {...input}
+            {...inputProps}
+          />
         </Col>
-
         {displayHelpToolTip &&
           <Col span={2} className="field-tooltip">
             <Tooltip {...mergedTooltipProps}>
               <McsIcons type="info" />
             </Tooltip>
-          </Col>}
+          </Col>
+        }
       </Row>
     </Form.Item>
   );
 }
 
-FormSelect.defaultProps = {
+FormTextArea.defaultProps = {
   formItemProps: {},
-  selectProps: {},
-  options: [],
+  inputProps: {},
   helpToolTipProps: {},
 };
 
-FormSelect.propTypes = {
+FormTextArea.propTypes = {
   input: PropTypes.shape({
     name: PropTypes.string.isRequired,
   }).isRequired,
@@ -72,40 +68,24 @@ FormSelect.propTypes = {
   }).isRequired,
   formItemProps: PropTypes.shape({
     required: PropTypes.bool,
-    label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
+    label: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.string,
+    ]),
     colon: PropTypes.bool,
   }),
-  selectProps: PropTypes.shape({
-    mode: PropTypes.oneOf(['multiple', 'tags', 'combobox']),
+  inputProps: PropTypes.shape({
+    type: PropTypes.string,
     placeholder: PropTypes.string,
-    defaultValue: PropTypes.string,
+    size: PropTypes.oneOf(['small', 'default', 'large']),
+    className: PropTypes.string,
   }),
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      disabled: PropTypes.bool,
-      value: PropTypes.string,
-      key: PropTypes.string,
-      title: PropTypes.string,
-      text: PropTypes.string,
-    }),
-  ),
   helpToolTipProps: PropTypes.shape({
     tile: PropTypes.string,
-    placement: PropTypes.oneOf([
-      'top',
-      'left',
-      'right',
-      'bottom',
-      'topLeft',
-      'topRight',
-      'bottomLeft',
-      'bottomRight',
-      'leftTop',
-      'leftBottom',
-      'rightTop',
-      'rightBottom',
-    ]),
+    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
+      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
+      'leftTop', 'leftBottom', 'rightTop', 'rightBottom']),
   }),
 };
 
-export default FormSelect;
+export default FormTextArea;

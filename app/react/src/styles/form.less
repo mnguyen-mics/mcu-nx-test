@@ -1,6 +1,159 @@
 .mcs-form-container {
   padding-top: 20px;
 
+  .intermediate-title {
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+
+  .menu.small {
+    padding: 10px 0;
+    width: 100%;
+  }
+
+  .menu {
+    padding: 20px 0;
+    width: 100%;
+
+    .menu-sublist {
+      overflow: hidden;
+
+      .lines {
+        transition: max-height 0.5s ease-in;
+      }
+      .lines.closed {
+        max-height: 0px;
+      }
+      .lines.opened {
+        max-height: 1000px;
+      }
+    }
+    
+    .presentation {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: space-between;
+      margin: auto;
+
+      .separator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1em;
+        font-weight: bold;
+        letter-spacing: 0.3px;
+      }
+
+      .presentation-item {
+        flex: 0 0 45%;
+        justify-content: center;
+        background-color: #FFFFFF;
+        border: @border-width-base @border-style-base @border-color-base;
+        border-radius: @border-radius-sm @border-radius-sm;
+        display: flex;
+        align-items: center;
+        .content {
+          .icon {
+            font-size: 10em;
+          }
+          .title {
+            font-size: 1.1em;
+            font-weight: bold;
+            letter-spacing: 0.4px;
+          }
+          .subtitle {
+            font-size: 1em;
+            letter-spacing: 0.4px;
+            color: @text-color-secondary ;
+          }
+        }
+      }
+
+      .presentation-item:before {
+        content: "";
+        float: left;
+        padding-top: 100%;
+      }
+
+      .presentation-item:hover {
+        background-color: #ebeff2;
+      }
+
+      .presentation-item:focus {
+        outline: none;
+      }
+    }
+
+    .menu-item {
+      width: 100%;
+      text-align: left;
+      background-color: #FFFFFF;
+      border: @border-width-base @border-style-base @border-color-base;
+      display: flex;
+      align-items: center;
+      align-content: space-between;
+      flex-flow: row wrap;
+      justify-content: space-between;
+      .selector {
+        padding: 0 20px 0 0;
+      }
+      .content {
+        padding: 20px 0 20px 50px;
+        .title {
+          font-size: 1.1em;
+          font-weight: bold;
+          letter-spacing: 0.4px;
+        }
+        .subtitle {
+          font-size: 1em;
+          letter-spacing: 0.4px;
+          color: @text-color-secondary ;
+        }
+      }
+      .content.alone {
+        padding: 29px 0 29px 50px;
+      }
+      .content.alone.small {
+        padding: 12px 0 12px 50px;
+      }
+      .clearfix {
+        width: 100%;
+      }
+    }
+
+    .menu-item.opened {
+      border-bottom: none;
+    }
+
+    .menu-item.small {
+      border-right: @border-width-base @border-style-base @border-color-base;
+      border-left: @border-width-base @border-style-base @border-color-base;
+      border-top: none;
+      border-bottom: none
+    }
+
+    .menu-item.small:last-child{
+      border-bottom: @border-width-base @border-style-base @border-color-base;
+    }
+
+    .menu-sublist:first-child {
+      border-radius: @border-radius-sm @border-radius-sm 0 0;
+    }
+    .menu-sublist:last-child {
+      border-radius: 0 0 @border-radius-sm @border-radius-sm;
+    }
+
+    .menu-item:hover {
+      background-color: #ebeff2;
+    }
+    .menu-item:focus {
+      outline: none;
+    }
+  }
+
+
+
   hr {
     border-bottom: solid 1px #dcdcdc;
     margin: 40px 0;
@@ -20,12 +173,38 @@
       font-size: 1em;
       color: #7e7e7e;
     }
+  }
 
+  .upload {
+    color: #7e7e7e;
+    padding: 0 5px;
+    .name {
+      float: left;
+      text-align: left;
+    }
+    .close {
+      color: @error-color;
+      float: right;
+      font-size: 0.8em;
+      line-height: inherit;
+      vertical-align: middle;
+    }
+  }
+
+  .upload:hover {
+    background-color: #ebeff2;
   }
 
   .field-tooltip {
     text-align: right;
     font-size: 1.3em;
+  }
+
+  iframe.renderer {
+    display: block;
+    margin: 0 auto;
+    background-color: #fff;
+    border: @border-style-base @border-width-base @border-color-base 
   }
 
 }
