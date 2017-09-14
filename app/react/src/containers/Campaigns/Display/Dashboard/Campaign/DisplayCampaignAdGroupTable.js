@@ -17,14 +17,13 @@ class DisplayCampaignAdGroupTable extends Component {
     const {
       match: {
         params: {
-          organisationId,
           campaignId,
         },
       },
       history,
     } = this.props;
 
-    const editUrl = `/${organisationId}/campaigns/display/expert/edit/${campaignId}/edit-ad-group/${adgroup.id}`;
+    const editUrl = `${campaignId}/adgroups/edit/${adgroup.id}`;
 
     history.push(editUrl);
   }
@@ -117,7 +116,7 @@ class DisplayCampaignAdGroupTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroup/${record.id}`}
+            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${record.id}`}
           >{text}
           </Link>
         ),

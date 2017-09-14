@@ -8,7 +8,6 @@ import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import ReportService from '../../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import messages from '../messages';
@@ -50,13 +49,21 @@ class EditAdGroupPage extends Component {
 
     return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
       .then(({ data }) => {
+        const generalInfo = {};
+
+        if (data.start_date) {
+          generalInfo.adGroupBudgetStartDate = moment(data.start_date);
+        }
+        if (data.end_date) {
+          generalInfo.adGroupBudgetEndDate = moment(data.end_date);
+        }
+
         return {
+          ...generalInfo,
           adGroupName: data.name,
           adGroupBudgetSplit: data.max_budget_per_period,
           adGroupBudgetSplitPeriod: formatBudgetPeriod[data.max_budget_period],
           adGroupBudgetTotal: data.total_budget,
-          adGroupBudgetStartDate: moment(data.start_date),
-          adGroupBudgetEndDate: moment(data.end_date),
           adGroupTechnicalName: data.technical_name || '',
         };
       });

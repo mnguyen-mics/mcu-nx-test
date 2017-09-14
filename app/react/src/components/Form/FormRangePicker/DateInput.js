@@ -4,7 +4,7 @@ import { DatePicker } from 'antd';
 
 function DateInput({ input, ...otherProps }) {
   const { value, ...rest } = input;
-  const correctedInput = (value === '' ? rest : { ...rest, value });
+  const correctedInput = (!value ? rest : { ...rest, value });
 
   return (
     <DatePicker
