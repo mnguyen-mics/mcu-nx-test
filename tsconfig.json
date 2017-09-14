@@ -1,0 +1,20 @@
+
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es6",
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "outDir": "ts-build",
+    "jsx": "preserve",
+    "allowJs": true
+  },
+  "exclude":[
+    "node_modules",
+    "ts-build",
+    "app/angular/bower_components"
+  ]
+}

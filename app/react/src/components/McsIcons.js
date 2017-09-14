@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Icons(props) {
+function McsIcons(props) {
   return (
     <span className="icon" {...props}>
       <i className={`mcs-${props.type}`} />
@@ -9,8 +9,8 @@ function Icons(props) {
   );
 }
 
-Icons.propTypes = {
+McsIcons.propTypes = {
   type: PropTypes.string.isRequired,
 };
 
-export default Icons;
+export default McsIcons;

@@ -3,12 +3,11 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const paths = require('./paths');
-const babelOptions = require('./babel');
 const pkg = require('../package.json');
 
 const extractStyle = new ExtractTextPlugin({
   filename: '[name].[chunkhash].css',
-  disable: process.env.NODE_ENV === 'development',
+  disable: process.env.NODE_ENV === 'development'
 });
 
 const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
@@ -18,7 +17,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
     entry: {
       app: path.join(paths.reactAppSrc, '/index.js'),
       'style-less': paths.appStyleLess,
-      'react-vendors': Object.keys(pkg.dependencies),
+      'react-vendors': Object.keys(pkg.dependencies)
     },
 
     module: {
@@ -29,27 +28,31 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
           use: {
             loader: 'eslint-loader',
             query: {
-              failOnError: eslintFailOnError,
-            },
+              failOnError: eslintFailOnError
+            }
           },
-          enforce: 'pre',
+          enforce: 'pre'
         },
         {
-          test: /\.js$/,
+          test: /\.(t|j)sx?$/,
           include: paths.reactAppSrc,
           use: {
-            loader: 'babel-loader',
-            options: babelOptions,
-          },
+            loader: 'awesome-typescript-loader'
+          }
+        },
+        {
+          enforce: 'pre',
+          test: /\.js$/,
+          loader: 'source-map-loader'
         },
         {
           test: /\.less$/,
           loader: extractStyle.extract({
             use: [
               'css-loader?sourceMap',
-              'less-loader?sourceMap',
-            ],
-          }),
+              'less-loader?sourceMap'
+            ]
+          })
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
@@ -57,8 +60,8 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
             {
               loader: 'file-loader',
               query: {
-                name: `${isProduction ? '/src/assets/images/' : ''}[name].[ext]`,
-              },
+                name: `${isProduction ? '/src/assets/images/' : ''}[name].[ext]`
+              }
             },
             {
               loader: 'image-webpack-loader',
@@ -69,41 +72,38 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
                 },
                 optipng: {
                   optimizationLevel: 7,
-                },
-              },
-            },
-          ],
+                }
+              }
+            }
+          ]
         },
         {
           test: /\.(eot|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
-          use: 'url-loader',
-        },
-      ],
-      noParse: /(mapbox-gl)\.js$/,
+          use: 'url-loader'
+        }
+      ]
     },
 
     resolve: {
       alias: {
-        Containers: path.resolve(__dirname, 'app/react/src/containers/'),
-        webworkify: 'webworkify-webpack-dropin',
-        'mapbox-gl$': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js'),
+        Containers: path.resolve(__dirname, 'app/react/src/containers/')
       },
       modules: [paths.appNodeModules],
+      extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
 
     plugins: [
       extractStyle,
       new webpack.DefinePlugin({
-        PUBLIC_PATH: JSON.stringify('react'),
+        PUBLIC_PATH: JSON.stringify('react')
       }),
       new webpack.DefinePlugin({
-        PUBLIC_URL: JSON.stringify('/v2'),
+        PUBLIC_URL: JSON.stringify('/v2')
       }),
       new webpack.optimize.CommonsChunkPlugin({
-        names: ['react-vendors', 'manifest'],
-      }),
-      new webpack.EnvironmentPlugin(['MapboxAccessToken']),
-    ],
+        names: ['react-vendors', 'manifest']
+      })
+    ]
   };
 
 };
