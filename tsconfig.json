@@ -1,20 +1,24 @@
-
 {
   "compilerOptions": {
-    "module": "esnext",
+    "module": "commonjs",
     "target": "es6",
     "moduleResolution": "node",
-    "baseUrl": "src",
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "sourceMap": true,
     "outDir": "ts-build",
-    "jsx": "preserve",
-    "allowJs": true
+    "allowJs": true,
+    "jsx":"react",
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
   "exclude":[
     "node_modules",
     "ts-build",
     "app/angular/bower_components"
+  ],
+  "include": [
+    "./src/**/*"
   ]
 }

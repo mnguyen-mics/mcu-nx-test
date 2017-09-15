@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Button, Icon } from 'antd';
 
@@ -35,7 +35,7 @@ const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
   return (
     <Row className="related-record">
       <Col span={1}>
-        
+
       </Col>
       <Col span={7}>
         {title}

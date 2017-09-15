@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const paths = require('./paths');
+const babelOptions = require('./babel');
 const pkg = require('../package.json');
 
 const extractStyle = new ExtractTextPlugin({
@@ -22,29 +23,36 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
 
     module: {
       rules: [
+        // {
+        //   test: /\.js$/,
+        //   include: paths.reactAppSrc,
+        //   use: {
+        //     loader: 'eslint-loader',
+        //     query: {
+        //       failOnError: eslintFailOnError
+        //     }
+        //   },
+        //   enforce: 'pre'
+        // },
         {
-          test: /\.js$/,
+          test: /\.jsx?$/,
           include: paths.reactAppSrc,
-          use: {
-            loader: 'eslint-loader',
-            query: {
-              failOnError: eslintFailOnError
-            }
-          },
-          enforce: 'pre'
+          loader: 'babel-loader?presets[]=es2015&presets[]=react&presets[]=stage-2'
+          // use: {
+          //   loader: 'babel-loader',
+          //   options: babelOptions
+          // }
         },
         {
-          test: /\.(t|j)sx?$/,
+          test: /\.tsx?$/,
           include: paths.reactAppSrc,
-          use: {
-            loader: 'awesome-typescript-loader'
-          }
+          use: ['babel-loader?presets[]=es2015&presets[]=react&presets[]=stage-2', 'awesome-typescript-loader']
         },
-        {
-          enforce: 'pre',
-          test: /\.js$/,
-          loader: 'source-map-loader'
-        },
+        // {
+        //   enforce: 'pre',
+        //   test: /\.js$/,
+        //   loader: 'source-map-loader'
+        // },
         {
           test: /\.less$/,
           loader: extractStyle.extract({
