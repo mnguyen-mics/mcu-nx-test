@@ -10,6 +10,10 @@ import AudienceSegmentService from '../../../../../services/AudienceSegmentServi
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import {
+  filterEmptyValues,
+  formatKeysToPascalCase
+} from '../../../../../utils/ReduxFormHelper';
 import messages from '../messages';
 
 class EditAdGroupPage extends Component {
@@ -21,7 +25,7 @@ class EditAdGroupPage extends Component {
   componentDidMount() {
     Promise.all([
       this.getGeneralInfo(),
-      this.getSegments()
+      this.getSegments(),
     ])
       .then((results) => {
         const initialValues = results.reduce((acc, result) => ({
@@ -30,6 +34,11 @@ class EditAdGroupPage extends Component {
         }), {});
 
         this.setState({ initialValues });
+
+        return this.getBidOptimizers(initialValues.adGroupBidOptimizerId);
+      })
+      .then((results) => {
+        console.log('the results = ', results);
       });
   }
 
@@ -41,33 +50,97 @@ class EditAdGroupPage extends Component {
       },
     } = this.props;
 
-    const formatBudgetPeriod = {
-      DAY: formatMessage(messages.contentSection1Row2Option1),
-      WEEK: formatMessage(messages.contentSection1Row2Option2),
-      MONTH: formatMessage(messages.contentSection1Row2Option3),
-    };
-
     return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
       .then(({ data }) => {
-        const generalInfo = {};
+        const neededKeys = [
+          'bid_optimizer_id',
+          'end_date',
+          'max_budget_per_period',
+          'max_budget_period',
+          'name',
+          'start_date',
+          'technical_name',
+          'total_budget',
+        ];
 
-        if (data.start_date) {
-          generalInfo.adGroupBudgetStartDate = moment(data.start_date);
-        }
-        if (data.end_date) {
-          generalInfo.adGroupBudgetEndDate = moment(data.end_date);
-        }
-
-        return {
-          ...generalInfo,
-          adGroupName: data.name,
-          adGroupBudgetSplit: data.max_budget_per_period,
-          adGroupBudgetSplitPeriod: formatBudgetPeriod[data.max_budget_period],
-          adGroupBudgetTotal: data.total_budget,
-          adGroupTechnicalName: data.technical_name || '',
+        const formatBudgetPeriod = {
+          DAY: formatMessage(messages.contentSection1Row2Option1),
+          WEEK: formatMessage(messages.contentSection1Row2Option2),
+          MONTH: formatMessage(messages.contentSection1Row2Option3),
         };
+
+        const filteredData = filterEmptyValues({ data, neededKeys })
+          .reduce((acc, key) => {
+            let value = data[key];
+
+            if (key === 'start_date') {
+              value = moment(value);
+            } else if (key === 'end_date') {
+              value = moment(value);
+            } else if (key === 'max_budget_period') {
+              value = formatBudgetPeriod[value];
+            }
+
+            return { ...acc, [key]: value };
+          }, {});
+
+
+        return formatKeysToPascalCase({ data: filteredData, prefix: 'adGroup' });
       });
   }
+
+  getBidOptimizers(selectedBidId) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    return DisplayCampaignService.getBidOptimizers(organisationId)
+      .then((bidOptimizers) => {
+        const selectedBid = bidOptimizers.find(elem => elem.id === selectedBidId);
+
+        const fetchEngineProperties = DisplayCampaignService
+          .getEngineProperties(selectedBid.engine_version_id);
+
+        const fetchEngineVersion = DisplayCampaignService
+            .getEngineVersion(selectedBid.engine_version_id);
+
+        return Promise.all([fetchEngineProperties, fetchEngineVersion]);
+      })
+      .then(results => ({
+        name: (results[0].find(elem => elem.technical_name === 'name')).value.value,
+        provider: (results[0].find(elem => elem.technical_name === 'provider')).value.value,
+        toBeRemoved: false,
+      }));
+  }
+
+  // getBidOptimizers() {
+  //   // bid_optimizer_id
+  //   // {id: "131", name: "OpenRTB Dynamic Allocation Test", organisation_id: "1125",…}
+  //
+  //   const {
+  //     match: {
+  //       params: { organisationId },
+  //     },
+  //   } = this.props;
+  //
+  //   return DisplayCampaignService.getBidOptimizers(organisationId)
+  //     .then((bidOptimizers) => {
+  //       console.log('bidOptimizers = ', bidOptimizers);
+  //
+  //       return Promise.all(bidOptimizers.map(bidOptimizer => {
+  //         const fetchEngineProperties = DisplayCampaignService
+  //           .getEngineProperties(bidOptimizer.engine_version_id);
+  //
+  //         const fetchEngineVersion = DisplayCampaignService
+  //             .getEngineVersion(bidOptimizer.engine_version_id);
+  //
+  //         return Promise.all([fetchEngineProperties, fetchEngineVersion]);
+  //       }));
+  //     })
+  //     .then(results => console.log('et là ? ', results));
+  // }
 
   getSegments() {
     let initialSegments;
@@ -107,6 +180,7 @@ class EditAdGroupPage extends Component {
   }
 
   render() {
+    console.log('initialValues = ', this.state.initialValues);
     return (
       <AdGroupContent
         editionMode

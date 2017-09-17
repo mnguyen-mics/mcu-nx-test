@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Layout, Button, Checkbox } from 'antd';
-import moment from 'moment';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
@@ -13,7 +12,6 @@ import {
   TableViewFilters,
 } from '../../../../components/TableView';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
-import ReportService from '../../../../services/ReportService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';

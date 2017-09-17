@@ -75,7 +75,7 @@ class AdGroupContent extends Component {
         <AdGroupForm
           editionMode={editionMode}
           formId={formId}
-          initialValues={initialValues}
+          initialValues={{ adGroupMaxBudgetPeriod: 'Per Day', ...initialValues }}
         />
       </EditContentLayout>
     );
@@ -84,10 +84,7 @@ class AdGroupContent extends Component {
 
 AdGroupContent.defaultProps = {
   editionMode: false,
-
-  initialValues: {
-    adGroupBudgetSplitPeriod: 'Per Day',
-  },
+  initialValues: {},
 };
 
 AdGroupContent.propTypes = {

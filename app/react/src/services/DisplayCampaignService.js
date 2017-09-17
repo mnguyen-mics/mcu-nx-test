@@ -64,14 +64,36 @@ function updateAd(adId, campaignId, adGroupId, body) {
   return ApiService.putRequest(endpoint, body);
 }
 
+/* BID OPTIMIZERS SERVICES */
+function getBidOptimizers(organisationId) {
+  const endpoint = `bid_optimizers?organisation_id=${organisationId}`;
+
+  return ApiService.getRequest(endpoint).then(res => res.data);
+}
+
+function getEngineProperties(engineVersionId) {
+  const endpoint = `plugins/${engineVersionId}/properties`;
+
+  return ApiService.getRequest(endpoint).then(res => res.data);
+}
+
+function getEngineVersion(engineVersionId) {
+  const endpoint = `plugins/version/${engineVersionId}`;
+
+  return ApiService.getRequest(endpoint).then(res => res.data);
+}
+
 export default {
   createAdGroup,
   createSegment,
   deleteSegment,
-  getCampaignDisplay,
-  getCampaignName,
   getAdGroup,
   getAds,
+  getBidOptimizers,
+  getCampaignDisplay,
+  getCampaignName,
+  getEngineProperties,
+  getEngineVersion,
   getSegments,
   updateAd,
   updateAdGroup,

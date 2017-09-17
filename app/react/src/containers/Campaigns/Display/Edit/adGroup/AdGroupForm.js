@@ -57,13 +57,13 @@ class AdGroupForm extends Component {
     };
 
     const generalBody = {
-      end_date: finalValues.adGroupBudgetEndDate.valueOf(),
-      max_budget_per_period: finalValues.adGroupBudgetSplit,
-      max_budget_period: formatBudgetPeriod[finalValues.adGroupBudgetSplitPeriod],
+      end_date: finalValues.adGroupEndDate.valueOf(),
+      max_budget_per_period: finalValues.adGroupMaxBudgetPerPeriod,
+      max_budget_period: formatBudgetPeriod[finalValues.adGroupMaxBudgetPeriod],
       name: finalValues.adGroupName,
-      start_date: finalValues.adGroupBudgetStartDate.valueOf(),
+      start_date: finalValues.adGroupStartDate.valueOf(),
       technical_name: finalValues.adGroupTechnicalName,
-      total_budget: finalValues.adGroupBudgetTotal,
+      total_budget: finalValues.adGroupTotalBudget,
     };
 
     let asyncOperations = null;

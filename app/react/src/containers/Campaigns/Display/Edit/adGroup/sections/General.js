@@ -64,7 +64,7 @@ class General extends Component {
 
         <Row>
           <Field
-            name="adGroupBudgetSplit"
+            name="adGroupMaxBudgetPerPeriod"
             component={FormInput}
             validate={[isRequired]}
             props={{
@@ -76,7 +76,7 @@ class General extends Component {
               inputProps: {
                 addonAfter: (
                   <Field
-                    name="adGroupBudgetSplitPeriod"
+                    name="adGroupMaxBudgetPeriod"
                     component={FormSelectAddon}
                     props={{
                       options: [
@@ -100,7 +100,7 @@ class General extends Component {
 
         <Row>
           <Field
-            name="adGroupBudgetTotal"
+            name="adGroupTotalBudget"
             component={FormInput}
             validate={[isRequired]}
             props={{
@@ -132,20 +132,20 @@ class General extends Component {
             }}
 
             startProps={{
-              name: 'adGroupBudgetStartDate',
+              name: 'adGroupStartDate',
               placeholder: formatMessage(messages.contentSection1Row4Placeholder1),
               style: { width: '100%' },
             }}
 
             endProps={{
-              name: 'adGroupBudgetEndDate',
+              name: 'adGroupEndDate',
               placeholder: formatMessage(messages.contentSection1Row4Placeholder2),
               style: { width: '100%' },
             }}
 
             values={{
-              startDate: values && values.adGroupBudgetStartDate,
-              endDate: values && values.adGroupBudgetEndDate,
+              startDate: values && values.adGroupStartDate,
+              endDate: values && values.adGroupEndDate,
             }}
 
             fieldValidators={{ start: [isRequired], end: [isRequired] }}
