@@ -32,7 +32,7 @@ function updateAdGroup(campaignId, adGroupId, body) {
   return ApiService.putRequest(endpoint, body);
 }
 
-/* SEGMENTS SERVICES */
+/* SEGMENT SERVICES */
 function getSegments(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.getRequest(endpoint).then(res => res.data);
@@ -53,7 +53,18 @@ function deleteSegment(campaignId, adGroupId, segmentId) {
   return ApiService.deleteRequest(endpoint);
 }
 
-/* ADS SERVICES */
+/* PUBLISHER SERVICES */
+function getAllPublishers(organisationId) {
+  const endpoint = `display_network_accesses?organisation_id=${organisationId}`;
+  return ApiService.getRequest(endpoint).then(res => res.data);
+}
+
+function getSelectedPublishers(campaignId) {
+  const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
+  return ApiService.getRequest(endpoint).then(res => res.data);
+}
+
+/* AD SERVICES */
 function getAds(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
   return ApiService.getRequest(endpoint);
@@ -64,7 +75,7 @@ function updateAd(adId, campaignId, adGroupId, body) {
   return ApiService.putRequest(endpoint, body);
 }
 
-/* BID OPTIMIZERS SERVICES */
+/* BID OPTIMIZER SERVICES */
 function getBidOptimizers(organisationId) {
   const endpoint = `bid_optimizers?organisation_id=${organisationId}`;
 
@@ -89,12 +100,14 @@ export default {
   deleteSegment,
   getAdGroup,
   getAds,
+  getAllPublishers,
   getBidOptimizers,
   getCampaignDisplay,
   getCampaignName,
   getEngineProperties,
   getEngineVersion,
   getSegments,
+  getSelectedPublishers,
   updateAd,
   updateAdGroup,
   updateCampaign,

@@ -8,35 +8,22 @@ import messages from '../../messages';
 
 const { FormSection } = Form;
 
-// TODO: Remove mock data
-const mockDataSource = [
-  {
-    type: {
-      image: 'question',
-      text: 'Google Ad Network',
-    },
-    data: [
-      { image: 'check', name: 'Display' },
-      { image: 'check', name: 'Video' },
-      { image: 'check', name: 'Mobile' },
-    ],
-    switchButton: true,
-  },
-  {
-    type: {
-      image: 'question',
-      text: 'LinkedIn',
-    },
-    data: [
-      { image: 'check', name: 'Display' },
-      { image: 'close-big', name: 'Video' },
-      { image: 'check', name: 'Mobile' },
-    ],
-    switchButton: true,
-  },
-];
+function Publisher({ formValues, formatMessage, handlers }) {
 
-function Publisher({ formatMessage, handlers }) {
+  const dataSource = formValues.reduce((tableData, publisher, index) => {
+    return (!publisher.toBeRemoved
+      ? [
+        ...tableData,
+        {
+          key: publisher.id,
+          type: { image: 'question', name: publisher.display_network_name },
+          info: [],
+          toBeRemoved: index,
+        }
+      ]
+      : tableData
+    );
+  }, []);
 
   return (
     <div id="publisher">
@@ -53,27 +40,30 @@ function Publisher({ formatMessage, handlers }) {
       />
 
       <Row>
-        {/* mockDataSource.length
-          ? (
-            <AdGroupTable
-              dataSource={mockDataSource}
-              tableName="publisherTable"
-              updateTableFieldStatus={handlers.updateTableFieldStatus}
-            />
-          )
-          : */(
-            <EmptyRecords
-              iconType="plus"
-              message={formatMessage(messages.contentSection4EmptyTitle)}
-            />
-          )
+        <AdGroupTable
+          dataSource={dataSource}
+          tableName="publisherTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
+
+        {!dataSource.length
+          ? <EmptyRecords
+            iconType="plus"
+            message={formatMessage(messages.contentSection2EmptyTitle)}
+          />
+          : null
         }
       </Row>
     </div>
   );
 }
 
+Publisher.defaultProps = {
+  formValues: [],
+};
+
 Publisher.propTypes = {
+  formValues: PropTypes.arrayOf(PropTypes.shape()),
   formatMessage: PropTypes.func.isRequired,
 
   handlers: PropTypes.shape({

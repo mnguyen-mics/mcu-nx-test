@@ -33,6 +33,7 @@ function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) 
         colSpan: 6,
         dataIndex: 'info',
         key: 'info',
+        /* In render, info is either an array of string of an array of { image: '', name: '' } */
         render: (info) => {
           const elemToDisplay = (elem) => (elem.image
               ? (

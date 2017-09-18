@@ -66,17 +66,19 @@ class AdGroupForm extends Component {
       total_budget: finalValues.adGroupTotalBudget,
     };
 
-    let asyncOperations = null;
+    let adGroupRequest = null;
 
     if (!editionMode) {
-      asyncOperations = DisplayCampaignService.createAdGroup(campaignId, generalBody);
+      adGroupRequest = DisplayCampaignService.createAdGroup(campaignId, generalBody);
     } else {
-      asyncOperations = DisplayCampaignService.updateAdGroup(campaignId, adGroupId, generalBody);
+      adGroupRequest = DisplayCampaignService.updateAdGroup(campaignId, adGroupId, generalBody);
     }
 
-    asyncOperations
+    adGroupRequest
       .then((result) => {
-        return this.updateAudienceSegments(result.data.id);
+        const newAdGroupId = result.data.id;
+
+        return this.updateAudienceSegments(newAdGroupId);
       })
       .catch(error => notifyError(error));
   }
@@ -139,22 +141,22 @@ class AdGroupForm extends Component {
   }
 
   updateTableFields = ({ newFields, tableName }) => {
-    const newFieldIds = newFields.map(field => field.audience_segment_id);
+    const newFieldIds = newFields.map(field => field.id);
     const prevFields = this.props.formValues[tableName] || [];
 
     if (prevFields.length) {
-      prevFields.forEach((field, index) => {
-        const toBeRemoved = !newFieldIds.includes(field.audience_segment_id);
+      prevFields.forEach((prevField, index) => {
+        const toBeRemoved = !newFieldIds.includes(prevField.id);
 
         this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
       });
     }
 
-    newFields.forEach((segment) => {
+    newFields.forEach((newField) => {
       if (!prevFields.length
-        || !prevFields.find(field => (field.audience_segment_id === segment.audience_segment_id))
+        || !prevFields.find(prevField => (prevField.id === newField.id))
       ) {
-        this.props.arrayPush(FORM_NAME, `${tableName}`, { ...segment, toBeRemoved: false });
+        this.props.arrayPush(FORM_NAME, `${tableName}`, { ...newField, toBeRemoved: false });
       }
     });
   }
@@ -185,7 +187,8 @@ class AdGroupForm extends Component {
     };
     const {
       audienceTable,
-      bidOptimizerTable
+      bidOptimizerTable,
+      publisherTable,
     } = formValues;
 
     return (
@@ -206,7 +209,7 @@ class AdGroupForm extends Component {
           <hr />
           <DeviceAndLocation {...commonProps} />
           <hr />
-          <Publisher {...commonProps} />
+          <Publisher {...commonProps} formValues={publisherTable} />
           <hr />
           <Media {...commonProps} />
           <hr />
