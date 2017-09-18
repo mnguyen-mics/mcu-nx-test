@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { CardWithHeader } from '../../../../components/Card/CardWithHeader';
+import { CardWithHeader } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { formatMetric } from '../../../../utils/MetricHelper';

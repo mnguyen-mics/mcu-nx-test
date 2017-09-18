@@ -1,11 +1,16 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
 import { Select as AntSelect } from 'antd';
 
 import InternalSelect from './InternalSelect';
 
-class Select extends Component {
+interface SelectProps {
+  defaultValue: any;
+  selectClassNames: Array<string>;
+}
+
+class Select extends React.Component<SelectProps, {}> {
 
   static Option = AntSelect.Option;
 
@@ -22,16 +27,16 @@ class Select extends Component {
     );
   }
 }
+// 
+//
+// Select.propTypes = {
+//   defaultValue: PropTypes.string,
+//   selectClassNames: PropTypes.arrayOf(PropTypes.string),
+// };
 
-
-Select.propTypes = {
-  defaultValue: PropTypes.string,
-  selectClassNames: PropTypes.arrayOf(PropTypes.string),
-};
-
-Select.defaultProps = {
-  defaultValue: undefined,
-  selectClassNames: ['form-control'],
-};
+// Select.defaultProps = {
+//   defaultValue: undefined,
+//   selectClassNames: ['form-control'],
+// };
 
 export default Select;

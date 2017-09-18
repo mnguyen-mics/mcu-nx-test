@@ -10,7 +10,17 @@ const DEFAULT_DRAWER_OPTIONS = {
   isModal: false,
 };
 
+// interface withDrawerProps {
+//
+// }
+//
+// interface withDrawerState {
+//   //drawableContents: object;
+//   drawableContents: object;
+// }
+
 const withDrawer = WrappedComponent => {
+
   return class extends Component {
 
     constructor(props) {
@@ -38,7 +48,7 @@ const withDrawer = WrappedComponent => {
 
       this.setState({
         drawableContents: [
-          ...this.state.drawableContents,
+          this.state.drawableContents,
           { component, ...extendedOptions },
         ],
       });

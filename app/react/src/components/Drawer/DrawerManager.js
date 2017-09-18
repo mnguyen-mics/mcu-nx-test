@@ -4,6 +4,21 @@ import PropTypes from 'prop-types';
 
 const viewportDrawerRatio = 0.75;
 
+// interface DrawerManagerProps {
+//   drawableContents?: [{
+//     component: any;
+//     additionalProps?: object;
+//     size: string;
+//     openNextDrawer?: any;
+//     closeNextDrawer?: any;
+//   }];
+//   onEscapeKeyDown: any;
+//   onClickOnBackground: any;
+//   drawerDiv: any;
+// }
+
+// class DrawerManager extends React.Component<DrawerManagerProps, {}> {
+
 class DrawerManager extends Component {
 
   constructor(props) {

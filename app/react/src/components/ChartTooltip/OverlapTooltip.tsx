@@ -1,17 +1,32 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import McsIcons from '../McsIcons';
 
+interface OverlapTooltipProps {
+  content?: {
+    segment_initial: {
+      name: string,
+      population: number
+    },
+    segment_overlaping: {
+      name: string,
+      population: number
+    },
+    overlap: {
+      population: number
+    }
+  }
+}
 
-function OverlapTooltip({ content }) {
+const OverlapTooltip: React.SFC<OverlapTooltipProps> = props => {
 
-  if (!content) {
+  if (!props.content) {
     return <div />;
   }
 
-  const { overlap, segment_initial, segment_overlaping } = content;
+  const { overlap, segment_initial, segment_overlaping } = props.content;
   const rmax = 30;
   const strokeWidth = 1;
   const o = overlap.population;
@@ -91,22 +106,6 @@ OverlapTooltip.defaultProps = {
       population: 1,
     },
   },
-};
-
-OverlapTooltip.propTypes = {
-  content: PropTypes.shape({
-    segment_initial: PropTypes.shape({
-      name: PropTypes.string,
-      population: PropTypes.number,
-    }),
-    segment_overlaping: PropTypes.shape({
-      name: PropTypes.string,
-      population: PropTypes.number,
-    }),
-    overlap: PropTypes.shape({
-      population: PropTypes.number,
-    }),
-  }),
 };
 
 export default OverlapTooltip;

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es6",
     "target": "es6",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -8,14 +8,11 @@
     "sourceMap": true,
     "outDir": "ts-build",
     "allowJs": true,
-    "jsx":"react",
+    "jsx":"preserve",
   },
   "exclude":[
     "node_modules",
     "ts-build",
     "app/angular/bower_components"
-  ],
-  "include": [
-    "./src/**/*"
   ]
 }

@@ -1,14 +1,31 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-function BasicTooltip({ content }) {
+interface BasicTooltipProps {
+  // content: object;
+  // xLabel: string | number;
+  // entries: object;
+  // label: object;
+  // color: string;
+  // value: number;
+  content: {
+    xLabel: string | number ;
+    entries: [{
+      label: object;
+      color: string;
+      value: number;
+    }];
+  };
+}
+
+const BasicTooltip: React.SFC<BasicTooltipProps> = props => {
 
   const buildStyle = (c) => ({ fill: c, r: 6 });
   let tooltipTableContent = [];
 
-  if (content) {
-    tooltipTableContent = content.entries.map((entry, index) => {
+  if (props.content) {
+    tooltipTableContent =props.content.entries.map((entry, index) => {
 
       return (
         <tr key={index.toString()}>
@@ -27,14 +44,18 @@ function BasicTooltip({ content }) {
       );
     });
   } else {
-    tooltipTableContent = (<tr />);
+    let tooltipTableContent = (<tr />);
   }
 
   return (
     <div className="mcs-tooltip">
       <table>
         <thead>
-          <tr><th colSpan="3">{content ? content.xLabel : ''}</th></tr>
+          <tr>
+            <th colSpan={3}>
+              {props.content ? props.content.xLabel : ''}
+            </th>
+          </tr>
         </thead>
         <tbody>
           {tooltipTableContent}
@@ -55,39 +76,5 @@ BasicTooltip.defaultProps = {
   },
 };
 
-BasicTooltip.propTypes = {
-
-  content: PropTypes.shape({
-    xLabel: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number,
-      React.PropTypes.instanceOf(Date),
-    ]).isRequired,
-
-  /*
-  * The content of the tooltip
-  */
-    entries: PropTypes.arrayOf(
-      PropTypes.shape({
-
-        /*
-        * The legend of the plot entry
-        */
-        label: PropTypes.object,
-
-        /*
-        * The color of the plot entry
-        */
-        color: PropTypes.string,
-
-        /*
-        * The value of the plot entry
-        */
-        value: PropTypes.number,
-      }),
-    ).isRequired,
-  }),
-
-};
 
 export default BasicTooltip;
