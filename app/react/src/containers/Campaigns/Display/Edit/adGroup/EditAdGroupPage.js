@@ -37,8 +37,12 @@ class EditAdGroupPage extends Component {
 
         return this.getBidOptimizers(initialValues.adGroupBidOptimizerId);
       })
-      .then((results) => {
-        console.log('the results = ', results);
+      .then((bidOptimizer) => {
+        const { initialValues } = this.state;
+
+        this.setState({
+          initialValues: { ...initialValues, bidOptimizerTable: bidOptimizer }
+        });
       });
   }
 
@@ -99,20 +103,23 @@ class EditAdGroupPage extends Component {
     return DisplayCampaignService.getBidOptimizers(organisationId)
       .then((bidOptimizers) => {
         const selectedBid = bidOptimizers.find(elem => elem.id === selectedBidId);
-
         const fetchEngineProperties = DisplayCampaignService
           .getEngineProperties(selectedBid.engine_version_id);
 
         const fetchEngineVersion = DisplayCampaignService
-            .getEngineVersion(selectedBid.engine_version_id);
+          .getEngineVersion(selectedBid.engine_version_id);
 
         return Promise.all([fetchEngineProperties, fetchEngineVersion]);
       })
-      .then(results => ({
-        name: (results[0].find(elem => elem.technical_name === 'name')).value.value,
-        provider: (results[0].find(elem => elem.technical_name === 'provider')).value.value,
-        toBeRemoved: false,
-      }));
+      .then(results => {
+        return ([{
+          ...results[1],
+          name: (results[0].find(elem => elem.technical_name === 'name')).value.value,
+          provider: (results[0].find(elem => elem.technical_name === 'provider')).value.value,
+          toBeRemoved: false,
+          id: selectedBidId,
+        }]);
+      });
   }
 
   // getBidOptimizers() {
@@ -180,7 +187,7 @@ class EditAdGroupPage extends Component {
   }
 
   render() {
-    console.log('initialValues = ', this.state.initialValues);
+    // console.log('initialValues = ', this.state.initialValues);
     return (
       <AdGroupContent
         editionMode

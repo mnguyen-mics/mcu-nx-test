@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'antd';
+import { Switch, Table } from 'antd';
 import { Field, FieldArray } from 'redux-form';
 
 import { ButtonStyleless, Form, McsIcons } from '../../../../../components';
@@ -55,15 +55,22 @@ function AdGroupTableWrapper({ dataSource, updateTableFieldStatus, tableName }) 
         colSpan: 9,
         dataIndex: 'include',
         key: 'include',
-        render: (data) => {
+        render: (data = {}) => {
+          const displaySwitch = !!Object.keys(data).length;
+
           return (
-            <div>
+            <div className={displaySwitch ? '' : 'visibility-hidden'} >
               <div className="display-row align-left">
-                <Field
-                  component={SwitchInput}
-                  name={`${tableName}[${data.index}].include`}
-                  type="checkbox"
-                />
+                {displaySwitch
+                  ? (
+                    <Field
+                      component={SwitchInput}
+                      name={`${tableName}[${data.index}].include`}
+                      type="checkbox"
+                    />
+                  )
+                  : <Switch />
+                }
 
                 <p className="switch-title-padding">
                   {data.bool ? 'Target' : 'Exclude'}

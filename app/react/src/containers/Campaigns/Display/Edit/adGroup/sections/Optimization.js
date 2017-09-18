@@ -8,18 +8,22 @@ import messages from '../../messages';
 
 const { FormSection } = Form;
 
-// TODO: Remove mock data
-const mockDataSource = [
-  {
-    type: {
-      image: 'question',
-      name: 'PreBid - Retargeting',
-    },
-    data: ['Click Prediction (DTLR)'],
-  },
-];
+function Optimization({ formValues, formatMessage, handlers }) {
 
-function Optimization({ formatMessage, handlers }) {
+  const dataSource = formValues.reduce((tableData, bidOptimizer, index) => {
+    return (!bidOptimizer.toBeRemoved
+      ? [
+        ...tableData,
+        {
+          key: bidOptimizer.current_version_id,
+          type: { image: 'question', name: bidOptimizer.provider },
+          info: [bidOptimizer.name],
+          toBeRemoved: index,
+        }
+      ]
+      : tableData
+    );
+  }, []);
 
   return (
     <div id="optimization">
@@ -36,28 +40,32 @@ function Optimization({ formatMessage, handlers }) {
       />
 
       <Row>
-        {/* mockDataSource.length
-          ? (
-            <AdGroupTable
-              dataSource={mockDataSource}
-              tableName="optimizationTable"
-              updateTableFieldStatus={handlers.updateTableFieldStatus}
-            />
-          )
-          : */ (
-            <EmptyRecords
-              iconType="plus"
-              message={formatMessage(messages.contentSection6EmptyTitle)}
-            />
-          )
+        <AdGroupTable
+          dataSource={dataSource}
+          tableName="bidOptimizerTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
+
+        {!dataSource.length
+          ? <EmptyRecords
+            iconType="plus"
+            message={formatMessage(messages.contentSection2EmptyTitle)}
+          />
+          : null
         }
       </Row>
     </div>
   );
 }
 
+Optimization.defaultProps = {
+  formValues: [],
+};
+
 Optimization.propTypes = {
+  formValues: PropTypes.arrayOf(PropTypes.shape()),
   formatMessage: PropTypes.func.isRequired,
+
   handlers: PropTypes.shape({
     updateTableFieldStatus: PropTypes.func.isRequired,
   }).isRequired,

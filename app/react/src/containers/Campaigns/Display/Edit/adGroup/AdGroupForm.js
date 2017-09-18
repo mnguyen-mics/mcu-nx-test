@@ -183,7 +183,10 @@ class AdGroupForm extends Component {
       },
       organisationId,
     };
-    const { audienceTable } = formValues;
+    const {
+      audienceTable,
+      bidOptimizerTable
+    } = formValues;
 
     return (
       <Form
@@ -207,7 +210,7 @@ class AdGroupForm extends Component {
           <hr />
           <Media {...commonProps} />
           <hr />
-          <Optimization {...commonProps} />
+          <Optimization {...commonProps} formValues={bidOptimizerTable} />
           <hr />
           <Ads {...commonProps} />
           <hr />

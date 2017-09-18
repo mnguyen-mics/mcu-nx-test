@@ -142,6 +142,7 @@ Audience.defaultProps = {
 };
 
 Audience.propTypes = {
+  formValues: PropTypes.arrayOf(PropTypes.shape()),
   formatMessage: PropTypes.func.isRequired,
 
   handlers: PropTypes.shape({
@@ -152,7 +153,6 @@ Audience.propTypes = {
   }).isRequired,
 
   organisationId: PropTypes.string.isRequired,
-  formValues: PropTypes.arrayOf(PropTypes.shape()),
 };
 
 export default Audience;
