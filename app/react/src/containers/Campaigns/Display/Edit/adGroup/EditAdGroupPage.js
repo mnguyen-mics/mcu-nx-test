@@ -15,7 +15,7 @@ import AudienceSegmentService from '../../../../../services/AudienceSegmentServi
 import {
   getAdGroup,
   getSegments,
-  getSelectedPublishers,
+  getPublishers,
 } from '../../../../../services/DisplayCampaignService';
 import { getBidOptimizers } from '../../../../../services/BidOptimizerServices';
 
@@ -64,54 +64,23 @@ class EditAdGroupPage extends Component {
     } = this.props;
 
     return getAdGroup(campaignId, adGroupId)
-      .then(({ data }) => {
-        const neededKeys = [
-          'bid_optimizer_id',
-          'end_date',
-          'max_budget_per_period',
-          'max_budget_period',
-          'name',
-          'start_date',
-          'technical_name',
-          'total_budget',
-        ];
-
+      .then((results) => {
         const formatBudgetPeriod = {
           DAY: formatMessage(messages.contentSection1Row2Option1),
           WEEK: formatMessage(messages.contentSection1Row2Option2),
           MONTH: formatMessage(messages.contentSection1Row2Option3),
         };
 
-        const filteredData = filterEmptyValues({ data, neededKeys })
-          .reduce((acc, key) => {
-            let value = data[key];
-
-            if (key === 'start_date') {
-              value = moment(value);
-            } else if (key === 'end_date') {
-              value = moment(value);
-            } else if (key === 'max_budget_period') {
-              value = formatBudgetPeriod[value];
-            }
-
-            return { ...acc, [key]: value };
-          }, {});
-
-
-        return formatKeysToPascalCase({ data: filteredData, prefix: 'adGroup' });
+        return {
+          ...results,
+          adGroupMaxBudgetPeriod: formatBudgetPeriod[results.adGroupMaxBudgetPeriod],
+        };
       });
   }
 
   getPublishers({ campaignId }) {
-    return getSelectedPublishers(campaignId)
-      .then(results => {
-        const publisherTable = results.map(publisher => ({
-          ...publisher,
-          toBeRemoved: false
-        }));
-
-        return { publisherTable };
-      });
+    return getPublishers({ campaignId })
+      .then(publisherTable => ({ publisherTable }));
   }
 
   getSegments({ adGroupId, campaignId, organisationId }) {

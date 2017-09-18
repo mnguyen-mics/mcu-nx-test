@@ -191,6 +191,8 @@ class AdGroupForm extends Component {
       publisherTable,
     } = formValues;
 
+    console.log('formValues = ', formValues);
+
     return (
       <Form
         className="edit-layout ant-layout"

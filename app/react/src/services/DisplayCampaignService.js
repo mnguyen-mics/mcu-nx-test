@@ -1,4 +1,7 @@
+import moment from 'moment';
+
 import ApiService from './ApiService';
+import { filterEmptyValues, formatKeysToPascalCase } from '../utils/ReduxFormHelper';
 
 /* CAMPAIGN SERVICES */
 function getCampaignDisplay(campaignId, params = '') {
@@ -19,7 +22,36 @@ function updateCampaign(campaignId, body) {
 /* AD GROUP SERVICES */
 function getAdGroup(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
-  return ApiService.getRequest(endpoint);
+  return ApiService.getRequest(endpoint)
+    .then(results => {
+      const { data } = results;
+
+      const neededKeys = [
+        'bid_optimizer_id',
+        'end_date',
+        'max_budget_per_period',
+        'max_budget_period',
+        'name',
+        'start_date',
+        'technical_name',
+        'total_budget',
+      ];
+
+      const filteredData = filterEmptyValues({ data, neededKeys })
+        .reduce((acc, key) => {
+          let value = data[key];
+
+          if (key === 'start_date') {
+            value = moment(value);
+          } else if (key === 'end_date') {
+            value = moment(value);
+          }
+
+          return { ...acc, [key]: value };
+        }, {});
+
+      return formatKeysToPascalCase({ data: filteredData, prefix: 'adGroup' });
+    });
 }
 
 function createAdGroup(campaignId, body) {
@@ -54,14 +86,13 @@ function deleteSegment(campaignId, adGroupId, segmentId) {
 }
 
 /* PUBLISHER SERVICES */
-function getAllPublishers(organisationId) {
-  const endpoint = `display_network_accesses?organisation_id=${organisationId}`; // TODO remove
-  return ApiService.getRequest(endpoint).then(res => res.data);
-}
-
-function getSelectedPublishers(campaignId) {
+function getPublishers({ campaignId }) {
   const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
-  return ApiService.getRequest(endpoint).then(res => res.data);
+  return ApiService.getRequest(endpoint)
+    .then(res => res.data.map(publisher => ({
+      ...publisher,
+      toBeRemoved: false
+    })));
 }
 
 /* AD SERVICES */
@@ -81,11 +112,10 @@ export default {
   deleteSegment,
   getAdGroup,
   getAds,
-  getAllPublishers,
   getCampaignDisplay,
   getCampaignName,
+  getPublishers,
   getSegments,
-  getSelectedPublishers,
   updateAd,
   updateAdGroup,
   updateCampaign,
@@ -98,11 +128,10 @@ export {
   deleteSegment,
   getAdGroup,
   getAds,
-  getAllPublishers,
   getCampaignDisplay,
   getCampaignName,
+  getPublishers,
   getSegments,
-  getSelectedPublishers,
   updateAd,
   updateAdGroup,
   updateCampaign,
