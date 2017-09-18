@@ -15,7 +15,7 @@ function Optimization({ formValues, formatMessage, handlers }) {
       ? [
         ...tableData,
         {
-          key: bidOptimizer.current_version_id,
+          key: bidOptimizer.id,
           type: { image: 'question', name: bidOptimizer.provider },
           info: [bidOptimizer.name],
           toBeRemoved: index,

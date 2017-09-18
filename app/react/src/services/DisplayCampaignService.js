@@ -55,7 +55,7 @@ function deleteSegment(campaignId, adGroupId, segmentId) {
 
 /* PUBLISHER SERVICES */
 function getAllPublishers(organisationId) {
-  const endpoint = `display_network_accesses?organisation_id=${organisationId}`;
+  const endpoint = `display_network_accesses?organisation_id=${organisationId}`; // TODO remove
   return ApiService.getRequest(endpoint).then(res => res.data);
 }
 
@@ -75,25 +75,6 @@ function updateAd(adId, campaignId, adGroupId, body) {
   return ApiService.putRequest(endpoint, body);
 }
 
-/* BID OPTIMIZER SERVICES */
-function getBidOptimizers(organisationId) {
-  const endpoint = `bid_optimizers?organisation_id=${organisationId}`;
-
-  return ApiService.getRequest(endpoint).then(res => res.data);
-}
-
-function getEngineProperties(engineVersionId) {
-  const endpoint = `plugins/${engineVersionId}/properties`;
-
-  return ApiService.getRequest(endpoint).then(res => res.data);
-}
-
-function getEngineVersion(engineVersionId) {
-  const endpoint = `plugins/version/${engineVersionId}`;
-
-  return ApiService.getRequest(endpoint).then(res => res.data);
-}
-
 export default {
   createAdGroup,
   createSegment,
@@ -101,11 +82,25 @@ export default {
   getAdGroup,
   getAds,
   getAllPublishers,
-  getBidOptimizers,
   getCampaignDisplay,
   getCampaignName,
-  getEngineProperties,
-  getEngineVersion,
+  getSegments,
+  getSelectedPublishers,
+  updateAd,
+  updateAdGroup,
+  updateCampaign,
+  updateSegment
+};
+
+export {
+  createAdGroup,
+  createSegment,
+  deleteSegment,
+  getAdGroup,
+  getAds,
+  getAllPublishers,
+  getCampaignDisplay,
+  getCampaignName,
   getSegments,
   getSelectedPublishers,
   updateAd,

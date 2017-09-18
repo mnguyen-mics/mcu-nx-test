@@ -6,15 +6,19 @@ import moment from 'moment';
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
-import {
-  filterEmptyValues,
-  formatKeysToPascalCase
-} from '../../../../../utils/ReduxFormHelper';
+import { filterEmptyValues, formatKeysToPascalCase } from '../../../../../utils/ReduxFormHelper';
 import messages from '../messages';
+
+import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
+import {
+  getAdGroup,
+  getSegments,
+  getSelectedPublishers,
+} from '../../../../../services/DisplayCampaignService';
+import { getBidOptimizers } from '../../../../../services/BidOptimizerServices';
+
 
 class EditAdGroupPage extends Component {
 
@@ -35,23 +39,21 @@ class EditAdGroupPage extends Component {
       this.getSegments({ adGroupId, campaignId, organisationId }),
     ])
       .then((results) => {
-        const initialValues = results.reduce((acc, result) => ({
-          ...acc,
-          ...result
-        }), {});
+        const initialValues = results.reduce((acc, result) => ({ ...acc, ...result }), {});
+        const reqParams = {
+          organisationId,
+          selectedIds: [initialValues.adGroupBidOptimizerId],
+        };
 
         this.setState({ initialValues });
 
-        return this.getBidOptimizers({
-          organisationId,
-          selectedBidId: initialValues.adGroupBidOptimizerId
-        });
+        return getBidOptimizers(reqParams);
       })
-      .then((bidOptimizers) => {
+      .then((bidOptimizerTable) => {
         const { initialValues } = this.state;
 
         this.setState({
-          initialValues: { ...initialValues, bidOptimizerTable: bidOptimizers }
+          initialValues: { ...initialValues, bidOptimizerTable }
         });
       });
   }
@@ -61,7 +63,7 @@ class EditAdGroupPage extends Component {
       intl: { formatMessage }
     } = this.props;
 
-    return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
+    return getAdGroup(campaignId, adGroupId)
       .then(({ data }) => {
         const neededKeys = [
           'bid_optimizer_id',
@@ -101,7 +103,7 @@ class EditAdGroupPage extends Component {
   }
 
   getPublishers({ campaignId }) {
-    return DisplayCampaignService.getSelectedPublishers(campaignId)
+    return getSelectedPublishers(campaignId)
       .then(results => {
         const publisherTable = results.map(publisher => ({
           ...publisher,
@@ -112,60 +114,10 @@ class EditAdGroupPage extends Component {
       });
   }
 
-  getBidOptimizers({ organisationId, selectedBidId }) {
-    return DisplayCampaignService.getBidOptimizers(organisationId)
-      .then((bidOptimizers) => {
-        const selectedBid = bidOptimizers.find(elem => elem.id === selectedBidId);
-        const fetchEngineProperties = DisplayCampaignService
-          .getEngineProperties(selectedBid.engine_version_id);
-
-        const fetchEngineVersion = DisplayCampaignService
-          .getEngineVersion(selectedBid.engine_version_id);
-
-        return Promise.all([fetchEngineProperties, fetchEngineVersion]);
-      })
-      .then(results => {
-        return ([{
-          ...results[1],
-          name: (results[0].find(elem => elem.technical_name === 'name')).value.value,
-          provider: (results[0].find(elem => elem.technical_name === 'provider')).value.value,
-          toBeRemoved: false,
-          id: selectedBidId,
-        }]);
-      });
-  }
-
-  // getBidOptimizers() {
-  //   // bid_optimizer_id
-  //   // {id: "131", name: "OpenRTB Dynamic Allocation Test", organisation_id: "1125",…}
-  //
-  //   const {
-  //     match: {
-  //       params: { organisationId },
-  //     },
-  //   } = this.props;
-  //
-  //   return DisplayCampaignService.getBidOptimizers(organisationId)
-  //     .then((bidOptimizers) => {
-  //       console.log('bidOptimizers = ', bidOptimizers);
-  //
-  //       return Promise.all(bidOptimizers.map(bidOptimizer => {
-  //         const fetchEngineProperties = DisplayCampaignService
-  //           .getEngineProperties(bidOptimizer.engine_version_id);
-  //
-  //         const fetchEngineVersion = DisplayCampaignService
-  //             .getEngineVersion(bidOptimizer.engine_version_id);
-  //
-  //         return Promise.all([fetchEngineProperties, fetchEngineVersion]);
-  //       }));
-  //     })
-  //     .then(results => console.log('et là ? ', results));
-  // }
-
   getSegments({ adGroupId, campaignId, organisationId }) {
     let initialSegments;
 
-    return DisplayCampaignService.getSegments(campaignId, adGroupId)
+    return getSegments(campaignId, adGroupId)
       .then((segments) => {
         initialSegments = segments;
 
