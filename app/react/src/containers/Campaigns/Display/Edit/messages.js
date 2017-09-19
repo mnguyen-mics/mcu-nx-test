@@ -169,16 +169,16 @@ export default defineMessages({
     id: 'adGroupEditor.section1.row2.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
-  contentSection1Row2Option1: {
-    id: 'adGroupEditor.section1.row2.option1',
+  contentSection1Row2OptionDAY: {
+    id: 'adGroupEditor.section1.row2.optionDAY',
     defaultMessage: 'Per Day',
   },
-  contentSection1Row2Option2: {
-    id: 'adGroupEditor.section1.row2.option2',
+  contentSection1Row2OptionWEEK: {
+    id: 'adGroupEditor.section1.row2.optionWEEK',
     defaultMessage: 'Per Week',
   },
-  contentSection1Row2Option3: {
-    id: 'adGroupEditor.section1.row2.option13',
+  contentSection1Row2OptionMONTH: {
+    id: 'adGroupEditor.section1.row2.option1MONTH',
     defaultMessage: 'Per Month',
   },
 

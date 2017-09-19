@@ -51,9 +51,9 @@ class AdGroupForm extends Component {
     } = this.props;
 
     const formatBudgetPeriod = {
-      [formatMessage(messages.contentSection1Row2Option1)]: 'DAY',
-      [formatMessage(messages.contentSection1Row2Option2)]: 'WEEK',
-      [formatMessage(messages.contentSection1Row2Option3)]: 'MONTH',
+      [formatMessage(messages.contentSection1Row2OptionDAY)]: 'DAY',
+      [formatMessage(messages.contentSection1Row2OptionWEEK)]: 'WEEK',
+      [formatMessage(messages.contentSection1Row2OptionMONTH)]: 'MONTH',
     };
 
     const generalBody = {

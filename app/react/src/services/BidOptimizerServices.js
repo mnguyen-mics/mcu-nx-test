@@ -38,6 +38,6 @@ function getBidOptimizers({ organisationId, selectedIds, getAll }) {
     });
 }
 
-export {
+export default {
   getBidOptimizers,
 };

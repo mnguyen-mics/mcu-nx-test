@@ -121,19 +121,3 @@ export default {
   updateCampaign,
   updateSegment
 };
-
-export {
-  createAdGroup,
-  createSegment,
-  deleteSegment,
-  getAdGroup,
-  getAds,
-  getCampaignDisplay,
-  getCampaignName,
-  getPublishers,
-  getSegments,
-  updateAd,
-  updateAdGroup,
-  updateCampaign,
-  updateSegment
-};

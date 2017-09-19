@@ -80,9 +80,9 @@ class General extends Component {
                     component={FormSelectAddon}
                     props={{
                       options: [
-                        formatMessage(messages.contentSection1Row2Option1),
-                        formatMessage(messages.contentSection1Row2Option2),
-                        formatMessage(messages.contentSection1Row2Option3),
+                        formatMessage(messages.contentSection1Row2OptionDAY),
+                        formatMessage(messages.contentSection1Row2OptionWEEK),
+                        formatMessage(messages.contentSection1Row2OptionMONTH),
                       ],
                     }}
                   />

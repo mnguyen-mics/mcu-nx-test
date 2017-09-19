@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
-import moment from 'moment';
 
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
-import { filterEmptyValues, formatKeysToPascalCase } from '../../../../../utils/ReduxFormHelper';
 import messages from '../messages';
 
 import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
-import {
-  getAdGroup,
-  getSegments,
-  getPublishers,
-} from '../../../../../services/DisplayCampaignService';
-import { getBidOptimizers } from '../../../../../services/BidOptimizerServices';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import BidOptimizerServices from '../../../../../services/BidOptimizerServices';
 
 
 class EditAdGroupPage extends Component {
@@ -27,11 +21,7 @@ class EditAdGroupPage extends Component {
   }
 
   componentDidMount() {
-    const {
-      match: {
-        params: { adGroupId, campaignId, organisationId },
-      },
-    } = this.props;
+    const { adGroupId, campaignId, organisationId } = this.props.match.params;
 
     Promise.all([
       this.getGeneralInfo({ adGroupId, campaignId }),
@@ -39,54 +29,45 @@ class EditAdGroupPage extends Component {
       this.getSegments({ adGroupId, campaignId, organisationId }),
     ])
       .then((results) => {
-        const initialValues = results.reduce((acc, result) => ({ ...acc, ...result }), {});
-        const reqParams = {
-          organisationId,
-          selectedIds: [initialValues.adGroupBidOptimizerId],
-        };
+        const {
+          adGroupBidOptimizerId,
+          ...initialValues
+        } = results.reduce((acc, result) => ({ ...acc, ...result }), {});
 
         this.setState({ initialValues });
 
-        return getBidOptimizers(reqParams);
+        return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroupBidOptimizerId] });
       })
       .then((bidOptimizerTable) => {
-        const { initialValues } = this.state;
-
-        this.setState({
-          initialValues: { ...initialValues, bidOptimizerTable }
-        });
+        this.setState({ initialValues: { ...this.state.initialValues, bidOptimizerTable } });
       });
   }
 
   getGeneralInfo({ campaignId, adGroupId }) {
-    const {
-      intl: { formatMessage }
-    } = this.props;
-
-    return getAdGroup(campaignId, adGroupId)
+    return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
       .then((results) => {
-        const formatBudgetPeriod = {
-          DAY: formatMessage(messages.contentSection1Row2Option1),
-          WEEK: formatMessage(messages.contentSection1Row2Option2),
-          MONTH: formatMessage(messages.contentSection1Row2Option3),
-        };
+        if (!results.adGroupMaxBudgetPeriod) {
+          return results;
+        }
 
         return {
           ...results,
-          adGroupMaxBudgetPeriod: formatBudgetPeriod[results.adGroupMaxBudgetPeriod],
+          adGroupMaxBudgetPeriod: this.props.intl.formatMessage(
+            messages[`contentSection1Row2Option${results.adGroupMaxBudgetPeriod}`]
+          ),
         };
       });
   }
 
   getPublishers({ campaignId }) {
-    return getPublishers({ campaignId })
+    return DisplayCampaignService.getPublishers({ campaignId })
       .then(publisherTable => ({ publisherTable }));
   }
 
   getSegments({ adGroupId, campaignId, organisationId }) {
     let initialSegments;
 
-    return getSegments(campaignId, adGroupId)
+    return DisplayCampaignService.getSegments(campaignId, adGroupId)
       .then((segments) => {
         initialSegments = segments;
 
