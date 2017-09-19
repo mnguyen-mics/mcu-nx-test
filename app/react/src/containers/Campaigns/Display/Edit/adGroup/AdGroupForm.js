@@ -92,10 +92,11 @@ class AdGroupForm extends Component {
 
 
     const adGroupId = rest.adGroupId || newAdGroupId;
+    console.log('audienceTable = ', audienceTable);
 
     return audienceTable.reduce((promise, segment) => {
-      const { audience_segment_id, id, include, toBeRemoved } = segment;
-      const body = { audience_segment_id, exclude: !include };
+      const { id, include, otherId, toBeRemoved } = segment;
+      const body = { audience_segment_id: id, exclude: !include };
 
       return promise.then(() => {
         let newPromise;
@@ -103,26 +104,35 @@ class AdGroupForm extends Component {
         if (!toBeRemoved) {
           /* In case we want to add or update a segment */
 
-          if (!id) {
+          if (!otherId) {
+            console.log('creation pour : ', body.audience_segment_id);
             /* creation */
             newPromise = DisplayCampaignService.createSegment(campaignId, adGroupId, body)
             .then((newSegment) => newSegment);
           } else {
             const needsUpdating = formInitialValues.audienceTable.find(seg => (
-              seg.id === id && seg.include !== include
+              seg.otherId === otherId && seg.include !== include
             ));
+
+            if (!needsUpdating) {
+              console.log('ne devrait pas modifier pour : ', otherId);
+            }
 
             /* update if modified segment */
             if (needsUpdating) {
-              newPromise = DisplayCampaignService.updateSegment(campaignId, adGroupId, id, body)
+              console.log('modification pour : ', otherId);
+
+              newPromise = DisplayCampaignService.updateSegment(campaignId, adGroupId, otherId, body)
                 .then(newSegment => newSegment);
             }
 
             newPromise = Promise.resolve();
           }
-        } else if (id) {
+        } else if (otherId) {
+          console.log('suppression pour : ', otherId);
+
           /* In case we want to delete an existing segment */
-          DisplayCampaignService.deleteSegment(campaignId, adGroupId, id)
+          DisplayCampaignService.deleteSegment(campaignId, adGroupId, otherId)
             .then(newSegment => newSegment);
         } else {
           newPromise = Promise.resolve();
@@ -190,8 +200,6 @@ class AdGroupForm extends Component {
       bidOptimizerTable,
       publisherTable,
     } = formValues;
-
-    console.log('formValues = ', formValues);
 
     return (
       <Form

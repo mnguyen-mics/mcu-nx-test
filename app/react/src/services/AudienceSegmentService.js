@@ -1,6 +1,9 @@
 import moment from 'moment';
+
 import ApiService from './ApiService';
 import ReportService from './ReportService';
+import { normalizeArrayOfObject } from '../utils/Normalizer';
+import { normalizeReportView } from '../utils/MetricHelper';
 
 const getSegments = (organisationId, datamartId, options = {}) => {
   const endpoint = 'audience_segments';
@@ -24,13 +27,25 @@ const getSegment = (segmentId, options = {}) => {
   return ApiService.getRequest(endpoint, params).then(res => { return res.data; });
 };
 
+const getFormattedSegment = (segmentId, options = {}) => {
+  return getSegment(segmentId, options)
+    .then(segment => ({
+      id: segment.id,
+      name: segment.name,
+    }));
+};
+
 const getSegmentMetaData = (organisationId) => {
   return ReportService.getAudienceSegmentReport(
     organisationId,
     moment().subtract(1, 'days'),
     moment(),
     'audience_segment_id',
-  ).then(res => res.data.report_view);
+  )
+    .then(res => normalizeArrayOfObject(
+      normalizeReportView(res.data.report_view),
+      'audience_segment_id',
+    ));
 };
 
 const createOverlap = (datamartId, segmentId) => {
@@ -72,6 +87,7 @@ const getEmailCount = (datamartId, segmentIds = [], providerTns = []) => {
 };
 
 export default {
+  getFormattedSegment,
   getSegment,
   getSegmentMetaData,
   getSegments,

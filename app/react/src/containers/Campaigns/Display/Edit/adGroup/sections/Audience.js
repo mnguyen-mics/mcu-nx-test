@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
-import moment from 'moment';
 
 import { EmptyRecords, Form } from '../../../../../../components';
 import AdGroupTable from '../AdGroupTable';
 import messages from '../../messages';
 import SegmentSelector from '../../../../Email/Edit/SegmentSelector';
 import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
-import ReportService from '../../../../../../services/ReportService';
-import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
-import { normalizeReportView } from '../../../../../../utils/MetricHelper';
 
 const { FormSection } = Form;
 
@@ -21,7 +17,7 @@ class Audience extends Component {
 
     const selectedSegmentIds = formValues
       .filter(segment => !segment.toBeRemoved)
-      .map(segment => segment.audience_segment_id);
+      .map(segment => segment.id);
 
     const additionalProps = {
       close: handlers.closeNextDrawer,
@@ -36,43 +32,28 @@ class Audience extends Component {
     return (selectedSegmentIds) => {
       callback();
 
-      const {
-        handlers: { updateTableFields },
-        organisationId,
-      } = this.props;
-
+      const { formValues, handlers, organisationId } = this.props;
       const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
-        return AudienceSegmentService.getSegment(segmentId).then(segment => ({
-          audience_segment_id: segment.id,
-          name: segment.name,
-          include: true,
-        }));
+        return AudienceSegmentService.getFormattedSegment(segmentId);
       }));
-
-      const fetchMetadata = ReportService.getAudienceSegmentReport(
-        organisationId,
-        moment().subtract(1, 'days'),
-        moment(),
-        'audience_segment_id',
-      );
+      const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 
       Promise.all([fetchSelectedSegments, fetchMetadata])
-      .then(results => {
-        const selectedSegments = results[0];
-        const metadata = normalizeArrayOfObject(
-          normalizeReportView(results[1].data.report_view),
-          'audience_segment_id',
-        );
+        .then(results => {
+          const segments = results[0];
+          const metadata = results[1];
 
-        return selectedSegments.map(segment => {
-          const { user_points, desktop_cookie_ids } = metadata[segment.audience_segment_id];
+          return segments.map(segment => {
+            const { desktop_cookie_ids, user_points } = metadata[segment.id];
+            const prevSeg = formValues.find(elem => elem.id === segment.id);
+            const include = (prevSeg ? prevSeg.include : true);
 
-          return { ...segment, user_points, desktop_cookie_ids };
+            return { ...segment, desktop_cookie_ids, include, user_points };
+          });
+        })
+        .then(newFields => {
+          handlers.updateTableFields({ newFields, tableName: 'audienceTable' });
         });
-      })
-      .then(newFields => {
-        updateTableFields({ newFields, tableName: 'audienceTable' });
-      });
     };
   }
 
@@ -84,7 +65,7 @@ class Audience extends Component {
         ? [
           ...tableData,
           {
-            key: segment.audience_segment_id,
+            key: segment.id,
             type: { image: 'users', name: segment.name },
             info: [
               `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,

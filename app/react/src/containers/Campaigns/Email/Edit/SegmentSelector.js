@@ -15,7 +15,6 @@ import AudienceSegmentService from '../../../../services/AudienceSegmentService'
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
-import { normalizeReportView } from '../../../../utils/MetricHelper';
 import messages from './messages';
 
 const { Content } = Layout;
@@ -64,26 +63,18 @@ class SegmentSelector extends Component {
   fetchAudienceSegments = () => {
     const { organisationId, defaultDatamart, selectedSegmentIds } = this.props;
     const { pageSize, currentPage, keywords } = this.state;
-
-    const options = {
-      ...getPaginatedApiParam(currentPage, pageSize),
-    };
+    const datamartId = defaultDatamart(organisationId).id;
+    const options = { ...getPaginatedApiParam(currentPage, pageSize) };
 
     if (keywords) {
       options.keywords = keywords;
     }
 
-    const datamartId = defaultDatamart(organisationId).id;
-
     return AudienceSegmentService.getSegments(organisationId, datamartId, options).then(response => {
       return AudienceSegmentService.getSegmentMetaData(organisationId)
         .then(results => {
           const segments = response.data;
-
-          const metadata = normalizeArrayOfObject(
-            normalizeReportView(results),
-            'audience_segment_id',
-          );
+          const metadata = results;
 
           const segmentsWithAdditionalMetadata = segments.map(segment => {
             const { user_points, desktop_cookie_ids } = metadata[segment.id];

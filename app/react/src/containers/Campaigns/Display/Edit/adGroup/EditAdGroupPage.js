@@ -5,8 +5,6 @@ import { injectIntl, intlShape } from 'react-intl';
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import messages from '../messages';
 
 import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
@@ -65,35 +63,21 @@ class EditAdGroupPage extends Component {
   }
 
   getSegments({ adGroupId, campaignId, organisationId }) {
-    let initialSegments;
+    const fetchSegments = DisplayCampaignService.getSegments(campaignId, adGroupId);
+    const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 
-    return DisplayCampaignService.getSegments(campaignId, adGroupId)
-      .then((segments) => {
-        initialSegments = segments;
-
-        return AudienceSegmentService.getSegmentMetaData(organisationId);
-      })
+    return Promise.all([fetchSegments, fetchMetadata])
       .then((results) => {
-        const metadata = normalizeArrayOfObject(
-          normalizeReportView(results),
-          'audience_segment_id',
-        );
+        const segments = results[0];
+        const metadata = results[1];
 
-        const audienceTable = initialSegments.map(segment => {
-          const { user_points, desktop_cookie_ids } = metadata[segment.audience_segment_id];
-          const { technical_name, exclude, ...relevantData } = segment;
+        return segments.map(segment => {
+          const { desktop_cookie_ids, user_points } = metadata[segment.id];
 
-          return {
-            ...relevantData,
-            desktop_cookie_ids,
-            include: !exclude,
-            toBeRemoved: false,
-            user_points,
-          };
+          return { ...segment, desktop_cookie_ids, user_points };
         });
-
-        return { audienceTable };
-      });
+      })
+      .then(audienceTable => ({ audienceTable }));
   }
 
   render() {

@@ -67,7 +67,17 @@ function updateAdGroup(campaignId, adGroupId, body) {
 /* SEGMENT SERVICES */
 function getSegments(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.getRequest(endpoint).then(res => res.data);
+  return ApiService.getRequest(endpoint).then(res => res.data.map(segment => {
+    const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
+
+    return {
+      ...relevantData,
+      id: audience_segment_id,
+      include: !exclude,
+      otherId: id,
+      toBeRemoved: false,
+    };
+  }));
 }
 
 function createSegment(campaignId, adGroupId, body) {
