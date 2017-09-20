@@ -6,43 +6,30 @@ import { isEmpty } from 'lodash';
 import McsIcons from '../../components/McsIcons';
 
 interface FormInputsProps {
-  input: [{
+  input: {
     name: string;
-  }];
-  meta: any;
-  formItemProps: object;
-  required?: boolean;
-  label?: any;
-  colon?: boolean;
-  // formItemProps?: [{
-  //
-  // }];
-  inputProps: object;
-  type?: string;
-  placehodler?: string;
-  size?: 'small' | 'default' | 'large';
-  className?: string;
-  // inputProps?: [{
-  //   type?: string;
-  //   placehodler?: string;
-  //   size?: 'small' | 'default' | 'large';
-  //   className?: string;
-  // }];
-  datePickerProps?: object;
-  format?: string;
-  showTime?: any;
-  // datePickerProps?: [{
-  //   format?: string;
-  //   showTime?: any;
-  //   placehodler?: string;
-  // }];
-  helpToolTipProps?: any;
-  title?: string;
-  placement?: 'top' | 'left' | 'right' | 'bottom' | 'topLeft'| 'topRight' | 'bottomLeft'| 'bottomRight' | 'leftTop' | 'leftBottom'| 'rightTop' | 'rightBottom';
-  // helpToolTipProps?: [{
-  //   title?: string;
-  //   placement?: 'top' | 'left' | 'right' | 'bottom' | 'topLeft'| 'topRight' | 'bottomLeft'| 'bottomRight' | 'leftTop' | 'leftBottom'| 'rightTop' | 'rightBottom';
-  // }];
+  };
+  meta: {
+    error?: string;
+    touched?: string;
+    invalid?: string;
+    warning?: string;
+  };
+  formItemProps: {
+    required?: boolean;
+    label?: Element | string;
+    colon?: boolean;
+  };
+  inputProps?: {
+    type?: string;
+    placehodler?: string;
+    size?: 'small' | 'default' | 'large'; 
+    className?: string;
+  };
+  helpToolTipProps?: {
+    title?: string;
+    placement?: 'top' | 'left' | 'right' | 'bottom' | 'topLeft'| 'topRight' | 'bottomLeft'| 'bottomRight' | 'leftTop' | 'leftBottom'| 'rightTop' | 'rightBottom';    
+  };
   value?: string;
   otherInputProps?: any;
 }
@@ -51,7 +38,7 @@ const defaultTooltipPlacement = 'right';
 
 const FormInput: React.SFC<FormInputsProps> = props => {
 
-  let validateStatus = '';
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
@@ -79,7 +66,7 @@ const FormInput: React.SFC<FormInputsProps> = props => {
         </Col>
         {displayHelpToolTip &&
           <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
+            <Tooltip {...'mergedTooltipProps'}>
               <McsIcons type="info" />
             </Tooltip>
           </Col>

@@ -1,11 +1,45 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Row, Col, Tag, Icon, Tooltip, Button, Input, AutoComplete } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
+interface LabelListViewProps {
+  label?: string;
+  translations: {};
+  filters: {};
+  isInputVisible?: boolean;
+  onClickOnClose: Function;
+  onInputSubmit?: Function;
+  className?: string;
+  listItems: [{
+    id?: PropTypes.number,
+    name?: PropTypes.string,
+  }];
+  
+}
 
-class LabelListView extends Component {
+interface LabelListViewState {
+  inputValue: string;
+  inputVisible: boolean;
+  data: Array<{
+    value?: string;
+    text?: string;
+  }>;
+}
+
+let LabelListView = class LabelListView extends React.Component<LabelListViewProps, LabelListViewState> {
+
+  static defaultprops = {
+    onInputSubmit: () => {},
+    label: '',
+    isInputVisible: false,
+    className: '',
+  }
+
+  inputElement: {
+    focus?: Function;
+  };
 
   constructor(props) {
     super(props);
@@ -104,7 +138,7 @@ class LabelListView extends Component {
       filters,
     } = this.props;
 
-    const items = filters;
+    const items: any = filters;
 
     const selectedTags = listItems.map(item => {
       const filter = {
@@ -162,7 +196,7 @@ class LabelListView extends Component {
             <Button
               size="small"
               type="dashed"
-              onClick={e => { this.showInput(e); this.handleClick(e); }}
+              onClick={e => { this.showInput(); this.handleClick(e); }}
             >Add New Tag
             </Button>
           )}
@@ -171,28 +205,6 @@ class LabelListView extends Component {
     );
   }
 }
-
-
-LabelListView.defaultProps = {
-  onInputSubmit: () => {},
-  label: '',
-  isInputVisible: false,
-  className: '',
-};
-
-LabelListView.propTypes = {
-  label: PropTypes.string,
-  translations: PropTypes.shape().isRequired,
-  filters: PropTypes.shape().isRequired,
-  isInputVisible: PropTypes.bool,
-  onClickOnClose: PropTypes.func.isRequired,
-  onInputSubmit: PropTypes.func,
-  className: PropTypes.string,
-  listItems: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-  })).isRequired,
-};
 
 const mapStateToProps = state => ({
   translations: state.translations,

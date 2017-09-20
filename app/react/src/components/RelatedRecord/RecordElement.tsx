@@ -1,10 +1,16 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Col, Icon, Row } from 'antd';
 
 import McsIcons from '../McsIcons';
 
-function RecordElement({ recordIconType, title, actionButtons, children }) {
+interface RecordElementProps {
+  recordIconType: string;
+  title: string;
+  actionButtons?: object;
+}
+
+const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
   return (
     <Row className="related-record">
       <Col span={1}>
@@ -27,22 +33,7 @@ function RecordElement({ recordIconType, title, actionButtons, children }) {
       </Col>
     </Row>
   );
-}
-
-RecordElement.defaultProps = {
-  title: '',
-  actionButtons: [],
 };
 
-RecordElement.propTypes = {
-  recordIconType: PropTypes.string.isRequired,
-  title: PropTypes.string,
-  actionButtons: PropTypes.arrayOf(
-    PropTypes.shape({
-      iconType: PropTypes.string.isRequired,
-      onClick: PropTypes.func.isRequired,
-    }),
-  ),
-};
 
 export default RecordElement;

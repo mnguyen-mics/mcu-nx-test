@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Menu, Table } from 'antd';
@@ -12,7 +12,40 @@ const DEFAULT_PAGINATION_OPTION = {
   showSizeChanger: true,
 };
 
-class TableView extends Component {
+interface TableViewProps {
+  columnsDefinitions: {
+    dataColumnsDefinition?:[{
+      intlMessage: FormattedMessage.Props;
+      translationKey: string;
+      key?: string;
+      render?: string;
+      sorter?: string;
+      isHideable?: boolean;
+    }];
+    actionsColumnsDefinition?: Array<object>;
+  };
+  dataSource: [{}];
+  loading: any;
+  pagination: any;
+  onChange: any;
+  visibilitySelectedColumns: [{
+    key: string;
+    value: string;
+  }];
+  intlMessage: FormattedMessage.Props;
+}
+
+interface TableViewState {
+  visibilitySelectedColumns
+}
+
+class TableView extends React.Component<TableViewProps, TableViewState> {
+
+  static defaultprops = {
+    pagination: false,
+    onChange: () => {},
+    visibilitySelectedColumns: []
+  }
 
   buildActionsColumns = (defaultActionsColumns) => {
     const actionColumns = defaultActionsColumns.map(column => {
@@ -38,9 +71,20 @@ class TableView extends Component {
   }
 
   buildDataColumns = () => {
-    const { columnsDefinitions: { dataColumnsDefinition } } = this.props;
+    const { 
+      columnsDefinitions: { dataColumnsDefinition },
+      visibilitySelectedColumns
+    } = this.props;
 
-    const dataColumns = dataColumnsDefinition.map(dataColumn => {
+    const visibilitySelectedColumnsValues = [];
+    // visibilitySelectedColumns.forEach((el) => {
+    //   visibilitySelectedColumnsValues.push(el.value);
+    // });
+    visibilitySelectedColumns ? visibilitySelectedColumns.map(function(column){
+      return visibilitySelectedColumnsValues.push(column.value);
+    }) : null;
+
+    const dataColumns = dataColumnsDefinition.filter(column => !column.isHideable || visibilitySelectedColumnsValues.includes(column.key)).map(dataColumn => {
       return Object.assign(
         {},
         isValidFormattedMessageProps(dataColumn.intlMessage)
@@ -114,18 +158,6 @@ class TableView extends Component {
 
     const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
 
-    const visibilitySelectedColumnsValues = [];
-    visibilitySelectedColumns.forEach((el) => {
-      visibilitySelectedColumnsValues.push(el.value);
-    });
-
-    const columnsToDisplay = [];
-    columns.forEach((el) => {
-      if (visibilitySelectedColumnsValues.includes(el.key) || el.key === 'name' || el.key === 'status') {
-        columnsToDisplay.push(el);
-      }
-    });
-
     const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
 
     let newPagination = pagination;
@@ -137,33 +169,14 @@ class TableView extends Component {
     }
     return (
       <Table
-        columns={columnsToDisplay}
+        columns={columns}
         dataSource={dataSourceWithIds}
         onChange={onChange}
         loading={loading}
         pagination={newPagination}
-        visibilitySelectedColumns={this.props.visibilitySelectedColumns}
       />
     );
   }
 }
-
-TableView.defaultProps = {
-  pagination: false,
-  onChange: () => {},
-  visibilitySelectedColumns: []
-};
-
-TableView.propTypes = {
-  columnsDefinitions: PropTypes.shape({
-    dataColumnsDefinition: PropTypes.array,
-    actionsColumnsDefinition: PropTypes.array,
-  }).isRequired,
-  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  loading: PropTypes.bool.isRequired,
-  pagination: PropTypes.any, // eslint-disable-line react/forbid-prop-types
-  onChange: PropTypes.func,
-  visibilitySelectedColumns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-};
 
 export default TableView;

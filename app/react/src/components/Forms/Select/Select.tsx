@@ -6,13 +6,18 @@ import { Select as AntSelect } from 'antd';
 import InternalSelect from './InternalSelect';
 
 interface SelectProps {
-  defaultValue: any;
+  defaultValue: string;
   selectClassNames: Array<string>;
 }
 
 class Select extends React.Component<SelectProps, {}> {
 
   static Option = AntSelect.Option;
+
+  static defaultprops = {
+  defaultValue: undefined,
+  selectClassNames: ['form-control'],
+  }
 
   render() {
     const {
@@ -27,16 +32,5 @@ class Select extends React.Component<SelectProps, {}> {
     );
   }
 }
-// 
-//
-// Select.propTypes = {
-//   defaultValue: PropTypes.string,
-//   selectClassNames: PropTypes.arrayOf(PropTypes.string),
-// };
-
-// Select.defaultProps = {
-//   defaultValue: undefined,
-//   selectClassNames: ['form-control'],
-// };
 
 export default Select;

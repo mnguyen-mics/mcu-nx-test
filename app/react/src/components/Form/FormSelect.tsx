@@ -6,45 +6,39 @@ import { isEmpty } from 'lodash';
 import McsIcons from '../../components/McsIcons';
 
 interface FormSelectProps {
-  input: [{
+  input: {
     name: string;
-  }];
-  meta: any;
-  formItemProps: object;
-  required?: boolean;
-  label?: any;
-  colon?: boolean;
-  // formItemProps?: [{
-  //   required?: boolean;
-  //   label?: any;
-  //   colon?: boolean;
-  // }];
-  inputProps: object;
-  type?: string;
-  placehodler?: string;
-  size?: 'small' | 'default' | 'large';
-  className?: string;
-  // inputProps?: [{
-  //   type?: string;
-  //   placehodler?: string;
-  //   size?: 'small' | 'default' | 'large';
-  //   className?: string;
-  // }];
-  // selectProps: any;
-  selectProps?: object;
-  mode: 'multiple' | 'tags' | 'combobox';
-  placeholder?: string;
+  };
+  meta: {
+    error?: string;
+    touched?: string;
+    invalid?: string;
+    warning?: string;
+  };
+  formItemProps?: {
+    required?: boolean;
+    label?: Element | string;
+    colon?: boolean;
+  };
+  selectProps?: {
+    mode?: 'multiple' | 'tags' | 'comobox';
+    placehodler?: string;  
+  };
   options?: [{
     disabled?: boolean;
     value?: string;
     key?: string;
-    text?: string;
     title?: string;
+    text?: string;
   }];
-  helpToolTipProps?: object;
-  title?: string;
-  placement?: 'top' | 'left' | 'right' | 'bottom' | 'topLeft'| 'topRight' | 'bottomLeft'| 'bottomRight' | 'leftTop' | 'leftBottom'| 'rightTop' | 'rightBottom';
-
+  helpToolTipProps: {
+    title?: string;
+    placement?: 'top' | 'left' | 'right' | 'bottom' | 'topLeft'| 'topRight' | 'bottomLeft'| 'bottomRight' | 'leftTop' | 'leftBottom'| 'rightTop' | 'rightBottom';
+  };
+  value?: string;
+  otherInputProps?: any;
+  help?: React.ReactNode;
+  validateStatus?: 'success' | 'warning' | 'error' | 'validating';
 }
 
 const Option = Select.Option;
@@ -53,7 +47,7 @@ const defaultTooltipPlacement = 'right';
 
 const FormSelect: React.SFC<FormSelectProps> = props => {
 
-  let validateStatus = '';
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
@@ -73,7 +67,7 @@ const FormSelect: React.SFC<FormSelectProps> = props => {
 
       <Row align="middle" type="flex">
         <Col span={22}>
-          <Select {...props.input} {...props.selectProps}>
+          <Select {...this.props.input} {...props.selectProps}>
             {props.options.map(({ disabled, value, key, title, text }) => (
               <Option {...{ disabled, value, key, title }}>{text}</Option>
             ))}
@@ -82,7 +76,7 @@ const FormSelect: React.SFC<FormSelectProps> = props => {
 
         {displayHelpToolTip &&
           <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
+            <Tooltip {...'mergedTooltipProps'}>
               <McsIcons type="info" />
             </Tooltip>
           </Col>}

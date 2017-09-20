@@ -1,7 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import { Spin } from 'antd';
 
-function Loading() {
+const Loading: React.SFC<{}> = props => {
+
   return (
     <div className="mcs-centered-container">
       <Spin size="large" />

@@ -3,8 +3,10 @@ import { Select } from 'antd';
 
 interface InternalSelectProps {
   defaultValue?: string;
-  input?: any;
-  meta: any;
+  input?: {
+    onChange: Function;
+  };
+  meta: {};
 }
 
 interface InternalSelectState {
@@ -13,6 +15,11 @@ interface InternalSelectState {
 
 class InternalSelect extends React.Component<InternalSelectProps, InternalSelectState> {
 
+  static defaultProps = {
+    defaultValue: undefined,
+    input: ['form-control'],
+  }
+  
   constructor(props) {
     super(props);
     const {
@@ -41,15 +48,5 @@ class InternalSelect extends React.Component<InternalSelectProps, InternalSelect
   }
 }
 
-// InternalSelect.defaultProps = {
-//   defaultValue: undefined,
-//   input: ['form-control'],
-// };
-//
-// InternalSelect.propTypes = {
-//   defaultValue: PropTypes.string,
-//   input: PropTypes.shape(),
-//   meta: PropTypes.shape().isRequired,
-// };
-
 export default InternalSelect;
+

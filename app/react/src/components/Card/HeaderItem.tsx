@@ -6,19 +6,22 @@ import McsIcons from '../McsIcons';
 
 interface HeaderItemProps {
   className: string;
-  data?: object;
-  iconType?: string;
-  translationKey?: string;
-  number?:number;
+  data: {
+    iconType?: string;
+    translationKey?: string;
+    number?:number;
+  };
 }
 
 const HeaderItem: React.SFC<HeaderItemProps> = props => {
   return (
     <Col span={6} className={props.className}>
-    <McsIcons type={props.iconType}/>
-    <div className="title"><FormattedMessage id={props.translationKey}/></div>
-    <div className="number">{props.number}</div>
-  </Col>);
-}
+      <McsIcons type={props.data.iconType} />
+      <div className="title" >
+        <FormattedMessage id={props.data.translationKey} />
+      </div>
+      <div className="number">{props.data.number}</div>
+    </Col>);
+};
 
 export default HeaderItem;

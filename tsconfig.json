@@ -9,6 +9,10 @@
     "outDir": "ts-build",
     "allowJs": true,
     "jsx":"preserve",
+    "lib": [
+      "dom",
+      "es7"
+    ]
   },
   "exclude":[
     "node_modules",

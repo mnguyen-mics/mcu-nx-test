@@ -4,15 +4,10 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
 interface FormTitleProps {
-  titleMessage: [{
-    id: string;
-    defaultMessage: string;
-  }];
-  subTitleMessage: [{
-    id: string;
-    defaultMessage: string;
-  }];
+  titleMessage: FormattedMessage.Props;
+  subTitleMessage: FormattedMessage.Props;
 }
+
 
 const FormTitle: React.SFC<FormTitleProps> = props => {
 

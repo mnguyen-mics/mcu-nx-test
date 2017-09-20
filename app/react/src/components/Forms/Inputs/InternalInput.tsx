@@ -5,8 +5,8 @@ import { Input } from 'antd';
 import Alert from 'mcs-react-alert';
 
 interface InternalInputProps {
-  input?: any;
-  meta: any;
+  input?: {};
+  meta: {};
   other: any;
   touched?: any;
   warning?: any;

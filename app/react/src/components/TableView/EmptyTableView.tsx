@@ -12,27 +12,33 @@ const messages = defineMessages({
   },
 });
 
-function EmptyTableView({
-    className,
-    iconType,
-    text,
-    intlMessage,
-  }) {
+interface EmptyTableViewProps {
+  text?: string;
+  intlMessage?: {
+    id?: string;
+    defaultMessage?: string;
+  };
+  iconType?: string;
+  className?: string;
+}
+
+const EmptyTableView:React.SFC<EmptyTableViewProps> = props => {
+
 
   /* Support new intl message obj and legacy translation key (en/fr.json) */
   const formattedMessageProps = {
-    id: intlMessage.id ? intlMessage.id : text ? text : messages.emptyMsg.id,
-    defaultMessage: (intlMessage.defaultMessage
-      ? intlMessage.defaultMessage
+    id: props.intlMessage.id ? props.intlMessage.id : props.text ? props.text : messages.emptyMsg.id,
+    defaultMessage: (props.intlMessage.defaultMessage
+      ? props.intlMessage.defaultMessage
       : messages.emptyMsg.defaultMessage
     ),
   };
 
   return (
     <div className="mcs-aligner">
-      <Col span={24} className={className}>
+      <Col span={24} className={props.className}>
         <div className="logo">
-          <McsIcons type={iconType} />
+          <McsIcons type={props.iconType} />
         </div>
         <FormattedMessage {...formattedMessageProps} />
       </Col>
@@ -45,13 +51,6 @@ EmptyTableView.defaultProps = {
   className: 'mcs-table-view-empty',
   intlMessage: {},
   text: null,
-};
-
-EmptyTableView.propTypes = {
-  text: PropTypes.string,
-  intlMessage: PropTypes.shape(),
-  iconType: PropTypes.string,
-  className: PropTypes.string,
 };
 
 export default EmptyTableView;

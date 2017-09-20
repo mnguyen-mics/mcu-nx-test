@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 
-function NotFound() {
+const NotFound = () => {
   return (
     <div className="mcs-centered-container">
       404 not found

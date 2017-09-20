@@ -1,13 +1,30 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Dropdown, Button, DatePicker, Menu, Icon } from 'antd';
 import moment from 'moment';
 
 import { withTranslations } from '../containers/Helpers';
 
+interface McsDateRangePickerProps {
+  values: {
+    rangeType?: string;
+    lookbackWindow?: any;
+    from?: any;
+    to?: any;
+  };
+  onChange: any;
+  translations: any;
+  format: any;
+  disabled: any;
+}
+
+interface McsDateRangePickerState {
+  showRangePicker?: boolean;
+}
+
 const { RangePicker } = DatePicker;
 
-const ranges = [
+const ranges: any = [
   {
     name: 'TODAY',
     dateRange: [moment(), moment().add(1, 'days')],
@@ -26,9 +43,9 @@ const ranges = [
   },
 ];
 
-const format = 'YYYY-MM-DD';
+const format: string = 'YYYY-MM-DD';
 
-class McsDateRangePicker extends Component {
+let McsDateRangePicker =  class McsDateRangePicker extends React.Component<McsDateRangePickerProps, McsDateRangePickerState> {
 
   constructor(props) {
     super(props);
@@ -156,18 +173,6 @@ class McsDateRangePicker extends Component {
       : this.renderRangesDropdown();
   }
 }
-
-
-McsDateRangePicker.propTypes = {
-  values: PropTypes.shape({
-    rangeType: PropTypes.string,
-    lookbackWindow: PropTypes.object,
-    from: PropTypes.object,
-    to: PropTypes.object,
-  }).isRequired,
-  onChange: PropTypes.func.isRequired,
-  translations: PropTypes.shape().isRequired,
-};
 
 McsDateRangePicker = withTranslations(McsDateRangePicker);
 

@@ -3,16 +3,10 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
 interface BasicTooltipProps {
-  // content: object;
-  // xLabel: string | number;
-  // entries: object;
-  // label: object;
-  // color: string;
-  // value: number;
   content: {
-    xLabel: string | number ;
+    xLabel: string | number;
     entries: [{
-      label: object;
+      label: FormattedMessage.Props;
       color: string;
       value: number;
     }];
@@ -75,6 +69,5 @@ BasicTooltip.defaultProps = {
     }],
   },
 };
-
 
 export default BasicTooltip;

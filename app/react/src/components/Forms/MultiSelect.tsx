@@ -1,8 +1,38 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Icon, Dropdown, Menu, Button } from 'antd';
 
-class MultiSelect extends Component {
+interface MultiSelectProps {
+  name: string;
+  displayElement: any;
+  onCloseMenu?: Function,
+  // menuItems: {
+  //   handleMenuClick?: any;
+  //   selectedItems?: [{
+  //     key?: string;
+  //     value?: string;
+  //   }];
+  //   items: [{
+  //     key?: string;
+  //     value?: string;
+  //   }];
+  // };
+  menuItems?: any;
+  selectedItems?: any;
+  buttonClass: any;
+  key: string;
+}
+
+interface MultiSelectState {
+  selectedItems: any;
+  overlayVisible: boolean;
+}
+
+class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
+
+  static defaultprops = {
+    buttonClass: '',
+    onCloseMenu: () => {},
+  }
 
   constructor(props) {
     super(props);
@@ -45,11 +75,11 @@ class MultiSelect extends Component {
   isChecked(value) {
     let isChecked = false;
 
-    this.buildFilterItems().forEach((item) => {
-      if (item.value.toLowerCase() === value.toLowerCase()) {
-        isChecked = true;
-      }
-    });
+    // this.buildFilterItems().forEach((item) => {
+    //   if (item.value.toLowerCase() === value.toLowerCase()) {
+    //     isChecked = true;
+    //   }
+    // });
 
     return isChecked;
   }
@@ -110,27 +140,5 @@ class MultiSelect extends Component {
   }
 }
 
-MultiSelect.defaultProps = {
-  buttonClass: '',
-  onCloseMenu: () => { },
-};
-
-MultiSelect.propTypes = {
-  name: PropTypes.string.isRequired,
-  displayElement: PropTypes.element.isRequired,
-  onCloseMenu: PropTypes.func,
-  menuItems: PropTypes.shape({
-    handleMenuClick: PropTypes.func,
-    selectedItems: PropTypes.arrayOf(PropTypes.shape({
-      key: PropTypes.string,
-      value: PropTypes.string,
-    })),
-    items: PropTypes.arrayOf(PropTypes.shape({
-      key: PropTypes.string,
-      value: PropTypes.string,
-    })),
-  }).isRequired,
-  buttonClass: PropTypes.string,
-};
-
 export default MultiSelect;
+

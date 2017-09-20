@@ -1,8 +1,20 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 
-class McsTabs extends Component {
+interface McTabsProps {
+  items: [{
+    title?: string;
+    display?: any;
+  }];
+  isCard?: boolean;
+}
+
+class McsTabs extends React.Component<McTabsProps> {
+
+  static defaultProps = {
+    isCard: true,
+  }
 
   buildMenuItems() {
     const { items } = this.props;
@@ -36,17 +48,5 @@ class McsTabs extends Component {
 
   }
 }
-
-McsTabs.defaultProps = {
-  isCard: true,
-};
-
-McsTabs.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string,
-    display: PropTypes.element,
-  })).isRequired,
-  isCard: PropTypes.bool,
-};
 
 export default McsTabs;

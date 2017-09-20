@@ -3,12 +3,8 @@ import PropTypes from 'prop-types';
 import { Input } from 'antd';
 
 interface InternalGridInputProps {
-  input?: any;
-  // meta: {
-  //   error: any;
-  //   touched: any;
-  // };
-  meta: any;
+  input?: {};
+  meta: {};
   error: any;
   touched: any;
   className: string;

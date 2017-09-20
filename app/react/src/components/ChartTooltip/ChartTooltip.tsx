@@ -35,23 +35,4 @@ ChartTooltip.defaultProps = {
   },
 };
 
-// ChartTooltip.propTypes = {
-//   tooltipStyle: PropTypes.shape({
-//     /*
-//   * The X pixel where the tooltip will be displayed
-//   */
-//     xTooltip: PropTypes.number,
-//
-//   /*
-//   * The Y pixel where the tooltip will be displayed
-//   */
-//     yTooltip: PropTypes.number,
-//
-//   /*
-//   * To show or not the tooltip
-//   */
-//     visibility: React.PropTypes.string,
-//   }),
-// };
-
 export default ChartTooltip;

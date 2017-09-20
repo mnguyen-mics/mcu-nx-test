@@ -6,16 +6,16 @@ import McsIcons from '../McsIcons';
 
 interface OverlapTooltipProps {
   content?: {
-    segment_initial: {
-      name: string,
-      population: number
+    segment_initial?: {
+      name?: string,
+      population?: number
     },
-    segment_overlaping: {
-      name: string,
-      population: number
+    segment_overlaping?: {
+      name?: string,
+      population?: number
     },
     overlap: {
-      population: number
+      population?: number
     }
   }
 }

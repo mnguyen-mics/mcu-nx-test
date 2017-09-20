@@ -1,8 +1,24 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-class TitleAndStatusHeader extends Component {
+interface TitleAndStatusHeaderProps {
+  headerTitle: string;
+  headerStatus?: {
+    value?: string;
+    translationKeyPrefix?: string;
+  };
+  translationKeyPrefix?: string;
+  value?: string;
+  headerAttributes: Array<Element>;
+}
+
+class TitleAndStatusHeader extends React.Component<TitleAndStatusHeaderProps, {}> {
+
+  static defaultProps = {
+    headerStatus: { value: null },
+    headerAttributes: [],
+  }
 
   buildStatusElement = () => {
     const { headerStatus } = this.props;
@@ -69,19 +85,5 @@ class TitleAndStatusHeader extends Component {
 
   }
 }
-
-TitleAndStatusHeader.defaultProps = {
-  headerStatus: { value: null },
-  headerAttributes: [],
-};
-
-TitleAndStatusHeader.propTypes = {
-  headerTitle: PropTypes.string.isRequired,
-  headerStatus: PropTypes.shape({
-    translationKeyPrefix: PropTypes.string,
-    value: PropTypes.string,
-  }),
-  headerAttributes: PropTypes.arrayOf(PropTypes.element),
-};
 
 export default TitleAndStatusHeader;

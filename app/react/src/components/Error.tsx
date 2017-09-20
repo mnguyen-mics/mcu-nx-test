@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 
-function Error() {
+const Error:React.SFC<{}> = () => {
   return (
     <div className="mcs-centered-container">
       Oops, please try to reload the page or contact support

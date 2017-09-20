@@ -1,15 +1,23 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 
-function MetricsColumn(props) {
+interface MetricsColumnProps {
+  metrics: [{
+    name?: string;
+    value?: string;
+  }];
+  isLoading?: boolean;
+}
+
+const MetricsColumn: React.SFC<MetricsColumnProps> = props => {
 
   const {
     metrics,
     isLoading,
   } = props;
-  const height = 375;
-  const nbOfVal = metrics ? metrics.length : 1;
-  const cellHeight = height / nbOfVal;
+  const height: number = 375;
+  const nbOfVal: number = metrics ? metrics.length : 1;
+  const cellHeight: number = height / nbOfVal;
 
   return (
     <div className="p-r-20 mcs-metrics-column">
@@ -26,14 +34,6 @@ function MetricsColumn(props) {
 
 MetricsColumn.defaultProps = {
   isLoading: false,
-};
-
-MetricsColumn.propTypes = {
-  metrics: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    value: PropTypes.string,
-  }).isRequired).isRequired,
-  isLoading: PropTypes.bool,
 };
 
 export default MetricsColumn;
