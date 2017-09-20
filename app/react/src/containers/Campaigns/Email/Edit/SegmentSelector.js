@@ -61,7 +61,7 @@ class SegmentSelector extends Component {
   }
 
   fetchAudienceSegments = () => {
-    const { organisationId, defaultDatamart, selectedSegmentIds } = this.props;
+    const { organisationId, defaultDatamart, selectedIds } = this.props;
     const { pageSize, currentPage, keywords } = this.state;
     const datamartId = defaultDatamart(organisationId).id;
     const options = { ...getPaginatedApiParam(currentPage, pageSize) };
@@ -88,7 +88,7 @@ class SegmentSelector extends Component {
           this.setState(prevState => {
             const selectedSegmentById = {
               ...prevState.selectedSegmentById,
-              ...selectedSegmentIds.reduce((acc, segmentId) => {
+              ...selectedIds.reduce((acc, segmentId) => {
                 if (!prevState.selectedSegmentById[segmentId]) {
                   return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
                 }
@@ -247,14 +247,14 @@ class SegmentSelector extends Component {
 }
 
 SegmentSelector.defaultProps = {
-  selectedSegmentIds: [],
+  selectedIds: [],
 };
 
 SegmentSelector.propTypes = {
   close: PropTypes.func.isRequired,
   defaultDatamart: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
-  selectedSegmentIds: PropTypes.arrayOf(PropTypes.string),
+  selectedIds: PropTypes.arrayOf(PropTypes.string),
   save: PropTypes.func.isRequired,
 };
 

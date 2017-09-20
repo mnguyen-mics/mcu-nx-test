@@ -5,6 +5,6 @@ function getAllPublishers(organisationId) {
   return ApiService.getRequest(endpoint).then(res => res.data);
 }
 
-export {
+export default {
   getAllPublishers
 };

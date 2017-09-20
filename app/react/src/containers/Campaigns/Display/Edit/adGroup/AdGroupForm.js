@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
-import { isEqual } from 'lodash';
+import { capitalize, isEqual } from 'lodash';
 
 import {
   Ads,
@@ -78,25 +78,29 @@ class AdGroupForm extends Component {
       .then((result) => {
         const newAdGroupId = result.data.id;
 
-        return this.updateAudienceSegments(newAdGroupId);
+        return this.saveTableModifications('audience', newAdGroupId);
       })
       .catch(error => notifyError(error));
   }
 
-  updateAudienceSegments = (newAdGroupId) => {
+  saveTableModifications = (tableName, newAdGroupId) => {
     const {
       formInitialValues,
-      formValues: { audienceTable = [] },
+      formValues,
       match: { params: { campaignId, ...rest } },
     } = this.props;
 
+    const formName = `${tableName}Table`;
+
+    const table = formValues[formName] || [];
+    const capitalName = capitalize(tableName);
 
     const adGroupId = rest.adGroupId || newAdGroupId;
-    console.log('audienceTable = ', audienceTable);
+    console.log('table = ', table);
 
-    return audienceTable.reduce((promise, segment) => {
-      const { id, include, otherId, toBeRemoved } = segment;
-      const body = { audience_segment_id: id, exclude: !include };
+    return table.reduce((promise, row) => {
+      const { id, include, otherId, toBeRemoved } = row;
+      const body = { audience_segment_id: id, exclude: !include };  // RENDRE GENERIQUE
 
       return promise.then(() => {
         let newPromise;
@@ -107,10 +111,13 @@ class AdGroupForm extends Component {
           if (!otherId) {
             console.log('creation pour : ', body.audience_segment_id);
             /* creation */
-            newPromise = DisplayCampaignService.createSegment(campaignId, adGroupId, body)
-            .then((newSegment) => newSegment);
+            newPromise = DisplayCampaignService[`create${capitalName}`](campaignId, adGroupId, body)
+            .then((newElement) => {
+              console.log('APRES creation ok pour ', newElement);
+              return newElement;
+            });
           } else {
-            const needsUpdating = formInitialValues.audienceTable.find(seg => (
+            const needsUpdating = formInitialValues[formName].find(seg => (
               seg.otherId === otherId && seg.include !== include
             ));
 
@@ -122,8 +129,11 @@ class AdGroupForm extends Component {
             if (needsUpdating) {
               console.log('modification pour : ', otherId);
 
-              newPromise = DisplayCampaignService.updateSegment(campaignId, adGroupId, otherId, body)
-                .then(newSegment => newSegment);
+              newPromise = DisplayCampaignService[`update${capitalName}`](campaignId, adGroupId, otherId, body)
+                .then(newElement => {
+                  console.log('APRES modification ok pour ', newElement);
+                  return newElement;
+                });
             }
 
             newPromise = Promise.resolve();
@@ -132,8 +142,11 @@ class AdGroupForm extends Component {
           console.log('suppression pour : ', otherId);
 
           /* In case we want to delete an existing segment */
-          DisplayCampaignService.deleteSegment(campaignId, adGroupId, otherId)
-            .then(newSegment => newSegment);
+          DisplayCampaignService[`delete${capitalName}`](campaignId, adGroupId, otherId)
+            .then(newElement => {
+              console.log('APRES suppression ok pour ', newElement);
+              return newElement;
+            });
         } else {
           newPromise = Promise.resolve();
         }
@@ -189,17 +202,19 @@ class AdGroupForm extends Component {
       formatMessage,
       handlers: {
         closeNextDrawer,
-        updateTableFieldStatus: this.updateTableFieldStatus,
         openNextDrawer,
+        updateTableFieldStatus: this.updateTableFieldStatus,
         updateTableFields: this.updateTableFields,
       },
       organisationId,
     };
     const {
       audienceTable,
-      bidOptimizerTable,
+      optimizerTable,
       publisherTable,
     } = formValues;
+
+    console.log('formValues = ', formValues);
 
     return (
       <Form
@@ -223,7 +238,7 @@ class AdGroupForm extends Component {
           <hr />
           <Media {...commonProps} />
           <hr />
-          <Optimization {...commonProps} formValues={bidOptimizerTable} />
+          <Optimization {...commonProps} formValues={optimizerTable} />
           <hr />
           <Ads {...commonProps} />
           <hr />

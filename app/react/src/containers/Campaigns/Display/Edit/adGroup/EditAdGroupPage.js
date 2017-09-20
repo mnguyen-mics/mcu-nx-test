@@ -36,8 +36,8 @@ class EditAdGroupPage extends Component {
 
         return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroupBidOptimizerId] });
       })
-      .then((bidOptimizerTable) => {
-        this.setState({ initialValues: { ...this.state.initialValues, bidOptimizerTable } });
+      .then((optimizerTable) => {
+        this.setState({ initialValues: { ...this.state.initialValues, optimizerTable } });
       });
   }
 
@@ -63,7 +63,7 @@ class EditAdGroupPage extends Component {
   }
 
   getSegments({ adGroupId, campaignId, organisationId }) {
-    const fetchSegments = DisplayCampaignService.getSegments(campaignId, adGroupId);
+    const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
     const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 
     return Promise.all([fetchSegments, fetchMetadata])

@@ -19,7 +19,7 @@ function getBidOptimizerProperties({ bidOptimizers, selectedIds }) {
   );
 }
 
-function getAllBidOptimizers(organisationId) {
+function getAllBidOptimizers({ organisationId }) {
   const endpoint = `bid_optimizers?organisation_id=${organisationId}`;
 
   return ApiService.getRequest(endpoint)
@@ -27,7 +27,7 @@ function getAllBidOptimizers(organisationId) {
 }
 
 function getBidOptimizers({ organisationId, selectedIds, getAll }) {
-  return getAllBidOptimizers(organisationId)
+  return getAllBidOptimizers({ organisationId })
     .then((bidOptimizers) => {
       const reqParams = (getAll
         ? { bidOptimizers, selectedIds }
@@ -39,5 +39,6 @@ function getBidOptimizers({ organisationId, selectedIds, getAll }) {
 }
 
 export default {
+  getAllBidOptimizers,
   getBidOptimizers,
 };

@@ -14,31 +14,25 @@ class Audience extends Component {
 
   openWindow = () => {
     const { formValues, handlers } = this.props;
-
-    const selectedSegmentIds = formValues
-      .filter(segment => !segment.toBeRemoved)
-      .map(segment => segment.id);
-
     const additionalProps = {
       close: handlers.closeNextDrawer,
-      save: this.updateData(handlers.closeNextDrawer),
-      selectedSegmentIds,
+      save: this.updateData,
+      selectedIds: formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id),
     };
 
     handlers.openNextDrawer(SegmentSelector, { additionalProps });
   }
 
-  updateData = (callback) => {
-    return (selectedSegmentIds) => {
-      callback();
+  updateData = (selectedSegmentIds) => {
+    const { formValues, handlers, organisationId } = this.props;
+    const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
+      return AudienceSegmentService.getFormattedSegment(segmentId);
+    }));
+    const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 
-      const { formValues, handlers, organisationId } = this.props;
-      const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
-        return AudienceSegmentService.getFormattedSegment(segmentId);
-      }));
-      const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
+    handlers.closeNextDrawer();
 
-      Promise.all([fetchSelectedSegments, fetchMetadata])
+    Promise.all([fetchSelectedSegments, fetchMetadata])
         .then(results => {
           const segments = results[0];
           const metadata = results[1];
@@ -54,7 +48,6 @@ class Audience extends Component {
         .then(newFields => {
           handlers.updateTableFields({ newFields, tableName: 'audienceTable' });
         });
-    };
   }
 
   render() {

@@ -97,7 +97,7 @@ class EmailBlastForm extends Component {
     const segmentSelectorProps = {
       save: this.updateSegments,
       close: closeNextDrawer,
-      selectedSegmentIds: segments.map(s => s.audience_segment_id),
+      selectedIds: segments.map(s => s.audience_segment_id),
     };
 
     const options = {

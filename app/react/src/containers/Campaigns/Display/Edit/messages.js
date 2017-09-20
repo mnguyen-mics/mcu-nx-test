@@ -394,8 +394,19 @@ export default defineMessages({
     id: 'adGroupEditor.section8.part9',
     defaultMessage: 'You have {number} creatives attached to your ad',
   },
-});
 
-/*
-   ============> PART 2 : AUDIENCE
-*/
+  /*
+  ==============================================================================
+  ================================ SECTION SELECTORS ==============================
+  ==============================================================================
+  */
+
+  sectionSelectorTitleName: {
+    id: 'section.selector.title.name',
+    defaultMessage: 'Name',
+  },
+  sectionSelectorTitleProvider: {
+    id: 'section.selector.title.provider',
+    defaultMessage: 'Provider',
+  }
+});

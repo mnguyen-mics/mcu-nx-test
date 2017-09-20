@@ -64,8 +64,8 @@ function updateAdGroup(campaignId, adGroupId, body) {
   return ApiService.putRequest(endpoint, body);
 }
 
-/* SEGMENT SERVICES */
-function getSegments(campaignId, adGroupId) {
+/* AUDIENCE SERVICES */
+function getAudiences(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.getRequest(endpoint).then(res => res.data.map(segment => {
     const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
@@ -80,17 +80,17 @@ function getSegments(campaignId, adGroupId) {
   }));
 }
 
-function createSegment(campaignId, adGroupId, body) {
+function createAudience(campaignId, adGroupId, body) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.postRequest(endpoint, body).then(res => res.data);
 }
 
-function updateSegment(campaignId, adGroupId, segmentId, body) {
+function updateAudience(campaignId, adGroupId, segmentId, body) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${segmentId}`;
   return ApiService.putRequest(endpoint, body);
 }
 
-function deleteSegment(campaignId, adGroupId, segmentId) {
+function deleteAudience(campaignId, adGroupId, segmentId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${segmentId}`;
   return ApiService.deleteRequest(endpoint);
 }
@@ -99,8 +99,10 @@ function deleteSegment(campaignId, adGroupId, segmentId) {
 function getPublishers({ campaignId }) {
   const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
   return ApiService.getRequest(endpoint)
-    .then(res => res.data.map(publisher => ({
+    .then(res => res.data.map(({ display_network_access_id, id, ...publisher }) => ({
       ...publisher,
+      id: display_network_access_id,
+      otherId: id,
       toBeRemoved: false
     })));
 }
@@ -118,16 +120,16 @@ function updateAd(adId, campaignId, adGroupId, body) {
 
 export default {
   createAdGroup,
-  createSegment,
-  deleteSegment,
+  createAudience,
+  deleteAudience,
   getAdGroup,
   getAds,
   getCampaignDisplay,
   getCampaignName,
   getPublishers,
-  getSegments,
+  getAudiences,
   updateAd,
   updateAdGroup,
   updateCampaign,
-  updateSegment
+  updateAudience
 };
