@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-import { Layout, Button, Checkbox } from 'antd';
+import { Layout, Button } from 'antd';
+import { FormattedMessage } from 'react-intl';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
-  TableView,
   TableViewFilters,
+  CollectionView,
 } from '../../../../components/TableView';
 import CreativeService from '../../../../services/CreativeService';
+import CreativeCard from './CreativeCard';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import messages from './messages';
 
 const { Content } = Layout;
 
@@ -27,7 +30,7 @@ class EmailTemplateSelector extends Component {
       hasEmailTemplates: true,
       isLoading: true,
       total: 0,
-      pageSize: 10,
+      pageSize: 12,
       currentPage: 1,
       keywords: '',
     };
@@ -109,65 +112,36 @@ class EmailTemplateSelector extends Component {
     save(newEmailTemplateSelections);
   }
 
+
   getColumnsDefinitions() {
     const { newEmailTemplateSelections } = this.state;
     const selectedEmailTemplateIds = newEmailTemplateSelections
       .map(templateSelection => templateSelection.email_template_id);
 
     return {
-      dataColumnsDefinition: [
-        {
-          key: 'selected',
-          render: (text, record) => (
-            <Checkbox
-              checked={selectedEmailTemplateIds.includes(record.id)}
-              onChange={() => this.toggleTemplateSelection(record.id)}
-            >{text}
-            </Checkbox>
-          ),
-        },
-        {
-          translationKey: 'PREVIEW',
-          key: 'asset_path',
-          isHideable: false,
-          className: 'mcs-table-image-col',
-          render: (text, record) => (
-            <div className="mcs-table-cell-thumbnail">
-              <a
-                target="_blank"
-                rel="noreferrer noopener"
-                href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}
-              >
-                <span className="thumbnail-helper" />
-                <img
-                  src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}
-                  alt={record.name}
-                />
-              </a>
-            </div>
-          ),
-        },
-        {
-          translationKey: 'NAME',
-          key: 'name',
-          isHideable: false,
-          render: text => <span>{text}</span>,
-        },
-        {
-          translationKey: 'AUDIT_STATUS',
-          key: 'audit_status',
-          isHideable: false,
-          render: text => <span>{text}</span>,
-        },
-        {
-          translationKey: 'PUBLISHED_VERSION',
-          key: 'published_version',
-          isHideable: false,
-          render: text => <span>{text}</span>,
-        },
-      ],
-      actionsColumnsDefinition: [],
+      title: {
+        key: 'name',
+        render: (text) => {
+          return <span>{text}</span>;
+        }
+      },
+      footer: {
+        key: 'selected',
+        render: (text, record) => {
+          return selectedEmailTemplateIds.includes(record.id) ? <Button type="primary" className="mcs-primary"><FormattedMessage {...messages.blastTemplateSelectedButton} /></Button> : <Button onClick={() => this.toggleTemplateSelection(record.id)}><FormattedMessage {...messages.blastTemplateSelectButton} /></Button>;
+        }
+      }
     };
+  }
+
+  buildCollectionItems = (dataSource) => {
+    const columnDef = this.getColumnsDefinitions();
+    if (dataSource) {
+      return dataSource.map(data => {
+        return <CreativeCard item={data} title={columnDef.title} footer={columnDef.footer} />;
+      });
+    }
+    return null;
   }
 
   getSearchOptions() {
@@ -194,7 +168,10 @@ class EmailTemplateSelector extends Component {
     } = this.state;
 
     const pagination = {
-      currentPage,
+      size: 'small',
+      showSizeChanger: true,
+      className: 'ant-table-pagination mini',
+      current: currentPage,
       pageSize,
       total,
       onChange: page =>
@@ -207,6 +184,7 @@ class EmailTemplateSelector extends Component {
           ...prevState,
           pageSize: size,
         })),
+      pageSizeOptions: ['12', '24', '36', '48'],
     };
 
     return (
@@ -214,7 +192,7 @@ class EmailTemplateSelector extends Component {
         <div className="edit-layout ant-layout">
           <Actionbar path={[{ name: 'Add an existing template' }]} edition>
             <Button type="primary mcs-primary" onClick={this.handleAdd}>
-              <McsIcons type="plus" /><span>Add</span>
+              <McsIcons type="plus" /><span><FormattedMessage {...messages.blastTemplateAddButton} /></span>
             </Button>
             <McsIcons
               type="close"
@@ -224,17 +202,15 @@ class EmailTemplateSelector extends Component {
             />
           </Actionbar>
           <Layout>
-            <Content className="mcs-table-edit-container">
-              {hasEmailTemplates
-                ? <TableViewFilters searchOptions={this.getSearchOptions()}>
-                  <TableView
-                    columnsDefinitions={this.getColumnsDefinitions()}
-                    dataSource={emailTemplates}
+            <Content className="mcs-edit-container">
+              {hasEmailTemplates ?
+                <TableViewFilters searchOptions={this.getSearchOptions()}>
+                  <CollectionView
+                    collectionItems={this.buildCollectionItems(emailTemplates)}
                     loading={isLoading}
                     pagination={pagination}
                   />
-                </TableViewFilters>
-                : <EmptyTableView iconType="file" />}
+                </TableViewFilters> : <EmptyTableView iconType="file" />}
             </Content>
           </Layout>
         </div>
