@@ -408,5 +408,13 @@ export default defineMessages({
   sectionSelectorTitleProvider: {
     id: 'section.selector.title.provider',
     defaultMessage: 'Provider',
-  }
+  },
+  sectionSelectorTitleUserPoints: {
+    id: 'section.selector.title.userPoints',
+    defaultMessage: 'User Points',
+  },
+  sectionSelectorTitleCookieIds: {
+    id: 'section.selector.title.cookieIds',
+    defaultMessage: 'Desktop Cookie Ids',
+  },
 });

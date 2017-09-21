@@ -48,6 +48,17 @@ const getSegmentMetaData = (organisationId) => {
     ));
 };
 
+const getSegmentsWithMetadata = (organisationId, datamartId, options = {}) => {
+  return getSegments(organisationId, datamartId, options)
+    .then(segments => getSegmentMetaData(organisationId)
+        .then(metadata => segments.data.map(segment => {
+          const { desktop_cookie_ids, user_points } = metadata[segment.id];
+
+          return { ...segment, user_points, desktop_cookie_ids };
+        }))
+    );
+};
+
 const createOverlap = (datamartId, segmentId) => {
   const endpoint = `datamarts/${datamartId}/overlap_analysis`;
   const header = { 'Content-Type': 'application/json' };
@@ -90,6 +101,7 @@ export default {
   getFormattedSegment,
   getSegment,
   getSegmentMetaData,
+  getSegmentsWithMetadata,
   getSegments,
   getEmailCount,
   createOverlap,

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
@@ -17,8 +18,8 @@ class Publisher extends Component {
 
   openWindow = () => {
     const { formValues, handlers } = this.props;
-
     const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
+
     const columnsDefinitions = [
       {
         intlMessage: messages.sectionSelectorTitleName,
@@ -29,7 +30,6 @@ class Publisher extends Component {
     ];
 
     const additionalProps = {
-      formName: 'publisherTable',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
       fetchSelectorData: this.getAllPublishers,
@@ -96,8 +96,10 @@ class Publisher extends Component {
         />
 
         <Row>
-          <AdGroupTable
+          <FieldArray
+            component={AdGroupTable}
             dataSource={dataSource}
+            name="publisherTable"
             tableName="publisherTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
           />

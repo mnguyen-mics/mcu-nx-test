@@ -1,26 +1,69 @@
 import React, { Component } from 'react';
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
+import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form } from '../../../../../../components';
-import AdGroupTable from '../AdGroupTable';
+import { EmptyRecords, Form, TableSelector } from '../../../../../../components';
 import messages from '../../messages';
-import SegmentSelector from '../../../../Email/Edit/SegmentSelector';
 import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
+import { getDefaultDatamart } from '../../../../../../state/Session/selectors';
+import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
+import AdGroupTable from '../AdGroupTable';
 
 const { FormSection } = Form;
 
 class Audience extends Component {
 
+  getAudiences = (filterOptions) => {
+    const { organisationId, defaultDatamart } = this.props;
+    const { currentPage, keywords, pageSize } = filterOptions;
+    const datamartId = defaultDatamart(organisationId).id;
+    const params = { ...getPaginatedApiParam(currentPage, pageSize) };
+
+    if (keywords) {
+      params.keywords = keywords;
+    }
+
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, params);
+  }
+
   openWindow = () => {
     const { formValues, handlers } = this.props;
+    const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
+
+    const columnsDefinitions = [
+      {
+        intlMessage: messages.sectionSelectorTitleName,
+        key: 'name',
+        isHideable: false,
+        render: text => <span>{text}</span>,
+      },
+      {
+        intlMessage: messages.sectionSelectorTitleUserPoints,
+        key: 'user_points',
+        isHideable: false,
+        render: text => <span>{text}</span>,
+      },
+      {
+        intlMessage: messages.sectionSelectorTitleCookieIds,
+        key: 'desktop_cookie_ids',
+        isHideable: false,
+        render: text => <span>{text}</span>,
+      },
+    ];
+
     const additionalProps = {
       close: handlers.closeNextDrawer,
+      columnsDefinitions,
+      displayFiltering: true,
+      fetchSelectorData: this.getAudiences,
       save: this.updateData,
-      selectedIds: formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id),
+      selectedIds,
     };
 
-    handlers.openNextDrawer(SegmentSelector, { additionalProps });
+    handlers.openNextDrawer(TableSelector, { additionalProps });
   }
 
   updateData = (selectedIds) => {
@@ -33,21 +76,21 @@ class Audience extends Component {
     handlers.closeNextDrawer();
 
     Promise.all([fetchSelectedSegments, fetchMetadata])
-        .then(results => {
-          const segments = results[0];
-          const metadata = results[1];
+      .then(results => {
+        const segments = results[0];
+        const metadata = results[1];
 
-          return segments.map(segment => {
-            const { desktop_cookie_ids, user_points } = metadata[segment.id];
-            const prevSeg = formValues.find(elem => elem.id === segment.id);
-            const include = (prevSeg ? prevSeg.include : true);
+        return segments.map(segment => {
+          const { desktop_cookie_ids, user_points } = metadata[segment.id];
+          const prevSeg = formValues.find(elem => elem.id === segment.id);
+          const include = (prevSeg ? prevSeg.include : true);
 
-            return { ...segment, desktop_cookie_ids, include, user_points };
-          });
-        })
-        .then(newFields => {
-          handlers.updateTableFields({ newFields, tableName: 'audienceTable' });
+          return { ...segment, desktop_cookie_ids, include, user_points };
         });
+      })
+      .then(newFields => {
+        handlers.updateTableFields({ newFields, tableName: 'audienceTable' });
+      });
   }
 
   render() {
@@ -92,8 +135,10 @@ class Audience extends Component {
         />
 
         <Row>
-          <AdGroupTable
+          <FieldArray
+            component={AdGroupTable}
             dataSource={dataSource}
+            name="audienceTable"
             tableName="audienceTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
@@ -116,6 +161,7 @@ Audience.defaultProps = {
 };
 
 Audience.propTypes = {
+  defaultDatamart: PropTypes.func.isRequired,
   formValues: PropTypes.arrayOf(PropTypes.shape()),
   formatMessage: PropTypes.func.isRequired,
 
@@ -129,4 +175,10 @@ Audience.propTypes = {
   organisationId: PropTypes.string.isRequired,
 };
 
-export default Audience;
+export default compose(
+  connect(
+    state => ({
+      defaultDatamart: getDefaultDatamart(state),
+    }),
+  ),
+)(Audience);

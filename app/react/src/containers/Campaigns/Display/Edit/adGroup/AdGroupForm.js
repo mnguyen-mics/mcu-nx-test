@@ -91,12 +91,9 @@ class AdGroupForm extends Component {
     } = this.props;
 
     const formName = `${tableName}Table`;
-
     const table = formValues[formName] || [];
     const capitalName = capitalize(tableName);
-
     const adGroupId = rest.adGroupId || newAdGroupId;
-    console.log('table = ', table);
 
     return table.reduce((promise, row) => {
       const { id, include, otherId, toBeRemoved } = row;
@@ -109,49 +106,24 @@ class AdGroupForm extends Component {
           /* In case we want to add or update a segment */
 
           if (!otherId) {
-            console.log('creation pour : ', body.audience_segment_id);
             /* creation */
-            newPromise = DisplayCampaignService[`create${capitalName}`](campaignId, adGroupId, body)
-            .then((newElement) => {
-              console.log('APRES creation ok pour ', newElement);
-              return newElement;
-            });
+            newPromise = DisplayCampaignService[`create${capitalName}`](campaignId, adGroupId, body);
           } else {
             const needsUpdating = formInitialValues[formName].find(seg => (
               seg.otherId === otherId && seg.include !== include
             ));
 
-            if (!needsUpdating) {
-              console.log('ne devrait pas modifier pour : ', otherId);
-            }
-
             /* update if modified segment */
             if (needsUpdating) {
-              console.log('modification pour : ', otherId);
-
-              newPromise = DisplayCampaignService[`update${capitalName}`](campaignId, adGroupId, otherId, body)
-                .then(newElement => {
-                  console.log('APRES modification ok pour ', newElement);
-                  return newElement;
-                });
+              newPromise = DisplayCampaignService[`update${capitalName}`](campaignId, adGroupId, otherId, body);
             }
-
-            newPromise = Promise.resolve();
           }
         } else if (otherId) {
-          console.log('suppression pour : ', otherId);
-
           /* In case we want to delete an existing segment */
-          DisplayCampaignService[`delete${capitalName}`](campaignId, adGroupId, otherId)
-            .then(newElement => {
-              console.log('APRES suppression ok pour ', newElement);
-              return newElement;
-            });
-        } else {
-          newPromise = Promise.resolve();
+          newPromise = DisplayCampaignService[`delete${capitalName}`](campaignId, adGroupId, otherId);
         }
 
-        return newPromise;
+        return newPromise || Promise.resolve();
       });
     }, Promise.resolve());
   };
@@ -167,7 +139,7 @@ class AdGroupForm extends Component {
     const newFieldIds = newFields.map(field => field.id);
     const prevFields = this.props.formValues[tableName] || [];
 
-    if (prevFields.length) {
+    if (prevFields.length > 0) {
       prevFields.forEach((prevField, index) => {
         const toBeRemoved = !newFieldIds.includes(prevField.id);
 
@@ -179,7 +151,7 @@ class AdGroupForm extends Component {
       if (!prevFields.length
         || !prevFields.find(prevField => (prevField.id === newField.id))
       ) {
-        this.props.arrayPush(FORM_NAME, `${tableName}`, { ...newField, toBeRemoved: false });
+        this.props.arrayPush(FORM_NAME, tableName, { ...newField, toBeRemoved: false });
       }
     });
   }
@@ -295,8 +267,8 @@ export default compose(
     form: FORM_NAME,
     enableReinitialize: true,
   }),
+  connect(mapStateToProps, mapDispatchToProps),
   withDrawer,
   withValidators,
-  connect(mapStateToProps, mapDispatchToProps),
   injectIntl
 )(AdGroupForm);

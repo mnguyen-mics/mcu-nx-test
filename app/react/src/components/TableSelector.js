@@ -4,7 +4,7 @@ import { Layout, Button, Checkbox } from 'antd';
 
 import { Actionbar } from '../containers/Actionbar';
 import McsIcons from './McsIcons';
-import { EmptyTableView, TableView } from './TableView';
+import { EmptyTableView, TableView, TableViewFilters } from './TableView';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 
 const { Content } = Layout;
@@ -20,6 +20,7 @@ class TableSelector extends Component {
     total: 0,
     pageSize: 10,
     currentPage: 1,
+    keywords: '',
   };
 
   componentDidMount() {
@@ -36,13 +37,15 @@ class TableSelector extends Component {
     const {
       currentPage,
       pageSize,
+      keywords,
     } = this.state;
     const {
       currentPage: prevCurrentPage,
       pageSize: prevPageSize,
+      keywords: prevKeywords,
     } = prevState;
 
-    if (currentPage !== prevCurrentPage || pageSize !== prevPageSize) {
+    if (currentPage !== prevCurrentPage || pageSize !== prevPageSize || keywords !== prevKeywords) {
       this.populateTable();
     }
   }
@@ -69,6 +72,18 @@ class TableSelector extends Component {
     };
   }
 
+  getSearchOptions() {
+    return {
+      isEnabled: true,
+      placeholder: 'Search a template',
+      onSearch: value => {
+        this.setState({
+          keywords: value,
+        });
+      },
+    };
+  }
+
   handleAdd = () => {
     const { save } = this.props;
     const { selectedElementsById } = this.state;
@@ -78,9 +93,15 @@ class TableSelector extends Component {
   }
 
   populateTable = () => {
-    const { selectedIds } = this.props;
+    const { displayFiltering, selectedIds } = this.props;
+    const { currentPage, keywords, pageSize } = this.state;
 
-    return this.props.fetchSelectorData()
+    const filterOptions = (displayFiltering
+      ? { currentPage, keywords, pageSize }
+      : null
+    );
+
+    return this.props.fetchSelectorData(filterOptions)
         .then((results) => {
           const allElementIds = results.map(element => element.id);
           const elementsById = normalizeArrayOfObject(results, 'id');
@@ -142,7 +163,7 @@ class TableSelector extends Component {
   }
 
   render() {
-    console.log('this.state = ', this.state);
+    const { close, displayFiltering } = this.props;
     const {
       elementsById,
       allElementIds,
@@ -153,6 +174,7 @@ class TableSelector extends Component {
       noElement,
     } = this.state;
 
+    const datasource = allElementIds.map(id => elementsById[id]);
     const pagination = {
       currentPage,
       pageSize,
@@ -161,7 +183,14 @@ class TableSelector extends Component {
       onShowSizeChange: (current, size) => this.setState({ pageSize: size }),
     };
 
-    const datasource = allElementIds.map(id => elementsById[id]);
+    const tableView = (
+      <TableView
+        columnsDefinitions={this.getColumnsDefinitions()}
+        dataSource={datasource}
+        loading={isLoading}
+        pagination={pagination}
+      />
+    );
 
     return (
       <Layout>
@@ -174,19 +203,21 @@ class TableSelector extends Component {
               type="close"
               className="close-icon"
               style={{ cursor: 'pointer' }}
-              onClick={this.props.close}
+              onClick={close}
             />
           </Actionbar>
           <Layout>
             <Content className="mcs-table-edit-container">
               {noElement
                 ? <EmptyTableView iconType="file" />
-                : <TableView
-                  columnsDefinitions={this.getColumnsDefinitions()}
-                  dataSource={datasource}
-                  loading={isLoading}
-                  pagination={pagination}
-                />
+                : (displayFiltering
+                  ? (
+                    <TableViewFilters searchOptions={this.getSearchOptions()}>
+                      {tableView}
+                    </TableViewFilters>
+                  )
+                  : tableView
+                )
               }
             </Content>
           </Layout>
@@ -197,6 +228,7 @@ class TableSelector extends Component {
 }
 
 TableSelector.defaultProps = {
+  displayFiltering: false,
   selectedIds: [],
   singleSelection: false,
 };
@@ -204,6 +236,7 @@ TableSelector.defaultProps = {
 TableSelector.propTypes = {
   close: PropTypes.func.isRequired,
   columnsDefinitions: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
+  displayFiltering: PropTypes.bool,
   fetchSelectorData: PropTypes.func.isRequired,
   selectedIds: PropTypes.arrayOf(PropTypes.string),
   save: PropTypes.func.isRequired,

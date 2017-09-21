@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
@@ -46,7 +47,6 @@ class Optimization extends Component {
     ];
 
     const additionalProps = {
-      formName: 'optimizerTable',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
       fetchSelectorData: this.getBidOptimizers({ getAll: true }),
@@ -113,8 +113,10 @@ class Optimization extends Component {
         />
 
         <Row>
-          <AdGroupTable
+          <FieldArray
+            component={AdGroupTable}
             dataSource={dataSource}
+            name="optimizerTable"
             tableName="optimizerTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
