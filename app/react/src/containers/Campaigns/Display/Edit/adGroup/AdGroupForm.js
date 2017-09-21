@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
-import { capitalize, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 import {
   Ads,
@@ -38,6 +38,10 @@ const FORM_NAME = 'adGroupForm';
 
 class AdGroupForm extends Component {
 
+  state = {
+    adGroupId: this.props.match.params.adGroupId,
+  }
+
   shouldComponentUpdate(nextProps) {
     return !isEqual(nextProps.formValues, this.props.formValues);
   }
@@ -56,7 +60,18 @@ class AdGroupForm extends Component {
       [formatMessage(messages.contentSection1Row2OptionMONTH)]: 'MONTH',
     };
 
+    let bidOptimizerId = null;
+
+    if (finalValues.optimizerTable && finalValues.optimizerTable.length) {
+      const bidObject = finalValues.optimizerTable.find(elem => !elem.toBeRemoved);
+
+      if (bidObject) {
+        bidOptimizerId = bidObject.id;
+      }
+    }
+
     const generalBody = {
+      bid_optimizer_id: bidOptimizerId,
       end_date: finalValues.adGroupEndDate.valueOf(),
       max_budget_per_period: finalValues.adGroupMaxBudgetPerPeriod,
       max_budget_period: formatBudgetPeriod[finalValues.adGroupMaxBudgetPeriod],
@@ -76,57 +91,83 @@ class AdGroupForm extends Component {
 
     adGroupRequest
       .then((result) => {
-        const newAdGroupId = result.data.id;
-
-        return this.saveTableModifications('audience', newAdGroupId);
+        return this.setState({ adGroupId: result.data.id });
       })
+      .then(() => this.saveAudiences())
+      .then(() => this.savePublishers())
       .catch(error => notifyError(error));
   }
 
-  saveTableModifications = (tableName, newAdGroupId) => {
+  saveAudiences = () => {
+    const { adGroupId } = this.state;
     const {
       formInitialValues,
       formValues,
-      match: { params: { campaignId, ...rest } },
+      match: { params: { campaignId } },
     } = this.props;
 
-    const formName = `${tableName}Table`;
-    const table = formValues[formName] || [];
-    const capitalName = capitalize(tableName);
-    const adGroupId = rest.adGroupId || newAdGroupId;
+    const audienceTable = formValues.audienceTable || [];
 
-    return table.reduce((promise, row) => {
+    return audienceTable.reduce((promise, row) => {
       const { id, include, otherId, toBeRemoved } = row;
-      const body = { audience_segment_id: id, exclude: !include };  // RENDRE GENERIQUE
+      const body = { audience_segment_id: id, exclude: !include };
 
       return promise.then(() => {
         let newPromise;
 
         if (!toBeRemoved) {
-          /* In case we want to add or update a segment */
+          /* In case we want to add or update a element */
 
           if (!otherId) {
             /* creation */
-            newPromise = DisplayCampaignService[`create${capitalName}`](campaignId, adGroupId, body);
+            newPromise = DisplayCampaignService.createAudience({ campaignId, adGroupId, body });
           } else {
-            const needsUpdating = formInitialValues[formName].find(seg => (
-              seg.otherId === otherId && seg.include !== include
+            const needsUpdating = formInitialValues.audienceTable.find(elem => (
+              elem.otherId === otherId && elem.include !== include
             ));
 
-            /* update if modified segment */
+            /* update if modified element */
             if (needsUpdating) {
-              newPromise = DisplayCampaignService[`update${capitalName}`](campaignId, adGroupId, otherId, body);
+              newPromise = DisplayCampaignService.updateAudience({ campaignId, adGroupId, id: otherId, body });
             }
           }
         } else if (otherId) {
-          /* In case we want to delete an existing segment */
-          newPromise = DisplayCampaignService[`delete${capitalName}`](campaignId, adGroupId, otherId);
+          /* In case we want to delete an existing element */
+          newPromise = DisplayCampaignService.deleteAudience({ campaignId, adGroupId, id: otherId });
         }
 
         return newPromise || Promise.resolve();
       });
     }, Promise.resolve());
-  };
+  }
+
+  savePublishers = () => {
+    const {
+      formValues,
+      match: { params: { campaignId } },
+    } = this.props;
+
+    const publisherTable = formValues.publisherTable || [];
+
+    return publisherTable.reduce((promise, row) => {
+      const { id, otherId, toBeRemoved } = row;
+      const body = { display_network_access_id: id };
+
+      return promise.then(() => {
+        let newPromise;
+
+        if (!toBeRemoved) {
+          if (!otherId) {
+            newPromise = DisplayCampaignService.createPublisher({ campaignId, body });
+          }
+        } else if (otherId) {
+          newPromise = DisplayCampaignService.deletePublisher({ campaignId, id: otherId });
+        }
+
+        return newPromise || Promise.resolve();
+      });
+    }, Promise.resolve());
+  }
 
   updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => () => {
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
@@ -185,8 +226,6 @@ class AdGroupForm extends Component {
       optimizerTable,
       publisherTable,
     } = formValues;
-
-    console.log('formValues = ', formValues);
 
     return (
       <Form

@@ -80,18 +80,18 @@ function getAudiences(campaignId, adGroupId) {
   }));
 }
 
-function createAudience(campaignId, adGroupId, body) {
+function createAudience({ campaignId, adGroupId, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.postRequest(endpoint, body).then(res => res.data);
 }
 
-function updateAudience(campaignId, adGroupId, segmentId, body) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${segmentId}`;
+function updateAudience({ campaignId, adGroupId, id, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
   return ApiService.putRequest(endpoint, body);
 }
 
-function deleteAudience(campaignId, adGroupId, segmentId) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${segmentId}`;
+function deleteAudience({ campaignId, adGroupId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
   return ApiService.deleteRequest(endpoint);
 }
 
@@ -99,12 +99,27 @@ function deleteAudience(campaignId, adGroupId, segmentId) {
 function getPublishers({ campaignId }) {
   const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
   return ApiService.getRequest(endpoint)
-    .then(res => res.data.map(({ display_network_access_id, id, ...publisher }) => ({
-      ...publisher,
-      id: display_network_access_id,
-      otherId: id,
-      toBeRemoved: false
-    })));
+    .then(res => res.data.map((elem) => {
+      const { display_network_access_id, id, ...publisher } = elem;
+
+      return {
+        ...publisher,
+        display_network_access_id,
+        id: display_network_access_id,
+        otherId: id,
+        toBeRemoved: false
+      };
+    }));
+}
+
+function createPublisher({ campaignId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/inventory_sources/`;
+  return ApiService.postRequest(endpoint, body);
+}
+
+function deletePublisher({ campaignId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/inventory_sources/${id}`;
+  return ApiService.deleteRequest(endpoint);
 }
 
 /* AD SERVICES */
@@ -121,7 +136,9 @@ function updateAd(adId, campaignId, adGroupId, body) {
 export default {
   createAdGroup,
   createAudience,
+  createPublisher,
   deleteAudience,
+  deletePublisher,
   getAdGroup,
   getAds,
   getCampaignDisplay,
@@ -130,6 +147,6 @@ export default {
   getAudiences,
   updateAd,
   updateAdGroup,
+  updateAudience,
   updateCampaign,
-  updateAudience
 };
