@@ -23,9 +23,9 @@ class Audience extends Component {
     handlers.openNextDrawer(SegmentSelector, { additionalProps });
   }
 
-  updateData = (selectedSegmentIds) => {
+  updateData = (selectedIds) => {
     const { formValues, handlers, organisationId } = this.props;
-    const fetchSelectedSegments = Promise.all(selectedSegmentIds.map(segmentId => {
+    const fetchSelectedSegments = Promise.all(selectedIds.map(segmentId => {
       return AudienceSegmentService.getFormattedSegment(segmentId);
     }));
     const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);

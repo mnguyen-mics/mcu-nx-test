@@ -40,7 +40,7 @@ class Publisher extends Component {
     handlers.openNextDrawer(TableSelector, { additionalProps });
   }
 
-  updateData = (selectedSegmentIds) => {
+  updateData = (selectedIds) => {
     const { handlers } = this.props;
 
     handlers.closeNextDrawer();
@@ -48,7 +48,7 @@ class Publisher extends Component {
     this.getAllPublishers()
       .then((publishers) => {
         const newFields = publishers.reduce((acc, publisher) => {
-          return (selectedSegmentIds.includes(publisher.id)
+          return (selectedIds.includes(publisher.id)
             ? [...acc, publisher]
             : acc
           );

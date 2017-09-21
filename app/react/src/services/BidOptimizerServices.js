@@ -13,7 +13,7 @@ function getBidOptimizerProperties({ bidOptimizers, selectedIds }) {
     .then(results => results.map((result) => ({
       name: (result[0].find(elem => elem.technical_name === 'name')).value.value,
       provider: (result[0].find(elem => elem.technical_name === 'provider')).value.value,
-      toBeRemoved: (!selectedIds ? false : !selectedIds.includes(result[1].id)),
+      toBeRemoved: (!selectedIds ? false : !(selectedIds.includes(result[1].id))),
       ...result[1],
     }))
   );

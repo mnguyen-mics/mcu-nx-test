@@ -12,22 +12,23 @@ const { FormSection } = Form;
 
 class Optimization extends Component {
 
-  getBidOptimizers = (getAll) => () => {
-    console.log('this.props = ', this.props);
-    const { formValues, organisationId } = this.props;
-    const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
+  getBidOptimizers = ({ getAll, newSelectedIds }) => () => {
+    const prevSelectedIds = this.getSelectedIds();
 
     return BidOptimizerServices.getBidOptimizers({
       getAll,
-      organisationId,
-      selectedIds,
+      organisationId: this.props.organisationId,
+      selectedIds: newSelectedIds || prevSelectedIds,
     });
 
   }
 
+  getSelectedIds = () => {
+    return this.props.formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
+  }
+
   openWindow = () => {
-    const { formValues, handlers } = this.props;
-    const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
+    const { handlers } = this.props;
 
     const columnsDefinitions = [
       {
@@ -48,24 +49,24 @@ class Optimization extends Component {
       formName: 'optimizerTable',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
-      fetchSelectorData: this.getBidOptimizers(true),
+      fetchSelectorData: this.getBidOptimizers({ getAll: true }),
       save: this.updateData,
       singleSelection: true,
-      selectedIds,
+      selectedIds: this.getSelectedIds(),
     };
 
     handlers.openNextDrawer(TableSelector, { additionalProps });
   }
 
-  updateData = (selectedSegmentIds) => {
+  updateData = (newSelectedIds) => {
     const { handlers } = this.props;
 
     handlers.closeNextDrawer();
 
-    this.getBidOptimizers()()
+    this.getBidOptimizers({ newSelectedIds })()
       .then((optimizers) => {
         const newFields = optimizers.reduce((acc, optimizer) => {
-          return (selectedSegmentIds.includes(optimizer.id)
+          return (newSelectedIds.includes(optimizer.id)
             ? [...acc, optimizer]
             : acc
           );
