@@ -17,50 +17,68 @@ class CreativeCard extends Component {
   }
 
   componentDidMount() {
+    const {
+      item
+    } = this.props;
+    this.fetchData(item.id);
+  }
 
+  componentWillReceiveProps(nextProps) {
     const {
       item
     } = this.props;
 
-    CreativeService.getCreativeScreenshotStatus(item.id)
-      .then(response => {
-        if (response && response.data && response.data.status) {
-          if (response.data.status === 'SUCCEEDED') {
-            this.setState(prevState => {
-              const nextState = {
-                ...prevState
-              };
-              nextState.success = true;
-              return nextState;
-            });
-          } else if (response.data.status === 'PENDING' || response.data.status === 'PROCESSING') {
-            this.setState(prevState => {
-              const nextState = {
-                ...prevState
-              };
-              nextState.loading = true;
-              return nextState;
-            });
-          } else if (response.data.status === 'FAILED' || response.data.status === 'NOT_TAKEN') {
-            this.setState(prevState => {
-              const nextState = {
-                ...prevState
-              };
-              nextState.error = true;
-              return nextState;
-            });
-          }
-        }
+    const {
+      item: nextItem
+    } = nextProps;
 
-      }).catch(() => {
-        this.setState(prevState => {
-          const nextState = {
-            ...prevState
-          };
-          nextState.error = true;
-          return nextState;
-        });
+    if (item.id !== nextItem.id) {
+      this.fetchData(nextItem.id);
+    }
+
+  }
+
+
+  fetchData = (id) => {
+    CreativeService.getCreativeScreenshotStatus(id)
+    .then(response => {
+      if (response && response.data && response.data.status) {
+        if (response.data.status === 'SUCCEEDED') {
+          this.setState(prevState => {
+            const nextState = {
+              ...prevState
+            };
+            nextState.success = true;
+            return nextState;
+          });
+        } else if (response.data.status === 'PENDING' || response.data.status === 'PROCESSING') {
+          this.setState(prevState => {
+            const nextState = {
+              ...prevState
+            };
+            nextState.loading = true;
+            return nextState;
+          });
+        } else if (response.data.status === 'FAILED' || response.data.status === 'NOT_TAKEN') {
+          this.setState(prevState => {
+            const nextState = {
+              ...prevState
+            };
+            nextState.error = true;
+            return nextState;
+          });
+        }
+      }
+
+    }).catch(() => {
+      this.setState(prevState => {
+        const nextState = {
+          ...prevState
+        };
+        nextState.error = true;
+        return nextState;
       });
+    });
   }
 
   renderSuccessScreenshot = (record) => {
@@ -85,7 +103,7 @@ class CreativeCard extends Component {
 
   renderErrorScreenshot = () => {
     return (
-      <div className="text-center" style={{ lineHeight: '200px', textAlign: 'center', backgroundColor: '#bdbdbd' }}>
+      <div className="text-center" style={{ lineHeight: '210px', textAlign: 'center', backgroundColor: '#bdbdbd' }}>
         <McsIcons className="icon-3x" type="close-big" />
       </div>
     );
