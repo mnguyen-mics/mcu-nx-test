@@ -6,7 +6,6 @@ import { Icon } from 'antd';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 
 import {
-  TableView,
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView';
@@ -187,14 +186,10 @@ function EmailCampaignsTable({
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}
             columnsVisibilityOptions={columnsVisibilityOptions}
-          >
-            <TableView
-              columnsDefinitions={columnsDefinitions}
-              dataSource={dataSource}
-              loading={isFetchingCampaigns}
-              pagination={pagination}
-            />
-          </TableViewFilters>
+            dataSource={dataSource}
+            loading={isFetchingCampaigns}
+            pagination={pagination}
+          />
         </div>
      );
 }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableViewFilters, TableView, EmptyTableView } from '../../../../components/TableView';
+import { TableViewFilters, EmptyTableView } from '../../../../components/TableView';
 
 import * as AssetsFilesActions from '../../../../state/Library/AssetsFiles/actions';
 
@@ -176,14 +176,10 @@ class AssetsFilesTable extends Component {
       <div className="mcs-table-container">
         <TableViewFilters
           columnsDefinitions={columnsDefinitions}
-        >
-          <TableView
-            columnsDefinitions={columnsDefinitions}
-            dataSource={dataSource}
-            loading={isFetchingAssetsFiles}
-            pagination={pagination}
-          />
-        </TableViewFilters>
+          dataSource={dataSource}
+          loading={isFetchingAssetsFiles}
+          pagination={pagination}
+        />
       </div>) : (<EmptyTableView iconType="library" text="EMPTY_LIBRARY_ASSETS" />);
 
   }

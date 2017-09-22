@@ -7,7 +7,6 @@ import { FormattedMessage } from 'react-intl';
 import lodash from 'lodash';
 
 import {
-  TableView,
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView';
@@ -414,14 +413,10 @@ class AudienceSegmentsTable extends Component {
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}
             columnsVisibilityOptions={columnsVisibilityOptions}
-          >
-            <TableView
-              columnsDefinitions={columnsDefinitions}
-              dataSource={dataSource}
-              loading={isFetchingAudienceSegments}
-              pagination={pagination}
-            />
-          </TableViewFilters>
+            dataSource={dataSource}
+            loading={isFetchingAudienceSegments}
+            pagination={pagination}
+          />
         </div>
       )
       : <EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />
