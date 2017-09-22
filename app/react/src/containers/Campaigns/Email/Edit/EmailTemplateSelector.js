@@ -9,8 +9,7 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 import {
   EmptyTableView,
-  TableViewFilters,
-  CollectionView,
+  CollectionViewFilters,
 } from '../../../../components/TableView';
 import CreativeService from '../../../../services/CreativeService';
 import CreativeCard from './CreativeCard';
@@ -202,28 +201,15 @@ class EmailTemplateSelector extends Component {
             />
           </Actionbar>
           <Layout>
-<<<<<<< HEAD
             <Content className="mcs-edit-container">
               {hasEmailTemplates ?
-                <TableViewFilters searchOptions={this.getSearchOptions()}>
-                  <CollectionView
-                    collectionItems={this.buildCollectionItems(emailTemplates)}
-                    loading={isLoading}
-                    pagination={pagination}
-                  />
-                </TableViewFilters> : <EmptyTableView iconType="file" />}
-=======
-            <Content className="mcs-table-edit-container">
-              {hasEmailTemplates
-                ? <TableViewFilters
+                <CollectionViewFilters
                   searchOptions={this.getSearchOptions()}
-                  columnsDefinitions={this.getColumnsDefinitions()}
-                  dataSource={emailTemplates}
+                  collectionItems={this.buildCollectionItems(emailTemplates)}
                   loading={isLoading}
                   pagination={pagination}
                 />
-                : <EmptyTableView iconType="file" />}
->>>>>>> refactoring for all containers
+                 : <EmptyTableView iconType="file" />}
             </Content>
           </Layout>
         </div>
