@@ -2,11 +2,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import generateGuid from '../../utils/generateGuid';
-
 const viewportDrawerRatio = 0.75;
 
-// TODO : remove generateGuid!!!!!
 class DrawerManager extends Component {
 
   constructor(props) {
@@ -76,17 +73,15 @@ class DrawerManager extends Component {
       const lastElement = index === drawableContents.length - 1;
       const displayInForeground = lastElement;
 
-      drawersWithOverlay.push((key) => (
+      drawersWithOverlay.push(() => (
         <div
-          key={key}
           className={'drawer-overlay'}
           onClick={onClickOnBackground}
         />
       ));
 
-      drawersWithOverlay.push((key) => (
+      drawersWithOverlay.push(() => (
         <div
-          key={key}
           ref={div => {
             this.drawerDiv = div;
           }}
@@ -102,12 +97,12 @@ class DrawerManager extends Component {
       ));
     });
 
-    drawersWithOverlay.push(key => <div key={key} className="drawer-overlay" />);
-    drawersWithOverlay.push(key => <div key={key} className="drawer" style={drawerStyles.ready} />);
+    drawersWithOverlay.push(() => <div className="drawer-overlay" />);
+    drawersWithOverlay.push(() => <div className="drawer" style={drawerStyles.ready} />);
 
     return (
       <div onKeyDown={this.handleOnKeyDown} className="drawer-container">
-        {drawersWithOverlay.map(drawer => drawer(generateGuid()))}
+        {drawersWithOverlay.map(drawer => drawer())}
       </div>
     );
   }

@@ -25,8 +25,11 @@ import {
   Publisher,
   Summary,
 } from './sections';
+import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withValidators } from '../../../../../components/Form';
 import withDrawer from '../../../../../components/Drawer';
+import { LoadingChart } from '../../../../../components/EmptyCharts';
+
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -40,17 +43,41 @@ class AdGroupForm extends Component {
 
   state = {
     adGroupId: this.props.match.params.adGroupId,
+    loading: false,
   }
 
-  shouldComponentUpdate(nextProps) {
-    return !isEqual(nextProps.formValues, this.props.formValues);
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      !isEqual(nextProps.formValues, this.props.formValues)
+      || !isEqual(nextState.loading, this.state.loading)
+    );
+  }
+
+  changeLoadingStatus(status, callback) {
+    this.setState(
+      () => ({ loading: status }),
+      () => callback
+    );
   }
 
   onSubmit = () => {
+    const {
+      history,
+      match: { params: { campaignId, organisationId } },
+    } = this.props;
+
+    this.setState({ loading: true });
     this.saveAdGroup()
-      .then(() => this.saveAudience())
-      .then(() => this.savePublishers())
-      .catch(error => this.props.notifyError(error));
+    .then(() => this.saveAudience())
+    .then(() => this.savePublishers())
+    .then(() => {
+      this.setState({ loading: false });
+      history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
+    })
+    .catch(error => {
+      this.setState({ loading: false });
+      this.props.notifyError(error);
+    });
   }
 
   saveAdGroup = () => {
@@ -215,34 +242,38 @@ class AdGroupForm extends Component {
     };
 
     return (
-      <Form
-        className="edit-layout ant-layout"
-        id={formId}
-        onSubmit={handleSubmit(this.onSubmit)}
-      >
-        <Content className="mcs-content-container mcs-form-container">
-          <General {...commonProps} fieldValidators={fieldValidators} />
-          {
-            displayAudience &&
-            <div>
-              <hr />
-              <Audience {...commonProps} formValues={audienceTable} />
-            </div>
-          }
-          <hr />
-          <DeviceAndLocation {...commonProps} />
-          <hr />
-          <Publisher {...commonProps} formValues={publisherTable} />
-          <hr />
-          <Media {...commonProps} />
-          <hr />
-          <Optimization {...commonProps} formValues={optimizerTable} />
-          <hr />
-          <Ads {...commonProps} />
-          <hr />
-          <Summary {...commonProps} />
-        </Content>
-      </Form>
+      <div>
+        {this.state.loading ? <LoadingChart /> : null}
+
+        <Form
+          className={this.state.loading ? 'hide-section' : 'edit-layout ant-layout'}
+          id={formId}
+          onSubmit={handleSubmit(this.onSubmit)}
+        >
+          <Content className="mcs-content-container mcs-form-container">
+            <General {...commonProps} fieldValidators={fieldValidators} />
+            {
+              displayAudience &&
+              <div>
+                <hr />
+                <Audience {...commonProps} formValues={audienceTable} />
+              </div>
+            }
+            <hr />
+            <DeviceAndLocation {...commonProps} />
+            <hr />
+            <Publisher {...commonProps} formValues={publisherTable} />
+            <hr />
+            <Media {...commonProps} />
+            <hr />
+            <Optimization {...commonProps} formValues={optimizerTable} />
+            <hr />
+            <Ads {...commonProps} />
+            <hr />
+            <Summary {...commonProps} />
+          </Content>
+        </Form>
+      </div>
     );
   }
 }
@@ -264,6 +295,7 @@ AdGroupForm.propTypes = {
   formValues: PropTypes.shape().isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasDatamarts: PropTypes.func.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
   match: PropTypes.shape().isRequired,
 

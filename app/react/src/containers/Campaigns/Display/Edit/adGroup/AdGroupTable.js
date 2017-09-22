@@ -93,8 +93,8 @@ function AdGroupTable({ dataSource, tableName, updateTableFieldStatus }) {
     <div className="adGroup-table">
       <Table
         className={dataSource.length ? 'border-style' : 'hide-section'}
-        dataSource={dataSource}
         columns={columns}
+        dataSource={dataSource}
         pagination={false}
         showHeader={false}
       />

@@ -4,6 +4,7 @@ import { Breadcrumb } from 'antd';
 
 import { PathPropTypes } from '../../validators/proptypes';
 import McsIcons from '../../components/McsIcons';
+import generateGuid from '../../utils/generateGuid';
 
 function BreadcrumbBar(props) {
 
@@ -14,7 +15,7 @@ function BreadcrumbBar(props) {
     );
     const item = elt.url ? <Link to={elt.url}>{formatedElt}</Link> : formatedElt;
 
-    return <Breadcrumb.Item>{item}</Breadcrumb.Item>;
+    return <Breadcrumb.Item key={generateGuid()}>{item}</Breadcrumb.Item>;
   };
 
   const sep = <McsIcons type="chevron-right" />;
