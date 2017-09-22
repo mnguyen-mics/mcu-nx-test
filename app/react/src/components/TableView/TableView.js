@@ -38,9 +38,16 @@ class TableView extends Component {
   }
 
   buildDataColumns = () => {
-    const { columnsDefinitions: { dataColumnsDefinition } } = this.props;
+    const {
+      columnsDefinitions: { dataColumnsDefinition },
+      visibilitySelectedColumns
+    } = this.props;
 
-    const dataColumns = dataColumnsDefinition.map(dataColumn => {
+    const visibilitySelectedColumnsValues = [];
+    visibilitySelectedColumns.forEach((el) => {
+      visibilitySelectedColumnsValues.push(el.value);
+    });
+    const dataColumns = dataColumnsDefinition.filter(column => !column.isHideable || visibilitySelectedColumnsValues.includes(column.key)).map(dataColumn => {
       return Object.assign(
         {},
         isValidFormattedMessageProps(dataColumn.intlMessage)
@@ -100,12 +107,11 @@ class TableView extends Component {
 
   render() {
     const {
-      columnsDefinitions,
       dataSource,
       pagination,
       loading,
       onChange,
-      visibilitySelectedColumns,
+      columnsDefinitions
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
@@ -113,19 +119,6 @@ class TableView extends Component {
     ) : null;
 
     const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
-
-    const visibilitySelectedColumnsValues = [];
-    visibilitySelectedColumns.forEach((el) => {
-      visibilitySelectedColumnsValues.push(el.value);
-    });
-
-    const columnsToDisplay = [];
-    columns.forEach((el) => {
-      if (visibilitySelectedColumnsValues.includes(el.key) || el.key === 'name' || el.key === 'status') {
-        columnsToDisplay.push(el);
-      }
-    });
-
     const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
 
     let newPagination = pagination;
@@ -137,12 +130,11 @@ class TableView extends Component {
     }
     return (
       <Table
-        columns={columnsToDisplay}
+        columns={columns}
         dataSource={dataSourceWithIds}
         onChange={onChange}
         loading={loading}
         pagination={newPagination}
-        visibilitySelectedColumns={this.props.visibilitySelectedColumns}
       />
     );
   }
