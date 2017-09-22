@@ -27,14 +27,6 @@ const getSegment = (segmentId, options = {}) => {
   return ApiService.getRequest(endpoint, params).then(res => { return res.data; });
 };
 
-const getFormattedSegment = (segmentId, options = {}) => {
-  return getSegment(segmentId, options)
-    .then(segment => ({
-      id: segment.id,
-      name: segment.name,
-    }));
-};
-
 const getSegmentMetaData = (organisationId) => {
   return ReportService.getAudienceSegmentReport(
     organisationId,
@@ -98,7 +90,6 @@ const getEmailCount = (datamartId, segmentIds = [], providerTns = []) => {
 };
 
 export default {
-  getFormattedSegment,
   getSegment,
   getSegmentMetaData,
   getSegmentsWithMetadata,

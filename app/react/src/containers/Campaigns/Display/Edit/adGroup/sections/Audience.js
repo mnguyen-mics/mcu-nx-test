@@ -69,7 +69,7 @@ class Audience extends Component {
   updateData = (selectedIds) => {
     const { formValues, handlers, organisationId } = this.props;
     const fetchSelectedSegments = Promise.all(selectedIds.map(segmentId => {
-      return AudienceSegmentService.getFormattedSegment(segmentId);
+      return AudienceSegmentService.getSegment(segmentId);
     }));
     const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 

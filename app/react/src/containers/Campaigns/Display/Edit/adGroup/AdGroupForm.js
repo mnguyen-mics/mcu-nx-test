@@ -46,12 +46,19 @@ class AdGroupForm extends Component {
     return !isEqual(nextProps.formValues, this.props.formValues);
   }
 
-  onSubmit = (finalValues) => {
+  onSubmit = () => {
+    this.saveAdGroup()
+      .then(() => this.saveAudience())
+      .then(() => this.savePublishers())
+      .catch(error => this.props.notifyError(error));
+  }
+
+  saveAdGroup = () => {
     const {
       editionMode,
+      formValues,
       intl: { formatMessage },
       match: { params: { adGroupId, campaignId } },
-      notifyError,
     } = this.props;
 
     const formatBudgetPeriod = {
@@ -60,57 +67,66 @@ class AdGroupForm extends Component {
       [formatMessage(messages.contentSection1Row2OptionMONTH)]: 'MONTH',
     };
 
-    let bidOptimizerId = null;
-
-    if (finalValues.optimizerTable && finalValues.optimizerTable.length) {
-      const bidObject = finalValues.optimizerTable.find(elem => !elem.toBeRemoved);
-
-      if (bidObject) {
-        bidOptimizerId = bidObject.id;
-      }
+    let bidOptimizer = null;
+    if (formValues.optimizerTable && formValues.optimizerTable.length) {
+      bidOptimizer = formValues.optimizerTable.find(elem => !elem.toBeRemoved);
     }
 
-    const generalBody = {
-      bid_optimizer_id: bidOptimizerId,
-      end_date: finalValues.adGroupEndDate.valueOf(),
-      max_budget_per_period: finalValues.adGroupMaxBudgetPerPeriod,
-      max_budget_period: formatBudgetPeriod[finalValues.adGroupMaxBudgetPeriod],
-      name: finalValues.adGroupName,
-      start_date: finalValues.adGroupStartDate.valueOf(),
-      technical_name: finalValues.adGroupTechnicalName,
-      total_budget: finalValues.adGroupTotalBudget,
+    const body = {
+      bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
+      end_date: formValues.adGroupEndDate.valueOf(),
+      max_budget_per_period: formValues.adGroupMaxBudgetPerPeriod,
+      max_budget_period: formatBudgetPeriod[formValues.adGroupMaxBudgetPeriod],
+      name: formValues.adGroupName,
+      start_date: formValues.adGroupStartDate.valueOf(),
+      technical_name: formValues.adGroupTechnicalName,
+      total_budget: formValues.adGroupTotalBudget,
     };
 
-    let adGroupRequest = null;
+    const request = (!editionMode
+      ? DisplayCampaignService.createAdGroup(campaignId, body)
+      : DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body)
+    );
 
-    if (!editionMode) {
-      adGroupRequest = DisplayCampaignService.createAdGroup(campaignId, generalBody);
-    } else {
-      adGroupRequest = DisplayCampaignService.updateAdGroup(campaignId, adGroupId, generalBody);
-    }
-
-    adGroupRequest
-      .then((result) => {
-        return this.setState({ adGroupId: result.data.id });
-      })
-      .then(() => this.saveAudiences())
-      .then(() => this.savePublishers())
-      .catch(error => notifyError(error));
+    return request.then((result) => this.setState({ adGroupId: result.data.id }));
   }
 
-  saveAudiences = () => {
-    const { adGroupId } = this.state;
-    const {
-      formInitialValues,
-      formValues,
-      match: { params: { campaignId } },
-    } = this.props;
+  saveAudience = () => {
+    const options = {
+      getBody: (row) => ({ audience_segment_id: row.id, exclude: !row.include }),
+      requests: {
+        create: DisplayCampaignService.createAudience,
+        update: DisplayCampaignService.updateAudience,
+        delete: DisplayCampaignService.deleteAudience,
+      },
+      tableName: 'audienceTable',
+    };
 
-    const audienceTable = formValues.audienceTable || [];
+    return this.saveTableFields(options);
+  }
 
-    return audienceTable.reduce((promise, row) => {
-      const { id, include, otherId, toBeRemoved } = row;
-      const body = { audience_segment_id: id, exclude: !include };
+  savePublishers = () => {
+    const options = {
+      getBody: (row) => ({ display_network_access_id: row.id }),
+      requests: {
+        create: DisplayCampaignService.createPublisher,
+        delete: DisplayCampaignService.deletePublisher,
+      },
+      tableName: 'publisherTable',
+    };
+
+    return this.saveTableFields(options);
+  }
+
+  saveTableFields = (options) => {
+    const { match, formInitialValues, formValues } = this.props;
+    const { adGroupId, campaignId } = match.params;
+    const { getBody, requests, tableName } = options;
+    const table = formValues[tableName] || [];
+
+    return table.reduce((promise, row) => {
+      const body = getBody(row);
+      const { include, otherId, toBeRemoved } = row;
 
       return promise.then(() => {
         let newPromise;
@@ -120,48 +136,20 @@ class AdGroupForm extends Component {
 
           if (!otherId) {
             /* creation */
-            newPromise = DisplayCampaignService.createAudience({ campaignId, adGroupId, body });
-          } else {
-            const needsUpdating = formInitialValues.audienceTable.find(elem => (
+            newPromise = requests.create({ campaignId, adGroupId, body });
+          } else if (requests.update) {
+            const needsUpdating = formInitialValues[tableName].find(elem => (
               elem.otherId === otherId && elem.include !== include
             ));
 
             /* update if modified element */
             if (needsUpdating) {
-              newPromise = DisplayCampaignService.updateAudience({ campaignId, adGroupId, id: otherId, body });
+              newPromise = requests.update({ campaignId, adGroupId, id: otherId, body });
             }
           }
         } else if (otherId) {
           /* In case we want to delete an existing element */
-          newPromise = DisplayCampaignService.deleteAudience({ campaignId, adGroupId, id: otherId });
-        }
-
-        return newPromise || Promise.resolve();
-      });
-    }, Promise.resolve());
-  }
-
-  savePublishers = () => {
-    const {
-      formValues,
-      match: { params: { campaignId } },
-    } = this.props;
-
-    const publisherTable = formValues.publisherTable || [];
-
-    return publisherTable.reduce((promise, row) => {
-      const { id, otherId, toBeRemoved } = row;
-      const body = { display_network_access_id: id };
-
-      return promise.then(() => {
-        let newPromise;
-
-        if (!toBeRemoved) {
-          if (!otherId) {
-            newPromise = DisplayCampaignService.createPublisher({ campaignId, body });
-          }
-        } else if (otherId) {
-          newPromise = DisplayCampaignService.deletePublisher({ campaignId, id: otherId });
+          newPromise = requests.delete({ campaignId, adGroupId, id: otherId });
         }
 
         return newPromise || Promise.resolve();
@@ -202,7 +190,11 @@ class AdGroupForm extends Component {
       closeNextDrawer,
       fieldValidators,
       formId,
-      formValues,
+      formValues: {
+        audienceTable,
+        optimizerTable,
+        publisherTable,
+      },
       handleSubmit,
       hasDatamarts,
       intl: { formatMessage },
@@ -210,7 +202,7 @@ class AdGroupForm extends Component {
       organisationId,
     } = this.props;
 
-    const displaySegmentSelector = hasDatamarts(organisationId);
+    const displayAudience = hasDatamarts(organisationId);
     const commonProps = {
       formatMessage,
       handlers: {
@@ -221,11 +213,6 @@ class AdGroupForm extends Component {
       },
       organisationId,
     };
-    const {
-      audienceTable,
-      optimizerTable,
-      publisherTable,
-    } = formValues;
 
     return (
       <Form
@@ -236,7 +223,7 @@ class AdGroupForm extends Component {
         <Content className="mcs-content-container mcs-form-container">
           <General {...commonProps} fieldValidators={fieldValidators} />
           {
-            displaySegmentSelector &&
+            displayAudience &&
             <div>
               <hr />
               <Audience {...commonProps} formValues={audienceTable} />
