@@ -13,6 +13,8 @@ const { FormSection } = Form;
 
 class Optimization extends Component {
 
+  state = { loading: false }
+
   getBidOptimizers = ({ getAll, newSelectedIds }) => () => {
     const prevSelectedIds = this.getSelectedIds();
 
@@ -61,6 +63,7 @@ class Optimization extends Component {
   updateData = (newSelectedIds) => {
     const { handlers } = this.props;
 
+    this.setState({ loading: true });
     handlers.closeNextDrawer();
 
     this.getBidOptimizers({ newSelectedIds })()
@@ -73,6 +76,7 @@ class Optimization extends Component {
         }, []);
 
         handlers.updateTableFields({ newFields, tableName: 'optimizerTable' });
+        this.setState({ loading: false });
       });
   }
 
@@ -116,6 +120,7 @@ class Optimization extends Component {
           <FieldArray
             component={AdGroupTable}
             dataSource={dataSource}
+            loading={this.state.loading}
             name="optimizerTable"
             tableName="optimizerTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}

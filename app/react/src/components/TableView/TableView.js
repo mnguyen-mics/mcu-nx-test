@@ -40,7 +40,7 @@ class TableView extends Component {
   buildDataColumns = () => {
     const {
       columnsDefinitions: { dataColumnsDefinition },
-      visibilitySelectedColumns,
+      visibilitySelectedColumns
     } = this.props;
 
     const visibilitySelectedColumnsValues = [];
@@ -50,13 +50,14 @@ class TableView extends Component {
     const dataColumns = dataColumnsDefinition.filter(column => !column.isHideable || visibilitySelectedColumnsValues.includes(column.key)).map(dataColumn => {
       return Object.assign(
         {},
-        { title: (isValidFormattedMessageProps(dataColumn.intlMessage)
-          ? <FormattedMessage {...dataColumn.intlMessage} />
-          : (dataColumn.translationKey // support for legacy translation key constant (en/fr.json) ...
-            ? <FormattedMessage id={dataColumn.translationKey} />
-            : null
-          )
-        ) },
+        isValidFormattedMessageProps(dataColumn.intlMessage)
+          ? // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
+            // spreading values...
+            { title: <FormattedMessage {...dataColumn.intlMessage} /> }
+          : dataColumn.translationKey
+              ? // support for legacy translation key constant (en/fr.json) ...
+                { title: <FormattedMessage id={dataColumn.translationKey} /> }
+              : null, // allow empty column title
         { dataIndex: dataColumn.key },
         { key: dataColumn.key },
         { render: dataColumn.render ? dataColumn.render : text => text },
@@ -110,7 +111,7 @@ class TableView extends Component {
       pagination,
       loading,
       onChange,
-      columnsDefinitions,
+      columnsDefinitions
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
@@ -127,7 +128,6 @@ class TableView extends Component {
         ...pagination,
       };
     }
-
     return (
       <Table
         columns={columns}
@@ -143,7 +143,7 @@ class TableView extends Component {
 TableView.defaultProps = {
   pagination: false,
   onChange: () => {},
-  visibilitySelectedColumns: [],
+  visibilitySelectedColumns: []
 };
 
 TableView.propTypes = {

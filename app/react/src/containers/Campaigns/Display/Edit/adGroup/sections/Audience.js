@@ -16,6 +16,8 @@ const { FormSection } = Form;
 
 class Audience extends Component {
 
+  state = { loading: false }
+
   getAudiences = (filterOptions) => {
     const { organisationId, defaultDatamart } = this.props;
     const { currentPage, keywords, pageSize } = filterOptions;
@@ -73,6 +75,7 @@ class Audience extends Component {
     }));
     const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 
+    this.setState({ loading: true });
     handlers.closeNextDrawer();
 
     Promise.all([fetchSelectedSegments, fetchMetadata])
@@ -90,6 +93,7 @@ class Audience extends Component {
       })
       .then(newFields => {
         handlers.updateTableFields({ newFields, tableName: 'audienceTable' });
+        this.setState({ loading: false });
       });
   }
 
@@ -138,6 +142,7 @@ class Audience extends Component {
           <FieldArray
             component={AdGroupTable}
             dataSource={dataSource}
+            loading={this.state.loading}
             name="audienceTable"
             tableName="audienceTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}

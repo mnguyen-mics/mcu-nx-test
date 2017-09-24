@@ -12,6 +12,8 @@ const { FormSection } = Form;
 
 class Publisher extends Component {
 
+  state = { loading: false }
+
   getAllPublishers = () => {
     return DisplayNetworkServices.getAllPublishers(this.props.organisationId);
   }
@@ -43,6 +45,7 @@ class Publisher extends Component {
   updateData = (selectedIds) => {
     const { handlers } = this.props;
 
+    this.setState({ loading: true });
     handlers.closeNextDrawer();
 
     this.getAllPublishers()
@@ -55,6 +58,7 @@ class Publisher extends Component {
         }, []);
 
         handlers.updateTableFields({ newFields, tableName: 'publisherTable' });
+        this.setState({ loading: false });
       });
   }
 
@@ -99,6 +103,7 @@ class Publisher extends Component {
           <FieldArray
             component={AdGroupTable}
             dataSource={dataSource}
+            loading={this.state.loading}
             name="publisherTable"
             tableName="publisherTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}

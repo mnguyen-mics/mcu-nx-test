@@ -3,6 +3,7 @@ import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
 
 import AdGroupContent from './AdGroupContent';
+import { LoadingChart } from '../../../../../components/EmptyCharts';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
@@ -15,7 +16,8 @@ import BidOptimizerServices from '../../../../../services/BidOptimizerServices';
 class EditAdGroupPage extends Component {
 
   state = {
-    initialValues: {}
+    initialValues: {},
+    loading: true,
   }
 
   componentDidMount() {
@@ -37,7 +39,10 @@ class EditAdGroupPage extends Component {
         return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroupBidOptimizerId] });
       })
       .then((optimizerTable) => {
-        this.setState({ initialValues: { ...this.state.initialValues, optimizerTable } });
+        this.setState({
+          initialValues: { ...this.state.initialValues, optimizerTable },
+          loading: false,
+        });
       });
   }
 
@@ -81,8 +86,9 @@ class EditAdGroupPage extends Component {
   }
 
   render() {
-    return (
-      <AdGroupContent
+    return (this.state.loading
+      ? <LoadingChart />
+      : <AdGroupContent
         editionMode
         initialValues={this.state.initialValues}
       />

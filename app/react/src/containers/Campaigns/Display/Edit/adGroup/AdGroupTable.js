@@ -7,7 +7,7 @@ import { ButtonStyleless, Form, McsIcons } from '../../../../../components';
 import generateGuid from '../../../../../utils/generateGuid';
 
 const { SwitchInput } = Form;
-function AdGroupTable({ dataSource, tableName, updateTableFieldStatus }) {
+function AdGroupTable({ dataSource, loading, tableName, updateTableFieldStatus }) {
   const columns = [
     {
       colSpan: 8,
@@ -92,9 +92,10 @@ function AdGroupTable({ dataSource, tableName, updateTableFieldStatus }) {
   return (
     <div className="adGroup-table">
       <Table
-        className={dataSource.length ? 'border-style' : 'hide-section'}
+        className={dataSource.length || loading ? 'border-style' : 'hide-section'}
         columns={columns}
         dataSource={dataSource}
+        loading={loading}
         pagination={false}
         showHeader={false}
       />
@@ -102,8 +103,14 @@ function AdGroupTable({ dataSource, tableName, updateTableFieldStatus }) {
   );
 }
 
+AdGroupTable.defaultProps = {
+  loading: false,
+};
+
+
 AdGroupTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  loading: PropTypes.bool,
   tableName: PropTypes.string.isRequired,
   updateTableFieldStatus: PropTypes.func.isRequired,
 };

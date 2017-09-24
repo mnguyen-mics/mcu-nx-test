@@ -53,13 +53,6 @@ class AdGroupForm extends Component {
     );
   }
 
-  changeLoadingStatus(status, callback) {
-    this.setState(
-      () => ({ loading: status }),
-      () => callback
-    );
-  }
-
   onSubmit = () => {
     const {
       history,
@@ -217,11 +210,7 @@ class AdGroupForm extends Component {
       closeNextDrawer,
       fieldValidators,
       formId,
-      formValues: {
-        audienceTable,
-        optimizerTable,
-        publisherTable,
-      },
+      formValues,
       handleSubmit,
       hasDatamarts,
       intl: { formatMessage },
@@ -240,6 +229,11 @@ class AdGroupForm extends Component {
       },
       organisationId,
     };
+    const {
+      audienceTable,
+      optimizerTable,
+      publisherTable,
+    } = formValues;
 
     return (
       <div>
@@ -270,7 +264,7 @@ class AdGroupForm extends Component {
             <hr />
             <Ads {...commonProps} />
             <hr />
-            <Summary {...commonProps} />
+            <Summary {...commonProps} formValues={formValues} />
           </Content>
         </Form>
       </div>

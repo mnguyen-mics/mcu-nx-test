@@ -358,41 +358,70 @@ export default defineMessages({
 
   // TODO: use formatMessage(messages.greeting, {name: 'Eric'});
   // cf. https://github.com/yahoo/react-intl/wiki/API
-  contentSection8Line1: {
-    id: 'adGroupEditor.section8.part1',
-    defaultMessage: 'Your ad group will run from {start} to the {finish} with a {rate} budget of {budget} €',
+  contentSection8Part1Group1: {
+    id: 'adGroupEditor.section8.part1.group1',
+    defaultMessage: 'Your ad group will run from',
   },
-  contentSection8Line2: {
+  contentSection8Part1Group2: {
+    id: 'adGroupEditor.section8.part1.group2',
+    defaultMessage: 'to the',
+  },
+  contentSection8Part1Group3: {
+    id: 'adGroupEditor.section8.part1.group3',
+    defaultMessage: 'with a',
+  },
+  contentSection8Part1Group4OptionDAY: {
+    id: 'adGroupEditor.section8.part1.group4.optionDAY',
+    defaultMessage: 'DAILY',
+  },
+  contentSection8Part1Group4OptionWEEK: {
+    id: 'adGroupEditor.section8.part1.group4.optionWEEK',
+    defaultMessage: 'WEEKLY',
+  },
+  contentSection8Part1Group4OptionMONTH: {
+    id: 'adGroupEditor.section8.part1.group4.optionMONTH',
+    defaultMessage: 'MONTHLY',
+  },
+  contentSection8Part1Group5: {
+    id: 'adGroupEditor.section8.part1.group4',
+    defaultMessage: 'budget of',
+  },
+
+  contentSection8Part2: {
     id: 'adGroupEditor.section8.part2',
-    defaultMessage: 'Your ad will be visible for the following segments\n{segments}',
+    defaultMessage: 'Your ad will be visible for the following segments:',
   },
-  contentSection8Line3: {
+  contentSection8Part3: {
     id: 'adGroupEditor.section8.part3',
-    defaultMessage: 'Your ad will not be published for people inside the following segment\n{segment}',
+    defaultMessage: 'Your ad will not be published for people inside the following segment:',
   },
-  contentSection8Line4: {
+  contentSection8Part4: {
     id: 'adGroupEditor.section8.part4',
-    defaultMessage: 'Your ad will target the following devices\n{devices}',
+    defaultMessage: 'Your ad will target the following devices:',
   },
-  contentSection8Line5: {
+  contentSection8Part5: {
     id: 'adGroupEditor.section8.part5',
-    defaultMessage: 'Your ad will target the following areas\n{areas}',
+    defaultMessage: 'Your ad will target the following areas:',
   },
-  contentSection8Line6: {
+  contentSection8Part6: {
     id: 'adGroupEditor.section8.part6',
-    defaultMessage: 'Your ad will be published on the following networks\n{networks}',
+    defaultMessage: 'Your ad will be published on the following networks:',
   },
-  contentSection8Line7: {
+  contentSection8Part7: {
     id: 'adGroupEditor.section8.part7',
-    defaultMessage: 'Your ad will target the following keywords\n{keywords}',
+    defaultMessage: 'Your ad will target the following keywords:',
   },
-  contentSection8Line8: {
+  contentSection8Part8: {
     id: 'adGroupEditor.section8.part8',
-    defaultMessage: 'Your ad is using the following bid optimizer\n{optimizer}',
+    defaultMessage: 'Your ad is using the following bid optimizer:',
   },
-  contentSection8Line9: {
-    id: 'adGroupEditor.section8.part9',
-    defaultMessage: 'You have {number} creatives attached to your ad',
+  contentSection8Part9Group1: {
+    id: 'adGroupEditor.section8.part9.group1',
+    defaultMessage: 'You have',
+  },
+  contentSection8Part9Group2: {
+    id: 'adGroupEditor.section8.part9.group2',
+    defaultMessage: 'creatives attached to your ad',
   },
 
   /*

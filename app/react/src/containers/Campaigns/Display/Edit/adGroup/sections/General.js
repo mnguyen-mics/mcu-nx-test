@@ -18,7 +18,8 @@ class General extends Component {
 
   state = { advancedSectionDisplayed: false };
 
-  displayAdvancedSection = () => {
+  displayAdvancedSection = (e) => {
+    e.preventDefault();
     this.setState({ advancedSectionDisplayed: !this.state.advancedSectionDisplayed });
   }
 

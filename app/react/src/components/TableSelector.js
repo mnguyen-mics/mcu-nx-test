@@ -174,7 +174,6 @@ class TableSelector extends Component {
       noElement,
     } = this.state;
 
-    const datasource = allElementIds.map(id => elementsById[id]);
     const pagination = {
       currentPage,
       pageSize,
@@ -183,14 +182,12 @@ class TableSelector extends Component {
       onShowSizeChange: (current, size) => this.setState({ pageSize: size }),
     };
 
-    const tableView = (
-      <TableView
-        columnsDefinitions={this.getColumnsDefinitions()}
-        dataSource={datasource}
-        loading={isLoading}
-        pagination={pagination}
-      />
-    );
+    const tableViewProps = {
+      columnsDefinitions: this.getColumnsDefinitions(),
+      dataSource: allElementIds.map(id => elementsById[id]),
+      loading: isLoading,
+      pagination: pagination,
+    };
 
     return (
       <Layout>
@@ -212,11 +209,12 @@ class TableSelector extends Component {
                 ? <EmptyTableView iconType="file" />
                 : (displayFiltering
                   ? (
-                    <TableViewFilters searchOptions={this.getSearchOptions()}>
-                      {tableView}
-                    </TableViewFilters>
+                    <TableViewFilters
+                      {...tableViewProps}
+                      searchOptions={this.getSearchOptions()}
+                    />
                   )
-                  : tableView
+                  : <TableView {...tableViewProps} />
                 )
               }
             </Content>
