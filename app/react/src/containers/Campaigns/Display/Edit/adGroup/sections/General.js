@@ -25,6 +25,7 @@ class General extends Component {
 
   render() {
     const {
+      fieldNormalizer: { isNumber },
       fieldValidators: { isRequired },
       formatMessage,
       values,
@@ -67,6 +68,7 @@ class General extends Component {
           <Field
             name="adGroupMaxBudgetPerPeriod"
             component={FormInput}
+            normalize={isNumber}
             validate={[isRequired]}
             props={{
               formItemProps: {
@@ -87,7 +89,7 @@ class General extends Component {
                       ],
                     }}
                   />
-              ),
+                ),
                 placeholder: formatMessage(messages.contentSection1Row2Placeholder),
                 style: { width: '100%' },
                 type: 'number',
@@ -103,6 +105,7 @@ class General extends Component {
           <Field
             name="adGroupTotalBudget"
             component={FormInput}
+            normalize={isNumber}
             validate={[isRequired]}
             props={{
               formItemProps: {
@@ -199,6 +202,10 @@ General.defaultProps = {
 };
 
 General.propTypes = {
+  fieldNormalizer: PropTypes.shape({
+    isNumber: PropTypes.func.isRequired,
+  }).isRequired,
+
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,
   }).isRequired,

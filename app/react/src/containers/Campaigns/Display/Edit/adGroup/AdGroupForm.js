@@ -26,8 +26,7 @@ import {
   Summary,
 } from './sections';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { withValidators } from '../../../../../components/Form';
-import withDrawer from '../../../../../components/Drawer';
+import { withNormalizer, withValidators } from '../../../../../components/Form';
 import { LoadingChart } from '../../../../../components/EmptyCharts';
 
 import * as SessionHelper from '../../../../../state/Session/selectors';
@@ -208,6 +207,7 @@ class AdGroupForm extends Component {
   render() {
     const {
       closeNextDrawer,
+      fieldNormalizer,
       fieldValidators,
       formId,
       formValues,
@@ -220,6 +220,8 @@ class AdGroupForm extends Component {
 
     const displayAudience = hasDatamarts(organisationId);
     const commonProps = {
+      fieldNormalizer,
+      fieldValidators,
       formatMessage,
       handlers: {
         closeNextDrawer,
@@ -245,7 +247,7 @@ class AdGroupForm extends Component {
           onSubmit={handleSubmit(this.onSubmit)}
         >
           <Content className="mcs-content-container mcs-form-container">
-            <General {...commonProps} fieldValidators={fieldValidators} />
+            <General {...commonProps} />
             {
               displayAudience &&
               <div>
@@ -283,6 +285,7 @@ AdGroupForm.propTypes = {
   arrayRemove: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   editionMode: PropTypes.bool,
+  fieldNormalizer: PropTypes.shape().isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
   formInitialValues: PropTypes.shape().isRequired,
@@ -292,10 +295,8 @@ AdGroupForm.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
   match: PropTypes.shape().isRequired,
-
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
-
   notifyError: PropTypes.func.isRequired,
 };
 
@@ -320,7 +321,7 @@ export default compose(
     enableReinitialize: true,
   }),
   connect(mapStateToProps, mapDispatchToProps),
-  withDrawer,
+  withNormalizer,
   withValidators,
   injectIntl
 )(AdGroupForm);

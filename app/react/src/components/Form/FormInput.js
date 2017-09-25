@@ -3,28 +3,31 @@ import PropTypes from 'prop-types';
 import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
+import { formatMetric } from '../../utils/MetricHelper';
 import McsIcons from '../../components/McsIcons';
 
 const defaultTooltipPlacement = 'right';
 
-function FormInput(
-  { input,
-    meta,
-    formItemProps,
-    inputProps,
-    helpToolTipProps,
-  }) {
+function FormInput({
+  input: { value, ...otherInput },
+  meta,
+  formItemProps,
+  inputProps: { type, ...otherInputProps },
+  helpToolTipProps,
+}) {
 
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
   if (meta.touched && meta.warning) validateStatus = 'warning';
 
+  const inputValue = (type === 'number' ? formatMetric(value, '0,0') : value);
   const displayHelpToolTip = !isEmpty(helpToolTipProps);
 
   const mergedTooltipProps = {
     placement: defaultTooltipPlacement,
     ...helpToolTipProps,
   };
+
   return (
     <Form.Item
       help={meta.touched && (meta.warning || meta.error)}
@@ -35,9 +38,10 @@ function FormInput(
       <Row align="middle" type="flex">
         <Col span={22} >
           <Input
-            id={input.name}
-            {...input}
-            {...inputProps}
+            id={otherInput.name}
+            {...otherInput}
+            {...otherInputProps}
+            value={inputValue}
           />
         </Col>
         {displayHelpToolTip &&

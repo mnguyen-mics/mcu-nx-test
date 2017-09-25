@@ -73,9 +73,11 @@ class AdGroupContent extends Component {
         url={url}
       >
         <AdGroupForm
+          closeNextDrawer={this.props.closeNextDrawer}
           editionMode={editionMode}
           formId={formId}
           initialValues={{ adGroupMaxBudgetPeriod: 'Per Day', ...initialValues }}
+          openNextDrawer={this.props.openNextDrawer}
         />
       </EditContentLayout>
     );
@@ -88,10 +90,12 @@ AdGroupContent.defaultProps = {
 };
 
 AdGroupContent.propTypes = {
+  closeNextDrawer: PropTypes.func.isRequired,
   editionMode: PropTypes.bool,
   initialValues: PropTypes.shape(),
   intl: intlShape.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
 };
 
 export default compose(

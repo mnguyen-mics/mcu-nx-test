@@ -31,7 +31,6 @@
       font-size: 1em;
       color: #7e7e7e;
     }
-
   }
 
   .field-tooltip {
@@ -39,25 +38,32 @@
     font-size: 1.3em;
   }
 
-  .blue-text {
-    color: @info-color;
-    margin: 0 .4em;
-  }
-
-  .inline {
-    display: flex;
-    flex-direction: row;
-  }
-
   .summarySection {
-    margin-left: 1em;
-    padding-left: 4em;
-    background-color: red
+    .content {
+      padding-left: 1em;
+    }
 
-    .summaryRow {
+    .section {
       border-bottom: solid 1px #dcdcdc;
       padding-bottom: .7em;
+    }
+
+    .sectionPaddingTop {
       padding-top: 1em;
+    }
+
+    .inline {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .textPadding {
+      padding-left: 1.5em;
+    }
+
+    .blue-text {
+      color: @info-color;
+      margin: 0 .4em;
     }
   }
 }

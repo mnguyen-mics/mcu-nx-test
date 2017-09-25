@@ -30,7 +30,7 @@ function ActionbarWrapper({
 
   return (
     <Actionbar path={breadcrumbPaths}>
-      <Button {...submitButtonProps}>
+      <Button {...submitButtonProps} className="mcs-primary">
         <McsIcons type="plus" />
         <FormattedMessage {...message} />
       </Button>

@@ -11,6 +11,7 @@ import AudienceSegmentService from '../../../../../../services/AudienceSegmentSe
 import { getDefaultDatamart } from '../../../../../../state/Session/selectors';
 import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
 import AdGroupTable from '../AdGroupTable';
+import { formatMetric } from '../../../../../../utils/MetricHelper';
 
 const { FormSection } = Form;
 
@@ -108,8 +109,8 @@ class Audience extends Component {
             key: segment.id,
             type: { image: 'users', name: segment.name },
             info: [
-              `${segment.user_points} ${formatMessage(messages.contentSection2Medium1)}`,
-              `${segment.desktop_cookie_ids} ${formatMessage(messages.contentSection2Medium2)}`,
+              `${formatMetric(segment.user_points, '0,0')} ${formatMessage(messages.contentSection2Medium1)}`,
+              `${formatMetric(segment.desktop_cookie_ids, '0,0')} ${formatMessage(messages.contentSection2Medium2)}`,
             ],
             include: { bool: segment.include, index },
             toBeRemoved: index,

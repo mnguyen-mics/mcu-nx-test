@@ -89,10 +89,12 @@ function AdGroupTable({ dataSource, loading, tableName, updateTableFieldStatus }
     },
   ];
 
+  const tableStyle = (dataSource.length || loading ? 'border-style' : 'hide-section');
+
   return (
-    <div className="adGroup-table">
+    <div className="adGroup-table testeu">
       <Table
-        className={dataSource.length || loading ? 'border-style' : 'hide-section'}
+        className={tableStyle}
         columns={columns}
         dataSource={dataSource}
         loading={loading}

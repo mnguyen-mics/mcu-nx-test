@@ -13,7 +13,7 @@ function EditContentLayout({
 }) {
 
   return (
-    <Layout>
+    <Layout className="edit-layout">
       <ActionbarWrapper
         {...buttonMetadata}
         breadcrumbPaths={breadcrumbPaths}

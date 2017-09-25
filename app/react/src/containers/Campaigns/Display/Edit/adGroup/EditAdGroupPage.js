@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
 
+import withDrawer from '../../../../../components/Drawer';
 import AdGroupContent from './AdGroupContent';
 import { LoadingChart } from '../../../../../components/EmptyCharts';
 import { withMcsRouter } from '../../../../Helpers';
@@ -89,19 +91,24 @@ class EditAdGroupPage extends Component {
     return (this.state.loading
       ? <LoadingChart />
       : <AdGroupContent
+        closeNextDrawer={this.props.closeNextDrawer}
         editionMode
         initialValues={this.state.initialValues}
+        openNextDrawer={this.props.openNextDrawer}
       />
     );
   }
 }
 
 EditAdGroupPage.propTypes = {
+  closeNextDrawer: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
+  withDrawer,
   injectIntl,
 )(EditAdGroupPage);
