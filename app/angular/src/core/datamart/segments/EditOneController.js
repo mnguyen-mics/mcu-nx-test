@@ -25,7 +25,8 @@ define(['./module'], function (module) {
             datamart_id: Session.getCurrentDatamartId(),
             evaluation_mode: 'PERIODIC',
             evaluation_period: 1,
-            evaluation_period_unit: 'DAY'
+            evaluation_period_unit: 'DAY',
+            persisted: true
           };
           var queryContainer = new QueryContainer(Session.getCurrentDatamartId());
           $scope.queryContainer = queryContainer;
