@@ -364,30 +364,38 @@ export default defineMessages({
   },
   contentSection8Part1Group2: {
     id: 'adGroupEditor.section8.part1.group2',
-    defaultMessage: 'to the',
+    defaultMessage: 'the',
   },
   contentSection8Part1Group3: {
     id: 'adGroupEditor.section8.part1.group3',
-    defaultMessage: 'with a',
+    defaultMessage: 'today',
   },
-  contentSection8Part1Group4OptionDAY: {
-    id: 'adGroupEditor.section8.part1.group4.optionDAY',
-    defaultMessage: 'DAILY',
-  },
-  contentSection8Part1Group4OptionWEEK: {
-    id: 'adGroupEditor.section8.part1.group4.optionWEEK',
-    defaultMessage: 'WEEKLY',
-  },
-  contentSection8Part1Group4OptionMONTH: {
-    id: 'adGroupEditor.section8.part1.group4.optionMONTH',
-    defaultMessage: 'MONTHLY',
+  contentSection8Part1Group4: {
+    id: 'adGroupEditor.section8.part1.group4',
+    defaultMessage: 'to the',
   },
   contentSection8Part1Group5: {
     id: 'adGroupEditor.section8.part1.group5',
+    defaultMessage: 'with a',
+  },
+  contentSection8Part1Group6OptionDAY: {
+    id: 'adGroupEditor.section8.part1.group6.optionDAY',
+    defaultMessage: 'DAILY',
+  },
+  contentSection8Part1Group6OptionWEEK: {
+    id: 'adGroupEditor.section8.part1.group6.optionWEEK',
+    defaultMessage: 'WEEKLY',
+  },
+  contentSection8Part1Group6OptionMONTH: {
+    id: 'adGroupEditor.section8.part1.group6.optionMONTH',
+    defaultMessage: 'MONTHLY',
+  },
+  contentSection8Part1Group7: {
+    id: 'adGroupEditor.section8.part1.group7',
     defaultMessage: 'budget of',
   },
-  contentSection8Part1Group6: {
-    id: 'adGroupEditor.section8.part1.group6',
+  contentSection8Part1Group8: {
+    id: 'adGroupEditor.section8.part1.group8',
     defaultMessage: '€',
   },
 
