@@ -383,8 +383,12 @@ export default defineMessages({
     defaultMessage: 'MONTHLY',
   },
   contentSection8Part1Group5: {
-    id: 'adGroupEditor.section8.part1.group4',
+    id: 'adGroupEditor.section8.part1.group5',
     defaultMessage: 'budget of',
+  },
+  contentSection8Part1Group6: {
+    id: 'adGroupEditor.section8.part1.group6',
+    defaultMessage: '€',
   },
 
   contentSection8Part2: {

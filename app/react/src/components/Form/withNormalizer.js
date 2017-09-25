@@ -3,8 +3,9 @@ import { compose, withProps } from 'recompose';
 const isNumber = (value, prevValue) => {
   const formattedValue = value.replace(/,/g, '');
 
-  return (
-    value && /^\d+$/.test(formattedValue, '') ? value : prevValue
+  return (value && formattedValue.length < 16 && /^\d+$/.test(formattedValue, '')
+    ? value
+    : prevValue
   );
 };
 

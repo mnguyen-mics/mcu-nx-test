@@ -47,13 +47,13 @@ class Audience extends Component {
         intlMessage: messages.sectionSelectorTitleUserPoints,
         key: 'user_points',
         isHideable: false,
-        render: text => <span>{text}</span>,
+        render: text => <span>{formatMetric(text, '0,0')}</span>,
       },
       {
         intlMessage: messages.sectionSelectorTitleCookieIds,
         key: 'desktop_cookie_ids',
         isHideable: false,
-        render: text => <span>{text}</span>,
+        render: text => <span>{formatMetric(text, '0,0')}</span>,
       },
     ];
 

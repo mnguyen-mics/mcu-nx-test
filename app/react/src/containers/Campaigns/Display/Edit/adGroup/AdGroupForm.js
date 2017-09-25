@@ -59,7 +59,8 @@ class AdGroupForm extends Component {
     } = this.props;
 
     this.setState({ loading: true });
-    this.saveAdGroup()
+
+    return this.saveAdGroup()
     .then(() => this.saveAudience())
     .then(() => this.savePublishers())
     .then(() => {

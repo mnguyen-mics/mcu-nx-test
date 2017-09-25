@@ -5,6 +5,7 @@ import { Col, Row } from 'antd';
 
 import { FormSection } from '../../../../../../components/Form';
 import messages from '../../messages';
+import { formatMetric } from '../../../../../../utils/MetricHelper';
 
 function Summary({ formatMessage, formValues }) {
 
@@ -72,7 +73,7 @@ function Summary({ formatMessage, formValues }) {
                   {text(formatMessage(messages.contentSection8Part1Group3))}
                   {text(adGroupMaxBudgetPeriod, true)}
                   {text(formatMessage(messages.contentSection8Part1Group5))}
-                  {text(adGroupMaxBudgetPerPeriod, true)}
+                  {text(`${formatMetric(adGroupMaxBudgetPerPeriod, '0,0')}${formatMessage(messages.contentSection8Part1Group6)}`, true)}
                 </div>
               </Section>
             )

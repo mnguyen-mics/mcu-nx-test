@@ -102,32 +102,32 @@ class TableSelector extends Component {
     );
 
     return this.props.fetchSelectorData(filterOptions)
-        .then((results) => {
-          const allElementIds = results.map(element => element.id);
-          const elementsById = normalizeArrayOfObject(results, 'id');
+      .then((results) => {
+        const allElementIds = results.map(element => element.id);
+        const elementsById = normalizeArrayOfObject(results, 'id');
 
-          this.setState(prevState => {
-            const selectedElementsById = {
-              ...prevState.selectedElementsById,
-              ...selectedIds.reduce((acc, elementId) => {
-                if (!prevState.selectedElementsById[elementId]) {
-                  return { ...acc, [elementId]: elementsById[elementId] };
-                }
-                return acc;
-              }, {}),
-            };
+        this.setState(prevState => {
+          const selectedElementsById = {
+            ...prevState.selectedElementsById,
+            ...selectedIds.reduce((acc, elementId) => {
+              if (!prevState.selectedElementsById[elementId]) {
+                return { ...acc, [elementId]: elementsById[elementId] };
+              }
+              return acc;
+            }, {}),
+          };
 
-            return {
-              allElementIds,
-              elementsById,
-              selectedElementsById,
-              isLoading: false,
-              total: results.length
-            };
-          });
-
-          return results;
+          return {
+            allElementIds,
+            elementsById,
+            selectedElementsById,
+            isLoading: false,
+            total: results.length
+          };
         });
+
+        return results;
+      });
   }
 
   toggleElementSelection = (elementId) => {

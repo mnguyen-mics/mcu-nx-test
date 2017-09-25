@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isInvalid, submit } from 'redux-form';
+import { isInvalid, submit, isSubmitting } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'antd';
 
@@ -19,11 +19,12 @@ function ActionbarWrapper({
   formId,
   message,
   onClose,
+  submitting,
   ...rest,
  }) {
 
   const submitButtonProps = {
-    disabled,
+    disabled: submitting || disabled,
     htmlType: 'submit',
     onClick: () => dispatch(submit(formId)),
     type: 'primary',
@@ -49,6 +50,7 @@ function ActionbarWrapper({
 ActionbarWrapper.defaultProps = {
   disabled: null,
   onClose: () => {},
+  submitting: false,
 };
 
 ActionbarWrapper.propTypes = {
@@ -67,6 +69,7 @@ ActionbarWrapper.propTypes = {
   }).isRequired,
 
   onClose: PropTypes.func,
+  submitting: PropTypes.bool,
 };
 
 export default connect(
@@ -75,5 +78,6 @@ export default connect(
      * check http://redux-form.com/6.8.0/docs/api/Selectors.md/
      */
     disabled: isInvalid(ownProps.formId)(state),
+    submitting: isSubmitting(ownProps.formId)(state),
   }),
 )(ActionbarWrapper);
