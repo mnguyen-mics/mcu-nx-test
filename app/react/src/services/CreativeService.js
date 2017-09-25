@@ -28,6 +28,11 @@ const getEmailTemplate = templateId => {
   return getCreative(templateId);
 };
 
+const getCreativeScreenshotStatus = creativeId => {
+  const endpoint = `creatives/${creativeId}/screenshots/last`;
+  return ApiService.getRequest(endpoint);
+};
+
 
 export default {
   getCreatives,
@@ -35,4 +40,5 @@ export default {
   getDisplayAds,
   getEmailTemplates,
   getEmailTemplate,
+  getCreativeScreenshotStatus,
 };

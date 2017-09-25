@@ -71,7 +71,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
   }
 
   buildDataColumns = () => {
-    const { 
+    const {
       columnsDefinitions: { dataColumnsDefinition },
       visibilitySelectedColumns
     } = this.props;
@@ -144,12 +144,12 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
 
   render() {
     const {
-      columnsDefinitions,
       dataSource,
       pagination,
       loading,
       onChange,
       visibilitySelectedColumns,
+      columnsDefinitions
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
