@@ -16,6 +16,7 @@ function EditContentLayout({
     <Layout className="edit-layout">
       <ActionbarWrapper
         {...buttonMetadata}
+        edition
         breadcrumbPaths={breadcrumbPaths}
       />
 

@@ -195,7 +195,7 @@ class EmailForm extends Component {
       intl: { formatMessage },
       handleSubmit,
       fieldValidators: { isRequired },
-      formId,
+      formId: scrollLabelContentId,
     } = this.props;
 
     const { routerOptions } = this.state;
@@ -212,10 +212,12 @@ class EmailForm extends Component {
     return (
       <Form
         className="edit-layout ant-layout"
-        id={formId}
         onSubmit={handleSubmit(this.handleSaveEmailCampaign)}
       >
-        <Content className="mcs-content-container mcs-form-container">
+        <Content
+          className="mcs-content-container mcs-form-container"
+          id={scrollLabelContentId}
+        >
           <div id="general">
             <FormSection
               subtitle={messages.emailEditorGeneralInformationSubTitle}

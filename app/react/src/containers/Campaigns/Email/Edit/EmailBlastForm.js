@@ -124,7 +124,7 @@ class EmailBlastForm extends Component {
     const {
       intl: { formatMessage },
       fieldValidators: { isRequired, isValidEmail },
-      formId,
+      formId: scrollLabelContentId,
       handleSubmit,
       closeNextDrawer,
       openNextDrawer,
@@ -149,10 +149,12 @@ class EmailBlastForm extends Component {
     return (
       <Form
         className="edit-layout ant-layout"
-        id={formId}
         onSubmit={handleSubmit(this.handleSave)}
       >
-        <Content className="mcs-content-container mcs-form-container">
+        <Content
+          className="mcs-content-container mcs-form-container"
+          id={scrollLabelContentId}
+        >
           <div id="general">
             <FormSection
               subtitle={messages.emailBlastEditorStepSubTitleGeneralInformation}

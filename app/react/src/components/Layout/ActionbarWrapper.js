@@ -19,6 +19,7 @@ function ActionbarWrapper({
   formId,
   message,
   onClose,
+  ...rest,
  }) {
 
   const submitButtonProps = {
@@ -29,7 +30,7 @@ function ActionbarWrapper({
   };
 
   return (
-    <Actionbar path={breadcrumbPaths}>
+    <Actionbar path={breadcrumbPaths} {...rest}>
       <Button {...submitButtonProps} className="mcs-primary">
         <McsIcons type="plus" />
         <FormattedMessage {...message} />
