@@ -121,7 +121,7 @@ class Audience extends Component {
     }, []);
 
     return (
-      <div id="audience">
+      <div>
         <FormSection
           dropdownItems={[
             {

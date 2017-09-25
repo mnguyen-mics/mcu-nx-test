@@ -209,7 +209,7 @@ class AdGroupForm extends Component {
       closeNextDrawer,
       fieldNormalizer,
       fieldValidators,
-      formId,
+      formId: scrollLabelContentId,
       formValues,
       handleSubmit,
       hasDatamarts,
@@ -238,19 +238,21 @@ class AdGroupForm extends Component {
     } = formValues;
 
     return (
-      <div>
+      <Layout>
         {this.state.loading ? <LoadingChart /> : null}
 
         <Form
           className={this.state.loading ? 'hide-section' : 'edit-layout ant-layout'}
-          id={formId}
           onSubmit={handleSubmit(this.onSubmit)}
         >
-          <Content className="mcs-content-container mcs-form-container">
+          <Content
+            className="mcs-content-container mcs-form-container"
+            id={scrollLabelContentId}
+          >
             <General {...commonProps} />
             {
               displayAudience &&
-              <div>
+              <div id="audience">
                 <hr />
                 <Audience {...commonProps} formValues={audienceTable} />
               </div>
@@ -269,7 +271,7 @@ class AdGroupForm extends Component {
             <Summary {...commonProps} formValues={formValues} />
           </Content>
         </Form>
-      </div>
+      </Layout>
     );
   }
 }
