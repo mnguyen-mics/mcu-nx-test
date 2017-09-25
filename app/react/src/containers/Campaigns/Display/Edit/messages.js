@@ -40,6 +40,11 @@ export default defineMessages({
     defaultMessage: 'Exclude',
   },
 
+  noResults: {
+    id: 'adGroupEditor.noResults',
+    defaultMessage: 'NONE',
+  },
+
   /*
   ==============================================================================
   =============================== DROPDOWN OPTIONS =============================
