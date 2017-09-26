@@ -42,7 +42,7 @@ export default defineMessages({
 
   noResults: {
     id: 'adGroupEditor.noResults',
-    defaultMessage: 'NONE',
+    defaultMessage: '[X]',
   },
 
   /*
@@ -436,9 +436,21 @@ export default defineMessages({
     id: 'adGroupEditor.section8.part9.group1',
     defaultMessage: 'You have',
   },
+  contentSection8Part9Negation: {
+    id: 'adGroupEditor.section8.part9.negation',
+    defaultMessage: 'no',
+  },
   contentSection8Part9Group2: {
     id: 'adGroupEditor.section8.part9.group2',
-    defaultMessage: 'creatives attached to your ad',
+    defaultMessage: 'attached to your ad',
+  },
+  contentSection8Part9Singular: {
+    id: 'adGroupEditor.section8.part9.Singular',
+    defaultMessage: 'creative',
+  },
+  contentSection8Part9Plural: {
+    id: 'adGroupEditor.section8.part9.Plural',
+    defaultMessage: 'creatives',
   },
 
   /*
