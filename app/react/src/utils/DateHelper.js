@@ -1,10 +1,24 @@
 import moment from 'moment';
 
-function isPastDate(current) {
-  const now = moment();
-  return current && current.isBefore(now);
+function formatCalendarDate(date) {
+  return moment(date).locale('fr').format('L');
 }
 
+function isPastDate(date) {
+  const now = moment();
+
+  return date && date.isBefore(now, 'day');
+}
+
+function isToday(date) {
+  const now = moment();
+
+  return date && date.isSame(now, 'day');
+}
+
+
 export {
+  formatCalendarDate,
   isPastDate,
+  isToday,
 };

@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { FormattedNumber, FormattedPlural } from 'react-intl';
 import { Col, Row } from 'antd';
-
 
 import { FormSection } from '../../../../../../components/Form';
 import messages from '../../messages';
 import { formatMetric } from '../../../../../../utils/MetricHelper';
+import { isToday, formatCalendarDate } from '../../../../../../utils/DateHelper';
+import {
+  filterTableByIncludeStatus,
+  filterTableByRemovedStatus,
+  stringifyTable,
+} from '../../../../../../utils/TableUtils';
 
 function Summary({ formatMessage, formValues }) {
 
@@ -23,12 +27,6 @@ function Summary({ formatMessage, formValues }) {
   } = formValues;
 
   /* Format data */
-  const formatCalendarDate = (date) => moment(date).locale('fr').format('L');
-  const filterIncludedElements = (table = [], bool) => table.filter(elem => !elem.toBeRemoved && elem.include === bool);
-  const filterTable = (table = []) => table.filter(elem => !elem.toBeRemoved);
-  const stringifyTableElements = (table = [], key) => table.reduce((acc, element, i) => (
-    `${acc}${`${i > 0 && i < table.length ? ',' : ''} ${element[key]}`}`
-  ), '');
   const formatPeriod = {
     'Per Day': formatMessage(messages.contentSection8Part1Group6OptionDAY),
     'Per Week': formatMessage(messages.contentSection8Part1Group6OptionWEEK),
@@ -37,7 +35,6 @@ function Summary({ formatMessage, formValues }) {
 
   /* Data to display */
   const nothingToDisplay = formatMessage(messages.noResults);
-  const startIsToday = moment().diff(adGroupStartDate, 'days') === 0;
   const startDate = adGroupStartDate && formatCalendarDate(adGroupStartDate);
   const endDate = adGroupEndDate && formatCalendarDate(adGroupEndDate);
   const period = formatPeriod[adGroupMaxBudgetPeriod];
@@ -45,18 +42,18 @@ function Summary({ formatMessage, formValues }) {
     ? formatMetric(adGroupMaxBudgetPerPeriod, '0,0')
     : nothingToDisplay
   )}${formatMessage(messages.contentSection8Part1Group8)}`;
-  const includedSegments = stringifyTableElements(filterIncludedElements(audienceTable, true), 'name');
-  const excludedSegments = stringifyTableElements(filterIncludedElements(audienceTable, false), 'name');
-  const publishers = stringifyTableElements(filterTable(publisherTable), 'display_network_name');
-  const optimizers = stringifyTableElements(filterTable(optimizerTable), 'provider');
-  const numberOfCreatives = 0; // TODO : remove static number of creatives
+  const includedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, true), 'name');
+  const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
+  const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
+  const optimizers = stringifyTable(filterTableByRemovedStatus(optimizerTable), 'provider');
+  const numberOfCreatives = 0; // TODO : remove static number for creatives
 
   /* JSX */
   const Section = ({ children }) => (
     <div className="section sectionPaddingTop">
       <Row className="textPadding"><Col span={16}>{children}</Col></Row>
     </div>
-    );
+  );
   const Span = ({ children, blue }) => (  // eslint-disable-line
     <span className={blue ? 'blue-text text' : 'text'}>{children || nothingToDisplay}</span>
   );
@@ -75,7 +72,7 @@ function Summary({ formatMessage, formValues }) {
           <Section>
             <div>
               <Span>{formatMessage(messages.contentSection8Part1Group1)}</Span>
-              {startDate && startIsToday
+              {startDate && isToday(adGroupStartDate)
                   ? <Span blue>{formatMessage(messages.contentSection8Part1Group3)}</Span>
                   : <span>
                     <Span>{formatMessage(messages.contentSection8Part1Group2)}</Span>
