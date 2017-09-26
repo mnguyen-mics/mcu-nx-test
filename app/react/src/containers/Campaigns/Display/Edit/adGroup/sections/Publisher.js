@@ -63,7 +63,7 @@ class Publisher extends Component {
   }
 
   render() {
-    const { formValues, formatMessage, handlers } = this.props;
+    const { formatMessage, formValues, handlers } = this.props;
 
     const dataSource = formValues.reduce((tableData, publisher, index) => {
       return (!publisher.toBeRemoved
@@ -110,12 +110,12 @@ class Publisher extends Component {
           />
 
           {!dataSource.length
-          ? <EmptyRecords
-            iconType="plus"
-            message={formatMessage(messages.contentSection2EmptyTitle)}
-          />
-          : null
-        }
+            ? <EmptyRecords
+              iconType="plus"
+              message={formatMessage(messages.contentSection2EmptyTitle)}
+            />
+            : null
+          }
         </Row>
       </div>
     );

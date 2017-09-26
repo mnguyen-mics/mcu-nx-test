@@ -35,28 +35,6 @@ class EmailTemplateSelector extends Component {
     };
   }
 
-  fetchEmailTemplate = () => {
-    const { organisationId } = this.props;
-    const { pageSize, currentPage, keywords } = this.state;
-
-    const options = {
-      ...getPaginatedApiParam(currentPage, pageSize),
-    };
-
-    if (keywords) {
-      options.keywords = keywords;
-    }
-
-    return CreativeService.getEmailTemplates(organisationId, options).then(response => {
-      this.setState({
-        emailTemplates: response.data,
-        isLoading: false,
-        total: response.total,
-      });
-      return response;
-    });
-  }
-
   componentDidMount() {
     this.fetchEmailTemplate().then(response => {
       if (response.total === 0) {
@@ -85,32 +63,37 @@ class EmailTemplateSelector extends Component {
     }
   }
 
-  toggleTemplateSelection(emailTemplateId) {
-    // Only one template can be selected for now
-    // So we juste update email_template_id
-    const { emailTemplateSelections } = this.props;
+  buildCollectionItems = (dataSource) => {
+    const columnDef = this.getColumnsDefinitions();
+    if (dataSource) {
+      return dataSource.map(data => {
+        return <CreativeCard item={data} title={columnDef.title} footer={columnDef.footer} />;
+      });
+    }
+    return null;
+  }
 
-    let newSelection = { email_template_id: emailTemplateId };
+  fetchEmailTemplate = () => {
+    const { organisationId } = this.props;
+    const { pageSize, currentPage, keywords } = this.state;
 
-    const existingSelection = emailTemplateSelections[0];
-    if (existingSelection) {
-      newSelection = {
-        ...existingSelection,
-        ...newSelection,
-      };
+    const options = {
+      ...getPaginatedApiParam(currentPage, pageSize),
+    };
+
+    if (keywords) {
+      options.keywords = keywords;
     }
 
-    this.setState({
-      newEmailTemplateSelections: [newSelection],
+    return CreativeService.getEmailTemplates(organisationId, options).then(response => {
+      this.setState({
+        emailTemplates: response.data,
+        isLoading: false,
+        total: response.total,
+      });
+      return response;
     });
   }
-
-  handleAdd = () => {
-    const { save } = this.props;
-    const { newEmailTemplateSelections } = this.state;
-    save(newEmailTemplateSelections);
-  }
-
 
   getColumnsDefinitions() {
     const { newEmailTemplateSelections } = this.state;
@@ -127,20 +110,22 @@ class EmailTemplateSelector extends Component {
       footer: {
         key: 'selected',
         render: (text, record) => {
-          return selectedEmailTemplateIds.includes(record.id) ? <Button type="primary" className="mcs-primary"><FormattedMessage {...messages.blastTemplateSelectedButton} /></Button> : <Button onClick={() => this.toggleTemplateSelection(record.id)}><FormattedMessage {...messages.blastTemplateSelectButton} /></Button>;
+          const isSelected = selectedEmailTemplateIds.includes(record.id);
+          const message = (isSelected ? 'blastTemplateSelectedButton' : 'blastTemplateSelectButton');
+          const buttonProps = {
+            className: (isSelected ? 'mcs-primary' : ''),
+            onClick: () => this.toggleTemplateSelection(record.id),
+            type: (isSelected ? 'primary' : ''),
+          };
+
+          return (
+            <Button {...buttonProps}>
+              <FormattedMessage {...messages[message]} />
+            </Button>
+          );
         }
       }
     };
-  }
-
-  buildCollectionItems = (dataSource) => {
-    const columnDef = this.getColumnsDefinitions();
-    if (dataSource) {
-      return dataSource.map(data => {
-        return <CreativeCard item={data} title={columnDef.title} footer={columnDef.footer} />;
-      });
-    }
-    return null;
   }
 
   getSearchOptions() {
@@ -154,6 +139,33 @@ class EmailTemplateSelector extends Component {
         }));
       },
     };
+  }
+
+  handleAdd = () => {
+    const { save } = this.props;
+    const { newEmailTemplateSelections } = this.state;
+    save(newEmailTemplateSelections);
+  }
+
+  toggleTemplateSelection(emailTemplateId) {
+    this.setState(prevState => {
+      const { newEmailTemplateSelections } = this.state;
+      const isElementSelected = prevState.newEmailTemplateSelections.find(selection => selection.email_template_id === emailTemplateId);
+      const newSelection = { email_template_id: emailTemplateId };
+
+      if (this.props.singleSelection) {
+        return {
+          newEmailTemplateSelections: (!isElementSelected ? [newSelection] : []),
+        };
+      }
+      return {
+        newEmailTemplateSelections: (!isElementSelected
+            ? [...newEmailTemplateSelections, newSelection]
+            : newEmailTemplateSelections.filter(selection => selection.email_template_id !== emailTemplateId)
+          )
+      };
+
+    });
   }
 
   render() {
@@ -220,6 +232,7 @@ class EmailTemplateSelector extends Component {
 
 EmailTemplateSelector.defaultProps = {
   emailTemplateSelections: [],
+  singleSelection: false,
 };
 
 EmailTemplateSelector.propTypes = {
@@ -229,6 +242,7 @@ EmailTemplateSelector.propTypes = {
     email_template_id: PropTypes.string.isRequired,
   })),
   save: PropTypes.func.isRequired,
+  singleSelection: PropTypes.bool,
   close: PropTypes.func.isRequired,
 };
 

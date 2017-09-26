@@ -234,6 +234,7 @@ class AdGroupForm extends Component {
       audienceTable,
       optimizerTable,
       publisherTable,
+      ads,
     } = formValues;
 
     return (
@@ -248,7 +249,7 @@ class AdGroupForm extends Component {
             className="mcs-content-container mcs-form-container"
             id={scrollLabelContentId}
           >
-            <General {...commonProps} formValues={formValues} />
+            {/* <General {...commonProps} />
             {
               displayAudience &&
               <div id="audience">
@@ -264,8 +265,8 @@ class AdGroupForm extends Component {
             <Media {...commonProps} />
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
-            <hr />
-            <Ads {...commonProps} />
+            <hr /> */}
+            <Ads {...commonProps} formValues={ads} />
             <hr />
             <Summary {...commonProps} formValues={formValues} />
           </Content>

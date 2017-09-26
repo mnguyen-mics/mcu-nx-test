@@ -53,6 +53,7 @@ class EmailTemplateSelection extends Component {
     const options = {
       additionalProps: emailTemplateSelectorProps,
       isModal: true,
+      singleSelection: true,
     };
 
     openNextDrawer(EmailTemplateSelector, options);
