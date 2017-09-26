@@ -22,13 +22,15 @@ const s2ab = s => {
   return buf;
 };
 
-function buildSheet(title, data, headers, filter, formatMessage) {
+function buildSheet(title, data, headers, filter, formatMessage, technicalName) {
   const titleLine = typeof title === 'string' ? [title] : [formatMessage(title)];
   const sheet = [];
   const blankLine = [];
-
   sheet.push(titleLine);
   sheet.push([`${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${filter.to}`]);
+  if (technicalName && typeof technicalName === 'string') {
+    sheet.push([technicalName]);
+  }
   sheet.push(blankLine);
   sheet.push(headers.map(h => h.translation));
 
@@ -49,13 +51,14 @@ function buildSheet(title, data, headers, filter, formatMessage) {
  * @param filter        Date filters containing from and to
  * @param formatMessage Internationalization method
  * @param title         [OPTIONAL] Title at the top of the page, if undefined use tabTitle
+ * @param technicalName
  * @returns {*}
  */
-function addSheet(tabTitle, data, headers, filter, formatMessage, title) {
+function addSheet(tabTitle, data, headers, filter, formatMessage, title, technicalName) {
   const formattedTabTitle = formatMessage(tabTitle);
   const sheetTitle = title ? title : tabTitle;
   if (data && data.length) {
-    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage);
+    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, technicalName);
     return {
       name: formattedTabTitle,
       data: sheet
@@ -175,6 +178,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
   const headersMap = [
     { name: 'status', translation: translations.STATUS },
     { name: 'name', translation: translations.NAME },
+    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
     { name: 'impressions', translation: translations.IMPRESSIONS },
     { name: 'clicks', translation: translations.CLICKS },
     { name: 'cpm', translation: translations.CPM },
@@ -246,11 +250,13 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
     { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
   ];
 
+  const technicalName = (campaign && campaign.technical_name) ? campaign.technical_name : null;
+
   const sheets = [
-    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle),
-    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage),
-    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage),
-    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage)
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle, technicalName),
+    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage, technicalName),
+    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage, technicalName),
+    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage, technicalName)
   ].filter(x => x);
 
   if (sheets.length) {
@@ -284,6 +290,7 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
   const headersMap = [
     { name: 'status', translation: translations.STATUS },
     { name: 'name', translation: translations.NAME },
+    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
     { name: 'email_sent', translation: translations.EMAIL_SENT },
     { name: 'email_hard_bounced', translation: translations.EMAIL_HARD_BOUNCED },
     { name: 'email_soft_bounced', translation: translations.EMAIL_SOFT_BOUNCED },
@@ -427,6 +434,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   const headersMap = [
     { name: 'type', translation: translations.TYPE },
     { name: 'name', translation: translations.NAME },
+    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
     { name: 'user_points', translation: translations.USER_POINTS },
     { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
     { name: 'emails', translation: translations.EMAILS },
@@ -456,7 +464,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 /**
  * Audience Segment Dashboard
  */
-const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, formatMessage) => {
+const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, formatMessage, segment) => {
   const overviewHeaders = [
     { name: 'day', translation: formatMessage(dateMessages.day) },
     { name: 'user_points', translation: formatMessage(segmentMessages.userPoints) },
@@ -476,10 +484,13 @@ const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData,
     { name: 'yKey', translation: formatMessage(segmentMessages.overlapNumber) }
   ];
 
+  const technicalName = (segment && segment.technical_name) ? segment.technical_name : null;
+  const title = '';
+
   const sheets = [
-    addSheet(exportMessages.audienceSegmentOverviewExportTitle, segmentData, overviewHeaders, filter, formatMessage),
-    addSheet(exportMessages.audienceSegmentAdditionsDeletionsExportTitle, segmentData, additionDeletionHeaders, filter, formatMessage),
-    addSheet(exportMessages.overlapExportTitle, overlapData, overlapHeaders, filter, formatMessage)
+    addSheet(exportMessages.audienceSegmentOverviewExportTitle, segmentData, overviewHeaders, filter, formatMessage, title, technicalName),
+    addSheet(exportMessages.audienceSegmentAdditionsDeletionsExportTitle, segmentData, additionDeletionHeaders, filter, formatMessage, title, technicalName),
+    addSheet(exportMessages.overlapExportTitle, overlapData, overlapHeaders, filter, formatMessage, title, technicalName)
   ].filter(x => x);
 
   if (sheets.length) {
