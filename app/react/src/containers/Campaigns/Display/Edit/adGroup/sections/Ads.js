@@ -6,8 +6,7 @@ import { Row } from 'antd';
 import { EmptyRecords, Form } from '../../../../../../components';
 import AdGroupCardList from '../AdGroupCardList';
 import messages from '../../messages';
-import EmailTemplateSelector from '../../../../Email/Edit/EmailTemplateSelector';
-import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
+import CreativeCardSelector from '../../../../Email/Edit/CreativeCardSelector';
 import CreativeService from '../../../../../../services/CreativeService';
 
 const { FormSection } = Form;
@@ -17,26 +16,19 @@ class Ads extends Component {
   state = { loading: false }
 
   getAllAds = () => {
-    const { pageSize, currentPage, keywords } = this.state;
-    const options = { ...getPaginatedApiParam(currentPage, pageSize) };
+    const { organisationId } = this.props;
 
-    if (keywords) {
-      options.keywords = keywords;
-    }
-
-    return CreativeService.getEmailTemplates(this.props.organisationId, options)
-      .then(results => results.data);
+    return CreativeService.getDisplayAds({ organisationId })
+      .then(({ data, total }) => ({ data, total }));
   }
 
   openWindow = () => {
     const { formValues, handlers } = this.props;
-    const emailTemplateSelections = formValues
-      .filter(ad => !ad.toBeRemoved)
-      .map(({ id, ...ad }) => ({ ...ad, email_template_id: id }));
 
     const emailTemplateSelectorProps = {
       close: handlers.closeNextDrawer,
-      emailTemplateSelections,
+      fetchData: this.getAllAds,
+      selectedData: formValues.filter(ad => !ad.toBeRemoved),
       save: this.updateData,
     };
 
@@ -45,22 +37,23 @@ class Ads extends Component {
       isModal: true,
     };
 
-    handlers.openNextDrawer(EmailTemplateSelector, options);
+    handlers.openNextDrawer(CreativeCardSelector, options);
   }
 
   updateData = (selectedAds) => {
     const { handlers } = this.props;
-    const selectedIds = selectedAds.map(selection => selection.email_template_id);
+    const selectedIds = selectedAds.map(selection => selection.id);
 
     this.setState({ loading: true });
     handlers.closeNextDrawer();
 
     this.getAllAds()
-      .then((ads) => {
-        const newFields = ads.filter((ad) => selectedIds.includes(ad.id));
+      .then(({ data }) => {
+        const newFields = data.filter((ad) => selectedIds.includes(ad.id));
 
         handlers.updateTableFields({ newFields, tableName: 'ads' });
-        this.setState({ loading: false });
+
+        return this.setState({ loading: false });
       });
   }
 

@@ -18,7 +18,7 @@ function CollectionView(props) {
       <Row gutter={gutter}>
         {collectionItems && collectionItems.map(item => {
           return (
-            <Col span={span} key={item.id}>
+            <Col key={item.key} span={span}>
               { item }
             </Col>
           );

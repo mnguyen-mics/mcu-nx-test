@@ -123,6 +123,13 @@ class CreativeCard extends Component {
       success,
     } = this.state;
 
+    const dataToRender = (data) => (data.key
+      ? item[data.key]
+      : Object.keys(item).reduce((acc, key) => (
+        data.keys.includes(key) ? { ...acc, [key]: item[key] } : acc), {}
+      )
+    );
+
     return (
       <div className="mcs-creative-card">
         <div className="creative-cover">
@@ -131,13 +138,16 @@ class CreativeCard extends Component {
           { success ? this.renderSuccessScreenshot(item) : null}
         </div>
         <div className="creative-details">
-          <div className="title">{ title.render(item[title.key], item) }</div>
-          { subtitles && subtitles.length && subtitles.map(subtitle => {
-            return <div key={subtitle.key} className="subtitle"><span>{ subtitle.render(item[subtitle.key], item) }</span></div>;
-          }) }
+          <div className="title">{ title.render(dataToRender(title), item) }</div>
+          { subtitles && subtitles.length && subtitles.map(subtitle => (
+            <div key={subtitle.key} className="subtitle">
+              <span>{ subtitle.render(item[subtitle.key], item) }</span>
+            </div>
+            ))
+          }
         </div>
         <div className="creative-footer">
-          { footer.render(item[footer.key], item) }
+          { footer.render(dataToRender(footer), item) }
         </div>
       </div>
     );
@@ -159,7 +169,8 @@ CreativeCard.propTypes = {
     render: PropTypes.func.isRequired,
   })),
   footer: PropTypes.shape({
-    key: PropTypes.string.isRequired,
+    key: PropTypes.string,
+    keys: PropTypes.arrayOf(PropTypes.string.isRequired),
     render: PropTypes.func.isRequired,
   }).isRequired,
 };

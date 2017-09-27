@@ -16,11 +16,11 @@ const getCreative = creativeId => {
   return ApiService.getRequest(endpoint).then(res => res.data);
 };
 
-const getDisplayAds = (organisationId, options = {}) => {
+const getDisplayAds = ({ organisationId, options = {} }) => {
   return getCreatives(organisationId, { creative_type: 'DISPLAY_AD', ...options });
 };
 
-const getEmailTemplates = (organisationId, options = {}) => {
+const getEmailTemplates = ({ organisationId, options = {} }) => {
   return getCreatives(organisationId, { creative_type: 'EMAIL_TEMPLATE', ...options });
 };
 
