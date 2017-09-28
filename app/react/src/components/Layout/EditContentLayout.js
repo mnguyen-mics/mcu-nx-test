@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Layout } from 'antd';
 
-import { ActionbarWrapper, SidebarWrapper } from '../Layout';
+import { EditLayoutActionbar, SidebarWrapper } from '../Layout';
 
 function EditContentLayout({
   breadcrumbPaths,
@@ -14,7 +14,7 @@ function EditContentLayout({
 
   return (
     <Layout className="edit-layout">
-      <ActionbarWrapper
+      <EditLayoutActionbar
         {...buttonMetadata}
         edition
         breadcrumbPaths={breadcrumbPaths}

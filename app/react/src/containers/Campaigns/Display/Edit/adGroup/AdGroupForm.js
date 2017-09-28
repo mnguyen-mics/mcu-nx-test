@@ -40,10 +40,7 @@ const FORM_NAME = 'adGroupForm';
 
 class AdGroupForm extends Component {
 
-  state = {
-    adGroupId: this.props.match.params.adGroupId,
-    loading: false,
-  }
+  state = { loading: false }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
@@ -60,20 +57,22 @@ class AdGroupForm extends Component {
 
     this.setState({ loading: true });
 
-    return this.saveAdGroup()
-    .then(() => this.saveAudience())
-    .then(() => this.savePublishers())
-    .then(() => {
-      this.setState({ loading: false });
-      history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
-    })
-    .catch(error => {
-      this.setState({ loading: false });
-      this.props.notifyError(error);
-    });
+    return this.saveOrUpdateAdGroup()
+      .then((adGroupId) => Promise.all([
+        this.saveAudience(adGroupId),
+        this.savePublishers(adGroupId),
+      ]))
+      .then(() => {
+        this.setState({ loading: false });
+        history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
+      })
+      .catch(error => {
+        this.setState({ loading: false });
+        this.props.notifyError(error);
+      });
   }
 
-  saveAdGroup = () => {
+  saveOrUpdateAdGroup = () => {
     const {
       editionMode,
       formValues,
@@ -108,11 +107,12 @@ class AdGroupForm extends Component {
       : DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body)
     );
 
-    return request.then((result) => this.setState({ adGroupId: result.data.id }));
+    return request.then((result) => result.data.id);
   }
 
-  saveAudience = () => {
+  saveAudience = (adGroupId) => {
     const options = {
+      adGroupId,
       getBody: (row) => ({ audience_segment_id: row.id, exclude: !row.include }),
       requests: {
         create: DisplayCampaignService.createAudience,
@@ -125,8 +125,9 @@ class AdGroupForm extends Component {
     return this.saveTableFields(options);
   }
 
-  savePublishers = () => {
+  savePublishers = (adGroupId) => {
     const options = {
+      adGroupId,
       getBody: (row) => ({ display_network_access_id: row.id }),
       requests: {
         create: DisplayCampaignService.createPublisher,
@@ -140,8 +141,8 @@ class AdGroupForm extends Component {
 
   saveTableFields = (options) => {
     const { match, formInitialValues, formValues } = this.props;
-    const { adGroupId, campaignId } = match.params;
-    const { getBody, requests, tableName } = options;
+    const { campaignId } = match.params;
+    const { adGroupId, getBody, requests, tableName } = options;
     const table = formValues[tableName] || [];
 
     return table.reduce((promise, row) => {
@@ -250,7 +251,7 @@ class AdGroupForm extends Component {
             className="mcs-content-container mcs-form-container"
             id={scrollLabelContentId}
           >
-            <General {...commonProps} />
+            <General {...commonProps} formValues={formValues} />
             {
               displayAudience &&
               <div id="audience">
@@ -319,6 +320,7 @@ const mapDispatchToProps = {
 
 export default compose(
   withMcsRouter,
+  injectIntl,
   reduxForm({
     form: FORM_NAME,
     enableReinitialize: true,
@@ -326,5 +328,4 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withNormalizer,
   withValidators,
-  injectIntl
 )(AdGroupForm);

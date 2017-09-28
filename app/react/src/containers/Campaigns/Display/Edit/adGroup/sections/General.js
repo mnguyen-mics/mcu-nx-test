@@ -28,7 +28,7 @@ class General extends Component {
       fieldNormalizer: { isNumber },
       fieldValidators: { isRequired },
       formatMessage,
-      values,
+      formValues,
     } = this.props;
 
     const fieldGridConfig = {
@@ -148,8 +148,8 @@ class General extends Component {
             }}
 
             values={{
-              startDate: values && values.adGroupStartDate,
-              endDate: values && values.adGroupEndDate,
+              startDate: formValues && formValues.adGroupStartDate,
+              endDate: formValues && formValues.adGroupEndDate,
             }}
 
             fieldValidators={{ start: [isRequired], end: [isRequired] }}
@@ -198,7 +198,7 @@ class General extends Component {
 }
 
 General.defaultProps = {
-  values: null,
+  formValues: null,
 };
 
 General.propTypes = {
@@ -211,13 +211,7 @@ General.propTypes = {
   }).isRequired,
 
   formatMessage: PropTypes.func.isRequired,
-  values: PropTypes.shape(),
+  formValues: PropTypes.shape(),
 };
 
-const ConnectedGeneral = connect(
-  state => ({
-    values: getFormValues('adGroupForm')(state),
-  }),
-)(General);
-
-export default ConnectedGeneral;
+export default General;

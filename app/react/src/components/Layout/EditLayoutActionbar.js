@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isInvalid, submit, isSubmitting } from 'redux-form';
+import { isPristine, isSubmitting, submit } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'antd';
 
@@ -12,19 +12,19 @@ import { Actionbar } from '../../containers/Actionbar';
  * This component includes a remote submit button.
  * See example at http://redux-form.com/6.8.0/examples/remoteSubmit/
  */
-function ActionbarWrapper({
+function EditLayoutActionbar({
   breadcrumbPaths,
-  disabled,
   dispatch,
   formId,
   message,
   onClose,
+  pristine,
   submitting,
   ...rest,
  }) {
 
   const submitButtonProps = {
-    disabled: submitting || disabled,
+    disabled: pristine || submitting,
     htmlType: 'submit',
     onClick: () => dispatch(submit(formId)),
     type: 'primary',
@@ -47,19 +47,18 @@ function ActionbarWrapper({
   );
 }
 
-ActionbarWrapper.defaultProps = {
-  disabled: null,
+EditLayoutActionbar.defaultProps = {
   onClose: () => {},
+  pristine: null,
   submitting: false,
 };
 
-ActionbarWrapper.propTypes = {
+EditLayoutActionbar.propTypes = {
   breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     url: PropTypes.string,
   })).isRequired,
 
-  disabled: PropTypes.bool,
   dispatch: PropTypes.func.isRequired,
   formId: PropTypes.string.isRequired,
 
@@ -69,6 +68,7 @@ ActionbarWrapper.propTypes = {
   }).isRequired,
 
   onClose: PropTypes.func,
+  pristine: PropTypes.bool,
   submitting: PropTypes.bool,
 };
 
@@ -77,7 +77,7 @@ export default connect(
     /* For additional redux-form selectors, such as "pristine" or "form errors",
      * check http://redux-form.com/6.8.0/docs/api/Selectors.md/
      */
-    disabled: isInvalid(ownProps.formId)(state),
+    pristine: isPristine(ownProps.formId)(state),
     submitting: isSubmitting(ownProps.formId)(state),
   }),
-)(ActionbarWrapper);
+)(EditLayoutActionbar);
