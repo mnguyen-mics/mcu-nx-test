@@ -5,7 +5,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal, Tooltip } from 'antd';
 
 import {
-  TableView,
   EmptyTableView,
   TableViewFilters,
 } from '../../../components/TableView';
@@ -246,14 +245,12 @@ class AutomationsListTable extends Component {
     return (hasAutomations
       ? (
         <div className="mcs-table-container">
-          <TableViewFilters>
-            <TableView
-              columnsDefinitions={columnsDefinitions}
-              dataSource={dataSource}
-              loading={isFetchingAutomationList}
-              pagination={pagination}
-            />
-          </TableViewFilters>
+          <TableViewFilters
+            columnsDefinitions={columnsDefinitions}
+            dataSource={dataSource}
+            loading={isFetchingAutomationList}
+            pagination={pagination}
+          />
         </div>
       )
       : <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />

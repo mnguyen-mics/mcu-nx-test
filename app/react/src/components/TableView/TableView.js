@@ -38,9 +38,16 @@ class TableView extends Component {
   }
 
   buildDataColumns = () => {
-    const { columnsDefinitions: { dataColumnsDefinition } } = this.props;
+    const {
+      columnsDefinitions: { dataColumnsDefinition },
+      visibilitySelectedColumns
+    } = this.props;
 
-    const dataColumns = dataColumnsDefinition.map(dataColumn => {
+    const visibilitySelectedColumnsValues = [];
+    visibilitySelectedColumns.forEach((el) => {
+      visibilitySelectedColumnsValues.push(el.value);
+    });
+    const dataColumns = dataColumnsDefinition.filter(column => !column.isHideable || visibilitySelectedColumnsValues.includes(column.key)).map(dataColumn => {
       return Object.assign(
         {},
         isValidFormattedMessageProps(dataColumn.intlMessage)
@@ -100,11 +107,11 @@ class TableView extends Component {
 
   render() {
     const {
-      columnsDefinitions,
       dataSource,
       pagination,
       loading,
       onChange,
+      columnsDefinitions
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
@@ -136,6 +143,7 @@ class TableView extends Component {
 TableView.defaultProps = {
   pagination: false,
   onChange: () => {},
+  visibilitySelectedColumns: []
 };
 
 TableView.propTypes = {
@@ -147,6 +155,7 @@ TableView.propTypes = {
   loading: PropTypes.bool.isRequired,
   pagination: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   onChange: PropTypes.func,
+  visibilitySelectedColumns: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 export default TableView;

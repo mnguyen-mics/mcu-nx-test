@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from 'react-intl';
 import moment from 'moment';
 
-import { EmptyTableView, TableView, TableViewFilters } from '../../../components/TableView';
+import { EmptyTableView, TableViewFilters } from '../../../components/TableView';
 import messages from './messages';
 
 class SitesTable extends Component {
@@ -89,14 +89,10 @@ class SitesTable extends Component {
              <TableViewFilters
                columnsDefinitions={columnsDefinitions}
                searchOptions={searchOptions}
-             >
-               <TableView
-                 columnsDefinitions={columnsDefinitions}
-                 dataSource={dataSource}
-                 loading={isFetchingSites}
-                 pagination={pagination}
-               />
-             </TableViewFilters>
+               dataSource={dataSource}
+               loading={isFetchingSites}
+               pagination={pagination}
+             />
            );
   }
 }

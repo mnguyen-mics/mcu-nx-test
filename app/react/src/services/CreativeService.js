@@ -105,6 +105,11 @@ const takeScreenshot = (creativeId, organisationId, options = []) => {
   const endpoint = `creatives/${creativeId}/screenshots?organisation_id=${organisationId}`;
   return ApiService.postRequest(endpoint, options);
 };
+const getCreativeScreenshotStatus = creativeId => {
+  const endpoint = `creatives/${creativeId}/screenshots/last`;
+  return ApiService.getRequest(endpoint);
+};
+
 
 export default {
   getCreatives,
@@ -119,5 +124,6 @@ export default {
   getAuditStatus,
   postCreativeStatus,
   takeScreenshot,
-  updateDisplayCreative
+  updateDisplayCreative,
+  getCreativeScreenshotStatus,
 };
