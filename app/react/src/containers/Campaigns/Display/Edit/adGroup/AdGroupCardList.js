@@ -4,13 +4,15 @@ import PropTypes from 'prop-types';
 import { Col, Row } from 'antd';
 
 import CreativeCard from '../../../Email/Edit/CreativeCard';
+import { ButtonStyleless, McsIcons } from '../../../../../components';
+import { computeDimensionsByRatio } from '../../../../../utils/ShapeHelper';
 
-function AdGroupCardList({ data }) {
-  const cardContent = {
+function AdGroupCardList({ data, updateTableFieldStatus }) {
+  const cardContent = (index) => ({
     title: {
       key: 'name',
       render: (text) => {
-        return <span>{text}</span>;
+        return <div className="title"><span>{text}</span></div>;
       }
     },
 
@@ -18,31 +20,47 @@ function AdGroupCardList({ data }) {
       keys: ['id', 'format'],
       render: (values) => {
         const format = split(values.format, 'x');
-        const width = `${Number(format[0]) / 220}em`;
-        const height = `${Number(format[1]) / 220}em`;
+        const dimensions = computeDimensionsByRatio(Number(format[0]), Number(format[1]));
+
+        const shapeStyle = {
+          backgroundColor: '#e8e8e8',
+          border: 'solid 1px #c7c7c7',
+          height: `${dimensions.width}em`,
+          width: `${dimensions.height}em`
+        };
 
         return (
           <div>
-            <Row>
-              <Col span={3}>
-                <div style={{ backgroundColor: '#e8e8e8', border: 'solid 1px #c7c7c7', height, width }} />
+            <Row className="footer">
+              <Col className="inline formatWrapper" span={16}>
+                <div style={shapeStyle} />
+                <div className="dimensions">{values.format}</div>
               </Col>
-              <Col span={18}>
-                <div className="format">{values.format}</div>
+              <Col className="inline buttons" span={6}>
+                <ButtonStyleless>
+                  <McsIcons type="pen" className="button" />
+                </ButtonStyleless>
+
+                <div className="button-separator" />
+
+                <ButtonStyleless >
+                  <McsIcons
+                    className="button"
+                    onClick={updateTableFieldStatus({ index, tableName: 'ads' })}
+                    type="delete"
+                  />
+                </ButtonStyleless>
               </Col>
-              <Col span={4} />
             </Row>
           </div>
         );
       }
     }
-  };
+  });
 
-  console.log('CARD data = ', data);
-
-  const cards = data.map(card => ({
+  const cards = data.map((card, index) => ({
     id: card.id,
-    view: <CreativeCard key={card.id} item={card} {...cardContent} />
+    view: <CreativeCard key={card.id} item={card} {...cardContent(index)} />
   }));
 
   return (
@@ -64,6 +82,7 @@ AdGroupCardList.defaultProps = {
 
 AdGroupCardList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({})),
+  updateTableFieldStatus: PropTypes.func.isRequired,
 };
 
 export default AdGroupCardList;

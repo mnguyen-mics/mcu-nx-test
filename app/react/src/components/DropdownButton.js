@@ -18,7 +18,6 @@ class DropdownButton extends Component {
 
     const handleClick = (e) => {
       const currentItem = items.find(item => item.id === e.key);
-      // const currentItem = items.filter(item => item.id === e.key);
 
       currentItem.onClick();
     };

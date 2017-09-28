@@ -1,8 +1,51 @@
 @import 'application.less';
 
 .adGroupCard {
-  .format {
-    background-color: 'red';
-    text-align: 'left';
+
+  .inline {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .title {
+    margin-left: .4em;
+
+    span {
+      font-weight: bold;
+    }
+  }
+
+  .footer {
+
+    .formatWrapper {
+      align-items: center;
+      height: 2.7em;
+      margin-left: 1em;
+
+      .dimensions {
+        margin-left: 1em;
+
+        font-family: CircularStd;
+        font-size: 12px;
+        font-weight: 500;
+        color: #919191;
+      }
+    }
+
+    .buttons {
+      align-items: center;
+      justify-content: space-between;
+
+      .button {
+        color: #cecece;
+        font-size: 1.7em;
+      }
+
+      .button-separator {
+        width: 1px;
+        height: 2em;
+        background-color: #e8e8e8
+      }
+    }
   }
 }
