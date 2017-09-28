@@ -11,7 +11,7 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import BidOptimizerServices from '../../../../../services/BidOptimizerServices';
-
+import CreativeService from '../../../../../services/CreativeService';
 
 class EditAdGroupPage extends Component {
 
@@ -25,6 +25,7 @@ class EditAdGroupPage extends Component {
 
     Promise.all([
       this.getGeneralInfo({ adGroupId, campaignId }),
+      this.getAds({ adGroupId, campaignId, organisationId }),
       this.getPublishers({ campaignId }),
       this.getSegments({ adGroupId, campaignId, organisationId }),
     ])
@@ -44,6 +45,31 @@ class EditAdGroupPage extends Component {
           loading: false,
         });
       });
+  }
+
+  getAds({ adGroupId, campaignId, organisationId }) {
+    const fetchAllAds = CreativeService.getDisplayAds({ organisationId })
+      .then(({ data }) => data);
+
+    const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)
+      .then(({ data }) => data.map(ad => ({ id: ad.creative_id, otherId: ad.id })));
+
+    return Promise.all([fetchAllAds, fetchSelectedAds])
+      .then((results) => {
+        const allAds = results[0];
+        const selectedAds = results[1];
+        const selectedAdIds = selectedAds.map(ad => ad.id);
+
+        const ads = allAds
+          .filter(ad => selectedAdIds.includes(ad.id))
+          .map(ad => ({
+            ...ad,
+            otherId: (selectedAds.find(selection => selection.id === ad.id)).otherId
+          }));
+
+        return { ads };
+      });
+
   }
 
   getGeneralInfo({ campaignId, adGroupId }) {

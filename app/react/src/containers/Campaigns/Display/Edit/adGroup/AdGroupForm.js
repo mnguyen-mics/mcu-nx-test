@@ -108,7 +108,20 @@ class AdGroupForm extends Component {
     return request.then(result => result.data.id);
   }
 
-  saveAudience = (adGroupId) => {
+  saveAds = () => {
+    const options = {
+      getBody: (row) => ({ creative_id: row.id }),
+      requests: {
+        create: DisplayCampaignService.createAd,
+        delete: DisplayCampaignService.deleteAd,
+      },
+      tableName: 'ads',
+    };
+
+    return this.saveTableFields(options);
+  }
+
+  saveAudience = () => {
     const options = {
       adGroupId,
       getBody: (row) => ({ audience_segment_id: row.id, exclude: !row.include }),
@@ -176,11 +189,15 @@ class AdGroupForm extends Component {
     }, Promise.resolve());
   }
 
-  updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => () => {
+  updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => (e) => {
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
 
     this.props.arrayRemove(FORM_NAME, tableName, index);
     this.props.arrayInsert(FORM_NAME, tableName, index, updatedField);
+
+    if (e) {
+      e.preventDefault();
+    }
   }
 
   updateTableFields = ({ newFields, tableName }) => {
@@ -208,6 +225,7 @@ class AdGroupForm extends Component {
     const {
       closeNextDrawer,
       displayAudience,
+      editionMode,
       fieldNormalizer,
       fieldValidators,
       formId: scrollLabelContentId,
@@ -249,7 +267,11 @@ class AdGroupForm extends Component {
             className="mcs-content-container mcs-form-container"
             id={scrollLabelContentId}
           >
-            {/* <General {...commonProps} />
+            {editionMode
+              ? <div><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /><hr /></div>
+              : null
+            }
+            <General {...commonProps} />
             {
               displayAudience &&
               <div id="audience">
@@ -265,10 +287,12 @@ class AdGroupForm extends Component {
             <Media {...commonProps} />
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
-            <hr /> */}
-            <Ads {...commonProps} formValues={ads} />
             <hr />
-            <Summary {...commonProps} formValues={formValues} />
+            <Ads {...commonProps} formValues={ads} />
+            {!editionMode
+              ? <div><hr /><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /></div>
+              : null
+            }
           </Content>
         </Form>
       </Layout>

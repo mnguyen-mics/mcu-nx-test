@@ -13,17 +13,19 @@ import {
   stringifyTable,
 } from '../../../../../../utils/TableUtils';
 
-function Summary({ formatMessage, formValues }) {
+function Summary({ displayAudience, formatMessage, formValues }) {
 
   const {
     adGroupStartDate,
     adGroupEndDate,
     adGroupMaxBudgetPeriod,
     adGroupMaxBudgetPerPeriod,
+    ads,
+    areas,
     audienceTable,
-    publisherTable,
+    devices,
     optimizerTable,
-    adTable,
+    publisherTable,
   } = formValues;
 
   /* Format data */
@@ -46,7 +48,7 @@ function Summary({ formatMessage, formValues }) {
   const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
   const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
   const optimizers = stringifyTable(filterTableByRemovedStatus(optimizerTable), 'provider');
-  const numberOfCreatives = 0; // TODO : remove static number for creatives
+  const numberOfCreatives = (ads ? ads.length : 0);
 
   /* JSX */
   const Section = ({ children }) => (
@@ -88,22 +90,22 @@ function Summary({ formatMessage, formValues }) {
             </div>
           </Section>
 
-          <Section>
+          {displayAudience && <Section>
             {formatMessage(messages.contentSection8Part2)}
             <P blue>{includedSegments}</P>
-          </Section>
+          </Section>}
 
-          <Section>
+          {displayAudience && <Section>
             {formatMessage(messages.contentSection8Part3)}
             <P blue>{excludedSegments}</P>
-          </Section>
+          </Section>}
 
-          {adTable && <Section>
+          {devices && <Section>
             {formatMessage(messages.contentSection8Part4)}
             <P blue>XXX</P>
           </Section>}
 
-          {adTable && <Section>
+          {areas && <Section>
             {formatMessage(messages.contentSection8Part5)}
             <P blue>XXX</P>
           </Section>}
@@ -113,7 +115,7 @@ function Summary({ formatMessage, formValues }) {
             <P blue>{publishers}</P>
           </Section>
 
-          {adTable && <Section>
+          {false && <Section>
             {formatMessage(messages.contentSection8Part7)}
             <P blue>XXX</P>
           </Section>}
@@ -153,7 +155,12 @@ function Summary({ formatMessage, formValues }) {
   );
 }
 
+Summary.defaultProps = {
+  displayAudience: false,
+};
+
 Summary.propTypes = {
+  displayAudience: PropTypes.bool,
   formatMessage: PropTypes.func.isRequired,
   formValues: PropTypes.shape({}).isRequired,
 };

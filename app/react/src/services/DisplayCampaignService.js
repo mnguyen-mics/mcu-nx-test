@@ -111,15 +111,22 @@ function getAds(campaignId, adGroupId) {
   return ApiService.getRequest(endpoint);
 }
 
-function updateAd(adId, campaignId, adGroupId, body) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
-  return ApiService.putRequest(endpoint, body);
+function createAd({ campaignId, adGroupId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
+  return ApiService.postRequest(endpoint, body);
+}
+
+function deleteAd({ campaignId, adGroupId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${id}`;
+  return ApiService.deleteRequest(endpoint);
 }
 
 export default {
+  createAd,
   createAdGroup,
   createAudience,
   createPublisher,
+  deleteAd,
   deleteAudience,
   deletePublisher,
   getAdGroup,
@@ -128,7 +135,6 @@ export default {
   getCampaignName,
   getPublishers,
   getAudiences,
-  updateAd,
   updateAdGroup,
   updateAudience,
   updateCampaign,

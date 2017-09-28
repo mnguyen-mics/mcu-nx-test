@@ -136,7 +136,7 @@ export default defineMessages({
   },
   sectionSubtitle8: {
     id: 'adGroupEditor.section.subtitle8',
-    defaultMessage: 'Before submitting, please review the configuration of your ad group',
+    defaultMessage: 'Please find below the configuration of your ad group',
   },
 
   /*

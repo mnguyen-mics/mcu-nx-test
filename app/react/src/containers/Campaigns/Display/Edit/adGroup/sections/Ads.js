@@ -59,7 +59,6 @@ class Ads extends Component {
 
   render() {
     const { formatMessage, formValues, handlers } = this.props;
-    const cardsToDisplay = formValues.filter(ad => !ad.toBeRemoved);
 
     return (
       <div id="ads">
@@ -83,13 +82,13 @@ class Ads extends Component {
         <Row>
           <FieldArray
             component={AdGroupCardList}
-            data={cardsToDisplay}
+            data={formValues}
             loading={this.state.loading}
             name="ads"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
 
-          {!formValues.length
+          {!formValues.filter(ad => !ad.toBeRemoved).length
             ? <EmptyRecords
               iconType="plus"
               message={formatMessage(messages.contentSection7EmptyTitle)}

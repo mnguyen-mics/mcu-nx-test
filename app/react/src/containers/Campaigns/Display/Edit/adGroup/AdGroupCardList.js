@@ -43,7 +43,7 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
 
                 <div className="button-separator" />
 
-                <ButtonStyleless >
+                <ButtonStyleless>
                   <McsIcons
                     className="button"
                     onClick={updateTableFieldStatus({ index, tableName: 'ads' })}
@@ -58,10 +58,13 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
     }
   });
 
-  const cards = data.map((card, index) => ({
-    id: card.id,
-    view: <CreativeCard key={card.id} item={card} {...cardContent(index)} />
-  }));
+  const cards = data
+    .map((card, index) => ({
+      id: card.id,
+      toBeRemoved: card.toBeRemoved,
+      view: <CreativeCard key={card.id} item={card} {...cardContent(index)} />
+    }))
+    .filter(card => !card.toBeRemoved);
 
   return (
     <Row className="mcs-table-card">
@@ -70,7 +73,8 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
           <Col key={card.id} span={6}>
             <div className="adGroupCard">{ card.view }</div>
           </Col>
-        ))}
+          )
+        )}
       </Row>
     </Row>
   );

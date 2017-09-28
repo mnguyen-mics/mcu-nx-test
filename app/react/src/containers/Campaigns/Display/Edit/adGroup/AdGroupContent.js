@@ -78,8 +78,12 @@ class AdGroupContent extends Component {
       media: messages.sectionTitle5,
       optimization: messages.sectionTitle6,
       ads: messages.sectionTitle7,
-      summary: messages.sectionTitle8,
     };
+
+    sidebarItems = (editionMode
+      ? { summary: messages.sectionTitle8, ...sidebarItems }
+      : { ...sidebarItems, summary: messages.sectionTitle8 }
+    );
 
     const buttonMetadata = {
       formId,
