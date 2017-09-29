@@ -27,7 +27,7 @@ define(['./module'], function (module) {
             if(Session.getUserProfile()) {
               errorReport.user_id = Session.getUserProfile().id;
             }
-            // errorReport.current_datamart_id = Session.getCurrentWorkspace().datamart_id;
+            errorReport.current_datamart_id = Session.getCurrentWorkspace().datamart_id;
 
             // console.error("TRACEKIT REPORT", JSON.stringify(errorReport));
             $.ajax("/log_errors.html", {data: errorReport});
