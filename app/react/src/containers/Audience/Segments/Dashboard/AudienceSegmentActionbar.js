@@ -122,7 +122,6 @@ AudienceSegmentActionbar.propTypes = {
   defaultDatamart: PropTypes.func.isRequired,
   segment: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   overlapView: PropTypes.shape({
-    date: PropTypes.number.isRequired,
     data: PropTypes.arrayOf(PropTypes.object)
   }).isRequired,
   segmentData: PropTypes.arrayOf(PropTypes.object).isRequired,
