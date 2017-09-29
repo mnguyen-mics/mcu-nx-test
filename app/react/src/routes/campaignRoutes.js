@@ -14,6 +14,10 @@ import {
 } from '../containers/Campaigns/Display/Edit';
 
 import {
+  CreateCampaignPage,
+} from '../containers/Campaigns/Display/Edit/Campaign';
+
+import {
   CreateEmailPage,
   EditEmailPage,
   CreateBlastPage,
@@ -40,6 +44,16 @@ const campaignsRoutes = [
     layout: 'main',
     contentComponent: DisplayCampaignsTable,
     actionBarComponent: DisplayCampaignsActionbar,
+  },
+  {
+    path: '/campaigns/display/create',
+    layout: 'edit',
+    editComponent: CreateCampaignPage,
+  },
+  {
+    path: '/campaigns/display/:campaignId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: CreateCampaignPage,
   },
   {
     path: '/campaigns/display/:campaignId(\\d+)',

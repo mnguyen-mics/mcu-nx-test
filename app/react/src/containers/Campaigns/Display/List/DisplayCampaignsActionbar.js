@@ -154,11 +154,12 @@ class DisplayCampaignsActionbar extends Component {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Dropdown overlay={newCampaignMenu} trigger={['click']}>
-          <Button className="mcs-primary" type="primary">
+        <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
+          <Button className="mcs-primary" type="primary" >
             <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
-        </Dropdown>
+        </Link>
+
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           { !exportIsRunning && <McsIcons type="download" /> }
           <FormattedMessage id="EXPORT" />
