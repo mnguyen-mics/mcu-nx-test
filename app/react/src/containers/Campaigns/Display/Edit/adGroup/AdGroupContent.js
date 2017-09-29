@@ -43,7 +43,10 @@ class AdGroupContent extends Component {
         name: this.state.campaignName,
         url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
       },
-      { name: formatMessage(messages.breadcrumbTitle2) },
+      { name: (editionMode
+        ? initialValues.adGroupName
+        : formatMessage(messages.breadcrumbTitle2))
+      },
     ];
 
     const sidebarItems = {

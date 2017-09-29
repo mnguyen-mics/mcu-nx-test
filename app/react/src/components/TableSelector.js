@@ -102,9 +102,9 @@ class TableSelector extends Component {
     );
 
     return this.props.fetchSelectorData(filterOptions)
-      .then((results) => {
-        const allElementIds = results.map(element => element.id);
-        const elementsById = normalizeArrayOfObject(results, 'id');
+      .then(({ data, total }) => {
+        const allElementIds = data.map(element => element.id);
+        const elementsById = normalizeArrayOfObject(data, 'id');
 
         this.setState(prevState => {
           const selectedElementsById = {
@@ -122,11 +122,11 @@ class TableSelector extends Component {
             elementsById,
             selectedElementsById,
             isLoading: false,
-            total: results.length
+            total,
           };
         });
 
-        return results;
+        return data;
       });
   }
 
@@ -163,7 +163,7 @@ class TableSelector extends Component {
   }
 
   render() {
-    const { close, displayFiltering } = this.props;
+    const { actionBarTitle, close, displayFiltering } = this.props;
     const {
       elementsById,
       allElementIds,
@@ -192,7 +192,7 @@ class TableSelector extends Component {
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <Actionbar path={[{ name: 'Add an existing template' }]} edition>
+          <Actionbar path={[{ name: actionBarTitle }]} edition>
             <Button type="primary mcs-primary" onClick={this.handleAdd}>
               <McsIcons type="plus" /><span>Add</span>
             </Button>
@@ -226,12 +226,14 @@ class TableSelector extends Component {
 }
 
 TableSelector.defaultProps = {
+  actionBarTitle: 'Add an existing template',
   displayFiltering: false,
   selectedIds: [],
   singleSelection: false,
 };
 
 TableSelector.propTypes = {
+  actionBarTitle: PropTypes.string,
   close: PropTypes.func.isRequired,
   columnsDefinitions: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
   displayFiltering: PropTypes.bool,

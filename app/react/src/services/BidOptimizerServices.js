@@ -22,19 +22,22 @@ function getBidOptimizerProperties({ bidOptimizers, selectedIds }) {
 function getAllBidOptimizers({ organisationId }) {
   const endpoint = `bid_optimizers?organisation_id=${organisationId}`;
 
-  return ApiService.getRequest(endpoint)
-    .then(res => res.data);
+  return ApiService.getRequest(endpoint);
 }
 
 function getBidOptimizers({ organisationId, selectedIds, getAll }) {
+  /* getAllBidOptimizers fetches for us some optimizer metadata. */
   return getAllBidOptimizers({ organisationId })
-    .then((bidOptimizers) => {
+  /* However, we need more, why is why we make a second call via getBidOptimizerProperties. */
+    .then(({ data, ...rest }) => {
+      /* We can fetch either all or selected optimizers thanks to the "getAll" boolean. */
       const reqParams = (getAll
-        ? { bidOptimizers, selectedIds }
-        : { bidOptimizers: bidOptimizers.filter(bidOptimizer => selectedIds.includes(bidOptimizer.id)) }
+        ? { bidOptimizers: data, selectedIds }
+        : { bidOptimizers: data.filter(bidOptimizer => selectedIds.includes(bidOptimizer.id)) }
       );
 
-      return getBidOptimizerProperties(reqParams);
+      return getBidOptimizerProperties(reqParams)
+        .then((results) => ({ data: results, ...rest }));
     });
 }
 

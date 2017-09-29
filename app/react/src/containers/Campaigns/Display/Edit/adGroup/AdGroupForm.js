@@ -33,7 +33,6 @@ import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as actions from '../../../../../state/Notifications/actions';
-import messages from '../messages';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
@@ -76,15 +75,8 @@ class AdGroupForm extends Component {
     const {
       editionMode,
       formValues,
-      intl: { formatMessage },
       match: { params: { adGroupId, campaignId } },
     } = this.props;
-
-    const formatBudgetPeriod = {
-      [formatMessage(messages.contentSection1Row2OptionDAY)]: 'DAY',
-      [formatMessage(messages.contentSection1Row2OptionWEEK)]: 'WEEK',
-      [formatMessage(messages.contentSection1Row2OptionMONTH)]: 'MONTH',
-    };
 
     let bidOptimizer = null;
     if (formValues.optimizerTable && formValues.optimizerTable.length) {
@@ -95,7 +87,7 @@ class AdGroupForm extends Component {
       bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
       end_date: formValues.adGroupEndDate.valueOf(),
       max_budget_per_period: formValues.adGroupMaxBudgetPerPeriod,
-      max_budget_period: formatBudgetPeriod[formValues.adGroupMaxBudgetPeriod],
+      max_budget_period: formValues.adGroupMaxBudgetPeriod,
       name: formValues.adGroupName,
       start_date: formValues.adGroupStartDate.valueOf(),
       technical_name: formValues.adGroupTechnicalName,

@@ -24,7 +24,7 @@ const getSegment = (segmentId, options = {}) => {
     ...options,
   };
 
-  return ApiService.getRequest(endpoint, params).then(res => { return res.data; });
+  return ApiService.getRequest(endpoint, params).then(res => res.data);
 };
 
 const getSegmentMetaData = (organisationId) => {
@@ -42,12 +42,15 @@ const getSegmentMetaData = (organisationId) => {
 
 const getSegmentsWithMetadata = (organisationId, datamartId, options = {}) => {
   return getSegments(organisationId, datamartId, options)
-    .then(segments => getSegmentMetaData(organisationId)
-        .then(metadata => segments.data.map(segment => {
+    .then(({ data, ...rest }) => getSegmentMetaData(organisationId)
+      .then(metadata => ({
+        ...rest,
+        data: data.map(segment => {
           const { desktop_cookie_ids, user_points } = metadata[segment.id];
 
           return { ...segment, user_points, desktop_cookie_ids };
-        }))
+        })
+      }))
     );
 };
 

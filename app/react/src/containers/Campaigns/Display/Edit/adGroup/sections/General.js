@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Row } from 'antd';
-import { Field, getFormValues } from 'redux-form';
+import { Field } from 'redux-form';
 
 import messages from '../../messages';
 import { ButtonStyleless, Form, McsIcons } from '../../../../../../components';
@@ -30,6 +29,8 @@ class General extends Component {
       formatMessage,
       formValues,
     } = this.props;
+
+    console.log('formValues = ', formValues);
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
@@ -83,9 +84,9 @@ class General extends Component {
                     component={FormSelectAddon}
                     props={{
                       options: [
-                        formatMessage(messages.contentSection1Row2OptionDAY),
-                        formatMessage(messages.contentSection1Row2OptionWEEK),
-                        formatMessage(messages.contentSection1Row2OptionMONTH),
+                        { key: 'DAY', text: formatMessage(messages.contentSection1Row2OptionDAY) },
+                        { key: 'WEEK', text: formatMessage(messages.contentSection1Row2OptionWEEK) },
+                        { key: 'MONTH', text: formatMessage(messages.contentSection1Row2OptionMONTH) },
                       ],
                     }}
                   />
@@ -163,7 +164,7 @@ class General extends Component {
 
         <div>
           <ButtonStyleless
-            className="optional-section-title"
+            className="optional-section-title clickable-on-hover"
             onClick={this.displayAdvancedSection}
           >
             <McsIcons type="settings" />

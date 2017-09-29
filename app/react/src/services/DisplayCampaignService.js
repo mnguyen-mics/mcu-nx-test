@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import ApiService from './ApiService';
-import { filterEmptyValues, formatKeysToPascalCase } from '../utils/ReduxFormHelper';
+import { filterEmptyValues } from '../utils/ReduxFormHelper';
 
 /* CAMPAIGN SERVICES */
 function getCampaignDisplay(campaignId, params = '') {
@@ -10,8 +10,7 @@ function getCampaignDisplay(campaignId, params = '') {
 }
 
 function getCampaignName(campaignId) {
-  const endpoint = `display_campaigns/${campaignId}`;
-  return ApiService.getRequest(endpoint).then(res => res.data.name);
+  return getCampaignDisplay(campaignId).then(res => res.data.name);
 }
 
 function updateCampaign(campaignId, body) {
@@ -23,35 +22,19 @@ function updateCampaign(campaignId, body) {
 function getAdGroup(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
   return ApiService.getRequest(endpoint)
-    .then(results => {
-      const { data } = results;
+    .then(({ data }) => (
+      filterEmptyValues(data).reduce((acc, key) => {
+        let value = data[key];
 
-      const neededKeys = [
-        'bid_optimizer_id',
-        'end_date',
-        'max_budget_per_period',
-        'max_budget_period',
-        'name',
-        'start_date',
-        'technical_name',
-        'total_budget',
-      ];
+        if (key === 'start_date') {
+          value = moment(value);
+        } else if (key === 'end_date') {
+          value = moment(value);
+        }
 
-      const filteredData = filterEmptyValues({ data, neededKeys })
-        .reduce((acc, key) => {
-          let value = data[key];
-
-          if (key === 'start_date') {
-            value = moment(value);
-          } else if (key === 'end_date') {
-            value = moment(value);
-          }
-
-          return { ...acc, [key]: value };
-        }, {});
-
-      return formatKeysToPascalCase({ data: filteredData, prefix: 'adGroup' });
-    });
+        return { ...acc, [key]: value };
+      }, {})
+    ));
 }
 
 function createAdGroup(campaignId, body) {

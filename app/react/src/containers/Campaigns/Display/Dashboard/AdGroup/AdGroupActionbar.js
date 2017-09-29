@@ -109,7 +109,7 @@ class AdGroupActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
-        <Link to={`/${organisationId}/campaigns/display/edit/${campaignId}/adgroup/${adGroupId}`}>
+        <Link to={`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`}>
           <Button>
             <Icon type="edit" />
             <FormattedMessage {...messages.editAdGroup} />

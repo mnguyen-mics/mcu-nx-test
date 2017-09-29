@@ -5,12 +5,11 @@ import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form, TableSelector } from '../../../../../../components';
+import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components';
 import messages from '../../messages';
 import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
 import { getDefaultDatamart } from '../../../../../../state/Session/selectors';
 import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
-import AdGroupTable from '../AdGroupTable';
 import { formatMetric } from '../../../../../../utils/MetricHelper';
 
 const { FormSection } = Form;
@@ -19,7 +18,7 @@ class Audience extends Component {
 
   state = { loading: false }
 
-  getAudiences = (filterOptions) => {
+  getAudience = (filterOptions) => {
     const { organisationId, defaultDatamart } = this.props;
     const { currentPage, keywords, pageSize } = filterOptions;
     const datamartId = defaultDatamart(organisationId).id;
@@ -58,10 +57,11 @@ class Audience extends Component {
     ];
 
     const additionalProps = {
+      actionBarTitle: 'Add an Audience',
       close: handlers.closeNextDrawer,
       columnsDefinitions,
       displayFiltering: true,
-      fetchSelectorData: this.getAudiences,
+      fetchSelectorData: this.getAudience,
       save: this.updateData,
       selectedIds,
     };
@@ -141,7 +141,7 @@ class Audience extends Component {
 
         <Row>
           <FieldArray
-            component={AdGroupTable}
+            component={RelatedRecordTable}
             dataSource={dataSource}
             loading={this.state.loading}
             name="audienceTable"

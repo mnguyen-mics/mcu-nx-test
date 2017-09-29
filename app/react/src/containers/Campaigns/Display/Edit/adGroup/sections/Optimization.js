@@ -3,8 +3,7 @@ import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form, TableSelector } from '../../../../../../components';
-import AdGroupTable from '../AdGroupTable';
+import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components';
 import BidOptimizerServices from '../../../../../../services/BidOptimizerServices';
 
 import messages from '../../messages';
@@ -23,7 +22,6 @@ class Optimization extends Component {
       organisationId: this.props.organisationId,
       selectedIds: newSelectedIds || prevSelectedIds,
     });
-
   }
 
   getSelectedIds = () => {
@@ -49,6 +47,7 @@ class Optimization extends Component {
     ];
 
     const additionalProps = {
+      actionBarTitle: 'Add a Bid Optimizer',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
       fetchSelectorData: this.getBidOptimizers({ getAll: true }),
@@ -67,8 +66,8 @@ class Optimization extends Component {
     handlers.closeNextDrawer();
 
     this.getBidOptimizers({ newSelectedIds })()
-      .then((optimizers) => {
-        const newFields = optimizers.reduce((acc, optimizer) => {
+      .then(({ data }) => {
+        const newFields = data.reduce((acc, optimizer) => {
           return (newSelectedIds.includes(optimizer.id)
             ? [...acc, optimizer]
             : acc
@@ -118,7 +117,7 @@ class Optimization extends Component {
 
         <Row>
           <FieldArray
-            component={AdGroupTable}
+            component={RelatedRecordTable}
             dataSource={dataSource}
             loading={this.state.loading}
             name="optimizerTable"

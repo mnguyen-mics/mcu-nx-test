@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
+import { camelCase } from 'lodash';
 
 import withDrawer from '../../../../../components/Drawer';
 import AdGroupContent from './AdGroupContent';
 import { LoadingChart } from '../../../../../components/EmptyCharts';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import messages from '../messages';
 
 import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -40,9 +40,9 @@ class EditAdGroupPage extends Component {
 
         return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroupBidOptimizerId] });
       })
-      .then((optimizerTable) => {
+      .then(({ data }) => {
         this.setState({
-          initialValues: { ...this.state.initialValues, optimizerTable },
+          initialValues: { ...this.state.initialValues, optimizerTable: data },
           loading: false,
         });
       });
@@ -50,18 +50,11 @@ class EditAdGroupPage extends Component {
 
   getGeneralInfo({ campaignId, adGroupId }) {
     return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
-      .then((results) => {
-        if (!results.adGroupMaxBudgetPeriod) {
-          return results;
-        }
-
-        return {
-          ...results,
-          adGroupMaxBudgetPeriod: this.props.intl.formatMessage(
-            messages[`contentSection1Row2Option${results.adGroupMaxBudgetPeriod}`]
-          ),
-        };
-      });
+      .then((results) => Object.keys(results).reduce((acc, key) => ({
+        ...acc,
+        [camelCase(`adGroup-${key}`)]: results[key]
+      }), {})
+      );
   }
 
   getPublishers({ campaignId }) {

@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
-import { ButtonStyleless, Form, McsIcons } from '../../../../../components';
-import generateGuid from '../../../../../utils/generateGuid';
+import ButtonStyleless from './ButtonStyleless';
+import { SwitchInput } from './Form';
+import McsIcons from './McsIcons';
+import generateGuid from '../utils/generateGuid';
 
-const { SwitchInput } = Form;
-function AdGroupTable({ dataSource, loading, tableName, updateTableFieldStatus }) {
+function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldStatus }) {
   const columns = [
     {
       colSpan: 8,
@@ -92,7 +93,7 @@ function AdGroupTable({ dataSource, loading, tableName, updateTableFieldStatus }
   const tableStyle = (dataSource.length || loading ? 'border-style' : 'hide-section');
 
   return (
-    <div className="adGroup-table testeu">
+    <div className="adGroup-table">
       <Table
         className={tableStyle}
         columns={columns}
@@ -105,16 +106,16 @@ function AdGroupTable({ dataSource, loading, tableName, updateTableFieldStatus }
   );
 }
 
-AdGroupTable.defaultProps = {
+RelatedRecordTable.defaultProps = {
   loading: false,
 };
 
 
-AdGroupTable.propTypes = {
+RelatedRecordTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   loading: PropTypes.bool,
   tableName: PropTypes.string.isRequired,
   updateTableFieldStatus: PropTypes.func.isRequired,
 };
 
-export default AdGroupTable;
+export default RelatedRecordTable;

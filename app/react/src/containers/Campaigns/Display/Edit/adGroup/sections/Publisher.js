@@ -3,8 +3,7 @@ import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form, TableSelector } from '../../../../../../components';
-import AdGroupTable from '../AdGroupTable';
+import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components';
 import DisplayNetworkServices from '../../../../../../services/DisplayNetworkServices';
 import messages from '../../messages';
 
@@ -32,6 +31,7 @@ class Publisher extends Component {
     ];
 
     const additionalProps = {
+      actionBarTitle: 'Add a Publisher',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
       fetchSelectorData: this.getAllPublishers,
@@ -49,8 +49,8 @@ class Publisher extends Component {
     handlers.closeNextDrawer();
 
     this.getAllPublishers()
-      .then((publishers) => {
-        const newFields = publishers.reduce((acc, publisher) => {
+      .then(({ data }) => {
+        const newFields = data.reduce((acc, publisher) => {
           return (selectedIds.includes(publisher.id)
             ? [...acc, publisher]
             : acc
@@ -101,7 +101,7 @@ class Publisher extends Component {
 
         <Row>
           <FieldArray
-            component={AdGroupTable}
+            component={RelatedRecordTable}
             dataSource={dataSource}
             loading={this.state.loading}
             name="publisherTable"

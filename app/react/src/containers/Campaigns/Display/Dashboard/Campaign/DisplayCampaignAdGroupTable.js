@@ -23,9 +23,7 @@ class DisplayCampaignAdGroupTable extends Component {
       history,
     } = this.props;
 
-    const editUrl = `${campaignId}/adgroups/edit/${adgroup.id}`;
-
-    history.push(editUrl);
+    history.push(`${campaignId}/adgroups/edit/${adgroup.id}`);
   }
 
   render() {
@@ -91,7 +89,6 @@ class DisplayCampaignAdGroupTable extends Component {
         });
     };
 
-
     const dataColumns = [
       {
         translationKey: 'STATUS',
@@ -116,7 +113,7 @@ class DisplayCampaignAdGroupTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${record.id}`}
+            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${record.id}`}
           >{text}
           </Link>
         ),
