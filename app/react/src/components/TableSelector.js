@@ -24,13 +24,14 @@ class TableSelector extends Component {
   };
 
   componentDidMount() {
-    this.populateTable().then(response => {
-      if (response.length === 0) {
-        this.setState({
-          noElement: true,
-        });
-      }
-    });
+    this.populateTable(this.props.selectedIds)
+      .then(response => {
+        if (response.length === 0) {
+          this.setState({
+            noElement: true,
+          });
+        }
+      });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -38,6 +39,7 @@ class TableSelector extends Component {
       currentPage,
       pageSize,
       keywords,
+      selectedElementsById,
     } = this.state;
     const {
       currentPage: prevCurrentPage,
@@ -46,7 +48,7 @@ class TableSelector extends Component {
     } = prevState;
 
     if (currentPage !== prevCurrentPage || pageSize !== prevPageSize || keywords !== prevKeywords) {
-      this.populateTable();
+      this.populateTable(Object.keys(selectedElementsById));
     }
   }
 
@@ -72,11 +74,11 @@ class TableSelector extends Component {
     };
   }
 
-  getSearchOptions() {
+  getSearchOptions = () => {
     return {
       isEnabled: true,
       placeholder: 'Search a template',
-      onSearch: value => {
+      onSearch: (value) => {
         this.setState({
           keywords: value,
         });
@@ -92,8 +94,8 @@ class TableSelector extends Component {
     save(selectedElements);
   }
 
-  populateTable = () => {
-    const { displayFiltering, selectedIds } = this.props;
+  populateTable = (selectedIds) => {
+    const { displayFiltering } = this.props;
     const { currentPage, keywords, pageSize } = this.state;
 
     const filterOptions = (displayFiltering

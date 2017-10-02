@@ -30,8 +30,6 @@ class General extends Component {
       formValues,
     } = this.props;
 
-    console.log('formValues = ', formValues);
-
     const fieldGridConfig = {
       labelCol: { span: 3 },
       wrapperCol: { span: 10, offset: 1 },

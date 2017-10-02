@@ -25,7 +25,7 @@ class Audience extends Component {
     const params = { ...getPaginatedApiParam(currentPage, pageSize) };
 
     if (keywords) {
-      params.keywords = keywords;
+      params.name = keywords;
     }
 
     return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, params);

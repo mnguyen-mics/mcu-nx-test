@@ -33,6 +33,7 @@ import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as actions from '../../../../../state/Notifications/actions';
+import { unformatMetric } from '../../../../../utils/MetricHelper';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
@@ -86,12 +87,12 @@ class AdGroupForm extends Component {
     const body = {
       bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
       end_date: formValues.adGroupEndDate.valueOf(),
-      max_budget_per_period: formValues.adGroupMaxBudgetPerPeriod,
+      max_budget_per_period: unformatMetric(formValues.adGroupMaxBudgetPerPeriod),
       max_budget_period: formValues.adGroupMaxBudgetPeriod,
       name: formValues.adGroupName,
       start_date: formValues.adGroupStartDate.valueOf(),
       technical_name: formValues.adGroupTechnicalName,
-      total_budget: formValues.adGroupTotalBudget,
+      total_budget: unformatMetric(formValues.adGroupTotalBudget),
     };
 
     const request = (!editionMode
@@ -99,7 +100,7 @@ class AdGroupForm extends Component {
       : DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body)
     );
 
-    return request.then((result) => result.data.id);
+    return request.then(result => result.data.id);
   }
 
   saveAudience = (adGroupId) => {

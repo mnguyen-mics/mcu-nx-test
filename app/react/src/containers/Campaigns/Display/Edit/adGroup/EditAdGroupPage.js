@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-import { injectIntl, intlShape } from 'react-intl';
 import { camelCase } from 'lodash';
 
 import withDrawer from '../../../../../components/Drawer';
@@ -95,7 +94,6 @@ class EditAdGroupPage extends Component {
 
 EditAdGroupPage.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
 };
@@ -103,5 +101,4 @@ EditAdGroupPage.propTypes = {
 export default compose(
   withMcsRouter,
   withDrawer,
-  injectIntl,
 )(EditAdGroupPage);

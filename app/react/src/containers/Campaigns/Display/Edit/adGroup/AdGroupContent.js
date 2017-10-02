@@ -79,7 +79,7 @@ class AdGroupContent extends Component {
           closeNextDrawer={this.props.closeNextDrawer}
           editionMode={editionMode}
           formId={formId}
-          initialValues={{ adGroupMaxBudgetPeriod: 'Per Day', ...initialValues }}
+          initialValues={{ adGroupMaxBudgetPeriod: 'DAY', ...initialValues }}
           openNextDrawer={this.props.openNextDrawer}
         />
       </EditContentLayout>
