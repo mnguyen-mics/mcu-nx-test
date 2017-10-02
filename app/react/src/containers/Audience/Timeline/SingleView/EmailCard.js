@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Row, Tooltip, Modal, Col, Button } from 'antd';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import moment from 'moment';
-import { Card } from '../../../../components/Card';
-import McsIcons from '../../../../components/McsIcons';
-import { TableView } from '../../../../components/TableView';
+import { Card } from '../../../../components/Card/index.ts';
+import McsIcons from '../../../../components/McsIcons.tsx';
+import { TableView } from '../../../../components/TableView/index.ts';
 import messages from '../messages';
 
 class EmailCard extends Component {

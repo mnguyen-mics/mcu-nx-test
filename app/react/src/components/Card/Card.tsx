@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { Row, Col, Spin } from 'antd';
 
 interface CardProps {
-  buttons?: any;
+  buttons: JSX.Element;
   title?: string;
   isLoading?: boolean;
-  children?: any;
 }
 
-const Card: React.SFC<CardProps> = props => {
+const Card: React.SFC<CardProps> = (props) => {
+  const { title, buttons, isLoading, children } = props;
   return (
     <Row className="mcs-card-container">
       { (props.title || props.buttons)
@@ -26,7 +26,7 @@ const Card: React.SFC<CardProps> = props => {
           <Col span={24} className="text-center">
             <Spin />
           </Col>
-        ) : props.children}
+        ) : children}
       </Row>
     </Row>
   );

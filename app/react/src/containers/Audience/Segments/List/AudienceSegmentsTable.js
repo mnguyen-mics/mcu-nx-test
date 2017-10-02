@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import {
   TableViewFilters,
   EmptyTableView,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';

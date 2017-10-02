@@ -6,8 +6,8 @@ import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { EmptyTableView, TableViewFilters } from '../../../../components/TableView';
-import McsIcons from '../../../../components/McsIcons';
+import { EmptyTableView, TableViewFilters } from '../../../../components/TableView/index.ts';
+import McsIcons from '../../../../components/McsIcons.tsx';
 
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 

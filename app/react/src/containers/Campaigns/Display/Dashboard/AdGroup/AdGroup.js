@@ -9,8 +9,8 @@ import AdGroupHeader from '../Common/DisplayCampaignHeader';
 import AdGroupAdTable from '../Common/DisplayCampaignAdTable';
 import AdGroupsDashboard from './AdGroupsDashboard';
 import AdGroupActionbar from './AdGroupActionbar';
-import { Card } from '../../../../../components/Card';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import { Card } from '../../../../../components/Card/index.ts';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';

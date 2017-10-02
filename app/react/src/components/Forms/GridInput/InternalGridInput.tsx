@@ -4,20 +4,20 @@ import { Input } from 'antd';
 
 interface InternalGridInputProps {
   input?: {};
-  meta: {};
-  error: any;
-  touched: any;
+  meta: {
+    error?: any;
+    touched?: any;
+  };
   className: string;
-  other: any;
-  classValue: string;
+  other:any;
 }
 
-const InternalGridInput: React.SFC<InternalGridInputProps> = props => {
+const InternalGridInput: React.SFC<InternalGridInputProps> = (props) => {
 
-  const classValue = (props.touched && props.error) ? 'mics-gridinput-input-error' : props.className;
+  const classValue = (props.meta.touched && props.meta.error) ? 'mics-gridinput-input-error' : props.className;
 
   return (
-    <div> <Input {...props.input} className={props.classValue} type="text" {...props.other} /> </div>
+    <div> <Input {...props.input} className={classValue} type="text" {...props.other} /> </div>
   );
 }
 

@@ -9,19 +9,19 @@ interface FormTitleProps {
 }
 
 
-const FormTitle: React.SFC<FormTitleProps> = props => {
+const FormTitle: React.SFC<FormTitleProps> = ({ titleMessage, subTitleMessage}) => {
 
   return (
     <div className="title-container">
       <div className="title">
       <FormattedMessage
-        {...props.titleMessage}
+        {...titleMessage}
       />
       </div>
-      {!!props.subTitleMessage &&
+      {!!subTitleMessage &&
         <div className="subtitle">
         <FormattedMessage
-          {...props.subTitleMessage}
+          {...subTitleMessage}
         />
         </div>
       }

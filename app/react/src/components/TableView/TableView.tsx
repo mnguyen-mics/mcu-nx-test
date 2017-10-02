@@ -84,7 +84,12 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       return visibilitySelectedColumnsValues.push(column.value);
     }) : null;
 
-    const dataColumns = dataColumnsDefinition.filter(column => !column.isHideable || visibilitySelectedColumnsValues.includes(column.key)).map(dataColumn => {
+    const dataColumns = dataColumnsDefinition.filter(column => {
+      if (visibilitySelectedColumnsValues.length >= 1) {
+        return !column.isHideable || visibilitySelectedColumnsValues.includes(column.key);
+      }
+      return column;
+    }).map(dataColumn => {
       return Object.assign(
         {},
         isValidFormattedMessageProps(dataColumn.intlMessage)

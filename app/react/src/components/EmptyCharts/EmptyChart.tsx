@@ -9,15 +9,15 @@ interface EmptyChartsProps {
   icon?: string;
 }
 
-const EmptyCharts: React.SFC<EmptyChartsProps> = props => {
+const EmptyCharts: React.SFC<EmptyChartsProps> = ({ title, icon }) => {
 
   return (
     <Row className="mcs-card-no-data">
       <Col span={24} className="">
-        <McsIcons type={props.icon} />
+        <McsIcons type={icon} />
       </Col>
       <Col span={24} className="">
-        {props.title}
+        {title}
       </Col>
     </Row>
   );

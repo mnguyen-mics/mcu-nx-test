@@ -1,6 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Select, Tooltip, Row, Col } from 'antd';
+import { TooltipPlacement } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
 
 import McsIcons from '../../components/McsIcons';
@@ -33,7 +34,7 @@ interface FormSelectProps {
   }];
   helpToolTipProps: {
     title?: string;
-    placement?: 'top' | 'left' | 'right' | 'bottom' | 'topLeft'| 'topRight' | 'bottomLeft'| 'bottomRight' | 'leftTop' | 'leftBottom'| 'rightTop' | 'rightBottom';
+    placement?: TooltipPlacement;
   };
   value?: string;
   otherInputProps?: any;

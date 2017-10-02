@@ -20,13 +20,13 @@ interface OverlapTooltipProps {
   }
 }
 
-const OverlapTooltip: React.SFC<OverlapTooltipProps> = props => {
+const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
 
-  if (!props.content) {
+  if (!content) {
     return <div />;
   }
 
-  const { overlap, segment_initial, segment_overlaping } = props.content;
+  const { overlap, segment_initial, segment_overlaping } = content;
   const rmax = 30;
   const strokeWidth = 1;
   const o = overlap.population;

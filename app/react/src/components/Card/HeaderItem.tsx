@@ -13,14 +13,14 @@ interface HeaderItemProps {
   };
 }
 
-const HeaderItem: React.SFC<HeaderItemProps> = props => {
+const HeaderItem: React.SFC<HeaderItemProps> = ({className, data}) => {
   return (
-    <Col span={6} className={props.className}>
-      <McsIcons type={props.data.iconType} />
+    <Col span={6} className={className}>
+      <McsIcons type={data.iconType} />
       <div className="title" >
-        <FormattedMessage id={props.data.translationKey} />
+        <FormattedMessage id={data.translationKey} />
       </div>
-      <div className="number">{props.data.number}</div>
+      <div className="number">{data.number}</div>
     </Col>);
 };
 

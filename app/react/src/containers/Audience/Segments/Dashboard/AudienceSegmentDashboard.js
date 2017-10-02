@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { CardWithHeader } from '../../../../components/Card';
-import McsTabs from '../../../../components/McsTabs';
+import { CardWithHeader } from '../../../../components/Card/index.ts';
+import McsTabs from '../../../../components/McsTabs.tsx';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { formatMetric } from '../../../../utils/MetricHelper';
 

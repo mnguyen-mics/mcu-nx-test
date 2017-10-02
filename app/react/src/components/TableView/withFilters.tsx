@@ -23,7 +23,7 @@ interface ViewComponentWithFiltersProps {
     onChange?: (value: string) => any;
     disabled?: boolean;
     values?: any;
-    translations: {};
+    translations: object;
   };
   filtersOptions?: [{
     name: string;

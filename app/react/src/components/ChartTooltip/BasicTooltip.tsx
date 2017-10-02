@@ -13,13 +13,13 @@ interface BasicTooltipProps {
   };
 }
 
-const BasicTooltip: React.SFC<BasicTooltipProps> = props => {
+const BasicTooltip: React.SFC<BasicTooltipProps> = ({ content }) => {
 
   const buildStyle = (c) => ({ fill: c, r: 6 });
   let tooltipTableContent = [];
 
-  if (props.content) {
-    tooltipTableContent =props.content.entries.map((entry, index) => {
+  if (content) {
+    tooltipTableContent =content.entries.map((entry, index) => {
 
       return (
         <tr key={index.toString()}>
@@ -47,7 +47,7 @@ const BasicTooltip: React.SFC<BasicTooltipProps> = props => {
         <thead>
           <tr>
             <th colSpan={3}>
-              {props.content ? props.content.xLabel : ''}
+              {content ? content.xLabel : ''}
             </th>
           </tr>
         </thead>

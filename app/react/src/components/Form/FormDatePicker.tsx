@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Form, DatePicker, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 import McsIcons from '../../components/McsIcons';
+import { TooltipPlacement } from 'antd/lib/tooltip';
 
 
 interface FormDatePickerProps {
@@ -27,7 +28,7 @@ interface FormDatePickerProps {
   };
   helpToolTipProps: {
     title?: string;
-    placement?: 'top' | 'left' | 'right' | 'bottom' | 'topLeft'| 'topRight' | 'bottomLeft'| 'bottomRight' | 'leftTop' | 'leftBottom'| 'rightTop' | 'rightBottom';
+    placement?: TooltipPlacement;
   };
   value?: string;
   otherInputProps?: any;

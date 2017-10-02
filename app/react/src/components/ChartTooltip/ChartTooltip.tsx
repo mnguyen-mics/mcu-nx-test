@@ -7,22 +7,21 @@ interface ChartTooltipProps {
     yTooltip: number,
     visibility: string,
   };
-  children: any;
 }
 
-const ChartTooltip: React.SFC<ChartTooltipProps> = props => {
+const ChartTooltip: React.SFC<ChartTooltipProps> = ({ tooltipStyle, children }) => {
 
   const style = {
-    left: props.tooltipStyle.xTooltip,
-    top: props.tooltipStyle.yTooltip,
-    visibility: props.tooltipStyle.visibility,
+    tooltipStyle: {
+    left: tooltipStyle.xTooltip,
+    top: tooltipStyle.yTooltip,
+    visibility: tooltipStyle.visibility,
     position: 'fixed',
+    }
   };
 
   return (
-    <div style={this.style}>
-      { props.children }
-    </div>
+    <div style={style}></div>
   );
 
 }

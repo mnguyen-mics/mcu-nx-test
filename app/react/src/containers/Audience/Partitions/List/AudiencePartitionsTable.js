@@ -5,7 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import lodash from 'lodash';
 
-import { TableViewFilters, EmptyTableView } from '../../../../components/TableView';
+import { TableViewFilters, EmptyTableView } from '../../../../components/TableView/index.ts';
 import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
 
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';

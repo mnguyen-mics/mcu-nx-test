@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 
-import McsTabs from '../../../../components/McsTabs';
-import { Card } from '../../../../components/Card';
+import McsTabs from '../../../../components/McsTabs.tsx';
+import { Card } from '../../../../components/Card/index.ts';
 import { EmailPieCharts, EmailStackedAreaChart } from './Charts';
 import { withTranslations } from '../../../Helpers';
 

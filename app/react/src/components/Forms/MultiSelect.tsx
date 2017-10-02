@@ -3,8 +3,8 @@ import { Icon, Dropdown, Menu, Button } from 'antd';
 
 interface MultiSelectProps {
   name: string;
-  displayElement: any;
-  onCloseMenu?: Function,
+  displayElement: JSX.Element;
+  onCloseMenu?: Function;
   // menuItems: {
   //   handleMenuClick?: any;
   //   selectedItems?: [{

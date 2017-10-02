@@ -8,7 +8,7 @@ import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import {
   TableViewFilters,
   EmptyTableView,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';

@@ -6,14 +6,10 @@ interface InternalSelectProps {
   input?: {
     onChange: Function;
   };
-  meta: {};
+  meta: object;
 }
 
-interface InternalSelectState {
-
-}
-
-class InternalSelect extends React.Component<InternalSelectProps, InternalSelectState> {
+class InternalSelect extends React.Component<InternalSelectProps> {
 
   static defaultProps = {
     defaultValue: undefined,

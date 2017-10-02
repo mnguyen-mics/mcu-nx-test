@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   MainLayout,
   EditLayout,
-} from './';
+} from './index.ts';
 
 import log from '../../utils/Logger';
 

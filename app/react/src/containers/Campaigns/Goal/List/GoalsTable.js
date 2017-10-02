@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   TableViewFilters,
   EmptyTableView,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 
