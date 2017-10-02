@@ -15,6 +15,7 @@ import {
 
 import {
   CreateCampaignPage,
+  EditCampaignPage,
 } from '../containers/Campaigns/Display/Edit/Campaign';
 
 import {
@@ -53,7 +54,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/display/:campaignId(\\d+)/edit',
     layout: 'edit',
-    editComponent: CreateCampaignPage,
+    editComponent: EditCampaignPage,
   },
   {
     path: '/campaigns/display/:campaignId(\\d+)',
