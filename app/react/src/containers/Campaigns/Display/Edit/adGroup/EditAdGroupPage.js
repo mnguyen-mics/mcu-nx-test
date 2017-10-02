@@ -5,7 +5,7 @@ import { camelCase } from 'lodash';
 
 import withDrawer from '../../../../../components/Drawer';
 import AdGroupContent from './AdGroupContent';
-import { Loading } from '../../../../../components';
+// import { Loading } from '../../../../../components';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
@@ -80,12 +80,12 @@ class EditAdGroupPage extends Component {
   }
 
   render() {
-    return (this.state.loading
-      ? <Loading className="loading-full-screen" />
-      : <AdGroupContent
+    return (
+      <AdGroupContent
         closeNextDrawer={this.props.closeNextDrawer}
         editionMode
         initialValues={this.state.initialValues}
+        loading={this.state.loading}
         openNextDrawer={this.props.openNextDrawer}
       />
     );

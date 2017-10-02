@@ -27,9 +27,8 @@ import {
 } from './sections';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withNormalizer, withValidators } from '../../../../../components/Form';
-import { LoadingChart } from '../../../../../components/EmptyCharts';
+import { Loading } from '../../../../../components';
 
-import * as SessionHelper from '../../../../../state/Session/selectors';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as actions from '../../../../../state/Notifications/actions';
@@ -202,18 +201,17 @@ class AdGroupForm extends Component {
   render() {
     const {
       closeNextDrawer,
+      displayAudience,
       fieldNormalizer,
       fieldValidators,
       formId: scrollLabelContentId,
       formValues,
       handleSubmit,
-      hasDatamarts,
       intl: { formatMessage },
       openNextDrawer,
       organisationId,
     } = this.props;
 
-    const displayAudience = hasDatamarts(organisationId);
     const commonProps = {
       fieldNormalizer,
       fieldValidators,
@@ -234,7 +232,7 @@ class AdGroupForm extends Component {
 
     return (
       <Layout>
-        {this.state.loading ? <LoadingChart /> : null}
+        {this.state.loading ? <Loading className="loading-full-screen" /> : null}
 
         <Form
           className={this.state.loading ? 'hide-section' : 'edit-layout ant-layout'}
@@ -272,6 +270,7 @@ class AdGroupForm extends Component {
 }
 
 AdGroupForm.defaultProps = {
+  displayAudience: false,
   editionMode: false,
   fieldValidators: {},
 };
@@ -281,6 +280,7 @@ AdGroupForm.propTypes = {
   arrayPush: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
+  displayAudience: PropTypes.bool,
   editionMode: PropTypes.bool,
   fieldNormalizer: PropTypes.shape().isRequired,
   fieldValidators: PropTypes.shape().isRequired,
@@ -288,7 +288,6 @@ AdGroupForm.propTypes = {
   formInitialValues: PropTypes.shape().isRequired,
   formValues: PropTypes.shape().isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  hasDatamarts: PropTypes.func.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
   match: PropTypes.shape().isRequired,
@@ -301,7 +300,6 @@ AdGroupForm.propTypes = {
 const mapStateToProps = (state) => ({
   formInitialValues: getFormInitialValues(FORM_NAME)(state),
   formValues: getFormValues(FORM_NAME)(state),
-  hasDatamarts: SessionHelper.hasDatamarts(state),
 });
 
 const mapDispatchToProps = {

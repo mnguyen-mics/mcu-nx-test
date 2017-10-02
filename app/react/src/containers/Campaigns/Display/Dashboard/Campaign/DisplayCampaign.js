@@ -84,7 +84,12 @@ class DisplayCampaign extends Component {
 
     const adGroupButtons = (
       <span>
-        <Link to={`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`}>
+        <Link
+          to={{
+            pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
+            state: { goBack: true },
+          }}
+        >
           <Button className="m-r-10" type="primary">
             <FormattedMessage {...messages.newAdGroups} />
           </Button>

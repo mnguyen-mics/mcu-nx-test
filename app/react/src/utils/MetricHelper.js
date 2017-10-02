@@ -9,7 +9,7 @@ export const formatMetric = (value, numeralFormat, prefix = '', suffix = '') => 
 
 export const unformatMetric = (value) => {
   return (value !== undefined
-    ? parseInt(value.toString().replace(/,/g, ''), 10)
+    ? parseInt(value.toString().replace(/[.,]/g, ''), 10)
     : 0
   );
 };
