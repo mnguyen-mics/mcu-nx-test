@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Breadcrumb } from 'antd';
 
 import { PathPropTypes } from '../../validators/proptypes';
-import McsIcons from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons.tsx';
 
 import generateGuid from '../../utils/generateGuid';
 

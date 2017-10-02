@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 
 import ExportService from '../../../../services/ExportService';
 import GoalService from '../../../../services/GoalService';

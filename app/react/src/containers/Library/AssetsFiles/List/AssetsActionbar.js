@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
 import { withTranslations } from '../../../Helpers';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 
 class AssetsActionbar extends Component {
 

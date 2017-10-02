@@ -7,7 +7,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import NotFound from '../../components/NotFound';
+import NotFound from '../../components/NotFound.tsx';
 import AuthService from '../../services/AuthService';
 import log from '../../utils/Logger';
 import { getWorkspace } from '../../state/Session/actions';

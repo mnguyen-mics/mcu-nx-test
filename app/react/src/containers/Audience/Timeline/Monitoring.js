@@ -6,7 +6,7 @@ import moment from 'moment';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Row, Col, Icon, Timeline, Layout, Spin } from 'antd';
 
-import McsIcons from '../../../components/McsIcons';
+import McsIcons from '../../../components/McsIcons.tsx';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
 import SegmentsCard from './SingleView/SegmentsCard';

@@ -5,8 +5,8 @@ import { injectIntl, intlShape } from 'react-intl';
 
 import messages from './messages';
 import EmailTemplateSelector from './EmailTemplateSelector';
-import { FormTitle } from '../../../../components/Form';
-import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import { FormTitle } from '../../../../components/Form/index.ts';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import CreativeService from '../../../../services/CreativeService';
 
 class EmailTemplateSelection extends Component {

@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import PieChart from '../../../../../components/PieChart';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';

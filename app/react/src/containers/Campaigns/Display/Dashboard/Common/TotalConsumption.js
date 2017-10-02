@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
-import Progress from '../../../../../components/Progress';
+import Progress from '../../../../../components/Progress.tsx';
 
 class TotalConsumption extends Component {
 

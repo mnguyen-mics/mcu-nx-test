@@ -6,9 +6,9 @@ import { Row, Col } from 'antd';
 import { injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import * as EmailCampaignActions from '../../../../../state/Campaign/Email/actions';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
