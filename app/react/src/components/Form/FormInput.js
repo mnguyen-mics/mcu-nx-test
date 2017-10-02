@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
-import { formatMetric } from '../../utils/MetricHelper';
 import McsIcons from '../../components/McsIcons';
 
 const defaultTooltipPlacement = 'right';
@@ -20,9 +19,7 @@ function FormInput({
   if (meta.touched && meta.invalid) validateStatus = 'error';
   if (meta.touched && meta.warning) validateStatus = 'warning';
 
-  const inputValue = (type === 'number' ? formatMetric(value, '0,0') : value);
   const displayHelpToolTip = !isEmpty(helpToolTipProps);
-
   const mergedTooltipProps = {
     placement: defaultTooltipPlacement,
     ...helpToolTipProps,
@@ -41,7 +38,7 @@ function FormInput({
             id={otherInput.name}
             {...otherInput}
             {...otherInputProps}
-            value={inputValue}
+            value={value}
           />
         </Col>
         {displayHelpToolTip &&

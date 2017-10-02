@@ -1,18 +1,32 @@
 import { compose, withProps } from 'recompose';
 
-const isNumber = (value, prevValue) => {
+import { formatMetric } from '../../utils/MetricHelper';
+
+function formatToNumber(value) {
+  return (value ? formatMetric(value) : 0);
+}
+
+function isNumber(value, prevValue) {
   const formattedValue = value.replace(/,/g, '');
 
   return (!value || (value && formattedValue.length < 16 && /^\d+$/.test(formattedValue, ''))
     ? value
     : prevValue
   );
-};
+}
+
+function normalizeNumber(value, prevValue) {
+  const number = isNumber(value, prevValue);
+
+  return (number === prevValue ? number : formatToNumber(value));
+}
 
 export default compose(
   withProps(() => ({
     fieldNormalizer: {
+      formatToNumber,
       isNumber,
+      normalizeNumber,
     },
   })),
 );

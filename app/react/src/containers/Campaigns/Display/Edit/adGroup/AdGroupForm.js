@@ -54,21 +54,27 @@ class AdGroupForm extends Component {
       match: { params: { campaignId, organisationId } },
     } = this.props;
 
-    this.setState({ loading: true });
 
-    return this.saveOrUpdateAdGroup()
-      .then((adGroupId) => Promise.all([
-        this.saveAudience(adGroupId),
-        this.savePublishers(adGroupId),
-      ]))
-      .then(() => {
-        this.setState({ loading: false });
-        history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
-      })
-      .catch(error => {
-        this.setState({ loading: false });
-        this.props.notifyError(error);
-      });
+    if (!this.props.pristine) {
+      this.setState({ loading: true });
+
+      return this.saveOrUpdateAdGroup()
+        .then((adGroupId) => Promise.all([
+          this.saveAudience(adGroupId),
+          this.savePublishers(adGroupId),
+        ]))
+        .then(() => {
+          this.setState({ loading: false });
+          history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
+        })
+        .catch(error => {
+          this.setState({ loading: false });
+          this.props.notifyError(error);
+        });
+    }
+
+    history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
+    return Promise.resolve();
   }
 
   saveOrUpdateAdGroup = () => {
@@ -273,6 +279,7 @@ AdGroupForm.defaultProps = {
   displayAudience: false,
   editionMode: false,
   fieldValidators: {},
+  pristine: true,
 };
 
 AdGroupForm.propTypes = {
@@ -293,6 +300,7 @@ AdGroupForm.propTypes = {
   match: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
+  pristine: PropTypes.bool,
   notifyError: PropTypes.func.isRequired,
 };
 

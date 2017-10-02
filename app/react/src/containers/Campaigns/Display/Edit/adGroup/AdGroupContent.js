@@ -14,6 +14,7 @@ import DisplayCampaignService from '../../../../../services/DisplayCampaignServi
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
 import { Loading } from '../../../../../components';
+import { formatMetric } from '../../../../../utils/MetricHelper';
 
 const formId = 'adGroupForm';
 
@@ -90,6 +91,13 @@ class AdGroupContent extends Component {
       )
     };
 
+    const formValues = {
+      adGroupMaxBudgetPeriod: 'DAY',
+      ...initialValues,
+      adGroupMaxBudgetPerPeriod: formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0'),
+      adGroupTotalBudget: formatMetric(initialValues.adGroupTotalBudget, '0,0'),
+    };
+
     return (
       <Layout>
         <Loading className={loading || submitting ? 'loading-full-screen' : 'hide-section'} />
@@ -106,7 +114,7 @@ class AdGroupContent extends Component {
               displayAudience={displayAudience}
               editionMode={editionMode}
               formId={formId}
-              initialValues={{ adGroupMaxBudgetPeriod: 'DAY', ...initialValues }}
+              initialValues={formValues}
               openNextDrawer={this.props.openNextDrawer}
             />
           </EditContentLayout>

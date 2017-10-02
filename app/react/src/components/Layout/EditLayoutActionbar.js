@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isPristine, isSubmitting, submit } from 'redux-form';
+import { isSubmitting, submit } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'antd';
 
@@ -18,13 +18,12 @@ function EditLayoutActionbar({
   formId,
   message,
   onClose,
-  pristine,
   submitting,
   ...rest,
  }) {
 
   const submitButtonProps = {
-    disabled: pristine || submitting,
+    disabled: submitting,
     htmlType: 'submit',
     onClick: () => dispatch(submit(formId)),
     type: 'primary',
@@ -68,7 +67,6 @@ EditLayoutActionbar.propTypes = {
   }).isRequired,
 
   onClose: PropTypes.func,
-  pristine: PropTypes.bool,
   submitting: PropTypes.bool,
 };
 
@@ -77,7 +75,6 @@ export default connect(
     /* For additional redux-form selectors, such as "pristine" or "form errors",
      * check http://redux-form.com/6.8.0/docs/api/Selectors.md/
      */
-    pristine: isPristine(ownProps.formId)(state),
     submitting: isSubmitting(ownProps.formId)(state),
   }),
 )(EditLayoutActionbar);
