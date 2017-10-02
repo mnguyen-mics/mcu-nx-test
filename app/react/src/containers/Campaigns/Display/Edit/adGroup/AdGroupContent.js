@@ -26,6 +26,7 @@ class AdGroupContent extends Component {
   render() {
     const {
     editionMode,
+    history,
     initialValues,
     intl: { formatMessage },
     match: {
@@ -65,7 +66,7 @@ class AdGroupContent extends Component {
     const buttonMetadata = {
       formId,
       message: messages.saveAdGroup,
-      onClose: () => {},
+      onClose: () => history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`),
     };
 
     return (
@@ -95,6 +96,7 @@ AdGroupContent.defaultProps = {
 AdGroupContent.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
   editionMode: PropTypes.bool,
+  history: ReactRouterPropTypes.history.isRequired,
   initialValues: PropTypes.shape(),
   intl: intlShape.isRequired,
   match: ReactRouterPropTypes.match.isRequired,

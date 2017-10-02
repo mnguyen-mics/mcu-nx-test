@@ -8,7 +8,10 @@ export const formatMetric = (value, numeralFormat, prefix = '', suffix = '') => 
 };
 
 export const unformatMetric = (value) => {
-  return (value !== undefined ? Number(value.replace(/,/g, '')) : 0);
+  return (value !== undefined
+    ? parseInt(value.toString().replace(/,/g, ''), 10)
+    : 0
+  );
 };
 
 /**

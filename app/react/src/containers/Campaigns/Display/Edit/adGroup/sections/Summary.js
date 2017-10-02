@@ -28,9 +28,9 @@ function Summary({ formatMessage, formValues }) {
 
   /* Format data */
   const formatPeriod = {
-    'Per Day': formatMessage(messages.contentSection8Part1Group6OptionDAY),
-    'Per Week': formatMessage(messages.contentSection8Part1Group6OptionWEEK),
-    'Per Month': formatMessage(messages.contentSection8Part1Group6OptionMONTH),
+    DAY: formatMessage(messages.contentSection8Part1Group6OptionDAY),
+    WEEK: formatMessage(messages.contentSection8Part1Group6OptionWEEK),
+    MONTH: formatMessage(messages.contentSection8Part1Group6OptionMONTH),
   };
 
   /* Data to display */
