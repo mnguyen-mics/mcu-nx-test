@@ -251,12 +251,13 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
   ];
 
   const technicalName = (campaign && campaign.technical_name) ? campaign.technical_name : null;
+  const title = '';
 
   const sheets = [
-    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle, technicalName),
-    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage, technicalName),
-    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage, technicalName),
-    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage, technicalName)
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle, title, technicalName),
+    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage, title, technicalName),
+    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage, title, technicalName),
+    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage, title, technicalName)
   ].filter(x => x);
 
   if (sheets.length) {
