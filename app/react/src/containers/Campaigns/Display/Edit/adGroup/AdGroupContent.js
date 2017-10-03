@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { isSubmitting } from 'redux-form';
-import { Layout } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 
 import { EditContentLayout } from '../../../../../components/Layout';

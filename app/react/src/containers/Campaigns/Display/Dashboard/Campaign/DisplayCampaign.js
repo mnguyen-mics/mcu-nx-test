@@ -20,6 +20,7 @@ import {
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
+import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
 const { Content } = Layout;
 
@@ -88,7 +89,7 @@ class DisplayCampaign extends Component {
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
-            state: { from: location.pathname },
+            state: { from: `${location.pathname}${location.search}` },
           }}
         >
           <Button className="m-r-10" type="primary">
@@ -155,9 +156,9 @@ class DisplayCampaign extends Component {
 }
 
 DisplayCampaign.propTypes = {
-  match: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
+  location: ReactRouterPropTypes.location.isRequired,
+  history: ReactRouterPropTypes.match.isRequired,
   ads: PropTypes.shape({
     isLoadingList: PropTypes.bool,
     isLoadingPerf: PropTypes.bool,

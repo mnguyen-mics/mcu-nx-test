@@ -113,7 +113,7 @@ class AdGroupActionbar extends Component {
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
-            state: { from: location.pathname },
+            state: { from: `${location.pathname}${location.search}` },
           }}
         >
           <Button>
