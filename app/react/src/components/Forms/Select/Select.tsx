@@ -8,6 +8,7 @@ import InternalSelect from './InternalSelect';
 interface SelectProps {
   defaultValue: string;
   selectClassNames: Array<string>;
+  other: object;
 }
 
 class Select extends React.Component<SelectProps, {}> {
@@ -26,7 +27,7 @@ class Select extends React.Component<SelectProps, {}> {
     } = this.props;
 
     return (
-      <Field component={InternalSelect} {...other}>
+      <Field name="" component={InternalSelect} {...other}>
         {children}
       </Field>
     );
