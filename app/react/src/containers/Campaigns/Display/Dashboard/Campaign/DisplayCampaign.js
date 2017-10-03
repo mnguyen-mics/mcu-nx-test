@@ -73,6 +73,7 @@ class DisplayCampaign extends Component {
       campaign,
       ads,
       adGroups,
+      location,
       updateAd,
       updateAdGroup,
       updateCampaign,
@@ -87,7 +88,7 @@ class DisplayCampaign extends Component {
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
-            state: { goBack: true },
+            state: { from: location.pathname },
           }}
         >
           <Button className="m-r-10" type="primary">

@@ -279,7 +279,6 @@ AdGroupForm.defaultProps = {
   displayAudience: false,
   editionMode: false,
   fieldValidators: {},
-  pristine: true,
 };
 
 AdGroupForm.propTypes = {
@@ -300,7 +299,7 @@ AdGroupForm.propTypes = {
   match: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
-  pristine: PropTypes.bool,
+  pristine: PropTypes.bool.isRequired,
   notifyError: PropTypes.func.isRequired,
 };
 

@@ -83,17 +83,18 @@ class AdGroupActionbar extends Component {
   render() {
 
     const {
+      adGroup,
+      displayCampaign,
+      intl: {
+        formatMessage,
+      },
+      location,
       match: {
         params: {
           organisationId,
           campaignId,
           adGroupId,
         },
-      },
-      adGroup,
-      displayCampaign,
-      intl: {
-        formatMessage,
       },
     } = this.props;
 
@@ -112,7 +113,7 @@ class AdGroupActionbar extends Component {
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
-            state: { goBack: true },
+            state: { from: location.pathname },
           }}
         >
           <Button>
@@ -132,6 +133,7 @@ class AdGroupActionbar extends Component {
 }
 
 AdGroupActionbar.propTypes = {
+  location: PropTypes.shape().isRequired,
   translations: PropTypes.shape().isRequired,
   match: PropTypes.shape().isRequired,
   adGroup: PropTypes.shape().isRequired,

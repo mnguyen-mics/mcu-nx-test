@@ -85,10 +85,10 @@ class AdGroupContent extends Component {
     const buttonMetadata = {
       formId,
       message: messages.saveAdGroup,
-      onClose: () => (location.state && location.state.goBack
-        ? history.goBack()
+      onClose: () => (location.state && location.state.from
+        ? history.push(location.state.from)
         : history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`)
-      )
+      ),
     };
 
     const formValues = {
