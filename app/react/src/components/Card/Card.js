@@ -13,7 +13,7 @@ function Card(props) {
             <span className="mcs-card-title">{title}</span>
             <span className="mcs-card-button">{buttons}</span>
           </Col>
-          <hr />
+          <Col span={24}><hr /></Col>
         </Row>
       }
       <Row>

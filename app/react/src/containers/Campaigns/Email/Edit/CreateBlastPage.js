@@ -7,8 +7,8 @@ import { injectIntl, intlShape } from 'react-intl';
 import { pick } from 'lodash';
 
 import { withMcsRouter } from '../../../Helpers';
+import EmailBlastContent from './EmailBlastContent';
 import withDrawer from '../../../../components/Drawer';
-import EmailBlastEditor from './EmailBlastEditor';
 import messages from './messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import * as actions from '../../../../state/Notifications/actions';
@@ -122,13 +122,17 @@ class CreateBlastPage extends Component {
       { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast) },
     ];
 
+    const handlers = {
+      closeNextDrawer: this.props.closeNextDrawer,
+      openNextDrawer: this.props.openNextDrawer,
+      redirect: this.redirect,
+      save: this.createBlast,
+    };
+
     return (
-      <EmailBlastEditor
-        save={this.createBlast}
-        close={this.redirect}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
+      <EmailBlastContent
         breadcrumbPaths={breadcrumbPaths}
+        handlers={handlers}
       />
     );
   }

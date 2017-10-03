@@ -7,6 +7,13 @@ export const formatMetric = (value, numeralFormat, prefix = '', suffix = '') => 
   return '-';
 };
 
+export const unformatMetric = (value) => {
+  return (value !== undefined
+    ? parseInt(value.toString().replace(/[.,]/g, ''), 10)
+    : 0
+  );
+};
+
 /**
  * Normalize a reportView to an object like the following :
  *

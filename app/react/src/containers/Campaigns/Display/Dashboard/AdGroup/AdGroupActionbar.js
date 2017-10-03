@@ -83,17 +83,18 @@ class AdGroupActionbar extends Component {
   render() {
 
     const {
+      adGroup,
+      displayCampaign,
+      intl: {
+        formatMessage,
+      },
+      location,
       match: {
         params: {
           organisationId,
           campaignId,
           adGroupId,
         },
-      },
-      adGroup,
-      displayCampaign,
-      intl: {
-        formatMessage,
       },
     } = this.props;
 
@@ -109,7 +110,12 @@ class AdGroupActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
-        <Link to={`/${organisationId}/campaigns/display/edit/${campaignId}/adgroup/${adGroupId}`}>
+        <Link
+          to={{
+            pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
+            state: { from: `${location.pathname}${location.search}` },
+          }}
+        >
           <Button>
             <Icon type="edit" />
             <FormattedMessage {...messages.editAdGroup} />
@@ -127,6 +133,7 @@ class AdGroupActionbar extends Component {
 }
 
 AdGroupActionbar.propTypes = {
+  location: PropTypes.shape().isRequired,
   translations: PropTypes.shape().isRequired,
   match: PropTypes.shape().isRequired,
   adGroup: PropTypes.shape().isRequired,

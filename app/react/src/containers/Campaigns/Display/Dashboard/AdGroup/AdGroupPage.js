@@ -396,9 +396,9 @@ class AdGroupPage extends Component {
 }
 
 AdGroupPage.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   intl: intlShape.isRequired,
   notifyError: PropTypes.func.isRequired,
   notifySuccess: PropTypes.func.isRequired,

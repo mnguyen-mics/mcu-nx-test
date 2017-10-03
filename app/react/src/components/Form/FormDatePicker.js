@@ -47,6 +47,7 @@ function FormDatePicker({
             id={correctedInput.name}
             {...correctedInput}
             {...datePickerProps}
+            allowClear={false}
           />
         </Col>
         {displayHelpToolTip &&

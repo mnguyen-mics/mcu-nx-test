@@ -7,20 +7,19 @@ import McsIcons from '../../components/McsIcons';
 
 const defaultTooltipPlacement = 'right';
 
-function FormInput(
-  { input,
-    meta,
-    formItemProps,
-    inputProps,
-    helpToolTipProps,
-  }) {
+function FormInput({
+  input: { value, ...otherInput },
+  meta,
+  formItemProps,
+  inputProps: { type, ...otherInputProps },
+  helpToolTipProps,
+}) {
 
   let validateStatus = '';
   if (meta.touched && meta.invalid) validateStatus = 'error';
   if (meta.touched && meta.warning) validateStatus = 'warning';
 
   const displayHelpToolTip = !isEmpty(helpToolTipProps);
-
   const mergedTooltipProps = {
     placement: defaultTooltipPlacement,
     ...helpToolTipProps,
@@ -36,9 +35,10 @@ function FormInput(
       <Row align="middle" type="flex">
         <Col span={22} >
           <Input
-            id={input.name}
-            {...input}
-            {...inputProps}
+            id={otherInput.name}
+            {...otherInput}
+            {...otherInputProps}
+            value={value}
           />
         </Col>
         {displayHelpToolTip &&
@@ -55,17 +55,11 @@ function FormInput(
 
 FormInput.defaultProps = {
   formItemProps: {},
-  inputProps: {},
   helpToolTipProps: {},
+  inputProps: {},
 };
 
 FormInput.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  meta: PropTypes.shape({
-    error: PropTypes.string,
-  }).isRequired,
   formItemProps: PropTypes.shape({
     required: PropTypes.bool,
     label: PropTypes.oneOfType([
@@ -74,18 +68,24 @@ FormInput.propTypes = {
     ]),
     colon: PropTypes.bool,
   }),
+  helpToolTipProps: PropTypes.shape({
+    tile: PropTypes.string,
+    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
+      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
+      'leftTop', 'leftBottom', 'rightTop', 'rightBottom'])
+  }),
+  input: PropTypes.shape({
+    name: PropTypes.string,
+  }).isRequired,
   inputProps: PropTypes.shape({
     type: PropTypes.string,
     placeholder: PropTypes.string,
     size: PropTypes.oneOf(['small', 'default', 'large']),
     className: PropTypes.string,
   }),
-  helpToolTipProps: PropTypes.shape({
-    tile: PropTypes.string,
-    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
-      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
-      'leftTop', 'leftBottom', 'rightTop', 'rightBottom']),
-  }),
+  meta: PropTypes.shape({
+    error: PropTypes.string,
+  }).isRequired,
 };
 
 export default FormInput;
