@@ -1,4 +1,9 @@
+import moment from 'moment';
+
 import ApiService from './ApiService';
+import ReportService from './ReportService';
+import { normalizeArrayOfObject } from '../utils/Normalizer';
+import { normalizeReportView } from '../utils/MetricHelper';
 
 const getSegments = (organisationId, datamartId, options = {}) => {
   const endpoint = 'audience_segments';
@@ -19,14 +24,50 @@ const getSegment = (segmentId, options = {}) => {
     ...options,
   };
 
-  return ApiService.getRequest(endpoint, params).then(res => { return res.data; });
+  return ApiService.getRequest(endpoint, params).then(res => res.data);
+};
+
+const getSegmentMetaData = (organisationId) => {
+  return ReportService.getAudienceSegmentReport(
+    organisationId,
+    moment().subtract(1, 'days'),
+    moment(),
+    'audience_segment_id',
+  )
+    .then(res => normalizeArrayOfObject(
+      normalizeReportView(res.data.report_view),
+      'audience_segment_id',
+    ));
+};
+
+const getSegmentsWithMetadata = (organisationId, datamartId, options = {}) => {
+  return getSegments(organisationId, datamartId, options)
+    .then(({ data, ...rest }) => getSegmentMetaData(organisationId)
+      .then(metadata => ({
+        ...rest,
+        data: data.map(segment => {
+          const { desktop_cookie_ids, user_points } = metadata[segment.id];
+
+          return { ...segment, user_points, desktop_cookie_ids };
+        })
+      }))
+    );
 };
 
 const createOverlap = (datamartId, segmentId) => {
   const endpoint = `datamarts/${datamartId}/overlap_analysis`;
-
-  const body = { first_party_overlap: { source: { type: 'segment_overlap', segment_id: segmentId, datamart_id: datamartId }, type: 'FIRST_PARTY_OVERLAP' } };
   const header = { 'Content-Type': 'application/json' };
+  const body = {
+    first_party_overlap: {
+      source: {
+        type: 'segment_overlap',
+        segment_id: segmentId,
+        datamart_id: datamartId
+      },
+      type: 'FIRST_PARTY_OVERLAP'
+    }
+  };
+
   return ApiService.postRequest(endpoint, body, {}, header);
 };
 
@@ -52,8 +93,10 @@ const getEmailCount = (datamartId, segmentIds = [], providerTns = []) => {
 };
 
 export default {
-  getSegments,
   getSegment,
+  getSegmentMetaData,
+  getSegmentsWithMetadata,
+  getSegments,
   getEmailCount,
   createOverlap,
   retrieveOverlap,

@@ -73,7 +73,7 @@ class AdGroup extends Component {
       <span>
         <Link to={`/${organisationId}/campaigns/email/edit/`}>
           <Button className="m-r-10" type="primary">
-            <FormattedMessage {...messages.newAdGroups} />
+            <FormattedMessage {...messages.newCreatives} />
           </Button>
         </Link>
         {this.renderDatePicker()}

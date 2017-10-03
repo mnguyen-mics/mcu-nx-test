@@ -124,7 +124,7 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
     'uniq_email_unsubscribed',
     'uniq_email_hard_bounced',
     'uniq_email_soft_bounced',
-    'uniq_email_complaints'
+    'uniq_email_complaints',
   ];
 
   const params = {
@@ -178,7 +178,7 @@ const getConversionPerformanceReport = (organisationId, startDate, endDate, dime
 
 const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/audience_segment_report';
-  const DEFAULT_METRICS = ['user_points', 'user_accounts', 'emails,desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'];
+  const DEFAULT_METRICS = ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'];
 
   const params = {
     organisation_id: organisationId,
@@ -208,7 +208,7 @@ const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endD
     'uniq_email_unsubscribed',
     'uniq_email_hard_bounced',
     'uniq_email_soft_bounced',
-    'uniq_email_complaints'
+    'uniq_email_complaints',
   ];
 
   const params = {

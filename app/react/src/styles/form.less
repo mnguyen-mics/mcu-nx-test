@@ -31,7 +31,6 @@
       font-size: 1em;
       color: #7e7e7e;
     }
-
   }
 
   .field-tooltip {
@@ -39,4 +38,56 @@
     font-size: 1.3em;
   }
 
+  .summarySection {
+    .content {
+      padding-left: 1em;
+    }
+
+    .section {
+      border-bottom: solid 1px #dcdcdc;
+      padding-bottom: .7em;
+    }
+
+    .sectionPaddingTop {
+      padding-top: 1em;
+    }
+
+    .inline {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .textPadding {
+      padding-left: 1.5em;
+    }
+
+    .text {
+      margin-right: .4em;
+    }
+
+    .blue-text {
+      color: @info-color;
+    }
+  }
+}
+
+.optional-section-title, .optional-section-title:active {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 9.5em;
+  color: @info-color;
+  font-size: 1.2em;
+  font-weight: bold;
+  padding-bottom: 1.8em;
+  padding-top: .4em;
+}
+
+.hide-section {
+  display: none;
+}
+
+.visibility-hidden {
+  visibility: hidden;
 }

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Row } from 'antd';
+import { Row } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 
 import messages from './messages';
 import EmailTemplateSelector from './EmailTemplateSelector';
-import { FormTitle } from '../../../../components/Form/index.ts';
+import { FormSection } from '../../../../components/Form/index.ts';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import CreativeService from '../../../../services/CreativeService';
 
@@ -100,15 +100,14 @@ class EmailTemplateSelection extends Component {
 
     return (
       <div>
-        <Row type="flex" align="middle" justify="space-between" className="section-header">
-          <FormTitle
-            titleMessage={messages.emailBlastEditorStepTitleTemplateSelection}
-            subTitleMessage={messages.emailBlastEditorStepSubTitleTemplateSelection}
-          />
-          <Button onClick={this.handleClickOnSelectTemplate}>
-            {formatMessage(messages.blastTemplateSelectionSelectButton)}
-          </Button>
-        </Row>
+        <FormSection
+          button={{
+            message: formatMessage(messages.blastTemplateSelectionSelectButton),
+            onClick: this.handleClickOnSelectTemplate,
+          }}
+          subtitle={messages.emailBlastEditorStepSubTitleTemplateSelection}
+          title={messages.emailBlastEditorStepTitleTemplateSelection}
+        />
         <Row>
           <RelatedRecords emptyOption={emptyOption}>
             {this.getEmailTemplateRecords()}

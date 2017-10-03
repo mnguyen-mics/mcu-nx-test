@@ -18,7 +18,7 @@ const Card: React.SFC<CardProps> = (props) => {
             <span className="mcs-card-title">{props.title}</span>
             <span className="mcs-card-button">{props.buttons}</span>
           </Col>
-          <hr />
+          <Col span={24}><hr /></Col>
         </Row>
       }
       <Row>

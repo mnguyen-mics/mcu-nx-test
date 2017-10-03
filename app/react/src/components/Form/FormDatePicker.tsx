@@ -1,40 +1,27 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Form, DatePicker, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
+
+// TS Interfaces
+import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form'
+import { InputProps } from 'antd/lib/input/Input';
+import { DatePickerProps } from 'antd/lib/date-picker';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+
 import McsIcons from '../../components/McsIcons';
-import { TooltipPlacement } from 'antd/lib/tooltip';
 
 
 interface FormDatePickerProps {
-  input: {
-    name: string;
-  };
-  meta: {
-    error?: string;
-    touched?: string;
-    invalid?: string;
-    warning?: string;
-  };
-  formItemProps?: {
-    required?: boolean;
-    label?: Element | string;
-    colon?: boolean;
-  };
-  datePickerProps: {
-    format?: string;
-    showTime?: boolean | object;
-    placehodler?: string;  
-  };
-  helpToolTipProps: {
-    title?: string;
-    placement?: TooltipPlacement;
-  };
-  value?: string;
-  otherInputProps?: any;
+  input: WrappedFieldInputProps;
+  meta: WrappedFieldMetaProps;
+  formItemProps: FormItemProps;
+  inputProps?: InputProps;
+  helpToolTipProps?: TooltipProps;
+  datePickerProps: DatePickerProps;  
 }
 
-const defaultTooltipPlacement = 'right';
+const defaultTooltipPlacement: TooltipPlacement = 'right';
 
 const FormDatePicker: React.SFC<FormDatePickerProps> = props => {
 
@@ -44,7 +31,7 @@ const FormDatePicker: React.SFC<FormDatePickerProps> = props => {
 
   const displayHelpToolTip = !isEmpty(props.helpToolTipProps);
 
-  const mergedTooltipProps = {
+  const mergedTooltipProps: TooltipProps = {
     placement: defaultTooltipPlacement,
     ...props.helpToolTipProps,
   };
@@ -52,10 +39,9 @@ const FormDatePicker: React.SFC<FormDatePickerProps> = props => {
   // By default, input.value is initialised to '' by redux-form
   // But antd DatePicker doesn't like that
   // So we don't pass this props if equal to ''
-  const correctedInput = (props.value === ''
-    ? { ...props.otherInputProps }
-    : { ...props.otherInputProps, props:props.value }
-  );
+  if (props.input.value === '') {
+    delete props.input.value;
+  }
   
   return (
     <Form.Item
@@ -67,14 +53,14 @@ const FormDatePicker: React.SFC<FormDatePickerProps> = props => {
       <Row align="middle" type="flex">
         <Col span={22}>
           <DatePicker
-            id={correctedInput.name}
-            {...correctedInput}
+            allowClear={false}
+            {...props.input}
             {...props.datePickerProps}
           />
         </Col>
         {displayHelpToolTip &&
           <Col span={2} className="field-tooltip">
-            <Tooltip {...'mergedTooltipProps'}>
+            <Tooltip {...mergedTooltipProps}>
               <McsIcons type="info" />
             </Tooltip>
           </Col>}

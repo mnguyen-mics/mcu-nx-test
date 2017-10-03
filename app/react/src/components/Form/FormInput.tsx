@@ -1,41 +1,25 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Input, Tooltip, Row, Col } from 'antd';
-import { TooltipPlacement } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
+
+// TS Interfaces
+import { Form, Input, Tooltip, Row, Col } from 'antd';
+import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { InputProps } from 'antd/lib/input/Input';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form'
 
 import McsIcons from '../../components/McsIcons';
 
 interface FormInputsProps {
-  input: {
-    name: string;
-  };
-  meta: {
-    error?: string;
-    touched?: string;
-    invalid?: string;
-    warning?: string;
-  };
-  formItemProps: {
-    required?: boolean;
-    label?: Element | string;
-    colon?: boolean;
-  };
-  inputProps?: {
-    type?: string;
-    placehodler?: string;
-    size?: 'small' | 'default' | 'large'; 
-    className?: string;
-  };
-  helpToolTipProps?: {
-    title?: string;
-    placement?: TooltipPlacement;    
-  };
-  value?: string;
-  otherInputProps?: any;
+  input: WrappedFieldInputProps;
+  meta: WrappedFieldMetaProps;
+  formItemProps: FormItemProps;
+  inputProps?: InputProps;
+  helpToolTipProps?: TooltipProps;
 }
 
-const defaultTooltipPlacement = 'right';
+const defaultTooltipPlacement: TooltipPlacement = 'right';
 
 const FormInput: React.SFC<FormInputsProps> = props => {
 
@@ -45,7 +29,7 @@ const FormInput: React.SFC<FormInputsProps> = props => {
 
   const displayHelpToolTip = !isEmpty(props.helpToolTipProps);
 
-  const mergedTooltipProps = {
+  const mergedTooltipProps: TooltipProps = {
     placement: defaultTooltipPlacement,
     ...props.helpToolTipProps,
   };
@@ -67,7 +51,7 @@ const FormInput: React.SFC<FormInputsProps> = props => {
         </Col>
         {displayHelpToolTip &&
           <Col span={2} className="field-tooltip">
-            <Tooltip {...'mergedTooltipProps'}>
+            <Tooltip {...mergedTooltipProps}>
               <McsIcons type="info" />
             </Tooltip>
           </Col>
@@ -80,11 +64,7 @@ const FormInput: React.SFC<FormInputsProps> = props => {
 FormInput.defaultProps = {
   formItemProps: {},
   inputProps: {},
-  helpToolTipProps: {},
-};
-
-FormInput.propTypes = {
-
+  helpToolTipProps: {}
 };
 
 export default FormInput;

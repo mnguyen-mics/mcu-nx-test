@@ -1,17 +1,15 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Input } from 'antd';
-
 import Alert from 'mcs-react-alert';
 
+// TS Interfaces
+import { InputProps } from 'antd/lib/input/Input';
+import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form'
+
 interface InternalInputProps {
-  input?: {};
-  meta: {
-    touched?: any;
-    warning?: any;
-    error?: any;
-  };
-  other: any;
+  input: WrappedFieldInputProps;
+  meta: WrappedFieldMetaProps;
+  other: object;
 }
 
 const InternalInput: React.SFC<InternalInputProps> = props => {
@@ -25,7 +23,4 @@ const InternalInput: React.SFC<InternalInputProps> = props => {
   );
 }
 
-InternalInput.defaultProps = {
-  input: ['form-control'],
-};
 export default InternalInput;

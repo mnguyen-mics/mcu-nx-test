@@ -17,10 +17,6 @@ export default defineMessages({
     id: 'emailEditor.breadcrumb.edit-campaign',
     defaultMessage: 'Edit {campaignName}',
   },
-  emailEditorSaveCampaign: {
-    id: 'emailEditor.button.save_campaign',
-    defaultMessage: 'Save Campaign',
-  },
   emailEditorGeneralInformationTitle: {
     id: 'emailEditor.step.title.general_information',
     defaultMessage: 'General Information',
@@ -41,6 +37,28 @@ export default defineMessages({
     id: 'emailEditor.step.input.helper.campaign_name',
     defaultMessage: 'Give your Campaign a name and make it as memorable as you can. It will be displayed accorss all the screens.',
   },
+  emailEditorSave: {
+    id: 'emailEditor.button.save',
+    defaultMessage: 'Save'
+  },
+  emailEditorSaveCampaign: {
+    id: 'emailEditor.button.save_campaign',
+    defaultMessage: 'Save Campaign'
+  },
+
+  emailEditorSectionTitle1: {
+    id: 'emailEditor.section.title1',
+    defaultMessage: 'General Information'
+  },
+  emailEditorSectionTitle2: {
+    id: 'emailEditor.breadcrumb.title2',
+    defaultMessage: 'Router Config'
+  },
+  emailEditorSectionTitle3: {
+    id: 'emailEditor.breadcrumb.title3',
+    defaultMessage: 'Email Blasts'
+  },
+
   emailEditorTechnicalNameInputLabel: {
     id: 'emailEditor.step.input.label.campaign_technical_name',
     defaultMessage: 'Technical name',
@@ -252,5 +270,17 @@ export default defineMessages({
   blastSegmentSelectionRequired: {
     id: 'blastSegmentSelection.required',
     defaultMessage: 'At least one segment is required',
-  }
+  },
+  segmentTitleColumn1: {
+    id: 'segment.title.column1',
+    defaultMessage: 'Name',
+  },
+  segmentTitleColumn2: {
+    id: 'segment.title.column2',
+    defaultMessage: 'User Points',
+  },
+  segmentTitleColumn3: {
+    id: 'segment.title.column3',
+    defaultMessage: 'Desktop Cookie Ids',
+  },
 });
