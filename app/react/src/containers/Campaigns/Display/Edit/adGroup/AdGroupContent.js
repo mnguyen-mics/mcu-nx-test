@@ -99,10 +99,12 @@ class AdGroupContent extends Component {
     };
 
     return (
-      <Layout>
-        <Loading className={loading || submitting ? 'loading-full-screen' : 'hide-section'} />
+      <div className="ant-layout">
+        { (loading || submitting) &&
+          <Loading className={loading || submitting ? 'loading-full-screen' : 'hide-section'} />
+        }
 
-        <div className={(!loading && !submitting ? '' : 'hide-section')}>
+        <div className={(!loading && !submitting ? 'ant-layout' : 'hide-section')}>
           <EditContentLayout
             breadcrumbPaths={breadcrumbPaths}
             sidebarItems={sidebarItems}
@@ -119,7 +121,7 @@ class AdGroupContent extends Component {
             />
           </EditContentLayout>
         </div>
-      </Layout>
+      </div>
     );
   }
 }
