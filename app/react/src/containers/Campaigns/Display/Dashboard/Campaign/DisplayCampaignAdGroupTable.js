@@ -18,12 +18,17 @@ class DisplayCampaignAdGroupTable extends Component {
       match: {
         params: {
           campaignId,
+          organisationId
         },
       },
       history,
+      location
     } = this.props;
 
-    history.push(`${campaignId}/adgroups/edit/${adgroup.id}`);
+    history.push({
+      pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adgroup.id}`,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   }
 
   render() {
@@ -203,6 +208,7 @@ class DisplayCampaignAdGroupTable extends Component {
 DisplayCampaignAdGroupTable.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
   isFetching: PropTypes.bool.isRequired,
   isFetchingStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
