@@ -100,6 +100,10 @@ export default defineMessages({
     id: 'adGroupEditor.section.title8',
     defaultMessage: 'Summary',
   },
+  sectionTitle9: {
+    id: 'adGroupEditor.section.title9',
+    defaultMessage: 'Placement',
+  },
 
   /*
   ==============================================================================
@@ -137,6 +141,10 @@ export default defineMessages({
   sectionSubtitle8: {
     id: 'adGroupEditor.section.subtitle8',
     defaultMessage: 'Please find below the configuration of your ad group',
+  },
+  sectionSubtitle9: {
+    id: 'adGroupEditor.section.subtitle9',
+    defaultMessage: 'Define on which websites you want your content to appear',
   },
 
   /*
@@ -451,6 +459,36 @@ export default defineMessages({
   contentSection8Part9Plural: {
     id: 'adGroupEditor.section8.part9.Plural',
     defaultMessage: 'creatives',
+  },
+
+  /* ------------------------------- SECTION 9 ------------------------------ */
+
+  contentSection9Radio1: {
+    id: 'adGroupEditor.section9.radio1',
+    defaultMessage: 'Automatic Placements (Recommended)',
+  },
+  contentSection9Radio2: {
+    id: 'adGroupEditor.section9.radio2',
+    defaultMessage: 'Edit Placements',
+  },
+
+  contentSection9Properties: {
+    id: 'adGroupEditor.section9.properties',
+    defaultMessage: 'Properties',
+  },
+  contentSection9TypeWebsites: {
+    id: 'adGroupEditor.section9.type.websites',
+    defaultMessage: 'Web Sites',
+  },
+  contentSection9TypeMobileApps: {
+    id: 'adGroupEditor.section9.type.mobileApps',
+    defaultMessage: 'Mobile Apps',
+  },
+
+
+  contentSection9EmptyTitle: {
+    id: 'adGroupEditor.section9.emptyTitle',
+    defaultMessage: 'Click on the pen to add a placement to your ad group',
   },
 
   /*

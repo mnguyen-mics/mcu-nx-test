@@ -22,6 +22,7 @@ import {
   General,
   Media,
   Optimization,
+  Placement,
   Publisher,
   Summary,
 } from './sections';
@@ -62,6 +63,7 @@ class AdGroupForm extends Component {
         .then((adGroupId) => Promise.all([
           this.saveAudience(adGroupId),
           this.savePublishers(adGroupId),
+          this.saveAds(adGroupId),
         ]))
         .then(() => {
           this.setState({ loading: false });
@@ -75,6 +77,35 @@ class AdGroupForm extends Component {
 
     history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
     return Promise.resolve();
+  }
+
+  saveAds = (adGroupId) => {
+    const options = {
+      adGroupId,
+      getBody: (row) => ({ creative_id: row.id }),
+      requests: {
+        create: DisplayCampaignService.createAd,
+        delete: DisplayCampaignService.deleteAd,
+      },
+      tableName: 'ads',
+    };
+
+    return this.saveTableFields(options);
+  }
+
+  saveAudience = (adGroupId) => {
+    const options = {
+      adGroupId,
+      getBody: (row) => ({ audience_segment_id: row.id, exclude: !row.include }),
+      requests: {
+        create: DisplayCampaignService.createAudience,
+        update: DisplayCampaignService.updateAudience,
+        delete: DisplayCampaignService.deleteAudience,
+      },
+      tableName: 'audienceTable',
+    };
+
+    return this.saveTableFields(options);
   }
 
   saveOrUpdateAdGroup = () => {
@@ -106,34 +137,6 @@ class AdGroupForm extends Component {
     );
 
     return request.then(result => result.data.id);
-  }
-
-  saveAds = () => {
-    const options = {
-      getBody: (row) => ({ creative_id: row.id }),
-      requests: {
-        create: DisplayCampaignService.createAd,
-        delete: DisplayCampaignService.deleteAd,
-      },
-      tableName: 'ads',
-    };
-
-    return this.saveTableFields(options);
-  }
-
-  saveAudience = () => {
-    const options = {
-      adGroupId,
-      getBody: (row) => ({ audience_segment_id: row.id, exclude: !row.include }),
-      requests: {
-        create: DisplayCampaignService.createAudience,
-        update: DisplayCampaignService.updateAudience,
-        delete: DisplayCampaignService.deleteAudience,
-      },
-      tableName: 'audienceTable',
-    };
-
-    return this.saveTableFields(options);
   }
 
   savePublishers = (adGroupId) => {
@@ -251,9 +254,12 @@ class AdGroupForm extends Component {
     const {
       audienceTable,
       optimizerTable,
+      placementType,
       publisherTable,
       ads,
     } = formValues;
+
+    console.log('formValues = ', formValues);
 
     return (
       <Layout>
@@ -271,7 +277,7 @@ class AdGroupForm extends Component {
               ? <div><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /><hr /></div>
               : null
             }
-            <General {...commonProps} />
+            <General {...commonProps} formValues={formValues} />
             {
               displayAudience &&
               <div id="audience">
@@ -287,6 +293,8 @@ class AdGroupForm extends Component {
             <Media {...commonProps} />
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
+            <hr />
+            <Placement {...commonProps} formValues={{ placementType }} />
             <hr />
             <Ads {...commonProps} formValues={ads} />
             {!editionMode

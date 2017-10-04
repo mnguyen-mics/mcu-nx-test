@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
-import ButtonStyleless from './ButtonStyleless';
-import { SwitchInput } from './Form';
-import McsIcons from './McsIcons';
+import { ButtonStyleless, Form, McsIcons } from '../components';
 import generateGuid from '../utils/generateGuid';
+
+const { SwitchInput } = Form;
 
 function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldStatus }) {
   const columns = [
@@ -93,7 +93,7 @@ function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldSt
   const tableStyle = (dataSource.length || loading ? 'border-style' : 'hide-section');
 
   return (
-    <div className="adGroup-table">
+    <div className="related-record-table">
       <Table
         className={tableStyle}
         columns={columns}

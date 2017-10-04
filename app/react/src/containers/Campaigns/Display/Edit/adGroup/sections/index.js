@@ -4,6 +4,7 @@ import DeviceAndLocation from './DeviceAndLocation';
 import General from './General';
 import Media from './Media';
 import Optimization from './Optimization';
+import Placement from './Placement';
 import Publisher from './Publisher';
 import Summary from './Summary';
 
@@ -13,6 +14,7 @@ export {
   DeviceAndLocation,
   General,
   Media,
+  Placement,
   Publisher,
   Optimization,
   Summary,

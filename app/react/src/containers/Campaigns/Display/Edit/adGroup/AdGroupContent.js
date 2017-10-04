@@ -99,6 +99,7 @@ class AdGroupContent extends Component {
       ...initialValues,
       adGroupMaxBudgetPerPeriod: formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0'),
       adGroupTotalBudget: formatMetric(initialValues.adGroupTotalBudget, '0,0'),
+      placementType: 'auto', // TODO: change to dynamic value of 'auto' or 'custom'
     };
 
     return (

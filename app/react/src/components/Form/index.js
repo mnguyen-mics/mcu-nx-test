@@ -1,5 +1,7 @@
 import FormDatePicker from './FormDatePicker';
 import FormInput from './FormInput';
+import FormRadio from './FormRadio';
+import FormRadioGroup from './FormRadioGroup';
 import FormRangePicker from './FormRangePicker/index';
 import FormSection from './FormSection';
 import FormSelect from './FormSelect';
@@ -12,6 +14,8 @@ import withValidators from './withValidators';
 export default {
   FormDatePicker,
   FormInput,
+  FormRadio,
+  FormRadioGroup,
   FormRangePicker,
   FormSection,
   FormSelect,
@@ -24,6 +28,8 @@ export default {
 export {
   FormDatePicker,
   FormInput,
+  FormRadio,
+  FormRadioGroup,
   FormRangePicker,
   FormSection,
   FormSelect,

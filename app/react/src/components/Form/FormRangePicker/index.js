@@ -20,7 +20,7 @@ function FormRangePicker({
   values,
 }) {
 
-  const disabledDate = (isStart) => (currentDate) => {
+  const disabledDate = ({ isStart }) => (currentDate) => {
     const { startDate, endDate } = values;
     const dateToCompare = (isStart ? endDate : startDate);
 
@@ -33,8 +33,8 @@ function FormRangePicker({
     }
 
     return (isStart
-      ? currentDate.valueOf() > dateToCompare.valueOf()
-      : currentDate.valueOf() <= dateToCompare.valueOf()
+      ? currentDate.isAfter(dateToCompare)
+      : dateToCompare.isAfter(currentDate) || currentDate.isSame(dateToCompare)
     );
   };
 
@@ -65,7 +65,7 @@ function FormRangePicker({
               validate={fieldValidators.start}
               props={{
                 ...startProps,
-                disabledDate: disabledDate(true),
+                disabledDate: disabledDate({ isStart: true }),
               }}
             />
           </div>
@@ -82,7 +82,7 @@ function FormRangePicker({
             validate={fieldValidators.end}
             props={{
               ...endProps,
-              disabledDate: disabledDate(false),
+              disabledDate: disabledDate({ isStart: false }),
             }}
           />
         </Col>

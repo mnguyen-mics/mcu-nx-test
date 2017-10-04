@@ -3,7 +3,6 @@ import EmptyRecords from './RelatedRecord/EmptyRecords';
 import Form from './Form';
 import Loading from './Loading';
 import McsIcons from './McsIcons';
-import RelatedRecordTable from './RelatedRecordTable';
 import TableSelector from './TableSelector';
 
 export {
@@ -12,6 +11,5 @@ export {
   Form,
   Loading,
   McsIcons,
-  RelatedRecordTable,
   TableSelector,
 };

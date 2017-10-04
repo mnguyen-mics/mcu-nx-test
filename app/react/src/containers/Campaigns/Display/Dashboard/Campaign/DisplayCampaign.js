@@ -158,7 +158,7 @@ class DisplayCampaign extends Component {
 DisplayCampaign.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
-  history: ReactRouterPropTypes.match.isRequired,
+  history: PropTypes.shape().isRequired,
   ads: PropTypes.shape({
     isLoadingList: PropTypes.bool,
     isLoadingPerf: PropTypes.bool,
