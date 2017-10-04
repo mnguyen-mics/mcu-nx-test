@@ -18,7 +18,7 @@ class Ads extends Component {
   getAllAds = () => {
     const { organisationId } = this.props;
 
-    return CreativeService.getDisplayAds({ organisationId })
+    return CreativeService.getDisplayAds(organisationId)
       .then(({ data, total }) => ({ data, total }));
   }
 

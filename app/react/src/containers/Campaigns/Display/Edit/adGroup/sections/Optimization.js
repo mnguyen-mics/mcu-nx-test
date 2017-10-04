@@ -16,13 +16,10 @@ class Optimization extends Component {
   state = { loading: false }
 
   getBidOptimizers = ({ getAll, newSelectedIds }) => () => {
-    const prevSelectedIds = this.getSelectedIds();
+    const selectedIds = newSelectedIds || this.getSelectedIds();
+    const options = { getAll };
 
-    return BidOptimizerServices.getBidOptimizers({
-      getAll,
-      organisationId: this.props.organisationId,
-      selectedIds: newSelectedIds || prevSelectedIds,
-    });
+    return BidOptimizerServices.getBidOptimizers(this.props.organisationId, selectedIds, options);
   }
 
   getSelectedIds = () => {

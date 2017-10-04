@@ -259,8 +259,6 @@ class AdGroupForm extends Component {
       ads,
     } = formValues;
 
-    console.log('formValues = ', formValues);
-
     return (
       <Layout>
         {this.state.loading ? <Loading className="loading-full-screen" /> : null}

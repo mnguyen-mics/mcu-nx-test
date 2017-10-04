@@ -35,9 +35,11 @@ class EditAdGroupPage extends Component {
           ...initialValues
         } = results.reduce((acc, result) => ({ ...acc, ...result }), {});
 
+        const selectedIds = [adGroupBidOptimizerId];
+
         this.setState({ initialValues });
 
-        return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroupBidOptimizerId] });
+        return BidOptimizerServices.getBidOptimizers(organisationId, selectedIds);
       })
       .then(({ data }) => {
         this.setState({
@@ -48,7 +50,7 @@ class EditAdGroupPage extends Component {
   }
 
   getAds({ adGroupId, campaignId, organisationId }) {
-    const fetchAllAds = CreativeService.getDisplayAds({ organisationId })
+    const fetchAllAds = CreativeService.getDisplayAds(organisationId)
       .then(({ data }) => data);
 
     const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)

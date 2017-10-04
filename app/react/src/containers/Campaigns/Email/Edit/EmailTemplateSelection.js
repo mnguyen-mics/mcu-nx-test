@@ -48,7 +48,7 @@ class EmailTemplateSelection extends Component {
   getEmailTemplates = (options) => {
     const { organisationId } = this.props;
 
-    return CreativeService.getEmailTemplates({ organisationId, options })
+    return CreativeService.getEmailTemplates(organisationId, options)
       .then(response => ({
         data: response.data,
         total: response.total,
