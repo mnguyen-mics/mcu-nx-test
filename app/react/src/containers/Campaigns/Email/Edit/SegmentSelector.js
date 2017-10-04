@@ -15,6 +15,7 @@ import AudienceSegmentService from '../../../../services/AudienceSegmentService'
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { formatMetric } from '../../../../utils/MetricHelper';
 import messages from './messages';
 
 const { Content } = Layout;
@@ -70,44 +71,34 @@ class SegmentSelector extends Component {
       options.keywords = keywords;
     }
 
-    return AudienceSegmentService.getSegments(organisationId, datamartId, options).then(response => {
-      return AudienceSegmentService.getSegmentMetaData(organisationId)
-        .then(results => {
-          const segments = response.data;
-          const metadata = results;
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, options)
+      .then(response => {
+        const segments = response.data;
+        const allAudienceSegmentIds = segments.map(segment => segment.id);
+        const audienceSegmentById = normalizeArrayOfObject(segments, 'id');
 
-          const segmentsWithAdditionalMetadata = segments.map(segment => {
-            const { user_points, desktop_cookie_ids } = metadata[segment.id];
+        this.setState(prevState => {
+          const selectedSegmentById = {
+            ...prevState.selectedSegmentById,
+            ...selectedIds.reduce((acc, segmentId) => {
+              if (!prevState.selectedSegmentById[segmentId]) {
+                return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
+              }
+              return acc;
+            }, {}),
+          };
 
-            return { ...segment, user_points, desktop_cookie_ids };
-          });
-
-          const allAudienceSegmentIds = segmentsWithAdditionalMetadata.map(segment => segment.id);
-          const audienceSegmentById = normalizeArrayOfObject(segmentsWithAdditionalMetadata, 'id');
-
-          this.setState(prevState => {
-            const selectedSegmentById = {
-              ...prevState.selectedSegmentById,
-              ...selectedIds.reduce((acc, segmentId) => {
-                if (!prevState.selectedSegmentById[segmentId]) {
-                  return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
-                }
-                return acc;
-              }, {}),
-            };
-
-            return {
-              allAudienceSegmentIds,
-              audienceSegmentById,
-              selectedSegmentById,
-              isLoading: false,
-              total: response.total,
-            };
-          });
-
-          return response;
+          return {
+            allAudienceSegmentIds,
+            audienceSegmentById,
+            selectedSegmentById,
+            isLoading: false,
+            total: response.total,
+          };
         });
-    });
+
+        return response;
+      });
   }
 
   getColumnsDefinitions = () => {
@@ -135,13 +126,13 @@ class SegmentSelector extends Component {
           intlMessage: messages.segmentTitleColumn2,
           key: 'user_points',
           isHideable: false,
-          render: text => <span>{text}</span>,
+          render: text => <span>{text === '-' ? text : formatMetric(text, '0,0')}</span>,
         },
         {
           intlMessage: messages.segmentTitleColumn3,
           key: 'desktop_cookie_ids',
           isHideable: false,
-          render: text => <span>{text}</span>,
+          render: text => <span>{text === '-' ? text : formatMetric(text, '0,0')}</span>,
         },
       ],
       actionsColumnsDefinition: [],
@@ -215,7 +206,7 @@ class SegmentSelector extends Component {
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <Actionbar path={[{ name: 'Add an existing template' }]} edition>
+          <Actionbar path={[{ name: 'Add an audience' }]} edition>
             <Button type="primary mcs-primary" onClick={this.handleAdd}>
               <McsIcons type="plus" /><span>Add</span>
             </Button>

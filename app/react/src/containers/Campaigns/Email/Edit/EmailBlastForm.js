@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { Field, Form, reduxForm } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Row } from 'antd';
@@ -13,6 +14,8 @@ import SegmentSelector from './SegmentSelector';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
 import { isPastDate } from '../../../../utils/DateHelper';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 const { Content } = Layout;
 
@@ -45,19 +48,37 @@ class EmailBlastForm extends Component {
     }
   }
 
+  getSegments = () => {
+    const {
+      defaultDatamart,
+      match: { params: { organisationId } },
+    } = this.props;
+
+    const datamartId = defaultDatamart(organisationId).id;
+
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId);
+  }
+
   updateSegments = (selectedAudienceSegments) => {
     const { closeNextDrawer } = this.props;
 
-    const buildSegmentSelection = segment => ({
-      audience_segment_id: segment.id,
-      name: segment.name,
-    });
+    this.getSegments()
+      .then(({ data }) => {
+        const buildSegmentSelection = segment => {
+          const metadata = data.find(seg => seg.id === segment);
 
-    this.setState(prevState => ({
-      segments: selectedAudienceSegments.map(buildSegmentSelection),
-      segmentRequired: !prevState.segmentRequired,
-    }));
-    closeNextDrawer();
+          return {
+            audience_segment_id: metadata.id,
+            name: metadata.name,
+          };
+        };
+
+        this.setState(prevState => ({
+          segments: selectedAudienceSegments.map(buildSegmentSelection),
+          segmentRequired: !prevState.segmentRequired,
+        }));
+        closeNextDrawer();
+      });
   }
 
   handleClickOnRemoveSegment(segment) {
@@ -69,21 +90,16 @@ class EmailBlastForm extends Component {
   getSegmentRecords() {
     const { segments } = this.state;
 
-    const segmentRecords = segments.filter(segment => !segment.isDeleted).map(segment => {
-
-      return (
-        <RecordElement
-          key={segment.audience_segment_id}
-          recordIconType={'users'}
-          title={segment.name}
-          actionButtons={[
+    return segments.filter(segment => !segment.isDeleted).map(segment => (
+      <RecordElement
+        key={segment.audience_segment_id}
+        recordIconType={'users'}
+        title={segment.name}
+        actionButtons={[
             { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) },
-          ]}
-        />
-      );
-    });
-
-    return segmentRecords;
+        ]}
+      />
+    ));
   }
 
   handleSegmentActionClick = () => {
@@ -349,6 +365,7 @@ EmailBlastForm.defaultProps = {
 EmailBlastForm.propTypes = {
   /* blastName: PropTypes.string --> not currently used */
   closeNextDrawer: PropTypes.func.isRequired,
+  defaultDatamart: PropTypes.func.isRequired,
   /* initialValues={initialValues} --> for redux-form */
   handleSubmit: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
@@ -366,6 +383,11 @@ EmailBlastForm.propTypes = {
 EmailBlastForm = compose(
   injectIntl,
   withRouter,
+  connect(
+    state => ({
+      defaultDatamart: getDefaultDatamart(state),
+    }),
+  ),
   reduxForm({
     form: 'emailBlastForm',
     enableReinitialize: true,

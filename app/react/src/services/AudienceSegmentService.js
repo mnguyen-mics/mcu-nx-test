@@ -30,8 +30,8 @@ const getSegment = (segmentId, options = {}) => {
 const getSegmentMetaData = (organisationId) => {
   return ReportService.getAudienceSegmentReport(
     organisationId,
-    moment().subtract(1, 'days'),
     moment(),
+    moment().add(1, 'days'),
     'audience_segment_id',
   )
     .then(res => normalizeArrayOfObject(
@@ -46,9 +46,11 @@ const getSegmentsWithMetadata = (organisationId, datamartId, options = {}) => {
       .then(metadata => ({
         ...rest,
         data: data.map(segment => {
-          const { desktop_cookie_ids, user_points } = metadata[segment.id];
+          const meta = metadata[segment.id];
+          const userPoints = (meta && meta.user_points ? meta.user_points : '-');
+          const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
 
-          return { ...segment, user_points, desktop_cookie_ids };
+          return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
         })
       }))
     );
