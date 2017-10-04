@@ -15,6 +15,7 @@ import AudienceSegmentService from '../../../../services/AudienceSegmentService'
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { formatMetric } from '../../../../utils/MetricHelper';
 import messages from './messages';
 
 const { Content } = Layout;
@@ -77,9 +78,11 @@ class SegmentSelector extends Component {
           const metadata = results;
 
           const segmentsWithAdditionalMetadata = segments.map(segment => {
-            const { user_points, desktop_cookie_ids } = metadata[segment.id];
+            const meta = metadata[segment.id];
+            const userPoints = (meta && meta.user_points ? meta.user_points : '-');
+            const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
 
-            return { ...segment, user_points, desktop_cookie_ids };
+            return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
           });
 
           const allAudienceSegmentIds = segmentsWithAdditionalMetadata.map(segment => segment.id);
@@ -135,13 +138,13 @@ class SegmentSelector extends Component {
           intlMessage: messages.segmentTitleColumn2,
           key: 'user_points',
           isHideable: false,
-          render: text => <span>{text}</span>,
+          render: text => <span>{text === '-' ? text : formatMetric(text, '0,0')}</span>,
         },
         {
           intlMessage: messages.segmentTitleColumn3,
           key: 'desktop_cookie_ids',
           isHideable: false,
-          render: text => <span>{text}</span>,
+          render: text => <span>{text === '-' ? text : formatMetric(text, '0,0')}</span>,
         },
       ],
       actionsColumnsDefinition: [],
