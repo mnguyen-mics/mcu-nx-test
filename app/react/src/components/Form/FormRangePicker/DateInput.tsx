@@ -1,9 +1,14 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { DatePicker } from 'antd';
+import { DatePickerProps } from 'antd/lib/date-picker';
+import { WrappedFieldProps } from 'redux-form';
 
-function DateInput({ input, ...otherProps }) {
-  const { value, ...rest } = input;
+export type DateInputProps = WrappedFieldProps & DatePickerProps;
+
+const DateInput: React.StatelessComponent<DateInputProps> = props => { 
+  const { input, ...otherProps} = props;
+  const { value, ...rest } = props.input;
   const correctedInput = (!value ? rest : { ...rest, value });
 
   return (
@@ -11,7 +16,6 @@ function DateInput({ input, ...otherProps }) {
       {...correctedInput}
       {...otherProps}
       allowClear={false}
-      id={input.name}
       onOpenChange={windowIsOpen => {
         /*
          * Because antd DatePicker doesn't support onBlur,
@@ -19,8 +23,8 @@ function DateInput({ input, ...otherProps }) {
          * we need to bind redux-form's onBlur method to antd's onOpenChange artificially.
          */
         return (windowIsOpen
-          ? input.onFocus()
-          : input.onBlur()
+          ? props.input.onFocus(null)
+          : props.input.onBlur(null)
         );
       }}
     />
@@ -33,14 +37,5 @@ DateInput.defaultProps = {
   showTime: null,
 };
 
-DateInput.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-
-  format: PropTypes.string,
-  placeholder: PropTypes.string.isRequired,
-  showTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-};
-
 export default DateInput;
+

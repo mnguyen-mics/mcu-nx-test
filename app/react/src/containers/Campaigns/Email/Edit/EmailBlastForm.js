@@ -6,8 +6,8 @@ import { Field, Form, reduxForm } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Row } from 'antd';
 
-import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
-import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form/index.ts';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';

@@ -7,13 +7,11 @@ import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form'
+import { WrappedFieldProps } from 'redux-form'
 
 import McsIcons from '../../components/McsIcons';
 
-interface FormInputsProps {
-  input: WrappedFieldInputProps;
-  meta: WrappedFieldMetaProps;
+interface FormInputsProps {  
   formItemProps: FormItemProps;
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
@@ -21,7 +19,7 @@ interface FormInputsProps {
 
 const defaultTooltipPlacement: TooltipPlacement = 'right';
 
-const FormInput: React.SFC<FormInputsProps> = props => {
+const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form';
+import { FormSection } from '../../../../../../components/Form/index.ts';
 import messages from '../../messages';
 
 function DeviceAndLocation() {

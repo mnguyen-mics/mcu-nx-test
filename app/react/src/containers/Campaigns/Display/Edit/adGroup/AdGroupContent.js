@@ -5,14 +5,14 @@ import { connect } from 'react-redux';
 import { isSubmitting } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
 
-import { EditContentLayout } from '../../../../../components/Layout';
+import { EditContentLayout } from '../../../../../components/Layout/index.ts';
 import AdGroupForm from './AdGroupForm';
 import { withMcsRouter } from '../../../../Helpers';
 import * as SessionHelper from '../../../../../state/Session/selectors';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
-import { Loading } from '../../../../../components';
+import { Loading } from '../../../../../components/index.ts';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 
 const formId = 'adGroupForm';
@@ -93,8 +93,8 @@ class AdGroupContent extends Component {
     const formValues = {
       adGroupMaxBudgetPeriod: 'DAY',
       ...initialValues,
-      adGroupMaxBudgetPerPeriod: formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0'),
-      adGroupTotalBudget: formatMetric(initialValues.adGroupTotalBudget, '0,0'),
+      adGroupMaxBudgetPerPeriod: initialValues.adGroupMaxBudgetPerPeriod ? formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0') : '',
+      adGroupTotalBudget: initialValues.adGroupTotalBudget ? formatMetric(initialValues.adGroupTotalBudget, '0,0') : '',
     };
 
     return (

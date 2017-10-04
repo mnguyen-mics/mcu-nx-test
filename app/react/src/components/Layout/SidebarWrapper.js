@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from 'antd';
 import Scrollspy from 'react-scrollspy';
 
-import McsIcons from '../McsIcons';
+import McsIcons from '../McsIcons.tsx';
 
 const { Sider } = Layout;
 

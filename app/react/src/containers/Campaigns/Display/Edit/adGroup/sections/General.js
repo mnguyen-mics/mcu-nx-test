@@ -4,7 +4,7 @@ import { Row } from 'antd';
 import { Field } from 'redux-form';
 
 import messages from '../../messages';
-import { ButtonStyleless, Form, McsIcons } from '../../../../../../components';
+import { ButtonStyleless, McsIcons, Form } from '../../../../../../components/index.ts';
 
 const {
   FormInput,
@@ -82,16 +82,15 @@ class General extends Component {
                     component={FormSelectAddon}
                     props={{
                       options: [
-                        { key: 'DAY', text: formatMessage(messages.contentSection1Row2OptionDAY) },
-                        { key: 'WEEK', text: formatMessage(messages.contentSection1Row2OptionWEEK) },
-                        { key: 'MONTH', text: formatMessage(messages.contentSection1Row2OptionMONTH) },
+                        { value: 'DAY', title: formatMessage(messages.contentSection1Row2OptionDAY) },
+                        { value: 'WEEK', title: formatMessage(messages.contentSection1Row2OptionWEEK) },
+                        { value: 'MONTH', title: formatMessage(messages.contentSection1Row2OptionMONTH) },
                       ],
                     }}
                   />
                 ),
                 placeholder: formatMessage(messages.contentSection1Row2Placeholder),
-                style: { width: '100%' },
-                type: 'number',
+                style: { width: '100%' }
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSection1Row2Tooltip),
@@ -113,8 +112,7 @@ class General extends Component {
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row3Placeholder),
-                type: 'number',
+                placeholder: formatMessage(messages.contentSection1Row3Placeholder)
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSection1Row3Tooltip),

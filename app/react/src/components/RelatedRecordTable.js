@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
-import ButtonStyleless from './ButtonStyleless';
-import { SwitchInput } from './Form';
-import McsIcons from './McsIcons';
+import ButtonStyleless from './ButtonStyleless.tsx';
+import { SwitchInput } from './Form/index.ts';
+import McsIcons from './McsIcons.tsx';
 import generateGuid from '../utils/generateGuid';
 
 function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldStatus }) {

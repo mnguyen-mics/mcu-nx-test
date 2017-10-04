@@ -1,11 +1,23 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Button, Dropdown, Menu } from 'antd';
+import { MenuProps } from 'antd/lib/menu'
 
 import McsIcons from './McsIcons';
 
-class DropdownButton extends Component {
+export interface DropdownButtonItemProps {
+  id: string;
+  message: FormattedMessage.MessageDescriptor;
+  onClick: Function;
+}
+
+export interface DropdownButtonProps {
+  items: DropdownButtonItemProps[];
+}
+
+
+class DropdownButton extends React.Component<DropdownButtonProps> {
 
   render() {
     const { items } = this.props;
@@ -43,12 +55,5 @@ class DropdownButton extends Component {
   }
 }
 
-DropdownButton.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    message: PropTypes.shape().isRequired,
-    onClick: PropTypes.func.isRequired,
-  })).isRequired,
-};
-
 export default DropdownButton;
+

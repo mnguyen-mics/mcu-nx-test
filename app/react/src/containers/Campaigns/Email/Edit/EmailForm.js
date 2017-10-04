@@ -7,8 +7,8 @@ import { Layout, Row } from 'antd';
 
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { withMcsRouter } from '../../../Helpers';
-import { FormInput, FormSelect, FormSection, withValidators } from '../../../../components/Form';
-import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import { FormInput, FormSelect, FormSection, withValidators } from '../../../../components/Form/index.ts';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 
 import { generateFakeId, isFakeId } from '../../../../utils/FakeIdHelper';
 import messages from './messages';
