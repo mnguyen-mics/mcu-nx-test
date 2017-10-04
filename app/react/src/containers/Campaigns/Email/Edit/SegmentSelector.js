@@ -206,7 +206,7 @@ class SegmentSelector extends Component {
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <Actionbar path={[{ name: 'Add an existing template' }]} edition>
+          <Actionbar path={[{ name: 'Add an audience' }]} edition>
             <Button type="primary mcs-primary" onClick={this.handleAdd}>
               <McsIcons type="plus" /><span>Add</span>
             </Button>
