@@ -71,46 +71,34 @@ class SegmentSelector extends Component {
       options.keywords = keywords;
     }
 
-    return AudienceSegmentService.getSegments(organisationId, datamartId, options).then(response => {
-      return AudienceSegmentService.getSegmentMetaData(organisationId)
-        .then(results => {
-          const segments = response.data;
-          const metadata = results;
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, options)
+      .then(response => {
+        const segments = response.data;
+        const allAudienceSegmentIds = segments.map(segment => segment.id);
+        const audienceSegmentById = normalizeArrayOfObject(segments, 'id');
 
-          const segmentsWithAdditionalMetadata = segments.map(segment => {
-            const meta = metadata[segment.id];
-            const userPoints = (meta && meta.user_points ? meta.user_points : '-');
-            const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
+        this.setState(prevState => {
+          const selectedSegmentById = {
+            ...prevState.selectedSegmentById,
+            ...selectedIds.reduce((acc, segmentId) => {
+              if (!prevState.selectedSegmentById[segmentId]) {
+                return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
+              }
+              return acc;
+            }, {}),
+          };
 
-            return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
-          });
-
-          const allAudienceSegmentIds = segmentsWithAdditionalMetadata.map(segment => segment.id);
-          const audienceSegmentById = normalizeArrayOfObject(segmentsWithAdditionalMetadata, 'id');
-
-          this.setState(prevState => {
-            const selectedSegmentById = {
-              ...prevState.selectedSegmentById,
-              ...selectedIds.reduce((acc, segmentId) => {
-                if (!prevState.selectedSegmentById[segmentId]) {
-                  return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
-                }
-                return acc;
-              }, {}),
-            };
-
-            return {
-              allAudienceSegmentIds,
-              audienceSegmentById,
-              selectedSegmentById,
-              isLoading: false,
-              total: response.total,
-            };
-          });
-
-          return response;
+          return {
+            allAudienceSegmentIds,
+            audienceSegmentById,
+            selectedSegmentById,
+            isLoading: false,
+            total: response.total,
+          };
         });
-    });
+
+        return response;
+      });
   }
 
   getColumnsDefinitions = () => {
