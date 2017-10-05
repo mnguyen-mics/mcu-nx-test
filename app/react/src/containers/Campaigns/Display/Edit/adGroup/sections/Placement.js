@@ -12,9 +12,6 @@ const { FormRadioGroup, FormSection } = Form;
 function Placement({ formValues, formatMessage }) {
 
   const { placementType, placements } = formValues;
-
-  console.log('formValues = ', formValues);
-
   const radios = [
     { id: 1, title: formatMessage(messages.contentSection9Radio1), value: 'auto' },
     { id: 2, title: formatMessage(messages.contentSection9Radio2), value: 'custom' },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { filter } from 'lodash';
 import PropTypes from 'prop-types';
-import { Checkbox, Table } from 'antd';
+import { Avatar, Checkbox, Table } from 'antd';
 import { CheckboxWithSign } from '../../../../../components/Form';
 
 import messages from '../messages';
@@ -10,17 +10,22 @@ function PlacementTable({ formatMessage, placements }) {
 
   const formatDataSource = (type, title) => {
     const filteredValues = filter(placements, { type });
-    const allValuesChecked = !filteredValues.find(elem => !elem.checked);
+    const numberOfCheckedElements = filteredValues.filter(elem => elem.checked);
+    const checkboxType = (numberOfCheckedElements.length < filteredValues.length
+      ? (!numberOfCheckedElements.length ? 'none' : 'some')
+      : 'all'
+    );
+
     const titleRow = {
-      checked: { isTitle: true, value: allValuesChecked },
+      checked: { isTitle: true, value: checkboxType },
       key: 'title',
-      name: { isTitle: true, value: title },
+      name: { isTitle: true, text: title },
     };
 
     const otherRows = filteredValues.map(elem => ({
       checked: { value: elem.checked },
       key: elem.id,
-      name: { value: elem.name },
+      name: { icon: elem.icon, text: elem.name },
     }));
 
     return [titleRow, ...otherRows];
@@ -34,27 +39,37 @@ function PlacementTable({ formatMessage, placements }) {
       width: '90%',
       dataIndex: 'name',
       key: 'name',
-      render: text => {
-        const className = (text.isTitle ? 'bold titleRowName' : 'regularRowName');
-
-        return <div className={className}>{text.value}</div>;
-      },
+      render: value => (value.isTitle
+        ? <div className="bold rowName">{value.text}</div>
+        : (
+          <div className="align-vertically rowName">
+            <Avatar shape="square" size="small" src={value.icon} />
+            <p className="margin-from-icon">{value.text}</p>
+          </div>
+        )
+      ),
     },
      // this.truc(record.id)
     {
       width: '10%',
       dataIndex: 'checked',
       key: 'checked',
-      render: (checked, record) => (checked.isTitle
-          ? <CheckboxWithSign sign={checked.value ? '+' : '-'} />
+      render: (checked, record) => {
+        const value = (checked.isTitle
+          ? (checked.value === 'all' ? true : false)
+          : checked.value
+        );
+
+        return (checked.value === 'some'
+          ? <CheckboxWithSign sign="-" />
           : (
             <Checkbox
-              checked={checked.value}
+              checked={value}
               onChange={() => {}}
             />
           )
-
-      ),
+        );
+      },
       title: 'todo',
     },
   ];

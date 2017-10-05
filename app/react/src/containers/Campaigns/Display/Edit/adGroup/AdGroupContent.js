@@ -19,12 +19,12 @@ const formId = 'adGroupForm';
 
 // TODO: remove TEMPDATA
 const TEMPDATA = [
-  { id: '1', checked: true, name: 'Libération', type: 'web' },
-  { id: '2', checked: false, name: 'Voici', type: 'web' },
-  { id: '3', checked: false, name: 'Gala', type: 'web' },
-  { id: '4', checked: true, name: 'Libération', type: 'mobile' },
-  { id: '5', checked: true, name: 'Voici', type: 'mobile' },
-  { id: '6', checked: true, name: 'Gala', type: 'mobile' },
+  { id: '1', checked: true, icon: 'http://is3.mzstatic.com/image/thumb/Purple71/v4/08/de/87/08de8741-4a7f-19c2-ccf0-0d5fb0681d88/source/175x175bb.jpg', name: 'Libération', type: 'web' },
+  { id: '2', checked: false, icon: 'https://cdn6.aptoide.com/imgs/3/2/1/3216b5660a628c7d6a82b47f6f4a3856_icon.png?w=240', name: 'Voici', type: 'web' },
+  { id: '3', checked: false, icon: 'https://upload.wikimedia.org/wikipedia/fr/thumb/8/83/Gala_1993_logo.svg/800px-Gala_1993_logo.svg.png', name: 'Gala', type: 'web' },
+  { id: '4', checked: true, icon: 'http://is3.mzstatic.com/image/thumb/Purple71/v4/08/de/87/08de8741-4a7f-19c2-ccf0-0d5fb0681d88/source/175x175bb.jpg', name: 'Libération', type: 'mobile' },
+  { id: '5', checked: true, icon: 'https://cdn6.aptoide.com/imgs/3/2/1/3216b5660a628c7d6a82b47f6f4a3856_icon.png?w=240', name: 'Voici', type: 'mobile' },
+  { id: '6', checked: true, icon: 'https://upload.wikimedia.org/wikipedia/fr/thumb/8/83/Gala_1993_logo.svg/800px-Gala_1993_logo.svg.png', name: 'Gala', type: 'mobile' },
 ];
 
 class AdGroupContent extends Component {
