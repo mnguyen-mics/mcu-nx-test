@@ -255,6 +255,7 @@ class AdGroupForm extends Component {
       audienceTable,
       optimizerTable,
       placementType,
+      placements,
       publisherTable,
       ads,
     } = formValues;
@@ -292,7 +293,7 @@ class AdGroupForm extends Component {
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
             <hr />
-            <Placement {...commonProps} formValues={{ placementType }} />
+            <Placement {...commonProps} formValues={{ placementType, placements }} />
             <hr />
             <Ads {...commonProps} formValues={ads} />
             {!editionMode

@@ -9,17 +9,11 @@ import messages from '../../messages';
 
 const { FormRadioGroup, FormSection } = Form;
 
-// TODO: remove TEMPDATA
-const TEMPDATA = [
-  { id: 1, name: 'Libération', type: 'web' },
-  { id: 2, name: 'Voici', type: 'web' },
-  { id: 3, name: 'Gala', type: 'web' },
-  { id: 4, name: 'Libération', type: 'mobile' },
-  { id: 5, name: 'Voici', type: 'mobile' },
-  { id: 6, name: 'Gala', type: 'mobile' },
-];
-
 function Placement({ formValues, formatMessage }) {
+
+  const { placementType, placements } = formValues;
+
+  console.log('formValues = ', formValues);
 
   const radios = [
     { id: 1, title: formatMessage(messages.contentSection9Radio1), value: 'auto' },
@@ -54,15 +48,15 @@ function Placement({ formValues, formatMessage }) {
           />
         </Col>
 
-        {formValues.placementType === 'custom' && TEMPDATA.length
+        {placementType === 'custom' && placements.length
           && (
             <Col offset={2}>
-              <PlacementTable />
+              <PlacementTable placements={placements} />
             </Col>
           )
         }
 
-        {formValues.placementType === 'custom' && !TEMPDATA.length
+        {placementType === 'custom' && !placements.length
           && <EmptyRecords
             iconType="plus"
             message={formatMessage(messages.contentSection9EmptyTitle)}

@@ -17,6 +17,16 @@ import { formatMetric } from '../../../../../utils/MetricHelper';
 
 const formId = 'adGroupForm';
 
+// TODO: remove TEMPDATA
+const TEMPDATA = [
+  { id: '1', name: 'Libération', type: 'web' },
+  { id: '2', name: 'Voici', type: 'web' },
+  { id: '3', name: 'Gala', type: 'web' },
+  { id: '4', name: 'Libération', type: 'mobile' },
+  { id: '5', name: 'Voici', type: 'mobile' },
+  { id: '6', name: 'Gala', type: 'mobile' },
+];
+
 class AdGroupContent extends Component {
 
   state = {
@@ -100,6 +110,7 @@ class AdGroupContent extends Component {
       adGroupMaxBudgetPerPeriod: formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0'),
       adGroupTotalBudget: formatMetric(initialValues.adGroupTotalBudget, '0,0'),
       placementType: 'auto', // TODO: change to dynamic value of 'auto' or 'custom'
+      placements: TEMPDATA, // TODO: remove temp data
     };
 
     return (
