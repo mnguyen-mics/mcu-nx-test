@@ -2,6 +2,7 @@ import * as React from 'react';
 
 interface McsIconsProps {
     type: string;
+    style?: React.CSSProperties;
 }
 
 const McsIcons: React.SFC<McsIconsProps> = props => {

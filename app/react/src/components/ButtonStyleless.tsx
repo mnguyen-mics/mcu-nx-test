@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 interface ButtonStylelessProps {
   children: React.ReactNode;
   className?: string;
-  buttonProps: object;
+  buttonProps?: object;
+  onClick: React.FormEventHandler<any>;
 }
 
 //function ButtonStyleless({ children, className, ...buttonProps }) {

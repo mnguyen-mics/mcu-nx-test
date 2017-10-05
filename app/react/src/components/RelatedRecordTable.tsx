@@ -1,14 +1,30 @@
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
-import ButtonStyleless from './ButtonStyleless.tsx';
-import { SwitchInput } from './Form/index.ts';
-import McsIcons from './McsIcons.tsx';
+import ButtonStyleless from './ButtonStyleless';
+import { SwitchInput } from './Form';
+import McsIcons from './McsIcons';
 import generateGuid from '../utils/generateGuid';
+import {  } from '';
 
-function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldStatus }) {
+interface RelatedRecordTableProps {
+  dataSource: Array<{}>;
+  loading: boolean;
+  tableName: string;
+  updateTableFieldStatus: Function;
+}
+
+const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
+
+  const {
+    dataSource, 
+    loading, 
+    tableName, 
+    updateTableFieldStatus
+  } = this.props;
+
   const columns = [
     {
       colSpan: 8,
@@ -53,7 +69,7 @@ function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldSt
       colSpan: 9,
       dataIndex: 'include',
       key: 'include',
-      render: (data = {}) => {
+      render: (data = {index:{}, bool:{}}) => {
         const displaySwitch = !!Object.keys(data).length;
 
         return (
@@ -110,12 +126,5 @@ RelatedRecordTable.defaultProps = {
   loading: false,
 };
 
-
-RelatedRecordTable.propTypes = {
-  dataSource: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  loading: PropTypes.bool,
-  tableName: PropTypes.string.isRequired,
-  updateTableFieldStatus: PropTypes.func.isRequired,
-};
-
 export default RelatedRecordTable;
+
