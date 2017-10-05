@@ -7,7 +7,10 @@ import McsIcons from '../McsIcons';
 interface RecordElementProps {
   recordIconType: string;
   title: string;
-  actionButtons?: object;
+  actionButtons?: [{
+    iconType: string;
+    oncClick: React.FormEventHandler<any>;
+  }];
 }
 
 const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
@@ -23,13 +26,13 @@ const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
         {children}
       </Col>
       <Col span={1}>
-        {actionButtons.map(({ iconType, onClick }) => {
+        {actionButtons ? actionButtons.map(({ iconType, onClick }) => {
           return (
             <Button key={Math.random()} className="invisible-button" onClick={onClick}>
               <Icon type={iconType} />
             </Button>
           );
-        })}
+        }) : []}
       </Col>
     </Row>
   );

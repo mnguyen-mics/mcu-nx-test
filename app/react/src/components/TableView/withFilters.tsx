@@ -84,10 +84,10 @@ function withFilters(ViewComponent) {
     }
 
     state = {
-      visibilitySelectedColumns: (this.getHideableColumns()
+      visibilitySelectedColumns: this.props.columnsDefinitions ? (this.getHideableColumns()
       .filter(column => column.isVisibleByDefault)
       .map(column => ({ key: column.translationKey, value: column.key }))
-      ),
+      ): [],
       waiting: true,
     }
 
