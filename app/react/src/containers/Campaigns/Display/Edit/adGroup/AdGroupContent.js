@@ -19,12 +19,12 @@ const formId = 'adGroupForm';
 
 // TODO: remove TEMPDATA
 const TEMPDATA = [
-  { id: '1', name: 'Libération', type: 'web' },
-  { id: '2', name: 'Voici', type: 'web' },
-  { id: '3', name: 'Gala', type: 'web' },
-  { id: '4', name: 'Libération', type: 'mobile' },
-  { id: '5', name: 'Voici', type: 'mobile' },
-  { id: '6', name: 'Gala', type: 'mobile' },
+  { id: '1', checked: true, name: 'Libération', type: 'web' },
+  { id: '2', checked: false, name: 'Voici', type: 'web' },
+  { id: '3', checked: false, name: 'Gala', type: 'web' },
+  { id: '4', checked: true, name: 'Libération', type: 'mobile' },
+  { id: '5', checked: true, name: 'Voici', type: 'mobile' },
+  { id: '6', checked: true, name: 'Gala', type: 'mobile' },
 ];
 
 class AdGroupContent extends Component {

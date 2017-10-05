@@ -1,35 +1,81 @@
 import React from 'react';
 import { filter } from 'lodash';
 import PropTypes from 'prop-types';
+import { Checkbox, Table } from 'antd';
+import { CheckboxWithSign } from '../../../../../components/Form';
 
-// import { Field } from 'redux-form';
-// import { Table } from 'antd';
+import messages from '../messages';
 
-/*
-<Table
-  className={tableStyle}
-  columns={columns}
-  dataSource={dataSource}
-  loading={loading}
-  pagination={false}
-  showHeader={false}
-/>
-*/
+function PlacementTable({ formatMessage, placements }) {
 
-function PlacementTable({ placements }) {
-  // const getPlacements = (type) => placements.filter(placement => placement.type === type);
-  //
-  // const webPlacements = getPlacements('web');
-  // const mobilePlacements = getPlacements('mobile');
+  const formatDataSource = (type, title) => {
+    const filteredValues = filter(placements, { type });
+    const allValuesChecked = !filteredValues.find(elem => !elem.checked);
+    const titleRow = {
+      checked: { isTitle: true, value: allValuesChecked },
+      key: 'title',
+      name: { isTitle: true, value: title },
+    };
 
-  const webPlacements = filter(placements, { type: 'web' });
-  const mobilePlacements = filter(placements, { type: 'mobile' });
+    const otherRows = filteredValues.map(elem => ({
+      checked: { value: elem.checked },
+      key: elem.id,
+      name: { value: elem.name },
+    }));
 
-  console.log('webPlacements = ', webPlacements);
-  console.log('mobilePlacements = ', mobilePlacements);
+    return [titleRow, ...otherRows];
+  };
+
+  const webPlacements = formatDataSource('web', formatMessage(messages.contentSection9TypeWebsites));
+  const mobilePlacements = formatDataSource('mobile', formatMessage(messages.contentSection9TypeMobileApps));
+
+  const columns = [
+    {
+      width: '90%',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => {
+        const className = (text.isTitle ? 'bold titleRowName' : 'regularRowName');
+
+        return <div className={className}>{text.value}</div>;
+      },
+    },
+     // this.truc(record.id)
+    {
+      width: '10%',
+      dataIndex: 'checked',
+      key: 'checked',
+      render: (checked, record) => (checked.isTitle
+          ? <CheckboxWithSign sign={checked.value ? '+' : '-'} />
+          : (
+            <Checkbox
+              checked={checked.value}
+              onChange={() => {}}
+            />
+          )
+
+      ),
+      title: 'todo',
+    },
+  ];
 
   return (
-    <div>Inside Placement Table</div>
+    <div className="placement-table">
+      <Table
+        columns={columns}
+        dataSource={webPlacements}
+        pagination={false}
+        showHeader={false}
+      />
+
+      <Table
+        className="remove-margin-between-tables"
+        columns={columns}
+        dataSource={mobilePlacements}
+        pagination={false}
+        showHeader={false}
+      />
+    </div>
   );
 }
 
@@ -39,6 +85,8 @@ PlacementTable.defaultProps = {
 
 
 PlacementTable.propTypes = {
+  formatMessage: PropTypes.func.isRequired,
+
   placements: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,

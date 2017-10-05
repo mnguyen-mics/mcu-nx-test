@@ -6,10 +6,11 @@ import FormRadio from './FormRadio';
 
 const RadioGroup = Radio.Group;
 
-function FormRadioGroup({ className, elements, input }) {
+function FormRadioGroup({ elementClassName, groupClassName, elements, input }) {
 
   const elementsToMap = elements.map(element => (
     <FormRadio
+      className={elementClassName}
       key={element.id}
       name={element.value}
       title={element.title}
@@ -20,7 +21,7 @@ function FormRadioGroup({ className, elements, input }) {
   return (
     <RadioGroup
       {...input}
-      className={className}
+      className={groupClassName}
       onChange={(e) => input.onChange(e.target.value)}
       value={input.value}
     >{elementsToMap}
@@ -29,18 +30,21 @@ function FormRadioGroup({ className, elements, input }) {
 }
 
 FormRadioGroup.defaultProps = {
-  className: 'display-flex-column',
+  elementClassName: '',
+  groupClassName: '',
 };
 
 
 FormRadioGroup.propTypes = {
-  className: PropTypes.string,
+  elementClassName: PropTypes.string,
 
   elements: PropTypes.arrayOf(
     PropTypes.shape({
       placementType: PropTypes.string,
     }).isRequired
   ).isRequired,
+
+  groupClassName: PropTypes.string,
 
   input: PropTypes.shape({
     onChange: PropTypes.func.isRequired,

@@ -33,7 +33,7 @@ function FormInput({
     >
 
       <Row align="middle" type="flex">
-        <Col span={22} >
+        <Col span={22}>
           <Input
             id={otherInput.name}
             {...otherInput}

@@ -8,12 +8,7 @@ function FormRadio({ title, ...otherProps }) {
   return <Radio {...otherProps}>{title}</Radio>;
 }
 
-FormRadio.defaultProps = {
-  className: 'form-radio',
-};
-
 FormRadio.propTypes = {
-  className: PropTypes.string,
   title: PropTypes.string.isRequired,
 };
 

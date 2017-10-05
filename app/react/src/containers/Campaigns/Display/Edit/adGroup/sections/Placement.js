@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-import { Col, Row } from 'antd';
+import { Col, Row, Tooltip } from 'antd';
 
-import { EmptyRecords, Form } from '../../../../../../components';
+import { EmptyRecords, Form, McsIcons } from '../../../../../../components';
 import PlacementTable from '../PlacementTable';
 import messages from '../../messages';
 
@@ -23,35 +23,40 @@ function Placement({ formValues, formatMessage }) {
   return (
     <div id="media">
       <FormSection
-        dropdownItems={[
-          {
-            id: messages.dropdownNew.id,
-            message: messages.dropdownNew,
-            onClick: () => {},
-          },
-          {
-            id: messages.dropdownAddExisting.id,
-            message: messages.dropdownAddExisting,
-            onClick: () => {},
-          },
-        ]}
         subtitle={messages.sectionSubtitle9}
         title={messages.sectionTitle9}
       />
 
-      <Row>
+      <Row className="ad-group-placement">
         <Col offset={2}>
           <Field
             component={FormRadioGroup}
             name="placementType"
-            props={{ elements: radios }}
+            props={{
+              elementClassName: 'bold font-size radio',
+              elements: radios,
+              groupClassName: 'display-flex-column',
+            }}
           />
         </Col>
 
         {placementType === 'custom' && placements.length
           && (
-            <Col offset={2}>
-              <PlacementTable placements={placements} />
+            <Col className="customContent font-size" offset={2}>
+              <Row>
+                <Col span={3} className="bold">
+                  {formatMessage(messages.contentSection9Properties)}
+                </Col>
+
+                <Col span={14} style={{ marginTop: '-3em' }}>
+                  <PlacementTable formatMessage={formatMessage} placements={placements} />
+                </Col>
+                <Col span={1} className="field-tooltip">
+                  <Tooltip title="Test">
+                    <McsIcons type="info" />
+                  </Tooltip>
+                </Col>
+              </Row>
             </Col>
           )
         }
