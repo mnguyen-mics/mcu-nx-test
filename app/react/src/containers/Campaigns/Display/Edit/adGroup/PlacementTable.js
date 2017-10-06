@@ -3,74 +3,91 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { arrayInsert, arrayRemove, Field } from 'redux-form';
 import { Avatar, Checkbox, Table } from 'antd';
-import { CheckboxWithSign, FormCheckbox } from '../../../../../components/Form';
+import { ButtonStyleless, Form } from '../../../../../components';
+
+const { CheckboxWithSign, FormCheckbox } = Form;
 
 class PlacementTable extends Component {
 
+  state = { displayAll: false }
+
+  changeDisplayOptions = (bool) => (e) => {
+    e.preventDefault();
+
+    this.setState({ displayAll: bool });
+  }
+
   buildColumns = () => {
+    const { placements } = this.props;
+    const numberOfCheckedRows = placements.filter(placement => placement.checked).length;
+    const allIsChecked = numberOfCheckedRows === placements.length;
+    const checkedStatus = (!allIsChecked
+      ? (!numberOfCheckedRows ? 'none' : 'some')
+      : 'all'
+    );
+
     return [
       {
-        width: '90%',
         dataIndex: 'name',
         key: 'name',
-        render: value => (value.isTitle
-          ? <div className="bold rowName">{value.text}</div>
-          : (
-            <div className="align-vertically rowName">
-              <Avatar shape="square" size="small" src={value.icon} />
-              <p className="margin-from-icon">{value.text}</p>
-            </div>
-          )
+        render: value => (
+          <div className="align-vertically rowName">
+            <Avatar shape="square" size="small" src={value.icon} />
+            <p className="margin-from-icon">{value.text}</p>
+          </div>
         ),
+        title: <div className="bold rowName title-wrapper">{this.props.title}</div>,
+        width: '70%',
       },
       {
-        width: '10%',
+        title: (
+          <div className="title-wrapper">
+            <div>
+              <ButtonStyleless
+                className={this.state.displayAll ? 'theme-color' : ''}
+                onClick={this.changeDisplayOptions(true)}
+              >show
+            </ButtonStyleless>
+              <span className="button-separator">/</span>
+              <ButtonStyleless
+                className={!this.state.displayAll ? 'theme-color' : ''}
+                onClick={this.changeDisplayOptions(false)}
+              >hide
+            </ButtonStyleless>
+            </div>
+          </div>
+        ),
+        width: '20%',
+      },
+      {
         dataIndex: 'checked',
         key: 'checked',
-        render: (checked, record, i) => {
-          if (!checked.isTitle) {
-            return (
-              <Field
-                component={FormCheckbox}
-                name={`placements.${this.props.type}.${i - 1}.checked`}
-                type="checkbox"
-              />
-            );
-          }
-
-          const isAllChecked = checked.value === 'all';
-
-          return (checked.value === 'some'
-            ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!isAllChecked)} sign="-" />
-            : <Checkbox checked={isAllChecked} onClick={this.updateAllCheckboxes(!isAllChecked)} />
-          );
-        },
-        title: 'todo',
+        render: (checked, record, i) => (
+          <Field
+            component={FormCheckbox}
+            name={`placements.${this.props.type}.${i}.checked`}
+            type="checkbox"
+          />
+        ),
+        title: (
+          <div className="title-wrapper">
+            {checkedStatus === 'some'
+              ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
+              : <Checkbox checked={allIsChecked} onClick={this.updateAllCheckboxes(!allIsChecked)} />
+            }
+          </div>
+        ),
+        width: '10%',
       },
     ];
   }
 
   buildDataSource = () => {
-    const { placements, title } = this.props;
-    const numberOfCheckedElements = placements.filter(elem => elem.checked);
-    const checkboxType = (numberOfCheckedElements.length < placements.length
-      ? (!numberOfCheckedElements.length ? 'none' : 'some')
-      : 'all'
-    );
-
-    const titleRow = {
-      checked: { isTitle: true, value: checkboxType },
-      key: 'title',
-      name: { isTitle: true, text: title },
-    };
-
-    const otherRows = placements.map(elem => ({
+    return this.props.placements.map(elem => ({
       checked: { name: elem.name, value: elem.checked },
       key: elem.id,
       name: { icon: elem.icon, text: elem.text },
     }));
-
-    return [titleRow, ...otherRows];
   };
 
   updateAllCheckboxes = (bool) => () => {
@@ -90,16 +107,19 @@ class PlacementTable extends Component {
   render() {
     return (
       <Table
+        className={this.props.className}
         columns={this.buildColumns()}
         dataSource={this.buildDataSource()}
         pagination={false}
-        showHeader={false}
+        scroll={this.state.displayAll ? { y: 0 } : { y: 225 }}
+        showHeader
       />
     );
   }
 }
 
 PlacementTable.defaultProps = {
+  className: '',
   placements: [],
 };
 
@@ -107,6 +127,7 @@ PlacementTable.defaultProps = {
 PlacementTable.propTypes = {
   arrayInsert: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
+  className: PropTypes.string,
   formName: PropTypes.string.isRequired,
 
   placements: PropTypes.arrayOf(PropTypes.shape({

@@ -63,6 +63,7 @@ function Placement({
                       component={PlacementTable}
                       name="placements.mobile"
                       props={{
+                        className: 'remove-margin-between-tables',
                         formName,
                         placements: placements.mobile,
                         title: formatMessage(messages.contentSection9TypeMobileApps),
@@ -81,7 +82,7 @@ function Placement({
           )
         }
 
-        {placementType === 'custom' && !placements.length
+        {placementType === 'custom' && !placements.mobile.length && !placements.web.length
           && <EmptyRecords
             iconType="plus"
             message={formatMessage(messages.contentSection9EmptyTitle)}
