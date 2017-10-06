@@ -383,16 +383,16 @@ EmailBlastForm.propTypes = {
 EmailBlastForm = compose(
   injectIntl,
   withRouter,
-  connect(
-    state => ({
-      defaultDatamart: getDefaultDatamart(state),
-    }),
-  ),
   reduxForm({
     form: 'emailBlastForm',
     enableReinitialize: true,
   }),
   withValidators,
+  connect(
+    state => ({
+      defaultDatamart: getDefaultDatamart(state),
+    }),
+  ),
 )(EmailBlastForm);
 
 export default EmailBlastForm;
