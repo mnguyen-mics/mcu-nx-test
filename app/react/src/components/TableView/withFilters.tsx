@@ -1,76 +1,39 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Row, Col, Input } from 'antd';
-import McsDateRangePicker from '../McsDateRangePicker';
-import { MultiSelect } from '../Forms';
+
+import { SearchProps } from 'antd/lib/input/Search'
+
+import McsDateRangePicker, { McsDateRangePickerProps } from '../McsDateRangePicker';
+import MultiSelect, { MultiSelectProps } from '../Forms/MultiSelect';
+import { TableViewProps } from './TableView'
 
 
 const Search = Input.Search;
 const DEFAULT_RANGE_PICKER_DATE_FORMAT = 'DD/MM/YYYY';
 
 interface ViewComponentWithFiltersProps {
-  searchOptions?: {
-    isEnabled?: boolean;
-    placeholder?: string;
-    defaultValue?: string | number;
-    onSearch?: (value: string) => any;
-  };
-  dateRangePickerOptions?: {
-    isEnabled?: boolean;
-    from?: object; // momentjs
-    to?: object; // momentjs
-    format?: string;
-    onChange?: (value: string) => any;
-    disabled?: boolean;
-    values?: any;
-    translations: object;
-  };
-  filtersOptions?: [{
-    name: string;
-    displayElement: any;
-    onCloseMenu?: Function;
-    menuItems?: any;
-    selectedItems?: any;
-    key: string;
-    buttonClass: string;
-  }];
-  columnsDefinitions?:{
-    dataColumnsDefinition?: [{
-      isHideable?: boolean;
-      isVisibleByDefault?: boolean;
-      translationKey?: string;
-      key?: string;
-      // isEnabled?: boolean;
-    }];
-    actionsColumnsDefinition?: Array<object>;
-  };
+  searchOptions?: SearchProps;
+  dateRangePickerOptions?: McsDateRangePickerProps;
+  filtersOptions?: MultiSelectProps[];
   columnsVisibilityOptions?: {
     isEnabled?: boolean;
-    onChange?: Function;
+    onChange?: (selected: Array<{
+      key: string;
+      value: string;
+    }>) => void;
   };
 }
 
-function withFilters(ViewComponent) {
+function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
 
-  class ViewComponentWithFilters extends React.Component<ViewComponentWithFiltersProps> {
+  class ViewComponentWithFilters extends React.Component<ViewComponentWithFiltersProps & TableViewProps> {
 
-    static defaultprops = {
-      searchOptions: {
-        isEnabled: false,
-      },
-      dateRangePickerOptions: {
-        isEnabled: false,
-        format: DEFAULT_RANGE_PICKER_DATE_FORMAT,
-        disabled: false,
-      },
-      pagination: {},
-      filtersOptions: [],
+    static defaultProps: Partial<ViewComponentWithFiltersProps> = {
       columnsVisibilityOptions: {
         isEnabled: false,
         onChange: () => {},
-      },
-      columnsDefinitions: { dataColumnsDefinition: [] },
-      visibilitySelectedColumns: [],
+      }
     }
 
     getHideableColumns = () => {
@@ -85,10 +48,8 @@ function withFilters(ViewComponent) {
 
     state = {
       visibilitySelectedColumns: this.props.columnsDefinitions ? (this.getHideableColumns()
-      .filter(column => column.isVisibleByDefault)
       .map(column => ({ key: column.translationKey, value: column.key }))
-      ): [],
-      waiting: true,
+      ): []
     }
 
     changeColumnVisibility = (selectedColumns) => {
@@ -114,27 +75,23 @@ function withFilters(ViewComponent) {
         columnsVisibilityOptions,
       } = this.props;
 
-      const searchInput = searchOptions && searchOptions.isEnabled
+      const searchInput = searchOptions
       ? (
         <Col span={6}>
-          <Search
-            placeholder={searchOptions.placeholder}
+          <Search          
             className="mcs-search-input"
-            defaultValue={searchOptions.defaultValue}
-            onSearch={searchOptions.onSearch}
+            { ...searchOptions }
           />
         </Col>
       )
       : null;
 
-      const dateRangePicker = dateRangePickerOptions && dateRangePickerOptions.isEnabled
+      const dateRangePicker = dateRangePickerOptions
       ? (
         <McsDateRangePicker
           values={dateRangePickerOptions.values}
           format={dateRangePickerOptions.format}
           onChange={dateRangePickerOptions.onChange}
-          disabled={dateRangePickerOptions.disabled}
-          translations={dateRangePickerOptions.translations}
         />
       )
       : null;
@@ -151,10 +108,9 @@ function withFilters(ViewComponent) {
         );
       }) : null;
 
-      const visibilityMultiSelect = columnsVisibilityOptions && columnsVisibilityOptions.isEnabled
+      const visibilityMultiSelect = columnsVisibilityOptions.isEnabled
       ? (
         <MultiSelect
-          key="name"
           name="columns"
           displayElement={<Icon type="layout" />}
           buttonClass={'mcs-table-filters-item'}

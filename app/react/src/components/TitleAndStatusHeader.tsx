@@ -13,9 +13,9 @@ interface TitleAndStatusHeaderProps {
   headerAttributes: Array<Element>;
 }
 
-class TitleAndStatusHeader extends React.Component<TitleAndStatusHeaderProps, {}> {
+class TitleAndStatusHeader extends React.Component<TitleAndStatusHeaderProps> {
 
-  static defaultProps = {
+  static defaultProps: Partial<TitleAndStatusHeaderProps> = {
     headerStatus: { value: null },
     headerAttributes: [],
   }

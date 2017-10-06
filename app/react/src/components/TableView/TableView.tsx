@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Menu, Table } from 'antd';
 
+import { ColumnProps } from 'antd/lib/table/Column'
+import { PaginationProps } from 'antd/lib/pagination/Pagination'
+import { SpinProps } from 'antd/lib/spin'
+
 import McsIcons from '../McsIcons';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
 import generateGuid from '../../utils/generateGuid';
@@ -12,38 +16,48 @@ const DEFAULT_PAGINATION_OPTION = {
   showSizeChanger: true,
 };
 
-interface TableViewProps {
-  columnsDefinitions: {
-    dataColumnsDefinition?:[{
-      intlMessage: FormattedMessage.Props;
-      translationKey: string;
-      key?: string;
-      render?: string;
-      sorter?: string;
-      isHideable?: boolean;
-    }];
-    actionsColumnsDefinition?: Array<object>;
-  };
-  dataSource: [{}];
-  loading: any;
-  pagination: any;
-  onChange: any;
+export interface ColumnsDefinitions {
+  dataColumnsDefinition?:[{
+    intlMessage: FormattedMessage.Props;
+    translationKey: string;
+    key?: string;
+    render?: (text: string, record: object, index: number) => JSX.Element;
+    sorter?: boolean | ((a: any, b: any) => number);
+    isHideable?: boolean;
+  }];
+  actionsColumnsDefinition?: Array<{ 
+    key: string, 
+    actions: Array<{ 
+      translationKey: string, 
+      callback: (record: object) => void 
+    }> 
+  }>;
+}
+
+export interface TableViewProps {
+  columnsDefinitions: ColumnsDefinitions;
+  // TODO use generics T[]
+  dataSource: object[];
+  loading?: boolean | SpinProps;
+  pagination?: PaginationProps | boolean;
+  onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: Object) => any;
+  visibilitySelectedColumns: Array<{
+    key: string;
+    value: string;
+  }>;
+}
+
+interface TableViewState {
   visibilitySelectedColumns: [{
     key: string;
     value: string;
   }];
-  intlMessage: FormattedMessage.Props;
-}
-
-interface TableViewState {
-  visibilitySelectedColumns
 }
 
 class TableView extends React.Component<TableViewProps, TableViewState> {
 
-  static defaultprops = {
+  static defaultprops: Partial<TableViewProps> = {
     pagination: false,
-    onChange: () => {},
     visibilitySelectedColumns: []
   }
 
@@ -76,10 +90,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       visibilitySelectedColumns
     } = this.props;
 
-    const visibilitySelectedColumnsValues = [];
-    // visibilitySelectedColumns.forEach((el) => {
-    //   visibilitySelectedColumnsValues.push(el.value);
-    // });
+    const visibilitySelectedColumnsValues = [];    
     visibilitySelectedColumns ? visibilitySelectedColumns.map(function(column){
       return visibilitySelectedColumnsValues.push(column.value);
     }) : null;
@@ -163,13 +174,15 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
 
     const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
 
-    const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
+    const dataSourceWithIds = dataSource.map(elem => {
+      return { key: generateGuid(), ...elem };
+    });
 
     let newPagination = pagination;
     if (pagination) {
       newPagination = {
         ...DEFAULT_PAGINATION_OPTION,
-        ...pagination,
+        ...pagination as PaginationProps,
       };
     }
     return (

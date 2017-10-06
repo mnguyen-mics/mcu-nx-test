@@ -280,9 +280,8 @@ class EmailForm extends Component {
                     ...fieldGridConfig,
                   },
                   options: routerOptions.map(router => ({
-                    key: router.id,
                     value: router.id,
-                    text: router.name,
+                    title: router.name,
                   })),
                   helpToolTipProps: {
                     title: formatMessage(messages.emailEditorRouterSelectHelper),

@@ -15,6 +15,7 @@ const MetricsColumn: React.SFC<MetricsColumnProps> = props => {
     metrics,
     isLoading,
   } = props;
+  
   const height: number = 375;
   const nbOfVal: number = metrics ? metrics.length : 1;
   const cellHeight: number = height / nbOfVal;

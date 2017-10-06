@@ -2,19 +2,15 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Card } from './';
 import { Row, Col } from 'antd';
-import { HeaderItem } from './';
+import HeaderItem, { HeaderItemDataProp } from './HeaderItem';
 
 interface CardWithHeaderProps {
-  headerItems?: [{
-    iconType?: string;
-    translationKey?: string;
-    number?: number;
-  }];
+  headerItems?: HeaderItemDataProp[];
   buttons?: JSX.Element;
   hasHeader?: boolean;
 }
 
-const CardWithHeader: React.SFC<CardWithHeaderProps> = ({children, headerItems }) => {
+const CardWithHeader: React.SFC<CardWithHeaderProps> = ({ children, headerItems }) => {
 
   const displayHeader = headerItems.map((element, i) => (
     <HeaderItem

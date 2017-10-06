@@ -4,7 +4,7 @@ import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
 import ButtonStyleless from './ButtonStyleless';
-import { SwitchInput } from './Form';
+import { SwitchInput, FormInput } from './Form';
 import McsIcons from './McsIcons';
 import generateGuid from '../utils/generateGuid';
 import {  } from '';
@@ -78,9 +78,8 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
               {displaySwitch
                 ? (
                   <Field
-                    component={SwitchInput}
                     name={`${tableName}[${data.index}].include`}
-                    type="checkbox"
+                    component={SwitchInput}
                   />
                 )
                 : <Switch />

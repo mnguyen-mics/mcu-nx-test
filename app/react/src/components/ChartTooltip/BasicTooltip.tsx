@@ -4,9 +4,9 @@ import { FormattedMessage } from 'react-intl';
 
 interface BasicTooltipProps {
   content: {
-    xLabel: string | number;
+    xLabel: string | number | Date;
     entries: [{
-      label: FormattedMessage.Props;
+      label?: FormattedMessage.Props;
       color: string;
       value: number;
     }];
@@ -62,9 +62,13 @@ const BasicTooltip: React.SFC<BasicTooltipProps> = ({ content }) => {
 BasicTooltip.defaultProps = {
   content: {
     xLabel: '',
+    // The content of the tooltip
     entries: [{
+      // The legend of the plot entry
       label: null,
+      // The color of the plot entry
       color: '',
+      // The value of the plot entry
       value: 0,
     }],
   },

@@ -76,7 +76,6 @@ class SitesTable extends Component {
     };
 
     const searchOptions = {
-      isEnabled: true,
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: value => onFilterChange({
         name: value,

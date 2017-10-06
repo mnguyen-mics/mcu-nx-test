@@ -1,46 +1,40 @@
 import * as React from 'react';
 import { Icon, Dropdown, Menu, Button } from 'antd';
 
-interface MultiSelectProps {
+
+
+interface Item {
+  key: string;
+  value: string;
+}
+interface MenuItem {
+  handleMenuClick?: (obj: { [name: string]: object[] }) => void;
+  selectedItems?: Item[];
+  items: Item[];
+}
+export interface MultiSelectProps {
   name: string;
   displayElement: JSX.Element;
-  onCloseMenu?: Function;
-  // menuItems: {
-  //   handleMenuClick?: any;
-  //   selectedItems?: [{
-  //     key?: string;
-  //     value?: string;
-  //   }];
-  //   items: [{
-  //     key?: string;
-  //     value?: string;
-  //   }];
-  // };
-  menuItems?: any;
-  selectedItems?: any;
-  buttonClass: any;
-  key: string;
+  onCloseMenu?: (selectedItems: object[]) => void;
+  menuItems: MenuItem;
+  buttonClass?: string;
 }
 
 interface MultiSelectState {
-  selectedItems: any;
+  selectedItems: Item[];
   overlayVisible: boolean;
 }
 
 class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
 
-  static defaultprops = {
+  static defaultprops: Partial<MultiSelectProps> = {
     buttonClass: '',
     onCloseMenu: () => {},
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      overlayVisible: false,
-      selectedItems: this.props.menuItems.selectedItems,
-    };
+  state = {
+    overlayVisible: false,
+    selectedItems: this.props.menuItems.selectedItems,
   }
 
   buildMenuItems = () => {
@@ -70,18 +64,6 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
     if (!isVisible) {
       this.props.onCloseMenu(this.state.selectedItems);
     }
-  }
-
-  isChecked(value) {
-    let isChecked = false;
-
-    // this.buildFilterItems().forEach((item) => {
-    //   if (item.value.toLowerCase() === value.toLowerCase()) {
-    //     isChecked = true;
-    //   }
-    // });
-
-    return isChecked;
   }
 
   onMenuClick = (item) => {

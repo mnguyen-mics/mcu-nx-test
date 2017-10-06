@@ -1,5 +1,9 @@
 import { connect } from 'react-redux';
 
+export interface TranslationProps {
+  translations: {[key: string]: string};
+}
+
 const withTranslations = (WrappedComponent) => {
 
   const mapStateToProps = (state) => ({

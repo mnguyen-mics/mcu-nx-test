@@ -27,7 +27,6 @@ function EmailCampaignsTable({
 }) {
 
   const searchOptions = {
-    isEnabled: true,
     placeholder: formatMessage(messages.searchPlaceholder),
     onSearch: value => onFilterChange({
       keywords: value,

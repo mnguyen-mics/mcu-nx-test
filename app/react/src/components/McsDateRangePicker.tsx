@@ -3,56 +3,64 @@ import PropTypes from 'prop-types';
 import { Dropdown, Button, DatePicker, Menu, Icon } from 'antd';
 import moment from 'moment';
 
-import { withTranslations } from '../containers/Helpers';
+import withTranslations, { TranslationProps } from '../containers/Helpers/withTranslations';
 
-interface McsDateRangePickerProps {
-  values: {
-    rangeType?: string;
-    lookbackWindow?: any;
-    from?: any;
-    to?: any;
-  };
-  onChange: any;
-  translations: any;
-  format: any;
-  disabled: any;
+interface McsDateRandeValue {
+  rangeType: string;
+  lookbackWindow?: moment.Duration;
+  from?: moment.Moment;
+  to?: moment.Moment;
+}
+
+export interface McsDateRangePickerProps {
+  values: McsDateRandeValue;
+  onChange: (values: McsDateRandeValue) => void;
+  format?: string
 }
 
 interface McsDateRangePickerState {
   showRangePicker?: boolean;
 }
 
+interface Range {
+  name: 'TODAY' | 'YESTERDAY' | 'LAST_7_DAYS' | 'LAST_30_DAYS';
+  from: moment.Moment,
+  to: moment.Moment
+}
+
 const { RangePicker } = DatePicker;
 
-const ranges: any = [
+const ranges: Range[] = [
   {
     name: 'TODAY',
-    dateRange: [moment(), moment().add(1, 'days')],
+    from : moment(),
+    to: moment().add(1, 'days')
   },
   {
     name: 'YESTERDAY',
-    dateRange: [moment().subtract(1, 'days'), moment().add(1, 'days')],
+    from : moment().subtract(1, 'days'),
+    to: moment().add(1, 'days')
   },
   {
     name: 'LAST_7_DAYS',
-    dateRange: [moment().subtract(7, 'days'), moment().add(1, 'days')],
+    from: moment().subtract(7, 'days'), 
+    to: moment().add(1, 'days'),
   },
   {
     name: 'LAST_30_DAYS',
-    dateRange: [moment().subtract(1, 'month'), moment().add(1, 'days')],
+    from: moment().subtract(1, 'month'), 
+    to: moment().add(1, 'days')
   },
 ];
 
-const format: string = 'YYYY-MM-DD';
+class McsDateRangePicker extends React.Component<McsDateRangePickerProps & TranslationProps, McsDateRangePickerState> {
 
-let McsDateRangePicker =  class McsDateRangePicker extends React.Component<McsDateRangePickerProps, McsDateRangePickerState> {
+  static defaultProps: Partial<McsDateRangePickerProps> = {
+    format: 'YYYY-MM-DD'
+  }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      showRangePicker: false,
-    };
+  state = {
+    showRangePicker: false,
   }
 
   disableFutureDates(current) {
@@ -60,14 +68,14 @@ let McsDateRangePicker =  class McsDateRangePicker extends React.Component<McsDa
   }
 
   getSelectedPresettedRange() {
-    const { values, translations } = this.props;
+    const { values, translations, format } = this.props;
 
     if (values.rangeType === 'absolute') {
       return `${values.from.format(format)} ~ ${values.to.format(format)}`;
     } else if (values.rangeType === 'relative') {
       const selectedRange = ranges.find((range) => {
         const ceil1 = Math.ceil(moment
-          .duration(range.dateRange[1] - range.dateRange[0])
+          .duration({ from: range.from, to: range.to })
           .asSeconds(),
         );
 
@@ -113,10 +121,10 @@ let McsDateRangePicker =  class McsDateRangePicker extends React.Component<McsDa
     });
 
     onChange({
-      lookbackWindow: moment.duration(selectedRange.dateRange[1] - selectedRange.dateRange[0]),
+      lookbackWindow: moment.duration({ to: selectedRange.to, from: selectedRange.from }),
       rangeType: 'relative',
-      from: selectedRange.dateRange[0],
-      to: selectedRange.dateRange[1],
+      from: selectedRange.from,
+      to: selectedRange.to,
     });
   }
 
@@ -174,6 +182,4 @@ let McsDateRangePicker =  class McsDateRangePicker extends React.Component<McsDa
   }
 }
 
-McsDateRangePicker = withTranslations(McsDateRangePicker);
-
-export default McsDateRangePicker;
+export default withTranslations(McsDateRangePicker);

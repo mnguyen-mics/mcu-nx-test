@@ -228,9 +228,8 @@ class EmailBlastForm extends Component {
                     ...fieldGridConfig,
                   },
                   options: consents.map(consent => ({
-                    key: consent.id,
                     value: consent.id,
-                    text: `${consent.name} (${consent.purpose})`,
+                    title: `${consent.name} (${consent.purpose})`,
                   })),
                   helpToolTipProps: {
                     title: formatMessage(messages.emailEditorProviderSelectHelper),

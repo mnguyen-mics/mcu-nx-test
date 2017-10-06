@@ -2,13 +2,11 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 
 interface ButtonStylelessProps {
-  children: React.ReactNode;
   className?: string;
-  buttonProps?: object;
+  buttonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
   onClick: React.FormEventHandler<any>;
 }
 
-//function ButtonStyleless({ children, className, ...buttonProps }) {
 const ButtonStyleless: React.SFC<ButtonStylelessProps> = props => {
   return (
     <button className={`button-styleless ${props.className}`} {...props.buttonProps}>

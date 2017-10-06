@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 
 interface ChartTooltipProps {
   tooltipStyle?: {
+    // The X pixel where the tooltip will be displayed
     xTooltip: number,
+    // The Y pixel where the tooltip will be displayed
     yTooltip: number,
+    // To show or not the tooltip
     visibility: string,
   };
 }
@@ -12,16 +15,14 @@ interface ChartTooltipProps {
 const ChartTooltip: React.SFC<ChartTooltipProps> = ({ tooltipStyle, children }) => {
 
   const style = {
-    tooltipStyle: {
     left: tooltipStyle.xTooltip,
     top: tooltipStyle.yTooltip,
     visibility: tooltipStyle.visibility,
     position: 'fixed',
-    }
   };
 
   return (
-    <div style={style}></div>
+    <div style={{ style }}>{ children }</div>
   );
 
 }

@@ -1,56 +1,28 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Select, Tooltip, Row, Col } from 'antd';
-import { TooltipPlacement } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
+
+// TS Interfaces
+import { WrappedFieldProps } from 'redux-form'
+import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import McsIcons from '../../components/McsIcons';
 
-interface FormSelectProps {
-  // input: {
-  //   name: string;
-  //   value?: string;
-  //   onChange?: Function;
-  // };
-  input: any;
-  meta: {
-    error?: string;
-    touched?: string;
-    invalid?: string;
-    warning?: string;
-  };
-  formItemProps?: {
-    required?: boolean;
-    label?: Element | string;
-    colon?: boolean;
-  };
-  selectProps?: {
-    mode?: 'multiple' | 'tags' | 'comobox';
-    placehodler?: string;  
-  };
-  options?: [{
-    disabled?: boolean;
-    value?: string;
-    key?: string;
-    title?: string;
-    text?: string;
-  }];
-  helpToolTipProps: {
-    title?: string;
-    placement?: TooltipPlacement;
-  };
-  value?: string;
-  otherInputProps?: any;
-  help?: React.ReactNode;
-  validateStatus?: 'success' | 'warning' | 'error' | 'validating';
+interface FormSelectProps {  
+  formItemProps?: FormItemProps;
+  selectProps?: SelectProps;
+  options?: OptionProps[];
+  helpToolTipProps: TooltipProps;
 }
 
 const Option = Select.Option;
 
-const defaultTooltipPlacement = 'right';
+const defaultTooltipPlacement: TooltipPlacement = 'right';
 
-// const FormSelect: React.SFC<FormSelectProps> = props => {
-class FormSelect extends React.Component<FormSelectProps> {
+class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
 
   static defaultprops = {
     formItemProps: {},
@@ -85,7 +57,7 @@ class FormSelect extends React.Component<FormSelectProps> {
   render() {
 
     const { 
-      input,
+      input: { value, onChange, onBlur, onFocus },
       meta,
       formItemProps,
       selectProps,
@@ -99,10 +71,14 @@ class FormSelect extends React.Component<FormSelectProps> {
 
     const displayHelpToolTip = !isEmpty(helpToolTipProps);
 
-    const mergedTooltipProps = {
+    const mergedTooltipProps: TooltipProps = {
       placement: defaultTooltipPlacement,
       ...helpToolTipProps,
     };
+
+    const optionsToDisplay = options.map(option => (
+      <Option key={option.value} value={option.value}>{option.title}</Option>
+    ));
 
     return (
       <Form.Item
@@ -113,16 +89,21 @@ class FormSelect extends React.Component<FormSelectProps> {
 
         <Row align="middle" type="flex">
           <Col span={22}>
-          <Select {...input} {...selectProps}>
-              {options.map(({ disabled, value, key, title, text }) => (
-                <Option {...{ disabled, value, key, title }}>{text}</Option>
-              ))}
+            <Select
+              value={value} 
+              onChange={onChange} 
+              // difficulties to map some WrappedFieldInputProps with SelectProps
+              onBlur={onChange as () => any}
+              onFocus={onFocus as () => any}            
+              {...selectProps}
+            >
+              {optionsToDisplay}
             </Select>
           </Col>
 
           {displayHelpToolTip &&
             <Col span={2} className="field-tooltip">
-              <Tooltip {...'mergedTooltipProps'}>
+              <Tooltip {...mergedTooltipProps}>
                 <McsIcons type="info" />
               </Tooltip>
             </Col>}

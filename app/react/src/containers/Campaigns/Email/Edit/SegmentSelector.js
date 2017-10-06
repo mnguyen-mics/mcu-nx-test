@@ -141,7 +141,6 @@ class SegmentSelector extends Component {
 
   getSearchOptions() {
     return {
-      isEnabled: true,
       placeholder: 'Search a template',
       onSearch: value => {
         this.setState({

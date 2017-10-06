@@ -4,10 +4,11 @@ import { Layout } from 'antd';
 import { NavigatorHeader } from '../../containers/Header';
 
 interface EditLayoutProps {
-  editComponent: ()=> HTMLElement;
+  editComponent: new() => React.Component;
 }
 
-const EditLayout = ({editComponent: EditComponent}) => {
+const EditLayout: React.SFC<EditLayoutProps> = props => {
+  const EditComponent = props.editComponent;
   return (
     <Layout className="mcs-fullscreen">
       <NavigatorHeader />

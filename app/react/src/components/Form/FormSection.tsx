@@ -2,29 +2,21 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Row } from 'antd';
 
-import { FormTitle } from '../Form/index';
+import FormTitle, { FormTitleProps } from './FormTitle';
 
 import DropdownButton from '../DropdownButton';
 import { DropdownButtonItemProps } from '../DropdownButton';
 
 
 interface FormSectionProps {
-  button: {
+  button?: {
     message: string;
     onClick: React.FormEventHandler<any>; 
   };
-  dropdownItems: DropdownButtonItemProps[];
-  subtitle: {
-    defaultMessage: string;
-    id: string;
-  };
-  title: {
-    defaultMessage: string;
-    id: string;
-  }
+  dropdownItems?: DropdownButtonItemProps[];  
 }
 
-const FormSection: React.SFC<FormSectionProps> = props => {
+const FormSection: React.SFC<FormSectionProps & FormTitleProps> = props => {
 
   return (
     <Row
@@ -34,8 +26,8 @@ const FormSection: React.SFC<FormSectionProps> = props => {
       className="section-header"
     >
       <FormTitle
-        titleMessage={props.title}
-        subTitleMessage={props.subtitle}
+        title={props.title}
+        subtitle={props.subtitle}
       />
 
       {props.button
@@ -54,10 +46,6 @@ const FormSection: React.SFC<FormSectionProps> = props => {
 FormSection.defaultProps = {
   button: null,
   dropdownItems: null,
-};
-
-FormSection.propTypes = {
- 
 };
 
 export default FormSection;

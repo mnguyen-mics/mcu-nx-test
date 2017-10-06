@@ -214,7 +214,6 @@ class AudienceSegmentsTable extends Component {
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
 
     const searchOptions = {
-      isEnabled: true,
       placeholder: translations.SEARCH_AUDIENCE_SEGMENTS,
       onSearch: value => this.updateLocationSearch({
         keywords: value,

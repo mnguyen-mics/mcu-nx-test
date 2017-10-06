@@ -3,25 +3,25 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-interface FormTitleProps {
-  titleMessage: FormattedMessage.Props;
-  subTitleMessage: FormattedMessage.Props;
+export interface FormTitleProps {
+  title: FormattedMessage.MessageDescriptor;
+  subtitle?: FormattedMessage.MessageDescriptor;
 }
 
 
-const FormTitle: React.SFC<FormTitleProps> = ({ titleMessage, subTitleMessage}) => {
+const FormTitle: React.SFC<FormTitleProps> = ({ title, subtitle}) => {
 
   return (
     <div className="title-container">
       <div className="title">
       <FormattedMessage
-        {...titleMessage}
+        {...title}
       />
       </div>
-      {!!subTitleMessage &&
+      {!!subtitle &&
         <div className="subtitle">
         <FormattedMessage
-          {...subTitleMessage}
+          {...subtitle}
         />
         </div>
       }
@@ -30,6 +30,7 @@ const FormTitle: React.SFC<FormTitleProps> = ({ titleMessage, subTitleMessage}) 
 };
 
 FormTitle.defaultProps = {
-  subTitleMessage: null
+  subtitle: null
 };
+
 export default FormTitle;
