@@ -1,4 +1,5 @@
 import CheckboxWithSign from './CheckboxWithSign';
+import FormCheckbox from './FormCheckbox';
 import FormDatePicker from './FormDatePicker';
 import FormInput from './FormInput';
 import FormRadio from './FormRadio';
@@ -14,6 +15,7 @@ import withValidators from './withValidators';
 
 export default {
   CheckboxWithSign,
+  FormCheckbox,
   FormDatePicker,
   FormInput,
   FormRadio,
@@ -29,6 +31,7 @@ export default {
 
 export {
   CheckboxWithSign,
+  FormCheckbox,
   FormDatePicker,
   FormInput,
   FormRadio,

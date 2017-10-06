@@ -147,7 +147,7 @@ class Audience extends Component {
             loading={this.state.loading}
             name="audienceTable"
             tableName="audienceTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
+            updateTableFieldState={handlers.updateTableFieldState}
           />
 
           {!dataSource.length
@@ -174,7 +174,7 @@ Audience.propTypes = {
 
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldStatus: PropTypes.func.isRequired,
+    updateTableFieldState: PropTypes.func.isRequired,
     openNextDrawer: PropTypes.func.isRequired,
     updateTableFields: PropTypes.func.isRequired,
   }).isRequired,

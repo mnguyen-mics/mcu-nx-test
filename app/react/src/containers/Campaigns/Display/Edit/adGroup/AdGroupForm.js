@@ -192,7 +192,7 @@ class AdGroupForm extends Component {
     }, Promise.resolve());
   }
 
-  updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => (e) => {
+  updateTableFieldState = ({ index, toBeRemoved = true, tableName }) => (e) => {
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
 
     this.props.arrayRemove(FORM_NAME, tableName, index);
@@ -211,7 +211,7 @@ class AdGroupForm extends Component {
       prevFields.forEach((prevField, index) => {
         const toBeRemoved = !newFieldIds.includes(prevField.id);
 
-        this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
+        this.updateTableFieldState({ index, toBeRemoved, tableName })();
       });
     }
 
@@ -242,11 +242,12 @@ class AdGroupForm extends Component {
     const commonProps = {
       fieldNormalizer,
       fieldValidators,
+      formName: FORM_NAME,
       formatMessage,
       handlers: {
         closeNextDrawer,
         openNextDrawer,
-        updateTableFieldStatus: this.updateTableFieldStatus,
+        updateTableFieldState: this.updateTableFieldState,
         updateTableFields: this.updateTableFields,
       },
       organisationId,

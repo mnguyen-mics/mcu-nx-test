@@ -7,7 +7,7 @@ import CreativeCard from '../../../Email/Edit/CreativeCard';
 import { ButtonStyleless, McsIcons } from '../../../../../components';
 import { computeDimensionsByRatio } from '../../../../../utils/ShapeHelper';
 
-function AdGroupCardList({ data, updateTableFieldStatus }) {
+function AdGroupCardList({ data, updateTableFieldState }) {
   const cardContent = (index) => ({
     title: {
       key: 'name',
@@ -46,7 +46,7 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
                 <ButtonStyleless>
                   <McsIcons
                     className="button"
-                    onClick={updateTableFieldStatus({ index, tableName: 'ads' })}
+                    onClick={updateTableFieldState({ index, tableName: 'ads' })}
                     type="delete"
                   />
                 </ButtonStyleless>
@@ -86,7 +86,7 @@ AdGroupCardList.defaultProps = {
 
 AdGroupCardList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({})),
-  updateTableFieldStatus: PropTypes.func.isRequired,
+  updateTableFieldState: PropTypes.func.isRequired,
 };
 
 export default AdGroupCardList;

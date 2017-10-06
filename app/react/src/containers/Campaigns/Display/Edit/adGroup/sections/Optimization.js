@@ -120,7 +120,7 @@ class Optimization extends Component {
             loading={this.state.loading}
             name="optimizerTable"
             tableName="optimizerTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
+            updateTableFieldState={handlers.updateTableFieldState}
           />
 
           {!dataSource.length
@@ -146,7 +146,7 @@ Optimization.propTypes = {
 
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldStatus: PropTypes.func.isRequired,
+    updateTableFieldState: PropTypes.func.isRequired,
   }).isRequired,
 
   organisationId: PropTypes.string.isRequired

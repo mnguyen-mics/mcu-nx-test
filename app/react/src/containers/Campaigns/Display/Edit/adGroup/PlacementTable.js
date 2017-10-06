@@ -1,17 +1,59 @@
-import React from 'react';
-import { filter } from 'lodash';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { arrayInsert, arrayRemove, Field } from 'redux-form';
 import { Avatar, Checkbox, Table } from 'antd';
-import { CheckboxWithSign } from '../../../../../components/Form';
+import { CheckboxWithSign, FormCheckbox } from '../../../../../components/Form';
 
-import messages from '../messages';
+class PlacementTable extends Component {
 
-function PlacementTable({ formatMessage, placements }) {
+  buildColumns = () => {
+    return [
+      {
+        width: '90%',
+        dataIndex: 'name',
+        key: 'name',
+        render: value => (value.isTitle
+          ? <div className="bold rowName">{value.text}</div>
+          : (
+            <div className="align-vertically rowName">
+              <Avatar shape="square" size="small" src={value.icon} />
+              <p className="margin-from-icon">{value.text}</p>
+            </div>
+          )
+        ),
+      },
+      {
+        width: '10%',
+        dataIndex: 'checked',
+        key: 'checked',
+        render: (checked, record, i) => {
+          if (!checked.isTitle) {
+            return (
+              <Field
+                component={FormCheckbox}
+                name={`placements.${this.props.type}.${i - 1}.checked`}
+                type="checkbox"
+              />
+            );
+          }
 
-  const formatDataSource = (type, title) => {
-    const filteredValues = filter(placements, { type });
-    const numberOfCheckedElements = filteredValues.filter(elem => elem.checked);
-    const checkboxType = (numberOfCheckedElements.length < filteredValues.length
+          const isAllChecked = checked.value === 'all';
+
+          return (checked.value === 'some'
+            ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!isAllChecked)} sign="-" />
+            : <Checkbox checked={isAllChecked} onClick={this.updateAllCheckboxes(!isAllChecked)} />
+          );
+        },
+        title: 'todo',
+      },
+    ];
+  }
+
+  buildDataSource = () => {
+    const { placements, title } = this.props;
+    const numberOfCheckedElements = placements.filter(elem => elem.checked);
+    const checkboxType = (numberOfCheckedElements.length < placements.length
       ? (!numberOfCheckedElements.length ? 'none' : 'some')
       : 'all'
     );
@@ -22,76 +64,39 @@ function PlacementTable({ formatMessage, placements }) {
       name: { isTitle: true, text: title },
     };
 
-    const otherRows = filteredValues.map(elem => ({
-      checked: { value: elem.checked },
+    const otherRows = placements.map(elem => ({
+      checked: { name: elem.name, value: elem.checked },
       key: elem.id,
-      name: { icon: elem.icon, text: elem.name },
+      name: { icon: elem.icon, text: elem.text },
     }));
 
     return [titleRow, ...otherRows];
   };
 
-  const webPlacements = formatDataSource('web', formatMessage(messages.contentSection9TypeWebsites));
-  const mobilePlacements = formatDataSource('mobile', formatMessage(messages.contentSection9TypeMobileApps));
+  updateAllCheckboxes = (bool) => () => {
+    const { formName, placements, type } = this.props;
 
-  const columns = [
-    {
-      width: '90%',
-      dataIndex: 'name',
-      key: 'name',
-      render: value => (value.isTitle
-        ? <div className="bold rowName">{value.text}</div>
-        : (
-          <div className="align-vertically rowName">
-            <Avatar shape="square" size="small" src={value.icon} />
-            <p className="margin-from-icon">{value.text}</p>
-          </div>
-        )
-      ),
-    },
-     // this.truc(record.id)
-    {
-      width: '10%',
-      dataIndex: 'checked',
-      key: 'checked',
-      render: (checked, record) => {
-        const value = (checked.isTitle
-          ? (checked.value === 'all' ? true : false)
-          : checked.value
-        );
+    placements.forEach((placement, index) => {
+      if (placement.checked !== bool) {
+        const tableName = `placements.${type}`;
+        const newState = { ...placement, checked: bool };
 
-        return (checked.value === 'some'
-          ? <CheckboxWithSign sign="-" />
-          : (
-            <Checkbox
-              checked={value}
-              onChange={() => {}}
-            />
-          )
-        );
-      },
-      title: 'todo',
-    },
-  ];
+        this.props.arrayRemove(formName, tableName, index);
+        this.props.arrayInsert(formName, tableName, index, newState);
+      }
+    });
+  }
 
-  return (
-    <div className="placement-table">
+  render() {
+    return (
       <Table
-        columns={columns}
-        dataSource={webPlacements}
+        columns={this.buildColumns()}
+        dataSource={this.buildDataSource()}
         pagination={false}
         showHeader={false}
       />
-
-      <Table
-        className="remove-margin-between-tables"
-        columns={columns}
-        dataSource={mobilePlacements}
-        pagination={false}
-        showHeader={false}
-      />
-    </div>
-  );
+    );
+  }
 }
 
 PlacementTable.defaultProps = {
@@ -100,13 +105,20 @@ PlacementTable.defaultProps = {
 
 
 PlacementTable.propTypes = {
-  formatMessage: PropTypes.func.isRequired,
+  arrayInsert: PropTypes.func.isRequired,
+  arrayRemove: PropTypes.func.isRequired,
+  formName: PropTypes.string.isRequired,
 
   placements: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
   }).isRequired),
+
+  title: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
 };
 
-export default PlacementTable;
+const mapDispatchToProps = { arrayInsert, arrayRemove };
+
+export default connect(null, mapDispatchToProps)(PlacementTable);

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Field } from 'redux-form';
+import { Field, FieldArray } from 'redux-form';
 import { Col, Row, Tooltip } from 'antd';
 
 import { EmptyRecords, Form, McsIcons } from '../../../../../../components';
@@ -9,13 +9,11 @@ import messages from '../../messages';
 
 const { FormRadioGroup, FormSection } = Form;
 
-function Placement({ formValues, formatMessage }) {
-
-  const { placementType, placements } = formValues;
-  const radios = [
-    { id: 1, title: formatMessage(messages.contentSection9Radio1), value: 'auto' },
-    { id: 2, title: formatMessage(messages.contentSection9Radio2), value: 'custom' },
-  ];
+function Placement({
+  formName,
+  formValues: { placementType, placements },
+  formatMessage,
+}) {
 
   return (
     <div id="media">
@@ -31,13 +29,16 @@ function Placement({ formValues, formatMessage }) {
             name="placementType"
             props={{
               elementClassName: 'bold font-size radio',
-              elements: radios,
+              elements: [
+                { id: 1, title: formatMessage(messages.contentSection9Radio1), value: 'auto' },
+                { id: 2, title: formatMessage(messages.contentSection9Radio2), value: 'custom' },
+              ],
               groupClassName: 'display-flex-column',
             }}
           />
         </Col>
 
-        {placementType === 'custom' && placements.length
+        {placementType === 'custom' && (placements.mobile.length || placements.web.length)
           && (
             <Col className="customContent font-size" offset={2}>
               <Row>
@@ -46,7 +47,29 @@ function Placement({ formValues, formatMessage }) {
                 </Col>
 
                 <Col span={14} style={{ marginTop: '-3em' }}>
-                  <PlacementTable formatMessage={formatMessage} placements={placements} />
+                  <div className="placement-table">
+                    <FieldArray
+                      component={PlacementTable}
+                      name="placements.web"
+                      props={{
+                        formName,
+                        placements: placements.web,
+                        title: formatMessage(messages.contentSection9TypeWebsites),
+                        type: 'web',
+                      }}
+                    />
+
+                    <FieldArray
+                      component={PlacementTable}
+                      name="placements.mobile"
+                      props={{
+                        formName,
+                        placements: placements.mobile,
+                        title: formatMessage(messages.contentSection9TypeMobileApps),
+                        type: 'mobile',
+                      }}
+                    />
+                  </div>
                 </Col>
                 <Col span={1} className="field-tooltip">
                   <Tooltip title="Test">
@@ -71,9 +94,12 @@ function Placement({ formValues, formatMessage }) {
 
 
 Placement.propTypes = {
+  formName: PropTypes.string.isRequired,
+
   formValues: PropTypes.shape({
     placementType: PropTypes.string,
   }).isRequired,
+
   formatMessage: PropTypes.func.isRequired,
 };
 

@@ -107,7 +107,7 @@ class Publisher extends Component {
             loading={this.state.loading}
             name="publisherTable"
             tableName="publisherTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
+            updateTableFieldState={handlers.updateTableFieldState}
           />
 
           {!dataSource.length
@@ -134,7 +134,7 @@ Publisher.propTypes = {
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
     openNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldStatus: PropTypes.func.isRequired,
+    updateTableFieldState: PropTypes.func.isRequired,
   }).isRequired,
 
   organisationId: PropTypes.string.isRequired
