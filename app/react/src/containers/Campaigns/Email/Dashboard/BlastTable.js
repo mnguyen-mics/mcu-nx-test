@@ -75,6 +75,7 @@ class BlastTable extends Component {
       match: {
         params: {
           organisationId,
+          campaignId
         },
       },
       isFetchingBlasts,
@@ -109,7 +110,7 @@ class BlastTable extends Component {
         translationKey: 'NAME',
         key: 'blast_name',
         isHideable: false,
-        render: (blastName, blast) => <Link className="mcs-campaigns-link" to={`v2/o/${organisationId}/campaign/email/${blast.id}`}>{blastName}</Link>,
+        render: (blastName, blast) => <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${blast.id}/edit`}>{blastName}</Link>,
       },
       {
         translationKey: 'EMAIL_SENT',
