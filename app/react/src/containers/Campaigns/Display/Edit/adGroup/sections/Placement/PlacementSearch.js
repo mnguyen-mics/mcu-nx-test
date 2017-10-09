@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { arrayInsert, arrayRemove, Field } from 'redux-form';
+import { Field } from 'redux-form';
 import { Avatar, Table } from 'antd';
 
 import { ButtonStyleless, Form, McsIcons } from '../../../../../../../components';
@@ -113,13 +112,10 @@ PlacementSearch.defaultProps = {
 };
 
 PlacementSearch.propTypes = {
-  arrayInsert: PropTypes.func.isRequired,
-  arrayRemove: PropTypes.func.isRequired,
   className: PropTypes.string,
   displaySearchOptions: PropTypes.bool.isRequired,
   emptyTableMessage: PropTypes.string.isRequired,
   formatMessage: PropTypes.func.isRequired,
-  formName: PropTypes.string.isRequired,
 
   placements: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -130,6 +126,4 @@ PlacementSearch.propTypes = {
   updateDisplayOptions: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = { arrayInsert, arrayRemove };
-
-export default connect(null, mapDispatchToProps)(PlacementSearch);
+export default PlacementSearch;

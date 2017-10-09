@@ -8,7 +8,7 @@ import generateGuid from '../utils/generateGuid';
 
 const { SwitchInput } = Form;
 
-function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldStatus }) {
+function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldState }) {
   const columns = [
     {
       colSpan: 8,
@@ -83,7 +83,7 @@ function RelatedRecordTable({ dataSource, loading, tableName, updateTableFieldSt
       dataIndex: 'toBeRemoved',
       key: 'toBeRemoved',
       render: (index) => (
-        <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
+        <ButtonStyleless onClick={updateTableFieldState({ index, tableName })}>
           <McsIcons type="delete" style={{ fontSize: 20 }} />
         </ButtonStyleless>
     ),
@@ -115,7 +115,7 @@ RelatedRecordTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   loading: PropTypes.bool,
   tableName: PropTypes.string.isRequired,
-  updateTableFieldStatus: PropTypes.func.isRequired,
+  updateTableFieldState: PropTypes.func.isRequired,
 };
 
 export default RelatedRecordTable;

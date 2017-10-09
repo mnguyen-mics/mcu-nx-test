@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Field, FieldArray } from 'redux-form';
+import { FieldArray } from 'redux-form';
 import { Col, Row, Tooltip } from 'antd';
 
 import { EmptyRecords, Form, McsIcons } from '../../../../../../../components';
@@ -13,7 +13,10 @@ const { FormRadioGroup, FormSection } = Form;
 
 class Placement extends Component {
 
-  state = { displaySearchOptions: false }
+  state = {
+    placementOption: 'auto',
+    displaySearchOptions: false
+  }
 
   updateDisplaySearchOptions = (bool) => (e) => {
     this.setState({ displaySearchOptions: bool });
@@ -22,14 +25,15 @@ class Placement extends Component {
 
   render() {
     const {
-    formName,
-    formValues: { placementType, placements },
-    formatMessage,
-  } = this.props;
+      formName,
+      formValues,
+      formatMessage,
+    } = this.props;
+    const { placementOption, displaySearchOptions } = this.state;
 
     const formattedPlacements = [
-      ...setTableRowIndex(placements.web),
-      ...setTableRowIndex(placements.mobile)
+      ...setTableRowIndex(formValues.web),
+      ...setTableRowIndex(formValues.mobile)
     ];
 
     const commonProps = {
@@ -47,21 +51,21 @@ class Placement extends Component {
 
         <Row className="ad-group-placement">
           <Col offset={2}>
-            <Field
-              component={FormRadioGroup}
-              name="placementType"
-              props={{
-                elementClassName: 'bold font-size radio',
-                elements: [
+            <FormRadioGroup
+              elementClassName="bold font-size radio"
+              elements={[
                 { id: 1, title: formatMessage(messages.contentSection9Radio1), value: 'auto' },
                 { id: 2, title: formatMessage(messages.contentSection9Radio2), value: 'custom' },
-                ],
-                groupClassName: 'display-flex-column',
+              ]}
+              groupClassName="display-flex-column"
+              input={{
+                onChange: (option) => this.setState({ placementOption: option }),
+                value: this.state.placementOption,
               }}
             />
           </Col>
 
-          {placementType === 'custom' && (placements.mobile.length || placements.web.length)
+          {placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
           && (
             <Col className="custom-content font-size" offset={2}>
               <Row>
@@ -78,7 +82,7 @@ class Placement extends Component {
                     updateDisplayOptions={this.updateDisplaySearchOptions}
                   />
 
-                  {!this.state.displaySearchOptions
+                  {!displaySearchOptions
                     && (
                     <div className="placement-table">
                       <FieldArray
@@ -86,7 +90,7 @@ class Placement extends Component {
                         name="placements.web"
                         props={{
                           ...commonProps,
-                          placements: placements.web,
+                          placements: formValues.web,
                           title: messages.contentSection9TypeWebsites,
                           type: 'web',
                         }}
@@ -97,7 +101,7 @@ class Placement extends Component {
                         name="placements.mobile"
                         props={{
                           ...commonProps,
-                          placements: placements.mobile,
+                          placements: formValues.mobile,
                           title: messages.contentSection9TypeMobileApps,
                           type: 'mobile',
                         }}
@@ -116,7 +120,7 @@ class Placement extends Component {
           )
         }
 
-          {placementType === 'custom' && !placements.mobile.length && !placements.web.length
+          {placementOption === 'custom' && !formValues.mobile.length && !formValues.web.length
           && <EmptyRecords
             iconType="plus"
             message={formatMessage(messages.contentSection9EmptyTitle)}
@@ -133,7 +137,17 @@ Placement.propTypes = {
   formName: PropTypes.string.isRequired,
 
   formValues: PropTypes.shape({
-    placementType: PropTypes.string,
+    web: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+    })),
+
+    mobile: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+    })),
   }).isRequired,
 
   formatMessage: PropTypes.func.isRequired,

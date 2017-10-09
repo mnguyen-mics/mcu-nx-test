@@ -15,7 +15,7 @@ class PlacementTable extends Component {
   buildColumns = () => {
     const { formatMessage, placements, title } = this.props;
     const numberOfCheckedRows = placements.filter(placement => placement.checked).length;
-    const allIsChecked = numberOfCheckedRows === placements.length;
+    const allIsChecked = numberOfCheckedRows && numberOfCheckedRows === placements.length;
     const checkedStatus = (!allIsChecked
       ? (!numberOfCheckedRows ? 'none' : 'some')
       : 'all'
@@ -64,13 +64,16 @@ class PlacementTable extends Component {
             type="checkbox"
           />
         ),
-        title: (
-          <div className="title-wrapper">
-            {checkedStatus === 'some'
-              ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
-              : <Checkbox checked={allIsChecked} onClick={this.updateAllCheckboxes(!allIsChecked)} />
-            }
-          </div>
+        title: (this.state.displayTableOptions
+          ? (
+            <div className="title-wrapper">
+              {checkedStatus === 'some'
+                ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
+                : <Checkbox checked={allIsChecked} onClick={this.updateAllCheckboxes(!allIsChecked)} />
+              }
+            </div>
+          )
+          : <div />
         ),
         width: '10%',
       },
