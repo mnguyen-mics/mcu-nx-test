@@ -16,52 +16,67 @@
     height: 2.2em;
   }
 
+  .align-vertically {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .button-separator {
+    margin: 0 .2em;
+  }
+
+  .row-name {
+    margin-left: 1em;
+
+    .margin-from-icon {
+      margin-left: 1em;
+
+    }
+  }
+
+  .remove-margin-between-tables {
+    margin-top: -4em;
+  }
+
+  .rowClassName {
+    border: 1px solid red;
+  }
+
+  .search-input {
+    height: 3em;
+    width: 98%;
+  }
+
+  .theme-color {
+    color: @info-color;
+  }
+
+  .title-wrapper {
+    color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 1.8em;
+    margin-bottom: .4em;
+  }
+
+  .search-title-wrapper {
+    color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 1.8em;
+    margin-bottom: .4em;
+    padding: 1em;
+  }
+
   .placement-table {
     table {
       border-left: 1px solid #dcdcdc;
       border-radius: 4px;
       border-right: 1px solid #dcdcdc;
       border-top: 1px solid #d3dbe1;
-    }
-
-    .align-vertically {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-    }
-
-    .button-separator {
-      margin: 0 .2em;
-    }
-
-    .rowName {
-      margin-left: 1em;
-
-      .margin-from-icon {
-        margin-left: 1em;
-
-      }
-    }
-
-    .remove-margin-between-tables {
-      margin-top: -4em;
-    }
-
-    .rowClassName {
-      border: 1px solid red;
-    }
-
-    .theme-color {
-      color: @info-color;
-    }
-
-    .title-wrapper {
-      color: rgba(0, 0, 0, 0.65);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin-top: 1.8em;
-      margin-bottom: .4em;
     }
   }
 }

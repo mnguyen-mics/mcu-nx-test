@@ -7,9 +7,9 @@ import { ButtonStyleless, Form } from '../../../../../components';
 
 const { CheckboxWithSign, FormCheckbox } = Form;
 
-class PlacementTable extends Component {
+class PlacementSearch extends Component {
 
-  state = { displayAll: false }
+  state = { displayAll: false, keyword: '' }
 
   changeDisplayOptions = (bool) => (e) => {
     e.preventDefault();
@@ -33,31 +33,18 @@ class PlacementTable extends Component {
         render: value => (
           <div className="align-vertically row-name">
             <Avatar shape="square" size="small" src={value.icon} />
-            <p className="margin-from-icon">{value.text}</p>
+            <p className="margin-from-icon">{`${value.type} > ${value.text}`}</p>
           </div>
         ),
-        title: <div className="bold row-name title-wrapper">{this.props.title}</div>,
-        width: '70%',
-      },
-      {
         title: (
-          <div className="title-wrapper">
-            <div>
-              <ButtonStyleless
-                className={this.state.displayAll ? 'theme-color' : ''}
-                onClick={this.changeDisplayOptions(true)}
-              >show
-            </ButtonStyleless>
-              <span className="button-separator">/</span>
-              <ButtonStyleless
-                className={!this.state.displayAll ? 'theme-color' : ''}
-                onClick={this.changeDisplayOptions(false)}
-              >hide
-            </ButtonStyleless>
-            </div>
-          </div>
+          <input
+            className="row-name search-input search-title-wrapper"
+            placeholder="Q: ..."
+            onChange={this.updateSearch}
+            value={this.state.keyword}
+          />
         ),
-        width: '20%',
+        width: '95%',
       },
       {
         dataIndex: 'checked',
@@ -65,7 +52,7 @@ class PlacementTable extends Component {
         render: (checked, record, i) => (
           <Field
             component={FormCheckbox}
-            name={`placements.${this.props.type}.${i}.checked`}
+            name={`placements.${checked.type}.${i}.checked`}
             type="checkbox"
           />
         ),
@@ -77,25 +64,25 @@ class PlacementTable extends Component {
             }
           </div>
         ),
-        width: '10%',
+        width: '5%',
       },
     ];
   }
 
   buildDataSource = () => {
     return this.props.placements.map(elem => ({
-      checked: { name: elem.name, value: elem.checked },
+      checked: { name: elem.name, type: elem.type, value: elem.checked },
       key: elem.id,
-      name: { icon: elem.icon, text: elem.text },
+      name: { icon: elem.icon, text: elem.text, type: elem.type, },
     }));
   };
 
   updateAllCheckboxes = (bool) => () => {
-    const { formName, placements, type } = this.props;
+    const { formName, placements } = this.props;
 
     placements.forEach((placement, index) => {
       if (placement.checked !== bool) {
-        const tableName = `placements.${type}`;
+        const tableName = `placements.${placement.type}`;
         const newState = { ...placement, checked: bool };
 
         this.props.arrayRemove(formName, tableName, index);
@@ -104,7 +91,15 @@ class PlacementTable extends Component {
     });
   }
 
+  updateSearch = (e) => {
+    console.log('e = ', e.target.value);
+
+    this.setState({ keyword: e.target.value });
+  }
+
   render() {
+    console.log('this.state = ', this.state);
+    console.log('this.props.placements = ', this.props.placements);
     return (
       <Table
         className={this.props.className}
@@ -118,13 +113,12 @@ class PlacementTable extends Component {
   }
 }
 
-PlacementTable.defaultProps = {
+PlacementSearch.defaultProps = {
   className: '',
   placements: [],
 };
 
-
-PlacementTable.propTypes = {
+PlacementSearch.propTypes = {
   arrayInsert: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
   className: PropTypes.string,
@@ -135,11 +129,8 @@ PlacementTable.propTypes = {
     name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
   }).isRequired),
-
-  title: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = { arrayInsert, arrayRemove };
 
-export default connect(null, mapDispatchToProps)(PlacementTable);
+export default connect(null, mapDispatchToProps)(PlacementSearch);

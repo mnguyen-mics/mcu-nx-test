@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { arrayInsert, arrayRemove, Field } from 'redux-form';
-import { Avatar, Checkbox, Table } from 'antd';
-import { ButtonStyleless, Form } from '../../../../../components';
+import { arrayInsert, arrayRemove } from 'redux-form';
+import { Checkbox, Table } from 'antd';
+import { ButtonStyleless, Form } from '../../../../../../../components';
 
-const { CheckboxWithSign, FormCheckbox } = Form;
+const { CheckboxWithSign } = Form;
 
-class PlacementTable extends Component {
+class PlacementTableHeader extends Component {
 
   state = { displayAll: false }
 
@@ -28,30 +28,26 @@ class PlacementTable extends Component {
 
     return [
       {
-        dataIndex: 'name',
-        key: 'name',
-        render: value => (
-          <div className="align-vertically row-name">
-            <Avatar shape="square" size="small" src={value.icon} />
-            <p className="margin-from-icon">{value.text}</p>
-          </div>
+        key: 'title',
+        render: () => (
+          <div className="bold row-name">{this.props.title}</div>
         ),
-        title: <div className="bold row-name title-wrapper">{this.props.title}</div>,
         width: '70%',
       },
       {
-        title: (
-          <div className="title-wrapper">
+        key: 'displayOption',
+        render: () => (
+          <div className="">
             <div>
               <ButtonStyleless
                 className={this.state.displayAll ? 'theme-color' : ''}
-                onClick={this.changeDisplayOptions(true)}
+                onClick={this.props.changeDisplayOptions(this.props.type, true)}
               >show
             </ButtonStyleless>
               <span className="button-separator">/</span>
               <ButtonStyleless
                 className={!this.state.displayAll ? 'theme-color' : ''}
-                onClick={this.changeDisplayOptions(false)}
+                onClick={this.props.changeDisplayOptions(this.props.type, false)}
               >hide
             </ButtonStyleless>
             </div>
@@ -60,17 +56,9 @@ class PlacementTable extends Component {
         width: '20%',
       },
       {
-        dataIndex: 'checked',
         key: 'checked',
-        render: (checked, record, i) => (
-          <Field
-            component={FormCheckbox}
-            name={`placements.${this.props.type}.${i}.checked`}
-            type="checkbox"
-          />
-        ),
-        title: (
-          <div className="title-wrapper">
+        render: () => (
+          <div className="">
             {checkedStatus === 'some'
               ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
               : <Checkbox checked={allIsChecked} onClick={this.updateAllCheckboxes(!allIsChecked)} />
@@ -81,14 +69,6 @@ class PlacementTable extends Component {
       },
     ];
   }
-
-  buildDataSource = () => {
-    return this.props.placements.map(elem => ({
-      checked: { name: elem.name, value: elem.checked },
-      key: elem.id,
-      name: { icon: elem.icon, text: elem.text },
-    }));
-  };
 
   updateAllCheckboxes = (bool) => () => {
     const { formName, placements, type } = this.props;
@@ -109,24 +89,25 @@ class PlacementTable extends Component {
       <Table
         className={this.props.className}
         columns={this.buildColumns()}
-        dataSource={this.buildDataSource()}
+        dataSource={[{}]}
         pagination={false}
-        scroll={this.state.displayAll ? { y: 0 } : { y: 225 }}
-        showHeader
+        rowClassName={() => 'row-height'}
+        showHeader={false}
       />
     );
   }
 }
 
-PlacementTable.defaultProps = {
+PlacementTableHeader.defaultProps = {
   className: '',
   placements: [],
 };
 
 
-PlacementTable.propTypes = {
+PlacementTableHeader.propTypes = {
   arrayInsert: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
+  changeDisplayOptions: PropTypes.func.isRequired,
   className: PropTypes.string,
   formName: PropTypes.string.isRequired,
 
@@ -142,4 +123,4 @@ PlacementTable.propTypes = {
 
 const mapDispatchToProps = { arrayInsert, arrayRemove };
 
-export default connect(null, mapDispatchToProps)(PlacementTable);
+export default connect(null, mapDispatchToProps)(PlacementTableHeader);

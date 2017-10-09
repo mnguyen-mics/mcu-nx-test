@@ -4,6 +4,7 @@ import { Field, FieldArray } from 'redux-form';
 import { Col, Row, Tooltip } from 'antd';
 
 import { EmptyRecords, Form, McsIcons } from '../../../../../../components';
+import PlacementSearch from '../PlacementSearch';
 import PlacementTable from '../PlacementTable';
 import messages from '../../messages';
 
@@ -37,6 +38,11 @@ function Placement({
             }}
           />
         </Col>
+
+        <PlacementSearch
+          formName={formName}
+          placements={[...placements.web, ...placements.mobile]}
+        />
 
         {placementType === 'custom' && (placements.mobile.length || placements.web.length)
           && (
