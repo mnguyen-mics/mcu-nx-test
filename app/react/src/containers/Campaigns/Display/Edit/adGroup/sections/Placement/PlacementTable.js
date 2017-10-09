@@ -10,10 +10,10 @@ const { CheckboxWithSign, FormCheckbox } = Form;
 
 class PlacementTable extends Component {
 
-  state = { displayAll: true }
+  state = { displayTableOptions: true }
 
   buildColumns = () => {
-    const { placements } = this.props;
+    const { formatMessage, placements, title } = this.props;
     const numberOfCheckedRows = placements.filter(placement => placement.checked).length;
     const allIsChecked = numberOfCheckedRows === placements.length;
     const checkedStatus = (!allIsChecked
@@ -31,7 +31,7 @@ class PlacementTable extends Component {
             <p className="margin-from-icon">{value.text}</p>
           </div>
         ),
-        title: <div className="bold row-name title-wrapper">{this.props.title}</div>,
+        title: <div className="bold row-name title-wrapper">{formatMessage(title)}</div>,
         width: '70%',
       },
       {
@@ -39,13 +39,13 @@ class PlacementTable extends Component {
           <div className="title-wrapper">
             <div>
               <ButtonStyleless
-                className={this.state.displayAll ? 'theme-color' : ''}
+                className={this.state.displayTableOptions ? 'theme-color' : ''}
                 onClick={this.updateDisplayOptions(true)}
               >show
             </ButtonStyleless>
               <span className="button-separator">/</span>
               <ButtonStyleless
-                className={!this.state.displayAll ? 'theme-color' : ''}
+                className={!this.state.displayTableOptions ? 'theme-color' : ''}
                 onClick={this.updateDisplayOptions(false)}
               >hide
             </ButtonStyleless>
@@ -78,15 +78,18 @@ class PlacementTable extends Component {
   }
 
   buildDataSource = () => {
-    return this.props.placements.map(elem => ({
-      checked: { name: elem.name, value: elem.checked },
-      key: elem.id,
-      name: { icon: elem.icon, text: elem.text },
-    }));
+    return (this.state.displayTableOptions
+      ? this.props.placements.map(elem => ({
+        checked: { name: elem.name, value: elem.checked },
+        key: elem.id,
+        name: { icon: elem.icon, text: elem.text },
+      }))
+      : []
+    );
   };
 
   updateDisplayOptions = (bool) => (e) => {
-    this.setState({ displayAll: bool });
+    this.setState({ displayTableOptions: bool });
     e.preventDefault();
   }
 
@@ -105,21 +108,26 @@ class PlacementTable extends Component {
   }
 
   render() {
+    const { emptyTableMessage } = this.props;
+    const { displayTableOptions } = this.state;
+
     return (
-      <Table
-        className={this.props.className}
-        columns={this.buildColumns()}
-        dataSource={this.buildDataSource()}
-        pagination={false}
-        scroll={this.state.displayAll ? { y: 0 } : { y: 225 }}
-        showHeader
-      />
+      <div className={displayTableOptions ? '' : 'table-without-empty-message'}>
+        <Table
+          className="remove-margin-between-tables"
+          columns={this.buildColumns()}
+          dataSource={this.buildDataSource()}
+          locale={{ emptyText: (displayTableOptions ? emptyTableMessage : '') }}
+          pagination={false}
+          scroll={{ y: 250 }}
+          showHeader
+        />
+      </div>
     );
   }
 }
 
 PlacementTable.defaultProps = {
-  className: '',
   placements: [],
 };
 
@@ -127,7 +135,8 @@ PlacementTable.defaultProps = {
 PlacementTable.propTypes = {
   arrayInsert: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
-  className: PropTypes.string,
+  emptyTableMessage: PropTypes.string.isRequired,
+  formatMessage: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
 
   placements: PropTypes.arrayOf(PropTypes.shape({
@@ -136,7 +145,11 @@ PlacementTable.propTypes = {
     type: PropTypes.string.isRequired,
   }).isRequired),
 
-  title: PropTypes.string.isRequired,
+  title: PropTypes.shape({
+    defaultMessage: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+
   type: PropTypes.string.isRequired,
 };
 

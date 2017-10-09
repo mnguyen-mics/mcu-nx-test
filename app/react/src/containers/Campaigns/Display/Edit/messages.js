@@ -491,7 +491,7 @@ export default defineMessages({
   },
   contentSection9SearchEmptyTable: {
     id: 'adGroupEditor.section9.search.emptyTable',
-    defaultMessage: 'No Result',
+    defaultMessage: 'No result',
   },
 
   contentSection9EmptyTitle: {

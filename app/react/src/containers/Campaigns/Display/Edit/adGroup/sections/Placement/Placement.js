@@ -15,7 +15,7 @@ class Placement extends Component {
 
   state = { displaySearchOptions: false }
 
-  setDisplaySearchOptions = (bool) => (e) => {
+  updateDisplaySearchOptions = (bool) => (e) => {
     this.setState({ displaySearchOptions: bool });
     e.preventDefault();
   }
@@ -31,6 +31,12 @@ class Placement extends Component {
       ...setTableRowIndex(placements.web),
       ...setTableRowIndex(placements.mobile)
     ];
+
+    const commonProps = {
+      emptyTableMessage: formatMessage(messages.contentSection9SearchEmptyTable),
+      formatMessage,
+      formName: formName,
+    };
 
     return (
       <div id="media">
@@ -57,21 +63,19 @@ class Placement extends Component {
 
           {placementType === 'custom' && (placements.mobile.length || placements.web.length)
           && (
-            <Col className="customContent font-size" offset={2}>
+            <Col className="custom-content font-size" offset={2}>
               <Row>
                 <Col span={3} className="bold">
                   {formatMessage(messages.contentSection9Properties)}
                 </Col>
 
-                <Col span={14} style={{ marginTop: '-3em' }}>
+                <Col span={14} className="tables-wrapper">
 
                   <PlacementSearch
+                    {...commonProps}
                     displaySearchOptions={this.state.displaySearchOptions}
-                    emptyTableMessage={formatMessage(messages.contentSection9SearchEmptyTable)}
-                    placeholder={formatMessage(messages.contentSection9SearchPlaceholder)}
-                    formName={formName}
                     placements={formattedPlacements}
-                    setDisplaySearchOptions={this.setDisplaySearchOptions}
+                    updateDisplayOptions={this.updateDisplaySearchOptions}
                   />
 
                   {!this.state.displaySearchOptions
@@ -81,10 +85,9 @@ class Placement extends Component {
                         component={PlacementTable}
                         name="placements.web"
                         props={{
-                          className: 'remove-margin-between-tables',
-                          formName,
+                          ...commonProps,
                           placements: placements.web,
-                          title: formatMessage(messages.contentSection9TypeWebsites),
+                          title: messages.contentSection9TypeWebsites,
                           type: 'web',
                         }}
                       />
@@ -93,10 +96,9 @@ class Placement extends Component {
                         component={PlacementTable}
                         name="placements.mobile"
                         props={{
-                          className: 'remove-margin-between-tables',
-                          formName,
+                          ...commonProps,
                           placements: placements.mobile,
-                          title: formatMessage(messages.contentSection9TypeMobileApps),
+                          title: messages.contentSection9TypeMobileApps,
                           type: 'mobile',
                         }}
                       />

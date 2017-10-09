@@ -6,6 +6,7 @@ import { Avatar, Table } from 'antd';
 
 import { ButtonStyleless, Form, McsIcons } from '../../../../../../../components';
 import { toLowerCaseNoAccent } from '../../../../../../../utils/StringHelper';
+import messages from '../../../messages';
 
 const { FormCheckbox } = Form;
 
@@ -14,6 +15,7 @@ class PlacementSearch extends Component {
   state = { keyword: '' }
 
   buildColumns = () => {
+    const { formatMessage, updateDisplayOptions } = this.props;
     return [
       {
         dataIndex: 'name',
@@ -27,9 +29,9 @@ class PlacementSearch extends Component {
         title: (
           <input
             className="row-name search-input search-title-wrapper"
-            placeholder={this.props.placeholder}
+            placeholder={formatMessage(messages.contentSection9SearchPlaceholder)}
             onChange={this.updateSearch}
-            onFocus={this.props.setDisplaySearchOptions(true)}
+            onFocus={updateDisplayOptions(true)}
             value={this.state.keyword}
           />
         ),
@@ -77,22 +79,8 @@ class PlacementSearch extends Component {
 
   onClose = (e) => {
     this.updateSearch();
-    this.props.setDisplaySearchOptions(false)(e);
+    this.props.updateDisplayOptions(false)(e);
     e.preventDefault();
-  }
-
-  updateAllCheckboxes = (bool) => () => {
-    const { formName, placements } = this.props;
-
-    placements.forEach((placement, index) => {
-      if (placement.checked !== bool) {
-        const tableName = `placements.${placement.type}`;
-        const newState = { ...placement, checked: bool };
-
-        this.props.arrayRemove(formName, tableName, index);
-        this.props.arrayInsert(formName, tableName, index, newState);
-      }
-    });
   }
 
   updateSearch = (e) => {
@@ -105,14 +93,16 @@ class PlacementSearch extends Component {
     const { className, displaySearchOptions, emptyTableMessage } = this.props;
 
     return (
-      <Table
-        locale={{ emptyText: (displaySearchOptions ? emptyTableMessage : '') }}
-        className={className}
-        columns={this.buildColumns()}
-        dataSource={this.buildDataSource()}
-        pagination={false}
-        showHeader
-      />
+      <div className={displaySearchOptions ? '' : 'table-without-empty-message'}>
+        <Table
+          className={className}
+          columns={this.buildColumns()}
+          dataSource={this.buildDataSource()}
+          locale={{ emptyText: (displaySearchOptions ? emptyTableMessage : '') }}
+          pagination={false}
+          showHeader
+        />
+      </div>
     );
   }
 }
@@ -128,8 +118,8 @@ PlacementSearch.propTypes = {
   className: PropTypes.string,
   displaySearchOptions: PropTypes.bool.isRequired,
   emptyTableMessage: PropTypes.string.isRequired,
+  formatMessage: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
 
   placements: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -137,7 +127,7 @@ PlacementSearch.propTypes = {
     type: PropTypes.string.isRequired,
   }).isRequired),
 
-  setDisplaySearchOptions: PropTypes.func.isRequired,
+  updateDisplayOptions: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = { arrayInsert, arrayRemove };
