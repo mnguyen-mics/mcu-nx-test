@@ -4,7 +4,7 @@ import DeviceAndLocation from './DeviceAndLocation';
 import General from './General';
 import Media from './Media';
 import Optimization from './Optimization';
-import Placement from './Placement';
+import Placement from './Placement/Placement';
 import Publisher from './Publisher';
 import Summary from './Summary';
 

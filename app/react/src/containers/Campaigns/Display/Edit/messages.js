@@ -485,6 +485,14 @@ export default defineMessages({
     defaultMessage: 'Mobile Apps',
   },
 
+  contentSection9SearchPlaceholder: {
+    id: 'adGroupEditor.section9.search.placeholder',
+    defaultMessage: 'Search',
+  },
+  contentSection9SearchEmptyTable: {
+    id: 'adGroupEditor.section9.search.emptyTable',
+    defaultMessage: 'No Result',
+  },
 
   contentSection9EmptyTitle: {
     id: 'adGroupEditor.section9.emptyTitle',

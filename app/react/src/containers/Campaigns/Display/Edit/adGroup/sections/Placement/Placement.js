@@ -4,29 +4,33 @@ import { Field, FieldArray } from 'redux-form';
 import { Col, Row, Tooltip } from 'antd';
 
 import { EmptyRecords, Form, McsIcons } from '../../../../../../../components';
-import PlacementTableHeader from './PlacementTableHeader';
+import PlacementSearch from './PlacementSearch';
 import PlacementTable from './PlacementTable';
+import { setTableRowIndex } from '../../../../../../../utils/TableUtils';
 import messages from '../../../messages';
 
 const { FormRadioGroup, FormSection } = Form;
 
 class Placement extends Component {
 
-  state = { displayAll: false }
+  state = { displaySearchOptions: false }
 
-  changeDisplayOptions = (bool) => (e) => {
+  setDisplaySearchOptions = (bool) => (e) => {
+    this.setState({ displaySearchOptions: bool });
     e.preventDefault();
-
-    this.setState({ displayAll: bool });
   }
 
   render() {
-
     const {
     formName,
     formValues: { placementType, placements },
     formatMessage,
   } = this.props;
+
+    const formattedPlacements = [
+      ...setTableRowIndex(placements.web),
+      ...setTableRowIndex(placements.mobile)
+    ];
 
     return (
       <div id="media">
@@ -51,7 +55,7 @@ class Placement extends Component {
             />
           </Col>
 
-          {true // placementType === 'custom' && (placements.mobile.length || placements.web.length)
+          {placementType === 'custom' && (placements.mobile.length || placements.web.length)
           && (
             <Col className="customContent font-size" offset={2}>
               <Row>
@@ -60,47 +64,45 @@ class Placement extends Component {
                 </Col>
 
                 <Col span={14} style={{ marginTop: '-3em' }}>
-                  <div className="placement-table">
-                    {/* <PlacementTableHeader
-                      changeDisplayOptions={this.changeDisplayOptions}
-                      formName={formName}
-                      placements={placements.web}
-                      title={formatMessage(messages.contentSection9TypeWebsites)}
-                      type="web"
-                    /> */}
-                    <FieldArray
-                      component={PlacementTable}
-                      name="placements.web"
-                      props={{
-                        className: '', // ''remove-margin-between-tables',
-                        displayAll: this.state.displayAll,
-                        placements: placements.web,
-                        type: 'web',
-                        formName: formName,
-                        title: formatMessage(messages.contentSection9TypeWebsites),
-                      }}
-                    />
 
-                    {/* <PlacementTableHeader
-                      changeDisplayOptions={this.changeDisplayOptions}
-                      formName={formName}
-                      placements={placements.mobile}
-                      title={formatMessage(messages.contentSection9TypeMobileApps)}
-                      type="mobile"
-                    /> */}
-                    {/* <FieldArray
-                      component={PlacementTable}
-                      name="placements.mobile"
-                      props={{
-                        className: 'remove-margin-between-tables',
-                        displayAll: this.state.displayAll,
-                        placements: placements.mobile,
-                        type: 'mobile',
-                        formName: formName,
-                        title: formatMessage(messages.contentSection9TypeWebsites),
-                      }}
-                    /> */}
-                  </div>
+                  <PlacementSearch
+                    displaySearchOptions={this.state.displaySearchOptions}
+                    emptyTableMessage={formatMessage(messages.contentSection9SearchEmptyTable)}
+                    placeholder={formatMessage(messages.contentSection9SearchPlaceholder)}
+                    formName={formName}
+                    placements={formattedPlacements}
+                    setDisplaySearchOptions={this.setDisplaySearchOptions}
+                  />
+
+                  {!this.state.displaySearchOptions
+                    && (
+                    <div className="placement-table">
+                      <FieldArray
+                        component={PlacementTable}
+                        name="placements.web"
+                        props={{
+                          className: 'remove-margin-between-tables',
+                          formName,
+                          placements: placements.web,
+                          title: formatMessage(messages.contentSection9TypeWebsites),
+                          type: 'web',
+                        }}
+                      />
+
+                      <FieldArray
+                        component={PlacementTable}
+                        name="placements.mobile"
+                        props={{
+                          className: 'remove-margin-between-tables',
+                          formName,
+                          placements: placements.mobile,
+                          title: formatMessage(messages.contentSection9TypeMobileApps),
+                          type: 'mobile',
+                        }}
+                      />
+                    </div>
+                  )
+                }
                 </Col>
                 <Col span={1} className="field-tooltip">
                   <Tooltip title="Test">

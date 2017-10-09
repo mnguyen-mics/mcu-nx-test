@@ -12,8 +12,13 @@ function stringifyTable(table = [], key) {
   ), '');
 }
 
+function setTableRowIndex(table = []) {
+  return table.map((row, index) => ({ ...row, index }));
+}
+
 export {
   filterTableByIncludeStatus,
   filterTableByRemovedStatus,
+  setTableRowIndex,
   stringifyTable,
 };

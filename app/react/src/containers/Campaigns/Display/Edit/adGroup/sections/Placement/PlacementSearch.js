@@ -2,30 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { arrayInsert, arrayRemove, Field } from 'redux-form';
-import { Avatar, Checkbox, Table } from 'antd';
-import { ButtonStyleless, Form } from '../../../../../components';
+import { Avatar, Table } from 'antd';
 
-const { CheckboxWithSign, FormCheckbox } = Form;
+import { ButtonStyleless, Form, McsIcons } from '../../../../../../../components';
+import { toLowerCaseNoAccent } from '../../../../../../../utils/StringHelper';
+
+const { FormCheckbox } = Form;
 
 class PlacementSearch extends Component {
 
-  state = { displayAll: false, keyword: '' }
-
-  changeDisplayOptions = (bool) => (e) => {
-    e.preventDefault();
-
-    this.setState({ displayAll: bool });
-  }
+  state = { keyword: '' }
 
   buildColumns = () => {
-    const { placements } = this.props;
-    const numberOfCheckedRows = placements.filter(placement => placement.checked).length;
-    const allIsChecked = numberOfCheckedRows === placements.length;
-    const checkedStatus = (!allIsChecked
-      ? (!numberOfCheckedRows ? 'none' : 'some')
-      : 'all'
-    );
-
     return [
       {
         dataIndex: 'name',
@@ -39,8 +27,9 @@ class PlacementSearch extends Component {
         title: (
           <input
             className="row-name search-input search-title-wrapper"
-            placeholder="Q: ..."
+            placeholder={this.props.placeholder}
             onChange={this.updateSearch}
+            onFocus={this.props.setDisplaySearchOptions(true)}
             value={this.state.keyword}
           />
         ),
@@ -49,20 +38,22 @@ class PlacementSearch extends Component {
       {
         dataIndex: 'checked',
         key: 'checked',
-        render: (checked, record, i) => (
+        render: (checked) => (
           <Field
             component={FormCheckbox}
-            name={`placements.${checked.type}.${i}.checked`}
+            name={`placements.${checked.type}.${checked.index}.checked`}
             type="checkbox"
           />
         ),
-        title: (
-          <div className="title-wrapper">
-            {checkedStatus === 'some'
-              ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
-              : <Checkbox checked={allIsChecked} onClick={this.updateAllCheckboxes(!allIsChecked)} />
-            }
-          </div>
+        title: (this.props.displaySearchOptions
+          ? (
+            <div className="title-wrapper">
+              <ButtonStyleless onClick={this.onClose}>
+                <McsIcons type="close" className="button" />
+              </ButtonStyleless>
+            </div>
+          )
+          : <div />
         ),
         width: '5%',
       },
@@ -70,12 +61,25 @@ class PlacementSearch extends Component {
   }
 
   buildDataSource = () => {
-    return this.props.placements.map(elem => ({
-      checked: { name: elem.name, type: elem.type, value: elem.checked },
-      key: elem.id,
-      name: { icon: elem.icon, text: elem.text, type: elem.type, },
-    }));
+    const { displaySearchOptions, placements } = this.props;
+
+    return (displaySearchOptions
+      ? placements
+        .map(elem => ({
+          checked: { index: elem.index, type: elem.type },
+          key: elem.id,
+          name: { icon: elem.icon, text: elem.text, type: elem.type, },
+        }))
+        .filter(elem => toLowerCaseNoAccent(elem.name.text).includes(this.state.keyword))
+      : []
+    );
   };
+
+  onClose = (e) => {
+    this.updateSearch();
+    this.props.setDisplaySearchOptions(false)(e);
+    e.preventDefault();
+  }
 
   updateAllCheckboxes = (bool) => () => {
     const { formName, placements } = this.props;
@@ -92,21 +96,21 @@ class PlacementSearch extends Component {
   }
 
   updateSearch = (e) => {
-    console.log('e = ', e.target.value);
-
-    this.setState({ keyword: e.target.value });
+    this.setState({
+      keyword: (e && e.target.value ? toLowerCaseNoAccent(e.target.value) : '')
+    });
   }
 
   render() {
-    console.log('this.state = ', this.state);
-    console.log('this.props.placements = ', this.props.placements);
+    const { className, displaySearchOptions, emptyTableMessage } = this.props;
+
     return (
       <Table
-        className={this.props.className}
+        locale={{ emptyText: (displaySearchOptions ? emptyTableMessage : '') }}
+        className={className}
         columns={this.buildColumns()}
         dataSource={this.buildDataSource()}
         pagination={false}
-        scroll={this.state.displayAll ? { y: 0 } : { y: 225 }}
         showHeader
       />
     );
@@ -122,13 +126,18 @@ PlacementSearch.propTypes = {
   arrayInsert: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
   className: PropTypes.string,
+  displaySearchOptions: PropTypes.bool.isRequired,
+  emptyTableMessage: PropTypes.string.isRequired,
   formName: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
 
   placements: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
   }).isRequired),
+
+  setDisplaySearchOptions: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = { arrayInsert, arrayRemove };
