@@ -65,7 +65,7 @@ class Placement extends Component {
             />
           </Col>
 
-          {true // placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
+          {placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
           && (
             <Col className="custom-content font-size" offset={2}>
               <Row>

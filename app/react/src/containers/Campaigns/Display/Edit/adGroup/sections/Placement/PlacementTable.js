@@ -42,7 +42,7 @@ class PlacementTable extends Component {
                 className={this.state.displayTableOptions ? 'theme-color' : ''}
                 onClick={this.updateDisplayOptions(true)}
               >show
-            </ButtonStyleless>
+              </ButtonStyleless>
               <span className="button-separator">/</span>
               <ButtonStyleless
                 className={!this.state.displayTableOptions ? 'theme-color' : ''}
@@ -58,15 +58,17 @@ class PlacementTable extends Component {
         dataIndex: 'checked',
         key: 'checked',
         render: (checked, record, i) => (
-          <Field
-            component={FormCheckbox}
-            name={`placements.${this.props.type}.${i}.checked`}
-            type="checkbox"
-          />
+          <div className="checkbox-wrapper">
+            <Field
+              component={FormCheckbox}
+              name={`placements.${this.props.type}.${i}.checked`}
+              type="checkbox"
+            />
+          </div>
         ),
         title: (this.state.displayTableOptions
           ? (
-            <div className="title-wrapper">
+            <div className="title-checkbox-wrapper">
               {checkedStatus === 'some'
                 ? <CheckboxWithSign className="checkbox-with-sign" onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
                 : <Checkbox checked={allIsChecked} onClick={this.updateAllCheckboxes(!allIsChecked)} />
@@ -122,7 +124,7 @@ class PlacementTable extends Component {
           dataSource={this.buildDataSource()}
           locale={{ emptyText: (displayTableOptions ? emptyTableMessage : '') }}
           pagination={false}
-          scroll={{ y: 255 }}
+          scroll={{ y: 225 }}
           showHeader
         />
       </div>

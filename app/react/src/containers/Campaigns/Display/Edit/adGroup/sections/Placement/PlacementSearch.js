@@ -94,6 +94,7 @@ class PlacementSearch extends Component {
           locale={{ emptyText: (displaySearchOptions ? emptyTableMessage : '') }}
           pagination={false}
           showHeader={false}
+          scroll={{ y: 265 }}
         />
       </div>
     );
