@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-import { Avatar, Table } from 'antd';
+import { Avatar, Icon, Input, Table } from 'antd';
 
-import { ButtonStyleless, Form, McsIcons } from '../../../../../../../components';
+import { Form } from '../../../../../../../components';
 import { toLowerCaseNoAccent } from '../../../../../../../utils/StringHelper';
 import messages from '../../../messages';
 
@@ -14,7 +14,6 @@ class PlacementSearch extends Component {
   state = { keyword: '' }
 
   buildColumns = () => {
-    const { formatMessage, updateDisplayOptions } = this.props;
     return [
       {
         dataIndex: 'name',
@@ -24,15 +23,6 @@ class PlacementSearch extends Component {
             <Avatar shape="square" size="small" src={value.icon} />
             <p className="margin-from-icon">{`${value.type} > ${value.text}`}</p>
           </div>
-        ),
-        title: (
-          <input
-            className="row-name search-input search-title-wrapper"
-            placeholder={formatMessage(messages.contentSection9SearchPlaceholder)}
-            onChange={this.updateSearch}
-            onFocus={updateDisplayOptions(true)}
-            value={this.state.keyword}
-          />
         ),
         width: '95%',
       },
@@ -45,16 +35,6 @@ class PlacementSearch extends Component {
             name={`placements.${checked.type}.${checked.index}.checked`}
             type="checkbox"
           />
-        ),
-        title: (this.props.displaySearchOptions
-          ? (
-            <div className="title-wrapper">
-              <ButtonStyleless onClick={this.onClose}>
-                <McsIcons type="close" className="button" />
-              </ButtonStyleless>
-            </div>
-          )
-          : <div />
         ),
         width: '5%',
       },
@@ -89,17 +69,31 @@ class PlacementSearch extends Component {
   }
 
   render() {
-    const { className, displaySearchOptions, emptyTableMessage } = this.props;
+    const { className, displaySearchOptions, emptyTableMessage, formatMessage, updateDisplayOptions } = this.props;
+    const { keyword } = this.state;
+
+    const suffix = (displaySearchOptions ? <Icon type="close-circle" onClick={this.onClose} /> : null);
 
     return (
-      <div className={displaySearchOptions ? '' : 'table-without-empty-message'}>
+      <div>
+        <Input
+          size="large"
+          className="search-input"
+          placeholder={formatMessage(messages.contentSection9SearchPlaceholder)}
+          prefix={<Icon type="search" />}
+          suffix={suffix}
+          value={keyword}
+          onChange={this.updateSearch}
+          onFocus={updateDisplayOptions(true)}
+        />
+
         <Table
-          className={className}
+          className={`${className} remove-margin-between-search-and-table ${displaySearchOptions ? '' : 'table-without-empty-message'}`}
           columns={this.buildColumns()}
           dataSource={this.buildDataSource()}
           locale={{ emptyText: (displaySearchOptions ? emptyTableMessage : '') }}
           pagination={false}
-          showHeader
+          showHeader={false}
         />
       </div>
     );

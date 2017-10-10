@@ -68,7 +68,7 @@ class PlacementTable extends Component {
           ? (
             <div className="title-wrapper">
               {checkedStatus === 'some'
-                ? <CheckboxWithSign onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
+                ? <CheckboxWithSign className="checkbox-with-sign" onClick={this.updateAllCheckboxes(!allIsChecked)} sign="-" />
                 : <Checkbox checked={allIsChecked} onClick={this.updateAllCheckboxes(!allIsChecked)} />
               }
             </div>
@@ -122,7 +122,7 @@ class PlacementTable extends Component {
           dataSource={this.buildDataSource()}
           locale={{ emptyText: (displayTableOptions ? emptyTableMessage : '') }}
           pagination={false}
-          scroll={{ y: 250 }}
+          scroll={{ y: 255 }}
           showHeader
         />
       </div>

@@ -65,7 +65,7 @@ class Placement extends Component {
             />
           </Col>
 
-          {placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
+          {true // placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
           && (
             <Col className="custom-content font-size" offset={2}>
               <Row>
@@ -82,8 +82,7 @@ class Placement extends Component {
                     updateDisplayOptions={this.updateDisplaySearchOptions}
                   />
 
-                  {!displaySearchOptions
-                    && (
+                  <div className={displaySearchOptions ? 'hide-section' : ''}>
                     <div className="placement-table">
                       <FieldArray
                         component={PlacementTable}
@@ -107,8 +106,8 @@ class Placement extends Component {
                         }}
                       />
                     </div>
-                  )
-                }
+                  </div>
+
                 </Col>
                 <Col span={1} className="field-tooltip">
                   <Tooltip title="Test">
