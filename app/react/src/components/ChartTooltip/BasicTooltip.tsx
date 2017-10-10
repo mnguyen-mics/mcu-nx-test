@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
 interface BasicTooltipProps {
@@ -15,11 +14,12 @@ interface BasicTooltipProps {
 
 const BasicTooltip: React.SFC<BasicTooltipProps> = ({ content }) => {
 
-  const buildStyle = (c) => ({ fill: c, r: 6 });
-  let tooltipTableContent = [];
+  function buildStyle(color: string) { return { fill: color, r: 6 }; }
+
+  let tooltipTableContent: JSX.Element | JSX.Element[];
 
   if (content) {
-    tooltipTableContent =content.entries.map((entry, index) => {
+    tooltipTableContent = content.entries.map((entry, index) => {
 
       return (
         <tr key={index.toString()}>
@@ -38,7 +38,7 @@ const BasicTooltip: React.SFC<BasicTooltipProps> = ({ content }) => {
       );
     });
   } else {
-    let tooltipTableContent = (<tr />);
+    tooltipTableContent = (<tr />);
   }
 
   return (
@@ -57,7 +57,7 @@ const BasicTooltip: React.SFC<BasicTooltipProps> = ({ content }) => {
       </table>
     </div>
   );
-}
+};
 
 BasicTooltip.defaultProps = {
   content: {
@@ -65,7 +65,7 @@ BasicTooltip.defaultProps = {
     // The content of the tooltip
     entries: [{
       // The legend of the plot entry
-      label: null,
+      label: undefined,
       // The color of the plot entry
       color: '',
       // The value of the plot entry

@@ -1,23 +1,22 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import McsIcons from '../McsIcons';
 
 interface OverlapTooltipProps {
-  content?: {
-    segment_initial?: {
-      name?: string,
-      population?: number
+  content: {
+    segment_initial: {
+      name: string,
+      population: number,
     },
-    segment_overlaping?: {
-      name?: string,
-      population?: number
+    segment_overlaping: {
+      name: string,
+      population: number,
     },
     overlap: {
-      population?: number
-    }
-  }
+      population: number,
+    },
+  };
 }
 
 const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
@@ -44,7 +43,8 @@ const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
       <circle
         cx={r1}
         cy={(svgHeight / 2) + strokeWidth}
-        r={r1} fill="#00A1DF"
+        r={r1}
+        fill="#00A1DF"
         stroke="#979797"
       />
       <circle
@@ -70,7 +70,7 @@ const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
               Overlaping
             </td>
             <td>
-              { Math.round(((overlap.population / segment_initial.population) * 100) * 100) / 100 }%
+              {Math.round(((overlap.population / segment_initial.population) * 100) * 100) / 100}%
             </td>
           </tr>
           <tr key="extension">
@@ -78,7 +78,7 @@ const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
               Extension Power
             </td>
             <td>
-              { Math.round((((segment_overlaping.population - overlap.population) / segment_initial.population) * 100) * 100) / 100 }%
+              {Math.round((((segment_overlaping.population - overlap.population) / segment_initial.population) * 100) * 100) / 100}%
             </td>
           </tr>
         </tbody>
@@ -90,22 +90,6 @@ const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
       </div>
     </div>
   );
-}
-
-OverlapTooltip.defaultProps = {
-  content: {
-    segment_initial: {
-      name: '',
-      population: 1,
-    },
-    segment_overlaping: {
-      name: '',
-      population: 1,
-    },
-    overlap: {
-      population: 1,
-    },
-  },
 };
 
 export default OverlapTooltip;

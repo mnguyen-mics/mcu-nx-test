@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 
 interface MetricsColumnProps {
   metrics: [{
@@ -15,8 +14,8 @@ const MetricsColumn: React.SFC<MetricsColumnProps> = props => {
     metrics,
     isLoading,
   } = props;
-  
-  const height: number = 375;
+
+  const height = 375;
   const nbOfVal: number = metrics ? metrics.length : 1;
   const cellHeight: number = height / nbOfVal;
 
@@ -31,7 +30,7 @@ const MetricsColumn: React.SFC<MetricsColumnProps> = props => {
       })}
     </div>
   );
-}
+};
 
 MetricsColumn.defaultProps = {
   isLoading: false,

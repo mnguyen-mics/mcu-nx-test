@@ -44,10 +44,14 @@
     "which": "^1.2.14"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.3",
     "@types/d3": "^4.10.0",
+    "@types/lodash": "^4.14.77",
+    "@types/prop-types": "^15.5.2",
     "@types/react": "^16.0.9",
     "@types/react-dom": "^16.0.0",
     "@types/react-intl": "^2.3.2",
+    "@types/react-redux": "^5.0.10",
     "@types/recompose": "^0.24.2",
     "@types/redux-form": "^7.0.5",
     "awesome-typescript-loader": "^3.2.2",
@@ -126,6 +130,9 @@
     "svg-url-loader": "^2.0.1",
     "time-grunt": "~0.2.1",
     "ts-loader": "^2.3.7",
+    "tslint": "^5.7.0",
+    "tslint-eslint-rules": "^4.1.1",
+    "tslint-react": "^3.2.0",
     "typescript": "^2.5.3",
     "url-loader": "^0.5.8",
     "webpack": "^2.7.0",
@@ -141,6 +148,7 @@
   "scripts": {
     "test": "grunt test",
     "i18n": "node scripts/i18n.js",
+    "test:tslint": "tslint -c tslint.json app/react/src/**/*.{ts,tsx}",
     "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "start": "grunt serve",
     "build": "grunt build"

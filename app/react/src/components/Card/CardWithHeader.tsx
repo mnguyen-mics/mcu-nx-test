@@ -1,6 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import { Card } from './';
 import { Row, Col } from 'antd';
 import HeaderItem, { HeaderItemDataProp } from './HeaderItem';
 
@@ -12,9 +10,9 @@ interface CardWithHeaderProps {
 
 const CardWithHeader: React.SFC<CardWithHeaderProps> = ({ children, headerItems }) => {
 
-  const displayHeader = headerItems.map((element, i) => (
+  const displayHeader = headerItems!.map((element, i) => (
     <HeaderItem
-      className={i !== headerItems.length - 1 ? 'section border' : 'section'}
+      className={i !== headerItems!.length - 1 ? 'section border' : 'section'}
       data={element}
       key={element.translationKey}
     />

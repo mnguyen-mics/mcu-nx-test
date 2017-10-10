@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Row, Col, Button, Icon } from 'antd';
+import { Row, Col,  Icon } from 'antd';
 
-interface EmptyRecordsProps {
+export interface EmptyRecordsProps {
   iconType: string;
   message: string;
-  className: string
+  className: string;
 }
 
 const EmptyRecords: React.SFC<EmptyRecordsProps> = props => {
@@ -22,7 +22,7 @@ const EmptyRecords: React.SFC<EmptyRecordsProps> = props => {
 
 EmptyRecords.defaultProps = {
   iconType: 'exclamation-circle-o',
-  className: ''
+  className: '',
 };
 
 export default EmptyRecords;

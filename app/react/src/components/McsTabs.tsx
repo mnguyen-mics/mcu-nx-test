@@ -1,7 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
-import generateGuid from '../utils/generateGuid';
 
 interface McTabsProps {
   items: [{
@@ -15,14 +13,14 @@ class McsTabs extends React.Component<McTabsProps> {
 
   static defaultProps: Partial<McTabsProps> = {
     isCard: true,
-  }
+  };
 
   buildMenuItems() {
     const { items } = this.props;
 
     return items.map((item, index) => (
       <Tabs.TabPane tab={item.title} key={item.title}>
-        { item.display }
+        {item.display}
       </Tabs.TabPane>
     ));
   }

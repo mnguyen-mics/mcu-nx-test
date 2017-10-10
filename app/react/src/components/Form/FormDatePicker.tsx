@@ -4,13 +4,12 @@ import { isEmpty } from 'lodash';
 
 // TS Interfaces
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
-import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form'
+import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form';
 import { InputProps } from 'antd/lib/input/Input';
 import { DatePickerProps } from 'antd/lib/date-picker';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import McsIcons from '../../components/McsIcons';
-
 
 interface FormDatePickerProps {
   input: WrappedFieldInputProps;
@@ -18,7 +17,7 @@ interface FormDatePickerProps {
   formItemProps: FormItemProps;
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
-  datePickerProps: DatePickerProps;  
+  datePickerProps: DatePickerProps;
 }
 
 const defaultTooltipPlacement: TooltipPlacement = 'right';
@@ -42,7 +41,7 @@ const FormDatePicker: React.SFC<FormDatePickerProps> = props => {
   if (props.input.value === '') {
     delete props.input.value;
   }
-  
+
   return (
     <Form.Item
       help={props.meta.touched && (props.meta.warning || props.meta.error)}
@@ -67,8 +66,7 @@ const FormDatePicker: React.SFC<FormDatePickerProps> = props => {
       </Row>
     </Form.Item>
   );
-}
-
+};
 
 FormDatePicker.defaultProps = {
   formItemProps: {},

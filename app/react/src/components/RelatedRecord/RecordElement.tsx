@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Button, Col, Icon, Row } from 'antd';
 
 import McsIcons from '../McsIcons';
@@ -9,11 +8,11 @@ interface RecordElementProps {
   title: string;
   actionButtons?: [{
     iconType: string;
-    oncClick: React.FormEventHandler<any>;
+    onClick: React.FormEventHandler<any>;
   }];
 }
 
-const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
+const RecordElement: React.SFC<RecordElementProps> = ({ recordIconType, title, actionButtons, children }) => {
   return (
     <Row className="related-record">
       <Col span={1}>
@@ -37,6 +36,5 @@ const RecordElement = ({ recordIconType, title, actionButtons, children }) => {
     </Row>
   );
 };
-
 
 export default RecordElement;

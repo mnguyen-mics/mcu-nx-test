@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Layout } from 'antd';
 import { NavigatorHeader } from '../../containers/Header';
 
@@ -15,6 +14,6 @@ const EditLayout: React.SFC<EditLayoutProps> = props => {
       <EditComponent />
     </Layout>
   );
-}
+};
 
 export default EditLayout;

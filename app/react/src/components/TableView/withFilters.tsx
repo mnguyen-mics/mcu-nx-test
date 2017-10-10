@@ -1,16 +1,13 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Icon, Row, Col, Input } from 'antd';
 
-import { SearchProps } from 'antd/lib/input/Search'
+import { SearchProps } from 'antd/lib/input/Search';
 
 import McsDateRangePicker, { McsDateRangePickerProps } from '../McsDateRangePicker';
-import MultiSelect, { MultiSelectProps } from '../Forms/MultiSelect';
-import { TableViewProps } from './TableView'
-
+import MultiSelect, { MultiSelectProps } from '../MultiSelect';
+import { TableViewProps } from './TableView';
 
 const Search = Input.Search;
-const DEFAULT_RANGE_PICKER_DATE_FORMAT = 'DD/MM/YYYY';
 
 interface ViewComponentWithFiltersProps {
   searchOptions?: SearchProps;
@@ -32,9 +29,16 @@ function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
     static defaultProps: Partial<ViewComponentWithFiltersProps> = {
       columnsVisibilityOptions: {
         isEnabled: false,
-        onChange: () => {},
-      }
-    }
+      },
+    };
+
+    state = {
+      visibilitySelectedColumns: this.props.columnsDefinitions ?
+        (this.props.columnsDefinitions.dataColumnsDefinition
+          .filter(column => column.isHideable)
+          .map(column => ({ key: column.translationKey, value: column.key }))
+        ) : [],
+    };
 
     getHideableColumns = () => {
       const {
@@ -46,24 +50,14 @@ function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
       return dataColumnsDefinition.filter(column => column.isHideable);
     }
 
-    state = {
-      visibilitySelectedColumns: this.props.columnsDefinitions ? (this.getHideableColumns()
-      .map(column => ({ key: column.translationKey, value: column.key }))
-      ): []
-    }
-
-    changeColumnVisibility = (selectedColumns) => {
-      const {
-        columnsVisibilityOptions: {
-          onChange,
-        },
-      } = this.props;
+    changeColumnVisibility = (selectedColumns: { [name: string]: object[] }) => {
+      // const onChange = this.props.columnsVisibilityOptions!.onChange;
 
       this.setState({
         visibilitySelectedColumns: selectedColumns.columns,
       });
 
-      if (onChange) onChange(selectedColumns);
+      // if (onChange) onChange(selectedColumns);
     }
 
     render() {
@@ -78,9 +72,9 @@ function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
       const searchInput = searchOptions
       ? (
         <Col span={6}>
-          <Search          
+          <Search
             className="mcs-search-input"
-            { ...searchOptions }
+            {...searchOptions}
           />
         </Col>
       )
@@ -108,7 +102,7 @@ function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
         );
       }) : null;
 
-      const visibilityMultiSelect = columnsVisibilityOptions.isEnabled
+      const visibilityMultiSelect = columnsVisibilityOptions!.isEnabled
       ? (
         <MultiSelect
           name="columns"

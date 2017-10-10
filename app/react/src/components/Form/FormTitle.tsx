@@ -1,13 +1,11 @@
 /* eslint-disable */
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
 export interface FormTitleProps {
   title: FormattedMessage.MessageDescriptor;
   subtitle?: FormattedMessage.MessageDescriptor;
 }
-
 
 const FormTitle: React.SFC<FormTitleProps> = ({ title, subtitle}) => {
 
@@ -26,11 +24,7 @@ const FormTitle: React.SFC<FormTitleProps> = ({ title, subtitle}) => {
         </div>
       }
     </div>
-  )
-};
-
-FormTitle.defaultProps = {
-  subtitle: null
+  );
 };
 
 export default FormTitle;

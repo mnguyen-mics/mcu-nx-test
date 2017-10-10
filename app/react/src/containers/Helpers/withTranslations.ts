@@ -4,9 +4,9 @@ export interface TranslationProps {
   translations: {[key: string]: string};
 }
 
-const withTranslations = (WrappedComponent) => {
+const withTranslations = (WrappedComponent: any) => {
 
-  const mapStateToProps = (state) => ({
+  const mapStateToProps = (state: any) => ({
     translations: state.translations,
   });
 

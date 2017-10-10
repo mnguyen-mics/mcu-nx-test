@@ -1,11 +1,10 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Menu, Table } from 'antd';
 
-import { ColumnProps } from 'antd/lib/table/Column'
-import { PaginationProps } from 'antd/lib/pagination/Pagination'
-import { SpinProps } from 'antd/lib/spin'
+import { PaginationProps } from 'antd/lib/pagination/Pagination';
+import { SpinProps } from 'antd/lib/spin';
+import { ClickParam } from 'antd/lib/menu';
 
 import McsIcons from '../McsIcons';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
@@ -16,22 +15,33 @@ const DEFAULT_PAGINATION_OPTION = {
   showSizeChanger: true,
 };
 
+interface DataColumnDefinition {
+  intlMessage: FormattedMessage.Props;
+  translationKey: string;
+  key: string;
+  render?: (text: string, record: object, index: number) => JSX.Element;
+  sorter?: boolean | ((a: any, b: any) => number);
+  isHideable?: boolean;
+}
+
+interface ActionDefinition {
+  translationKey?: string;
+  intlMessage?: FormattedMessage.MessageDescriptor;
+  callback: (record: object) => void;
+}
+interface ActionsColumnDefinition {
+  key: string;
+  actions: ActionDefinition[];
+}
+
+interface VisibilitySelectedColumn {
+  key: string;
+  value: string;
+}
+
 export interface ColumnsDefinitions {
-  dataColumnsDefinition?:[{
-    intlMessage: FormattedMessage.Props;
-    translationKey: string;
-    key?: string;
-    render?: (text: string, record: object, index: number) => JSX.Element;
-    sorter?: boolean | ((a: any, b: any) => number);
-    isHideable?: boolean;
-  }];
-  actionsColumnsDefinition?: Array<{ 
-    key: string, 
-    actions: Array<{ 
-      translationKey: string, 
-      callback: (record: object) => void 
-    }> 
-  }>;
+  dataColumnsDefinition: DataColumnDefinition[];
+  actionsColumnsDefinition?: ActionsColumnDefinition[];
 }
 
 export interface TableViewProps {
@@ -40,11 +50,8 @@ export interface TableViewProps {
   dataSource: object[];
   loading?: boolean | SpinProps;
   pagination?: PaginationProps | boolean;
-  onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: Object) => any;
-  visibilitySelectedColumns: Array<{
-    key: string;
-    value: string;
-  }>;
+  onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
+  visibilitySelectedColumns: VisibilitySelectedColumn[];
 }
 
 interface TableViewState {
@@ -56,17 +63,18 @@ interface TableViewState {
 
 class TableView extends React.Component<TableViewProps, TableViewState> {
 
-  static defaultprops: Partial<TableViewProps> = {
+  static defaultProps: Partial<TableViewProps> = {
     pagination: false,
-    visibilitySelectedColumns: []
-  }
+    visibilitySelectedColumns: [],
+  };
 
-  buildActionsColumns = (defaultActionsColumns) => {
-    const actionColumns = defaultActionsColumns.map(column => {
+  buildActionsColumns = (actionsColumnsDefinition: ActionsColumnDefinition[]) => {
+    const actionColumns = actionsColumnsDefinition.map(column => {
       return {
+        dataIndex: generateGuid(),
         key: generateGuid(),
         width: 30,
-        render: (text, record) => {
+        render: (text: string, record: object) => {
           return (
             <Dropdown
               overlay={this.renderActionsMenu(column.actions, record)}
@@ -78,6 +86,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
             </Dropdown>
           );
         },
+        sorter: false,
       };
     });
 
@@ -87,13 +96,12 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
   buildDataColumns = () => {
     const {
       columnsDefinitions: { dataColumnsDefinition },
-      visibilitySelectedColumns
+      visibilitySelectedColumns,
     } = this.props;
 
-    const visibilitySelectedColumnsValues = [];    
-    visibilitySelectedColumns ? visibilitySelectedColumns.map(function(column){
-      return visibilitySelectedColumnsValues.push(column.value);
-    }) : null;
+    const visibilitySelectedColumnsValues: string[] = visibilitySelectedColumns.map((column) => {
+      return column.value;
+    });
 
     const dataColumns = dataColumnsDefinition.filter(column => {
       if (visibilitySelectedColumnsValues.length >= 1) {
@@ -101,41 +109,26 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       }
       return column;
     }).map(dataColumn => {
-      return Object.assign(
-        {},
-        isValidFormattedMessageProps(dataColumn.intlMessage)
+      return {...(isValidFormattedMessageProps(dataColumn.intlMessage)
           ? // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
             // spreading values...
             { title: <FormattedMessage {...dataColumn.intlMessage} /> }
           : dataColumn.translationKey
               ? // support for legacy translation key constant (en/fr.json) ...
                 { title: <FormattedMessage id={dataColumn.translationKey} /> }
-              : null, // allow empty column title
-        { dataIndex: dataColumn.key },
-        { key: dataColumn.key },
-        { render: dataColumn.render ? dataColumn.render : text => text },
-        { sorter: dataColumn.sorter ? dataColumn.sorter : false },
-      );
+              : null), // allow empty column title
+              dataIndex: dataColumn.key,
+              key: dataColumn.key,
+              render: dataColumn.render ? dataColumn.render : (text: any) => text,
+              sorter: dataColumn.sorter ? dataColumn.sorter : false,
+      };
     });
 
     return dataColumns;
   }
 
-  columnSorter(a, b, key) {
-    if (a[key] === '-' && b[key] === '-') {
-      return 0;
-    }
-    if (a[key] === '-') {
-      return 0 - b[key];
-    }
-    if (b[key] === '-') {
-      return a[key] - 0;
-    }
-    return a[key] - b[key];
-  }
-
-  renderActionsMenu(actions, record) {
-    const onClick = item => {
+  renderActionsMenu(actions: ActionDefinition[], record: any) {
+    const onClick = (item: ClickParam) => {
       actions[parseInt(item.key, 0)].callback(record);
     };
 
@@ -147,8 +140,8 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
               <a>
                 {
                   isValidFormattedMessageProps(action.intlMessage) ?
-                    <FormattedMessage {...action.intlMessage} /> :
-                    <FormattedMessage id={action.translationKey} />
+                    <FormattedMessage {...action.intlMessage!} /> :
+                    <FormattedMessage id={action.translationKey!} />
                 }
               </a>
             </Menu.Item>
@@ -164,13 +157,12 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       pagination,
       loading,
       onChange,
-      visibilitySelectedColumns,
-      columnsDefinitions
+      columnsDefinitions,
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
       columnsDefinitions.actionsColumnsDefinition,
-    ) : null;
+    ) : [];
 
     const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
 

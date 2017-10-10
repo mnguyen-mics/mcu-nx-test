@@ -1,19 +1,16 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Button, Row } from 'antd';
 
 import FormTitle, { FormTitleProps } from './FormTitle';
 
-import DropdownButton from '../DropdownButton';
-import { DropdownButtonItemProps } from '../DropdownButton';
-
+import DropdownButton, { DropdownButtonItemProps } from '../DropdownButton';
 
 interface FormSectionProps {
   button?: {
     message: string;
-    onClick: React.FormEventHandler<any>; 
+    onClick: React.FormEventHandler<any>;
   };
-  dropdownItems?: DropdownButtonItemProps[];  
+  dropdownItems?: DropdownButtonItemProps[];
 }
 
 const FormSection: React.SFC<FormSectionProps & FormTitleProps> = props => {
@@ -41,11 +38,6 @@ const FormSection: React.SFC<FormSectionProps & FormTitleProps> = props => {
       }
     </Row>
   );
-}
-
-FormSection.defaultProps = {
-  button: null,
-  dropdownItems: null,
 };
 
 export default FormSection;

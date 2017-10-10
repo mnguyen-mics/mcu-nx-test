@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Icon, Dropdown, Menu, Button } from 'antd';
-
-
+import { ClickParam } from 'antd/lib/menu';
 
 interface Item {
   key: string;
@@ -9,13 +8,13 @@ interface Item {
 }
 interface MenuItem {
   handleMenuClick?: (obj: { [name: string]: object[] }) => void;
-  selectedItems?: Item[];
+  selectedItems: Item[];
   items: Item[];
 }
 export interface MultiSelectProps {
   name: string;
   displayElement: JSX.Element;
-  onCloseMenu?: (selectedItems: object[]) => void;
+  onCloseMenu?: (selectedItems: Item[]) => void;
   menuItems: MenuItem;
   buttonClass?: string;
 }
@@ -29,21 +28,19 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
 
   static defaultprops: Partial<MultiSelectProps> = {
     buttonClass: '',
-    onCloseMenu: () => {},
-  }
+  };
 
   state = {
     overlayVisible: false,
     selectedItems: this.props.menuItems.selectedItems,
-  }
+  };
 
   buildMenuItems = () => {
     const { menuItems: { items } } = this.props;
     const { selectedItems } = this.state;
-    const getItem = value => items.find(item => item.value === value);
 
     return (
-      <Menu onClick={value => this.onMenuClick(getItem(value.key))}>
+      <Menu onClick={this.onMenuClick}>
         { items.map(item => {
           const isItemSelected = selectedItems.find(selectedItem => selectedItem.value === item.value);
           return (
@@ -58,21 +55,23 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
 
   }
 
-  handleVisibleChange = (isVisible) => {
+  handleVisibleChange = (isVisible: boolean) => {
     this.setVisibility(isVisible);
 
-    if (!isVisible) {
+    if (!isVisible && this.props.onCloseMenu) {
       this.props.onCloseMenu(this.state.selectedItems);
     }
   }
 
-  onMenuClick = (item) => {
-    const { name, menuItems: { handleMenuClick } } = this.props;
+  onMenuClick = (param: ClickParam) => {
+    const { name, menuItems: { items, handleMenuClick } } = this.props;
     const { selectedItems } = this.state;
 
+    const clickedItem = items.find(item => item.value === param.key);
+
     // Add or remove item on selectedItems
-    let newArray = [];
-    const index = selectedItems.findIndex(selectedItem => selectedItem.value === item.value);
+    let newArray: Item[] = [];
+    const index = selectedItems!.findIndex(selectedItem => selectedItem.value === clickedItem!.value);
 
     if (index !== -1) {
       newArray = [
@@ -82,7 +81,7 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
     } else {
       newArray = [
         ...selectedItems,
-        item,
+        clickedItem!,
       ];
     }
 
@@ -95,7 +94,7 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
     }
   }
 
-  setVisibility(isVisible) {
+  setVisibility(isVisible: boolean) {
     this.setState({
       overlayVisible: isVisible,
     });
@@ -114,7 +113,7 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
         visible={overlayVisible}
       >
         <Button className={buttonClass}>
-          { displayElement }
+          {displayElement}
         </Button>
       </Dropdown>
     );
@@ -123,4 +122,3 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
 }
 
 export default MultiSelect;
-

@@ -1,11 +1,16 @@
 import * as React from 'react';
-import EmptyRecords from './EmptyRecords';
+import EmptyRecords, { EmptyRecordsProps } from './EmptyRecords';
 
-const RelatedRecords = ({ emptyOption, children }) => {
-  return children.length > 0
-    ? <div className="related-records-container">
+interface RelatedRecordsProps {
+  emptyOption: EmptyRecordsProps;
+}
+
+const RelatedRecords: React.SFC<RelatedRecordsProps> = ({ emptyOption, children }) => {
+  return React.Children.count(children) > 0
+    ? (
+    <div className="related-records-container">
       {children}
-    </div>
+    </div>)
     : <EmptyRecords {...emptyOption} />;
 };
 

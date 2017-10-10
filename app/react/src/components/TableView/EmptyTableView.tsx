@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Col } from 'antd';
 
@@ -18,18 +17,17 @@ interface EmptyTableViewProps {
     id?: string;
     defaultMessage?: string;
   };
-  iconType?: string;
+  iconType: string;
   className?: string;
 }
 
-const EmptyTableView:React.SFC<EmptyTableViewProps> = props => {
-
+const EmptyTableView: React.SFC<EmptyTableViewProps> = props => {
 
   /* Support new intl message obj and legacy translation key (en/fr.json) */
-  const formattedMessageProps = {
-    id: props.intlMessage.id ? props.intlMessage.id : props.text ? props.text : messages.emptyMsg.id,
-    defaultMessage: (props.intlMessage.defaultMessage
-      ? props.intlMessage.defaultMessage
+  const formattedMessageProps: FormattedMessage.MessageDescriptor = {
+    id: props.intlMessage!.id ? props.intlMessage!.id! : props.text ? props.text : messages.emptyMsg.id,
+    defaultMessage: (props.intlMessage!.defaultMessage
+      ? props.intlMessage!.defaultMessage
       : messages.emptyMsg.defaultMessage
     ),
   };
@@ -44,13 +42,13 @@ const EmptyTableView:React.SFC<EmptyTableViewProps> = props => {
       </Col>
     </div>
   );
-}
+};
 
 EmptyTableView.defaultProps = {
   iconType: 'exclamation',
   className: 'mcs-table-view-empty',
   intlMessage: {},
-  text: null,
+  text: undefined,
 };
 
 export default EmptyTableView;

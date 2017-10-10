@@ -8,7 +8,7 @@ const Loading: React.SFC<{ className?: string }> = props => {
       <Spin size="large" />
     </div>
   );
-}
+};
 
 Loading.defaultProps = {
   className: '',

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
 interface TitleAndStatusHeaderProps {
@@ -10,22 +9,22 @@ interface TitleAndStatusHeaderProps {
   };
   translationKeyPrefix?: string;
   value?: string;
-  headerAttributes: Array<Element>;
+  headerAttributes: Element[];
 }
 
 class TitleAndStatusHeader extends React.Component<TitleAndStatusHeaderProps> {
 
   static defaultProps: Partial<TitleAndStatusHeaderProps> = {
-    headerStatus: { value: null },
+    headerStatus: { value: undefined },
     headerAttributes: [],
-  }
+  };
 
   buildStatusElement = () => {
     const { headerStatus } = this.props;
-    const statusIndicatorClass = `mcs-indicator-${headerStatus.value.toLowerCase()}`;
-    const statusTranslationKey = `${headerStatus.translationKeyPrefix}_${headerStatus.value}`;
+    const statusIndicatorClass = `mcs-indicator-${headerStatus!.value!.toLowerCase()}`;
+    const statusTranslationKey = `${headerStatus!.translationKeyPrefix}_${headerStatus!.value}`;
 
-    return (headerStatus.value
+    return (headerStatus!.value
       ? (
         <div className="mcs-title-status-header-status">
           <div className={statusIndicatorClass} />
@@ -37,7 +36,7 @@ class TitleAndStatusHeader extends React.Component<TitleAndStatusHeaderProps> {
       )
       : null
     );
-  };
+  }
 
   buildAttributesElement = () => {
     const { headerAttributes } = this.props;
@@ -49,7 +48,7 @@ class TitleAndStatusHeader extends React.Component<TitleAndStatusHeaderProps> {
         })}
       </div>
     );
-  };
+  }
 
   render() {
     const {
@@ -57,21 +56,10 @@ class TitleAndStatusHeader extends React.Component<TitleAndStatusHeaderProps> {
       headerStatus,
       headerAttributes,
     } = this.props;
-    let statusElements;
 
-    if (headerStatus.value !== null) {
-      statusElements = this.buildStatusElement();
-    } else {
-      statusElements = <div />;
-    }
+    const statusElements = headerStatus!.value ? this.buildStatusElement() : <div />;
 
-    let attibutesElement;
-
-    if (headerAttributes !== []) {
-      attibutesElement = this.buildAttributesElement();
-    } else {
-      attibutesElement = <div />;
-    }
+    const attibutesElement = (headerAttributes &&  headerAttributes.length > 0) ? this.buildAttributesElement() : <div />;
 
     return (
       <div className="mcs-title-status-header">

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Row, Col, Spin } from 'antd';
 
 interface CardProps {
@@ -12,17 +11,17 @@ const Card: React.SFC<CardProps> = (props) => {
   const { title, buttons, isLoading, children } = props;
   return (
     <Row className="mcs-card-container">
-      { (props.title || props.buttons)
+      { (title || buttons)
         && <Row className="mcs-card-header">
           <Col span={24}>
-            <span className="mcs-card-title">{props.title}</span>
-            <span className="mcs-card-button">{props.buttons}</span>
+            <span className="mcs-card-title">{title}</span>
+            <span className="mcs-card-button">{buttons}</span>
           </Col>
           <Col span={24}><hr /></Col>
         </Row>
       }
       <Row>
-        {(props.isLoading) ? (
+        { isLoading ? (
           <Col span={24} className="text-center">
             <Spin />
           </Col>
@@ -30,11 +29,11 @@ const Card: React.SFC<CardProps> = (props) => {
       </Row>
     </Row>
   );
-}
+};
 
 Card.defaultProps = {
-  buttons: null,
-  title: null,
+  buttons: undefined,
+  title: undefined,
   isLoading: false,
 };
 

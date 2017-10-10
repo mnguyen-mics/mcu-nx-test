@@ -1,10 +1,9 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
 import ButtonStyleless from './ButtonStyleless';
-import { SwitchInput, FormInput } from './Form';
+import { SwitchInput } from './Form';
 import McsIcons from './McsIcons';
 import generateGuid from '../utils/generateGuid';
 import {  } from '';
@@ -13,24 +12,24 @@ interface RelatedRecordTableProps {
   dataSource: Array<{}>;
   loading: boolean;
   tableName: string;
-  updateTableFieldStatus: Function;
+  updateTableFieldStatus: (obj: {index: number, tableName: string}) => void;
 }
 
 const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
 
   const {
-    dataSource, 
-    loading, 
-    tableName, 
-    updateTableFieldStatus
-  } = this.props;
+    dataSource,
+    loading,
+    tableName,
+    updateTableFieldStatus,
+  } = props;
 
   const columns = [
     {
       colSpan: 8,
       dataIndex: 'type',
       key: 'type',
-      render: (type) => (
+      render: (type: { image: string, name: string}) => (
         <div className="display-row center-vertically row-height">
           <div className="icon-round-border">
             <McsIcons
@@ -47,8 +46,8 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       dataIndex: 'info',
       key: 'info',
       /* In render, info is either an array of string of an array of { image: '', name: '' } */
-      render: (info) => {
-        const elemToDisplay = (elem) => (elem.image
+      render: (info: Array<{ image?: string, name: string}>) => {
+        const elemToDisplay = (elem: { image?: string, name: string}) => (elem.image
             ? (
               <div className="display-row" key={generateGuid()}>
                 <McsIcons type={elem.image} style={{ fontSize: 20 }} />
@@ -69,7 +68,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       colSpan: 9,
       dataIndex: 'include',
       key: 'include',
-      render: (data = {index:{}, bool:{}}) => {
+      render: (data = {index: {}, bool: {}}) => {
         const displaySwitch = !!Object.keys(data).length;
 
         return (
@@ -97,11 +96,14 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       colSpan: 1,
       dataIndex: 'toBeRemoved',
       key: 'toBeRemoved',
-      render: (index) => (
-        <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
-          <McsIcons type="delete" style={{ fontSize: 20 }} />
-        </ButtonStyleless>
-    ),
+      render: (index: number) => {
+        const handleClick = () => updateTableFieldStatus({ index, tableName });
+        return (
+          <ButtonStyleless onClick={handleClick}>
+            <McsIcons type="delete" style={{ fontSize: 20 }} />
+          </ButtonStyleless>
+        );
+      },
     },
   ];
 
@@ -119,11 +121,10 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       />
     </div>
   );
-}
+};
 
 RelatedRecordTable.defaultProps = {
   loading: false,
 };
 
 export default RelatedRecordTable;
-

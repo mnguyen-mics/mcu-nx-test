@@ -8,7 +8,7 @@ const McsIcons: React.SFC<McsIconsProps & React.DetailedHTMLProps<React.HTMLAttr
 
   const {
     type,
-    ...rest
+    ...rest,
   } = props;
 
   return (
@@ -16,6 +16,6 @@ const McsIcons: React.SFC<McsIconsProps & React.DetailedHTMLProps<React.HTMLAttr
       <i className={`mcs-${props.type}`} />
     </span>
   );
-}
+};
 
 export default McsIcons;

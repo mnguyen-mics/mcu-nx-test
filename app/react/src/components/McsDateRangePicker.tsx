@@ -1,7 +1,7 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Dropdown, Button, DatePicker, Menu, Icon } from 'antd';
 import moment from 'moment';
+import { ClickParam } from 'antd/lib/menu';
 
 import withTranslations, { TranslationProps } from '../containers/Helpers/withTranslations';
 
@@ -15,7 +15,7 @@ interface McsDateRandeValue {
 export interface McsDateRangePickerProps {
   values: McsDateRandeValue;
   onChange: (values: McsDateRandeValue) => void;
-  format?: string
+  format?: string;
 }
 
 interface McsDateRangePickerState {
@@ -24,8 +24,8 @@ interface McsDateRangePickerState {
 
 interface Range {
   name: 'TODAY' | 'YESTERDAY' | 'LAST_7_DAYS' | 'LAST_30_DAYS';
-  from: moment.Moment,
-  to: moment.Moment
+  from: moment.Moment;
+  to: moment.Moment;
 }
 
 const { RangePicker } = DatePicker;
@@ -34,36 +34,36 @@ const ranges: Range[] = [
   {
     name: 'TODAY',
     from : moment(),
-    to: moment().add(1, 'days')
+    to: moment().add(1, 'days'),
   },
   {
     name: 'YESTERDAY',
     from : moment().subtract(1, 'days'),
-    to: moment().add(1, 'days')
+    to: moment().add(1, 'days'),
   },
   {
     name: 'LAST_7_DAYS',
-    from: moment().subtract(7, 'days'), 
+    from: moment().subtract(7, 'days'),
     to: moment().add(1, 'days'),
   },
   {
     name: 'LAST_30_DAYS',
-    from: moment().subtract(1, 'month'), 
-    to: moment().add(1, 'days')
+    from: moment().subtract(1, 'month'),
+    to: moment().add(1, 'days'),
   },
 ];
 
 class McsDateRangePicker extends React.Component<McsDateRangePickerProps & TranslationProps, McsDateRangePickerState> {
 
   static defaultProps: Partial<McsDateRangePickerProps> = {
-    format: 'YYYY-MM-DD'
-  }
+    format: 'YYYY-MM-DD',
+  };
 
   state = {
     showRangePicker: false,
-  }
+  };
 
-  disableFutureDates(current) {
+  disableFutureDates(current: moment.Moment) {
     return current && current.valueOf() > Date.now();
   }
 
@@ -71,7 +71,7 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
     const { values, translations, format } = this.props;
 
     if (values.rangeType === 'absolute') {
-      return `${values.from.format(format)} ~ ${values.to.format(format)}`;
+      return `${values.from!.format(format)} ~ ${values.to!.format(format)}`;
     } else if (values.rangeType === 'relative') {
       const selectedRange = ranges.find((range) => {
         const ceil1 = Math.ceil(moment
@@ -79,19 +79,19 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
           .asSeconds(),
         );
 
-        return ceil1 === Math.ceil(values.lookbackWindow.asSeconds());
+        return ceil1 === Math.ceil(values.lookbackWindow!.asSeconds());
       });
 
       return (selectedRange
         ? translations[selectedRange.name]
-        : Math.ceil(values.lookbackWindow.asSeconds()).toString().concat(' ', translations.SECONDS)
+        : Math.ceil(values.lookbackWindow!.asSeconds()).toString().concat(' ', translations.SECONDS)
       );
     }
 
     return translations.ERROR;
   }
 
-  handleDatePickerMenuChange = (dates) => {
+  handleDatePickerMenuChange = (dates: [moment.Moment, moment.Moment]) => {
     const { onChange } = this.props;
 
     this.setState({ showRangePicker: false });
@@ -100,14 +100,14 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
       rangeType: 'absolute',
       from: dates[0],
       to: dates[1],
-      lookbackWindow: moment.duration(dates[1] - dates[0]),
+      lookbackWindow: moment.duration({from: dates[0], to: dates[1]}),
     });
   }
 
-  handleDropdownMenuClick = (e) => {
+  handleDropdownMenuClick = (param: ClickParam) => {
     const { onChange } = this.props;
 
-    if (e.key === 'CUSTOM') {
+    if (param.key === 'CUSTOM') {
       this.setState({
         showRangePicker: true,
       });
@@ -117,14 +117,14 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
     this.setState({ showRangePicker: false });
 
     const selectedRange = ranges.find(element => {
-      return element.name.toLowerCase() === e.key.toLowerCase();
+      return element.name.toLowerCase() === param.key.toLowerCase();
     });
 
     onChange({
-      lookbackWindow: moment.duration({ to: selectedRange.to, from: selectedRange.from }),
+      lookbackWindow: moment.duration({ to: selectedRange!.to, from: selectedRange!.from }),
       rangeType: 'relative',
-      from: selectedRange.from,
-      to: selectedRange.to,
+      from: selectedRange!.from,
+      to: selectedRange!.to,
     });
   }
 
@@ -134,12 +134,11 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
     });
   }
 
-
   renderRangesDropdown() {
     const { translations } = this.props;
 
     const menu = (
-      <Menu onClick={(key) => this.handleDropdownMenuClick(key)}>
+      <Menu onClick={this.handleDropdownMenuClick}>
         <Menu.ItemGroup title={translations.LOOKBACK_WINDOW}>
           {
             ranges.map((item) => {
@@ -170,16 +169,19 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
     const { showRangePicker } = this.state;
 
     return showRangePicker === true
-      ? <RangePicker
-        allowClear={false}
-        onChange={this.handleDatePickerMenuChange}
-        defaultValue={[values.from, values.to]}
-        disabledDate={current => this.disableFutureDates(current)}
-        onOpenChange={this.onDatePickerOpenChange}
-        open={showRangePicker}
-      />
+      ? (
+          <RangePicker
+            allowClear={false}
+            onChange={this.handleDatePickerMenuChange}
+            defaultValue={[values.from!, values.to!]}
+            disabledDate={this.disableFutureDates}
+            onOpenChange={this.onDatePickerOpenChange}
+            open={showRangePicker}
+          />
+        )
       : this.renderRangesDropdown();
   }
 }
 
-export default withTranslations(McsDateRangePicker);
+// TODO replace any with correct type
+export default withTranslations(McsDateRangePicker) as any;

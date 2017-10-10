@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 
 interface ChartTooltipProps {
   tooltipStyle?: {
@@ -14,18 +13,18 @@ interface ChartTooltipProps {
 
 const ChartTooltip: React.SFC<ChartTooltipProps> = ({ tooltipStyle, children }) => {
 
-  const style = {
-    left: tooltipStyle.xTooltip,
-    top: tooltipStyle.yTooltip,
-    visibility: tooltipStyle.visibility,
+  const style: React.CSSProperties = {
+    left: tooltipStyle!.xTooltip,
+    top: tooltipStyle!.yTooltip,
+    visibility: tooltipStyle!.visibility,
     position: 'fixed',
   };
 
   return (
-    <div style={{ style }}>{ children }</div>
+    <div style={style}>{children}</div>
   );
 
-}
+};
 
 ChartTooltip.defaultProps = {
   tooltipStyle: {

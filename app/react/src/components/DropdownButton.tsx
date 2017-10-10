@@ -1,21 +1,19 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Button, Dropdown, Menu } from 'antd';
-import { MenuProps } from 'antd/lib/menu'
+import { ClickParam } from 'antd/lib/menu';
 
 import McsIcons from './McsIcons';
 
 export interface DropdownButtonItemProps {
   id: string;
   message: FormattedMessage.MessageDescriptor;
-  onClick: Function;
+  onClick: () => void ;
 }
 
 export interface DropdownButtonProps {
   items: DropdownButtonItemProps[];
 }
-
 
 class DropdownButton extends React.Component<DropdownButtonProps> {
 
@@ -28,16 +26,16 @@ class DropdownButton extends React.Component<DropdownButtonProps> {
       </Menu.Item>
     ));
 
-    const handleClick = (e) => {
-      const currentItem = items.find(item => item.id === e.key);
+    const handleClick = (param: ClickParam) => {
+      const currentItem = items.find(item => item.id === param.key);
       // const currentItem = items.filter(item => item.id === e.key);
 
-      currentItem.onClick();
+      currentItem!.onClick();
     };
 
     const overlay = (
       <Menu className="mcs-dropdown-actions" onClick={handleClick}>
-        { displayOptions }
+        {displayOptions}
       </Menu>
     );
 
@@ -56,4 +54,3 @@ class DropdownButton extends React.Component<DropdownButtonProps> {
 }
 
 export default DropdownButton;
-

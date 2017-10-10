@@ -1,17 +1,16 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Form, Select, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
 // TS Interfaces
-import { WrappedFieldProps } from 'redux-form'
+import { WrappedFieldProps } from 'redux-form';
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import McsIcons from '../../components/McsIcons';
 
-interface FormSelectProps {  
+interface FormSelectProps {
   formItemProps?: FormItemProps;
   selectProps?: SelectProps;
   options?: OptionProps[];
@@ -28,8 +27,8 @@ class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
     formItemProps: {},
     selectProps: {},
     options: [],
-    helpToolTipProps: {}
-  }
+    helpToolTipProps: {},
+  };
 
   componentDidMount() {
     this.setDefaultValue();
@@ -44,10 +43,9 @@ class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
       options,
       input: {
         value,
-        onChange
-      }
+        onChange,
+      },
     } = this.props;
-
 
     if (options && options.length === 1 && (!value || value === '')) {
       onChange(options[0].value);
@@ -56,13 +54,13 @@ class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
 
   render() {
 
-    const { 
-      input: { value, onChange, onBlur, onFocus },
+    const {
+      input: { value, onChange, onFocus },
       meta,
       formItemProps,
       selectProps,
       options,
-      helpToolTipProps
+      helpToolTipProps,
     } = this.props;
 
     let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -76,7 +74,7 @@ class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
       ...helpToolTipProps,
     };
 
-    const optionsToDisplay = options.map(option => (
+    const optionsToDisplay = options!.map(option => (
       <Option key={option.value} value={option.value}>{option.title}</Option>
     ));
 
@@ -90,11 +88,11 @@ class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
         <Row align="middle" type="flex">
           <Col span={22}>
             <Select
-              value={value} 
-              onChange={onChange} 
+              value={value}
+              onChange={onChange}
               // difficulties to map some WrappedFieldInputProps with SelectProps
               onBlur={onChange as () => any}
-              onFocus={onFocus as () => any}            
+              onFocus={onFocus as () => any}
               {...selectProps}
             >
               {optionsToDisplay}

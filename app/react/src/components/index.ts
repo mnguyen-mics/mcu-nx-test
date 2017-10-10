@@ -5,6 +5,7 @@ import Loading from './Loading';
 import McsIcons from './McsIcons';
 import RelatedRecordTable from './RelatedRecordTable';
 import TableSelector from './TableSelector';
+import MultiSelect from './MultiSelect';
 
 export {
   ButtonStyleless,
@@ -14,4 +15,5 @@ export {
   McsIcons,
   RelatedRecordTable,
   TableSelector,
+  MultiSelect,
 };

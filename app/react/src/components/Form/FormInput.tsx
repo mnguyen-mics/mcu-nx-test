@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 
 // TS Interfaces
@@ -7,11 +6,11 @@ import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { WrappedFieldProps } from 'redux-form'
+import { WrappedFieldProps } from 'redux-form';
 
 import McsIcons from '../../components/McsIcons';
 
-interface FormInputsProps {  
+interface FormInputsProps {
   formItemProps: FormItemProps;
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
@@ -42,7 +41,7 @@ const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
       <Row align="middle" type="flex">
         <Col span={22} >
           <Input
-            id={props.input[name]}
+            id={props.input.name}
             {...props.input}
             {...props.inputProps}
           />
@@ -57,12 +56,12 @@ const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
       </Row>
     </Form.Item>
   );
-}
+};
 
 FormInput.defaultProps = {
   formItemProps: {},
   inputProps: {},
-  helpToolTipProps: {}
+  helpToolTipProps: {},
 };
 
 export default FormInput;
