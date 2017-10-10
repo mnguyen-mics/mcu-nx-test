@@ -65,7 +65,7 @@ class Placement extends Component {
             />
           </Col>
 
-          {placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
+          {true // placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
           && (
             <Col className="custom-content font-size" offset={2}>
               <Row>
@@ -95,7 +95,7 @@ class Placement extends Component {
                         }}
                       />
 
-                      <FieldArray
+                      {/* <FieldArray
                         component={PlacementTable}
                         name="placements.mobile"
                         props={{
@@ -104,7 +104,7 @@ class Placement extends Component {
                           title: messages.contentSection9TypeMobileApps,
                           type: 'mobile',
                         }}
-                      />
+                      /> */}
                     </div>
                   </div>
 
