@@ -7,8 +7,8 @@ import { Field, Form, reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Row } from 'antd';
 
-import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
-import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form/index.ts';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
@@ -233,7 +233,6 @@ class EmailBlastForm extends Component {
                     ...fieldGridConfig,
                   },
                   options: consents.map(consent => ({
-                    key: consent.id,
                     value: consent.id,
                     text: consent.technical_name,
                   })),

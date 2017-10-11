@@ -8,7 +8,7 @@ import { injectIntl, intlShape, FormattedMessage, defineMessages } from 'react-i
 
 import {
   FormInput,
-} from '../../../components/Form';
+} from '../../../components/Form/index.ts';
 import * as AccountActions from '../../../state/Account/actions';
 
 class UserAccount extends Component {

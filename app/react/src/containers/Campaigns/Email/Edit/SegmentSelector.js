@@ -6,11 +6,11 @@ import { Layout, Button, Checkbox } from 'antd';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import {
   EmptyTableView,
   TableViewFilters,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
@@ -141,7 +141,6 @@ class SegmentSelector extends Component {
 
   getSearchOptions() {
     return {
-      isEnabled: true,
       placeholder: 'Search a template',
       onSearch: value => {
         this.setState({

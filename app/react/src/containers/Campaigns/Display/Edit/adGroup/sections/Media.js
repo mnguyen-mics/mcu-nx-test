@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form } from '../../../../../../components';
+import { EmptyRecords, Form } from '../../../../../../components/index.ts';
 import messages from '../../messages';
 
 const { FormSection } = Form;

@@ -15,10 +15,10 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 
-import { LayoutManager } from '../../components/Layout';
-import NotFound from '../../components/NotFound';
-import Loading from '../../components/Loading';
-import Error from '../../components/Error';
+import { LayoutManager } from '../../components/Layout/index.ts';
+import NotFound from '../../components/NotFound.tsx';
+import Loading from '../../components/Loading.tsx';
+import Error from '../../components/Error.tsx';
 import { AuthenticatedRoute } from '../../containers/Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../ForgotPassword';

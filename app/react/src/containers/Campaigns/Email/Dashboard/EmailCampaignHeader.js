@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader';
+import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader.tsx';
 
 class EmailCampaignHeader extends Component {
 

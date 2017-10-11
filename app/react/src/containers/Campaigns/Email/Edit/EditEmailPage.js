@@ -7,7 +7,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import moment from 'moment';
 import { pick } from 'lodash';
 
-import { EditContentLayout } from '../../../../components/Layout';
+import { EditContentLayout } from '../../../../components/Layout/index.ts';
 import EmailForm from './EmailForm';
 import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';

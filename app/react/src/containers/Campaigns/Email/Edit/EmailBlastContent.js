@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 
 import { withMcsRouter } from '../../../Helpers';
-import { EditContentLayout } from '../../../../components/Layout';
+import { EditContentLayout } from '../../../../components/Layout/index.ts';
 import EmailBlastForm from './EmailBlastForm';
 import messages from './messages';
 

@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
-import { StackedBarCharts } from '../../../../../components/BarCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
+import { StackedBarCharts } from '../../../../../components/BarCharts/index.ts';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
 

@@ -6,8 +6,8 @@ import { Row, Col } from 'antd';
 import { injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 

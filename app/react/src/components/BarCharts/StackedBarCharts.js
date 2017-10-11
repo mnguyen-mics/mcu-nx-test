@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Plottable from 'plottable';
 
-import { BasicTooltip, ChartTooltip } from '../ChartTooltip';
+import { BasicTooltip, ChartTooltip } from '../ChartTooltip/index.ts';
 
 class StackedBarCharts extends Component {
 

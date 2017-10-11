@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Spin } from 'antd';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import CreativeService from '../../../../services/CreativeService';
 
 

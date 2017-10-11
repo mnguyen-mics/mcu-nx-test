@@ -7,10 +7,10 @@ import moment from 'moment';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { compose } from 'recompose';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import { VerticalBarChart } from '../../../../../components/BarCharts';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
+import { VerticalBarChart } from '../../../../../components/BarCharts/index.ts';
 import { LegendChart } from '../../../../../components/LegendChart';
-import McsIcons from '../../../../../components/McsIcons';
+import McsIcons from '../../../../../components/McsIcons.tsx';
 import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/actions';
 import { getDefaultDatamart } from '../../../../../state/Session/selectors';
 import messages from '../messages';

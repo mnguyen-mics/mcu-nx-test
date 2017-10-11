@@ -4,8 +4,8 @@ import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { injectIntl, intlShape } from 'react-intl';
 
-import McsTabs from '../../../../../components/McsTabs';
-import Card from '../../../../../components/Card/Card';
+import McsTabs from '../../../../../components/McsTabs.tsx';
+import Card from '../../../../../components/Card/Card.tsx';
 import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 
 import messages from '../messages';

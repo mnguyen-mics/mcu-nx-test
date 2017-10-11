@@ -3,7 +3,7 @@ import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components';
+import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components/index.ts';
 import BidOptimizerServices from '../../../../../../services/BidOptimizerServices';
 
 import messages from '../../messages';

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Layout, Button, Checkbox } from 'antd';
 
 import { Actionbar } from '../containers/Actionbar';
-import McsIcons from './McsIcons';
-import { EmptyTableView, TableView, TableViewFilters } from './TableView';
+import McsIcons from './McsIcons.tsx';
+import { EmptyTableView, TableView, TableViewFilters } from './TableView/index.ts';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 
 const { Content } = Layout;
