@@ -1,60 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Field } from 'redux-form';
-import { Avatar, Icon, Input, Table } from 'antd';
+import { Icon, Input } from 'antd';
 
-import { Form } from '../../../../../../../components';
+import PlacementRow from './PlacementRow';
 import { toLowerCaseNoAccent } from '../../../../../../../utils/StringHelper';
 import messages from '../../../messages';
-
-const { FormCheckbox } = Form;
 
 class PlacementSearch extends Component {
 
   state = { keyword: '' }
-
-  buildColumns = () => {
-    return [
-      {
-        dataIndex: 'name',
-        key: 'name',
-        render: value => (
-          <div className="align-vertically row-name">
-            <Avatar shape="square" size="small" src={value.icon} />
-            <p className="margin-from-icon">{`${value.type} > ${value.text}`}</p>
-          </div>
-        ),
-        width: '95%',
-      },
-      {
-        dataIndex: 'checked',
-        key: 'checked',
-        render: (checked) => (
-          <Field
-            component={FormCheckbox}
-            name={`placements.${checked.type}.${checked.index}.checked`}
-            type="checkbox"
-          />
-        ),
-        width: '5%',
-      },
-    ];
-  }
-
-  buildDataSource = () => {
-    const { displaySearchOptions, placements } = this.props;
-
-    return (displaySearchOptions
-      ? placements
-        .map(elem => ({
-          checked: { index: elem.index, type: elem.type },
-          key: elem.id,
-          name: { icon: elem.icon, text: elem.text, type: elem.type, },
-        }))
-        .filter(elem => toLowerCaseNoAccent(elem.name.text).includes(this.state.keyword))
-      : []
-    );
-  };
 
   onClose = (e) => {
     this.updateSearch();
@@ -69,10 +23,21 @@ class PlacementSearch extends Component {
   }
 
   render() {
-    const { className, displaySearchOptions, emptyTableMessage, formatMessage, updateDisplayOptions } = this.props;
+    const { displaySearchOptions, emptyTableMessage, formatMessage, placements, updateDisplayOptions } = this.props;
     const { keyword } = this.state;
 
     const suffix = (displaySearchOptions ? <Icon type="close-circle" onClick={this.onClose} /> : null);
+    const placementsToDisplay = (displaySearchOptions
+      ? placements.filter(elem => toLowerCaseNoAccent(elem.text).includes(this.state.keyword))
+      : null
+    );
+
+    const searchMapping = (placementsToDisplay && placementsToDisplay.length
+      ? placementsToDisplay.map((elem) => (
+        <PlacementRow key={elem.id} {...elem} text={`${elem.type} > ${elem.text}`} />
+      ))
+      : <li className="empty-list">{emptyTableMessage}</li>
+    );
 
     return (
       <div>
@@ -87,27 +52,22 @@ class PlacementSearch extends Component {
           onFocus={updateDisplayOptions(true)}
         />
 
-        <Table
-          className={`${className} remove-margin-between-search-and-table ${displaySearchOptions ? '' : 'table-without-empty-message'}`}
-          columns={this.buildColumns()}
-          dataSource={this.buildDataSource()}
-          locale={{ emptyText: (displaySearchOptions ? emptyTableMessage : '') }}
-          pagination={false}
-          showHeader={false}
-          scroll={{ y: 265 }}
-        />
+
+        {displaySearchOptions && (
+          <div className="scrolling">
+            {searchMapping}
+          </div>
+        )}
       </div>
     );
   }
 }
 
 PlacementSearch.defaultProps = {
-  className: '',
   placements: [],
 };
 
 PlacementSearch.propTypes = {
-  className: PropTypes.string,
   displaySearchOptions: PropTypes.bool.isRequired,
   emptyTableMessage: PropTypes.string.isRequired,
   formatMessage: PropTypes.func.isRequired,

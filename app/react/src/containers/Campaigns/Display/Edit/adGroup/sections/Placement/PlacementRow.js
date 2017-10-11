@@ -7,20 +7,20 @@ import { Form } from '../../../../../../../components';
 
 const { FormCheckbox } = Form;
 
-function PlacementDisplayRow({ icon, id, text, type }) {
+function PlacementDisplayRow({ icon, index, text, type }) {
 
   return (
     <li>
-      <Row>
+      <Row className="align-vertically">
         <Col span={22} className="align-vertically row-name">
           <Avatar shape="square" size="small" src={icon} />
           <p className="margin-from-icon">{text}</p>
         </Col>
 
-        <Col span={1} className="checkbox-wrapper">
+        <Col span={1}>
           <Field
             component={FormCheckbox}
-            name={`placements.${type}.${id}.checked`}
+            name={`placements.${type}.${index}.checked`}
             type="checkbox"
           />
         </Col>
@@ -31,7 +31,7 @@ function PlacementDisplayRow({ icon, id, text, type }) {
 
 PlacementDisplayRow.propTypes = {
   icon: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
   text: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
 };

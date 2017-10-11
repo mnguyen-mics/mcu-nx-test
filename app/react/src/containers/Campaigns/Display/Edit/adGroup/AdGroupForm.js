@@ -272,7 +272,7 @@ class AdGroupForm extends Component {
             className="mcs-content-container mcs-form-container"
             id={scrollLabelContentId}
           >
-            {/* {editionMode
+            {editionMode
               ? <div><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /><hr /></div>
               : null
             }
@@ -292,14 +292,14 @@ class AdGroupForm extends Component {
             <Media {...commonProps} />
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
-            <hr /> */}
+            <hr />
             <Placement {...commonProps} formValues={placements} />
             <hr />
-            {/* <Ads {...commonProps} formValues={ads} />
+            <Ads {...commonProps} formValues={ads} />
             {!editionMode
               ? <div><hr /><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /></div>
               : null
-            } */}
+            }
           </Content>
         </Form>
       </Layout>

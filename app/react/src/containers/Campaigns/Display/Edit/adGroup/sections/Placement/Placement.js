@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
 import { Col, Row, Tooltip } from 'antd';
 
-import { EmptyRecords, Form, McsIcons } from '../../../../../../../components';
+import { EmptyRecords, Form, List, McsIcons } from '../../../../../../../components';
 import PlacementSearch from './PlacementSearch';
-import PlacementTable from './PlacementTable';
+import PlacementList from './PlacementList';
 import { setTableRowIndex } from '../../../../../../../utils/TableUtils';
 import messages from '../../../messages';
 
@@ -65,7 +65,7 @@ class Placement extends Component {
             />
           </Col>
 
-          {true // placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
+          {placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
           && (
             <Col className="custom-content font-size" offset={2}>
               <Row>
@@ -73,41 +73,39 @@ class Placement extends Component {
                   {formatMessage(messages.contentSection9Properties)}
                 </Col>
 
-                <Col span={14} className="tables-wrapper">
+                <Col span={14} className="content-wrapper">
+                  <List>
+                    <PlacementSearch
+                      {...commonProps}
+                      displaySearchOptions={this.state.displaySearchOptions}
+                      placements={formattedPlacements}
+                      updateDisplayOptions={this.updateDisplaySearchOptions}
+                    />
 
-                  <PlacementSearch
-                    {...commonProps}
-                    displaySearchOptions={this.state.displaySearchOptions}
-                    placements={formattedPlacements}
-                    updateDisplayOptions={this.updateDisplaySearchOptions}
-                  />
-
-                  <div className={displaySearchOptions ? 'hide-section' : ''}>
-                    <div className="placement-table">
+                    <div className={displaySearchOptions ? 'hide-section' : ''}>
                       <FieldArray
-                        component={PlacementTable}
+                        component={PlacementList}
                         name="placements.web"
                         props={{
                           ...commonProps,
-                          placements: formValues.web,
+                          placements: formattedPlacements.filter(({ type }) => type === 'web'),
                           title: messages.contentSection9TypeWebsites,
                           type: 'web',
                         }}
                       />
 
-                      {/* <FieldArray
-                        component={PlacementTable}
+                      <FieldArray
+                        component={PlacementList}
                         name="placements.mobile"
                         props={{
                           ...commonProps,
-                          placements: formValues.mobile,
+                          placements: formattedPlacements.filter(({ type }) => type === 'mobile'),
                           title: messages.contentSection9TypeMobileApps,
                           type: 'mobile',
                         }}
-                      /> */}
+                      />
                     </div>
-                  </div>
-
+                  </List>
                 </Col>
                 <Col span={1} className="field-tooltip">
                   <Tooltip title="Test">

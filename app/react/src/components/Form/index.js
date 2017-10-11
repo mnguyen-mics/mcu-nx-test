@@ -1,4 +1,3 @@
-import CheckboxWithSign from './CheckboxWithSign';
 import FormCheckbox from './FormCheckbox';
 import FormDatePicker from './FormDatePicker';
 import FormInput from './FormInput';
@@ -14,7 +13,6 @@ import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
 
 export default {
-  CheckboxWithSign,
   FormCheckbox,
   FormDatePicker,
   FormInput,
@@ -30,7 +28,6 @@ export default {
 };
 
 export {
-  CheckboxWithSign,
   FormCheckbox,
   FormDatePicker,
   FormInput,
