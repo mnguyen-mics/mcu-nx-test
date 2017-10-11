@@ -132,6 +132,7 @@
     "ts-loader": "^2.3.7",
     "tslint": "^5.7.0",
     "tslint-eslint-rules": "^4.1.1",
+    "tslint-loader": "^3.5.3",
     "tslint-react": "^3.2.0",
     "typescript": "^2.5.3",
     "url-loader": "^0.5.8",
@@ -148,7 +149,7 @@
   "scripts": {
     "test": "grunt test",
     "i18n": "node scripts/i18n.js",
-    "test:tslint": "tslint -c tslint.json app/react/src/**/*.{ts,tsx}",
+    "test:tslint": "tslint -c tslint.json 'app/react/src/**/*.{ts,tsx}'",
     "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "start": "grunt serve",
     "build": "grunt build"

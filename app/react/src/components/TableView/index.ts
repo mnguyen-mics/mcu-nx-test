@@ -9,5 +9,5 @@ export {
   TableView,
   EmptyTableView,
   CollectionView,
-  CollectionViewFilters
+  CollectionViewFilters,
 };
