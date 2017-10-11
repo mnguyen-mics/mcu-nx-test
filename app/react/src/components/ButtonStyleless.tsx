@@ -2,14 +2,14 @@ import * as React from 'react';
 
 interface ButtonStylelessProps {
   className?: string;
-  buttonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
   onClick: React.FormEventHandler<HTMLButtonElement>;
 }
 
-const ButtonStyleless: React.SFC<ButtonStylelessProps> = props => {
+const ButtonStyleless: React.SFC<ButtonStylelessProps & React.ButtonHTMLAttributes<HTMLButtonElement>> = props => {
 
+  const { children, className, ...rest } = props;
   return (
-    <button className={`button-styleless ${props.className}`} {...props.buttonProps}>
+    <button className={`button-styleless ${props.className}`} {...rest}>
       {props.children}
     </button>
   );
