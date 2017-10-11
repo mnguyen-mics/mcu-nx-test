@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Field, Form, reduxForm } from 'redux-form';
+import { Field, Form, reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Row } from 'antd';
 
 import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form/index.ts';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import EmailTemplateSelection from './EmailTemplateSelection';
+import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
@@ -144,9 +145,10 @@ class EmailBlastForm extends Component {
       handleSubmit,
       closeNextDrawer,
       openNextDrawer,
+      selectedConsentId
     } = this.props;
 
-    const { consents, segmentRequired } = this.state;
+    const { consents, segmentRequired, segments } = this.state;
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
@@ -161,6 +163,9 @@ class EmailBlastForm extends Component {
       ),
       className: segmentRequired ? 'required' : '',
     };
+
+    const segmentIds = segments.map(s => s.audience_segment_id);
+    const providerTechnicalNames = selectedConsentId ? consents.filter(c => c.id === selectedConsentId).map(c => c.technical_name) : [];
 
     return (
       <Form
@@ -229,7 +234,7 @@ class EmailBlastForm extends Component {
                   },
                   options: consents.map(consent => ({
                     value: consent.id,
-                    title: `${consent.name} (${consent.purpose})`,
+                    text: consent.technical_name,
                   })),
                   helpToolTipProps: {
                     title: formatMessage(messages.emailEditorProviderSelectHelper),
@@ -348,6 +353,9 @@ class EmailBlastForm extends Component {
                 {this.getSegmentRecords()}
               </RelatedRecords>
             </Row>
+            <Row className="section-footer">
+              <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
+            </Row>
           </div>
         </Content>
       </Form>
@@ -359,6 +367,7 @@ EmailBlastForm.defaultProps = {
   isCreationMode: true,
   blastName: '',
   segments: [],
+  selectedConsentId: null,
 };
 
 EmailBlastForm.propTypes = {
@@ -377,21 +386,23 @@ EmailBlastForm.propTypes = {
     name: PropTypes.string,
     audience_segment_id: PropTypes.string.isRequired,
   })),
+  selectedConsentId: PropTypes.string,
 };
 
 EmailBlastForm = compose(
   injectIntl,
   withRouter,
-  connect(
-    state => ({
-      defaultDatamart: getDefaultDatamart(state),
-    }),
-  ),
   reduxForm({
     form: 'emailBlastForm',
     enableReinitialize: true,
   }),
   withValidators,
+  connect(
+    (state, ownProps) => ({
+      defaultDatamart: getDefaultDatamart(state),
+      selectedConsentId: formValueSelector(ownProps.formId)(state, 'blast.consents[0].consent_id')
+    }),
+  ),
 )(EmailBlastForm);
 
 export default EmailBlastForm;

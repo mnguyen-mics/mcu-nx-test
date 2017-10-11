@@ -50,7 +50,7 @@ class EditEmailPage extends Component {
     }
   }
 
-  editEmailCampaign(updatedEmailCampaign) {
+  editEmailCampaign = (updatedEmailCampaign) => {
     const {
       notifyError,
       intl: { formatMessage },
@@ -154,7 +154,7 @@ class EditEmailPage extends Component {
     });
   }
 
-  loadEmailCampaign(campaignId) {
+  loadEmailCampaign = (campaignId) => {
     const { notifyError } = this.props;
 
     EmailCampaignService.getEmailCampaign(campaignId)
