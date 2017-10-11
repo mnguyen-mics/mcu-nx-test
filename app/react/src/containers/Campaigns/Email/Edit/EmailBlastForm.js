@@ -234,7 +234,7 @@ class EmailBlastForm extends Component {
                   },
                   options: consents.map(consent => ({
                     value: consent.id,
-                    text: consent.technical_name,
+                    title: consent.technical_name,
                   })),
                   helpToolTipProps: {
                     title: formatMessage(messages.emailEditorProviderSelectHelper),
