@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Tag, Tooltip } from 'antd';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
-import { Card } from '../../../../components/Card';
+import { Card } from '../../../../components/Card/index.ts';
 import messages from '../messages';
 
 class AccountIdCard extends Component {

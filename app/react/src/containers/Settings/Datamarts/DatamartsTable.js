@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import moment from 'moment';
 
-import { EmptyTableView, TableView } from '../../../components/TableView';
+import { EmptyTableView, TableView } from '../../../components/TableView/index.ts';
 import messages from './messages';
 
 class DatamartsTable extends Component {

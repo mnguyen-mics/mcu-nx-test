@@ -2,17 +2,21 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-import { Field, Form, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { Field, Form, reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Row } from 'antd';
 
-import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
-import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form/index.ts';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import EmailTemplateSelection from './EmailTemplateSelection';
+import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService';
 import { isPastDate } from '../../../../utils/DateHelper';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 const { Content } = Layout;
 
@@ -45,19 +49,37 @@ class EmailBlastForm extends Component {
     }
   }
 
+  getSegments = () => {
+    const {
+      defaultDatamart,
+      match: { params: { organisationId } },
+    } = this.props;
+
+    const datamartId = defaultDatamart(organisationId).id;
+
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId);
+  }
+
   updateSegments = (selectedAudienceSegments) => {
     const { closeNextDrawer } = this.props;
 
-    const buildSegmentSelection = segment => ({
-      audience_segment_id: segment.id,
-      name: segment.name,
-    });
+    this.getSegments()
+      .then(({ data }) => {
+        const buildSegmentSelection = segment => {
+          const metadata = data.find(seg => seg.id === segment);
 
-    this.setState(prevState => ({
-      segments: selectedAudienceSegments.map(buildSegmentSelection),
-      segmentRequired: !prevState.segmentRequired,
-    }));
-    closeNextDrawer();
+          return {
+            audience_segment_id: metadata.id,
+            name: metadata.name,
+          };
+        };
+
+        this.setState(prevState => ({
+          segments: selectedAudienceSegments.map(buildSegmentSelection),
+          segmentRequired: !prevState.segmentRequired,
+        }));
+        closeNextDrawer();
+      });
   }
 
   handleClickOnRemoveSegment(segment) {
@@ -69,21 +91,16 @@ class EmailBlastForm extends Component {
   getSegmentRecords() {
     const { segments } = this.state;
 
-    const segmentRecords = segments.filter(segment => !segment.isDeleted).map(segment => {
-
-      return (
-        <RecordElement
-          key={segment.audience_segment_id}
-          recordIconType={'users'}
-          title={segment.name}
-          actionButtons={[
+    return segments.filter(segment => !segment.isDeleted).map(segment => (
+      <RecordElement
+        key={segment.audience_segment_id}
+        recordIconType={'users'}
+        title={segment.name}
+        actionButtons={[
             { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) },
-          ]}
-        />
-      );
-    });
-
-    return segmentRecords;
+        ]}
+      />
+    ));
   }
 
   handleSegmentActionClick = () => {
@@ -128,9 +145,10 @@ class EmailBlastForm extends Component {
       handleSubmit,
       closeNextDrawer,
       openNextDrawer,
+      selectedConsentId
     } = this.props;
 
-    const { consents, segmentRequired } = this.state;
+    const { consents, segmentRequired, segments } = this.state;
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
@@ -145,6 +163,9 @@ class EmailBlastForm extends Component {
       ),
       className: segmentRequired ? 'required' : '',
     };
+
+    const segmentIds = segments.map(s => s.audience_segment_id);
+    const providerTechnicalNames = selectedConsentId ? consents.filter(c => c.id === selectedConsentId).map(c => c.technical_name) : [];
 
     return (
       <Form
@@ -212,9 +233,8 @@ class EmailBlastForm extends Component {
                     ...fieldGridConfig,
                   },
                   options: consents.map(consent => ({
-                    key: consent.id,
                     value: consent.id,
-                    text: `${consent.name} (${consent.purpose})`,
+                    title: consent.technical_name,
                   })),
                   helpToolTipProps: {
                     title: formatMessage(messages.emailEditorProviderSelectHelper),
@@ -333,6 +353,9 @@ class EmailBlastForm extends Component {
                 {this.getSegmentRecords()}
               </RelatedRecords>
             </Row>
+            <Row className="section-footer">
+              <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
+            </Row>
           </div>
         </Content>
       </Form>
@@ -344,11 +367,13 @@ EmailBlastForm.defaultProps = {
   isCreationMode: true,
   blastName: '',
   segments: [],
+  selectedConsentId: null,
 };
 
 EmailBlastForm.propTypes = {
   /* blastName: PropTypes.string --> not currently used */
   closeNextDrawer: PropTypes.func.isRequired,
+  defaultDatamart: PropTypes.func.isRequired,
   /* initialValues={initialValues} --> for redux-form */
   handleSubmit: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
@@ -361,6 +386,7 @@ EmailBlastForm.propTypes = {
     name: PropTypes.string,
     audience_segment_id: PropTypes.string.isRequired,
   })),
+  selectedConsentId: PropTypes.string,
 };
 
 EmailBlastForm = compose(
@@ -371,6 +397,12 @@ EmailBlastForm = compose(
     enableReinitialize: true,
   }),
   withValidators,
+  connect(
+    (state, ownProps) => ({
+      defaultDatamart: getDefaultDatamart(state),
+      selectedConsentId: formValueSelector(ownProps.formId)(state, 'blast.consents[0].consent_id')
+    }),
+  ),
 )(EmailBlastForm);
 
 export default EmailBlastForm;

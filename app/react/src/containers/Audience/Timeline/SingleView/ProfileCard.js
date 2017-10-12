@@ -4,7 +4,7 @@ import { Row, Col, Tooltip } from 'antd';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import messages from '../messages';
-import { Card } from '../../../../components/Card';
+import { Card } from '../../../../components/Card/index.ts';
 
 class ProfileCard extends Component {
 

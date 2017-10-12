@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import {
   TableViewFilters,
   EmptyTableView,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
@@ -214,7 +214,6 @@ class AudienceSegmentsTable extends Component {
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
 
     const searchOptions = {
-      isEnabled: true,
       placeholder: translations.SEARCH_AUDIENCE_SEGMENTS,
       onSearch: value => this.updateLocationSearch({
         keywords: value,

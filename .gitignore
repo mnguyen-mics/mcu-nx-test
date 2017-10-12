@@ -22,6 +22,4 @@ app/version*
 Icon?
 .eslintcache
 build/
-
-
-
+ts-build

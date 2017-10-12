@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
-import { TableViewFilters, EmptyTableView } from '../../../../components/TableView';
+import { TableViewFilters, EmptyTableView } from '../../../../components/TableView/index.ts';
 
 import * as AssetsFilesActions from '../../../../state/Library/AssetsFiles/actions';
 

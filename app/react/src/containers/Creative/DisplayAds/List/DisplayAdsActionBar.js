@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import { withTranslations } from '../../../Helpers';
 
 class ListCreativesDisplay extends Component {

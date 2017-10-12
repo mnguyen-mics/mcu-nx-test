@@ -1,5 +1,5 @@
 import CollectionView from './CollectionView';
-import withFilters from './withFilters';
+import withFilters from './withFilters.tsx';
 
 const CollectionViewFilters = withFilters(CollectionView);
 

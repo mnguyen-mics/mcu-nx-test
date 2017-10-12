@@ -6,7 +6,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../Actionbar';
-import McsIcons from '../../../components/McsIcons';
+import McsIcons from '../../../components/McsIcons.tsx';
 import messages from './messages';
 
 const InputGroup = Input.Group;

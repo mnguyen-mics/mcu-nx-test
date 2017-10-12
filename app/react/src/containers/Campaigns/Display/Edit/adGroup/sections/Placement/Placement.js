@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
 import { Col, Row, Tooltip } from 'antd';
 
-import { EmptyRecords, Form, McsIcons } from '../../../../../../../components';
+import { EmptyRecords, Form, McsIcons } from '../../../../../../../components/index.ts';
 import PlacementSearch from './PlacementSearch';
 import PlacementList from './PlacementList';
 import { setTableRowIndex } from '../../../../../../../utils/TableUtils';

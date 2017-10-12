@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Input } from 'antd';
 
-import { List } from '../../../../../../../components';
+import { List } from '../../../../../../../components/index.ts';
 import PlacementRow from './PlacementRow';
 import { toLowerCaseNoAccent } from '../../../../../../../utils/StringHelper';
 import messages from '../../../messages';

@@ -7,8 +7,8 @@ import { Modal, Tooltip } from 'antd';
 import {
   EmptyTableView,
   TableViewFilters,
-} from '../../../components/TableView';
-import McsIcons from '../../../components/McsIcons';
+} from '../../../components/TableView/index.ts';
+import McsIcons from '../../../components/McsIcons.tsx';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 

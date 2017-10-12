@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
 import { Avatar, Col, Row } from 'antd';
 
-import { Form } from '../../../../../../../components';
+import { Form } from '../../../../../../../components/index.ts';
 
 const { FormCheckbox } = Form;
 

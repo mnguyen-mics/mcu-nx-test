@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Icon } from 'antd';
 
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 
 const Device = (props) => {
   const {

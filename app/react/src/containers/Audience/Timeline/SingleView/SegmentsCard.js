@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
-import { Card } from '../../../../components/Card';
+import { Card } from '../../../../components/Card/index.ts';
 import SegmentsTag from './SegmentsTag';
 import messages from '../messages';
 

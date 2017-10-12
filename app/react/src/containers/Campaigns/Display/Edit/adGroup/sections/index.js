@@ -1,4 +1,4 @@
-import Ads from './Ads';
+import Ads from './Ads/Ads';
 import Audience from './Audience';
 import DeviceAndLocation from './DeviceAndLocation';
 import General from './General';

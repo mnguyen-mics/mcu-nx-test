@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from 'react-intl';
 import moment from 'moment';
 
-import { EmptyTableView, TableViewFilters } from '../../../components/TableView';
+import { EmptyTableView, TableViewFilters } from '../../../components/TableView/index.ts';
 import messages from './messages';
 
 class MobileApplicationsTable extends Component {
@@ -76,7 +76,6 @@ class MobileApplicationsTable extends Component {
     };
 
     const searchOptions = {
-      isEnabled: true,
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: value => onFilterChange({
         name: value,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
-import McsIcons from '../../components/McsIcons';
+import McsIcons from '../McsIcons.tsx';
 
 const defaultTooltipPlacement = 'right';
 

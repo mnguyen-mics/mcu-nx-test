@@ -7,11 +7,11 @@ import { FormattedMessage } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import {
   EmptyTableView,
   CollectionViewFilters,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import CreativeCard from './CreativeCard';
 import messages from './messages';
 
@@ -128,7 +128,6 @@ class CreativeCardSelector extends Component {
 
   getSearchOptions() {
     return {
-      isEnabled: true,
       placeholder: 'Search a template',
       onSearch: value => {
         this.setState(prevState => ({

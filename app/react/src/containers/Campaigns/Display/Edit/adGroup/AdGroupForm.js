@@ -27,8 +27,8 @@ import {
   Summary,
 } from './sections';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { withNormalizer, withValidators } from '../../../../../components/Form';
-import { Loading } from '../../../../../components';
+import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+import { Loading } from '../../../../../components/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';

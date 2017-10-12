@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Checkbox, Col, Row } from 'antd';
 
-import { ButtonStyleless } from '../../../../../../../components';
+import { ButtonStyleless } from '../../../../../../../components/index.ts';
 
 function PlacementHeader({
   className,

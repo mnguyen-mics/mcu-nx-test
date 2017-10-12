@@ -6,8 +6,8 @@ import { injectIntl, intlShape } from 'react-intl';
 
 import messages from './messages';
 import CreativeCardSelector from './CreativeCardSelector';
-import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
-import { FormSection } from '../../../../components/Form';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
+import { FormSection } from '../../../../components/Form/index.ts';
 import CreativeService from '../../../../services/CreativeService';
 import { withMcsRouter } from '../../../Helpers';
 

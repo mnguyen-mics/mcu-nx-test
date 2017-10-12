@@ -5,12 +5,12 @@ import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form, TableSelector } from '../../../../../../components';
+import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import messages from '../../messages';
 import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
 import { getDefaultDatamart } from '../../../../../../state/Session/selectors';
 import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
-import RelatedRecordTable from '../../../../../RelatedRecordTable';
+import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
 import { formatMetric } from '../../../../../../utils/MetricHelper';
 
 const { FormSection } = Form;

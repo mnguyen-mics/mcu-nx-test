@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Row, Col, Radio } from 'antd';
-import McsIcons from '../McsIcons';
+import McsIcons from '../McsIcons.tsx';
 
 class LegendChartWithModal extends Component {
 

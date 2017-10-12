@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { arrayInsert, arrayRemove } from 'redux-form';
 
-import { List } from '../../../../../../../components';
+import { List } from '../../../../../../../components/index.ts';
 import PlacementHeader from './PlacementHeader';
 import PlacementRow from './PlacementRow';
 import messages from '../../../messages';
@@ -65,6 +65,7 @@ class PlacementList extends Component {
 }
 
 PlacementList.defaultProps = {
+  displayHeaderTopBorder: false,
   placements: [],
 };
 
@@ -72,7 +73,7 @@ PlacementList.defaultProps = {
 PlacementList.propTypes = {
   arrayInsert: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
-  displayHeaderTopBorder: PropTypes.bool.isRequired,
+  displayHeaderTopBorder: PropTypes.bool,
   formatMessage: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
 

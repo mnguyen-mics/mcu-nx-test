@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import LabelListView from '../../../../components/LabelListView';
+import LabelListView from '../../../../components/LabelListView.tsx';
 
 import * as LabelsActions from '../../../../state/Labels/actions';
 import * as EmailsActions from '../../../../state/Campaign/Email/actions';
