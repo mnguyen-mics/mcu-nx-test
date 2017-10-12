@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Input } from 'antd';
 
+import { List } from '../../../../../../../components';
 import PlacementRow from './PlacementRow';
 import { toLowerCaseNoAccent } from '../../../../../../../utils/StringHelper';
 import messages from '../../../messages';
@@ -23,7 +24,7 @@ class PlacementSearch extends Component {
   }
 
   render() {
-    const { displaySearchOptions, emptyTableMessage, formatMessage, placements, updateDisplayOptions } = this.props;
+    const { displaySearchOptions, formatMessage, placements, updateDisplayOptions } = this.props;
     const { keyword } = this.state;
 
     const suffix = (displaySearchOptions ? <Icon type="close-circle" onClick={this.onClose} /> : null);
@@ -36,7 +37,7 @@ class PlacementSearch extends Component {
       ? placementsToDisplay.map((elem) => (
         <PlacementRow key={elem.id} {...elem} text={`${elem.type} > ${elem.text}`} />
       ))
-      : <li className="empty-list">{emptyTableMessage}</li>
+      : <li className="empty-list">{formatMessage(messages.contentSection9SearchEmptyTable)}</li>
     );
 
     return (
@@ -52,11 +53,10 @@ class PlacementSearch extends Component {
           onFocus={updateDisplayOptions(true)}
         />
 
-
         {displaySearchOptions && (
-          <div className="scrolling">
+          <List className="list scrolling">
             {searchMapping}
-          </div>
+          </List>
         )}
       </div>
     );
@@ -69,7 +69,6 @@ PlacementSearch.defaultProps = {
 
 PlacementSearch.propTypes = {
   displaySearchOptions: PropTypes.bool.isRequired,
-  emptyTableMessage: PropTypes.string.isRequired,
   formatMessage: PropTypes.func.isRequired,
 
   placements: PropTypes.arrayOf(PropTypes.shape({

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
 import { Col, Row, Tooltip } from 'antd';
 
-import { EmptyRecords, Form, List, McsIcons } from '../../../../../../../components';
+import { EmptyRecords, Form, McsIcons } from '../../../../../../../components';
 import PlacementSearch from './PlacementSearch';
 import PlacementList from './PlacementList';
 import { setTableRowIndex } from '../../../../../../../utils/TableUtils';
@@ -74,38 +74,37 @@ class Placement extends Component {
                 </Col>
 
                 <Col span={14} className="content-wrapper">
-                  <List>
-                    <PlacementSearch
-                      {...commonProps}
-                      displaySearchOptions={this.state.displaySearchOptions}
-                      placements={formattedPlacements}
-                      updateDisplayOptions={this.updateDisplaySearchOptions}
+                  <PlacementSearch
+                    {...commonProps}
+                    displaySearchOptions={this.state.displaySearchOptions}
+                    placements={formattedPlacements}
+                    updateDisplayOptions={this.updateDisplaySearchOptions}
+                  />
+
+                  <div className={displaySearchOptions ? 'hide-section' : ''}>
+                    <FieldArray
+                      component={PlacementList}
+                      name="placements.web"
+                      props={{
+                        ...commonProps,
+                        placements: formattedPlacements.filter(({ type }) => type === 'web'),
+                        title: messages.contentSection9TypeWebsites,
+                        type: 'web',
+                      }}
                     />
 
-                    <div className={displaySearchOptions ? 'hide-section' : ''}>
-                      <FieldArray
-                        component={PlacementList}
-                        name="placements.web"
-                        props={{
-                          ...commonProps,
-                          placements: formattedPlacements.filter(({ type }) => type === 'web'),
-                          title: messages.contentSection9TypeWebsites,
-                          type: 'web',
-                        }}
-                      />
-
-                      <FieldArray
-                        component={PlacementList}
-                        name="placements.mobile"
-                        props={{
-                          ...commonProps,
-                          placements: formattedPlacements.filter(({ type }) => type === 'mobile'),
-                          title: messages.contentSection9TypeMobileApps,
-                          type: 'mobile',
-                        }}
-                      />
-                    </div>
-                  </List>
+                    <FieldArray
+                      component={PlacementList}
+                      name="placements.mobile"
+                      props={{
+                        ...commonProps,
+                        displayHeaderTopBorder: true,
+                        placements: formattedPlacements.filter(({ type }) => type === 'mobile'),
+                        title: messages.contentSection9TypeMobileApps,
+                        type: 'mobile',
+                      }}
+                    />
+                  </div>
                 </Col>
                 <Col span={1} className="field-tooltip">
                   <Tooltip title="Test">

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { arrayInsert, arrayRemove } from 'redux-form';
 
+import { List } from '../../../../../../../components';
 import PlacementHeader from './PlacementHeader';
 import PlacementRow from './PlacementRow';
+import messages from '../../../messages';
 
 class PlacementList extends Component {
 
@@ -30,18 +32,19 @@ class PlacementList extends Component {
   }
 
   render() {
-    const { emptyTableMessage, formatMessage, placements, title } = this.props;
+    const { displayHeaderTopBorder, formatMessage, placements, title } = this.props;
     const { displayTableOptions } = this.state;
 
     const placementsToDisplay = (displayTableOptions ? placements : null);
     const placementMapping = (placementsToDisplay && placementsToDisplay.length
       ? placements.map((elem) => <PlacementRow key={elem.index} {...elem} />)
-      : <li className="empty-list">{emptyTableMessage}</li>
+      : <li className="empty-list">{formatMessage(messages.contentSection9SearchEmptyTable)}</li>
     );
 
     return (
       <div>
         <PlacementHeader
+          className={displayHeaderTopBorder ? 'header-top-border' : ''}
           displayTableOptions={displayTableOptions}
           handlers={{
             updateAllCheckboxes: this.updateAllCheckboxes,
@@ -52,9 +55,9 @@ class PlacementList extends Component {
         />
 
         {placementsToDisplay && (
-          <div className="scrolling">
+          <List className="list scrolling">
             {placementMapping}
-          </div>
+          </List>
         )}
       </div>
     );
@@ -69,7 +72,7 @@ PlacementList.defaultProps = {
 PlacementList.propTypes = {
   arrayInsert: PropTypes.func.isRequired,
   arrayRemove: PropTypes.func.isRequired,
-  emptyTableMessage: PropTypes.string.isRequired,
+  displayHeaderTopBorder: PropTypes.bool.isRequired,
   formatMessage: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
 

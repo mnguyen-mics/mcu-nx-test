@@ -1,8 +1,7 @@
 .list-ul {
 
-  ul {
-    border: 1px solid rgb(224, 225, 225);
-    border-radius: 4px;
+  ul.scrolling {
+    overflow-y: scroll;
   }
 
   li {
@@ -15,17 +14,17 @@
     justify-content: center;
   }
 
-  li.header {
-    border-top: 1px solid rgb(224, 225, 225);
-  }
-
   li.empty-list {
     align-items: center;
   }
 
   li:last-child {
-    border: none;
+    border-bottom: none;
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
+  }
+
+  li:first-child {
+    border-top: 1px solid rgb(224, 225, 225);
   }
 }

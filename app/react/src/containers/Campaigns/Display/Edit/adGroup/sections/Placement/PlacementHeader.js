@@ -5,6 +5,7 @@ import { Checkbox, Col, Row } from 'antd';
 import { ButtonStyleless } from '../../../../../../../components';
 
 function PlacementHeader({
+  className,
   displayTableOptions,
   handlers,
   placements,
@@ -16,7 +17,7 @@ function PlacementHeader({
   const indeterminate = !!checkedPlacements.length && (checkedPlacements.length < placements.length);
 
   return (
-    <li className="header">
+    <div className={`list-header ${className}`}>
       <Row type="flex" align="middle">
         <Col span={18} className="bold row-name">
           {title}
@@ -53,11 +54,16 @@ function PlacementHeader({
           : <Col span={1} />
         }
       </Row>
-    </li>
+    </div>
   );
 }
 
+PlacementHeader.defaultProps = {
+  className: '',
+};
+
 PlacementHeader.propTypes = {
+  className: PropTypes.string,
   displayTableOptions: PropTypes.bool.isRequired,
 
   handlers: PropTypes.shape({
