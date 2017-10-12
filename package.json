@@ -144,7 +144,7 @@
     "why-did-you-update": "0.0.8"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "test": "grunt test",
