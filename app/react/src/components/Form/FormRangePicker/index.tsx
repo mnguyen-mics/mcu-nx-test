@@ -36,12 +36,12 @@ interface FormRangePickerProps {
     endDate?: moment.Moment;
   };
 }
-
 const DateInputField = Field as new () => GenericField<DatePickerProps>;
 
 class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
 
   static defaultProps: Partial<FormRangePickerProps> = {
+    fieldsMetaData: undefined,
     fieldValidators: { start: [], end: [] },
     syncErrors: undefined,
   };
@@ -71,12 +71,11 @@ class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
   )
 
   render() {
-
     const { startProps, endProps, syncErrors, fieldValidators, helpToolTipProps } = this.props;
 
     const error = (
-      (this.displayError(startProps.name) && syncErrors[startProps.name])
-      || (this.displayError(endProps.name) && syncErrors[endProps.name])
+      (this.displayError(startProps.name) && syncErrors && syncErrors[startProps.name])
+      || (this.displayError(endProps.name) && syncErrors && syncErrors[endProps.name])
       || ''
     );
 
@@ -92,7 +91,7 @@ class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
               <DateInputField
                 component={DateInput}
                 validate={fieldValidators!.start}
-                disabledDate={this.disabledDate(false)}
+                disabledDate={this.disabledDate(true)}
                 {...startProps}
               />
             </div>

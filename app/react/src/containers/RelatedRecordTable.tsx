@@ -23,8 +23,6 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
     updateTableFieldState,
   } = props;
 
-  console.log('dataSource = ', dataSource);
-
   const columns = [
     {
       colSpan: 8,
