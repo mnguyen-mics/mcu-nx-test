@@ -55,16 +55,13 @@ class AdGroupForm extends Component {
       match: { params: { campaignId, organisationId } },
     } = this.props;
 
-
     if (!this.props.pristine) {
       this.setState({ loading: true });
 
       return this.saveOrUpdateAdGroup()
-        .then((adGroupId) => Promise.all([
-          this.saveAudience(adGroupId),
-          this.savePublishers(adGroupId),
-          this.saveAds(adGroupId),
-        ]))
+        .then((adGroupId) => this.saveAudience(adGroupId).then(() => adGroupId))
+        .then((adGroupId) => this.savePublishers(adGroupId).then(() => adGroupId))
+        .then((adGroupId) => this.saveAds(adGroupId))
         .then(() => {
           this.setState({ loading: false });
           history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
