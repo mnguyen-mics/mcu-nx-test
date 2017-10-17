@@ -315,86 +315,62 @@ export default defineMessages({
   },
 
   /* ----------------------------- SECTION DEVICE --------------------------- */
-  /* ---------------------------- SECTION LOCATION -------------------------- */
 
-  /* Part 1 */
-  contentSection3Part1Message: {
-    id: 'adGroupEditor.section3.part1.message',
+  contentSectionDevicePart1Message: {
+    id: 'adGroupEditor.section.device.part1.message',
     defaultMessage: 'I want to target a specific device/os/carrier',
   },
 
-  contentSection3Part1Row1Label: {
-    id: 'adGroupEditor.section3.part1.row1.label',
-    defaultMessage: 'Device',
+  contentSectionDevicePart1Row1Label: {
+    id: 'adGroupEditor.section.device.part1.row1.label',
+    defaultMessage: 'Device Type',
   },
-  contentSection3Part1Row1Tooltip: {
-    id: 'adGroupEditor.section3.part1.row1.tooltip',
+  contentSectionDevicePart1Row1Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row1.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  contentSection3Part1Row2Label: {
-    id: 'adGroupEditor.section3.part1.row2.label',
-    defaultMessage: 'Browser',
-  },
-  contentSection3Part1Row2Tooltip: {
-    id: 'adGroupEditor.section3.part1.row2.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-
-  contentSection3Part1Row3Label: {
-    id: 'adGroupEditor.section3.part1.row3.label',
+  contentSectionDevicePart1Row2Label: {
+    id: 'adGroupEditor.section.device.part1.row2.label',
     defaultMessage: 'OS',
   },
-  contentSection3Part1Row3Tooltip: {
-    id: 'adGroupEditor.section3.part1.row3.tooltip',
+  contentSectionDevicePart1Row2Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row2.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  contentSection3Part1Row4Label: {
-    id: 'adGroupEditor.section3.part1.row4.label',
+  contentSectionDevicePart1Row3Label: {
+    id: 'adGroupEditor.section.device.part1.row3.label',
+    defaultMessage: 'Browser',
+  },
+  contentSectionDevicePart1Row3Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row3.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+
+  contentSectionDevicePart1Row4Label: {
+    id: 'adGroupEditor.section.device.part1.row4.label',
     defaultMessage: 'Carrier',
   },
-  contentSection3Part1Row4Tooltip: {
-    id: 'adGroupEditor.section3.part1.row4.tooltip',
+  contentSectionDevicePart1Row4Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row4.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  /* Part 2 */
-  contentSection3Part2Message: {
-    id: 'adGroupEditor.section3.part2.message',
-    defaultMessage: 'I want to target a specific Region, City, Country for my ad',
+  /* ---------------------------- SECTION LOCATION -------------------------- */
+
+  contentSectionLocationPart2Message: {
+    id: 'adGroupEditor.section.location.part2.message',
+    defaultMessage: 'I want to target a specific location',
   },
 
-  contentSection3Part2Row1Label: {
-    id: 'adGroupEditor.section3.part2.row1.label',
-    defaultMessage: 'Country',
+  contentSectionLocationPart2Row1Label: {
+    id: 'adGroupEditor.section.location.part2.row1.label',
+    defaultMessage: 'Location',
   },
-  contentSection3Part2Row1Tooltip: {
-    id: 'adGroupEditor.section3.part2.row1.tooltip',
+  contentSectionLocationPart2Row1Tooltip: {
+    id: 'adGroupEditor.section.location.part2.row1.tooltip',
     defaultMessage: 'Lorem ipsum',
-  },
-
-  contentSection3Part2Row2Label: {
-    id: 'adGroupEditor.section3.part2.row2.label',
-    defaultMessage: 'Region',
-  },
-  contentSection3Part2Row2Tooltip: {
-    id: 'adGroupEditor.section3.part2.row2.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-
-  contentSection3Part2Row3Label: {
-    id: 'adGroupEditor.section3.part2.row3.label',
-    defaultMessage: 'City',
-  },
-  contentSection3Part2Row3Tooltip: {
-    id: 'adGroupEditor.section3.part2.row3.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-
-  contentSection4EmptyTitle: {
-    id: 'adGroupEditor.section4.emptyTitle',
-    defaultMessage: 'Click on the pen to add a network to your ad group',
   },
 
   /* ----------------------------- SECTION MEDIA ---------------------------- */
