@@ -37,7 +37,7 @@ class PlacementSearch extends Component {
       ? placementsToDisplay.map((elem) => (
         <PlacementRow key={elem.id} {...elem} text={`${elem.type} > ${elem.text}`} />
       ))
-      : <li className="empty-list">{formatMessage(messages.contentSection9SearchEmptyTable)}</li>
+      : <li className="empty-list">{formatMessage(messages.contentSectionPlacementSearchEmptyTable)}</li>
     );
 
     return (
@@ -45,7 +45,7 @@ class PlacementSearch extends Component {
         <Input
           size="large"
           className="search-input"
-          placeholder={formatMessage(messages.contentSection9SearchPlaceholder)}
+          placeholder={formatMessage(messages.contentSectionPlacementSearchPlaceholder)}
           prefix={<Icon type="search" />}
           suffix={suffix}
           value={keyword}

@@ -110,8 +110,8 @@ class Audience extends Component {
             key: segment.modelId,
             type: { image: 'users', name: segment.name },
             info: [
-              `${formatMetric(segment.user_points, '0,0')} ${formatMessage(messages.contentSection2Medium1)}`,
-              `${formatMetric(segment.desktop_cookie_ids, '0,0')} ${formatMessage(messages.contentSection2Medium2)}`,
+              `${formatMetric(segment.user_points, '0,0')} ${formatMessage(messages.contentSectionAudienceMedium1)}`,
+              `${formatMetric(segment.desktop_cookie_ids, '0,0')} ${formatMessage(messages.contentSectionAudienceMedium2)}`,
             ],
             include: { bool: segment.include, index },
             toBeRemoved: index,
@@ -136,8 +136,8 @@ class Audience extends Component {
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitle2}
-          title={messages.sectionTitle2}
+          subtitle={messages.sectionSubtitleAudience}
+          title={messages.sectionTitleAudience}
         />
 
         <Row>
@@ -153,7 +153,7 @@ class Audience extends Component {
           {!dataSource.length
             ? <EmptyRecords
               iconType="plus"
-              message={formatMessage(messages.contentSection2EmptyTitle)}
+              message={formatMessage(messages.contentSectionAudienceEmptyTitle)}
             />
             : null
           }

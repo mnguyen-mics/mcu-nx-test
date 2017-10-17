@@ -96,8 +96,8 @@ class Publisher extends Component {
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitle4}
-          title={messages.sectionTitle4}
+          subtitle={messages.sectionSubtitlePublisher}
+          title={messages.sectionTitlePublisher}
         />
 
         <Row>
@@ -113,7 +113,7 @@ class Publisher extends Component {
           {!dataSource.length
             ? <EmptyRecords
               iconType="plus"
-              message={formatMessage(messages.contentSection2EmptyTitle)}
+              message={formatMessage(messages.contentSectionPublisherEmptyTitle)}
             />
             : null
           }

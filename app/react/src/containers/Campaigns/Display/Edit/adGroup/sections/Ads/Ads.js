@@ -75,8 +75,8 @@ class Ads extends Component {
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitle7}
-          title={messages.sectionTitle7}
+          subtitle={messages.sectionSubtitleAds}
+          title={messages.sectionTitleAds}
         />
 
         <Row>
@@ -91,7 +91,7 @@ class Ads extends Component {
           {!formValues.filter(ad => !ad.toBeRemoved).length
             ? <EmptyRecords
               iconType="plus"
-              message={formatMessage(messages.contentSection7EmptyTitle)}
+              message={formatMessage(messages.contentSectionAdEmptyTitle)}
             />
             : null
           }

@@ -109,8 +109,8 @@ class Optimization extends Component {
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitle6}
-          title={messages.sectionTitle6}
+          subtitle={messages.sectionSubtitleOptimizer}
+          title={messages.sectionTitleOptimizer}
         />
 
         <Row>
@@ -126,7 +126,7 @@ class Optimization extends Component {
           {!dataSource.length
           ? <EmptyRecords
             iconType="plus"
-            message={formatMessage(messages.contentSection2EmptyTitle)}
+            message={formatMessage(messages.contentSectionOptimizerEmptyTitle)}
           />
           : null
         }

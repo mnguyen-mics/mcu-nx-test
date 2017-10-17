@@ -37,7 +37,7 @@ class Placement extends Component {
     ];
 
     const commonProps = {
-      emptyTableMessage: formatMessage(messages.contentSection9SearchEmptyTable),
+      emptyTableMessage: formatMessage(messages.contentSectionPlacementSearchEmptyTable),
       formatMessage,
       formName: formName,
     };
@@ -45,8 +45,8 @@ class Placement extends Component {
     return (
       <div id="media">
         <FormSection
-          subtitle={messages.sectionSubtitle9}
-          title={messages.sectionTitle9}
+          subtitle={messages.sectionSubtitlePlacement}
+          title={messages.sectionTitlePlacement}
         />
 
         <Row className="ad-group-placement">
@@ -54,8 +54,8 @@ class Placement extends Component {
             <FormRadioGroup
               elementClassName="bold font-size radio"
               elements={[
-                { id: 1, title: formatMessage(messages.contentSection9Radio1), value: 'auto' },
-                { id: 2, title: formatMessage(messages.contentSection9Radio2), value: 'custom' },
+                { id: 1, title: formatMessage(messages.contentSectionPlacementRadio1), value: 'auto' },
+                { id: 2, title: formatMessage(messages.contentSectionPlacementRadio2), value: 'custom' },
               ]}
               groupClassName="display-flex-column"
               input={{
@@ -70,7 +70,7 @@ class Placement extends Component {
             <Col className="custom-content font-size" offset={2}>
               <Row>
                 <Col span={3} className="bold">
-                  {formatMessage(messages.contentSection9Properties)}
+                  {formatMessage(messages.contentSectionPlacementProperties)}
                 </Col>
 
                 <Col span={14} className="content-wrapper">
@@ -88,7 +88,7 @@ class Placement extends Component {
                       props={{
                         ...commonProps,
                         placements: formattedPlacements.filter(({ type }) => type === 'web'),
-                        title: messages.contentSection9TypeWebsites,
+                        title: messages.contentSectionPlacementTypeWebsites,
                         type: 'web',
                       }}
                     />
@@ -100,7 +100,7 @@ class Placement extends Component {
                         ...commonProps,
                         displayHeaderTopBorder: true,
                         placements: formattedPlacements.filter(({ type }) => type === 'mobile'),
-                        title: messages.contentSection9TypeMobileApps,
+                        title: messages.contentSectionPlacementTypeMobileApps,
                         type: 'mobile',
                       }}
                     />
@@ -119,7 +119,7 @@ class Placement extends Component {
           {placementOption === 'custom' && !formValues.mobile.length && !formValues.web.length
           && <EmptyRecords
             iconType="plus"
-            message={formatMessage(messages.contentSection9EmptyTitle)}
+            message={formatMessage(messages.contentSectionPlacementEmptyTitle)}
           />
         }
         </Row>
@@ -127,7 +127,6 @@ class Placement extends Component {
     );
   }
 }
-
 
 Placement.propTypes = {
   formName: PropTypes.string.isRequired,

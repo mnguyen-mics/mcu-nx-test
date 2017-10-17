@@ -38,7 +38,7 @@ class PlacementList extends Component {
     const placementsToDisplay = (displayTableOptions ? placements : null);
     const placementMapping = (placementsToDisplay && placementsToDisplay.length
       ? placements.map((elem) => <PlacementRow key={elem.index} {...elem} />)
-      : <li className="empty-list">{formatMessage(messages.contentSection9SearchEmptyTable)}</li>
+      : <li className="empty-list">{formatMessage(messages.contentSectionPlacementSearchEmptyTable)}</li>
     );
 
     return (

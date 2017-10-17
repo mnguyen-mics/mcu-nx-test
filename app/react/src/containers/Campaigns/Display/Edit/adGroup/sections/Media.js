@@ -21,14 +21,14 @@ function Media({
             onClick: () => {},
           },
         ]}
-        subtitle={messages.sectionSubtitle5}
-        title={messages.sectionTitle5}
+        subtitle={messages.sectionSubtitleMedia}
+        title={messages.sectionTitleMedia}
       />
 
       <Row>
         <EmptyRecords
           iconType="plus"
-          message={formatMessage(messages.contentSection5EmptyTitle)}
+          message={formatMessage(messages.contentSectionMediaEmptyTitle)}
         />
       </Row>
     </div>

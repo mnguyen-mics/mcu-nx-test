@@ -18,9 +18,9 @@ import { isEqual } from 'lodash';
 import {
   Ads,
   Audience,
-  DeviceAndLocation,
+  Device,
   General,
-  Media,
+  Location,
   Optimization,
   Placement,
   Publisher,
@@ -292,17 +292,17 @@ class AdGroupForm extends Component {
               </div>
             }
             <hr />
-            <DeviceAndLocation {...commonProps} />
+            <Device {...commonProps} />
+            <hr />
+            <Location {...commonProps} />
             <hr />
             <Publisher {...commonProps} formValues={publisherTable} />
-            <hr />
-            <Media {...commonProps} />
-            <hr />
-            <Optimization {...commonProps} formValues={optimizerTable} />
             <hr />
             <Placement {...commonProps} formValues={placements} />
             <hr />
             <Ads {...commonProps} formValues={ads} />
+            <hr />
+            <Optimization {...commonProps} formValues={optimizerTable} />
             {!editionMode
               ? <div><hr /><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /></div>
               : null

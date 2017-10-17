@@ -30,9 +30,9 @@ function Summary({ displayAudience, formatMessage, formValues }) {
 
   /* Format data */
   const formatPeriod = {
-    DAY: formatMessage(messages.contentSection8Part1Group6OptionDAY),
-    WEEK: formatMessage(messages.contentSection8Part1Group6OptionWEEK),
-    MONTH: formatMessage(messages.contentSection8Part1Group6OptionMONTH),
+    DAY: formatMessage(messages.contentSectionSummaryPart1Group6OptionDAY),
+    WEEK: formatMessage(messages.contentSectionSummaryPart1Group6OptionWEEK),
+    MONTH: formatMessage(messages.contentSectionSummaryPart1Group6OptionMONTH),
   };
 
   /* Data to display */
@@ -43,7 +43,7 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   const budgetPerPeriod = `${(adGroupMaxBudgetPerPeriod
     ? formatMetric(adGroupMaxBudgetPerPeriod, '0,0')
     : nothingToDisplay
-  )}${formatMessage(messages.contentSection8Part1Group8)}`;
+  )}${formatMessage(messages.contentSectionSummaryPart1Group8)}`;
   const includedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, true), 'name');
   const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
   const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
@@ -66,67 +66,67 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   return (
     <div id="summary" className="summarySection">
       <FormSection
-        subtitle={messages.sectionSubtitle8}
-        title={messages.sectionTitle8}
+        subtitle={messages.sectionSubtitleSummary}
+        title={messages.sectionTitleSummary}
       />
       <Row className="content">
         <Col span={16}>
           <Section>
             <div>
-              <Span>{formatMessage(messages.contentSection8Part1Group1)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group1)}</Span>
               {startDate && isToday(adGroupStartDate)
-                  ? <Span blue>{formatMessage(messages.contentSection8Part1Group3)}</Span>
+                  ? <Span blue>{formatMessage(messages.contentSectionSummaryPart1Group3)}</Span>
                   : <span>
-                    <Span>{formatMessage(messages.contentSection8Part1Group2)}</Span>
+                    <Span>{formatMessage(messages.contentSectionSummaryPart1Group2)}</Span>
                     <Span blue>{startDate}</Span>
                   </span>
                 }
-              <Span>{formatMessage(messages.contentSection8Part1Group4)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group4)}</Span>
               <Span blue>{endDate}</Span>
-              <Span>{formatMessage(messages.contentSection8Part1Group5)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group5)}</Span>
               <Span blue>{period}</Span>
-              <Span>{formatMessage(messages.contentSection8Part1Group7)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group7)}</Span>
               <Span blue>{budgetPerPeriod}</Span>
             </div>
           </Section>
 
           {displayAudience && <Section>
-            {formatMessage(messages.contentSection8Part2)}
+            {formatMessage(messages.contentSectionSummaryPart2)}
             <P blue>{includedSegments}</P>
           </Section>}
 
           {displayAudience && <Section>
-            {formatMessage(messages.contentSection8Part3)}
+            {formatMessage(messages.contentSectionSummaryPart3)}
             <P blue>{excludedSegments}</P>
           </Section>}
 
           {devices && <Section>
-            {formatMessage(messages.contentSection8Part4)}
+            {formatMessage(messages.contentSectionSummaryPart4)}
             <P blue>XXX</P>
           </Section>}
 
           {areas && <Section>
-            {formatMessage(messages.contentSection8Part5)}
+            {formatMessage(messages.contentSectionSummaryPart5)}
             <P blue>XXX</P>
           </Section>}
 
           <Section>
-            {formatMessage(messages.contentSection8Part6)}
+            {formatMessage(messages.contentSectionSummaryPart6)}
             <P blue>{publishers}</P>
           </Section>
 
           {false && <Section>
-            {formatMessage(messages.contentSection8Part7)}
+            {formatMessage(messages.contentSectionSummaryPart7)}
             <P blue>XXX</P>
           </Section>}
 
           <Section>
-            {formatMessage(messages.contentSection8Part8)}
+            {formatMessage(messages.contentSectionSummaryPart8)}
             <P blue>{optimizers}</P>
           </Section>
 
           <div className="sectionPaddingTop textPadding">
-            <Span>{formatMessage(messages.contentSection8Part9Group1)}</Span>
+            <Span>{formatMessage(messages.contentSectionSummaryPart9Group1)}</Span>
             {numberOfCreatives
               ? (
                 <span>
@@ -134,20 +134,20 @@ function Summary({ displayAudience, formatMessage, formValues }) {
                   <Span>
                     <FormattedPlural
                       value={numberOfCreatives}
-                      one={formatMessage(messages.contentSection8Part9Singular)}
-                      other={formatMessage(messages.contentSection8Part9Plural)}
+                      one={formatMessage(messages.contentSectionSummaryPart9Singular)}
+                      other={formatMessage(messages.contentSectionSummaryPart9Plural)}
                     />
                   </Span>
                 </span>
               )
               : (
                 <span>
-                  <Span blue>{formatMessage(messages.contentSection8Part9Negation)}</Span>
-                  <Span>{formatMessage(messages.contentSection8Part9Singular)}</Span>
+                  <Span blue>{formatMessage(messages.contentSectionSummaryPart9Negation)}</Span>
+                  <Span>{formatMessage(messages.contentSectionSummaryPart9Singular)}</Span>
                 </span>
               )
             }
-            <Span>{formatMessage(messages.contentSection8Part9Group2)}</Span>
+            <Span>{formatMessage(messages.contentSectionSummaryPart9Group2)}</Span>
           </div>
         </Col>
       </Row>

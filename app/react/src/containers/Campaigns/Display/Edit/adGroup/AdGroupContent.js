@@ -89,25 +89,26 @@ class AdGroupContent extends Component {
     ];
 
     let sidebarItems = {
-      general: messages.sectionTitle1,
+      general: messages.sectionTitleGeneral,
     };
 
     if (displayAudience) {
-      sidebarItems.audience = messages.sectionTitle2;
+      sidebarItems.audience = messages.sectionTitleAudience;
     }
 
     sidebarItems = {
       ...sidebarItems,
-      deviceAndLocation: messages.sectionTitle3,
-      publisher: messages.sectionTitle4,
-      media: messages.sectionTitle5,
-      optimization: messages.sectionTitle6,
-      ads: messages.sectionTitle7,
+      device: messages.sectionTitleDevice,
+      location: messages.sectionTitleLocation,
+      publisher: messages.sectionTitlePublisher,
+      placement: messages.sectionTitlePlacement,
+      ads: messages.sectionTitleAds,
+      optimization: messages.sectionTitleOptimizer,
     };
 
     sidebarItems = (editionMode
-      ? { summary: messages.sectionTitle8, ...sidebarItems }
-      : { ...sidebarItems, summary: messages.sectionTitle8 }
+      ? { summary: messages.sectionTitleSummary, ...sidebarItems }
+      : { ...sidebarItems, summary: messages.sectionTitleSummary }
     );
 
     const buttonMetadata = {

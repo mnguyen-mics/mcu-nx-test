@@ -38,8 +38,8 @@ class General extends Component {
     return (
       <div id="general">
         <FormSection
-          subtitle={messages.sectionSubtitle1}
-          title={messages.sectionTitle1}
+          subtitle={messages.sectionSubtitleGeneral}
+          title={messages.sectionTitleGeneral}
         />
 
         <Row>
@@ -49,15 +49,15 @@ class General extends Component {
             validate={[isRequired]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row1Label),
+                label: formatMessage(messages.contentSectionGeneralRow1Label),
                 required: true,
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row1Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row1Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
               },
             }}
           />
@@ -71,7 +71,7 @@ class General extends Component {
             validate={[isRequired, isNotZero]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row2Label),
+                label: formatMessage(messages.contentSectionGeneralRow2Label),
                 required: true,
                 ...fieldGridConfig,
               },
@@ -82,19 +82,19 @@ class General extends Component {
                     component={FormSelectAddon}
                     props={{
                       options: [
-                        { value: 'DAY', title: formatMessage(messages.contentSection1Row2OptionDAY) },
-                        { value: 'WEEK', title: formatMessage(messages.contentSection1Row2OptionWEEK) },
-                        { value: 'MONTH', title: formatMessage(messages.contentSection1Row2OptionMONTH) },
+                        { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow2OptionDAY) },
+                        { value: 'WEEK', title: formatMessage(messages.contentSectionGeneralRow2OptionWEEK) },
+                        { value: 'MONTH', title: formatMessage(messages.contentSectionGeneralRow2OptionMONTH) },
                       ],
                     }}
                   />
                 ),
-                placeholder: formatMessage(messages.contentSection1Row2Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow2Placeholder),
                 style: { width: '100%' },
                 suffix: <span>€</span>,
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row2Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow2Tooltip),
               },
             }}
           />
@@ -108,16 +108,16 @@ class General extends Component {
             validate={[isRequired, isNotZero]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row3Label),
+                label: formatMessage(messages.contentSectionGeneralRow3Label),
                 required: true,
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row3Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow3Placeholder),
                 suffix: <span>€</span>,
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row3Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
               },
             }}
           />
@@ -128,7 +128,7 @@ class General extends Component {
             formId="adGroupForm"
 
             formItemProps={{
-              label: formatMessage(messages.contentSection1Row4Label),
+              label: formatMessage(messages.contentSectionGeneralRow4Label),
               labelCol: { span: 3 },
               wrapperCol: { span: 10, offset: 1 },
               required: true,
@@ -136,13 +136,13 @@ class General extends Component {
 
             startProps={{
               name: 'adGroupStartDate',
-              placeholder: formatMessage(messages.contentSection1Row4Placeholder1),
+              placeholder: formatMessage(messages.contentSectionGeneralRow4Placeholder1),
               style: { width: '100%' },
             }}
 
             endProps={{
               name: 'adGroupEndDate',
-              placeholder: formatMessage(messages.contentSection1Row4Placeholder2),
+              placeholder: formatMessage(messages.contentSectionGeneralRow4Placeholder2),
               style: { width: '100%' },
             }}
 
@@ -155,7 +155,7 @@ class General extends Component {
 
             helpToolTipProps={{
               placement: 'right',
-              title: formatMessage(messages.contentSection1Row4Tooltip),
+              title: formatMessage(messages.contentSectionGeneralRow4Tooltip),
             }}
           />
         </Row>
@@ -168,16 +168,16 @@ class General extends Component {
             validate={[isRequired, isNotZero]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row5Label),
+                label: formatMessage(messages.contentSectionGeneralRow5Label),
                 required: true,
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row5Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow5Placeholder),
                 suffix: <span>€</span>,
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row5Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
               },
             }}
           />
@@ -191,16 +191,16 @@ class General extends Component {
             validate={[isRequired, isNotZero]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row6Label),
+                label: formatMessage(messages.contentSectionGeneralRow6Label),
                 required: true,
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row6Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
                 suffix: <span>€</span>,
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row6Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
               },
             }}
           />
@@ -214,16 +214,16 @@ class General extends Component {
             validate={[isRequired, isNotZero]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row7Label),
+                label: formatMessage(messages.contentSectionGeneralRow7Label),
                 required: true,
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row7Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
                 suffix: <span>€</span>,
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row7Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
               },
             }}
           />
@@ -236,7 +236,7 @@ class General extends Component {
           >
             <McsIcons type="settings" />
             <span className="step-title">
-              {formatMessage(messages.contentSection1AdvancedPartTitle)}
+              {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
             <McsIcons type="chevron" />
           </ButtonStyleless>
@@ -247,14 +247,14 @@ class General extends Component {
               component={FormInput}
               props={{
                 formItemProps: {
-                  label: formatMessage(messages.contentSection1Row8Label),
+                  label: formatMessage(messages.contentSectionGeneralRow8Label),
                   ...fieldGridConfig,
                 },
                 inputProps: {
-                  placeholder: formatMessage(messages.contentSection1Row8Placeholder),
+                  placeholder: formatMessage(messages.contentSectionGeneralRow8Placeholder),
                 },
                 helpToolTipProps: {
-                  title: formatMessage(messages.contentSection1Row8Tooltip),
+                  title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
                 },
               }}
             />
