@@ -13,10 +13,17 @@ const defaultErrorMessages = defineMessages({
 });
 
 const isRequired = formatMessage => value => {
-  if (!value) {
-    return formatMessage(defaultErrorMessages.required);
-  }
-  return undefined;
+  return (!value
+    ? formatMessage(defaultErrorMessages.required)
+    : undefined
+  );
+};
+
+const isNotZero = formatMessage => value => {
+  return (!value || value === '0'
+    ? formatMessage(defaultErrorMessages.required)
+    : undefined
+  );
 };
 
 const isValidEmail = formatMessage => value => {
@@ -28,6 +35,7 @@ const withValidators = compose(
   injectIntl,
   withProps(({ intl: { formatMessage } }) => ({
     fieldValidators: {
+      isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),
     },

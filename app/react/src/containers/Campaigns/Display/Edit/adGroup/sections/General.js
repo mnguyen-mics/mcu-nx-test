@@ -25,7 +25,7 @@ class General extends Component {
   render() {
     const {
       fieldNormalizer: { normalizeNumber },
-      fieldValidators: { isRequired },
+      fieldValidators: { isRequired, isNotZero },
       formatMessage,
       formValues,
     } = this.props;
@@ -68,7 +68,7 @@ class General extends Component {
             name="adGroupMaxBudgetPerPeriod"
             component={FormInput}
             normalize={normalizeNumber}
-            validate={[isRequired]}
+            validate={[isRequired, isNotZero]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSection1Row2Label),
@@ -90,7 +90,8 @@ class General extends Component {
                   />
                 ),
                 placeholder: formatMessage(messages.contentSection1Row2Placeholder),
-                style: { width: '100%' }
+                style: { width: '100%' },
+                suffix: <span>€</span>,
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSection1Row2Tooltip),
@@ -104,7 +105,7 @@ class General extends Component {
             name="adGroupTotalBudget"
             component={FormInput}
             normalize={normalizeNumber}
-            validate={[isRequired]}
+            validate={[isRequired, isNotZero]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSection1Row3Label),
@@ -112,7 +113,8 @@ class General extends Component {
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row3Placeholder)
+                placeholder: formatMessage(messages.contentSection1Row3Placeholder),
+                suffix: <span>€</span>,
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSection1Row3Tooltip),
@@ -158,6 +160,75 @@ class General extends Component {
           />
         </Row>
 
+        <Row>
+          <Field
+            name="adGroupMaxBidPrice"
+            component={FormInput}
+            normalize={normalizeNumber}
+            validate={[isRequired, isNotZero]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSection1Row5Label),
+                required: true,
+                ...fieldGridConfig,
+              },
+              inputProps: {
+                placeholder: formatMessage(messages.contentSection1Row5Placeholder),
+                suffix: <span>€</span>,
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSection1Row5Tooltip),
+              },
+            }}
+          />
+        </Row>
+
+        <Row>
+          <Field
+            name="adGroupTotalImpressionCapping"
+            component={FormInput}
+            normalize={normalizeNumber}
+            validate={[isRequired, isNotZero]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSection1Row6Label),
+                required: true,
+                ...fieldGridConfig,
+              },
+              inputProps: {
+                placeholder: formatMessage(messages.contentSection1Row6Placeholder),
+                suffix: <span>€</span>,
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSection1Row6Tooltip),
+              },
+            }}
+          />
+        </Row>
+
+        <Row>
+          <Field
+            name="adGroupPerDayImpressionCapping"
+            component={FormInput}
+            normalize={normalizeNumber}
+            validate={[isRequired, isNotZero]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSection1Row7Label),
+                required: true,
+                ...fieldGridConfig,
+              },
+              inputProps: {
+                placeholder: formatMessage(messages.contentSection1Row7Placeholder),
+                suffix: <span>€</span>,
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSection1Row7Tooltip),
+              },
+            }}
+          />
+        </Row>
+
         <div>
           <ButtonStyleless
             className="optional-section-title clickable-on-hover"
@@ -176,14 +247,14 @@ class General extends Component {
               component={FormInput}
               props={{
                 formItemProps: {
-                  label: formatMessage(messages.contentSection1Row5Label),
+                  label: formatMessage(messages.contentSection1Row8Label),
                   ...fieldGridConfig,
                 },
                 inputProps: {
-                  placeholder: formatMessage(messages.contentSection1Row5Placeholder),
+                  placeholder: formatMessage(messages.contentSection1Row8Placeholder),
                 },
                 helpToolTipProps: {
-                  title: formatMessage(messages.contentSection1Row5Tooltip),
+                  title: formatMessage(messages.contentSection1Row8Tooltip),
                 },
               }}
             />
@@ -204,6 +275,7 @@ General.propTypes = {
   }).isRequired,
 
   fieldValidators: PropTypes.shape({
+    isNotZero: PropTypes.func.isRequired,
     isRequired: PropTypes.func.isRequired,
   }).isRequired,
 

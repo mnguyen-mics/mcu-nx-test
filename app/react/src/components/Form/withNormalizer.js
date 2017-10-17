@@ -9,7 +9,7 @@ function formatToNumber(value) {
 function isNumber(value, prevValue) {
   const formattedValue = value.replace(/,/g, '');
 
-  return (!value || (value && formattedValue.length < 16 && /^\d+$/.test(formattedValue, ''))
+  return (!value || (value && formattedValue.length < 16 && /^\d+$/.test(formattedValue))
     ? value
     : prevValue
   );

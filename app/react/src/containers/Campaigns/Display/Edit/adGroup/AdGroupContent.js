@@ -124,6 +124,9 @@ class AdGroupContent extends Component {
       ...initialValues,
       adGroupMaxBudgetPerPeriod: initialValues.adGroupMaxBudgetPerPeriod ? formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0') : '',
       adGroupTotalBudget: initialValues.adGroupTotalBudget ? formatMetric(initialValues.adGroupTotalBudget, '0,0') : '',
+      adGroupMaxBidPrice: initialValues.adGroupMaxBidPrice ? formatMetric(initialValues.adGroupMaxBidPrice, '0,0') : '',
+      adGroupTotalImpressionCapping: initialValues.adGroupTotalImpressionCapping ? formatMetric(initialValues.adGroupTotalImpressionCapping, '0,0') : '',
+      adGroupPerDayImpressionCapping: initialValues.adGroupPerDayImpressionCapping ? formatMetric(initialValues.adGroupPerDayImpressionCapping, '0,0') : '',
       placements: {
         mobile: mobilePlacements, // TODO: remove temp data
         web: webPlacements, // TODO: remove temp data

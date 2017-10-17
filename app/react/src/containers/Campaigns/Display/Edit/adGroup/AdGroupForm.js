@@ -121,12 +121,15 @@ class AdGroupForm extends Component {
     const body = {
       bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
       end_date: formValues.adGroupEndDate.valueOf(),
+      max_bid_price: unformatMetric(formValues.adGroupMaxBidPrice),
       max_budget_per_period: unformatMetric(formValues.adGroupMaxBudgetPerPeriod),
       max_budget_period: formValues.adGroupMaxBudgetPeriod,
       name: formValues.adGroupName,
+      per_day_impression_capping: unformatMetric(formValues.adGroupPerDayImpressionCapping),
       start_date: formValues.adGroupStartDate.valueOf(),
       technical_name: formValues.adGroupTechnicalName,
       total_budget: unformatMetric(formValues.adGroupTotalBudget),
+      total_impression_capping: unformatMetric(formValues.adGroupTotalImpressionCapping),
     };
 
     const request = (!editionMode

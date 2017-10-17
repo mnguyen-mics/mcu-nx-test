@@ -227,6 +227,48 @@ export default defineMessages({
     defaultMessage: 'Lorem ipsum',
   },
 
+  /* Row 5 */
+  contentSection1Row5Label: {
+    id: 'adGroupEditor.section1.row5.label',
+    defaultMessage: 'Max Bid Price',
+  },
+  contentSection1Row5Placeholder: {
+    id: 'adGroupEditor.section1.row5.placeholder',
+    defaultMessage: '1.3 €',
+  },
+  contentSection1Row5Tooltip: {
+    id: 'adGroupEditor.section1.row5.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+
+  /* Row 6 */
+  contentSection1Row6Label: {
+    id: 'adGroupEditor.section1.row6.label',
+    defaultMessage: 'Total Impression Capping',
+  },
+  contentSection1Row6Placeholder: {
+    id: 'adGroupEditor.section1.row6.placeholder',
+    defaultMessage: '1 500 €',
+  },
+  contentSection1Row6Tooltip: {
+    id: 'adGroupEditor.section1.row6.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+
+  /* Row 7 */
+  contentSection1Row7Label: {
+    id: 'adGroupEditor.section1.row7.label',
+    defaultMessage: 'Daily Impression Capping',
+  },
+  contentSection1Row7Placeholder: {
+    id: 'adGroupEditor.section1.row7.placeholder',
+    defaultMessage: '1 500 €',
+  },
+  contentSection1Row7Tooltip: {
+    id: 'adGroupEditor.section1.row7.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+
   /* Advanced part */
 
   contentSection1AdvancedPartTitle: {
@@ -234,17 +276,17 @@ export default defineMessages({
     defaultMessage: 'Advanced',
   },
 
-  /* Row 5 */
-  contentSection1Row5Label: {
-    id: 'adGroupEditor.section1.row5.label',
+  /* Row 8 */
+  contentSection1Row8Label: {
+    id: 'adGroupEditor.section1.row8.label',
     defaultMessage: 'Technical Name',
   },
-  contentSection1Row5Placeholder: {
-    id: 'adGroupEditor.section1.row5.placeholder',
+  contentSection1Row8Placeholder: {
+    id: 'adGroupEditor.section1.row8.placeholder',
     defaultMessage: 'This is an ad group',
   },
-  contentSection1Row5Tooltip: {
-    id: 'adGroupEditor.section1.row5.tooltip',
+  contentSection1Row8Tooltip: {
+    id: 'adGroupEditor.section1.row8.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
