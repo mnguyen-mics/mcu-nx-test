@@ -1,5 +1,6 @@
 import ApiService from './ApiService';
 import PluginServices from './PluginServices';
+import { generateFakeId } from '../utils/FakeIdHelper';
 
 function getBidOptimizerProperties({ bidOptimizers, selectedIds }) {
   return Promise.all(bidOptimizers.map(bidOptimizer => {
@@ -39,7 +40,10 @@ function getBidOptimizers(organisationId, selectedIds, options = {}) {
       );
 
       return getBidOptimizerProperties(reqParams)
-        .then((results) => ({ data: results, ...rest }));
+        .then((results) => ({
+          data: results.map(elem => ({ ...elem, modelId: generateFakeId() })),
+          ...rest
+        }));
     });
 }
 

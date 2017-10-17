@@ -71,7 +71,7 @@ class Publisher extends Component {
       ? [
         ...tableData,
         {
-          key: publisher.id,
+          key: publisher.modelId,
           type: { image: 'question', name: publisher.display_network_name },
           info: [],
           toBeRemoved: index,
@@ -107,7 +107,7 @@ class Publisher extends Component {
             loading={this.state.loading}
             name="publisherTable"
             tableName="publisherTable"
-            updateTableFieldState={handlers.updateTableFieldState}
+            updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
 
           {!dataSource.length
@@ -134,7 +134,7 @@ Publisher.propTypes = {
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
     openNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldState: PropTypes.func.isRequired,
+    updateTableFieldStatus: PropTypes.func.isRequired,
   }).isRequired,
 
   organisationId: PropTypes.string.isRequired

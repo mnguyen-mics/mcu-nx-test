@@ -34,6 +34,7 @@ import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as actions from '../../../../../state/Notifications/actions';
 import { unformatMetric } from '../../../../../utils/MetricHelper';
+import { generateFakeId, isFakeId } from '../../../../../utils/FakeIdHelper';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
@@ -158,7 +159,8 @@ class AdGroupForm extends Component {
 
     return table.reduce((promise, row) => {
       const body = getBody(row);
-      const { include, otherId, toBeRemoved } = row;
+      const { include, modelId, toBeRemoved } = row;
+      const isCreation = isFakeId(modelId);
 
       return promise.then(() => {
         let newPromise;
@@ -166,22 +168,23 @@ class AdGroupForm extends Component {
         if (!toBeRemoved) {
           /* In case we want to add or update a element */
 
-          if (!otherId) {
+          if (isCreation) {
             /* creation */
             newPromise = requests.create({ campaignId, adGroupId, body });
           } else if (requests.update) {
+
             const needsUpdating = formInitialValues[tableName].find(elem => (
-              elem.otherId === otherId && elem.include !== include
+              elem.modelId === modelId && elem.include !== include
             ));
 
             /* update if modified element */
             if (needsUpdating) {
-              newPromise = requests.update({ campaignId, adGroupId, id: otherId, body });
+              newPromise = requests.update({ campaignId, adGroupId, id: modelId, body });
             }
           }
-        } else if (otherId) {
+        } else if (!isCreation) {
           /* In case we want to delete an existing element */
-          newPromise = requests.delete({ campaignId, adGroupId, id: otherId });
+          newPromise = requests.delete({ campaignId, adGroupId, id: modelId });
         }
 
         return newPromise || Promise.resolve();
@@ -189,7 +192,7 @@ class AdGroupForm extends Component {
     }, Promise.resolve());
   }
 
-  updateTableFieldState = ({ index, toBeRemoved = true, tableName }) => (e) => {
+  updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => (e) => {
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
 
     this.props.arrayRemove(FORM_NAME, tableName, index);
@@ -208,7 +211,7 @@ class AdGroupForm extends Component {
       prevFields.forEach((prevField, index) => {
         const toBeRemoved = !newFieldIds.includes(prevField.id);
 
-        this.updateTableFieldState({ index, toBeRemoved, tableName })();
+        this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
       });
     }
 
@@ -216,7 +219,11 @@ class AdGroupForm extends Component {
       if (!prevFields.length
         || !prevFields.find(prevField => (prevField.id === newField.id))
       ) {
-        this.props.arrayPush(FORM_NAME, tableName, { ...newField, toBeRemoved: false });
+        this.props.arrayPush(
+          FORM_NAME,
+          tableName,
+          { ...newField, modelId: generateFakeId(), toBeRemoved: false }
+        );
       }
     });
   }
@@ -244,7 +251,7 @@ class AdGroupForm extends Component {
       handlers: {
         closeNextDrawer,
         openNextDrawer,
-        updateTableFieldState: this.updateTableFieldState,
+        updateTableFieldStatus: this.updateTableFieldStatus,
         updateTableFields: this.updateTableFields,
       },
       organisationId,

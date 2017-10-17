@@ -84,7 +84,7 @@ class Optimization extends Component {
       ? [
         ...tableData,
         {
-          key: bidOptimizer.id,
+          key: bidOptimizer.modelId,
           type: { image: 'question', name: bidOptimizer.provider },
           info: [bidOptimizer.name],
           toBeRemoved: index,
@@ -120,7 +120,7 @@ class Optimization extends Component {
             loading={this.state.loading}
             name="optimizerTable"
             tableName="optimizerTable"
-            updateTableFieldState={handlers.updateTableFieldState}
+            updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
 
           {!dataSource.length
@@ -146,7 +146,7 @@ Optimization.propTypes = {
 
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldState: PropTypes.func.isRequired,
+    updateTableFieldStatus: PropTypes.func.isRequired,
   }).isRequired,
 
   organisationId: PropTypes.string.isRequired

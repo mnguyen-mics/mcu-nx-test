@@ -54,7 +54,7 @@ class EditAdGroupPage extends Component {
       .then(({ data }) => data);
 
     const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)
-      .then(({ data }) => data.map(ad => ({ id: ad.creative_id, otherId: ad.id })));
+      .then(({ data }) => data.map(ad => ({ id: ad.creative_id, modelId: ad.id })));
 
     return Promise.all([fetchAllAds, fetchSelectedAds])
       .then((results) => {
@@ -66,7 +66,7 @@ class EditAdGroupPage extends Component {
           .filter(ad => selectedAdIds.includes(ad.id))
           .map(ad => ({
             ...ad,
-            otherId: (selectedAds.find(selection => selection.id === ad.id)).otherId
+            modelId: (selectedAds.find(selection => selection.id === ad.id)).modelId
           }));
 
         return { ads };
@@ -89,7 +89,7 @@ class EditAdGroupPage extends Component {
   }
 
   getSegments({ adGroupId, campaignId, organisationId }) {
-    const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
+    const fetchSegments = DisplayCampaignService.getAudience(campaignId, adGroupId);
     const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 
     return Promise.all([fetchSegments, fetchMetadata])

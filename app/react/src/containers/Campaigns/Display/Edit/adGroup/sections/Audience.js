@@ -107,7 +107,7 @@ class Audience extends Component {
         ? [
           ...tableData,
           {
-            key: segment.id,
+            key: segment.modelId,
             type: { image: 'users', name: segment.name },
             info: [
               `${formatMetric(segment.user_points, '0,0')} ${formatMessage(messages.contentSection2Medium1)}`,
@@ -147,7 +147,7 @@ class Audience extends Component {
             loading={this.state.loading}
             name="audienceTable"
             tableName="audienceTable"
-            updateTableFieldState={handlers.updateTableFieldState}
+            updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
 
           {!dataSource.length
@@ -174,7 +174,7 @@ Audience.propTypes = {
 
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldState: PropTypes.func.isRequired,
+    updateTableFieldStatus: PropTypes.func.isRequired,
     openNextDrawer: PropTypes.func.isRequired,
     updateTableFields: PropTypes.func.isRequired,
   }).isRequired,

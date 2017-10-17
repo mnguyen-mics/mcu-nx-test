@@ -85,7 +85,7 @@ class Ads extends Component {
             data={formValues}
             loading={this.state.loading}
             name="ads"
-            updateTableFieldState={handlers.updateTableFieldState}
+            updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
 
           {!formValues.filter(ad => !ad.toBeRemoved).length
@@ -112,7 +112,7 @@ Ads.propTypes = {
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
     openNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldState: PropTypes.func.isRequired,
+    updateTableFieldStatus: PropTypes.func.isRequired,
   }).isRequired,
 
   organisationId: PropTypes.string.isRequired

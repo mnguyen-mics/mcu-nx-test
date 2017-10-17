@@ -11,7 +11,7 @@ interface RelatedRecordTableProps {
   dataSource: Array<{}>;
   loading: boolean;
   tableName: string;
-  updateTableFieldState: (obj: {index: number, tableName: string}) => (e: any) => void;
+  updateTableFieldStatus: (obj: {index: number, tableName: string}) => (e: any) => void;
 }
 
 const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
@@ -20,7 +20,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
     dataSource,
     loading,
     tableName,
-    updateTableFieldState,
+    updateTableFieldStatus,
   } = props;
 
   const columns = [
@@ -98,7 +98,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       key: 'toBeRemoved',
       render: (index: number) => {
         return (
-          <ButtonStyleless onClick={updateTableFieldState({ index, tableName })}>
+          <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
             <McsIcons type="delete" style={{ fontSize: 20 }} />
           </ButtonStyleless>
         );

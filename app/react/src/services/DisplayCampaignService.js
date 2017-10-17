@@ -48,7 +48,7 @@ function updateAdGroup(campaignId, adGroupId, body) {
 }
 
 /* AUDIENCE SERVICES */
-function getAudiences(campaignId, adGroupId) {
+function getAudience(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.getRequest(endpoint).then(res => res.data.map(segment => {
     const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
@@ -57,7 +57,7 @@ function getAudiences(campaignId, adGroupId) {
       ...relevantData,
       id: audience_segment_id,
       include: !exclude,
-      otherId: id,
+      modelId: id,
       toBeRemoved: false,
     };
   }));
@@ -89,7 +89,7 @@ function getPublishers({ campaignId }) {
         ...publisher,
         display_network_access_id,
         id: display_network_access_id,
-        otherId: id,
+        modelId: id,
         toBeRemoved: false
       };
     }));
@@ -134,7 +134,7 @@ export default {
   getCampaignDisplay,
   getCampaignName,
   getPublishers,
-  getAudiences,
+  getAudience,
   updateAdGroup,
   updateAudience,
   updateCampaign,
