@@ -27,6 +27,7 @@ class EditAdGroupPage extends Component {
       this.getGeneralInfo({ adGroupId, campaignId }),
       this.getPublishers({ campaignId }),
       this.getSegments({ adGroupId, campaignId, organisationId }),
+      // this.getLocations({ adGroupId }),
     ])
       .then((results) => {
         const {
@@ -58,6 +59,11 @@ class EditAdGroupPage extends Component {
   getPublishers({ campaignId }) {
     return DisplayCampaignService.getPublishers({ campaignId })
       .then(publisherTable => ({ publisherTable }));
+  }
+
+  getLocations({ apGroupId }) {
+    return DisplayCampaignService.getLocations({ apGroupId })
+      .then(locationAndTargetingTable => ({ locationAndTargetingTable }));
   }
 
   getSegments({ adGroupId, campaignId, organisationId }) {

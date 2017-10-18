@@ -23,7 +23,7 @@ const defaultTooltipPlacement: TooltipPlacement = 'right';
 
 class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
 
-  static defaultprops = {
+  static defaultprops: Partial<FormSelectProps> = {
     formItemProps: {},
     selectProps: {},
     options: [],

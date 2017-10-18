@@ -1,21 +1,21 @@
-import React from 'react';
+import * as React from 'react';
 import { Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form/index.ts';
+import { FormSection } from '../../../../../../components/Form';
 import messages from '../../messages';
 
-function DeviceAndLocation() {
+function Device() {
 
   return (
-    <div id="deviceAndLocation">
+    <div id="device">
       <FormSection
         subtitle={messages.sectionSubtitle3}
         title={messages.sectionTitle3}
       />
-
       <Row />
     </div>
   );
 }
 
-export default DeviceAndLocation;
+export default Device;
+

@@ -5,6 +5,7 @@ import FormSection from './FormSection';
 import FormSelect from './FormSelect';
 import FormSelectAddon from './FormSelectAddon';
 import FormTitle from './FormTitle';
+import SearchResultBox from './SearchResultBox';
 import SwitchInput from './SwitchInput';
 import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
@@ -17,6 +18,7 @@ export default {
   FormSelect,
   FormSelectAddon,
   FormTitle,
+  SearchResultBox,
   SwitchInput,
   withValidators,
 };
@@ -29,6 +31,7 @@ export {
   FormSelect,
   FormSelectAddon,
   FormTitle,
+  SearchResultBox,
   SwitchInput,
   withNormalizer,
   withValidators,

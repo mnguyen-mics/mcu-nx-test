@@ -78,7 +78,11 @@ export default defineMessages({
   },
   sectionTitle3: {
     id: 'adGroupEditor.section.title3',
-    defaultMessage: 'Device & Location',
+    defaultMessage: 'Device',
+  },
+  sectionTitle3bis: {
+    id: 'adGroupEditor.section.title3bis',
+    defaultMessage: 'Location & Targeting',
   },
   sectionTitle4: {
     id: 'adGroupEditor.section.title4',
@@ -117,6 +121,10 @@ export default defineMessages({
   sectionSubtitle3: {
     id: 'adGroupEditor.section.subtitle3',
     defaultMessage: 'Be more specific on which device you want to advertise',
+  },
+  sectionSubtitle3bis: {
+    id: 'adGroupEditor.section.subtitle3bis',
+    defaultMessage: 'Be more specific on which location you want to advertise (country, region or department)',
   },
   sectionSubtitle4: {
     id: 'adGroupEditor.section.subtitle4',

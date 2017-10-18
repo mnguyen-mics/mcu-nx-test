@@ -17,8 +17,8 @@ const DateInput: React.StatelessComponent<DateInputProps> = props => {
    */
   function handleOnOpenChange(windowIsOpen: boolean) {
     return (windowIsOpen
-      ? props.input.onFocus(null!)
-      : props.input.onBlur(null!)
+      ? props.input.onFocus(undefined!)
+      : props.input.onBlur(undefined)
     );
   }
 

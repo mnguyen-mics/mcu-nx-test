@@ -51,13 +51,9 @@ function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
     }
 
     changeColumnVisibility = (selectedColumns: { [name: string]: object[] }) => {
-      // const onChange = this.props.columnsVisibilityOptions!.onChange;
-
       this.setState({
         visibilitySelectedColumns: selectedColumns.columns,
       });
-
-      // if (onChange) onChange(selectedColumns);
     }
 
     render() {

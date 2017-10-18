@@ -1,6 +1,7 @@
 import Ads from './Ads';
 import Audience from './Audience';
-import DeviceAndLocation from './DeviceAndLocation';
+import Device from './Device';
+import LocationTargeting from './LocationTargeting';
 import General from './General';
 import Media from './Media';
 import Optimization from './Optimization';
@@ -10,7 +11,8 @@ import Summary from './Summary';
 export {
   Ads,
   Audience,
-  DeviceAndLocation,
+  Device,
+  LocationTargeting,
   General,
   Media,
   Publisher,

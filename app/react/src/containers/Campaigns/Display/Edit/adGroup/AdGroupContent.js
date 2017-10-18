@@ -73,7 +73,8 @@ class AdGroupContent extends Component {
 
     sidebarItems = {
       ...sidebarItems,
-      deviceAndLocation: messages.sectionTitle3,
+      device: messages.sectionTitle3,
+      locationTargeting: messages.sectionTitle3bis,
       publisher: messages.sectionTitle4,
       media: messages.sectionTitle5,
       optimization: messages.sectionTitle6,

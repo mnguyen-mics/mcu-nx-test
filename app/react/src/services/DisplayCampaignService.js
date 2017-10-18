@@ -68,6 +68,12 @@ function createAudience({ campaignId, adGroupId, body }) {
   return ApiService.postRequest(endpoint, body).then(res => res.data);
 }
 
+function createLocation({ campaignId, adGroupId, body }) {
+  const endpoint = `geonames/${campaignId}/ad_groups/${adGroupId}/locations`;
+  return ApiService.postRequest(endpoint, body).then(res => res.data);
+  // return Promise.resolve(body);
+}
+
 function updateAudience({ campaignId, adGroupId, id, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
   return ApiService.putRequest(endpoint, body);
@@ -75,6 +81,11 @@ function updateAudience({ campaignId, adGroupId, id, body }) {
 
 function deleteAudience({ campaignId, adGroupId, id }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
+  return ApiService.deleteRequest(endpoint);
+}
+
+function deleteLocation({ campaignId, adGroupId, id }) {
+  const endpoint = `genonames/${campaignId}/ad_groups/${adGroupId}/location/${id}`;
   return ApiService.deleteRequest(endpoint);
 }
 
@@ -87,6 +98,22 @@ function getPublishers({ campaignId }) {
 
       return {
         ...publisher,
+        display_network_access_id,
+        id: display_network_access_id,
+        otherId: id,
+        toBeRemoved: false
+      };
+    }));
+}
+
+function getLocations(campaignId) {
+  const endpoint = `geonames/${campaignId}`;
+  return ApiService.getRequest(endpoint)
+    .then(res => res.data.map((elem) => {
+      const { display_network_access_id, id, ...locations } = elem;
+
+      return {
+        ...locations,
         display_network_access_id,
         id: display_network_access_id,
         otherId: id,
@@ -119,15 +146,18 @@ function updateAd(adId, campaignId, adGroupId, body) {
 export default {
   createAdGroup,
   createAudience,
+  createLocation,
   createPublisher,
   deleteAudience,
+  deleteLocation,
   deletePublisher,
   getAdGroup,
   getAds,
+  getAudiences,
   getCampaignDisplay,
   getCampaignName,
+  getLocations,
   getPublishers,
-  getAudiences,
   updateAd,
   updateAdGroup,
   updateAudience,

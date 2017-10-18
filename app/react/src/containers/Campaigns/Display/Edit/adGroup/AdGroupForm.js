@@ -18,13 +18,14 @@ import { isEqual } from 'lodash';
 import {
   Ads,
   Audience,
-  DeviceAndLocation,
+  Device,
   General,
+  LocationTargeting,
   Media,
   Optimization,
   Publisher,
   Summary,
-} from './sections';
+} from './sections/index.ts';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
 import { Loading } from '../../../../../components/index.ts';
@@ -59,10 +60,15 @@ class AdGroupForm extends Component {
       this.setState({ loading: true });
 
       return this.saveOrUpdateAdGroup()
-        .then((adGroupId) => Promise.all([
-          this.saveAudience(adGroupId),
-          this.savePublishers(adGroupId),
-        ]))
+        .then((adGroupId) => {
+          return this.saveAudience(adGroupId).then(() => { return adGroupId; });
+        })
+        .then((adGroupId) => {
+          return this.savePublishers(adGroupId).then(() => { return adGroupId; });
+        })
+        .then((adGroupId) => {
+          return this.saveLocations(adGroupId).then(() => { return adGroupId; });
+        })
         .then(() => {
           this.setState({ loading: false });
           history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
@@ -123,6 +129,21 @@ class AdGroupForm extends Component {
     return this.saveTableFields(options);
   }
 
+  saveLocations = (adGroupId) => {
+    const options = {
+      adGroupId,
+      getBody: (row) => (row),
+      requests: {
+        create: DisplayCampaignService.createLocation,
+        update: () => Promise.resolve(),
+        delete: DisplayCampaignService.deleteLocation,
+      },
+      tableName: 'locationAndTargetingTable',
+    };
+
+    return this.saveTableFields(options);
+  }
+
   savePublishers = (adGroupId) => {
     const options = {
       adGroupId,
@@ -152,7 +173,6 @@ class AdGroupForm extends Component {
 
         if (!toBeRemoved) {
           /* In case we want to add or update a element */
-
           if (!otherId) {
             /* creation */
             newPromise = requests.create({ campaignId, adGroupId, body });
@@ -160,7 +180,6 @@ class AdGroupForm extends Component {
             const needsUpdating = formInitialValues[tableName].find(elem => (
               elem.otherId === otherId && elem.include !== include
             ));
-
             /* update if modified element */
             if (needsUpdating) {
               newPromise = requests.update({ campaignId, adGroupId, id: otherId, body });
@@ -234,6 +253,7 @@ class AdGroupForm extends Component {
       audienceTable,
       optimizerTable,
       publisherTable,
+      locationAndTargetingTable,
     } = formValues;
 
     return (
@@ -257,7 +277,9 @@ class AdGroupForm extends Component {
               </div>
             }
             <hr />
-            <DeviceAndLocation {...commonProps} />
+            <Device {...commonProps} />
+            <hr />
+            <LocationTargeting {...commonProps} formValues={locationAndTargetingTable} />
             <hr />
             <Publisher {...commonProps} formValues={publisherTable} />
             <hr />
