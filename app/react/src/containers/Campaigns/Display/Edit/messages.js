@@ -184,7 +184,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow2Placeholder: {
     id: 'adGroupEditor.section.general.row2.placeholder',
-    defaultMessage: '500 €',
+    defaultMessage: '500',
   },
   contentSectionGeneralRow2Tooltip: {
     id: 'adGroupEditor.section.general.row2.tooltip',
@@ -210,7 +210,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow3Placeholder: {
     id: 'adGroupEditor.section.general.row3.placeholder',
-    defaultMessage: '1 500 €',
+    defaultMessage: '1 500',
   },
   contentSectionGeneralRow3Tooltip: {
     id: 'adGroupEditor.section.general.row3.tooltip',
@@ -242,7 +242,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow5Placeholder: {
     id: 'adGroupEditor.section.general.row5.placeholder',
-    defaultMessage: '1.3 €',
+    defaultMessage: '1.3',
   },
   contentSectionGeneralRow5Tooltip: {
     id: 'adGroupEditor.section.general.row5.tooltip',
@@ -256,7 +256,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow6Placeholder: {
     id: 'adGroupEditor.section.general.row6.placeholder',
-    defaultMessage: '1 500 €',
+    defaultMessage: '10',
   },
   contentSectionGeneralRow6Tooltip: {
     id: 'adGroupEditor.section.general.row6.tooltip',
@@ -270,7 +270,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow7Placeholder: {
     id: 'adGroupEditor.section.general.row7.placeholder',
-    defaultMessage: '1 500 €',
+    defaultMessage: '1',
   },
   contentSectionGeneralRow7Tooltip: {
     id: 'adGroupEditor.section.general.row7.tooltip',
@@ -410,6 +410,10 @@ export default defineMessages({
     defaultMessage: 'Edit Placements',
   },
 
+  contentSectionPlacementTooltip: {
+    id: 'adGroupEditor.section.placement.tooltip',
+    defaultMessage: 'Lorem Ips',
+  },
   contentSectionPlacementProperties: {
     id: 'adGroupEditor.section.placement.properties',
     defaultMessage: 'Properties',

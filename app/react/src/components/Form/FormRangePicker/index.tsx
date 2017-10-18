@@ -89,7 +89,7 @@ class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
         {...otherFormItemProps}
       >
         <Row align="middle" type="flex">
-          <Col span={10}>
+          <div style={{ width: '43%' }}>
             <div>
               <DateInputField
                 component={DateInput}
@@ -98,20 +98,20 @@ class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
                 {...startProps}
               />
             </div>
-          </Col>
+          </div>
 
-          <Col span={2}>
+          <div style={{ width: '5.5%' }}>
             <p className="ant-form-split">-</p>
-          </Col>
+          </div>
 
-          <Col span={10}>
+          <div style={{ width: '43%' }}>
             <DateInputField
               component={DateInput}
               validate={fieldValidators!.end}
               disabledDate={this.disabledDate(false)}
               {...endProps}
             />
-          </Col>
+          </div>
 
           {!isEmpty(helpToolTipProps)
             ? (

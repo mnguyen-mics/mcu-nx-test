@@ -40,7 +40,6 @@ const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
       label={<span className="field-label">{label}</span>}
       {...otherFormItemProps}
     >
-
       <Row align="middle" type="flex">
         <Col span={22}>
           <Input
@@ -49,6 +48,7 @@ const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
             {...props.inputProps}
           />
         </Col>
+
         {displayHelpToolTip &&
           <Col span={2} className="field-tooltip">
             <Tooltip {...mergedTooltipProps}>

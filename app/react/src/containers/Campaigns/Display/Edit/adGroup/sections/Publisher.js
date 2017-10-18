@@ -86,11 +86,6 @@ class Publisher extends Component {
         <FormSection
           dropdownItems={[
             {
-              id: messages.dropdownAdd.id,
-              message: messages.dropdownAdd,
-              onClick: () => {},
-            },
-            {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openWindow,

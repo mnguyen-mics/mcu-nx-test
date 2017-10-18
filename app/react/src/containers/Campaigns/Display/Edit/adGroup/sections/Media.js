@@ -14,13 +14,7 @@ function Media({
   return (
     <div id="media">
       <FormSection
-        dropdownItems={[
-          {
-            id: messages.dropdownAdd.id,
-            message: messages.dropdownAdd,
-            onClick: () => {},
-          },
-        ]}
+        dropdownItems={[]}
         subtitle={messages.sectionSubtitleMedia}
         title={messages.sectionTitleMedia}
       />

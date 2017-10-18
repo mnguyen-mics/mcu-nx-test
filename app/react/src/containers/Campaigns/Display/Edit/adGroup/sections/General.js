@@ -24,16 +24,12 @@ class General extends Component {
 
   render() {
     const {
+      fieldGridConfig,
       fieldNormalizer: { normalizeNumber },
       fieldValidators: { isRequired, isNotZero },
       formatMessage,
       formValues,
     } = this.props;
-
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 },
-    };
 
     return (
       <div id="general">
@@ -270,6 +266,8 @@ General.defaultProps = {
 };
 
 General.propTypes = {
+  fieldGridConfig: PropTypes.shape().isRequired,
+
   fieldNormalizer: PropTypes.shape({
     isNumber: PropTypes.func.isRequired,
   }).isRequired,

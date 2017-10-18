@@ -246,7 +246,13 @@ class AdGroupForm extends Component {
       organisationId,
     } = this.props;
 
+    const fieldGridConfig = {
+      labelCol: { span: 3 },
+      wrapperCol: { span: 10, offset: 1 },
+    };
+
     const commonProps = {
+      fieldGridConfig,
       fieldNormalizer,
       fieldValidators,
       formName: FORM_NAME,
@@ -279,7 +285,7 @@ class AdGroupForm extends Component {
             className="mcs-content-container mcs-form-container"
             id={scrollLabelContentId}
           >
-            {/* {editionMode
+            {editionMode
               ? <div><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /><hr /></div>
               : null
             }
@@ -290,23 +296,23 @@ class AdGroupForm extends Component {
                 <hr />
                 <Audience {...commonProps} formValues={audienceTable} />
               </div>
-            }
-            <hr /> */}
+             }
+            <hr />
             <Device {...commonProps} formValues={formValues} />
             <hr />
-            {/* <Location {...commonProps} />
+            <Location {...commonProps} />
             <hr />
             <Publisher {...commonProps} formValues={publisherTable} />
-            <hr /> */}
+            <hr />
             <Placement {...commonProps} formValues={placements} />
-            {/* <hr />
+            <hr />
             <Ads {...commonProps} formValues={ads} />
-            {/* <hr />
+            <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
             {!editionMode
               ? <div><hr /><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /></div>
               : null
-            } */}
+            }
           </Content>
         </Form>
       </Layout>

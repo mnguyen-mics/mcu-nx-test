@@ -37,20 +37,30 @@ const MOCK_OS_LIST = [
   { value: '11', label: 'doré' },
 ];
 
+const MOCK_BROWSER_LIST = [
+  { value: '1', label: 'browser 1' },
+  { value: '2', label: 'browser 2' },
+  { value: '3', label: 'browser 3' },
+  { value: '4', label: 'browser 4' },
+  { value: '5', label: 'browser 5' },
+  { value: '6', label: 'browser 6' },
+  { value: '7', label: 'browser 7' },
+  { value: '8', label: 'browser 8' },
+  { value: '9', label: 'browser 9' },
+  { value: '10', label: 'browser 10' },
+  { value: '11', label: 'browser 11' },
+];
+
 class Device extends Component {
 
   state = { displayOptions: false }
 
   render() {
     const {
+      fieldGridConfig,
       fieldValidators: { isRequired },
       formatMessage,
     } = this.props;
-
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 },
-    };
 
     return (
       <div id="device">
@@ -70,72 +80,67 @@ class Device extends Component {
 
           {this.state.displayOptions
           && (
-            <Col className="custom-content">
-              <Row>
-                <Field
-                  name="adGroupDeviceType"
-                  component={FormTagSelect}
-                  validate={[isRequired]}
-                  props={{
-                    formItemProps: {
-                      label: formatMessage(messages.contentSectionDevicePart1Row1Label),
-                      required: true,
-                      ...fieldGridConfig,
-                    },
-                    selectProps: {
-                      options: MOCK_TYPE_LIST,
-                      placeholder: formatMessage(messages.contentSectionDevicePart1Row1Placeholder),
-                    },
-                    helpToolTipProps: {
-                      title: formatMessage(messages.contentSectionDevicePart1Row1Tooltip),
-                    },
-                  }}
-                />
-              </Row>
+            <div className="custom-content">
+              <Field
+                name="adGroupDeviceType"
+                component={FormTagSelect}
+                validate={[isRequired]}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionDevicePart1Row1Label),
+                    required: true,
+                    ...fieldGridConfig,
+                  },
+                  selectProps: {
+                    options: MOCK_TYPE_LIST,
+                    placeholder: formatMessage(messages.contentSectionDevicePart1Row1Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionDevicePart1Row1Tooltip),
+                  },
+                }}
+              />
 
-              <Row>
-                <Field
-                  name="adGroupDeviceOS"
-                  component={FormTagSelect}
-                  validate={[isRequired]}
-                  props={{
-                    formItemProps: {
-                      label: formatMessage(messages.contentSectionDevicePart1Row2Label),
-                      required: true,
-                      ...fieldGridConfig,
-                    },
-                    selectProps: {
-                      options: MOCK_OS_LIST,
-                      placeholder: formatMessage(messages.contentSectionDevicePart1Row2Placeholder),
-                    },
-                    helpToolTipProps: {
-                      title: formatMessage(messages.contentSectionDevicePart1Row2Tooltip),
-                    },
-                  }}
-                />
-              </Row>
+              <Field
+                name="adGroupDeviceOS"
+                component={FormTagSelect}
+                validate={[isRequired]}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionDevicePart1Row2Label),
+                    required: true,
+                    ...fieldGridConfig,
+                  },
+                  selectProps: {
+                    options: MOCK_OS_LIST,
+                    placeholder: formatMessage(messages.contentSectionDevicePart1Row2Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionDevicePart1Row2Tooltip),
+                  },
+                }}
+              />
 
-              <Row>
-                <Field
-                  name="adGroupDeviceBrowser"
-                  component={FormInput}
-                  validate={[isRequired]}
-                  props={{
-                    formItemProps: {
-                      label: formatMessage(messages.contentSectionDevicePart1Row3Label),
-                      required: true,
-                      ...fieldGridConfig,
-                    },
-                    inputProps: {
-                      placeholder: formatMessage(messages.contentSectionDevicePart1Row3Placeholder),
-                    },
-                    helpToolTipProps: {
-                      title: formatMessage(messages.contentSectionDevicePart1Row3Tooltip),
-                    },
-                  }}
-                />
-              </Row>
-            </Col>
+              <Field
+                name="adGroupDeviceBrowser"
+                component={FormTagSelect}
+                validate={[isRequired]}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionDevicePart1Row3Label),
+                    required: true,
+                    ...fieldGridConfig,
+                  },
+                  selectProps: {
+                    options: MOCK_BROWSER_LIST,
+                    placeholder: formatMessage(messages.contentSectionDevicePart1Row3Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionDevicePart1Row3Tooltip),
+                  },
+                }}
+              />
+            </div>
           )
         }
         </Row>
@@ -149,6 +154,8 @@ Device.defaultProps = {
 };
 
 Device.propTypes = {
+  fieldGridConfig: PropTypes.shape().isRequired,
+
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,
   }).isRequired,

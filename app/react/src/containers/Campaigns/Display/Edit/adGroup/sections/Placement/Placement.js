@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
-import { Col, Row, Tooltip } from 'antd';
+import { isEmpty } from 'lodash';
+import { Col, Form as AntForm, Row, Tooltip } from 'antd';
 
 import { EmptyRecords, Form, McsIcons } from '../../../../../../../components/index.ts';
 import PlacementSearch from './PlacementSearch';
@@ -15,7 +16,7 @@ class Placement extends Component {
 
   state = {
     placementOption: 'auto',
-    displaySearchOptions: false
+    displaySearchOptions: false,
   }
 
   updateDisplaySearchOptions = (bool) => (e) => {
@@ -25,6 +26,7 @@ class Placement extends Component {
 
   render() {
     const {
+      fieldGridConfig,
       formName,
       formValues,
       formatMessage,
@@ -42,6 +44,16 @@ class Placement extends Component {
       formName: formName,
     };
 
+    const helpToolTipProps = {
+      title: formatMessage(messages.contentSectionPlacementTooltip),
+    };
+    const mergedTooltipProps = {
+      placement: 'right',
+      ...helpToolTipProps,
+    };
+
+    const displayHelpToolTip = !isEmpty(helpToolTipProps);
+
     return (
       <div id="media">
         <FormSection
@@ -50,9 +62,9 @@ class Placement extends Component {
         />
 
         <Row className="ad-group-placement">
-          <Col offset={2}>
+          <Col offset={1}>
             <FormRadioGroup
-              elementClassName="bold font-size radio"
+              elementClassName="field-label radio"
               elements={[
                 { id: 1, title: formatMessage(messages.contentSectionPlacementRadio1), value: 'auto' },
                 { id: 2, title: formatMessage(messages.contentSectionPlacementRadio2), value: 'custom' },
@@ -66,14 +78,13 @@ class Placement extends Component {
           </Col>
 
           {placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
-          && (
-            <Col className="custom-content font-size" offset={2}>
-              <Row>
-                <Col span={3} className="bold">
-                  {formatMessage(messages.contentSectionPlacementProperties)}
-                </Col>
-
-                <Col span={14} className="content-wrapper">
+            && (
+            <AntForm.Item
+              label={<span className="field-label">{formatMessage(messages.contentSectionPlacementProperties)}</span>}
+              {...fieldGridConfig}
+            >
+              <Row align="middle" type="flex">
+                <Col span={22} className="content-wrapper">
                   <PlacementSearch
                     {...commonProps}
                     displaySearchOptions={this.state.displaySearchOptions}
@@ -106,22 +117,29 @@ class Placement extends Component {
                     />
                   </div>
                 </Col>
-                <Col span={1} className="field-tooltip">
-                  <Tooltip title="Test">
-                    <McsIcons type="info" />
-                  </Tooltip>
-                </Col>
+
+                {displayHelpToolTip
+                  && (
+                    <Col span={2} className="field-tooltip" style={{ alignSelf: 'flex-start', paddingTop: '.7em' }}>
+                      <Tooltip {...mergedTooltipProps}>
+                        <McsIcons type="info" />
+                      </Tooltip>
+                    </Col>
+                  )
+                }
               </Row>
-            </Col>
-          )
-        }
+            </AntForm.Item>
+            )
+          }
 
           {placementOption === 'custom' && !formValues.mobile.length && !formValues.web.length
-          && <EmptyRecords
-            iconType="plus"
-            message={formatMessage(messages.contentSectionPlacementEmptyTitle)}
-          />
-        }
+            && (
+              <EmptyRecords
+                iconType="plus"
+                message={formatMessage(messages.contentSectionPlacementEmptyTitle)}
+              />
+            )
+          }
         </Row>
       </div>
     );
@@ -129,6 +147,7 @@ class Placement extends Component {
 }
 
 Placement.propTypes = {
+  fieldGridConfig: PropTypes.shape().isRequired,
   formName: PropTypes.string.isRequired,
 
   formValues: PropTypes.shape({

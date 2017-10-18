@@ -65,11 +65,6 @@ class Ads extends Component {
         <FormSection
           dropdownItems={[
             {
-              id: messages.dropdownNew.id,
-              message: messages.dropdownNew,
-              onClick: () => {},
-            },
-            {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openWindow,
