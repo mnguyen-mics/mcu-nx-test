@@ -4,50 +4,23 @@ import { Select } from 'antd';
 
 const Option = Select.Option;
 
-function FormTagSelect({ formValues, input, options }) {
+function FormTagSelect(props) {
 
-  // const displayOptions = options.map((option) => {
-  //   return <Option key={option.id}>{option.text}</Option>;
-  // });
-
-  const optionss = [
-    { id: '1', text: 'hello' },
-    { id: '2', text: 'you' },
-    { id: '3', text: 'ca' },
-    { id: '3', text: 'va' },
-  ];
-
-  const displayOptions = optionss.map((option) => {
-    return <Option key={option.id}>{option.text}</Option>;
-  });
+  const displayOptions = props.options.map(({ label, value, ...rest }) => (
+    <Option {...rest} key={value} value={String(value)}>{label}</Option>
+  ));
 
   return (
     <Select
-      {...input}
+      {...props}
+      defaultValue={props.input.value}
       mode="tags"
-      size="default"
+      onChange={values => props.input.onChange(values)}
       placeholder="Please select"
-      defaultValue={[]}
-      onChange={(value) => input.onChange()}
-      style={{ width: '100%' }}
     >
       {displayOptions}
     </Select>
   );
-
-  // return (
-  //   <Select
-  //     {...input}
-  //     mode="tags"
-  //     size="default"
-  //     placeholder="Please select"
-  //     defaultValue={formValues}
-  //     onChange={(e) => console.log('e = ', e)}
-  //     style={{ width: '100%' }}
-  //   >
-  //     {displayOptions}
-  //   </Select>
-  // );
 }
 
 FormTagSelect.defaultProps = {
@@ -55,18 +28,14 @@ FormTagSelect.defaultProps = {
 };
 
 FormTagSelect.propTypes = {
-  formValues: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-  })),
-
   input: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
+    value: PropTypes.arrayOf(PropTypes.string.isRequired),
   }).isRequired,
 
   options: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
   })).isRequired,
 };
 

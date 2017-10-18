@@ -9,32 +9,32 @@ import messages from '../../messages';
 const { FormInput, FormSection, FormTagSelect } = Form;
 
 const MOCK_TYPE_LIST = [
-  { id: '1', text: 'Mobile' },
-  { id: '2', text: 'Desktop' },
-  { id: '3', text: 'Lundi' },
-  { id: '4', text: 'Mardi' },
-  { id: '5', text: 'Mercredi' },
-  { id: '6', text: 'Jeudi' },
-  { id: '7', text: 'Vendredi' },
-  { id: '8', text: 'Samedi' },
-  { id: '9', text: 'Dimanche' },
-  { id: '10', text: 'Et Lundi' },
-  { id: '11', text: 'Et Mardi' },
+  { value: '1', label: 'Mobile' },
+  { value: '2', label: 'Desktop' },
+  { value: '3', label: 'Lundi' },
+  { value: '4', label: 'Mardi' },
+  { value: '5', label: 'Mercredi' },
+  { value: '6', label: 'Jeudi' },
+  { value: '7', label: 'Vendredi' },
+  { value: '8', label: 'Samedi' },
+  { value: '9', label: 'Dimanche' },
+  { value: '10', label: 'Et Lundi' },
+  { value: '11', label: 'Et Mardi' },
 ];
 
 
 const MOCK_OS_LIST = [
-  { id: '1', text: 'iOS' },
-  { id: '2', text: 'android' },
-  { id: '3', text: 'rouge' },
-  { id: '4', text: 'jaune' },
-  { id: '5', text: 'blue' },
-  { id: '6', text: 'violet' },
-  { id: '7', text: 'vert' },
-  { id: '8', text: 'noir' },
-  { id: '9', text: 'blanc' },
-  { id: '10', text: 'beige' },
-  { id: '11', text: 'doré' },
+  { value: '1', label: 'iOS' },
+  { value: '2', label: 'android' },
+  { value: '3', label: 'rouge' },
+  { value: '4', label: 'jaune' },
+  { value: '5', label: 'blue' },
+  { value: '6', label: 'violet' },
+  { value: '7', label: 'vert' },
+  { value: '8', label: 'noir' },
+  { value: '9', label: 'blanc' },
+  { value: '10', label: 'beige' },
+  { value: '11', label: 'doré' },
 ];
 
 class Device extends Component {
@@ -81,12 +81,9 @@ class Device extends Component {
 
                 <Col span={14}>
                   <Field
-                    name="adGroupDeviceType"
                     component={FormTagSelect}
-                    props={{
-                      formValues: formValues.adGroupDeviceType,
-                      options: MOCK_TYPE_LIST,
-                    }}
+                    name="adGroupDeviceType"
+                    options={MOCK_TYPE_LIST}
                   />
                 </Col>
 
