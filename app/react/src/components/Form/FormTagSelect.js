@@ -13,8 +13,7 @@ function FormTagSelect(props) {
   return (
     <Select
       {...props}
-      defaultValue={props.input.value}
-      mode="tags"
+      defaultValue={props.input.value || []}
       onChange={values => props.input.onChange(values)}
       placeholder="Please select"
     >
@@ -25,12 +24,16 @@ function FormTagSelect(props) {
 
 FormTagSelect.defaultProps = {
   formValues: [],
+  mode: 'multiple',
 };
 
 FormTagSelect.propTypes = {
   input: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
-    value: PropTypes.arrayOf(PropTypes.string.isRequired),
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string.isRequired),
+    ]).isRequired,
   }).isRequired,
 
   options: PropTypes.arrayOf(PropTypes.shape({

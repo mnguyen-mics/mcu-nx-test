@@ -99,7 +99,13 @@ class Device extends Component {
                   {formatMessage(messages.contentSectionDevicePart1Row2Label)}
                 </Col>
 
-                <Col span={14} />
+                <Col span={14}>
+                  <Field
+                    component={FormTagSelect}
+                    name="adGroupDeviceOS"
+                    options={MOCK_OS_LIST}
+                  />
+                </Col>
 
                 <Col span={1} className="field-tooltip">
                   <Tooltip title={formatMessage(messages.contentSectionDevicePart1Row2Tooltip)}>
