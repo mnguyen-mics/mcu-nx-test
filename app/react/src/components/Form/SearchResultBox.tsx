@@ -26,7 +26,7 @@ interface SearchResultBoxState {
 class SearchResultBox extends React.Component<SearchResultBoxProps, SearchResultBoxState> {
 
     deleteLocationFromFields = (index: number, allFields: any) => () => {
-        allFields.remove(index).push();
+        allFields.remove(index);
     }
 
     render() {
