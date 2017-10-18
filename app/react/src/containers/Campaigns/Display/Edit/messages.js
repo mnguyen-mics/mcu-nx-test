@@ -325,6 +325,10 @@ export default defineMessages({
     id: 'adGroupEditor.section.device.part1.row1.label',
     defaultMessage: 'Device Type',
   },
+  contentSectionDevicePart1Row1Placeholder: {
+    id: 'adGroupEditor.section.device.part1.row1.placeholder',
+    defaultMessage: 'Please select',
+  },
   contentSectionDevicePart1Row1Tooltip: {
     id: 'adGroupEditor.section.device.part1.row1.tooltip',
     defaultMessage: 'Lorem ipsum',
@@ -333,6 +337,10 @@ export default defineMessages({
   contentSectionDevicePart1Row2Label: {
     id: 'adGroupEditor.section.device.part1.row2.label',
     defaultMessage: 'OS',
+  },
+  contentSectionDevicePart1Row2Placeholder: {
+    id: 'adGroupEditor.section.device.part1.row2.placeholder',
+    defaultMessage: 'Please select',
   },
   contentSectionDevicePart1Row2Tooltip: {
     id: 'adGroupEditor.section.device.part1.row2.tooltip',
@@ -346,6 +354,10 @@ export default defineMessages({
   contentSectionDevicePart1Row3Tooltip: {
     id: 'adGroupEditor.section.device.part1.row3.tooltip',
     defaultMessage: 'Lorem ipsum',
+  },
+  contentSectionDevicePart1Row3Placeholder: {
+    id: 'adGroupEditor.section.device.part1.row3.placeholder',
+    defaultMessage: 'http://www...',
   },
 
   contentSectionDevicePart1Row4Label: {

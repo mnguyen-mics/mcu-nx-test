@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-import { Checkbox, Col, Row, Tooltip } from 'antd';
+import { Checkbox, Col, Row } from 'antd';
 
-import { Form, McsIcons } from '../../../../../../components/index.ts';
+import { Form } from '../../../../../../components/index.ts';
 import messages from '../../messages';
 
 const { FormInput, FormSection, FormTagSelect } = Form;
@@ -39,16 +39,13 @@ const MOCK_OS_LIST = [
 
 class Device extends Component {
 
-  state = { displayOptions: true }
+  state = { displayOptions: false }
 
   render() {
     const {
       fieldValidators: { isRequired },
       formatMessage,
-      formValues,
     } = this.props;
-
-    console.log('formValues = ', formValues);
 
     const fieldGridConfig = {
       labelCol: { span: 3 },
@@ -63,9 +60,9 @@ class Device extends Component {
         />
 
         <Row className="ad-group-device">
-          <Col offset={2}>
+          <Col offset={1}>
             <Checkbox
-              className="bold font-size checkbox"
+              className="field-label"
               onClick={() => this.setState({ displayOptions: !this.state.displayOptions })}
             >{formatMessage(messages.contentSectionDevicePart1Message)}
             </Checkbox>
@@ -73,45 +70,49 @@ class Device extends Component {
 
           {this.state.displayOptions
           && (
-            <Col className="custom-content font-size" offset={2}>
+            <Col className="custom-content">
               <Row>
-                <Col span={3} className="bold">
-                  {formatMessage(messages.contentSectionDevicePart1Row1Label)}
-                </Col>
-
-                <Col span={14}>
-                  <Field
-                    component={FormTagSelect}
-                    name="adGroupDeviceType"
-                    options={MOCK_TYPE_LIST}
-                  />
-                </Col>
-
-                <Col span={1} className="field-tooltip">
-                  <Tooltip title={formatMessage(messages.contentSectionDevicePart1Row1Tooltip)}>
-                    <McsIcons type="info" />
-                  </Tooltip>
-                </Col>
+                <Field
+                  name="adGroupDeviceType"
+                  component={FormTagSelect}
+                  validate={[isRequired]}
+                  props={{
+                    formItemProps: {
+                      label: formatMessage(messages.contentSectionDevicePart1Row1Label),
+                      required: true,
+                      ...fieldGridConfig,
+                    },
+                    selectProps: {
+                      options: MOCK_TYPE_LIST,
+                      placeholder: formatMessage(messages.contentSectionDevicePart1Row1Placeholder),
+                    },
+                    helpToolTipProps: {
+                      title: formatMessage(messages.contentSectionDevicePart1Row1Tooltip),
+                    },
+                  }}
+                />
               </Row>
 
               <Row>
-                <Col span={3} className="bold">
-                  {formatMessage(messages.contentSectionDevicePart1Row2Label)}
-                </Col>
-
-                <Col span={14}>
-                  <Field
-                    component={FormTagSelect}
-                    name="adGroupDeviceOS"
-                    options={MOCK_OS_LIST}
-                  />
-                </Col>
-
-                <Col span={1} className="field-tooltip">
-                  <Tooltip title={formatMessage(messages.contentSectionDevicePart1Row2Tooltip)}>
-                    <McsIcons type="info" />
-                  </Tooltip>
-                </Col>
+                <Field
+                  name="adGroupDeviceOS"
+                  component={FormTagSelect}
+                  validate={[isRequired]}
+                  props={{
+                    formItemProps: {
+                      label: formatMessage(messages.contentSectionDevicePart1Row2Label),
+                      required: true,
+                      ...fieldGridConfig,
+                    },
+                    selectProps: {
+                      options: MOCK_OS_LIST,
+                      placeholder: formatMessage(messages.contentSectionDevicePart1Row2Placeholder),
+                    },
+                    helpToolTipProps: {
+                      title: formatMessage(messages.contentSectionDevicePart1Row2Tooltip),
+                    },
+                  }}
+                />
               </Row>
 
               <Row>
@@ -126,7 +127,7 @@ class Device extends Component {
                       ...fieldGridConfig,
                     },
                     inputProps: {
-                      placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
+                      placeholder: formatMessage(messages.contentSectionDevicePart1Row3Placeholder),
                     },
                     helpToolTipProps: {
                       title: formatMessage(messages.contentSectionDevicePart1Row3Tooltip),
@@ -153,7 +154,6 @@ Device.propTypes = {
   }).isRequired,
 
   formatMessage: PropTypes.func.isRequired,
-  formValues: PropTypes.shape(),
 };
 
 export default Device;

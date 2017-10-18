@@ -1,33 +1,85 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Select } from 'antd';
+import { isEmpty } from 'lodash';
+import { Col, Form, Row, Select, Tooltip } from 'antd';
+
+import McsIcons from '../../components/McsIcons.tsx';
 
 const Option = Select.Option;
 
-function FormTagSelect(props) {
+function FormTagSelect({
+  formItemProps,
+  helpToolTipProps,
+  input,
+  meta,
+  selectProps,
+}) {
 
-  const displayOptions = props.options.map(({ label, value, ...rest }) => (
+  const displayOptions = selectProps.options.map(({ label, value, ...rest }) => (
     <Option {...rest} key={value} value={String(value)}>{label}</Option>
   ));
 
+  const value = input.value || [];
+
+  let validateStatus = 'success';
+
+  if (meta.touched && meta.invalid) validateStatus = 'error';
+  if (meta.touched && meta.warning) validateStatus = 'warning';
+
+  const mergedTooltipProps = {
+    placement: 'right',
+    ...helpToolTipProps,
+  };
+
+  const { label, ...otherFormItemProps } = formItemProps;
+
   return (
-    <Select
-      {...props}
-      defaultValue={props.input.value || []}
-      onChange={values => props.input.onChange(values)}
-      placeholder="Please select"
+    <Form.Item
+      help={meta.touched && (meta.warning || meta.error)}
+      validateStatus={validateStatus}
+      label={<span className="field-label">{label}</span>}
+      {...otherFormItemProps}
     >
-      {displayOptions}
-    </Select>
+      <Row align="middle" type="flex">
+        <Col span={22} >
+          <Select
+            mode="multiple"
+            {...input}
+            {...selectProps}
+            defaultValue={value}
+            value={value}
+            onChange={values => input.onChange(values)}
+          >
+            {displayOptions}
+          </Select>
+        </Col>
+
+        {!isEmpty(helpToolTipProps) &&
+          <Col span={2} className="field-tooltip">
+            <Tooltip {...mergedTooltipProps}>
+              <McsIcons type="info" />
+            </Tooltip>
+          </Col>
+        }
+      </Row>
+    </Form.Item>
   );
 }
 
 FormTagSelect.defaultProps = {
-  formValues: [],
-  mode: 'multiple',
+  helpToolTipProps: null,
 };
 
 FormTagSelect.propTypes = {
+  formItemProps: PropTypes.shape({
+    label: PropTypes.string,
+    required: PropTypes.bool.isRequired,
+  }).isRequired,
+
+  helpToolTipProps: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+  }),
+
   input: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
     value: PropTypes.oneOfType([
@@ -36,10 +88,23 @@ FormTagSelect.propTypes = {
     ]).isRequired,
   }).isRequired,
 
-  options: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-  })).isRequired,
+  meta: PropTypes.shape({
+    error: PropTypes.string,
+    invalid: PropTypes.bool,
+    touched: PropTypes.bool,
+    warning: PropTypes.bool,
+  }).isRequired,
+
+  selectProps: PropTypes.shape({
+    mode: PropTypes.string,
+
+    options: PropTypes.arrayOf(PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    })).isRequired,
+
+    placeholder: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default FormTagSelect;

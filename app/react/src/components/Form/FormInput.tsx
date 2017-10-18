@@ -31,15 +31,18 @@ const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
     ...props.helpToolTipProps,
   };
 
+  const { label, ...otherFormItemProps } = props.formItemProps;
+
   return (
     <Form.Item
       help={props.meta.touched && (props.meta.warning || props.meta.error)}
       validateStatus={validateStatus}
-      {...props.formItemProps}
+      label={<span className="field-label">{label}</span>}
+      {...otherFormItemProps}
     >
 
       <Row align="middle" type="flex">
-        <Col span={22} >
+        <Col span={22}>
           <Input
             id={props.input.name}
             {...props.input}

@@ -79,11 +79,14 @@ class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
       || ''
     );
 
+    const { label, ...otherFormItemProps } = this.props.formItemProps;
+
     return (
       <Form.Item
-        {...this.props.formItemProps}
         help={error}
         validateStatus={error ? 'error' : 'success'}
+        label={<span className="field-label">{label}</span>}
+        {...otherFormItemProps}
       >
         <Row align="middle" type="flex">
           <Col span={10}>

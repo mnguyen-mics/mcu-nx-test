@@ -293,15 +293,15 @@ class AdGroupForm extends Component {
             }
             <hr /> */}
             <Device {...commonProps} formValues={formValues} />
-            {/* <hr />
-            <Location {...commonProps} />
+            <hr />
+            {/* <Location {...commonProps} />
             <hr />
             <Publisher {...commonProps} formValues={publisherTable} />
-            <hr />
+            <hr /> */}
             <Placement {...commonProps} formValues={placements} />
-            <hr />
+            {/* <hr />
             <Ads {...commonProps} formValues={ads} />
-            <hr />
+            {/* <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
             {!editionMode
               ? <div><hr /><Summary {...commonProps} displayAudience={displayAudience} formValues={formValues} /></div>
