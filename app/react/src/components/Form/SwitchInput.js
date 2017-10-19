@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Switch } from 'antd';
 
 function SwitchInput({ className, input }) {
+
   return (
     <Switch
       {...input}

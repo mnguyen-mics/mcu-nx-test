@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Row } from 'antd';
-import { Field, getFormValues } from 'redux-form';
+import { Field } from 'redux-form';
 
 import messages from '../messages';
 import { ButtonStyleless, Form, McsIcons } from '../../../../../../components';
@@ -41,7 +40,7 @@ class General extends Component {
 
         <Row>
           <Field
-            name="campaignName"
+            name="name"
             component={FormInput}
             validate={[isRequired]}
             props={{
@@ -74,7 +73,7 @@ class General extends Component {
 
           <Row className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
             <Field
-              name="campaignTechnicalName"
+              name="technical_name"
               component={FormInput}
               props={{
                 formItemProps: {
@@ -101,16 +100,12 @@ General.defaultProps = {
 };
 
 General.propTypes = {
-  fieldNormalizer: PropTypes.shape({
-    isNumber: PropTypes.func.isRequired,
-  }).isRequired,
 
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,
   }).isRequired,
 
   formatMessage: PropTypes.func.isRequired,
-  formValues: PropTypes.shape(),
 };
 
 export default General;

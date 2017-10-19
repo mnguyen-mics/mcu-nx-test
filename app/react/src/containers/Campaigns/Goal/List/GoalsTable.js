@@ -28,6 +28,8 @@ import {
   getTableDataSource,
 } from '../../../../state/Campaigns/Goal/selectors';
 
+import GoalService from '../../../../services/GoalService';
+
 class GoalsTable extends Component {
 
   componentDidMount() {
@@ -112,14 +114,22 @@ class GoalsTable extends Component {
         },
       },
       location: {
+        pathname,
+        state,
         search,
       },
-      archiveGoal,
+      history,
+      dataSource,
       loadGoalsDataSource,
       translations,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
+    const newGoal = {
+      ...goal
+    };
+
+    newGoal.archived = true;
 
     Modal.confirm({
       title: translations.GOAL_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -128,8 +138,21 @@ class GoalsTable extends Component {
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return archiveGoal(goal.id).then(() => {
-          loadGoalsDataSource(organisationId, filter);
+        return GoalService.updateGoal({ id: goal.id, body: newGoal }).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter
+            };
+            newFilter.currentPage = filter.currentPage - 1;
+            loadGoalsDataSource(organisationId, filter);
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state
+            });
+          } else {
+            loadGoalsDataSource(organisationId, filter);
+          }
         });
       },
       onCancel() { },
@@ -320,10 +343,6 @@ class GoalsTable extends Component {
   }
 }
 
-GoalsTable.defaultProps = {
-  archiveGoal: () => {},
-};
-
 GoalsTable.propTypes = {
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
@@ -337,7 +356,6 @@ GoalsTable.propTypes = {
   totalGoals: PropTypes.number.isRequired,
 
   loadGoalsDataSource: PropTypes.func.isRequired,
-  archiveGoal: PropTypes.func.isRequired,
   resetGoalsTable: PropTypes.func.isRequired,
 };
 
@@ -353,7 +371,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   loadGoalsDataSource: GoalsActions.loadGoalsDataSource,
-  // archiveGoal: GoalActions.archiveGoal,
   resetGoalsTable: GoalsActions.resetGoalsTable,
 };
 

@@ -31,6 +31,10 @@ class DisplayCampaignAdGroupTable extends Component {
     });
   }
 
+  archiveAdGroup = () => {
+    // TODO
+  }
+
   render() {
     const {
       match: {
@@ -93,6 +97,7 @@ class DisplayCampaignAdGroupTable extends Component {
           type: 'DISPLAY',
         });
     };
+
 
     const dataColumns = [
       {
@@ -181,10 +186,12 @@ class DisplayCampaignAdGroupTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,
-          }, {
-            translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign,
           },
+          // Commented for now to be improved later
+          // {
+          //   translationKey: 'ARCHIVE',
+          //   callback: this.archiveAdGroup,
+          // },
         ],
       },
     ];

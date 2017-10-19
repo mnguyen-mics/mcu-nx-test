@@ -27,24 +27,24 @@ class AdGroupContent extends Component {
     DisplayCampaignService.getCampaignName(this.props.match.params.campaignId)
       .then((campaignName) => {
         this.setState({ campaignName });
+      }).catch(() => {
+        this.setState({ campaignName: 'New Campaign' });
       });
   }
 
   render() {
     const {
-    editionMode,
-    hasDatamarts,
-    history,
-    location,
-    initialValues,
-    intl: { formatMessage },
-    loading,
-    match: {
-      params: { campaignId, organisationId },
-      url,
-    },
-    submitting,
-  } = this.props;
+      editionMode,
+      hasDatamarts,
+      initialValues,
+      intl: { formatMessage },
+      loading,
+      match: {
+        params: { campaignId, organisationId },
+        url,
+      },
+      submitting,
+    } = this.props;
 
     const displayAudience = hasDatamarts(organisationId);
 
@@ -84,17 +84,14 @@ class AdGroupContent extends Component {
     const buttonMetadata = {
       formId,
       message: messages.saveAdGroup,
-      onClose: () => (location.state && location.state.from
-        ? history.push(location.state.from)
-        : history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`)
-      ),
+      onClose: this.props.close
     };
 
     const formValues = {
       adGroupMaxBudgetPeriod: 'DAY',
       ...initialValues,
-      adGroupMaxBudgetPerPeriod: formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0'),
-      adGroupTotalBudget: formatMetric(initialValues.adGroupTotalBudget, '0,0'),
+      adGroupMaxBudgetPerPeriod: initialValues.adGroupMaxBudgetPerPeriod ? formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0') : '',
+      adGroupTotalBudget: initialValues.adGroupTotalBudget ? formatMetric(initialValues.adGroupTotalBudget, '0,0') : '',
     };
 
     return (
@@ -116,6 +113,7 @@ class AdGroupContent extends Component {
               editionMode={editionMode}
               formId={formId}
               initialValues={formValues}
+              save={this.props.save}
               openNextDrawer={this.props.openNextDrawer}
             />
           </EditContentLayout>
@@ -141,14 +139,14 @@ AdGroupContent.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
   editionMode: PropTypes.bool,
   hasDatamarts: PropTypes.func.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
   initialValues: PropTypes.shape(),
   intl: intlShape.isRequired,
-  location: PropTypes.shape().isRequired,
   loading: PropTypes.bool,
   match: ReactRouterPropTypes.match.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   submitting: PropTypes.bool,
+  save: PropTypes.func.isRequired,
+  close: PropTypes.func.isRequired,
 };
 
 export default compose(

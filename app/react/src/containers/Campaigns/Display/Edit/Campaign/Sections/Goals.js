@@ -8,14 +8,14 @@ import { Row } from 'antd';
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components';
 import messages from '../messages';
 import GoalService from '../../../../../../services/GoalService';
-import { getDefaultDatamart } from '../../../../../../state/Session/selectors';
 import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
-import GoalTable from '../Tables';
-import { formatMetric } from '../../../../../../utils/MetricHelper';
+import { GoalsTable } from '../Tables';
+import GoalContent from '../Goal/GoalContent';
+import * as SessionHelpers from '../../../../../../state/Session/selectors';
 
 const { FormSection } = Form;
 
-class Audience extends Component {
+class Goals extends Component {
 
   state = { loading: false }
 
@@ -33,7 +33,7 @@ class Audience extends Component {
 
   openWindow = () => {
     const { formValues, handlers } = this.props;
-    const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
+    const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => { return elem.main_id ? elem.main_id : elem.id; });
 
     const columnsDefinitions = [
       {
@@ -41,18 +41,6 @@ class Audience extends Component {
         key: 'name',
         isHideable: false,
         render: text => <span>{text}</span>,
-      },
-      {
-        intlMessage: messages.sectionSelectorTitleUserPoints,
-        key: 'user_points',
-        isHideable: false,
-        render: text => <span>{formatMetric(text, '0,0')}</span>,
-      },
-      {
-        intlMessage: messages.sectionSelectorTitleCookieIds,
-        key: 'desktop_cookie_ids',
-        isHideable: false,
-        render: text => <span>{formatMetric(text, '0,0')}</span>,
       },
     ];
 
@@ -68,65 +56,147 @@ class Audience extends Component {
     handlers.openNextDrawer(TableSelector, { additionalProps });
   }
 
+  openNewWindow = () => {
+    const { handlers } = this.props;
+    const additionalProps = {
+      openNextDrawer: handlers.openNextDrawer,
+      closeNextDrawer: handlers.closeNextDrawer,
+      close: handlers.closeNextDrawer,
+      save: this.createNewData,
+    };
+
+    const options = {
+      additionalProps,
+      isModal: true
+    };
+
+    handlers.openNextDrawer(GoalContent, options);
+  }
+
+  createNewData = (object) => {
+    const { formValues, handlers } = this.props;
+    const valuesToAdd = formValues.filter(item => {
+      return !item.toBeRemoved;
+    });
+    valuesToAdd.push(object);
+    this.setState({ loading: true }, () => {
+      handlers.updateTableFields({ newFields: valuesToAdd, tableName: 'goalsTable' });
+    });
+    this.setState({ loading: false });
+    this.props.handlers.closeNextDrawer();
+  }
+
+  updateNewData = (object) => {
+    const {
+      formValues,
+      handlers
+    } = this.props;
+    const newValues = formValues.map((item) => {
+      return item.id === object.id ? object : item;
+    });
+    this.setState({ loading: true }, () => {
+      handlers.updateTableFields({ newFields: newValues, tableName: 'goalsTable' });
+      this.setState({ loading: false });
+      this.props.handlers.closeNextDrawer();
+    });
+
+  }
+
+
   updateData = (selectedIds) => {
-    const { formValues, handlers, organisationId } = this.props;
-    const fetchSelectedGoald = Promise.all(selectedIds.map(goalId => {
-      return GoalService.getSegment(goalId);
+    const { formValues, handlers } = this.props;
+
+    // Don't fetch goals that are in creation
+    const filteredIds = selectedIds.filter(id => {
+      const value = formValues.find(item => { return item.id === id; });
+      return value && value.toBeRemoved !== true ? !value.toBeCreated : true;
+    });
+
+    // Replace Already Saved Goals as Goal Selection by their Goal Id
+
+    const fetchSelectedGoald = Promise.all(filteredIds.map(goalId => {
+      return GoalService.getGoal(goalId);
     }));
-    const fetchMetadata = GoalService.getSegmentMetaData(organisationId);
 
     this.setState({ loading: true });
     handlers.closeNextDrawer();
 
-    Promise.all([fetchSelectedGoald, fetchMetadata])
+    Promise.all([fetchSelectedGoald])
       .then(results => {
         const goals = results[0];
-        const metadata = results[1];
-
         return goals.map(goal => {
-          const { desktop_cookie_ids, user_points } = metadata[goal.id];
-          const prevSeg = formValues.find(elem => elem.id === goal.id);
-          const include = (prevSeg ? prevSeg.include : true);
-
-          return { ...goal, desktop_cookie_ids, include, user_points };
+          return { ...goal.data };
         });
       })
       .then(newFields => {
-        handlers.updateTableFields({ newFields, tableName: 'audienceTable' });
+        let storedData = formValues.filter(value => {
+          return selectedIds.includes(value.id) && value.toBeCreated;
+        });
+        if (storedData === undefined) {
+          storedData = [];
+        } else if (storedData && !Array.isArray(storedData)) {
+          storedData = [storedData];
+        }
+        const newFieldsUpdated = newFields.concat(storedData);
+        const sortedNewField = selectedIds.map(id => {
+          return newFieldsUpdated.find(item => item.id === id);
+        });
+        handlers.updateTableFields({ newFields: sortedNewField, tableName: 'goalsTable' });
         this.setState({ loading: false });
       });
   }
 
-  render() {
-    const { formatMessage, formValues, handlers } = this.props;
+  handleClickOnGoal = (goalValue) => {
+    const {
+      handlers,
+      formValues
+    } = this.props;
 
+    const initialGoal = formValues.find(item => {
+      return item.id === goalValue.key;
+    });
+
+    const goalEditorProps = {
+      initialValues: initialGoal,
+      openNextDrawer: handlers.openNextDrawer,
+      closeNextDrawer: handlers.closeNextDrawer,
+      close: handlers.closeNextDrawer,
+      save: this.updateNewData,
+    };
+
+    const options = {
+      additionalProps: goalEditorProps,
+      isModal: true,
+    };
+
+    handlers.openNextDrawer(GoalContent, options);
+  }
+
+  render() {
+    const { formatMessage, formValues, handlers, defaultDatamart, organisationId, hasDatamarts, createUniqueGoal } = this.props;
     const dataSource = formValues.reduce((tableData, goal, index) => {
       return (!goal.toBeRemoved
         ? [
           ...tableData,
           {
             key: goal.id,
-            type: { image: 'users', name: goal.name },
-            info: [
-              `${formatMetric(goal.user_points, '0,0')} ${formatMessage(messages.contentSection2Medium1)}`,
-              `${formatMetric(goal.desktop_cookie_ids, '0,0')} ${formatMessage(messages.contentSection2Medium2)}`,
-            ],
-            include: { bool: goal.include, index },
+            type: { image: 'goals', name: goal.name ? goal.name : goal.goal_name },
+            default: { bool: goal.default, index },
             toBeRemoved: index,
+            toBeCreated: goal.toBeCreated
           }
         ]
         : tableData
       );
     }, []);
-
     return (
-      <div>
+      <div id="goals">
         <FormSection
           dropdownItems={[
             {
               id: messages.dropdownNew.id,
               message: messages.dropdownNew,
-              onClick: () => {},
+              onClick: this.openNewWindow,
             },
             {
               id: messages.dropdownAddExisting.id,
@@ -140,12 +210,17 @@ class Audience extends Component {
 
         <Row>
           <FieldArray
-            component={GoalTable}
+            component={GoalsTable}
             dataSource={dataSource}
             loading={this.state.loading}
-            name="audienceTable"
-            tableName="audienceTable"
+            name="goalsTable"
+            tableName="goalsTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
+            openEditionMode={this.handleClickOnGoal}
+            defaultDatamart={defaultDatamart}
+            organisationId={organisationId}
+            hasDatamarts={hasDatamarts}
+            createUniqueGoal={createUniqueGoal}
           />
 
           {!dataSource.length
@@ -161,12 +236,13 @@ class Audience extends Component {
   }
 }
 
-Audience.defaultProps = {
+Goals.defaultProps = {
   formValues: [],
 };
 
-Audience.propTypes = {
+Goals.propTypes = {
   defaultDatamart: PropTypes.func.isRequired,
+  hasDatamarts: PropTypes.func.isRequired,
   formValues: PropTypes.arrayOf(PropTypes.shape()),
   formatMessage: PropTypes.func.isRequired,
 
@@ -176,14 +252,15 @@ Audience.propTypes = {
     openNextDrawer: PropTypes.func.isRequired,
     updateTableFields: PropTypes.func.isRequired,
   }).isRequired,
-
   organisationId: PropTypes.string.isRequired,
+  createUniqueGoal: PropTypes.func.isRequired,
 };
 
 export default compose(
   connect(
     state => ({
-      defaultDatamart: getDefaultDatamart(state),
+      defaultDatamart: SessionHelpers.getDefaultDatamart(state),
+      hasDatamarts: SessionHelpers.hasDatamarts(state)
     }),
   ),
-)(Audience);
+)(Goals);

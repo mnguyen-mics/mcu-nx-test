@@ -10,6 +10,7 @@ import { EmptyTableView, TableViewFilters } from '../../../../components/TableVi
 import McsIcons from '../../../../components/McsIcons';
 
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
+import DisplayCampaignsService from '../../../../services/DisplayCampaignService';
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
@@ -36,6 +37,7 @@ class DisplayCampaignsTable extends Component {
       },
       loadDisplayCampaignsDataSource
     } = this.props;
+
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
@@ -103,10 +105,13 @@ class DisplayCampaignsTable extends Component {
         },
       },
       location: {
+        pathname,
+        state,
         search,
       },
-      archiveDisplayCampaign,
       loadDisplayCampaignsDataSource,
+      history,
+      dataSource,
       translations,
     } = this.props;
 
@@ -119,8 +124,21 @@ class DisplayCampaignsTable extends Component {
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return archiveDisplayCampaign(campaign.id).then(() => {
-          loadDisplayCampaignsDataSource(organisationId, filter);
+        return DisplayCampaignsService.deleteCampaign(campaign.id).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter
+            };
+            newFilter.currentPage = filter.currentPage - 1;
+            loadDisplayCampaignsDataSource(organisationId, filter);
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state
+            });
+          } else {
+            loadDisplayCampaignsDataSource(organisationId, filter);
+          }
         });
       },
       onCancel() { },
@@ -137,20 +155,7 @@ class DisplayCampaignsTable extends Component {
       history,
     } = this.props;
 
-    let editUrl;
-    switch (campaign.editor_artifact_id) {
-      case 'default-editor':
-        editUrl = `/${organisationId}/campaigns/display/expert/edit/${campaign.id}`;
-        break;
-      case 'external-campaign-editor':
-        editUrl = `/${organisationId}/campaigns/display/external/edit/${campaign.id}`;
-        break;
-      case 'keywords-targeting-editor':
-        editUrl = `/${organisationId}/campaigns/display/keywords/${campaign.id}`;
-        break;
-      default:
-        break;
-    }
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaign.id}/edit`;
 
     history.push(editUrl);
   };
@@ -377,9 +382,6 @@ class DisplayCampaignsTable extends Component {
   }
 }
 
-DisplayCampaignsTable.defaultProps = {
-  archiveDisplayCampaign: () => { },
-};
 
 DisplayCampaignsTable.propTypes = {
   match: PropTypes.shape().isRequired,
@@ -394,7 +396,6 @@ DisplayCampaignsTable.propTypes = {
   totalDisplayCampaigns: PropTypes.number.isRequired,
 
   loadDisplayCampaignsDataSource: PropTypes.func.isRequired,
-  archiveDisplayCampaign: PropTypes.func.isRequired,
   resetDisplayCampaignsTable: PropTypes.func.isRequired,
 };
 
@@ -409,7 +410,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   loadDisplayCampaignsDataSource: DisplayCampaignsActions.loadDisplayCampaignsDataSource,
-  // archiveDisplayCampaign: EmailCampaignAction.archiveDisplayCampaign,
   resetDisplayCampaignsTable: DisplayCampaignsActions.resetDisplayCampaignsTable,
 };
 

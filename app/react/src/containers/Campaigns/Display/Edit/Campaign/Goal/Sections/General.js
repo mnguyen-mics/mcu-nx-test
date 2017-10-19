@@ -1,18 +1,25 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Row } from 'antd';
-import { Field, getFormValues } from 'redux-form';
+import { Field } from 'redux-form';
 
-import messages from './messages';
-import { ButtonStyleless, Form, McsIcons } from '../../../../../../components';
+import messages from '../messages';
+import { ButtonStyleless, Form, McsIcons } from '../../../../../../../components';
 
 const {
   FormInput,
   FormSection,
 } = Form;
 
-class SimpleAttributionCreatePage extends Component {
+class General extends Component {
+
+  state = { advancedSectionDisplayed: false };
+
+  displayAdvancedSection = (e) => {
+    e.preventDefault();
+    this.setState({ advancedSectionDisplayed: !this.state.advancedSectionDisplayed });
+  }
+
   render() {
     const {
       fieldValidators: { isRequired },
@@ -33,7 +40,7 @@ class SimpleAttributionCreatePage extends Component {
 
         <Row>
           <Field
-            name="campaignName"
+            name="name"
             component={FormInput}
             validate={[isRequired]}
             props={{
@@ -66,7 +73,7 @@ class SimpleAttributionCreatePage extends Component {
 
           <Row className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
             <Field
-              name="campaignTechnicalName"
+              name="technical_name"
               component={FormInput}
               props={{
                 formItemProps: {
@@ -88,21 +95,17 @@ class SimpleAttributionCreatePage extends Component {
   }
 }
 
-SimpleAttributionCreatePage.defaultProps = {
+General.defaultProps = {
   formValues: null,
 };
 
-SimpleAttributionCreatePage.propTypes = {
-  fieldNormalizer: PropTypes.shape({
-    isNumber: PropTypes.func.isRequired,
-  }).isRequired,
+General.propTypes = {
 
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,
   }).isRequired,
 
   formatMessage: PropTypes.func.isRequired,
-  formValues: PropTypes.shape(),
 };
 
-export default SimpleAttributionCreatePage;
+export default General;

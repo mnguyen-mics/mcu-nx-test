@@ -18,6 +18,11 @@ function updateCampaign(campaignId, body) {
   return ApiService.putRequest(endpoint, body);
 }
 
+function deleteCampaign(campaignId, body) {
+  const endpoint = `display_campaigns/${campaignId}`;
+  return ApiService.deleteRequest(endpoint, body);
+}
+
 /* AD GROUP SERVICES */
 function getAdGroup(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
@@ -37,6 +42,11 @@ function getAdGroup(campaignId, adGroupId) {
     ));
 }
 
+function getAdGroups(campaignId) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups`;
+  return ApiService.getRequest(endpoint);
+}
+
 function createAdGroup(campaignId, body) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups`;
   return ApiService.postRequest(endpoint, body);
@@ -45,6 +55,11 @@ function createAdGroup(campaignId, body) {
 function updateAdGroup(campaignId, adGroupId, body) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
   return ApiService.putRequest(endpoint, body);
+}
+
+function deleteAdGroup({ campaignId, id, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${id}`;
+  return ApiService.deleteRequest(endpoint, body);
 }
 
 /* AUDIENCE SERVICES */
@@ -116,20 +131,53 @@ function updateAd(adId, campaignId, adGroupId, body) {
   return ApiService.putRequest(endpoint, body);
 }
 
+function createCampaign(organisationId, body) {
+  const endpoint = `display_campaigns/?organisation_id=${organisationId}`;
+  return ApiService.postRequest(endpoint, body);
+}
+
+function getGoal({ campaignId, options = {} }) {
+  const endpoint = `campaigns/${campaignId}/goal_selections`;
+  return ApiService.getRequest(endpoint, options);
+}
+
+function createGoal({ campaignId, body }) {
+  const endpoint = `campaigns/${campaignId}/goal_selections`;
+  return ApiService.postRequest(endpoint, body);
+}
+
+function updateGoal({ campaignId, id, body }) {
+  const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
+  return ApiService.putRequest(endpoint, body);
+}
+
+function deleteGoal({ campaignId, id, body }) {
+  const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
+  return ApiService.deleteRequest(endpoint, body);
+}
+
 export default {
   createAdGroup,
   createAudience,
+  createCampaign,
+  createGoal,
   createPublisher,
   deleteAudience,
+  deleteGoal,
   deletePublisher,
   getAdGroup,
+  getAdGroups,
   getAds,
   getCampaignDisplay,
   getCampaignName,
+  getGoal,
   getPublishers,
   getAudiences,
   updateAd,
   updateAdGroup,
   updateAudience,
   updateCampaign,
+  updateGoal,
+  deleteAdGroup,
+  deleteCampaign,
 };
