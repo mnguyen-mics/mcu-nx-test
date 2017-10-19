@@ -6,8 +6,8 @@ import { TooltipProps } from 'antd/lib/tooltip';
 
 import McsIcons from '../McsIcons';
 
-interface FormFieldWrapperProps {
-  helpToolTipProps?: TooltipProps;
+export interface FormFieldWrapperProps {
+  helpToolTipProps?: TooltipProps & { className?: string };
 }
 
 const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props => {
@@ -40,7 +40,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
 
         {!isEmpty(helpToolTipProps)
           && (
-            <Col span={2} className="field-tooltip" style={style}>
+            <Col span={2} className={`field-tooltip ${helpToolTipProps!.className}`}>
               <Tooltip {...tooltipProps} placement="right">
                 <McsIcons type="info" />
               </Tooltip>
@@ -50,10 +50,6 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
       </Row>
     </Form.Item>
   );
-};
-
-FormFieldWrapper.defaultProps = {
-  helpToolTipProps: {},
 };
 
 export default FormFieldWrapper;

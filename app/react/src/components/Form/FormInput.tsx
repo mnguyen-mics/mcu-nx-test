@@ -2,20 +2,18 @@ import * as React from 'react';
 
 // TS Interfaces
 import { Input, Col } from 'antd';
-import { TooltipProps } from 'antd/lib/tooltip';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
 
-import FormFieldWrapper from '../../components/Form/FormFieldWrapper';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
-interface FormInputsProps {
+interface FormInputProps {
   formItemProps: FormItemProps;
   inputProps?: InputProps;
-  helpToolTipProps?: TooltipProps;
 }
 
-const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
+const FormInput: React.SFC<FormInputProps & FormFieldWrapperProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 

@@ -8,15 +8,13 @@ import {
   GenericField,
   FormErrors,
 } from 'redux-form';
-
-import FormFieldWrapper from '../../../components/Form/FormFieldWrapper';
-import DateInput from './DateInput';
-import { isPastDate } from '../../../utils/DateHelper';
-
-import { TooltipProps } from 'antd/lib/tooltip';
 import moment from 'moment';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { DatePickerProps } from 'antd/lib/date-picker';
+
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../../components/Form/FormFieldWrapper';
+import DateInput from './DateInput';
+import { isPastDate } from '../../../utils/DateHelper';
 
 interface FormRangePickerProps {
   endProps: GenericField<DatePickerProps>;
@@ -26,7 +24,6 @@ interface FormRangePickerProps {
   };
   fieldsMetaData: {[field: string]: { touched: boolean, visited: boolean }};
   formItemProps: FormItemProps;
-  helpToolTipProps: TooltipProps;
   startProps: GenericField<DatePickerProps>;
   syncErrors: FormErrors<{[key: string]: string}>;
   values: {
@@ -37,7 +34,7 @@ interface FormRangePickerProps {
 
 const DateInputField = Field as new () => GenericField<DatePickerProps>;
 
-class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
+class FormRangePicker extends React.Component<FormRangePickerProps & FormFieldWrapperProps, {}> {
 
   static defaultProps: Partial<FormRangePickerProps> = {
     fieldsMetaData: undefined,

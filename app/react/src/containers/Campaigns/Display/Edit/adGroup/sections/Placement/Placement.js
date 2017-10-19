@@ -43,7 +43,7 @@ class Placement extends Component {
     };
 
     const helpToolTipProps = {
-      style: { alignSelf: 'flex-start', paddingTop: '.7em' },
+      className: 'tooltip-top-right',
       title: formatMessage(messages.contentSectionPlacementTooltip),
     };
 
