@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
-import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader';
+import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader.tsx';
 
 function AudienceSegmentHeader({ segment, translations }) {
 

@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
-import { TableView } from '../../../../../components/TableView';
+import { TableView } from '../../../../../components/TableView/index.ts';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
 import {

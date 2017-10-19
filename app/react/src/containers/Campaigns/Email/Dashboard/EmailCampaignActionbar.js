@@ -13,7 +13,7 @@ import ExportService from '../../../../services/ExportService';
 import { Actionbar } from '../../../Actionbar';
 import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 
 class EmailCampaignActionbar extends Component {
 

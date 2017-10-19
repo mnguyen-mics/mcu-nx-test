@@ -4,7 +4,7 @@ import { Row, Icon } from 'antd';
 import moment from 'moment';
 import { intlShape, injectIntl } from 'react-intl';
 
-import { Card } from '../../../../components/Card';
+import { Card } from '../../../../components/Card/index.ts';
 import EventActivity from './EventActivity';
 import Device from './Device';
 import Origin from './Origin';

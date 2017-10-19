@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Button, message } from 'antd';
+import { Menu, Button, Dropdown, message } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
@@ -44,8 +44,18 @@ const fetchExportData = (organisationId, filter) => {
   const dimension = '';
 
   const apiResults = Promise.all([
-    CampaignService.getCampaigns(organisationId, campaignType, buildOptionsForGetCampaigns()),
-    ReportService.getDisplayCampaignPerformanceReport(organisationId, startDate, endDate, dimension),
+
+    CampaignService.getCampaigns(
+      organisationId,
+      campaignType,
+      buildOptionsForGetCampaigns(),
+    ),
+    ReportService.getDisplayCampaignPerfomanceReport(
+      organisationId,
+      startDate,
+      endDate,
+      dimension,
+    ),
   ]);
 
   return apiResults.then(results => {
@@ -66,10 +76,7 @@ const fetchExportData = (organisationId, filter) => {
 
 class DisplayCampaignsActionbar extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = { exportIsRunning: false };
-  }
+  state = { exportIsRunning: false };
 
   handleRunExport = () => {
     const {
@@ -84,6 +91,7 @@ class DisplayCampaignsActionbar extends Component {
     const filter = parseSearch(this.props.location.search, DISPLAY_SEARCH_SETTINGS);
 
     this.setState({ exportIsRunning: true });
+
     const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
 
     fetchExportData(organisationId, filter).then(data => {
@@ -99,6 +107,7 @@ class DisplayCampaignsActionbar extends Component {
   };
 
   render() {
+    const { exportIsRunning } = this.state;
     const {
       match: {
         params: {
@@ -108,8 +117,6 @@ class DisplayCampaignsActionbar extends Component {
       history,
       translations,
     } = this.props;
-
-    const exportIsRunning = this.state.exportIsRunning;
 
     const handleOnClick = ({ key }) => {
       switch (key) {
@@ -165,12 +172,12 @@ DisplayCampaignsActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired
+  history: PropTypes.shape().isRequired,
 };
 
 DisplayCampaignsActionbar = compose(
   withRouter,
-  withTranslations
+  withTranslations,
 )(DisplayCampaignsActionbar);
 
 export default DisplayCampaignsActionbar;

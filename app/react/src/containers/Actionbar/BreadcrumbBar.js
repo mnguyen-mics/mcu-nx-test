@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Breadcrumb } from 'antd';
 
 import { PathPropTypes } from '../../validators/proptypes';
-import McsIcons from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons.tsx';
 
 import generateGuid from '../../utils/generateGuid';
 
@@ -14,7 +14,7 @@ function BreadcrumbBar(props) {
       ? (elt.name.substr(0, 27) !== elt.name ? `${elt.name.substr(0, 27)}\u2026` : elt.name)
       : null
     );
-    const item = elt.url ? <Link to={elt.url} key={elt.key}>{formatedElt}</Link> : formatedElt;
+    const item = elt.url ? <Link to={elt.url}>{formatedElt}</Link> : formatedElt;
 
     return <Breadcrumb.Item key={generateGuid()}>{item}</Breadcrumb.Item>;
   };

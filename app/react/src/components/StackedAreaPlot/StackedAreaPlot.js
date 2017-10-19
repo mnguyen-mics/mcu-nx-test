@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Plottable from 'plottable';
 
-import { ChartTooltip, BasicTooltip } from '../ChartTooltip';
+import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index.ts';
 
 class StackedAreaPlot extends Component {
 

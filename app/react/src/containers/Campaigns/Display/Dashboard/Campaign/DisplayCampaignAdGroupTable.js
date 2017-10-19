@@ -7,9 +7,9 @@ import { compose } from 'recompose';
 
 import messages from '../messages';
 
-import { TableView } from '../../../../../components/TableView';
+import { TableView } from '../../../../../components/TableView/index.ts';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import McsIcons from '../../../../../components/McsIcons';
+import McsIcons from '../../../../../components/McsIcons.tsx';
 
 class DisplayCampaignAdGroupTable extends Component {
 
@@ -17,16 +17,18 @@ class DisplayCampaignAdGroupTable extends Component {
     const {
       match: {
         params: {
-          organisationId,
           campaignId,
+          organisationId
         },
       },
       history,
+      location
     } = this.props;
 
-    const editUrl = `/${organisationId}/campaigns/display/expert/edit/${campaignId}/edit-ad-group/${adgroup.id}`;
-
-    history.push(editUrl);
+    history.push({
+      pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adgroup.id}`,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   }
 
   render() {
@@ -92,7 +94,6 @@ class DisplayCampaignAdGroupTable extends Component {
         });
     };
 
-
     const dataColumns = [
       {
         translationKey: 'STATUS',
@@ -117,7 +118,7 @@ class DisplayCampaignAdGroupTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroup/${record.id}`}
+            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${record.id}`}
           >{text}
           </Link>
         ),
@@ -207,6 +208,7 @@ class DisplayCampaignAdGroupTable extends Component {
 DisplayCampaignAdGroupTable.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
   isFetching: PropTypes.bool.isRequired,
   isFetchingStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,

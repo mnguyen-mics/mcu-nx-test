@@ -9,7 +9,7 @@ import { Layout, Button } from 'antd';
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import EmailCampaignHeader from './EmailCampaignHeader';
 import EmailCampaignDashboard from './EmailCampaignDashboard';
-import { Card } from '../../../../components/Card';
+import { Card } from '../../../../components/Card/index.ts';
 import BlastTable from './BlastTable';
 import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
 import messages from './messages';

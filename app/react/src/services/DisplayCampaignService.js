@@ -1,40 +1,135 @@
-import ApiService from './ApiService';
+import moment from 'moment';
 
-const getCampaignDisplay = (campaignId, params = '') => {
+import ApiService from './ApiService';
+import { filterEmptyValues } from '../utils/ReduxFormHelper';
+
+/* CAMPAIGN SERVICES */
+function getCampaignDisplay(campaignId, params = '') {
   const endpoint = `display_campaigns/${campaignId}`;
   return ApiService.getRequest(endpoint, params);
-};
+}
 
-const getAdGroup = (campaignId, adGroupId) => {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
-  return ApiService.getRequest(endpoint);
-};
+function getCampaignName(campaignId) {
+  return getCampaignDisplay(campaignId).then(res => res.data.name);
+}
 
-const getAds = (campaignId, adGroupId) => {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
-  return ApiService.getRequest(endpoint);
-};
-
-const updateCampaign = (campaignId, body) => {
+function updateCampaign(campaignId, body) {
   const endpoint = `display_campaigns/${campaignId}`;
   return ApiService.putRequest(endpoint, body);
-};
+}
 
-const updateAdGroup = (campaignId, adGroupId, body) => {
+/* AD GROUP SERVICES */
+function getAdGroup(campaignId, adGroupId) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
+  return ApiService.getRequest(endpoint)
+    .then(({ data }) => (
+      filterEmptyValues(data).reduce((acc, key) => {
+        let value = data[key];
+
+        if (key === 'start_date') {
+          value = moment(value);
+        } else if (key === 'end_date') {
+          value = moment(value);
+        }
+
+        return { ...acc, [key]: value };
+      }, {})
+    ));
+}
+
+function createAdGroup(campaignId, body) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups`;
+  return ApiService.postRequest(endpoint, body);
+}
+
+function updateAdGroup(campaignId, adGroupId, body) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
   return ApiService.putRequest(endpoint, body);
-};
+}
 
-const updateAd = (adId, campaignId, adGroupId, body) => {
+/* AUDIENCE SERVICES */
+function getAudiences(campaignId, adGroupId) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
+  return ApiService.getRequest(endpoint).then(res => res.data.map(segment => {
+    const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
+
+    return {
+      ...relevantData,
+      id: audience_segment_id,
+      include: !exclude,
+      otherId: id,
+      toBeRemoved: false,
+    };
+  }));
+}
+
+function createAudience({ campaignId, adGroupId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
+  return ApiService.postRequest(endpoint, body).then(res => res.data);
+}
+
+function updateAudience({ campaignId, adGroupId, id, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
+  return ApiService.putRequest(endpoint, body);
+}
+
+function deleteAudience({ campaignId, adGroupId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
+  return ApiService.deleteRequest(endpoint);
+}
+
+/* PUBLISHER SERVICES */
+function getPublishers({ campaignId }) {
+  const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
+  return ApiService.getRequest(endpoint)
+    .then(res => res.data.map((elem) => {
+      const { display_network_access_id, id, ...publisher } = elem;
+
+      return {
+        ...publisher,
+        display_network_access_id,
+        id: display_network_access_id,
+        otherId: id,
+        toBeRemoved: false
+      };
+    }));
+}
+
+function createPublisher({ campaignId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/inventory_sources/`;
+  return ApiService.postRequest(endpoint, body);
+}
+
+function deletePublisher({ campaignId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/inventory_sources/${id}`;
+  return ApiService.deleteRequest(endpoint);
+}
+
+/* AD SERVICES */
+function getAds(campaignId, adGroupId) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
+  return ApiService.getRequest(endpoint);
+}
+
+function updateAd(adId, campaignId, adGroupId, body) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
   return ApiService.putRequest(endpoint, body);
-};
+}
 
 export default {
-  getCampaignDisplay,
+  createAdGroup,
+  createAudience,
+  createPublisher,
+  deleteAudience,
+  deletePublisher,
   getAdGroup,
   getAds,
-  updateCampaign,
-  updateAdGroup,
+  getCampaignDisplay,
+  getCampaignName,
+  getPublishers,
+  getAudiences,
   updateAd,
+  updateAdGroup,
+  updateAudience,
+  updateCampaign,
 };

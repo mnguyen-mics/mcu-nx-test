@@ -15,4 +15,5 @@ module.exports = {
   appDistPath: resolve('dist/react'),
   publicPath: '/',
   publicDistPath: '/react',
+  appIndexJs: resolve('app/react/src/index.tsx'),
 };

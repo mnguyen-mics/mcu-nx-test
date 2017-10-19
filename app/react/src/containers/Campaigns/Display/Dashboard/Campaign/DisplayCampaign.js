@@ -9,8 +9,8 @@ import DisplayCampaignHeader from '../Common/DisplayCampaignHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
 import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
-import Card from '../../../../../components/Card/Card';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import Card from '../../../../../components/Card/Card.tsx';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
@@ -18,8 +18,9 @@ import messages from '../messages';
 
 import {
   parseSearch,
-  updateSearch
+  updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
+import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
 const { Content } = Layout;
 
@@ -30,7 +31,7 @@ class DisplayCampaign extends Component {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS)
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -40,9 +41,9 @@ class DisplayCampaign extends Component {
     const {
       history: {
         location: {
-          search
-        }
-      }
+          search,
+        },
+      },
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
@@ -51,14 +52,14 @@ class DisplayCampaign extends Component {
       rangeType: filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
-      to: filter.to
+      to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
       rangeType: newValues.rangeType,
       lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
-      to: newValues.to
+      to: newValues.to,
     });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
@@ -68,23 +69,29 @@ class DisplayCampaign extends Component {
 
     const {
       match: {
-        params: { organisationId },
+        params: { campaignId, organisationId },
       },
       campaign,
       ads,
       adGroups,
+      location,
       updateAd,
       updateAdGroup,
       updateCampaign,
       dashboardPerformance,
       intl: {
-        formatMessage
-      }
+        formatMessage,
+      },
     } = this.props;
 
     const adGroupButtons = (
       <span>
-        <Link to={`/${organisationId}/campaigns/display/expert/edit/${campaign.items.id}/edit-ad-group/T1`}>
+        <Link
+          to={{
+            pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
+            state: { from: `${location.pathname}${location.search}` },
+          }}
+        >
           <Button className="m-r-10" type="primary">
             <FormattedMessage {...messages.newAdGroups} />
           </Button>
@@ -149,9 +156,9 @@ class DisplayCampaign extends Component {
 }
 
 DisplayCampaign.propTypes = {
-  match: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
+  location: ReactRouterPropTypes.location.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
   ads: PropTypes.shape({
     isLoadingList: PropTypes.bool,
     isLoadingPerf: PropTypes.bool,
@@ -182,17 +189,17 @@ DisplayCampaign.propTypes = {
       isLoading: PropTypes.bool,
       hasFetched: PropTypes.bool,
       items: PropTypes.arrayOf(PropTypes.object),
-    })
+    }),
   }).isRequired,
   updateCampaign: PropTypes.func.isRequired,
   updateAdGroup: PropTypes.func.isRequired,
   updateAd: PropTypes.func.isRequired,
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
 };
 
 DisplayCampaign = compose(
   injectIntl,
-  withRouter
+  withRouter,
 )(DisplayCampaign);
 
 export default DisplayCampaign;

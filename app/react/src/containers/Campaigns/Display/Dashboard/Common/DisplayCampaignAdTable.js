@@ -5,9 +5,9 @@ import { Link, withRouter } from 'react-router-dom';
 import { Tooltip, Popover, Switch } from 'antd';
 import { compose } from 'recompose';
 
-import { TableView } from '../../../../../components/TableView';
+import { TableView } from '../../../../../components/TableView/index.ts';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import McsIcons from '../../../../../components/McsIcons';
+import McsIcons from '../../../../../components/McsIcons.tsx';
 import messages from '../messages';
 
 class DisplayCampaignAdTable extends Component {

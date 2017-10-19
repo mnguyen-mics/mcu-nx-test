@@ -7,9 +7,11 @@ import { injectIntl, intlShape } from 'react-intl';
 import moment from 'moment';
 import { pick } from 'lodash';
 
+import { EditContentLayout } from '../../../../components/Layout/index.ts';
+import EmailForm from './EmailForm';
 import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';
-import EmailEditor from './EmailEditor';
+
 import messages from './messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import * as actions from '../../../../state/Notifications/actions';
@@ -18,19 +20,13 @@ import { isFakeId } from '../../../../utils/FakeIdHelper';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 class EditEmailPage extends Component {
-  constructor(props) {
-    super(props);
-    this.editEmailCampaign = this.editEmailCampaign.bind(this);
-    this.loadEmailCampaign = this.loadEmailCampaign.bind(this);
-    this.redirect = this.redirect.bind(this);
 
-    this.state = {
-      loadedEmailCampaign: {
-        routers: [],
-        blasts: [],
-      },
-    };
-  }
+  state = {
+    loadedEmailCampaign: {
+      routers: [],
+      blasts: []
+    }
+  };
 
   componentDidMount() {
     const {
@@ -54,7 +50,7 @@ class EditEmailPage extends Component {
     }
   }
 
-  editEmailCampaign(updatedEmailCampaign) {
+  editEmailCampaign = (updatedEmailCampaign) => {
     const {
       notifyError,
       intl: { formatMessage },
@@ -158,7 +154,7 @@ class EditEmailPage extends Component {
     });
   }
 
-  loadEmailCampaign(campaignId) {
+  loadEmailCampaign = (campaignId) => {
     const { notifyError } = this.props;
 
     EmailCampaignService.getEmailCampaign(campaignId)
@@ -216,8 +212,9 @@ class EditEmailPage extends Component {
 
   render() {
     const {
-      organisationId,
       intl: { formatMessage },
+      match: { url },
+      organisationId,
     } = this.props;
 
     const {
@@ -227,6 +224,7 @@ class EditEmailPage extends Component {
       },
     } = this.state;
 
+    const formId = 'emailForm';
     const initialValues = { campaign: other };
     const campaignName = other.name;
 
@@ -238,16 +236,34 @@ class EditEmailPage extends Component {
       { name: formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, { campaignName }) },
     ];
 
+    const sidebarItems = {
+      general: messages.emailEditorSectionTitle1,
+      router: messages.emailEditorSectionTitle2,
+      blasts: messages.emailEditorSectionTitle3,
+    };
+
+    const buttonMetadata = {
+      formId,
+      message: messages.emailEditorSaveCampaign,
+      onClose: this.redirect,
+    };
+
     return (
-      <EmailEditor
-        initialValues={initialValues}
-        blasts={blasts}
-        save={this.editEmailCampaign}
-        close={this.redirect}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
+      <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
-      />
+        sidebarItems={sidebarItems}
+        buttonMetadata={buttonMetadata}
+        url={url}
+      >
+        <EmailForm
+          blasts={blasts}
+          closeNextDrawer={this.props.closeNextDrawer}
+          formId={formId}
+          initialValues={initialValues}
+          openNextDrawer={this.props.openNextDrawer}
+          save={this.editEmailCampaign}
+        />
+      </EditContentLayout>
     );
   }
 }

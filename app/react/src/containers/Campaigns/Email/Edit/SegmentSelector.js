@@ -6,15 +6,17 @@ import { Layout, Button, Checkbox } from 'antd';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import {
   EmptyTableView,
   TableViewFilters,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { formatMetric } from '../../../../utils/MetricHelper';
+import messages from './messages';
 
 const { Content } = Layout;
 
@@ -60,49 +62,48 @@ class SegmentSelector extends Component {
   }
 
   fetchAudienceSegments = () => {
-    const { organisationId, defaultDatamart, selectedSegmentIds } = this.props;
+    const { organisationId, defaultDatamart, selectedIds } = this.props;
     const { pageSize, currentPage, keywords } = this.state;
-
-    const options = {
-      ...getPaginatedApiParam(currentPage, pageSize),
-    };
+    const datamartId = defaultDatamart(organisationId).id;
+    const options = { ...getPaginatedApiParam(currentPage, pageSize) };
 
     if (keywords) {
       options.keywords = keywords;
     }
 
-    const datamartId = defaultDatamart(organisationId).id;
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, options)
+      .then(response => {
+        const segments = response.data;
+        const allAudienceSegmentIds = segments.map(segment => segment.id);
+        const audienceSegmentById = normalizeArrayOfObject(segments, 'id');
 
-    return AudienceSegmentService.getSegments(organisationId, datamartId, options).then(response => {
-      const allAudienceSegmentIds = response.data.map(segment => segment.id);
-      const audienceSegmentById = normalizeArrayOfObject(response.data, 'id');
+        this.setState(prevState => {
+          const selectedSegmentById = {
+            ...prevState.selectedSegmentById,
+            ...selectedIds.reduce((acc, segmentId) => {
+              if (!prevState.selectedSegmentById[segmentId]) {
+                return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
+              }
+              return acc;
+            }, {}),
+          };
 
-      this.setState(prevState => {
+          return {
+            allAudienceSegmentIds,
+            audienceSegmentById,
+            selectedSegmentById,
+            isLoading: false,
+            total: response.total,
+          };
+        });
 
-        const selectedSegmentById = {
-          ...prevState.selectedSegmentById,
-          ...selectedSegmentIds.reduce((acc, segmentId) => {
-            if (!prevState.selectedSegmentById[segmentId]) {
-              return { ...acc, [segmentId]: audienceSegmentById[segmentId] };
-            }
-            return acc;
-          }, {}),
-        };
-
-        return {
-          allAudienceSegmentIds,
-          audienceSegmentById,
-          selectedSegmentById,
-          isLoading: false,
-          total: response.total,
-        };
+        return response;
       });
-      return response;
-    });
   }
 
   getColumnsDefinitions = () => {
     const { selectedSegmentById } = this.state;
+
     return {
       dataColumnsDefinition: [
         {
@@ -116,10 +117,22 @@ class SegmentSelector extends Component {
           ),
         },
         {
-          translationKey: 'NAME',
+          intlMessage: messages.segmentTitleColumn1,
           key: 'name',
           isHideable: false,
           render: text => <span>{text}</span>,
+        },
+        {
+          intlMessage: messages.segmentTitleColumn2,
+          key: 'user_points',
+          isHideable: false,
+          render: text => <span>{text === '-' ? text : formatMetric(text, '0,0')}</span>,
+        },
+        {
+          intlMessage: messages.segmentTitleColumn3,
+          key: 'desktop_cookie_ids',
+          isHideable: false,
+          render: text => <span>{text === '-' ? text : formatMetric(text, '0,0')}</span>,
         },
       ],
       actionsColumnsDefinition: [],
@@ -128,7 +141,6 @@ class SegmentSelector extends Component {
 
   getSearchOptions() {
     return {
-      isEnabled: true,
       placeholder: 'Search a template',
       onSearch: value => {
         this.setState({
@@ -142,6 +154,7 @@ class SegmentSelector extends Component {
     const { save } = this.props;
     const { selectedSegmentById } = this.state;
     const selectedSegments = Object.keys(selectedSegmentById);
+
     save(selectedSegments);
   }
 
@@ -192,7 +205,7 @@ class SegmentSelector extends Component {
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <Actionbar path={[{ name: 'Add an existing template' }]} edition>
+          <Actionbar path={[{ name: 'Add an audience' }]} edition>
             <Button type="primary mcs-primary" onClick={this.handleAdd}>
               <McsIcons type="plus" /><span>Add</span>
             </Button>
@@ -224,15 +237,15 @@ class SegmentSelector extends Component {
 }
 
 SegmentSelector.defaultProps = {
-  selectedSegmentIds: [],
+  selectedIds: [],
 };
 
 SegmentSelector.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  selectedSegmentIds: PropTypes.arrayOf(PropTypes.string),
-  defaultDatamart: PropTypes.func.isRequired,
-  save: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
+  defaultDatamart: PropTypes.func.isRequired,
+  organisationId: PropTypes.string.isRequired,
+  selectedIds: PropTypes.arrayOf(PropTypes.string),
+  save: PropTypes.func.isRequired,
 };
 
 export default compose(

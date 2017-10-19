@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Plottable from 'plottable';
 
-import { OverlapTooltip, ChartTooltip } from '../ChartTooltip';
+import { OverlapTooltip, ChartTooltip } from '../ChartTooltip/index.ts';
 
 class VerticalBarChart extends Component {
 

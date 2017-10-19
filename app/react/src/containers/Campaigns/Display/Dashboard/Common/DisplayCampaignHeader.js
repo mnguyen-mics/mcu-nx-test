@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TitleAndStatusHeader from '../../../../../components/TitleAndStatusHeader';
+import TitleAndStatusHeader from '../../../../../components/TitleAndStatusHeader.tsx';
 
 function DisplayCampaignHeader({
   object: {

@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';

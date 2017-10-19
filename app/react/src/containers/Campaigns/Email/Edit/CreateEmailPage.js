@@ -6,15 +6,16 @@ import { message } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 import { pick } from 'lodash';
 
+import { EditContentLayout } from '../../../../components/Layout/index.ts';
+import EmailForm from './EmailForm';
 import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';
-import EmailEditor from './EmailEditor';
+
 import messages from './messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import * as actions from '../../../../state/Notifications/actions';
 import log from '../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
-
 
 class CreateEmailPage extends Component {
 
@@ -86,10 +87,10 @@ class CreateEmailPage extends Component {
   }
 
   render() {
-
     const {
-      organisationId,
       intl: { formatMessage },
+      match: { url },
+      organisationId,
     } = this.props;
 
     const breadcrumbPaths = [
@@ -100,25 +101,47 @@ class CreateEmailPage extends Component {
       { name: formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle) },
     ];
 
+    const sidebarItems = {
+      general: messages.emailEditorSectionTitle1,
+      router: messages.emailEditorSectionTitle2,
+      blasts: messages.emailEditorSectionTitle3,
+    };
+
+    const formId = 'emailForm';
+
+    const buttonMetadata = {
+      formId,
+      message: messages.emailEditorSaveCampaign,
+      onClose: this.redirect,
+    };
+
+
     return (
-      <EmailEditor
-        save={this.createEmailCampaign}
-        close={this.redirect}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
+      <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
-      />
+        sidebarItems={sidebarItems}
+        buttonMetadata={buttonMetadata}
+        url={url}
+      >
+        <EmailForm
+          closeNextDrawer={this.props.closeNextDrawer}
+          formId={formId}
+          openNextDrawer={this.props.openNextDrawer}
+          save={this.createEmailCampaign}
+        />
+      </EditContentLayout>
     );
   }
 }
 
 CreateEmailPage.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-  openNextDrawer: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
-  notifyError: PropTypes.func.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
+  notifyError: PropTypes.func.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
+  organisationId: PropTypes.string.isRequired,
 };
 
 export default compose(

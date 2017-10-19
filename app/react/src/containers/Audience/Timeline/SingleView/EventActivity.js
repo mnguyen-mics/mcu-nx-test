@@ -5,7 +5,7 @@ import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
 import lodash from 'lodash';
 
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import messages from '../messages';
 
 class EventActivity extends Component {

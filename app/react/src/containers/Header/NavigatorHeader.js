@@ -8,7 +8,7 @@ import { Layout, Menu, Dropdown, Row, Col } from 'antd';
 import pathToRegexp from 'path-to-regexp'; // eslint-disable-line import/no-extraneous-dependencies
 
 import * as SessionHelper from '../../state/Session/selectors';
-import McsIcons from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons.tsx';
 import log from '../../utils/Logger';
 import messages from './messages';
 

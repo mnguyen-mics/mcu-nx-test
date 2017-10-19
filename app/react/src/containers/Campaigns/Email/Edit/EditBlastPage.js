@@ -9,7 +9,7 @@ import moment from 'moment';
 
 import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';
-import EmailBlastEditor from './EmailBlastEditor';
+import EmailBlastContent from './EmailBlastContent';
 import messages from './messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import * as actions from '../../../../state/Notifications/actions';
@@ -18,15 +18,16 @@ import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 
 
 class EditBlastPage extends Component {
+
   state = {
     emailCampaign: {
       name: '',
     },
     loadedBlast: {
       consents: [],
-      templates: [],
       segments: [],
-    },
+      templates: [],
+    }
   }
 
   componentDidMount() {
@@ -79,6 +80,18 @@ class EditBlastPage extends Component {
       log.error(error);
       notifyError(error);
     });
+  }
+
+  redirect = () => {
+    const {
+      organisationId,
+      match: { params: { campaignId } },
+      history,
+    } = this.props;
+
+    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email/${campaignId}`;
+
+    history.push(emailCampaignListUrl);
   }
 
   updateBlast = (updatedBlast) => {
@@ -138,26 +151,11 @@ class EditBlastPage extends Component {
     });
   }
 
-  redirect = () => {
-    const {
-      organisationId,
-      match: { params: { campaignId } },
-      history,
-    } = this.props;
-
-    const emailCampaignListUrl = `/v2/o/${organisationId}/campaigns/email/${campaignId}`;
-
-    history.push(emailCampaignListUrl);
-  }
-
   render() {
 
     const {
       emailCampaign,
-      loadedBlast: {
-        segments,
-        ...other
-      },
+      loadedBlast,
     } = this.state;
 
     const {
@@ -166,28 +164,31 @@ class EditBlastPage extends Component {
       match: { params: { campaignId } },
     } = this.props;
 
-    const initialValues = { blast: other };
-    const blastName = other.blast_name;
-
     const breadcrumbPaths = [
       {
         name: emailCampaign.name,
         url: `/v2/o/${organisationId}/campaigns/email/${campaignId}`,
       },
-      { name: formatMessage(messages.emailBlastEditorBreadcrumbTitleEditBlast, { blastName }) },
+      {
+        name: formatMessage(
+          messages.emailBlastEditorBreadcrumbTitleEditBlast,
+          { blastName: loadedBlast.blast_name }
+        )
+      }
     ];
 
+    const handlers = {
+      closeNextDrawer: this.props.closeNextDrawer,
+      openNextDrawer: this.props.openNextDrawer,
+      redirect: this.redirect,
+      save: this.updateBlast,
+    };
 
     return (
-      <EmailBlastEditor
-        initialValues={initialValues}
-        blastName={blastName}
-        segments={segments}
-        save={this.updateBlast}
-        close={this.redirect}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
+      <EmailBlastContent
+        blast={loadedBlast}
         breadcrumbPaths={breadcrumbPaths}
+        handlers={handlers}
       />
     );
   }
