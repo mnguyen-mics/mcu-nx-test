@@ -34,11 +34,7 @@ const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & Wrap
   }
 
   const displayOptions = selectProps!.options.map(({ label, ...option }) => (
-    <Option
-      {...option}
-      key={option.value}
-    >{label}
-    </Option>
+    <Option {...option} key={option.value}>{label}</Option>
   ));
 
   return (
@@ -48,7 +44,7 @@ const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & Wrap
       validateStatus={validateStatus}
       {...formItemProps}
     >
-      <Col span={22} >
+      <Col span={22}>
         <Select
           {...selectProps}
           mode={mode}

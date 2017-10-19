@@ -150,12 +150,6 @@ class EmailBlastForm extends Component {
 
     const { consents, segmentRequired, segments } = this.state;
 
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 },
-    };
-
-
     const emptySegmentOption = {
       message: (segmentRequired
         ? formatMessage(messages.blastSegmentSelectionRequired)
@@ -208,7 +202,6 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorDatePickerLabelSentDate),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   datePickerProps: {
                     format: 'DD/MM/YYYY HH:mm',
@@ -229,7 +222,6 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailEditorProviderSelectLabel),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   options: consents.map(consent => ({
                     value: consent.id,

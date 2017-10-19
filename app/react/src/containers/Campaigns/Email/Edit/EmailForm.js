@@ -200,11 +200,6 @@ class EmailForm extends Component {
 
     const { routerOptions } = this.state;
 
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 },
-    };
-
     // const hasUnsavedChange = dirty;
     // dirty is for redux-form only
     // TODO handle wider email campaign modification (blasts)
@@ -275,7 +270,6 @@ class EmailForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailEditorRouterSelectLabel),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   options: routerOptions.map(router => ({
                     value: router.id,
