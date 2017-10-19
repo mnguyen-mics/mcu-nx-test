@@ -7,7 +7,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import moment from 'moment';
 import { pick } from 'lodash';
 
-import { EditContentLayout } from '../../../../components/Layout';
+import { EditContentLayout } from '../../../../components/Layout/index.ts';
 import EmailForm from './EmailForm';
 import { withMcsRouter } from '../../../Helpers';
 import withDrawer from '../../../../components/Drawer';
@@ -50,7 +50,7 @@ class EditEmailPage extends Component {
     }
   }
 
-  editEmailCampaign(updatedEmailCampaign) {
+  editEmailCampaign = (updatedEmailCampaign) => {
     const {
       notifyError,
       intl: { formatMessage },
@@ -154,7 +154,7 @@ class EditEmailPage extends Component {
     });
   }
 
-  loadEmailCampaign(campaignId) {
+  loadEmailCampaign = (campaignId) => {
     const { notifyError } = this.props;
 
     EmailCampaignService.getEmailCampaign(campaignId)

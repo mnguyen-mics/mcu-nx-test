@@ -6,11 +6,11 @@ import { FormattedMessage } from 'react-intl';
 
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import {
   EmptyTableView,
   CollectionViewFilters,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import CreativeService from '../../../../services/CreativeService';
 import CreativeCard from './CreativeCard';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
@@ -145,7 +145,6 @@ class EmailTemplateSelector extends Component {
 
   getSearchOptions() {
     return {
-      isEnabled: true,
       placeholder: 'Search a template',
       onSearch: value => {
         this.setState(prevState => ({

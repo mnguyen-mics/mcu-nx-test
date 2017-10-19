@@ -2,6 +2,29 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Plottable from 'plottable';
 
+// interface DatasetProps {
+//   key: string;
+//   value: number;
+//   color: string;
+// }
+//
+// interface TextProps {
+//   value?: string;
+//   text?: string;
+// }
+//
+// interface OptionsProps {
+//   innerRadius: boolean;
+//   isHalf: boolean;
+//   text: TextProps[];
+// }
+//
+// interface PieChartProps {
+//   identifier: string;
+//   dataset: DatasetProps[];
+//   options: OptionsProps[];
+// }
+
 class PieChart extends Component {
 
   constructor(props) {

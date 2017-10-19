@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 import lodash from 'lodash';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 
 import ExportService from '../../../../services/ExportService';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';

@@ -7,11 +7,11 @@ import { injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import moment from 'moment';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
-import MetricsColumn from '../../../../../components/MetricsColumn';
+import MetricsColumn from '../../../../../components/MetricsColumn.tsx';
 import CampaignDisplayProgress from './CampaignDisplayProgress';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';

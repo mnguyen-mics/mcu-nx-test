@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   TableViewFilters,
   EmptyTableView,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 
@@ -210,7 +210,6 @@ class GoalsTable extends Component {
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
 
     const searchOptions = {
-      isEnabled: true,
       placeholder: translations.SEARCH_DISPLAY_CAMPAIGNS,
       onSearch: value => this.updateLocationSearch({
         keywords: value,

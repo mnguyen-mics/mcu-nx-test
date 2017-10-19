@@ -25,10 +25,10 @@ import {
   Publisher,
   Summary,
 } from './sections';
-import { withNormalizer, withValidators } from '../../../../../components/Form';
-import { Loading } from '../../../../../components';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import { Loading, withNormalizer, withValidators } from '../../../../../components/index.ts';
+
 import { withMcsRouter } from '../../../../Helpers';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as actions from '../../../../../state/Notifications/actions';
 import { unformatMetric } from '../../../../../utils/MetricHelper';
 

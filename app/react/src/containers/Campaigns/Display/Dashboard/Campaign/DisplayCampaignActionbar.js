@@ -9,7 +9,7 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
-import McsIcons from '../../../../../components/McsIcons';
+import McsIcons from '../../../../../components/McsIcons.tsx';
 import ExportService from '../../../../../services/ExportService';
 
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';

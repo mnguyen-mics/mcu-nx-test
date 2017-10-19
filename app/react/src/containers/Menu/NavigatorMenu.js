@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   hasDatamarts,
   getDefaultDatamart } from '../../state/Session/selectors';
-import McsIcons from '../../components/McsIcons';
+import McsIcons from '../../components/McsIcons.tsx';
 import {
   itemDefinitions,
   itemDisplayedOnlyIfDatamart,

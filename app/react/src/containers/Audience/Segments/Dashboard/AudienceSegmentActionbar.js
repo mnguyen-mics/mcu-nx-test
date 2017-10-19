@@ -8,7 +8,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcons from '../../../../components/McsIcons.tsx';
 import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';

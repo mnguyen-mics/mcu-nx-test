@@ -8,7 +8,7 @@ import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import {
   TableViewFilters,
   EmptyTableView,
-} from '../../../../components/TableView';
+} from '../../../../components/TableView/index.ts';
 import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
@@ -27,7 +27,6 @@ function EmailCampaignsTable({
 }) {
 
   const searchOptions = {
-    isEnabled: true,
     placeholder: formatMessage(messages.searchPlaceholder),
     onSearch: value => onFilterChange({
       keywords: value,

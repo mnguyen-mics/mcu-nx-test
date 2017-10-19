@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 
 import messages from './messages';
-import TitleAndStatusHeader from '../../../components/TitleAndStatusHeader';
+import TitleAndStatusHeader from '../../../components/TitleAndStatusHeader.tsx';
 
 class TimelineHeader extends Component {
 

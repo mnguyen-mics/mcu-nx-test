@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedNumber, FormattedPlural } from 'react-intl';
 import { Col, Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form';
+import { FormSection } from '../../../../../../components/Form/index.ts';
 import messages from '../../messages';
 import { formatMetric } from '../../../../../../utils/MetricHelper';
 import { isToday, formatCalendarDate } from '../../../../../../utils/DateHelper';
