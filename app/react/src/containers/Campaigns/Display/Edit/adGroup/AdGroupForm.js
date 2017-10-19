@@ -21,6 +21,7 @@ import {
   Device,
   General,
   Location,
+  Media,
   Optimization,
   Placement,
   Publisher,
@@ -295,6 +296,8 @@ class AdGroupForm extends Component {
             <Device {...commonProps} formValues={formValues} />
             <hr />
             <Location {...commonProps} />
+            <hr />
+            <Media {...commonProps} />
             <hr />
             <Publisher {...commonProps} formValues={publisherTable} />
             <hr />
