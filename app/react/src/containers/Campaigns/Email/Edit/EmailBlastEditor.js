@@ -10,9 +10,9 @@ import { Layout, Button, Form, Row, Dropdown, Menu } from 'antd';
 import moment from 'moment';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
-import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form';
-import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord';
+import McsIcons from '../../../../components/McsIcons.tsx';
+import { withValidators, FormTitle, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form/index.ts';
+import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
