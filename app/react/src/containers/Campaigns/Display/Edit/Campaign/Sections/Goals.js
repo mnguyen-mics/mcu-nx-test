@@ -5,7 +5,7 @@ import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Row } from 'antd';
 
-import { EmptyRecords, Form, TableSelector } from '../../../../../../components';
+import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import messages from '../messages';
 import GoalService from '../../../../../../services/GoalService';
 import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';

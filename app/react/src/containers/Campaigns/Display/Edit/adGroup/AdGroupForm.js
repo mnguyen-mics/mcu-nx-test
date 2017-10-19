@@ -25,7 +25,8 @@ import {
   Publisher,
   Summary,
 } from './sections';
-import { Loading, withNormalizer, withValidators } from '../../../../../components/index.ts';
+import { Loading } from '../../../../../components/index.ts';
+import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';

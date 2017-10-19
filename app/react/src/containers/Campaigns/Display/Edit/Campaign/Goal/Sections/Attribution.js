@@ -4,7 +4,7 @@ import { Row } from 'antd';
 import { Field } from 'redux-form';
 
 import messages from '../messages';
-import { Form } from '../../../../../../../components';
+import { Form } from '../../../../../../../components/index.ts';
 
 const {
   FormInput,

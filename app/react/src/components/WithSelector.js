@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Layout, Button } from 'antd';
 
 import { Actionbar } from '../containers/Actionbar';
-import McsIcons from './McsIcons';
+import McsIcons from './McsIcons.tsx';
 
 const { Content } = Layout;
 

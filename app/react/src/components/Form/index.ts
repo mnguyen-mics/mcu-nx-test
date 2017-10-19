@@ -18,6 +18,7 @@ export default {
   FormSelectAddon,
   FormTitle,
   SwitchInput,
+  withNormalizer,
   withValidators,
 };
 

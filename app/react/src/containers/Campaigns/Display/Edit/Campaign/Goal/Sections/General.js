@@ -4,7 +4,7 @@ import { Row } from 'antd';
 import { Field } from 'redux-form';
 
 import messages from '../messages';
-import { ButtonStyleless, Form, McsIcons } from '../../../../../../../components';
+import { ButtonStyleless, Form, McsIcons } from '../../../../../../../components/index.ts';
 
 const {
   FormInput,

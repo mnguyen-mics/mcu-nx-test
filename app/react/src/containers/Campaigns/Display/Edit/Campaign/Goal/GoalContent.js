@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
 
-import { EditContentLayout } from '../../../../../../components/Layout';
+import { EditContentLayout } from '../../../../../../components/Layout/index.ts';
 import GoalForm from './GoalForm';
 import { withMcsRouter } from '../../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../../validators/proptypes';

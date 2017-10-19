@@ -6,12 +6,12 @@ import { isSubmitting } from 'redux-form';
 import { Layout } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 
-import { EditContentLayout } from '../../../../../components/Layout';
+import { EditContentLayout } from '../../../../../components/Layout/index.ts';
 import CampaignForm from './CampaignForm';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from './messages';
-import { Loading } from '../../../../../components';
+import { Loading } from '../../../../../components/index.ts';
 
 
 const formId = 'campaignForm';

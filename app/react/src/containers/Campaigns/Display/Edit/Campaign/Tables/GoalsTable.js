@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Table, Modal } from 'antd';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
-import { ButtonStyleless, McsIcons } from '../../../../../../components';
+import { ButtonStyleless, McsIcons } from '../../../../../../components/index.ts';
 import messages from '../../messages';
 
 class GoalsTable extends Component {
