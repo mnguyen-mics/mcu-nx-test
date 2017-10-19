@@ -1,6 +1,6 @@
 import Ads from './Ads/Ads';
 import Audience from './Audience';
-import Device from './Device';
+import Device from './Device/Device';
 import General from './General';
 import Location from './Location';
 import Media from './Media';

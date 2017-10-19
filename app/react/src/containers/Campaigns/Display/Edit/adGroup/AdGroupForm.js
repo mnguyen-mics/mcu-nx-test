@@ -246,13 +246,7 @@ class AdGroupForm extends Component {
       organisationId,
     } = this.props;
 
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 },
-    };
-
     const commonProps = {
-      fieldGridConfig,
       fieldNormalizer,
       fieldValidators,
       formName: FORM_NAME,

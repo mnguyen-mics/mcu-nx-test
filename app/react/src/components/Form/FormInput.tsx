@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { isEmpty } from 'lodash';
 
 // TS Interfaces
-import { Form, Input, Tooltip, Row, Col } from 'antd';
-import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { Input, Col } from 'antd';
+import { TooltipProps } from 'antd/lib/tooltip';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
 
-import McsIcons from '../../components/McsIcons';
+import FormFieldWrapper from '../../components/Form/FormFieldWrapper';
 
 interface FormInputsProps {
   formItemProps: FormItemProps;
@@ -16,48 +15,28 @@ interface FormInputsProps {
   helpToolTipProps?: TooltipProps;
 }
 
-const defaultTooltipPlacement: TooltipPlacement = 'right';
-
 const FormInput: React.SFC<FormInputsProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
-  const displayHelpToolTip = !isEmpty(props.helpToolTipProps);
-
-  const mergedTooltipProps: TooltipProps = {
-    placement: defaultTooltipPlacement,
-    ...props.helpToolTipProps,
-  };
-
-  const { label, ...otherFormItemProps } = props.formItemProps;
-
   return (
-    <Form.Item
+    <FormFieldWrapper
       help={props.meta.touched && (props.meta.warning || props.meta.error)}
+      helpToolTipProps={props.helpToolTipProps}
       validateStatus={validateStatus}
-      label={<span className="field-label">{label}</span>}
-      {...otherFormItemProps}
+      {...props.formItemProps}
     >
-      <Row align="middle" type="flex">
-        <Col span={22}>
-          <Input
-            id={props.input.name}
-            {...props.input}
-            {...props.inputProps}
-          />
-        </Col>
-
-        {displayHelpToolTip &&
-          <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
-              <McsIcons type="info" />
-            </Tooltip>
-          </Col>
-        }
-      </Row>
-    </Form.Item>
+      <Col span={22}>
+        <Input
+          id={props.input.name}
+          {...props.input}
+          {...props.inputProps}
+        />
+      </Col>
+    </FormFieldWrapper>
   );
 };
 

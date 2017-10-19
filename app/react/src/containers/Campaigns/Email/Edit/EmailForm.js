@@ -233,7 +233,6 @@ class EmailForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailEditorNameInputLabel),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   inputProps: {
                     placeholder: formatMessage(messages.emailEditorNameInputPlaceholder),
@@ -249,7 +248,6 @@ class EmailForm extends Component {
                 props={{
                   formItemProps: {
                     label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
-                    ...fieldGridConfig,
                   },
                   inputProps: {
                     placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder),

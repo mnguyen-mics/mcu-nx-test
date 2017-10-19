@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
-import { Col, Form, Row, Select, Tooltip } from 'antd';
+import { Col, Select, } from 'antd';
 
-import McsIcons from '../../components/McsIcons.tsx';
+import FormFieldWrapper from './FormFieldWrapper';
 
 const Option = Select.Option;
 
@@ -14,6 +13,10 @@ function FormTagSelect({
   meta,
   selectProps,
 }) {
+  let validateStatus = 'success';
+
+  if (meta.touched && meta.invalid) validateStatus = 'error';
+  if (meta.touched && meta.warning) validateStatus = 'warning';
 
   const displayOptions = selectProps.options.map(({ label, value, ...rest }) => (
     <Option {...rest} key={value} value={String(value)}>{label}</Option>
@@ -21,48 +24,26 @@ function FormTagSelect({
 
   const value = input.value || [];
 
-  let validateStatus = 'success';
-
-  if (meta.touched && meta.invalid) validateStatus = 'error';
-  if (meta.touched && meta.warning) validateStatus = 'warning';
-
-  const mergedTooltipProps = {
-    placement: 'right',
-    ...helpToolTipProps,
-  };
-
-  const { label, ...otherFormItemProps } = formItemProps;
-
   return (
-    <Form.Item
+    <FormFieldWrapper
       help={meta.touched && (meta.warning || meta.error)}
+      helpToolTipProps={helpToolTipProps}
       validateStatus={validateStatus}
-      label={<span className="field-label">{label}</span>}
-      {...otherFormItemProps}
+      {...formItemProps}
     >
-      <Row align="middle" type="flex">
-        <Col span={22} >
-          <Select
-            mode="multiple"
-            {...input}
-            {...selectProps}
-            defaultValue={value}
-            value={value}
-            onChange={values => input.onChange(values)}
-          >
-            {displayOptions}
-          </Select>
-        </Col>
-
-        {!isEmpty(helpToolTipProps) &&
-          <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
-              <McsIcons type="info" />
-            </Tooltip>
-          </Col>
-        }
-      </Row>
-    </Form.Item>
+      <Col span={22} >
+        <Select
+          mode="multiple"
+          {...input}
+          {...selectProps}
+          defaultValue={value}
+          value={value}
+          onChange={values => input.onChange(values)}
+        >
+          {displayOptions}
+        </Select>
+      </Col>
+    </FormFieldWrapper>
   );
 }
 

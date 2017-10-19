@@ -1,5 +1,6 @@
 import FormCheckbox from './FormCheckbox';
 import FormDatePicker from './FormDatePicker';
+import FormFieldWrapper from './FormFieldWrapper';
 import FormInput from './FormInput';
 import FormRadio from './FormRadio';
 import FormRadioGroup from './FormRadioGroup';
@@ -16,6 +17,7 @@ import withValidators from './withValidators';
 export default {
   FormCheckbox,
   FormDatePicker,
+  FormFieldWrapper,
   FormInput,
   FormRadio,
   FormRadioGroup,
@@ -32,6 +34,7 @@ export default {
 export {
   FormCheckbox,
   FormDatePicker,
+  FormFieldWrapper,
   FormInput,
   FormRadio,
   FormRadioGroup,

@@ -24,7 +24,6 @@ class General extends Component {
 
   render() {
     const {
-      fieldGridConfig,
       fieldNormalizer: { normalizeNumber },
       fieldValidators: { isRequired, isNotZero },
       formatMessage,
@@ -47,7 +46,6 @@ class General extends Component {
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralRow1Label),
                 required: true,
-                ...fieldGridConfig,
               },
               inputProps: {
                 placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
@@ -69,7 +67,6 @@ class General extends Component {
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralRow2Label),
                 required: true,
-                ...fieldGridConfig,
               },
               inputProps: {
                 addonAfter: (
@@ -87,7 +84,6 @@ class General extends Component {
                 ),
                 placeholder: formatMessage(messages.contentSectionGeneralRow2Placeholder),
                 style: { width: '100%' },
-                suffix: <span>€</span>,
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSectionGeneralRow2Tooltip),
@@ -106,11 +102,9 @@ class General extends Component {
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralRow3Label),
                 required: true,
-                ...fieldGridConfig,
               },
               inputProps: {
                 placeholder: formatMessage(messages.contentSectionGeneralRow3Placeholder),
-                suffix: <span>€</span>,
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
@@ -166,11 +160,9 @@ class General extends Component {
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralRow5Label),
                 required: true,
-                ...fieldGridConfig,
               },
               inputProps: {
                 placeholder: formatMessage(messages.contentSectionGeneralRow5Placeholder),
-                suffix: <span>€</span>,
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
@@ -189,11 +181,9 @@ class General extends Component {
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralRow6Label),
                 required: true,
-                ...fieldGridConfig,
               },
               inputProps: {
                 placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
-                suffix: <span>€</span>,
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
@@ -212,11 +202,9 @@ class General extends Component {
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralRow7Label),
                 required: true,
-                ...fieldGridConfig,
               },
               inputProps: {
                 placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
-                suffix: <span>€</span>,
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
@@ -244,7 +232,6 @@ class General extends Component {
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow8Label),
-                  ...fieldGridConfig,
                 },
                 inputProps: {
                   placeholder: formatMessage(messages.contentSectionGeneralRow8Placeholder),
@@ -266,8 +253,6 @@ General.defaultProps = {
 };
 
 General.propTypes = {
-  fieldGridConfig: PropTypes.shape().isRequired,
-
   fieldNormalizer: PropTypes.shape({
     isNumber: PropTypes.func.isRequired,
   }).isRequired,

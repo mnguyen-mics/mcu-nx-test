@@ -191,7 +191,6 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelBlastName),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   inputProps: {
                     placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName),
@@ -259,7 +258,6 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelSubjectLine),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   inputProps: {
                     placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
@@ -277,7 +275,6 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelFromEmail),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   inputProps: {
                     placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
@@ -295,7 +292,6 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelFromName),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   inputProps: {
                     placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
@@ -313,7 +309,6 @@ class EmailBlastForm extends Component {
                   formItemProps: {
                     label: formatMessage(messages.emailBlastEditorInputLabelReplyTo),
                     required: true,
-                    ...fieldGridConfig,
                   },
                   inputProps: {
                     placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
