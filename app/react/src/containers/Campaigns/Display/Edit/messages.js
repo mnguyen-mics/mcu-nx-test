@@ -428,6 +428,14 @@ export default defineMessages({
     id: 'adGroupEditor.section8.part5',
     defaultMessage: 'Your ad will target the following areas:',
   },
+  contentSection8PartIncludedLocations: {
+    id: 'adGroupEditor.section8.PartIncludedLocations',
+    defaultMessage: 'Your ad will target the following locations:',
+  },
+  contentSection8PartExcludedLocations: {
+    id: 'adGroupEditor.section8.PartExcludedLocations',
+    defaultMessage: 'And exclude the following ones:',
+  },
   contentSection8Part6: {
     id: 'adGroupEditor.section8.part6',
     defaultMessage: 'Your ad will be published on the following networks:',

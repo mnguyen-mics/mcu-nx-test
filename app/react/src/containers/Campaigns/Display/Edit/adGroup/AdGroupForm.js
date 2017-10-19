@@ -208,8 +208,7 @@ class AdGroupForm extends Component {
 
     if (prevFields.length > 0) {
       prevFields.forEach((prevField, index) => {
-        const toBeRemoved = !newFieldIds.includes(prevField.id);
-
+        const toBeRemoved = prevField.exclude === undefined ? !newFieldIds.includes(prevField.id) : false;
         this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
       });
     }

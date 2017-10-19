@@ -10,6 +10,7 @@ import { isToday, formatCalendarDate } from '../../../../../../utils/DateHelper'
 import {
   filterTableByIncludeStatus,
   filterTableByRemovedStatus,
+  filterTableByExcludeProperty,
   stringifyTable,
 } from '../../../../../../utils/TableUtils';
 
@@ -21,6 +22,7 @@ function Summary({ formatMessage, formValues }) {
     adGroupMaxBudgetPeriod,
     adGroupMaxBudgetPerPeriod,
     audienceTable,
+    locationAndTargetingTable,
     publisherTable,
     optimizerTable,
     adTable,
@@ -44,6 +46,8 @@ function Summary({ formatMessage, formValues }) {
   )}${formatMessage(messages.contentSection8Part1Group8)}`;
   const includedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, true), 'name');
   const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
+  const includedLocations = stringifyTable(filterTableByExcludeProperty(locationAndTargetingTable, false), 'name');
+  const excludedLocations = stringifyTable(filterTableByExcludeProperty(locationAndTargetingTable, true), 'name');
   const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
   const optimizers = stringifyTable(filterTableByRemovedStatus(optimizerTable), 'provider');
   const numberOfCreatives = 0; // TODO : remove static number for creatives
@@ -107,6 +111,13 @@ function Summary({ formatMessage, formValues }) {
             {formatMessage(messages.contentSection8Part5)}
             <P blue>XXX</P>
           </Section>}
+
+          <Section>
+            {formatMessage(messages.contentSection8PartIncludedLocations)}
+            <P blue>{includedLocations}</P>
+            {formatMessage(messages.contentSection8PartExcludedLocations)}
+            <P blue>{excludedLocations}</P>
+          </Section>
 
           <Section>
             {formatMessage(messages.contentSection8Part6)}

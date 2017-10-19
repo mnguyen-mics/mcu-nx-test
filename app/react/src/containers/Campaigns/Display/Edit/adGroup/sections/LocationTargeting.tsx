@@ -13,7 +13,6 @@ import GeonameService from '../../../../../../services/GeonameService';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
-
 interface LocationTargetingProps {
   formItemProps?: FormItemProps;
   label?: string;
