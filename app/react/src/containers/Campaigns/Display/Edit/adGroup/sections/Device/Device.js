@@ -11,7 +11,7 @@ const { FormSection, FormTagSelect } = Form;
 
 class Device extends Component {
 
-  state = { displayOptions: true }
+  state = { displayOptions: false }
 
   render() {
     const { formatMessage } = this.props;

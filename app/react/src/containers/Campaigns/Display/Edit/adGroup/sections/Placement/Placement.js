@@ -14,7 +14,7 @@ const { FormFieldWrapper, FormRadioGroup, FormSection } = Form;
 class Placement extends Component {
 
   state = {
-    placementOption: 'custom',
+    placementOption: 'auto',
     displaySearchOptions: false,
   }
 
