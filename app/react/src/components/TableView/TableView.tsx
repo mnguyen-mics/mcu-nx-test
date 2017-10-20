@@ -22,6 +22,7 @@ interface DataColumnDefinition {
   render?: (text: string, record: object, index: number) => JSX.Element;
   sorter?: boolean | ((a: any, b: any) => number);
   isHideable?: boolean;
+  isVisibleByDefault?: boolean;
 }
 
 interface ActionDefinition {

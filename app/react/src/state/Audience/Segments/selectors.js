@@ -7,6 +7,7 @@ const getAudienceSegments = state => state.audienceSegmentsTable.audienceSegment
 const getPerformanceReportView = state => state.audienceSegmentsTable.performanceReportApi.report_view;
 const getAudienceSegmentSinglePerformance = state => state.audienceSegmentsTable.performanceReportSingleApi.report_view;
 const getOverlapAnalysis = state => state.audienceSegmentsTable.overlapAnalysisApi.data;
+const getSingleSegment = state => state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment;
 
 const getAudienceSegmentsById = createSelector(
   getAudienceSegments,
@@ -43,16 +44,18 @@ const getAudienceSegmentPerformance = createSelector(
 
 const getOverlapFormatted = createSelector(
   getOverlapAnalysis,
-  (data) => {
+  getSingleSegment,
+  (data, segmentSource) => {
     if (data.length === 0) {
       return { date: 0, data: [] };
     }
+    // we get the segment source data in order to have access to segment source size
+    const source = data.segments.find(segment => segment.segment_id.toString() === segmentSource.id);
     const formattedData = data.overlaps.map(overlap => {
-      const source = data.segments.find((segment) => {
-        return segment.segment_id === overlap.segment_source_id;
-      });
       return {
-        xKey: overlap.segment_intersect_with,
+        xKey: data.segments.find(segment => {
+          return segment.segment_id === overlap.segment_intersect_with;
+        }).name,
         yKey: (overlap.overlap_number / source.segment_size) * 100,
         segment_source: {
           id: overlap.segment_source_id,
@@ -75,36 +78,11 @@ const getOverlapFormatted = createSelector(
   },
 );
 
-const getOverlapSorted = createSelector(
-  getOverlapFormatted,
-  (data) => {
-    const sortedData = data.data.sort((a, b) => {
-      return a.overlap_number.percentage > b.overlap_number.percentage ? -1 : 1;
-    });
-    return {
-      ...data,
-      data: sortedData,
-    };
-  },
-);
-
 const getOverlapView = createSelector(
-  getOverlapSorted,
-  getAudienceSegments,
-  (overlap, segment) => {
-    const data = overlap.data.map(o => {
-      const se = segment.find(s => {
-        return s.id.toString() === o.segment_intersect_with.id.toString();
-      });
-      const xKey = se ? se.name : o.segment_intersect_with.id;
-      return {
-        ...o,
-        xKey: xKey,
-      };
-    });
+  getOverlapFormatted,
+  (overlap) => {
     return {
-      ...overlap,
-      data: data,
+      ...overlap
     };
   },
 );

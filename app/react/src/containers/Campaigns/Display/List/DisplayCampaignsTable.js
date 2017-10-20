@@ -236,8 +236,16 @@ class DisplayCampaignsTable extends Component {
       if (isFetchingCampaignsStat) {
         return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
       }
-      const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
-      return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
+      switch (currency) {
+        case 'EUR': {
+          const unlocalizedMoneyPrefix = '€ ';
+          return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
+        }
+        default: {
+          const unlocalizedMoneyPrefix = '';
+          return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
+        }
+      }
     };
 
     const dataColumns = [
@@ -302,7 +310,7 @@ class DisplayCampaignsTable extends Component {
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,00 %'),
+        render: text => renderMetricData(parseFloat(text) / 100, '0.000%'),
       },
       {
         translationKey: 'CPC',
@@ -355,6 +363,7 @@ class DisplayCampaignsTable extends Component {
       dataColumnsDefinition: dataColumns,
       actionsColumnsDefinition: actionColumns,
     };
+
 
     return (hasDisplayCampaigns
       ? (

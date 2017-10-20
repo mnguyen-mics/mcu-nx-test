@@ -1,7 +1,7 @@
 import numeral from 'numeral';
 
 export const formatMetric = (value, numeralFormat, prefix = '', suffix = '') => {
-  if (value !== undefined) {
+  if (value !== undefined && !isNaN(value)) {
     return `${prefix}${numeral(value).format(numeralFormat)}${suffix}`;
   }
   return '-';
