@@ -66,7 +66,12 @@ const updateDisplayCreativeRendererProperty = (organisationId, creativeId, techn
         return resolve();
       });
     }
-    return ApiService.postRequest(uploadEndpoint, params.value[0])
+
+    const fileValue = (params.value && params.value.file) ? params.value.file : null;
+    const formData = new FormData(); /* global FormData */
+    formData.append('file', fileValue, fileValue.name);
+    if (fileValue !== null) {
+      return ApiService.postRequest(uploadEndpoint, formData)
       .then(res => {
         const newParams = {
           ...params
@@ -78,6 +83,11 @@ const updateDisplayCreativeRendererProperty = (organisationId, creativeId, techn
         };
         ApiService.putRequest(endpoint, newParams);
       });
+    }
+    console.log(params.value[0]);
+    return ApiService.putRequest(endpoint, params.value[0]);
+
+
   }
   // } else if (technicalName === 'DATA_FILE') {
     // TODO UPLOAD DATA FILE

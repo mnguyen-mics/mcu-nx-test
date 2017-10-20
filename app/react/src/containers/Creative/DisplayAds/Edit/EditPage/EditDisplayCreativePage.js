@@ -215,7 +215,7 @@ class CreateDisplayCreativePage extends Component {
       { name: formatMessage(messages.creativeCreationBreadCrumb) },
     ];
 
-    return this.state.isLoading ? <Loading style={{ flex: 1 }} /> : (
+    return this.state.isLoading ? <div style={{ display: 'flex', flex: 1 }}><Loading className="loading-full-screen" /></div> : (
       <DisplayCreativeEditionEditor
         save={this.updateDisplayCreative}
         close={this.redirect}

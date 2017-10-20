@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
 
-import { FormInput, FormTextArea, FormBoolean, FormUpload, withValidators } from '../../components/Form';
+import { Form } from '../../components/index.ts';
 import { FormAdLayout, FormStyleSheet } from './ConnectedFields';
+
+const { FormInput, FormTextArea, FormBoolean, FormUpload, withValidators } = Form;
 
 class PluginFieldGenerator extends Component {
 
@@ -36,6 +38,7 @@ class PluginFieldGenerator extends Component {
           defaultValue: fieldDefinition.value.value,
           ...additionalInputProps,
         },
+        buttonText: additionalInputProps.buttonText ? additionalInputProps.buttonText : null,
         options: {
           ...options
         },
@@ -87,6 +90,8 @@ class PluginFieldGenerator extends Component {
       definition,
       organisationId,
     } = this.props;
+
+
     return (definition && organisationId) ? this.generateFielBasedOnDefinition(definition, organisationId) : null;
   }
 }

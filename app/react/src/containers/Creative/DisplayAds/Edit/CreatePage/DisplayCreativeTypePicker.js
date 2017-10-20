@@ -4,13 +4,14 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Layout, Row } from 'antd';
 
 import { Actionbar } from '../../../../Actionbar';
-import McsIcons from '../../../../../components/McsIcons';
-import { FormTitle } from '../../../../../components/Form';
+import McsIcons from '../../../../../components/McsIcons.tsx';
+import { FormTitle } from '../../../../../components/Form/index.ts';
 import { MenuList, MenuPresentational, MenuSubList } from '../../../../../components/FormMenu';
 
 import messages from '../messages';
 
 const { Content } = Layout;
+
 const imageAdRendererId = 1;
 const htmlAdRendererId = 1004;
 const externalAdRendererId = 1005;
@@ -63,8 +64,8 @@ class DisplayCreativeTypePicker extends Component {
           <Layout>
             <Content className="mcs-content-container mcs-form-container text-center">
               <FormTitle
-                titleMessage={messages.creativesTypePickerTitle}
-                subTitleMessage={messages.creativesTypePickerSubTitle}
+                title={messages.creativesTypePickerTitle}
+                subTitle={messages.creativesTypePickerSubTitle}
               />
               <Row style={{ width: '650px', display: 'inline-block' }}>
                 <Row className="menu">

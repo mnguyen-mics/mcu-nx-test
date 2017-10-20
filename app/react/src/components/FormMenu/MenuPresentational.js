@@ -1,7 +1,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import McsIcons from '../McsIcons';
+import McsIcons from '../McsIcons.tsx';
 
 function MenuPresentational(props) {
 

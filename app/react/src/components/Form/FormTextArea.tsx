@@ -1,21 +1,35 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Form, Input, Tooltip, Row, Col } from 'antd';
 import { isEmpty } from 'lodash';
 
 import McsIcons from '../../components/McsIcons';
 
-const defaultTooltipPlacement = 'right';
+// TS Interface
+import { WrappedFieldProps } from 'redux-form';
+import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+import { TextAreaProps } from 'antd/lib/input/TextArea';
 
-function FormTextArea(
-  { input,
+const defaultTooltipPlacement: TooltipPlacement = 'right';
+
+export interface FormTextArea {
+  formItemProps?: FormItemProps;
+  inputProps?: TextAreaProps;
+  helpToolTipProps: TooltipProps;
+  buttonText: string;
+}
+
+const FormTextArea: React.SFC<FormTextArea & WrappedFieldProps> = props => {
+
+  const {
+    input,
     meta,
     formItemProps,
     inputProps,
     helpToolTipProps,
-  }) {
+  } = props;
 
-  let validateStatus = '';
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
   if (meta.touched && meta.invalid) validateStatus = 'error';
   if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -36,7 +50,6 @@ function FormTextArea(
       <Row align="middle" type="flex">
         <Col span={22} >
           <Input.TextArea
-            id={input.name}
             {...input}
             {...inputProps}
           />
@@ -51,41 +64,12 @@ function FormTextArea(
       </Row>
     </Form.Item>
   );
-}
+};
 
 FormTextArea.defaultProps = {
   formItemProps: {},
   inputProps: {},
   helpToolTipProps: {},
-};
-
-FormTextArea.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  meta: PropTypes.shape({
-    error: PropTypes.string,
-  }).isRequired,
-  formItemProps: PropTypes.shape({
-    required: PropTypes.bool,
-    label: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.string,
-    ]),
-    colon: PropTypes.bool,
-  }),
-  inputProps: PropTypes.shape({
-    type: PropTypes.string,
-    placeholder: PropTypes.string,
-    size: PropTypes.oneOf(['small', 'default', 'large']),
-    className: PropTypes.string,
-  }),
-  helpToolTipProps: PropTypes.shape({
-    tile: PropTypes.string,
-    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
-      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
-      'leftTop', 'leftBottom', 'rightTop', 'rightBottom']),
-  }),
 };
 
 export default FormTextArea;

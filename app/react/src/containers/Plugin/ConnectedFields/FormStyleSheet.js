@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import messages from '../messages';
 
-import McsIcons from '../../../components/McsIcons';
+import McsIcons from '../../../components/McsIcons.tsx';
 import PluginService from '../../../services/PluginService';
 
 const Option = Select.Option;

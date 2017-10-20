@@ -217,7 +217,7 @@ class CreateDisplayCreativePage extends Component {
     const breadcrumbPaths = [
       { name: formatMessage(messages.creativeCreationBreadCrumb) },
     ];
-    return isLoading ? <Loading style={{ flex: 1 }} /> : (adRenderer.id && adRenderer.versionId ? (
+    return isLoading ? <div style={{ display: 'flex', flex: 1 }}><Loading className="loading-full-screen" /></div> : (adRenderer.id && adRenderer.versionId ? (
       <DisplayCreativeCreationEditor
         save={this.createDisplayCreative}
         close={this.redirect}

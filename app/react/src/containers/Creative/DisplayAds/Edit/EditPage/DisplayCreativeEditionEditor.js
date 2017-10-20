@@ -10,8 +10,8 @@ import { Layout, Form, Row, Button } from 'antd';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withMcsRouter } from '../../../../Helpers';
 import { Actionbar } from '../../../../Actionbar';
-import McsIcons from '../../../../../components/McsIcons';
-import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form';
+import McsIcons from '../../../../../components/McsIcons.tsx';
+import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form/index.ts';
 import AuditComponent from './AuditComponent';
 import { PluginFieldGenerator } from '../../../../Plugin';
 
@@ -164,8 +164,8 @@ class DisplayCreativeEditionEditor extends Component {
                 <div id={'general'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
-                      titleMessage={messages.creativeSectionGeneralTitle}
-                      subTitleMessage={messages.creativeSectionGeneralSubTitle}
+                      title={messages.creativeSectionGeneralTitle}
+                      subTitle={messages.creativeSectionGeneralSubTitle}
                     />
                   </Row>
                   <Row>
@@ -201,7 +201,7 @@ class DisplayCreativeEditionEditor extends Component {
                         options: formats && formats.map(format => ({
                           key: format,
                           value: format,
-                          text: format,
+                          title: format,
                           disabled: isDisabled
                         })),
                         helpToolTipProps: {
@@ -235,8 +235,8 @@ class DisplayCreativeEditionEditor extends Component {
                 <div id={'audit_status'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
-                      titleMessage={messages.creativeSectionAuditTitle}
-                      subTitleMessage={messages.creativeSectionAuditSubTitle}
+                      title={messages.creativeSectionAuditTitle}
+                      subTitle={messages.creativeSectionAuditSubTitle}
                     />
                   </Row>
                   <Row>
@@ -247,8 +247,8 @@ class DisplayCreativeEditionEditor extends Component {
                 <div id={'properties'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
-                      titleMessage={messages.creativeSectionPropertyTitle}
-                      subTitleMessage={messages.creativeSectionPropertySubTitle}
+                      title={messages.creativeSectionPropertyTitle}
+                      subTitle={messages.creativeSectionPropertySubTitle}
                     />
                   </Row>
                   <Row>
@@ -261,8 +261,8 @@ class DisplayCreativeEditionEditor extends Component {
                 <div id={'preview'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
-                      titleMessage={messages.creativeSectionPreviewTitle}
-                      subTitleMessage={messages.creativeSectionPreviewSubTitle}
+                      title={messages.creativeSectionPreviewTitle}
+                      subTitle={messages.creativeSectionPreviewSubTitle}
                     />
                   </Row>
                   <Row>

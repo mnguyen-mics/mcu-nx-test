@@ -1,22 +1,38 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Form, Upload, Tooltip, Row, Col, Button, Icon } from 'antd';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
+import { WrappedFieldProps } from 'redux-form';
+import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
 
 import McsIcons from '../../components/McsIcons';
 
-const defaultTooltipPlacement = 'right';
+const defaultTooltipPlacement: TooltipPlacement = 'right';
 
-class FormUpload extends Component {
+export interface FormUploadProps {
+  formItemProps?: FormItemProps;
+  uploadProps?: UploadProps;
+  helpToolTipProps: TooltipProps;
+  buttonText: string;
+}
+
+class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
+
+  static defaultprops = {
+    formItemProps: {},
+    uploadProps: {},
+    helpToolTipProps: {},
+  };
 
   state = {
     fileName: '',
     canRemoveFile: false,
-  }
+  };
 
   componentDidMount() {
     const {
-      input
+      input,
     } = this.props;
 
     if (input.value.asset_id) {
@@ -30,31 +46,32 @@ class FormUpload extends Component {
     }
   }
 
-  changeCanRemoveFile = (canRemoveFile) => {
+  changeCanRemoveFile = (canRemoveFile: boolean) => {
     this.setState({ canRemoveFile: canRemoveFile });
   }
 
-  changeFileName = (fileName) => {
+  changeFileName = (fileName: string) => {
     this.setState({ fileName: fileName });
   }
 
   onRemoveFile = () => {
     const {
-      input
+      input,
     } = this.props;
     this.changeFileName('');
     input.onChange([]);
   }
 
   render() {
-    const { input,
+    const {
+      input,
       meta,
       formItemProps,
-      inputProps,
+      uploadProps,
       helpToolTipProps,
     } = this.props;
 
-    let validateStatus = '';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -65,16 +82,15 @@ class FormUpload extends Component {
       ...helpToolTipProps,
     };
 
-    const uploadProps = {
+    const uploadDetailProps = {
       action: '/',
-      beforeUpload: (file) => {
+      beforeUpload: (file: UploadFile) => {
         this.changeFileName(file.name);
         const formData = new FormData(); /* global FormData */
-        formData.append('file', file, file.name);
-        input.onChange([formData]);
-
+        formData.append('file', file as any, file.name);
+        input.onChange([file]);
         return false;
-      }
+      },
     };
 
     return (
@@ -86,13 +102,12 @@ class FormUpload extends Component {
         <Row align="middle" type="flex">
           <Col span={22} >
             <Upload
-              id={input.name}
               {...input}
-              {...inputProps}
               {...uploadProps}
+              {...uploadDetailProps}
             >
               <Button>
-                <Icon type="upload" /> {inputProps.buttonText}
+                <Icon type="upload" /> {this.props.buttonText}
               </Button>
             </Upload>
 
@@ -105,50 +120,9 @@ class FormUpload extends Component {
             </Col>
           }
         </Row>
-        <Row>
-          <Col span={22}>
-            {(input && input.value && input.value.length !== 0) ? <Row key={input.uid} className="upload"> {this.state.canRemoveFile ? <button onClick={() => this.onRemoveFile(input.value)} className="mcs-invisible-button close"><McsIcons type="close" /></button> : null}<span className="name">{this.state.fileName}</span></Row> : null}
-          </Col>
-        </Row>
       </Form.Item>
     );
   }
 }
-
-FormUpload.defaultProps = {
-  formItemProps: {},
-  inputProps: {},
-  helpToolTipProps: {},
-};
-
-FormUpload.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  meta: PropTypes.shape({
-    error: PropTypes.string,
-  }).isRequired,
-  formItemProps: PropTypes.shape({
-    required: PropTypes.bool,
-    label: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.string,
-    ]),
-    colon: PropTypes.bool,
-  }),
-  inputProps: PropTypes.shape({
-    type: PropTypes.string,
-    placeholder: PropTypes.string,
-    size: PropTypes.oneOf(['small', 'default', 'large']),
-    className: PropTypes.string,
-    buttonText: PropTypes.string,
-  }),
-  helpToolTipProps: PropTypes.shape({
-    tile: PropTypes.string,
-    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
-      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
-      'leftTop', 'leftBottom', 'rightTop', 'rightBottom']),
-  }),
-};
 
 export default FormUpload;

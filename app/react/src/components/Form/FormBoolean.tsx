@@ -1,36 +1,60 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Form, Tooltip, Row, Col, Checkbox } from 'antd';
 import { isEmpty } from 'lodash';
 
+// TS Interface
+import { WrappedFieldProps } from 'redux-form';
+import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
+
 import McsIcons from '../../components/McsIcons';
 
-const defaultTooltipPlacement = 'right';
+interface FormBooleanProps {
+  formItemProps?: FormItemProps;
+  inputProps?: CheckboxProps;
+  helpToolTipProps: TooltipProps;
+}
 
-class FormBoolean extends Component {
+const defaultTooltipPlacement: TooltipPlacement = 'right';
 
-  constructor(props) {
+interface StateInterface  {
+  checked: boolean;
+}
+
+class FormBoolean extends React.Component<FormBooleanProps & WrappedFieldProps, StateInterface> {
+
+  static defaultprops = {
+    formItemProps: {},
+    inputProps: {},
+    helpToolTipProps: {},
+  };
+
+  constructor(props: FormBooleanProps & WrappedFieldProps) {
     super(props);
     this.state = {
-      checked: false
+      checked: props.input.value ? props.input.value : false,
     };
   }
 
-  onChange = (checked) => {
+  onChange = (checked: boolean) => {
+    const { input } = this.props;
+    input.onChange(checked);
     this.setState({
-      checked: checked
+      checked: checked,
     });
-  };
+  }
 
   render() {
-    const { input,
+    const {
       meta,
       formItemProps,
       inputProps,
       helpToolTipProps,
+      input,
     } = this.props;
 
-    let validateStatus = '';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -50,9 +74,9 @@ class FormBoolean extends Component {
         <Row align="middle" type="flex">
           <Col span={22} >
             <Checkbox
-              id={input.name}
               {...input}
               {...inputProps}
+              defaultChecked={this.state.checked}
             />
           </Col>
           {displayHelpToolTip &&
@@ -67,40 +91,5 @@ class FormBoolean extends Component {
     );
   }
 }
-
-FormBoolean.defaultProps = {
-  formItemProps: {},
-  inputProps: {},
-  helpToolTipProps: {},
-};
-
-FormBoolean.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  meta: PropTypes.shape({
-    error: PropTypes.string,
-  }).isRequired,
-  formItemProps: PropTypes.shape({
-    required: PropTypes.bool,
-    label: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.string,
-    ]),
-    colon: PropTypes.bool,
-  }),
-  inputProps: PropTypes.shape({
-    type: PropTypes.string,
-    placeholder: PropTypes.string,
-    size: PropTypes.oneOf(['small', 'default', 'large']),
-    className: PropTypes.string,
-  }),
-  helpToolTipProps: PropTypes.shape({
-    tile: PropTypes.string,
-    placement: PropTypes.oneOf(['top', 'left', 'right', 'bottom',
-      'topLeft', 'topRight', 'bottomLeft', 'bottomRight',
-      'leftTop', 'leftBottom', 'rightTop', 'rightBottom']),
-  }),
-};
 
 export default FormBoolean;

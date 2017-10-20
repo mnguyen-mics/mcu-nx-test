@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import EmptyRecords from './EmptyRecords';
+import EmptyRecords from './EmptyRecords.tsx';
 
 function RelatedRecords({ emptyOption, children }) {
 

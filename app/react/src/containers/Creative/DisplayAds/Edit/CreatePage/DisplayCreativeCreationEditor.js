@@ -10,8 +10,8 @@ import { Layout, Form, Row, Button } from 'antd';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withMcsRouter } from '../../../../Helpers';
 import { Actionbar } from '../../../../Actionbar';
-import McsIcons from '../../../../../components/McsIcons';
-import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form';
+import McsIcons from '../../../../../components/McsIcons.tsx';
+import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form/index.ts';
 import { PluginFieldGenerator } from '../../../../Plugin';
 
 import messages from '../messages';
@@ -62,7 +62,7 @@ class DisplayCreativeCreationEditor extends Component {
       organisationId
     } = this.props;
 
-    const pouet = this.props.rendererProperties.map(fieldDef => {
+    const pluginFieldGenerated = this.props.rendererProperties.map(fieldDef => {
       return <PluginFieldGenerator key={`${fieldDef.technical_name}`} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isLoading} rendererVersionId={versionId} organisationId={organisationId} />;
     });
     return (
@@ -115,8 +115,8 @@ class DisplayCreativeCreationEditor extends Component {
                 <div id={'general'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
-                      titleMessage={messages.creativeSectionGeneralTitle}
-                      subTitleMessage={messages.creativeSectionGeneralSubTitle}
+                      title={messages.creativeSectionGeneralTitle}
+                      subTitle={messages.creativeSectionGeneralSubTitle}
                     />
                   </Row>
                   <Row>
@@ -159,7 +159,7 @@ class DisplayCreativeCreationEditor extends Component {
                         options: formats && formats.map(format => ({
                           key: format,
                           value: format,
-                          text: format,
+                          title: format,
                         })),
                         helpToolTipProps: {
                           title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
@@ -191,12 +191,12 @@ class DisplayCreativeCreationEditor extends Component {
                 <div id={'properties'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
-                      titleMessage={messages.creativeSectionPropertyTitle}
-                      subTitleMessage={messages.creativeSectionPropertySubTitle}
+                      title={messages.creativeSectionPropertyTitle}
+                      subTitle={messages.creativeSectionPropertySubTitle}
                     />
                   </Row>
                   <Row>
-                    { pouet }
+                    { pluginFieldGenerated }
                   </Row>
                 </div>
               </Content>
