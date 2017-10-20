@@ -1,16 +1,15 @@
 import ApiService from './ApiService';
 
-// interface Geoname {
-// }
+export interface Geoname {
+  id: string;
+  name: string;
+}
 
-// const getGeonames: Promise<T> = () => {
-
-const getGeonames = () => {
-  const endpoint = 'geonames';
-
-  return ApiService.getRequest(endpoint);
+const GeonameService = {
+  getGeonames(): Promise<Geoname[]> {
+    const endpoint = 'geonames/';
+    return ApiService.getRequest(endpoint).then(res => res.data as Geoname[]);
+  },
 };
 
-export default {
-  getGeonames,
-};
+export default GeonameService;

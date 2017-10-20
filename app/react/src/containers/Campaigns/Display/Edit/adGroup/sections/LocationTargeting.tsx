@@ -9,7 +9,7 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormSection, SearchResultBox } from '../../../../../../components/Form';
-import GeonameService from '../../../../../../services/GeonameService';
+import GeonameService, { Geoname } from '../../../../../../services/GeonameService';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -36,16 +36,8 @@ interface LocationTargetingProps {
 }
 
 interface LocationTargetingState {
-  listOfCountriesToDisplay: Array<{
-    id: number;
-    name: string;
-  }>;
+  listOfCountriesToDisplay: Geoname[];
   locationTargetingDisplayed: boolean;
-  dataSource: Array<{
-    data: {
-      name: string;
-    },
-  }>;
   incOrExc: string;
   fetching?: boolean;
 }
@@ -54,7 +46,6 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
 
   state = {
     locationTargetingDisplayed: false,
-    dataSource: [],
     listOfCountriesToDisplay: [],
     value: [],
     fetching: false,
@@ -62,18 +53,12 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
   };
 
   fetchCountries = (value: string = '') => {
-    GeonameService.getGeonames().then(json => {
-      this.setState({dataSource: json.data});
-    }).then(() => {
-      const listOfCountriesToDisplay = this.state.dataSource!.filter((country: {name: string}) => {
+    GeonameService.getGeonames().then(geonames => {
+      const listOfCountriesToDisplay = geonames.filter((country: {name: string}) => {
         return country.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) >= 0 || country.name.indexOf(value) >= 0;
       });
       this.setState({ listOfCountriesToDisplay });
     });
-  }
-
-  componentDidMount() {
-    this.fetchCountries();
   }
 
   handleIncOrExcChange = (value: string) => {
@@ -89,7 +74,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
   handleChange = (idCountry: string) => {
 
     const selectedCountry = this.state.listOfCountriesToDisplay.find((filteredCountry: {id: string}) => {
-      return filteredCountry.id === idCountry;
+      return filteredCountry.id === idCountry[0];
     });
 
     const { handlers } = this.props;
@@ -105,6 +90,10 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
       newFields: [selectedLocation],
       tableName: 'locationAndTargetingTable',
     });
+
+    this.setState({
+      listOfCountriesToDisplay: [],
+    });
   }
 
   displayLocationTargetingSection = () => {
@@ -115,8 +104,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
 
   render() {
 
-    const { fetching, listOfCountriesToDisplay } = this.state;
-    const { handlers } = this.props;
+    const { fetching, listOfCountriesToDisplay, value } = this.state;
 
     // If we have time, do an HOC for the select component in order to use generic id element
     return (
@@ -135,7 +123,6 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
               <FieldArray
                 component={SearchResultBox}
                 name="locationAndTargetingTable"
-                props={handlers}
               />
             </Col>
           </Row>
@@ -164,8 +151,9 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
                 </Select>
                 <div id="selectContainer" style={{width: '75%'}}>
                   <Select
+                    mode="multiple"
                     style={{ width: '100%' }}
-                    value={undefined}
+                    value={value}
                     placeholder="Enter a location (country, region or department)"
                     notFoundContent={fetching ? <Spin size="small" /> : null}
                     filterOption={false}
