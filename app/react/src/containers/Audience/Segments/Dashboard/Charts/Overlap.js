@@ -51,7 +51,7 @@ class Overlap extends Component {
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     const { lookbackWindow } = filter;
-    const data = dataSource.data;
+    const data = dataSource.data.slice(0, 20);
 
     const optionsForChart = {
       xKey: 'xKey',

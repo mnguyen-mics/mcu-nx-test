@@ -221,7 +221,7 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
         // sort on overlap number (same as sorting on percentage )
         const topOverlaps = overlapData.overlaps.sort((a, b) => {
           return a.overlap_number > b.overlap_number ? -1 : 1;
-        }).slice(0, 20); // select 20 biggest overlpas
+        }); // select 20 biggest overlpas
 
         const topSegments = topOverlaps.map(overlap => {
           return overlapData.segments.find(s => s.segment_id === overlap.segment_intersect_with);

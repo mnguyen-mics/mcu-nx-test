@@ -22,21 +22,23 @@ const s2ab = s => {
   return buf;
 };
 
-function buildSheet(title, data, headers, filter, formatMessage, technicalName) {
+function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
   const titleLine = typeof title === 'string' ? [title] : [formatMessage(title)];
   const sheet = [];
   const blankLine = [];
   sheet.push(titleLine);
   sheet.push([`${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${filter.to}`]);
-  if (technicalName && typeof technicalName === 'string') {
-    sheet.push([technicalName]);
+  if (otherInfos) {
+    sheet.push([otherInfos.name]);
+    sheet.push([otherInfos.id]);
+    sheet.push([otherInfos.technical_name]);
   }
   sheet.push(blankLine);
   sheet.push(headers.map(h => h.translation));
 
   data.forEach(row => {
     const dataLine = headers.map(header => {
-      return row[header.name];
+      return header.name === 'segment_intersect_with' ? row.segment_intersect_with.id : row[header.name];
     });
     sheet.push(dataLine);
   });
@@ -51,14 +53,14 @@ function buildSheet(title, data, headers, filter, formatMessage, technicalName) 
  * @param filter        Date filters containing from and to
  * @param formatMessage Internationalization method
  * @param title         [OPTIONAL] Title at the top of the page, if undefined use tabTitle
- * @param technicalName
+ * @param otherInfos
  * @returns {*}
  */
-function addSheet(tabTitle, data, headers, filter, formatMessage, title, technicalName) {
+function addSheet(tabTitle, data, headers, filter, formatMessage, title, otherInfos) {
   const formattedTabTitle = formatMessage(tabTitle);
   const sheetTitle = title ? title : tabTitle;
   if (data && data.length) {
-    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, technicalName);
+    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, otherInfos);
     return {
       name: formattedTabTitle,
       data: sheet
@@ -211,6 +213,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
  * Display Campaign Dashboard
  */
 const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, mediasData, adGroupsData, adsData, filter, formatMessage) => {
+
   const campaignPageTitle = `${campaign.name} - ${campaign.id}`;
   const hourlyPrecision = (datenum(filter.to) - datenum(filter.from)) <= 1;
   const dateHeader = hourlyPrecision ? { name: 'hour_of_day', translation: formatMessage(dateMessages.hour) } : { name: 'day', translation: formatMessage(dateMessages.day) };
@@ -250,14 +253,14 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
     { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
   ];
 
-  const technicalName = (campaign && campaign.technical_name) ? campaign.technical_name : null;
+  const otherInfos = campaign ? campaign : null;
   const title = '';
 
   const sheets = [
-    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle, title, technicalName),
-    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage, title, technicalName),
-    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage, title, technicalName),
-    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage, title, technicalName)
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle, title, otherInfos),
+    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage, title, otherInfos),
+    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage, title, otherInfos),
+    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage, title, otherInfos)
   ].filter(x => x);
 
   if (sheets.length) {
@@ -482,16 +485,17 @@ const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData,
 
   const overlapHeaders = [
     { name: 'xKey', translation: formatMessage(segmentMessages.overlap) },
-    { name: 'yKey', translation: formatMessage(segmentMessages.overlapNumber) }
+    { name: 'yKey', translation: formatMessage(segmentMessages.overlapNumber) },
+    { name: 'segment_intersect_with', translation: 'id' }
   ];
 
-  const technicalName = (segment && segment.technical_name) ? segment.technical_name : null;
+  const otherInfos = segment ? segment : null;
   const title = '';
 
   const sheets = [
-    addSheet(exportMessages.audienceSegmentOverviewExportTitle, segmentData, overviewHeaders, filter, formatMessage, title, technicalName),
-    addSheet(exportMessages.audienceSegmentAdditionsDeletionsExportTitle, segmentData, additionDeletionHeaders, filter, formatMessage, title, technicalName),
-    addSheet(exportMessages.overlapExportTitle, overlapData, overlapHeaders, filter, formatMessage, title, technicalName)
+    addSheet(exportMessages.audienceSegmentOverviewExportTitle, segmentData, overviewHeaders, filter, formatMessage, title, otherInfos),
+    addSheet(exportMessages.audienceSegmentAdditionsDeletionsExportTitle, segmentData, additionDeletionHeaders, filter, formatMessage, title, otherInfos),
+    addSheet(exportMessages.overlapExportTitle, overlapData, overlapHeaders, filter, formatMessage, title, otherInfos)
   ].filter(x => x);
 
   if (sheets.length) {
