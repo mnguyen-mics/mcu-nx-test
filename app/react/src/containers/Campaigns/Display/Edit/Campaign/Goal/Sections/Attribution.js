@@ -16,7 +16,7 @@ class Attribution extends Component {
 
   render() {
     const {
-      fieldValidators: { isRequired },
+      fieldValidators: { isRequired, isValidNumber },
       formatMessage,
     } = this.props;
 
@@ -36,7 +36,7 @@ class Attribution extends Component {
           <Field
             name="attribution[0].post_click"
             component={FormInput}
-            validate={[isRequired]}
+            validate={[isRequired, isValidNumber]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSection2Row1Label),
@@ -57,7 +57,7 @@ class Attribution extends Component {
           <Field
             name="attribution[0].post_view"
             component={FormInput}
-            validate={[isRequired]}
+            validate={[isRequired, isValidNumber]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSection2Row2Label),
@@ -84,6 +84,7 @@ Attribution.propTypes = {
 
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,
+    isValidNumber: PropTypes.func.isRequired,
   }).isRequired,
 
   formatMessage: PropTypes.func.isRequired,

@@ -63,10 +63,10 @@ class CampaignContent extends Component {
           )
     };
 
-
+    console.log('submitting ', submitting, ' loading ', loading);
     return (
       <Layout>
-        {(loading || submitting) ?
+        {(submitting || loading) ?
 
         (<Loading className="loading-full-screen" />) :
 

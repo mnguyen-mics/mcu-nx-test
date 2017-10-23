@@ -355,8 +355,6 @@ class CampaignForm extends Component {
 
     return (
       <Layout>
-        {this.state.loading ? <Loading className="loading-full-screen" /> : null}
-
         <Form
           className={this.state.loading ? 'hide-section' : 'edit-layout ant-layout'}
           onSubmit={handleSubmit(this.onSubmit)}
