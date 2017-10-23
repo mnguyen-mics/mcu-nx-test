@@ -13,7 +13,9 @@ define(['./module'], function (module) {
 
       $scope.newSegment = function () {
         var newScope = $scope.$new(true);
-        newScope.segment = {};
+        newScope.segment = {
+          persisted: true
+        };
         newScope.queryContainer = $scope.queryContainer.copy();
         $uibModal.open({
           templateUrl: 'angular/src/core/datamart/queries/new-segment.html',
