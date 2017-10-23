@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 import { Field } from 'redux-form';
 
 import messages from '../messages';
@@ -33,7 +32,7 @@ class Attribution extends Component {
           title={messages.sectionTitle2}
         />
 
-        <Row>
+        <div>
           <Field
             name="attribution[0].post_click"
             component={FormInput}
@@ -52,9 +51,9 @@ class Attribution extends Component {
               },
             }}
           />
-        </Row>
+        </div>
 
-        <Row>
+        <div>
           <Field
             name="attribution[0].post_view"
             component={FormInput}
@@ -73,17 +72,13 @@ class Attribution extends Component {
               },
             }}
           />
-        </Row>
+        </div>
 
 
       </div>
     );
   }
 }
-
-Attribution.defaultProps = {
-  formValues: null,
-};
 
 Attribution.propTypes = {
 

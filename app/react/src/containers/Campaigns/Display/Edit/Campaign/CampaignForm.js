@@ -145,7 +145,7 @@ class CampaignForm extends Component {
       [key.indexOf('Table') === -1 ? camelCase(`adGroup-${key}`) : key]: formInitialValues[key]
     }), {}) : null;
 
-    return AdGroupServiceWrapper.createAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, editionMode);
+    return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, editionMode);
   }
 
   updateAdGroup = ({ campaignId, organisationId, body }) => {

@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import messages from '../messages';
@@ -75,10 +74,13 @@ class Goals extends Component {
 
   createNewData = (object) => {
     const { formValues, handlers } = this.props;
-    const valuesToAdd = formValues.filter(item => {
-      return !item.toBeRemoved;
-    });
-    valuesToAdd.push(object);
+    const valuesToAdd = [
+      formValues.filter(item => {
+        return !item.toBeRemoved;
+      }),
+      ...object
+    ];
+
     this.setState({ loading: true }, () => {
       handlers.updateTableFields({ newFields: valuesToAdd, tableName: 'goalsTable' });
     });
@@ -132,9 +134,7 @@ class Goals extends Component {
         let storedData = formValues.filter(value => {
           return selectedIds.includes(value.id) && value.toBeCreated;
         });
-        if (storedData === undefined) {
-          storedData = [];
-        } else if (storedData && !Array.isArray(storedData)) {
+        if (storedData.length === 0) {
           storedData = [storedData];
         }
         const newFieldsUpdated = newFields.concat(storedData);
@@ -208,7 +208,7 @@ class Goals extends Component {
           title={messages.sectionTitle2}
         />
 
-        <Row>
+        <div>
           <FieldArray
             component={GoalsTable}
             dataSource={dataSource}
@@ -230,7 +230,7 @@ class Goals extends Component {
             />
             : null
           }
-        </Row>
+        </div>
       </div>
     );
   }

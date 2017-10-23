@@ -5,7 +5,6 @@ import Loading from './Loading';
 import McsIcons from './McsIcons';
 import RelatedRecordTable from './RelatedRecordTable';
 import TableSelector from './TableSelector';
-import withSelector from './WithSelector';
 import MultiSelect from './MultiSelect';
 
 export {
@@ -16,6 +15,5 @@ export {
   McsIcons,
   RelatedRecordTable,
   TableSelector,
-  withSelector,
   MultiSelect,
 };

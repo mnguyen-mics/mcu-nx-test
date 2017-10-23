@@ -146,9 +146,9 @@ class EmailCampaignListPage extends Component {
         EmailCampaignService.deleteEmailCampaign(campaign.id).then(() => {
           if (emailCampaignsById.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
-              ...filter
+              ...filter,
+              currentPage: filter.currentPage - 1,
             };
-            newFilter.currentPage = filter.currentPage - 1;
             reloadEmailCampaign();
             history.replace({
               pathname: pathname,

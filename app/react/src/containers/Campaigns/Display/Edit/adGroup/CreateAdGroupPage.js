@@ -6,7 +6,7 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import AdGroupContent from './AdGroupContent';
 import withDrawer from '../../../../../components/Drawer';
 import { withMcsRouter } from '../../../../Helpers';
-import { createAdGroup } from '../AdGroupServiceWrapper';
+import { saveAdGroup } from '../AdGroupServiceWrapper';
 
 function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, match, location, history }) {
 
@@ -16,7 +16,7 @@ function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, match, location, h
   );
 
   const createNewAdgroup = (object) => {
-    createAdGroup(match.params.campaignId, object, {}, false).then(() => {
+    saveAdGroup(match.params.campaignId, object, {}, false).then(() => {
       history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`);
     });
 

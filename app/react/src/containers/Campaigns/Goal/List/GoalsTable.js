@@ -126,10 +126,9 @@ class GoalsTable extends Component {
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
     const newGoal = {
-      ...goal
+      ...goal,
+      archived: true,
     };
-
-    newGoal.archived = true;
 
     Modal.confirm({
       title: translations.GOAL_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -141,9 +140,9 @@ class GoalsTable extends Component {
         return GoalService.updateGoal({ id: goal.id, body: newGoal }).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
-              ...filter
+              ...filter,
+              currentPage: filter.currentPage - 1
             };
-            newFilter.currentPage = filter.currentPage - 1;
             loadGoalsDataSource(organisationId, filter);
             history.replace({
               pathname: pathname,

@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 import { camelCase, snakeCase } from 'lodash';
 
 import { EmptyRecords, Form } from '../../../../../../components/index.ts';
@@ -143,7 +142,7 @@ class AdGroups extends Component {
           title={messages.sectionTitle3}
         />
 
-        <Row>
+        <div>
           <FieldArray
             component={AdGroupsTable}
             dataSource={dataSource}
@@ -161,7 +160,7 @@ class AdGroups extends Component {
             />
             : null
           }
-        </Row>
+        </div>
       </div>
     );
   }

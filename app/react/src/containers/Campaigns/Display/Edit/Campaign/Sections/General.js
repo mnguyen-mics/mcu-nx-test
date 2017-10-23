@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 import { Field } from 'redux-form';
 
 import messages from '../messages';
@@ -38,7 +37,7 @@ class General extends Component {
           title={messages.sectionTitle1}
         />
 
-        <Row>
+        <div>
           <Field
             name="name"
             component={FormInput}
@@ -57,7 +56,7 @@ class General extends Component {
               },
             }}
           />
-        </Row>
+        </div>
 
         <div>
           <ButtonStyleless
@@ -71,7 +70,7 @@ class General extends Component {
             <McsIcons type="chevron" />
           </ButtonStyleless>
 
-          <Row className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
+          <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
             <Field
               name="technical_name"
               component={FormInput}
@@ -88,7 +87,7 @@ class General extends Component {
                 },
               }}
             />
-          </Row>
+          </div>
         </div>
       </div>
     );

@@ -58,7 +58,7 @@ class GoalsTable extends Component {
             <div className="icon-round-border">
               <McsIcons
                 type={type.image}
-                style={{ color: '#00a1df', fontSize: 24, margin: 'auto' }}
+                additionalClass="related-records"
               />
             </div>
             {type.name}
@@ -81,13 +81,13 @@ class GoalsTable extends Component {
         render: (index, record) => (
           <span>
             {hasDatamarts(organisationId) ? <ButtonStyleless onClick={(e) => { e.preventDefault(); this.onClickOnGetPixelGoal(record); }}>
-              <McsIcons type="settings" style={{ fontSize: 20 }} />
+              <McsIcons type="settings" additionalClass="big" />
             </ButtonStyleless> : null}
             {record.toBeCreated === true ? <ButtonStyleless onClick={(e) => { e.preventDefault(); openEditionMode(record); }}>
-              <McsIcons type="pen" style={{ fontSize: 20 }} />
+              <McsIcons type="pen" additionalClass="big" />
             </ButtonStyleless> : null}
             <ButtonStyleless onClick={(e) => { e.preventDefault(); updateTableFieldStatus({ index, tableName }); }}>
-              <McsIcons type="delete" style={{ fontSize: 20 }} />
+              <McsIcons type="delete" additionalClass="big" />
             </ButtonStyleless>
           </span>
       ),
@@ -97,7 +97,7 @@ class GoalsTable extends Component {
     const tableStyle = (dataSource.length || loading ? 'border-style' : 'hide-section');
 
     return (
-      <div className="adGroup-table testeu">
+      <div className="adGroup-table">
         <Table
           className={tableStyle}
           columns={columns}

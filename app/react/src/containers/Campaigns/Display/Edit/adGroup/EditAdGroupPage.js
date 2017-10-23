@@ -7,7 +7,7 @@ import withDrawer from '../../../../../components/Drawer';
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { createAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
+import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
 
 
 class EditAdGroupPage extends Component {
@@ -34,7 +34,7 @@ class EditAdGroupPage extends Component {
   onSave = (object) => {
     const { history, match, location } = this.props;
 
-    createAdGroup(match.params.campaignId, object, {}, true).then(() => {
+    saveAdGroup(match.params.campaignId, object, {}, true).then(() => {
       return location.state && location.state.from
       ? history.push(location.state.from)
       : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`);

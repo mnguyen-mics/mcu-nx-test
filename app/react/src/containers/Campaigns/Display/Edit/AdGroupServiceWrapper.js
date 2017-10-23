@@ -4,44 +4,6 @@ import BidOptimizerServices from '../../../../services/BidOptimizerServices';
 import { unformatMetric } from '../../../../utils/MetricHelper';
 
 
-const saveTableFields = (options, formValues, formInitialValues) => {
-
-  const { campaignId, adGroupId, getBody, requests } = options;
-
-  return formValues.reduce((promise, row) => {
-    const body = getBody(row);
-    const { include, otherId, toBeRemoved } = row;
-
-    return promise.then(() => {
-      let newPromise;
-
-      if (!toBeRemoved) {
-          /* In case we want to add or update a element */
-
-        if (!otherId) {
-            /* creation */
-          newPromise = requests.create({ campaignId, adGroupId, body });
-        } else if (requests.update) {
-          const needsUpdating = formInitialValues.find(elem => (
-              elem.otherId === otherId && elem.include !== include
-            ));
-
-            /* update if modified element */
-          if (needsUpdating) {
-            newPromise = requests.update({ campaignId, adGroupId, id: otherId, body });
-          }
-        }
-      } else if (otherId) {
-          /* In case we want to delete an existing element */
-        newPromise = requests.delete({ campaignId, adGroupId, id: otherId });
-      }
-
-      return newPromise || Promise.resolve();
-    });
-  }, Promise.resolve());
-};
-
-
 // ===========================================================================
 //                             GET ADGROUP
 // ===========================================================================
@@ -99,8 +61,45 @@ const getAdGroups = (organisationId, campaignId) => {
 };
 
 // ===========================================================================
-//                             CREATE ADGROUP
+//                             SAVE ADGROUP
 // ===========================================================================
+
+const saveTableFields = (options, formValues, formInitialValues) => {
+
+  const { campaignId, adGroupId, getBody, requests } = options;
+
+  return formValues.reduce((promise, row) => {
+    const body = getBody(row);
+    const { include, otherId, toBeRemoved } = row;
+
+    return promise.then(() => {
+      let newPromise;
+
+      if (!toBeRemoved) {
+            /* In case we want to add or update a element */
+
+        if (!otherId) {
+              /* creation */
+          newPromise = requests.create({ campaignId, adGroupId, body });
+        } else if (requests.update) {
+          const needsUpdating = formInitialValues.find(elem => (
+                elem.otherId === otherId && elem.include !== include
+              ));
+
+              /* update if modified element */
+          if (needsUpdating) {
+            newPromise = requests.update({ campaignId, adGroupId, id: otherId, body });
+          }
+        }
+      } else if (otherId) {
+            /* In case we want to delete an existing element */
+        newPromise = requests.delete({ campaignId, adGroupId, id: otherId });
+      }
+
+      return newPromise || Promise.resolve();
+    });
+  }, Promise.resolve());
+};
 
 const saveAudience = (campaignId, adGroupId, formValue, initialFormValue) => {
   const options = {
@@ -133,7 +132,7 @@ const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
   return saveTableFields(options, formValue, initialFormValue);
 };
 
-const createAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = false) => {
+const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = false) => {
 
   const publisherTable = adGroupData && adGroupData.publisherTable ? adGroupData.publisherTable : [];
   const audienceTable = adGroupData && adGroupData.audienceTable ? adGroupData.audienceTable : [];
@@ -184,13 +183,8 @@ const createAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode 
 };
 
 
-const updateAdGroup = () => {
-  return null;
-};
-
 export {
-    updateAdGroup,
-    createAdGroup,
+    saveAdGroup,
     getAdGroup,
     getAdGroups,
 };

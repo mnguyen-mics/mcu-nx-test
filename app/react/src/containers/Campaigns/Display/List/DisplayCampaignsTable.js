@@ -127,9 +127,9 @@ class DisplayCampaignsTable extends Component {
         return DisplayCampaignsService.deleteCampaign(campaign.id).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
-              ...filter
+              ...filter,
+              currentPage: filter.currentPage - 1
             };
-            newFilter.currentPage = filter.currentPage - 1;
             loadDisplayCampaignsDataSource(organisationId, filter);
             history.replace({
               pathname: pathname,

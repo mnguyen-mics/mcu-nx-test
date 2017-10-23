@@ -14,40 +14,26 @@ const getGoals = (organisationId, options = {}) => {
 const getGoal = (goaldId, options = {}) => {
   const endpoint = `goals/${goaldId}`;
 
-  const params = {
-    ...options,
-  };
-
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getRequest(endpoint, options);
 };
 
 const updateGoal = ({ id, body = {} }) => {
   const endpoint = `goals/${id}`;
 
-  const params = {
-    ...body,
-  };
-
-  return ApiService.putRequest(endpoint, params);
+  return ApiService.putRequest(endpoint, body);
 };
 
 const createGoal = (organisationId, options = {}) => {
   const endpoint = `goals?organisation_id=${organisationId}`;
 
-  const params = {
-    ...options,
-  };
-
-  return ApiService.postRequest(endpoint, params);
+  return ApiService.postRequest(endpoint, options);
 };
 
 
 const createAttributionModel = (goalId, options = {}) => {
   const endpoint = `goals/${goalId}/attribution_models`;
-  const params = {
-    ...options,
-  };
-  return ApiService.postRequest(endpoint, params);
+
+  return ApiService.postRequest(endpoint, options);
 };
 
 export default {

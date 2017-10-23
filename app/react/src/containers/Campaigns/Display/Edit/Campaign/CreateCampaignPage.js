@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 
@@ -6,20 +6,17 @@ import CampaignContent from './CampaignContent';
 import withDrawer from '../../../../../components/Drawer';
 
 
-class CreateCampaignPage extends Component {
-  render() {
-    const {
-      closeNextDrawer,
-      openNextDrawer
-    } = this.props;
+function CreateCampaignPage({
+  closeNextDrawer,
+  openNextDrawer }) {
 
-    return (
-      <CampaignContent
-        closeNextDrawer={closeNextDrawer}
-        openNextDrawer={openNextDrawer}
-      />
-    );
-  }
+  return (
+    <CampaignContent
+      closeNextDrawer={closeNextDrawer}
+      openNextDrawer={openNextDrawer}
+    />
+  );
+
 }
 
 CreateCampaignPage.propTypes = {

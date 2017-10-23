@@ -38,7 +38,7 @@ class General extends Component {
           title={messages.sectionTitle1}
         />
 
-        <Row>
+        <div>
           <Field
             name="name"
             component={FormInput}
@@ -57,7 +57,7 @@ class General extends Component {
               },
             }}
           />
-        </Row>
+        </div>
 
         <div>
           <ButtonStyleless

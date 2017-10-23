@@ -14,11 +14,7 @@ const getAttributionModels = (organisationId, options = {}) => {
 const createAttributionModels = (organisationId, options = {}) => {
   const endpoint = `attribution_models?organisation_id=${organisationId}`;
 
-  const params = {
-    ...options,
-  };
-
-  return ApiService.postRequest(endpoint, params);
+  return ApiService.postRequest(endpoint, options);
 };
 
 const updateAttributionModelProperty = (attributionModelId, technicalName, value) => {
@@ -28,7 +24,7 @@ const updateAttributionModelProperty = (attributionModelId, technicalName, value
     origin: 'PLUGIN',
     property_type: 'INT',
     technical_name: technicalName,
-    value: { value: value },
+    value: { value },
     writable: true,
   };
   return ApiService.putRequest(endpoint, body);
