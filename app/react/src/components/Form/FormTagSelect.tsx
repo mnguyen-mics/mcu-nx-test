@@ -37,27 +37,34 @@ const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & Wrap
     <Option {...option} key={option.value}>{label}</Option>
   ));
 
+  const getPopupContainer = (triggerNode: Element) => {
+    return document.getElementById('tag-select') as any;
+  };
+
   return (
-    <FormFieldWrapper
-      help={meta.touched && (meta.warning || meta.error)}
-      helpToolTipProps={helpToolTipProps}
-      validateStatus={validateStatus}
-      {...formItemProps}
-    >
-      <Col span={22}>
-        <Select
-          {...selectProps}
-          mode={mode}
-          value={value || []}
-          onChange={onChange}
-          // difficulties to map some WrappedFieldInputProps with SelectProps
-          onBlur={onBlur as () => any}
-          onFocus={onFocus as () => any}
-        >
-          {displayOptions}
-        </Select>
-      </Col>
-    </FormFieldWrapper>
+    <div id="tag-select">
+      <FormFieldWrapper
+        help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={helpToolTipProps}
+        validateStatus={validateStatus}
+        {...formItemProps}
+      >
+        <Col span={22}>
+          <Select
+            {...selectProps}
+            mode={mode}
+            value={value || []}
+            onChange={onChange}
+            getPopupContainer={getPopupContainer}
+            // difficulties to map some WrappedFieldInputProps with SelectProps
+            onBlur={onBlur as () => any}
+            onFocus={onFocus as () => any}
+          >
+            {displayOptions}
+          </Select>
+        </Col>
+      </FormFieldWrapper>
+    </div>
   );
 };
 
