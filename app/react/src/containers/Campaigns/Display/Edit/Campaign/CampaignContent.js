@@ -63,7 +63,6 @@ class CampaignContent extends Component {
           )
     };
 
-    console.log('submitting ', submitting, ' loading ', loading);
     return (
       <Layout>
         {(submitting || loading) ?

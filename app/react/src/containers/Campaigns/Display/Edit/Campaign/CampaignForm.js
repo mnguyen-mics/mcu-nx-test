@@ -23,7 +23,6 @@ import {
 } from './Sections';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
-import { Loading } from '../../../../../components/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
