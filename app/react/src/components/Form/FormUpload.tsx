@@ -12,7 +12,7 @@ const defaultTooltipPlacement: TooltipPlacement = 'right';
 
 export interface FormUploadProps {
   formItemProps?: FormItemProps;
-  uploadProps?: UploadProps;
+  inputProps?: UploadProps;
   helpToolTipProps: TooltipProps;
   buttonText: string;
 }
@@ -21,7 +21,7 @@ class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
 
   static defaultprops = {
     formItemProps: {},
-    uploadProps: {},
+    inputProps: {},
     helpToolTipProps: {},
   };
 
@@ -67,7 +67,7 @@ class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
       input,
       meta,
       formItemProps,
-      uploadProps,
+      inputProps,
       helpToolTipProps,
     } = this.props;
 
@@ -103,7 +103,7 @@ class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
           <Col span={22} >
             <Upload
               {...input}
-              {...uploadProps}
+              {...inputProps}
               {...uploadDetailProps}
             >
               <Button>

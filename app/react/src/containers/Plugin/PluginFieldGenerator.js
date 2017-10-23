@@ -39,6 +39,7 @@ class PluginFieldGenerator extends Component {
           ...additionalInputProps,
         },
         buttonText: additionalInputProps.buttonText ? additionalInputProps.buttonText : null,
+        accept: additionalInputProps.accept ? additionalInputProps.accept : null,
         options: {
           ...options
         },
@@ -61,7 +62,7 @@ class PluginFieldGenerator extends Component {
       case 'URL':
         return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.url`, fieldDefinition, [isValidUrl]);
       case 'ASSET':
-        return this.renderFieldBasedOnConfig(FormUpload, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', showUploadList: false, accept: '.jpg,.jpeg,.png,.gif' });
+        return this.renderFieldBasedOnConfig(FormUpload, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', accept: '.jpg,.jpeg,.png,.gif' });
       case 'PIXEL_TAG':
         return this.renderFieldBasedOnConfig(FormTextArea, `${fieldDefinition.technical_name}.value.value`, fieldDefinition, [], { rows: 4 });
       case 'STYLE_SHEET':
