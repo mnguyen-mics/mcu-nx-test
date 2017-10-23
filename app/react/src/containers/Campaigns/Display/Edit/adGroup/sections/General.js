@@ -37,211 +37,213 @@ class General extends Component {
           title={messages.sectionTitleGeneral}
         />
 
-        <Row>
-          <Field
-            name="adGroupName"
-            component={FormInput}
-            validate={[isRequired]}
-            props={{
-              formItemProps: {
-                label: formatMessage(messages.contentSectionGeneralRow1Label),
-                required: true,
-              },
-              inputProps: {
-                placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
-              },
-              helpToolTipProps: {
-                title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
-              },
-            }}
-          />
-        </Row>
-
-        <Row>
-          <Field
-            name="adGroupMaxBudgetPerPeriod"
-            component={FormInput}
-            normalize={normalizeNumber}
-            validate={[isRequired, isNotZero]}
-            props={{
-              formItemProps: {
-                label: formatMessage(messages.contentSectionGeneralRow2Label),
-                required: true,
-              },
-              inputProps: {
-                addonAfter: (
-                  <Field
-                    name="adGroupMaxBudgetPeriod"
-                    component={FormSelectAddon}
-                    props={{
-                      options: [
-                        { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow2OptionDAY) },
-                        { value: 'WEEK', title: formatMessage(messages.contentSectionGeneralRow2OptionWEEK) },
-                        { value: 'MONTH', title: formatMessage(messages.contentSectionGeneralRow2OptionMONTH) },
-                      ],
-                    }}
-                  />
-                ),
-                placeholder: formatMessage(messages.contentSectionGeneralRow2Placeholder),
-                style: { width: '100%' },
-              },
-              helpToolTipProps: {
-                title: formatMessage(messages.contentSectionGeneralRow2Tooltip),
-              },
-            }}
-          />
-        </Row>
-
-        <Row>
-          <Field
-            name="adGroupTotalBudget"
-            component={FormInput}
-            normalize={normalizeNumber}
-            validate={[isRequired, isNotZero]}
-            props={{
-              formItemProps: {
-                label: formatMessage(messages.contentSectionGeneralRow3Label),
-                required: true,
-              },
-              inputProps: {
-                placeholder: formatMessage(messages.contentSectionGeneralRow3Placeholder),
-              },
-              helpToolTipProps: {
-                title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
-              },
-            }}
-          />
-        </Row>
-
-        <Row>
-          <FormRangePicker
-            formId="adGroupForm"
-
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralRow4Label),
-              labelCol: { span: 3 },
-              wrapperCol: { span: 10, offset: 1 },
-              required: true,
-            }}
-
-            startProps={{
-              name: 'adGroupStartDate',
-              placeholder: formatMessage(messages.contentSectionGeneralRow4Placeholder1),
-              style: { width: '100%' },
-            }}
-
-            endProps={{
-              name: 'adGroupEndDate',
-              placeholder: formatMessage(messages.contentSectionGeneralRow4Placeholder2),
-              style: { width: '100%' },
-            }}
-
-            values={{
-              startDate: formValues && formValues.adGroupStartDate,
-              endDate: formValues && formValues.adGroupEndDate,
-            }}
-
-            fieldValidators={{ start: [isRequired], end: [isRequired] }}
-
-            helpToolTipProps={{
-              placement: 'right',
-              title: formatMessage(messages.contentSectionGeneralRow4Tooltip),
-            }}
-          />
-        </Row>
-
-        <Row>
-          <Field
-            name="adGroupMaxBidPrice"
-            component={FormInput}
-            normalize={normalizeNumber}
-            validate={[isRequired, isNotZero]}
-            props={{
-              formItemProps: {
-                label: formatMessage(messages.contentSectionGeneralRow5Label),
-                required: true,
-              },
-              inputProps: {
-                placeholder: formatMessage(messages.contentSectionGeneralRow5Placeholder),
-              },
-              helpToolTipProps: {
-                title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
-              },
-            }}
-          />
-        </Row>
-
-        <Row>
-          <Field
-            name="adGroupTotalImpressionCapping"
-            component={FormInput}
-            normalize={normalizeNumber}
-            validate={[isRequired, isNotZero]}
-            props={{
-              formItemProps: {
-                label: formatMessage(messages.contentSectionGeneralRow6Label),
-                required: true,
-              },
-              inputProps: {
-                placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
-              },
-              helpToolTipProps: {
-                title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
-              },
-            }}
-          />
-        </Row>
-
-        <Row>
-          <Field
-            name="adGroupPerDayImpressionCapping"
-            component={FormInput}
-            normalize={normalizeNumber}
-            validate={[isRequired, isNotZero]}
-            props={{
-              formItemProps: {
-                label: formatMessage(messages.contentSectionGeneralRow7Label),
-                required: true,
-              },
-              inputProps: {
-                placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
-              },
-              helpToolTipProps: {
-                title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
-              },
-            }}
-          />
-        </Row>
-
         <div>
-          <ButtonStyleless
-            className="optional-section-title clickable-on-hover"
-            onClick={this.displayAdvancedSection}
-          >
-            <McsIcons type="settings" />
-            <span className="step-title">
-              {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
-            </span>
-            <McsIcons type="chevron" />
-          </ButtonStyleless>
-
-          <Row className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
+          <Row>
             <Field
-              name="adGroupTechnicalName"
+              name="adGroupName"
               component={FormInput}
+              validate={[isRequired]}
               props={{
                 formItemProps: {
-                  label: formatMessage(messages.contentSectionGeneralRow8Label),
+                  label: formatMessage(messages.contentSectionGeneralRow1Label),
+                  required: true,
                 },
                 inputProps: {
-                  placeholder: formatMessage(messages.contentSectionGeneralRow8Placeholder),
+                  placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
                 },
                 helpToolTipProps: {
-                  title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
+                  title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
                 },
               }}
             />
           </Row>
+
+          <Row>
+            <Field
+              name="adGroupMaxBudgetPerPeriod"
+              component={FormInput}
+              normalize={normalizeNumber}
+              validate={[isRequired, isNotZero]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.contentSectionGeneralRow2Label),
+                  required: true,
+                },
+                inputProps: {
+                  addonAfter: (
+                    <Field
+                      name="adGroupMaxBudgetPeriod"
+                      component={FormSelectAddon}
+                      props={{
+                        options: [
+                        { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow2OptionDAY) },
+                        { value: 'WEEK', title: formatMessage(messages.contentSectionGeneralRow2OptionWEEK) },
+                        { value: 'MONTH', title: formatMessage(messages.contentSectionGeneralRow2OptionMONTH) },
+                        ],
+                      }}
+                    />
+                ),
+                  placeholder: formatMessage(messages.contentSectionGeneralRow2Placeholder),
+                  style: { width: '100%' },
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.contentSectionGeneralRow2Tooltip),
+                },
+              }}
+            />
+          </Row>
+
+          <Row>
+            <Field
+              name="adGroupTotalBudget"
+              component={FormInput}
+              normalize={normalizeNumber}
+              validate={[isRequired, isNotZero]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.contentSectionGeneralRow3Label),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.contentSectionGeneralRow3Placeholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
+                },
+              }}
+            />
+          </Row>
+
+          <Row>
+            <FormRangePicker
+              formId="adGroupForm"
+
+              formItemProps={{
+                label: formatMessage(messages.contentSectionGeneralRow4Label),
+                labelCol: { span: 3 },
+                wrapperCol: { span: 10, offset: 1 },
+                required: true,
+              }}
+
+              startProps={{
+                name: 'adGroupStartDate',
+                placeholder: formatMessage(messages.contentSectionGeneralRow4Placeholder1),
+                style: { width: '100%' },
+              }}
+
+              endProps={{
+                name: 'adGroupEndDate',
+                placeholder: formatMessage(messages.contentSectionGeneralRow4Placeholder2),
+                style: { width: '100%' },
+              }}
+
+              values={{
+                startDate: formValues && formValues.adGroupStartDate,
+                endDate: formValues && formValues.adGroupEndDate,
+              }}
+
+              fieldValidators={{ start: [isRequired], end: [isRequired] }}
+
+              helpToolTipProps={{
+                placement: 'right',
+                title: formatMessage(messages.contentSectionGeneralRow4Tooltip),
+              }}
+            />
+          </Row>
+
+          <Row>
+            <Field
+              name="adGroupMaxBidPrice"
+              component={FormInput}
+              normalize={normalizeNumber}
+              validate={[isRequired, isNotZero]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.contentSectionGeneralRow5Label),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.contentSectionGeneralRow5Placeholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
+                },
+              }}
+            />
+          </Row>
+
+          <Row>
+            <Field
+              name="adGroupTotalImpressionCapping"
+              component={FormInput}
+              normalize={normalizeNumber}
+              validate={[isRequired, isNotZero]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.contentSectionGeneralRow6Label),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
+                },
+              }}
+            />
+          </Row>
+
+          <Row>
+            <Field
+              name="adGroupPerDayImpressionCapping"
+              component={FormInput}
+              normalize={normalizeNumber}
+              validate={[isRequired, isNotZero]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.contentSectionGeneralRow7Label),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
+                },
+              }}
+            />
+          </Row>
+
+          <div className="advanced-section">
+            <ButtonStyleless
+              className="optional-section-title clickable-on-hover"
+              onClick={this.displayAdvancedSection}
+            >
+              <McsIcons type="settings" />
+              <span className="step-title">
+                {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
+              </span>
+              <McsIcons type="chevron" />
+            </ButtonStyleless>
+
+            <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
+              <Field
+                name="adGroupTechnicalName"
+                component={FormInput}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionGeneralRow8Label),
+                  },
+                  inputProps: {
+                    placeholder: formatMessage(messages.contentSectionGeneralRow8Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
+                  },
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     );

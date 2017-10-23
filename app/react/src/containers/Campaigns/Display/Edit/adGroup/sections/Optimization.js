@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
@@ -108,24 +107,22 @@ class Optimization extends Component {
           title={messages.sectionTitleOptimizer}
         />
 
-        <Row>
-          <FieldArray
-            component={RelatedRecordTable}
-            dataSource={dataSource}
-            loading={this.state.loading}
-            name="optimizerTable"
-            tableName="optimizerTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
-          />
+        <FieldArray
+          component={RelatedRecordTable}
+          dataSource={dataSource}
+          loading={this.state.loading}
+          name="optimizerTable"
+          tableName="optimizerTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
 
-          {!dataSource.length
+        {!dataSource.length
           ? <EmptyRecords
             iconType="plus"
             message={formatMessage(messages.contentSectionOptimizerEmptyTitle)}
           />
           : null
         }
-        </Row>
       </div>
     );
   }

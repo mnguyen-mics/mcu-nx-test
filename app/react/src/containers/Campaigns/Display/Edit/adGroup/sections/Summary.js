@@ -64,13 +64,13 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   );
 
   return (
-    <div id="summary" className="summarySection">
+    <div id="summary">
       <FormSection
         subtitle={messages.sectionSubtitleSummary}
         title={messages.sectionTitleSummary}
       />
-      <Row className="content">
-        <Col span={16}>
+      <Row className="ad-group-summary-section">
+        <Col span={16} className="content">
           <Section>
             <div>
               <Span>{formatMessage(messages.contentSectionSummaryPart1Group1)}</Span>

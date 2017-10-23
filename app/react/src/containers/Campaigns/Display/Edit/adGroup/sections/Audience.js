@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import messages from '../../messages';
@@ -135,24 +134,22 @@ class Audience extends Component {
           title={messages.sectionTitleAudience}
         />
 
-        <Row>
-          <FieldArray
-            component={RelatedRecordTable}
-            dataSource={dataSource}
-            loading={this.state.loading}
-            name="audienceTable"
-            tableName="audienceTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
-          />
+        <FieldArray
+          component={RelatedRecordTable}
+          dataSource={dataSource}
+          loading={this.state.loading}
+          name="audienceTable"
+          tableName="audienceTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
 
-          {!dataSource.length
-            ? <EmptyRecords
-              iconType="plus"
-              message={formatMessage(messages.contentSectionAudienceEmptyTitle)}
-            />
-            : null
-          }
-        </Row>
+        {!dataSource.length
+          ? <EmptyRecords
+            iconType="plus"
+            message={formatMessage(messages.contentSectionAudienceEmptyTitle)}
+          />
+          : null
+        }
       </div>
     );
   }

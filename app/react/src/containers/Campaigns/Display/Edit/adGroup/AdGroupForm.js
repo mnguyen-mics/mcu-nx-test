@@ -63,7 +63,9 @@ class AdGroupForm extends Component {
       return this.saveOrUpdateAdGroup()
         .then((adGroupId) => this.saveAudience(adGroupId).then(() => adGroupId))
         .then((adGroupId) => this.savePublishers(adGroupId).then(() => adGroupId))
-        .then((adGroupId) => this.saveAds(adGroupId))
+        .then((adGroupId) => this.saveAds(adGroupId).then(() => adGroupId))
+        .then((adGroupId) => this.saveDevices(adGroupId).then(() => adGroupId))
+        .then((adGroupId) => this.savePlacements(adGroupId))
         .then(() => {
           this.setState({ loading: false });
           history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
@@ -107,6 +109,10 @@ class AdGroupForm extends Component {
     return this.saveTableFields(options);
   }
 
+  saveDevices = (/* adGroupId */) => {
+    return Promise.resolve();
+  }
+
   saveOrUpdateAdGroup = () => {
     const {
       editionMode,
@@ -139,6 +145,10 @@ class AdGroupForm extends Component {
     );
 
     return request.then(result => result.data.id);
+  }
+
+  savePlacements = (/* adGroupId */) => {
+    return Promise.resolve();
   }
 
   savePublishers = (adGroupId) => {
@@ -277,7 +287,7 @@ class AdGroupForm extends Component {
           onSubmit={handleSubmit(this.onSubmit)}
         >
           <Content
-            className="mcs-content-container mcs-form-container"
+            className="mcs-content-container mcs-form-container ad-group-form"
             id={scrollLabelContentId}
           >
             {editionMode

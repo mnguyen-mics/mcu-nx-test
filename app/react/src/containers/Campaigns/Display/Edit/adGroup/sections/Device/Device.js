@@ -23,10 +23,10 @@ class Device extends Component {
           title={messages.sectionTitleDevice}
         />
 
-        <Row className="ad-group-device">
+        <Row className="ad-group-device-section">
           <Col offset={1}>
             <Checkbox
-              className="field-label"
+              className="field-label checkbox-wrapper"
               onClick={() => this.setState({ displayOptions: !this.state.displayOptions })}
             >{formatMessage(messages.contentSectionDevicePart1Message)}
             </Checkbox>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
@@ -95,24 +94,22 @@ class Publisher extends Component {
           title={messages.sectionTitlePublisher}
         />
 
-        <Row>
-          <FieldArray
-            component={RelatedRecordTable}
-            dataSource={dataSource}
-            loading={this.state.loading}
-            name="publisherTable"
-            tableName="publisherTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
-          />
+        <FieldArray
+          component={RelatedRecordTable}
+          dataSource={dataSource}
+          loading={this.state.loading}
+          name="publisherTable"
+          tableName="publisherTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
 
-          {!dataSource.length
-            ? <EmptyRecords
-              iconType="plus"
-              message={formatMessage(messages.contentSectionPublisherEmptyTitle)}
-            />
-            : null
-          }
-        </Row>
+        {!dataSource.length
+          ? <EmptyRecords
+            iconType="plus"
+            message={formatMessage(messages.contentSectionPublisherEmptyTitle)}
+          />
+          : null
+        }
       </div>
     );
   }

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
 import { EmptyRecords, Form } from '../../../../../../components/index.ts';
 import messages from '../../messages';
@@ -19,12 +18,10 @@ function Media({
         title={messages.sectionTitleMedia}
       />
 
-      <Row>
-        <EmptyRecords
-          iconType="plus"
-          message={formatMessage(messages.contentSectionMediaEmptyTitle)}
-        />
-      </Row>
+      <EmptyRecords
+        iconType="plus"
+        message={formatMessage(messages.contentSectionMediaEmptyTitle)}
+      />
     </div>
   );
 }

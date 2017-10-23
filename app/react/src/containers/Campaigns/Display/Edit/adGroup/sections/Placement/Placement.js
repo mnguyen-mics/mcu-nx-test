@@ -48,13 +48,13 @@ class Placement extends Component {
     };
 
     return (
-      <div id="media">
+      <div id="placement">
         <FormSection
           subtitle={messages.sectionSubtitlePlacement}
           title={messages.sectionTitlePlacement}
         />
 
-        <Row className="ad-group-placement">
+        <Row className="ad-group-placement-section">
           <Col offset={1}>
             <FormRadioGroup
               elementClassName="field-label checkbox-options"

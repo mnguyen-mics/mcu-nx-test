@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
-import { Row } from 'antd';
 
 import { EmptyRecords, Form } from '../../../../../../../components/index.ts';
 import AdGroupCardList from './AdGroupCardList';
@@ -74,7 +73,7 @@ class Ads extends Component {
           title={messages.sectionTitleAds}
         />
 
-        <Row>
+        <div className="ad-group-ad-section">
           <FieldArray
             component={AdGroupCardList}
             data={formValues}
@@ -84,13 +83,14 @@ class Ads extends Component {
           />
 
           {!formValues.filter(ad => !ad.toBeRemoved).length
-            ? <EmptyRecords
-              iconType="plus"
-              message={formatMessage(messages.contentSectionAdEmptyTitle)}
-            />
-            : null
+            && (
+              <EmptyRecords
+                iconType="plus"
+                message={formatMessage(messages.contentSectionAdEmptyTitle)}
+              />
+            )
           }
-        </Row>
+        </div>
       </div>
     );
   }

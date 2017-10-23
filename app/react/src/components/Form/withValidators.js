@@ -13,7 +13,7 @@ const defaultErrorMessages = defineMessages({
 });
 
 const isRequired = formatMessage => value => {
-  return (!value || !value.length
+  return (!value || (value.length !== undefined && !value.length)
     ? formatMessage(defaultErrorMessages.required)
     : undefined
   );

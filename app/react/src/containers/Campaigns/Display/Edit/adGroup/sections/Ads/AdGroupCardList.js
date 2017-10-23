@@ -30,29 +30,27 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
         };
 
         return (
-          <div>
-            <Row className="footer">
-              <Col className="inline formatWrapper" span={16}>
-                <div style={shapeStyle} />
-                <div className="dimensions">{values.format}</div>
-              </Col>
-              <Col className="inline buttons" span={6}>
-                <ButtonStyleless>
-                  <McsIcons type="pen" className="button" />
-                </ButtonStyleless>
+          <Row className="footer">
+            <Col className="inline formatWrapper" span={16}>
+              <div style={shapeStyle} />
+              <div className="dimensions">{values.format}</div>
+            </Col>
+            <Col className="inline buttons" span={6}>
+              <ButtonStyleless>
+                <McsIcons type="pen" className="button" />
+              </ButtonStyleless>
 
-                <div className="button-separator" />
+              <div className="button-separator" />
 
-                <ButtonStyleless>
-                  <McsIcons
-                    className="button"
-                    onClick={updateTableFieldStatus({ index, tableName: 'ads' })}
-                    type="delete"
-                  />
-                </ButtonStyleless>
-              </Col>
-            </Row>
-          </div>
+              <ButtonStyleless>
+                <McsIcons
+                  className="button"
+                  onClick={updateTableFieldStatus({ index, tableName: 'ads' })}
+                  type="delete"
+                />
+              </ButtonStyleless>
+            </Col>
+          </Row>
         );
       }
     }
@@ -67,16 +65,16 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
     .filter(card => !card.toBeRemoved);
 
   return (
-    <Row className="mcs-table-card">
+    <div className="mcs-table-card">
       <Row gutter={20}>
         {cards.map(card => (
           <Col key={card.id} span={6}>
-            <div className="adGroupCard">{ card.view }</div>
+            <div className="ad-group-card">{ card.view }</div>
           </Col>
           )
         )}
       </Row>
-    </Row>
+    </div>
   );
 }
 
