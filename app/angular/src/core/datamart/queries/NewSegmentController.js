@@ -15,6 +15,7 @@ define(['./module'], function (module) {
                 var queryId = params.queryId;
                 var segment = {
                     name : $scope.segment.name,
+                    persisted : $scope.segment.persisted,
                     type : "USER_QUERY",
                     query_id : queryId,
                     evaluation_mode: 'PERIODIC',
@@ -37,6 +38,7 @@ define(['./module'], function (module) {
                 var queryId = queryContainerUpdate.id;
                 var segment = {
                     name : $scope.segment.name,
+                    persisted : $scope.segment.persisted,
                     type : "USER_QUERY",
                     query_id : queryId,
                     evaluation_mode: 'PERIODIC',

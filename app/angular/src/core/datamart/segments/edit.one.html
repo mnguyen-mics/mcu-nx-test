@@ -208,8 +208,8 @@
             <div class="form-inline" ng-if="segment.type == 'USER_QUERY'">
               <div class="radio">
                 <label>
-                  <input type="checkbox" ng-model="segment.persisted" />
-                  Persisted Query Segment
+                  <input type="checkbox" ng-model="segment.persisted" ng-disabled="!isCreationMode" />
+                  Persisted Query Segment (warning, this can't be changed afterwards)
                 </label>
               </div>
             </div>            
