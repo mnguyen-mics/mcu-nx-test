@@ -6,7 +6,6 @@ import ButtonStyleless from './ButtonStyleless';
 import { SwitchInput } from './Form';
 import McsIcons from './McsIcons';
 import generateGuid from '../utils/generateGuid';
-import {  } from '';
 
 interface RelatedRecordTableProps {
   dataSource: Array<{}>;
