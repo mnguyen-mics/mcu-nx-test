@@ -36,3 +36,21 @@ export const takeLatest = functionReturningPromise => {
   };
 
 };
+
+export const makeCancelable = (promise) => {
+  let hasCanceled = false;
+
+  const wrappedPromise = new Promise((resolve, reject) => {
+    promise.then(
+      val => hasCanceled ? reject({ isCanceled: true }) : resolve(val), // eslint-disable-line no-confusing-arrow
+      error => hasCanceled ? reject({ isCanceled: true }) : reject(error) // eslint-disable-line no-confusing-arrow
+    );
+  });
+
+  return {
+    promise: wrappedPromise,
+    cancel() {
+      hasCanceled = true;
+    },
+  };
+};

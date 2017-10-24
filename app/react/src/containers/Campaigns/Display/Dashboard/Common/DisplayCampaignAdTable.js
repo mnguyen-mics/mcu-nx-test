@@ -236,7 +236,7 @@ class DisplayCampaignAdTable extends Component {
             callback: this.editCampaign,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign,
+            callback: this.archiveAd,
           },
         ],
       },
