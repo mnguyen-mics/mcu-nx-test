@@ -55,7 +55,7 @@ class Placement extends Component {
         />
 
         <div className="ad-group-placement-section">
-          <Col offset={1}>
+          <div className="placement-radio-group">
             <FormRadioGroup
               elementClassName="field-label checkbox-options"
               elements={[
@@ -68,7 +68,7 @@ class Placement extends Component {
                 value: this.state.placementOption,
               }}
             />
-          </Col>
+          </div>
 
           {placementOption === 'custom' && (formValues.mobile.length || formValues.web.length)
             && (

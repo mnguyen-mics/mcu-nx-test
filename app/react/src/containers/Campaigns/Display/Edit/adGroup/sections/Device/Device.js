@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-import { Checkbox, Col, Row } from 'antd';
+import { Checkbox } from 'antd';
 
 import { Form } from '../../../../../../../components/index.ts';
 import messages from '../../../messages';
@@ -23,14 +23,14 @@ class Device extends Component {
           title={messages.sectionTitleDevice}
         />
 
-        <Row className="ad-group-device-section">
-          <Col offset={1}>
+        <div className="ad-group-device-section">
+          <div className="device-checkbox">
             <Checkbox
               className="field-label checkbox-wrapper"
               onClick={() => this.setState({ displayOptions: !this.state.displayOptions })}
             >{formatMessage(messages.contentSectionDevicePart1Message)}
             </Checkbox>
-          </Col>
+          </div>
 
           {this.state.displayOptions
           && (
@@ -88,7 +88,7 @@ class Device extends Component {
             </div>
           )
         }
-        </Row>
+        </div>
       </div>
     );
   }
