@@ -156,8 +156,6 @@ const saveAudience = (campaignId, adGroupId, formValue, initialFormValue) => {
     tableName: 'audienceTable',
   };
 
-  console.log('options = ', options);
-
   return saveTableFields(options, formValue, initialFormValue);
 };
 

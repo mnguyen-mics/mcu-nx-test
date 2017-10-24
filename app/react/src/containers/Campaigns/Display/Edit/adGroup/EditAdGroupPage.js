@@ -36,7 +36,7 @@ class EditAdGroupPage extends Component {
   onSave = (object) => {
     const { history, match, location } = this.props;
 
-    saveAdGroup(match.params.campaignId, object, {}, true).then(() => {
+    saveAdGroup(match.params.campaignId, object, this.state.initialValues, true).then(() => {
       return location.state && location.state.from
       ? history.push(location.state.from)
       : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`);
