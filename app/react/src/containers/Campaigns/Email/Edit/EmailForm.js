@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Field, Form, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
-import { Layout, Row } from 'antd';
+import { Layout } from 'antd';
 
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { withMcsRouter } from '../../../Helpers';

@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Field, Form, reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
-import { Layout, Row } from 'antd';
+import { Layout } from 'antd';
 
 import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form/index.ts';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
@@ -334,9 +334,13 @@ class EmailBlastForm extends Component {
             <RelatedRecords emptyOption={emptySegmentOption}>
               {this.getSegmentRecords()}
             </RelatedRecords>
-            <div className="section-footer">
-              <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
-            </div>
+            {segments.length > 0
+              && (
+                <div className="section-footer">
+                  <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
+                </div>
+              )
+            }
           </div>
         </Content>
       </Form>

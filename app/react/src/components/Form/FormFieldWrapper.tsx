@@ -7,6 +7,7 @@ import { TooltipProps } from 'antd/lib/tooltip';
 import McsIcons from '../McsIcons';
 
 export interface FormFieldWrapperProps {
+  hasMarginBottom?: boolean;
   helpToolTipProps?: TooltipProps & { className?: string };
 }
 
@@ -30,26 +31,32 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
   };
 
   return (
-    <Form.Item
-      label={<span className="field-label">{label}</span>}
-      {...fieldGridConfig}
-      {...formInputProps}
-    >
-      <Row align="middle" type="flex">
-        {children}
+    <div className={props.hasMarginBottom ? '' : 'form-field-wrapper'}>
+      <Form.Item
+        label={<span className="field-label">{label}</span>}
+        {...fieldGridConfig}
+        {...formInputProps}
+      >
+        <Row align="middle" type="flex">
+          {children}
 
-        {!isEmpty(helpToolTipProps)
-          && (
-            <Col span={2} className={`field-tooltip ${helpToolTipProps!.className}`}>
-              <Tooltip {...tooltipProps} placement="right">
-                <McsIcons type="info" />
-              </Tooltip>
-            </Col>
-          )
-        }
-      </Row>
-    </Form.Item>
+          {!isEmpty(helpToolTipProps)
+            && (
+              <Col span={2} className={`field-tooltip ${helpToolTipProps!.className}`}>
+                <Tooltip {...tooltipProps} placement="right">
+                  <McsIcons type="info" />
+                </Tooltip>
+              </Col>
+            )
+          }
+        </Row>
+      </Form.Item>
+    </div>
   );
+};
+
+FormFieldWrapper.defaultProps = {
+  hasMarginBottom: false,
 };
 
 export default FormFieldWrapper;
