@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Select } from 'antd';
+import { Select } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
 import { OptionProps } from 'antd/lib/select';
 
