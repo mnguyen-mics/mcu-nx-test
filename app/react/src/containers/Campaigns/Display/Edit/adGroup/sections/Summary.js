@@ -20,7 +20,7 @@ function Summary({ displayAudience, formatMessage, formValues }) {
     adGroupEndDate,
     adGroupMaxBudgetPeriod,
     adGroupMaxBudgetPerPeriod,
-    ads,
+    adTable,
     areas,
     audienceTable,
     devices,
@@ -48,7 +48,7 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
   const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
   const optimizers = stringifyTable(filterTableByRemovedStatus(optimizerTable), 'provider');
-  const numberOfCreatives = (ads ? ads.filter(ad => !ad.toBeRemoved).length : 0);
+  const numberOfCreatives = (adTable ? adTable.filter(ad => !ad.toBeRemoved).length : 0);
 
   /* JSX */
   const Section = ({ children }) => (

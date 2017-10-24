@@ -15,10 +15,11 @@ class Optimization extends Component {
   state = { loading: false }
 
   getBidOptimizers = ({ getAll, newSelectedIds }) => () => {
+    const { organisationId } = this.props;
     const selectedIds = newSelectedIds || this.getSelectedIds();
     const options = { getAll };
 
-    return BidOptimizerServices.getBidOptimizers(this.props.organisationId, selectedIds, options);
+    return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds, options });
   }
 
   getSelectedIds = () => {

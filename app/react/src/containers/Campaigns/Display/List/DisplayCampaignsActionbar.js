@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Button, Dropdown, message } from 'antd';
+import { Button, message } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
@@ -114,38 +114,8 @@ class DisplayCampaignsActionbar extends Component {
           organisationId,
         },
       },
-      history,
       translations,
     } = this.props;
-
-    const handleOnClick = ({ key }) => {
-      switch (key) {
-        case 'DESKTOP_AND_MOBILE':
-          history.push(`/${organisationId}/campaigns/display/expert/edit/T1`);
-          break;
-
-        default:
-          break;
-      }
-    };
-
-    const newCampaignMenu = (
-      <Menu onClick={handleOnClick}>
-        <Menu.Item key="DESKTOP_AND_MOBILE">
-          <FormattedMessage id="DESKTOP_AND_MOBILE" />
-        </Menu.Item>
-        <Menu.Item key="SIMPLIFIED_KEYWORDS_TARGETING">
-          <Link to={`/${organisationId}/campaigns/display/keywords`}>
-            <FormattedMessage id="SIMPLIFIED_KEYWORDS_TARGETING" />
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="EXTERNAL_CAMPAIGN">
-          <Link to={`/${organisationId}/campaigns/display/external/edit/T1`}>
-            <FormattedMessage id="EXTERNAL_CAMPAIGN" />
-          </Link>
-        </Menu.Item>
-      </Menu>
-    );
 
     const breadcrumbPaths = [{
       name: translations.DISPLAY,
@@ -154,11 +124,12 @@ class DisplayCampaignsActionbar extends Component {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Dropdown overlay={newCampaignMenu} trigger={['click']}>
-          <Button className="mcs-primary" type="primary">
+        <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
+          <Button className="mcs-primary" type="primary" >
             <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
-        </Dropdown>
+        </Link>
+
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           { !exportIsRunning && <McsIcons type="download" /> }
           <FormattedMessage id="EXPORT" />
@@ -172,7 +143,6 @@ DisplayCampaignsActionbar.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
 };
 
 DisplayCampaignsActionbar = compose(

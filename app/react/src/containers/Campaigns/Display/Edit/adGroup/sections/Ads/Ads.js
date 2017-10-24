@@ -50,7 +50,7 @@ class Ads extends Component {
       .then(({ data }) => {
         const newFields = data.filter((ad) => selectedIds.includes(ad.id));
 
-        handlers.updateTableFields({ newFields, tableName: 'ads' });
+        handlers.updateTableFields({ newFields, tableName: 'adTable' });
 
         return this.setState({ loading: false });
       });
@@ -79,7 +79,7 @@ class Ads extends Component {
             component={AdGroupCardList}
             data={formValues}
             loading={this.state.loading}
-            name="ads"
+            name="adTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
           />
 

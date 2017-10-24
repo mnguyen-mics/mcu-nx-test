@@ -45,7 +45,7 @@ function AdGroupCardList({ className, data, updateTableFieldStatus }) {
               <ButtonStyleless>
                 <McsIcons
                   className="button"
-                  onClick={updateTableFieldStatus({ index, tableName: 'ads' })}
+                  onClick={updateTableFieldStatus({ index, tableName: 'adTable' })}
                   type="delete"
                 />
               </ButtonStyleless>

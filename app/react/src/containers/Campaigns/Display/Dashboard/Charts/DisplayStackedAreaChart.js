@@ -139,7 +139,7 @@ class DisplayStackedAreaChart extends Component {
       value: hasFetchedOverallStat ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€') : null,
     }, {
       name: 'CTR',
-      value: hasFetchedOverallStat ? formatMetric(overallStat[0].ctr, '0.000%') : null,
+      value: hasFetchedOverallStat ? formatMetric(parseFloat(overallStat[0].ctr) / 100, '0.000 %') : null,
     }, {
       name: 'CPM',
       value: hasFetchedOverallStat ? formatMetric(overallStat[0].ctr, '0,0[.]00', '', '€') : null,

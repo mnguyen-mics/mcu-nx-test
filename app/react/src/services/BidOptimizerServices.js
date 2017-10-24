@@ -26,7 +26,7 @@ function getAllBidOptimizers(organisationId) {
   return ApiService.getRequest(endpoint);
 }
 
-function getBidOptimizers(organisationId, selectedIds, options = {}) {
+function getBidOptimizers({ organisationId, selectedIds, options = {} }) {
   const { getAll } = options;
 
   /* getAllBidOptimizers fetches for us some optimizer metadata. */

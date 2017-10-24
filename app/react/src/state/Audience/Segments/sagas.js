@@ -218,8 +218,34 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
       if (response.data[0].status === 'SUCCEEDED') {
         const micsUri = response.data[0].output_result.result.data_file_uri;
         const overlapData = yield call(DataFileService.getDatafileData, micsUri);
+        // sort on overlap number (same as sorting on percentage )
+        const topOverlaps = overlapData.overlaps.sort((a, b) => {
+          return a.overlap_number > b.overlap_number ? -1 : 1;
+        }); // select 20 biggest overlpas
+
+        const topSegments = topOverlaps.map(overlap => {
+          return overlapData.segments.find(s => s.segment_id === overlap.segment_intersect_with);
+        });
+        // for each overlap we match it with its id related segment
+        const segmentResources = yield all(topSegments.map(s => {
+          return call(AudienceSegmentService.getSegment, s.segment_id);
+        }));
+        // get segments names
+        const segments = [
+          ...topSegments.map(s => {
+            const name = (segmentResources.find(res => res.id === s.segment_id.toString()) || {}).name;
+            return {
+              ...s,
+              name
+            };
+          }),
+          overlapData.segments.find(s => s.segment_id.toString() === segmentId)
+        ];
+        // we formate the data chart
         formatedResponse = {
           ...overlapData,
+          overlaps: topOverlaps,
+          segments,
           hasOverlap: true,
         };
       } else if (response.data[0].status === 'PENDING' || response.data[0].status === 'RUNNING') {
@@ -227,7 +253,7 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
         let responseStatus = response.data[0].status;
 
         while (responseStatus !== 'SUCCEEDED') {
-
+          yield call(delay, 1 * 1000);
           const test = yield call(AudienceSegmentService.retrieveOverlap, segmentId, formatedFilters.first_result, formatedFilters.max_results);
           if (test.data[0].status === 'SUCCEEDED') {
             responseStatus = test.data[0].status;
@@ -238,7 +264,6 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
               hasOverlap: true,
             };
           }
-          yield call(delay, 1 * 1000);
         }
       }
     } else {
@@ -257,8 +282,8 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
       const segmentList = yield call(AudienceSegmentService.getSegments, organisationId, datamartId, options);
       yield put(fetchAudienceSegmentList.success(segmentList));
     }
-    yield put(fetchAudienceSegmentOverlap.success(formatedResponse));
 
+    yield put(fetchAudienceSegmentOverlap.success(formatedResponse));
   } catch (error) {
     log.error(error);
     yield put(fetchAudienceSegmentOverlap.failure(error));

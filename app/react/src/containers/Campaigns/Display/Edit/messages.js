@@ -571,4 +571,25 @@ export default defineMessages({
     id: 'section.selector.title.cookieIds',
     defaultMessage: 'Desktop Cookie Ids',
   },
+
+  /*
+  ==============================================================================
+  =============================== GOAL PIXEL MODAL =============================
+  ==============================================================================
+  */
+
+  goalPixelModalTitle: {
+    id: 'goal.pixel.modal.title',
+    defaultMessage: 'Your Goal Pixel'
+  },
+
+  goalPixelModalContent: {
+    id: 'goal.pixel.modal.content',
+    defaultMessage: 'Please find your goal pixel below. Give this code to your web administrator or your web developer so that it can be placed on the page that will trigger the goal. For instance, place it on your receipt page to get all the users that have bought something from your store.'
+  },
+  goalPixelModalSaveGoal: {
+    id: 'goal.pixel.modal.saveGoal',
+    defaultMessage: 'Before Getting your pixel, we need to save your Goal. After saving you won\'t be able to modify your goal. Are you sure you want to save your Goal?'
+  }
+
 });

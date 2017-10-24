@@ -28,6 +28,7 @@ export default {
   FormTagSelect,
   FormTitle,
   SwitchInput,
+  withNormalizer,
   withValidators,
 };
 

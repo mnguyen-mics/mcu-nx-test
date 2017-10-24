@@ -27,15 +27,12 @@ import {
   Publisher,
   Summary,
 } from './sections';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
 import { Loading } from '../../../../../components/index.ts';
+import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as actions from '../../../../../state/Notifications/actions';
-import { unformatMetric } from '../../../../../utils/MetricHelper';
-import { generateFakeId, isFakeId } from '../../../../../utils/FakeIdHelper';
+import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
@@ -53,168 +50,25 @@ class AdGroupForm extends Component {
 
   onSubmit = () => {
     const {
-      history,
-      match: { params: { campaignId, organisationId } },
-    } = this.props;
-
-    if (!this.props.pristine) {
-      this.setState({ loading: true });
-
-      return this.saveOrUpdateAdGroup()
-        .then((adGroupId) => this.saveAudience(adGroupId).then(() => adGroupId))
-        .then((adGroupId) => this.savePublishers(adGroupId).then(() => adGroupId))
-        .then((adGroupId) => this.saveAds(adGroupId).then(() => adGroupId))
-        .then((adGroupId) => this.saveDevices(adGroupId).then(() => adGroupId))
-        .then((adGroupId) => this.savePlacements(adGroupId))
-        .then(() => {
-          this.setState({ loading: false });
-          history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
-        })
-        .catch(error => {
-          this.setState({ loading: false });
-          this.props.notifyError(error);
-        });
-    }
-
-    history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
-    return Promise.resolve();
-  }
-
-  saveAds = (adGroupId) => {
-    const options = {
-      adGroupId,
-      getBody: (row) => ({ creative_id: row.id }),
-      requests: {
-        create: DisplayCampaignService.createAd,
-        delete: DisplayCampaignService.deleteAd,
-      },
-      tableName: 'ads',
-    };
-
-    return this.saveTableFields(options);
-  }
-
-  saveAudience = (adGroupId) => {
-    const options = {
-      adGroupId,
-      getBody: (row) => ({ audience_segment_id: row.id, exclude: !row.include }),
-      requests: {
-        create: DisplayCampaignService.createAudience,
-        update: DisplayCampaignService.updateAudience,
-        delete: DisplayCampaignService.deleteAudience,
-      },
-      tableName: 'audienceTable',
-    };
-
-    return this.saveTableFields(options);
-  }
-
-  saveDevices = (/* adGroupId */) => {
-    return Promise.resolve();
-  }
-
-  saveOrUpdateAdGroup = () => {
-    const {
-      editionMode,
       formValues,
-      match: { params: { adGroupId, campaignId } },
+      editionMode
     } = this.props;
 
-    let bidOptimizer = null;
-    if (formValues.optimizerTable && formValues.optimizerTable.length) {
-      bidOptimizer = formValues.optimizerTable.find(elem => !elem.toBeRemoved);
+    if (editionMode === false) {
+      formValues.id = formValues.id ? formValues.id : Math.round(Math.random() * 1000);
     }
-
-    const body = {
-      bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
-      end_date: formValues.adGroupEndDate.valueOf(),
-      max_bid_price: unformatMetric(formValues.adGroupMaxBidPrice),
-      max_budget_per_period: unformatMetric(formValues.adGroupMaxBudgetPerPeriod),
-      max_budget_period: formValues.adGroupMaxBudgetPeriod,
-      name: formValues.adGroupName,
-      per_day_impression_capping: unformatMetric(formValues.adGroupPerDayImpressionCapping),
-      start_date: formValues.adGroupStartDate.valueOf(),
-      technical_name: formValues.adGroupTechnicalName,
-      total_budget: unformatMetric(formValues.adGroupTotalBudget),
-      total_impression_capping: unformatMetric(formValues.adGroupTotalImpressionCapping),
-    };
-
-    const request = (!editionMode
-      ? DisplayCampaignService.createAdGroup(campaignId, body)
-      : DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body)
-    );
-
-    return request.then(result => result.data.id);
-  }
-
-  savePlacements = (/* adGroupId */) => {
-    return Promise.resolve();
-  }
-
-  savePublishers = (adGroupId) => {
-    const options = {
-      adGroupId,
-      getBody: (row) => ({ display_network_access_id: row.id }),
-      requests: {
-        create: DisplayCampaignService.createPublisher,
-        delete: DisplayCampaignService.deletePublisher,
-      },
-      tableName: 'publisherTable',
-    };
-
-    return this.saveTableFields(options);
-  }
-
-  saveTableFields = (options) => {
-    const { match, formInitialValues, formValues } = this.props;
-    const { campaignId } = match.params;
-    const { adGroupId, getBody, requests, tableName } = options;
-    const table = formValues[tableName] || [];
-
-    return table.reduce((promise, row) => {
-      const body = getBody(row);
-      const { include, modelId, toBeRemoved } = row;
-      const isCreation = isFakeId(modelId);
-
-      return promise.then(() => {
-        let newPromise;
-
-        if (!toBeRemoved) {
-          /* In case we want to add or update a element */
-
-          if (isCreation) {
-            /* creation */
-            newPromise = requests.create({ campaignId, adGroupId, body });
-          } else if (requests.update) {
-
-            const needsUpdating = formInitialValues[tableName].find(elem => (
-              elem.modelId === modelId && elem.include !== include
-            ));
-
-            /* update if modified element */
-            if (needsUpdating) {
-              newPromise = requests.update({ campaignId, adGroupId, id: modelId, body });
-            }
-          }
-        } else if (!isCreation) {
-          /* In case we want to delete an existing element */
-          newPromise = requests.delete({ campaignId, adGroupId, id: modelId });
-        }
-
-        return newPromise || Promise.resolve();
-      });
-    }, Promise.resolve());
+    this.props.save(formValues);
   }
 
   updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
 
     this.props.arrayRemove(FORM_NAME, tableName, index);
     this.props.arrayInsert(FORM_NAME, tableName, index, updatedField);
-
-    if (e) {
-      e.preventDefault();
-    }
   }
 
   updateTableFields = ({ newFields, tableName }) => {
@@ -275,7 +129,7 @@ class AdGroupForm extends Component {
       optimizerTable,
       placements,
       publisherTable,
-      ads,
+      adTable,
     } = formValues;
 
     return (
@@ -313,7 +167,7 @@ class AdGroupForm extends Component {
             <hr />
             <Placement {...commonProps} formValues={placements} />
             <hr />
-            <Ads {...commonProps} formValues={ads} />
+            <Ads {...commonProps} formValues={adTable} />
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
             {!editionMode
@@ -343,16 +197,14 @@ AdGroupForm.propTypes = {
   fieldNormalizer: PropTypes.shape().isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
-  formInitialValues: PropTypes.shape().isRequired,
+  // formInitialValues: PropTypes.shape().isRequired,
   formValues: PropTypes.shape().isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
-  match: PropTypes.shape().isRequired,
+  // match: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
-  pristine: PropTypes.bool.isRequired,
-  notifyError: PropTypes.func.isRequired,
+  save: PropTypes.func.isRequired,
 };
 
 

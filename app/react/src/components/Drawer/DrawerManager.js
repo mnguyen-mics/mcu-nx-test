@@ -21,9 +21,10 @@ class DrawerManager extends Component {
   }
 
   componentDidUpdate() {
-    if (this.drawerDiv) {
-      this.drawerDiv.focus();
-    }
+    // TODO focus blur issue with GoalForm
+    // if (this.drawerDiv) {
+    //   this.drawerDiv.focus();
+    // }
   }
 
   componentWillUnmount() {
@@ -73,14 +74,14 @@ class DrawerManager extends Component {
       const lastElement = index === drawableContents.length - 1;
       const displayInForeground = lastElement;
 
-      drawersWithOverlay.push(() => (
+      drawersWithOverlay.push(
         <div
           className={'drawer-overlay'}
           onClick={onClickOnBackground}
         />
-      ));
+      );
 
-      drawersWithOverlay.push(() => (
+      drawersWithOverlay.push(
         <div
           ref={div => {
             this.drawerDiv = div;
@@ -94,15 +95,15 @@ class DrawerManager extends Component {
         >
           <WrappedComponent {...additionalProps} {...others} />
         </div>
-      ));
+      );
     });
 
-    drawersWithOverlay.push(() => <div className="drawer-overlay" />);
-    drawersWithOverlay.push(() => <div className="drawer" style={drawerStyles.ready} />);
+    drawersWithOverlay.push(<div className="drawer-overlay" />);
+    drawersWithOverlay.push(<div className="drawer" style={drawerStyles.ready} />);
 
     return (
       <div onKeyDown={this.handleOnKeyDown} className="drawer-container">
-        {drawersWithOverlay.map(drawer => drawer())}
+        {drawersWithOverlay.map(drawer => drawer)}
       </div>
     );
   }

@@ -10,6 +10,10 @@ const defaultErrorMessages = defineMessages({
     id: 'common.form.field.error.invalid_email',
     defaultMessage: 'invalid email address',
   },
+  invalidNumber: {
+    id: 'common.form.field.error.invalid_number',
+    defaultMessage: 'Invalid Number'
+  }
 });
 
 const isRequired = formatMessage => value => {
@@ -26,6 +30,11 @@ const isNotZero = formatMessage => value => {
   );
 };
 
+const isValidNumber = formatMessage => value => {
+  return value && !/^\d+$/i.test(value) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+};
+
 const isValidEmail = formatMessage => value => {
   return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
@@ -38,6 +47,7 @@ const withValidators = compose(
       isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),
+      isValidNumber: isValidNumber(formatMessage)
     },
   })),
 );

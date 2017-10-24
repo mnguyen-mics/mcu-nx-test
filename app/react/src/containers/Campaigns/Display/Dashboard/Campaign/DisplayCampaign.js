@@ -39,11 +39,9 @@ class DisplayCampaign extends Component {
 
   renderDatePicker() {
     const {
-      history: {
         location: {
           search,
         },
-      },
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
