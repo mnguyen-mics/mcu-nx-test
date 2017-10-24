@@ -65,11 +65,11 @@ class CampaignContent extends Component {
 
     return (
       <Layout>
-        {(submitting || loading) ?
+        { (loading || submitting) &&
+          <Loading className={loading || submitting ? 'loading-full-screen' : 'hide-section'} />
+        }
 
-        (<Loading className="loading-full-screen" />) :
-
-        (<div className="ant-layout">
+        <div className={(!loading && !submitting ? 'ant-layout' : 'hide-section')}>
           <EditContentLayout
             breadcrumbPaths={breadcrumbPaths}
             sidebarItems={sidebarItems}
@@ -84,7 +84,7 @@ class CampaignContent extends Component {
               openNextDrawer={this.props.openNextDrawer}
             />
           </EditContentLayout>
-        </div>)}
+        </div>
       </Layout>
     );
   }

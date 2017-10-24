@@ -75,10 +75,10 @@ class Goals extends Component {
   createNewData = (object) => {
     const { formValues, handlers } = this.props;
     const valuesToAdd = [
-      formValues.filter(item => {
+      ...formValues.filter(item => {
         return !item.toBeRemoved;
       }),
-      ...object
+      object
     ];
 
     this.setState({ loading: true }, () => {

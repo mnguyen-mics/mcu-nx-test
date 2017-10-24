@@ -29,6 +29,8 @@ import * as NotificationActions from '../../../../../state/Notifications/actions
 
 class AdGroupPage extends Component {
 
+  cancelablePromises = [];
+
   constructor(props) {
     super(props);
     this.fetchAllData = this.fetchAllData.bind(this);
@@ -97,10 +99,10 @@ class AdGroupPage extends Component {
   fetchAllData(organisationId, campaignId, adGroupId, filter) {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
-    const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions);
-    const getAdPerf = () => ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '');
-    const getMediaPerf = () => ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 });
-    const getOverallAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(
+    const getAdGroupPerf = ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions);
+    const getAdPerf = ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '');
+    const getMediaPerf = ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 });
+    const getOverallAdGroupPerf = ReportService.getAdGroupDeliveryReport(
       organisationId,
       'ad_group_id',
       adGroupId,
@@ -109,6 +111,9 @@ class AdGroupPage extends Component {
       '',
       ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
     );
+
+    this.cancelablePromises.push(getAdGroupPerf, getAdPerf, getMediaPerf, getOverallAdGroupPerf);
+
     this.setState((prevState) => {
       const nextState = {
         ...prevState,
@@ -152,50 +157,42 @@ class AdGroupPage extends Component {
       });
     });
 
-    getOverallAdGroupPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.adGroups.overallPerformance.isLoading = false;
-        nextState.adGroups.overallPerformance.hasFetched = true;
-        nextState.adGroups.overallPerformance.performance = normalizeReportView(response.data.report_view);
-        return nextState;
-      });
+    getOverallAdGroupPerf.promise.then(response => {
+      this.updateStateOnPerf('adGroups', 'overallPerformance', normalizeReportView(response.data.report_view));
+    }).catch(this.catchCancellablePromises);
+
+    getAdGroupPerf.promise.then(response => {
+      this.updateStateOnPerf('adGroups', 'performance', normalizeReportView(response.data.report_view));
+    }).catch(this.catchCancellablePromises);
+
+    getAdPerf.promise.then(response => {
+      this.updateStateOnPerf('ads', 'performance', this.formatReportView(response.data.report_view, 'ad_id'));
+    }).catch(this.catchCancellablePromises);
+    getMediaPerf.promise.then(response => {
+      this.updateStateOnPerf('adGroups', 'mediaPerformance', normalizeReportView(response.data.report_view, 'media_id'));
+    }).catch(this.catchCancellablePromises);
+  }
+
+  updateStateOnPerf(firstLevelKey, secondLevelKey, performanceReport) {
+    this.setState((prevState) => {
+      const nextState = {
+        ...prevState,
+      };
+      nextState[firstLevelKey][secondLevelKey].isLoading = false;
+      nextState[firstLevelKey][secondLevelKey].hasFetched = true;
+      nextState[firstLevelKey][secondLevelKey].performance = performanceReport;
+
+      return nextState;
     });
-    getAdGroupPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.adGroups.performance.isLoading = false;
-        nextState.adGroups.performance.hasFetched = true;
-        nextState.adGroups.performance.performance = normalizeReportView(response.data.report_view);
-        return nextState;
-      });
-    });
-    getAdPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.ads.performance.isLoading = false;
-        nextState.ads.performance.hasFetched = true;
-        nextState.ads.performance.performanceById = this.formatReportView(response.data.report_view, 'ad_id');
-        return nextState;
-      });
-    });
-    getMediaPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.adGroups.mediaPerformance.isLoading = false;
-        nextState.adGroups.mediaPerformance.hasFetched = true;
-        nextState.adGroups.mediaPerformance.performance = normalizeReportView(response.data.report_view, 'media_id');
-        return nextState;
-      });
-    });
+  }
+
+  catchCancellablePromises = (err) => {
+    const {
+      notifyError
+    } = this.props;
+    if (!err.isCanceled) {
+      notifyError(err);
+    }
   }
 
   updateAdGroup(adGroupId, body) {
@@ -334,6 +331,11 @@ class AdGroupPage extends Component {
       }
     }
   }
+
+  componentWillUnmount() {
+    this.cancelablePromises.forEach(promise => promise.cancel());
+  }
+
 
   formatListview(a, b) {
     if (a) {
