@@ -219,40 +219,38 @@ class EmailForm extends Component {
               title={messages.emailEditorGeneralInformationTitle}
             />
 
-            <Row>
-              <Field
-                name="campaign.name"
-                component={FormInput}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailEditorNameInputLabel),
-                    required: true,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailEditorNameInputPlaceholder),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailEditorNameInputHelper),
-                  },
-                }}
-              />
-              <Field
-                name="campaign.technical_name"
-                component={FormInput}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailEditorTechnicalNameInputHelper),
-                  },
-                }}
-              />
-            </Row>
+            <Field
+              name="campaign.name"
+              component={FormInput}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailEditorNameInputLabel),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailEditorNameInputPlaceholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailEditorNameInputHelper),
+                },
+              }}
+            />
+            <Field
+              name="campaign.technical_name"
+              component={FormInput}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailEditorTechnicalNameInputHelper),
+                },
+              }}
+            />
           </div>
           <hr />
           <div id="router">
@@ -261,26 +259,24 @@ class EmailForm extends Component {
               title={messages.emailEditorRouterTitle}
             />
 
-            <Row>
-              <Field
-                name="campaign.routers[0].email_router_id"
-                component={FormSelect}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailEditorRouterSelectLabel),
-                    required: true,
-                  },
-                  options: routerOptions.map(router => ({
-                    value: router.id,
-                    title: router.name,
-                  })),
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailEditorRouterSelectHelper),
-                  },
-                }}
-              />
-            </Row>
+            <Field
+              name="campaign.routers[0].email_router_id"
+              component={FormSelect}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailEditorRouterSelectLabel),
+                  required: true,
+                },
+                options: routerOptions.map(router => ({
+                  value: router.id,
+                  title: router.name,
+                })),
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailEditorRouterSelectHelper),
+                },
+              }}
+            />
           </div>
           <hr />
           <div id="blasts">
@@ -293,15 +289,13 @@ class EmailForm extends Component {
               title={messages.emailEditorEmailBlastTitle}
             />
 
-            <Row>
-              <RelatedRecords
-                emptyOption={{
-                  message: formatMessage(messages.emailEditorEmailBlastEmpty),
-                }}
-              >
-                {this.getBlastRecords()}
-              </RelatedRecords>
-            </Row>
+            <RelatedRecords
+              emptyOption={{
+                message: formatMessage(messages.emailEditorEmailBlastEmpty),
+              }}
+            >
+              {this.getBlastRecords()}
+            </RelatedRecords>
           </div>
         </Content>
       </Form>
