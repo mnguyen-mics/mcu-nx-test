@@ -75,6 +75,7 @@ class Ads extends Component {
 
         <div className="ad-group-ad-section">
           <FieldArray
+            className="content"
             component={AdGroupCardList}
             data={formValues}
             loading={this.state.loading}

@@ -4,51 +4,55 @@
 
   .ad-group-ad-section {
 
-    .ad-group-card {
+    .content {
+      margin-bottom: -1.4em;
 
-      .inline {
-        display: flex;
-        flex-direction: row;
-      }
+      .ad-group-card {
 
-      .title {
-        margin-left: .4em;
-
-        span {
-          font-weight: bold;
+        .inline {
+          display: flex;
+          flex-direction: row;
         }
-      }
 
-      .footer {
+        .title {
+          margin-left: .4em;
 
-        .formatWrapper {
-          align-items: center;
-          height: 2.7em;
-          margin-left: 1em;
+          span {
+            font-weight: bold;
+          }
+        }
 
-          .dimensions {
+        .footer {
+
+          .formatWrapper {
+            align-items: center;
+            height: 2.7em;
             margin-left: 1em;
 
-            font-family: CircularStd;
-            font-size: 12px;
-            font-weight: 500;
-            color: #919191;
-          }
-        }
+            .dimensions {
+              margin-left: 1em;
 
-        .buttons {
-          align-items: center;
-          justify-content: space-between;
-
-          .button {
-            color: #cecece;
-            font-size: 1.7em;
+              font-family: CircularStd;
+              font-size: 12px;
+              font-weight: 500;
+              color: #919191;
+            }
           }
 
-          .button-separator {
-            width: 1px;
-            height: 2em;
-            background-color: #e8e8e8
+          .buttons {
+            align-items: center;
+            justify-content: space-between;
+
+            .button {
+              color: #cecece;
+              font-size: 1.7em;
+            }
+
+            .button-separator {
+              width: 1px;
+              height: 2em;
+              background-color: #e8e8e8
+            }
           }
         }
       }
@@ -57,16 +61,13 @@
 
   .ad-group-device-section {
 
-    .ant-row {
-      margin-bottom: 0;
-    }
-
     .ant-checkbox-wrapper {
       margin: auto;
     }
 
     .custom-content {
       margin-top: 3em;
+      margin-bottom: -1.5em;
     }
   }
 
@@ -76,18 +77,6 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-    }
-
-    .ant-row {
-      margin-bottom: 0;
-    }
-
-    .checkbox-options {
-      margin-bottom: .8em;
-    }
-
-    .checkbox-options:last-child {
-      margin-bottom: 0;
     }
 
     .ant-checkbox-wrapper {
@@ -100,6 +89,14 @@
 
     .button-separator {
       margin: 0 .2em;
+    }
+
+    .checkbox-options {
+      margin-bottom: .8em;
+    }
+
+    .checkbox-options:last-child {
+      margin-bottom: 0;
     }
 
     .content-wrapper {

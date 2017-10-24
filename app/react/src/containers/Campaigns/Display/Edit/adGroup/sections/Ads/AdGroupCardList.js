@@ -7,7 +7,7 @@ import CreativeCard from '../../../../../Email/Edit/CreativeCard';
 import { ButtonStyleless, McsIcons } from '../../../../../../../components/index.ts';
 import { computeDimensionsByRatio } from '../../../../../../../utils/ShapeHelper';
 
-function AdGroupCardList({ data, updateTableFieldStatus }) {
+function AdGroupCardList({ className, data, updateTableFieldStatus }) {
   const cardContent = (index) => ({
     title: {
       key: 'name',
@@ -65,7 +65,7 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
     .filter(card => !card.toBeRemoved);
 
   return (
-    <div className="mcs-table-card">
+    <div className={`mcs-table-card ${className}`}>
       <Row gutter={20}>
         {cards.map(card => (
           <Col key={card.id} span={6}>
@@ -79,11 +79,13 @@ function AdGroupCardList({ data, updateTableFieldStatus }) {
 }
 
 AdGroupCardList.defaultProps = {
+  className: '',
   data: [],
 };
 
 AdGroupCardList.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape({})),
+  className: PropTypes.string,
+  data: PropTypes.arrayOf(PropTypes.shape().isRequired),
   updateTableFieldStatus: PropTypes.func.isRequired,
 };
 

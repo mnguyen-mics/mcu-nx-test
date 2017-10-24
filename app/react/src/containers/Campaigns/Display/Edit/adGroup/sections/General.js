@@ -214,7 +214,7 @@ class General extends Component {
             />
           </Row>
 
-          <div className="advanced-section">
+          <div>
             <ButtonStyleless
               className="optional-section-title clickable-on-hover"
               onClick={this.displayAdvancedSection}

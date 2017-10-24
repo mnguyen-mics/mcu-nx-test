@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select } from 'antd';
+import { Row, Select } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
 import { OptionProps } from 'antd/lib/select';
 
@@ -25,18 +25,24 @@ const FormSelectAddon: React.SFC<FormSelectAddonProps & WrappedFieldProps> = pro
     <Option key={option.value} value={option.value}>{option.title}</Option>
   ));
 
-  return (
+  const getPopupContainer = (triggerNode: Element) => {
+    return document.getElementById('addon-select') as any;
+  };
 
-    <Select
-      style={{ display: 'flex', justifyContent: 'center', ...style }}
-      value={value}
-      onChange={onChange}
-      // difficulties to map some WrappedFieldInputProps with SelectProps
-      onBlur={onChange as () => any}
-      onFocus={onFocus as () => any}
-    >
-      {optionsToDisplay}
-    </Select>
+  return (
+    <div id="addon-select">
+      <Select
+        getPopupContainer={getPopupContainer}
+        onChange={onChange}
+        // difficulties to map some WrappedFieldInputProps with SelectProps
+        onBlur={onChange as () => any}
+        onFocus={onFocus as () => any}
+        style={{ display: 'flex', justifyContent: 'center', ...style }}
+        value={value}
+      >
+        {optionsToDisplay}
+      </Select>
+    </div>
   );
 };
 

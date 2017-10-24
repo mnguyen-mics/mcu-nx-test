@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
-import { Col, Row } from 'antd';
+import { Col } from 'antd';
 
 import { EmptyRecords, Form } from '../../../../../../../components/index.ts';
 import PlacementSearch from './PlacementSearch';
@@ -54,7 +54,7 @@ class Placement extends Component {
           title={messages.sectionTitlePlacement}
         />
 
-        <Row className="ad-group-placement-section">
+        <div className="ad-group-placement-section">
           <Col offset={1}>
             <FormRadioGroup
               elementClassName="field-label checkbox-options"
@@ -122,7 +122,7 @@ class Placement extends Component {
               />
             )
           }
-        </Row>
+        </div>
       </div>
     );
   }
