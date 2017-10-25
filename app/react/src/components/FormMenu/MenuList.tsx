@@ -1,15 +1,14 @@
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import McsIcons from '../McsIcons.tsx';
+import McsIcons from '../McsIcons';
 
-function MenuList(props) {
+export interface MenuListProps {
+  title: string;
+  subtitles?: string[];
+  select: React.FormEventHandler<any>;
+}
 
-  const {
-      title,
-      subtitles,
-      select,
-    } = props;
+const MenuList: React.SFC<MenuListProps> = ({ title, subtitles, select }) => {
 
   return (
     <div className="menu-sublist">
@@ -26,16 +25,6 @@ function MenuList(props) {
       </button>
     </div>
   );
-}
-
-MenuList.defaultProps = {
-  subtitles: null
-};
-
-MenuList.propTypes = {
-  title: PropTypes.string.isRequired,
-  subtitles: PropTypes.arrayOf(PropTypes.string.isRequired),
-  select: PropTypes.func.isRequired,
 };
 
 export default MenuList;

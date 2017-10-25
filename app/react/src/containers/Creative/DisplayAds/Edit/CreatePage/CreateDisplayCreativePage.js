@@ -13,7 +13,7 @@ import CreativeService from '../../../../../services/CreativeService';
 import * as actions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import Loading from '../../../../../components/Loading';
+import Loading from '../../../../../components/Loading.tsx';
 
 import messages from '../messages';
 

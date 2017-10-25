@@ -1,11 +1,25 @@
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import McsIcons from '../McsIcons.tsx';
+import McsIcons from '../McsIcons';
 
-class MenuList extends Component {
+interface Submenu {
+  title: string;
+  select: React.FormEventHandler<any>;
+}
 
-  constructor(props) {
+export interface MenuListProps {
+  title: string;
+  subtitles: string[];
+  submenu: Submenu[];
+}
+
+export interface MenuListState {
+  open: boolean;
+}
+
+class MenuList extends Component<MenuListProps, MenuListState> {
+
+  constructor(props: MenuListProps) {
     super(props);
     this.state = {
       open: false,
@@ -53,18 +67,5 @@ class MenuList extends Component {
     );
   }
 }
-
-MenuList.defaultProps = {
-  subtitles: null
-};
-
-MenuList.propTypes = {
-  title: PropTypes.string.isRequired,
-  subtitles: PropTypes.arrayOf(PropTypes.string.isRequired),
-  submenu: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    select: PropTypes.func.isRequired,
-  }).isRequired).isRequired,
-};
 
 export default MenuList;

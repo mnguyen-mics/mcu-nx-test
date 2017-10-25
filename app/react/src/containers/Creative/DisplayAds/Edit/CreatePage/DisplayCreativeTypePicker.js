@@ -6,7 +6,7 @@ import { Layout, Row } from 'antd';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons.tsx';
 import { FormTitle } from '../../../../../components/Form/index.ts';
-import { MenuList, MenuPresentational, MenuSubList } from '../../../../../components/FormMenu';
+import { MenuList, MenuPresentational, MenuSubList } from '../../../../../components/FormMenu/index.ts';
 
 import messages from '../messages';
 

@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import { Field, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Layout, Form, Row, Button } from 'antd';
 
+import * as actions from '../../../../../state/Notifications/actions';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withMcsRouter } from '../../../../Helpers';
 import { Actionbar } from '../../../../Actionbar';
@@ -73,6 +75,7 @@ class DisplayCreativeEditionEditor extends Component {
     const {
       creative,
       rendererProperties,
+      notifyError
     } = this.props;
 
     let tagType = 'iframe';
@@ -80,7 +83,7 @@ class DisplayCreativeEditionEditor extends Component {
       try {
         tagType = rendererProperties.find((prop) => { return prop.technical_name === 'tag_type'; }).value.value || 'iframe';
       } catch (e) {
-        // TODO NOTIFY
+        notifyError(e);
       }
     }
 
@@ -302,6 +305,7 @@ DisplayCreativeEditionEditor.propTypes = {
   refreshCreative: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   organisationId: PropTypes.string.isRequired,
+  notifyError: PropTypes.func.isRequired,
 };
 
 DisplayCreativeEditionEditor = compose(
@@ -311,6 +315,10 @@ DisplayCreativeEditionEditor = compose(
     form: 'creativeEditor',
     enableReinitialize: true,
   }),
+  connect(
+    undefined,
+    { notifyError: actions.notifyError },
+  ),
   withValidators,
 )(DisplayCreativeEditionEditor);
 

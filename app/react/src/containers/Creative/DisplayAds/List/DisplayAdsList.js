@@ -195,10 +195,10 @@ class CreativeDisplayTable extends Component {
 
   }
 
-  editCreativeDisplay(campaign) {
+  editCreativeDisplay(creative) {
     const { match: { params: { organisationId } }, history } = this.props;
 
-    history.push(`/${organisationId}/creatives/display-ad/default-editor/edit/${campaign.id}`);
+    history.push(`/v2/o/${organisationId}/creatives/display/edit/${creative.id}`);
   }
 
   archiveCreativeDisplay(campaign) {
@@ -251,7 +251,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchCreativeDisplay: CreativeDisplayActions.fetchCreativeDisplay.request,
-  // archiveCreativeDisplay: CreativeDisplayActions.archiveCreativeDisplay,
   resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay,
 };
 
