@@ -57,7 +57,7 @@ class EmailBlastForm extends Component {
 
     const datamartId = defaultDatamart(organisationId).id;
 
-    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId);
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, { max_results: 10000 });
   }
 
   updateSegments = (selectedAudienceSegments) => {
@@ -67,7 +67,6 @@ class EmailBlastForm extends Component {
       .then(({ data }) => {
         const buildSegmentSelection = segment => {
           const metadata = data.find(seg => seg.id === segment);
-
           return {
             audience_segment_id: metadata.id,
             name: metadata.name,
@@ -127,14 +126,12 @@ class EmailBlastForm extends Component {
   handleSave = (formValues) => {
     const { save } = this.props;
     const { segments } = this.state;
-    if (segments.length === 0) {
-      this.setState({ segmentRequired: true });
-    } else {
-      save({
-        ...formValues.blast,
-        segments,
-      });
-    }
+
+    save({
+      ...formValues.blast,
+      segments,
+    });
+
   }
 
   render() {
