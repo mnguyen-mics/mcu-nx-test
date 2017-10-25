@@ -8,17 +8,15 @@ function formatToNumber(value) {
 
 function isNumber(value, prevValue) {
   const formattedValue = value.replace(/,/g, '');
-
   return (!value || (value && formattedValue.length < 16 && /^\d+$/.test(formattedValue))
-    ? value
+    ? formattedValue
     : prevValue
   );
 }
 
 function normalizeNumber(value, prevValue) {
   const number = isNumber(value, prevValue);
-
-  return (number === prevValue ? number : formatToNumber(value));
+  return (number === prevValue ? number : formatToNumber(number));
 }
 
 export default compose(
