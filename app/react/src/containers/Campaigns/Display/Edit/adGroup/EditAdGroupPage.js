@@ -34,31 +34,47 @@ class EditAdGroupPage extends Component {
   }
 
   onSave = (object) => {
-    const { history, match, location } = this.props;
+    const {
+      history,
+      match: {
+        params: { campaignId, organisationId },
+      },
+    } = this.props;
 
-    saveAdGroup(match.params.campaignId, object, this.state.initialValues, true).then(() => {
-      return location.state && location.state.from
-      ? history.push(location.state.from)
-      : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`);
-    });
+    saveAdGroup(campaignId, object, this.state.initialValues, true)
+      .then((adGroupId) => {
+        history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
+      });
   }
 
-  render() {
-    const { history, match, location } = this.props;
+  onClose = () => {
+    const {
+      history,
+      location,
+      match: {
+        params: {
+          adGroupId,
+          campaignId,
+          organisationId
+        }
+      }
+    } = this.props;
 
-    const onClose = () => (location.state && location.state.from
-      ? history.push(location.state.from)
-      : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}/adgroups/${match.params.adGroupId}`)
+    return (location.state && location.state.from
+    ? history.push(location.state.from)
+    : history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`)
     );
+  };
 
+  render() {
     return (
       <AdGroupContent
         closeNextDrawer={this.props.closeNextDrawer}
         editionMode
         initialValues={this.state.initialValues}
         loading={this.state.loading}
+        onClose={this.onClose}
         openNextDrawer={this.props.openNextDrawer}
-        close={onClose}
         save={this.onSave}
       />
     );
@@ -67,8 +83,8 @@ class EditAdGroupPage extends Component {
 
 EditAdGroupPage.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
 };

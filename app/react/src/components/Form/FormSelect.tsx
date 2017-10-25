@@ -7,6 +7,7 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
+import { generateFakeId } from '../../utils/FakeIdHelper';
 
 interface FormSelectProps {
   formItemProps?: FormItemProps;
@@ -65,26 +66,34 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
       <Option key={option.value} value={option.value}>{option.title}</Option>
     ));
 
+    const selectId = generateFakeId();
+    const getPopupContainer = (triggerNode: Element) => {
+      return document.getElementById(selectId) as any;
+    };
+
     return (
-      <FormFieldWrapper
-        help={meta.touched && (meta.warning || meta.error)}
-        helpToolTipProps={helpToolTipProps}
-        validateStatus={validateStatus}
-        {...formItemProps}
-      >
-        <Col span={22}>
-          <Select
-            {...selectProps}
-            value={value}
-            onChange={onChange}
-            // difficulties to map some WrappedFieldInputProps with SelectProps
-            onBlur={onChange as () => any}
-            onFocus={onFocus as () => any}
-          >
-            {optionsToDisplay}
-          </Select>
-        </Col>
-      </FormFieldWrapper>
+        <FormFieldWrapper
+          help={meta.touched && (meta.warning || meta.error)}
+          helpToolTipProps={helpToolTipProps}
+          validateStatus={validateStatus}
+          {...formItemProps}
+        >
+          <Col span={22}>
+            <div id={selectId}>
+              <Select
+                {...selectProps}
+                getPopupContainer={getPopupContainer}
+                onChange={onChange}
+                // difficulties to map some WrappedFieldInputProps with SelectProps
+                onBlur={onChange as () => any}
+                onFocus={onFocus as () => any}
+                value={value}
+              >
+                {optionsToDisplay}
+              </Select>
+            </div>
+          </Col>
+        </FormFieldWrapper>
     );
   }
 }

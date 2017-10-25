@@ -26,7 +26,7 @@ class CampaignContent extends Component {
       intl: { formatMessage },
       loading,
       match: {
-        params: { organisationId, campaignId },
+        params: { organisationId },
         url
       },
       submitting,
@@ -59,14 +59,14 @@ class CampaignContent extends Component {
       message: messages.saveAdGroup,
       onClose: () => (location.state && location.state.goBack
             ? history.goBack()
-            : history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId ? campaignId : ''}`)
+            : history.push(`/v2/o/${organisationId}/campaigns/display/`)
           )
     };
 
     return (
       <Layout>
         { (loading || submitting) &&
-          <Loading className={loading || submitting ? 'loading-full-screen' : 'hide-section'} />
+          <Loading className={'loading-full-screen'} />
         }
 
         <div className={(!loading && !submitting ? 'ant-layout' : 'hide-section')}>

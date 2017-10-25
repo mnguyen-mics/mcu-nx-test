@@ -233,8 +233,8 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = 
       .then(() => saveAds(campaignId, adGroupNewId, adTable, initialAdTable))
       .then(() => saveDevices(campaignId, adGroupNewId, deviceTable, initialDeviceTable))
       .then(() => savePlacements(campaignId, adGroupNewId, placementTable, initialPlacementTable))
-      .then((results) => {
-        resolve(results);
+      .then(() => {
+        resolve(adGroupNewId);
       })
       .catch(error => {
         reject(error);

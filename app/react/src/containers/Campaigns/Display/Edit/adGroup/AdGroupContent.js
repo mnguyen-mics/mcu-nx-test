@@ -114,7 +114,7 @@ class AdGroupContent extends Component {
     const buttonMetadata = {
       formId,
       message: messages.saveAdGroup,
-      onClose: this.props.close
+      onClose: this.props.onClose,
     };
 
     const formValues = {
@@ -135,7 +135,7 @@ class AdGroupContent extends Component {
     return (
       <div className="ant-layout">
         { (loading || submitting) &&
-          <Loading className={loading || submitting ? 'loading-full-screen' : 'hide-section'} />
+          <Loading className={'loading-full-screen'} />
         }
 
         <div className={(!loading && !submitting ? 'ant-layout' : 'hide-section')}>
@@ -181,10 +181,10 @@ AdGroupContent.propTypes = {
   intl: intlShape.isRequired,
   loading: PropTypes.bool,
   match: ReactRouterPropTypes.match.isRequired,
+  onClose: PropTypes.func.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   submitting: PropTypes.bool,
   save: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
 };
 
 export default compose(

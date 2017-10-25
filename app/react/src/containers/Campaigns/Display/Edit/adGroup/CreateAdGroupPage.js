@@ -8,26 +8,27 @@ import withDrawer from '../../../../../components/Drawer';
 import { withMcsRouter } from '../../../../Helpers';
 import { saveAdGroup } from '../AdGroupServiceWrapper';
 
-function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, match, location, history }) {
+function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, location, match, history }) {
+
+  const { campaignId, organisationId } = match.params;
+
+  const createNewAdgroup = (object) => {
+    saveAdGroup(campaignId, object, {}, false)
+      .then((adGroupId) => {
+        history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
+      });
+  };
 
   const onClose = () => (location.state && location.state.from
     ? history.push(location.state.from)
-    : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`)
+    : history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`)
   );
 
-  const createNewAdgroup = (object) => {
-    saveAdGroup(match.params.campaignId, object, {}, false).then(() => {
-      history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`);
-    });
-
-  };
-
   return (
-
     <AdGroupContent
       closeNextDrawer={closeNextDrawer}
+      onClose={onClose}
       openNextDrawer={openNextDrawer}
-      close={onClose}
       save={createNewAdgroup}
     />
   );
@@ -36,8 +37,8 @@ function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, match, location, h
 CreateAdGroupPage.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
   history: ReactRouterPropTypes.history.isRequired
 };
 

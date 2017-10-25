@@ -5,6 +5,7 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
+import { generateFakeId } from '../../utils/FakeIdHelper';
 
 const Option = Select.Option;
 
@@ -37,19 +38,20 @@ const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & Wrap
     <Option {...option} key={option.value}>{label}</Option>
   ));
 
+  const selectId = generateFakeId();
   const getPopupContainer = (triggerNode: Element) => {
-    return document.getElementById('tag-select') as any;
+    return document.getElementById(selectId) as any;
   };
 
   return (
-    <div id="tag-select">
-      <FormFieldWrapper
-        help={meta.touched && (meta.warning || meta.error)}
-        helpToolTipProps={helpToolTipProps}
-        validateStatus={validateStatus}
-        {...formItemProps}
-      >
-        <Col span={22}>
+    <FormFieldWrapper
+      help={meta.touched && (meta.warning || meta.error)}
+      helpToolTipProps={helpToolTipProps}
+      validateStatus={validateStatus}
+      {...formItemProps}
+    >
+      <Col span={22}>
+        <div id={selectId}>
           <Select
             {...selectProps}
             mode={mode}
@@ -62,9 +64,9 @@ const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & Wrap
           >
             {displayOptions}
           </Select>
-        </Col>
-      </FormFieldWrapper>
-    </div>
+        </div>
+      </Col>
+    </FormFieldWrapper>
   );
 };
 
