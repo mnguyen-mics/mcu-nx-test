@@ -81,7 +81,7 @@ define(['./module', 'jquery'], function (module, $) {
           }
           Restangular.all('ad_layouts/' + $scope.adLayout.id + '/versions/' + $scope.adLayoutVersion.id)
             .customPUT($scope.adLayoutVersionUpdate, undefined, {organisation_id: organisationId}).then(function (adLayoutVersion) {
-              $scope.pluploadOptions.url = location.protocol + configuration.WS_URL + "/ad_layouts/" + $scope.adLayout.id + "/versions/" + adLayoutVersion.id + "/ad_templates?organisation_id=" + organisationId;
+              $scope.pluploadOptions.url = configuration.WS_URL + "/ad_layouts/" + $scope.adLayout.id + "/versions/" + adLayoutVersion.id + "/ad_templates?organisation_id=" + organisationId;
               optionalUpload();
           });
         } else {
@@ -98,7 +98,7 @@ define(['./module', 'jquery'], function (module, $) {
               $scope.adLayoutVersion.version_id = 1;
             }
             Restangular.all('ad_layouts/' + $scope.adLayoutVersion.ad_layout_id + '/versions').post($scope.adLayoutVersion).then(function (adLayoutVersion) {
-              $scope.pluploadOptions.url = location.protocol + configuration.WS_URL + "/ad_layouts/" + $scope.adLayout.id + "/versions/" + adLayoutVersion.id + "/ad_templates?organisation_id=" + organisationId;
+              $scope.pluploadOptions.url = configuration.WS_URL + "/ad_layouts/" + $scope.adLayout.id + "/versions/" + adLayoutVersion.id + "/ad_templates?organisation_id=" + organisationId;
               optionalUpload();
             });
           });
