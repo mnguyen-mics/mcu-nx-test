@@ -3,6 +3,7 @@ const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const cssnano = require('cssnano');
 
 const paths = require('./paths');
@@ -27,7 +28,9 @@ const prodConfig = {
       inject: true,
       template: paths.appDistHtml,
       filename: '../index.html',
+      excludeAssets: [/plateforme.*\/style.*.(css|js)/]
     }),
+    new HtmlWebpackExcludeAssetsPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         screw_ie8: true, // React doesn't support IE8
