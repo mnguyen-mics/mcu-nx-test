@@ -26,7 +26,7 @@ class CampaignContent extends Component {
       intl: { formatMessage },
       loading,
       match: {
-        params: { organisationId },
+        params: { organisationId, campaignId },
         url
       },
       submitting,
@@ -59,7 +59,7 @@ class CampaignContent extends Component {
       message: messages.saveAdGroup,
       onClose: () => (location.state && location.state.goBack
             ? history.goBack()
-            : history.push(`/v2/o/${organisationId}/campaigns/display`)
+            : history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId ? campaignId : ''}`)
           )
     };
 

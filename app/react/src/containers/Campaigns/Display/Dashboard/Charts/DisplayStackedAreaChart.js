@@ -133,19 +133,19 @@ class DisplayStackedAreaChart extends Component {
 
     const metrics = [{
       name: 'CPA',
-      value: hasFetchedOverallStat ? formatMetric(overallStat[0].cpa, '0,0[.]00', '', '€') : null,
+      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].cpa, '0,0[.]00', '', '€') : null,
     }, {
       name: 'CPC',
-      value: hasFetchedOverallStat ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€') : null,
+      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€') : null,
     }, {
       name: 'CTR',
-      value: hasFetchedOverallStat ? formatMetric(parseFloat(overallStat[0].ctr) / 100, '0.000 %') : null,
+      value: hasFetchedOverallStat && overallStat.length ? formatMetric(parseFloat(overallStat[0].ctr) / 100, '0.000 %') : null,
     }, {
       name: 'CPM',
-      value: hasFetchedOverallStat ? formatMetric(overallStat[0].ctr, '0,0[.]00', '', '€') : null,
+      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].ctr, '0,0[.]00', '', '€') : null,
     }, {
       name: 'Spent',
-      value: hasFetchedOverallStat ? formatMetric(overallStat[0].impressions_cost, '0,0[.]00', '', '€') : null,
+      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].impressions_cost, '0,0[.]00', '', '€') : null,
     }];
 
     return (!isFetchingCampaignStat && hasFetchedCampaignStat)

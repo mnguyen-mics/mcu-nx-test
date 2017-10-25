@@ -48,7 +48,7 @@ class EditAdGroupPage extends Component {
 
     const onClose = () => (location.state && location.state.from
       ? history.push(location.state.from)
-      : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`)
+      : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}/adgroups/${match.params.adGroupId}`)
     );
 
     return (
