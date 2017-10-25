@@ -77,7 +77,7 @@ define(['./module'], function (module) {
 
       $scope.pluploadOptions = {
         multi_selection: true,
-        url: $location.protocol() + ":" + Restangular.one('placement_lists', placementListId).one("placement_descriptors").one("batch").getRestangularUrl(),
+        url: Restangular.one('placement_lists', placementListId).one("placement_descriptors").one("batch").getRestangularUrl(),
         filters: {
           mime_types: [
             {title: "CSV files", extensions: "csv,txt"}
