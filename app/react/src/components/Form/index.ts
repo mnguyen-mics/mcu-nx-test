@@ -24,6 +24,7 @@ export default {
   FormUpload,
   FormTextArea,
   SwitchInput,
+  withNormalizer,
   withValidators,
 };
 

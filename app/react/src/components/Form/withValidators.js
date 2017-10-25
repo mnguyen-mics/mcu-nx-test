@@ -31,6 +31,11 @@ const isRequired = formatMessage => value => {
   return undefined;
 };
 
+const isValidNumber = formatMessage => value => {
+  return value && !/^\d+$/i.test(value) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+};
+
 const isValidEmail = formatMessage => value => {
   return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
@@ -44,11 +49,6 @@ const isValidUrl = formatMessage => value => {
 const isValidDomain = formatMessage => value => {
   return value && !/^[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidDomain) : undefined;
-};
-
-const isValidNumber = formatMessage => value => {
-  return value && !/^[0-9]$/.test(value) ?
-    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 
 const withValidators = compose(

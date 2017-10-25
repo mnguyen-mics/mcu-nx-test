@@ -1,5 +1,6 @@
 import 'whatwg-fetch';
 import { isEmpty } from 'lodash';
+import { makeCancelable } from '../utils/ApiHelper';
 
 import AuthService from './AuthService';
 
@@ -90,9 +91,17 @@ const getRequest = (endpoint, params = {}, headers = {}, options = {}) => {
   return request('get', endpoint, params, headers, null, authenticated, options);
 };
 
+const getCancelableRequest = (endpoint, params = {}, headers = {}, options = {}) => {
+  return makeCancelable(getRequest(endpoint, params, headers, options));
+};
+
 const postRequest = (endpoint, body, params = {}, headers = {}, options = {}) => {
   const authenticated = options.authenticated !== undefined ? options.authenticated : true;
   return request('post', endpoint, params, headers, body, authenticated, options);
+};
+
+const postCancelableRequest = (endpoint, params = {}, headers = {}, options = {}) => {
+  return makeCancelable(postRequest(endpoint, params, headers, options));
 };
 
 const putRequest = (endpoint, body, params = {}, headers, options = {}) => {
@@ -100,9 +109,17 @@ const putRequest = (endpoint, body, params = {}, headers, options = {}) => {
   return request('put', endpoint, params, headers, body, authenticated, options);
 };
 
+const putCancelableRequest = (endpoint, params = {}, headers = {}, options = {}) => {
+  return makeCancelable(putRequest(endpoint, params, headers, options));
+};
+
 const deleteRequest = (endpoint, params = {}, headers = {}, options = {}) => {
   const authenticated = options.authenticated !== undefined ? options.authenticated : true;
   return request('delete', endpoint, params, headers, null, authenticated, options);
+};
+
+const deleteCancelableRequest = (endpoint, params = {}, headers = {}, options = {}) => {
+  return makeCancelable(deleteRequest(endpoint, params, headers, options));
 };
 
 export default {
@@ -111,4 +128,8 @@ export default {
   postRequest,
   putRequest,
   deleteRequest,
+  getCancelableRequest,
+  postCancelableRequest,
+  putCancelableRequest,
+  deleteCancelableRequest,
 };

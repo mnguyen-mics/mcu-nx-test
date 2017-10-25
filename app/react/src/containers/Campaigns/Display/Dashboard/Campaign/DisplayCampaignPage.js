@@ -27,6 +27,8 @@ import * as NotificationActions from '../../../../../state/Notifications/actions
 
 class DisplayCampaignPage extends Component {
 
+  cancelablePromises = []
+
   constructor(props) {
     super(props);
 
@@ -158,17 +160,22 @@ class DisplayCampaignPage extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.cancelablePromises.forEach(promise => promise.cancel());
+  }
+
+
   fetchAllData = (organisationId, campaignId, filter) => {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
-    const getCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
+    const getCampaignPerf = ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
       filter.from,
       filter.to,
       dimensions,
     );
-    const getOverallCampaignPerf = () => ReportService.getSingleDisplayDeliveryReport(
+    const getOverallCampaignPerf = ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
       filter.from,
@@ -176,7 +183,7 @@ class DisplayCampaignPage extends Component {
       '',
       ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
     );
-    const getAdGroupPerf = () => ReportService.getAdGroupDeliveryReport(
+    const getAdGroupPerf = ReportService.getAdGroupDeliveryReport(
       organisationId,
       'campaign_id',
       campaignId,
@@ -184,7 +191,7 @@ class DisplayCampaignPage extends Component {
       filter.to,
       '',
     );
-    const getAdPerf = () => ReportService.getAdDeliveryReport(
+    const getAdPerf = ReportService.getAdDeliveryReport(
       organisationId,
       'campaign_id',
       campaignId,
@@ -192,7 +199,7 @@ class DisplayCampaignPage extends Component {
       filter.to,
       '',
     );
-    const getMediaPerf = () => ReportService.getMediaDeliveryReport(
+    const getMediaPerf = ReportService.getMediaDeliveryReport(
       organisationId,
       'campaign_id',
       campaignId,
@@ -202,6 +209,9 @@ class DisplayCampaignPage extends Component {
       '',
       { sort: '-clicks', limit: 30 },
     );
+
+    this.cancelablePromises.push(getCampaignPerf, getMediaPerf, getAdPerf, getAdGroupPerf, getOverallCampaignPerf, getOverallCampaignPerf);
+
 
     this.setState((prevState) => {
       const nextState = {
@@ -265,12 +275,10 @@ class DisplayCampaignPage extends Component {
         };
 
         nextState.campaign.items.isLoading = false;
-        nextState.campaign.mediaPerformance.isLoading = false;
         nextState.adGroups.items.isLoading = false;
         nextState.ads.items.isLoading = false;
 
         nextState.campaign.items.hasFetched = true;
-        nextState.campaign.mediaPerformance.hasFetched = true;
         nextState.adGroups.items.hasFetched = true;
         nextState.ads.items.hasFetched = true;
 
@@ -284,83 +292,59 @@ class DisplayCampaignPage extends Component {
       });
     });
 
-    getCampaignPerf().then(response => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
+    getCampaignPerf.promise.then(response => {
+      this.updateStateOnPerf('campaign', 'performance', normalizeReportView(response.data.report_view));
+    }).catch(this.catchCancellablePromises);
 
-        nextState.campaign.performance.isLoading = false;
-        nextState.campaign.performance.hasFetched = true;
-        nextState.campaign.performance.performance = normalizeReportView(response.data.report_view);
+    getAdGroupPerf.promise.then(response => {
+      this.updateStateOnPerf('adGroups', 'performance', DisplayCampaignPage.formatReportView(
+        response.data.report_view,
+        'ad_group_id',
+      ));
+    }).catch(this.catchCancellablePromises);
 
-        return nextState;
-      });
+    getAdPerf.promise.then(response => {
+      this.updateStateOnPerf('ads', 'performance', normalizeReportView(
+        response.data.report_view,
+        'ad_id',
+      ));
+    }).catch(this.catchCancellablePromises);
+
+    getMediaPerf.promise.then(response => {
+      this.updateStateOnPerf('campaign', 'mediaPerformance', normalizeReportView(
+        response.data.report_view,
+        'campaign_id',
+      ));
+    }).catch(this.catchCancellablePromises);
+
+    getOverallCampaignPerf.promise.then(response => {
+      this.updateStateOnPerf('campaign', 'overallPerformance', normalizeReportView(
+        response.data.report_view,
+        'campaign_id',
+      ));
+    }).catch(this.catchCancellablePromises);
+  }
+
+  updateStateOnPerf(firstLevelKey, secondLevelKey, performanceReport) {
+    this.setState((prevState) => {
+      const nextState = {
+        ...prevState,
+      };
+      nextState[firstLevelKey][secondLevelKey].isLoading = false;
+      nextState[firstLevelKey][secondLevelKey].hasFetched = true;
+      nextState[firstLevelKey][secondLevelKey].performance = performanceReport;
+
+      return nextState;
     });
+  }
 
-    getAdGroupPerf().then(response => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-
-        nextState.adGroups.performance.isLoading = false;
-        nextState.adGroups.performance.hasFetched = true;
-        nextState.adGroups.performance.performanceById = DisplayCampaignPage.formatReportView(
-          response.data.report_view,
-          'ad_group_id',
-        );
-        return nextState;
-      });
-    });
-
-    getAdPerf().then(response => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-
-        nextState.ads.performance.isLoading = false;
-        nextState.ads.performance.hasFetched = true;
-        nextState.ads.performance.performanceById = DisplayCampaignPage.formatReportView(
-          response.data.report_view,
-          'ad_id',
-        );
-        return nextState;
-      });
-    });
-
-    getMediaPerf().then(response => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-
-        nextState.campaign.mediaPerformance.isLoading = false;
-        nextState.campaign.mediaPerformance.hasFetched = true;
-        nextState.campaign.mediaPerformance.performance = normalizeReportView(
-          response.data.report_view
-        );
-
-        return nextState;
-      });
-    });
-    getOverallCampaignPerf().then(response => {
-      this.setState((prevState) => {
-        const nextState = {
-          ...prevState,
-        };
-
-        nextState.campaign.overallPerformance.isLoading = false;
-        nextState.campaign.overallPerformance.hasFetched = true;
-        nextState.campaign.overallPerformance.performance = normalizeReportView(
-          response.data.report_view,
-          'campaign_id',
-        );
-
-        return nextState;
-      });
-    });
+  catchCancellablePromises = (err) => {
+    const {
+      notifyError
+    } = this.props;
+    if (!err.isCanceled) {
+      notifyError(err);
+    }
   }
 
   formatListView(a, b) {

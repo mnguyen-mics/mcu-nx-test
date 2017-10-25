@@ -117,7 +117,7 @@ class MediaPerformanceTable extends Component {
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,00 %'),
+        render: text => renderMetricData(parseFloat(text) / 100, '0.000 %'),
         sorter: (a, b) => sorter(a, b, 'ctr'),
       },
       {

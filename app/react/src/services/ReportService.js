@@ -51,7 +51,7 @@ const getSingleDisplayDeliveryReport = (organisationId, campaignId, startDate, e
     ...options,
   };
 
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getCancelableRequest(endpoint, params);
 };
 
 const getAdGroupDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
@@ -69,7 +69,7 @@ const getAdGroupDeliveryReport = (organisationId, objectType, objectId, startDat
     ...options,
   };
 
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getCancelableRequest(endpoint, params);
 };
 
 const getAdDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
@@ -87,7 +87,7 @@ const getAdDeliveryReport = (organisationId, objectType, objectId, startDate, en
     ...options,
   };
 
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getCancelableRequest(endpoint, params);
 };
 
 const getMediaDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
@@ -105,7 +105,7 @@ const getMediaDeliveryReport = (organisationId, objectType, objectId, startDate,
     ...options,
   };
 
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getCancelableRequest(endpoint, params);
 };
 
 const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, endDate, dimension, metrics, options = {}) => {

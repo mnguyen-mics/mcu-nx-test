@@ -63,7 +63,7 @@ class DisplayCampaignActionbar extends Component {
         <Button onClick={this.handleRunExport}>
           { !isFetchingStats && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
         </Button>
-        <Link to={`/${organisationId}/campaigns/display/expert/edit/${campaignId}`}>
+        <Link to={`/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`}>
           <Button>
             <McsIcons type="pen" />
             <FormattedMessage {...messages.editCampaign} />
