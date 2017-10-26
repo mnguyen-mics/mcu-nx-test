@@ -30,7 +30,8 @@ const prodConfig = {
       filename: '../index.html',
       excludeAssets: [/plateforme.*\/style.*.(css|js)/]
     }),
-    new HtmlWebpackExcludeAssetsPlugin(),
+    // use this plugin in production only
+    // new HtmlWebpackExcludeAssetsPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         screw_ie8: true, // React doesn't support IE8
