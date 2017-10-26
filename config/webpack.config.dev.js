@@ -26,6 +26,7 @@ const devConfig = {
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
+      excludeAssets: [/plateforme.*\/style.*.(css|js)/]
     }),
   ],
 
