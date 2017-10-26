@@ -2,7 +2,6 @@ import DisplayCampaignService from '../../../../services/DisplayCampaignService'
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import BidOptimizerServices from '../../../../services/BidOptimizerServices';
 import CreativeService from '../../../../services/CreativeService';
-import { unformatMetric } from '../../../../utils/MetricHelper';
 import { isFakeId } from '../../../../utils/FakeIdHelper';
 
 
@@ -206,15 +205,15 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = 
   const body = {
     bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
     end_date: adGroupData.adGroupEndDate.valueOf(),
-    max_budget_per_period: unformatMetric(adGroupData.adGroupMaxBudgetPerPeriod),
+    max_budget_per_period: adGroupData.adGroupMaxBudgetPerPeriod,
     max_budget_period: adGroupData.adGroupMaxBudgetPeriod,
     name: adGroupData.adGroupName,
     start_date: adGroupData.adGroupStartDate.valueOf(),
     technical_name: adGroupData.adGroupTechnicalName,
-    total_budget: unformatMetric(adGroupData.adGroupTotalBudget),
-    per_day_impression_capping: unformatMetric(adGroupData.adGroupPerDayImpressionCapping),
-    total_impression_capping: unformatMetric(adGroupData.adGroupTotalImpressionCapping),
-    max_bid_price: unformatMetric(adGroupData.adGroupMaxBidPrice),
+    total_budget: adGroupData.adGroupTotalBudget,
+    per_day_impression_capping: adGroupData.adGroupPerDayImpressionCapping,
+    total_impression_capping: adGroupData.adGroupTotalImpressionCapping,
+    max_bid_price: adGroupData.adGroupMaxBidPrice,
   };
 
   const request = (!editionMode

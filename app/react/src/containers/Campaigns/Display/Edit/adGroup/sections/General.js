@@ -24,8 +24,8 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { normalizeNumber },
-      fieldValidators: { isRequired, isNotZero },
+      fieldNormalizer: { isNotTooLongNumber },
+      fieldValidators: { isRequired, isNotZero, isValidNumber },
       formatMessage,
       formValues,
     } = this.props;
@@ -62,8 +62,8 @@ class General extends Component {
             <Field
               name="adGroupMaxBudgetPerPeriod"
               component={FormInput}
-              normalize={normalizeNumber}
-              validate={[isRequired, isNotZero]}
+              normalize={isNotTooLongNumber}
+              validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow2Label),
@@ -97,8 +97,8 @@ class General extends Component {
             <Field
               name="adGroupTotalBudget"
               component={FormInput}
-              normalize={normalizeNumber}
-              validate={[isRequired, isNotZero]}
+              normalize={isNotTooLongNumber}
+              validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow3Label),
@@ -155,8 +155,8 @@ class General extends Component {
             <Field
               name="adGroupMaxBidPrice"
               component={FormInput}
-              normalize={normalizeNumber}
-              validate={[isRequired, isNotZero]}
+              normalize={isNotTooLongNumber}
+              validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow5Label),
@@ -176,8 +176,8 @@ class General extends Component {
             <Field
               name="adGroupTotalImpressionCapping"
               component={FormInput}
-              normalize={normalizeNumber}
-              validate={[isRequired, isNotZero]}
+              normalize={isNotTooLongNumber}
+              validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow6Label),
@@ -197,8 +197,8 @@ class General extends Component {
             <Field
               name="adGroupPerDayImpressionCapping"
               component={FormInput}
-              normalize={normalizeNumber}
-              validate={[isRequired, isNotZero]}
+              normalize={isNotTooLongNumber}
+              validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow7Label),

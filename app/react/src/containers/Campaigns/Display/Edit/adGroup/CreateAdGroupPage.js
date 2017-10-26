@@ -12,7 +12,7 @@ function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, location, match, h
 
   const { campaignId, organisationId } = match.params;
 
-  const createNewAdgroup = (object) => {
+  const onSave = (object) => {
     saveAdGroup(campaignId, object, {}, false)
       .then((adGroupId) => {
         history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
@@ -29,7 +29,7 @@ function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, location, match, h
       closeNextDrawer={closeNextDrawer}
       onClose={onClose}
       openNextDrawer={openNextDrawer}
-      save={createNewAdgroup}
+      save={onSave}
     />
   );
 }

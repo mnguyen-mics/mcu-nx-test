@@ -13,7 +13,6 @@ import DisplayCampaignService from '../../../../../services/DisplayCampaignServi
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
 import { Loading } from '../../../../../components/index.ts';
-import { formatMetric } from '../../../../../utils/MetricHelper';
 
 const formId = 'adGroupForm';
 
@@ -120,11 +119,11 @@ class AdGroupContent extends Component {
     const formValues = {
       adGroupMaxBudgetPeriod: 'DAY',
       ...initialValues,
-      adGroupMaxBudgetPerPeriod: initialValues.adGroupMaxBudgetPerPeriod ? formatMetric(initialValues.adGroupMaxBudgetPerPeriod, '0,0') : '',
-      adGroupTotalBudget: initialValues.adGroupTotalBudget ? formatMetric(initialValues.adGroupTotalBudget, '0,0') : '',
-      adGroupMaxBidPrice: initialValues.adGroupMaxBidPrice ? formatMetric(initialValues.adGroupMaxBidPrice, '0,0') : '',
-      adGroupTotalImpressionCapping: initialValues.adGroupTotalImpressionCapping ? formatMetric(initialValues.adGroupTotalImpressionCapping, '0,0') : '',
-      adGroupPerDayImpressionCapping: initialValues.adGroupPerDayImpressionCapping ? formatMetric(initialValues.adGroupPerDayImpressionCapping, '0,0') : '',
+      adGroupMaxBudgetPerPeriod: initialValues.adGroupMaxBudgetPerPeriod || '',
+      adGroupTotalBudget: initialValues.adGroupTotalBudget || '',
+      adGroupMaxBidPrice: initialValues.adGroupMaxBidPrice || '',
+      adGroupTotalImpressionCapping: initialValues.adGroupTotalImpressionCapping || '',
+      adGroupPerDayImpressionCapping: initialValues.adGroupPerDayImpressionCapping || '',
       placements: {
         mobile: mobilePlacements, // TODO: remove temp data
         web: webPlacements, // TODO: remove temp data

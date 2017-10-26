@@ -31,7 +31,7 @@ const isNotZero = formatMessage => value => {
 };
 
 const isValidNumber = formatMessage => value => {
-  return value && !/^\d+$/i.test(value) ?
+  return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 
