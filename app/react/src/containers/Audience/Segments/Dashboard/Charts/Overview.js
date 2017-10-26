@@ -75,6 +75,7 @@ class Overview extends Component {
       },
       dataSource,
       hasFetchedAudienceStat,
+      colors,
     } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
@@ -90,7 +91,7 @@ class Overview extends Component {
         { key: 'desktop_cookie_ids', message: messages.desktopCookieId },
       ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
+      colors: [colors['mcs-warning'], colors['mcs-info'], colors['mcs-success'], colors['mcs-error']],
     };
     return (hasFetchedAudienceStat
       ? (
@@ -109,6 +110,7 @@ class Overview extends Component {
       translations,
       dataSource,
       hasFetchedAudienceStat,
+      colors,
     } = this.props;
 
     const options = {
@@ -118,7 +120,7 @@ class Overview extends Component {
         translations['emails'.toUpperCase()],
         translations['desktop_cookie_ids'.toUpperCase()],
       ],
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
+      colors: [colors['mcs-warning'], colors['mcs-info'], colors['mcs-success'], colors['mcs-error']],
     };
 
     return (
@@ -151,12 +153,14 @@ Overview.propTypes = {
   history: PropTypes.shape().isRequired,
   hasFetchedAudienceStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
+  colors: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedAudienceStat: state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
   dataSource: getAudienceSegmentPerformance(state),
+  colors: state.theme.colors
 });
 
 Overview = connect(mapStateToProps)(Overview);

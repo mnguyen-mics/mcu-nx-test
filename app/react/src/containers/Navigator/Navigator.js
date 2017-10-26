@@ -29,10 +29,32 @@ import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
 import { isAppInitialized } from '../../state/App/selectors';
 import { logOut } from '../../state/Login/actions';
+import { setColorsStore } from '../../state/Colors/actions';
 
 addLocaleData([enLocaleData, frLocaleData]);
 
 class Navigator extends Component {
+
+  componentDidMount() {
+    // Read theme colors in DOM and store them in redux for future usage
+
+    function rgb2hex(rgb) {
+      const rgbTested = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+      return (rgbTested && rgbTested.length === 4) ? `#${
+       (`0${parseInt(rgbTested[1], 10).toString(16)}`).slice(-2)
+       }${(`0${parseInt(rgbTested[2], 10).toString(16)}`).slice(-2)
+       }${(`0${parseInt(rgbTested[3], 10).toString(16)}`).slice(-2)}` : '';
+    }
+    const elemts = global.document.getElementsByClassName('mcs-colors')[0].children;
+    const mcsColors = {};
+
+    for (let i = 0; i < elemts.length; i += 1) {
+      const elem = elemts[i];
+      mcsColors[elem.className] = rgb2hex(global.window.getComputedStyle(elem)['background-color']);
+    }
+    this.props.setColorsStore(mcsColors);
+  }
+
 
   render() {
 
@@ -137,6 +159,7 @@ Navigator.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string),
   defaultWorkspaceOrganisationId: PropTypes.string.isRequired,
   logOut: PropTypes.func.isRequired,
+  setColorsStore: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -148,6 +171,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   logOut: logOut,
+  setColorsStore: setColorsStore,
 };
 
 Navigator = connect(

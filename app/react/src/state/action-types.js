@@ -128,3 +128,5 @@ export const CREATIVES_EMAIL_RESET = 'CREATIVES_EMAIL_RESET';
 export const GET_LOGO = createRequestTypes('GET_LOGO');
 export const PUT_LOGO = createRequestTypes('PUT_LOGO');
 export const SAVE_PROFILE = createRequestTypes('SAVE_PROFILE');
+
+export const STORE_COLOR = 'STORE_COLOR';

@@ -115,10 +115,21 @@ class VerticalBarChart extends Component {
     }
   }
 
+  shadeColor = (color, percent) => {
+    const f = parseInt(color.slice(1), 16);
+    const t = percent < 0 ? 0 : 255;
+    const p = percent < 0 ? percent * -1 : percent;
+    const R = f >> 16; // eslint-disable-line no-bitwise
+    const G = (f >> 8) & 0x00FF; // eslint-disable-line no-bitwise
+    const B = f & 0x0000FF;  // eslint-disable-line no-bitwise
+    return `#${(0x1000000 + ((Math.round((t - R) * p) + R) * 0x10000) + ((Math.round((t - G) * p) + G) * 0x100) + (Math.round((t - B) * p) + B)).toString(16).slice(1)}`;
+  }
+
   renderBarChart = (dataset) => {
     const {
       identifier,
       options,
+      colors
     } = this.props;
 
     if (this.plot !== null) {
@@ -205,7 +216,7 @@ class VerticalBarChart extends Component {
             nearestEntity.datum[options.yKeys[i]] = entity.datum.y;
           });
           tooltip.drawAt(nearestEntity.position, point, nearestEntity);
-          selection.attr('fill', '#ff9012');
+          selection.attr('fill', colors.hover);
         }
       });
       interaction.attachTo(plot);
@@ -227,6 +238,7 @@ class VerticalBarChart extends Component {
   render() {
     const {
       identifier,
+      colors,
     } = this.props;
 
     const {
@@ -250,8 +262,8 @@ class VerticalBarChart extends Component {
               id="verticalGradientBlue"
               x1="0" y1="0" x2="0" y2="100%"
             >
-              <stop offset="0%" stopColor="#2FBCF2" />
-              <stop offset="100%" stopColor="#269CC9" />
+              <stop offset="0%" stopColor={this.shadeColor(colors.base, 0)} />
+              <stop offset="100%" stopColor={this.shadeColor(colors.base, -0.2)} />
             </linearGradient>
           </defs>
         </svg>
@@ -265,19 +277,27 @@ class VerticalBarChart extends Component {
   }
 }
 
+VerticalBarChart.defaultProps = {
+  colors: {
+    base: '#0ba6e1',
+    hover: '#ff9012'
+  }
+};
+
 VerticalBarChart.propTypes = {
   identifier: PropTypes.string.isRequired,
   dataset: PropTypes.arrayOf(
     PropTypes.shape(),
   ).isRequired,
   options: PropTypes.shape({
-    innerRadius: PropTypes.bool,
-    startAngle: PropTypes.number,
-    endAngle: PropTypes.number,
     yKeys: PropTypes.arrayOf(PropTypes.string),
     xKey: PropTypes.string,
     lookbackWindow: PropTypes.number,
   }).isRequired,
+  colors: PropTypes.shape({
+    base: PropTypes.string,
+    hover: PropTypes.string,
+  }),
 };
 
 export default VerticalBarChart;

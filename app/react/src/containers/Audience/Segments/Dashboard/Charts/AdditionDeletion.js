@@ -71,6 +71,7 @@ class AdditionDeletion extends Component {
       },
       dataSource,
       hasFetchedAudienceStat,
+      colors,
     } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
@@ -91,7 +92,7 @@ class AdditionDeletion extends Component {
         { key: 'user_point_deletions', message: messages.UserPointDeletion },
       ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#00ad68', '#ff5959'],
+      colors: [colors['mcs-success'], colors['mcs-error']],
     };
     return hasFetchedAudienceStat
     ? (
@@ -109,6 +110,7 @@ class AdditionDeletion extends Component {
       translations,
       dataSource,
       hasFetchedAudienceStat,
+      colors,
     } = this.props;
 
     const options = {
@@ -118,7 +120,7 @@ class AdditionDeletion extends Component {
         translations['user_point_deletions'.toUpperCase()
         ],
       ],
-      colors: ['#00ad68', '#ff5959'],
+      colors: [colors['mcs-success'], colors['mcs-error']],
     };
 
     return (
@@ -151,12 +153,14 @@ AdditionDeletion.propTypes = {
   history: PropTypes.shape().isRequired,
   hasFetchedAudienceStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
+  colors: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
   hasFetchedAudienceStat: state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
   dataSource: getAudienceSegmentPerformance(state),
+  colors: state.theme.colors,
 });
 
 AdditionDeletion = connect(mapStateToProps)(AdditionDeletion);

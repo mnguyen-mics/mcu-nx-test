@@ -24,6 +24,13 @@ import { getTableDataSource } from '../../../../../state/Campaign/Email/selector
 
 class EmailStackedAreaChart extends Component {
 
+  generateColors = () => {
+    const {
+      colors
+    } = this.props;
+    return [colors['mcs-warning'], colors['mcs-info'], colors['mcs-success'], colors['mcs-error']];
+  }
+
   updateLocationSearch(params) {
     const {
       history,
@@ -91,7 +98,7 @@ class EmailStackedAreaChart extends Component {
         { key: 'email_hard_bounced', message: messages.emailHardBounce },
       ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
+      colors: this.generateColors(),
     };
     return hasFetchedCampaignStat
       ? (
@@ -109,6 +116,7 @@ class EmailStackedAreaChart extends Component {
       translations,
       dataSource,
       hasFetchedCampaignStat,
+      colors,
     } = this.props;
 
     const options = {
@@ -118,7 +126,7 @@ class EmailStackedAreaChart extends Component {
         translations['impressions'.toUpperCase()],
         translations['email_hard_bounced'.toUpperCase()],
       ],
-      colors: ['#ff9012', '#00a1df', '#00ad68', '#f12f2f'],
+      colors: this.generateColors(),
     };
 
     const chartArea = (
@@ -153,6 +161,7 @@ EmailStackedAreaChart.propTypes = {
   history: PropTypes.shape().isRequired,
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
+  colors: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -160,6 +169,7 @@ const mapStateToProps = state => ({
   isFetchingCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.isFetching,
   hasFetchedCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.hasFetched,
   dataSource: getTableDataSource(state),
+  colors: state.theme.colors
 });
 
 
