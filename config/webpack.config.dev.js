@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const paths = require('./paths');
 const configFactory = require('./webpack.config');
-const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 
 const customFontPath = 'app/react/src/assets/fonts/';
 
@@ -29,7 +28,6 @@ const devConfig = {
       template: paths.appHtml,
       excludeAssets: [/plateforme.*\/style.*.(css|js)/]
     }),
-    new HtmlWebpackExcludeAssetsPlugin()
   ],
 
 };

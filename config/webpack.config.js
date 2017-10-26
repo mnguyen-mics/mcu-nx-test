@@ -10,6 +10,8 @@ const extractStyle = new ExtractTextPlugin({
   disable: process.env.NODE_ENV === 'development'
 });
 
+const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
+
 const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
 
   return {
@@ -122,7 +124,8 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
       }),
       new webpack.optimize.CommonsChunkPlugin({
         names: ['react-vendors', 'manifest']
-      })
+      }),
+      new HtmlWebpackExcludeAssetsPlugin(),
     ]
   };
 
