@@ -1,12 +1,12 @@
 import {
-    STORE_COLOR,
+  STORE_THEME_COLOR,
   } from '../action-types';
 
 const theme = (state = {
   colors: {},
 }, action) => {
   switch (action.type) {
-    case STORE_COLOR:
+    case STORE_THEME_COLOR:
       return {
         ...state,
         colors: action.payload,

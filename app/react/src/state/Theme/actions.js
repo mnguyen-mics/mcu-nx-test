@@ -1,10 +1,10 @@
 import { createAction } from 'redux-actions';
 
 import {
-    STORE_COLOR,
+    STORE_THEME_COLOR,
 } from '../action-types';
 
-const setColorsStore = createAction(STORE_COLOR);
+const setColorsStore = createAction(STORE_THEME_COLOR);
 
 
 export {

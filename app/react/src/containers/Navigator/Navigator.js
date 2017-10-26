@@ -29,7 +29,7 @@ import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
 import { isAppInitialized } from '../../state/App/selectors';
 import { logOut } from '../../state/Login/actions';
-import { setColorsStore } from '../../state/Colors/actions';
+import { setColorsStore } from '../../state/Theme/actions';
 
 addLocaleData([enLocaleData, frLocaleData]);
 

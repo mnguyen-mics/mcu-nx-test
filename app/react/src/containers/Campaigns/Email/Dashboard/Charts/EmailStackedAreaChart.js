@@ -116,7 +116,6 @@ class EmailStackedAreaChart extends Component {
       translations,
       dataSource,
       hasFetchedCampaignStat,
-      colors,
     } = this.props;
 
     const options = {

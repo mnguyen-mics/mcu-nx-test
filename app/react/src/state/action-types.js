@@ -129,4 +129,4 @@ export const GET_LOGO = createRequestTypes('GET_LOGO');
 export const PUT_LOGO = createRequestTypes('PUT_LOGO');
 export const SAVE_PROFILE = createRequestTypes('SAVE_PROFILE');
 
-export const STORE_COLOR = 'STORE_COLOR';
+export const STORE_THEME_COLOR = 'STORE_THEME_COLOR';
