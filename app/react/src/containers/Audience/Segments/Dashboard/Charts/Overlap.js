@@ -47,6 +47,7 @@ class Overlap extends Component {
       },
       dataSource,
       isFetchingOverlap,
+      colors,
     } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
@@ -57,7 +58,7 @@ class Overlap extends Component {
       xKey: 'xKey',
       yKeys: ['yKey'],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#2FBCF2'],
+      colors: [colors['mcs-info']],
     };
 
     return !isFetchingOverlap
@@ -66,6 +67,7 @@ class Overlap extends Component {
         identifier="StackedAreaChartEmailOverlap"
         dataset={data}
         options={optionsForChart}
+        colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
       />
     )
     : <LoadingChart />;
@@ -107,11 +109,12 @@ class Overlap extends Component {
       hasFetchedAudienceStat,
       isFetchingOverlap,
       hasOverlap,
+      colors,
     } = this.props;
 
     const options = {
       domains: [translations['overlap_number'.toUpperCase()]],
-      colors: ['#2FBCF2'],
+      colors: [colors['mcs-info']],
     };
 
     const chartArea = (
@@ -169,6 +172,7 @@ Overlap.propTypes = {
   defaultDatamart: PropTypes.func.isRequired,
   createOverlapAnalysis: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  colors: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -179,6 +183,7 @@ const mapStateToProps = state => ({
   dataSource: getOverlapView(state),
   defaultDatamart: getDefaultDatamart(state),
   segmentsInformation: state.audienceSegmentsTable.audienceSegmentsApi.data,
+  colors: state.theme.colors,
 });
 
 const mapDispatchToProps = {
