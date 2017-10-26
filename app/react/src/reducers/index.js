@@ -4,6 +4,7 @@ import FormReducer from './FormReducer';
 
 import AppReducer from '../state/App/reducer';
 import ThemeReducer from '../state/Theme/reducer';
+import FeaturesReducer from '../state/Features/reducer';
 import DisplayCampaignsReducers from '../state/Campaigns/Display/reducer';
 import EmailCampaignReducers from '../state/Campaign/Email/reducer';
 import GoalsReducers from '../state/Campaigns/Goal/reducer';
@@ -29,6 +30,7 @@ const allReducers = Object.assign({},
   FormReducer,
   AppReducer,
   ThemeReducer,
+  FeaturesReducer,
   DisplayCampaignsReducers,
   EmailCampaignReducers,
   GoalsReducers,
