@@ -30,7 +30,6 @@ class EmailTemplateSelection extends Component {
   }
 
   getEmailTemplateRecords() {
-    const { input: { value } } = this.props;
     return (this.state.emailTemplates || []).map(template => {
       return (
         <RecordElement
