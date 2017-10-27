@@ -4,6 +4,7 @@ import { WrappedFieldProps } from 'redux-form';
 import { OptionProps } from 'antd/lib/select';
 
 const { Option } = Select;
+import { generateFakeId } from '../../utils/FakeIdHelper';
 
 interface FormSelectAddonProps {
   options: OptionProps[];
@@ -25,18 +26,25 @@ const FormSelectAddon: React.SFC<FormSelectAddonProps & WrappedFieldProps> = pro
     <Option key={option.value} value={option.value}>{option.title}</Option>
   ));
 
-  return (
+  const selectId = generateFakeId();
+  const getPopupContainer = (triggerNode: Element) => {
+    return document.getElementById(selectId) as any;
+  };
 
-    <Select
-      style={{ display: 'flex', justifyContent: 'center', ...style }}
-      value={value}
-      onChange={onChange}
-      // difficulties to map some WrappedFieldInputProps with SelectProps
-      onBlur={onChange as () => any}
-      onFocus={onFocus as () => any}
-    >
-      {optionsToDisplay}
-    </Select>
+  return (
+    <div id={selectId}>
+      <Select
+        getPopupContainer={getPopupContainer}
+        onChange={onChange}
+        // difficulties to map some WrappedFieldInputProps with SelectProps
+        onBlur={onChange as () => any}
+        onFocus={onFocus as () => any}
+        style={{ display: 'flex', justifyContent: 'center', ...style }}
+        value={value}
+      >
+        {optionsToDisplay}
+      </Select>
+    </div>
   );
 };
 

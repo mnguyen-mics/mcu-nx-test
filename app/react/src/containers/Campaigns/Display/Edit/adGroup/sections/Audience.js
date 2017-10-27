@@ -3,13 +3,13 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
-import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components/index.ts';
+import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import messages from '../../messages';
 import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
 import { getDefaultDatamart } from '../../../../../../state/Session/selectors';
 import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
+import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
 import { formatMetric } from '../../../../../../utils/MetricHelper';
 
 const { FormSection } = Form;
@@ -106,11 +106,11 @@ class Audience extends Component {
         ? [
           ...tableData,
           {
-            key: segment.id,
+            key: segment.modelId,
             type: { image: 'users', name: segment.name },
             info: [
-              `${formatMetric(segment.user_points, '0,0')} ${formatMessage(messages.contentSection2Medium1)}`,
-              `${formatMetric(segment.desktop_cookie_ids, '0,0')} ${formatMessage(messages.contentSection2Medium2)}`,
+              `${formatMetric(segment.user_points, '0,0')} ${formatMessage(messages.contentSectionAudienceMedium1)}`,
+              `${formatMetric(segment.desktop_cookie_ids, '0,0')} ${formatMessage(messages.contentSectionAudienceMedium2)}`,
             ],
             include: { bool: segment.include, index },
             toBeRemoved: index,
@@ -125,38 +125,31 @@ class Audience extends Component {
         <FormSection
           dropdownItems={[
             {
-              id: messages.dropdownNew.id,
-              message: messages.dropdownNew,
-              onClick: () => {},
-            },
-            {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitle2}
-          title={messages.sectionTitle2}
+          subtitle={messages.sectionSubtitleAudience}
+          title={messages.sectionTitleAudience}
         />
 
-        <Row>
-          <FieldArray
-            component={RelatedRecordTable}
-            dataSource={dataSource}
-            loading={this.state.loading}
-            name="audienceTable"
-            tableName="audienceTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
-          />
+        <FieldArray
+          component={RelatedRecordTable}
+          dataSource={dataSource}
+          loading={this.state.loading}
+          name="audienceTable"
+          tableName="audienceTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
 
-          {!dataSource.length
-            ? <EmptyRecords
-              iconType="plus"
-              message={formatMessage(messages.contentSection2EmptyTitle)}
-            />
-            : null
-          }
-        </Row>
+        {!dataSource.length
+          ? <EmptyRecords
+            iconType="plus"
+            message={formatMessage(messages.contentSectionAudienceEmptyTitle)}
+          />
+          : null
+        }
       </div>
     );
   }

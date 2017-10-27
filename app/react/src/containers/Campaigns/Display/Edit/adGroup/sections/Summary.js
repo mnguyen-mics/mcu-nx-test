@@ -13,24 +13,26 @@ import {
   stringifyTable,
 } from '../../../../../../utils/TableUtils';
 
-function Summary({ formatMessage, formValues }) {
+function Summary({ displayAudience, formatMessage, formValues }) {
 
   const {
     adGroupStartDate,
     adGroupEndDate,
     adGroupMaxBudgetPeriod,
     adGroupMaxBudgetPerPeriod,
-    audienceTable,
-    publisherTable,
-    optimizerTable,
     adTable,
+    areas,
+    audienceTable,
+    devices,
+    optimizerTable,
+    publisherTable,
   } = formValues;
 
   /* Format data */
   const formatPeriod = {
-    DAY: formatMessage(messages.contentSection8Part1Group6OptionDAY),
-    WEEK: formatMessage(messages.contentSection8Part1Group6OptionWEEK),
-    MONTH: formatMessage(messages.contentSection8Part1Group6OptionMONTH),
+    DAY: formatMessage(messages.contentSectionSummaryPart1Group6OptionDAY),
+    WEEK: formatMessage(messages.contentSectionSummaryPart1Group6OptionWEEK),
+    MONTH: formatMessage(messages.contentSectionSummaryPart1Group6OptionMONTH),
   };
 
   /* Data to display */
@@ -41,12 +43,12 @@ function Summary({ formatMessage, formValues }) {
   const budgetPerPeriod = `${(adGroupMaxBudgetPerPeriod
     ? formatMetric(adGroupMaxBudgetPerPeriod, '0,0')
     : nothingToDisplay
-  )}${formatMessage(messages.contentSection8Part1Group8)}`;
+  )}${formatMessage(messages.contentSectionSummaryPart1Group8)}`;
   const includedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, true), 'name');
   const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
   const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
   const optimizers = stringifyTable(filterTableByRemovedStatus(optimizerTable), 'provider');
-  const numberOfCreatives = 0; // TODO : remove static number for creatives
+  const numberOfCreatives = (adTable ? adTable.filter(ad => !ad.toBeRemoved).length : 0);
 
   /* JSX */
   const Section = ({ children }) => (
@@ -62,69 +64,69 @@ function Summary({ formatMessage, formValues }) {
   );
 
   return (
-    <div id="summary" className="summarySection">
+    <div id="summary">
       <FormSection
-        subtitle={messages.sectionSubtitle8}
-        title={messages.sectionTitle8}
+        subtitle={messages.sectionSubtitleSummary}
+        title={messages.sectionTitleSummary}
       />
-      <Row className="content">
-        <Col span={16}>
+      <Row className="ad-group-summary-section">
+        <Col span={16} className="content">
           <Section>
             <div>
-              <Span>{formatMessage(messages.contentSection8Part1Group1)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group1)}</Span>
               {startDate && isToday(adGroupStartDate)
-                  ? <Span blue>{formatMessage(messages.contentSection8Part1Group3)}</Span>
+                  ? <Span blue>{formatMessage(messages.contentSectionSummaryPart1Group3)}</Span>
                   : <span>
-                    <Span>{formatMessage(messages.contentSection8Part1Group2)}</Span>
+                    <Span>{formatMessage(messages.contentSectionSummaryPart1Group2)}</Span>
                     <Span blue>{startDate}</Span>
                   </span>
                 }
-              <Span>{formatMessage(messages.contentSection8Part1Group4)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group4)}</Span>
               <Span blue>{endDate}</Span>
-              <Span>{formatMessage(messages.contentSection8Part1Group5)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group5)}</Span>
               <Span blue>{period}</Span>
-              <Span>{formatMessage(messages.contentSection8Part1Group7)}</Span>
+              <Span>{formatMessage(messages.contentSectionSummaryPart1Group7)}</Span>
               <Span blue>{budgetPerPeriod}</Span>
             </div>
           </Section>
 
-          <Section>
-            {formatMessage(messages.contentSection8Part2)}
+          {displayAudience && <Section>
+            {formatMessage(messages.contentSectionSummaryPart2)}
             <P blue>{includedSegments}</P>
-          </Section>
+          </Section>}
 
-          <Section>
-            {formatMessage(messages.contentSection8Part3)}
+          {displayAudience && <Section>
+            {formatMessage(messages.contentSectionSummaryPart3)}
             <P blue>{excludedSegments}</P>
-          </Section>
+          </Section>}
 
-          {adTable && <Section>
-            {formatMessage(messages.contentSection8Part4)}
+          {devices && <Section>
+            {formatMessage(messages.contentSectionSummaryPart4)}
             <P blue>XXX</P>
           </Section>}
 
-          {adTable && <Section>
-            {formatMessage(messages.contentSection8Part5)}
+          {areas && <Section>
+            {formatMessage(messages.contentSectionSummaryPart5)}
             <P blue>XXX</P>
           </Section>}
 
           <Section>
-            {formatMessage(messages.contentSection8Part6)}
+            {formatMessage(messages.contentSectionSummaryPart6)}
             <P blue>{publishers}</P>
           </Section>
 
-          {adTable && <Section>
-            {formatMessage(messages.contentSection8Part7)}
+          {false && <Section>
+            {formatMessage(messages.contentSectionSummaryPart7)}
             <P blue>XXX</P>
           </Section>}
 
           <Section>
-            {formatMessage(messages.contentSection8Part8)}
+            {formatMessage(messages.contentSectionSummaryPart8)}
             <P blue>{optimizers}</P>
           </Section>
 
           <div className="sectionPaddingTop textPadding">
-            <Span>{formatMessage(messages.contentSection8Part9Group1)}</Span>
+            <Span>{formatMessage(messages.contentSectionSummaryPart9Group1)}</Span>
             {numberOfCreatives
               ? (
                 <span>
@@ -132,20 +134,20 @@ function Summary({ formatMessage, formValues }) {
                   <Span>
                     <FormattedPlural
                       value={numberOfCreatives}
-                      one={formatMessage(messages.contentSection8Part9Singular)}
-                      other={formatMessage(messages.contentSection8Part9Plural)}
+                      one={formatMessage(messages.contentSectionSummaryPart9Singular)}
+                      other={formatMessage(messages.contentSectionSummaryPart9Plural)}
                     />
                   </Span>
                 </span>
               )
               : (
                 <span>
-                  <Span blue>{formatMessage(messages.contentSection8Part9Negation)}</Span>
-                  <Span>{formatMessage(messages.contentSection8Part9Singular)}</Span>
+                  <Span blue>{formatMessage(messages.contentSectionSummaryPart9Negation)}</Span>
+                  <Span>{formatMessage(messages.contentSectionSummaryPart9Singular)}</Span>
                 </span>
               )
             }
-            <Span>{formatMessage(messages.contentSection8Part9Group2)}</Span>
+            <Span>{formatMessage(messages.contentSectionSummaryPart9Group2)}</Span>
           </div>
         </Col>
       </Row>
@@ -153,7 +155,12 @@ function Summary({ formatMessage, formValues }) {
   );
 }
 
+Summary.defaultProps = {
+  displayAudience: false,
+};
+
 Summary.propTypes = {
+  displayAudience: PropTypes.bool,
   formatMessage: PropTypes.func.isRequired,
   formValues: PropTypes.shape({}).isRequired,
 };

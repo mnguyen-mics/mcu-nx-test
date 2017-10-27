@@ -12,7 +12,7 @@ import messages from './messages';
 
 const formId = 'goalForm';
 
-class CampaignContent extends Component {
+class GoalContent extends Component {
   render() {
     const {
       editionMode,
@@ -67,14 +67,14 @@ class CampaignContent extends Component {
   }
 }
 
-CampaignContent.defaultProps = {
+GoalContent.defaultProps = {
   editionMode: false,
   initialValues: {},
   loading: false,
   submitting: false,
 };
 
-CampaignContent.propTypes = {
+GoalContent.propTypes = {
   editionMode: PropTypes.bool,
   initialValues: PropTypes.shape(),
   intl: intlShape.isRequired,
@@ -88,4 +88,4 @@ CampaignContent.propTypes = {
 export default compose(
   injectIntl,
   withMcsRouter,
-)(CampaignContent);
+)(GoalContent);

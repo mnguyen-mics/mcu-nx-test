@@ -97,7 +97,7 @@ class GoalsTable extends Component {
     const tableStyle = (dataSource.length || loading ? 'border-style' : 'hide-section');
 
     return (
-      <div className="adGroup-table">
+      <div className="related-record-table">
         <Table
           className={tableStyle}
           columns={columns}
