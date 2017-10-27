@@ -198,7 +198,7 @@ class DisplayCampaignAdTable extends Component {
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text / 100, '0,00 %'),
+        render: text => renderMetricData(parseFloat(text) / 100, '0.000 %'),
         sorter: (a, b) => sorter(a, b, 'ctr'),
       },
       {
@@ -236,7 +236,7 @@ class DisplayCampaignAdTable extends Component {
             callback: this.editCampaign,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign,
+            callback: this.archiveAd,
           },
         ],
       },

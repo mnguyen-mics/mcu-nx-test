@@ -5,6 +5,12 @@ const getEmailCampaign = campaignId => {
   return ApiService.getRequest(endpoint).then(res => res.data);
 };
 
+const deleteEmailCampaign = campaignId => {
+  const endpoint = `email_campaigns/${campaignId}`;
+  return ApiService.deleteRequest(endpoint);
+};
+
+
 const getRouters = campaignId => {
   const endpoint = `email_campaigns/${campaignId}/email_routers`;
   return ApiService.getRequest(endpoint);
@@ -134,6 +140,7 @@ export default {
   getEmailTemplates,
   getConsents,
   getSegments,
+  deleteEmailCampaign,
 
   createEmailCampaign,
   createBlast,

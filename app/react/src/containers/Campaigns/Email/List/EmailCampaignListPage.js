@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-// import { Modal } from 'antd';
+import { Modal } from 'antd';
 import { injectIntl, defineMessages } from 'react-intl';
 
 import EmailCampaignsTable from './EmailCampaignsTable';
@@ -20,6 +20,7 @@ import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
 import CampaignService from '../../../../services/CampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService';
 import ReportService from '../../../../services/ReportService';
 import * as notifyActions from '../../../../state/Notifications/actions';
 
@@ -65,9 +66,6 @@ class EmailCampaignListPage extends Component {
       isFetchingStats: true,
       noCampaignYet: false,
     };
-    this.handleArchiveCampaign = this.handleArchiveCampaign.bind(this);
-    this.handleEditCampaign = this.handleEditCampaign.bind(this);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
   }
 
   componentDidMount() {
@@ -118,34 +116,63 @@ class EmailCampaignListPage extends Component {
     }
   }
 
-  handleArchiveCampaign() {
-    // const { organisationId, location: { search }, intl: { formatMessage } } = this.props;
+  handleArchiveCampaign = (campaign) => {
+    const {
+      organisationId,
+      location: {
+        pathname,
+        state,
+        search,
+      },
+      history,
+      translations,
+    } = this.props;
 
-    // console.log(organisationId);
-    // console.log(search);
-    // console.log(campaign);
+    const { emailCampaignsById } = this.state;
 
-    // Modal.confirm({
-    //   title: <FormattedMessage {...messages.confirmArchiveModalTitle} />,
-    //   content: <FormattedMessage {...messages.confirmArchiveModalContent} />,
-    //   iconType: 'exclamation-circle',
-    //   okText: formatMessage(messages.confirmArchiveModalOk),
-    //   cancelText: formatMessage(messages.confirmArchiveModalCancel),
-    //   onOk() {
-    //     // return CampaignService.archiveEmailCampaign(campaign.id).then(() => {
-    //     //   loadEmailCampaignsDataSource(organisationId, filter);
-    //     // });
-    //   },
-    //   onCancel() { },
-    // });
+    const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
+
+    const reloadEmailCampaign = () => {
+      this.fetchCampaignAndStats(organisationId, filter);
+    };
+
+    Modal.confirm({
+      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
+      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      iconType: 'exclamation-circle',
+      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
+      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      onOk() {
+        EmailCampaignService.deleteEmailCampaign(campaign.id).then(() => {
+          if (emailCampaignsById.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            reloadEmailCampaign();
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state
+            });
+            return Promise.resolve();
+          }
+          reloadEmailCampaign();
+          return Promise.resolve();
+
+        });
+      },
+      onCancel() { },
+    });
   }
 
-  handleEditCampaign(campaign) {
+
+  handleEditCampaign = (campaign) => {
     const { organisationId, history } = this.props;
     history.push(`/v2/o/${organisationId}/campaigns/email/${campaign.id}/edit`);
   }
 
-  handleFilterChange(filter) {
+  handleFilterChange = (filter) => {
     const {
       history,
       location: { search: currentSearch, pathname },
@@ -159,7 +186,7 @@ class EmailCampaignListPage extends Component {
     history.push(nextLocation);
   }
 
-  fetchCampaignAndStats(organisationId, filter, checkHasCampaigns = true) {
+  fetchCampaignAndStats = (organisationId, filter, checkHasCampaigns = true) => {
 
     const buildGetCampaignsOptions = () => {
       const options = {
@@ -204,7 +231,7 @@ class EmailCampaignListPage extends Component {
 
   }
 
-  buildTableDataSource() {
+  buildTableDataSource = () => {
     const {
       emailCampaignsById,
       deliveryReportByCampaignId,
@@ -258,6 +285,7 @@ EmailCampaignListPage.propTypes = {
   location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   notifyError: PropTypes.func,
+  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   // intl: intlShape.isRequired
 };
 
@@ -265,7 +293,9 @@ export default compose(
   injectIntl,
   withMcsRouter,
   connect(
-    undefined,
+    state => ({
+      translations: state.translations })
+      ,
     { notifyError: notifyActions.notifyError },
   ),
 )(EmailCampaignListPage);

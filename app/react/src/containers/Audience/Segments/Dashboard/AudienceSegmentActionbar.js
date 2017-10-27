@@ -33,6 +33,7 @@ class AudienceSegmentActionbar extends Component {
       },
       location: { search },
       defaultDatamart,
+      segment,
       segmentData,
       overlapView,
       intl
@@ -45,7 +46,7 @@ class AudienceSegmentActionbar extends Component {
     const overlapData = overlapView ? overlapView.data : [];
 
     // Overlap job may still be pending. In which case we dont include it in the export.
-    ExportService.exportAudienceSegmentDashboard(organisationId, datamartId, segmentData, overlapData, filter, intl.formatMessage);
+    ExportService.exportAudienceSegmentDashboard(organisationId, datamartId, segmentData, overlapData, filter, intl.formatMessage, segment);
   };
 
   handleRunExport = () => {
@@ -121,7 +122,6 @@ AudienceSegmentActionbar.propTypes = {
   defaultDatamart: PropTypes.func.isRequired,
   segment: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   overlapView: PropTypes.shape({
-    date: PropTypes.number.isRequired,
     data: PropTypes.arrayOf(PropTypes.object)
   }).isRequired,
   segmentData: PropTypes.arrayOf(PropTypes.object).isRequired,

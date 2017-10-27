@@ -35,7 +35,7 @@ function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
     state = {
       visibilitySelectedColumns: this.props.columnsDefinitions ?
         (this.props.columnsDefinitions.dataColumnsDefinition
-          .filter(column => column.isHideable)
+          .filter(column => column.isHideable && column.isVisibleByDefault)
           .map(column => ({ key: column.translationKey, value: column.key }))
         ) : [],
     };

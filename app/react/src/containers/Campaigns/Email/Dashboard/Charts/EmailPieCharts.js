@@ -120,11 +120,15 @@ class EmailPieCharts extends Component {
 
     const generateOptions = (isHalf, color, translationKey, ratioValeA, ratioValeB) => {
 
+      const {
+        colors
+      } = this.props;
+
       let colorFormated = '';
       if (color === 'blue') {
-        colorFormated = '#00a1df';
+        colorFormated = colors['mcs-info'];
       } else {
-        colorFormated = '#ff9012';
+        colorFormated = colors['mcs-warning'];
       }
       const gray = '#eaeaea';
 
@@ -233,6 +237,7 @@ EmailPieCharts.propTypes = {
   hasFetchedCampaignStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   flatData: PropTypes.shape().isRequired,
+  colors: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -240,6 +245,7 @@ const mapStateToProps = state => ({
   hasFetchedCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.hasFetched,
   dataSource: getTableDataSource(state),
   flatData: normalizedEmailPerformance(state),
+  colors: state.theme.colors
 });
 
 

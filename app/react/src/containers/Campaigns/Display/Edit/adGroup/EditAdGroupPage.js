@@ -7,10 +7,7 @@ import withDrawer from '../../../../../components/Drawer';
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-
-import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import BidOptimizerServices from '../../../../../services/BidOptimizerServices';
+import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
 
 
 class EditAdGroupPage extends Component {
@@ -22,69 +19,36 @@ class EditAdGroupPage extends Component {
 
   componentDidMount() {
     const { adGroupId, campaignId, organisationId } = this.props.match.params;
-
-    Promise.all([
-      this.getGeneralInfo({ adGroupId, campaignId }),
-      this.getPublishers({ campaignId }),
-      this.getSegments({ adGroupId, campaignId, organisationId }),
-      // this.getLocations({ adGroupId }),
-    ])
-      .then((results) => {
-        const {
-          adGroupBidOptimizerId,
-          ...initialValues
-        } = results.reduce((acc, result) => ({ ...acc, ...result }), {});
-
-        this.setState({ initialValues });
-
-        return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroupBidOptimizerId] });
-      })
-      .then(({ data }) => {
-        this.setState({
-          initialValues: { ...this.state.initialValues, optimizerTable: data },
-          loading: false,
-        });
-      });
-  }
-
-  getGeneralInfo({ campaignId, adGroupId }) {
-    return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
-      .then((results) => Object.keys(results).reduce((acc, key) => ({
+    getAdGroup(organisationId, campaignId, adGroupId).then(adGroup => {
+      const initialAdGroupFormatted = Object.keys(adGroup).reduce((acc, key) => ({
         ...acc,
-        [camelCase(`adGroup-${key}`)]: results[key]
-      }), {})
-      );
+        [key.indexOf('Table') === -1 ? camelCase(`adGroup-${key}`) : key]: adGroup[key]
+      }), {});
+      this.setState({
+        initialValues: initialAdGroupFormatted,
+        loading: false,
+      });
+    });
   }
 
-  getPublishers({ campaignId }) {
-    return DisplayCampaignService.getPublishers({ campaignId })
-      .then(publisherTable => ({ publisherTable }));
-  }
+  onSave = (object) => {
+    const { history, match, location } = this.props;
 
-  getLocations({ apGroupId }) {
-    return DisplayCampaignService.getLocations({ apGroupId })
-      .then(locationAndTargetingTable => ({ locationAndTargetingTable }));
-  }
-
-  getSegments({ adGroupId, campaignId, organisationId }) {
-    const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
-    const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
-
-    return Promise.all([fetchSegments, fetchMetadata])
-      .then((results) => {
-        const segments = results[0];
-        const metadata = results[1];
-
-        return segments.map(segment => {
-          const { desktop_cookie_ids, user_points } = metadata[segment.id];
-
-          return { ...segment, desktop_cookie_ids, user_points };
-        });
-      })
-      .then(audienceTable => ({ audienceTable }));
+    saveAdGroup(match.params.campaignId, object, {}, true).then(() => {
+      return location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`);
+    });
   }
 
   render() {
+    const { history, match, location } = this.props;
+
+    const onClose = () => (location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(`/v2/o/${match.params.organisationId}/campaigns/display/${match.params.campaignId}`)
+    );
+
     return (
       <AdGroupContent
         closeNextDrawer={this.props.closeNextDrawer}
@@ -92,6 +56,8 @@ class EditAdGroupPage extends Component {
         initialValues={this.state.initialValues}
         loading={this.state.loading}
         openNextDrawer={this.props.openNextDrawer}
+        close={onClose}
+        save={this.onSave}
       />
     );
   }
@@ -100,6 +66,8 @@ class EditAdGroupPage extends Component {
 EditAdGroupPage.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
+  location: ReactRouterPropTypes.location.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
 };
 

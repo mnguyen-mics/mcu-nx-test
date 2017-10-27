@@ -20,6 +20,7 @@ export default {
   FormTitle,
   SearchResultBox,
   SwitchInput,
+  withNormalizer,
   withValidators,
 };
 

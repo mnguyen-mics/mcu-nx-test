@@ -105,6 +105,7 @@ class DisplayStackedAreaChart extends Component {
       hasFetchedOverallStat,
       isFetchingOverallStat,
       overallStat,
+      colors,
     } = this.props;
     const { key1, key2 } = this.state;
 
@@ -119,7 +120,7 @@ class DisplayStackedAreaChart extends Component {
         { key: key2, message: messages[key2] },
       ],
       lookbackWindow: lookbackWindow.as('milliseconds'),
-      colors: ['#ff9012', '#00a1df'],
+      colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,
       onDragEnd: (values) => {
         this.updateLocationSearch({
@@ -139,7 +140,7 @@ class DisplayStackedAreaChart extends Component {
       value: hasFetchedOverallStat ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€') : null,
     }, {
       name: 'CTR',
-      value: hasFetchedOverallStat ? formatMetric(overallStat[0].ctr, '0.000%') : null,
+      value: hasFetchedOverallStat ? formatMetric(parseFloat(overallStat[0].ctr) / 100, '0.000 %') : null,
     }, {
       name: 'CPM',
       value: hasFetchedOverallStat ? formatMetric(overallStat[0].ctr, '0,0[.]00', '', '€') : null,
@@ -164,19 +165,19 @@ class DisplayStackedAreaChart extends Component {
   }
 
   render() {
-    const { translations, dataSource, hasFetchedCampaignStat, renderCampaignProgress } = this.props;
+    const { translations, dataSource, hasFetchedCampaignStat, renderCampaignProgress, colors } = this.props;
     const { key1, key2 } = this.state;
 
     const legendOptions = [
       {
         key: key1,
         domain: translations[key1.toUpperCase()],
-        color: '#ff9012',
+        color: colors['mcs-warning'],
       },
       {
         key: key2,
         domain: translations[key2.toUpperCase()],
-        color: '#00a1df',
+        color: colors['mcs-info'],
       },
     ];
     const legends = this.createLegend();
@@ -227,10 +228,12 @@ DisplayStackedAreaChart.propTypes = {
   hasFetchedOverallStat: PropTypes.bool.isRequired,
   overallStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   renderCampaignProgress: PropTypes.bool,
+  colors: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
+  colors: state.theme.colors,
 });
 
 DisplayStackedAreaChart = connect(mapStateToProps)(DisplayStackedAreaChart);

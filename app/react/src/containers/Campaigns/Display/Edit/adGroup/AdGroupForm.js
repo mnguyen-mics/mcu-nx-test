@@ -25,10 +25,9 @@ import {
   Optimization,
   Publisher,
   Summary,
-} from './sections/index.ts';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+} from './sections';
 import { Loading } from '../../../../../components/index.ts';
+import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -51,36 +50,14 @@ class AdGroupForm extends Component {
 
   onSubmit = () => {
     const {
-      history,
-      match: { params: { campaignId, organisationId } },
+      formValues,
+      editionMode
     } = this.props;
 
-
-    if (!this.props.pristine) {
-      this.setState({ loading: true });
-
-      return this.saveOrUpdateAdGroup()
-        .then((adGroupId) => {
-          return this.saveAudience(adGroupId).then(() => { return adGroupId; });
-        })
-        .then((adGroupId) => {
-          return this.savePublishers(adGroupId).then(() => { return adGroupId; });
-        })
-        .then((adGroupId) => {
-          return this.saveLocations(adGroupId).then(() => { return adGroupId; });
-        })
-        .then(() => {
-          this.setState({ loading: false });
-          history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
-        })
-        .catch(error => {
-          this.setState({ loading: false });
-          this.props.notifyError(error);
-        });
+    if (editionMode === false) {
+      formValues.id = formValues.id ? formValues.id : Math.round(Math.random() * 1000);
     }
-
-    history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
-    return Promise.resolve();
+    this.props.save(formValues);
   }
 
   saveOrUpdateAdGroup = () => {
@@ -315,13 +292,11 @@ AdGroupForm.propTypes = {
   formInitialValues: PropTypes.shape().isRequired,
   formValues: PropTypes.shape().isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
   match: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
-  pristine: PropTypes.bool.isRequired,
-  notifyError: PropTypes.func.isRequired,
+  save: PropTypes.func.isRequired,
 };
 
 

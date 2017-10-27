@@ -31,6 +31,10 @@ class DisplayCampaignAdGroupTable extends Component {
     });
   }
 
+  archiveAdGroup = () => {
+    // TODO
+  }
+
   render() {
     const {
       match: {
@@ -94,6 +98,7 @@ class DisplayCampaignAdGroupTable extends Component {
         });
     };
 
+
     const dataColumns = [
       {
         translationKey: 'STATUS',
@@ -149,7 +154,7 @@ class DisplayCampaignAdGroupTable extends Component {
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text / 100, '0,00 %'),
+        render: text => renderMetricData(parseFloat(text) / 100, '0.000 %'),
       },
       {
         translationKey: 'CPC',
@@ -181,10 +186,12 @@ class DisplayCampaignAdGroupTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,
-          }, {
-            translationKey: 'ARCHIVE',
-            callback: this.archiveCampaign,
           },
+          // Commented for now to be improved later
+          // {
+          //   translationKey: 'ARCHIVE',
+          //   callback: this.archiveAdGroup,
+          // },
         ],
       },
     ];
