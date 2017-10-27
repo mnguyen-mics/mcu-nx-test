@@ -128,7 +128,7 @@ class CampaignForm extends Component {
     return request.then(result => result.data.id);
   }
 
-  createAdGroup = (campaignId, organisationId, value, editionMode = false) => {
+  createAdGroup = (campaignId, organisationId, value, options) => {
     const {
       formValues,
       formInitialValues,
@@ -146,12 +146,12 @@ class CampaignForm extends Component {
       [key.indexOf('Table') === -1 ? camelCase(`adGroup-${key}`) : key]: formInitialValues[key]
     }), {}) : null;
 
-    return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, editionMode);
+    return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, options);
   }
 
   updateAdGroup = ({ campaignId, organisationId, body }) => {
 
-    return this.createAdGroup(campaignId, organisationId, body, true);
+    return this.createAdGroup(campaignId, organisationId, body, { editionMode: true, catalogMode: false });
   }
 
   saveAdGroups = (campaignId) => {

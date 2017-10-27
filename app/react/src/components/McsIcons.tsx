@@ -1,7 +1,59 @@
 import * as React from 'react';
 
+export type McsIconType =
+  'automation' |
+  'bell' |
+  'bolt' |
+  'check-rounded-inverted' |
+  'check-rounded' |
+  'check' |
+  'chevron-right' |
+  'chevron' |
+  'close-big' |
+  'close-rounded' |
+  'close' |
+  'code' |
+  'creative' |
+  'delete' |
+  'display' |
+  'dots' |
+  'download' |
+  'email-inverted' |
+  'email' |
+  'extend' |
+  'filters' |
+  'full-users' |
+  'gears' |
+  'goals-rounded' |
+  'goals' |
+  'image' |
+  'info' |
+  'laptop' |
+  'library' |
+  'magnifier' |
+  'menu-close' |
+  'minus' |
+  'options' |
+  'partitions' |
+  'pause' |
+  'pen' |
+  'phone' |
+  'play' |
+  'plus' |
+  'query' |
+  'question' |
+  'refresh' |
+  'settings' |
+  'smartphone' |
+  'status' |
+  'tablet' |
+  'user' |
+  'users' |
+  'video' |
+  'warning';
+
 interface McsIconsProps {
-    type: string;
+    type: McsIconType;
     additionalClass?: string;
 }
 

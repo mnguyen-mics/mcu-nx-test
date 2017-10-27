@@ -4,6 +4,7 @@ import { Field } from 'redux-form';
 
 import { ButtonStyleless, Form, McsIcons } from '../components';
 import generateGuid from '../utils/generateGuid';
+import { McsIconType } from '../components/McsIcons';
 
 const { SwitchInput } = Form;
 
@@ -28,7 +29,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       colSpan: 8,
       dataIndex: 'type',
       key: 'type',
-      render: (type: { image: string, name: string}) => (
+      render: (type: { image: McsIconType, name: string}) => (
         <div className="display-row center-vertically row-height">
           <div className="icon-round-border">
             <McsIcons
@@ -45,8 +46,8 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       dataIndex: 'info',
       key: 'info',
       /* In render, info is either an array of string of an array of { image: '', name: '' } */
-      render: (info: Array<{ image?: string, name: string}>) => {
-        const elemToDisplay = (elem: { image?: string, name: string}) => (elem.image
+      render: (info: Array<{ image?: McsIconType, name: string}>) => {
+        const elemToDisplay = (elem: { image?: McsIconType, name: string}) => (elem.image
             ? (
               <div className="display-row" key={generateGuid()}>
                 <McsIcons type={elem.image} additionalClass="big" />

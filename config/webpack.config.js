@@ -35,13 +35,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
             }
           },
           enforce: 'pre'
-        },
-        {
-          test: /\.ts$/,
-          include: paths.reactAppSrc,
-          enforce: 'pre',
-          loader: 'tslint-loader'
-        },
+        },        
         {
           test: /\.jsx?$/,
           include: paths.reactAppSrc,

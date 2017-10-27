@@ -1,5 +1,5 @@
 import moment from 'moment';
-
+import { camelizeKeys, decamelizeKeys } from 'humps';
 import ApiService from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 
@@ -68,11 +68,18 @@ function deleteAdGroup({ campaignId, id, body }) {
 }
 
 /* AUDIENCE SERVICES */
-function getAudience(campaignId, adGroupId) {
+function getAudienceSegments(campaignId, adGroupId) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
+  return ApiService.getRequest(endpoint).then(res => res.data.map(d => camelizeKeys(d)));
+}
+
+// TODO delete, use getAudienceSegments instead
+function getAudiences(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.getRequest(endpoint).then(res => res.data.map(segment => {
     const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
 
+    // code smell...
     return {
       ...relevantData,
       id: audience_segment_id,
@@ -88,9 +95,19 @@ function createAudience({ campaignId, adGroupId, body }) {
   return ApiService.postRequest(endpoint, body).then(res => res.data);
 }
 
+function createAudienceSegment({ campaignId, adGroupId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
+  return ApiService.postRequest(endpoint, decamelizeKeys(body)).then(res => camelizeKeys(res.data));
+}
+
 function updateAudience({ campaignId, adGroupId, id, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
   return ApiService.putRequest(endpoint, body);
+}
+
+function updateAudienceSegment({ campaignId, adGroupId, id, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
+  return ApiService.putRequest(endpoint, decamelizeKeys(body)).then(res => camelizeKeys(res.data));
 }
 
 function deleteAudience({ campaignId, adGroupId, id }) {
@@ -131,6 +148,11 @@ function getAds(campaignId, adGroupId) {
   return ApiService.getRequest(endpoint);
 }
 
+function updateAd(adId, campaignId, adGroupId, body) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
+  return ApiService.putRequest(endpoint, body);
+}
+
 function createAd({ campaignId, adGroupId, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
   return ApiService.postRequest(endpoint, body);
@@ -166,6 +188,7 @@ export default {
   createAd,
   createAdGroup,
   createAudience,
+  createAudienceSegment,
   createCampaign,
   createGoal,
   createPublisher,
@@ -180,9 +203,12 @@ export default {
   getCampaignName,
   getGoal,
   getPublishers,
-  getAudience,
+  getAudiences,
+  getAudienceSegments,
+  updateAd,
   updateAdGroup,
   updateAudience,
+  updateAudienceSegment,
   updateCampaign,
   updateGoal,
   deleteAdGroup,

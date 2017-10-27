@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { camelCase } from 'lodash';
 
 import withDrawer from '../../../../../components/Drawer';
@@ -8,6 +9,8 @@ import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
+import * as NotificationActions from '../../../../../state/Notifications/actions';
+import log from '../../../../../utils/Logger';
 
 
 class EditAdGroupPage extends Component {
@@ -39,11 +42,16 @@ class EditAdGroupPage extends Component {
       match: {
         params: { campaignId, organisationId },
       },
+      notifyError,
     } = this.props;
 
-    saveAdGroup(campaignId, object, this.state.initialValues, true)
+    saveAdGroup(campaignId, object, this.state.initialValues, { editionMode: true, catalogMode: false })
       .then((adGroupId) => {
         history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
+      })
+      .catch(err => {
+        log.error(err);
+        notifyError(err);
       });
   }
 
@@ -87,9 +95,16 @@ EditAdGroupPage.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
+  notifyError: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   withDrawer,
+  connect(
+    undefined,
+    {
+      notifyError: NotificationActions.notifyError,
+    }
+  )
 )(EditAdGroupPage);
