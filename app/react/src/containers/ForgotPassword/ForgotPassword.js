@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Form, Icon, Input, Button } from 'antd';
 import Alert from 'mcs-react-alert';
-import logoUrl from '../../assets/images/logo-mediarithmics.png';
+import logoUrl from '../../assets/images/logo.png';
 import { sendPassword, passwordForgotReset } from '../../state/ForgotPassword/actions';
 import messages from './messages';
 
@@ -42,7 +42,9 @@ class ForgotPassword extends Component {
     return (
       <div className="mcs-reset-password-container">
         <div className="reset-password-container-frame">
-          <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
+          <div className="image-wrapper">
+            <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
+          </div>
           { !passwordSentSuccess &&
           <Form onSubmit={this.handleSubmit} className="reset-password-form">
             { errorMsg }
