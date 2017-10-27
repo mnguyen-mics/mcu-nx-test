@@ -27,6 +27,7 @@ const prodConfig = {
       inject: true,
       template: paths.appDistHtml,
       filename: '../index.html',
+      excludeAssets: [/plateforme.*\/style.*.(css|js)/]
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {

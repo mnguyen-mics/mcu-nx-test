@@ -6,9 +6,11 @@ const paths = require('./paths');
 const pkg = require('../package.json');
 
 const extractStyle = new ExtractTextPlugin({
-  filename: '[name].[chunkhash].css',
+  filename: '[name].css',
   disable: process.env.NODE_ENV === 'development'
 });
+
+const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 
 const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
 
@@ -17,6 +19,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
     entry: {
       app: path.join(paths.reactAppSrc, '/index.js'),
       'style-less': paths.appStyleLess,
+      'plateforme.alliancegravity.com/style-less': paths.appGravityStyleLess,
       'react-vendors': Object.keys(pkg.dependencies)
     },
 
@@ -65,7 +68,13 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
               'css-loader?sourceMap',
               'less-loader?sourceMap'
             ]
-          })
+          }),
+          include: [paths.appStyleLess, paths.appGravityStyleLess],
+          // include: [
+          //   path.appStyleLessDir,
+          //   path.appStyleLess,
+          // ],
+          // exclude: path.appGravityStyleLess,
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
@@ -115,7 +124,8 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
       }),
       new webpack.optimize.CommonsChunkPlugin({
         names: ['react-vendors', 'manifest']
-      })
+      }),
+      new HtmlWebpackExcludeAssetsPlugin(),
     ]
   };
 
