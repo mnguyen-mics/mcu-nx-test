@@ -120,7 +120,8 @@ class EditEmailPage extends Component {
           return EmailCampaignService.updateBlast(campaignId, editedBlast.id, blastResource).then(() => {
             return Promise.all([
               ...editedBlast.templates.map(template => {
-                const templateResource = pick(template, ['email_template_id']);
+                // const templateResource = pick(template, ['email_template_id']);
+                const templateResource = { email_template_id: template.id };
                 return EmailCampaignService.addEmailTemplate(campaignId, editedBlast.id, templateResource);
               }),
               ...loadedBlast.templates.map(template => {
