@@ -110,8 +110,8 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
     return (
       <div id="locationTargeting" className="locationTargeting">
         <FormSection
-          subtitle={messages.sectionSubtitle3bis}
-          title={messages.sectionTitle3bis}
+          subtitle={messages.sectionSubtitleLocation}
+          title={messages.sectionTitleLocationTargeting}
         />
         <Checkbox className="checkbox-location-section" onChange={this.displayLocationTargetingSection}>
           <FormattedMessage id="monid" defaultMessage="I want to target a specific location" />

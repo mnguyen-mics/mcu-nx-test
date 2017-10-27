@@ -3,6 +3,7 @@ import { Select } from 'antd';
 import { OptionProps, SelectValue} from 'antd/lib/select';
 
 const { Option } = Select;
+import { generateFakeId } from '../../utils/FakeIdHelper';
 
 interface FormSelectAddonProps {
   options: OptionProps[];
@@ -31,14 +32,25 @@ const FormSelectAddon: React.SFC<FormSelectAddonProps > = props => {
     <Option key={option.value} value={option.value}>{option.title}</Option>
   ));
 
+  const selectId = generateFakeId();
+  const getPopupContainer = (triggerNode: Element) => {
+    return document.getElementById(selectId) as any;
+  };
+
   return (
-    <Select
-      style={{ display: 'flex', justifyContent: 'center', ...style }}
-      value={value}
-      onChange={onChange}
-    >
-      {optionsToDisplay}
-    </Select>
+    <div id={selectId}>
+      <Select
+        getPopupContainer={getPopupContainer}
+        onChange={onChange}
+        // difficulties to map some WrappedFieldInputProps with SelectProps
+        onBlur={onChange as () => any}
+        onFocus={onfocus as () => any}
+        style={{ display: 'flex', justifyContent: 'center', ...style }}
+        value={value}
+      >
+        {optionsToDisplay}
+      </Select>
+    </div>
   );
 };
 

@@ -63,7 +63,7 @@ function deleteAdGroup({ campaignId, id, body }) {
 }
 
 /* AUDIENCE SERVICES */
-function getAudiences(campaignId, adGroupId) {
+function getAudience(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.getRequest(endpoint).then(res => res.data.map(segment => {
     const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
@@ -72,7 +72,7 @@ function getAudiences(campaignId, adGroupId) {
       ...relevantData,
       id: audience_segment_id,
       include: !exclude,
-      otherId: id,
+      modelId: id,
       toBeRemoved: false,
     };
   }));
@@ -115,7 +115,7 @@ function getPublishers({ campaignId }) {
         ...publisher,
         display_network_access_id,
         id: display_network_access_id,
-        otherId: id,
+        modelId: id,
         toBeRemoved: false
       };
     }));
@@ -153,9 +153,14 @@ function getAds(campaignId, adGroupId) {
   return ApiService.getRequest(endpoint);
 }
 
-function updateAd(adId, campaignId, adGroupId, body) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
-  return ApiService.putRequest(endpoint, body);
+function createAd({ campaignId, adGroupId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
+  return ApiService.postRequest(endpoint, body);
+}
+
+function deleteAd({ campaignId, adGroupId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${id}`;
+  return ApiService.deleteRequest(endpoint);
 }
 
 function createCampaign(organisationId, body) {
@@ -184,12 +189,14 @@ function deleteGoal({ campaignId, id, body }) {
 }
 
 export default {
+  createAd,
   createAdGroup,
   createAudience,
   createCampaign,
   createGoal,
   createLocation,
   createPublisher,
+  deleteAd,
   deleteAudience,
   deleteGoal,
   deleteLocation,
@@ -197,13 +204,12 @@ export default {
   getAdGroup,
   getAdGroups,
   getAds,
-  getAudiences,
   getCampaignDisplay,
   getCampaignName,
   getLocations,
   getGoal,
   getPublishers,
-  updateAd,
+  getAudience,
   updateAdGroup,
   updateAudience,
   updateCampaign,

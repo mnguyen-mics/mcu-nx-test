@@ -1,5 +1,6 @@
 import ApiService from './ApiService';
 import PluginServices from './PluginServices';
+import { generateFakeId } from '../utils/FakeIdHelper';
 
 function getBidOptimizerProperties({ bidOptimizers, selectedIds }) {
   return Promise.all(bidOptimizers.map(bidOptimizer => {
@@ -19,15 +20,17 @@ function getBidOptimizerProperties({ bidOptimizers, selectedIds }) {
   );
 }
 
-function getAllBidOptimizers({ organisationId }) {
+function getAllBidOptimizers(organisationId) {
   const endpoint = `bid_optimizers?organisation_id=${organisationId}`;
 
   return ApiService.getRequest(endpoint);
 }
 
-function getBidOptimizers({ organisationId, selectedIds, getAll }) {
+function getBidOptimizers({ organisationId, selectedIds, options = {} }) {
+  const { getAll } = options;
+
   /* getAllBidOptimizers fetches for us some optimizer metadata. */
-  return getAllBidOptimizers({ organisationId })
+  return getAllBidOptimizers(organisationId)
   /* However, we need more, why is why we make a second call via getBidOptimizerProperties. */
     .then(({ data, ...rest }) => {
       /* We can fetch either all or selected optimizers thanks to the "getAll" boolean. */
@@ -37,7 +40,10 @@ function getBidOptimizers({ organisationId, selectedIds, getAll }) {
       );
 
       return getBidOptimizerProperties(reqParams)
-        .then((results) => ({ data: results, ...rest }));
+        .then((results) => ({
+          data: results.map(elem => ({ ...elem, modelId: generateFakeId() })),
+          ...rest
+        }));
     });
 }
 

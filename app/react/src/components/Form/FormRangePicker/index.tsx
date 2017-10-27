@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Form, Tooltip, Row, Col } from 'antd';
-import { isEmpty } from 'lodash';
 import {
   Field,
   getFormMeta,
@@ -10,15 +8,13 @@ import {
   GenericField,
   FormErrors,
 } from 'redux-form';
-
-import McsIcons from '../../../components/McsIcons';
-import DateInput from './DateInput';
-import { isPastDate } from '../../../utils/DateHelper';
-
-import { TooltipProps } from 'antd/lib/tooltip';
 import moment from 'moment';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { DatePickerProps } from 'antd/lib/date-picker';
+
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../../components/Form/FormFieldWrapper';
+import DateInput from './DateInput';
+import { isPastDate } from '../../../utils/DateHelper';
 
 interface FormRangePickerProps {
   endProps: GenericField<DatePickerProps>;
@@ -28,7 +24,6 @@ interface FormRangePickerProps {
   };
   fieldsMetaData: {[field: string]: { touched: boolean, visited: boolean }};
   formItemProps: FormItemProps;
-  helpToolTipProps: TooltipProps;
   startProps: GenericField<DatePickerProps>;
   syncErrors: FormErrors<{[key: string]: string}>;
   values: {
@@ -39,9 +34,10 @@ interface FormRangePickerProps {
 
 const DateInputField = Field as new () => GenericField<DatePickerProps>;
 
-class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
+class FormRangePicker extends React.Component<FormRangePickerProps & FormFieldWrapperProps, {}> {
 
   static defaultProps: Partial<FormRangePickerProps> = {
+    fieldsMetaData: undefined,
     fieldValidators: { start: [], end: [] },
     syncErrors: {},
   };
@@ -71,58 +67,56 @@ class FormRangePicker extends React.Component<FormRangePickerProps, {}> {
   )
 
   render() {
-
-    const { startProps, endProps, syncErrors, fieldValidators, helpToolTipProps } = this.props;
+    const {
+      values: {
+        startDate,
+        endDate,
+      },
+      endProps,
+      formItemProps,
+      fieldValidators,
+      helpToolTipProps,
+      startProps,
+      syncErrors,
+    } = this.props;
 
     const error = (
-      (this.displayError(startProps.name) && syncErrors[startProps.name])
-      || (this.displayError(endProps.name) && syncErrors[endProps.name])
+      (!startDate && this.displayError(startProps.name) && syncErrors && syncErrors[startProps.name])
+      || (!endDate && this.displayError(endProps.name) && syncErrors && syncErrors[endProps.name])
       || ''
     );
 
     return (
-      <Form.Item
-        {...this.props.formItemProps}
+      <FormFieldWrapper
         help={error}
+        helpToolTipProps={helpToolTipProps}
         validateStatus={error ? 'error' : 'success'}
+        {...formItemProps}
       >
-        <Row align="middle" type="flex">
-          <Col span={10}>
-            <div>
-              <DateInputField
-                component={DateInput}
-                validate={fieldValidators!.start}
-                disabledDate={this.disabledDate(false)}
-                {...startProps}
-              />
-            </div>
-          </Col>
-
-          <Col span={2}>
-            <p className="ant-form-split">-</p>
-          </Col>
-
-          <Col span={10}>
+        <div style={{ width: '43%' }}>
+          <div>
             <DateInputField
               component={DateInput}
-              validate={fieldValidators!.end}
-              disabledDate={this.disabledDate(false)}
-              {...endProps}
+              validate={fieldValidators!.start}
+              disabledDate={this.disabledDate(true)}
+              {...startProps}
             />
-          </Col>
+          </div>
+        </div>
 
-          {!isEmpty(helpToolTipProps)
-            ? (
-              <Col span={2} className="field-tooltip">
-                <Tooltip {...helpToolTipProps}>
-                  <McsIcons type="info" />
-                </Tooltip>
-              </Col>
-            )
-            : null
-          }
-        </Row>
-      </Form.Item>
+        <div style={{ width: '5.5%' }}>
+          <p className="ant-form-split">-</p>
+        </div>
+
+        <div style={{ width: '43%' }}>
+          <DateInputField
+            component={DateInput}
+            validate={fieldValidators!.end}
+            disabledDate={this.disabledDate(false)}
+            {...endProps}
+          />
+        </div>
+      </FormFieldWrapper>
     );
   }
 }

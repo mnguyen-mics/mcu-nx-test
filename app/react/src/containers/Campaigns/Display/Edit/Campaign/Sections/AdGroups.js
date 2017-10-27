@@ -26,7 +26,7 @@ class AdGroups extends Component {
     const additionalProps = {
       openNextDrawer: handlers.openNextDrawer,
       closeNextDrawer: handlers.closeNextDrawer,
-      close: handlers.closeNextDrawer,
+      onClose: handlers.closeNextDrawer,
       save: this.createNewData,
     };
 

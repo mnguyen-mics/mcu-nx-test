@@ -1,33 +1,28 @@
 import * as React from 'react';
-import { Form, Select, Tooltip, Row, Col } from 'antd';
-import { isEmpty } from 'lodash';
+import { Select, Col } from 'antd';
 
 // TS Interfaces
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 
-import McsIcons from '../../components/McsIcons';
+import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
+import { generateFakeId } from '../../utils/FakeIdHelper';
 
 interface FormSelectProps {
   formItemProps?: FormItemProps;
   selectProps?: SelectProps;
   options?: OptionProps[];
-  helpToolTipProps: TooltipProps;
 }
 
 const Option = Select.Option;
 
-const defaultTooltipPlacement: TooltipPlacement = 'right';
-
-class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
+class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
 
   static defaultprops: Partial<FormSelectProps> = {
     formItemProps: {},
     selectProps: {},
     options: [],
-    helpToolTipProps: {},
   };
 
   componentDidMount() {
@@ -53,7 +48,6 @@ class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
   }
 
   render() {
-
     const {
       input: { value, onChange, onFocus },
       meta,
@@ -67,46 +61,38 @@ class FormSelect extends React.Component<FormSelectProps & WrappedFieldProps> {
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
-    const displayHelpToolTip = !isEmpty(helpToolTipProps);
-
-    const mergedTooltipProps: TooltipProps = {
-      placement: defaultTooltipPlacement,
-      ...helpToolTipProps,
-    };
-
     const optionsToDisplay = options!.map(option => (
       <Option key={option.value} value={option.value}>{option.title}</Option>
     ));
 
+    const selectId = generateFakeId();
+    const getPopupContainer = (triggerNode: Element) => {
+      return document.getElementById(selectId) as any;
+    };
+
     return (
-      <Form.Item
-        help={meta.touched && (meta.warning || meta.error)}
-        validateStatus={validateStatus}
-        {...formItemProps}
-      >
-
-        <Row align="middle" type="flex">
+        <FormFieldWrapper
+          help={meta.touched && (meta.warning || meta.error)}
+          helpToolTipProps={helpToolTipProps}
+          validateStatus={validateStatus}
+          {...formItemProps}
+        >
           <Col span={22}>
-            <Select
-              value={value}
-              onChange={onChange}
-              // difficulties to map some WrappedFieldInputProps with SelectProps
-              onBlur={onChange as () => any}
-              onFocus={onFocus as () => any}
-              {...selectProps}
-            >
-              {optionsToDisplay}
-            </Select>
+            <div id={selectId}>
+              <Select
+                {...selectProps}
+                getPopupContainer={getPopupContainer}
+                onChange={onChange}
+                // difficulties to map some WrappedFieldInputProps with SelectProps
+                onBlur={onChange as () => any}
+                onFocus={onFocus as () => any}
+                value={value}
+              >
+                {optionsToDisplay}
+              </Select>
+            </div>
           </Col>
-
-          {displayHelpToolTip &&
-            <Col span={2} className="field-tooltip">
-              <Tooltip {...mergedTooltipProps}>
-                <McsIcons type="info" />
-              </Tooltip>
-            </Col>}
-        </Row>
-      </Form.Item>
+        </FormFieldWrapper>
     );
   }
 }

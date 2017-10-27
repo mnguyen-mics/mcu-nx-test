@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { compose } from 'recompose';
 import { Row } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 
 import messages from './messages';
-import EmailTemplateSelector from './EmailTemplateSelector';
-import { FormSection } from '../../../../components/Form/index.ts';
+import CreativeCardSelector from './CreativeCardSelector';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
+import { FormSection } from '../../../../components/Form/index.ts';
 import CreativeService from '../../../../services/CreativeService';
+import { withMcsRouter } from '../../../Helpers';
 
 class EmailTemplateSelection extends Component {
 
@@ -22,7 +24,9 @@ class EmailTemplateSelection extends Component {
   componentWillReceiveProps(nextProps) {
     const { input: { value } } = nextProps;
 
-    (value || []).forEach(emailTemplateSelection => this.loadEmailTemplateIfNeeded(emailTemplateSelection.email_template_id));
+    (value || []).forEach(emailTemplateSelection => (
+      this.loadEmailTemplateIfNeeded(emailTemplateSelection.id)
+    ));
   }
 
   getEmailTemplateRecords() {
@@ -30,15 +34,25 @@ class EmailTemplateSelection extends Component {
 
     return (value || []).map(emailTemplateSelection => {
       const emailTemplate = this.state.emailTemplates
-        .find(t => t.id === emailTemplateSelection.email_template_id) || {};
+        .find(t => t.id === emailTemplateSelection.id) || {};
       return (
         <RecordElement
-          key={emailTemplateSelection.email_template_id}
+          key={emailTemplateSelection.id}
           recordIconType={'email'}
           title={emailTemplate.name}
         />
       );
     });
+  }
+
+  getEmailTemplates = (options) => {
+    const { organisationId } = this.props;
+
+    return CreativeService.getEmailTemplates(organisationId, options)
+      .then(response => ({
+        data: response.data,
+        total: response.total,
+      }));
   }
 
   handleClickOnSelectTemplate = () => {
@@ -47,38 +61,44 @@ class EmailTemplateSelection extends Component {
     const emailTemplateSelectorProps = {
       save: this.updateSelectedEmailTemplates,
       close: closeNextDrawer,
-      emailTemplateSelections: input.value || [],
+      selectedData: input.value || [],
     };
 
     const options = {
       additionalProps: emailTemplateSelectorProps,
+      fetchData: this.getEmailTemplates,
       isModal: true,
+      singleSelection: true,
     };
 
-    openNextDrawer(EmailTemplateSelector, options);
+    openNextDrawer(CreativeCardSelector, options);
   }
 
   loadEmailTemplateIfNeeded = (templateId) => {
-    const { emailTemplates } = this.state;
-    const found = emailTemplates.find(t => t.id === templateId);
-    if (!found) {
-      CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
-        this.setState(prevState => ({
-          emailTemplates: [
-            ...prevState.emailTemplates,
-            emailTemplate,
-          ],
-        }));
-      });
+    if (!templateId) {
+      this.setState(() => ({ emailTemplate: [] }));
+    } else {
+      const { emailTemplates } = this.state;
+      const found = emailTemplates.find(t => t.id === templateId);
+
+      if (!found) {
+        CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
+          this.setState(prevState => ({
+            emailTemplates: [
+              ...prevState.emailTemplates,
+              emailTemplate,
+            ],
+          }));
+        });
+      }
     }
   }
 
-  updateSelectedEmailTemplates = (emailTemplateSelections) => {
+  updateSelectedEmailTemplates = (selections) => {
     const { closeNextDrawer, input } = this.props;
-    const newSelections = input.value || [{}];
-    newSelections[0].email_template_id = emailTemplateSelections[0].email_template_id;
-    input.onChange(newSelections);
-    this.loadEmailTemplateIfNeeded(newSelections[0].email_template_id);
+
+    input.onChange(selections);
+    this.loadEmailTemplateIfNeeded(selections[0] ? selections[0].id : null);
     closeNextDrawer();
   }
 
@@ -119,11 +139,15 @@ class EmailTemplateSelection extends Component {
 }
 
 EmailTemplateSelection.propTypes = {
+  closeNextDrawer: PropTypes.func.isRequired,
   input: PropTypes.shape().isRequired,
+  intl: intlShape.isRequired,
   meta: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
-  closeNextDrawer: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
+  organisationId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(EmailTemplateSelection);
+export default compose(
+  withMcsRouter,
+  injectIntl,
+)(EmailTemplateSelection);

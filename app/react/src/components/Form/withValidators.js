@@ -17,14 +17,21 @@ const defaultErrorMessages = defineMessages({
 });
 
 const isRequired = formatMessage => value => {
-  if (!value) {
-    return formatMessage(defaultErrorMessages.required);
-  }
-  return undefined;
+  return (!value || (value.length !== undefined && !value.length)
+    ? formatMessage(defaultErrorMessages.required)
+    : undefined
+  );
+};
+
+const isNotZero = formatMessage => value => {
+  return (!value || value === '0'
+    ? formatMessage(defaultErrorMessages.required)
+    : undefined
+  );
 };
 
 const isValidNumber = formatMessage => value => {
-  return value && !/^\d+$/i.test(value) ?
+  return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 
@@ -37,6 +44,7 @@ const withValidators = compose(
   injectIntl,
   withProps(({ intl: { formatMessage } }) => ({
     fieldValidators: {
+      isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),
       isValidNumber: isValidNumber(formatMessage)

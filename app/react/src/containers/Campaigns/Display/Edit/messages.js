@@ -68,40 +68,44 @@ export default defineMessages({
   ================================ SECTION TITLES ==============================
   ==============================================================================
   */
-  sectionTitle1: {
-    id: 'adGroupEditor.section.title1',
-    defaultMessage: 'General Information',
+  sectionTitleGeneral: {
+    id: 'adGroupEditor.section.title.general',
+    defaultMessage: 'General settings',
   },
-  sectionTitle2: {
-    id: 'adGroupEditor.section.title2',
+  sectionTitleAudience: {
+    id: 'adGroupEditor.section.title.audience',
     defaultMessage: 'Audience',
   },
-  sectionTitle3: {
-    id: 'adGroupEditor.section.title3',
-    defaultMessage: 'Device',
-  },
-  sectionTitle3bis: {
+  sectionTitleLocationTargeting: {
     id: 'adGroupEditor.section.title3bis',
     defaultMessage: 'Location & Targeting',
   },
-  sectionTitle4: {
-    id: 'adGroupEditor.section.title4',
+  sectionTitleDevice: {
+    id: 'adGroupEditor.section.title.device',
+    defaultMessage: 'Device Targeting',
+  },
+  sectionTitlePublisher: {
+    id: 'adGroupEditor.section.title.publisher',
     defaultMessage: 'Publisher',
   },
-  sectionTitle5: {
-    id: 'adGroupEditor.section.title5',
+  sectionTitleMedia: {
+    id: 'adGroupEditor.section.title.media',
     defaultMessage: 'Media Content',
   },
-  sectionTitle6: {
-    id: 'adGroupEditor.section.title6',
-    defaultMessage: 'Optimization',
-  },
-  sectionTitle7: {
-    id: 'adGroupEditor.section.title7',
+  sectionTitleAds: {
+    id: 'adGroupEditor.section.title.ads',
     defaultMessage: 'Ads',
   },
-  sectionTitle8: {
-    id: 'adGroupEditor.section.title8',
+  sectionTitlePlacement: {
+    id: 'adGroupEditor.section.title.placement',
+    defaultMessage: 'Placement',
+  },
+  sectionTitleOptimizer: {
+    id: 'adGroupEditor.section.title.optimizer',
+    defaultMessage: 'Optimization',
+  },
+  sectionTitleSummary: {
+    id: 'adGroupEditor.section.title.summary',
     defaultMessage: 'Summary',
   },
 
@@ -110,41 +114,45 @@ export default defineMessages({
   ============================== SECTION SUBTITLES =============================
   ==============================================================================
   */
-  sectionSubtitle1: {
-    id: 'adGroupEditor.section.subtitle1',
+  sectionSubtitleGeneral: {
+    id: 'adGroupEditor.section.subtitle.general',
     defaultMessage: 'Give your ad group a name and a duration',
   },
-  sectionSubtitle2: {
-    id: 'adGroupEditor.section.subtitle2',
+  sectionSubtitleAudience: {
+    id: 'adGroupEditor.section.subtitle.audience',
     defaultMessage: 'Choose to whom your ad group will be displayed to',
   },
-  sectionSubtitle3: {
-    id: 'adGroupEditor.section.subtitle3',
+  sectionSubtitleDevice: {
+    id: 'adGroupEditor.section.subtitle.device',
     defaultMessage: 'Be more specific on which device you want to advertise',
   },
-  sectionSubtitle3bis: {
-    id: 'adGroupEditor.section.subtitle3bis',
+  sectionSubtitleLocation: {
+    id: 'adGroupEditor.section.subtitle.location',
     defaultMessage: 'Be more specific on which location you want to advertise (country, region or department)',
   },
-  sectionSubtitle4: {
-    id: 'adGroupEditor.section.subtitle4',
+  sectionSubtitlePublisher: {
+    id: 'adGroupEditor.section.subtitle.publisher',
     defaultMessage: 'Select your network to reach you audience',
   },
-  sectionSubtitle5: {
-    id: 'adGroupEditor.section.subtitle5',
+  sectionSubtitleMedia: {
+    id: 'adGroupEditor.section.subtitle.media',
     defaultMessage: 'Define on which websites you want your content to appear or which section of the website',
   },
-  sectionSubtitle6: {
-    id: 'adGroupEditor.section.subtitle6',
-    defaultMessage: 'Leverage the power of AI to optimize the way you bid',
+  sectionSubtitlePlacement: {
+    id: 'adGroupEditor.section.subtitle.placement',
+    defaultMessage: 'Define on which websites you want your content to appear',
   },
-  sectionSubtitle7: {
-    id: 'adGroupEditor.section.subtitle7',
+  sectionSubtitleAds: {
+    id: 'adGroupEditor.section.subtitle.ads',
     defaultMessage: 'This section helps you add new ads to your ad group',
   },
-  sectionSubtitle8: {
-    id: 'adGroupEditor.section.subtitle8',
-    defaultMessage: 'Before submitting, please review the configuration of your ad group',
+  sectionSubtitleOptimizer: {
+    id: 'adGroupEditor.section.subtitle.optimizer',
+    defaultMessage: 'Leverage the power of AI to optimize the way you bid',
+  },
+  sectionSubtitleSummary: {
+    id: 'adGroupEditor.section.subtitle.summary',
+    defaultMessage: 'Please find below the configuration of your ad group',
   },
 
   /*
@@ -153,279 +161,359 @@ export default defineMessages({
   ==============================================================================
   */
 
-  /* ------------------------------- SECTION 1 ------------------------------ */
+  /* ---------------------------- SECTION GENERAL --------------------------- */
 
   /* Row 1 */
-  contentSection1Row1Label: {
-    id: 'adGroupEditor.section1.row1.label',
+  contentSectionGeneralRow1Label: {
+    id: 'adGroupEditor.section.general.row1.label',
     defaultMessage: 'Ad Group Name',
   },
-  contentSection1Row1Placeholder: {
-    id: 'adGroupEditor.section1.row1.placeholder',
+  contentSectionGeneralRow1Placeholder: {
+    id: 'adGroupEditor.section.general.row1.placeholder',
     defaultMessage: 'This is an ad group',
   },
-  contentSection1Row1Tooltip: {
-    id: 'adGroupEditor.section1.row1.tooltip',
+  contentSectionGeneralRow1Tooltip: {
+    id: 'adGroupEditor.section.general.row1.tooltip',
     defaultMessage: 'The campaign\'s name will help you identify it on the different screens. Make it as memorable as you want your results to be!',
   },
 
   /* Row 2 */
-  contentSection1Row2Label: {
-    id: 'adGroupEditor.section1.row2.label',
+  contentSectionGeneralRow2Label: {
+    id: 'adGroupEditor.section.general.row2.label',
     defaultMessage: 'Budget Split',
   },
-  contentSection1Row2Placeholder: {
-    id: 'adGroupEditor.section1.row2.placeholder',
-    defaultMessage: '500 €',
+  contentSectionGeneralRow2Placeholder: {
+    id: 'adGroupEditor.section.general.row2.placeholder',
+    defaultMessage: '500',
   },
-  contentSection1Row2Tooltip: {
-    id: 'adGroupEditor.section1.row2.tooltip',
+  contentSectionGeneralRow2Tooltip: {
+    id: 'adGroupEditor.section.general.row2.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
-  contentSection1Row2OptionDAY: {
-    id: 'adGroupEditor.section1.row2.optionDAY',
+  contentSectionGeneralRow2OptionDAY: {
+    id: 'adGroupEditor.section.general.row2.optionDAY',
     defaultMessage: 'Per Day',
   },
-  contentSection1Row2OptionWEEK: {
-    id: 'adGroupEditor.section1.row2.optionWEEK',
+  contentSectionGeneralRow2OptionWEEK: {
+    id: 'adGroupEditor.section.general.row2.optionWEEK',
     defaultMessage: 'Per Week',
   },
-  contentSection1Row2OptionMONTH: {
-    id: 'adGroupEditor.section1.row2.option1MONTH',
+  contentSectionGeneralRow2OptionMONTH: {
+    id: 'adGroupEditor.section.general.row2.option1MONTH',
     defaultMessage: 'Per Month',
   },
 
   /* Row 3 */
-  contentSection1Row3Label: {
-    id: 'adGroupEditor.section1.row3.label',
+  contentSectionGeneralRow3Label: {
+    id: 'adGroupEditor.section.general.row3.label',
     defaultMessage: 'Total Budget',
   },
-  contentSection1Row3Placeholder: {
-    id: 'adGroupEditor.section1.row3.placeholder',
-    defaultMessage: '1 500 €',
+  contentSectionGeneralRow3Placeholder: {
+    id: 'adGroupEditor.section.general.row3.placeholder',
+    defaultMessage: '1 500',
   },
-  contentSection1Row3Tooltip: {
-    id: 'adGroupEditor.section1.row3.tooltip',
+  contentSectionGeneralRow3Tooltip: {
+    id: 'adGroupEditor.section.general.row3.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
   /* Row 4 */
-  contentSection1Row4Label: {
-    id: 'adGroupEditor.section1.row4.label',
+  contentSectionGeneralRow4Label: {
+    id: 'adGroupEditor.section.general.row4.label',
     defaultMessage: 'Duration',
   },
-  contentSection1Row4Placeholder1: {
-    id: 'adGroupEditor.section1.row4.placeholder1',
+  contentSectionGeneralRow4Placeholder1: {
+    id: 'adGroupEditor.section.general.row4.placeholder1',
     defaultMessage: 'Start date',
   },
-  contentSection1Row4Placeholder2: {
-    id: 'adGroupEditor.section1.row4.placeholder2',
+  contentSectionGeneralRow4Placeholder2: {
+    id: 'adGroupEditor.section.general.row4.placeholder2',
     defaultMessage: 'End date',
   },
-  contentSection1Row4Tooltip: {
-    id: 'adGroupEditor.section1.row4.tooltip',
+  contentSectionGeneralRow4Tooltip: {
+    id: 'adGroupEditor.section.general.row4.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+
+  /* Row 5 */
+  contentSectionGeneralRow5Label: {
+    id: 'adGroupEditor.section.general.row5.label',
+    defaultMessage: 'Max Bid Price',
+  },
+  contentSectionGeneralRow5Placeholder: {
+    id: 'adGroupEditor.section.general.row5.placeholder',
+    defaultMessage: '1.3',
+  },
+  contentSectionGeneralRow5Tooltip: {
+    id: 'adGroupEditor.section.general.row5.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+
+  /* Row 6 */
+  contentSectionGeneralRow6Label: {
+    id: 'adGroupEditor.section.general.row6.label',
+    defaultMessage: 'Total Impression Capping',
+  },
+  contentSectionGeneralRow6Placeholder: {
+    id: 'adGroupEditor.section.general.row6.placeholder',
+    defaultMessage: '10',
+  },
+  contentSectionGeneralRow6Tooltip: {
+    id: 'adGroupEditor.section.general.row6.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+
+  /* Row 7 */
+  contentSectionGeneralRow7Label: {
+    id: 'adGroupEditor.section.general.row7.label',
+    defaultMessage: 'Daily Impression Capping',
+  },
+  contentSectionGeneralRow7Placeholder: {
+    id: 'adGroupEditor.section.general.row7.placeholder',
+    defaultMessage: '1',
+  },
+  contentSectionGeneralRow7Tooltip: {
+    id: 'adGroupEditor.section.general.row7.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
   /* Advanced part */
 
-  contentSection1AdvancedPartTitle: {
-    id: 'adGroupEditor.section1.advancedPart.title',
+  contentSectionGeneralAdvancedPartTitle: {
+    id: 'adGroupEditor.section.general.advancedPart.title',
     defaultMessage: 'Advanced',
   },
 
-  /* Row 5 */
-  contentSection1Row5Label: {
-    id: 'adGroupEditor.section1.row5.label',
+  /* Row 8 */
+  contentSectionGeneralRow8Label: {
+    id: 'adGroupEditor.section.general.row8.label',
     defaultMessage: 'Technical Name',
   },
-  contentSection1Row5Placeholder: {
-    id: 'adGroupEditor.section1.row5.placeholder',
+  contentSectionGeneralRow8Placeholder: {
+    id: 'adGroupEditor.section.general.row8.placeholder',
     defaultMessage: 'This is an ad group',
   },
-  contentSection1Row5Tooltip: {
-    id: 'adGroupEditor.section1.row5.tooltip',
+  contentSectionGeneralRow8Tooltip: {
+    id: 'adGroupEditor.section.general.row8.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  /* ------------------------------- SECTION 2 ------------------------------ */
+  /* ---------------------------- SECTION AUDIENCE -------------------------- */
 
-  contentSection2Medium1: {
-    id: 'adGroupEditor.section2.medium1',
+  contentSectionAudienceMedium1: {
+    id: 'adGroupEditor.section.audience.medium1',
     defaultMessage: 'User Points',
   },
-  contentSection2Medium2: {
-    id: 'adGroupEditor.section2.medium2',
+  contentSectionAudienceMedium2: {
+    id: 'adGroupEditor.section.audience.medium2',
     defaultMessage: 'Desktop',
   },
 
-  contentSection2EmptyTitle: {
-    id: 'adGroupEditor.section2.emptyTitle',
+  contentSectionAudienceEmptyTitle: {
+    id: 'adGroupEditor.section.audience.emptyTitle',
     defaultMessage: 'Click on the pen to add an audience to your ad group',
   },
 
-  /* ------------------------------- SECTION 3 ------------------------------ */
+  /* ----------------------------- SECTION DEVICE --------------------------- */
 
-  /* Part 1 */
-  contentSection3Part1Message: {
-    id: 'adGroupEditor.section3.part1.message',
+  contentSectionDevicePart1Message: {
+    id: 'adGroupEditor.section.device.part1.message',
     defaultMessage: 'I want to target a specific device/os/carrier',
   },
 
-  contentSection3Part1Row1Label: {
-    id: 'adGroupEditor.section3.part1.row1.label',
-    defaultMessage: 'Device',
+  contentSectionDevicePart1Row1Label: {
+    id: 'adGroupEditor.section.device.part1.row1.label',
+    defaultMessage: 'Device Type',
   },
-  contentSection3Part1Row1Tooltip: {
-    id: 'adGroupEditor.section3.part1.row1.tooltip',
+  contentSectionDevicePart1Row1Placeholder: {
+    id: 'adGroupEditor.section.device.part1.row1.placeholder',
+    defaultMessage: 'Please select',
+  },
+  contentSectionDevicePart1Row1Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row1.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  contentSection3Part1Row2Label: {
-    id: 'adGroupEditor.section3.part1.row2.label',
-    defaultMessage: 'Browser',
-  },
-  contentSection3Part1Row2Tooltip: {
-    id: 'adGroupEditor.section3.part1.row2.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-
-  contentSection3Part1Row3Label: {
-    id: 'adGroupEditor.section3.part1.row3.label',
+  contentSectionDevicePart1Row2Label: {
+    id: 'adGroupEditor.section.device.part1.row2.label',
     defaultMessage: 'OS',
   },
-  contentSection3Part1Row3Tooltip: {
-    id: 'adGroupEditor.section3.part1.row3.tooltip',
+  contentSectionDevicePart1Row2Placeholder: {
+    id: 'adGroupEditor.section.device.part1.row2.placeholder',
+    defaultMessage: 'Please select',
+  },
+  contentSectionDevicePart1Row2Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row2.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  contentSection3Part1Row4Label: {
-    id: 'adGroupEditor.section3.part1.row4.label',
+  contentSectionDevicePart1Row3Label: {
+    id: 'adGroupEditor.section.device.part1.row3.label',
+    defaultMessage: 'Browser',
+  },
+  contentSectionDevicePart1Row3Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row3.tooltip',
+    defaultMessage: 'Lorem ipsum',
+  },
+  contentSectionDevicePart1Row3Placeholder: {
+    id: 'adGroupEditor.section.device.part1.row3.placeholder',
+    defaultMessage: 'http://www...',
+  },
+
+  contentSectionDevicePart1Row4Label: {
+    id: 'adGroupEditor.section.device.part1.row4.label',
     defaultMessage: 'Carrier',
   },
-  contentSection3Part1Row4Tooltip: {
-    id: 'adGroupEditor.section3.part1.row4.tooltip',
+  contentSectionDevicePart1Row4Tooltip: {
+    id: 'adGroupEditor.section.device.part1.row4.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  /* Part 2 */
-  contentSection3Part2Message: {
-    id: 'adGroupEditor.section3.part2.message',
-    defaultMessage: 'I want to target a specific Region, City, Country for my ad',
+  /* ---------------------------- SECTION LOCATION -------------------------- */
+
+  contentSectionLocationPart2Message: {
+    id: 'adGroupEditor.section.location.part2.message',
+    defaultMessage: 'I want to target a specific location',
   },
 
-  contentSection3Part2Row1Label: {
-    id: 'adGroupEditor.section3.part2.row1.label',
-    defaultMessage: 'Country',
+  contentSectionLocationPart2Row1Label: {
+    id: 'adGroupEditor.section.location.part2.row1.label',
+    defaultMessage: 'Location',
   },
-  contentSection3Part2Row1Tooltip: {
-    id: 'adGroupEditor.section3.part2.row1.tooltip',
+  contentSectionLocationPart2Row1Tooltip: {
+    id: 'adGroupEditor.section.location.part2.row1.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
 
-  contentSection3Part2Row2Label: {
-    id: 'adGroupEditor.section3.part2.row2.label',
-    defaultMessage: 'Region',
-  },
-  contentSection3Part2Row2Tooltip: {
-    id: 'adGroupEditor.section3.part2.row2.tooltip',
-    defaultMessage: 'Lorem ipsum',
+  /* ----------------------------- SECTION MEDIA ---------------------------- */
+
+  contentSectionMediaEmptyTitle: {
+    id: 'adGroupEditor.section.media.emptyTitle',
+    defaultMessage: 'Click on the pen to add a media to your ad group',
   },
 
-  contentSection3Part2Row3Label: {
-    id: 'adGroupEditor.section3.part2.row3.label',
-    defaultMessage: 'City',
-  },
-  contentSection3Part2Row3Tooltip: {
-    id: 'adGroupEditor.section3.part2.row3.tooltip',
-    defaultMessage: 'Lorem ipsum',
+  /* --------------------------- SECTION PUBLISHER -------------------------- */
+
+  contentSectionPublisherEmptyTitle: {
+    id: 'adGroupEditor.section.publisher.emptyTitle',
+    defaultMessage: 'Click on the pen to add a publisher to your ad group',
   },
 
-  contentSection4EmptyTitle: {
-    id: 'adGroupEditor.section4.emptyTitle',
-    defaultMessage: 'Click on the pen to add a network to your ad group',
+  /* --------------------------- SECTION PLACEMENT -------------------------- */
+
+  contentSectionPlacementRadio1: {
+    id: 'adGroupEditor.section.placement.radio1',
+    defaultMessage: 'Automatic Placements (Recommended)',
+  },
+  contentSectionPlacementRadio2: {
+    id: 'adGroupEditor.section.placement.radio2',
+    defaultMessage: 'Edit Placements',
   },
 
-  /* ------------------------------- SECTION 5 ------------------------------ */
+  contentSectionPlacementTooltip: {
+    id: 'adGroupEditor.section.placement.tooltip',
+    defaultMessage: 'Lorem Ips',
+  },
+  contentSectionPlacementProperties: {
+    id: 'adGroupEditor.section.placement.properties',
+    defaultMessage: 'Properties',
+  },
+  contentSectionPlacementTypeWebsites: {
+    id: 'adGroupEditor.section.placement.type.websites',
+    defaultMessage: 'Web Sites',
+  },
+  contentSectionPlacementTypeMobileApps: {
+    id: 'adGroupEditor.section.placement.type.mobileApps',
+    defaultMessage: 'Mobile Apps',
+  },
 
-  contentSection5EmptyTitle: {
-    id: 'adGroupEditor.section5.emptyTitle',
+  contentSectionPlacementSearchPlaceholder: {
+    id: 'adGroupEditor.section.placement.search.placeholder',
+    defaultMessage: 'Search',
+  },
+  contentSectionPlacementSearchEmptyTable: {
+    id: 'adGroupEditor.section.placement.search.emptyTable',
+    defaultMessage: 'No result',
+  },
+
+  contentSectionPlacementEmptyTitle: {
+    id: 'adGroupEditor.section.placement.emptyTitle',
     defaultMessage: 'Click on the pen to add a placement to your ad group',
   },
 
-  /* ------------------------------- SECTION 6 ------------------------------ */
+  /* ------------------------------- SECTION AD ----------------------------- */
 
-  contentSection6EmptyTitle: {
-    id: 'adGroupEditor.section6.emptyTitle',
-    defaultMessage: 'Click on the pen to add an optimization to your ad group',
-  },
-
-  /* ------------------------------- SECTION 7 ------------------------------ */
-
-  contentSection7EmptyTitle: {
-    id: 'adGroupEditor.section7.emptyTitle',
+  contentSectionAdEmptyTitle: {
+    id: 'adGroupEditor.section.ad.emptyTitle',
     defaultMessage: 'Click on the pen to add an ad to your ad group',
   },
 
-  /* ------------------------------- SECTION 8 ------------------------------ */
+  /* --------------------------- SECTION OPTIMIZER -------------------------- */
+
+  contentSectionOptimizerEmptyTitle: {
+    id: 'adGroupEditor.section.optimizer.emptyTitle',
+    defaultMessage: 'Click on the pen to add an optimizer to your ad group',
+  },
+
+  /* ---------------------------- SECTION SUMMARY --------------------------- */
 
   // TODO: use formatMessage(messages.greeting, {name: 'Eric'});
   // cf. https://github.com/yahoo/react-intl/wiki/API
-  contentSection8Part1Group1: {
-    id: 'adGroupEditor.section8.part1.group1',
+  contentSectionSummaryPart1Group1: {
+    id: 'adGroupEditor.section.summary.part1.group1',
     defaultMessage: 'Your ad group will run from',
   },
-  contentSection8Part1Group2: {
-    id: 'adGroupEditor.section8.part1.group2',
+  contentSectionSummaryPart1Group2: {
+    id: 'adGroupEditor.section.summary.part1.group2',
     defaultMessage: 'the',
   },
-  contentSection8Part1Group3: {
-    id: 'adGroupEditor.section8.part1.group3',
+  contentSectionSummaryPart1Group3: {
+    id: 'adGroupEditor.section.summary.part1.group3',
     defaultMessage: 'today',
   },
-  contentSection8Part1Group4: {
-    id: 'adGroupEditor.section8.part1.group4',
+  contentSectionSummaryPart1Group4: {
+    id: 'adGroupEditor.section.summary.part1.group4',
     defaultMessage: 'to the',
   },
-  contentSection8Part1Group5: {
-    id: 'adGroupEditor.section8.part1.group5',
+  contentSectionSummaryPart1Group5: {
+    id: 'adGroupEditor.section.summary.part1.group5',
     defaultMessage: 'with a',
   },
-  contentSection8Part1Group6OptionDAY: {
-    id: 'adGroupEditor.section8.part1.group6.optionDAY',
+  contentSectionSummaryPart1Group6OptionDAY: {
+    id: 'adGroupEditor.section.summary.part1.group6.optionDAY',
     defaultMessage: 'DAILY',
   },
-  contentSection8Part1Group6OptionWEEK: {
-    id: 'adGroupEditor.section8.part1.group6.optionWEEK',
+  contentSectionSummaryPart1Group6OptionWEEK: {
+    id: 'adGroupEditor.section.summary.part1.group6.optionWEEK',
     defaultMessage: 'WEEKLY',
   },
-  contentSection8Part1Group6OptionMONTH: {
-    id: 'adGroupEditor.section8.part1.group6.optionMONTH',
+  contentSectionSummaryPart1Group6OptionMONTH: {
+    id: 'adGroupEditor.section.summary.part1.group6.optionMONTH',
     defaultMessage: 'MONTHLY',
   },
-  contentSection8Part1Group7: {
-    id: 'adGroupEditor.section8.part1.group7',
+  contentSectionSummaryPart1Group7: {
+    id: 'adGroupEditor.section.summary.part1.group7',
     defaultMessage: 'budget of',
   },
-  contentSection8Part1Group8: {
-    id: 'adGroupEditor.section8.part1.group8',
+  contentSectionSummaryPart1Group8: {
+    id: 'adGroupEditor.section.summary.part1.group8',
     defaultMessage: '€',
   },
 
-  contentSection8Part2: {
-    id: 'adGroupEditor.section8.part2',
+  contentSectionSummaryPart2: {
+    id: 'adGroupEditor.section.summary.part2',
     defaultMessage: 'Your ad will be visible for the following segments:',
   },
-  contentSection8Part3: {
-    id: 'adGroupEditor.section8.part3',
+  contentSectionSummaryPart3: {
+    id: 'adGroupEditor.section.summary.part3',
     defaultMessage: 'Your ad will not be published for people inside the following segment:',
   },
-  contentSection8Part4: {
-    id: 'adGroupEditor.section8.part4',
+  contentSectionSummaryPart4: {
+    id: 'adGroupEditor.section.summary.part4',
     defaultMessage: 'Your ad will target the following devices:',
   },
-  contentSection8Part5: {
-    id: 'adGroupEditor.section8.part5',
+  contentSectionSummaryPart5: {
+    id: 'adGroupEditor.section.summary.part5',
     defaultMessage: 'Your ad will target the following areas:',
   },
   contentSection8PartIncludedLocations: {
@@ -440,32 +528,32 @@ export default defineMessages({
     id: 'adGroupEditor.section8.part6',
     defaultMessage: 'Your ad will be published on the following networks:',
   },
-  contentSection8Part7: {
-    id: 'adGroupEditor.section8.part7',
+  contentSectionSummaryPart7: {
+    id: 'adGroupEditor.section.summary.part7',
     defaultMessage: 'Your ad will target the following keywords:',
   },
-  contentSection8Part8: {
-    id: 'adGroupEditor.section8.part8',
+  contentSectionSummaryPart8: {
+    id: 'adGroupEditor.section.summary.part8',
     defaultMessage: 'Your ad is using the following bid optimizer:',
   },
-  contentSection8Part9Group1: {
-    id: 'adGroupEditor.section8.part9.group1',
+  contentSectionSummaryPart9Group1: {
+    id: 'adGroupEditor.section.summary.part9.group1',
     defaultMessage: 'You have',
   },
-  contentSection8Part9Negation: {
-    id: 'adGroupEditor.section8.part9.negation',
+  contentSectionSummaryPart9Negation: {
+    id: 'adGroupEditor.section.summary.part9.negation',
     defaultMessage: 'no',
   },
-  contentSection8Part9Group2: {
-    id: 'adGroupEditor.section8.part9.group2',
+  contentSectionSummaryPart9Group2: {
+    id: 'adGroupEditor.section.summary.part9.group2',
     defaultMessage: 'attached to your ad',
   },
-  contentSection8Part9Singular: {
-    id: 'adGroupEditor.section8.part9.Singular',
+  contentSectionSummaryPart9Singular: {
+    id: 'adGroupEditor.section.summary.part9.Singular',
     defaultMessage: 'creative',
   },
-  contentSection8Part9Plural: {
-    id: 'adGroupEditor.section8.part9.Plural',
+  contentSectionSummaryPart9Plural: {
+    id: 'adGroupEditor.section.summary.part9.Plural',
     defaultMessage: 'creatives',
   },
 
