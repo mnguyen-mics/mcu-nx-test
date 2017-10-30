@@ -78,7 +78,7 @@ export default defineMessages({
   },
   sectionTitleLocationTargeting: {
     id: 'adGroupEditor.section.title3bis',
-    defaultMessage: 'Location & Targeting',
+    defaultMessage: 'Location Targeting',
   },
   sectionTitleDevice: {
     id: 'adGroupEditor.section.title.device',

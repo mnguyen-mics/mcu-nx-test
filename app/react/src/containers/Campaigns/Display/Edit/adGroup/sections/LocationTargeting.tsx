@@ -33,6 +33,7 @@ interface LocationTargetingProps {
       tableName: string;
     }) => void;
   };
+  formValues: any;
 }
 
 interface LocationTargetingState {
@@ -40,6 +41,7 @@ interface LocationTargetingState {
   locationTargetingDisplayed: boolean;
   incOrExc: string;
   fetching?: boolean;
+  visible: boolean;
 }
 
 class LocationTargeting extends React.Component<LocationTargetingProps, LocationTargetingState> {
@@ -50,7 +52,24 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
     value: [],
     fetching: false,
     incOrExc: 'INC',
+    visible: false,
   };
+
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  }
+  handleOk = (e: Event) => {
+    this.setState({
+      visible: false,
+    });
+  }
+  handleCancel = (e: Event) => {
+    this.setState({
+      visible: false,
+    });
+  }
 
   fetchCountries = (value: string = '') => {
     GeonameService.getGeonames().then(geonames => {
@@ -88,7 +107,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
 
     handlers.updateTableFields({
       newFields: [selectedLocation],
-      tableName: 'locationAndTargetingTable',
+      tableName: 'locationTargetingTable',
     });
 
     this.setState({
@@ -104,6 +123,10 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
 
   render() {
 
+    const {
+      formValues,
+    } = this.props;
+
     const { fetching, listOfCountriesToDisplay, value } = this.state;
 
     // If we have time, do an HOC for the select component in order to use generic id element
@@ -113,16 +136,20 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
           subtitle={messages.sectionSubtitleLocation}
           title={messages.sectionTitleLocationTargeting}
         />
-        <Checkbox className="checkbox-location-section" onChange={this.displayLocationTargetingSection}>
+        <Checkbox
+          checked={(formValues && formValues.length > 0) || this.state.locationTargetingDisplayed ? true : false}
+          className="checkbox-location-section"
+          onChange={this.displayLocationTargetingSection}
+        >
           <FormattedMessage id="monid" defaultMessage="I want to target a specific location" />
         </Checkbox>
-        <Row className={!this.state.locationTargetingDisplayed ? 'hide-section' : ''}>
+        <Row className={!this.state.locationTargetingDisplayed && (!formValues || formValues.length === 0) ? 'hide-section' : ''}>
           <Row align="middle" type="flex">
             <Col span={4} />
             <Col span={10} >
               <FieldArray
                 component={SearchResultBox}
-                name="locationAndTargetingTable"
+                name="locationTargetingTable"
               />
             </Col>
           </Row>

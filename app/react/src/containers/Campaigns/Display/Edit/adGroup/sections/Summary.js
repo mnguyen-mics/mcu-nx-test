@@ -24,7 +24,7 @@ function Summary({ displayAudience, formatMessage, formValues }) {
     adTable,
     areas,
     audienceTable,
-    locationAndTargetingTable,
+    locationTargetingTable,
     publisherTable,
     devices,
     optimizerTable,
@@ -48,8 +48,8 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   )}${formatMessage(messages.contentSectionSummaryPart1Group8)}`;
   const includedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, true), 'name');
   const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
-  const includedLocations = stringifyTable(filterTableByExcludeProperty(locationAndTargetingTable, false), 'name');
-  const excludedLocations = stringifyTable(filterTableByExcludeProperty(locationAndTargetingTable, true), 'name');
+  const includedLocations = stringifyTable(filterTableByExcludeProperty(locationTargetingTable, false), 'name');
+  const excludedLocations = stringifyTable(filterTableByExcludeProperty(locationTargetingTable, true), 'name');
   const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
   const optimizers = stringifyTable(filterTableByRemovedStatus(optimizerTable), 'provider');
   const numberOfCreatives = (adTable ? adTable.filter(ad => !ad.toBeRemoved).length : 0);

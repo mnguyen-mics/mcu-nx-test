@@ -84,7 +84,8 @@ function createAudience({ campaignId, adGroupId, body }) {
 }
 
 function createLocation({ campaignId, adGroupId, body }) {
-  const endpoint = `geonames/${campaignId}/ad_groups/${adGroupId}/locations`;
+  console.log(body);
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
   return ApiService.postRequest(endpoint, body).then(res => res.data);
   // return Promise.resolve(body);
 }
@@ -122,19 +123,20 @@ function getPublishers({ campaignId }) {
 }
 
 function getLocations(campaignId) {
-  const endpoint = `geonames/${campaignId}`;
-  return ApiService.getRequest(endpoint)
-    .then(res => res.data.map((elem) => {
-      const { display_network_access_id, id, ...locations } = elem;
+  // const endpoint = `geonames/${campaignId}`;
+  // return ApiService.getRequest(endpoint)
+  //   .then(res => res.data.map((elem) => {
+  //     const { display_network_access_id, id, ...locations } = elem;
 
-      return {
-        ...locations,
-        display_network_access_id,
-        id: display_network_access_id,
-        otherId: id,
-        toBeRemoved: false
-      };
-    }));
+  //     return {
+  //       ...locations,
+  //       display_network_access_id,
+  //       id: display_network_access_id,
+  //       otherId: id,
+  //       toBeRemoved: false
+  //     };
+  //   }));
+  return Promise.resolve();
 }
 
 function createPublisher({ campaignId, body }) {

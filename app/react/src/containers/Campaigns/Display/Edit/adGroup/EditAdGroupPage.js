@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { camelCase } from 'lodash';
+import { connect } from 'react-redux';
 
 import withDrawer from '../../../../../components/Drawer';
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
+import * as actions from '../../../../../state/Notifications/actions';
 
 
 class EditAdGroupPage extends Component {
@@ -30,6 +32,12 @@ class EditAdGroupPage extends Component {
         initialValues: initialAdGroupFormatted,
         loading: false,
       });
+    }).catch((err) => {
+      console.log('coucou', err);
+      this.setState({
+        loading: false,
+      });
+      this.props.notifyError(err);
     });
   }
 
@@ -87,9 +95,14 @@ EditAdGroupPage.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
+  notifyError: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   withDrawer,
+  connect(
+    undefined,
+    { notifyError: actions.notifyError }
+  )
 )(EditAdGroupPage);

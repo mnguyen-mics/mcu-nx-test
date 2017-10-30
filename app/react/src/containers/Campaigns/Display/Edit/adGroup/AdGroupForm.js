@@ -128,7 +128,7 @@ class AdGroupForm extends Component {
       optimizerTable,
       placements,
       publisherTable,
-      locationAndTargetingTable,
+      locationTargetingTable,
       adTable,
     } = formValues;
 
@@ -157,7 +157,7 @@ class AdGroupForm extends Component {
               </div>
              }
             <hr />
-            <LocationTargeting {...commonProps} formValues={locationAndTargetingTable} />
+            <LocationTargeting {...commonProps} formValues={locationTargetingTable} />
             <hr />
             <Device {...commonProps} formValues={formValues} />
             <hr />

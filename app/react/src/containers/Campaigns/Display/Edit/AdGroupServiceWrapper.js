@@ -42,9 +42,17 @@ function getPublishers({ campaignId }) {
     .then(publisherTable => ({ publisherTable }));
 }
 
+function getLocations() {
+  return DisplayCampaignService.getLocations();
+}
+
 function getSegments({ adGroupId, campaignId, organisationId }) {
   const fetchSegments = DisplayCampaignService.getAudience(campaignId, adGroupId);
-  const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
+  const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId)
+    .catch(() => {
+      // TODO tempory fix
+      return {};
+    });
 
   return Promise.all([fetchSegments, fetchMetadata])
     .then((results) => {
@@ -68,6 +76,7 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
     getPublishers({ campaignId }),
     getSegments({ adGroupId, campaignId, organisationId }),
     getAds({ campaignId, adGroupId, organisationId }),
+    getLocations(),
   ])
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
@@ -166,6 +175,33 @@ const savePlacements = (/* campaignId, adGroupId, formValue, initialFormValue */
   return Promise.resolve();
 };
 
+const saveLocations = (campaignId, adGroupId, formValue, initialFormValue) => {
+  const options = {
+    campaignId,
+    adGroupId,
+    getBody: () => ({
+      id: '2',
+      type: 'POSTAL_CODE',
+      exclude: false,
+      geoname_id: 54458,
+      country: 'Randon Geoname',
+      admin_1: '00',
+      admin_2: null,
+      city: 'randon city',
+      postal_code: null,
+    }),
+    // getBody: (row) => ({ display_network_access_id: row.id }),
+    requests: {
+      create: DisplayCampaignService.createLocation,
+      delete: DisplayCampaignService.deleteLocation,
+    },
+    tableName: 'locationTargetingTable',
+  };
+
+  return saveTableFields(options, formValue, initialFormValue);
+  // return Promise.resolve();
+};
+
 const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
   const options = {
     campaignId,
@@ -183,18 +219,22 @@ const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
 
 const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = false) => {
 
+  console.log(adGroupData);
+
   const publisherTable = adGroupData && adGroupData.publisherTable ? adGroupData.publisherTable : [];
   const audienceTable = adGroupData && adGroupData.audienceTable ? adGroupData.audienceTable : [];
   const adTable = adGroupData && adGroupData.adTable ? adGroupData.adTable : [];
   const deviceTable = [];
   const placementTable = [];
   const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
+  const locationTargetingTable = adGroupData && adGroupData.locationTargetingTable ? adGroupData.locationTargetingTable : [];
 
   const initialPublisherTable = adGroupInitialData && adGroupInitialData.publisherTable ? adGroupInitialData.publisherTable : [];
   const initialAudienceTable = adGroupInitialData && adGroupInitialData.audienceTable ? adGroupInitialData.audienceTable : [];
   const initialAdTable = adGroupInitialData && adGroupInitialData.adTable ? adGroupInitialData.adTable : [];
   const initialDeviceTable = [];
   const initialPlacementTable = [];
+  const initialLocationTargetingTable = [];
 
   let bidOptimizer = null;
   if (optimizerTable && optimizerTable.length) {
@@ -228,6 +268,7 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = 
         adGroupNewId = response.data.id;
         return saveAudience(campaignId, adGroupNewId, audienceTable, initialAudienceTable);
       })
+      .then(() => saveLocations(campaignId, adGroupNewId, locationTargetingTable, initialLocationTargetingTable))
       .then(() => savePublishers(campaignId, adGroupNewId, publisherTable, initialPublisherTable))
       .then(() => saveAds(campaignId, adGroupNewId, adTable, initialAdTable))
       .then(() => saveDevices(campaignId, adGroupNewId, deviceTable, initialDeviceTable))
