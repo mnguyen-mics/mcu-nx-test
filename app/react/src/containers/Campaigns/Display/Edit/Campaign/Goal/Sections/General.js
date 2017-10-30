@@ -45,15 +45,15 @@ class General extends Component {
             validate={[isRequired]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row1Label),
+                label: formatMessage(messages.contentSectionGeneralRow1Label),
                 required: true,
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row1Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row1Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
               },
             }}
           />
@@ -66,7 +66,7 @@ class General extends Component {
           >
             <McsIcons type="settings" />
             <span className="step-title">
-              {formatMessage(messages.contentSection1AdvancedPartTitle)}
+              {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
             <McsIcons type="chevron" />
           </ButtonStyleless>
@@ -77,14 +77,14 @@ class General extends Component {
               component={FormInput}
               props={{
                 formItemProps: {
-                  label: formatMessage(messages.contentSection1Row5Label),
+                  label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
                   ...fieldGridConfig,
                 },
                 inputProps: {
-                  placeholder: formatMessage(messages.contentSection1Row5Placeholder),
+                  placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Placeholder),
                 },
                 helpToolTipProps: {
-                  title: formatMessage(messages.contentSection1Row5Tooltip),
+                  title: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Tooltip),
                 },
               }}
             />

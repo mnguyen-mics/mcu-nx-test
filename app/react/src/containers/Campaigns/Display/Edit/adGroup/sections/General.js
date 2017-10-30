@@ -24,7 +24,7 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { isNotTooLongNumber },
+      fieldNormalizer: { normalizeNumber },
       fieldValidators: { isRequired, isNotZero, isValidNumber },
       formatMessage,
       formValues,
@@ -62,7 +62,7 @@ class General extends Component {
             <Field
               name="adGroupMaxBudgetPerPeriod"
               component={FormInput}
-              normalize={isNotTooLongNumber}
+              normalize={normalizeNumber}
               validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
@@ -97,7 +97,7 @@ class General extends Component {
             <Field
               name="adGroupTotalBudget"
               component={FormInput}
-              normalize={isNotTooLongNumber}
+              normalize={normalizeNumber}
               validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
@@ -155,7 +155,7 @@ class General extends Component {
             <Field
               name="adGroupMaxBidPrice"
               component={FormInput}
-              normalize={isNotTooLongNumber}
+              normalize={normalizeNumber}
               validate={[isRequired, isValidNumber, isNotZero]}
               props={{
                 formItemProps: {
@@ -167,48 +167,6 @@ class General extends Component {
                 },
                 helpToolTipProps: {
                   title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
-                },
-              }}
-            />
-          </Row>
-
-          <Row>
-            <Field
-              name="adGroupTotalImpressionCapping"
-              component={FormInput}
-              normalize={isNotTooLongNumber}
-              validate={[isRequired, isValidNumber, isNotZero]}
-              props={{
-                formItemProps: {
-                  label: formatMessage(messages.contentSectionGeneralRow6Label),
-                  required: true,
-                },
-                inputProps: {
-                  placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
-                },
-                helpToolTipProps: {
-                  title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
-                },
-              }}
-            />
-          </Row>
-
-          <Row>
-            <Field
-              name="adGroupPerDayImpressionCapping"
-              component={FormInput}
-              normalize={isNotTooLongNumber}
-              validate={[isRequired, isValidNumber, isNotZero]}
-              props={{
-                formItemProps: {
-                  label: formatMessage(messages.contentSectionGeneralRow7Label),
-                  required: true,
-                },
-                inputProps: {
-                  placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
-                },
-                helpToolTipProps: {
-                  title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
                 },
               }}
             />
@@ -226,7 +184,7 @@ class General extends Component {
               <McsIcons type="chevron" />
             </ButtonStyleless>
 
-            <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
+            <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : 'optional-section-content'}>
               <Field
                 name="adGroupTechnicalName"
                 component={FormInput}
@@ -239,6 +197,42 @@ class General extends Component {
                   },
                   helpToolTipProps: {
                     title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
+                  },
+                }}
+              />
+
+              <Field
+                name="adGroupTotalImpressionCapping"
+                component={FormInput}
+                normalize={normalizeNumber}
+                validate={[isValidNumber, isNotZero]}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionGeneralRow6Label),
+                  },
+                  inputProps: {
+                    placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
+                  },
+                }}
+              />
+
+              <Field
+                name="adGroupPerDayImpressionCapping"
+                component={FormInput}
+                normalize={normalizeNumber}
+                validate={[isValidNumber, isNotZero]}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionGeneralRow7Label),
+                  },
+                  inputProps: {
+                    placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
                   },
                 }}
               />
@@ -256,7 +250,7 @@ General.defaultProps = {
 
 General.propTypes = {
   fieldNormalizer: PropTypes.shape({
-    isNotTooLongNumber: PropTypes.func.isRequired,
+    normalizeNumber: PropTypes.func.isRequired,
   }).isRequired,
 
   fieldValidators: PropTypes.shape({

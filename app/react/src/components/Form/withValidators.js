@@ -22,6 +22,10 @@ const defaultErrorMessages = defineMessages({
     id: 'common.form.field.error.invalid_domain',
     defaultMessage: 'invalid domain',
   },
+  positiveNumber: {
+    id: 'common.form.field.error.positive_number',
+    defaultMessage: 'Number must be above 0',
+  }
 });
 
 const isRequired = formatMessage => value => {
@@ -32,8 +36,8 @@ const isRequired = formatMessage => value => {
 };
 
 const isNotZero = formatMessage => value => {
-  return (!value || value === '0'
-    ? formatMessage(defaultErrorMessages.required)
+  return (value && value === '0'
+    ? formatMessage(defaultErrorMessages.positiveNumber)
     : undefined
   );
 };
