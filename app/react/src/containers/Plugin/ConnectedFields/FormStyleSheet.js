@@ -174,7 +174,7 @@ class FormStyleSheet extends Component {
         {...formItemProps}
       >
 
-        <Row align="middle" type="flex">
+        <Row align="middle" type="flex" style={{ marginBottom: '20px' }}>
           <Col span={22}>
             { input.value && input.value.id !== null ? <span className="m-r-10">{this.state.styleSheets.find(item => { return item.value === input.value.id; }).text} - {input.value.version}</span> : null }
             <Button onClick={() => { this.setState({ open: true }); }}>{input.value ? <FormattedMessage {...messages.styleSheetButtonChange} /> : <FormattedMessage {...messages.styleSheetButtonChoose} />}</Button>

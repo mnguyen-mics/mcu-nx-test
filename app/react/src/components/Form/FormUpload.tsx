@@ -99,7 +99,7 @@ class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
         validateStatus={validateStatus}
         {...formItemProps}
       >
-        <Row align="middle" type="flex">
+        <Row align="middle" type="flex" style={{ marginBottom: '20px' }}>
           <Col span={22} >
             <Upload
               {...input}
