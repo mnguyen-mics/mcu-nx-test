@@ -7,7 +7,6 @@ const getCreatives = (organisationId, options = {}) => {
     organisation_id: organisationId,
     ...options,
   };
-
   return ApiService.getRequest(endpoint, params);
 };
 

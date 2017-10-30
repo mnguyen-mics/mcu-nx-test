@@ -28,7 +28,6 @@ class DropdownButton extends React.Component<DropdownButtonProps> {
 
     const handleClick = (param: ClickParam) => {
       const currentItem = items.find(item => item.id === param.key);
-      // const currentItem = items.filter(item => item.id === e.key);
 
       currentItem!.onClick();
     };

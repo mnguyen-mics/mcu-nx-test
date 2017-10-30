@@ -2,16 +2,16 @@ import * as React from 'react';
 import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
-import ButtonStyleless from './ButtonStyleless';
-import { SwitchInput } from './Form';
-import McsIcons from './McsIcons';
+import { ButtonStyleless, Form, McsIcons } from '../components';
 import generateGuid from '../utils/generateGuid';
+
+const { SwitchInput } = Form;
 
 interface RelatedRecordTableProps {
   dataSource: Array<{}>;
   loading: boolean;
   tableName: string;
-  updateTableFieldStatus: (obj: {index: number, tableName: string}) => void;
+  updateTableFieldStatus: (obj: {index: number, tableName: string}) => (e: any) => void;
 }
 
 const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
@@ -67,8 +67,8 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       colSpan: 9,
       dataIndex: 'include',
       key: 'include',
-      render: (data = {index: {}, bool: {}}) => {
-        const displaySwitch = !!Object.keys(data).length;
+      render: (include = {index: null, bool: null}) => {
+        const displaySwitch = include.bool !== null;
 
         return (
           <div className={displaySwitch ? '' : 'visibility-hidden'} >
@@ -76,15 +76,16 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
               {displaySwitch
                 ? (
                   <Field
-                    name={`${tableName}[${data.index}].include`}
+                    name={`${tableName}[${include.index}].include`}
                     component={SwitchInput}
+                    type="checkbox"
                   />
                 )
                 : <Switch />
               }
 
               <p className="switch-title-padding">
-                {data.bool ? 'Target' : 'Exclude'}
+                {include.bool ? 'Target' : 'Exclude'}
               </p>
             </div>
           </div>
@@ -96,9 +97,8 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       dataIndex: 'toBeRemoved',
       key: 'toBeRemoved',
       render: (index: number) => {
-        const handleClick = () => updateTableFieldStatus({ index, tableName });
         return (
-          <ButtonStyleless onClick={handleClick}>
+          <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
             <McsIcons type="delete" additionalClass="big" />
           </ButtonStyleless>
         );
@@ -109,7 +109,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
   const tableStyle = (dataSource.length || loading ? 'border-style' : 'hide-section');
 
   return (
-    <div className="adGroup-table">
+    <div className="related-record-table">
       <Table
         className={tableStyle}
         columns={columns}

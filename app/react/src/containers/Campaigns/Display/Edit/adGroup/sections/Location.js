@@ -4,13 +4,13 @@ import { Row } from 'antd';
 import { FormSection } from '../../../../../../components/Form/index.ts';
 import messages from '../../messages';
 
-function DeviceAndLocation() {
+function Location() {
 
   return (
-    <div id="deviceAndLocation">
+    <div id="location">
       <FormSection
-        subtitle={messages.sectionSubtitle3}
-        title={messages.sectionTitle3}
+        subtitle={messages.sectionSubtitleLocation}
+        title={messages.sectionTitleLocation}
       />
 
       <Row />
@@ -18,4 +18,4 @@ function DeviceAndLocation() {
   );
 }
 
-export default DeviceAndLocation;
+export default Location;

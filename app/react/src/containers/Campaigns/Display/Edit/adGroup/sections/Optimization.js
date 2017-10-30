@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
-import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components/index.ts';
+import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
+import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
 import BidOptimizerServices from '../../../../../../services/BidOptimizerServices';
 
 import messages from '../../messages';
@@ -15,13 +15,11 @@ class Optimization extends Component {
   state = { loading: false }
 
   getBidOptimizers = ({ getAll, newSelectedIds }) => () => {
-    const prevSelectedIds = this.getSelectedIds();
+    const { organisationId } = this.props;
+    const selectedIds = newSelectedIds || this.getSelectedIds();
+    const options = { getAll };
 
-    return BidOptimizerServices.getBidOptimizers({
-      getAll,
-      organisationId: this.props.organisationId,
-      selectedIds: newSelectedIds || prevSelectedIds,
-    });
+    return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds, options });
   }
 
   getSelectedIds = () => {
@@ -86,7 +84,7 @@ class Optimization extends Component {
       ? [
         ...tableData,
         {
-          key: bidOptimizer.id,
+          key: bidOptimizer.modelId,
           type: { image: 'question', name: bidOptimizer.provider },
           info: [bidOptimizer.name],
           toBeRemoved: index,
@@ -101,38 +99,31 @@ class Optimization extends Component {
         <FormSection
           dropdownItems={[
             {
-              id: messages.dropdownAdd.id,
-              message: messages.dropdownAdd,
-              onClick: () => {},
-            },
-            {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitle6}
-          title={messages.sectionTitle6}
+          subtitle={messages.sectionSubtitleOptimizer}
+          title={messages.sectionTitleOptimizer}
         />
 
-        <Row>
-          <FieldArray
-            component={RelatedRecordTable}
-            dataSource={dataSource}
-            loading={this.state.loading}
-            name="optimizerTable"
-            tableName="optimizerTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
-          />
+        <FieldArray
+          component={RelatedRecordTable}
+          dataSource={dataSource}
+          loading={this.state.loading}
+          name="optimizerTable"
+          tableName="optimizerTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
 
-          {!dataSource.length
+        {!dataSource.length
           ? <EmptyRecords
             iconType="plus"
-            message={formatMessage(messages.contentSection2EmptyTitle)}
+            message={formatMessage(messages.contentSectionOptimizerEmptyTitle)}
           />
           : null
         }
-        </Row>
       </div>
     );
   }

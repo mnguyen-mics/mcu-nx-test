@@ -4,6 +4,7 @@ import { compose } from 'recompose';
 import { Layout, Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons.tsx';
@@ -11,22 +12,20 @@ import {
   EmptyTableView,
   CollectionViewFilters,
 } from '../../../../components/TableView/index.ts';
-import CreativeService from '../../../../services/CreativeService';
 import CreativeCard from './CreativeCard';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import messages from './messages';
 
 const { Content } = Layout;
 
-class EmailTemplateSelector extends Component {
+class CreativeCardSelector extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      newEmailTemplateSelections: props.emailTemplateSelections,
-      emailTemplates: [],
-      hasEmailTemplates: true,
+      selectedData: props.selectedData,
+      data: [],
+      hasData: true,
       isLoading: true,
       total: 0,
       pageSize: 12,
@@ -35,36 +34,24 @@ class EmailTemplateSelector extends Component {
     };
   }
 
-  fetchEmailTemplate = () => {
-    const { organisationId } = this.props;
-    const { pageSize, currentPage, keywords } = this.state;
-
-    const options = {
-      ...getPaginatedApiParam(currentPage, pageSize),
-    };
+  fetchAllData = () => {
+    const { currentPage, pageSize, keywords } = this.state;
+    const options = { ...getPaginatedApiParam(currentPage, pageSize) };
 
     if (keywords) {
       options.keywords = keywords;
     }
 
-    return CreativeService.getEmailTemplates(organisationId, options).then(response => {
-      this.setState({
-        emailTemplates: response.data,
-        isLoading: false,
-        total: response.total,
-      });
-      return response;
-    });
+    return this.props.fetchData(options);
   }
 
   componentDidMount() {
-    this.fetchEmailTemplate().then(response => {
-      if (response.total === 0) {
-        this.setState(prevState => ({
-          ...prevState,
-          hasEmailTemplates: false,
-        }));
-      }
+    this.fetchAllData().then((results) => {
+      this.setState(() => ({
+        ...results,
+        isLoading: false,
+        hasData: results.total > 0
+      }));
     });
   }
 
@@ -81,41 +68,35 @@ class EmailTemplateSelector extends Component {
     } = prevState;
 
     if (currentPage !== prevCurrentPage || pageSize !== prevPageSize || keywords !== prevKeywords) {
-      this.fetchEmailTemplate();
+      this.fetchAllData()
+        .then((results) => {
+          this.setState({ ...results, isLoading: false });
+        });
     }
   }
 
-  toggleTemplateSelection(emailTemplateId) {
-    // Only one template can be selected for now
-    // So we juste update email_template_id
-    const { emailTemplateSelections } = this.props;
+  buildCollectionItems = () => {
+    const { data } = this.state;
+    const columnDef = this.getColumnsDefinitions();
 
-    let newSelection = { email_template_id: emailTemplateId };
-
-    const existingSelection = emailTemplateSelections[0];
-    if (existingSelection) {
-      newSelection = {
-        ...existingSelection,
-        ...newSelection,
-      };
-    }
-
-    this.setState({
-      newEmailTemplateSelections: [newSelection],
-    });
+    return (data
+      ? data.map(elem => (
+        <CreativeCard
+          footer={columnDef.footer}
+          item={elem}
+          key={elem.id}
+          title={columnDef.title}
+        />
+        )
+      )
+      : null
+    );
   }
-
-  handleAdd = () => {
-    const { save } = this.props;
-    const { newEmailTemplateSelections } = this.state;
-    save(newEmailTemplateSelections);
-  }
-
 
   getColumnsDefinitions() {
-    const { newEmailTemplateSelections } = this.state;
-    const selectedEmailTemplateIds = newEmailTemplateSelections
-      .map(templateSelection => templateSelection.email_template_id);
+    const { selectedData } = this.state;
+    const selectedIds = selectedData
+      .map(selection => selection.id);
 
     return {
       title: {
@@ -127,20 +108,22 @@ class EmailTemplateSelector extends Component {
       footer: {
         key: 'selected',
         render: (text, record) => {
-          return selectedEmailTemplateIds.includes(record.id) ? <Button type="primary" className="mcs-primary"><FormattedMessage {...messages.blastTemplateSelectedButton} /></Button> : <Button onClick={() => this.toggleTemplateSelection(record.id)}><FormattedMessage {...messages.blastTemplateSelectButton} /></Button>;
+          const isSelected = selectedIds.includes(record.id);
+          const message = (isSelected ? 'blastTemplateSelectedButton' : 'blastTemplateSelectButton');
+          const buttonProps = {
+            className: (isSelected ? 'mcs-primary' : ''),
+            onClick: () => this.toggleSelection(record.id),
+            type: (isSelected ? 'primary' : ''),
+          };
+
+          return (
+            <Button {...buttonProps}>
+              <FormattedMessage {...messages[message]} />
+            </Button>
+          );
         }
       }
     };
-  }
-
-  buildCollectionItems = (dataSource) => {
-    const columnDef = this.getColumnsDefinitions();
-    if (dataSource) {
-      return dataSource.map(data => {
-        return <CreativeCard item={data} title={columnDef.title} footer={columnDef.footer} />;
-      });
-    }
-    return null;
   }
 
   getSearchOptions() {
@@ -155,14 +138,41 @@ class EmailTemplateSelector extends Component {
     };
   }
 
+  handleAdd = () => {
+    const { save } = this.props;
+    const { selectedData } = this.state;
+
+    save(selectedData);
+  }
+
+  toggleSelection(id) {
+    this.setState(prevState => {
+      const { selectedData } = this.state;
+      const isElementSelected = prevState.selectedData.find(selection => selection.id === id);
+      const newSelection = { id };
+
+      if (this.props.singleSelection) {
+        return {
+          selectedData: (!isElementSelected ? [newSelection] : []),
+        };
+      }
+
+      return {
+        selectedData: (!isElementSelected
+            ? [...selectedData, newSelection]
+            : selectedData.filter(selection => selection.id !== id)
+          )
+      };
+    });
+  }
+
   render() {
     const {
-      emailTemplates,
       isLoading,
       currentPage,
       total,
       pageSize,
-      hasEmailTemplates,
+      hasData,
     } = this.state;
 
     const pagination = {
@@ -201,10 +211,10 @@ class EmailTemplateSelector extends Component {
           </Actionbar>
           <Layout>
             <Content className="mcs-edit-container">
-              {hasEmailTemplates ?
+              {hasData ?
                 <CollectionViewFilters
                   searchOptions={this.getSearchOptions()}
-                  collectionItems={this.buildCollectionItems(emailTemplates)}
+                  collectionItems={this.buildCollectionItems()}
                   loading={isLoading}
                   pagination={pagination}
                 />
@@ -217,20 +227,21 @@ class EmailTemplateSelector extends Component {
   }
 }
 
-EmailTemplateSelector.defaultProps = {
-  emailTemplateSelections: [],
+CreativeCardSelector.defaultProps = {
+  selectedData: [],
+  singleSelection: false,
 };
 
-EmailTemplateSelector.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  emailTemplateSelections: PropTypes.arrayOf(PropTypes.shape({
+CreativeCardSelector.propTypes = {
+  fetchData: PropTypes.func.isRequired,
+  selectedData: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
-    email_template_id: PropTypes.string.isRequired,
   })),
   save: PropTypes.func.isRequired,
+  singleSelection: PropTypes.bool,
   close: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
-)(EmailTemplateSelector);
+)(CreativeCardSelector);

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
-import { Row } from 'antd';
 
-import { EmptyRecords, Form, RelatedRecordTable, TableSelector } from '../../../../../../components/index.ts';
+import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
+import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
 import DisplayNetworkServices from '../../../../../../services/DisplayNetworkServices';
 import messages from '../../messages';
 
@@ -63,14 +63,14 @@ class Publisher extends Component {
   }
 
   render() {
-    const { formValues, formatMessage, handlers } = this.props;
+    const { formatMessage, formValues, handlers } = this.props;
 
     const dataSource = formValues.reduce((tableData, publisher, index) => {
       return (!publisher.toBeRemoved
       ? [
         ...tableData,
         {
-          key: publisher.id,
+          key: publisher.modelId,
           type: { image: 'question', name: publisher.display_network_name },
           info: [],
           toBeRemoved: index,
@@ -85,38 +85,31 @@ class Publisher extends Component {
         <FormSection
           dropdownItems={[
             {
-              id: messages.dropdownAdd.id,
-              message: messages.dropdownAdd,
-              onClick: () => {},
-            },
-            {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitle4}
-          title={messages.sectionTitle4}
+          subtitle={messages.sectionSubtitlePublisher}
+          title={messages.sectionTitlePublisher}
         />
 
-        <Row>
-          <FieldArray
-            component={RelatedRecordTable}
-            dataSource={dataSource}
-            loading={this.state.loading}
-            name="publisherTable"
-            tableName="publisherTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
-          />
+        <FieldArray
+          component={RelatedRecordTable}
+          dataSource={dataSource}
+          loading={this.state.loading}
+          name="publisherTable"
+          tableName="publisherTable"
+          updateTableFieldStatus={handlers.updateTableFieldStatus}
+        />
 
-          {!dataSource.length
+        {!dataSource.length
           ? <EmptyRecords
             iconType="plus"
-            message={formatMessage(messages.contentSection2EmptyTitle)}
+            message={formatMessage(messages.contentSectionPublisherEmptyTitle)}
           />
           : null
         }
-        </Row>
       </div>
     );
   }

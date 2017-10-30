@@ -98,4 +98,3 @@ export default compose(
   withMcsRouter,
   withDrawer,
 )(EditCampaignPage);
-

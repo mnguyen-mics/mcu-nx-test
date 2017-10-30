@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Field, Form, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, intlShape } from 'react-intl';
-import { Layout, Row } from 'antd';
+import { Layout } from 'antd';
 
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { withMcsRouter } from '../../../Helpers';
@@ -200,11 +200,6 @@ class EmailForm extends Component {
 
     const { routerOptions } = this.state;
 
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 },
-    };
-
     // const hasUnsavedChange = dirty;
     // dirty is for redux-form only
     // TODO handle wider email campaign modification (blasts)
@@ -224,42 +219,38 @@ class EmailForm extends Component {
               title={messages.emailEditorGeneralInformationTitle}
             />
 
-            <Row>
-              <Field
-                name="campaign.name"
-                component={FormInput}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailEditorNameInputLabel),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailEditorNameInputPlaceholder),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailEditorNameInputHelper),
-                  },
-                }}
-              />
-              <Field
-                name="campaign.technical_name"
-                component={FormInput}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
-                    ...fieldGridConfig,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailEditorTechnicalNameInputHelper),
-                  },
-                }}
-              />
-            </Row>
+            <Field
+              name="campaign.name"
+              component={FormInput}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailEditorNameInputLabel),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailEditorNameInputPlaceholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailEditorNameInputHelper),
+                },
+              }}
+            />
+            <Field
+              name="campaign.technical_name"
+              component={FormInput}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailEditorTechnicalNameInputHelper),
+                },
+              }}
+            />
           </div>
           <hr />
           <div id="router">
@@ -268,27 +259,24 @@ class EmailForm extends Component {
               title={messages.emailEditorRouterTitle}
             />
 
-            <Row>
-              <Field
-                name="campaign.routers[0].email_router_id"
-                component={FormSelect}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailEditorRouterSelectLabel),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  options: routerOptions.map(router => ({
-                    value: router.id,
-                    title: router.name,
-                  })),
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailEditorRouterSelectHelper),
-                  },
-                }}
-              />
-            </Row>
+            <Field
+              name="campaign.routers[0].email_router_id"
+              component={FormSelect}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailEditorRouterSelectLabel),
+                  required: true,
+                },
+                options: routerOptions.map(router => ({
+                  value: router.id,
+                  title: router.name,
+                })),
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailEditorRouterSelectHelper),
+                },
+              }}
+            />
           </div>
           <hr />
           <div id="blasts">
@@ -301,15 +289,13 @@ class EmailForm extends Component {
               title={messages.emailEditorEmailBlastTitle}
             />
 
-            <Row>
-              <RelatedRecords
-                emptyOption={{
-                  message: formatMessage(messages.emailEditorEmailBlastEmpty),
-                }}
-              >
-                {this.getBlastRecords()}
-              </RelatedRecords>
-            </Row>
+            <RelatedRecords
+              emptyOption={{
+                message: formatMessage(messages.emailEditorEmailBlastEmpty),
+              }}
+            >
+              {this.getBlastRecords()}
+            </RelatedRecords>
           </div>
         </Content>
       </Form>

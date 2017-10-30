@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Field, Form, reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
-import { Layout, Row } from 'antd';
+import { Layout } from 'antd';
 
 import { withValidators, FormSection, FormSelect, FormInput, FormDatePicker } from '../../../../components/Form/index.ts';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
@@ -57,7 +57,7 @@ class EmailBlastForm extends Component {
 
     const datamartId = defaultDatamart(organisationId).id;
 
-    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId);
+    return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, { max_results: 10000 });
   }
 
   updateSegments = (selectedAudienceSegments) => {
@@ -67,7 +67,6 @@ class EmailBlastForm extends Component {
       .then(({ data }) => {
         const buildSegmentSelection = segment => {
           const metadata = data.find(seg => seg.id === segment);
-
           return {
             audience_segment_id: metadata.id,
             name: metadata.name,
@@ -127,14 +126,12 @@ class EmailBlastForm extends Component {
   handleSave = (formValues) => {
     const { save } = this.props;
     const { segments } = this.state;
-    if (segments.length === 0) {
-      this.setState({ segmentRequired: true });
-    } else {
-      save({
-        ...formValues.blast,
-        segments,
-      });
-    }
+
+    save({
+      ...formValues.blast,
+      segments,
+    });
+
   }
 
   render() {
@@ -149,12 +146,6 @@ class EmailBlastForm extends Component {
     } = this.props;
 
     const { consents, segmentRequired, segments } = this.state;
-
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 10, offset: 1 },
-    };
-
 
     const emptySegmentOption = {
       message: (segmentRequired
@@ -182,66 +173,61 @@ class EmailBlastForm extends Component {
               title={messages.emailBlastEditorStepTitleGeneralInformation}
             />
 
-            <Row>
-              <Field
-                name="blast.blast_name"
-                component={FormInput}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailBlastEditorInputLabelBlastName),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperBlastName),
-                  },
-                }}
-              />
-              <Field
-                name="blast.send_date"
-                component={FormDatePicker}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailBlastEditorDatePickerLabelSentDate),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  datePickerProps: {
-                    format: 'DD/MM/YYYY HH:mm',
-                    showTime: { format: 'HH:mm' },
-                    placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate),
-                    disabledDate: isPastDate,
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate),
-                  },
-                }}
-              />
-              <Field
-                name="blast.consents[0].consent_id"
-                component={FormSelect}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailEditorProviderSelectLabel),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  options: consents.map(consent => ({
-                    value: consent.id,
-                    title: consent.technical_name,
-                  })),
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailEditorProviderSelectHelper),
-                  },
-                }}
-              />
-            </Row>
+            <Field
+              name="blast.blast_name"
+              component={FormInput}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailBlastEditorInputLabelBlastName),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderBlastName),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailBlastEditorInputHelperBlastName),
+                },
+              }}
+            />
+            <Field
+              name="blast.send_date"
+              component={FormDatePicker}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailBlastEditorDatePickerLabelSentDate),
+                  required: true,
+                },
+                datePickerProps: {
+                  format: 'DD/MM/YYYY HH:mm',
+                  showTime: { format: 'HH:mm' },
+                  placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate),
+                  disabledDate: isPastDate,
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate),
+                },
+              }}
+            />
+            <Field
+              name="blast.consents[0].consent_id"
+              component={FormSelect}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailEditorProviderSelectLabel),
+                  required: true,
+                },
+                options: consents.map(consent => ({
+                  value: consent.id,
+                  title: consent.technical_name,
+                })),
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailEditorProviderSelectHelper),
+                },
+              }}
+            />
           </div>
           <hr />
           <div id="blast">
@@ -250,80 +236,74 @@ class EmailBlastForm extends Component {
               title={messages.emailBlastEditorStepTitleBlastInformation}
             />
 
-            <Row>
-              <Field
-                name="blast.subject_line"
-                component={FormInput}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailBlastEditorInputLabelSubjectLine),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
-                  },
-                }}
-              />
-              <Field
-                name="blast.from_email"
-                component={FormInput}
-                validate={[isRequired, isValidEmail]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailBlastEditorInputLabelFromEmail),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
-                  },
-                }}
-              />
-              <Field
-                name="blast.from_name"
-                component={FormInput}
-                validate={[isRequired]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailBlastEditorInputLabelFromName),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperFromName),
-                  },
-                }}
-              />
-              <Field
-                name="blast.reply_to"
-                component={FormInput}
-                validate={[isRequired, isValidEmail]}
-                props={{
-                  formItemProps: {
-                    label: formatMessage(messages.emailBlastEditorInputLabelReplyTo),
-                    required: true,
-                    ...fieldGridConfig,
-                  },
-                  inputProps: {
-                    placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
-                  },
-                  helpToolTipProps: {
-                    title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),
-                  },
-                }}
-              />
-            </Row>
+            <Field
+              name="blast.subject_line"
+              component={FormInput}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailBlastEditorInputLabelSubjectLine),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
+                },
+              }}
+            />
+            <Field
+              name="blast.from_email"
+              component={FormInput}
+              validate={[isRequired, isValidEmail]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailBlastEditorInputLabelFromEmail),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
+                },
+              }}
+            />
+            <Field
+              name="blast.from_name"
+              component={FormInput}
+              validate={[isRequired]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailBlastEditorInputLabelFromName),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailBlastEditorInputHelperFromName),
+                },
+              }}
+            />
+            <Field
+              name="blast.reply_to"
+              component={FormInput}
+              validate={[isRequired, isValidEmail]}
+              props={{
+                formItemProps: {
+                  label: formatMessage(messages.emailBlastEditorInputLabelReplyTo),
+                  required: true,
+                },
+                inputProps: {
+                  placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
+                },
+                helpToolTipProps: {
+                  title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),
+                },
+              }}
+            />
           </div>
           <hr />
           <div id="template">
@@ -348,14 +328,16 @@ class EmailBlastForm extends Component {
               subtitle={messages.segmentSelectionSubTitle}
               title={messages.segmentSelectionTitle}
             />
-            <Row>
-              <RelatedRecords emptyOption={emptySegmentOption}>
-                {this.getSegmentRecords()}
-              </RelatedRecords>
-            </Row>
-            <Row className="section-footer">
-              <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
-            </Row>
+            <RelatedRecords emptyOption={emptySegmentOption}>
+              {this.getSegmentRecords()}
+            </RelatedRecords>
+            {segments.length > 0
+              && (
+                <div className="section-footer">
+                  <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
+                </div>
+              )
+            }
           </div>
         </Content>
       </Form>

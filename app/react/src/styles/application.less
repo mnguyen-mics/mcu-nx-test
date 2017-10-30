@@ -20,7 +20,7 @@ a {
 }
 
 .mcs-content-container {
-  padding: 0 40px 40px;
+  padding: 0 40px 60px;
   height: inherit;
   overflow-y: scroll;
 }
@@ -76,15 +76,6 @@ a {
   padding: 10px;
 }
 
-.ant-table-wrapper {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.ant-table {
-  margin-bottom: 20px;
-}
-
 .ant-spin-dot i:first-child {
   background-color: @info-color !important;
   opacity: 1 !important;
@@ -117,4 +108,29 @@ a {
 
 input:disabled {
   cursor: not-allowed!important;
+}
+
+.mcs-colors {
+  display: none;
+  .mcs-primary {
+    background-color: @primary-color
+  }
+  .mcs-normal {
+    background-color: @normal-color
+  }
+  .mcs-info {
+    background-color: @info-color
+  }
+  .mcs-success {
+    background-color: @success-color
+  }
+  .mcs-error {
+    background-color: @error-color
+  }
+  .mcs-highlight {
+    background-color: @highlight-color
+  }
+  .mcs-warning {
+    background-color: @warning-color
+  }
 }

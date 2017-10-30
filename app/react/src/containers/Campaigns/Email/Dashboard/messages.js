@@ -33,4 +33,20 @@ export default defineMessages({
     id: 'email.blast.status.update.failure',
     defaultMessage: 'Blast Not Updated'
   },
+  blastArchiveTitle: {
+    id: 'email.blast.archive.title',
+    defaultMessage: 'Archive Blast'
+  },
+  blastArchivetext: {
+    id: 'email.blast.archive.text',
+    defaultMessage: 'You are about to archive your Email Blast. This operation cannot be undone. Are you sure you want to proceed?'
+  },
+  blastArchiveOk: {
+    id: 'email.blast.archive.Ok',
+    defaultMessage: 'Ok'
+  },
+  blastArchiveCancel: {
+    id: 'email.blast.archive.cancel',
+    defaultMessage: 'Cancel'
+  }
 });
