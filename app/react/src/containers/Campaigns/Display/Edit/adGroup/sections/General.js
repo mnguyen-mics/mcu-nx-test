@@ -256,7 +256,7 @@ General.defaultProps = {
 
 General.propTypes = {
   fieldNormalizer: PropTypes.shape({
-    isNumber: PropTypes.func.isRequired,
+    isNotTooLongNumber: PropTypes.func.isRequired,
   }).isRequired,
 
   fieldValidators: PropTypes.shape({
