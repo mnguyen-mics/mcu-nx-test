@@ -378,6 +378,7 @@ class CampaignForm extends Component {
 CampaignForm.defaultProps = {
   editionMode: false,
   fieldValidators: {},
+  formValues: {},
   pristine: true,
 };
 
@@ -392,7 +393,7 @@ CampaignForm.propTypes = {
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
   formInitialValues: PropTypes.shape().isRequired,
-  formValues: PropTypes.shape().isRequired,
+  formValues: PropTypes.shape(),
   handleSubmit: PropTypes.func.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
