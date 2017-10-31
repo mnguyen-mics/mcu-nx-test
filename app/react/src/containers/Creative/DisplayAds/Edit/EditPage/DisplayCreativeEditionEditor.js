@@ -102,7 +102,7 @@ class DisplayCreativeEditionEditor extends Component {
       intl: { formatMessage },
       handleSubmit,
       submitting,
-      fieldValidators: { isRequired, isValidDomain },
+      fieldValidators: { isRequired },
       breadcrumbPaths,
       formats,
       creative,
@@ -215,7 +215,7 @@ class DisplayCreativeEditionEditor extends Component {
                     <Field
                       name="creative.destination_domain"
                       component={FormInput}
-                      validate={[isRequired, isValidDomain]}
+                      validate={[isRequired]}
                       props={{
                         formItemProps: {
                           label: formatMessage(messages.creativeCreationGeneralDomainFieldTitle),

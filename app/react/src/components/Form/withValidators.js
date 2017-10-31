@@ -48,15 +48,6 @@ const isValidEmail = formatMessage => value => {
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
 };
 
-const isValidUrl = formatMessage => value => {
-  return value && !/^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/.test(value) ?
-    formatMessage(defaultErrorMessages.invalidUrl) : undefined;
-};
-
-const isValidDomain = formatMessage => value => {
-  return value && !/^[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/i.test(value) ?
-    formatMessage(defaultErrorMessages.invalidDomain) : undefined;
-};
 
 const withValidators = compose(
   injectIntl,
@@ -65,8 +56,6 @@ const withValidators = compose(
       isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),
-      isValidUrl: isValidUrl(formatMessage),
-      isValidDomain: isValidDomain(formatMessage),
       isValidNumber: isValidNumber(formatMessage),
     },
   })),

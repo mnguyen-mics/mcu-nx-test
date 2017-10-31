@@ -51,7 +51,6 @@ class PluginFieldGenerator extends Component {
   generateFielBasedOnDefinition = (fieldDefinition, organisationId) => {
     const {
       fieldValidators: {
-        isValidUrl,
         isValidNumber,
       }
     } = this.props;
@@ -60,7 +59,7 @@ class PluginFieldGenerator extends Component {
       case 'STRING':
         return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.value`, fieldDefinition);
       case 'URL':
-        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.url`, fieldDefinition, [isValidUrl]);
+        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.url`, fieldDefinition);
       case 'ASSET':
         return this.renderFieldBasedOnConfig(FormUpload, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', accept: '.jpg,.jpeg,.png,.gif' });
       case 'PIXEL_TAG':
