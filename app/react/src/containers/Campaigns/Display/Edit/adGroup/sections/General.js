@@ -205,7 +205,7 @@ class General extends Component {
                 name="adGroupTotalImpressionCapping"
                 component={FormInput}
                 normalize={normalizeNumber}
-                validate={[isValidNumber, isNotZero]}
+                validate={[isValidNumber]}
                 props={{
                   formItemProps: {
                     label: formatMessage(messages.contentSectionGeneralRow6Label),
@@ -223,7 +223,7 @@ class General extends Component {
                 name="adGroupPerDayImpressionCapping"
                 component={FormInput}
                 normalize={normalizeNumber}
-                validate={[isValidNumber, isNotZero]}
+                validate={[isValidNumber]}
                 props={{
                   formItemProps: {
                     label: formatMessage(messages.contentSectionGeneralRow7Label),
