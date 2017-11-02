@@ -96,9 +96,9 @@ class AdGroups extends Component {
     const adGroupEditorProps = {
       editionMode: true,
       initialValues: initialAdGroupFormatted,
-      openNextDrawer: handlers.openNextDrawer,
       closeNextDrawer: handlers.closeNextDrawer,
-      close: handlers.closeNextDrawer,
+      onClose: handlers.closeNextDrawer,
+      openNextDrawer: handlers.openNextDrawer,
       save: this.updateNewData,
     };
 

@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  arrayInsert,
-  arrayPush,
-  arrayRemove,
   Form,
   getFormInitialValues,
   getFormValues,
@@ -22,8 +19,6 @@ import { withNormalizer, withValidators } from '../../../../../../components/For
 import { Loading } from '../../../../../../components/index.ts';
 
 import { withMcsRouter } from '../../../../../Helpers';
-import * as actions from '../../../../../../state/Notifications/actions';
-
 
 const { Content } = Layout;
 const FORM_NAME = 'goalForm';
@@ -45,13 +40,11 @@ class GoalForm extends Component {
 
 
   render() {
-
     const {
       closeNextDrawer,
       fieldNormalizer,
       fieldValidators,
       formId: scrollLabelContentId,
-      formValues,
       handleSubmit,
       intl: { formatMessage },
       openNextDrawer,
@@ -87,7 +80,7 @@ class GoalForm extends Component {
             <General {...commonProps} />
 
             <hr />
-            <Attribution {...commonProps} formValues={formValues} />
+            <Attribution {...commonProps} />
           </Content>
         </Form>
       </Layout>
@@ -98,6 +91,7 @@ class GoalForm extends Component {
 GoalForm.defaultProps = {
   editionMode: false,
   fieldValidators: {},
+  formValues: {},
   pristine: true,
 };
 
@@ -106,7 +100,7 @@ GoalForm.propTypes = {
   fieldNormalizer: PropTypes.shape().isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
-  formValues: PropTypes.shape().isRequired,
+  formValues: PropTypes.shape(),
   handleSubmit: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
@@ -120,13 +114,6 @@ const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM_NAME)(state),
 });
 
-const mapDispatchToProps = {
-  arrayInsert,
-  arrayPush,
-  arrayRemove,
-  notifyError: actions.notifyError
-};
-
 export default compose(
   withMcsRouter,
   injectIntl,
@@ -136,5 +123,5 @@ export default compose(
   }),
   withNormalizer,
   withValidators,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(mapStateToProps),
 )(GoalForm);

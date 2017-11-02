@@ -114,7 +114,9 @@ class CampaignForm extends Component {
     const body = {
       editor_version_id: '11',
       name: formValues.name,
+      per_day_impression_capping: formValues.per_day_impression_capping,
       time_zone: 'Europe/Paris',
+      total_impression_capping: formValues.total_impression_capping,
       type: 'DISPLAY'
     };
 
@@ -378,6 +380,7 @@ class CampaignForm extends Component {
 CampaignForm.defaultProps = {
   editionMode: false,
   fieldValidators: {},
+  formValues: {},
   pristine: true,
 };
 
@@ -392,7 +395,7 @@ CampaignForm.propTypes = {
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
   formInitialValues: PropTypes.shape().isRequired,
-  formValues: PropTypes.shape().isRequired,
+  formValues: PropTypes.shape(),
   handleSubmit: PropTypes.func.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   intl: intlShape.isRequired,
