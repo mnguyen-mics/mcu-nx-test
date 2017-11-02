@@ -18,6 +18,7 @@ import frLocaleData from 'react-intl/locale-data/fr';
 import { LayoutManager } from '../../components/Layout/index.ts';
 import NotFound from '../../components/NotFound.tsx';
 import Loading from '../../components/Loading.tsx';
+import AdBlockError from '../../components/AdBlockError.tsx';
 import Error from '../../components/Error.tsx';
 import { AuthenticatedRoute } from '../../containers/Route';
 import { Notifications } from '../../containers/Notifications';
@@ -27,6 +28,7 @@ import { getDefaultWorkspaceOrganisationId } from '../../state/Session/selectors
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
+import NavigatorService from '../../services/NavigatorService';
 import { isAppInitialized } from '../../state/App/selectors';
 import { logOut } from '../../state/Login/actions';
 import { setColorsStore } from '../../state/Theme/actions';
@@ -35,26 +37,33 @@ addLocaleData([enLocaleData, frLocaleData]);
 
 class Navigator extends Component {
 
+  state = { adBlockOn: false }
+
   componentDidMount() {
-    // Read theme colors in DOM and store them in redux for future usage
+    NavigatorService.isAdBlockOn()
+      .then(() => {
+        // Read theme colors in DOM and store them in redux for future usage
+        function rgb2hex(rgb) {
+          const rgbTested = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+          return (rgbTested && rgbTested.length === 4) ? `#${
+           (`0${parseInt(rgbTested[1], 10).toString(16)}`).slice(-2)
+           }${(`0${parseInt(rgbTested[2], 10).toString(16)}`).slice(-2)
+           }${(`0${parseInt(rgbTested[3], 10).toString(16)}`).slice(-2)}` : '';
+        }
 
-    function rgb2hex(rgb) {
-      const rgbTested = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-      return (rgbTested && rgbTested.length === 4) ? `#${
-       (`0${parseInt(rgbTested[1], 10).toString(16)}`).slice(-2)
-       }${(`0${parseInt(rgbTested[2], 10).toString(16)}`).slice(-2)
-       }${(`0${parseInt(rgbTested[3], 10).toString(16)}`).slice(-2)}` : '';
-    }
-    const elemts = global.document.getElementsByClassName('mcs-colors')[0].children;
-    const mcsColors = {};
+        const elemts = global.document.getElementsByClassName('mcs-colors')[0].children;
 
-    for (let i = 0; i < elemts.length; i += 1) {
-      const elem = elemts[i];
-      mcsColors[elem.className] = rgb2hex(global.window.getComputedStyle(elem)['background-color']);
-    }
-    this.props.setColorsStore(mcsColors);
+        const mcsColors = {};
+
+        for (let i = 0; i < elemts.length; i += 1) {
+          const elem = elemts[i];
+          mcsColors[elem.className] = rgb2hex(global.window.getComputedStyle(elem)['background-color']);
+        }
+
+        this.props.setColorsStore(mcsColors);
+      })
+      .catch(() => this.setState({ adBlockOn: true }));
   }
-
 
   render() {
 
@@ -66,6 +75,7 @@ class Navigator extends Component {
       defaultWorkspaceOrganisationId,
     } = this.props;
 
+    if (this.state.adBlockOn) return (<AdBlockError />);
     if (initializationError) return (<Error />);
     if (!initialized) return (<Loading />); // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
