@@ -5,7 +5,7 @@ import { ClickParam } from 'antd/lib/menu';
 
 import withTranslations, { TranslationProps } from '../containers/Helpers/withTranslations';
 
-interface McsDateRandeValue {
+interface McsDateRangeValue {
   rangeType: string;
   lookbackWindow?: moment.Duration;
   from?: moment.Moment;
@@ -13,8 +13,8 @@ interface McsDateRandeValue {
 }
 
 export interface McsDateRangePickerProps {
-  values: McsDateRandeValue;
-  onChange: (values: McsDateRandeValue) => void;
+  values: McsDateRangeValue;
+  onChange: (values: McsDateRangeValue) => void;
   format?: string;
 }
 
@@ -30,26 +30,29 @@ interface Range {
 
 const { RangePicker } = DatePicker;
 
+const currentTimeStampInt = parseInt(moment().format('X'), 10); // radix is needed
+const numberOfSecondsInOneDay = 3600 * 24;
+
 const ranges: Range[] = [
   {
     name: 'TODAY',
-    from : moment(),
-    to: moment().add(1, 'days'),
+    from : moment.unix(currentTimeStampInt),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
   },
   {
     name: 'YESTERDAY',
-    from : moment().subtract(1, 'days'),
-    to: moment().add(1, 'days'),
+    from : moment.unix(currentTimeStampInt - numberOfSecondsInOneDay),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
   },
   {
     name: 'LAST_7_DAYS',
-    from: moment().subtract(7, 'days'),
-    to: moment().add(1, 'days'),
+    from: moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay)),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
   },
   {
     name: 'LAST_30_DAYS',
-    from: moment().subtract(1, 'month'),
-    to: moment().add(1, 'days'),
+    from: moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay)),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
   },
 ];
 
