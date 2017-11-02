@@ -42,9 +42,9 @@ function getPublishers({ campaignId }) {
     .then(publisherTable => ({ publisherTable }));
 }
 
-function getLocations({ campaignId, adGroupId }) {
-  return DisplayCampaignService.getLocations({ campaignId, adGroupId });
-}
+// function getLocations({ campaignId, adGroupId }) {
+//   return DisplayCampaignService.getLocations({ campaignId, adGroupId });
+// }
 
 function getSegments({ adGroupId, campaignId, organisationId }) {
   const fetchSegments = DisplayCampaignService.getAudience(campaignId, adGroupId);
