@@ -57,6 +57,42 @@ class General extends Component {
               },
             }}
           />
+
+          <Field
+            name="total_impression_capping"
+            component={FormInput}
+            normalize={normalizeNumber}
+            validate={[isValidNumber]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Label),
+              },
+              inputProps: {
+                placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Placeholder),
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Tooltip),
+              },
+            }}
+          />
+
+          <Field
+            name="per_day_impression_capping"
+            component={FormInput}
+            normalize={normalizeNumber}
+            validate={[isValidNumber]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Label),
+              },
+              inputProps: {
+                placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Placeholder),
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Tooltip),
+              },
+            }}
+          />
         </div>
 
         <div>
@@ -85,42 +121,6 @@ class General extends Component {
                 },
                 helpToolTipProps: {
                   title: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Tooltip),
-                },
-              }}
-            />
-
-            <Field
-              name="total_impression_capping"
-              component={FormInput}
-              normalize={normalizeNumber}
-              validate={[isValidNumber]}
-              props={{
-                formItemProps: {
-                  label: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Label),
-                },
-                inputProps: {
-                  placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Placeholder),
-                },
-                helpToolTipProps: {
-                  title: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Tooltip),
-                },
-              }}
-            />
-
-            <Field
-              name="per_day_impression_capping"
-              component={FormInput}
-              normalize={normalizeNumber}
-              validate={[isValidNumber]}
-              props={{
-                formItemProps: {
-                  label: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Label),
-                },
-                inputProps: {
-                  placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Placeholder),
-                },
-                helpToolTipProps: {
-                  title: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Tooltip),
                 },
               }}
             />
