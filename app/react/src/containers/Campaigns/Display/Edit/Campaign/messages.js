@@ -114,7 +114,7 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow2Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row2.tooltip',
-    defaultMessage: 'Lorem ipsum',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
   },
 
   /* Row 4 */
@@ -128,7 +128,7 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow3Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row3.tooltip',
-    defaultMessage: 'Lorem ipsum',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
   },
 
   /* ------------------------------- SECTION 2 ------------------------------ */

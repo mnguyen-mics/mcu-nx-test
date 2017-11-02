@@ -21,8 +21,8 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { normalizeNumber },
-      fieldValidators: { isRequired, isValidNumber },
+      fieldNormalizer: { normalizeInteger },
+      fieldValidators: { isRequired, isValidInteger },
       formatMessage,
     } = this.props;
 
@@ -61,8 +61,8 @@ class General extends Component {
           <Field
             name="total_impression_capping"
             component={FormInput}
-            normalize={normalizeNumber}
-            validate={[isValidNumber]}
+            normalize={normalizeInteger}
+            validate={[isValidInteger]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Label),
@@ -79,8 +79,8 @@ class General extends Component {
           <Field
             name="per_day_impression_capping"
             component={FormInput}
-            normalize={normalizeNumber}
-            validate={[isValidNumber]}
+            normalize={normalizeInteger}
+            validate={[isValidInteger]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Label),
@@ -137,7 +137,8 @@ General.defaultProps = {
 
 General.propTypes = {
   fieldNormalizer: PropTypes.shape({
-    normalizeNumber: PropTypes.func.isRequired,
+    normalizeFloat: PropTypes.func.isRequired,
+    normalizeInteger: PropTypes.func.isRequired,
   }).isRequired,
 
   fieldValidators: PropTypes.shape({

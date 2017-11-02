@@ -42,16 +42,20 @@ const isNotZero = formatMessage => value => {
   );
 };
 
-const isValidNumber = formatMessage => value => {
-  return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
-    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
-};
-
 const isValidEmail = formatMessage => value => {
   return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
 };
 
+const isValidFloat = formatMessage => value => {
+  return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+};
+
+const isValidInteger = formatMessage => value => {
+  return value && !/^\d+$/.test(value) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+};
 
 const withValidators = compose(
   injectIntl,
@@ -60,7 +64,8 @@ const withValidators = compose(
       isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),
-      isValidNumber: isValidNumber(formatMessage),
+      isValidFloat: isValidFloat(formatMessage),
+      isValidInteger: isValidInteger(formatMessage),
     },
   })),
 );

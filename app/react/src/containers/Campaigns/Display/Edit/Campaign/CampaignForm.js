@@ -114,7 +114,9 @@ class CampaignForm extends Component {
     const body = {
       editor_version_id: '11',
       name: formValues.name,
+      per_day_impression_capping: formValues.per_day_impression_capping,
       time_zone: 'Europe/Paris',
+      total_impression_capping: formValues.total_impression_capping,
       type: 'DISPLAY'
     };
 
