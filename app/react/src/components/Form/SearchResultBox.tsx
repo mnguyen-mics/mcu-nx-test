@@ -13,12 +13,8 @@ interface SearchResultBoxProps {
     updateTableFieldStatus: (obj: {index: number, tableName: string}) => void;
 }
 
-interface SearchResultBoxState {
-}
-
 class SearchResultBox extends React.Component<
-  SearchResultBoxProps & WrappedFieldArrayProps<{name: string, exclude: boolean}>,
-  SearchResultBoxState> {
+  SearchResultBoxProps & WrappedFieldArrayProps<{name: string, exclude: boolean}>> {
 
     deleteLocationFromFields = (index: number, allFields: any) => () => {
         allFields.remove(index);
@@ -36,7 +32,7 @@ class SearchResultBox extends React.Component<
                     type="flex"
                     align="middle"
                     justify="space-between"
-                    className={fields ? 'search-result-box' : 'hide-section'}
+                    className={fields.length !== 0 ? 'search-result-box' : 'hide-section'}
                 >
                     {fields ? fields.map((name, index, allFields) => {
 

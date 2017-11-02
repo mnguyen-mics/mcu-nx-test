@@ -12,9 +12,9 @@ const GeonameService = {
     return Promise.resolve([
       {
         id: '1',
-        name: 'La France du Général de Gaulle',
+        name: 'Fake Geoname #1',
         exclude: false,
-        country_iso: 'FRGDG',
+        country_iso: 'FG1',
         admin1: '00',
         admin2: null,
         admin3: null,
@@ -23,9 +23,9 @@ const GeonameService = {
       },
       {
         id: '2564',
-        name: 'Pays quelconque',
+        name: 'Fake Geoname #2',
         exclude: false,
-        country_iso: 'PQ',
+        country_iso: 'FG2',
         admin1: '55',
         admin2: null,
         admin3: null,

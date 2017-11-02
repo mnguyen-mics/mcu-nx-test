@@ -84,7 +84,6 @@ function createAudience({ campaignId, adGroupId, body }) {
 }
 
 function createLocation({ campaignId, adGroupId, body }) {
-  console.log(body);
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
   return ApiService.postRequest(endpoint, body).then(res => res.data);
   // return Promise.resolve(body);
@@ -101,7 +100,7 @@ function deleteAudience({ campaignId, adGroupId, id }) {
 }
 
 function deleteLocation({ campaignId, adGroupId, id }) {
-  const endpoint = `genonames/${campaignId}/ad_groups/${adGroupId}/location/${id}`;
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
   return ApiService.deleteRequest(endpoint);
 }
 
@@ -122,21 +121,20 @@ function getPublishers({ campaignId }) {
     }));
 }
 
-function getLocations(campaignId) {
-  // const endpoint = `geonames/${campaignId}`;
-  // return ApiService.getRequest(endpoint)
-  //   .then(res => res.data.map((elem) => {
-  //     const { display_network_access_id, id, ...locations } = elem;
+function getLocations({ campaignId, adGroupId }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+  return ApiService.getRequest(endpoint)
+    .then(res => res.data.map((elem) => {
+      const { display_network_access_id, id, ...locations } = elem;
 
-  //     return {
-  //       ...locations,
-  //       display_network_access_id,
-  //       id: display_network_access_id,
-  //       otherId: id,
-  //       toBeRemoved: false
-  //     };
-  //   }));
-  return Promise.resolve();
+      return {
+        ...locations,
+        display_network_access_id,
+        id: display_network_access_id,
+        modelId: id,
+        toBeRemoved: false
+      };
+    }));
 }
 
 function createPublisher({ campaignId, body }) {

@@ -11,6 +11,7 @@ interface FormSelectAddonProps {
   input: {
     value?: string;
     onChange?: (value: SelectValue) => void;
+    onFocus?: (value: SelectValue) => void;
   };
 }
 
@@ -24,6 +25,7 @@ const FormSelectAddon: React.SFC<FormSelectAddonProps > = props => {
 
   const value = input.value;
   const onChange = input.onChange;
+  const onFocus = input.onFocus;
 
   const formValue: SelectValue | any = options[0].value;
   const filteredOptions =  options.filter(option => option.value !== formValue.key);
@@ -44,7 +46,7 @@ const FormSelectAddon: React.SFC<FormSelectAddonProps > = props => {
         onChange={onChange}
         // difficulties to map some WrappedFieldInputProps with SelectProps
         onBlur={onChange as () => any}
-        onFocus={onfocus as () => any}
+        onFocus={onFocus as () => any}
         style={{ display: 'flex', justifyContent: 'center', ...style }}
         value={value}
       >

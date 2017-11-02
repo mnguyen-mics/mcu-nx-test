@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {  Row, Col, Checkbox, Input, Select, Tooltip, Spin } from 'antd';
 import {  FieldArray } from 'redux-form';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
 import { McsIcons } from '../../../../../../components';
 import messages from '../../messages';
@@ -33,7 +33,9 @@ interface LocationTargetingProps {
       tableName: string;
     }) => void;
   };
-  formValues: any;
+  intl: InjectedIntlProps; // change to ts
+  formValues: Array<{}>;
+  formatMessage: (arg: any) => string;
 }
 
 interface LocationTargetingState {
@@ -44,7 +46,7 @@ interface LocationTargetingState {
   visible: boolean;
 }
 
-class LocationTargeting extends React.Component<LocationTargetingProps, LocationTargetingState> {
+class LocationTargeting extends React.Component<LocationTargetingProps & InjectedIntlProps, LocationTargetingState> {
 
   state = {
     locationTargetingDisplayed: false,
@@ -125,11 +127,13 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
 
     const {
       formValues,
+      intl: {
+        formatMessage,
+      },
     } = this.props;
 
     const { fetching, listOfCountriesToDisplay, value } = this.state;
 
-    // If we have time, do an HOC for the select component in order to use generic id element
     return (
       <div id="locationTargeting" className="locationTargeting">
         <FormSection
@@ -138,10 +142,10 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
         />
         <Checkbox
           checked={(formValues && formValues.length > 0) || this.state.locationTargetingDisplayed ? true : false}
-          className="checkbox-location-section"
+          className="field-label checkbox-location-section"
           onChange={this.displayLocationTargetingSection}
         >
-          <FormattedMessage id="monid" defaultMessage="I want to target a specific location" />
+          <FormattedMessage id="location-checkbox-message" defaultMessage="I want to target a specific location" />
         </Checkbox>
         <Row className={!this.state.locationTargetingDisplayed && (!formValues || formValues.length === 0) ? 'hide-section' : ''}>
           <Row align="middle" type="flex">
@@ -154,18 +158,18 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
             </Col>
           </Row>
           <Row align="middle" type="flex">
-            <Col span={4} className="label-col">
-              <FormattedMessage id="label-location-targeting" defaultMessage="* Location :" />
+            <Col span={4} className="label-col field-label">
+              <FormattedMessage id="label-location-targeting" defaultMessage="Location : " />
             </Col>
             <Col span={10} >
               <InputGroup
                 compact={true}
               >
                 <Select
-                  style={{ width: '25%' }}
                   defaultValue="INC"
                   onChange={this.handleIncOrExcChange}
                   getPopupContainer={this.attachToDOM('selectContainer')}
+                  className="small-select"
                 >
                   <Option value="INC">
                     <McsIcons type="check" />
@@ -176,17 +180,17 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
                     Exclude
                   </Option>
                 </Select>
-                <div id="selectContainer" style={{width: '75%'}}>
+                <div id="selectContainer" className="wrapped-select">
                   <Select
                     mode="multiple"
-                    style={{ width: '100%' }}
                     value={value}
-                    placeholder="Enter a location (country, region or department)"
+                    placeholder={formatMessage(messages.contentSectionLocationInputPlaceholder)}
                     notFoundContent={fetching ? <Spin size="small" /> : null}
                     filterOption={false}
                     onSearch={this.fetchCountries}
                     onChange={this.handleChange}
                     getPopupContainer={this.attachToDOM('selectContainer')}
+                    className="big-select"
                   >
                     {listOfCountriesToDisplay.map((country: {id: number; name: string}) =>
                       <Option key={country.id}> {country.name}</Option>,
@@ -196,7 +200,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
               </InputGroup>
             </Col>
             <Col span={2} className="field-tooltip">
-              <Tooltip placement={'right'} title={'blabla'}>
+              <Tooltip placement="right" title={<FormattedMessage id="tooltip-location-message" defaultMessage="Lorem ipsum" />}>
                 <McsIcons type="info" />
               </Tooltip>
             </Col>
@@ -207,4 +211,4 @@ class LocationTargeting extends React.Component<LocationTargetingProps, Location
   }
 }
 
-export default LocationTargeting;
+export default injectIntl(LocationTargeting);

@@ -42,8 +42,8 @@ function getPublishers({ campaignId }) {
     .then(publisherTable => ({ publisherTable }));
 }
 
-function getLocations() {
-  return DisplayCampaignService.getLocations();
+function getLocations({ campaignId, adGroupId }) {
+  return DisplayCampaignService.getLocations({ campaignId, adGroupId });
 }
 
 function getSegments({ adGroupId, campaignId, organisationId }) {
@@ -76,7 +76,7 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
     getPublishers({ campaignId }),
     getSegments({ adGroupId, campaignId, organisationId }),
     getAds({ campaignId, adGroupId, organisationId }),
-    getLocations(),
+    // getLocations({ campaignId, adGroupId }),
   ])
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
@@ -104,6 +104,7 @@ const saveTableFields = (options, formValues, formInitialValues) => {
 
   return formValues.reduce((promise, row) => {
     const body = getBody(row);
+    // const body = { id: '564864', country: 'fake geoname test' };
     const { include, modelId, toBeRemoved } = row;
     const isCreation = isFakeId(modelId);
 
@@ -179,18 +180,7 @@ const saveLocations = (campaignId, adGroupId, formValue, initialFormValue) => {
   const options = {
     campaignId,
     adGroupId,
-    getBody: () => ({
-      id: '2',
-      type: 'POSTAL_CODE',
-      exclude: false,
-      geoname_id: 54458,
-      country: 'Randon Geoname',
-      admin_1: '00',
-      admin_2: null,
-      city: 'randon city',
-      postal_code: null,
-    }),
-    // getBody: (row) => ({ display_network_access_id: row.id }),
+    getBody: (row) => ({ location_id: row.id }),
     requests: {
       create: DisplayCampaignService.createLocation,
       delete: DisplayCampaignService.deleteLocation,
@@ -199,7 +189,6 @@ const saveLocations = (campaignId, adGroupId, formValue, initialFormValue) => {
   };
 
   return saveTableFields(options, formValue, initialFormValue);
-  // return Promise.resolve();
 };
 
 const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
@@ -218,8 +207,6 @@ const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
 };
 
 const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = false) => {
-
-  console.log(adGroupData);
 
   const publisherTable = adGroupData && adGroupData.publisherTable ? adGroupData.publisherTable : [];
   const audienceTable = adGroupData && adGroupData.audienceTable ? adGroupData.audienceTable : [];

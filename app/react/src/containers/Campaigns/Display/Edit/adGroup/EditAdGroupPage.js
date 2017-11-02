@@ -33,7 +33,6 @@ class EditAdGroupPage extends Component {
         loading: false,
       });
     }).catch((err) => {
-      console.log('coucou', err);
       this.setState({
         loading: false,
       });

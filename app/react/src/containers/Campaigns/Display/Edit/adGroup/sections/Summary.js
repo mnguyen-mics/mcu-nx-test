@@ -115,9 +115,9 @@ function Summary({ displayAudience, formatMessage, formValues }) {
           </Section>}
 
           <Section>
-            {formatMessage(messages.contentSection8PartIncludedLocations)}
+            {formatMessage(messages.contentSectionIncludedLocations)}
             <P blue>{includedLocations}</P>
-            {formatMessage(messages.contentSection8PartExcludedLocations)}
+            {formatMessage(messages.contentSectionExcludedLocations)}
             <P blue>{excludedLocations}</P>
           </Section>
 

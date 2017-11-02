@@ -378,11 +378,15 @@ export default defineMessages({
 
   contentSectionLocationPart2Row1Label: {
     id: 'adGroupEditor.section.location.part2.row1.label',
-    defaultMessage: 'Location',
+    defaultMessage: 'Location : ',
   },
   contentSectionLocationPart2Row1Tooltip: {
     id: 'adGroupEditor.section.location.part2.row1.tooltip',
     defaultMessage: 'Lorem ipsum',
+  },
+  contentSectionLocationInputPlaceholder: {
+    id: 'adGroupEditor.section.location.inputPlaceholder',
+    defaultMessage: 'Enter a location (country, region or department)',
   },
 
   /* ----------------------------- SECTION MEDIA ---------------------------- */
@@ -516,12 +520,12 @@ export default defineMessages({
     id: 'adGroupEditor.section.summary.part5',
     defaultMessage: 'Your ad will target the following areas:',
   },
-  contentSection8PartIncludedLocations: {
-    id: 'adGroupEditor.section8.PartIncludedLocations',
+  contentSectionIncludedLocations: {
+    id: 'adGroupEditor.PartIncludedLocations',
     defaultMessage: 'Your ad will target the following locations:',
   },
-  contentSection8PartExcludedLocations: {
-    id: 'adGroupEditor.section8.PartExcludedLocations',
+  contentSectionExcludedLocations: {
+    id: 'adGroupEditor.PartExcludedLocations',
     defaultMessage: 'And exclude the following ones:',
   },
   contentSection8Part6: {
