@@ -2,7 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const viewportDrawerRatio = 0.75;
+const viewportDrawerRatio = {
+  large: 0.85,
+  small: 0.4,
+};
 
 class DrawerManager extends Component {
 
@@ -11,12 +14,18 @@ class DrawerManager extends Component {
 
     this.state = {
       viewportWidth: window.innerWidth,
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio,
+      // drawerMaxWidth: window.innerWidth * viewportDrawerRatio.length,
+      drawerMaxWidth: undefined,
     };
+
+    // this.state = {
+    //   viewportWidth: window.innerWidth,
+    //   drawerMaxWidth: window.innerWidth * viewportDrawerRatio.large,
+    // };
   }
 
   componentDidMount() {
-    this.updateDimensions();
+    // this.updateDimensions(); // remove???
     window.addEventListener('resize', this.updateDimensions.bind(this));
   }
 
@@ -27,14 +36,22 @@ class DrawerManager extends Component {
     // }
   }
 
+  componentWillReceiveProps(nextProps) {
+    const prevSize = this.getDrawerSize(this.props.drawableContents);
+    const nextSize = this.getDrawerSize(nextProps.drawableContents);
+
+    if (prevSize !== nextSize) {
+      console.log('difference, prevSize = ', prevSize, ' / nextSize = ', nextSize);
+      this.updateDimensions(nextSize);
+    }
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  handleOnKeyDown = (event) => {
-    if (event.key === 'Escape') {
-      this.props.onEscapeKeyDown();
-    }
+  getDrawerSize = (drawableContents) => {
+    return drawableContents && drawableContents.length ? drawableContents[drawableContents.length - 1].size : 'large';
   }
 
   getDrawerStyle(xPos) {
@@ -44,10 +61,18 @@ class DrawerManager extends Component {
     };
   }
 
-  updateDimensions() {
+  handleOnKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      this.props.onEscapeKeyDown();
+    }
+  }
+
+  updateDimensions(size) {
+    const nextSize = size || this.getDrawerSize(this.props.drawableContents);
+
     this.setState({
       viewportWidth: window.innerWidth,
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio,
+      drawerMaxWidth: window.innerWidth * viewportDrawerRatio[nextSize],
     });
   }
 
@@ -123,6 +148,7 @@ DrawerManager.propTypes = {
       closeNextDrawer: PropTypes.func,
     }),
   ),
+
   onEscapeKeyDown: PropTypes.func.isRequired,
   onClickOnBackground: PropTypes.func.isRequired,
 };

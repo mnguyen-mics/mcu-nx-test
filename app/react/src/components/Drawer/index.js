@@ -6,7 +6,7 @@ import DrawerManager from './DrawerManager';
 
 const DEFAULT_DRAWER_OPTIONS = {
   additionalProps: {},
-  size: 'large', // or 'small'
+  // size: 'large', // or 'small'
   isModal: false,
 };
 
@@ -29,12 +29,23 @@ const withDrawer = WrappedComponent => {
     }
 
     handleOpenNewDrawer = (component, options = DEFAULT_DRAWER_OPTIONS) => {
+      const {
+        additionalProps: {
+          size,
+          ...additionalProps,
+        },
+        ...otherOptions
+      } = options;
+
       const extendedOptions = {
         ...DEFAULT_DRAWER_OPTIONS,
-        ...options,
+        ...otherOptions,
+        additionalProps,
+        size: size || 'large',
         openNextDrawer: this.handleOpenNewDrawer,
         closeNextDrawer: this.closeForegroundDrawer,
       };
+      console.log('extendedOptions = ', extendedOptions);
 
       this.setState({
         drawableContents: [

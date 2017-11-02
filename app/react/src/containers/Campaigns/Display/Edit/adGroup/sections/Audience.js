@@ -55,8 +55,9 @@ class Audience extends Component {
         render: text => <span>{formatMetric(text, '0,0')}</span>,
       },
     ];
-
+    console.log('iciiiiiiiiiiiiiiii');
     const additionalProps = {
+      size: 'small',
       actionBarTitle: 'Add an Audience',
       close: handlers.closeNextDrawer,
       columnsDefinitions,
