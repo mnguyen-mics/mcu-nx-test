@@ -26,7 +26,7 @@ class ListCreativesDisplay extends Component {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/${organisationId}/creatives/display-ad/default-editor/create`}>
+        <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
           </Button>

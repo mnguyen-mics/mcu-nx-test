@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, Link } from 'react-router-dom';
-import { Layout, Button } from 'antd';
+import { Layout, Button, Modal } from 'antd';
 
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import EmailCampaignHeader from './EmailCampaignHeader';
@@ -133,6 +133,43 @@ class EmailCampaign extends Component {
     }).catch(error => notifyError(error, { intlMessage: messages.blastStatusUpdateFailure }));
   }
 
+  archiveBlast = (blast) => {
+    const {
+      match: {
+        params: {
+          campaignId
+        }
+      },
+      location: {
+        search
+      },
+      intl: {
+        formatMessage
+      },
+      fetchAllEmailBlast,
+      fetchAllEmailBlastPerformance,
+      notifyError,
+    } = this.props;
+    const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+    Modal.confirm({
+      title: formatMessage(messages.blastArchiveTitle),
+      content: formatMessage(messages.blastArchivetext),
+      iconType: 'exclamation-circle',
+      okText: formatMessage(messages.blastArchiveOk),
+      cancelText: formatMessage(messages.blastArchiveCancel),
+      onOk() {
+        return EmailCampaignService.deleteBlast(campaignId, blast.id).then(() => {
+          fetchAllEmailBlast(campaignId);
+          fetchAllEmailBlastPerformance(campaignId, filter);
+        }).catch(err => {
+          notifyError(err);
+        });
+      },
+      onCancel() {},
+    });
+
+  }
+
   componentWillUnmount() {
     this.props.resetEmailCampaign();
   }
@@ -172,7 +209,7 @@ class EmailCampaign extends Component {
             <EmailCampaignHeader />
             <EmailCampaignDashboard />
             <Card title={formatMessage(messages.emailBlast)} buttons={buttons}>
-              <BlastTable updateBlastStatus={this.updateBlastStatus} />
+              <BlastTable updateBlastStatus={this.updateBlastStatus} archiveBlast={this.archiveBlast} />
             </Card>
           </Content>
         </div>

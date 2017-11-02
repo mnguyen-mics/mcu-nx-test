@@ -84,6 +84,7 @@ class BlastTable extends Component {
     );
   }
 
+
   render() {
 
     const {
@@ -165,7 +166,7 @@ class BlastTable extends Component {
             callback: this.editBlast,
           }, {
             translationKey: 'ARCHIVE',
-            callback: this.archiveBlast,
+            callback: this.props.archiveBlast,
           },
         ],
       },
@@ -195,6 +196,7 @@ BlastTable.propTypes = {
   isFetchingBlastsStat: PropTypes.bool.isRequired,
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
   updateBlastStatus: PropTypes.func.isRequired,
+  archiveBlast: PropTypes.func.isRequired,
 };
 
 export default compose(

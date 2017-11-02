@@ -19,7 +19,9 @@ import {
     EMAIL_CAMPAIGN_DELIVERY_REPORT_FETCH,
     EMAIL_CAMPAIGN_ARCHIVE,
     EMAIL_CAMPAIGN_UPDATE,
-    EMAIL_CAMPAIGN_LOAD_ALL
+    EMAIL_CAMPAIGN_LOAD_ALL,
+    EMAIL_BLAST_FETCH_ALL,
+    EMAIL_BLAST_FETCH_PERFORMANCE,
 } from '../../action-types';
 
 function* loadEmailCampaign({ payload }) {
@@ -98,7 +100,7 @@ function* loadAllEmailBlast({ payload }) {
   }
 }
 
-function* loadAllEmailBlastPErformance({ payload }) {
+function* loadAllEmailBlastPerformance({ payload }) {
   try {
 
     const {
@@ -147,11 +149,11 @@ function* watchLoadCampaignAndPerformance() {
 }
 
 function* watchLoadBlast() {
-  yield* takeLatest(EMAIL_CAMPAIGN_LOAD_ALL, loadAllEmailBlast);
+  yield* takeLatest([EMAIL_CAMPAIGN_LOAD_ALL, EMAIL_BLAST_FETCH_ALL.REQUEST], loadAllEmailBlast);
 }
 
 function* watchLoadBlastPerformance() {
-  yield* takeLatest(EMAIL_CAMPAIGN_LOAD_ALL, loadAllEmailBlastPErformance);
+  yield* takeLatest([EMAIL_CAMPAIGN_LOAD_ALL, EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST], loadAllEmailBlastPerformance);
 }
 
 export const emailCampaignSagas = [
