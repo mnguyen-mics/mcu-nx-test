@@ -51,8 +51,8 @@ const ranges: Range[] = [
   },
   {
     name: 'LAST_30_DAYS',
-    from: moment.unix(numberOfSecondsInOneDay - (30 * numberOfSecondsInOneDay)),
-    to: moment.unix(numberOfSecondsInOneDay + numberOfSecondsInOneDay),
+    from: moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay)),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
   },
 ];
 
