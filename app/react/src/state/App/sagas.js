@@ -11,7 +11,7 @@ import {
 } from '../action-types';
 
 function* watchInitializationSuccess() {
-  if (AuthService.getRefreshToken() || AuthService.isAuthenticated()) {
+  if (AuthService.isAuthenticated()) {
     yield all([
       take(LOAD_TRANSLATIONS.SUCCESS),
       take([CONNECTED_USER.SUCCESS, LOG_IN.FAILURE, CONNECTED_USER.FAILURE]),

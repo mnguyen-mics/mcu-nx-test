@@ -18,14 +18,19 @@ import { getConnectedUser } from '../Session/actions';
 
 function* authorize(credentialsOrRefreshToken) {
   const response = yield call(AuthService.createAccessToken, credentialsOrRefreshToken);
-  const { accessToken, expireIn, refreshToken } = response;
+  const { accessToken, expiresIn, refreshToken } = response;
   yield call(AuthService.setAccessToken, accessToken);
-  yield call(AuthService.setAccessTokenExpirationDate, expireIn);
-
+  yield call(AuthService.setAccessTokenExpirationDate, expiresIn);
     // Update refresh token if API sent a new one
   if (refreshToken) {
     log.debug(`Store refresh token ${refreshToken}`);
     yield call(AuthService.setRefreshToken, refreshToken);
+    const remember = yield call(AuthService.getRememberMe);
+    if (remember) {
+      yield call(AuthService.setRefreshTokenExpirationDate);
+    } else {
+      yield call(AuthService.setRefreshTokenExpirationDate, expiresIn);
+    }
   }
 
   yield put(logIn.success(accessToken));
@@ -34,25 +39,31 @@ function* authorize(credentialsOrRefreshToken) {
 
 function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false, remember = false) {
   try {
-    log.debug('Authorize user with credentialsOrRefreshToken');
+    log.debug('Authorize user with credentialsOrRefreshToken', credentialsOrRefreshToken);
 
     let refreshToken = false;
     let expiresIn = null;
+
     if (useStoredAccessToken) {
+      // already has an access token
       const expirationDate = yield call(AuthService.getAccessTokenExpirationDate);
       expiresIn = expirationDate.diff(moment(), 'seconds');
-      refreshToken = yield call(AuthService.getRefreshToken);
+      refreshToken = yield call(AuthService.getRefreshToken) ? yield call(AuthService.getRefreshToken) : yield call(AuthService.createRefreshToken, credentialsOrRefreshToken);
     } else if (remember) {
+      // has just signed up with remember me
       refreshToken = yield call(AuthService.createRefreshToken, credentialsOrRefreshToken);
       const result = yield call(authorize, { refreshToken });
       refreshToken = result.refreshToken;
       expiresIn = result.expiresIn;
     } else {
-      const result = yield call(authorize, credentialsOrRefreshToken);
+      // has just signed up with no remember me
+      if (!remember && !refreshToken) {
+        refreshToken = yield call(AuthService.createRefreshToken, credentialsOrRefreshToken);
+      }
+      const result = yield call(authorize, { refreshToken });
       refreshToken = result.refreshToken;
       expiresIn = result.expiresIn;
     }
-
     const connectedUser = yield call(AuthService.getConnectedUser);
     yield put(getConnectedUser.success(connectedUser));
 
@@ -60,10 +71,7 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
     window.organisationId = connectedUser.workspaces[connectedUser.default_workspace].organisation_id; // eslint-disable-line no-undef
 
     if (!refreshToken) {
-    // Wait till access token expire
-      const waitInMs = expiresIn * 1000;
-      log.debug(`Will LOG_OUT in ${waitInMs} ms`);
-      yield call(delay, waitInMs);
+      // No refresh token means we log out
       yield put(LOG_OUT);
     } else {
       while (true) {
@@ -71,9 +79,10 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
         const waitInMs = (expiresIn * 1000) - (60 * 1000);
         log.debug(`Will refresh access token in ${waitInMs} ms`);
         yield call(delay, waitInMs);
-        const storedRefreshToken = yield call(AuthService.getRefreshToken);
+        const storedRefreshToken = refreshToken ? refreshToken : yield call(AuthService.getRefreshToken);
         log.debug(`Authorize user with refresh token ${storedRefreshToken}`);
-        yield call(authorize, { refreshToken: storedRefreshToken });
+        const results = yield call(authorize, { refreshToken: storedRefreshToken });
+        expiresIn = results.expiresIn;
       }
     }
   } catch (e) {
@@ -85,19 +94,31 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
 
 function* authentication() {
   while (true) {
-    const storedRefreshToken = yield call(AuthService.getRefreshToken);
+    let storedRefreshToken;
+
+    const storedRefreshTokenExpirationDate = yield call(AuthService.getRefreshTokenExpirationDate);
+    if (storedRefreshTokenExpirationDate.diff(moment(), 'seconds') > 0) {
+      storedRefreshToken = yield call(AuthService.getRefreshToken);
+    }
+
     const isAuthenticated = yield call(AuthService.isAuthenticated);
 
     let credentialsOrRefreshToken = null;
     let remember = false;
 
     // TODO check non expired storedRefreshToken
+    // Is not logged in and has no refresh token
     if (!storedRefreshToken && !isAuthenticated) {
-
       // Wait for LOG_IN.REQUEST
-      const { payload } = yield take(LOG_IN.REQUEST);
 
+      const { payload } = yield take(LOG_IN.REQUEST);
       if (payload.remember) {
+        remember = true;
+        yield call(AuthService.setRememberMe, { rememberMe: true });
+      }
+
+      const rememberMe = yield call(AuthService.getRememberMe);
+      if (rememberMe) {
         remember = true;
       }
 
@@ -105,7 +126,8 @@ function* authentication() {
         email: payload.email,
         password: payload.password,
       };
-    } else {
+
+    } else if (storedRefreshToken) {
       credentialsOrRefreshToken = {
         refreshToken: storedRefreshToken,
       };

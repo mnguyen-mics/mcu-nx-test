@@ -8,6 +8,8 @@ import log from '../utils/Logger';
 const ACCESS_TOKEN = 'access_token';
 const ACCESS_TOKEN_EXPIRATION_DATE = 'access_token_expiration_date';
 const REFRESH_TOKEN = 'refresh_token';
+const REFRESH_TOKEN_EXPIRATION_DATE = 'refresh_token_expiration_date';
+const REMEMBER_ME = 'remember_me';
 
 const getAccessToken = () => {
   return LocalStorage.getItem(ACCESS_TOKEN);
@@ -19,16 +21,22 @@ const getAccessTokenExpirationDate = () => {
   return moment(0);
 };
 
+const getRefreshTokenExpirationDate = () => {
+  const timestamp = LocalStorage.getItem(REFRESH_TOKEN_EXPIRATION_DATE);
+  if (timestamp) return moment(timestamp, 'x');
+  return moment(0);
+};
+
 const isAuthenticated = () => {
   const accessToken = getAccessToken();
-  const expirationDate = getAccessTokenExpirationDate();
+  const refreshTokenExpirationDate = getRefreshTokenExpirationDate();
   const isAccessTokenNull = accessToken == null;
-  const isAccessTokenExpired = moment().isAfter(expirationDate);
+  const isRefreshTokenExpired = moment().isAfter(refreshTokenExpirationDate);
   if (isAccessTokenNull) {
     log.debug('Access token not found');
     return false;
-  } else if (isAccessTokenExpired) {
-    log.debug('Access token expired');
+  } else if (isRefreshTokenExpired) {
+    log.debug('refresh token expired');
     return false;
   }
   return true;
@@ -37,6 +45,11 @@ const isAuthenticated = () => {
 const getRefreshToken = () => {
   return LocalStorage.getItem(REFRESH_TOKEN);
 };
+
+const getRememberMe = () => {
+  return LocalStorage.getItem(REMEMBER_ME);
+};
+
 
 const setAccessToken = (token) => {
   LocalStorage.setItem({
@@ -58,10 +71,26 @@ const setRefreshToken = (refreshToken) => {
   });
 };
 
+const setRememberMe = ({ rememberMe }) => {
+  LocalStorage.setItem({
+    [REMEMBER_ME]: rememberMe,
+  });
+};
+
+const setRefreshTokenExpirationDate = (expireIn) => {
+  let expirationDate = moment().add(7, 'days');
+  if (expireIn) expirationDate = moment().add(expireIn, 'seconds');
+  LocalStorage.setItem({
+    [REFRESH_TOKEN_EXPIRATION_DATE]: expirationDate.format('x'),
+  });
+};
+
 const deleteCredentials = () => {
   LocalStorage.removeItem(ACCESS_TOKEN);
   LocalStorage.removeItem(ACCESS_TOKEN_EXPIRATION_DATE);
   LocalStorage.removeItem(REFRESH_TOKEN);
+  LocalStorage.removeItem(REFRESH_TOKEN_EXPIRATION_DATE);
+  LocalStorage.removeItem(REMEMBER_ME);
 };
 
 const createAccessToken = (credentialsOrRefreshToken) => {
@@ -109,6 +138,7 @@ const createRefreshToken = (credentials) => {
   });
 };
 
+
 const getConnectedUser = () => {
   const endpoint = 'connected_user';
 
@@ -130,11 +160,15 @@ export default {
   getAccessTokenExpirationDate,
   isAuthenticated,
   getRefreshToken,
+  getRefreshTokenExpirationDate,
   setAccessToken,
   setAccessTokenExpirationDate,
   setRefreshToken,
+  setRefreshTokenExpirationDate,
   createAccessToken,
   createRefreshToken,
+  getRememberMe,
+  setRememberMe,
   getConnectedUser,
   deleteCredentials,
   sendPassword,
