@@ -1,9 +1,13 @@
 import * as React from 'react';
 
-const Error: React.SFC = () => {
+interface ErrorProps {
+  message: string;
+}
+
+const Error: React.SFC<ErrorProps> = ({ message }) => {
   return (
-    <div className="mcs-centered-container">
-      Oops, please try to reload the page or contact support
+    <div className="mcs-centered-container page-error">
+      <p>{message}</p>
     </div>
   );
 };
