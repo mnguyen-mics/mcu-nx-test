@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'antd';
+import McsIcons from '../McsIcons';
 
 export interface EmptyRecordsProps {
   iconType: string;
@@ -10,7 +10,7 @@ export interface EmptyRecordsProps {
 const EmptyRecords: React.SFC<EmptyRecordsProps> = props => {
   return (
     <div className={`empty-related-records ${props.className}`}>
-      <Icon type={props.iconType} />
+      <McsIcons type={props.iconType} />
       {props.message}
     </div>
   );

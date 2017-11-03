@@ -145,7 +145,7 @@ class Audience extends Component {
 
         {!dataSource.length
           ? <EmptyRecords
-            iconType="plus"
+            iconType="users"
             message={formatMessage(messages.contentSectionAudienceEmptyTitle)}
           />
           : null

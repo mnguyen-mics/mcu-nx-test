@@ -86,7 +86,7 @@ class Ads extends Component {
           {!formValues.filter(ad => !ad.toBeRemoved).length
             && (
               <EmptyRecords
-                iconType="plus"
+                iconType="ads"
                 message={formatMessage(messages.contentSectionAdEmptyTitle)}
               />
             )
