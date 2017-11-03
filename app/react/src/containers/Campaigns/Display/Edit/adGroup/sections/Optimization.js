@@ -119,7 +119,7 @@ class Optimization extends Component {
 
         {!dataSource.length
           ? <EmptyRecords
-            iconType="plus"
+            iconType="optimization"
             message={formatMessage(messages.contentSectionOptimizerEmptyTitle)}
           />
           : null

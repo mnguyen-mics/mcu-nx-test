@@ -70,6 +70,7 @@ class General extends Component {
                   required: true,
                 },
                 inputProps: {
+                  suffix: (<span>€</span>),
                   addonAfter: (
                     <Field
                       name="adGroupMaxBudgetPeriod"
@@ -105,6 +106,7 @@ class General extends Component {
                   required: true,
                 },
                 inputProps: {
+                  suffix: (<span>€</span>),
                   placeholder: formatMessage(messages.contentSectionGeneralRow3Placeholder),
                 },
                 helpToolTipProps: {
@@ -163,6 +165,7 @@ class General extends Component {
                   required: true,
                 },
                 inputProps: {
+                  suffix: (<span>€</span>),
                   placeholder: formatMessage(messages.contentSectionGeneralRow5Placeholder),
                 },
                 helpToolTipProps: {
