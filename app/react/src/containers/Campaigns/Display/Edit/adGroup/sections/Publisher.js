@@ -105,7 +105,7 @@ class Publisher extends Component {
 
         {!dataSource.length
           ? <EmptyRecords
-            iconType="plus"
+            iconType="display"
             message={formatMessage(messages.contentSectionPublisherEmptyTitle)}
           />
           : null
