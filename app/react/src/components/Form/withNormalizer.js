@@ -1,31 +1,24 @@
 import { compose, withProps } from 'recompose';
 
-import { formatMetric } from '../../utils/MetricHelper';
-
-function formatToNumber(value) {
-  return (value ? formatMetric(value) : 0);
-}
-
-function isNotTooLongNumber(value, prevValue) {
-  // const formattedValue = value.replace(/,/g, '');
-  return (!value || (value && value.length < 16)
+function normalizeFloat(value, prevValue) {
+  return (!value || (value && value.length < 16 && /^[0-9]+(\.([0-9]{1,2})?)?$/i.test(value))
     ? value
     : prevValue
   );
 }
 
-// function normalizeNumber(value, prevValue) {
-//   const number = isNumber(value, prevValue);
-//   return (number === prevValue ? number : formatToNumber(number));
-// }
+function normalizeInteger(value, prevValue) {
+  return (!value || (value && value.length < 16 && /^\d+$/.test(value))
+    ? value
+    : prevValue
+  );
+}
 
 export default compose(
   withProps(() => ({
     fieldNormalizer: {
-      formatToNumber,
-      isNotTooLongNumber,
-      // isNumber,
-      // normalizeNumber,
+      normalizeFloat,
+      normalizeInteger,
     },
   })),
 );

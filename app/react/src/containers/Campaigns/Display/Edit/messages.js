@@ -260,7 +260,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow6Tooltip: {
     id: 'adGroupEditor.section.general.row6.tooltip',
-    defaultMessage: 'Lorem ipsum',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
   },
 
   /* Row 7 */
@@ -274,7 +274,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow7Tooltip: {
     id: 'adGroupEditor.section.general.row7.tooltip',
-    defaultMessage: 'Lorem ipsum',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
   },
 
   /* Advanced part */

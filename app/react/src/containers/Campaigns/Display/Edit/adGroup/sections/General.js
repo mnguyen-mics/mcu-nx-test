@@ -24,8 +24,8 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { isNotTooLongNumber },
-      fieldValidators: { isRequired, isNotZero, isValidNumber },
+      fieldNormalizer: { normalizeFloat, normalizeInteger },
+      fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       formatMessage,
       formValues,
     } = this.props;
@@ -62,8 +62,8 @@ class General extends Component {
             <Field
               name="adGroupMaxBudgetPerPeriod"
               component={FormInput}
-              normalize={isNotTooLongNumber}
-              validate={[isRequired, isValidNumber, isNotZero]}
+              normalize={normalizeFloat}
+              validate={[isRequired, isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow2Label),
@@ -97,8 +97,8 @@ class General extends Component {
             <Field
               name="adGroupTotalBudget"
               component={FormInput}
-              normalize={isNotTooLongNumber}
-              validate={[isRequired, isValidNumber, isNotZero]}
+              normalize={normalizeFloat}
+              validate={[isRequired, isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow3Label),
@@ -155,8 +155,8 @@ class General extends Component {
             <Field
               name="adGroupMaxBidPrice"
               component={FormInput}
-              normalize={isNotTooLongNumber}
-              validate={[isRequired, isValidNumber, isNotZero]}
+              normalize={normalizeFloat}
+              validate={[isRequired, isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow5Label),
@@ -167,48 +167,6 @@ class General extends Component {
                 },
                 helpToolTipProps: {
                   title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
-                },
-              }}
-            />
-          </Row>
-
-          <Row>
-            <Field
-              name="adGroupTotalImpressionCapping"
-              component={FormInput}
-              normalize={isNotTooLongNumber}
-              validate={[isRequired, isValidNumber, isNotZero]}
-              props={{
-                formItemProps: {
-                  label: formatMessage(messages.contentSectionGeneralRow6Label),
-                  required: true,
-                },
-                inputProps: {
-                  placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
-                },
-                helpToolTipProps: {
-                  title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
-                },
-              }}
-            />
-          </Row>
-
-          <Row>
-            <Field
-              name="adGroupPerDayImpressionCapping"
-              component={FormInput}
-              normalize={isNotTooLongNumber}
-              validate={[isRequired, isValidNumber, isNotZero]}
-              props={{
-                formItemProps: {
-                  label: formatMessage(messages.contentSectionGeneralRow7Label),
-                  required: true,
-                },
-                inputProps: {
-                  placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
-                },
-                helpToolTipProps: {
-                  title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
                 },
               }}
             />
@@ -226,7 +184,7 @@ class General extends Component {
               <McsIcons type="chevron" />
             </ButtonStyleless>
 
-            <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
+            <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : 'optional-section-content'}>
               <Field
                 name="adGroupTechnicalName"
                 component={FormInput}
@@ -239,6 +197,42 @@ class General extends Component {
                   },
                   helpToolTipProps: {
                     title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
+                  },
+                }}
+              />
+
+              <Field
+                name="adGroupTotalImpressionCapping"
+                component={FormInput}
+                normalize={normalizeInteger}
+                validate={[isValidInteger]}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionGeneralRow6Label),
+                  },
+                  inputProps: {
+                    placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
+                  },
+                }}
+              />
+
+              <Field
+                name="adGroupPerDayImpressionCapping"
+                component={FormInput}
+                normalize={normalizeInteger}
+                validate={[isValidInteger]}
+                props={{
+                  formItemProps: {
+                    label: formatMessage(messages.contentSectionGeneralRow7Label),
+                  },
+                  inputProps: {
+                    placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
+                  },
+                  helpToolTipProps: {
+                    title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
                   },
                 }}
               />
@@ -255,7 +249,10 @@ General.defaultProps = {
 };
 
 General.propTypes = {
-  fieldNormalizer: PropTypes.shape().isRequired,
+  fieldNormalizer: PropTypes.shape({
+    normalizeFloat: PropTypes.func.isRequired,
+    normalizeInteger: PropTypes.func.isRequired,
+  }).isRequired,
 
   fieldValidators: PropTypes.shape({
     isNotZero: PropTypes.func.isRequired,

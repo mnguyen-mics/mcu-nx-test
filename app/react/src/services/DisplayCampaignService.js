@@ -13,6 +13,11 @@ function getCampaignName(campaignId) {
   return getCampaignDisplay(campaignId).then(res => res.data.name);
 }
 
+function createCampaign(organisationId, body) {
+  const endpoint = `display_campaigns/?organisation_id=${organisationId}`;
+  return ApiService.postRequest(endpoint, body);
+}
+
 function updateCampaign(campaignId, body) {
   const endpoint = `display_campaigns/${campaignId}`;
   return ApiService.putRequest(endpoint, body);
@@ -163,11 +168,7 @@ function deleteAd({ campaignId, adGroupId, id }) {
   return ApiService.deleteRequest(endpoint);
 }
 
-function createCampaign(organisationId, body) {
-  const endpoint = `display_campaigns/?organisation_id=${organisationId}`;
-  return ApiService.postRequest(endpoint, body);
-}
-
+/* GOAL SERVICES */
 function getGoal({ campaignId, options = {} }) {
   const endpoint = `campaigns/${campaignId}/goal_selections`;
   return ApiService.getRequest(endpoint, options);

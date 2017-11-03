@@ -46,6 +46,7 @@ const setAccessToken = (token) => {
 
 const setAccessTokenExpirationDate = (expireIn) => {
   let expirationDate = moment().add(1, 'hours');
+  // let expirationDate = moment().add(2, 'seconds');
   if (expireIn) expirationDate = moment().add(expireIn, 'seconds');
   LocalStorage.setItem({
     [ACCESS_TOKEN_EXPIRATION_DATE]: expirationDate.format('x'),

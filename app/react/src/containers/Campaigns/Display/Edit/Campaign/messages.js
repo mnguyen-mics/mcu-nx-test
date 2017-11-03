@@ -69,38 +69,66 @@ export default defineMessages({
   */
 
   /* Row 1 */
-  contentSection1Row1Label: {
-    id: 'campaignEditor.section1.row1.label',
+  contentSectionGeneralRow1Label: {
+    id: 'campaignEditor.section.general.row1.label',
     defaultMessage: 'Campaign Name',
   },
-  contentSection1Row1Placeholder: {
-    id: 'campaignEditor.section1.row1.placeholder',
+  contentSectionGeneralRow1Placeholder: {
+    id: 'campaignEditor.section.general.row1.placeholder',
     defaultMessage: 'Campaign Name',
   },
-  contentSection1Row1Tooltip: {
-    id: 'campaignEditor.section1.row1.tooltip',
+  contentSectionGeneralRow1Tooltip: {
+    id: 'campaignEditor.section.general.row1.tooltip',
     defaultMessage: 'The campaign\'s name will help you identify it on the different screens. Make it as memorable as you want your results to be!',
   },
 
    /* Advanced part */
 
-  contentSection1AdvancedPartTitle: {
-    id: 'campaignEditor.section1.advancedPart.title',
+  contentSectionGeneralAdvancedPartTitle: {
+    id: 'campaignEditor.section.general.advancedPart.title',
     defaultMessage: 'Advanced',
   },
 
   /* Row 2 */
-  contentSection1Row5Label: {
-    id: 'campaignEditor.section1.row5.label',
+  contentSectionGeneralAdvancedPartRow1Label: {
+    id: 'campaignEditor.section1.advancedPart.row1.label',
     defaultMessage: 'Technical Name',
   },
-  contentSection1Row5Placeholder: {
-    id: 'campaignEditor.section1.row5.placeholder',
+  contentSectionGeneralAdvancedPartRow1Placeholder: {
+    id: 'campaignEditor.section1.advancedPart.row1.placeholder',
     defaultMessage: 'Technical Name',
   },
-  contentSection1Row5Tooltip: {
-    id: 'campaignEditor.section1.row5.tooltip',
+  contentSectionGeneralAdvancedPartRow1Tooltip: {
+    id: 'campaignEditor.section1.advancedPart.row1.tooltip',
     defaultMessage: 'Use the Technical Name for custom integration with other DSPs',
+  },
+
+  /* Row 3 */
+  contentSectionGeneralAdvancedPartRow2Label: {
+    id: 'campaignEditor.section1.advancedPart.row2.label',
+    defaultMessage: 'Total Impression Capping',
+  },
+  contentSectionGeneralAdvancedPartRow2Placeholder: {
+    id: 'campaignEditor.section1.advancedPart.row2.placeholder',
+    defaultMessage: '10',
+  },
+  contentSectionGeneralAdvancedPartRow2Tooltip: {
+    id: 'campaignEditor.section1.advancedPart.row2.tooltip',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
+  },
+
+  /* Row 4 */
+  contentSectionGeneralAdvancedPartRow3Label: {
+    id: 'campaignEditor.section1.advancedPart.row3.label',
+    defaultMessage: 'Daily Impression Capping',
+  },
+  contentSectionGeneralAdvancedPartRow3Placeholder: {
+    id: 'campaignEditor.section1.advancedPart.row3.placeholder',
+    defaultMessage: '1',
+  },
+  contentSectionGeneralAdvancedPartRow3Tooltip: {
+    id: 'campaignEditor.section1.advancedPart.row3.tooltip',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
   },
 
   /* ------------------------------- SECTION 2 ------------------------------ */
