@@ -16,7 +16,8 @@ class Attribution extends Component {
 
   render() {
     const {
-      fieldValidators: { isRequired, isValidNumber },
+      fieldNormalizer: { normalizeInteger },
+      fieldValidators: { isRequired, isValidInteger },
       formatMessage,
     } = this.props;
 
@@ -36,7 +37,8 @@ class Attribution extends Component {
           <Field
             name="attribution[0].post_click"
             component={FormInput}
-            validate={[isRequired, isValidNumber]}
+            normalize={normalizeInteger}
+            validate={[isRequired, isValidInteger]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSection2Row1Label),
@@ -57,7 +59,8 @@ class Attribution extends Component {
           <Field
             name="attribution[0].post_view"
             component={FormInput}
-            validate={[isRequired, isValidNumber]}
+            normalize={normalizeInteger}
+            validate={[isRequired, isValidInteger]}
             props={{
               formItemProps: {
                 label: formatMessage(messages.contentSection2Row2Label),
@@ -81,10 +84,13 @@ class Attribution extends Component {
 }
 
 Attribution.propTypes = {
+  fieldNormalizer: PropTypes.shape({
+    normalizeInteger: PropTypes.func.isRequired,
+  }).isRequired,
 
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,
-    isValidNumber: PropTypes.func.isRequired,
+    isValidInteger: PropTypes.func.isRequired,
   }).isRequired,
 
   formatMessage: PropTypes.func.isRequired,

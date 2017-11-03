@@ -12,7 +12,19 @@ const defaultErrorMessages = defineMessages({
   },
   invalidNumber: {
     id: 'common.form.field.error.invalid_number',
-    defaultMessage: 'Invalid Number'
+    defaultMessage: 'invalid number',
+  },
+  invalidUrl: {
+    id: 'common.form.field.error.invalid_url',
+    defaultMessage: 'invalid url',
+  },
+  invalidDomain: {
+    id: 'common.form.field.error.invalid_domain',
+    defaultMessage: 'invalid domain',
+  },
+  positiveNumber: {
+    id: 'common.form.field.error.positive_number',
+    defaultMessage: 'Number must be above 0',
   }
 });
 
@@ -24,20 +36,25 @@ const isRequired = formatMessage => value => {
 };
 
 const isNotZero = formatMessage => value => {
-  return (!value || value === '0'
-    ? formatMessage(defaultErrorMessages.required)
+  return (value && value === '0'
+    ? formatMessage(defaultErrorMessages.positiveNumber)
     : undefined
   );
-};
-
-const isValidNumber = formatMessage => value => {
-  return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
-    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 
 const isValidEmail = formatMessage => value => {
   return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
+};
+
+const isValidFloat = formatMessage => value => {
+  return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+};
+
+const isValidInteger = formatMessage => value => {
+  return value && !/^\d+$/.test(value) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 
 const withValidators = compose(
@@ -47,7 +64,8 @@ const withValidators = compose(
       isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),
-      isValidNumber: isValidNumber(formatMessage)
+      isValidFloat: isValidFloat(formatMessage),
+      isValidInteger: isValidInteger(formatMessage),
     },
   })),
 );

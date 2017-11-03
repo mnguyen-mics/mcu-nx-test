@@ -61,37 +61,37 @@ export default defineMessages({
   */
 
   /* Row 1 */
-  contentSection1Row1Label: {
-    id: 'goalSimpleEditor.section1.row1.label',
+  contentSectionGeneralRow1Label: {
+    id: 'goalSimpleEditor.section.general.row1.label',
     defaultMessage: 'Goal Name',
   },
-  contentSection1Row1Placeholder: {
-    id: 'goalSimpleEditor.section1.row1.placeholder',
+  contentSectionGeneralRow1Placeholder: {
+    id: 'goalSimpleEditor.section.general.row1.placeholder',
     defaultMessage: 'Goal Name',
   },
-  contentSection1Row1Tooltip: {
-    id: 'goalSimpleEditor.section1.row1.tooltip',
+  contentSectionGeneralRow1Tooltip: {
+    id: 'goalSimpleEditor.section.general.row1.tooltip',
     defaultMessage: 'The Goal\'s name will help you identify it on the different screens. Make it as memorable as you want your results to be!',
   },
 
    /* Advanced part */
 
-  contentSection1AdvancedPartTitle: {
-    id: 'goalSimpleEditor.section1.advancedPart.title',
+  contentSectionGeneralAdvancedPartTitle: {
+    id: 'goalSimpleEditor.section.general.advancedPart.title',
     defaultMessage: 'Advanced',
   },
 
   /* Row 2 */
-  contentSection1Row5Label: {
-    id: 'goalSimpleEditor.section1.row5.label',
+  contentSectionGeneralAdvancedPartRow1Label: {
+    id: 'goalSimpleEditor.section.general.advanced.row1.label',
     defaultMessage: 'Technical Name',
   },
-  contentSection1Row5Placeholder: {
-    id: 'goalSimpleEditor.section1.row5.placeholder',
+  contentSectionGeneralAdvancedPartRow1Placeholder: {
+    id: 'goalSimpleEditor.section.general.advanced.row1.placeholder',
     defaultMessage: 'Technical Name',
   },
-  contentSection1Row5Tooltip: {
-    id: 'goalSimpleEditor.section1.row5.tooltip',
+  contentSectionGeneralAdvancedPartRow1Tooltip: {
+    id: 'goalSimpleEditor.section.general.advanced.row1.tooltip',
     defaultMessage: 'Use the Technical Name for custom integration with other DSPs',
   },
 

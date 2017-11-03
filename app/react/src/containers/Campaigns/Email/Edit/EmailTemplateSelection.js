@@ -24,22 +24,18 @@ class EmailTemplateSelection extends Component {
   componentWillReceiveProps(nextProps) {
     const { input: { value } } = nextProps;
 
-    (value || []).forEach(emailTemplateSelection => (
-      this.loadEmailTemplateIfNeeded(emailTemplateSelection.id)
-    ));
+    (value || []).forEach(emailTemplateSelection => {
+      this.loadEmailTemplateIfNeeded(emailTemplateSelection.email_template_id);
+    });
   }
 
   getEmailTemplateRecords() {
-    const { input: { value } } = this.props;
-
-    return (value || []).map(emailTemplateSelection => {
-      const emailTemplate = this.state.emailTemplates
-        .find(t => t.id === emailTemplateSelection.id) || {};
+    return (this.state.emailTemplates || []).map(template => {
       return (
         <RecordElement
-          key={emailTemplateSelection.id}
+          key={template.id}
           recordIconType={'email'}
-          title={emailTemplate.name}
+          title={template.name}
         />
       );
     });
@@ -78,19 +74,18 @@ class EmailTemplateSelection extends Component {
     if (!templateId) {
       this.setState(() => ({ emailTemplate: [] }));
     } else {
-      const { emailTemplates } = this.state;
-      const found = emailTemplates.find(t => t.id === templateId);
 
-      if (!found) {
-        CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
-          this.setState(prevState => ({
+      CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
+        const { emailTemplates } = this.state;
+        const found = emailTemplates.find(t => t.id === templateId);
+        if (!found) {
+          this.setState(() => ({
             emailTemplates: [
-              ...prevState.emailTemplates,
               emailTemplate,
             ],
           }));
-        });
-      }
+        }
+      });
     }
   }
 
