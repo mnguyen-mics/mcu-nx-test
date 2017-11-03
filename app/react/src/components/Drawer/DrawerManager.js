@@ -13,20 +13,22 @@ class DrawerManager extends Component {
     super(props);
 
     this.state = {
+      drawerMaxWidth: window.innerWidth * viewportDrawerRatio.large,
       viewportWidth: window.innerWidth,
-      // drawerMaxWidth: window.innerWidth * viewportDrawerRatio.length,
-      drawerMaxWidth: undefined,
     };
-
-    // this.state = {
-    //   viewportWidth: window.innerWidth,
-    //   drawerMaxWidth: window.innerWidth * viewportDrawerRatio.large,
-    // };
   }
 
   componentDidMount() {
-    // this.updateDimensions(); // remove???
     window.addEventListener('resize', this.updateDimensions.bind(this));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const prevContents = this.props.drawableContents;
+    const nextContents = nextProps.drawableContents;
+
+    if (prevContents.length !== nextContents.length) {
+      this.updateDimensions(nextContents);
+    }
   }
 
   componentDidUpdate() {
@@ -36,29 +38,15 @@ class DrawerManager extends Component {
     // }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const prevSize = this.getDrawerSize(this.props.drawableContents);
-    const nextSize = this.getDrawerSize(nextProps.drawableContents);
-
-    if (prevSize !== nextSize) {
-      console.log('difference, prevSize = ', prevSize, ' / nextSize = ', nextSize);
-      this.updateDimensions(nextSize);
-    }
-  }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  getDrawerSize = (drawableContents) => {
-    return drawableContents && drawableContents.length ? drawableContents[drawableContents.length - 1].size : 'large';
-  }
-
-  getDrawerStyle(xPos) {
-    return {
-      transform: `translate(${xPos}px, 0px)`,
-      maxWidth: `${this.state.drawerMaxWidth}px`,
-    };
+  getForegroundContentSize = (drawableContents) => {
+    return (drawableContents && drawableContents.length
+      ? drawableContents[drawableContents.length - 1].size
+      : 'large'
+    );
   }
 
   handleOnKeyDown = (event) => {
@@ -67,23 +55,34 @@ class DrawerManager extends Component {
     }
   }
 
-  updateDimensions(size) {
-    const nextSize = size || this.getDrawerSize(this.props.drawableContents);
+  updateDimensions = (nextDrawableContents) => {
+    const drawableContents = (nextDrawableContents.length
+      ? nextDrawableContents
+      : this.props.drawableContents
+    );
+    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
     this.setState({
+      drawerMaxWidth: window.innerWidth * viewportDrawerRatio[foregroundContentSize],
       viewportWidth: window.innerWidth,
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio[nextSize],
     });
+  }
+
+  getDrawerStyle(xPos, size = 'large') {
+    return {
+      transform: `translate(${xPos}px, 0px)`,
+      maxWidth: `${window.innerWidth * viewportDrawerRatio[size]}px`,
+    };
   }
 
   render() {
     const { drawableContents, onClickOnBackground } = this.props;
+    const { drawerMaxWidth, viewportWidth } = this.state;
+    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
     const drawerStyles = {
-      ready: this.getDrawerStyle(this.state.viewportWidth),
-      foreground: this.getDrawerStyle(
-        this.state.viewportWidth - this.state.drawerMaxWidth,
-      ),
+      ready: this.getDrawerStyle(viewportWidth),
+      foreground: this.getDrawerStyle(viewportWidth - drawerMaxWidth, foregroundContentSize),
       background: this.getDrawerStyle(0),
     };
 
