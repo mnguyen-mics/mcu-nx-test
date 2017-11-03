@@ -10,6 +10,7 @@ import { TooltipProps } from 'antd/lib/tooltip';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormSection, SearchResultBox } from '../../../../../../components/Form';
 import GeonameService, { Geoname } from '../../../../../../services/GeonameService';
+import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -45,6 +46,8 @@ interface LocationTargetingState {
   fetching?: boolean;
   visible: boolean;
 }
+
+const randomId: string = generateFakeId();
 
 class LocationTargeting extends React.Component<LocationTargetingProps & InjectedIntlProps, LocationTargetingState> {
 
@@ -89,7 +92,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
   }
 
   attachToDOM = (elementId: string) => (triggerNode: Element) => {
-    return document.getElementById('selectContainer') as any;
+    return document.getElementById(elementId) as any;
   }
 
   handleChange = (idCountry: string) => {
@@ -100,11 +103,9 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
 
     const { handlers } = this.props;
 
-    const incOrExc: string = this.state.incOrExc;
-
     const selectedLocation = {
       ...selectedCountry,
-      exclude: incOrExc === 'EXC',
+      exclude: this.state.incOrExc === 'EXC',
     };
 
     handlers.updateTableFields({
@@ -147,7 +148,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
         >
           <FormattedMessage id="location-checkbox-message" defaultMessage="I want to target a specific location" />
         </Checkbox>
-        <Row className={!this.state.locationTargetingDisplayed && (!formValues || formValues.length === 0) ? 'hide-section' : ''}>
+        <div className={!this.state.locationTargetingDisplayed && (!formValues || formValues.length === 0) ? 'hide-section' : ''}>
           <Row align="middle" type="flex">
             <Col span={4} />
             <Col span={10} >
@@ -168,7 +169,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
                 <Select
                   defaultValue="INC"
                   onChange={this.handleIncOrExcChange}
-                  getPopupContainer={this.attachToDOM('selectContainer')}
+                  getPopupContainer={this.attachToDOM(randomId)}
                   className="small-select"
                 >
                   <Option value="INC">
@@ -180,7 +181,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
                     Exclude
                   </Option>
                 </Select>
-                <div id="selectContainer" className="wrapped-select">
+                <div id={randomId} className="wrapped-select">
                   <Select
                     mode="multiple"
                     value={value}
@@ -189,7 +190,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
                     filterOption={false}
                     onSearch={this.fetchCountries}
                     onChange={this.handleChange}
-                    getPopupContainer={this.attachToDOM('selectContainer')}
+                    getPopupContainer={this.attachToDOM(randomId)}
                     className="big-select"
                   >
                     {listOfCountriesToDisplay.map((country: {id: number; name: string}) =>
@@ -205,7 +206,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
               </Tooltip>
             </Col>
           </Row>
-        </Row>
+        </div>
       </div>
     );
   }
