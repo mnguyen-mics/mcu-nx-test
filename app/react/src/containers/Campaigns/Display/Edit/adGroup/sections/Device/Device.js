@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { change as changeAction, Field } from 'redux-form';
-import { Button, Checkbox } from 'antd';
+import { Checkbox, Modal } from 'antd';
 
 import { Form } from '../../../../../../../components/index.ts';
 import messages from '../../../messages';
 import selectOptions from './selectOptions';
 
-import * as NotificationActions from '../../../../../../../state/Notifications/actions';
-
 const { FormSection, FormTagSelect } = Form;
+const confirm = Modal.confirm;
 
 class Device extends Component {
 
@@ -25,30 +24,20 @@ class Device extends Component {
       change,
       formatMessage,
       formName,
-      notifyWarning,
-      removeNotification,
     } = this.props;
 
     if (this.state.displayCustom && this.hasCustomData()) {
-      const uid = Math.random();
-      const setToAutomatic = () => {
-        change(formName, 'adGroupDeviceType', []);
-        change(formName, 'adGroupDeviceOS', []);
-        change(formName, 'adGroupDeviceBrowser', []);
-        this.setState({ displayCustom: false });
-        removeNotification(uid);
-      };
-
-      notifyWarning({
-        description: formatMessage(messages.notificationWarning),
-        duration: 4.5,
-        btn: (
-          <div className="notification-buttons">
-            <Button type="default" size="large" onClick={() => removeNotification(uid)}>{formatMessage(messages.cancel)}</Button>
-            <Button type="primary" size="large" onClick={setToAutomatic}>{formatMessage(messages.ok)}</Button>
-          </div>
-        ),
-        uid,
+      confirm({
+        cancelText: formatMessage(messages.cancel),
+        content: formatMessage(messages.notificationWarning),
+        maskClosable: true,
+        okText: formatMessage(messages.ok),
+        onOk: () => {
+          change(formName, 'adGroupDeviceType', []);
+          change(formName, 'adGroupDeviceOS', []);
+          change(formName, 'adGroupDeviceBrowser', []);
+          this.setState({ displayCustom: false });
+        },
       });
     } else {
       this.setState({ displayCustom: !this.state.displayCustom });
@@ -156,15 +145,11 @@ Device.propTypes = {
   formatMessage: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
   formValues: PropTypes.shape().isRequired,
-  notifyWarning: PropTypes.func.isRequired,
-  removeNotification: PropTypes.func.isRequired,
 };
 
 
 const mapDispatchToProps = {
   change: changeAction,
-  notifyWarning: NotificationActions.notifyWarning,
-  removeNotification: NotificationActions.removeNotification
 };
 
 export default connect(null, mapDispatchToProps)(Device);
