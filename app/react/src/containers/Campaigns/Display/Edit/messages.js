@@ -7,6 +7,16 @@ export default defineMessages({
   =================================== BUTTONS ==================================
   ==============================================================================
   */
+  cancel: {
+    id: 'message.cancel',
+    defaultMessage: 'Cancel',
+  },
+
+  ok: {
+    id: 'message.ok',
+    defaultMessage: 'Ok',
+  },
+
   saveAdGroup: {
     id: 'message.submit.adGroup',
     defaultMessage: 'Save',
@@ -61,6 +71,16 @@ export default defineMessages({
   dropdownAddExisting: {
     id: 'adGroupEditor.dropdown.addExisting',
     defaultMessage: 'Add existing',
+  },
+
+  /*
+  ==============================================================================
+  ================================ NOTIFICATIONS ===============================
+  ==============================================================================
+  */
+  notificationWarning: {
+    id: 'notification.warning',
+    defaultMessage: 'Click on this button and you will lose your custom data.',
   },
 
   /*
