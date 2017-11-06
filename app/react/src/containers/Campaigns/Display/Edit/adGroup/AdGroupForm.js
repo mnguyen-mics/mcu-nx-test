@@ -24,8 +24,9 @@ import {
   Publisher,
   Summary,
 } from './sections';
-// import { AudienceCatalogContainer } from './sections/AudienceCatalog/index.ts';
+import { AudienceCatalogContainer } from './sections/AudienceCatalog/index.ts';
 import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+import FeatureSwitch from '../../../../../components/FeatureSwitch.tsx';
 import { Loading } from '../../../../../components/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
@@ -146,18 +147,15 @@ class AdGroupForm extends Component {
             <General {...commonProps} formValues={formValues} />
             {
               displayAudience &&
-              <div id="audience">
-                <hr />
-                <Audience {...commonProps} formValues={audienceTable} />
-              </div>
+                <div id="audience">
+                  <hr />
+                  <FeatureSwitch
+                    featureName="campaigns.display.edition.audience_catalog"
+                    enabledComponent={<AudienceCatalogContainer RxF={this.props.RxF} />}
+                    disabledComponent={<Audience {...commonProps} formValues={audienceTable} />}
+                  />
+                </div>
             }
-            { /*
-              displayAudience &&
-              <div id="audience">
-                <hr />
-                <AudienceCatalogContainer RxF={this.props.RxF} />
-              </div> */
-             }
             <hr />
             <Device {...commonProps} formValues={formValues} />
             <hr />
