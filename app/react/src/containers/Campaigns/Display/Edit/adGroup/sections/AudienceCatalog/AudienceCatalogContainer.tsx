@@ -80,7 +80,7 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
 
     return CatalogService.getCategoryTree(
       organisationId,
-      { serviceFamily: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'] },
+      { serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'] },
     ).then(categoryTree => {
 
       function fetchServices(category: ServiceCategoryTree): Promise<ServiceCategoryTree> {
@@ -101,6 +101,12 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
       return Promise.all(categoryTree.map(category => {
         return fetchServices(category);
       }));
+    }).then(categoryTree => {
+      // if 1 catalog only, hide root
+      if (categoryTree.length === 1) {
+        return categoryTree[0].children;
+      }
+      return categoryTree;
     });
   }
 
@@ -118,8 +124,7 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
       this.fetchDetailedTargetingData(),
       CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.GENDER'] }),
       CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.AGE'] }),
-      AudienceSegmentService.getSegments(organisationId, datamartId, { maxResults: 500 })
-        .then(res => res.data.filter((s: any) => s.id !== '4196')),
+      AudienceSegmentService.getSegments(organisationId, datamartId, { max_results: 500 }).then(res => res.data),
     ]).then(([audienceCategoryTree, genderServiceItems, ageServiceItems, audienceSegments]) => {
 
       this.setState(prevState => ({

@@ -13,6 +13,7 @@ export interface TreeData {
   key?: string;
   value: string;
   label: string;
+  parentLabel?: string;
   className?: string;
   disabled?: boolean;
   disableCheckbox?: boolean;

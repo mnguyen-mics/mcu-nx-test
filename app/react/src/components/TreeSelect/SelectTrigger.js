@@ -271,7 +271,12 @@ class SelectTrigger extends Component {
             </TreeNode>
           );
         }
-        return <TreeNode {...child.props} key={child.key} />;
+        const isSearching = props.inputValue;
+        let title = child.props.title
+        if (isSearching && child.props.parentLabel) {
+          title=(<div>{child.props.title}<span style={{ float: 'right', color: '#E0E1E1' }}>{child.props.parentLabel}</span></div>)
+        }
+        return <TreeNode {...child.props} title={title} key={child.key} />;
       });
     };
     // const s = Date.now();

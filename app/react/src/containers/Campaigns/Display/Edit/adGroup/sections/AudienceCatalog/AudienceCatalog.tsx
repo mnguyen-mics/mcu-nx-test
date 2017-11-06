@@ -111,6 +111,7 @@ function toTreeData(category: ServiceCategoryTree): TreeData {
   const serviceChildren = (category.services || []).map(service => ({
     value: (service as any).segmentId,
     label: service.name,
+    parentLabel: category.node.name,
     isLeaf: true,
   }));
 
@@ -214,7 +215,8 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
       audienceSegmentId: segmentId,
       exclude,
     };
-    this.props.RxF.change((fields as any).name, fields.getAll().concat([{
+    const allFields = fields.getAll() || [];
+    this.props.RxF.change((fields as any).name, allFields.concat([{
       id: generateFakeId(),
       resource,
     }]));

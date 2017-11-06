@@ -1,6 +1,8 @@
 import * as React from 'react';
 
 export type McsIconType =
+  'adGroups' |
+  'ads' |
   'automation' |
   'bell' |
   'bolt' |
@@ -33,6 +35,7 @@ export type McsIconType =
   'magnifier' |
   'menu-close' |
   'minus' |
+  'optimization' |
   'options' |
   'partitions' |
   'pause' |

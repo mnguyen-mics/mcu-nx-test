@@ -1,8 +1,8 @@
 import * as React from 'react';
-import McsIcons from '../McsIcons';
+import McsIcons, { McsIconType } from '../McsIcons';
 
 export interface EmptyRecordsProps {
-  iconType: string;
+  iconType: McsIconType;
   message: string;
   className: string;
 }
@@ -17,7 +17,7 @@ const EmptyRecords: React.SFC<EmptyRecordsProps> = props => {
 };
 
 EmptyRecords.defaultProps = {
-  iconType: 'exclamation-circle-o',
+  iconType: 'warning',
   className: '',
 };
 

@@ -33,8 +33,8 @@ function filterFn(input, child) {
   //   .indexOf(input) > -1;
   const match = !input ||
   ( child.props && 
-    child.props.title && 
-    child.props.title.toLowerCase().includes(input.toLowerCase())
+    child.props.label &&
+    child.props.label.toLowerCase().includes(input.toLowerCase())
   );
   return match;
 };
@@ -59,6 +59,7 @@ function loopTreeData(data, level = 0) {
     } = item;
     const props = {
       value,
+      label,
       title: label,
       // value: value || String(key || label), // cause onChange callback error
       key: key || value || pos,
