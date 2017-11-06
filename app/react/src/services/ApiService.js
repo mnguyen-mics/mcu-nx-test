@@ -61,6 +61,7 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
 
   const checkAndParse = response => {
     const contentType = response.headers.get('Content-Type');
+
     if (contentType && contentType.indexOf('image/png') !== -1) {
       return response.blob().then(blob => {
         if (!response.ok) {
@@ -69,6 +70,11 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
 
         return blob;
       });
+    } else if (contentType && contentType.indexOf('text/html') !== -1) {
+      return (response.status < 400
+        ? Promise.resolve()
+        : Promise.reject()
+      );
     }
 
     // Considered as a json response by default
