@@ -16,6 +16,7 @@ import EmailBlastContent from './EmailBlastContent';
 import EmailRouterService from '../../../../services/EmailRouterService';
 
 const { Content } = Layout;
+const { DefaultSelect } = FormSelect;
 
 class EmailForm extends Component {
 
@@ -261,7 +262,7 @@ class EmailForm extends Component {
 
             <Field
               name="campaign.routers[0].email_router_id"
-              component={FormSelect}
+              component={DefaultSelect}
               validate={[isRequired]}
               props={{
                 formItemProps: {

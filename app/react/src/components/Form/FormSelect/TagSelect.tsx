@@ -4,8 +4,8 @@ import { SelectProps } from 'antd/lib/select';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
 
-import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
-import { generateFakeId } from '../../utils/FakeIdHelper';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
+import FormSelect from './FormSelect';
 
 const Option = Select.Option;
 
@@ -14,12 +14,12 @@ interface FormTagSelectProps {
   selectProps?: SelectProps & { options: [{ label: string, value: string }] };
 }
 
-const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & WrappedFieldProps> = props => {
+const TagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & WrappedFieldProps> = props => {
 
   const {
     formItemProps,
     helpToolTipProps,
-    input: { value, onChange, onFocus, onBlur },
+    input,
     meta,
     selectProps,
   } = props;
@@ -34,14 +34,9 @@ const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & Wrap
     validateStatus = 'warning';
   }
 
-  const displayOptions = selectProps!.options.map(({ label, ...option }) => (
+  const optionsToDisplay = selectProps!.options.map(({ label, ...option }) => (
     <Option {...option} key={option.value}>{label}</Option>
   ));
-
-  const selectId = generateFakeId();
-  const getPopupContainer = (triggerNode: Element) => {
-    return document.getElementById(selectId) as any;
-  };
 
   return (
     <FormFieldWrapper
@@ -51,23 +46,17 @@ const FormTagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & Wrap
       {...formItemProps}
     >
       <Col span={22}>
-        <div id={selectId}>
-          <Select
-            {...selectProps}
-            mode={mode}
-            value={value || []}
-            onChange={onChange}
-            getPopupContainer={getPopupContainer}
-            // difficulties to map some WrappedFieldInputProps with SelectProps
-            onBlur={onBlur as () => any}
-            onFocus={onFocus as () => any}
-          >
-            {displayOptions}
-          </Select>
-        </div>
+        <FormSelect
+          {...selectProps}
+          input={input}
+          mode={mode}
+          onBlur={input.onBlur as () => any}
+          value={input.value || []}
+        >{optionsToDisplay}
+        </FormSelect>
       </Col>
     </FormFieldWrapper>
   );
 };
 
-export default FormTagSelect;
+export default TagSelect;

@@ -6,8 +6,9 @@ import { WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 
-import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
-import { generateFakeId } from '../../utils/FakeIdHelper';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
+import FormSelect from './FormSelect';
+// import ButtonStyleless from '../../ButtonStyleless';
 
 interface FormSelectProps {
   formItemProps?: FormItemProps;
@@ -17,9 +18,9 @@ interface FormSelectProps {
 
 const Option = Select.Option;
 
-class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
+class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
 
-  static defaultprops = {
+  static defaultProps = {
     formItemProps: {},
     selectProps: {},
     options: [],
@@ -50,12 +51,12 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
 
   render() {
     const {
-      input: { value, onChange, onFocus },
-      meta,
       formItemProps,
-      selectProps,
-      options,
       helpToolTipProps,
+      input,
+      meta,
+      options,
+      selectProps,
     } = this.props;
 
     let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -66,10 +67,7 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
       <Option key={option.value} value={option.value}>{option.title}</Option>
     ));
 
-    const selectId = generateFakeId();
-    const getPopupContainer = (triggerNode: Element) => {
-      return document.getElementById(selectId) as any;
-    };
+    // const onClick = () => console.log('dans onClick');
 
     return (
         <FormFieldWrapper
@@ -79,23 +77,32 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
           {...formItemProps}
         >
           <Col span={22}>
-            <div id={selectId}>
-              <Select
-                {...selectProps}
-                getPopupContainer={getPopupContainer}
-                onChange={onChange}
-                // difficulties to map some WrappedFieldInputProps with SelectProps
-                onBlur={onChange as () => any}
-                onFocus={onFocus as () => any}
-                value={value}
-              >
-                {optionsToDisplay}
-              </Select>
-            </div>
+            <FormSelect
+              {...selectProps}
+              input={input}
+              // style={{ width: '90%' }}
+            >{optionsToDisplay}
+            </FormSelect>
+            {/*<ButtonStyleless
+              className="clickable-on-hover"
+              onClick={onClick}
+            >custom
+            </ButtonStyleless>*/}
           </Col>
         </FormFieldWrapper>
     );
   }
 }
 
-export default FormSelect;
+/*<Select
+  {...selectProps}
+  style={{ width: '90%' }}
+  getPopupContainer={getPopupContainer}
+  onChange={onChange}
+  // difficulties to map some WrappedFieldInputProps with SelectProps
+  onBlur={onChange as () => any}
+  onFocus={onFocus as () => any}
+  value={value}
+>*/
+
+export default DefaultSelect;

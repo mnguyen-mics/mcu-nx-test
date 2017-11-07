@@ -20,6 +20,7 @@ import { PluginFieldGenerator } from '../../../../Plugin';
 import messages from '../messages';
 
 const { Content, Sider } = Layout;
+const { DefaultSelect } = FormSelect;
 
 const fieldGridConfig = {
   labelCol: { span: 3 },
@@ -193,7 +194,7 @@ class DisplayCreativeEditionEditor extends Component {
                     />
                     <Field
                       name="creative.format"
-                      component={FormSelect}
+                      component={DefaultSelect}
                       validate={[isRequired]}
                       props={{
                         formItemProps: {

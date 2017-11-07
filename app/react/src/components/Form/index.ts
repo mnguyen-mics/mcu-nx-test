@@ -1,3 +1,4 @@
+import FormBoolean from './FormBoolean';
 import FormCheckbox from './FormCheckbox';
 import FormDatePicker from './FormDatePicker';
 import FormFieldWrapper from './FormFieldWrapper';
@@ -7,32 +8,27 @@ import FormRadioGroup from './FormRadioGroup';
 import FormRangePicker from './FormRangePicker/index';
 import FormSection from './FormSection';
 import FormSelect from './FormSelect';
-import FormSelectAddon from './FormSelectAddon';
-import FormTagSelect from './FormTagSelect';
+import FormTextArea from './FormTextArea';
 import FormTitle from './FormTitle';
-import FormBoolean from './FormBoolean';
+import FormUpload from './FormUpload';
 import SwitchInput from './SwitchInput';
 import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
-import FormUpload from './FormUpload';
-import FormTextArea from './FormTextArea';
 
 export default {
+  FormBoolean,
   FormCheckbox,
   FormDatePicker,
   FormFieldWrapper,
   FormInput,
-  FormBoolean,
   FormRadio,
   FormRadioGroup,
   FormRangePicker,
   FormSection,
   FormSelect,
-  FormSelectAddon,
-  FormTagSelect,
+  FormTextArea,
   FormTitle,
   FormUpload,
-  FormTextArea,
   SwitchInput,
   withNormalizer,
   withValidators,
@@ -49,8 +45,6 @@ export {
   FormRangePicker,
   FormSection,
   FormSelect,
-  FormSelectAddon,
-  FormTagSelect,
   FormTitle,
   SwitchInput,
   FormUpload,
