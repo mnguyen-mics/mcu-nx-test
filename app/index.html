@@ -153,7 +153,7 @@ are two of the factors making these dependencies injections impossible. -->
   <script src="conf/plugins-configuration.js"></script>
   <script src="conf/react-configuration.js"></script>
   <script data-main="main.js" src="angular/bower_components/requirejs/require.js"></script>
-
+  <script>document.title = window.MCS_CONSTANTS.SITE_NAME</script>
   <script>
     require.onResourceLoad = function (context, map, depArray) {
       var elt = document.getElementById("mics_loading_progress_current");
