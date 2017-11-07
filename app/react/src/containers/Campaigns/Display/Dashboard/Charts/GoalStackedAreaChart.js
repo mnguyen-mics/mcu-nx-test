@@ -29,6 +29,7 @@ class GoalStackedAreaChart extends Component {
     performance: [],
     selectedAttributionModelId: '',
     isFetchingPerformance: false,
+    hasFetchedPerformance: false,
     hasData: true,
   };
 
@@ -137,7 +138,7 @@ class GoalStackedAreaChart extends Component {
       ReportService.getConversionAttributionPerformance(organisationId, values.from, values.to, filters, ['day'])
         .then(results => results.data)
         .then(results => {
-          this.setState({ performance: results, isFetchingPerformance: false, hasData: results.length ? true : false });
+          this.setState({ performance: results, isFetchingPerformance: false, hasData: results.length ? true : false, hasFetchedPerformance: true });
         });
     });
   }
@@ -198,51 +199,54 @@ class GoalStackedAreaChart extends Component {
     return <McsDateRangePicker values={values} onChange={onChange} />;
   }
 
-  // renderStackedAreaCharts() {
-  //   const {
-  //     location: { search },
-  //     colors,
-  //   } = this.props;
-  //   const { key1, key2 } = this.state;
+  renderStackedAreaCharts() {
+    const {
+      location: { search },
+      colors,
+    } = this.props;
 
-  //   const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+    const { performance, isFetchingPerformance } = this.state;
 
-  //   const { lookbackWindow } = filter;
+    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-  //   const optionsForChart = {
-  //     xKey: 'day',
-  //     yKeys: [
-  //       { key: key1, message: messages[key1] },
-  //       { key: key2, message: messages[key2] },
-  //     ],
-  //     lookbackWindow: lookbackWindow.as('milliseconds'),
-  //     colors: [colors['mcs-warning'], colors['mcs-info']],
-  //     isDraggable: true,
-  //     onDragEnd: (values) => {
-  //       this.updateLocationSearch({
-  //         from: values[0],
-  //         to: values[1],
-  //         lookbackWindow: moment.duration(values[1] - values[0]),
-  //         rangeType: 'absolute',
-  //       });
-  //     },
-  //   };
+    const { lookbackWindow } = filter;
 
-  //   return (!isFetchingCampaignStat && hasFetchedCampaignStat)
-  //     ? (
-  //       <StackedAreaPlotDoubleAxis
-  //         identifier={`${1}StackedAreaChartDisplayOverview`}
-  //         dataset={dataSource}
-  //         options={optionsForChart}
-  //         style={{ flex: '1' }}
-  //       />
-  //     )
-  //     : <LoadingChart />;
-  // }
+    // const optionsForChart = {
+    //   xKey: 'day',
+    //   yKeys: [
+    //     { key: key1, message: messages[key1] },
+    //     { key: key2, message: messages[key2] },
+    //   ],
+    //   lookbackWindow: lookbackWindow.as('milliseconds'),
+    //   colors: [colors['mcs-warning'], colors['mcs-info']],
+    //   isDraggable: true,
+    //   onDragEnd: (values) => {
+    //     this.updateLocationSearch({
+    //       from: values[0],
+    //       to: values[1],
+    //       lookbackWindow: moment.duration(values[1] - values[0]),
+    //       rangeType: 'absolute',
+    //     });
+    //   },
+    // };
+
+    return (!isFetchingPerformance && performance.length !== 0)
+      ? (
+        // <StackedAreaPlotDoubleAxis
+        //   identifier={`${1}StackedAreaChartDisplayOverview`}
+        //   dataset={dataSource}
+        //   options={optionsForChart}
+        //   style={{ flex: '1' }}
+        // />
+        <span>Ok</span>
+      )
+      : <LoadingChart />;
+  }
 
   render() {
     // const { translations, colors } = this.props;
     // const { key1, key2 } = this.state;
+    const { performance, hasFetchedPerformance } = this.state;
 
     // const legendOptions = [
     //   {
@@ -261,7 +265,7 @@ class GoalStackedAreaChart extends Component {
     const chartArea = (
       <div>
         <Row className="mcs-chart-header">
-          <Col span={12}>
+          {/* <Col span={12}>
             {dataSource.length === 0 && (hasFetchedCampaignStat)
             ? <div />
             : <LegendChartWithModal
@@ -270,15 +274,15 @@ class GoalStackedAreaChart extends Component {
               legends={legends}
               onLegendChange={(a, b) => this.setState({ key1: a, key2: b })}
             />}
-          </Col>
+          </Col> */}
           <Col span={12}>
             <span className="mcs-card-button">
               {this.renderDatePicker()}
             </span>
           </Col>
         </Row>
-        {dataSource.length === 0 && (hasFetchedCampaignStat)
-        ? <EmptyCharts title={translations.NO_EMAIL_STATS} />
+        {performance.length === 0 && (hasFetchedPerformance)
+        ? <EmptyCharts title={'no stats'} />
         : <Row><Col span={24}>{this.renderStackedAreaCharts()}</Col></Row>}
       </div>
     );
