@@ -45,7 +45,7 @@ export interface ServiceCategoryPublicResource {
   description?: string;
   providerId?: string;
   parentCategoryId?: string;
-  categorySubType?: string;
+  categorySubtype?: ServiceCategorySubType;
   listWeight?: number;
 }
 

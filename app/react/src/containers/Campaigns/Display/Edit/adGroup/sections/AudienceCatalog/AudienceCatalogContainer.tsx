@@ -86,7 +86,11 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
       function fetchServices(category: ServiceCategoryTree): Promise<ServiceCategoryTree> {
 
         const servicesP = CatalogService.getServices(organisationId, { parentCategoryId: category.node.id });
-        const childrenCategoryP = Promise.all(category.children.map(fetchServices));
+        const childrenCategoryP = Promise.all(
+          category.children.filter(child =>
+            child.node.categorySubtype !== 'AUDIENCE.AGE' && child.node.categorySubtype !== 'AUDIENCE.GENDER',
+          ).map(fetchServices),
+        );
 
         return Promise.all([servicesP, childrenCategoryP])
           .then(([ services, childrenCategory ]) => {
