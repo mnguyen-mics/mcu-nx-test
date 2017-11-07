@@ -12,6 +12,7 @@ import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getEmailTemplates, isFetchingEmailTemplates, hasEmailTemplates, getEmailTemplatesTotal } from '../../../../state/Creatives/Emails/selectors';
+import CreativeScreenshot from '../../CreativeScreenshot';
 
 class CreativeEmailsTable extends Component {
   constructor(props) {
@@ -133,11 +134,7 @@ class CreativeEmailsTable extends Component {
         isHideable: false,
         className: 'mcs-table-image-col',
         render: (text, record) => (
-          <div className="mcs-table-cell-thumbnail">
-            <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
-              <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
-            </a>
-          </div>
+          <CreativeScreenshot item={record} />
         ),
       },
       {
