@@ -9,7 +9,7 @@ import Alert from 'mcs-react-alert';
 
 import log from '../../utils/Logger';
 
-import logoUrl from '../../assets/images/logo-mediarithmics.png';
+import logoUrl from '../../assets/images/logo.png';
 
 import { logIn } from '../../state/Login/actions';
 
@@ -39,7 +39,9 @@ class Login extends Component {
       <div className="mcs-login-container">
         <div className="login-frame">
           <Form onSubmit={this.handleSubmit} className="login-form">
-            <img alt="mics-logo" className="login-logo" src={logoUrl} />
+            <div className="image-wrapper">
+              <img alt="mics-logo" className="login-logo" src={logoUrl} />
+            </div>
             { errorMsg }
             <FormItem>
               {getFieldDecorator('email', {

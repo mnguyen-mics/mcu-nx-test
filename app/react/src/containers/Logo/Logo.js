@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 
 import { withMcsRouter } from '../Helpers';
 import { getLogo } from '../../state/Session/actions';
-import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
+import mediarithmicsLogo from '../../assets/images/logo.png';
 
 class Logo extends Component {
 
