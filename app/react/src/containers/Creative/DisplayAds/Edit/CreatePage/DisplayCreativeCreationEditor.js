@@ -17,7 +17,7 @@ import { PluginFieldGenerator } from '../../../../Plugin';
 import messages from '../messages';
 
 const { Content, Sider } = Layout;
-const { DefaultSelect } = FormSelect;
+const { CustomSelect, DoubleSelect } = FormSelect;
 
 const fieldGridConfig = {
   labelCol: { span: 3 },
@@ -25,6 +25,12 @@ const fieldGridConfig = {
 };
 
 class DisplayCreativeCreationEditor extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = { customFormat: false };
+  }
 
 
   handleSaveDisplayCreative = formValues => {
@@ -140,33 +146,60 @@ class DisplayCreativeCreationEditor extends Component {
                         },
                       }}
                     />
-                    <Field
-                      name="creative.format"
-                      component={DefaultSelect}
-                      validate={[isRequired]}
-                      props={{
-                        formItemProps: {
+                    <div className={this.state.customFormat ? 'hide-section' : ''}>
+                      <Field
+                        name="creative.format"
+                        component={CustomSelect}
+                        validate={[isRequired]}
+                        props={{
+                          customProps: {
+                            label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonCustom),
+                            onClick: () => {},
+                          },
+                          formItemProps: {
+                            label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
+                            required: true,
+                          },
+                          selectProps: {
+                            defaultValue: formats[0]
+                          },
+                          inputProps: {
+                            disabled: isLoading,
+                            defaultValue: formats[0]
+                          },
+                          options: formats && formats.map(format => ({
+                            key: format,
+                            value: format,
+                            title: format,
+                          })),
+                          helpToolTipProps: {
+                            title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
+                          },
+                        }}
+                      />
+                    </div>
+
+                    <div className={!this.state.customFormat ? '' : 'hide-section'}>
+                      <DoubleSelect
+                        customProps={{
+                          label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonGeneric),
+                          onClick: () => {},
+                        }}
+                        formItemProps={{
                           label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                          required: true,
-                          ...fieldGridConfig,
-                        },
-                        selectProps: {
-                          defaultValue: formats[0]
-                        },
-                        inputProps: {
-                          disabled: isLoading,
-                          defaultValue: formats[0]
-                        },
-                        options: formats && formats.map(format => ({
-                          key: format,
-                          value: format,
-                          title: format,
-                        })),
-                        helpToolTipProps: {
-                          title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
-                        },
-                      }}
-                    />
+                        }}
+                        firstInputProps={{
+                          placeholder: 'width',
+                        }}
+                        secondInputProps={{
+                          placeholder: 'height',
+                        }}
+                        helpToolTipProp={{
+                          title: 'testeu du custom format',
+                        }}
+                      />
+                    </div>
+
                     <Field
                       name="creative.destination_domain"
                       component={FormInput}

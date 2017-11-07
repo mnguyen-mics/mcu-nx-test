@@ -8,16 +8,23 @@ import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
 import FormSelect from './FormSelect';
+import ButtonStyleless from '../../ButtonStyleless';
+
+interface CustomProps {
+  label: string;
+  onClick: () => any;
+}
 
 interface FormSelectProps {
   formItemProps?: FormItemProps;
-  selectProps?: SelectProps;
+  customProps: CustomProps;
   options?: OptionProps[];
+  selectProps?: SelectProps;
 }
 
 const Option = Select.Option;
 
-class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
+class CustomSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
 
   static defaultProps = {
     formItemProps: {},
@@ -53,6 +60,7 @@ class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperPr
       formItemProps,
       helpToolTipProps,
       input,
+      customProps,
       meta,
       options,
       selectProps,
@@ -73,14 +81,26 @@ class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperPr
           validateStatus={validateStatus}
           {...formItemProps}
         >
-          <FormSelect
-            {...selectProps}
-            input={input}
-          >{optionsToDisplay}
-          </FormSelect>
+          <div className="custom-select">
+            <div className="select">
+              <FormSelect
+                {...selectProps}
+                input={input}
+              >{optionsToDisplay}
+              </FormSelect>
+            </div>
+
+            <div className="button">
+              <ButtonStyleless
+                className="clickable-on-hover"
+                onClick={customProps.onClick}
+              >{customProps.label}
+              </ButtonStyleless>
+            </div>
+          </div>
         </FormFieldWrapper>
     );
   }
 }
 
-export default DefaultSelect;
+export default CustomSelect;

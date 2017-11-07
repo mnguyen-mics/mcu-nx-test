@@ -20,7 +20,7 @@ import { PluginFieldGenerator } from '../../../../Plugin';
 import messages from '../messages';
 
 const { Content, Sider } = Layout;
-const { DefaultSelect } = FormSelect;
+const { CustomSelect } = FormSelect;
 
 const fieldGridConfig = {
   labelCol: { span: 3 },
@@ -194,9 +194,13 @@ class DisplayCreativeEditionEditor extends Component {
                     />
                     <Field
                       name="creative.format"
-                      component={DefaultSelect}
+                      component={CustomSelect}
                       validate={[isRequired]}
                       props={{
+                        customProps: {
+                          label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonCustom),
+                          onClick: () => {},
+                        },
                         formItemProps: {
                           label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
                           required: true,
