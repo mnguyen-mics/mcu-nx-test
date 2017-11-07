@@ -5,7 +5,7 @@ import { ClickParam } from 'antd/lib/menu';
 
 import withTranslations, { TranslationProps } from '../containers/Helpers/withTranslations';
 
-interface McsDateRangeValue {
+export interface McsDateRangeValue {
   rangeType: string;
   lookbackWindow?: moment.Duration;
   from?: moment.Moment;

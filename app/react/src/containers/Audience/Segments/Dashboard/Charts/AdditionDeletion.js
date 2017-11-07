@@ -113,15 +113,13 @@ class AdditionDeletion extends Component {
       colors,
     } = this.props;
 
-    const options = {
-      domains: [
-        translations[
-          'user_point_additions'.toUpperCase()],
-        translations['user_point_deletions'.toUpperCase()
-        ],
-      ],
-      colors: [colors['mcs-success'], colors['mcs-error']],
-    };
+    const options = [{
+      domain: translations['user_point_additions'.toUpperCase()],
+      color: colors['mcs-success']
+    }, {
+      domain: translations['user_point_deletions'.toUpperCase()],
+      color: colors['mcs-error']
+    }];
 
     return (
       <div>

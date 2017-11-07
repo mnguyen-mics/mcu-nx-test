@@ -11,6 +11,7 @@ import CatalogService, {
 import AudienceSegmentService from '../../../../../../../services/AudienceSegmentService';
 import * as SessionSelectors from '../../../../../../../state/Session/selectors';
 import AudienceCatalog, { AudienceCatalogProps } from './AudienceCatalog';
+import { AudienceSegmentResource, AudienceSegmentSelectionResource } from '../../../../../../../models/Audience';
 
 const AudienceCatatogFieldArray = FieldArray as new() => GenericFieldArray<Field, AudienceCatalogProps>;
 
@@ -31,17 +32,6 @@ interface AudienceCatalogContainerState {
   ageServiceItems: AudienceSegmentServiceItemPublicResource[];
   // TODO use an interface
   audienceSegments: AudienceSegmentResource[];
-}
-
-export interface AudienceSegmentResource {
-  id: string;
-  name: string;
-}
-
-export interface AudienceSegmentSelectionResource {
-  id?: string;
-  audienceSegmentId: string;
-  exclude: boolean;
 }
 
 export interface AudienceSegmentFieldModel {

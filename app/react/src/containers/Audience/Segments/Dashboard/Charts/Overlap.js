@@ -112,10 +112,10 @@ class Overlap extends Component {
       colors,
     } = this.props;
 
-    const options = {
-      domains: [translations['overlap_number'.toUpperCase()]],
-      colors: [colors['mcs-info']],
-    };
+    const options = [{
+      domain: translations['overlap_number'.toUpperCase()],
+      color: colors['mcs-info'],
+    }];
 
     const chartArea = (
       <div>
