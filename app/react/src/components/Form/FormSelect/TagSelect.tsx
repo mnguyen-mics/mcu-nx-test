@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Select } from 'antd';
+import { Select } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
@@ -45,16 +45,14 @@ const TagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & WrappedF
       validateStatus={validateStatus}
       {...formItemProps}
     >
-      <Col span={22}>
-        <FormSelect
-          {...selectProps}
-          input={input}
-          mode={mode}
-          onBlur={input.onBlur as () => any}
-          value={input.value || []}
-        >{optionsToDisplay}
-        </FormSelect>
-      </Col>
+      <FormSelect
+        {...selectProps}
+        input={input}
+        mode={mode}
+        onBlur={input.onBlur as () => any}
+        value={input.value || []}
+      >{optionsToDisplay}
+      </FormSelect>
     </FormFieldWrapper>
   );
 };

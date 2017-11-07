@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, Col } from 'antd';
+import { Select } from 'antd';
 
 // TS Interfaces
 import { WrappedFieldProps } from 'redux-form';
@@ -76,23 +76,22 @@ class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperPr
           validateStatus={validateStatus}
           {...formItemProps}
         >
-          <Col span={22}>
-            <FormSelect
-              {...selectProps}
-              input={input}
-              // style={{ width: '90%' }}
-            >{optionsToDisplay}
-            </FormSelect>
-            {/*<ButtonStyleless
-              className="clickable-on-hover"
-              onClick={onClick}
-            >custom
-            </ButtonStyleless>*/}
-          </Col>
+          <FormSelect
+            {...selectProps}
+            input={input}
+            // style={{ width: '90%' }}
+          >{optionsToDisplay}
+          </FormSelect>
         </FormFieldWrapper>
     );
   }
 }
+
+/*<ButtonStyleless
+  className="clickable-on-hover"
+  onClick={onClick}
+>custom
+</ButtonStyleless>*/
 
 /*<Select
   {...selectProps}

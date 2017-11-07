@@ -93,8 +93,8 @@ class FormRangePicker extends React.Component<FormRangePickerProps & FormFieldWr
         validateStatus={error ? 'error' : 'success'}
         {...formItemProps}
       >
-        <div style={{ width: '43%' }}>
-          <div>
+        <div className="range-picker">
+          <div className="date-picker">
             <DateInputField
               component={DateInput}
               validate={fieldValidators!.start}
@@ -102,19 +102,19 @@ class FormRangePicker extends React.Component<FormRangePickerProps & FormFieldWr
               {...startProps}
             />
           </div>
-        </div>
 
-        <div style={{ width: '5.5%' }}>
-          <p className="ant-form-split">-</p>
-        </div>
+          <div className="range-picker-separator">
+            <p className="ant-form-split">-</p>
+          </div>
 
-        <div style={{ width: '43%' }}>
-          <DateInputField
-            component={DateInput}
-            validate={fieldValidators!.end}
-            disabledDate={this.disabledDate(false)}
-            {...endProps}
-          />
+          <div className="date-picker">
+            <DateInputField
+              component={DateInput}
+              validate={fieldValidators!.end}
+              disabledDate={this.disabledDate(false)}
+              {...endProps}
+            />
+          </div>
         </div>
       </FormFieldWrapper>
     );
