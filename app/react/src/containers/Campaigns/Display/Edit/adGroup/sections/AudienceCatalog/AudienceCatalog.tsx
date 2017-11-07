@@ -182,14 +182,14 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
     return selectedSegmentIds.filter(id => allSegmentIds.includes(id));
   }
 
-  markAsDeleted = (segmentId: string) => {
+  markAsDeleted = (forExcludedSegment: boolean = false) => (segmentId: string) => {
     const {
       fields,
       RxF: { change },
     } = this.props;
 
     const fieldWithIndex = this.getAllFieldsWithTheirIndex()
-      .find(({field}) => field.resource.audienceSegmentId === segmentId);
+      .find(({field}) => field.resource.audienceSegmentId === segmentId && field.resource.exclude === forExcludedSegment);
 
     if (fieldWithIndex) {
       const isTransient = isFakeId(fieldWithIndex.field.id);
@@ -226,31 +226,61 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
     const selectedValue = this.getAllFieldsWithTheirIndex()
       .find(({field}) => field.resource.audienceSegmentId === segmentId);
     if (selectedValue) {
-      this.markAsDeleted(segmentId);
+      this.markAsDeleted()(segmentId);
     } else {
       this.addSegment(segmentId);
     }
   }
 
   handleChange = (forExcludedSegment: boolean = false) => (segmentIds: string[]) => {
-    const selectedSegmentIds = this.getAllFieldsWithTheirIndex()
-      .filter(({field}) => field.resource.exclude === forExcludedSegment)
-      .map(({field}) => field.resource.audienceSegmentId);
+    const {
+      audienceCategoryTree,
+      audienceSegments,
+      fields,
+     } = this.props;
+
+    const allFields = fields.getAll() || [];
+
+    const newFields: AudienceSegmentFieldModel[] = [];
+
+    const currentlySelectedIds = this.getSelectedSegment(getServices(audienceCategoryTree), audienceSegments, forExcludedSegment);
+    const unrelatedSelectedIds = allFields.filter(field =>
+      !currentlySelectedIds.includes(field.resource.audienceSegmentId) || field.resource.exclude !== forExcludedSegment,
+    );
+    newFields.push(...unrelatedSelectedIds);
 
     // Leave already checked ids and add new ones
     segmentIds.forEach(segmentId => {
-      const found = selectedSegmentIds.includes(segmentId);
+      const found = allFields.find(field =>
+        field.resource.audienceSegmentId === segmentId && field.resource.exclude === forExcludedSegment,
+      );
       if (!found) {
-        this.addSegment(segmentId, forExcludedSegment);
+        newFields.push({
+          id: generateFakeId(),
+          resource: {
+            audienceSegmentId: segmentId,
+            exclude: forExcludedSegment,
+          },
+         });
+      } else if (found.deleted) {
+        newFields.push({ ...found, deleted: false });
       }
     });
 
     // Delete those that are not checked anymore
-    selectedSegmentIds.forEach(selectedSegmentId => {
-      if (!segmentIds.includes(selectedSegmentId)) {
-        this.markAsDeleted(selectedSegmentId);
+    allFields.filter(field => field.resource.exclude === forExcludedSegment).forEach(field => {
+      const found = segmentIds.includes(field.resource.audienceSegmentId);
+      if (!found) {
+        const isTransient = isFakeId(field.id);
+        if (!isTransient) {
+          newFields.push({ ...field, deleted: true });
+        }
+      } else {
+        newFields.push({ ...field });
       }
     });
+
+    this.props.RxF.change((fields as any).name, newFields);
   }
 
   buildTreeDataFromOwnSegments = (audienceSegments: AudienceSegmentResource[]): TreeData => {
@@ -313,7 +343,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
             datasource={genderServiceItemDataSource}
             tooltipProps={{ title: formatMessage(internalMessages.genderTooltip) }}
             value={this.getSelectedSegment(genderServiceItems)}
-            handleClickOnRemove={this.markAsDeleted}
+            handleClickOnRemove={this.markAsDeleted()}
             handleClickOnItem={this.toggleSelected}
           />
           <Row className="audience-selection-notice">
@@ -327,7 +357,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
             datasource={ageServiceItemDataSource}
             tooltipProps={{ title: formatMessage(internalMessages.ageTooltip) }}
             value={this.getSelectedSegment(ageServiceItems)}
-            handleClickOnRemove={this.markAsDeleted}
+            handleClickOnRemove={this.markAsDeleted()}
             handleClickOnItem={this.toggleSelected}
           />
           <Row className="audience-selection-notice">
@@ -341,7 +371,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
             datasource={detailedTargetingDataSource}
             tooltipProps={{ title: formatMessage(internalMessages.detailedTargetingTooltip) }}
             value={this.getSelectedSegment(getServices(audienceCategoryTree), audienceSegments)}
-            handleClickOnRemove={this.markAsDeleted}
+            handleClickOnRemove={this.markAsDeleted()}
             handleOnChange={this.handleChange()}
 
           />
@@ -357,7 +387,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
               datasource={detailedTargetingDataSource}
               tooltipProps={{ title: formatMessage(internalMessages.detailedTargetingExclusionTooltip) }}
               value={this.getSelectedSegment(getServices(audienceCategoryTree), audienceSegments, true)}
-              handleClickOnRemove={this.markAsDeleted}
+              handleClickOnRemove={this.markAsDeleted(true)}
               handleOnChange={this.handleChange(true)}
             />
           </div>
