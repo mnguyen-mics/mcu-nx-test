@@ -6,7 +6,7 @@ import { injectIntl, intlShape } from 'react-intl';
 
 import McsTabs from '../../../../../components/McsTabs.tsx';
 import Card from '../../../../../components/Card/Card.tsx';
-import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
+import { DisplayStackedAreaChart, MediaPerformanceTable, GoalStackedAreaChart } from '../Charts';
 
 import messages from '../messages';
 
@@ -21,10 +21,18 @@ function DisplayCampaignDashboard({
       overallStat,
       hasFetchedOverallStat,
       isFetchingOverallStat,
+      goals,
       intl: {
         formatMessage
       }
     }) {
+
+  const goalsItems = goals.map(goal => {
+    return {
+      title: goal.goal_name,
+      display: <GoalStackedAreaChart goal={goal} />
+    };
+  });
 
   const items = [
     {
@@ -51,6 +59,7 @@ function DisplayCampaignDashboard({
         />
         ),
     },
+    ...goalsItems,
   ];
 
   return <Card><McsTabs items={items} /></Card>;
@@ -67,6 +76,7 @@ DisplayCampaignDashboard.propTypes = {
   hasFetchedOverallStat: PropTypes.bool.isRequired,
   overallStat: PropTypes.arrayOf(PropTypes.object).isRequired,
   intl: intlShape.isRequired,
+  goals: PropTypes.arrayOf(PropTypes.shape()).isRequired,
 };
 
 

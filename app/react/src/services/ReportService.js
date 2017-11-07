@@ -223,6 +223,24 @@ const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endD
   return ApiService.getRequest(endpoint, params);
 };
 
+const getConversionAttributionPerformance = (organisationId, startDate, endDate, filters, dimension, metrics, options = {}) => {
+  const endpoint = 'reports/conversion_attribution_performance_report';
+  const DEFAULT_DIMENSIONS = ['day', 'interaction_type'];
+  const DEFAULT_METRICS = ['weighted_conversions', 'interaction_to_conversion_duration'];
+
+  const params = {
+    organisation_id: organisationId,
+    start_date: startDate.format(DATE_FORMAT),
+    end_date: endDate.format(DATE_FORMAT),
+    dimension: dimension || DEFAULT_DIMENSIONS,
+    metrics: metrics || DEFAULT_METRICS,
+    filters: filters,
+    ...options,
+  };
+
+  return ApiService.getRequest(endpoint, params);
+};
+
 export default {
   getDisplayCampaignPerformanceReport,
   getEmailDeliveryReport,
@@ -234,4 +252,5 @@ export default {
   getAdGroupDeliveryReport,
   getAdDeliveryReport,
   getMediaDeliveryReport,
+  getConversionAttributionPerformance,
 };
