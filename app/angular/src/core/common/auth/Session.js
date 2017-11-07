@@ -143,7 +143,7 @@ define(['./module'], function (module) {
           $log.debug("change current workspace to ", workspace);
           this.currentWorkspace = workspace;
 
-          document.title = workspace.organisation_name + " - " + workspace.datamart_name;
+          // document.title = workspace.organisation_name + " - " + workspace.datamart_name;
           $log.debug("Set page title to :", document.title);
           $rootScope.$broadcast(LoginConstants.WORKSPACE_CHANGED);
         }
