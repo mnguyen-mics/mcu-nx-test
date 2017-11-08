@@ -4,8 +4,8 @@ const ButtonStyleless: React.SFC<React.ButtonHTMLAttributes<HTMLButtonElement>> 
 
   const { children, className, ...rest } = props;
   return (
-    <button className={`button-styleless ${props.className}`} {...rest}>
-      {props.children}
+    <button className={`button-styleless ${className}`} {...rest}>
+      {children}
     </button>
   );
 };

@@ -331,7 +331,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
           </div>
           <Row className={showExclude ? 'hide-section' : ''}>
             <Col span={3} offset={11}>
-              <ButtonStyleless onClick={this.toogleShowExclude}>
+              <ButtonStyleless onClick={this.toogleShowExclude} className="action-button">
                 <FormattedMessage {...audienceCatalogMsgs.excludeLinkMsg} />
               </ButtonStyleless>
             </Col>
