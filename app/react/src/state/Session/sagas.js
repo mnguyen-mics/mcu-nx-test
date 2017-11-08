@@ -50,8 +50,16 @@ function* downloadLogo({ payload }) {
     const logoUrl = URL.createObjectURL(response); /* global URL */
     yield put(getLogo.success({ logoUrl }));
   } catch (e) {
-    log.error('Error while getting logo: ', e);
-    yield put(getLogo.failure(e));
+    log.error('Cannot get specific logo: ', e);
+    try {
+      const response = yield call(OrganisationService.getStandardLogo);
+      const logoUrl = URL.createObjectURL(response); /* global URL */
+      yield put(getLogo.success({ logoUrl }));
+    } catch (er) {
+      log.error('Error while getting org logo: ', e);
+      yield put(getLogo.failure(er));
+    }
+
   }
 }
 

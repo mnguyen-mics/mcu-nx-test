@@ -12,6 +12,17 @@ const getCookies = () => {
   return ApiService.getRequest(endpoint, {}, {}, { withCredentials: true }).then(res => res.data);
 };
 
+const getStandardLogo = () => {
+  const endpoint = 'react/src/assets/images/logo.png';
+
+  const headers = { Accept: 'image/png' };
+  const options = {
+    localUrl: true,
+  };
+
+  return ApiService.getRequest(endpoint, null, headers, options);
+};
+
 const getLogo = (organisationId) => {
   const endpoint = `organisations/${organisationId}/logo`;
 
@@ -28,6 +39,7 @@ const putLogo = (organisationId, formData) => {
 export default {
   getWorkspace,
   getLogo,
+  getStandardLogo,
   getCookies,
   putLogo,
 };
