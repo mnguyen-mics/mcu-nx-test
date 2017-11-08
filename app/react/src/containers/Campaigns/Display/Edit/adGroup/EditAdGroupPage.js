@@ -10,6 +10,7 @@ import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
+import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import log from '../../../../../utils/Logger';
 
 
@@ -33,6 +34,10 @@ class EditAdGroupPage extends Component {
         initialValues: initialAdGroupFormatted,
         loading: false,
       });
+    }).catch(err => {
+      log.error(err);
+      this.setState({ loading: false });
+      this.props.notifyError(err);
     });
   }
 
@@ -43,9 +48,15 @@ class EditAdGroupPage extends Component {
         params: { campaignId, organisationId },
       },
       notifyError,
+      hasFeature
     } = this.props;
 
-    saveAdGroup(campaignId, object, this.state.initialValues, { editionMode: true, catalogMode: false })
+    const saveOptions = {
+      editionMode: true,
+      catalogMode: hasFeature('campaigns.display.edition.audience_catalog')
+    };
+
+    saveAdGroup(campaignId, object, this.state.initialValues, saveOptions)
       .then((adGroupId) => {
         history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
       })
@@ -96,15 +107,14 @@ EditAdGroupPage.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   notifyError: PropTypes.func.isRequired,
+  hasFeature: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   withDrawer,
   connect(
-    undefined,
-    {
-      notifyError: NotificationActions.notifyError,
-    }
+    state => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
+    { notifyError: NotificationActions.notifyError }
   )
 )(EditAdGroupPage);

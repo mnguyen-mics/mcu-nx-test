@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 
 import CampaignContent from './CampaignContent';
 import withDrawer from '../../../../../components/Drawer';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import * as NotificationActions from '../../../../../state/Notifications/actions';
+import log from '../../../../../utils/Logger';
 import * as AdGroupWrapper from '../AdGroupServiceWrapper';
 
 
@@ -42,6 +45,11 @@ class EditCampaignPage extends Component {
         initialValues: { ...results[0], goalsTable: results[1], adGroupsTable: results[2] },
         loading: false,
       });
+    })
+    .catch(err => {
+      log.error(err);
+      this.setState({ loading: false });
+      this.props.notifyError(err);
     });
   }
 
@@ -91,10 +99,15 @@ EditCampaignPage.propTypes = {
   closeNextDrawer: PropTypes.func.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
+  notifyError: PropTypes.func.isRequired,
 };
 
 
 export default compose(
   withMcsRouter,
   withDrawer,
+  connect(
+    undefined,
+    { notifyError: NotificationActions.notifyError }
+  )
 )(EditCampaignPage);
