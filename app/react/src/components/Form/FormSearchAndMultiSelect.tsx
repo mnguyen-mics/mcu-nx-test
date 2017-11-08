@@ -51,8 +51,6 @@ const FormSearchAndMultiSelect: React.SFC<FormSearchAndMultiSelectProps & FormFi
   return (
     <FormFieldWrapper
       label={label}
-      labelCol={{ span: 3 }}
-      wrapperCol={{ span: 10, offset: 1 }}
       rowProps={{ align: flexAlign }}
       helpToolTipProps={tooltipProps}
     >

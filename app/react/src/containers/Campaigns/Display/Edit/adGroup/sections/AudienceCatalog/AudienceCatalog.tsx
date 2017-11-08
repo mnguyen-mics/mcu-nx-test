@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import { FormattedMessage, injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps, InjectedFormProps } from 'redux-form';
 
 import messages from '../../../messages';
@@ -20,69 +20,7 @@ import {
   AudienceSegmentFieldModel,
   AudienceSegmentSelectionResource,
 } from './AudienceCatalogContainer';
-
-const internalMessages = defineMessages({
-  selectPlaceholder: {
-    id: 'audience.catalog.select.placeholder',
-    defaultMessage: 'Browse Audience...',
-  },
-  genderLabel: {
-    id: 'audience.catalog.gender.label',
-    defaultMessage: 'Gender',
-  },
-  genderNotice: {
-    id: 'audience.catalog.gender.notice',
-    defaultMessage: 'INCLUDE people who match at least ONE of the following',
-  },
-  genderTooltip: {
-    id: 'audience.catalog.gender.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-  ageLabel: {
-    id: 'audience.catalog.age.label',
-    defaultMessage: 'Age',
-  },
-  ageNotice: {
-    id: 'audience.catalog.age.notice',
-    defaultMessage: 'INCLUDE people who match at least ONE of the following',
-  },
-  ageTooltip: {
-    id: 'audience.catalog.age.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-  detailedTargetingLabel: {
-    id: 'audience.catalog.detailed-targeting.label',
-    defaultMessage: 'Detailed Targeting',
-  },
-  detailedTargetingNotice: {
-    id: 'audience.catalog.detailed-targeting.notice',
-    defaultMessage: 'INCLUDE people who match at least ONE of the following',
-  },
-  detailedTargetingTooltip: {
-    id: 'audience.catalog.detailed-targeting.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-  detailedTargetingExclusionLabel: {
-    id: 'audience.catalog.detailed-targeting-exclusion.label',
-    defaultMessage: 'Exclude',
-  },
-  detailedTargetingExclusionNotice: {
-    id: 'audience.catalog.detailed-targeting-exclusion.notice',
-    defaultMessage: 'EXCLUDE people who match at least ONE of the following',
-  },
-  detailedTargetingExclusionTooltip: {
-    id: 'audience.catalog.detailed-targeting-exclusion.tooltip',
-    defaultMessage: 'Lorem ipsum',
-  },
-  excludeLinkMsg: {
-    id: 'audience.catalog.exclude-people.link.label',
-    defaultMessage: 'Exclude People',
-  },
-  mySegmentCategory: {
-    id: 'audience.catalog.my-segment-category.label',
-    defaultMessage: 'My Segment',
-  },
-});
+import audienceCatalogMsgs from './messages';
 
 export interface AudienceCatalogProps {
   audienceCategoryTree: ServiceCategoryTree[];
@@ -287,7 +225,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
     const { intl: { formatMessage } } = this.props;
     return {
       value: 'own-datamart-segments',
-      label: formatMessage(internalMessages.mySegmentCategory),
+      label: formatMessage(audienceCatalogMsgs.mySegmentCategory),
       isLeaf: false,
       children: audienceSegments.map(segment => ({
         value: segment.id,
@@ -334,42 +272,42 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
         <Row>
           <Row className="audience-selection-notice">
             <Col span={10} offset={4}>
-              <FormattedMessage {...internalMessages.genderNotice} />
+              <FormattedMessage {...audienceCatalogMsgs.genderNotice} />
             </Col>
           </Row>
           <FormSearchAndMultiSelect
-            label={formatMessage(internalMessages.genderLabel)}
-            placeholder={formatMessage(internalMessages.selectPlaceholder)}
+            label={formatMessage(audienceCatalogMsgs.genderLabel)}
+            placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
             datasource={genderServiceItemDataSource}
-            tooltipProps={{ title: formatMessage(internalMessages.genderTooltip) }}
+            tooltipProps={{ title: formatMessage(audienceCatalogMsgs.genderTooltip) }}
             value={this.getSelectedSegment(genderServiceItems)}
             handleClickOnRemove={this.markAsDeleted()}
             handleClickOnItem={this.toggleSelected}
           />
           <Row className="audience-selection-notice">
             <Col span={10} offset={4}>
-              <FormattedMessage {...internalMessages.ageNotice} />
+              <FormattedMessage {...audienceCatalogMsgs.ageNotice} />
             </Col>
           </Row>
           <FormSearchAndMultiSelect
-            label={formatMessage(internalMessages.ageLabel)}
-            placeholder={formatMessage(internalMessages.selectPlaceholder)}
+            label={formatMessage(audienceCatalogMsgs.ageLabel)}
+            placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
             datasource={ageServiceItemDataSource}
-            tooltipProps={{ title: formatMessage(internalMessages.ageTooltip) }}
+            tooltipProps={{ title: formatMessage(audienceCatalogMsgs.ageTooltip) }}
             value={this.getSelectedSegment(ageServiceItems)}
             handleClickOnRemove={this.markAsDeleted()}
             handleClickOnItem={this.toggleSelected}
           />
           <Row className="audience-selection-notice">
             <Col span={10} offset={4}>
-              <FormattedMessage {...internalMessages.detailedTargetingNotice} />
+              <FormattedMessage {...audienceCatalogMsgs.detailedTargetingNotice} />
             </Col>
           </Row>
           <FormSearchAndTreeSelect
-            label={formatMessage(internalMessages.detailedTargetingLabel)}
-            placeholder={formatMessage(internalMessages.selectPlaceholder)}
+            label={formatMessage(audienceCatalogMsgs.detailedTargetingLabel)}
+            placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
             datasource={detailedTargetingDataSource}
-            tooltipProps={{ title: formatMessage(internalMessages.detailedTargetingTooltip) }}
+            tooltipProps={{ title: formatMessage(audienceCatalogMsgs.detailedTargetingTooltip) }}
             value={this.getSelectedSegment(getServices(audienceCategoryTree), audienceSegments)}
             handleClickOnRemove={this.markAsDeleted()}
             handleOnChange={this.handleChange()}
@@ -378,14 +316,14 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
           <div className={showExclude ? '' : 'hide-section'}>
             <Row className="audience-selection-notice">
               <Col span={10} offset={4}>
-                <FormattedMessage {...internalMessages.detailedTargetingExclusionNotice} />
+                <FormattedMessage {...audienceCatalogMsgs.detailedTargetingExclusionNotice} />
               </Col>
             </Row>
             <FormSearchAndTreeSelect
-              label={formatMessage(internalMessages.detailedTargetingExclusionLabel)}
-              placeholder={formatMessage(internalMessages.selectPlaceholder)}
+              label={formatMessage(audienceCatalogMsgs.detailedTargetingExclusionLabel)}
+              placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
               datasource={detailedTargetingDataSource}
-              tooltipProps={{ title: formatMessage(internalMessages.detailedTargetingExclusionTooltip) }}
+              tooltipProps={{ title: formatMessage(audienceCatalogMsgs.detailedTargetingExclusionTooltip) }}
               value={this.getSelectedSegment(getServices(audienceCategoryTree), audienceSegments, true)}
               handleClickOnRemove={this.markAsDeleted(true)}
               handleOnChange={this.handleChange(true)}
@@ -394,7 +332,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
           <Row className={showExclude ? 'hide-section' : ''}>
             <Col span={3} offset={11}>
               <ButtonStyleless onClick={this.toogleShowExclude}>
-                <FormattedMessage {...internalMessages.excludeLinkMsg} />
+                <FormattedMessage {...audienceCatalogMsgs.excludeLinkMsg} />
               </ButtonStyleless>
             </Col>
           </Row>

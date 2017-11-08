@@ -83,7 +83,7 @@ export default class SearchAndMultiSelect
       return (
         <Menu.Item key={item.key}>
           <span>{item.label}</span>
-          <Checkbox style={{ float: 'right' }} checked={this.isChecked(item.key)} />
+          <Checkbox className="float-right" checked={this.isChecked(item.key)} />
         </Menu.Item>
       );
     });
@@ -100,7 +100,7 @@ export default class SearchAndMultiSelect
     );
 
     return (
-      <div id={this.containerId}>
+      <div id={this.containerId} >
       <Dropdown
         getPopupContainer={documentGetElementById(this.containerId)}
         overlay={menu}
