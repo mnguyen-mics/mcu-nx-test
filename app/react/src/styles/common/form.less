@@ -321,7 +321,7 @@
 
 
   .select {
-    width: 87%;
+    width: 83%;
   }
 
   .double-select {
@@ -329,9 +329,9 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: 87%;
+    width: 83%;
 
-    .select {
+    .input {
       width: 47%;
     }
 
@@ -342,10 +342,21 @@
   }
 
   .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: @info-color;
     font-size: 1.1em;
     font-weight: bold;
-    width: 11%;
+    height: 40px;
+    padding: '1%';
+    width: 16%;
+  }
+
+  .button:active {
+    border: 1px solid @info-color;
+    border-radius: 3px;
+
   }
 }
 

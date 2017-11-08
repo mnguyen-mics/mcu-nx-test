@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
-import { Field, reduxForm } from 'redux-form';
+import { change, Field, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Layout, Form, Row, Button } from 'antd';
 
@@ -146,59 +147,78 @@ class DisplayCreativeCreationEditor extends Component {
                         },
                       }}
                     />
-                    <div className={this.state.customFormat ? 'hide-section' : ''}>
+                    {!this.state.customFormat
+                      ? (
+                        <Field
+                          name="creative.format"
+                          component={CustomSelect}
+                          validate={[isRequired]}
+                          props={{
+                            customProps: {
+                              label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonCustom),
+                              onClick: (e) => {
+                                e.preventDefault();
+                                this.setState({ customFormat: true });
+                                this.props.change('creativeEditor', 'creative.format', '');
+                              },
+                            },
+                            formItemProps: {
+                              label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
+                              required: true,
+                            },
+                            selectProps: {
+                              defaultValue: formats[0]
+                            },
+                            inputProps: {
+                              disabled: isLoading,
+                              defaultValue: formats[0]
+                            },
+                            options: formats && formats.map(format => ({
+                              key: format,
+                              value: format,
+                              title: format,
+                            })),
+                            helpToolTipProps: {
+                              title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
+                            },
+                          }}
+                        />
+                    )
+                    : (
                       <Field
                         name="creative.format"
-                        component={CustomSelect}
+                        component={DoubleSelect}
                         validate={[isRequired]}
                         props={{
-                          customProps: {
-                            label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonCustom),
-                            onClick: () => {},
+                          doubleProps: {
+                            label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonStandard),
+                            onClick: (e) => {
+                              e.preventDefault();
+                              this.setState({ customFormat: false });
+                              this.props.change('creativeEditor', 'creative.format', '');
+                            },
                           },
                           formItemProps: {
                             label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
                             required: true,
                           },
-                          selectProps: {
-                            defaultValue: formats[0]
+                          widthProps: {
+                            placeholder: 'Width',
+                            value: (format) => format.split('x')[0] || 0,
+                            handleChange: ({ onChange, value }) => (width) => onChange(`${width || 0}x${value.split('x')[1] || 0}`)
                           },
-                          inputProps: {
-                            disabled: isLoading,
-                            defaultValue: formats[0]
+                          heightProps: {
+                            placeholder: 'Height',
+                            value: (format) => format.split('x')[1] || 0,
+                            handleChange: ({ onChange, value }) => (height) => onChange(`${value.split('x')[0] || 0}x${height || 0}`)
                           },
-                          options: formats && formats.map(format => ({
-                            key: format,
-                            value: format,
-                            title: format,
-                          })),
                           helpToolTipProps: {
-                            title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
+                            title: 'testeu du custom format',
                           },
                         }}
                       />
-                    </div>
-
-                    <div className={!this.state.customFormat ? '' : 'hide-section'}>
-                      <DoubleSelect
-                        customProps={{
-                          label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonGeneric),
-                          onClick: () => {},
-                        }}
-                        formItemProps={{
-                          label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                        }}
-                        firstInputProps={{
-                          placeholder: 'width',
-                        }}
-                        secondInputProps={{
-                          placeholder: 'height',
-                        }}
-                        helpToolTipProp={{
-                          title: 'testeu du custom format',
-                        }}
-                      />
-                    </div>
+                    )
+                  }
 
                     <Field
                       name="creative.destination_domain"
@@ -268,6 +288,11 @@ DisplayCreativeCreationEditor.propTypes = {
   rendererProperties: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
   isLoading: PropTypes.bool.isRequired,
   organisationId: PropTypes.string.isRequired,
+  change: PropTypes.func.isRequired,
+};
+
+const mapDispatchToProps = {
+  change,
 };
 
 DisplayCreativeCreationEditor = compose(
@@ -276,6 +301,7 @@ DisplayCreativeCreationEditor = compose(
   reduxForm({
     form: 'creativeEditor'
   }),
+  connect(null, mapDispatchToProps),
   withValidators,
 )(DisplayCreativeCreationEditor);
 

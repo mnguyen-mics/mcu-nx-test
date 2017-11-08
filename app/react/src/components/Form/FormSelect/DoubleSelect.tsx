@@ -1,25 +1,30 @@
 import * as React from 'react';
-import { Input, Select } from 'antd';
+import { Input } from 'antd';
 
 // TS Interfaces
-import { WrappedFieldProps } from 'redux-form';
+import { Field, WrappedFieldInputProps, WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
 import ButtonStyleless from '../../ButtonStyleless';
 
-interface CustomProps {
+interface DoubleProps {
   label: string;
   onClick: () => any;
 }
 
 interface FormSelectProps {
   formItemProps?: FormItemProps;
-  customProps: CustomProps;
-  options?: OptionProps[];
-  selectProps?: SelectProps;
+  doubleProps: DoubleProps;
+  widthProps: WrappedFieldInputProps;
+  heightProps: WrappedFieldInputProps;
 }
+
+const Component = (p: any) => {
+  const onChange = (e: any) => p.onChange(e.target.value);
+
+  return <Input {...p} onChange={onChange} />;
+};
 
 class DoubleSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
 
@@ -30,62 +35,52 @@ class DoubleSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
     selectProps: {},
   };
 
-  componentDidMount() {
-    this.setDefaultValue();
-  }
-
-  componentDidUpdate() {
-    this.setDefaultValue();
-  }
-
-  setDefaultValue = () => {
-    const {
-      options,
-      input: {
-        value,
-        onChange,
-      },
-    } = this.props;
-
-    if (options && options.length === 1 && (!value || value === '')) {
-      onChange(options[0].value);
-    }
-  }
-
   render() {
     const {
-      customProps,
+      doubleProps,
       formItemProps,
       helpToolTipProps,
-      firstInputProps,
-      secondInputProps,
-      // input,
-      // meta,
+      widthProps,
+      heightProps,
+      input,
+      meta,
     } = this.props;
 
-    const validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
-    // if (meta.touched && meta.invalid) validateStatus = 'error';
-    // if (meta && meta.touched && meta.warning) validateStatus = 'warning';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    if (meta.touched && meta.invalid) validateStatus = 'error';
+    if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
     return (
         <FormFieldWrapper
-          help={/*meta.touched && (meta.warning || meta.error)*/''}
+          help={meta.touched && (meta.warning || meta.error)}
           helpToolTipProps={helpToolTipProps}
           validateStatus={validateStatus}
           {...formItemProps}
         >
           <div className="custom-select">
             <div className="double-select">
-              <div className="select"><Input{...firstInputProps} /></div>
-              <div className="separator">-</div>
-              <div className="select"><Input {...secondInputProps} /></div>
+              <div className="input">
+                <Component
+                  placeholder={widthProps.placeholder}
+                  value={widthProps.value(input.value)}
+                  onChange={widthProps.handleChange(input)}
+                />
+              </div>
+              <div className="separator">x</div>
+              <div className="input">
+                <Component
+                  placeholder={heightProps.placeholder}
+                  value={heightProps.value(input.value)}
+                  onChange={heightProps.handleChange(input)}
+                />
+              </div>
             </div>
 
             <div className="button">
               <ButtonStyleless
                 className="clickable-on-hover"
-                onClick={customProps.onClick}
-              >{customProps.label}
+                onClick={doubleProps.onClick}
+              >{doubleProps.label}
               </ButtonStyleless>
             </div>
           </div>

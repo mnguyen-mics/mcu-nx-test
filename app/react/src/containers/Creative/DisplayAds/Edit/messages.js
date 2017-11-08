@@ -73,9 +73,9 @@ export default defineMessages({
     id: 'creatives.create.section.general.field.format.button.custom',
     defaultMessage: 'Custom',
   },
-  creativeCreationGeneralFormatFieldButtonGeneric: {
-    id: 'creatives.create.section.general.field.format.button.generic',
-    defaultMessage: 'Generic',
+  creativeCreationGeneralFormatFieldButtonStandard: {
+    id: 'creatives.create.section.general.field.format.button.standard',
+    defaultMessage: 'Standard',
   },
   creativeCreationGeneralFormatFieldHelper: {
     id: 'creatives.create.section.general.field.format.helper',
