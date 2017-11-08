@@ -1,9 +1,40 @@
 (function(){
   'use strict';
 
+  const defaultFeatures = [
+    'audience.segments',
+    'audience.partitions',
+    'audience.query_tool',
+    'audience.monitoring',
+    'campaigns.display',
+    'campaigns.email',
+    'campaigns.goals',
+    'automations',
+    'creatives.display',
+    'creatives.email',
+    'library.placements',
+    'library.keywords',
+    'library.bid_optimizers',
+    'library.attribution_models',
+    'library.visit_analyzers',
+    'library.catalog',
+    'library.ad_layouts',
+    'library.stylesheets',
+    'library.assets',
+    'library.exports',
+  ];
+
+  const gravityFeatures = [
+    'audience.segments',
+    'campaigns.display',
+    'campaigns.display.edition.audience_catalog',
+    'creatives.display',
+  ]
+
   var MCS_CONSTANTS = {
     NAVIGATOR_URL: 'http://navigator.mediarithmics.local',
-    API_URL: 'http://api.mediarithmics.local'
+    API_URL: 'http://api.mediarithmics.local',
+    FEATURES: defaultFeatures
   };
 
   window.MCS_CONSTANTS = MCS_CONSTANTS;

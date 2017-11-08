@@ -89,7 +89,6 @@ class GoalForm extends Component {
 }
 
 GoalForm.defaultProps = {
-  editionMode: false,
   fieldValidators: {},
   formValues: {},
   pristine: true,

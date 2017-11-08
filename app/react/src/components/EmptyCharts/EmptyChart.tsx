@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 
-import McsIcons from '../McsIcons';
+import McsIcons, { McsIconType } from '../McsIcons';
 
 interface EmptyChartsProps {
   title: string;
-  icon?: string;
+  icon?: McsIconType;
 }
 
 const EmptyCharts: React.SFC<EmptyChartsProps> = ({ title, icon }) => {

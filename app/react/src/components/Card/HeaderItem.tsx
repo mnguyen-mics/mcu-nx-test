@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Col } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import McsIcons from '../McsIcons';
+import McsIcons, { McsIconType } from '../McsIcons';
 
 export interface HeaderItemDataProp {
-  iconType: string;
+  iconType: McsIconType;
   translationKey: string;
   number: number;
 }

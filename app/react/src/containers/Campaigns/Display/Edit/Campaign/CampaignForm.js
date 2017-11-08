@@ -28,7 +28,8 @@ import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import GoalService from '../../../../../services/GoalService';
 import AttributionModelsService from '../../../../../services/AttributionModelsService';
-import * as actions from '../../../../../state/Notifications/actions';
+import * as NotificationActions from '../../../../../state/Notifications/actions';
+import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import * as AdGroupServiceWrapper from '../AdGroupServiceWrapper';
 
 
@@ -128,11 +129,17 @@ class CampaignForm extends Component {
     return request.then(result => result.data.id);
   }
 
-  createAdGroup = (campaignId, organisationId, value, editionMode = false) => {
+  createAdGroup = (campaignId, organisationId, value, options) => {
     const {
       formValues,
       formInitialValues,
+      hasFeature,
     } = this.props;
+
+    const saveOptions = {
+      ...options,
+      catalogMode: hasFeature('campaigns.display.edition.audience_catalog')
+    };
 
     const adGroupFormValue = formValues.adGroupsTable.find(item => item.id === value.id);
     const adGroupInitialFormValue = Object.keys(formInitialValues).length ? formInitialValues.adGroupsTable.find(item => item.id === value.id) : {};
@@ -146,12 +153,15 @@ class CampaignForm extends Component {
       [key.indexOf('Table') === -1 ? camelCase(`adGroup-${key}`) : key]: formInitialValues[key]
     }), {}) : null;
 
-    return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, editionMode);
+    return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, saveOptions);
   }
 
   updateAdGroup = ({ campaignId, organisationId, body }) => {
-
-    return this.createAdGroup(campaignId, organisationId, body, true);
+    const saveOptions = {
+      editionMode: true,
+      catalogMode: this.props.hasFeature('campaigns.display.edition.audience_catalog')
+    };
+    return this.createAdGroup(campaignId, organisationId, body, saveOptions);
   }
 
   saveAdGroups = (campaignId) => {
@@ -403,12 +413,14 @@ CampaignForm.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
   notifyError: PropTypes.func.isRequired,
+  hasFeature: PropTypes.func.isRequired,
 };
 
 
 const mapStateToProps = (state) => ({
   formInitialValues: getFormInitialValues(FORM_NAME)(state),
   formValues: getFormValues(FORM_NAME)(state),
+  hasFeature: FeatureSelectors.hasFeature(state),
 });
 
 const mapDispatchToProps = {
@@ -416,7 +428,7 @@ const mapDispatchToProps = {
   arrayPush,
   arrayRemove,
   arrayRemoveAll,
-  notifyError: actions.notifyError
+  notifyError: NotificationActions.notifyError
 };
 
 export default compose(
