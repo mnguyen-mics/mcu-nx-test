@@ -332,10 +332,10 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
 
     const { hasFetchedPerformance, hasData, isFetchingPerformance } = this.state;
 
-    const legendOptions = {
-      colors: [colors['mcs-success']],
-      domains: [formatMessage(messages.weightedConversion)],
-    };
+    const legendOptions = [{
+      color: colors['mcs-success'],
+      domain: formatMessage(messages.weightedConversion),
+    }];
 
     const chartArea = (
       <div>

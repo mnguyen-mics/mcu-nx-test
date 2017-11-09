@@ -16,10 +16,9 @@ import {
 } from '../../../../../../../services/CatalogService';
 import { generateFakeId, isFakeId } from '../../../../../../../utils/FakeIdHelper';
 import {
-  AudienceSegmentResource,
   AudienceSegmentFieldModel,
-  AudienceSegmentSelectionResource,
 } from './AudienceCatalogContainer';
+import { AudienceSegmentResource, AudienceSegmentSelectionResource } from '../../../../../../../models/Audience';
 import audienceCatalogMsgs from './messages';
 
 export interface AudienceCatalogProps {

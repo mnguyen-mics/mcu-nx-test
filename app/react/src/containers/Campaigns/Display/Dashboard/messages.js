@@ -162,7 +162,27 @@ export default defineMessages({
     defaultMessage: 'Monthly Budget Consumption',
   },
   weightedConversion: {
-    id: 'goal.chart.weightedConversion',
+    id: 'campaign.goal.chart.weightedConversion',
     defaultMessage: 'Weighted Conversion',
+  },
+  impressions: {
+    id: 'campaign.chart.impressions',
+    defaultMessage: 'Imp.',
+  },
+  clicks: {
+    id: 'campaign.chart.ctr',
+    defaultMessage: 'CTR',
+  },
+  impressions_cost: {
+    id: 'campaign.chart.impressions_cost',
+    defaultMessage: 'Spent.',
+  },
+  cpm: {
+    id: 'campaign.chart.cpm',
+    defaultMessage: 'CPM.',
+  },
+  cpc: {
+    id: 'campaign.chart.cpc',
+    defaultMessage: 'CPC.',
   }
 });
