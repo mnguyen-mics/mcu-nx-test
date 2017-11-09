@@ -48,7 +48,8 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
       // already has an access token
       const expirationDate = yield call(AuthService.getAccessTokenExpirationDate);
       expiresIn = expirationDate.diff(moment(), 'seconds');
-      refreshToken = yield call(AuthService.getRefreshToken) ? yield call(AuthService.getRefreshToken) : yield call(AuthService.createRefreshToken, credentialsOrRefreshToken);
+      refreshToken = yield call(AuthService.getRefreshToken);
+      if (!refreshToken) { refreshToken = yield call(AuthService.createRefreshToken, credentialsOrRefreshToken); }
     } else if (remember) {
       // has just signed up with remember me
       refreshToken = yield call(AuthService.createRefreshToken, credentialsOrRefreshToken);
@@ -79,7 +80,7 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
         const waitInMs = (expiresIn * 1000) - (60 * 1000);
         log.debug(`Will refresh access token in ${waitInMs} ms`);
         yield call(delay, waitInMs);
-        const storedRefreshToken = refreshToken ? refreshToken : yield call(AuthService.getRefreshToken);
+        const storedRefreshToken = yield call(AuthService.getRefreshToken);
         log.debug(`Authorize user with refresh token ${storedRefreshToken}`);
         const results = yield call(authorize, { refreshToken: storedRefreshToken });
         expiresIn = results.expiresIn;
