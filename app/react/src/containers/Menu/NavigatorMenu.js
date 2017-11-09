@@ -9,6 +9,7 @@ import {
   hasDatamarts,
   getDefaultDatamart } from '../../state/Session/selectors';
 import McsIcons from '../../components/McsIcons.tsx';
+import { getOrgFeatures } from '../../state/Features/selectors';
 import {
   itemDefinitions,
   itemDisplayedOnlyIfDatamart,
@@ -72,11 +73,12 @@ class NavigatorMenu extends Component {
         params: { organisationId },
       },
       organisationHasDatamarts,
+      orgFeatures,
     } = this.props;
 
     const isAvailable = key => {
-      if (itemDisplayedOnlyIfDatamart.includes(key)) return organisationHasDatamarts(organisationId);
-      return true;
+      if (itemDisplayedOnlyIfDatamart.includes(key)) return organisationHasDatamarts(organisationId) && orgFeatures.filter(v => v.includes(key)).length > 0;
+      return orgFeatures.filter(v => v.includes(key)).length > 0;
     };
 
     return itemDefinitions.reduce((acc, item) => {
@@ -198,11 +200,13 @@ NavigatorMenu.propTypes = {
   organisationHasDatamarts: PropTypes.func.isRequired,
   onMenuItemClick: PropTypes.func.isRequired,
   defaultDatamart: PropTypes.func.isRequired,
+  orgFeatures: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const mapStateToProps = state => ({
   organisationHasDatamarts: hasDatamarts(state),
   defaultDatamart: getDefaultDatamart(state),
+  orgFeatures: getOrgFeatures(state),
 });
 
 const mapDispatchToProps = {};

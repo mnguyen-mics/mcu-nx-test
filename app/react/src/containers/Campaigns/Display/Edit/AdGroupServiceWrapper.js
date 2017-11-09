@@ -43,7 +43,7 @@ function getPublishers({ campaignId }) {
 }
 
 function getSegments({ adGroupId, campaignId, organisationId }) {
-  const fetchSegments = DisplayCampaignService.getAudience(campaignId, adGroupId);
+  const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
   const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 
   return Promise.all([fetchSegments, fetchMetadata])
@@ -52,12 +52,25 @@ function getSegments({ adGroupId, campaignId, organisationId }) {
       const metadata = results[1];
 
       return segments.map(segment => {
-        const { desktop_cookie_ids, user_points } = metadata[segment.id];
+        const meta = metadata[segment.id];
+        const userPoints = (meta && meta.user_points ? meta.user_points : '-');
+        const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
 
-        return { ...segment, desktop_cookie_ids, user_points };
+        return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
       });
     })
     .then(audienceTable => ({ audienceTable }));
+}
+
+function getAdGroupAudienceSegments(campaignId, adGroupId) {
+  return DisplayCampaignService.getAudienceSegments(campaignId, adGroupId).then(segments => {
+    return segments.map(segment => {
+      return {
+        id: segment.id,
+        resource: segment,
+      };
+    });
+  }).then(audienceSegmentTable => ({ audienceSegmentTable }));
 }
 
 const getAdGroup = (organisationId, campaignId, adGroupId) => {
@@ -68,6 +81,7 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
     getPublishers({ campaignId }),
     getSegments({ adGroupId, campaignId, organisationId }),
     getAds({ campaignId, adGroupId, organisationId }),
+    getAdGroupAudienceSegments(campaignId, adGroupId),
   ])
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
@@ -93,38 +107,67 @@ const saveTableFields = (options, formValues, formInitialValues) => {
 
   const { campaignId, adGroupId, getBody, requests } = options;
 
-  return formValues.reduce((promise, row) => {
-    const body = getBody(row);
-    const { include, modelId, toBeRemoved } = row;
-    const isCreation = isFakeId(modelId);
+  // TODO generalize this way
+  const newFormValues = formValues.filter(field => field.resource && Object.keys(field.resource).length > 0);
 
-    return promise.then(() => {
-      let newPromise;
+  // TODO IN UPDATE CASE => maybe compare resource between initial and current
+  const createResources = newFormValues.filter(field => isFakeId(field.id)).map(field => {
+    return function promise() { return requests.create({ campaignId, adGroupId, body: field.resource }); };
+  });
 
-      if (!toBeRemoved) {
-        /* In case we want to add or update a element */
+  const updateResources = newFormValues.filter(field => !isFakeId(field.id) && !field.deleted).map(field => {
+    return function promise() { return requests.update({ campaignId, adGroupId, id: field.id, body: field.resource }); };
+  });
+  const deleteResources = newFormValues.filter(field => field.deleted).map(field => {
+    return function promise() { return requests.delete({ campaignId, adGroupId, id: field.id }); };
+  });
 
-        if (isCreation) {
-          /* creation */
-          newPromise = requests.create({ campaignId, adGroupId, body });
-        } else if (requests.update) {
-          const needsUpdating = formInitialValues.find(elem => (
-            elem.modelId === modelId && elem.include !== include
-          ));
-
-          /* update if modified element */
-          if (needsUpdating) {
-            newPromise = requests.update({ campaignId, adGroupId, id: modelId, body });
-          }
-        }
-      } else if (toBeRemoved && !isCreation) {
-        /* In case we want to delete an existing element */
-        newPromise = requests.delete({ campaignId, adGroupId, id: modelId });
-      }
-
-      return newPromise || Promise.resolve();
+  const sequentialPromisesResult = [
+    ...createResources,
+    ...updateResources,
+    ...deleteResources,
+  ].reduce((previousPromise, promise) => {
+    return previousPromise.then(() => {
+      return promise();
     });
   }, Promise.resolve());
+
+  const oldFormValues = formValues.filter(field => !field.resource);
+
+  return sequentialPromisesResult.then(() => {
+    return oldFormValues.reduce((promise, row) => {
+      const body = getBody(row);
+      const { include, modelId, toBeRemoved } = row;
+      const isCreation = isFakeId(modelId);
+
+      return promise.then(() => {
+        let newPromise;
+
+        if (!toBeRemoved) {
+          /* In case we want to add or update a element */
+
+          if (isCreation) {
+            /* creation */
+            newPromise = requests.create({ campaignId, adGroupId, body });
+          } else if (requests.update) {
+            const needsUpdating = formInitialValues.find(elem => (
+              elem.modelId === modelId && elem.include !== include
+            ));
+
+            /* update if modified element */
+            if (needsUpdating) {
+              newPromise = requests.update({ campaignId, adGroupId, id: modelId, body });
+            }
+          }
+        } else if (toBeRemoved && !isCreation) {
+          /* In case we want to delete an existing element */
+          newPromise = requests.delete({ campaignId, adGroupId, id: modelId });
+        }
+
+        return newPromise || Promise.resolve();
+      });
+    }, Promise.resolve());
+  });
 };
 
 const saveAds = (campaignId, adGroupId, formValue, initialFormValue) => {
@@ -152,7 +195,21 @@ const saveAudience = (campaignId, adGroupId, formValue, initialFormValue) => {
       update: DisplayCampaignService.updateAudience,
       delete: DisplayCampaignService.deleteAudience,
     },
-    tableName: 'audienceTable',
+  };
+
+  return saveTableFields(options, formValue, initialFormValue);
+};
+
+const saveAudienceSegments = (campaignId, adGroupId, formValue, initialFormValue) => {
+  const options = {
+    campaignId,
+    adGroupId,
+    getBody: () => {},
+    requests: {
+      create: DisplayCampaignService.createAudienceSegment,
+      update: DisplayCampaignService.updateAudienceSegment,
+      delete: DisplayCampaignService.deleteAudience,
+    },
   };
 
   return saveTableFields(options, formValue, initialFormValue);
@@ -175,24 +232,27 @@ const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
       create: DisplayCampaignService.createPublisher,
       delete: DisplayCampaignService.deletePublisher,
     },
-    tableName: 'publisherTable',
   };
 
   return saveTableFields(options, formValue, initialFormValue);
 };
 
-const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = false) => {
+const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { editionMode: false, catalogMode: false }) => {
+
+  const { editionMode, catalogMode } = options;
 
   const publisherTable = adGroupData && adGroupData.publisherTable ? adGroupData.publisherTable : [];
   const audienceTable = adGroupData && adGroupData.audienceTable ? adGroupData.audienceTable : [];
   const adTable = adGroupData && adGroupData.adTable ? adGroupData.adTable : [];
+  const audienceSegments = adGroupData && adGroupData.audienceSegmentTable ? adGroupData.audienceSegmentTable : [];
+  const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
   const deviceTable = [];
   const placementTable = [];
-  const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
 
   const initialPublisherTable = adGroupInitialData && adGroupInitialData.publisherTable ? adGroupInitialData.publisherTable : [];
   const initialAudienceTable = adGroupInitialData && adGroupInitialData.audienceTable ? adGroupInitialData.audienceTable : [];
   const initialAdTable = adGroupInitialData && adGroupInitialData.adTable ? adGroupInitialData.adTable : [];
+  const initialAudienceSegments = adGroupInitialData && adGroupInitialData.audienceSegmentTable ? adGroupInitialData.audienceSegmentTable : [];
   const initialDeviceTable = [];
   const initialPlacementTable = [];
 
@@ -221,23 +281,22 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, editionMode = 
     : DisplayCampaignService.updateAdGroup(campaignId, adGroupData.adGroupId, body)
   );
 
-  return new Promise((resolve, reject) => {
-    let adGroupNewId = null;
-    request
-      .then((response) => {
-        adGroupNewId = response.data.id;
-        return saveAudience(campaignId, adGroupNewId, audienceTable, initialAudienceTable);
-      })
-      .then(() => savePublishers(campaignId, adGroupNewId, publisherTable, initialPublisherTable))
-      .then(() => saveAds(campaignId, adGroupNewId, adTable, initialAdTable))
-      .then(() => saveDevices(campaignId, adGroupNewId, deviceTable, initialDeviceTable))
-      .then(() => savePlacements(campaignId, adGroupNewId, placementTable, initialPlacementTable))
-      .then(() => {
-        resolve(adGroupNewId);
-      })
-      .catch(error => {
-        reject(error);
-      });
+  return request.then(response => {
+    const adGroupId = response.data.id;
+
+    const handleSaveAudience = () => {
+      if (catalogMode) {
+        return saveAudienceSegments(campaignId, adGroupId, audienceSegments, initialAudienceSegments);
+      }
+      return saveAudience(campaignId, adGroupId, audienceTable, initialAudienceTable);
+    };
+
+    return handleSaveAudience()
+      .then(() => saveDevices(campaignId, adGroupId, deviceTable, initialDeviceTable))
+      .then(() => savePublishers(campaignId, adGroupId, publisherTable, initialPublisherTable))
+      .then(() => savePlacements(campaignId, adGroupId, placementTable, initialPlacementTable))
+      .then(() => saveAds(campaignId, adGroupId, adTable, initialAdTable))
+      .then(() => adGroupId);
   });
 };
 

@@ -1,10 +1,10 @@
 
 import React from 'react';
-import McsIcons from '../McsIcons';
+import McsIcons, { McsIconType } from '../McsIcons';
 
 export interface MenuPresentationalProps {
   title: string;
-  type: string;
+  type: McsIconType;
   subtitles?: string[];
   select: React.FormEventHandler<any>;
 }

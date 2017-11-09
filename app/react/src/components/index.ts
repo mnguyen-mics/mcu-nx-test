@@ -6,6 +6,8 @@ import Loading from './Loading';
 import McsIcons from './McsIcons';
 import TableSelector from './TableSelector';
 import MultiSelect from './MultiSelect';
+import SearchAndMultiSelect from './SearchAndMultiSelect';
+import SearchAndTreeSelect from './SearchAndTreeSelect';
 
 export {
   ButtonStyleless,
@@ -16,4 +18,6 @@ export {
   McsIcons,
   TableSelector,
   MultiSelect,
+  SearchAndMultiSelect,
+  SearchAndTreeSelect,
 };

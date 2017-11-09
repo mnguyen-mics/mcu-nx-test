@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Col } from 'antd';
 
-import McsIcons from '../McsIcons';
+import McsIcons, { McsIconType } from '../McsIcons';
 
 const messages = defineMessages({
   emptyMsg: {
@@ -17,7 +17,7 @@ interface EmptyTableViewProps {
     id?: string;
     defaultMessage?: string;
   };
-  iconType: string;
+  iconType: McsIconType;
   className?: string;
 }
 
@@ -45,7 +45,7 @@ const EmptyTableView: React.SFC<EmptyTableViewProps> = props => {
 };
 
 EmptyTableView.defaultProps = {
-  iconType: 'exclamation',
+  iconType: 'warning',
   className: 'mcs-table-view-empty',
   intlMessage: {},
   text: undefined,
