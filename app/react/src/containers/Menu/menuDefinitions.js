@@ -1,7 +1,8 @@
-export const itemDisplayedOnlyIfDatamart = ['audience', 'library_catalog', 'automations', 'email_campaigns'];
+export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'automations', 'campaigns.email'];
 
 
 // ATTENTION : ALL KEYS MUST BE UNIQUE !
+// AND MATCHED FEATURE FLAGS
 const audienceMenu = {
   key: 'audience',
   iconType: 'users',
@@ -9,23 +10,23 @@ const audienceMenu = {
   translationId: 'AUDIENCE',
   subMenuItems: [
     {
-      key: 'audience_segments',
+      key: 'audience.segments',
       path: '/audience/segments',
       translationId: 'AUDIENCE_SEGMENTS',
     },
     {
-      key: 'audience_partitions',
+      key: 'audience.partitions',
       path: '/audience/partitions',
       translationId: 'AUDIENCE_PARTITIONS',
     },
     {
-      key: 'audience_queries',
+      key: 'audience.queries',
       path: '/datamart/queries',
       translationId: 'QUERY_TOOL',
       legacyPath: true,
     },
     {
-      key: 'audience_monitoring',
+      key: 'audience.monitoring',
       path: '/audience/timeline',
       translationId: 'MONITORING',
     },
@@ -39,17 +40,17 @@ const campaignsMenu = {
   translationId: 'CAMPAIGNS',
   subMenuItems: [
     {
-      key: 'display_campaigns',
+      key: 'campaigns.display',
       path: '/campaigns/display',
       translationId: 'DISPLAY',
     },
     {
-      key: 'email_campaigns',
+      key: 'campaigns.email',
       path: '/campaigns/email',
       translationId: 'EMAILS',
     },
     {
-      key: 'campaigns_goals',
+      key: 'campaigns.goals',
       path: '/campaigns/goal',
       translationId: 'GOALS',
     },
@@ -70,12 +71,12 @@ const creativesMenu = {
   translationId: 'CREATIVES',
   subMenuItems: [
     {
-      key: 'creatives_display_ads',
+      key: 'creatives.display',
       path: '/creatives/display',
       translationId: 'DISPLAY',
     },
     {
-      key: 'creatives_email_templates',
+      key: 'creatives.email',
       path: '/creatives/email',
       translationId: 'EMAILS',
     },
@@ -89,58 +90,58 @@ const libraryMenu = {
   translationId: 'LIBRARY',
   subMenuItems: [
     {
-      key: 'library_placements',
+      key: 'library.placements',
       path: '/library/placements',
       translationId: 'PLACEMENT_LIST',
     },
     {
-      key: 'library_keywords',
+      key: 'library.keywords',
       path: '/library/keywords',
       translationId: 'KEYWORD_LIST',
     },
     {
-      key: 'library_bidOptimizers',
+      key: 'library.bid_optimizers',
       path: '/library/bidOptimizers',
       translationId: 'BID_OPTIMIZER',
       legacyPath: true,
     },
     {
-      key: 'library_attributionmodels',
+      key: 'library.attribution_models',
       path: '/library/attributionmodels',
       translationId: 'ATTRIBUTION_MODEL',
       legacyPath: true,
     },
     {
-      key: 'library_visitanalysers',
+      key: 'library.visit_analyzers',
       path: '/library/visitanalysers',
       translationId: 'VISIT_ANALYZER',
       legacyPath: true,
     },
     {
-      key: 'library_catalog',
+      key: 'library.catalog',
       path: '/datamart/items',
       translationId: 'CATALOG',
       legacyPath: true,
     },
     {
-      key: 'library_adlayouts',
+      key: 'library.ad_layouts',
       path: '/library/adlayouts',
       translationId: 'AD_LAYOUTS',
       legacyPath: true,
     },
     {
-      key: 'library_stylesheets',
+      key: 'library.stylesheets',
       path: '/library/stylesheets',
       translationId: 'STYLESHEETS',
       legacyPath: true,
     },
     {
-      key: 'library_assets',
+      key: 'library.assets',
       path: '/library/assets',
       translationId: 'ASSETS',
     },
     {
-      key: 'library_exports',
+      key: 'library.exports',
       path: '/library/exports',
       translationId: 'EXPORTS',
       legacyPath: true,

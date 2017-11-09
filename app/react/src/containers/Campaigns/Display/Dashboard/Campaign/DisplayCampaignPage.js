@@ -293,46 +293,46 @@ class DisplayCampaignPage extends Component {
     });
 
     getCampaignPerf.promise.then(response => {
-      this.updateStateOnPerf('campaign', 'performance', normalizeReportView(response.data.report_view));
+      this.updateStateOnPerf('campaign', 'performance', 'performance', normalizeReportView(response.data.report_view));
     }).catch(this.catchCancellablePromises);
 
     getAdGroupPerf.promise.then(response => {
-      this.updateStateOnPerf('adGroups', 'performance', DisplayCampaignPage.formatReportView(
+      this.updateStateOnPerf('adGroups', 'performance', 'performanceById', DisplayCampaignPage.formatReportView(
         response.data.report_view,
         'ad_group_id',
       ));
     }).catch(this.catchCancellablePromises);
 
     getAdPerf.promise.then(response => {
-      this.updateStateOnPerf('ads', 'performance', normalizeReportView(
+      this.updateStateOnPerf('ads', 'performance', 'performanceById', DisplayCampaignPage.formatReportView(
         response.data.report_view,
         'ad_id',
       ));
     }).catch(this.catchCancellablePromises);
 
     getMediaPerf.promise.then(response => {
-      this.updateStateOnPerf('campaign', 'mediaPerformance', normalizeReportView(
+      this.updateStateOnPerf('campaign', 'mediaPerformance', 'performance', normalizeReportView(
         response.data.report_view,
         'campaign_id',
       ));
     }).catch(this.catchCancellablePromises);
 
     getOverallCampaignPerf.promise.then(response => {
-      this.updateStateOnPerf('campaign', 'overallPerformance', normalizeReportView(
+      this.updateStateOnPerf('campaign', 'overallPerformance', 'performance', normalizeReportView(
         response.data.report_view,
         'campaign_id',
       ));
     }).catch(this.catchCancellablePromises);
   }
 
-  updateStateOnPerf(firstLevelKey, secondLevelKey, performanceReport) {
+  updateStateOnPerf(firstLevelKey, secondLevelKey, thirdLevel, performanceReport) {
     this.setState((prevState) => {
       const nextState = {
         ...prevState,
       };
       nextState[firstLevelKey][secondLevelKey].isLoading = false;
       nextState[firstLevelKey][secondLevelKey].hasFetched = true;
-      nextState[firstLevelKey][secondLevelKey].performance = performanceReport;
+      nextState[firstLevelKey][secondLevelKey][thirdLevel] = performanceReport;
 
       return nextState;
     });

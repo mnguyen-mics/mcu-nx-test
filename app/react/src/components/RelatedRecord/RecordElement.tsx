@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Button, Col, Icon, Row } from 'antd';
 
-import McsIcons from '../McsIcons';
+import McsIcons, { McsIconType } from '../McsIcons';
 
 interface RecordElementProps {
-  recordIconType: string;
+  recordIconType: McsIconType;
   title: string;
   actionButtons?: [{
     iconType: string;

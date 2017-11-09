@@ -1,16 +1,11 @@
 import * as React from 'react';
 
-interface ButtonStylelessProps {
-  className?: string;
-  onClick: React.FormEventHandler<HTMLButtonElement>;
-}
-
-const ButtonStyleless: React.SFC<ButtonStylelessProps & React.ButtonHTMLAttributes<HTMLButtonElement>> = props => {
+const ButtonStyleless: React.SFC<React.ButtonHTMLAttributes<HTMLButtonElement>> = props => {
 
   const { children, className, ...rest } = props;
   return (
-    <button className={`button-styleless ${props.className}`} {...rest}>
-      {props.children}
+    <button className={`button-styleless ${className}`} {...rest}>
+      {children}
     </button>
   );
 };

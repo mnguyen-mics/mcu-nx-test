@@ -21,7 +21,8 @@ class General extends Component {
 
   render() {
     const {
-      fieldValidators: { isRequired },
+      fieldNormalizer: { normalizeInteger },
+      fieldValidators: { isRequired, isValidInteger },
       formatMessage,
     } = this.props;
 
@@ -44,15 +45,51 @@ class General extends Component {
             validate={[isRequired]}
             props={{
               formItemProps: {
-                label: formatMessage(messages.contentSection1Row1Label),
+                label: formatMessage(messages.contentSectionGeneralRow1Label),
                 required: true,
                 ...fieldGridConfig,
               },
               inputProps: {
-                placeholder: formatMessage(messages.contentSection1Row1Placeholder),
+                placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
               },
               helpToolTipProps: {
-                title: formatMessage(messages.contentSection1Row1Tooltip),
+                title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
+              },
+            }}
+          />
+
+          <Field
+            name="total_impression_capping"
+            component={FormInput}
+            normalize={normalizeInteger}
+            validate={[isValidInteger]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Label),
+              },
+              inputProps: {
+                placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Placeholder),
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Tooltip),
+              },
+            }}
+          />
+
+          <Field
+            name="per_day_impression_capping"
+            component={FormInput}
+            normalize={normalizeInteger}
+            validate={[isValidInteger]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Label),
+              },
+              inputProps: {
+                placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Placeholder),
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Tooltip),
               },
             }}
           />
@@ -65,25 +102,25 @@ class General extends Component {
           >
             <McsIcons type="settings" />
             <span className="step-title">
-              {formatMessage(messages.contentSection1AdvancedPartTitle)}
+              {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
             <McsIcons type="chevron" />
           </ButtonStyleless>
 
-          <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : ''}>
+          <div className={!this.state.advancedSectionDisplayed ? 'hide-section' : 'optional-section-content'}>
             <Field
               name="technical_name"
               component={FormInput}
               props={{
                 formItemProps: {
-                  label: formatMessage(messages.contentSection1Row5Label),
+                  label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
                   ...fieldGridConfig,
                 },
                 inputProps: {
-                  placeholder: formatMessage(messages.contentSection1Row5Placeholder),
+                  placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Placeholder),
                 },
                 helpToolTipProps: {
-                  title: formatMessage(messages.contentSection1Row5Tooltip),
+                  title: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Tooltip),
                 },
               }}
             />
@@ -99,6 +136,10 @@ General.defaultProps = {
 };
 
 General.propTypes = {
+  fieldNormalizer: PropTypes.shape({
+    normalizeFloat: PropTypes.func.isRequired,
+    normalizeInteger: PropTypes.func.isRequired,
+  }).isRequired,
 
   fieldValidators: PropTypes.shape({
     isRequired: PropTypes.func.isRequired,

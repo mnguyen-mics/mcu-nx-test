@@ -96,9 +96,9 @@ class AdGroups extends Component {
     const adGroupEditorProps = {
       editionMode: true,
       initialValues: initialAdGroupFormatted,
-      openNextDrawer: handlers.openNextDrawer,
       closeNextDrawer: handlers.closeNextDrawer,
-      close: handlers.closeNextDrawer,
+      onClose: handlers.closeNextDrawer,
+      openNextDrawer: handlers.openNextDrawer,
       save: this.updateNewData,
     };
 
@@ -118,7 +118,7 @@ class AdGroups extends Component {
           ...tableData,
           {
             key: adGroup.id,
-            type: { image: 'goals', name: adGroup.name ? adGroup.name : adGroup.ad_group_name },
+            type: { image: 'adGroups', name: adGroup.name ? adGroup.name : adGroup.ad_group_name },
             default: { bool: adGroup.default, index },
             toBeRemoved: index,
             toBeCreated: adGroup.toBeCreated
@@ -155,7 +155,7 @@ class AdGroups extends Component {
 
           {!dataSource.length
             ? <EmptyRecords
-              iconType="plus"
+              iconType="adGroups"
               message={formatMessage(messages.contentSection3EmptyTitle)}
             />
             : null

@@ -51,7 +51,7 @@ class PluginFieldGenerator extends Component {
   generateFielBasedOnDefinition = (fieldDefinition, organisationId) => {
     const {
       fieldValidators: {
-        isValidNumber,
+        isValidInteger,
       }
     } = this.props;
 
@@ -71,7 +71,7 @@ class PluginFieldGenerator extends Component {
       case 'BOOLEAN':
         return this.renderFieldBasedOnConfig(FormBoolean, `${fieldDefinition.technical_name}.value.value`, fieldDefinition);
       case 'LONG':
-        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.url`, fieldDefinition, [isValidNumber]);
+        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.url`, fieldDefinition, [isValidInteger]);
       case 'DATA_FILE':
         return <div>DATA_FILE</div>;
       case 'MODEL_ID':

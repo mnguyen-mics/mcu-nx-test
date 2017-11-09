@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { camelCase } from 'lodash';
 
 import withDrawer from '../../../../../components/Drawer';
@@ -8,6 +9,9 @@ import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
+import * as NotificationActions from '../../../../../state/Notifications/actions';
+import * as FeatureSelectors from '../../../../../state/Features/selectors';
+import log from '../../../../../utils/Logger';
 
 
 class EditAdGroupPage extends Component {
@@ -30,6 +34,10 @@ class EditAdGroupPage extends Component {
         initialValues: initialAdGroupFormatted,
         loading: false,
       });
+    }).catch(err => {
+      log.error(err);
+      this.setState({ loading: false });
+      this.props.notifyError(err);
     });
   }
 
@@ -39,11 +47,22 @@ class EditAdGroupPage extends Component {
       match: {
         params: { campaignId, organisationId },
       },
+      notifyError,
+      hasFeature
     } = this.props;
 
-    saveAdGroup(campaignId, object, this.state.initialValues, true)
+    const saveOptions = {
+      editionMode: true,
+      catalogMode: hasFeature('campaigns.display.edition.audience_catalog')
+    };
+
+    saveAdGroup(campaignId, object, this.state.initialValues, saveOptions)
       .then((adGroupId) => {
         history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
+      })
+      .catch(err => {
+        log.error(err);
+        notifyError(err);
       });
   }
 
@@ -87,9 +106,15 @@ EditAdGroupPage.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
+  notifyError: PropTypes.func.isRequired,
+  hasFeature: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   withDrawer,
+  connect(
+    state => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
+    { notifyError: NotificationActions.notifyError }
+  )
 )(EditAdGroupPage);

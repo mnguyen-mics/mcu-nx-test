@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Icon } from 'antd';
+import McsIcons, { McsIconType } from '../McsIcons';
 
 export interface EmptyRecordsProps {
-  iconType: string;
+  iconType: McsIconType;
   message: string;
   className: string;
 }
@@ -10,14 +10,14 @@ export interface EmptyRecordsProps {
 const EmptyRecords: React.SFC<EmptyRecordsProps> = props => {
   return (
     <div className={`empty-related-records ${props.className}`}>
-      <Icon type={props.iconType} />
+      <McsIcons type={props.iconType} />
       {props.message}
     </div>
   );
 };
 
 EmptyRecords.defaultProps = {
-  iconType: 'exclamation-circle-o',
+  iconType: 'warning',
   className: '',
 };
 
