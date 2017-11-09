@@ -1,44 +1,43 @@
 import * as React from 'react';
-import { Input } from 'antd';
+import { Input as AntInput } from 'antd';
 
 // TS Interfaces
-import { Field, WrappedFieldInputProps, WrappedFieldProps } from 'redux-form';
+import { WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
+import { InputProps } from 'antd/lib/input/Input';
 
-import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
-import ButtonStyleless from '../../ButtonStyleless';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../../components/Form/FormFieldWrapper';
+import ButtonStyleless from '../../../components/ButtonStyleless';
 
-interface DoubleProps {
+interface ButtonProps {
   label: string;
   onClick: () => any;
 }
 
-interface FormSelectProps {
+interface CreativeCustomFormatProps {
   formItemProps?: FormItemProps;
-  doubleProps: DoubleProps;
-  widthProps: WrappedFieldInputProps;
-  heightProps: WrappedFieldInputProps;
+  button: ButtonProps;
+  widthProps: InputProps;
+  heightProps: InputProps;
 }
 
-const Component = (p: any) => {
+const Input = (p: any) => {
   const onChange = (e: any) => p.onChange(e.target.value);
 
-  return <Input {...p} onChange={onChange} />;
+  return <AntInput {...p} onChange={onChange} />;
 };
 
-class DoubleSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
+class CreativeCustomFormat extends React.Component<CreativeCustomFormatProps & FormFieldWrapperProps & WrappedFieldProps> {
 
   static defaultProps = {
     formItemProps: {},
     helpToolTipProps: {},
-    options: [],
-    selectProps: {},
   };
 
   render() {
     const {
-      doubleProps,
       formItemProps,
+      button,
       helpToolTipProps,
       widthProps,
       heightProps,
@@ -57,10 +56,10 @@ class DoubleSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
           validateStatus={validateStatus}
           {...formItemProps}
         >
-          <div className="custom-select">
-            <div className="double-select">
+          <div className="creative-format">
+            <div className="custom">
               <div className="input">
-                <Component
+                <Input
                   placeholder={widthProps.placeholder}
                   value={widthProps.value(input.value)}
                   onChange={widthProps.handleChange(input)}
@@ -68,7 +67,7 @@ class DoubleSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
               </div>
               <div className="separator">x</div>
               <div className="input">
-                <Component
+                <Input
                   placeholder={heightProps.placeholder}
                   value={heightProps.value(input.value)}
                   onChange={heightProps.handleChange(input)}
@@ -79,8 +78,8 @@ class DoubleSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
             <div className="button">
               <ButtonStyleless
                 className="clickable-on-hover"
-                onClick={doubleProps.onClick}
-              >{doubleProps.label}
+                onClick={button.onClick}
+              >{button.label}
               </ButtonStyleless>
             </div>
           </div>
@@ -89,4 +88,4 @@ class DoubleSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
   }
 }
 
-export default DoubleSelect;
+export default CreativeCustomFormat;

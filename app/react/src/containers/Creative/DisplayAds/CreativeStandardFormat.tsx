@@ -6,31 +6,31 @@ import { WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 
-import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
-import FormSelect from './FormSelect';
-import ButtonStyleless from '../../ButtonStyleless';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../../components/Form/FormFieldWrapper';
+import FormSelect from '../../../components/Form/FormSelect/FormSelect';
+import ButtonStyleless from '../../../components/ButtonStyleless';
 
-interface CustomProps {
+interface ButtonProps {
   label: string;
   onClick: () => any;
 }
 
-interface FormSelectProps {
+interface StandardFormatProps {
   formItemProps?: FormItemProps;
-  customProps: CustomProps;
+  button: ButtonProps;
   options?: OptionProps[];
-  selectProps?: SelectProps;
+  select?: SelectProps;
 }
 
 const Option = Select.Option;
 
-class CustomSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
+class CreativeStandardFormat extends React.Component<StandardFormatProps & FormFieldWrapperProps & WrappedFieldProps> {
 
   static defaultProps = {
     formItemProps: {},
     helpToolTipProps: {},
     options: [],
-    selectProps: {},
+    select: {},
   };
 
   componentDidMount() {
@@ -58,12 +58,12 @@ class CustomSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
   render() {
     const {
       formItemProps,
+      button,
       helpToolTipProps,
-      input,
-      customProps,
-      meta,
       options,
-      selectProps,
+      select,
+      input,
+      meta,
     } = this.props;
 
     let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -81,10 +81,10 @@ class CustomSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
           validateStatus={validateStatus}
           {...formItemProps}
         >
-          <div className="custom-select">
-            <div className="select">
+          <div className="creative-format">
+            <div className="standard">
               <FormSelect
-                {...selectProps}
+                {...select}
                 input={input}
               >{optionsToDisplay}
               </FormSelect>
@@ -93,8 +93,8 @@ class CustomSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
             <div className="button">
               <ButtonStyleless
                 className="clickable-on-hover"
-                onClick={customProps.onClick}
-              >{customProps.label}
+                onClick={button.onClick}
+              >{button.label}
               </ButtonStyleless>
             </div>
           </div>
@@ -103,4 +103,4 @@ class CustomSelect extends React.Component<FormSelectProps & FormFieldWrapperPro
   }
 }
 
-export default CustomSelect;
+export default CreativeStandardFormat;

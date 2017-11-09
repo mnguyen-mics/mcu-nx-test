@@ -12,13 +12,14 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withMcsRouter } from '../../../../Helpers';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons.tsx';
-import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form/index.ts';
+import { FormInput, FormTitle, withValidators } from '../../../../../components/Form/index.ts';
 import { PluginFieldGenerator } from '../../../../Plugin';
+import CreativeCustomFormat from '../../CreativeCustomFormat.tsx';
+import CreativeStandardFormat from '../../CreativeStandardFormat.tsx';
 
 import messages from '../messages';
 
 const { Content, Sider } = Layout;
-const { CustomSelect, DoubleSelect } = FormSelect;
 
 const fieldGridConfig = {
   labelCol: { span: 3 },
@@ -30,7 +31,7 @@ class DisplayCreativeCreationEditor extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { customFormat: false };
+    this.state = { standardFormat: true };
   }
 
 
@@ -70,9 +71,43 @@ class DisplayCreativeCreationEditor extends Component {
       organisationId
     } = this.props;
 
+    const { standardFormat } = this.state;
+
+    const options = formats && formats.map(format => ({
+      key: format,
+      value: format,
+      title: format,
+    }));
+
     const pluginFieldGenerated = this.props.rendererProperties.map(fieldDef => {
       return <PluginFieldGenerator key={`${fieldDef.technical_name}`} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isLoading} rendererVersionId={versionId} organisationId={organisationId} />;
     });
+
+    const formatProps = (standardFormat
+      ? {
+        select: {
+          defaultValue: formats[0]
+        },
+        inputProps: {
+          disabled: isLoading,
+          defaultValue: formats[0]
+        },
+        options,
+      }
+      : {
+        widthProps: {
+          placeholder: 'Width',
+          value: (format) => format.split('x')[0] || 0,
+          handleChange: ({ onChange, value }) => (width) => onChange(`${width || 0}x${value.split('x')[1] || 0}`)
+        },
+        heightProps: {
+          placeholder: 'Height',
+          value: (format) => format.split('x')[1] || 0,
+          handleChange: ({ onChange, value }) => (height) => onChange(`${value.split('x')[0] || 0}x${height || 0}`)
+        },
+      }
+    );
+
     return (
       <Layout>
         <Form
@@ -119,7 +154,7 @@ class DisplayCreativeCreationEditor extends Component {
               </Scrollspy>
             </Sider>
             <Layout>
-              <Content id={'displayCreativesSteps'} className="mcs-content-container mcs-form-container">
+              <Content id={'displayCreativesSteps'} className="mcs-content-container mcs-form-container creative-form">
                 <div id={'general'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
@@ -147,78 +182,31 @@ class DisplayCreativeCreationEditor extends Component {
                         },
                       }}
                     />
-                    {!this.state.customFormat
-                      ? (
-                        <Field
-                          name="creative.format"
-                          component={CustomSelect}
-                          validate={[isRequired]}
-                          props={{
-                            customProps: {
-                              label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonCustom),
-                              onClick: (e) => {
-                                e.preventDefault();
-                                this.setState({ customFormat: true });
-                                this.props.change('creativeEditor', 'creative.format', '');
-                              },
-                            },
-                            formItemProps: {
-                              label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                              required: true,
-                            },
-                            selectProps: {
-                              defaultValue: formats[0]
-                            },
-                            inputProps: {
-                              disabled: isLoading,
-                              defaultValue: formats[0]
-                            },
-                            options: formats && formats.map(format => ({
-                              key: format,
-                              value: format,
-                              title: format,
-                            })),
-                            helpToolTipProps: {
-                              title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
-                            },
-                          }}
-                        />
-                    )
-                    : (
-                      <Field
-                        name="creative.format"
-                        component={DoubleSelect}
-                        validate={[isRequired]}
-                        props={{
-                          doubleProps: {
-                            label: formatMessage(messages.creativeCreationGeneralFormatFieldButtonStandard),
-                            onClick: (e) => {
-                              e.preventDefault();
-                              this.setState({ customFormat: false });
-                              this.props.change('creativeEditor', 'creative.format', '');
-                            },
-                          },
-                          formItemProps: {
-                            label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                            required: true,
-                          },
-                          widthProps: {
-                            placeholder: 'Width',
-                            value: (format) => format.split('x')[0] || 0,
-                            handleChange: ({ onChange, value }) => (width) => onChange(`${width || 0}x${value.split('x')[1] || 0}`)
-                          },
-                          heightProps: {
-                            placeholder: 'Height',
-                            value: (format) => format.split('x')[1] || 0,
-                            handleChange: ({ onChange, value }) => (height) => onChange(`${value.split('x')[0] || 0}x${height || 0}`)
-                          },
-                          helpToolTipProps: {
-                            title: 'testeu du custom format',
-                          },
-                        }}
-                      />
-                    )
-                  }
+
+                    <Field
+                      name="creative.format"
+                      component={standardFormat ? CreativeStandardFormat : CreativeCustomFormat}
+                      validate={[isRequired]}
+                      formItemProps={{
+                        label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
+                        required: true,
+                      }}
+                      button={{
+                        label: formatMessage(messages[standardFormat
+                          ? 'creativeCreationGeneralFormatFieldButtonCustom'
+                          : 'creativeCreationGeneralFormatFieldButtonStandard'
+                        ]),
+                        onClick: (e) => {
+                          e.preventDefault();
+                          this.setState({ standardFormat: !standardFormat });
+                          this.props.change('creativeEditor', 'creative.format', '');
+                        },
+                      }}
+                      helpToolTipProps={{
+                        title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
+                      }}
+                      {...formatProps}
+                    />
 
                     <Field
                       name="creative.destination_domain"
