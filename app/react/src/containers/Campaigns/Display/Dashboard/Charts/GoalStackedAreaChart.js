@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Row, Col, Select, Menu, Dropdown, Button, Icon } from 'antd';
+import { Row, Col, Menu, Dropdown, Button, Icon } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 import { compose } from 'recompose';
-import moment from 'moment';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
@@ -20,10 +19,8 @@ import { updateSearch,
   isSearchValid,
   buildDefaultSearch,
   compareSearches, } from '../../../../../utils/LocationSearchHelper';
-import { formatMetric, normalizeReportView } from '../../../../../utils/MetricHelper';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
-
-const { Option } = Select;
 
 class GoalStackedAreaChart extends Component {
 
@@ -292,17 +289,14 @@ GoalStackedAreaChart.defaultProps = {
 
 GoalStackedAreaChart.propTypes = {
   match: PropTypes.shape().isRequired,
-  translations: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
-  renderCampaignProgress: PropTypes.bool,
   goal: PropTypes.shape().isRequired,
   colors: PropTypes.shape().isRequired,
   intl: intlShape.isRequired
 };
 
 const mapStateToProps = state => ({
-  translations: state.translations,
   colors: state.theme.colors,
 });
 
