@@ -1,15 +1,18 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Col, Menu, Dropdown, Button, Icon } from 'antd';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
+import moment from 'moment';
+import { ClickParam } from 'antd/lib/menu';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
+import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index';
+import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
+
+import { GoalSelection, AttributionModel } from '../../../../../models/Goal';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -18,22 +21,66 @@ import { updateSearch,
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearches, } from '../../../../../utils/LocationSearchHelper';
+  compareSearches } from '../../../../../utils/LocationSearchHelper';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
 
-class GoalStackedAreaChart extends Component {
+const StackedAreaPlotTS = StackedAreaPlot as any;
+const LegendChartTS = LegendChart as any;
 
-  state = {
-    performance: [],
-    selectedAttributionModelId: '',
-    selectedAttributionModel: {},
-    isFetchingPerformance: false,
-    hasFetchedPerformance: false,
-    hasData: true,
-  };
+interface RouterMatchParams {
+  organisationId: string;
+  campaignId: string;
+}
 
-  updateLocationSearch(params) {
+interface McsColors {
+  'mcs-primary': string;
+  'mcs-normal': string;
+  'mcs-info': string;
+  'mcs-success': string;
+  'mcs-error': string;
+  'mcs-highlight': string;
+  'mcs-warning': string;
+}
+
+interface PerformanceValue {
+  day: string;
+  weighted_conversions: string;
+  interaction_to_conversion_duration: string;
+}
+
+interface Goal extends GoalSelection {
+  attribution: AttributionModel[];
+}
+
+interface GoalStackedAreaChartProps {
+  goal: Goal;
+  colors: McsColors;
+}
+
+interface GoalStackedAreaChartState {
+  performance: PerformanceValue[];
+  selectedAttributionModel?: AttributionModel;
+  isFetchingPerformance: boolean;
+  hasFetchedPerformance: boolean;
+  hasData: boolean;
+}
+
+type JoinedProps = GoalStackedAreaChartProps & RouteComponentProps<RouterMatchParams> & InjectedIntlProps;
+
+class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaChartState> {
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      performance: [],
+      isFetchingPerformance: false,
+      hasFetchedPerformance: false,
+      hasData: true,
+    };
+  }
+
+  updateLocationSearch(params: McsDateRangeValue) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
@@ -56,8 +103,8 @@ class GoalStackedAreaChart extends Component {
         params: {
           campaignId,
           organisationId,
-        }
-      }
+        },
+      },
     } = this.props;
 
     if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
@@ -72,30 +119,30 @@ class GoalStackedAreaChart extends Component {
     }
   }
 
-  getSetAttribution = (state, goal) => {
+  getSetAttribution = (state: GoalStackedAreaChartState, goal: Goal) => {
     let attributionId = null;
-    if (Object.keys(state.selectedAttributionModel).length) {
+    if (state.selectedAttributionModel !== undefined) {
       attributionId = state.selectedAttributionModel.id;
-    } else if (Object.keys(state.selectedAttributionModel).length === 0 && goal.attribution.length) {
+    } else if (state.selectedAttributionModel === undefined && goal.attribution.length) {
       this.setState({ selectedAttributionModel: goal.attribution[0] });
       attributionId = goal.attribution[0].id;
     }
     return attributionId;
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillUpdate(nextProps: JoinedProps, nextState: GoalStackedAreaChartState) {
     const {
       goal: nextGoal,
       location: {
         search: nextSearch,
-        pathname: nextPathname
+        pathname: nextPathname,
       },
       match: {
         params: {
           campaignId: nextCampaignId,
           organisationId: nextOrganisationId,
-        }
-      }
+        },
+      },
     } = nextProps;
 
     const {
@@ -108,19 +155,23 @@ class GoalStackedAreaChart extends Component {
         params: {
           campaignId,
           organisationId,
-        }
-      }
+        },
+      },
     } = this.props;
 
     const {
-      selectedAttributionModelId
+      selectedAttributionModel,
     } = this.state;
 
     const {
-      selectedAttributionModelId: nextSelectedAttributionModelId,
+      selectedAttributionModel: nextSelectedAttributionModel,
     } = nextState;
 
-    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId || organisationId !== nextOrganisationId || goal !== nextGoal || nextSelectedAttributionModelId !== selectedAttributionModelId) {
+    if (!compareSearches(search, nextSearch)
+      || campaignId !== nextCampaignId
+      || organisationId !== nextOrganisationId
+      || goal !== nextGoal
+      || selectedAttributionModel !== nextSelectedAttributionModel) {
       if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -128,13 +179,20 @@ class GoalStackedAreaChart extends Component {
         });
       } else {
         const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-        const attributionId = this.getSetAttribution(nextState, nextGoal);
-        this.getPerformanceForGoalAndAttribution(nextOrganisationId, nextCampaignId, nextGoal, attributionId, filter.from, filter.to);
+        const nextAttributionId = nextSelectedAttributionModel ? nextSelectedAttributionModel.id : null;
+        this.getPerformanceForGoalAndAttribution(nextOrganisationId, nextCampaignId, nextGoal, nextAttributionId, filter.from, filter.to);
       }
     }
   }
 
-  getPerformanceForGoalAndAttribution = (organisationId, campaignId, goal, attributionId, from, to) => {
+  getPerformanceForGoalAndAttribution = (
+    organisationId: string,
+    campaignId: string,
+    goal: Goal,
+    attributionId: string | null,
+    from: moment.Moment,
+    to: moment.Moment,
+  ) => {
     const filters = [`campaign_id==${campaignId}`, `goal_id==${goal.goal_id}`];
 
     if (attributionId) { filters.push(`attribution_model_id==${attributionId}`); }
@@ -142,11 +200,15 @@ class GoalStackedAreaChart extends Component {
       ReportService.getConversionAttributionPerformance(organisationId, from, to, filters, ['day'])
         .then(results => normalizeReportView(results.data.report_view))
         .then(results => {
-          this.setState({ performance: results, isFetchingPerformance: false, hasData: results.length ? true : false, hasFetchedPerformance: true });
+          this.setState({
+            performance: results,
+            isFetchingPerformance: false,
+            hasData: !!results.length,
+            hasFetchedPerformance: true,
+          });
         });
     });
   }
-
 
   renderDatePicker() {
     const { history: { location: { search } } } = this.props;
@@ -154,14 +216,14 @@ class GoalStackedAreaChart extends Component {
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
+      rangeType:  filter.rangeType,
       lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
-    const onChange = newValues =>
-      this.updateLocationSearch({
+    const onChange = (newValues: McsDateRangeValue) =>
+    this.updateLocationSearch({
         rangeType: newValues.rangeType,
         lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
@@ -196,7 +258,7 @@ class GoalStackedAreaChart extends Component {
 
     return (!isFetchingPerformance && performance.length !== 0)
       ? (
-        <StackedAreaPlot
+        <StackedAreaPlotTS
           identifier={`Goal${goal.id}StackedAreaChartDisplayOverview`}
           dataset={performance}
           options={optionsForChart}
@@ -212,15 +274,30 @@ class GoalStackedAreaChart extends Component {
         params: {
           campaignId,
           organisationId,
-        }
+        },
       },
       location: { search },
     } = this.props;
 
-    const handleClick = ({ key }) => {
+    const handleClick = ({ key }: ClickParam) => {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.setState({ selectedAttributionModel: goal.attribution.find(item => item.id === key) }, () => {
-        this.getPerformanceForGoalAndAttribution(organisationId, campaignId, goal, this.state.selectedAttributionModel.id, filter.from, filter.to);
+      this.setState(prevState => {
+
+        const selectedAttributionModel = goal.attribution.find(item => item.id === key);
+
+        this.getPerformanceForGoalAndAttribution(
+          organisationId,
+          campaignId,
+          goal,
+          selectedAttributionModel!.id,
+          filter.from,
+          filter.to,
+        );
+
+        return {
+          selectedAttributionModel,
+        };
+
       });
 
     };
@@ -228,31 +305,36 @@ class GoalStackedAreaChart extends Component {
     const menu = (
       <Menu onClick={handleClick}>
         {goal.attribution.map(attribution => {
-          return attribution.id !== this.state.selectedAttributionModel.id ? <Menu.Item key={attribution.id}>{attribution.attribution_model_name}</Menu.Item> : null;
+          return (this.state.selectedAttributionModel && attribution.id !== this.state.selectedAttributionModel.id) ?
+            <Menu.Item key={attribution.id}>{attribution.attribution_model_name}</Menu.Item> : null;
         })}
       </Menu>
     );
 
-    return (<Dropdown overlay={menu} trigger={['click']}>
-      <Button style={{ marginRight: 8 }}>
-        <span>{ this.state.selectedAttributionModel.attribution_model_name }</span> <Icon type="down" />
-      </Button>
-    </Dropdown>);
+    return (
+      <Dropdown overlay={menu} trigger={['click']}>
+        <Button style={{ marginRight: 8 }}>
+          <span>
+            {this.state.selectedAttributionModel && this.state.selectedAttributionModel.attribution_model_name}
+          </span> <Icon type="down" />
+        </Button>
+      </Dropdown>
+    );
   }
 
   render() {
     const {
       colors,
       intl: {
-        formatMessage
-      }
+        formatMessage,
+      },
     } = this.props;
 
     const { hasFetchedPerformance, hasData, isFetchingPerformance } = this.state;
 
     const legendOptions = {
       colors: [colors['mcs-success']],
-      domains: [formatMessage(messages.weightedConversion)]
+      domains: [formatMessage(messages.weightedConversion)],
     };
 
     const chartArea = (
@@ -261,7 +343,7 @@ class GoalStackedAreaChart extends Component {
           {<Col span={12}>
             {hasData && (isFetchingPerformance)
             ? <div />
-            : <LegendChart
+            : <LegendChartTS
               identifier="chartLegend"
               options={legendOptions}
             />}
@@ -283,25 +365,12 @@ class GoalStackedAreaChart extends Component {
   }
 }
 
-GoalStackedAreaChart.defaultProps = {
-  renderCampaignProgress: false,
-};
-
-GoalStackedAreaChart.propTypes = {
-  match: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
-  goal: PropTypes.shape().isRequired,
-  colors: PropTypes.shape().isRequired,
-  intl: intlShape.isRequired
-};
-
-const mapStateToProps = state => ({
-  colors: state.theme.colors,
-});
-
-GoalStackedAreaChart = connect(mapStateToProps)(GoalStackedAreaChart);
-
-GoalStackedAreaChart = compose(injectIntl, withRouter)(GoalStackedAreaChart);
-
-export default GoalStackedAreaChart;
+export default compose<JoinedProps, GoalStackedAreaChartProps>(
+  injectIntl,
+  withRouter,
+  connect(
+    (state: any) => ({
+      colors: state.theme.colors,
+    }),
+  ),
+)(GoalStackedAreaChart);
