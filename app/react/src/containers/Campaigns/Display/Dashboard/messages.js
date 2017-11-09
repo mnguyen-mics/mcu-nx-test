@@ -161,4 +161,8 @@ export default defineMessages({
     id: 'progress.budget.monthly',
     defaultMessage: 'Monthly Budget Consumption',
   },
+  weightedConversion: {
+    id: 'goal.chart.weightedConversion',
+    defaultMessage: 'Weighted Conversion',
+  }
 });

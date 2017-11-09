@@ -30,7 +30,8 @@ function DisplayCampaignDashboard({
   const goalsItems = goals.map(goal => {
     return {
       title: goal.goal_name,
-      display: <GoalStackedAreaChart goal={goal} />
+      display: <GoalStackedAreaChart goal={goal} />,
+      forceRender: true,
     };
   });
 

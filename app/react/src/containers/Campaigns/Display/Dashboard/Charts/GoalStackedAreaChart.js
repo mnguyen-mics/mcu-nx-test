@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Row, Col } from 'antd';
-import { injectIntl } from 'react-intl';
+import { Row, Col, Select, Menu, Dropdown, Button, Icon } from 'antd';
+import { injectIntl, intlShape } from 'react-intl';
 import { compose } from 'recompose';
 import moment from 'moment';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
-import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
-import { LegendChartWithModal } from '../../../../../components/LegendChart';
+import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
+import { LegendChart } from '../../../../../components/LegendChart';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -20,14 +20,17 @@ import { updateSearch,
   isSearchValid,
   buildDefaultSearch,
   compareSearches, } from '../../../../../utils/LocationSearchHelper';
-import { formatMetric } from '../../../../../utils/MetricHelper';
+import { formatMetric, normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
+
+const { Option } = Select;
 
 class GoalStackedAreaChart extends Component {
 
   state = {
     performance: [],
     selectedAttributionModelId: '',
+    selectedAttributionModel: {},
     isFetchingPerformance: false,
     hasFetchedPerformance: false,
     hasData: true,
@@ -66,12 +69,24 @@ class GoalStackedAreaChart extends Component {
         search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-
-      this.getPerformanceForGoalAndAttribution(organisationId, campaignId, goal);
+      const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+      const attributionId = this.getSetAttribution(this.state, goal);
+      this.getPerformanceForGoalAndAttribution(organisationId, campaignId, goal, attributionId, filter.from, filter.to);
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  getSetAttribution = (state, goal) => {
+    let attributionId = null;
+    if (Object.keys(state.selectedAttributionModel).length) {
+      attributionId = state.selectedAttributionModel.id;
+    } else if (Object.keys(state.selectedAttributionModel).length === 0 && goal.attribution.length) {
+      this.setState({ selectedAttributionModel: goal.attribution[0] });
+      attributionId = goal.attribution[0].id;
+    }
+    return attributionId;
+  }
+
+  componentWillUpdate(nextProps, nextState) {
     const {
       goal: nextGoal,
       location: {
@@ -100,79 +115,39 @@ class GoalStackedAreaChart extends Component {
       }
     } = this.props;
 
-    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId || organisationId !== nextOrganisationId || goal !== nextGoal) {
+    const {
+      selectedAttributionModelId
+    } = this.state;
+
+    const {
+      selectedAttributionModelId: nextSelectedAttributionModelId,
+    } = nextState;
+
+    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId || organisationId !== nextOrganisationId || goal !== nextGoal || nextSelectedAttributionModelId !== selectedAttributionModelId) {
       if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
         });
       } else {
-        this.getPerformanceForGoalAndAttribution(nextOrganisationId, nextCampaignId, nextGoal);
+        const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+        const attributionId = this.getSetAttribution(nextState, nextGoal);
+        this.getPerformanceForGoalAndAttribution(nextOrganisationId, nextCampaignId, nextGoal, attributionId, filter.from, filter.to);
       }
     }
   }
 
-  getPerformanceForGoalAndAttribution = (organisationId, campaignId, goal) => {
+  getPerformanceForGoalAndAttribution = (organisationId, campaignId, goal, attributionId, from, to) => {
     const filters = [`campaign_id==${campaignId}`, `goal_id==${goal.goal_id}`];
-
-    const { history: { location: { search } } } = this.props;
-
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-
-    const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
-      from: filter.from,
-      to: filter.to,
-    };
-    let attributionId = null;
-    if (this.state.selectedAttributionModelId !== '') {
-      attributionId = this.state.selectedAttributionModelId;
-    } else if (this.state.selectedAttributionModelId === '' && goal.attribution.length) {
-      this.setState({ selectedAttributionModelId: goal.attribution[0].attribution_model_id });
-      attributionId = goal.attribution[0].attribution_model_id;
-    }
 
     if (attributionId) { filters.push(`attribution_model_id==${attributionId}`); }
     return this.setState({ isFetchingPerformance: true }, () => {
-      ReportService.getConversionAttributionPerformance(organisationId, values.from, values.to, filters, ['day'])
-        .then(results => results.data)
+      ReportService.getConversionAttributionPerformance(organisationId, from, to, filters, ['day'])
+        .then(results => normalizeReportView(results.data.report_view))
         .then(results => {
           this.setState({ performance: results, isFetchingPerformance: false, hasData: results.length ? true : false, hasFetchedPerformance: true });
         });
     });
-  }
-
-  createLegend() {
-    const { translations } = this.props;
-    const legends = [
-      {
-        key: 'impressions',
-        domain: translations['impressions'.toUpperCase()],
-      },
-      {
-        key: 'clicks',
-        domain: translations['clicks'.toUpperCase()],
-      },
-      {
-        key: 'ctr',
-        domain: translations['ctr'.toUpperCase()],
-      },
-      {
-        key: 'impressions_cost',
-        domain: translations.IMPRESSIONS_COST,
-      },
-      {
-        key: 'cpm',
-        domain: translations['cpm'.toUpperCase()],
-      },
-      {
-        key: 'cpc',
-        domain: translations['cpc'.toUpperCase()],
-      },
-    ];
-
-    return legends;
   }
 
 
@@ -203,6 +178,7 @@ class GoalStackedAreaChart extends Component {
     const {
       location: { search },
       colors,
+      goal,
     } = this.props;
 
     const { performance, isFetchingPerformance } = this.state;
@@ -211,77 +187,96 @@ class GoalStackedAreaChart extends Component {
 
     const { lookbackWindow } = filter;
 
-    // const optionsForChart = {
-    //   xKey: 'day',
-    //   yKeys: [
-    //     { key: key1, message: messages[key1] },
-    //     { key: key2, message: messages[key2] },
-    //   ],
-    //   lookbackWindow: lookbackWindow.as('milliseconds'),
-    //   colors: [colors['mcs-warning'], colors['mcs-info']],
-    //   isDraggable: true,
-    //   onDragEnd: (values) => {
-    //     this.updateLocationSearch({
-    //       from: values[0],
-    //       to: values[1],
-    //       lookbackWindow: moment.duration(values[1] - values[0]),
-    //       rangeType: 'absolute',
-    //     });
-    //   },
-    // };
+    const optionsForChart = {
+      xKey: 'day',
+      yKeys: [
+        { key: 'weighted_conversions', message: messages.weightedConversion },
+      ],
+      lookbackWindow: lookbackWindow.as('milliseconds'),
+      colors: [colors['mcs-success']],
+      isDraggable: false,
+    };
 
     return (!isFetchingPerformance && performance.length !== 0)
       ? (
-        // <StackedAreaPlotDoubleAxis
-        //   identifier={`${1}StackedAreaChartDisplayOverview`}
-        //   dataset={dataSource}
-        //   options={optionsForChart}
-        //   style={{ flex: '1' }}
-        // />
-        <span>Ok</span>
+        <StackedAreaPlot
+          identifier={`Goal${goal.id}StackedAreaChartDisplayOverview`}
+          dataset={performance}
+          options={optionsForChart}
+        />
       )
       : <LoadingChart />;
   }
 
-  render() {
-    // const { translations, colors } = this.props;
-    // const { key1, key2 } = this.state;
-    const { performance, hasFetchedPerformance } = this.state;
+  renderAttributionSelect = () => {
+    const {
+      goal,
+      match: {
+        params: {
+          campaignId,
+          organisationId,
+        }
+      },
+      location: { search },
+    } = this.props;
 
-    // const legendOptions = [
-    //   {
-    //     key: key1,
-    //     domain: translations[key1.toUpperCase()],
-    //     color: colors['mcs-warning'],
-    //   },
-    //   {
-    //     key: key2,
-    //     domain: translations[key2.toUpperCase()],
-    //     color: colors['mcs-info'],
-    //   },
-    // ];
-    // const legends = this.createLegend();
+    const handleClick = ({ key }) => {
+      const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+      this.setState({ selectedAttributionModel: goal.attribution.find(item => item.id === key) }, () => {
+        this.getPerformanceForGoalAndAttribution(organisationId, campaignId, goal, this.state.selectedAttributionModel.id, filter.from, filter.to);
+      });
+
+    };
+
+    const menu = (
+      <Menu onClick={handleClick}>
+        {goal.attribution.map(attribution => {
+          return attribution.id !== this.state.selectedAttributionModel.id ? <Menu.Item key={attribution.id}>{attribution.attribution_model_name}</Menu.Item> : null;
+        })}
+      </Menu>
+    );
+
+    return (<Dropdown overlay={menu} trigger={['click']}>
+      <Button style={{ marginRight: 8 }}>
+        <span>{ this.state.selectedAttributionModel.attribution_model_name }</span> <Icon type="down" />
+      </Button>
+    </Dropdown>);
+  }
+
+  render() {
+    const {
+      colors,
+      intl: {
+        formatMessage
+      }
+    } = this.props;
+
+    const { hasFetchedPerformance, hasData, isFetchingPerformance } = this.state;
+
+    const legendOptions = {
+      colors: [colors['mcs-success']],
+      domains: [formatMessage(messages.weightedConversion)]
+    };
 
     const chartArea = (
       <div>
         <Row className="mcs-chart-header">
-          {/* <Col span={12}>
-            {dataSource.length === 0 && (hasFetchedCampaignStat)
+          {<Col span={12}>
+            {hasData && (isFetchingPerformance)
             ? <div />
-            : <LegendChartWithModal
+            : <LegendChart
               identifier="chartLegend"
               options={legendOptions}
-              legends={legends}
-              onLegendChange={(a, b) => this.setState({ key1: a, key2: b })}
             />}
-          </Col> */}
+          </Col>}
           <Col span={12}>
             <span className="mcs-card-button">
+              {this.renderAttributionSelect()}
               {this.renderDatePicker()}
             </span>
           </Col>
         </Row>
-        {performance.length === 0 && (hasFetchedPerformance)
+        {!hasData && (hasFetchedPerformance)
         ? <EmptyCharts title={'no stats'} />
         : <Row><Col span={24}>{this.renderStackedAreaCharts()}</Col></Row>}
       </div>
@@ -303,6 +298,7 @@ GoalStackedAreaChart.propTypes = {
   renderCampaignProgress: PropTypes.bool,
   goal: PropTypes.shape().isRequired,
   colors: PropTypes.shape().isRequired,
+  intl: intlShape.isRequired
 };
 
 const mapStateToProps = state => ({
