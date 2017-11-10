@@ -1,6 +1,5 @@
 import { compose, withProps } from 'recompose';
 import { injectIntl, defineMessages } from 'react-intl';
-import { log } from 'util';
 
 const defaultErrorMessages = defineMessages({
   required: {
