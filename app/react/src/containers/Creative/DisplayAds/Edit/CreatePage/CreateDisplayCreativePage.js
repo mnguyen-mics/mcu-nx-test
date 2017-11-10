@@ -217,24 +217,42 @@ class CreateDisplayCreativePage extends Component {
     const breadcrumbPaths = [
       { name: formatMessage(messages.creativeCreationBreadCrumb) },
     ];
-    return isLoading ? <div style={{ display: 'flex', flex: 1 }}><Loading className="loading-full-screen" /></div> : (adRenderer.id && adRenderer.versionId ? (
-      <DisplayCreativeCreationEditor
-        save={this.createDisplayCreative}
-        close={this.redirect}
-        breadcrumbPaths={breadcrumbPaths}
-        changeType={this.onReset}
-        adRenderer={adRenderer}
-        isLoading={isLoading}
-        formats={this.state.formats}
-        rendererProperties={this.state.rendererProperties}
-        organisationId={organisationId}
-      />
-    ) : (
-      <DisplayCreativeTypePicker
-        breadcrumbPaths={breadcrumbPaths}
-        close={this.redirect}
-        onSelect={this.onSelect}
-      />));
+
+    const initialValues = {
+      creative: {
+        format: this.state.formats[0]
+      }
+    };
+
+    if (isLoading) {
+      return (
+        <div style={{ display: 'flex', flex: 1 }}>
+          <Loading className="loading-full-screen" />
+        </div>
+      );
+    }
+
+    return (adRenderer.id && adRenderer.versionId
+      ? (
+        <DisplayCreativeCreationEditor
+          save={this.createDisplayCreative}
+          close={this.redirect}
+          breadcrumbPaths={breadcrumbPaths}
+          changeType={this.onReset}
+          adRenderer={adRenderer}
+          initialValues={initialValues}
+          formats={this.state.formats}
+          rendererProperties={this.state.rendererProperties}
+          organisationId={organisationId}
+        />
+      )
+      : (
+        <DisplayCreativeTypePicker
+          breadcrumbPaths={breadcrumbPaths}
+          close={this.redirect}
+          onSelect={this.onSelect}
+        />)
+    );
   }
 }
 

@@ -96,6 +96,10 @@ class PluginFieldGenerator extends Component {
   }
 }
 
+PluginFieldGenerator.defaultProps = {
+  disabled: false,
+};
+
 PluginFieldGenerator.propTypes = {
   fieldGridConfig: PropTypes.shape({
     labelCol: PropTypes.shape({
@@ -108,7 +112,7 @@ PluginFieldGenerator.propTypes = {
   }).isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   definition: PropTypes.shape().isRequired,
-  disabled: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
   rendererVersionId: PropTypes.string.isRequired,
   organisationId: PropTypes.string.isRequired,
 };

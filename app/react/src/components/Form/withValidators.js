@@ -1,10 +1,15 @@
 import { compose, withProps } from 'recompose';
 import { injectIntl, defineMessages } from 'react-intl';
+import { log } from 'util';
 
 const defaultErrorMessages = defineMessages({
   required: {
     id: 'common.form.field.error.required',
     defaultMessage: 'required',
+  },
+  formatNotZero: {
+    id: 'common.form.field.error.format_not_zero',
+    defaultMessage: 'Width and/or height cannot be 0',
   },
   invalidEmail: {
     id: 'common.form.field.error.invalid_email',
@@ -42,6 +47,15 @@ const isNotZero = formatMessage => value => {
   );
 };
 
+const formatIsNotZero = formatMessage => value => {
+  const format = value.split('x');
+
+  return (value && format && (Number(format[0]) === 0 || Number(format[1]) === 0)
+  ? formatMessage(defaultErrorMessages.formatNotZero)
+  : undefined
+  );
+};
+
 const isValidEmail = formatMessage => value => {
   return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
@@ -61,6 +75,7 @@ const withValidators = compose(
   injectIntl,
   withProps(({ intl: { formatMessage } }) => ({
     fieldValidators: {
+      formatIsNotZero: formatIsNotZero(formatMessage),
       isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),
