@@ -356,7 +356,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
           </Col>
         </Row>
         {!hasData && (hasFetchedPerformance)
-        ? <EmptyCharts title={'no stats'} />
+        ? <EmptyCharts title={formatMessage(messages.noGoalStatAvailable)} />
         : <Row><Col span={24}>{this.renderStackedAreaCharts()}</Col></Row>}
       </div>
     );

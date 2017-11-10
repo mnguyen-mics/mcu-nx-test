@@ -184,5 +184,9 @@ export default defineMessages({
   cpc: {
     id: 'campaign.chart.cpc',
     defaultMessage: 'CPC.',
+  },
+  noGoalStatAvailable: {
+    id: 'campaign.goal.chart.noStats',
+    defaultMessage: 'There is no conversion associated to this attribution model and campaign on the given period.'
   }
 });
