@@ -7,6 +7,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { withMcsRouter } from '../Helpers';
 import { SitesListPage } from './Sites';
 import { DatamartsListPage } from './Datamarts';
+import { LabelsListPage } from './Labels';
 import { MobileApplicationsListPage } from './MobileApplications';
 import { getDefaultDatamart } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
@@ -71,6 +72,7 @@ class Settings extends Component {
   render() {
     const {
       intl: { formatMessage },
+      organisationId,
     } = this.props;
 
     const urlParams = this.getUrlParameters();
@@ -81,6 +83,7 @@ class Settings extends Component {
           this.datamartId &&
           <Row className="mcs-table-container">
             <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={(key) => this.switchTab(key)}>
+              <TabPane tab={formatMessage(messages.labels)} key="labels"><LabelsListPage organisationId={organisationId} /></TabPane>
               <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.datamartId} /></TabPane>
               <TabPane tab={formatMessage(messages.mobileApplications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>
               <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.datamartId} /></TabPane>

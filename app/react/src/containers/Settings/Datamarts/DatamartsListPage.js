@@ -38,23 +38,15 @@ class DatamartsListPage extends Component {
     this.fetchDatamarts(organisationId, this.state.filter);
   }
 
-  /**
-   * Interaction
-   */
 
   handleEditDatamart(datamart) {
     const {
       organisationId,
       history,
-      datamartId,
     } = this.props;
 
-    history.push(`/o${organisationId}d${datamartId}/settings/datamarts/edit/${datamart.id}`);
+    history.push(`/o${organisationId}/settings/datamarts/edit/${datamart.id}`);
   }
-
-  /**
-   * Data
-   */
 
   fetchDatamarts(organisationId, filter) {
     const buildGetDatamartsOptions = () => {
@@ -75,6 +67,10 @@ class DatamartsListPage extends Component {
       this.setState({ isFetchingDatamarts: false });
       this.props.notifyError(error);
     });
+  }
+
+  handleFilterChange = () => {
+    console.log('ok');
   }
 
   render() {
@@ -108,7 +104,6 @@ class DatamartsListPage extends Component {
 
 DatamartsListPage.propTypes = {
   organisationId: PropTypes.string.isRequired,
-  datamartId: PropTypes.number.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   notifyError: PropTypes.func.isRequired,
 };

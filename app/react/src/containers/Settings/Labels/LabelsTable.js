@@ -6,13 +6,13 @@ import moment from 'moment';
 import { EmptyTableView, TableView } from '../../../components/TableView/index.ts';
 import messages from './messages';
 
-class DatamartsTable extends Component {
+class LabelsTable extends Component {
 
   render() {
     const {
-      isFetchingDatamarts,
+      isFetchingLabels,
       dataSource,
-      totalDatamarts,
+      totalLabels,
       noDatamartYet,
       onFilterChange,
       onEditDatamart,
@@ -20,9 +20,9 @@ class DatamartsTable extends Component {
     } = this.props;
 
     const pagination = {
-      current: filter.currentPage,
+      currentPage: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalDatamarts,
+      total: totalLabels,
       onChange: (page) => onFilterChange({
         currentPage: page,
       }),
@@ -40,9 +40,16 @@ class DatamartsTable extends Component {
       },
       {
         intlMessage: messages.datamartToken,
-        key: 'name',
+        key: 'token',
         isVisibleByDefault: true,
-        isHideable: false,
+        isHideable: true,
+      },
+      {
+        intlMessage: messages.datamartCreationDate,
+        key: 'creation_ts',
+        isVisibleByDefault: true,
+        isHideable: true,
+        render: ts => moment(ts).format('DD/MM/YYYY'),
       },
     ];
 
@@ -63,23 +70,23 @@ class DatamartsTable extends Component {
       actionsColumnsDefinition: actionColumns,
     };
 
-    return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyDatamarts} />) :
+    return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyLabels} />) :
            (
              <TableView
                columnsDefinitions={columnsDefinitions}
                dataSource={dataSource}
-               loading={isFetchingDatamarts}
+               loading={isFetchingLabels}
                pagination={pagination}
              />
            );
   }
 }
 
-DatamartsTable.propTypes = {
+LabelsTable.propTypes = {
   noDatamartYet: PropTypes.bool.isRequired,
-  isFetchingDatamarts: PropTypes.bool.isRequired,
+  isFetchingLabels: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  totalDatamarts: PropTypes.number.isRequired,
+  totalLabels: PropTypes.number.isRequired,
   filter: PropTypes.shape({
     currentPage: PropTypes.number,
     pageSize: PropTypes.number,
@@ -89,4 +96,4 @@ DatamartsTable.propTypes = {
   onEditDatamart: PropTypes.func.isRequired,
 };
 
-export default injectIntl(DatamartsTable);
+export default injectIntl(LabelsTable);
