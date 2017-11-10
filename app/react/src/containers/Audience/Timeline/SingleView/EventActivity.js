@@ -21,10 +21,9 @@ class EventActivity extends Component {
     if (typeof value === 'object' && !Array.isArray(value)) {
 
       const formattedArray = Object.keys(value).map(key => { return { name: key, value: value[key] }; });
-      const test = lodash.sortBy(formattedArray, [(o) => { return o.name; }]).map(item => {
+      return lodash.sortBy(formattedArray, [(o) => { return o.name; }]).map(item => {
         return [item.name, item.value || 'empty'];
       });
-      return test;
     } else if (Array.isArray(value)) {
       return value.sort((a, b) => {
         return a - b;
