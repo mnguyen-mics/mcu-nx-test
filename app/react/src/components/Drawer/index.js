@@ -29,10 +29,8 @@ const withDrawer = WrappedComponent => {
 
     handleOpenNewDrawer = (component, options = DEFAULT_DRAWER_OPTIONS) => {
       const {
-        additionalProps: {
-          size,
-          ...additionalProps,
-        },
+        additionalProps,
+        size,
         ...otherOptions
       } = options;
 

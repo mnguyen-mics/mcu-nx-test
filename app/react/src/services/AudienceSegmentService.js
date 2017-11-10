@@ -44,21 +44,21 @@ const getSegmentsWithMetadata = (organisationId, datamartId, options = {}) => {
   return Promise.all([
     getSegments(organisationId, datamartId, options),
     getSegmentMetaData(organisationId),
-  ]).then(([segmentApiResp, metadata]) => {
+  ])
+    .then(([segmentApiResp, metadata]) => {
+      const augmentedSegments = segmentApiResp.data.map(segment => {
+        const meta = metadata[segment.id];
+        const userPoints = (meta && meta.user_points ? meta.user_points : '-');
+        const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
 
-    const augmentedSegments = segmentApiResp.data.map(segment => {
-      const meta = metadata[segment.id];
-      const userPoints = (meta && meta.user_points ? meta.user_points : '-');
-      const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
+        return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
+      });
 
-      return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
+      return {
+        ...segmentApiResp,
+        data: augmentedSegments
+      };
     });
-
-    return {
-      ...segmentApiResp,
-      data: augmentedSegments
-    };
-  });
 };
 
 const createOverlap = (datamartId, segmentId) => {
