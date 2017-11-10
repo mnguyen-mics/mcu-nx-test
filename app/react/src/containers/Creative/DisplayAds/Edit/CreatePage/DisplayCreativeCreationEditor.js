@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
-import { change, Field, reduxForm } from 'redux-form';
+import { Field, reduxForm } from 'redux-form';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Layout, Form, Row, Button } from 'antd';
 
@@ -14,8 +13,7 @@ import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons.tsx';
 import { FormInput, FormTitle, withValidators } from '../../../../../components/Form/index.ts';
 import { PluginFieldGenerator } from '../../../../Plugin';
-import CreativeCustomFormat from '../../CreativeCustomFormat.tsx';
-import CreativeStandardFormat from '../../CreativeStandardFormat.tsx';
+import CreativeFormatEditor from '../../CreativeFormatEditor';
 
 import messages from '../messages';
 
@@ -27,13 +25,6 @@ const fieldGridConfig = {
 };
 
 class DisplayCreativeCreationEditor extends Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = { standardFormat: true };
-  }
-
 
   handleSaveDisplayCreative = formValues => {
     const { save } = this.props;
@@ -71,42 +62,18 @@ class DisplayCreativeCreationEditor extends Component {
       organisationId
     } = this.props;
 
-    const { standardFormat } = this.state;
-
-    const options = formats && formats.map(format => ({
-      key: format,
-      value: format,
-      title: format,
-    }));
-
     const pluginFieldGenerated = this.props.rendererProperties.map(fieldDef => {
-      return <PluginFieldGenerator key={`${fieldDef.technical_name}`} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isLoading} rendererVersionId={versionId} organisationId={organisationId} />;
+      return (
+        <PluginFieldGenerator
+          key={`${fieldDef.technical_name}`}
+          definition={fieldDef}
+          fieldGridConfig={fieldGridConfig}
+          disabled={isLoading}
+          rendererVersionId={versionId}
+          organisationId={organisationId}
+        />
+      );
     });
-
-    const formatProps = (standardFormat
-      ? {
-        select: {
-          defaultValue: formats[0]
-        },
-        inputProps: {
-          disabled: isLoading,
-          defaultValue: formats[0]
-        },
-        options,
-      }
-      : {
-        widthProps: {
-          placeholder: 'Width',
-          value: (format) => format.split('x')[0] || 0,
-          handleChange: ({ onChange, value }) => (width) => onChange(`${width || 0}x${value.split('x')[1] || 0}`)
-        },
-        heightProps: {
-          placeholder: 'Height',
-          value: (format) => format.split('x')[1] || 0,
-          handleChange: ({ onChange, value }) => (height) => onChange(`${value.split('x')[0] || 0}x${height || 0}`)
-        },
-      }
-    );
 
     return (
       <Layout>
@@ -185,27 +152,13 @@ class DisplayCreativeCreationEditor extends Component {
 
                     <Field
                       name="creative.format"
-                      component={standardFormat ? CreativeStandardFormat : CreativeCustomFormat}
-                      validate={[isRequired]}
-                      formItemProps={{
-                        label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                        required: true,
+                      component={CreativeFormatEditor}
+                      formats={formats}
+                      inputProps={{ // Really needed??????
+                        disabled: isLoading,
+                        defaultValue: formats[0]
                       }}
-                      button={{
-                        label: formatMessage(messages[standardFormat
-                          ? 'creativeCreationGeneralFormatFieldButtonCustom'
-                          : 'creativeCreationGeneralFormatFieldButtonStandard'
-                        ]),
-                        onClick: (e) => {
-                          e.preventDefault();
-                          this.setState({ standardFormat: !standardFormat });
-                          this.props.change('creativeEditor', 'creative.format', '');
-                        },
-                      }}
-                      helpToolTipProps={{
-                        title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
-                      }}
-                      {...formatProps}
+                      isLoading={isLoading}
                     />
 
                     <Field
@@ -276,11 +229,6 @@ DisplayCreativeCreationEditor.propTypes = {
   rendererProperties: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
   isLoading: PropTypes.bool.isRequired,
   organisationId: PropTypes.string.isRequired,
-  change: PropTypes.func.isRequired,
-};
-
-const mapDispatchToProps = {
-  change,
 };
 
 DisplayCreativeCreationEditor = compose(
@@ -289,7 +237,6 @@ DisplayCreativeCreationEditor = compose(
   reduxForm({
     form: 'creativeEditor'
   }),
-  connect(null, mapDispatchToProps),
   withValidators,
 )(DisplayCreativeCreationEditor);
 
