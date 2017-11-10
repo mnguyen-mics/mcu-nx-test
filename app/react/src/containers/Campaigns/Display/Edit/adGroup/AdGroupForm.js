@@ -25,13 +25,14 @@ import {
   Summary,
 } from './sections';
 import { AudienceCatalogContainer } from './sections/AudienceCatalog/index.ts';
-import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 import FeatureSwitch from '../../../../../components/FeatureSwitch.tsx';
 import { Loading } from '../../../../../components/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import * as actions from '../../../../../state/Notifications/actions';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
+import messages from '../messages';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
@@ -46,6 +47,17 @@ class AdGroupForm extends Component {
       !isEqual(nextProps.formValues, this.props.formValues)
       || !isEqual(nextState.loading, this.state.loading)
     );
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) || (nextProps.RxF.submitFailed && (this.props.RxF.submitFailed !== nextProps.RxF.submitFailed))) {
+      const {
+        intl: {
+          formatMessage
+        }
+      } = this.props;
+      formErrorMessage(formatMessage(messages.errorFormMessage));
+    }
   }
 
   onSubmit = () => {
@@ -185,6 +197,7 @@ AdGroupForm.defaultProps = {
   displayAudience: false,
   editionMode: false,
   fieldValidators: {},
+  submitFailed: false,
 };
 
 AdGroupForm.propTypes = {
@@ -200,6 +213,7 @@ AdGroupForm.propTypes = {
   organisationId: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
   RxF: PropTypes.shape(formPropTypes).isRequired,
+  submitFailed: PropTypes.bool,
 };
 
 

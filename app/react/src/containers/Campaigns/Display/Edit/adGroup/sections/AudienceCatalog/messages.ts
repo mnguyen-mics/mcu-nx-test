@@ -61,4 +61,8 @@ export default defineMessages({
     id: 'audience.catalog.my-segment-category.label',
     defaultMessage: 'My Segment',
   },
+  errorFormMessage: {
+    id: 'adGroup.form.generic.error.message',
+    defaultMessage: 'There is a error with some fields in your form. Please review the data you entered.',
+  },
 });
