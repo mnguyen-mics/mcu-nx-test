@@ -12,7 +12,7 @@ import {
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Layout, message } from 'antd';
+import { Layout } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 import { camelCase } from 'lodash';
 
@@ -48,7 +48,6 @@ class CampaignForm extends Component {
           formatMessage
         }
       } = this.props;
-      console.log(formatMessage(messages.errorFormMessage));
       formErrorMessage(formatMessage(messages.errorFormMessage));
     }
   }
