@@ -11,9 +11,8 @@ class DrawerManager extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio.large,
+      drawerMaxWidth: this.getDimensions('large'),
       viewportWidth: window.innerWidth,
     };
   }
@@ -42,6 +41,15 @@ class DrawerManager extends Component {
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
+  getDimensions = (size) => window.innerWidth * viewportDrawerRatio[size]
+
+  getDrawerStyle(xPos, size = 'large') {
+    return {
+      transform: `translate(${xPos}px, 0px)`,
+      maxWidth: `${window.innerWidth * viewportDrawerRatio[size]}px`,
+    };
+  }
+
   getForegroundContentSize = (drawableContents) => {
     return (drawableContents && drawableContents.length
       ? drawableContents[drawableContents.length - 1].size
@@ -63,16 +71,9 @@ class DrawerManager extends Component {
     const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
     this.setState({
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio[foregroundContentSize],
+      drawerMaxWidth: this.getDimensions(foregroundContentSize),
       viewportWidth: window.innerWidth,
     });
-  }
-
-  getDrawerStyle(xPos, size = 'large') {
-    return {
-      transform: `translate(${xPos}px, 0px)`,
-      maxWidth: `${window.innerWidth * viewportDrawerRatio[size]}px`,
-    };
   }
 
   render() {
