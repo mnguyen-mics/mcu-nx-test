@@ -11,6 +11,7 @@ import DisplayCampaign from './DisplayCampaign';
 
 import ReportService from '../../../../../services/ReportService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import GoalService from '../../../../../services/GoalService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import {
   normalizeReportView,
@@ -90,6 +91,19 @@ class DisplayCampaignPage extends Component {
           hasFetched: false,
         },
       },
+      goals: {
+        items: {
+          itemById: [],
+          isLoading: false,
+          hasItems: true,
+          hasFetched: false,
+        },
+        performance: {
+          performanceById: {},
+          isLoading: false,
+          hasFetched: false,
+        },
+      }
     };
   }
 
@@ -210,6 +224,7 @@ class DisplayCampaignPage extends Component {
       { sort: '-clicks', limit: 30 },
     );
 
+
     this.cancelablePromises.push(getCampaignPerf, getMediaPerf, getAdPerf, getAdGroupPerf, getOverallCampaignPerf, getOverallCampaignPerf);
 
 
@@ -226,6 +241,7 @@ class DisplayCampaignPage extends Component {
       nextState.campaign.overallPerformance.isLoading = true;
       nextState.adGroups.performance.isLoading = true;
       nextState.ads.performance.isLoading = true;
+      nextState.goals.items.isLoading = true;
 
       return nextState;
     });
@@ -289,6 +305,26 @@ class DisplayCampaignPage extends Component {
         nextState.ads.items.adAdGroup = normalizeArrayOfObject(adAdGroup, 'ad_id');
 
         return nextState;
+      });
+    });
+
+    DisplayCampaignService.getGoal({ campaignId: campaignId }).then(goals => goals.data).then(goals => {
+      const promises = goals.map(goal => {
+        return GoalService.getAttributionModel(goal.goal_id).then(attribution => {
+          return { ...goal, attribution: attribution.data };
+        });
+      });
+      return Promise.all(promises);
+    }).then(goals => {
+      this.setState({
+        goals: {
+          items: {
+            itemById: goals,
+            isLoading: false,
+            hasFetched: true,
+            hasItems: true,
+          }
+        }
       });
     });
 
@@ -541,6 +577,8 @@ class DisplayCampaignPage extends Component {
       ),
     };
 
+    const goals = this.state.goals.items.itemById;
+
     const dashboardPerformance = {
       media: {
         isLoading: this.state.campaign.mediaPerformance.isLoading,
@@ -566,6 +604,7 @@ class DisplayCampaignPage extends Component {
       adGroups={adGroups}
       ads={ads}
       dashboardPerformance={dashboardPerformance}
+      goals={goals}
     />);
   }
 }

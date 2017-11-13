@@ -5,6 +5,7 @@ interface McTabsProps {
   items: [{
     title: string;
     display?: JSX.Element;
+    forceRender?: boolean;
   }];
   isCard?: boolean;
 }
@@ -19,7 +20,7 @@ class McsTabs extends React.Component<McTabsProps> {
     const { items } = this.props;
 
     return items.map((item, index) => (
-      <Tabs.TabPane tab={item.title} key={item.title}>
+      <Tabs.TabPane tab={item.title} key={item.title} forceRender={item.forceRender ? item.forceRender : false}>
         {item.display}
       </Tabs.TabPane>
     ));
