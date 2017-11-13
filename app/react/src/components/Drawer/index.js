@@ -7,6 +7,7 @@ import DrawerManager from './DrawerManager';
 const DEFAULT_DRAWER_OPTIONS = {
   additionalProps: {},
   isModal: false,
+  size: 'large',
 };
 
 const withDrawer = WrappedComponent => {
@@ -28,17 +29,9 @@ const withDrawer = WrappedComponent => {
     }
 
     handleOpenNewDrawer = (component, options = DEFAULT_DRAWER_OPTIONS) => {
-      const {
-        additionalProps,
-        size,
-        ...otherOptions
-      } = options;
-
       const extendedOptions = {
         ...DEFAULT_DRAWER_OPTIONS,
-        ...otherOptions,
-        additionalProps,
-        size: size || 'large',
+        ...options,
         openNextDrawer: this.handleOpenNewDrawer,
         closeNextDrawer: this.closeForegroundDrawer,
       };
