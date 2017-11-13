@@ -35,7 +35,7 @@ interface ActionsColumnDefinition {
   actions: ActionDefinition[];
 }
 
-interface VisibilitySelectedColumn {
+export interface VisibilitySelectedColumn {
   key: string;
   value: string;
 }

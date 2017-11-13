@@ -5,7 +5,7 @@ import { SearchProps } from 'antd/lib/input/Search';
 
 import McsDateRangePicker, { McsDateRangePickerProps } from '../McsDateRangePicker';
 import MultiSelect, { MultiSelectProps } from '../MultiSelect';
-import { TableViewProps } from './TableView';
+import { TableViewProps, VisibilitySelectedColumn } from './TableView';
 
 const Search = Input.Search;
 
@@ -15,16 +15,20 @@ interface ViewComponentWithFiltersProps {
   filtersOptions?: MultiSelectProps[];
   columnsVisibilityOptions?: {
     isEnabled?: boolean;
-    onChange?: (selected: Array<{
-      key: string;
-      value: string;
-    }>) => void;
+    onChange?: () => void;
   };
 }
 
-function withFilters(ViewComponent: typeof React.Component) {
+interface State {
+  visibilitySelectedColumns: VisibilitySelectedColumn[];
+}
 
-  class ViewComponentWithFilters extends React.Component<ViewComponentWithFiltersProps & TableViewProps> {
+type JoinedProps = TableViewProps & ViewComponentWithFiltersProps;
+type HOCWrapped<P> = React.ComponentClass<P> | React.SFC<P>;
+
+function withFilters(ViewComponent: HOCWrapped<TableViewProps>): React.ComponentClass<JoinedProps> {
+
+  class ViewComponentWithFilters extends React.Component<JoinedProps, State> {
 
     static defaultProps: Partial<ViewComponentWithFiltersProps> = {
       columnsVisibilityOptions: {
@@ -32,13 +36,16 @@ function withFilters(ViewComponent: typeof React.Component) {
       },
     };
 
-    state = {
-      visibilitySelectedColumns: this.props.columnsDefinitions ?
-        (this.props.columnsDefinitions.dataColumnsDefinition
-          .filter(column => column.isHideable && column.isVisibleByDefault)
-          .map(column => ({ key: column.translationKey, value: column.key }))
-        ) : [],
-    };
+    constructor(props: JoinedProps) {
+      super(props);
+      this.state = {
+        visibilitySelectedColumns: this.props.columnsDefinitions ?
+          (this.props.columnsDefinitions.dataColumnsDefinition
+            .filter(column => column.isHideable && column.isVisibleByDefault)
+            .map(column => ({ key: column.translationKey, value: column.key }))
+          ) : [],
+      };
+    }
 
     getHideableColumns = () => {
       const {
@@ -51,12 +58,10 @@ function withFilters(ViewComponent: typeof React.Component) {
     }
 
     changeColumnVisibility = (selectedColumns: { [name: string]: object[] }) => {
-      // const onChange = this.props.columnsVisibilityOptions!.onChange;
-
       this.setState({
-        visibilitySelectedColumns: selectedColumns.columns,
+        visibilitySelectedColumns: selectedColumns.columns as any,
       });
-
+      // const onChange = this.props.columnsVisibilityOptions!.onChange;
       // if (onChange) onChange(selectedColumns);
     }
 
