@@ -181,23 +181,22 @@ class StackedAreaPlot extends Component {
     });
     const xScale = new Plottable.Scales.Time().padProportion(0);
     let tickInterval = 10;
-    const hasHoursOfDay = dataset[0].hour_of_day !== undefined ? true : false;
+    const hasHoursOfDay = !!dataset[0].hour_of_day;
     let isSameDay = false;
+    const firstDate = new Date(dataset[dataset.length - 1].day);
+    const secondDate = new Date(dataset[0].day);
     if (dataset.length) {
       if (hasHoursOfDay) {
-        if (new Date(dataset[dataset.length - 1].day).setHours(0) - new Date(dataset[0].day).setHours(0) === 0) {
+        if (firstDate.setHours(0) - secondDate.setHours(0) === 0) {
           isSameDay = true;
           tickInterval = 3600 * 1000;
         } else {
-          tickInterval = ((new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7);
+          tickInterval = ((firstDate - secondDate) / 7);
         }
       } else {
-        const avgInterval = (new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7;
-        let avgDay = avgInterval / (24 * 3600 * 1000);
-        if (Math.round(avgDay) === 0) {
-          avgDay = 1;
-        }
-        tickInterval = Math.round(avgDay) * (24 * 3600 * 1000);
+        const avgInterval = (firstDate - secondDate) / 7;
+        const avgDay = Math.round(avgInterval / (24 * 3600 * 1000)) || 1;
+        tickInterval = avgDay * (24 * 3600 * 1000);
 
       }
     }
@@ -234,7 +233,8 @@ class StackedAreaPlot extends Component {
       });
       dragBox.onDragEnd((bounds) => {
         const min = moment(xScale.invert(bounds.topLeft.x));
-        const max = (moment(xScale.invert(bounds.bottomRight.x)) - min) > 24 * 3600 * 1000 ? moment(xScale.invert(bounds.bottomRight.x)) : moment(xScale.invert(bounds.bottomRight.x)).add(1, 'days');
+        const maxXScale = moment(xScale.invert(bounds.bottomRight.x));
+        const max = (maxXScale - min) > 24 * 3600 * 1000 ? maxXScale : maxXScale.add(1, 'days');
         options.onDragEnd([min, max]);
       });
       xScale.onUpdate(() => {
@@ -271,10 +271,10 @@ class StackedAreaPlot extends Component {
               }
               return date;
             }, xScale)
-            .y((d) => { return d[item]; }, yScale)
+            .y((d) => d[item], yScale)
             .animated(true)
             .attr('fill', `url(#${item}${identifier})`)
-            .attr('stroke', () => { return item; }, colorScale);
+            .attr('stroke', () => item, colorScale);
 
           const selectedPoint = new Plottable.Plots.Scatter()
             .x(d => {

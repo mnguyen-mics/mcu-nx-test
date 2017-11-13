@@ -316,14 +316,15 @@ class DisplayCampaignPage extends Component {
       });
       return Promise.all(promises);
     }).then(goals => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState
-        };
-        nextState.goals.items.itemById = goals;
-        nextState.goals.items.isLoading = false;
-        nextState.goals.items.hasFetched = true;
-        nextState.goals.items.hasItems = true;
+      this.setState({
+        goals: {
+          items: {
+            itemById: goals,
+            isLoading: false,
+            hasFetched: true,
+            hasItems: true,
+          }
+        }
       });
     });
 

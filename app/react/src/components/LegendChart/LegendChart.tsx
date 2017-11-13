@@ -19,24 +19,15 @@ const LegendChart = (props: LegendChartProps) => {
   <div className="mcs-legend-container">
     {options.map(option => {
       return (
-        <div key={option.domain} style={{ float: 'left' }}>
+        <div key={option.domain} className="wrapper">
           <div
             style={{
               backgroundColor: option.color,
-              marginLeft: '10px',
-              width: '30px',
-              height: '4px',
-              borderRadius: '5px',
-              marginTop: '18px',
-              float: 'left',
             }}
+            className="mcs-line"
           />
           <span
-            style={{
-              float: 'right',
-              lineHeight: '40px',
-              marginLeft: '5px',
-            }}
+            className="mcs-legend"
           >
             {option.domain}
           </span>

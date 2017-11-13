@@ -340,14 +340,14 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     const chartArea = (
       <div>
         <Row className="mcs-chart-header">
-          {<Col span={12}>
+          <Col span={12}>
             {hasData && (isFetchingPerformance)
             ? <div />
             : <LegendChartTS
               identifier="chartLegend"
               options={legendOptions}
             />}
-          </Col>}
+          </Col>
           <Col span={12}>
             <span className="mcs-card-button">
               {this.renderAttributionSelect()}
