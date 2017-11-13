@@ -49,6 +49,10 @@ const messages = defineMessages({
     id: 'campaign.email.error.fetch-campaign',
     defaultMessage: 'Cannot load campaign data',
   },
+  filterByLabel: {
+    id: 'campaign.email.filterBy.label',
+    defaultMessage: 'Filter By Label'
+  }
 });
 
 const getLatestDeliveryReport = takeLatest(ReportService.getEmailDeliveryReport);
@@ -197,6 +201,7 @@ class EmailCampaignListPage extends Component {
       const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
 
       if (filter.keywords) { options.keywords = filter.keywords; }
+      if (filter.label_id.length) { options.label_id = filter.label_id; }
       if (apiStatuses.length > 0) {
         options.status = apiStatuses;
       }
@@ -257,7 +262,22 @@ class EmailCampaignListPage extends Component {
 
     const {
       location: { search },
+      labels
     } = this.props;
+
+    const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
+
+    const labelsOptions = {
+      labels: this.props.labels,
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.find(filteredLabelId => filteredLabelId === label.id) ? true : false;
+      }),
+      onChange: (newLabels) => {
+        const formattedLabels = newLabels.map(label => label.id);
+        this.handleFilterChange({ label_id: formattedLabels });
+      },
+      buttonMessage: messages.filterByLabel
+    };
 
     return (
       <EmailCampaignsTable
@@ -266,11 +286,11 @@ class EmailCampaignListPage extends Component {
         isFetchingCampaigns={isFetchingCampaigns}
         isFetchingStats={isFetchingStats}
         noCampaignYet={noCampaignYet}
-        filter={parseSearch(search, EMAIL_SEARCH_SETTINGS)}
+        filter={filter}
         onFilterChange={this.handleFilterChange}
         onArchiveCampaign={this.handleArchiveCampaign}
         onEditCampaign={this.handleEditCampaign}
-
+        labelsOptions={labelsOptions}
       />
     );
   }
@@ -286,6 +306,7 @@ EmailCampaignListPage.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,
   notifyError: PropTypes.func,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
+  labels: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   // intl: intlShape.isRequired
 };
 
@@ -294,7 +315,9 @@ export default compose(
   withMcsRouter,
   connect(
     state => ({
-      translations: state.translations })
+      translations: state.translations,
+      labels: state.labels.labelsApi.data,
+    })
       ,
     { notifyError: notifyActions.notifyError },
   ),

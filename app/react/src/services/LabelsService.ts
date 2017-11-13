@@ -1,6 +1,6 @@
 import ApiService from './ApiService';
 
-const getLabels = (organisationId, options = {}) => {
+const getLabels = (organisationId: string, options = {}) => {
   const endpoint = 'labels';
 
   const params = {
@@ -11,15 +11,16 @@ const getLabels = (organisationId, options = {}) => {
   return ApiService.getRequest(endpoint, params);
 };
 
-const updateLabel = (labelId, name) => {
-  const endpoint = `label/${labelId}`;
+const updateLabel = (labelId: string, name: string) => {
+  const endpoint = `labels/${labelId}`;
   const body = {
+    id: labelId,
     name,
   };
   return ApiService.putRequest(endpoint, body);
 };
 
-const createLabel = (name, organisationId, options = {}) => {
+const createLabel = (name: string, organisationId: string, options = {}) => {
   const endpoint = 'labels';
   const params = {
     name,
@@ -29,19 +30,19 @@ const createLabel = (name, organisationId, options = {}) => {
   return ApiService.postRequest(endpoint, params);
 };
 
-const deleteLabel = (labelId) => {
+const deleteLabel = (labelId: string) => {
   const endpoint = `labels/${labelId}`;
   return ApiService.deleteRequest(endpoint);
 };
 
-const pairLabels = (labelId, labelableType, labelableId) => {
+const pairLabels = (labelId: string, labelableType: string, labelableId: string) => {
   const endpoint = `labels/${labelId}/links/${labelableType}/${labelableId}`;
-  return ApiService.postRequest(endpoint);
+  return ApiService.postRequest(endpoint, {});
 };
 
-const unPairLabels = (labelId, labelableType, labelableId) => {
+const unPairLabels = (labelId: string, labelableType: string, labelableId: string) => {
   const endpoint = `labels/${labelId}/links/${labelableType}/${labelableId}`;
-  return ApiService.deleteRequest(endpoint);
+  return ApiService.deleteRequest(endpoint, {});
 };
 
 export default {

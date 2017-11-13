@@ -20,6 +20,7 @@ import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
+import messages from './messages';
 
 class DisplayCampaignsTable extends Component {
 
@@ -173,7 +174,6 @@ class DisplayCampaignsTable extends Component {
       pathname,
       search: updateSearch(currentSearch, params, DISPLAY_SEARCH_SETTINGS),
     };
-
     history.push(nextLocation);
   };
 
@@ -192,7 +192,8 @@ class DisplayCampaignsTable extends Component {
       isFetchingDisplayCampaigns,
       isFetchingCampaignsStat,
       dataSource,
-      totalDisplayCampaigns
+      totalDisplayCampaigns,
+      labels
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -369,6 +370,17 @@ class DisplayCampaignsTable extends Component {
       actionsColumnsDefinition: actionColumns,
     };
 
+    const labelsOptions = {
+      labels: this.props.labels,
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.find(filteredLabelId => filteredLabelId === label.id) ? true : false;
+      }),
+      onChange: (newLabels) => {
+        const formattedLabels = newLabels.map(label => label.id);
+        this.updateLocationSearch({ label_id: formattedLabels });
+      },
+      buttonMessage: messages.filterByLabel
+    };
 
     return (hasDisplayCampaigns
       ? (
@@ -382,6 +394,7 @@ class DisplayCampaignsTable extends Component {
             dataSource={dataSource}
             loading={isFetchingDisplayCampaigns}
             pagination={pagination}
+            labelsOptions={labelsOptions}
           />
         </div>
     )
@@ -402,12 +415,13 @@ DisplayCampaignsTable.propTypes = {
   isFetchingCampaignsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalDisplayCampaigns: PropTypes.number.isRequired,
-
+  labels: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   loadDisplayCampaignsDataSource: PropTypes.func.isRequired,
   resetDisplayCampaignsTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
+  labels: state.labels.labelsApi.data,
   translations: state.translations,
   hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
   isFetchingDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.isFetching,

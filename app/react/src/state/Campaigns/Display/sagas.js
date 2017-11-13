@@ -60,6 +60,10 @@ function* loadDisplayCampaignsList({ payload }) {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
+    if (filter.label_id.length) {
+      options.label_id = filter.label_id;
+    }
+
     const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
 
     if (filter.keywords) { options.keywords = filter.keywords; }

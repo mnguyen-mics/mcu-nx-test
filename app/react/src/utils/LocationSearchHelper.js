@@ -4,6 +4,19 @@ import moment from 'moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
+export const LABELS_SEARCH_SETTINGS = [{
+  paramName: 'label_id',
+  defaultValue: [],
+  deserialize: query => {
+    if (query.label_id) {
+      return query.label_id.split(',');
+    }
+    return [];
+  },
+  serialize: value => value.join(','),
+  isValid: query => !query.label_id || query.label_id.split(',').length > 0,
+}];
+
 export const PAGINATION_SEARCH_SETTINGS = [
   {
     paramName: 'currentPage',

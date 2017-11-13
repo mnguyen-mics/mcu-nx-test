@@ -8,6 +8,7 @@ import TableSelector from './TableSelector';
 import MultiSelect from './MultiSelect';
 import SearchAndMultiSelect from './SearchAndMultiSelect';
 import SearchAndTreeSelect from './SearchAndTreeSelect';
+import LabelsSelector from './LabelsSelector';
 
 export {
   ButtonStyleless,
@@ -15,6 +16,7 @@ export {
   Form,
   List,
   Loading,
+  LabelsSelector,
   McsIcons,
   TableSelector,
   MultiSelect,

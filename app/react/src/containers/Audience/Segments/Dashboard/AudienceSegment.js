@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 
 import AudienceSegmentHeader from './AudienceSegmentHeader';
 import AudienceSegmentDashboard from './AudienceSegmentDashboard';
+import { Labels } from '../../../Labels/index.ts';
 
 import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
 
@@ -102,9 +103,18 @@ class AudienceSegment extends Component {
 
 
   render() {
+    const {
+      match: {
+        params: {
+          segmentId,
+          organisationId,
+        },
+      },
+    } = this.props;
     return (
       <div>
         <AudienceSegmentHeader />
+        <Labels labellableId={segmentId} labellableType="SEGMENT" organisationId={organisationId} />
         <AudienceSegmentDashboard />
       </div>
     );

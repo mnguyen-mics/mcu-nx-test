@@ -11,6 +11,7 @@ import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
 import Card from '../../../../../components/Card/Card.tsx';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
+import { Labels } from '../../../../../containers/Labels/index.ts';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
@@ -120,6 +121,7 @@ class DisplayCampaign extends Component {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <DisplayCampaignHeader object={campaign.items} translationKey="CAMPAIGN" />
+            <Labels labellableId={campaignId} organisationId={organisationId} labellableType="DISPLAY_CAMPAIGN" />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}

@@ -79,17 +79,15 @@ class Settings extends Component {
 
     return (
       <div>
-        {
-          this.datamartId &&
-          <Row className="mcs-table-container">
-            <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={(key) => this.switchTab(key)}>
-              <TabPane tab={formatMessage(messages.labels)} key="labels"><LabelsListPage organisationId={organisationId} /></TabPane>
-              <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.datamartId} /></TabPane>
-              <TabPane tab={formatMessage(messages.mobileApplications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>
-              <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.datamartId} /></TabPane>
-            </Tabs>
-          </Row>
-        }
+
+        <Row className="mcs-table-container">
+          <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={(key) => this.switchTab(key)}>
+            <TabPane tab={formatMessage(messages.labels)} key="labels"><LabelsListPage organisationId={organisationId} /></TabPane>
+            {this.datamartId && <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={this.datamartId} /></TabPane>}
+            {this.datamartId && <TabPane tab={formatMessage(messages.mobileApplications)} key="mobile_applications"><MobileApplicationsListPage datamartId={this.datamartId} /></TabPane>}
+            {this.datamartId && <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={this.datamartId} /></TabPane>}
+          </Tabs>
+        </Row>
       </div>
     );
   }

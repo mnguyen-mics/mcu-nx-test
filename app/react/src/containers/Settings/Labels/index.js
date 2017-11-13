@@ -1,5 +1,5 @@
-import LabelsListPage from './LabelsListPage';
-import LabelsTable from './LabelsTable';
+import LabelsListPage from './LabelsListPage.tsx';
+import LabelsTable from './LabelsTable.tsx';
 
 export {
   LabelsListPage,

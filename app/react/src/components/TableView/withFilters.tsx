@@ -6,6 +6,7 @@ import { SearchProps } from 'antd/lib/input/Search';
 import McsDateRangePicker, { McsDateRangePickerProps } from '../McsDateRangePicker';
 import MultiSelect, { MultiSelectProps } from '../MultiSelect';
 import { TableViewProps, VisibilitySelectedColumn } from './TableView';
+import LabelsSelector, { LabelsSelectorProps } from '../LabelsSelector';
 
 const Search = Input.Search;
 
@@ -17,6 +18,7 @@ interface ViewComponentWithFiltersProps {
     isEnabled?: boolean;
     onChange?: () => void;
   };
+  labelsOptions?: LabelsSelectorProps;
 }
 
 interface State {
@@ -42,7 +44,7 @@ function withFilters(ViewComponent: HOCWrapped<TableViewProps>): React.Component
         visibilitySelectedColumns: this.props.columnsDefinitions ?
           (this.props.columnsDefinitions.dataColumnsDefinition
             .filter(column => column.isHideable && column.isVisibleByDefault)
-            .map(column => ({ key: column.translationKey, value: column.key }))
+            .map(column => ({ key: column.key, value: column.key }))
           ) : [],
       };
     }
@@ -72,6 +74,7 @@ function withFilters(ViewComponent: HOCWrapped<TableViewProps>): React.Component
         dateRangePickerOptions,
         filtersOptions,
         columnsVisibilityOptions,
+        labelsOptions,
       } = this.props;
 
       const searchInput = searchOptions
@@ -117,7 +120,7 @@ function withFilters(ViewComponent: HOCWrapped<TableViewProps>): React.Component
             handleMenuClick: this.changeColumnVisibility,
             selectedItems: this.state.visibilitySelectedColumns,
             items: this.getHideableColumns().map(column => ({
-              key: column.translationKey,
+              key: column.key,
               value: column.key,
             })),
           })}
@@ -135,6 +138,10 @@ function withFilters(ViewComponent: HOCWrapped<TableViewProps>): React.Component
               {visibilityMultiSelect}
             </Col>
           </Row>
+          {(labelsOptions) ?
+          <Row className="mcs-table-labels">
+            <LabelsSelector {...labelsOptions} />
+          </Row> : null}
           <Row className="mcs-table-body">
             <Col span={24}>
               <ViewComponent {...this.props} visibilitySelectedColumns={this.state.visibilitySelectedColumns} />

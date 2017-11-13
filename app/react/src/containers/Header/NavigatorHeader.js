@@ -23,7 +23,6 @@ function NavigatorHeader({
     workspace,
     userEmail,
     history,
-    hasDatamarts,
   }) {
 
   const organisationId = params.organisationId;
@@ -94,12 +93,9 @@ function NavigatorHeader({
         <Col span={2}>
           <Row >
             <Col span={12} className="icon-right-align">
-              {
-                  hasDatamarts(organisationId) &&
-                  <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: 'tab=sites' }}>
-                    <McsIcons type="options" className="menu-icon" />
-                  </Link>
-                }
+              <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: 'tab=labels' }}>
+                <McsIcons type="options" className="menu-icon" />
+              </Link>
             </Col>
             <Col span={12} className="icon-right-align">
               <Dropdown overlay={accountMenu} trigger={['click']} placement="bottomRight">
@@ -119,7 +115,6 @@ NavigatorHeader.propTypes = {
   workspace: PropTypes.func.isRequired,
   workspaces: PropTypes.shape().isRequired,
   userEmail: PropTypes.string.isRequired,
-  hasDatamarts: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({

@@ -59,7 +59,7 @@ function* loadGoals({ payload }) {
     };
 
     if (filter.keywords) { options.keywords = filter.keywords; }
-
+    if (filter.label_id.length) { options.label_id = filter.label_id; }
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
     };

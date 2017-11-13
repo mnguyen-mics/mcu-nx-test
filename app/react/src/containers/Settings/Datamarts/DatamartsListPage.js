@@ -69,10 +69,6 @@ class DatamartsListPage extends Component {
     });
   }
 
-  handleFilterChange = () => {
-    console.log('ok');
-  }
-
   render() {
     const {
       isFetchingDatamarts,

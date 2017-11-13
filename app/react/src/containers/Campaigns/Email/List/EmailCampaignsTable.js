@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { Link } from 'react-router-dom';
 import { Icon, Tooltip } from 'antd';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
@@ -24,7 +23,8 @@ function EmailCampaignsTable({
   onArchiveCampaign,
   onEditCampaign,
   intl: { formatMessage },
-  filter
+  filter,
+  labelsOptions
 }) {
 
   const searchOptions = {
@@ -175,6 +175,7 @@ function EmailCampaignsTable({
     actionsColumnsDefinition: actionColumns,
   };
 
+
   return (noCampaignYet)
       ? <EmptyTableView iconType="email" text="EMPTY_EMAILS" />
       : (
@@ -188,6 +189,7 @@ function EmailCampaignsTable({
             dataSource={dataSource}
             loading={isFetchingCampaigns}
             pagination={pagination}
+            labelsOptions={labelsOptions}
           />
         </div>
      );
@@ -204,6 +206,7 @@ EmailCampaignsTable.propTypes = {
   onArchiveCampaign: PropTypes.func.isRequired,
   onEditCampaign: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  labelsOptions: PropTypes.shape().isRequired,
 };
 
 export default injectIntl(EmailCampaignsTable);
