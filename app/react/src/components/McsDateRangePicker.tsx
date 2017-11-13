@@ -33,26 +33,30 @@ const { RangePicker } = DatePicker;
 const currentTimeStampInt = parseInt(moment().format('X'), 10); // radix is needed
 const numberOfSecondsInOneDay = 3600 * 24;
 
+const setToMidnight = (a: moment.Moment) => {
+  return a.hours(0).minutes(0).seconds(0).milliseconds(0);
+};
+
 const ranges: Range[] = [
   {
     name: 'TODAY',
-    from : moment.unix(currentTimeStampInt),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from : setToMidnight(moment.unix(currentTimeStampInt)),
+    to: setToMidnight(moment.unix(currentTimeStampInt + numberOfSecondsInOneDay)),
   },
   {
     name: 'YESTERDAY',
-    from : moment.unix(currentTimeStampInt - numberOfSecondsInOneDay),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from : setToMidnight(moment.unix(currentTimeStampInt - numberOfSecondsInOneDay)),
+    to: setToMidnight(moment.unix(currentTimeStampInt)),
   },
   {
     name: 'LAST_7_DAYS',
-    from: moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay)),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from: setToMidnight(moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay))),
+    to: setToMidnight(moment.unix(currentTimeStampInt + numberOfSecondsInOneDay)),
   },
   {
     name: 'LAST_30_DAYS',
-    from: moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay)),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from: setToMidnight(moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay))),
+    to: setToMidnight(moment.unix(currentTimeStampInt + numberOfSecondsInOneDay)),
   },
 ];
 
@@ -81,8 +85,8 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
           .duration({ from: range.from, to: range.to })
           .asSeconds(),
         );
-
-        return ceil1 === Math.ceil(values.lookbackWindow!.asSeconds());
+        return (ceil1 === Math.ceil(values.lookbackWindow!.asSeconds())
+          && (range.to.unix() === (values.to ? values.to.unix() : null)));
       });
 
       return (selectedRange
