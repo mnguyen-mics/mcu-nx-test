@@ -22,7 +22,7 @@ interface ViewComponentWithFiltersProps {
   };
 }
 
-function withFilters(ViewComponent: new() => React.Component<TableViewProps>) {
+function withFilters(ViewComponent: typeof React.Component) {
 
   class ViewComponentWithFilters extends React.Component<ViewComponentWithFiltersProps & TableViewProps> {
 
