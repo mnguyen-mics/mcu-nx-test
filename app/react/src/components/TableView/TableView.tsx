@@ -45,12 +45,16 @@ export interface ColumnsDefinitions {
   actionsColumnsDefinition?: ActionsColumnDefinition[];
 }
 
+interface CustomPaginationProps extends PaginationProps {
+  currentPage: number;
+}
+
 export interface TableViewProps {
   columnsDefinitions: ColumnsDefinitions;
   // TODO use generics T[]
   dataSource: object[];
   loading?: boolean | SpinProps;
-  pagination?: PaginationProps | boolean;
+  pagination?: CustomPaginationProps | boolean;
   onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
   visibilitySelectedColumns: VisibilitySelectedColumn[];
 }
@@ -175,7 +179,8 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
     if (pagination) {
       newPagination = {
         ...DEFAULT_PAGINATION_OPTION,
-        ...pagination as PaginationProps,
+        ...pagination as CustomPaginationProps,
+        current: (typeof pagination !== 'boolean' && pagination.currentPage) ? pagination.currentPage : 1,
       };
     }
     return (
