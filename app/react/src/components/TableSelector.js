@@ -191,6 +191,7 @@ class TableSelector extends Component {
       columnsDefinitions: this.getColumnsDefinitions(),
       dataSource: allElementIds.map(id => elementsById[id]),
       loading: isLoading,
+      onRowClick: this.toggleElementSelection,
       pagination: pagination,
     };
 
