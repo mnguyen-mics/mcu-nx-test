@@ -6,8 +6,8 @@ import DrawerManager from './DrawerManager';
 
 const DEFAULT_DRAWER_OPTIONS = {
   additionalProps: {},
-  size: 'large', // or 'small'
   isModal: false,
+  size: 'large',
 };
 
 const withDrawer = WrappedComponent => {
