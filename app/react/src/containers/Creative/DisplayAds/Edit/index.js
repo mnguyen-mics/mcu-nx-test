@@ -1,7 +1,11 @@
-import CreateDisplayCreativePage from './CreatePage/CreateDisplayCreativePage';
+import CreateCreativePage from './CreatePage/CreateCreativePage';
+import DisplayCreativeContent from './CreatePage/DisplayCreativeContent';
 import EditDisplayCreativePage from './EditPage/EditDisplayCreativePage';
+import EditDisplayCreativeContent from './EditPage/EditDisplayCreativeContent';
 
 export {
-    CreateDisplayCreativePage,
+    CreateCreativePage,
     EditDisplayCreativePage,
+    EditDisplayCreativeContent,
+    DisplayCreativeContent,
 };

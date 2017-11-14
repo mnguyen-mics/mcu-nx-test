@@ -7,6 +7,8 @@ import AdGroupCardList from './AdGroupCardList';
 import messages from '../../../messages';
 import CreativeCardSelector from '../../../../../Email/Edit/CreativeCardSelector';
 import CreativeService from '../../../../../../../services/CreativeService';
+import { DisplayCreativeContent } from '../../../../../../Creative/DisplayAds/Edit';
+import { createDisplayCreative } from '../../../../../../../formServices/CreativeServiceWrapper';
 
 const { FormSection } = Form;
 
@@ -39,21 +41,59 @@ class Ads extends Component {
     handlers.openNextDrawer(CreativeCardSelector, options);
   }
 
+  openWindowNewCreative = () => {
+    const { handlers } = this.props;
+
+    const additionalProps = {
+      onClose: handlers.closeNextDrawer,
+      save: this.createNewData,
+      close: handlers.closeNextDrawer,
+    };
+
+    const options = {
+      additionalProps: additionalProps,
+      isModal: true
+    };
+
+    handlers.openNextDrawer(DisplayCreativeContent, options);
+  }
+
+  createNewData = (creativeData, formattedProperties, rendererData) => {
+    const { formValues, handlers } = this.props;
+    const { organisationId } = this.props;
+    return createDisplayCreative(creativeData, formattedProperties, organisationId, rendererData)
+      .then((createdCreativeData) => {
+        const valuesToAdd = [
+          ...formValues.filter(item => {
+            return !item.toBeRemoved;
+          }),
+          createdCreativeData
+        ];
+        this.setState({ loading: true }, () => {
+          handlers.updateTableFields({ newFields: valuesToAdd, tableName: 'adTable' });
+        });
+        this.setState({ loading: false });
+      }).catch(() => {
+        // this.props.notifyError(err);
+      });
+  }
+
   updateData = (selectedAds) => {
     const { handlers } = this.props;
     const selectedIds = selectedAds.map(selection => selection.id);
 
     this.setState({ loading: true });
     handlers.closeNextDrawer();
-
-    this.getAllAds()
-      .then(({ data }) => {
-        const newFields = data.filter((ad) => selectedIds.includes(ad.id));
-
-        handlers.updateTableFields({ newFields, tableName: 'adTable' });
-
-        return this.setState({ loading: false });
+    const newFields = [];
+    const promises = selectedIds.map(selectedId => {
+      return CreativeService.getCreative(selectedId).then(data => {
+        newFields.push(data);
       });
+    });
+    Promise.all(promises).then(() => {
+      handlers.updateTableFields({ newFields, tableName: 'adTable' });
+      return this.setState({ loading: false });
+    });
   }
 
   render() {
@@ -63,6 +103,11 @@ class Ads extends Component {
       <div id="ads">
         <FormSection
           dropdownItems={[
+            {
+              id: messages.dropdownNew.id,
+              message: messages.dropdownNew,
+              onClick: this.openWindowNewCreative,
+            },
             {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
@@ -81,6 +126,7 @@ class Ads extends Component {
             loading={this.state.loading}
             name="adTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
+            handlers={this.props.handlers}
           />
 
           {!formValues.filter(ad => !ad.toBeRemoved).length
@@ -111,7 +157,8 @@ Ads.propTypes = {
     updateTableFieldStatus: PropTypes.func.isRequired,
   }).isRequired,
 
-  organisationId: PropTypes.string.isRequired
+  organisationId: PropTypes.string.isRequired,
+  // notifyError: PropTypes.func.isRequired,
 };
 
 export default Ads;

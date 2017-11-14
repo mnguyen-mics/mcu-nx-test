@@ -4,7 +4,7 @@ import {
 } from '../containers/Creative/DisplayAds/List';
 
 import {
-  CreateDisplayCreativePage,
+  CreateCreativePage,
   EditDisplayCreativePage,
 } from '../containers/Creative/DisplayAds/Edit';
 
@@ -23,7 +23,7 @@ const creativesRoutes = [
   {
     path: '/creatives/display/create',
     layout: 'edit',
-    editComponent: CreateDisplayCreativePage,
+    editComponent: CreateCreativePage,
   },
   {
     path: '/creatives/display/edit/:creativeId(\\d+)',

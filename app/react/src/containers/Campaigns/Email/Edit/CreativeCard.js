@@ -138,7 +138,11 @@ class CreativeCard extends Component {
           { success ? this.renderSuccessScreenshot(item) : null}
         </div>
         <div className="creative-details">
-          <div className="title">{ title.render(dataToRender(title), item) }</div>
+          <div className="title">
+            { title.render(dataToRender(title), item) && title.render(dataToRender(title), item).props.children !== null ?
+              title.render(dataToRender(title), item) :
+              'No title'}
+          </div>
           { subtitles && subtitles.length && subtitles.map(subtitle => (
             <div key={subtitle.key} className="subtitle">
               <span>{ subtitle.render(item[subtitle.key], item) }</span>

@@ -2,252 +2,66 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl } from 'react-intl';
+import * as actions from '../../../../../state/Notifications/actions';
 
 import { withMcsRouter } from '../../../../Helpers';
-import DisplayCreativeEditionEditor from './DisplayCreativeEditionEditor';
-
-
-import CreativeService from '../../../../../services/CreativeService';
-import * as actions from '../../../../../state/Notifications/actions';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import Loading from '../../../../../components/Loading.tsx';
+import EditDisplayCreativeContent from './EditDisplayCreativeContent';
+import withDrawer from '../../../../../components/Drawer';
 
-import messages from '../messages';
+class EditDisplayCreativePage extends Component {
 
-
-class CreateDisplayCreativePage extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      formats: [],
-      rendererProperties: [],
-      creative: {},
-      isLoading: false
-    };
-  }
-
-  fetchAllData = (organisationId, creativeId) => {
+  onClose = () => {
     const {
-      notifyError
-    } = this.props;
-
-    const getFormats = CreativeService.getCreativeFormats(organisationId);
-    const getRendererProperties = CreativeService.getCreativeRendererProperties(creativeId);
-    const getCreative = CreativeService.getCreative(creativeId);
-
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState
-      };
-      nextState.isLoading = true;
-      return nextState;
-    }, () => {
-      Promise.all([getFormats, getRendererProperties, getCreative]).then(values => {
-        this.setState(prevState => {
-          const nextState = {
-            ...prevState
-          };
-          nextState.formats = values[0].filter(item => {
-            return item.type === 'DISPLAY_AD';
-          }).sort((a, b) => {
-            return a.width - b.width;
-          }).map(item => {
-            return `${item.width}x${item.height}`;
-          });
-          nextState.rendererProperties = values[1].sort((a) => {
-            return a.writable === false ? -1 : 1;
-          });
-          nextState.creative = values[2];
-          nextState.isLoading = false;
-          return nextState;
-        });
-      })
-      .catch(err => {
-        notifyError(err);
-      });
-    });
-
-  }
-
-  updateDisplayCreative = (creative, properties) => {
-
-    const { organisationId, notifyError } = this.props;
-
-    const options = {
-      ...this.state.creative,
-      ...creative
-    };
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState
-      };
-      nextState.isLoading = true;
-      return nextState;
-    }, () => {
-
-      CreativeService
-        .updateDisplayCreative(organisationId, creative.id, options)
-        .then(() => {
-          const creativeId = creative.id;
-          const propertiesPromises = [];
-          properties.forEach(item => {
-            propertiesPromises.push(CreativeService.updateDisplayCreativeRendererProperty(organisationId, creativeId, item.technical_name, item));
-          });
-
-          Promise.all(propertiesPromises).then(() => {
-            CreativeService.takeScreenshot(creativeId, organisationId).then(() => {
-              this.setState(prevState => {
-                const nextState = {
-                  ...prevState
-                };
-                return nextState;
-              });
-              this.fetchAllData(organisationId, creativeId);
-            }).catch(err => {
-              notifyError(err);
-              this.setState(prevState => {
-                const nextState = {
-                  ...prevState
-                };
-                nextState.isLoading = false;
-                return nextState;
-              });
-            });
-          })
-          .catch(err => {
-            notifyError(err);
-            this.setState(prevState => {
-              const nextState = {
-                ...prevState
-              };
-              nextState.isLoading = false;
-              return nextState;
-            });
-
-          });
-        })
-        .catch(err => {
-          notifyError(err);
-          this.setState(prevState => {
-            const nextState = {
-              ...prevState
-            };
-            nextState.isLoading = false;
-            return nextState;
-          });
-
-        });
-    });
-  }
-
-  componentDidMount() {
-    const {
-      match: { params: { organisationId, creativeId } }
-    } = this.props;
-    this.fetchAllData(organisationId, creativeId);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const {
-      match: {
-        params: {
-          organisationId: nextOrganisationId,
-          creativeId: nextCreativeId
-        }
-      }
-    } = nextProps;
-
-    const {
+      history,
       match: {
         params: {
           organisationId,
-          creativeId
         }
       }
     } = this.props;
-
-    if (organisationId !== nextOrganisationId || creativeId !== nextCreativeId) {
-      this.fetchAllData(nextOrganisationId, nextCreativeId);
-    }
+    history.push(`/v2/o/${organisationId}/creatives/display`);
   }
 
-
-  redirect = () => {
-    const { history, organisationId } = this.props;
-    const emailCampaignListUrl = `/v2/o/${organisationId}/creatives/display`;
-    history.push(emailCampaignListUrl);
-  }
-
-  formatProperties = () => {
-    const {
-      rendererProperties
-    } = this.state;
-
-    const formattedProperties = {};
-    rendererProperties.forEach(item => {
-      formattedProperties[item.technical_name] = { value: item.value };
-    });
-
-    return formattedProperties;
-  }
-
-  refreshCreative = () => {
-    const {
-      match: { params: { organisationId, creativeId } }
-    } = this.props;
-
-    this.fetchAllData(organisationId, creativeId);
-  }
 
   render() {
+
     const {
-      organisationId,
-      intl: { formatMessage },
+      openNextDrawer,
+      closeNextDrawer,
+      match,
     } = this.props;
 
-    const {
-      isLoading
-    } = this.state;
-
-    const breadcrumbPaths = [
-      { name: formatMessage(messages.creativeCreationBreadCrumb) },
-    ];
-
-    return this.state.isLoading ? <div style={{ display: 'flex', flex: 1 }}><Loading className="loading-full-screen" /></div> : (
-      <DisplayCreativeEditionEditor
-        save={this.updateDisplayCreative}
-        close={this.redirect}
-        breadcrumbPaths={breadcrumbPaths}
-        initialValues={{
-          creative: this.state.creative,
-          properties: this.formatProperties(),
-        }}
-        creative={this.state.creative}
-        rendererProperties={this.state.rendererProperties}
-        formats={this.state.formats}
-        refreshCreative={this.refreshCreative}
-        organisationId={organisationId}
-        isLoading={isLoading}
+    return (
+      <EditDisplayCreativeContent
+        closeNextDrawer={closeNextDrawer}
+        onClose={this.onClose}
+        openNextDrawer={openNextDrawer}
+        creativeId={match.params.creativeId}
       />
     );
   }
 }
 
-CreateDisplayCreativePage.propTypes = {
-  match: ReactRouterPropTypes.match.isRequired,
-  organisationId: PropTypes.string.isRequired,
+EditDisplayCreativePage.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      organisationId: PropTypes.string.isRequired,
+      creativeId: PropTypes.string.isRequired,
+    })
+  }).isRequired,
   history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
+  closeNextDrawer: PropTypes.func.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   injectIntl,
+  withDrawer,
   connect(
     undefined,
     { notifyError: actions.notifyError },
   ),
-)(CreateDisplayCreativePage);
+)(EditDisplayCreativePage);

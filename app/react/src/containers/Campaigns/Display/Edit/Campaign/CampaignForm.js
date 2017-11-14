@@ -30,7 +30,7 @@ import GoalService from '../../../../../services/GoalService';
 import AttributionModelsService from '../../../../../services/AttributionModelsService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
-import * as AdGroupServiceWrapper from '../AdGroupServiceWrapper';
+import * as AdGroupServiceWrapper from '../../../../../formServices/AdGroupServiceWrapper';
 
 
 const { Content } = Layout;

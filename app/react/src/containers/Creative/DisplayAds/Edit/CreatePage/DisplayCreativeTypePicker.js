@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Layout, Row } from 'antd';
 
-import { Actionbar } from '../../../../Actionbar';
-import McsIcons from '../../../../../components/McsIcons.tsx';
 import { FormTitle } from '../../../../../components/Form/index.ts';
 import { MenuList, MenuPresentational, MenuSubList } from '../../../../../components/FormMenu/index.ts';
 
@@ -26,7 +24,7 @@ class DisplayCreativeTypePicker extends Component {
       onSelect,
       intl: {
         formatMessage
-      }
+      },
     } = this.props;
 
     return [{
@@ -41,11 +39,10 @@ class DisplayCreativeTypePicker extends Component {
   render() {
     const {
       onSelect,
-      breadcrumbPaths,
-      close,
       intl: {
         formatMessage
-      }
+      },
+      formId: scrollLabelContentId,
     } = this.props;
 
     return (
@@ -53,16 +50,8 @@ class DisplayCreativeTypePicker extends Component {
         <div
           className="edit-layout ant-layout"
         >
-          <Actionbar path={breadcrumbPaths} edition>
-            <McsIcons
-              type="close"
-              className="close-icon"
-              style={{ cursor: 'pointer' }}
-              onClick={close}
-            />
-          </Actionbar>
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
+            <Content className="mcs-content-container mcs-form-container text-center" id={scrollLabelContentId}>
               <FormTitle
                 title={messages.creativesTypePickerTitle}
                 subTitle={messages.creativesTypePickerSubTitle}
@@ -84,8 +73,6 @@ class DisplayCreativeTypePicker extends Component {
                   <MenuSubList title={formatMessage(messages.creativeTypeNative)} subtitles={[formatMessage(messages.creativeTypeQuantum), formatMessage(messages.creativeTypeIvidence)]} submenu={this.renderNativeSubmenu()} />
                 </Row>
               </Row>
-
-
             </Content>
           </Layout>
         </div>
@@ -96,12 +83,8 @@ class DisplayCreativeTypePicker extends Component {
 
 DisplayCreativeTypePicker.propTypes = {
   onSelect: PropTypes.func.isRequired,
-  breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    url: PropTypes.string,
-  })).isRequired,
-  close: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  formId: PropTypes.string.isRequired,
 };
 
 DisplayCreativeTypePicker = injectIntl(DisplayCreativeTypePicker);

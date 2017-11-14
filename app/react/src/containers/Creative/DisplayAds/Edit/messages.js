@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+  saveCreative: {
+    id: 'message.submit.saveCreative',
+    defaultMessage: 'Save',
+  },
   creativesTypePickerTitle: {
     id: 'creatives.create.typePicker.title',
     defaultMessage: 'Creative Type',

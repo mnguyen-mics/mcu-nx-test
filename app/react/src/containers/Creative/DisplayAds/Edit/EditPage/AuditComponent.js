@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Modal, Row, Col } from 'antd';
+import { Button, Modal, Row, Col, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
-import { Card } from '../../../../../components/Card/index.ts';
 import McsIcons from '../../../../../components/McsIcons.tsx';
 import CreativeService from '../../../../../services/CreativeService';
 import * as actionsRedux from '../../../../../state/Notifications/actions';
@@ -133,29 +132,33 @@ class AuditComponent extends Component {
 
     let message = messages.creativeAuditStatusFailed;
     let icon = 'close-big';
+    let color = '#CECECE';
     if (auditStatus === 'AUDIT_FAILED') {
       message = messages.creativeAuditStatusFailed;
       icon = 'close-big';
+      color = '#fc3f48'; // theme error color
     } else if (auditStatus === 'AUDIT_PASSED') {
       message = messages.creativeAuditStatusPassed;
       icon = 'check';
+      color = '#00ab67'; // theme success error
     } else if (auditStatus === 'AUDIT_PENDING') {
       message = messages.creativeAuditStatusPending;
       icon = 'refresh';
+      color = '#fd7c12'; // theme warning error
     } else if (auditStatus === 'AUDIT_PARTIALLY_PASSED') {
       message = messages.creativeAuditStatusPartiallyPassed;
       icon = 'close-big';
+      color = '#fd7c12'; // theme warning error
     } else if (auditStatus === 'NOT_AUDITED') {
       message = messages.creativeAuditStatusNotAudited;
       icon = 'close-big';
-    } else if (auditStatus === 'AUDIT_PASSED') {
-      message = messages.creativeAuditStatusPassed;
-      icon = 'check';
+      color = '#fc3f48'; // theme error color
     }
 
     return {
       message: message,
-      icon: icon
+      icon: icon,
+      color: color,
     };
   }
 
@@ -163,39 +166,78 @@ class AuditComponent extends Component {
     const {
       creative: {
         available_user_audit_actions: actions,
-      }
+      },
+      mode,
     } = this.props;
 
     return actions ? actions.map(item => {
-      return <div key={item} className="float-right m-l-10"><Button type={this.actionAudit(item).type} onClick={this.actionAudit(item).action}><FormattedMessage {...this.actionAudit(item).message} /></Button></div>;
+      return (
+        <div key={item} className={mode && mode === 'creativeCard' ? '' : 'float-right m-l-10'}>
+          <Button type={this.actionAudit(item).type} onClick={this.actionAudit(item).action}>
+            <FormattedMessage {...this.actionAudit(item).message} />
+          </Button>
+        </div>
+      );
     }) : null;
   }
 
   renderStatusButton = () => {
     const {
-      status
+      status,
+      mode,
     } = this.state;
 
-    return status.length ? <div className="float-right m-l-10"><Button onClick={() => { this.showHideModal(); }}><FormattedMessage {...messages.creativeAuditStatusDetails} /></Button></div> : null;
+    return status.length ?
+      <div className={mode && mode === 'creativeCard' ? '' : 'float-right m-l-10'}>
+        <Button onClick={() => { this.showHideModal(); }}>
+          <FormattedMessage {...messages.creativeAuditStatusDetails} />
+        </Button>
+      </div>
+      : null;
   }
 
   render() {
     const {
-      creative
+      creative,
+      mode,
     } = this.props;
 
     const {
       status
     } = this.state;
 
+    const PopoverButtons = (
+      <div>
+        <Row type="flex">
+          <Col span={12}>
+            { this.renderAuditAction() }
+          </Col>
+          <Col span={12}>
+            { this.renderStatusButton() }
+          </Col>
+        </Row>
+      </div>
+    );
+
+    const iconAndTextStatus = (
+      <div className="float-left" style={{ lineHeight: '34px' }}>
+        <McsIcons type={this.renderAuditStatus().icon} className="m-r-10" style={{ verticalAlign: 'middle', color: this.renderAuditStatus().color }} />
+        <FormattedMessage {...this.renderAuditStatus().message} />
+      </div>
+    );
+
     return creative && (
-      <Card>
-        { this.renderAuditAction() }
-        { this.renderStatusButton() }
-        <div className="float-left" style={{ lineHeight: '34px' }}>
-          <McsIcons type={this.renderAuditStatus().icon} className="m-r-10" style={{ verticalAlign: 'middle' }} />
-          <FormattedMessage {...this.renderAuditStatus().message} />
-        </div>
+      <div>
+        { mode && mode === 'creativeCard' ?
+          <Popover content={PopoverButtons} title="Audit">
+            { iconAndTextStatus }
+          </Popover> :
+          <div>
+            { this.renderAuditAction() }
+            { this.renderStatusButton() }
+            { iconAndTextStatus }
+          </div>
+        }
         <Modal
           title={<FormattedMessage {...messages.creativeAuditStatusDetails} />}
           visible={this.state.visible}
@@ -210,7 +252,7 @@ class AuditComponent extends Component {
             </Row>);
           })}
         </Modal>
-      </Card>
+      </div>
     );
   }
 }
@@ -225,6 +267,7 @@ AuditComponent.propTypes = {
   creative: PropTypes.shape(),
   onAuditChange: PropTypes.func,
   notifyError: PropTypes.func.isRequired,
+  mode: PropTypes.string.isRequired,
 };
 
 AuditComponent = compose(

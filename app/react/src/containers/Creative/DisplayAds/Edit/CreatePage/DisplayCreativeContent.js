@@ -14,11 +14,13 @@ import * as actions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import Loading from '../../../../../components/Loading.tsx';
+import { EditContentLayout } from '../../../../../components/Layout/index.ts';
 
 import messages from '../messages';
 
+const formId = 'creativeEditor';
 
-class CreateDisplayCreativePage extends Component {
+class DisplayCreativeContent extends Component {
 
   constructor(props) {
     super(props);
@@ -33,91 +35,6 @@ class CreateDisplayCreativePage extends Component {
       rendererProperties: [],
       formats: []
     };
-  }
-
-
-  createDisplayCreative = (creative, properties) => {
-
-    const { history, organisationId, notifyError } = this.props;
-
-    const options = {
-      renderer_artifact_id: this.state.adRenderer.artifactId,
-      renderer_group_id: this.state.adRenderer.groupId,
-      editor_artifact_id: 'default-editor',
-      editor_group_id: 'com.mediarithmics.creative.display',
-      subtype: 'BANNER',
-      format: creative.format,
-      destination_domain: creative.destination_domain,
-      name: creative.name,
-    };
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState
-      };
-      nextState.isLoading = true;
-      return nextState;
-    }, () => {
-
-      CreativeService
-        .createDisplayCreative(organisationId, options)
-        .then(res => {
-          const creativeId = res.id;
-          const propertiesPromises = [];
-          properties.forEach(item => {
-            propertiesPromises.push(CreativeService.updateDisplayCreativeRendererProperty(organisationId, creativeId, item.technical_name, item));
-          });
-          Promise.all(propertiesPromises).then(() => {
-            CreativeService.takeScreenshot(creativeId, organisationId).then(() => {
-              this.setState(prevState => {
-                const nextState = {
-                  ...prevState
-                };
-                return nextState;
-              });
-              history.push(`/v2/o/${organisationId}/creatives/display/edit/${creativeId}`);
-            }).catch(err => {
-              notifyError(err);
-
-              this.setState(prevState => {
-                const nextState = {
-                  ...prevState
-                };
-                nextState.isLoading = false;
-                return nextState;
-              });
-            });
-          })
-          .catch(err => {
-            notifyError(err);
-            this.setState(prevState => {
-              const nextState = {
-                ...prevState
-              };
-              nextState.isLoading = false;
-              return nextState;
-            });
-
-          });
-        })
-        .catch(err => {
-          // TODO NOTIFY ERR
-          notifyError(err);
-          this.setState(prevState => {
-            const nextState = {
-              ...prevState
-            };
-            nextState.isLoading = false;
-            return nextState;
-          });
-
-        });
-    });
-  }
-
-  redirect = () => {
-    const { history, organisationId } = this.props;
-    const emailCampaignListUrl = `/v2/o/${organisationId}/creatives/display`;
-    history.push(emailCampaignListUrl);
   }
 
   onSelect = adRenderer => {
@@ -207,6 +124,10 @@ class CreateDisplayCreativePage extends Component {
     const {
       organisationId,
       intl: { formatMessage },
+      onClose,
+      match: {
+        url,
+      },
     } = this.props;
 
     const {
@@ -214,35 +135,79 @@ class CreateDisplayCreativePage extends Component {
       isLoading
     } = this.state;
 
+    const sidebarItems = {
+      general: messages.creativeSiderMenuGeneralInformation,
+      properties: messages.creativeSiderMenuProperties,
+    };
+
+    const buttonMetadata = {
+      formId: formId,
+      message: messages.saveCreative,
+      onClose: onClose,
+    };
+
     const breadcrumbPaths = [
       { name: formatMessage(messages.creativeCreationBreadCrumb) },
     ];
-    return isLoading ? <div style={{ display: 'flex', flex: 1 }}><Loading className="loading-full-screen" /></div> : (adRenderer.id && adRenderer.versionId ? (
-      <DisplayCreativeCreationEditor
-        save={this.createDisplayCreative}
-        close={this.redirect}
-        breadcrumbPaths={breadcrumbPaths}
-        changeType={this.onReset}
-        adRenderer={adRenderer}
-        isLoading={isLoading}
-        formats={this.state.formats}
-        rendererProperties={this.state.rendererProperties}
-        organisationId={organisationId}
-      />
-    ) : (
-      <DisplayCreativeTypePicker
-        breadcrumbPaths={breadcrumbPaths}
-        close={this.redirect}
-        onSelect={this.onSelect}
-      />));
+    return (
+      <div className="ant-layout">
+        {isLoading ?
+          <div style={{ display: 'flex', flex: 1 }}>
+            <Loading className="loading-full-screen" />
+          </div>
+          :
+          (adRenderer.id && adRenderer.versionId) ?
+            <EditContentLayout
+              breadcrumbPaths={breadcrumbPaths}
+              sidebarItems={sidebarItems}
+              buttonMetadata={buttonMetadata}
+              url={url}
+            >
+              <DisplayCreativeCreationEditor
+                save={this.props.save}
+                changeType={this.onReset}
+                adRenderer={adRenderer}
+                isLoading={isLoading}
+                formats={this.state.formats}
+                rendererProperties={this.state.rendererProperties}
+                organisationId={organisationId}
+                closeNextDrawer={this.props.closeNextDrawer}
+                openNextDrawer={this.props.openNextDrawer}
+                formId={formId}
+              />
+            </EditContentLayout>
+            :
+            <div className="ant-layout">
+              <EditContentLayout
+                breadcrumbPaths={breadcrumbPaths}
+                buttonMetadata={buttonMetadata}
+                url={url}
+              >
+                <DisplayCreativeTypePicker
+                  save={this.props.save}
+                  onSelect={this.onSelect}
+                  formId={formId}
+                  closeNextDrawer={this.props.closeNextDrawer}
+                  openNextDrawer={this.props.openNextDrawer}
+                  organisationId={organisationId}
+                />
+              </EditContentLayout>
+            </div>}
+      </div>
+    );
   }
 }
 
-CreateDisplayCreativePage.propTypes = {
+DisplayCreativeContent.propTypes = {
   organisationId: PropTypes.string.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
+  // history: ReactRouterPropTypes.history.isRequired,
   notifyError: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  closeNextDrawer: PropTypes.func.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
+  save: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -252,4 +217,4 @@ export default compose(
     undefined,
     { notifyError: actions.notifyError },
   ),
-)(CreateDisplayCreativePage);
+)(DisplayCreativeContent);
