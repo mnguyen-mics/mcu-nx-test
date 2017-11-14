@@ -113,7 +113,7 @@ class KeywordListsTable extends Component {
     const filter = parseSearch(search, KEYWORDS_SEARCH_SETTINGS);
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
       onChange: page =>

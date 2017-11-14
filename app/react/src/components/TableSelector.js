@@ -176,7 +176,7 @@ class TableSelector extends Component {
     } = this.state;
 
     const pagination = {
-      currentPage,
+      current: currentPage,
       pageSize,
       total,
       onChange: page => this.setState({ currentPage: page }),
