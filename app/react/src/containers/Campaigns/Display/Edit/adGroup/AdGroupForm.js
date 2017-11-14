@@ -50,7 +50,10 @@ class AdGroupForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if ((nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) || (nextProps.RxF.submitFailed && (this.props.RxF.submitFailed !== nextProps.RxF.submitFailed))) {
+    if (
+      (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) ||
+      (nextProps.RxF.submitFailed && (this.props.RxF.submitFailed !== nextProps.RxF.submitFailed))
+    ) {
       const {
         intl: {
           formatMessage
