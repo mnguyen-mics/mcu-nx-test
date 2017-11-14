@@ -56,7 +56,7 @@ function EmailCampaignsTable({
   };
 
   const pagination = {
-    currentPage: filter.currentPage,
+    current: filter.currentPage,
     pageSize: filter.pageSize,
     total: totalCampaigns,
     onChange: (page) => onFilterChange({

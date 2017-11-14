@@ -115,7 +115,7 @@ class CreativeDisplayTable extends Component {
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeDisplay,
       onChange: page =>

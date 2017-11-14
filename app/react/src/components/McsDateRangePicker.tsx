@@ -33,30 +33,26 @@ const { RangePicker } = DatePicker;
 const currentTimeStampInt = parseInt(moment().format('X'), 10); // radix is needed
 const numberOfSecondsInOneDay = 3600 * 24;
 
-const setToMidnight = (a: moment.Moment) => {
-  return a.hours(0).minutes(0).seconds(0).milliseconds(0);
-};
-
 const ranges: Range[] = [
   {
     name: 'TODAY',
-    from : setToMidnight(moment.unix(currentTimeStampInt)),
-    to: setToMidnight(moment.unix(currentTimeStampInt + numberOfSecondsInOneDay)),
+    from : moment.unix(currentTimeStampInt).startOf('day'),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
   },
   {
     name: 'YESTERDAY',
-    from : setToMidnight(moment.unix(currentTimeStampInt - numberOfSecondsInOneDay)),
-    to: setToMidnight(moment.unix(currentTimeStampInt)),
+    from : moment.unix(currentTimeStampInt - numberOfSecondsInOneDay).startOf('day'),
+    to: moment.unix(currentTimeStampInt).startOf('day'),
   },
   {
     name: 'LAST_7_DAYS',
-    from: setToMidnight(moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay))),
-    to: setToMidnight(moment.unix(currentTimeStampInt + numberOfSecondsInOneDay)),
+    from: moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay)).startOf('day'),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
   },
   {
     name: 'LAST_30_DAYS',
-    from: setToMidnight(moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay))),
-    to: setToMidnight(moment.unix(currentTimeStampInt + numberOfSecondsInOneDay)),
+    from: moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay)).startOf('day'),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
   },
 ];
 

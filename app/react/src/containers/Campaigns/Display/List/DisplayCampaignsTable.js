@@ -226,7 +226,7 @@ class DisplayCampaignsTable extends Component {
     };
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalDisplayCampaigns,
       onChange: (page) => this.updateLocationSearch({

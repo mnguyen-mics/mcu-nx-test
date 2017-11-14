@@ -114,7 +114,7 @@ class CreativeEmailsTable extends Component {
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeEmails,
       onChange: page =>
