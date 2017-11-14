@@ -182,15 +182,17 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
     }
 
     const onRowClick: (row: { id: string }) => any = ({ id }) => this.props.onRowClick(id);
+    const rowClassName = () => 'mcs-table-cursor';
 
     return (
       <Table
-        onRowClick={onRowClick}
         columns={columns}
         dataSource={dataSourceWithIds}
-        onChange={onChange}
         loading={loading}
+        onChange={onChange}
+        onRowClick={onRowClick}
         pagination={newPagination}
+        rowClassName={rowClassName}
       />
     );
   }
