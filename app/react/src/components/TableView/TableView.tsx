@@ -52,7 +52,7 @@ export interface TableViewProps {
   loading?: boolean | SpinProps;
   pagination?: PaginationProps | boolean;
   onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
-  onRowClick: (id: string) => any;
+  onRowClick?: (id: string) => any;
   visibilitySelectedColumns: VisibilitySelectedColumn[];
 }
 
@@ -66,6 +66,7 @@ interface TableViewState {
 class TableView extends React.Component<TableViewProps, TableViewState> {
 
   static defaultProps: Partial<TableViewProps> = {
+    onRowClick: undefined,
     pagination: false,
     visibilitySelectedColumns: [],
   };
@@ -162,6 +163,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       dataSource,
       loading,
       onChange,
+      onRowClick,
       pagination,
     } = this.props;
 
@@ -181,8 +183,8 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       };
     }
 
-    const onRowClick: (row: { id: string }) => any = ({ id }) => this.props.onRowClick(id);
-    const rowClassName = () => 'mcs-table-cursor';
+    const handleRowClick: (row: { id: string }) => any = ({ id }) => onRowClick!(id);
+    const rowClassName = () => (onRowClick ? 'mcs-table-cursor' : '');
 
     return (
       <Table
@@ -190,7 +192,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
         dataSource={dataSourceWithIds}
         loading={loading}
         onChange={onChange}
-        onRowClick={onRowClick}
+        onRowClick={onRowClick ? handleRowClick : undefined}
         pagination={newPagination}
         rowClassName={rowClassName}
       />
