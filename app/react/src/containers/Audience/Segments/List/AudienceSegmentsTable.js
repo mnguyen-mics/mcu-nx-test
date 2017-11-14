@@ -242,7 +242,7 @@ class AudienceSegmentsTable extends Component {
     };
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAudienceSegments,
       onChange: (page) => this.updateLocationSearch({

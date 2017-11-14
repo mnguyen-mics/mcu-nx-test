@@ -22,7 +22,7 @@ class MobileApplicationsTable extends Component {
     } = this.props;
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalMobileApplications,
       onChange: (page) => onFilterChange({

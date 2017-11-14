@@ -184,7 +184,7 @@ class AutomationsListTable extends Component {
     const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAutomations,
       onChange: (page) => this.updateLocationSearch({

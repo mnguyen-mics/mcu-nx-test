@@ -108,7 +108,7 @@ class AssetsFilesTable extends Component {
     const filter = parseSearch(search, ASSETS_SEARCH_SETTINGS);
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
       onChange: page =>
