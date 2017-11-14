@@ -268,7 +268,6 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
   const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
   const deviceTable = [];
   const placementTable = [];
-  const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
   const locationTargetingTable = adGroupData && adGroupData.locationTargetingTable ? adGroupData.locationTargetingTable : [];
   const initialPublisherTable = adGroupInitialData && adGroupInitialData.publisherTable ? adGroupInitialData.publisherTable : [];
   const initialAudienceTable = adGroupInitialData && adGroupInitialData.audienceTable ? adGroupInitialData.audienceTable : [];
@@ -276,7 +275,6 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
   const initialAudienceSegments = adGroupInitialData && adGroupInitialData.audienceSegmentTable ? adGroupInitialData.audienceSegmentTable : [];
   const initialDeviceTable = [];
   const initialPlacementTable = [];
-  const initialLocationTargetingTable = [];
 
   let bidOptimizer = null;
   if (optimizerTable && optimizerTable.length) {
