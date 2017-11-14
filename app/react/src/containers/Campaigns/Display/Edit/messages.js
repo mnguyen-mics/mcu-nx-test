@@ -80,7 +80,7 @@ export default defineMessages({
   */
   notificationWarning: {
     id: 'notification.warning',
-    defaultMessage: 'Click on this button and you will lose your custom data.',
+    defaultMessage: 'Click on this button and you will lose your custom targeting.',
   },
 
   /*
