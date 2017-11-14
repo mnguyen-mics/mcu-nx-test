@@ -2,22 +2,32 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const viewportDrawerRatio = 0.75;
+const viewportDrawerRatio = {
+  large: 0.85,
+  small: 0.4,
+};
 
 class DrawerManager extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
+      drawerMaxWidth: this.getDimensions('large'),
       viewportWidth: window.innerWidth,
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio,
     };
   }
 
   componentDidMount() {
-    this.updateDimensions();
     window.addEventListener('resize', this.updateDimensions.bind(this));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const prevContents = this.props.drawableContents;
+    const nextContents = nextProps.drawableContents;
+
+    if (prevContents.length !== nextContents.length) {
+      this.updateDimensions(nextContents);
+    }
   }
 
   componentDidUpdate() {
@@ -31,34 +41,49 @@ class DrawerManager extends Component {
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
+  getDimensions = (size) => window.innerWidth * viewportDrawerRatio[size]
+
+  getDrawerStyle(xPos, size = 'large') {
+    return {
+      transform: `translate(${xPos}px, 0px)`,
+      maxWidth: `${window.innerWidth * viewportDrawerRatio[size]}px`,
+    };
+  }
+
+  getForegroundContentSize = (drawableContents) => {
+    return (drawableContents && drawableContents.length
+      ? drawableContents[drawableContents.length - 1].size
+      : 'large'
+    );
+  }
+
   handleOnKeyDown = (event) => {
     if (event.key === 'Escape') {
       this.props.onEscapeKeyDown();
     }
   }
 
-  getDrawerStyle(xPos) {
-    return {
-      transform: `translate(${xPos}px, 0px)`,
-      maxWidth: `${this.state.drawerMaxWidth}px`,
-    };
-  }
+  updateDimensions = (nextDrawableContents) => {
+    const drawableContents = (nextDrawableContents.length
+      ? nextDrawableContents
+      : this.props.drawableContents
+    );
+    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
-  updateDimensions() {
     this.setState({
+      drawerMaxWidth: this.getDimensions(foregroundContentSize),
       viewportWidth: window.innerWidth,
-      drawerMaxWidth: window.innerWidth * viewportDrawerRatio,
     });
   }
 
   render() {
     const { drawableContents, onClickOnBackground } = this.props;
+    const { drawerMaxWidth, viewportWidth } = this.state;
+    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
     const drawerStyles = {
-      ready: this.getDrawerStyle(this.state.viewportWidth),
-      foreground: this.getDrawerStyle(
-        this.state.viewportWidth - this.state.drawerMaxWidth,
-      ),
+      ready: this.getDrawerStyle(viewportWidth),
+      foreground: this.getDrawerStyle(viewportWidth - drawerMaxWidth, foregroundContentSize),
       background: this.getDrawerStyle(0),
     };
 
@@ -123,6 +148,7 @@ DrawerManager.propTypes = {
       closeNextDrawer: PropTypes.func,
     }),
   ),
+
   onEscapeKeyDown: PropTypes.func.isRequired,
   onClickOnBackground: PropTypes.func.isRequired,
 };

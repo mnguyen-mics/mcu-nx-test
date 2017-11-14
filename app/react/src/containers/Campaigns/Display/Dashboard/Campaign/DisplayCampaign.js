@@ -77,6 +77,7 @@ class DisplayCampaign extends Component {
       updateAdGroup,
       updateCampaign,
       dashboardPerformance,
+      goals,
       intl: {
         formatMessage,
       },
@@ -129,6 +130,7 @@ class DisplayCampaign extends Component {
               isFetchingOverallStat={dashboardPerformance.overall.isLoading}
               hasFetchedOverallStat={dashboardPerformance.overall.hasFetched}
               overallStat={dashboardPerformance.overall.items}
+              goals={goals}
             />
             <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
               <DisplayCampaignAdGroupTable
@@ -189,6 +191,7 @@ DisplayCampaign.propTypes = {
       items: PropTypes.arrayOf(PropTypes.object),
     }),
   }).isRequired,
+  goals: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   updateCampaign: PropTypes.func.isRequired,
   updateAdGroup: PropTypes.func.isRequired,
   updateAd: PropTypes.func.isRequired,
