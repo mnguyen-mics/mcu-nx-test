@@ -22,7 +22,7 @@ class Audience extends Component {
     const { organisationId, defaultDatamart } = this.props;
     const { currentPage, keywords, pageSize } = filterOptions;
     const datamartId = defaultDatamart(organisationId).id;
-    const params = { ...getPaginatedApiParam(currentPage, pageSize) };
+    const params = getPaginatedApiParam(currentPage, pageSize);
 
     if (keywords) {
       params.name = keywords;
@@ -145,7 +145,7 @@ class Audience extends Component {
 
         {!dataSource.length
           ? <EmptyRecords
-            iconType="plus"
+            iconType="users"
             message={formatMessage(messages.contentSectionAudienceEmptyTitle)}
           />
           : null

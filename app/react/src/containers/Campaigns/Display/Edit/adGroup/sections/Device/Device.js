@@ -1,17 +1,58 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Field } from 'redux-form';
-import { Checkbox } from 'antd';
+import { connect } from 'react-redux';
+import { change as changeAction, Field } from 'redux-form';
+import { Checkbox, Modal } from 'antd';
 
 import { Form } from '../../../../../../../components/index.ts';
 import messages from '../../../messages';
 import selectOptions from './selectOptions';
 
 const { FormSection, FormTagSelect } = Form;
+const confirm = Modal.confirm;
 
 class Device extends Component {
 
-  state = { displayOptions: false }
+  constructor(props) {
+    super(props);
+
+    this.state = { displayCustom: this.hasCustomData() };
+  }
+
+  handleCheckbox = () => {
+    const {
+      change,
+      formatMessage,
+      formName,
+    } = this.props;
+
+    if (this.state.displayCustom && this.hasCustomData()) {
+      confirm({
+        cancelText: formatMessage(messages.cancel),
+        content: formatMessage(messages.notificationWarning),
+        maskClosable: true,
+        okText: formatMessage(messages.ok),
+        onOk: () => {
+          change(formName, 'adGroupDeviceType', []);
+          change(formName, 'adGroupDeviceOS', []);
+          change(formName, 'adGroupDeviceBrowser', []);
+          this.setState({ displayCustom: false });
+        },
+      });
+    } else {
+      this.setState({ displayCustom: !this.state.displayCustom });
+    }
+  }
+
+  hasCustomData = () => {
+    const { adGroupDeviceBrowser, adGroupDeviceOS, adGroupDeviceType } = this.props.formValues;
+
+    return (
+      (adGroupDeviceBrowser && adGroupDeviceBrowser.length)
+      || (adGroupDeviceOS && adGroupDeviceOS.length)
+      || (adGroupDeviceType && adGroupDeviceType.length)
+    );
+  }
 
   render() {
     const { formatMessage } = this.props;
@@ -26,13 +67,14 @@ class Device extends Component {
         <div className="ad-group-device-section">
           <div className="device-checkbox">
             <Checkbox
+              checked={this.state.displayCustom}
               className="field-label checkbox-wrapper"
-              onClick={() => this.setState({ displayOptions: !this.state.displayOptions })}
+              onClick={this.handleCheckbox}
             >{formatMessage(messages.contentSectionDevicePart1Message)}
             </Checkbox>
           </div>
 
-          {this.state.displayOptions
+          {this.state.displayCustom
           && (
             <div className="custom-content">
               <Field
@@ -99,7 +141,15 @@ Device.defaultProps = {
 };
 
 Device.propTypes = {
+  change: PropTypes.func.isRequired,
   formatMessage: PropTypes.func.isRequired,
+  formName: PropTypes.string.isRequired,
+  formValues: PropTypes.shape().isRequired,
 };
 
-export default Device;
+
+const mapDispatchToProps = {
+  change: changeAction,
+};
+
+export default connect(null, mapDispatchToProps)(Device);

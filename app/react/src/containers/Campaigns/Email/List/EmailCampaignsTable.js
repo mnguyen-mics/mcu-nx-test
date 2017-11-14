@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-import { Icon } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 
 import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView/index.ts';
+import { McsIcons } from '../../../../components/index.ts';
 import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
@@ -55,7 +56,7 @@ function EmailCampaignsTable({
   };
 
   const pagination = {
-    currentPage: filter.currentPage,
+    current: filter.currentPage,
     pageSize: filter.pageSize,
     total: totalCampaigns,
     onChange: (page) => onFilterChange({
@@ -76,13 +77,12 @@ function EmailCampaignsTable({
   };
 
   const dataColumns = [
-      // {
-      //   intlMessage: messages.emailHeaderStatus,
-      //   key: 'status',
-      //   isHideable: false,
-      //   // title={formatMessage(messages[text])}
-      //   render: text => <Tooltip placement="top" title={text}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
-      // },
+    {
+      intlMessage: messages.emailHeaderStatus,
+      key: 'status',
+      isHideable: false,
+      render: text => <Tooltip placement="top" title={formatMessage(messages[text])}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
+    },
     {
       intlMessage: messages.emailHeaderName,
       key: 'name',

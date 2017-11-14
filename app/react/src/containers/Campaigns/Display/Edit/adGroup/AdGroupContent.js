@@ -130,7 +130,7 @@ class AdGroupContent extends Component {
         mobile: mobilePlacements, // TODO: remove temp data
         web: webPlacements, // TODO: remove temp data
       },
-      adGroupDeviceType: ['1', '2'], // TODO: remove temp data
+      // adGroupDeviceType: ['1', '2']
     };
 
     return (

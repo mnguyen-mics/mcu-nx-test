@@ -225,7 +225,7 @@ class Goals extends Component {
 
           {!dataSource.length
             ? <EmptyRecords
-              iconType="plus"
+              iconType="goals"
               message={formatMessage(messages.contentSection2EmptyTitle)}
             />
             : null

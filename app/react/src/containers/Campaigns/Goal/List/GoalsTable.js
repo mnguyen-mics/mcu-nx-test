@@ -237,7 +237,7 @@ class GoalsTable extends Component {
     };
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalGoals,
       onChange: (page) => this.updateLocationSearch({

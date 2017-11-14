@@ -113,15 +113,19 @@ class Overview extends Component {
       colors,
     } = this.props;
 
-    const options = {
-      domains: [
-        translations['user_points'.toUpperCase()],
-        translations['user_accounts'.toUpperCase()],
-        translations['emails'.toUpperCase()],
-        translations['desktop_cookie_ids'.toUpperCase()],
-      ],
-      colors: [colors['mcs-warning'], colors['mcs-info'], colors['mcs-success'], colors['mcs-error']],
-    };
+    const options = [{
+      domain: translations['user_points'.toUpperCase()],
+      color: colors['mcs-warning'],
+    }, {
+      domain: translations['user_accounts'.toUpperCase()],
+      color: colors['mcs-info'],
+    }, {
+      domain: translations['emails'.toUpperCase()],
+      color: colors['mcs-success'],
+    }, {
+      domain: translations['desktop_cookie_ids'.toUpperCase()],
+      color: colors['mcs-error'],
+    }];
 
     return (
       <div>

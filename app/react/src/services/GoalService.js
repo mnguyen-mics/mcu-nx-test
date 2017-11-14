@@ -36,10 +36,16 @@ const createAttributionModel = (goalId, options = {}) => {
   return ApiService.postRequest(endpoint, options);
 };
 
+const getAttributionModel = (goalId, options = {}) => {
+  const endpoint = `goals/${goalId}/attribution_models`;
+  return ApiService.getRequest(endpoint, options);
+};
+
 export default {
   getGoals,
   getGoal,
   updateGoal,
   createGoal,
-  createAttributionModel
+  createAttributionModel,
+  getAttributionModel,
 };

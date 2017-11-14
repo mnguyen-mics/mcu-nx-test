@@ -5,7 +5,7 @@ import { ClickParam } from 'antd/lib/menu';
 
 import withTranslations, { TranslationProps } from '../containers/Helpers/withTranslations';
 
-interface McsDateRangeValue {
+export interface McsDateRangeValue {
   rangeType: string;
   lookbackWindow?: moment.Duration;
   from?: moment.Moment;
@@ -36,23 +36,23 @@ const numberOfSecondsInOneDay = 3600 * 24;
 const ranges: Range[] = [
   {
     name: 'TODAY',
-    from : moment.unix(currentTimeStampInt),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from : moment.unix(currentTimeStampInt).startOf('day'),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
   },
   {
     name: 'YESTERDAY',
-    from : moment.unix(currentTimeStampInt - numberOfSecondsInOneDay),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from : moment.unix(currentTimeStampInt - numberOfSecondsInOneDay).startOf('day'),
+    to: moment.unix(currentTimeStampInt).startOf('day'),
   },
   {
     name: 'LAST_7_DAYS',
-    from: moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay)),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from: moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay)).startOf('day'),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
   },
   {
     name: 'LAST_30_DAYS',
-    from: moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay)),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay),
+    from: moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay)).startOf('day'),
+    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
   },
 ];
 
@@ -81,8 +81,8 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
           .duration({ from: range.from, to: range.to })
           .asSeconds(),
         );
-
-        return ceil1 === Math.ceil(values.lookbackWindow!.asSeconds());
+        return (ceil1 === Math.ceil(values.lookbackWindow!.asSeconds())
+          && (range.to.unix() === (values.to ? values.to.unix() : null)));
       });
 
       return (selectedRange

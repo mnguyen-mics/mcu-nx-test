@@ -1,21 +1,43 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
 import AdGroupContent from './AdGroupContent';
 import withDrawer from '../../../../../components/Drawer';
 import { withMcsRouter } from '../../../../Helpers';
 import { saveAdGroup } from '../AdGroupServiceWrapper';
+import * as NotificationActions from '../../../../../state/Notifications/actions';
+import * as FeatureSelectors from '../../../../../state/Features/selectors';
+import log from '../../../../../utils/Logger';
 
-function CreateAdGroupPage({ closeNextDrawer, openNextDrawer, location, match, history }) {
+function CreateAdGroupPage(props) {
 
-  const { campaignId, organisationId } = match.params;
+  const {
+    hasFeature,
+    notifyError,
+    history,
+    location,
+    closeNextDrawer,
+    openNextDrawer,
+    match: {
+      params: { campaignId, organisationId }
+    }
+  } = props;
 
   const onSave = (object) => {
-    saveAdGroup(campaignId, object, {}, false)
+    const saveOptions = {
+      editionMode: false,
+      catalogMode: hasFeature('campaigns.display.edition.audience_catalog')
+    };
+    saveAdGroup(campaignId, object, {}, saveOptions)
       .then((adGroupId) => {
         history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
+      })
+      .catch(err => {
+        log.error(err);
+        notifyError(err);
       });
   };
 
@@ -39,10 +61,16 @@ CreateAdGroupPage.propTypes = {
   openNextDrawer: PropTypes.func.isRequired,
   location: ReactRouterPropTypes.location.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
-  history: ReactRouterPropTypes.history.isRequired
+  history: ReactRouterPropTypes.history.isRequired,
+  notifyError: PropTypes.func.isRequired,
+  hasFeature: PropTypes.func.isRequired,
 };
 
 export default compose(
   withMcsRouter,
   withDrawer,
+  connect(
+    state => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
+    { notifyError: NotificationActions.notifyError }
+  )
 )(CreateAdGroupPage);

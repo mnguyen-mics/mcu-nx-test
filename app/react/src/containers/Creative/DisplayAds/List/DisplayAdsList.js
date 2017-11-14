@@ -13,6 +13,8 @@ import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSe
 
 import { getDisplayCreatives, getDisplayCreativesTotal, hasDisplayCreatives, isFetchingDisplayCreatives } from '../../../../state/Creatives/Display/selectors';
 
+import CreativeScreenshot from '../../CreativeScreenshot';
+
 class CreativeDisplayTable extends Component {
   constructor(props) {
     super(props);
@@ -113,7 +115,7 @@ class CreativeDisplayTable extends Component {
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeDisplay,
       onChange: page =>
@@ -133,11 +135,7 @@ class CreativeDisplayTable extends Component {
         isHideable: false,
         className: 'mcs-table-image-col',
         render: (text, record) => (
-          <div className="mcs-table-cell-thumbnail">
-            <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
-              <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
-            </a>
-          </div>
+          <CreativeScreenshot item={record} />
         ),
       },
       {

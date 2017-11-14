@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  arrayInsert,
-  arrayPush,
-  arrayRemove,
   Form,
-  getFormInitialValues,
   getFormValues,
-  reduxForm
+  reduxForm,
+  formPropTypes,
 } from 'redux-form';
 import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import { compose, mapProps } from 'recompose';
 import { Layout } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 import { isEqual } from 'lodash';
@@ -27,8 +24,10 @@ import {
   Publisher,
   Summary,
 } from './sections/index.ts';
-import { Loading } from '../../../../../components/index.ts';
+import { AudienceCatalogContainer } from './sections/AudienceCatalog/index.ts';
 import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+import FeatureSwitch from '../../../../../components/FeatureSwitch.tsx';
+import { Loading } from '../../../../../components/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import * as actions from '../../../../../state/Notifications/actions';
@@ -41,6 +40,7 @@ class AdGroupForm extends Component {
 
   state = { loading: false }
 
+  // code smell... (component can be out of sync with his props)
   shouldComponentUpdate(nextProps, nextState) {
     return (
       !isEqual(nextProps.formValues, this.props.formValues)
@@ -67,8 +67,8 @@ class AdGroupForm extends Component {
 
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
 
-    this.props.arrayRemove(FORM_NAME, tableName, index);
-    this.props.arrayInsert(FORM_NAME, tableName, index, updatedField);
+    this.props.RxF.array.remove(tableName, index);
+    this.props.RxF.array.insert(tableName, index, updatedField);
   }
 
   updateTableFields = ({ newFields, tableName }) => {
@@ -86,11 +86,7 @@ class AdGroupForm extends Component {
       if (!prevFields.length
         || !prevFields.find(prevField => (prevField.id === newField.id))
       ) {
-        this.props.arrayPush(
-          FORM_NAME,
-          tableName,
-          { ...newField, modelId: generateFakeId(), toBeRemoved: false }
-        );
+        this.props.RxF.array.push(tableName, { ...newField, modelId: generateFakeId(), toBeRemoved: false });
       }
     });
   }
@@ -104,7 +100,7 @@ class AdGroupForm extends Component {
       fieldValidators,
       formId: scrollLabelContentId,
       formValues,
-      handleSubmit,
+      RxF: { handleSubmit },
       intl: { formatMessage },
       openNextDrawer,
       organisationId,
@@ -151,11 +147,15 @@ class AdGroupForm extends Component {
             <General {...commonProps} formValues={formValues} />
             {
               displayAudience &&
-              <div id="audience">
-                <hr />
-                <Audience {...commonProps} formValues={audienceTable} />
-              </div>
-             }
+                <div id="audience">
+                  <hr />
+                  <FeatureSwitch
+                    featureName="campaigns.display.edition.audience_catalog"
+                    enabledComponent={<AudienceCatalogContainer RxF={this.props.RxF} />}
+                    disabledComponent={<Audience {...commonProps} formValues={audienceTable} />}
+                  />
+                </div>
+            }
             <hr />
             <LocationTargeting {...commonProps} formValues={locationTargetingTable} />
             <hr />
@@ -188,35 +188,26 @@ AdGroupForm.defaultProps = {
 };
 
 AdGroupForm.propTypes = {
-  arrayInsert: PropTypes.func.isRequired,
-  arrayPush: PropTypes.func.isRequired,
-  arrayRemove: PropTypes.func.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   displayAudience: PropTypes.bool,
   editionMode: PropTypes.bool,
   fieldNormalizer: PropTypes.shape().isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   formId: PropTypes.string.isRequired,
-  // formInitialValues: PropTypes.shape().isRequired,
   formValues: PropTypes.shape().isRequired,
-  handleSubmit: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-  // match: PropTypes.shape().isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   organisationId: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
+  RxF: PropTypes.shape(formPropTypes).isRequired,
 };
 
 
-const mapStateToProps = (state) => ({
-  formInitialValues: getFormInitialValues(FORM_NAME)(state),
-  formValues: getFormValues(FORM_NAME)(state),
+const mapStateToProps = (state, ownProps) => ({
+  formValues: getFormValues(ownProps.RxF.form)(state),
 });
 
 const mapDispatchToProps = {
-  arrayInsert,
-  arrayPush,
-  arrayRemove,
   notifyError: actions.notifyError
 };
 
@@ -226,8 +217,39 @@ export default compose(
   reduxForm({
     form: FORM_NAME,
     enableReinitialize: true,
+    propNamespace: 'RxF',
   }),
-  connect(mapStateToProps, mapDispatchToProps),
+  mapProps(
+    // https://github.com/erikras/redux-form/issues/3529
+    // Add missing redux form props to the namespace
+    props => {
+      const {
+        RxF,
+        array,
+        pure,
+        autofill,
+        clearAsyncError,
+        clearSubmit,
+        clearSubmitErrors,
+        submit,
+        ...rest
+      } = props;
+      return {
+        RxF: {
+          ...RxF,
+          array,
+          pure,
+          autofill,
+          clearAsyncError,
+          clearSubmit,
+          clearSubmitErrors,
+          submit,
+        },
+        ...rest
+      };
+    }
+  ),
   withNormalizer,
   withValidators,
+  connect(mapStateToProps, mapDispatchToProps),
 )(AdGroupForm);

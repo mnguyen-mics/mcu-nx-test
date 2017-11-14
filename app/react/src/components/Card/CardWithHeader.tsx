@@ -32,7 +32,7 @@ const CardWithHeader: React.SFC<CardWithHeaderProps> = ({ children, headerItems 
 
 CardWithHeader.defaultProps = {
   headerItems: [{
-    iconType: '',
+    iconType: 'warning',
     translationKey: '',
     number: 0,
   }],

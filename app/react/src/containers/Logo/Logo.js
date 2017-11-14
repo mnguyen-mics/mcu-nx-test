@@ -6,7 +6,6 @@ import { compose } from 'recompose';
 
 import { withMcsRouter } from '../Helpers';
 import { getLogo } from '../../state/Session/actions';
-import mediarithmicsLogo from '../../assets/images/logo-mediarithmics.png';
 
 class Logo extends Component {
 
@@ -51,7 +50,7 @@ class Logo extends Component {
         { mode === 'inline' &&
           <div className="mcs-logo" >
             <Link to={`/v2/o/${organisationId}/campaigns/display`} id="logo">
-              <img alt="logo" src={logoUrl ? logoUrl : mediarithmicsLogo} />
+              <img alt="logo" src={logoUrl} />
             </Link>
           </div>
         }

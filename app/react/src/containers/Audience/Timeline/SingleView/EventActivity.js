@@ -19,11 +19,7 @@ class EventActivity extends Component {
 
   formatIntoArray = (value) => {
     if (typeof value === 'object' && !Array.isArray(value)) {
-      // return Object.keys(value).map(key => {
-      //   return [key, value[key]];
-      // }).sort((a, b) => {
-      //   return a[0] - b[0];
-      // });
+
       const formattedArray = Object.keys(value).map(key => { return { name: key, value: value[key] }; });
       return lodash.sortBy(formattedArray, [(o) => { return o.name; }]).map(item => {
         return [item.name, item.value || 'empty'];
@@ -38,7 +34,11 @@ class EventActivity extends Component {
 
   renderSubList = (array) => {
     return array.map(items => {
-      return (<div key={items[0]}><Tooltip title={items[0]}><Tag className="card-tag">{items[0]}</Tag></Tooltip> : {items[1] === 'empty' ? (<i className="empty"><FormattedMessage {...messages.empty} /></i>) : this.renderList(this.formatIntoArray(items[1]))}</div>);
+      return (
+        <div key={items[0]}>
+          <Tooltip title={items[0]}><Tag className="card-tag">{items[0]}</Tag></Tooltip> :
+          {items[1] === 'empty' ? (<i className="empty"><FormattedMessage {...messages.empty} /></i>) : this.renderList(this.formatIntoArray(items[1]))}
+        </div>);
     });
   }
 
@@ -46,9 +46,10 @@ class EventActivity extends Component {
     if (typeof array === 'object' && Array.isArray(array)) {
       return array.map(value => {
         if (typeof value === 'object') {
-          return array.map(val => {
-            return <Col className="event-properties-sublist" span={24} style={{ marginLeft: '40px' }}>{this.renderSubList(this.formatIntoArray(val))}</Col>;
-          });
+          return (
+            <Col className="event-properties-sublist" span={24} style={{ marginLeft: '40px', marginTop: 5 }}>
+              {this.renderSubList(this.formatIntoArray(value))}
+            </Col>);
         }
         return (<span><Tooltip title={value}>{value}</Tooltip></span>);
       });
@@ -86,7 +87,11 @@ class EventActivity extends Component {
         </Col>
         {this.state.showMore === true ? (<div className="event-properties-list">
           {event.$properties ? this.formatIntoArray(event.$properties).map(object => {
-            return (<div className="event-properties-list-item" key={object}><Tooltip title={object[0]}><Tag className="card-tag">{object[0]}</Tag></Tooltip> : { object[1] === 'empty' ? (<i className="empty"><FormattedMessage {...messages.empty} /></i>) : this.renderList(this.formatIntoArray(object[1]))}</div>);
+            return (
+              <div className="event-properties-list-item" key={object}>
+                <Tooltip title={object[0]}><Tag className="card-tag">{object[0]}</Tag></Tooltip> :
+                { object[1] === 'empty' ? (<i className="empty"><FormattedMessage {...messages.empty} /></i>) : this.renderList(this.formatIntoArray(object[1]))}
+              </div>);
           }) : null}
         </div>) : null}
       </Row>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Checkbox } from 'antd';
+import { Button, Checkbox, Layout, Radio } from 'antd';
 
 import { Actionbar } from '../containers/Actionbar';
 import McsIcons from './McsIcons.tsx';
@@ -60,13 +60,17 @@ class TableSelector extends Component {
       dataColumnsDefinition: [
         {
           key: 'selected',
-          render: (text, record) => (
-            <Checkbox
-              checked={!!selectedElementsById[record.id]}
-              onChange={() => this.toggleElementSelection(record.id)}
-            >{text}
-            </Checkbox>
-          ),
+          render: (text, record) => {
+            const Field = (this.props.singleSelection ? Radio : Checkbox);
+
+            return (
+              <Field
+                checked={!!selectedElementsById[record.id]}
+                onChange={() => this.toggleElementSelection(record.id)}
+              >{text}
+              </Field>
+            );
+          },
         },
         ...columnsDefinitions,
       ],
@@ -176,7 +180,7 @@ class TableSelector extends Component {
     } = this.state;
 
     const pagination = {
-      currentPage,
+      current: currentPage,
       pageSize,
       total,
       onChange: page => this.setState({ currentPage: page }),
@@ -187,6 +191,7 @@ class TableSelector extends Component {
       columnsDefinitions: this.getColumnsDefinitions(),
       dataSource: allElementIds.map(id => elementsById[id]),
       loading: isLoading,
+      onRowClick: this.toggleElementSelection,
       pagination: pagination,
     };
 
@@ -199,8 +204,7 @@ class TableSelector extends Component {
             </Button>
             <McsIcons
               type="close"
-              className="close-icon"
-              style={{ cursor: 'pointer' }}
+              className="close-icon mcs-table-cursor"
               onClick={close}
             />
           </Actionbar>

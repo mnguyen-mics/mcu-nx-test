@@ -61,7 +61,7 @@ class Notifications extends Component {
       },
     };
 
-    // Functions bellow handle 'predifined' notification
+    // Functions bellow handle 'predefined' notification
     // - simple intl object as strings for message and description
     // - error (default error notif, display error_id)
     // - new version (displayed when a new version is detected)

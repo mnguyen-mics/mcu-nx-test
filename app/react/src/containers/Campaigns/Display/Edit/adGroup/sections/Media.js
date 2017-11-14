@@ -19,7 +19,7 @@ function Media({
       />
 
       <EmptyRecords
-        iconType="plus"
+        iconType="display"
         message={formatMessage(messages.contentSectionMediaEmptyTitle)}
       />
     </div>

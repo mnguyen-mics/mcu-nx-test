@@ -113,7 +113,7 @@ class PlacementListsTable extends Component {
     const filter = parseSearch(search, PLACEMENTS_SEARCH_SETTINGS);
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalPlacements,
       onChange: page =>

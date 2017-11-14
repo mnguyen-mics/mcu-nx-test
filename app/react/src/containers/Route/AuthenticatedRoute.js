@@ -1,13 +1,15 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import {
   Route,
   Redirect,
 } from 'react-router-dom';
+import { injectIntl, intlShape } from 'react-intl';
 
-import NotFound from '../../components/NotFound.tsx';
+import Error from '../../components/Error.tsx';
 import AuthService from '../../services/AuthService';
 import log from '../../utils/Logger';
 import { getWorkspace } from '../../state/Session/actions';
@@ -15,6 +17,7 @@ import {
   hasAccessToOrganisation,
   hasWorkspace,
  } from '../../state/Session/selectors';
+import errorMessages from '../Navigator/messages';
 
 class AuthenticatedRoute extends Component {
 
@@ -58,12 +61,13 @@ class AuthenticatedRoute extends Component {
 
   render() {
     const {
-      render,
+      accessGrantedToOrganisation,
       computedMatch: {
         params: { organisationId },
       },
-      accessGrantedToOrganisation,
       connectedUserLoaded,
+      intl: { formatMessage },
+      render,
     } = this.props;
 
     const authenticated = AuthService.isAuthenticated() && connectedUserLoaded; // if access token is present in local storage and valid
@@ -79,7 +83,7 @@ class AuthenticatedRoute extends Component {
               return render(props);
             }
 
-            return <NotFound />;
+            return <Error message={formatMessage(errorMessages.notFound)} />;
           }
           log.error(`Access denied to ${props.match.url}, redirect to login`);
           return (<Redirect to={{ pathname: '/login', state: { from: props.location } }} />);
@@ -90,12 +94,13 @@ class AuthenticatedRoute extends Component {
 }
 
 AuthenticatedRoute.propTypes = {
-  render: PropTypes.func.isRequired,
-  computedMatch: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  getWorkspaceRequest: PropTypes.func.isRequired,
-  accessGrantedToOrganisation: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
-  hasWorkspaceLoaded: PropTypes.func.isRequired,
+  accessGrantedToOrganisation: PropTypes.func.isRequired,
+  computedMatch: PropTypes.shape().isRequired,
   connectedUserLoaded: PropTypes.bool.isRequired,
+  getWorkspaceRequest: PropTypes.func.isRequired,
+  hasWorkspaceLoaded: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
+  render: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -108,9 +113,10 @@ const mapDispatchToProps = {
   getWorkspaceRequest: getWorkspace.request,
 };
 
-AuthenticatedRoute = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  injectIntl,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(AuthenticatedRoute);
-
-export default AuthenticatedRoute;

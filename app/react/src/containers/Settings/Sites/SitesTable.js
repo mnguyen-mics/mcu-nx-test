@@ -22,7 +22,7 @@ class SitesTable extends Component {
     } = this.props;
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalSites,
       onChange: (page) => onFilterChange({

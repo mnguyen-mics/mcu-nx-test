@@ -20,7 +20,7 @@ class DatamartsTable extends Component {
     } = this.props;
 
     const pagination = {
-      currentPage: filter.currentPage,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalDatamarts,
       onChange: (page) => onFilterChange({

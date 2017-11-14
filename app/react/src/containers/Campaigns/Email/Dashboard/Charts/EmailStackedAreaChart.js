@@ -116,17 +116,22 @@ class EmailStackedAreaChart extends Component {
       translations,
       dataSource,
       hasFetchedCampaignStat,
+      colors
     } = this.props;
 
-    const options = {
-      domains: [
-        translations['email_sent'.toUpperCase()],
-        translations['clicks'.toUpperCase()],
-        translations['impressions'.toUpperCase()],
-        translations['email_hard_bounced'.toUpperCase()],
-      ],
-      colors: this.generateColors(),
-    };
+    const options = [{
+      domain: translations['email_sent'.toUpperCase()],
+      color: colors['mcs-warning'],
+    }, {
+      domain: translations['clicks'.toUpperCase()],
+      color: colors['mcs-info'],
+    }, {
+      domain: translations['impressions'.toUpperCase()],
+      color: colors['mcs-success'],
+    }, {
+      domain: translations['email_hard_bounced'.toUpperCase()],
+      color: colors['mcs-error']
+    }];
 
     const chartArea = (
       <div>
