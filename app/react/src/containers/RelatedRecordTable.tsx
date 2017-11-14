@@ -12,7 +12,7 @@ interface RelatedRecordTableProps {
   dataSource: Array<{}>;
   loading: boolean;
   tableName: string;
-  updateTableFieldStatus: (obj: {index: number, tableName: string}) => (e: any) => void;
+  updateTableFieldStatus: (obj: { index: number, tableName: string }) => (e: any) => void;
 }
 
 const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
@@ -29,7 +29,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       colSpan: 8,
       dataIndex: 'type',
       key: 'type',
-      render: (type: { image: McsIconType, name: string}) => (
+      render: (type: { image: McsIconType, name: string }) => (
         <div className="display-row center-vertically row-height">
           <div className="icon-round-border">
             <McsIcons
@@ -46,8 +46,8 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       dataIndex: 'info',
       key: 'info',
       /* In render, info is either an array of string of an array of { image: '', name: '' } */
-      render: (info: Array<{ image?: McsIconType, name: string}>) => {
-        const elemToDisplay = (elem: { image?: McsIconType, name: string}) => (elem.image
+      render: (info: Array<{ image?: McsIconType, name: string }>) => {
+        const elemToDisplay = (elem: { image?: McsIconType, name: string }) => (elem.image
             ? (
               <div className="display-row" key={generateGuid()}>
                 <McsIcons type={elem.image} additionalClass="big" />
@@ -68,7 +68,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       colSpan: 9,
       dataIndex: 'include',
       key: 'include',
-      render: (include = {index: null, bool: null}) => {
+      render: (include = { index: null, bool: null }) => {
         const displaySwitch = include.bool !== null;
 
         return (

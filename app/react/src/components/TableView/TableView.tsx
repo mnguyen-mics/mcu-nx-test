@@ -52,6 +52,7 @@ export interface TableViewProps {
   loading?: boolean | SpinProps;
   pagination?: PaginationProps | boolean;
   onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
+  onRowClick: (id: string) => any;
   visibilitySelectedColumns: VisibilitySelectedColumn[];
 }
 
@@ -110,18 +111,21 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       }
       return column;
     }).map(dataColumn => {
-      return {...(isValidFormattedMessageProps(dataColumn.intlMessage)
-          ? // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
-            // spreading values...
-            { title: <FormattedMessage {...dataColumn.intlMessage} /> }
-          : dataColumn.translationKey
-              ? // support for legacy translation key constant (en/fr.json) ...
-                { title: <FormattedMessage id={dataColumn.translationKey} /> }
-              : null), // allow empty column title
-              dataIndex: dataColumn.key,
-              key: dataColumn.key,
-              render: dataColumn.render ? dataColumn.render : (text: any) => text,
-              sorter: dataColumn.sorter ? dataColumn.sorter : false,
+      // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
+      const titleProps = (isValidFormattedMessageProps(dataColumn.intlMessage)
+        ? { title: <FormattedMessage {...dataColumn.intlMessage} /> } // spreading values...
+        : (dataColumn.translationKey
+            ? { title: <FormattedMessage id={dataColumn.translationKey} /> } // support for legacy translation key constant (en/fr.json) ...
+            : null
+          )
+      );
+
+      return {
+        ...titleProps, // allow empty column title
+        dataIndex: dataColumn.key,
+        key: dataColumn.key,
+        render: dataColumn.render ? dataColumn.render : (text: any) => text,
+        sorter: dataColumn.sorter ? dataColumn.sorter : false,
       };
     });
 
@@ -154,11 +158,11 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
 
   render() {
     const {
+      columnsDefinitions,
       dataSource,
-      pagination,
       loading,
       onChange,
-      columnsDefinitions,
+      pagination,
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
@@ -167,9 +171,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
 
     const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
 
-    const dataSourceWithIds = dataSource.map(elem => {
-      return { key: generateGuid(), ...elem };
-    });
+    const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
 
     let newPagination = pagination;
     if (pagination) {
@@ -178,13 +180,19 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
         ...pagination as PaginationProps,
       };
     }
+
+    const onRowClick: (row: { id: string }) => any = ({ id }) => this.props.onRowClick(id);
+    const rowClassName = () => 'mcs-table-cursor';
+
     return (
       <Table
         columns={columns}
         dataSource={dataSourceWithIds}
-        onChange={onChange}
         loading={loading}
+        onChange={onChange}
+        onRowClick={onRowClick}
         pagination={newPagination}
+        rowClassName={rowClassName}
       />
     );
   }

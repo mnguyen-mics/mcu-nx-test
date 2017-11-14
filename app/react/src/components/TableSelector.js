@@ -191,6 +191,7 @@ class TableSelector extends Component {
       columnsDefinitions: this.getColumnsDefinitions(),
       dataSource: allElementIds.map(id => elementsById[id]),
       loading: isLoading,
+      onRowClick: this.toggleElementSelection,
       pagination: pagination,
     };
 
@@ -203,8 +204,7 @@ class TableSelector extends Component {
             </Button>
             <McsIcons
               type="close"
-              className="close-icon"
-              style={{ cursor: 'pointer' }}
+              className="close-icon mcs-table-cursor"
               onClick={close}
             />
           </Actionbar>
