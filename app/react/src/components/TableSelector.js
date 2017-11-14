@@ -204,8 +204,7 @@ class TableSelector extends Component {
             </Button>
             <McsIcons
               type="close"
-              className="close-icon"
-              style={{ cursor: 'pointer' }}
+              className="close-icon mcs-table-cursor"
               onClick={close}
             />
           </Actionbar>
