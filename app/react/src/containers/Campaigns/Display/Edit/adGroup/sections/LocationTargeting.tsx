@@ -103,11 +103,11 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
 
     const { handlers } = this.props;
 
-    const incOrExc: string = this.state.incOrExc;
+    const incOrExcValue: string = this.state.incOrExc;
 
     const selectedLocation = {
       ...selectedCountry,
-      exclude: incOrExc === 'EXC',
+      exclude: incOrExcValue === 'EXC',
     };
 
     handlers.updateTableFields({
