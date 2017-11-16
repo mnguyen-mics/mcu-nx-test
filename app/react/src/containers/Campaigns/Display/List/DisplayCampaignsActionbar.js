@@ -50,7 +50,7 @@ const fetchExportData = (organisationId, filter) => {
       campaignType,
       buildOptionsForGetCampaigns(),
     ),
-    ReportService.getDisplayCampaignPerfomanceReport(
+    ReportService.getDisplayCampaignPerformanceReport(
       organisationId,
       startDate,
       endDate,
