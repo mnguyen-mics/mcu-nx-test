@@ -42,13 +42,22 @@ function toMenuItemProps(
   };
 }
 
-function toTreeData(category: ServiceCategoryTree): TreeData {
+function toTreeData(category: ServiceCategoryTree, ancestors: TreeData[]): TreeData {
 
-  const categoryChildren = (category.children || []).map(toTreeData);
+  const categoryChildren = (category.children || []).map(child => {
+    const ancestor = {
+      value: child.node.id,
+      label: child.node.name,
+      isLeaf: false,
+    };
+    return toTreeData(child, ancestors.concat(ancestor));
+  });
+
   const serviceChildren = (category.services || []).map(service => ({
     value: (service as any).segmentId,
     label: service.name,
     parentLabel: category.node.name,
+    ancestors,
     isLeaf: true,
   }));
 
@@ -251,7 +260,12 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
 
     const genderServiceItemDataSource = genderServiceItems.map(toMenuItemProps);
     const ageServiceItemDataSource = ageServiceItems.map(toMenuItemProps);
-    const detailedTargetingDataSource = audienceCategoryTree.map(toTreeData)
+
+    const detailedTargetingDataSource = audienceCategoryTree.map(child => toTreeData(child, [{
+      value: child.node.id,
+      label: child.node.name,
+      isLeaf: false,
+    }]))
       .concat(
         audienceSegments.length > 0 ?
         // add datamart's segments to tree if any
