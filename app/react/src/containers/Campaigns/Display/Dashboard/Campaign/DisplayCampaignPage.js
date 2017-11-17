@@ -178,7 +178,6 @@ class DisplayCampaignPage extends Component {
     this.cancelablePromises.forEach(promise => promise.cancel());
   }
 
-
   fetchAllData = (organisationId, campaignId, filter) => {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
@@ -224,9 +223,7 @@ class DisplayCampaignPage extends Component {
       { sort: '-clicks', limit: 30 },
     );
 
-
     this.cancelablePromises.push(getCampaignPerf, getMediaPerf, getAdPerf, getAdGroupPerf, getOverallCampaignPerf, getOverallCampaignPerf);
-
 
     this.setState((prevState) => {
       const nextState = {

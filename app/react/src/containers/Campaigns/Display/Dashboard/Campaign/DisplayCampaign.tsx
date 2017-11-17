@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { withRouter, Link } from 'react-router-dom';
 import { Layout, Button } from 'antd';
@@ -9,8 +8,8 @@ import DisplayCampaignHeader from '../Common/DisplayCampaignHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
 import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
-import Card from '../../../../../components/Card/Card.tsx';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
+import Card from '../../../../../components/Card/Card';
+import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
@@ -20,13 +19,35 @@ import {
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
+// import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
 const { Content } = Layout;
 
-class DisplayCampaign extends Component {
+interface DisplayCampaignProps {
+  match: {
+    params: {
+      campaignId: number;
+      organisationId: number;
+    },
+  };
+  campaign,
+  ads,
+  adGroups,
+  location,
+  updateAd,
+  updateAdGroup,
+  updateCampaign,
+  dashboardPerformance,
+  goals,
+  intl: {
+    formatMessage,
+  },
+  history: any;
+}
 
-  updateLocationSearch(params) {
+class DisplayCampaign extends React.Component<DisplayCampaignProps> {
+
+  updateLocationSearch(params: string) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
@@ -53,7 +74,12 @@ class DisplayCampaign extends Component {
       to: filter.to,
     };
 
-    const onChange = (newValues) => this.updateLocationSearch({
+    const onChange = (newValues: {
+      rangeType: string;
+      lookbackWindow: string;
+      from: string;
+      to: string;
+    }): void => this.updateLocationSearch({
       rangeType: newValues.rangeType,
       lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
@@ -113,7 +139,6 @@ class DisplayCampaign extends Component {
           archiveCampaign={() => {}}
           isFetchingStats={dashboardPerformance.campaign.isLoading && adGroups.isLoadingPerf && ads.isLoadingPerf && dashboardPerformance.media.isLoading}
           campaignStats={dashboardPerformance.campaign.items}
-          mediasStats={dashboardPerformance.media.items}
           adGroupsStats={adGroups.items}
           adsStats={ads.items}
         />
@@ -155,48 +180,48 @@ class DisplayCampaign extends Component {
   }
 }
 
-DisplayCampaign.propTypes = {
-  match: ReactRouterPropTypes.match.isRequired,
-  location: ReactRouterPropTypes.location.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-  ads: PropTypes.shape({
-    isLoadingList: PropTypes.bool,
-    isLoadingPerf: PropTypes.bool,
-    items: PropTypes.arrayOf(PropTypes.object),
-  }).isRequired,
-  adGroups: PropTypes.shape({
-    isLoadingList: PropTypes.bool,
-    isLoadingPerf: PropTypes.bool,
-    items: PropTypes.arrayOf(PropTypes.object),
-  }).isRequired,
-  campaign: PropTypes.shape({
-    isLoadingList: PropTypes.bool,
-    isLoadingPerf: PropTypes.bool,
-    items: PropTypes.object,
-  }).isRequired,
-  dashboardPerformance: PropTypes.shape({
-    media: PropTypes.shape({
-      isLoading: PropTypes.bool,
-      hasFetched: PropTypes.bool,
-      items: PropTypes.arrayOf(PropTypes.object),
-    }),
-    overall: PropTypes.shape({
-      isLoading: PropTypes.bool,
-      hasFetched: PropTypes.bool,
-      items: PropTypes.arrayOf(PropTypes.object),
-    }),
-    campaign: PropTypes.shape({
-      isLoading: PropTypes.bool,
-      hasFetched: PropTypes.bool,
-      items: PropTypes.arrayOf(PropTypes.object),
-    }),
-  }).isRequired,
-  goals: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  updateCampaign: PropTypes.func.isRequired,
-  updateAdGroup: PropTypes.func.isRequired,
-  updateAd: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
-};
+// DisplayCampaign.propTypes = {
+//   match: ReactRouterPropTypes.match.isRequired,
+//   location: ReactRouterPropTypes.location.isRequired,
+//   history: ReactRouterPropTypes.history.isRequired,
+//   ads: PropTypes.shape({
+//     isLoadingList: PropTypes.bool,
+//     isLoadingPerf: PropTypes.bool,
+//     items: PropTypes.arrayOf(PropTypes.object),
+//   }).isRequired,
+//   adGroups: PropTypes.shape({
+//     isLoadingList: PropTypes.bool,
+//     isLoadingPerf: PropTypes.bool,
+//     items: PropTypes.arrayOf(PropTypes.object),
+//   }).isRequired,
+//   campaign: PropTypes.shape({
+//     isLoadingList: PropTypes.bool,
+//     isLoadingPerf: PropTypes.bool,
+//     items: PropTypes.object,
+//   }).isRequired,
+//   dashboardPerformance: PropTypes.shape({
+//     media: PropTypes.shape({
+//       isLoading: PropTypes.bool,
+//       hasFetched: PropTypes.bool,
+//       items: PropTypes.arrayOf(PropTypes.object),
+//     }),
+//     overall: PropTypes.shape({
+//       isLoading: PropTypes.bool,
+//       hasFetched: PropTypes.bool,
+//       items: PropTypes.arrayOf(PropTypes.object),
+//     }),
+//     campaign: PropTypes.shape({
+//       isLoading: PropTypes.bool,
+//       hasFetched: PropTypes.bool,
+//       items: PropTypes.arrayOf(PropTypes.object),
+//     }),
+//   }).isRequired,
+//   goals: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+//   updateCampaign: PropTypes.func.isRequired,
+//   updateAdGroup: PropTypes.func.isRequired,
+//   updateAd: PropTypes.func.isRequired,
+//   intl: intlShape.isRequired,
+// };
 
 DisplayCampaign = compose(
   injectIntl,

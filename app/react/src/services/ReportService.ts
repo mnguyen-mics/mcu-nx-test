@@ -1,10 +1,51 @@
 import moment from 'moment';
 import ApiService from './ApiService';
+import { ReportView } from '../models';
 
+interface CancelablePromise<T> {
+  promise: Promise<T>;
+  cancel: () => void;
+}
+
+interface getExportDataProps {
+  organisationId: string;
+  startDate: any;
+  endDate: any;
+  dimension: string;
+  metrics: string;
+  options: object;
+}
+
+const ReportService = {
+  getDisplayCampaignPerformanceReport(
+    getExportDataProps
+  ): CancelablePromise<ReportView> {
+    const endpoint = 'reports/display_campaign_performance_report';
+    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+    const params = {
+      organisation_id: organisationId,
+      start_date: startDate.format(DATE_FORMAT),
+      end_date: endDate.format(DATE_FORMAT),
+      dimension,
+      metrics: metrics || DEFAULT_METRICS,
+      ...options,
+    };
+
+    return ApiService.getRequest(endpoint, params);
+  },
+};
+
+export default ReportService;
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-const getDisplayCampaignPerformanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
+const getDisplayCampaignPerformanceReport = (organisationId: string,
+  startDate: any,
+  endDate: any,
+  dimension: string,
+  metrics: string,
+  options: object = {}
+) => {
   const endpoint = 'reports/display_campaign_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
