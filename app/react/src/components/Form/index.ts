@@ -16,6 +16,7 @@ import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
 import FormUpload from './FormUpload';
 import FormTextArea from './FormTextArea';
+import formErrorMessage from './formErrorMessage';
 
 export default {
   FormCheckbox,
@@ -33,6 +34,7 @@ export default {
   FormTitle,
   FormUpload,
   FormTextArea,
+  formErrorMessage,
   SwitchInput,
   withNormalizer,
   withValidators,
@@ -55,6 +57,7 @@ export {
   SwitchInput,
   FormUpload,
   FormTextArea,
+  formErrorMessage,
   withNormalizer,
   withValidators,
 };
