@@ -36,7 +36,7 @@ class CreativeCardSelector extends Component {
 
   fetchAllData = () => {
     const { currentPage, pageSize, keywords } = this.state;
-    const options = { ...getPaginatedApiParam(currentPage, pageSize) };
+    const options = getPaginatedApiParam(currentPage, pageSize);
 
     if (keywords) {
       options.keywords = keywords;
@@ -96,7 +96,7 @@ class CreativeCardSelector extends Component {
   getColumnsDefinitions() {
     const { selectedData } = this.state;
     const selectedIds = selectedData
-      .map(selection => selection.id);
+      .map(selection => selection.email_template_id);
 
     return {
       title: {
@@ -148,8 +148,8 @@ class CreativeCardSelector extends Component {
   toggleSelection(id) {
     this.setState(prevState => {
       const { selectedData } = this.state;
-      const isElementSelected = prevState.selectedData.find(selection => selection.id === id);
-      const newSelection = { id };
+      const isElementSelected = prevState.selectedData.find(selection => selection.email_template_id === id);
+      const newSelection = { email_template_id: id };
 
       if (this.props.singleSelection) {
         return {
@@ -160,7 +160,7 @@ class CreativeCardSelector extends Component {
       return {
         selectedData: (!isElementSelected
             ? [...selectedData, newSelection]
-            : selectedData.filter(selection => selection.id !== id)
+            : selectedData.filter(selection => selection.email_template_id !== id)
           )
       };
     });
