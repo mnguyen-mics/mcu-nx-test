@@ -190,6 +190,7 @@ class CreativeCardSelector extends Component {
       onShowSizeChange: (current, size) =>
         this.setState(prevState => ({
           ...prevState,
+          currentPage: 1,
           pageSize: size,
         })),
       pageSizeOptions: ['12', '24', '36', '48'],
