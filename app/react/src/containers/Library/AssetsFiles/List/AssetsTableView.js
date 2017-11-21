@@ -118,6 +118,7 @@ class AssetsFilesTable extends Component {
       onShowSizeChange: (current, size) =>
         this.updateLocationSearch({
           pageSize: size,
+          currentPage: 1,
         }),
     };
 

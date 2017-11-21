@@ -197,7 +197,7 @@ class SegmentSelector extends Component {
       pageSize,
       total,
       onChange: page => this.setState({ currentPage: page }),
-      onShowSizeChange: (current, size) => this.setState({ pageSize: size }),
+      onShowSizeChange: (current, size) => this.setState({ pageSize: size, currentPage: 1, }),
     };
 
     const datasource = allAudienceSegmentIds.map(id => audienceSegmentById[id]);
