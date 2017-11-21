@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Select, Col } from 'antd';
+import { Select } from 'antd';
 
 // TS Interfaces
 import { WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 
-import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
-import { generateFakeId } from '../../utils/FakeIdHelper';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
+import FormSelect from './FormSelect';
 
 interface FormSelectProps {
   formItemProps?: FormItemProps;
@@ -17,13 +17,13 @@ interface FormSelectProps {
 
 const Option = Select.Option;
 
-class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
+class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
 
-  static defaultprops = {
+  static defaultProps = {
     formItemProps: {},
-    selectProps: {},
-    options: [],
     helpToolTipProps: {},
+    options: [],
+    selectProps: {},
   };
 
   componentDidMount() {
@@ -50,12 +50,12 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
 
   render() {
     const {
-      input: { value, onChange, onFocus },
-      meta,
       formItemProps,
-      selectProps,
-      options,
       helpToolTipProps,
+      input,
+      meta,
+      options,
+      selectProps,
     } = this.props;
 
     let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -66,11 +66,6 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
       <Option key={option.value} value={option.value}>{option.title}</Option>
     ));
 
-    const selectId = generateFakeId();
-    const getPopupContainer = (triggerNode: Element) => {
-      return document.getElementById(selectId) as any;
-    };
-
     return (
         <FormFieldWrapper
           help={meta.touched && (meta.warning || meta.error)}
@@ -78,24 +73,14 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
           validateStatus={validateStatus}
           {...formItemProps}
         >
-          <Col span={22}>
-            <div id={selectId}>
-              <Select
-                {...selectProps}
-                getPopupContainer={getPopupContainer}
-                onChange={onChange}
-                // difficulties to map some WrappedFieldInputProps with SelectProps
-                onBlur={onChange as () => any}
-                onFocus={onFocus as () => any}
-                value={value}
-              >
-                {optionsToDisplay}
-              </Select>
-            </div>
-          </Col>
+          <FormSelect
+            {...selectProps}
+            input={input}
+          >{optionsToDisplay}
+          </FormSelect>
         </FormFieldWrapper>
     );
   }
 }
 
-export default FormSelect;
+export default DefaultSelect;
