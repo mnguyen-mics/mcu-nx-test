@@ -2,7 +2,7 @@ import lodash from 'lodash';
 import moment from 'moment';
 
 import LocalStorage from './LocalStorage';
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 import log from '../utils/Logger';
 
 const ACCESS_TOKEN = 'access_token';

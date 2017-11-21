@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import ApiService from '../ApiService.ts';
 
 const getPlacementLists = (organisationId, options = {}) => {
   const endpoint = 'placement_lists';

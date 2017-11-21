@@ -12,7 +12,7 @@ import {
 } from './actions';
 
 import EmailCampaignService from '../../../services/EmailCampaignService';
-import ReportService from '../../../services/ReportService';
+import ReportService from '../../../services/ReportService.ts';
 
 import {
     EMAIL_CAMPAIGN_FETCH,

@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-import ApiService from './ApiService';
-import ReportService from './ReportService';
+import ApiService from './ApiService.ts';
+import ReportService from './ReportService.ts';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
 

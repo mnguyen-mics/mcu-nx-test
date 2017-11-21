@@ -7,9 +7,9 @@ import { Button } from 'antd';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
-import DisplayCampaign from './DisplayCampaign';
+import DisplayCampaign from './DisplayCampaign.tsx';
 
-import ReportService from '../../../../../services/ReportService';
+import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import GoalService from '../../../../../services/GoalService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';

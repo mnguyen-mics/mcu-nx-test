@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { camelizeKeys, decamelizeKeys } from 'humps';
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 
 /* CAMPAIGN SERVICES */

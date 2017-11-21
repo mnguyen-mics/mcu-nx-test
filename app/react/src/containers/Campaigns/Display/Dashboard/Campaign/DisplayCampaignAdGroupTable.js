@@ -22,7 +22,8 @@ class DisplayCampaignAdGroupTable extends Component {
         },
       },
       history,
-      location
+      location,
+
     } = this.props;
 
     history.push({

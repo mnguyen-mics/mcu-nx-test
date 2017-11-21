@@ -1,5 +1,5 @@
 import { camelizeKeys, decamelizeKeys } from 'humps';
-import ApiService from './ApiService';
+import ApiService, { DataResponse, DataListResponse } from './ApiService';
 
 export type ServiceFamily = 'AUDIENCE_DATA' | 'DISPLAY_CAMPAIGN';
 export type ServiceType =
@@ -69,7 +69,10 @@ const CatalogService = {
   ): Promise<ServiceCategoryTree[]> {
     const endpoint = `subscribed_services/${organisationId}/category_trees`;
     const params = decamelizeKeys(options);
-    return ApiService.getRequest(endpoint, params).then(res => camelizeKeys(res.data) as ServiceCategoryTree[]);
+    return ApiService.getRequest(endpoint, params)
+    .then((res: DataListResponse<ServiceCategoryTree>) => {
+      return camelizeKeys(res.data) as ServiceCategoryTree[];
+    });
   },
 
   getCategory(
@@ -77,7 +80,10 @@ const CatalogService = {
     categoryId: string,
   ): Promise<ServiceCategoryPublicResource> {
     const endpoint = `subscribed_services/${organisationId}/categories/${categoryId}`;
-    return ApiService.getRequest(endpoint).then(res => camelizeKeys(res.data) as ServiceCategoryPublicResource);
+    return ApiService.getRequest(endpoint)
+    .then((res: DataResponse<ServiceCategoryPublicResource>) => {
+      return camelizeKeys(res.data) as ServiceCategoryPublicResource;
+    });
   },
 
   getCategories(
@@ -94,7 +100,10 @@ const CatalogService = {
   ): Promise<ServiceCategoryPublicResource[]> {
     const endpoint = `subscribed_services/${organisationId}/categories`;
     const params = decamelizeKeys(options);
-    return ApiService.getRequest(endpoint, params).then(res => camelizeKeys(res.data) as ServiceCategoryPublicResource[]);
+    return ApiService.getRequest(endpoint, params)
+    .then((res: DataListResponse<ServiceCategoryPublicResource>) => {
+      return camelizeKeys(res.data) as ServiceCategoryPublicResource[];
+    });
   },
 
   getServices(
@@ -112,7 +121,10 @@ const CatalogService = {
   ): Promise<ServiceItemPublicResource[]> {
     const endpoint = `subscribed_services/${organisationId}/services`;
     const params = decamelizeKeys(options);
-    return ApiService.getRequest(endpoint, params).then(res => camelizeKeys(res.data) as ServiceItemPublicResource[]);
+    return ApiService.getRequest(endpoint, params)
+    .then((res: DataListResponse<ServiceItemPublicResource>) => {
+      return camelizeKeys(res.data) as ServiceItemPublicResource[];
+    });
   },
 
 };

@@ -198,7 +198,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     if (attributionId) { filters.push(`attribution_model_id==${attributionId}`); }
     return this.setState({ isFetchingPerformance: true }, () => {
       ReportService.getConversionAttributionPerformance(organisationId, from, to, filters, ['day'])
-        .then(results => normalizeReportView(results.data.report_view))
+        .then((results) => normalizeReportView(results.data.report_view))
         .then(results => {
           this.setState({
             performance: results,

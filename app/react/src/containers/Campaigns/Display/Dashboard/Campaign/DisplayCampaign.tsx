@@ -1,9 +1,13 @@
+// import locale from 'antd/lib/time-picker/locale/pt_PT';
 import * as React from 'react';
-import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
-import { withRouter, Link } from 'react-router-dom';
+import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Layout, Button } from 'antd';
 import { compose } from 'recompose';
 
+import { CampaignRouteParams } from '../domain';
+import { CampaignResource } from '../../../../../models/CampaignResource';
 import DisplayCampaignHeader from '../Common/DisplayCampaignHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
 import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
@@ -11,43 +15,61 @@ import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
 import Card from '../../../../../components/Card/Card';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
-
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
-
 import {
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
-// import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
 const { Content } = Layout;
 
-interface DisplayCampaignProps {
-  match: {
-    params: {
-      campaignId: number;
-      organisationId: number;
-    },
-  };
-  campaign,
-  ads,
-  adGroups,
-  location,
-  updateAd,
-  updateAdGroup,
-  updateCampaign,
-  dashboardPerformance,
-  goals,
-  intl: {
-    formatMessage,
-  },
-  history: any;
+const DisplayCampaignAdGroupTableJS = DisplayCampaignAdGroupTable as any;
+const DisplayCampaignAdTableJS = DisplayCampaignAdTable as any;
+
+export interface CampaignSubProps {
+  isLoadingList?: boolean;
+  isLoadingPerf?: boolean;
+  items?: object[];
 }
 
-class DisplayCampaign extends React.Component<DisplayCampaignProps> {
+interface DashboardPerformanceSubProps {
+  isLoading: boolean;
+  hasFetched: boolean;
+  items?: object[];
+}
 
-  updateLocationSearch(params: string) {
+interface DisplayCampaignProps {
+  campaign: CampaignResource;
+  ads: CampaignSubProps;
+  adGroups: CampaignSubProps;
+  updateAd: (arg: any) => void;
+  updateAdGroup: (arg: any) => void;
+  updateCampaign: (campaignId: string, object: {
+    status: string,
+    type: string,
+  }) => void;
+  dashboardPerformance: {
+    media: DashboardPerformanceSubProps;
+    overall: DashboardPerformanceSubProps;
+    campaign: DashboardPerformanceSubProps;
+  };
+  goals: object[];
+}
+
+type JoinedProps =
+  DisplayCampaignProps &
+  RouteComponentProps<CampaignRouteParams> &
+  InjectedIntlProps;
+
+class DisplayCampaign extends React.Component<JoinedProps> {
+
+  updateLocationSearch(params: {
+    rangeType: string;
+    lookbackWindow: string;
+    from: string;
+    to: string;
+  }) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
@@ -93,7 +115,10 @@ class DisplayCampaign extends React.Component<DisplayCampaignProps> {
 
     const {
       match: {
-        params: { campaignId, organisationId },
+        params: {
+          campaignId,
+          organisationId,
+        },
       },
       campaign,
       ads,
@@ -109,7 +134,7 @@ class DisplayCampaign extends React.Component<DisplayCampaignProps> {
       },
     } = this.props;
 
-    const adGroupButtons = (
+    const adGroupButtons: JSX.Element = (
       <span>
         <Link
           to={{
@@ -125,7 +150,7 @@ class DisplayCampaign extends React.Component<DisplayCampaignProps> {
       </span>
     );
 
-    const adButtons = (
+    const adButtons: JSX.Element = (
       <span>
         {this.renderDatePicker()}
       </span>
@@ -134,17 +159,21 @@ class DisplayCampaign extends React.Component<DisplayCampaignProps> {
     return (
       <div className="ant-layout">
         <DisplayCampaignActionbar
-          campaign={campaign.items}
+          campaign={campaign}
           updateCampaign={updateCampaign}
-          archiveCampaign={() => {}}
-          isFetchingStats={dashboardPerformance.campaign.isLoading && adGroups.isLoadingPerf && ads.isLoadingPerf && dashboardPerformance.media.isLoading}
-          campaignStats={dashboardPerformance.campaign.items}
-          adGroupsStats={adGroups.items}
-          adsStats={ads.items}
+          isFetchingStats={
+            dashboardPerformance.campaign.isLoading &&
+            adGroups.isLoadingPerf &&
+            ads.isLoadingPerf &&
+            dashboardPerformance.media.isLoading
+          }
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayCampaignHeader object={campaign.items} translationKey="CAMPAIGN" />
+            <DisplayCampaignHeader
+              object={campaign.items}
+              translationKey="CAMPAIGN"
+            />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}
@@ -158,7 +187,7 @@ class DisplayCampaign extends React.Component<DisplayCampaignProps> {
               goals={goals}
             />
             <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
-              <DisplayCampaignAdGroupTable
+              <DisplayCampaignAdGroupTableJS
                 isFetching={adGroups.isLoadingList}
                 isFetchingStat={adGroups.isLoadingPerf}
                 dataSet={adGroups.items}
@@ -166,7 +195,7 @@ class DisplayCampaign extends React.Component<DisplayCampaignProps> {
               />
             </Card>
             <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
-              <DisplayCampaignAdTable
+              <DisplayCampaignAdTableJS
                 isFetching={ads.isLoadingList}
                 isFetchingStat={ads.isLoadingPerf}
                 dataSet={ads.items}
@@ -180,52 +209,7 @@ class DisplayCampaign extends React.Component<DisplayCampaignProps> {
   }
 }
 
-// DisplayCampaign.propTypes = {
-//   match: ReactRouterPropTypes.match.isRequired,
-//   location: ReactRouterPropTypes.location.isRequired,
-//   history: ReactRouterPropTypes.history.isRequired,
-//   ads: PropTypes.shape({
-//     isLoadingList: PropTypes.bool,
-//     isLoadingPerf: PropTypes.bool,
-//     items: PropTypes.arrayOf(PropTypes.object),
-//   }).isRequired,
-//   adGroups: PropTypes.shape({
-//     isLoadingList: PropTypes.bool,
-//     isLoadingPerf: PropTypes.bool,
-//     items: PropTypes.arrayOf(PropTypes.object),
-//   }).isRequired,
-//   campaign: PropTypes.shape({
-//     isLoadingList: PropTypes.bool,
-//     isLoadingPerf: PropTypes.bool,
-//     items: PropTypes.object,
-//   }).isRequired,
-//   dashboardPerformance: PropTypes.shape({
-//     media: PropTypes.shape({
-//       isLoading: PropTypes.bool,
-//       hasFetched: PropTypes.bool,
-//       items: PropTypes.arrayOf(PropTypes.object),
-//     }),
-//     overall: PropTypes.shape({
-//       isLoading: PropTypes.bool,
-//       hasFetched: PropTypes.bool,
-//       items: PropTypes.arrayOf(PropTypes.object),
-//     }),
-//     campaign: PropTypes.shape({
-//       isLoading: PropTypes.bool,
-//       hasFetched: PropTypes.bool,
-//       items: PropTypes.arrayOf(PropTypes.object),
-//     }),
-//   }).isRequired,
-//   goals: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-//   updateCampaign: PropTypes.func.isRequired,
-//   updateAdGroup: PropTypes.func.isRequired,
-//   updateAd: PropTypes.func.isRequired,
-//   intl: intlShape.isRequired,
-// };
-
-DisplayCampaign = compose(
+export default compose(
   injectIntl,
   withRouter,
 )(DisplayCampaign);
-
-export default DisplayCampaign;

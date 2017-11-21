@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getVersion = () => {
   const endpoint = 'version.json';
@@ -16,9 +16,9 @@ const isAdBlockOn = () => {
     localUrl: true,
   };
 
-  return ApiService.getRequest(endpoint, params, null, options);
+  return Promise.resolve();
+  // return ApiService.getRequest(endpoint, params, null, options);
 };
-
 
 export default {
   getVersion,

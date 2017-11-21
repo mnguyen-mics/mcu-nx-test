@@ -1,6 +1,8 @@
 export interface ReportView {
-    itemsPerPage: number;
-    totalItems: number;
-    columnsHeaders: string[];
-    row: any;
+  report_view: {
+    items_per_page: number;
+    total_items: number;
+    columns_headers: string[];
+    rows: any[][];
+  };
 }

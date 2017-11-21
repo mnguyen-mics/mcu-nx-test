@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import ReportService from '../../../../../services/ReportService';
+import ReportService from '../../../../../services/ReportService.ts';
 import Progress from '../../../../../components/Progress.tsx';
 
 class TotalConsumption extends Component {

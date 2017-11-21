@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getPluginVersions = (pluginId, params = {}) => {
   const endpoint = `plugins/${pluginId}/versions`;
