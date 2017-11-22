@@ -4,7 +4,7 @@ import ApiService from './ApiService.ts';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 
 /* CAMPAIGN SERVICES */
-function getCampaignDisplay(campaignId, params = '') {
+function getCampaignDisplay(campaignId, params = {}) {
   const endpoint = `display_campaigns/${campaignId}`;
   return ApiService.getRequest(endpoint, params);
 }

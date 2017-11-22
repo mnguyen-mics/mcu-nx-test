@@ -16,8 +16,7 @@ const isAdBlockOn = () => {
     localUrl: true,
   };
 
-  return Promise.resolve();
-  // return ApiService.getRequest(endpoint, params, null, options);
+  return ApiService.getRequest(endpoint, params, null, options);
 };
 
 export default {

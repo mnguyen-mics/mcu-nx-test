@@ -1,20 +1,20 @@
 import moment from 'moment';
 import ApiService, { DataResponse, CancelablePromise } from './ApiService';
-import { ReportView } from '../models/ReportView';
+import { ReportViewResource } from '../models/ReportView';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-type ReportViewReponse = DataResponse<ReportView>;
+type ReportViewResponse = DataResponse<ReportViewResource>;
 
 const ReportService = {
   getDisplayCampaignPerformanceReport(
     organisationId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): Promise<ReportViewReponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
     const params = {
@@ -32,10 +32,10 @@ const ReportService = {
     organisationId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): Promise<ReportViewReponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
     const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions'];
     const params = {
@@ -54,10 +54,10 @@ const ReportService = {
     campaignId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewReponse> {
+  ): CancelablePromise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'];
 
@@ -79,10 +79,10 @@ const ReportService = {
     objectId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewReponse> {
+  ): CancelablePromise<ReportViewResponse> {
     const endpoint = 'reports/ad_group_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
@@ -105,10 +105,10 @@ const ReportService = {
     objectId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewReponse> {
+  ): CancelablePromise<ReportViewResponse> {
     const endpoint = 'reports/ad_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
@@ -130,10 +130,10 @@ const ReportService = {
     objectId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewReponse> {
+  ): CancelablePromise<ReportViewResponse> {
     const endpoint = 'reports/media_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
@@ -156,10 +156,10 @@ const ReportService = {
     campaignId: number,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): Promise<ReportViewReponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
     const DEFAULT_METRICS = [
       'email_sent',
@@ -188,7 +188,7 @@ const ReportService = {
       metrics: metrics || DEFAULT_METRICS,
     };
 
-    return ApiService.getRequest(endpoint, params).then((response: ReportViewReponse) => {
+    return ApiService.getRequest(endpoint, params).then((response: ReportViewResponse) => {
       const data = response.data.report_view.rows;
       const formattedData = [];
       for (const d = moment(params.start_date); d.diff(moment(params.end_date)) < 0; d.add('days', 1)) {
@@ -215,10 +215,10 @@ const ReportService = {
     organisationId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): Promise<ReportViewReponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/conversion_performance_report';
     const DEFAULT_METRICS = ['conversions', 'value'];
 
@@ -238,10 +238,10 @@ const ReportService = {
     organisationId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): Promise<ReportViewReponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/audience_segment_report';
     const DEFAULT_METRICS = [
       'user_points',
@@ -268,10 +268,10 @@ const ReportService = {
     campaignId: number,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string,
+    dimension: string[],
     metrics: string[],
     options: object = {},
-  ): Promise<ReportViewReponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
     const DEFAULT_METRICS = [
       'email_sent',
@@ -309,7 +309,7 @@ const ReportService = {
     dimension: string[],
     metrics?: string[],
     options: object = {},
-  ): Promise<ReportViewReponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/conversion_attribution_performance_report';
     const DEFAULT_DIMENSIONS = ['day', 'interaction_type'];
     const DEFAULT_METRICS = ['weighted_conversions', 'interaction_to_conversion_duration'];

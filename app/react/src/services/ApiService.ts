@@ -100,7 +100,9 @@ function request(
   }
 
   const checkAndParse = (response: Response) => {
+
     const contentType = response.headers.get('Content-Type');
+
     if (contentType && contentType.indexOf('image/png') !== -1) {
       return response.blob().then(blob => {
         if (!response.ok) {
@@ -108,6 +110,11 @@ function request(
         }
         return blob;
       });
+    } else if (contentType && contentType.indexOf('text/html') !== -1) {
+      return (response.status < 400
+        ? Promise.resolve()
+        : Promise.reject(response)
+      );
     }
 
     // Considered as a json response by default

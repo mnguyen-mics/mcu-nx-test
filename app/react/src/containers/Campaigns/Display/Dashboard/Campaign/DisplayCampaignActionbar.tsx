@@ -12,14 +12,16 @@ import { CampaignResource } from '../../../../../models/CampaignResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons';
+// import { CancelablePromise } from '../../../../../services/ApiService';
 import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import log from '../../../../../utils/Logger';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-// import { ReportView } from '../../../../../models/ReportView';
+import { ReportView } from '../../../../../models/ReportView';
 
 interface RouterMatchParams {
   organisationId: string;
@@ -43,7 +45,9 @@ type JoinedProps =
   InjectedIntlProps &
   TranslationProps;
 
-const formatReportView = (reportView: any, key: string) => {
+// type ReportViewReponse = CancelablePromise<ReportView>;
+
+const formatReportView = (reportView: ReportView, key: string) => {
   const format = normalizeReportView(reportView);
   return normalizeArrayOfObject(format, key);
 };
@@ -55,9 +59,8 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
   to: moment.Moment;
 }) => {
 
-  const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-  // const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
-  const defaultMetrics = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+  const dimensions: string[] = filter.lookbackWindow.asSeconds() > 172800 ? ['day'] : ['day,hour_of_day'];
+  const defaultMetrics: string[] = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
   const apiResults = Promise.all([
     ReportService.getMediaDeliveryReport(
@@ -66,7 +69,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       campaignId,
       filter.from,
       filter.to,
-      '',
+      [],
       defaultMetrics,
       { sort: '-clicks' },
     ).promise,
@@ -76,7 +79,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       campaignId,
       filter.from,
       filter.to,
-      '',
+      [],
       defaultMetrics,
     ).promise,
     ReportService.getAdGroupDeliveryReport(
@@ -85,16 +88,8 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       campaignId,
       filter.from,
       filter.to,
-      '',
+      [],
       defaultMetrics,
-    ).promise,
-    ReportService.getSingleDisplayDeliveryReport(
-      organisationId,
-      campaignId,
-      filter.from,
-      filter.to,
-      '',
-      ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
     ).promise,
     ReportService.getSingleDisplayDeliveryReport(
       organisationId,
@@ -104,20 +99,79 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       dimensions,
       defaultMetrics,
     ).promise,
+    DisplayCampaignService.getCampaignDisplay(
+      campaignId,
+      { view: 'deep' },
+    ),
   ]);
 
   return apiResults.then(response => {
     const mediaData = normalizeReportView(response[0].data.report_view);
-    const adData = formatReportView(response[1].data.report_view, 'ad_id');
-    const adGroupData = formatReportView(response[2].data.report_view, 'campaign_id');
+    const adPerformanceById = formatReportView(response[1].data.report_view, 'ad_id');
+    const adGroupPerformanceById = formatReportView(response[2].data.report_view, 'ad_group_id');
     const overallDisplayData = normalizeReportView(response[3].data.report_view);
-    const displayData = normalizeReportView(response[4].data.report_view);
+    const data = response[4].data;
+    const campaign = {
+      ...data,
+    };
+    delete campaign.ad_groups;
+
+    const adGroups = [...data.ad_groups];
+    const formattedAdGroups = adGroups.map(item => {
+      const formattedItem = {
+        ...item,
+      };
+
+      delete formattedItem.ads;
+
+      return formattedItem;
+    });
+
+    const ads: object[] = [];
+    const adAdGroup: object[] = [];
+
+    data.ad_groups.forEach((adGroup: any) => {
+      adGroup.ads.forEach((ad: any) => {
+        ads.push(ad);
+        adAdGroup.push({
+          ad_id: ad.id,
+          ad_group_id: adGroup.id,
+          campaign_id: campaign.id,
+        });
+      });
+    });
+
+    const formatListView = (a: any, b: any) => {
+      if (a) {
+        return Object.keys(a).map((c) => {
+          return {
+            ...b[c],
+            ...a[c],
+          };
+        });
+      }
+      return [];
+    };
+
+    const adGroupItemsById = normalizeArrayOfObject(formattedAdGroups, 'id');
+    const adItemsById = normalizeArrayOfObject(ads, 'id');
+
     return {
       mediaData: mediaData,
-      adData: adData,
-      adGroupData: adGroupData,
+      adData: {
+        items: formatListView(
+          adItemsById,
+          adPerformanceById,
+        ),
+      },
+      adGroupData: {
+        items: formatListView(
+          adGroupItemsById,
+          adGroupPerformanceById,
+        ),
+      },
       overallDisplayData: overallDisplayData,
-      displayData: displayData,
+      displayData: campaign,
     };
   });
 };
@@ -140,6 +194,12 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
 
     const filter = parseSearch(this.props.location.search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
+    const exportFilter = {
+      ...filter,
+      from: filter.from.format('YYYY-MM-DD'),
+      to: filter.to.format('YYYY-MM-DD'),
+    };
+
     const hideExportLoadingMsg = message.loading(this.props.translations.EXPORT_IN_PROGRESS, 0);
 
     fetchAllExportData(organisationId, campaignId, filter).then(exportData => {
@@ -148,9 +208,9 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
         exportData.displayData,
         exportData.overallDisplayData,
         exportData.mediaData,
-        exportData.adGroupData,
-        exportData.adData,
-        filter,
+        exportData.adGroupData.items,
+        exportData.adData.items,
+        exportFilter,
         formatMessage);
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
@@ -179,7 +239,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
 
     const breadcrumbPaths = [
       { name: formatMessage(messages.display), url: `/v2/o/${organisationId}/campaigns/display` },
-      { name: campaign.name },
+      { name: campaign.items.name },
     ];
 
     return (
@@ -209,7 +269,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
       updateCampaign,
     } = this.props;
 
-    const onClickElement = (status: string) => () => updateCampaign(campaign.id, {
+    const onClickElement = (status: string) => () => updateCampaign(campaign.items.id, {
       status,
       type: 'EMAIL',
     });
@@ -235,11 +295,11 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
       </Button>
     );
 
-    if (campaign && !campaign.id) {
+    if (campaign.items && !campaign.items.id) {
       return null;
     }
 
-    return ((campaign.status === 'PAUSED' || campaign.status === 'PENDING')
+    return ((campaign.items.status === 'PAUSED' || campaign.items.status === 'PENDING')
         ? activeCampaignElement
         : pauseCampaignElement
     );
@@ -269,7 +329,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
     const onClick = (event: any) => {
       switch (event.key) {
         case 'ARCHIVED':
-          return handleArchiveGoal(campaign.id);
+          return handleArchiveGoal(campaign.items.id);
         default:
           return () => {
             log.error('onclick error');
