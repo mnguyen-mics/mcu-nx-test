@@ -610,6 +610,9 @@ export default defineMessages({
   goalPixelModalSaveGoal: {
     id: 'goal.pixel.modal.saveGoal',
     defaultMessage: 'Before Getting your pixel, we need to save your Goal. After saving you won\'t be able to modify your goal. Are you sure you want to save your Goal?'
+  },
+  errorFormMessage: {
+    id: 'campaign.form.generic.error.message',
+    defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
   }
-
 });

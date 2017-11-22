@@ -31,6 +31,7 @@ class Ads extends Component {
       fetchData: this.getAllAds,
       selectedData: formValues.filter(ad => !ad.toBeRemoved),
       save: this.updateData,
+      filterKey: 'id',
     };
 
     const options = {
