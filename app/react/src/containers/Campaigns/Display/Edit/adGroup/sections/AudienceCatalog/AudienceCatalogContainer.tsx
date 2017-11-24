@@ -78,7 +78,7 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
         const servicesP = CatalogService.getServices(organisationId, { parentCategoryId: category.node.id });
         const childrenCategoryP = Promise.all(
           category.children.filter(child =>
-            child.node.categorySubtype !== 'AUDIENCE.AGE' && child.node.categorySubtype !== 'AUDIENCE.GENDER',
+            child.node.category_subtype !== 'AUDIENCE.AGE' && child.node.category_subtype !== 'AUDIENCE.GENDER',
           ).map(fetchServices),
         );
 

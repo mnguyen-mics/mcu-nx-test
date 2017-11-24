@@ -37,7 +37,7 @@ function toMenuItemProps(
   audienceServiceItem: AudienceSegmentServiceItemPublicResource,
 ): MenuItemProps {
   return {
-    key: audienceServiceItem.segmentId,
+    key: audienceServiceItem.segment_id,
     label: audienceServiceItem.name,
   };
 }
@@ -54,7 +54,8 @@ function toTreeData(category: ServiceCategoryTree, ancestors: TreeData[]): TreeD
   });
 
   const serviceChildren = (category.services || []).map(service => ({
-    value: (service as any).segmentId,
+    // TODO remove as any
+    value: (service as any).segment_id,
     label: service.name,
     parentLabel: category.node.name,
     ancestors,
@@ -120,9 +121,9 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
     const selectedSegmentIds = this.getAllFieldsWithTheirIndex()
       .filter(({field}) => field.resource.exclude === excludedOnly)
       .map(({field}) => {
-        return field.resource.audienceSegmentId;
+        return field.resource.audience_segment_id;
       });
-    const serviceSegmentIds = serviceItems.map(s => s.segmentId);
+    const serviceSegmentIds = serviceItems.map(s => s.segment_id);
     const audienceSegmentIds = audienceSegments.map(s => s.id);
     const allSegmentIds = serviceSegmentIds.concat(audienceSegmentIds);
     return selectedSegmentIds.filter(id => allSegmentIds.includes(id));
@@ -135,13 +136,13 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
     } = this.props;
 
     const fieldWithIndex = this.getAllFieldsWithTheirIndex()
-      .find(({field}) => field.resource.audienceSegmentId === segmentId && field.resource.exclude === forExcludedSegment);
+      .find(({field}) => field.resource.audience_segment_id === segmentId && field.resource.exclude === forExcludedSegment);
 
     if (fieldWithIndex) {
       const isTransient = isFakeId(fieldWithIndex.field.id);
       if (!isTransient) {
         const newFields = this.getAllFieldsWithTheirIndex().map(({ field }) => {
-          if (field.resource.audienceSegmentId === segmentId) {
+          if (field.resource.audience_segment_id === segmentId) {
             return { ...field, deleted: true };
           } else {
             return field;
@@ -158,7 +159,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
   addSegment = (segmentId: string, exclude: boolean = false) => {
     const { fields } = this.props;
     const resource: AudienceSegmentSelectionResource = {
-      audienceSegmentId: segmentId,
+      audience_segment_id: segmentId,
       exclude,
     };
     const allFields = fields.getAll() || [];
@@ -170,7 +171,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
 
   toggleSelected = (segmentId: string) => {
     const selectedValue = this.getAllFieldsWithTheirIndex()
-      .find(({field}) => field.resource.audienceSegmentId === segmentId);
+      .find(({field}) => field.resource.audience_segment_id === segmentId);
     if (selectedValue) {
       this.markAsDeleted()(segmentId);
     } else {
@@ -191,20 +192,20 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
 
     const currentlySelectedIds = this.getSelectedSegment(getServices(audienceCategoryTree), audienceSegments, forExcludedSegment);
     const unrelatedSelectedIds = allFields.filter(field =>
-      !currentlySelectedIds.includes(field.resource.audienceSegmentId) || field.resource.exclude !== forExcludedSegment,
+      !currentlySelectedIds.includes(field.resource.audience_segment_id) || field.resource.exclude !== forExcludedSegment,
     );
     newFields.push(...unrelatedSelectedIds);
 
     // Leave already checked ids and add new ones
     segmentIds.forEach(segmentId => {
       const found = allFields.find(field =>
-        field.resource.audienceSegmentId === segmentId && field.resource.exclude === forExcludedSegment,
+        field.resource.audience_segment_id === segmentId && field.resource.exclude === forExcludedSegment,
       );
       if (!found) {
         newFields.push({
           id: generateFakeId(),
           resource: {
-            audienceSegmentId: segmentId,
+            audience_segment_id: segmentId,
             exclude: forExcludedSegment,
           },
          });
@@ -215,7 +216,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
 
     // Delete those that are not checked anymore
     allFields.filter(field => field.resource.exclude === forExcludedSegment).forEach(field => {
-      const found = segmentIds.includes(field.resource.audienceSegmentId);
+      const found = segmentIds.includes(field.resource.audience_segment_id);
       if (!found) {
         const isTransient = isFakeId(field.id);
         if (!isTransient) {

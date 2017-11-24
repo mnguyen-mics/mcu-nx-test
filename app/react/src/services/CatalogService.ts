@@ -1,4 +1,3 @@
-import { camelizeKeys, decamelizeKeys } from 'humps';
 import ApiService from './ApiService';
 
 export type ServiceFamily = 'AUDIENCE_DATA' | 'DISPLAY_CAMPAIGN';
@@ -20,20 +19,20 @@ export interface ServiceItemPublicResource {
   locale: Locale;
   name: string;
   description?: string;
-  providerId?: string;
-  categoryId?: string;
-  listWeight?: number;
-  serviceType?: ServiceType;
+  provider_id?: string;
+  category_id?: string;
+  list_weight?: number;
+  service_type?: ServiceType;
   [key: string]: any;
 }
 
 export interface AudienceSegmentServiceItemPublicResource extends ServiceItemPublicResource {
-  segmentId: string;
-  datamartId: string;
+  segment_id: string;
+  datamart_id: string;
 }
 
 export interface AdexInventoryServiceItemPublicResource extends ServiceItemPublicResource {
-  adExchangeHubKey: string;
+  ad_exchange_hub_key: string;
 }
 
 export type ServiceItemShape = AudienceSegmentServiceItemPublicResource | AdexInventoryServiceItemPublicResource;
@@ -43,10 +42,10 @@ export interface ServiceCategoryPublicResource {
   locale: Locale;
   name: string;
   description?: string;
-  providerId?: string;
-  parentCategoryId?: string;
-  categorySubtype?: ServiceCategorySubType;
-  listWeight?: number;
+  provider_id?: string;
+  parent_category_id?: string;
+  category_subtype?: ServiceCategorySubType;
+  list_weight?: number;
 }
 
 export interface ServiceCategoryTree {
@@ -68,8 +67,14 @@ const CatalogService = {
     } = {},
   ): Promise<ServiceCategoryTree[]> {
     const endpoint = `subscribed_services/${organisationId}/category_trees`;
-    const params = decamelizeKeys(options);
-    return ApiService.getRequest(endpoint, params).then(res => camelizeKeys(res.data) as ServiceCategoryTree[]);
+    const params = {
+      service_family: options.serviceFamily,
+      service_type: options.serviceType,
+      locale: options.locale,
+      category_type: options.categoryType,
+      category_subtype: options.categorySubtype,
+    };
+    return ApiService.getRequest(endpoint, params).then(res => res.data as ServiceCategoryTree[]);
   },
 
   getCategory(
@@ -77,7 +82,7 @@ const CatalogService = {
     categoryId: string,
   ): Promise<ServiceCategoryPublicResource> {
     const endpoint = `subscribed_services/${organisationId}/categories/${categoryId}`;
-    return ApiService.getRequest(endpoint).then(res => camelizeKeys(res.data) as ServiceCategoryPublicResource);
+    return ApiService.getRequest(endpoint).then(res => res.data as ServiceCategoryPublicResource);
   },
 
   getCategories(
@@ -93,8 +98,16 @@ const CatalogService = {
     } = {},
   ): Promise<ServiceCategoryPublicResource[]> {
     const endpoint = `subscribed_services/${organisationId}/categories`;
-    const params = decamelizeKeys(options);
-    return ApiService.getRequest(endpoint, params).then(res => camelizeKeys(res.data) as ServiceCategoryPublicResource[]);
+    const params = {
+      root: options.root,
+      parent_category_id: options.parentCategoryId,
+      service_family: options.serviceFamily,
+      service_type: options.serviceType,
+      locale: options.locale,
+      category_type: options.categoryType,
+      category_subtype: options.categorySubtype,
+    };
+    return ApiService.getRequest(endpoint, params).then(res => res.data as ServiceCategoryPublicResource[]);
   },
 
   getServices(
@@ -111,8 +124,16 @@ const CatalogService = {
     } = {},
   ): Promise<ServiceItemPublicResource[]> {
     const endpoint = `subscribed_services/${organisationId}/services`;
-    const params = decamelizeKeys(options);
-    return ApiService.getRequest(endpoint, params).then(res => camelizeKeys(res.data) as ServiceItemPublicResource[]);
+    const params = {
+      root: options.root,
+      parent_category_id: options.parentCategoryId,
+      service_family: options.serviceFamily,
+      service_type: options.serviceType,
+      locale: options.locale,
+      category_type: options.categoryType,
+      category_subtype: options.categorySubtype,
+    };
+    return ApiService.getRequest(endpoint, params).then(res => res.data as ServiceItemPublicResource[]);
   },
 
 };

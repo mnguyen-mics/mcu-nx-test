@@ -5,6 +5,6 @@ export interface AudienceSegmentResource {
 
 export interface AudienceSegmentSelectionResource {
     id?: string;
-    audienceSegmentId: string;
+    audience_segment_id: string;
     exclude: boolean;
 }
