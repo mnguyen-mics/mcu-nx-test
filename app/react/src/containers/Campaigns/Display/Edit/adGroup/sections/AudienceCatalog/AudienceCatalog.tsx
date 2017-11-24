@@ -3,22 +3,27 @@ import { Row, Col } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps, InjectedFormProps } from 'redux-form';
 
-import messages from '../../../messages';
 import FormSection from '../../../../../../../components/Form/FormSection';
 import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
 import { MenuItemProps } from '../../../../../../../components/SearchAndMultiSelect';
 import { TreeData } from '../../../../../../../components/TreeSelect';
 import FormSearchAndMultiSelect from '../../../../../../../components/Form/FormSearchAndMultiSelect';
 import FormSearchAndTreeSelect from '../../../../../../../components/Form/FormSearchAndTreeSelect';
-import {
-  AudienceSegmentServiceItemPublicResource,
-  ServiceCategoryTree,
-} from '../../../../../../../services/CatalogService';
+
 import { generateFakeId, isFakeId } from '../../../../../../../utils/FakeIdHelper';
 import {
   AudienceSegmentFieldModel,
 } from './AudienceCatalogContainer';
-import { AudienceSegmentResource, AudienceSegmentSelectionResource } from '../../../../../../../models/Audience';
+import {
+  ServiceCategoryTree,
+  AudienceSegmentServiceItemPublicResource,
+} from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
+import {
+  AudienceSegmentResource,
+  AudienceSegmentSelectionResource,
+} from '../../../../../../../models/audiencesegment';
+
+import messages from '../../../messages';
 import audienceCatalogMsgs from './messages';
 
 export interface AudienceCatalogProps {
