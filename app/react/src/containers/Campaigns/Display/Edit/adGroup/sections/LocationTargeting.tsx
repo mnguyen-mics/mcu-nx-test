@@ -51,14 +51,16 @@ const randomId: string = generateFakeId();
 
 class LocationTargeting extends React.Component<LocationTargetingProps & InjectedIntlProps, LocationTargetingState> {
 
-  state = {
-    locationTargetingDisplayed: false,
-    listOfCountriesToDisplay: [],
-    value: [],
-    fetching: false,
-    incOrExc: 'INC',
-    visible: false,
-  };
+  constructor(props: LocationTargetingProps & InjectedIntlProps) {
+    super(props);
+    this.state = {
+      locationTargetingDisplayed: false,
+      listOfCountriesToDisplay: [],
+      fetching: false,
+      incOrExc: 'INC',
+      visible: false,
+    };
+  }
 
   showModal = () => {
     this.setState({
@@ -77,8 +79,8 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
   }
 
   fetchCountries = (value: string = '') => {
-    GeonameService.getGeonames().then(geonames => {
-      const listOfCountriesToDisplay = geonames.filter((country: {name: string}) => {
+    GeonameService.getGeonames(value).then(geonames => {
+      const listOfCountriesToDisplay = geonames.filter(country => {
         return country.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) >= 0 || country.name.indexOf(value) >= 0;
       });
       this.setState({ listOfCountriesToDisplay });
@@ -97,23 +99,23 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
 
   handleChange = (idCountry: string) => {
 
-    const selectedCountry = this.state.listOfCountriesToDisplay.find((filteredCountry: {id: string}) => {
+    const selectedCountry = this.state.listOfCountriesToDisplay.find(filteredCountry => {
       return filteredCountry.id === idCountry[0];
     });
 
     const { handlers } = this.props;
 
-    const incOrExcValue: string = this.state.incOrExc;
+    if (selectedCountry) {
+      const selectedLocation = {
+        ...selectedCountry,
+        exclude: this.state.incOrExc === 'EXC',
+      };
 
-    const selectedLocation = {
-      ...selectedCountry,
-      exclude: incOrExcValue === 'EXC',
-    };
-
-    handlers.updateTableFields({
-      newFields: [selectedLocation],
-      tableName: 'locationTargetingTable',
-    });
+      handlers.updateTableFields({
+        newFields: [selectedLocation],
+        tableName: 'locationTargetingTable',
+      });
+    }
 
     this.setState({
       listOfCountriesToDisplay: [],
@@ -135,7 +137,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
       },
     } = this.props;
 
-    const { fetching, listOfCountriesToDisplay, value } = this.state;
+    const { fetching, listOfCountriesToDisplay } = this.state;
 
     return (
       <div id="locationTargeting" className="locationTargeting">
@@ -186,7 +188,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
                 <div id={randomId} className="wrapped-select">
                   <Select
                     mode="multiple"
-                    value={value}
+                    value={[]}
                     placeholder={formatMessage(messages.contentSectionLocationInputPlaceholder)}
                     notFoundContent={fetching ? <Spin size="small" /> : null}
                     filterOption={false}
@@ -195,7 +197,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
                     getPopupContainer={this.attachToDOM(randomId)}
                     className="big-select"
                   >
-                    {listOfCountriesToDisplay.map((country: {id: number; name: string}) =>
+                    {listOfCountriesToDisplay.map(country =>
                       <Option key={country.id}> {country.name}</Option>,
                     )}
                   </Select>
