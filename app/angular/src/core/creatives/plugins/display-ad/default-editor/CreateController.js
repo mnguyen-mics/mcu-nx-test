@@ -17,7 +17,7 @@ define(['./module'], function (module) {
       ];
       // TODO handle multiple groups / artifacts renderers according to the organisation
       if ($scope.organisationId === "1147") {
-        $scope.groupArtifacts.push({name: "AntVoice Ad-Renderer", groupId: "ant.mics.plugin.renderer", artifactId: "basic_renderer"});
+        $scope.groupArtifacts.push({name: "AntVoice Ad-Renderer", groupId: "ant.mics.plugin.renderer", artifactId: "antvoice_handlebar_renderer"});
       }
       $scope.wrapper = {
         groupArtifact: undefined,
