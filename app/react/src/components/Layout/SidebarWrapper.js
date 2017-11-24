@@ -8,15 +8,21 @@ import McsIcons from '../McsIcons.tsx';
 
 const { Sider } = Layout;
 
-function SidebarWrapper({ items, scrollId, url }) {
+function SidebarWrapper({ items, scrollId, url, changeType }) {
 
   const scrollItems = Object.keys(items);
   const options = scrollItems.map((name) => (
     <li key={name}>
-      <Link to={`${url}#${name}`}>
-        <McsIcons type="check-rounded-inverted" />
-        <span className="step-title">{items[name].defaultMessage}</span>
-      </Link>
+      {(changeType && name === 'creative') ?
+        <Link className="validated" to={`${url}#${name}`} onClick={changeType}>
+          <McsIcons type="check-rounded-inverted" />
+          <span className="step-title">{items[name].defaultMessage}</span>
+        </Link> :
+        <Link to={`${url}#${name}`}>
+          <McsIcons type="check-rounded-inverted" />
+          <span className="step-title">{items[name].defaultMessage}</span>
+        </Link>
+      }
     </li>
   ));
 
@@ -39,10 +45,15 @@ function SidebarWrapper({ items, scrollId, url }) {
  */
 SidebarWrapper.__ANT_LAYOUT_SIDER = true; // eslint-disable-line
 
+SidebarWrapper.defaultProps = {
+  changeType: null,
+};
+
 SidebarWrapper.propTypes = {
   items: PropTypes.shape(PropTypes.string.isRequired).isRequired,
   scrollId: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
+  changeType: PropTypes.func,
 };
 
 export default SidebarWrapper;

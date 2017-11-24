@@ -8,7 +8,7 @@ import { Layout, Row } from 'antd';
 
 import * as actions from '../../../../../state/Notifications/actions';
 import { withMcsRouter } from '../../../../Helpers';
-import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form/index.ts';
+import { FormInput, FormTitle, FormSelect, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 import AuditComponent from './AuditComponent';
 import { PluginFieldGenerator } from '../../../../Plugin';
 import { Card } from '../../../../../components/Card/index.ts';
@@ -34,6 +34,16 @@ class DisplayCreativeEditionEditor extends Component {
     creative: {},
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) {
+      const {
+        intl: {
+          formatMessage
+        }
+      } = this.props;
+      formErrorMessage(formatMessage(messages.errorFormMessage));
+    }
+  }
 
   handleSaveDisplayCreative = formValues => {
     const { save } = this.props;
@@ -114,7 +124,7 @@ class DisplayCreativeEditionEditor extends Component {
         >
           <Layout>
             <Content id={formId} className="mcs-content-container mcs-form-container">
-              <div id={'general'}>
+              <div id={'general_infos'}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                   <FormTitle
                     title={messages.creativeSectionGeneralTitle}
@@ -235,7 +245,8 @@ class DisplayCreativeEditionEditor extends Component {
 DisplayCreativeEditionEditor.defaultProps = {
   creative: {},
   rendererProperties: [],
-  formats: []
+  formats: [],
+  submitFailed: false,
 };
 
 DisplayCreativeEditionEditor.propTypes = {
@@ -251,6 +262,7 @@ DisplayCreativeEditionEditor.propTypes = {
   organisationId: PropTypes.string.isRequired,
   notifyError: PropTypes.func.isRequired,
   formId: PropTypes.string.isRequired,
+  submitFailed: PropTypes.bool,
 };
 
 DisplayCreativeEditionEditor = compose(

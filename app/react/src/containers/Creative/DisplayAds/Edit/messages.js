@@ -193,4 +193,8 @@ export default defineMessages({
     id: 'creatives.type.advanced',
     defaultMessage: 'Advanced'
   },
+  errorFormMessage: {
+    id: 'campaign.form.generic.error.message',
+    defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
+  }
 });

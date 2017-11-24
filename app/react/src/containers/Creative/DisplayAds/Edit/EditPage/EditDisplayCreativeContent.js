@@ -13,8 +13,6 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import Loading from '../../../../../components/Loading.tsx';
 import log from '../../../../../utils/Logger';
 import { EditContentLayout } from '../../../../../components/Layout/index.ts';
-import { updateDisplayCreative } from '../../../../../formServices/CreativeServiceWrapper';
-
 
 import messages from '../messages';
 
@@ -32,20 +30,9 @@ class EditDisplayCreativeContent extends Component {
     };
   }
 
-  onSave = (creative, properties) => {
-    const {
-      organisationId,
-    } = this.props;
-    updateDisplayCreative(organisationId, creative, properties)
-      .then((creativeId) => {
-        this.fetchAllData(organisationId, creativeId);
-      });
-  }
-
-  fetchAllData = (organisationId) => {
+  fetchAllData = (organisationId, creativeId) => {
     const {
       notifyError,
-      creativeId,
     } = this.props;
 
     const getFormats = CreativeService.getCreativeFormats(organisationId);
@@ -92,9 +79,9 @@ class EditDisplayCreativeContent extends Component {
       match: {
         params: {
           organisationId,
-          creativeId,
         }
-      }
+      },
+      creativeId,
     } = this.props;
     this.fetchAllData(organisationId, creativeId);
   }
@@ -161,7 +148,7 @@ class EditDisplayCreativeContent extends Component {
     } = this.state;
 
     const sidebarItems = {
-      general: messages.creativeSiderMenuGeneralInformation,
+      general_infos: messages.creativeSiderMenuGeneralInformation,
       audit_status: messages.creativeSiderMenuAudit,
       properties: messages.creativeSiderMenuProperties,
       preview: messages.creativeSiderMenuPreview,
@@ -188,7 +175,7 @@ class EditDisplayCreativeContent extends Component {
         url={url}
       >
         <DisplayCreativeEditionEditor
-          save={this.onSave}
+          save={this.props.save}
           close={this.redirect}
           breadcrumbPaths={breadcrumbPaths}
           initialValues={{
@@ -215,10 +202,11 @@ EditDisplayCreativeContent.propTypes = {
   organisationId: PropTypes.string.isRequired,
   notifyError: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  onClose: PropTypes.func.isRequired,
+  save: PropTypes.func.isRequired,
+  match: ReactRouterPropTypes.match.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
 };
 
 export default compose(

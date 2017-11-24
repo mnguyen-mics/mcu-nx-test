@@ -89,20 +89,29 @@ class AdGroupForm extends Component {
   updateTableFields = ({ newFields, tableName }) => {
     const newFieldIds = newFields.map(field => field.id);
     const prevFields = this.props.formValues[tableName] || [];
-
+    const prevFieldIds = prevFields.map(field => field.id);
     if (prevFields.length > 0) {
       prevFields.forEach((prevField, index) => {
         const toBeRemoved = !newFieldIds.includes(prevField.id);
-
         this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
+        if (toBeRemoved) {
+          if (prevField.main_id) {
+            // removing with API call
+            this.props.RxF.array.insert(tableName, index, { ...prevField, toBeRemoved });
+          } else {
+            // can safely remove from list
+            this.props.RxF.array.remove(tableName, index);
+          }
+        }
       });
     }
-
-    newFields.forEach((newField) => {
-      if (!prevFields.length
-        || !prevFields.find(prevField => (prevField.id === newField.id))
-      ) {
-        this.props.RxF.array.push(tableName, { ...newField, modelId: generateFakeId(), toBeRemoved: false });
+    newFieldIds.forEach((newId, index) => {
+      if (prevFieldIds.includes(newId)) {
+        this.props.RxF.array.insert(tableName, index, newFields[index]);
+      } else if (!prevFieldIds.includes(newId) && (!prevFields.length
+        || !prevFields.find(prevField => (prevField.id === newId))
+      )) {
+        this.props.RxF.array.push(tableName, { ...newFields[index], modelId: generateFakeId(), toBeRemoved: false });
       }
     });
   }

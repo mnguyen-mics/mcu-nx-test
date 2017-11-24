@@ -19,6 +19,7 @@ function EditLayoutActionbar({
   message,
   onClose,
   submitting,
+  isCreativetypePicker,
   ...rest,
  }) {
 
@@ -31,10 +32,12 @@ function EditLayoutActionbar({
 
   return (
     <Actionbar path={breadcrumbPaths} {...rest}>
-      <Button {...submitButtonProps} className="mcs-primary">
-        <McsIcons type="plus" />
-        <FormattedMessage {...message} />
-      </Button>
+      { !isCreativetypePicker ?
+        <Button {...submitButtonProps} className="mcs-primary">
+          <McsIcons type="plus" />
+          <FormattedMessage {...message} />
+        </Button> : null
+      }
 
       <McsIcons
         type="close"
@@ -50,6 +53,7 @@ EditLayoutActionbar.defaultProps = {
   onClose: () => {},
   pristine: null,
   submitting: false,
+  isCreativetypePicker: false,
 };
 
 EditLayoutActionbar.propTypes = {
@@ -68,6 +72,7 @@ EditLayoutActionbar.propTypes = {
 
   onClose: PropTypes.func,
   submitting: PropTypes.bool,
+  isCreativetypePicker: PropTypes.bool,
 };
 
 export default connect(

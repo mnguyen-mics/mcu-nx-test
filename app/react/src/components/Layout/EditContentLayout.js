@@ -10,6 +10,8 @@ function EditContentLayout({
   sidebarItems,
   buttonMetadata,
   url,
+  isCreativetypePicker,
+  changeType,
 }) {
 
   return (
@@ -18,10 +20,11 @@ function EditContentLayout({
         {...buttonMetadata}
         edition
         breadcrumbPaths={breadcrumbPaths}
+        isCreativetypePicker={isCreativetypePicker}
       />
 
       <Layout>
-        {sidebarItems && Object.keys(sidebarItems).length !== 0 ?
+        { sidebarItems && Object.keys(sidebarItems).length !== 0 ?
           <SidebarWrapper
             items={sidebarItems}
             scrollId={
@@ -31,9 +34,10 @@ function EditContentLayout({
               buttonMetadata.formId
             }
             url={url}
+            changeType={changeType}
           />
         :
-        null}
+        null }
         <Layout>{children}</Layout>
       </Layout>
     </Layout>
@@ -42,6 +46,8 @@ function EditContentLayout({
 
 EditContentLayout.defaultProps = {
   sidebarItems: {},
+  isCreativetypePicker: false,
+  changeType: null,
 };
 
 EditContentLayout.propTypes = {
@@ -63,6 +69,8 @@ EditContentLayout.propTypes = {
   }).isRequired,
 
   url: PropTypes.string.isRequired,
+  isCreativetypePicker: PropTypes.bool,
+  changeType: PropTypes.func,
 };
 
 export default EditContentLayout;

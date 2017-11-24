@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
+import { snakeCase } from 'lodash';
+
 
 import { EmptyRecords, Form } from '../../../../../../../components/index.ts';
 import AdGroupCardList from './AdGroupCardList';
@@ -8,7 +10,7 @@ import messages from '../../../messages';
 import CreativeCardSelector from '../../../../../Email/Edit/CreativeCardSelector';
 import CreativeService from '../../../../../../../services/CreativeService';
 import { DisplayCreativeContent } from '../../../../../../Creative/DisplayAds/Edit';
-import { createDisplayCreative } from '../../../../../../../formServices/CreativeServiceWrapper';
+import { createDisplayCreative, updateDisplayCreative } from '../../../../../../../formServices/CreativeServiceWrapper';
 
 const { FormSection } = Form;
 
@@ -72,11 +74,35 @@ class Ads extends Component {
         ];
         this.setState({ loading: true }, () => {
           handlers.updateTableFields({ newFields: valuesToAdd, tableName: 'adTable' });
+          this.props.handlers.closeNextDrawer();
         });
         this.setState({ loading: false });
       }).catch(() => {
         // this.props.notifyError(err);
       });
+  }
+
+  updateCreative = (creative, properties) => {
+    const {
+      formValues,
+      handlers,
+      organisationId,
+    } = this.props;
+    const formattedObject = Object.keys(creative).reduce((acc, key) => ({
+      ...acc,
+      [key.indexOf('Table') !== -1 ? key : snakeCase(key.replace('adGroup', ''))]: creative[key]
+    }), {});
+    const updatedValues = formValues.map((item) => {
+      return item.id === formattedObject.id ? formattedObject : item;
+    });
+    updateDisplayCreative(organisationId, creative, properties)
+    .then(() => {
+      this.setState({ loading: true }, () => {
+        handlers.updateTableFields({ newFields: updatedValues, tableName: 'adTable' });
+        this.setState({ loading: false });
+        this.props.handlers.closeNextDrawer();
+      });
+    });
   }
 
   updateData = (selectedAds) => {
@@ -128,6 +154,7 @@ class Ads extends Component {
             name="adTable"
             updateTableFieldStatus={handlers.updateTableFieldStatus}
             handlers={this.props.handlers}
+            updateCreative={this.updateCreative}
           />
 
           {!formValues.filter(ad => !ad.toBeRemoved).length

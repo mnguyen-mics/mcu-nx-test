@@ -136,7 +136,8 @@ class DisplayCreativeContent extends Component {
     } = this.state;
 
     const sidebarItems = {
-      general: messages.creativeSiderMenuGeneralInformation,
+      creative: messages.creativeSiderMenuCreativeType,
+      general_infos: messages.creativeSiderMenuGeneralInformation,
       properties: messages.creativeSiderMenuProperties,
     };
 
@@ -149,6 +150,10 @@ class DisplayCreativeContent extends Component {
     const breadcrumbPaths = [
       { name: formatMessage(messages.creativeCreationBreadCrumb) },
     ];
+
+
+    const isCreativetypePicker = true;
+
     return (
       <div className="ant-layout">
         {isLoading ?
@@ -162,10 +167,10 @@ class DisplayCreativeContent extends Component {
               sidebarItems={sidebarItems}
               buttonMetadata={buttonMetadata}
               url={url}
+              changeType={this.onReset}
             >
               <DisplayCreativeCreationEditor
                 save={this.props.save}
-                changeType={this.onReset}
                 adRenderer={adRenderer}
                 isLoading={isLoading}
                 formats={this.state.formats}
@@ -182,6 +187,7 @@ class DisplayCreativeContent extends Component {
                 breadcrumbPaths={breadcrumbPaths}
                 buttonMetadata={buttonMetadata}
                 url={url}
+                isCreativetypePicker={isCreativetypePicker}
               >
                 <DisplayCreativeTypePicker
                   save={this.props.save}
@@ -200,7 +206,6 @@ class DisplayCreativeContent extends Component {
 
 DisplayCreativeContent.propTypes = {
   organisationId: PropTypes.string.isRequired,
-  // history: ReactRouterPropTypes.history.isRequired,
   notifyError: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   closeNextDrawer: PropTypes.func.isRequired,

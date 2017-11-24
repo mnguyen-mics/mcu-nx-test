@@ -6,7 +6,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Row } from 'antd';
 
 import { withMcsRouter } from '../../../../Helpers';
-import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form/index.ts';
+import { FormInput, FormTitle, FormSelect, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 import { PluginFieldGenerator } from '../../../../Plugin';
 
 import messages from '../messages';
@@ -19,6 +19,17 @@ const fieldGridConfig = {
 };
 
 class DisplayCreativeCreationEditor extends Component {
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) {
+      const {
+        intl: {
+          formatMessage
+        }
+      } = this.props;
+      formErrorMessage(formatMessage(messages.errorFormMessage));
+    }
+  }
 
   onSubmit = formValues => {
     const { save } = this.props;
@@ -70,7 +81,7 @@ class DisplayCreativeCreationEditor extends Component {
         >
           <Layout>
             <Content id={formId} className="mcs-content-container mcs-form-container">
-              <div id={'general'}>
+              <div id={'general_infos'}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                   <FormTitle
                     title={messages.creativeSectionGeneralTitle}
@@ -168,6 +179,7 @@ class DisplayCreativeCreationEditor extends Component {
 DisplayCreativeCreationEditor.defaultProps = {
   blasts: [],
   campaignName: '',
+  submitFailed: false,
 };
 
 DisplayCreativeCreationEditor.propTypes = {
@@ -186,6 +198,7 @@ DisplayCreativeCreationEditor.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   organisationId: PropTypes.string.isRequired,
   formId: PropTypes.string.isRequired,
+  submitFailed: PropTypes.bool,
 };
 
 DisplayCreativeCreationEditor = compose(

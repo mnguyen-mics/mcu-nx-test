@@ -18,7 +18,7 @@ class AdGroupCardList extends Component {
       openNextDrawer: handlers.openNextDrawer,
       closeNextDrawer: handlers.closeNextDrawer,
       onClose: handlers.closeNextDrawer,
-      save: this.createNewData,
+      save: this.props.updateCreative,
       close: handlers.closeNextDrawer,
     };
 
@@ -135,8 +135,8 @@ AdGroupCardList.propTypes = {
   handlers: PropTypes.shape({
     closeNextDrawer: PropTypes.func.isRequired,
     openNextDrawer: PropTypes.func.isRequired,
-    updateTableFieldStatus: PropTypes.func.isRequired,
   }).isRequired,
+  updateCreative: PropTypes.func.isRequired,
 };
 
 export default AdGroupCardList;

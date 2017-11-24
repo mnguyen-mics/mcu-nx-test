@@ -9,6 +9,8 @@ import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import EditDisplayCreativeContent from './EditDisplayCreativeContent';
 import withDrawer from '../../../../../components/Drawer';
+import { updateDisplayCreative } from '../../../../../formServices/CreativeServiceWrapper';
+
 
 class EditDisplayCreativePage extends Component {
 
@@ -21,6 +23,19 @@ class EditDisplayCreativePage extends Component {
         }
       }
     } = this.props;
+    history.push(`/v2/o/${organisationId}/creatives/display`);
+  }
+
+  save = (creative, properties) => {
+    const {
+      history,
+      match: {
+        params: {
+          organisationId,
+        }
+      }
+    } = this.props;
+    updateDisplayCreative(organisationId, creative, properties);
     history.push(`/v2/o/${organisationId}/creatives/display`);
   }
 
@@ -37,6 +52,7 @@ class EditDisplayCreativePage extends Component {
       <EditDisplayCreativeContent
         closeNextDrawer={closeNextDrawer}
         onClose={this.onClose}
+        save={this.save}
         openNextDrawer={openNextDrawer}
         creativeId={match.params.creativeId}
       />
