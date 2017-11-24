@@ -233,6 +233,7 @@ class DisplayCampaignsTable extends Component {
         currentPage: page,
       }),
       onShowSizeChange: (current, size) => this.updateLocationSearch({
+        currentPage: 1,
         pageSize: size,
       }),
     };

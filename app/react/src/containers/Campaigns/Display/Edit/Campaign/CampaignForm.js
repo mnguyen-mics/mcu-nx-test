@@ -22,7 +22,7 @@ import {
   AdGroups
 } from './Sections';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -31,6 +31,7 @@ import AttributionModelsService from '../../../../../services/AttributionModelsS
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import * as AdGroupServiceWrapper from '../AdGroupServiceWrapper';
+import messages from '../messages';
 
 
 const { Content } = Layout;
@@ -39,6 +40,18 @@ const FORM_NAME = 'campaignForm';
 class CampaignForm extends Component {
 
   state = { loading: false }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) {
+      const {
+        intl: {
+          formatMessage
+        }
+      } = this.props;
+      formErrorMessage(formatMessage(messages.errorFormMessage));
+    }
+  }
+
 
   updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => {
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
@@ -414,6 +427,7 @@ CampaignForm.propTypes = {
   organisationId: PropTypes.string.isRequired,
   notifyError: PropTypes.func.isRequired,
   hasFeature: PropTypes.func.isRequired,
+  submitFailed: PropTypes.bool.isRequired,
 };
 
 

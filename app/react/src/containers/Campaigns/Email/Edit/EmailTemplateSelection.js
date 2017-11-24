@@ -65,6 +65,7 @@ class EmailTemplateSelection extends Component {
       fetchData: this.getEmailTemplates,
       isModal: true,
       singleSelection: true,
+      filterKey: 'email_template_id'
     };
 
     openNextDrawer(CreativeCardSelector, options);
