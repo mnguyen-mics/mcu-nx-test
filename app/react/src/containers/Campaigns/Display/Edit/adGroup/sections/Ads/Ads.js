@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray } from 'redux-form';
 import { snakeCase } from 'lodash';
+import { Spin } from 'antd';
 
 
 import { EmptyRecords, Form } from '../../../../../../../components/index.ts';
@@ -98,7 +99,7 @@ class Ads extends Component {
     updateDisplayCreative(organisationId, creative, properties)
     .then(() => {
       this.setState({ loading: true }, () => {
-        handlers.updateTableFields({ newFields: updatedValues, tableName: 'adTable' });
+        handlers.updateCreativeTableFields({ newFields: updatedValues, tableName: 'adTable' });
         this.setState({ loading: false });
         this.props.handlers.closeNextDrawer();
       });
@@ -144,28 +145,29 @@ class Ads extends Component {
           subtitle={messages.sectionSubtitleAds}
           title={messages.sectionTitleAds}
         />
+        <Spin spinning={this.state.loading}>
+          <div className="ad-group-ad-section">
+            <FieldArray
+              className="content"
+              component={AdGroupCardList}
+              data={formValues}
+              loading={this.state.loading}
+              name="adTable"
+              updateTableFieldStatus={handlers.updateTableFieldStatus}
+              handlers={this.props.handlers}
+              updateCreative={this.updateCreative}
+            />
 
-        <div className="ad-group-ad-section">
-          <FieldArray
-            className="content"
-            component={AdGroupCardList}
-            data={formValues}
-            loading={this.state.loading}
-            name="adTable"
-            updateTableFieldStatus={handlers.updateTableFieldStatus}
-            handlers={this.props.handlers}
-            updateCreative={this.updateCreative}
-          />
-
-          {!formValues.filter(ad => !ad.toBeRemoved).length
-            && (
-              <EmptyRecords
-                iconType="ads"
-                message={formatMessage(messages.contentSectionAdEmptyTitle)}
-              />
-            )
-          }
-        </div>
+            {!formValues.filter(ad => !ad.toBeRemoved).length
+              && (
+                <EmptyRecords
+                  iconType="ads"
+                  message={formatMessage(messages.contentSectionAdEmptyTitle)}
+                />
+              )
+            }
+          </div>
+        </Spin>
       </div>
     );
   }

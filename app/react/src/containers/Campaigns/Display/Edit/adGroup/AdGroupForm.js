@@ -5,6 +5,7 @@ import {
   getFormValues,
   reduxForm,
   formPropTypes,
+  arrayRemoveAll,
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose, mapProps } from 'recompose';
@@ -89,13 +90,35 @@ class AdGroupForm extends Component {
   updateTableFields = ({ newFields, tableName }) => {
     const newFieldIds = newFields.map(field => field.id);
     const prevFields = this.props.formValues[tableName] || [];
-    const prevFieldIds = prevFields.map(field => field.id);
+
     if (prevFields.length > 0) {
       prevFields.forEach((prevField, index) => {
         const toBeRemoved = !newFieldIds.includes(prevField.id);
+
+        this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
+      });
+    }
+
+    newFields.forEach((newField) => {
+      if (!prevFields.length
+        || !prevFields.find(prevField => (prevField.id === newField.id))
+      ) {
+        this.props.RxF.array.push(tableName, { ...newField, modelId: generateFakeId(), toBeRemoved: false });
+      }
+    });
+  }
+
+  updateCreativeTableFields = ({ newFields, tableName }) => {
+    const newFieldIds = newFields.map(field => field.id);
+    const prevFields = this.props.formValues[tableName] || [];
+    const prevFieldIds = prevFields.map(field => field.id);
+    if (prevFields.length > 0) {
+      prevFields.forEach((prevField, index) => {
+        this.props.RxF.array.remove(tableName, index);
+        const toBeRemoved = !newFieldIds.includes(prevField.id);
         this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
         if (toBeRemoved) {
-          if (prevField.main_id) {
+          if (prevField.modelId) {
             // removing with API call
             this.props.RxF.array.insert(tableName, index, { ...prevField, toBeRemoved });
           } else {
@@ -141,6 +164,7 @@ class AdGroupForm extends Component {
         openNextDrawer,
         updateTableFieldStatus: this.updateTableFieldStatus,
         updateTableFields: this.updateTableFields,
+        updateCreativeTableFields: this.updateCreativeTableFields,
       },
       organisationId,
     };
@@ -226,6 +250,7 @@ AdGroupForm.propTypes = {
   save: PropTypes.func.isRequired,
   RxF: PropTypes.shape(formPropTypes).isRequired,
   submitFailed: PropTypes.bool,
+  arrayRemoveAll: PropTypes.func.isRequired,
 };
 
 
@@ -234,7 +259,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  notifyError: actions.notifyError
+  notifyError: actions.notifyError,
+  arrayRemoveAll,
 };
 
 export default compose(
