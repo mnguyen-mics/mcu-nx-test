@@ -14,7 +14,9 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
   const paramsToQueryString = (paramsArg) => {
     if (!paramsArg) return '';
     const paramsToArray = Object.keys(paramsArg);
-    const str = paramsToArray.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`).join('&');
+    const str = paramsToArray
+      .filter(key => paramsArg[key] !== undefined)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`).join('&');
     return str.length ? `?${str}` : '';
   };
 
