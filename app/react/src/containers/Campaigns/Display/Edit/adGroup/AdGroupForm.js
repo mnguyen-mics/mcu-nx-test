@@ -5,7 +5,6 @@ import {
   getFormValues,
   reduxForm,
   formPropTypes,
-  arrayRemoveAll,
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose, mapProps } from 'recompose';
@@ -250,7 +249,6 @@ AdGroupForm.propTypes = {
   save: PropTypes.func.isRequired,
   RxF: PropTypes.shape(formPropTypes).isRequired,
   submitFailed: PropTypes.bool,
-  arrayRemoveAll: PropTypes.func.isRequired,
 };
 
 
@@ -260,7 +258,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = {
   notifyError: actions.notifyError,
-  arrayRemoveAll,
 };
 
 export default compose(
