@@ -256,11 +256,17 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
   const otherInfos = campaign ? campaign : null;
   const title = '';
 
+  const exportFilter = {
+    ...filter,
+    from: filter.from.format('YYYY-MM-DD'),
+    to: filter.to.format('YYYY-MM-DD'),
+  };
+
   const sheets = [
-    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, filter, formatMessage, campaignPageTitle, title, otherInfos),
-    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, filter, formatMessage, title, otherInfos),
-    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, filter, formatMessage, title, otherInfos),
-    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, filter, formatMessage, title, otherInfos)
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, exportFilter, formatMessage, campaignPageTitle, title, otherInfos),
+    addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, exportFilter, formatMessage, title, otherInfos),
+    addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, exportFilter, formatMessage, title, otherInfos),
+    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, exportFilter, formatMessage, title, otherInfos)
   ].filter(x => x);
 
   if (sheets.length) {

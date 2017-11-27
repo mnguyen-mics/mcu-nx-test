@@ -8,11 +8,10 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import withTranslations, { TranslationProps } from '../../../../Helpers/withTranslations';
 import messages from '../messages';
-import { CampaignResource } from '../../../../../models/CampaignResource';
+import { CampaignResource, CampaignRouteParams } from '../../../../../models/CampaignResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons';
-// import { CancelablePromise } from '../../../../../services/ApiService';
 import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -22,12 +21,6 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { ReportView } from '../../../../../models/ReportView';
-
-interface RouterMatchParams {
-  organisationId: string;
-  campaignId: string;
-  adGroupId?: string;
-}
 
 interface DisplayCampaignActionBarProps {
   campaign: CampaignResource;
@@ -41,7 +34,7 @@ interface DisplayCampaignActionBarProps {
 
 type JoinedProps =
   DisplayCampaignActionBarProps &
-  RouteComponentProps<RouterMatchParams> &
+  RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps &
   TranslationProps;
 
@@ -194,12 +187,6 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
 
     const filter = parseSearch(this.props.location.search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-    const exportFilter = {
-      ...filter,
-      from: filter.from.format('YYYY-MM-DD'),
-      to: filter.to.format('YYYY-MM-DD'),
-    };
-
     const hideExportLoadingMsg = message.loading(this.props.translations.EXPORT_IN_PROGRESS, 0);
 
     fetchAllExportData(organisationId, campaignId, filter).then(exportData => {
@@ -210,7 +197,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
         exportData.mediaData,
         exportData.adGroupData.items,
         exportData.adData.items,
-        exportFilter,
+        filter,
         formatMessage);
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
@@ -246,7 +233,8 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
       <Actionbar path={breadcrumbPaths}>
         {actionElement}
         <Button onClick={this.handleRunExport}>
-          {!isFetchingStats && <McsIcons type="download" />}<FormattedMessage id="EXPORT" />
+          <McsIcons type="download" />
+          <FormattedMessage id="EXPORT" />
         </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`}>
           <Button>

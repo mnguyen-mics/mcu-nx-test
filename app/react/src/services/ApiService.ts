@@ -25,7 +25,7 @@ export interface DataListResponse<T> extends ApiResponse {
 interface ApiOptions {
   localUrl?: string;
   adminApi?: object;
-  withCredentials?: object;
+  withCredentials?: boolean;
   authenticated?: boolean;
 }
 
@@ -54,7 +54,8 @@ function request(
     if (!paramsArg) return '';
     const paramsToArray: string[] = Object.keys(paramsArg);
     const str: string = paramsToArray
-      .map((key: any) => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`)
+      .filter(key => paramsArg[key] !== undefined)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`)
       .join('&');
     return str.length ? `?${str}` : '';
   };

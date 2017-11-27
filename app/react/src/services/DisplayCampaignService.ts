@@ -1,35 +1,53 @@
+import { CampaignResource, DisplayCampaignResource } from './../models/CampaignResource';
 import moment from 'moment';
-import { camelizeKeys, decamelizeKeys } from 'humps';
-import ApiService from './ApiService.ts';
+// import { camelizeKeys, decamelizeKeys } from 'humps';
+import ApiService from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 
 /* CAMPAIGN SERVICES */
-function getCampaignDisplay(campaignId, params = {}) {
+function getCampaignDisplay<T>(
+  campaignId: string,
+  params: object = {},
+): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}`;
-  return ApiService.getRequest(endpoint, params);
+  return ApiService.getRequest(endpoint, params) as Promise<T>;
 }
 
-function getCampaignName(campaignId) {
-  return getCampaignDisplay(campaignId).then(res => res.data.name);
+function getCampaignName<T>(
+  campaignId: string,
+): Promise<T> {
+  return getCampaignDisplay(campaignId).then(res => res.data.name) as Promise<T>;
 }
 
-function createCampaign(organisationId, body) {
+function createCampaign<T>(
+  organisationId: string,
+  body: object,
+): Promise<T> {
   const endpoint = `display_campaigns/?organisation_id=${organisationId}`;
-  return ApiService.postRequest(endpoint, body);
+  return ApiService.postRequest(endpoint, body) as Promise<T>;
 }
 
-function updateCampaign(campaignId, body) {
+function updateCampaign<T>(
+  campaignId: string,
+  body: object,
+): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}`;
-  return ApiService.putRequest(endpoint, body);
+  return ApiService.putRequest(endpoint, body) as Promise<T>;
 }
 
-function deleteCampaign(campaignId, body) {
+function deleteCampaign<T>(
+  campaignId: string,
+  body: object,
+): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}`;
-  return ApiService.deleteRequest(endpoint, body);
+  return ApiService.deleteRequest(endpoint, body) as Promise<T>;
 }
 
 /* AD GROUP SERVICES */
-function getAdGroup(campaignId, adGroupId) {
+function getAdGroup<T>(
+  campaignId: string,
+  adGroupId: string,
+): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
   return ApiService.getRequest(endpoint)
     .then(({ data }) => (
@@ -44,33 +62,42 @@ function getAdGroup(campaignId, adGroupId) {
 
         return { ...acc, [key]: value };
       }, {})
-    ));
+    )) as Promise<T>;
 }
 
-function getAdGroups(campaignId) {
+function getAdGroups<T>(
+  campaignId: string,
+): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}/ad_groups`;
-  return ApiService.getRequest(endpoint);
+  return ApiService.getRequest(endpoint) as Promise<T>;
 }
 
-function createAdGroup(campaignId, body) {
+function createAdGroup<T>(
+  campaignId: string,
+  body: object,
+): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}/ad_groups`;
-  return ApiService.postRequest(endpoint, body);
+  return ApiService.postRequest(endpoint, body) as Promise<T>;
 }
 
-function updateAdGroup(campaignId, adGroupId, body) {
+function updateAdGroup<T>(
+  campaignId: string,
+  adGroupId: string,
+  body: object,
+): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
-  return ApiService.putRequest(endpoint, body);
+  return ApiService.putRequest(endpoint, body) as Promise<T>;
 }
 
-function deleteAdGroup({ campaignId, id, body }) {
+function deleteAdGroup<T>({ campaignId, id, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${id}`;
-  return ApiService.deleteRequest(endpoint, body);
+  return ApiService.deleteRequest(endpoint, body) as Promise<T>;
 }
 
 /* AUDIENCE SERVICES */
 function getAudienceSegments(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.getRequest(endpoint).then(res => res.data.map(d => camelizeKeys(d)));
+  return ApiService.getRequest(endpoint).then(res => res.data) as Promise<T>;
 }
 
 // TODO delete, use getAudienceSegments instead
@@ -97,7 +124,7 @@ function createAudience({ campaignId, adGroupId, body }) {
 
 function createAudienceSegment({ campaignId, adGroupId, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.postRequest(endpoint, decamelizeKeys(body)).then(res => camelizeKeys(res.data));
+  return ApiService.postRequest(endpoint, body).then(res => res.data);
 }
 
 function updateAudience({ campaignId, adGroupId, id, body }) {
@@ -107,7 +134,7 @@ function updateAudience({ campaignId, adGroupId, id, body }) {
 
 function updateAudienceSegment({ campaignId, adGroupId, id, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
-  return ApiService.putRequest(endpoint, decamelizeKeys(body)).then(res => camelizeKeys(res.data));
+  return ApiService.putRequest(endpoint, body).then(res => res.data);
 }
 
 function deleteAudience({ campaignId, adGroupId, id }) {
