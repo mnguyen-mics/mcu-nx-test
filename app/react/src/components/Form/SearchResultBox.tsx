@@ -17,6 +17,7 @@ class SearchResultBox extends React.Component<
   SearchResultBoxProps & WrappedFieldArrayProps<{name: string, exclude: boolean}>> {
 
     deleteLocationFromFields = (index: number, allFields: any) => () => {
+        // e: React.FormEvent<HTMLButtonElement> e.preventDefault();
         allFields.remove(index);
     }
 

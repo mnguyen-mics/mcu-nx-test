@@ -106,6 +106,17 @@ class AdGroupForm extends Component {
     });
   }
 
+  removeAllGeonames = (tableName) => {
+    const prevFields = this.props.formValues[tableName] || [];
+    const promises = [];
+    prevFields.map((prevField, index) => {
+      return promises.push(this.props.RxF.array.remove(tableName, index));
+    });
+    Promise.all(promises).then(() => {
+      return console.log('done');
+    });
+  }
+
   render() {
     const {
       closeNextDrawer,
@@ -131,6 +142,7 @@ class AdGroupForm extends Component {
         openNextDrawer,
         updateTableFieldStatus: this.updateTableFieldStatus,
         updateTableFields: this.updateTableFields,
+        removeAllGeonames: this.removeAllGeonames,
       },
       organisationId,
     };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {  Row, Col, Checkbox, Input, Select, Tooltip, Spin } from 'antd';
+import {  Row, Col, Checkbox, Input, Select, Tooltip, Spin, Modal } from 'antd';
 import {  FieldArray } from 'redux-form';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -14,6 +14,8 @@ import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
+const confirm = Modal.confirm;
+
 interface LocationTargetingProps {
   formItemProps?: FormItemProps;
   label?: string;
@@ -33,10 +35,12 @@ interface LocationTargetingProps {
       newFields: {},
       tableName: string;
     }) => void;
+    removeAllGeonames: (arg: string) => any;
   };
   intl: InjectedIntlProps; // change to ts
   formValues: Array<{}>;
   formatMessage: (arg: any) => string;
+  handleCheckbox: () => any;
 }
 
 interface LocationTargetingState {
@@ -128,6 +132,29 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
     });
   }
 
+  handleCheckbox = () => {
+    const {
+      formatMessage,
+      handlers,
+      formValues,
+    } = this.props;
+    if (formValues && formValues.length > 0) {
+      confirm({
+        cancelText: formatMessage(messages.cancel),
+        content: formatMessage(messages.notificationWarning),
+        maskClosable: true,
+        okText: formatMessage(messages.ok),
+        onOk: () => {
+          this.displayLocationTargetingSection();
+          const tableName = 'locationTargetingTable';
+          handlers.removeAllGeonames(tableName);
+        },
+      });
+    } else {
+      this.displayLocationTargetingSection();
+    }
+  }
+
   render() {
 
     const {
@@ -148,7 +175,8 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
         <Checkbox
           checked={(formValues && formValues.length > 0) || this.state.locationTargetingDisplayed ? true : false}
           className="field-label checkbox-location-section"
-          onChange={this.displayLocationTargetingSection}
+          // onChange={this.displayLocationTargetingSection}
+          onChange={this.handleCheckbox}
         >
           <FormattedMessage id="location-checkbox-message" defaultMessage="I want to target a specific location" />
         </Checkbox>
