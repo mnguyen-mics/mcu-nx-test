@@ -104,6 +104,11 @@ class AdGroupForm extends Component {
   }
 
   emptyTableFields = (tableName) => {
+    const prevFields = this.props.formValues[tableName] || [];
+    prevFields.forEach((prevField, index) => {
+      const toBeRemoved = true;
+      this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
+    });
     this.props.RxF.change(tableName, []);
   }
 

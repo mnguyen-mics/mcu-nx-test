@@ -66,22 +66,6 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
     };
   }
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  }
-  handleOk = (e: Event) => {
-    this.setState({
-      visible: false,
-    });
-  }
-  handleCancel = (e: Event) => {
-    this.setState({
-      visible: false,
-    });
-  }
-
   fetchCountries = (value: string = '') => {
     GeonameService.getGeonames(value).then(geonames => {
       const listOfCountriesToDisplay = geonames.filter(country => {
@@ -145,9 +129,9 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
         maskClosable: true,
         okText: formatMessage(messages.ok),
         onOk: () => {
-          this.displayLocationTargetingSection();
           const tableName = 'locationTargetingTable';
           handlers.emptyTableFields(tableName);
+          this.displayLocationTargetingSection();
         },
       });
     } else {

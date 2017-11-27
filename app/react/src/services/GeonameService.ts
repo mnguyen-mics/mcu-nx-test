@@ -1,4 +1,3 @@
-import { Language } from './GeonameService.js';
 import ApiService from './ApiService.js';
 
 export interface Geoname {
