@@ -142,21 +142,10 @@ function getPublishers({ campaignId }) {
     }));
 }
 
-// function getLocations({ campaignId, adGroupId }) {
-//   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
-//   return ApiService.getRequest(endpoint)
-//     .then(res => res.data.map((elem) => {
-//       const { display_network_access_id, id, ...locations } = elem;
-
-//       return {
-//         ...locations,
-//         display_network_access_id,
-//         id: display_network_access_id,
-//         modelId: id,
-//         toBeRemoved: false
-//       };
-//     }));
-// }
+function getLocations({ campaignId, adGroupId }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+  return ApiService.getRequest(endpoint);
+}
 
 function createPublisher({ campaignId, body }) {
   const endpoint = `display_campaigns/${campaignId}/inventory_sources/`;
@@ -229,7 +218,7 @@ export default {
   getAds,
   getCampaignDisplay,
   getCampaignName,
-  // getLocations,
+  getLocations,
   getGoal,
   getPublishers,
   getAudiences,

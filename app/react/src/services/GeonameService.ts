@@ -1,18 +1,18 @@
-import { Language } from './GeonameService';
-import ApiService from './ApiService';
+import { Language } from './GeonameService.js';
+import ApiService from './ApiService.js';
 
 export interface Geoname {
   id: string;
   name: string;
 }
 
-export type Language = 'fr-FR' | 'en-US';
+export type Language = 'fr' | 'en';
 
 const GeonameService = {
   getGeonames(
     keywords: string,
-    lang: Language = 'fr-FR',
-    country: string = 'France',
+    lang: Language = 'fr',
+    country: string = 'FR',
   ): Promise<Geoname[]> {
     const endpoint = 'geonames/';
     const params = {
@@ -20,7 +20,7 @@ const GeonameService = {
       lang,
       country,
     };
-    return ApiService.getRequest(endpoint, params).then(res => res.data as Geoname[]);
+    return ApiService.getRequest(endpoint, params).then((res) => res.data as Geoname[]);
   },
 };
 
