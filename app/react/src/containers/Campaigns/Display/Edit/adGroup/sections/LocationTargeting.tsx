@@ -35,7 +35,7 @@ interface LocationTargetingProps {
       newFields: {},
       tableName: string;
     }) => void;
-    removeAllGeonames: (arg: string) => any;
+    emptyTableFields: (arg: string) => any;
   };
   intl: InjectedIntlProps; // change to ts
   formValues: Array<{}>;
@@ -147,7 +147,7 @@ class LocationTargeting extends React.Component<LocationTargetingProps & Injecte
         onOk: () => {
           this.displayLocationTargetingSection();
           const tableName = 'locationTargetingTable';
-          handlers.removeAllGeonames(tableName);
+          handlers.emptyTableFields(tableName);
         },
       });
     } else {

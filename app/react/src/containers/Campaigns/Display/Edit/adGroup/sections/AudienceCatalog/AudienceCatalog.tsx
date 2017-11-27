@@ -243,8 +243,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
     };
   }
 
-  toogleShowExclude = (e: React.FormEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  toogleShowExclude = () => {
     this.setState(prevState => ({ showExclude: !prevState.showExclude }));
   }
 

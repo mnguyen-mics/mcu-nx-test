@@ -114,8 +114,6 @@ export default compose(
   withMcsRouter,
   withDrawer,
   connect(
-    undefined,
-    { notifyError: NotificationActions.notifyError },
     state => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
     { notifyError: NotificationActions.notifyError }
   )

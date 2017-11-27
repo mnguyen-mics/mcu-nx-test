@@ -80,13 +80,13 @@ class GoalsTable extends Component {
         className: 'text-right',
         render: (index, record) => (
           <span>
-            {hasDatamarts(organisationId) ? <ButtonStyleless onClick={(e) => { e.preventDefault(); this.onClickOnGetPixelGoal(record); }}>
+            {hasDatamarts(organisationId) ? <ButtonStyleless onClick={() => { this.onClickOnGetPixelGoal(record); }}>
               <McsIcons type="settings" additionalClass="big" />
             </ButtonStyleless> : null}
-            {record.toBeCreated === true ? <ButtonStyleless onClick={(e) => { e.preventDefault(); openEditionMode(record); }}>
+            {record.toBeCreated === true ? <ButtonStyleless onClick={() => { openEditionMode(record); }}>
               <McsIcons type="pen" additionalClass="big" />
             </ButtonStyleless> : null}
-            <ButtonStyleless onClick={(e) => { e.preventDefault(); updateTableFieldStatus({ index, tableName }); }}>
+            <ButtonStyleless onClick={() => { updateTableFieldStatus({ index, tableName }); }}>
               <McsIcons type="delete" additionalClass="big" />
             </ButtonStyleless>
           </span>
