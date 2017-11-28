@@ -141,8 +141,6 @@ class General extends Component {
                 endDate: formValues && formValues.adGroupEndDate,
               }}
 
-              fieldValidators={{ start: [], end: [] }}
-
               helpToolTipProps={{
                 placement: 'right',
                 title: formatMessage(messages.contentSectionGeneralRow4Tooltip),
