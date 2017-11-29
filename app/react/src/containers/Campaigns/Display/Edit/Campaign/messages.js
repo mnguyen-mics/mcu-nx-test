@@ -131,6 +131,47 @@ export default defineMessages({
     defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
   },
 
+  /* Row 4 */
+  contentSectionGeneralAdvancedPartRow4Label: {
+    id: 'campaignEditor.section1.advancedPart.row4.label',
+    defaultMessage: 'Total Budget',
+  },
+  contentSectionGeneralAdvancedPartRow4Placeholder: {
+    id: 'campaignEditor.section1.advancedPart.row4.placeholder',
+    defaultMessage: '500',
+  },
+  contentSectionGeneralAdvancedPartRow4Tooltip: {
+    id: 'campaignEditor.section1.advancedPart.row4.tooltip',
+    defaultMessage: 'Define the total budget of your campaign.',
+  },
+
+   /* Row 5 */
+  contentSectionGeneralAdvancedPartRow5Label: {
+    id: 'campaignEditor.section1.advancedPart.row5.label',
+    defaultMessage: 'Budget Split',
+  },
+  contentSectionGeneralAdvancedPartRow5Placeholder: {
+    id: 'campaignEditor.section1.advancedPart.row5.placeholder',
+    defaultMessage: '500',
+  },
+  contentSectionGeneralAdvancedPartRow5Tooltip: {
+    id: 'campaignEditor.section1.advancedPart.row5.tooltip',
+    defaultMessage: 'Define the budget split of your campaign.',
+  },
+
+  contentSectionGeneralRow5OptionDAY: {
+    id: 'adGroupEditor.section.general.row5.optionDAY',
+    defaultMessage: 'Per Day',
+  },
+  contentSectionGeneralRow5OptionWEEK: {
+    id: 'adGroupEditor.section.general.row5.optionWEEK',
+    defaultMessage: 'Per Week',
+  },
+  contentSectionGeneralRow5OptionMONTH: {
+    id: 'adGroupEditor.section.general.row5.option1MONTH',
+    defaultMessage: 'Per Month',
+  },
+
   /* ------------------------------- SECTION 2 ------------------------------ */
 
   contentSection2Medium1: {
@@ -152,4 +193,6 @@ export default defineMessages({
     id: 'campaignEditor.section3.emptyTitle',
     defaultMessage: 'Click on the pen to add an Ad Group to your Campaign',
   },
+
+
 });

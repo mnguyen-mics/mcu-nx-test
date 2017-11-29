@@ -8,6 +8,7 @@ import { ButtonStyleless, Form, McsIcons } from '../../../../../../components/in
 const {
   FormInput,
   FormSection,
+  FormSelectAddon,
 } = Form;
 
 class General extends Component {
@@ -21,8 +22,8 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { normalizeInteger },
-      fieldValidators: { isRequired, isValidInteger },
+      fieldNormalizer: { normalizeFloat, normalizeInteger },
+      fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       formatMessage,
     } = this.props;
 
@@ -90,6 +91,58 @@ class General extends Component {
               },
               helpToolTipProps: {
                 title: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Tooltip),
+              },
+            }}
+          />
+
+          <Field
+            name="total_budget"
+            component={FormInput}
+            normalize={normalizeFloat}
+            validate={[isValidFloat, isNotZero]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSectionGeneralAdvancedPartRow4Label),
+              },
+              inputProps: {
+                suffix: (<span>€</span>),
+                placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow4Placeholder),
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSectionGeneralAdvancedPartRow4Tooltip),
+              },
+            }}
+          />
+
+          <Field
+            name="max_budget_per_period"
+            component={FormInput}
+            normalize={normalizeFloat}
+            validate={[isValidFloat, isNotZero]}
+            props={{
+              formItemProps: {
+                label: formatMessage(messages.contentSectionGeneralAdvancedPartRow5Label),
+              },
+              inputProps: {
+                suffix: (<span>€</span>),
+                addonAfter: (
+                  <Field
+                    name="max_budget_period"
+                    component={FormSelectAddon}
+                    props={{
+                      options: [
+                        { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow5OptionDAY) },
+                        { value: 'WEEK', title: formatMessage(messages.contentSectionGeneralRow5OptionWEEK) },
+                        { value: 'MONTH', title: formatMessage(messages.contentSectionGeneralRow5OptionMONTH) },
+                      ],
+                    }}
+                  />
+                ),
+                placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow5Placeholder),
+                style: { width: '100%' },
+              },
+              helpToolTipProps: {
+                title: formatMessage(messages.contentSectionGeneralAdvancedPartRow5Tooltip),
               },
             }}
           />
