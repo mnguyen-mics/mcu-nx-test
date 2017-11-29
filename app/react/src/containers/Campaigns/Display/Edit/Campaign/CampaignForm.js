@@ -25,7 +25,7 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
 import AttributionModelsService from '../../../../../services/AttributionModelsService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';

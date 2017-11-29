@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { Layout, Button } from 'antd';
 import { compose } from 'recompose';
 
-import { CampaignResource, CampaignRouteParams } from '../../../../../models/CampaignResource';
+import { CampaignResource, CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import DisplayCampaignHeader from '../Common/DisplayCampaignHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
 import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';

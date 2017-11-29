@@ -1,4 +1,4 @@
-import DisplayCampaignService from '../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../services/DisplayCampaignService.ts';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import BidOptimizerServices from '../../../../services/BidOptimizerServices';
 import CreativeService from '../../../../services/CreativeService';

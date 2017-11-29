@@ -8,7 +8,7 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import withTranslations, { TranslationProps } from '../../../../Helpers/withTranslations';
 import messages from '../messages';
-import { CampaignResource, CampaignRouteParams } from '../../../../../models/CampaignResource';
+import { CampaignResource, CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons';
@@ -98,7 +98,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
     ),
   ]);
 
-  return apiResults.then(response => {
+  return apiResults.then((response: any) => {
     const mediaData = normalizeReportView(response[0].data.report_view);
     const adPerformanceById = formatReportView(response[1].data.report_view, 'ad_id');
     const adGroupPerformanceById = formatReportView(response[2].data.report_view, 'ad_group_id');
@@ -218,7 +218,6 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
       },
       intl: { formatMessage },
       campaign,
-      isFetchingStats,
     } = this.props;
 
     const actionElement = this.buildActionElement();

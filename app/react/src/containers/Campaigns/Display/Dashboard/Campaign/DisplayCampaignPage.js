@@ -10,7 +10,7 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import DisplayCampaign from './DisplayCampaign.tsx';
 
 import ReportService from '../../../../../services/ReportService.ts';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import {

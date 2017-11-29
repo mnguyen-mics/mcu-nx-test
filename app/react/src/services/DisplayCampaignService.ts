@@ -1,22 +1,22 @@
-import { CampaignResource, DisplayCampaignResource } from './../models/CampaignResource';
+import { AdGroupResponseList } from './../models/campaign/display/AdGroupResource';
+import { DisplayCampaignResponse } from './../models/campaign/display/DisplayCampaignResource';
 import moment from 'moment';
-// import { camelizeKeys, decamelizeKeys } from 'humps';
 import ApiService from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 
 /* CAMPAIGN SERVICES */
-function getCampaignDisplay<T>(
+function getCampaignDisplay(
   campaignId: string,
   params: object = {},
-): Promise<T> {
+): Promise<DisplayCampaignResponse> {
   const endpoint = `display_campaigns/${campaignId}`;
-  return ApiService.getRequest(endpoint, params) as Promise<T>;
+  return ApiService.getRequest(endpoint, params);
 }
 
-function getCampaignName<T>(
+function getCampaignName(
   campaignId: string,
-): Promise<T> {
-  return getCampaignDisplay(campaignId).then(res => res.data.name) as Promise<T>;
+): Promise<DisplayCampaignResponse> {
+  return getCampaignDisplay(campaignId).then((res: any) => res.data.name);
 }
 
 function createCampaign<T>(
@@ -24,7 +24,7 @@ function createCampaign<T>(
   body: object,
 ): Promise<T> {
   const endpoint = `display_campaigns/?organisation_id=${organisationId}`;
-  return ApiService.postRequest(endpoint, body) as Promise<T>;
+  return ApiService.postRequest(endpoint, body);
 }
 
 function updateCampaign<T>(
@@ -32,7 +32,7 @@ function updateCampaign<T>(
   body: object,
 ): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}`;
-  return ApiService.putRequest(endpoint, body) as Promise<T>;
+  return ApiService.putRequest(endpoint, body);
 }
 
 function deleteCampaign<T>(
@@ -40,14 +40,14 @@ function deleteCampaign<T>(
   body: object,
 ): Promise<T> {
   const endpoint = `display_campaigns/${campaignId}`;
-  return ApiService.deleteRequest(endpoint, body) as Promise<T>;
+  return ApiService.deleteRequest(endpoint, body);
 }
 
 /* AD GROUP SERVICES */
-function getAdGroup<T>(
+function getAdGroup(
   campaignId: string,
   adGroupId: string,
-): Promise<T> {
+) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
   return ApiService.getRequest(endpoint)
     .then(({ data }) => (
@@ -59,51 +59,61 @@ function getAdGroup<T>(
         } else if (key === 'end_date') {
           value = moment(value);
         }
-
         return { ...acc, [key]: value };
       }, {})
-    )) as Promise<T>;
+    ));
 }
 
-function getAdGroups<T>(
+function getAdGroups(
   campaignId: string,
-): Promise<T> {
+): Promise<AdGroupResponseList> {
   const endpoint = `display_campaigns/${campaignId}/ad_groups`;
-  return ApiService.getRequest(endpoint) as Promise<T>;
+  return ApiService.getRequest(endpoint);
 }
 
-function createAdGroup<T>(
+function createAdGroup(
   campaignId: string,
   body: object,
-): Promise<T> {
+) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups`;
-  return ApiService.postRequest(endpoint, body) as Promise<T>;
+  return ApiService.postRequest(endpoint, body);
 }
 
-function updateAdGroup<T>(
+function updateAdGroup(
   campaignId: string,
   adGroupId: string,
   body: object,
-): Promise<T> {
+) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
-  return ApiService.putRequest(endpoint, body) as Promise<T>;
+  return ApiService.putRequest(endpoint, body);
 }
 
-function deleteAdGroup<T>({ campaignId, id, body }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${id}`;
-  return ApiService.deleteRequest(endpoint, body) as Promise<T>;
+function deleteAdGroup(
+  adGroupData: {
+    campaignId: string,
+    id: string,
+    body: object,
+  }) {
+  const endpoint = `display_campaigns/${adGroupData.campaignId}/ad_groups/${adGroupData.id}`;
+  return ApiService.deleteRequest(endpoint, adGroupData.body);
 }
 
 /* AUDIENCE SERVICES */
-function getAudienceSegments(campaignId, adGroupId) {
+function getAudienceSegments(
+  campaignId: string,
+  adGroupId: string,
+) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.getRequest(endpoint).then(res => res.data) as Promise<T>;
+  return ApiService.getRequest(endpoint).then((res: any) => res.data);
 }
 
 // TODO delete, use getAudienceSegments instead
-function getAudiences(campaignId, adGroupId) {
+function getAudiences(
+  campaignId: string,
+  adGroupId: string,
+) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.getRequest(endpoint).then(res => res.data.map(segment => {
+  return ApiService.getRequest(endpoint).then((res: any) => res.data.map((segment: any) => {
     const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
 
     // code smell...
@@ -117,36 +127,68 @@ function getAudiences(campaignId, adGroupId) {
   }));
 }
 
-function createAudience({ campaignId, adGroupId, body }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.postRequest(endpoint, body).then(res => res.data);
+function createAudience(
+  audienceData: {
+    campaignId: string,
+    adGroupId: string,
+    body: object,
+  }) {
+  const endpoint = `display_campaigns/${audienceData.campaignId}/ad_groups/${audienceData.adGroupId}/audience_segments`;
+  return ApiService.postRequest(endpoint, audienceData.body).then((res: any) => res.data);
 }
 
-function createAudienceSegment({ campaignId, adGroupId, body }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.postRequest(endpoint, body).then(res => res.data);
+function createAudienceSegment(
+  audienceSegmentData: {
+    campaignId: string,
+    adGroupId: string,
+    body: object,
+  }) {
+  const endpoint = `display_campaigns/${audienceSegmentData.campaignId}/ad_groups/${audienceSegmentData.adGroupId}/audience_segments`;
+  return ApiService.postRequest(endpoint, audienceSegmentData.body).then((res: any) => res.data);
 }
 
-function updateAudience({ campaignId, adGroupId, id, body }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
-  return ApiService.putRequest(endpoint, body);
+function updateAudience(
+  audienceData: {
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+    body: object,
+  }) {
+  const endpoint = `display_campaigns/${audienceData.campaignId}/ad_groups/${audienceData.adGroupId}/audience_segments/${audienceData.id}`;
+  return ApiService.putRequest(endpoint, audienceData.body);
 }
 
-function updateAudienceSegment({ campaignId, adGroupId, id, body }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
-  return ApiService.putRequest(endpoint, body).then(res => res.data);
+function updateAudienceSegment(
+  audienceSegmentData: {
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+    body: object,
+  }) {
+  const endpoint = `display_campaigns/
+    ${audienceSegmentData.campaignId}/ad_groups/
+    ${audienceSegmentData.adGroupId}/audience_segments/${audienceSegmentData.id}`;
+  return ApiService.putRequest(endpoint, audienceSegmentData.body).then((res: any) => res.data);
 }
 
-function deleteAudience({ campaignId, adGroupId, id }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
+function deleteAudience(
+  audienceData: {
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  }) {
+  const endpoint = `display_campaigns/${audienceData.campaignId}/ad_groups/${audienceData.adGroupId}/audience_segments/${audienceData.id}`;
   return ApiService.deleteRequest(endpoint);
 }
 
 /* PUBLISHER SERVICES */
-function getPublishers({ campaignId }) {
-  const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
+function getPublishers(
+  campaignData: {
+    campaignId: string,
+  }) {
+  const endpoint = `display_campaigns/${campaignData.campaignId}/inventory_sources`;
   return ApiService.getRequest(endpoint)
-    .then(res => res.data.map((elem) => {
+    .then((res: any) => res.data.map((elem: any) => {
       const { display_network_access_id, id, ...publisher } = elem;
 
       return {
@@ -154,61 +196,104 @@ function getPublishers({ campaignId }) {
         display_network_access_id,
         id: display_network_access_id,
         modelId: id,
-        toBeRemoved: false
+        toBeRemoved: false,
       };
     }));
 }
 
-function createPublisher({ campaignId, body }) {
-  const endpoint = `display_campaigns/${campaignId}/inventory_sources/`;
-  return ApiService.postRequest(endpoint, body);
+function createPublisher(
+  campaignData: {
+    campaignId: string,
+    body: object,
+  }) {
+  const endpoint = `display_campaigns/${campaignData.campaignId}/inventory_sources/`;
+  return ApiService.postRequest(endpoint, campaignData.body);
 }
 
-function deletePublisher({ campaignId, id }) {
-  const endpoint = `display_campaigns/${campaignId}/inventory_sources/${id}`;
+function deletePublisher(
+  campaignData: {
+    campaignId: string,
+    id: string,
+  }) {
+  const endpoint = `display_campaigns/${campaignData.campaignId}/inventory_sources/${campaignData.id}`;
   return ApiService.deleteRequest(endpoint);
 }
 
 /* AD SERVICES */
-function getAds(campaignId, adGroupId) {
+function getAds(
+  campaignId: string,
+  adGroupId: string,
+) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
   return ApiService.getRequest(endpoint);
 }
 
-function updateAd(adId, campaignId, adGroupId, body) {
+function updateAd(
+  adId: string,
+  campaignId: string,
+  adGroupId: string,
+  body: object) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
   return ApiService.putRequest(endpoint, body);
 }
 
-function createAd({ campaignId, adGroupId, body }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
-  return ApiService.postRequest(endpoint, body);
+function createAd(
+  adRelatedData: {
+    campaignId: string,
+    adGroupId: string,
+    body: object,
+  }) {
+  const endpoint = `display_campaigns/${adRelatedData.campaignId}/ad_groups/${adRelatedData.adGroupId}/ads`;
+  return ApiService.postRequest(endpoint, adRelatedData.body);
 }
 
-function deleteAd({ campaignId, adGroupId, id }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${id}`;
+function deleteAd(
+  adRelatedData: {
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  }) {
+  const endpoint = `display_campaigns/${adRelatedData.campaignId}/ad_groups/${adRelatedData.adGroupId}/ads/${id}`;
   return ApiService.deleteRequest(endpoint);
 }
 
 /* GOAL SERVICES */
-function getGoal({ campaignId, options = {} }) {
-  const endpoint = `campaigns/${campaignId}/goal_selections`;
-  return ApiService.getRequest(endpoint, options);
+function getGoal(
+  goalRelatedData: {
+    campaignId: string,
+    options: object,
+  }) {
+  const endpoint = `campaigns/${goalRelatedData.campaignId}/goal_selections`;
+  return ApiService.getRequest(endpoint, goalRelatedData.options);
 }
 
-function createGoal({ campaignId, body }) {
-  const endpoint = `campaigns/${campaignId}/goal_selections`;
-  return ApiService.postRequest(endpoint, body);
+function createGoal(
+  goalRelatedData: {
+    campaignId: string,
+    body: object,
+  }) {
+  const endpoint = `campaigns/${goalRelatedData.campaignId}/goal_selections`;
+  return ApiService.postRequest(endpoint, goalRelatedData.body);
 }
 
-function updateGoal({ campaignId, id, body }) {
-  const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
-  return ApiService.putRequest(endpoint, body);
+function updateGoal(
+  goalRelatedData: {
+    campaignId: string,
+    id: string,
+    body: object,
+  }) {
+  const endpoint = `campaigns/${goalRelatedData.campaignId}/goal_selections/${goalRelatedData.id}`;
+  return ApiService.putRequest(endpoint, goalRelatedData.body);
 }
 
-function deleteGoal({ campaignId, id, body }) {
-  const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
-  return ApiService.deleteRequest(endpoint, body);
+function deleteGoal(
+  goalRelatedData: {
+    campaignId: string,
+    id: string,
+    body: object,
+  }) {
+  const endpoint = `campaigns/${goalRelatedData.campaignId}/goal_selections/${goalRelatedData.id}`;
+  return ApiService.deleteRequest(endpoint, goalRelatedData.body);
 }
 
 export default {

@@ -11,7 +11,7 @@ import messages from '../messages';
 import AdGroup from './AdGroup';
 
 import ReportService from '../../../../../services/ReportService.ts';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import {
   normalizeReportView,
