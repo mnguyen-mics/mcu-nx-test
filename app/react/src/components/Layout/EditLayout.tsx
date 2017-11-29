@@ -7,6 +7,8 @@ interface EditLayoutProps {
   editComponent: new() => React.Component;
 }
 
+const NavigatorHeaderJS = NavigatorHeader as any;
+
 const EditLayout: React.SFC<EditLayoutProps> = props => {
   const EditComponent = props.editComponent;
   return (

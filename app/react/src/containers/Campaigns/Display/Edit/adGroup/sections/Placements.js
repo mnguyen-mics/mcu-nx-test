@@ -4,26 +4,25 @@ import PropTypes from 'prop-types';
 
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
-import BidOptimizerServices from '../../../../../../services/BidOptimizerServices';
+import PlacementListServices from '../../../../../../services/Library/PlacementListsService';
 
 import messages from '../../messages';
 
 const { FormSection } = Form;
 
-class Optimization extends Component {
+class Placements extends Component {
 
   state = { loading: false }
 
-  getBidOptimizers = ({ getAll, newSelectedIds }) => () => {
+  getPlacementLists = ({ getAll }) => () => {
     const { organisationId } = this.props;
-    const selectedIds = newSelectedIds || this.getSelectedIds();
     const options = { getAll };
 
-    return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds, options });
+    return PlacementListServices.getPlacementLists(organisationId, options);
   }
 
   getSelectedIds = () => {
-    return this.props.formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
+    return this.props.formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.placement_list_id);
   }
 
   openWindow = () => {
@@ -45,12 +44,12 @@ class Optimization extends Component {
     ];
 
     const additionalProps = {
-      actionBarTitle: 'Add a Bid Optimizer',
+      actionBarTitle: 'Add a Placement List',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
-      fetchSelectorData: this.getBidOptimizers({ getAll: true }),
+      fetchSelectorData: this.getPlacementLists({ getAll: true }),
       save: this.updateData,
-      singleSelection: true,
+      singleSelection: false,
       selectedIds: this.getSelectedIds(),
     };
 
@@ -63,31 +62,41 @@ class Optimization extends Component {
     this.setState({ loading: true });
     handlers.closeNextDrawer();
 
-    this.getBidOptimizers({ newSelectedIds })()
+    this.getPlacementLists({ newSelectedIds })()
       .then(({ data }) => {
-        const newFields = data.reduce((acc, optimizer) => {
-          return (newSelectedIds.includes(optimizer.id)
-            ? [...acc, optimizer]
-            : acc
-          );
+        const newFields = data.reduce((acc, placementList) => {
+          if (newSelectedIds.includes(placementList.id)) {
+            if (!this.props.formValues.find(elem => elem.placement_list_id === placementList.id)) {
+              const formattedPlacementList = {
+                ...placementList,
+                modelId: placementList.id,
+                include: !placementList.exclude,
+                placement_list_id: placementList.id,
+              };
+              return [...acc, formattedPlacementList];
+            }
+            return [...acc, this.props.formValues.find(elem => elem.placement_list_id === placementList.id)];
+          }
+          return acc;
         }, []);
 
-        handlers.updateTableFields({ newFields, tableName: 'optimizerTable' });
+        handlers.updateTableFields({ newFields, tableName: 'placementTable' });
         this.setState({ loading: false });
       });
   }
 
   render() {
     const { formValues, formatMessage, handlers } = this.props;
-    const dataSource = formValues.reduce((tableData, bidOptimizer, index) => {
-      return (!bidOptimizer.toBeRemoved
+    const dataSource = formValues.reduce((tableData, placementList, index) => {
+      return (!placementList.toBeRemoved
       ? [
         ...tableData,
         {
-          key: bidOptimizer.modelId,
-          type: { image: 'question' },
-          info: [bidOptimizer.name, bidOptimizer.provider],
+          key: placementList.modelId,
+          type: { image: 'question', name: placementList.provider },
+          info: [placementList.name],
           toBeRemoved: index,
+          include: { bool: placementList.include, index },
         }
       ]
       : tableData
@@ -95,7 +104,7 @@ class Optimization extends Component {
     }, []);
 
     return (
-      <div id="optimization">
+      <div id="placement">
         <FormSection
           dropdownItems={[
             {
@@ -104,22 +113,22 @@ class Optimization extends Component {
               onClick: this.openWindow,
             },
           ]}
-          subtitle={messages.sectionSubtitleOptimizer}
-          title={messages.sectionTitleOptimizer}
+          title={messages.sectionTitlePlacement}
+          subtitle={messages.sectionSubtitlePlacement}
         />
 
         <FieldArray
           component={RelatedRecordTable}
           dataSource={dataSource}
           loading={this.state.loading}
-          name="optimizerTable"
-          tableName="optimizerTable"
+          name="placementTable"
+          tableName="placementTable"
           updateTableFieldStatus={handlers.updateTableFieldStatus}
         />
 
         {!dataSource.length
           ? <EmptyRecords
-            iconType="optimization"
+            iconType="placement"
             message={formatMessage(messages.contentSectionOptimizerEmptyTitle)}
           />
           : null
@@ -129,11 +138,11 @@ class Optimization extends Component {
   }
 }
 
-Optimization.defaultProps = {
+Placements.defaultProps = {
   formValues: [],
 };
 
-Optimization.propTypes = {
+Placements.propTypes = {
   formValues: PropTypes.arrayOf(PropTypes.shape()),
   formatMessage: PropTypes.func.isRequired,
 
@@ -145,4 +154,4 @@ Optimization.propTypes = {
   organisationId: PropTypes.string.isRequired
 };
 
-export default Optimization;
+export default Placements;

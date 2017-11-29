@@ -18,10 +18,10 @@ import {
   Device,
   General,
   Location,
-  Media,
+  // Media,
+  Placements,
   Optimization,
-  Placement,
-  Publisher,
+  // Publisher,
   Summary,
 } from './sections';
 import { AudienceCatalogContainer } from './sections/AudienceCatalog/index.ts';
@@ -138,8 +138,9 @@ class AdGroupForm extends Component {
     const {
       audienceTable,
       optimizerTable,
-      placements,
-      publisherTable,
+      // placements,
+      // publisherTable,
+      placementTable,
       adTable,
     } = formValues;
 
@@ -175,12 +176,12 @@ class AdGroupForm extends Component {
             <Device {...commonProps} formValues={formValues} />
             <hr />
             <Location {...commonProps} />
-            <hr />
+            {/* <hr />
             <Media {...commonProps} />
             <hr />
-            <Publisher {...commonProps} formValues={publisherTable} />
+            <Publisher {...commonProps} formValues={publisherTable} /> */}
             <hr />
-            <Placement {...commonProps} formValues={placements} />
+            <Placements {...commonProps} formValues={placementTable} />
             <hr />
             <Ads {...commonProps} formValues={adTable} />
             <hr />
