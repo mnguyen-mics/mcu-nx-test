@@ -4,14 +4,18 @@ import { FieldArray, Field, GenericFieldArray, InjectedFormProps } from 'redux-f
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import CatalogService, {
-  AudienceSegmentServiceItemPublicResource,
-  ServiceCategoryTree,
-} from '../../../../../../../services/CatalogService';
 import AudienceSegmentService from '../../../../../../../services/AudienceSegmentService';
+import CatalogService from '../../../../../../../services/CatalogService';
 import * as SessionSelectors from '../../../../../../../state/Session/selectors';
 import AudienceCatalog, { AudienceCatalogProps } from './AudienceCatalog';
-import { AudienceSegmentResource, AudienceSegmentSelectionResource } from '../../../../../../../models/Audience';
+import {
+  AudienceSegmentResource,
+  AudienceSegmentSelectionResource,
+} from '../../../../../../../models/audiencesegment';
+import {
+  ServiceCategoryTree,
+  AudienceSegmentServiceItemPublicResource,
+} from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 
 const AudienceCatatogFieldArray = FieldArray as new() => GenericFieldArray<Field, AudienceCatalogProps>;
 
@@ -78,7 +82,7 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
         const servicesP = CatalogService.getServices(organisationId, { parentCategoryId: category.node.id });
         const childrenCategoryP = Promise.all(
           category.children.filter(child =>
-            child.node.categorySubtype !== 'AUDIENCE.AGE' && child.node.categorySubtype !== 'AUDIENCE.GENDER',
+            child.node.category_subtype !== 'AUDIENCE.AGE' && child.node.category_subtype !== 'AUDIENCE.GENDER',
           ).map(fetchServices),
         );
 
