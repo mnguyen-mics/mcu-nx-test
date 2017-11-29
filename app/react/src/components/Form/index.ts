@@ -10,7 +10,6 @@ import FormSelect from './FormSelect';
 import FormSelectAddon from './FormSelectAddon';
 import FormTagSelect from './FormTagSelect';
 import FormTitle from './FormTitle';
-import SearchResultBox from './SearchResultBox';
 import FormBoolean from './FormBoolean';
 import SwitchInput from './SwitchInput';
 import withNormalizer from './withNormalizer';
@@ -33,7 +32,6 @@ export default {
   FormSelectAddon,
   FormTagSelect,
   FormTitle,
-  SearchResultBox,
   FormUpload,
   FormTextArea,
   formErrorMessage,
@@ -56,7 +54,6 @@ export {
   FormSelectAddon,
   FormTagSelect,
   FormTitle,
-  SearchResultBox,
   SwitchInput,
   FormUpload,
   FormTextArea,

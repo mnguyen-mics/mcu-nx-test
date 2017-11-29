@@ -17,7 +17,7 @@ import {
   Audience,
   Device,
   General,
-  LocationTargeting,
+  LocationSection,
   Media,
   Optimization,
   Placement,
@@ -146,7 +146,6 @@ class AdGroupForm extends Component {
       optimizerTable,
       placements,
       publisherTable,
-      locationTargetingTable,
       adTable,
     } = formValues;
 
@@ -179,7 +178,7 @@ class AdGroupForm extends Component {
                 </div>
             }
             <hr />
-            <LocationTargeting {...commonProps} formValues={locationTargetingTable} />
+            <LocationSection RxF={this.props.RxF} />
             <hr />
             <Device {...commonProps} formValues={formValues} />
             <hr />

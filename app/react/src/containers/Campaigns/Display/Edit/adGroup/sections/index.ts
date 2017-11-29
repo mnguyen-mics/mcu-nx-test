@@ -1,6 +1,6 @@
 import Ads from './Ads/Ads';
 import Audience from './Audience';
-import LocationTargeting from './LocationTargeting';
+import LocationSection from './Location/LocationSection';
 import Device from './Device/Device';
 import General from './General';
 import Media from './Media';
@@ -13,7 +13,7 @@ export {
   Ads,
   Audience,
   Device,
-  LocationTargeting,
+  LocationSection,
   General,
   Media,
   Placement,

@@ -130,6 +130,7 @@ class AdGroupContent extends Component {
         mobile: mobilePlacements, // TODO: remove temp data
         web: webPlacements, // TODO: remove temp data
       },
+      locationTargetingTable: initialValues.locationTargetingTable || [],
       // adGroupDeviceType: ['1', '2']
     };
 

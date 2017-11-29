@@ -43,13 +43,27 @@ function getPublishers({ campaignId }) {
 }
 
 function getLocations({ campaignId, adGroupId }) {
-  return DisplayCampaignService.getLocations({ campaignId, adGroupId })
-    .then(({ data }) => {
+  return DisplayCampaignService.getLocations({ campaignId, adGroupId }).then(response => {
+    const locationSelections = response.data;
+    const locationFields = locationSelections.map(location => {
       return {
-        locationTargetingTable: data
+        id: location.id,
+        resource: location,
+        deleted: false,
       };
     });
+    return locationFields;
+  }).then(locationTargetingTable => ({ locationTargetingTable }));
 }
+
+// function getLocations({ campaignId, adGroupId }) {
+//   return DisplayCampaignService.getLocations({ campaignId, adGroupId })
+//     .then(({ data }) => {
+//       return {
+//         locationTargetingTable: data
+//       };
+//     });
+// }
 
 function getSegments({ adGroupId, campaignId, organisationId }) {
   const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
@@ -237,15 +251,11 @@ const saveLocations = (campaignId, adGroupId, formValue, initialFormValue) => {
   const options = {
     campaignId,
     adGroupId,
-    getBody: (row) => ({
-      country: row.name,
-      postal_code: row.postal_code,
-      admin2: row.admin2,
-      exclude: row.exclude,
-    }),
+    getBody: () => {},
     requests: {
       create: DisplayCampaignService.createLocation,
       delete: DisplayCampaignService.deleteLocation,
+      update: Promise.resolve(),
     },
     tableName: 'locationTargetingTable',
   };
