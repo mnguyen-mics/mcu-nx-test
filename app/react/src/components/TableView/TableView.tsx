@@ -53,7 +53,7 @@ export interface TableViewProps {
   pagination?: PaginationProps | boolean;
   onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
   onRowClick?: (id: string) => any;
-  visibilitySelectedColumns: VisibilitySelectedColumn[];
+  visibilitySelectedColumns?: VisibilitySelectedColumn[];
 }
 
 interface TableViewState {
@@ -102,7 +102,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       visibilitySelectedColumns,
     } = this.props;
 
-    const visibilitySelectedColumnsValues: string[] = visibilitySelectedColumns.map((column) => {
+    const visibilitySelectedColumnsValues: string[] = (visibilitySelectedColumns || []).map((column) => {
       return column.value;
     });
 

@@ -38,6 +38,7 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
   }
 
   const bodyIsFormData = (body instanceof FormData); /* global FormData */
+  const bodyIsBlob = (body instanceof Blob); /* global Blob */
 
   if (headers && !isEmpty(headers)) {
     config.headers = Object.assign({}, config.headers, headers);
@@ -53,8 +54,8 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
   }
   config.headers['X-Requested-By'] = 'mediarithmics-navigator';
 
-  if (bodyIsFormData) {
-    config.body = body; // body passed as a formdata object
+  if (bodyIsFormData || bodyIsBlob) {
+    config.body = body; // body passed as a formdata object or blob
   } else if (body) {
     config.body = JSON.stringify(body);
   }
@@ -75,6 +76,14 @@ const request = (method, endpoint, params, headers, body, authenticated = true, 
         ? Promise.resolve()
         : Promise.reject()
       );
+    } else if (contentType && contentType.indexOf('application/octet-stream') !== -1) {
+      return response.blob().then(blob => {
+        if (!response.ok) {
+          Promise.reject(blob);
+        }
+
+        return blob;
+      });
     }
 
     // Considered as a json response by default

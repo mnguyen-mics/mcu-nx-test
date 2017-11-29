@@ -8,6 +8,7 @@ import TableSelector from './TableSelector';
 import MultiSelect from './MultiSelect';
 import SearchAndMultiSelect from './SearchAndMultiSelect';
 import SearchAndTreeSelect from './SearchAndTreeSelect';
+import ItemList from './ItemList';
 
 export {
   ButtonStyleless,
@@ -20,4 +21,5 @@ export {
   MultiSelect,
   SearchAndMultiSelect,
   SearchAndTreeSelect,
+  ItemList,
 };

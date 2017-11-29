@@ -256,7 +256,7 @@ class DisplayCreativeEditionEditor extends Component {
                   </Row>
                   <Row>
                     {this.props.rendererProperties && this.props.rendererProperties.length && this.props.rendererProperties.map(fieldDef => {
-                      return <PluginFieldGenerator key={fieldDef.technical_name} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isDisabled} rendererVersionId={creative.renderer_version_id} organisationId={organisationId} />;
+                      return <PluginFieldGenerator key={fieldDef.technical_name} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isDisabled} pluginVersionId={creative.renderer_version_id} organisationId={organisationId} />;
                     })}
                   </Row>
                 </div>

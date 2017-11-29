@@ -11,6 +11,12 @@ const getPlacementLists = (organisationId, options = {}) => {
   return ApiService.getRequest(endpoint, params);
 };
 
+const deletePlacementList = (id, options = {}) => {
+  const endpoint = `placement_lists/${id}`;
+  return ApiService.deleteRequest(endpoint, options);
+};
+
 export default {
   getPlacementLists,
+  deletePlacementList,
 };

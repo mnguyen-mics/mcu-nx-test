@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { Row, Col, Spin } from 'antd';
 
-const LoadingChart: React.SFC = () => {
+interface LoadingChartProps {
+  className?: string;
+}
+
+const LoadingChart: React.SFC<LoadingChartProps> = ({ className }) => {
   return (
-    <Row className="mcs-card-no-data">
+    <Row className={`mcs-card-no-data ${className ? className : ''}`}>
       <Col span={24}>
         <Spin size="large" />
       </Col>

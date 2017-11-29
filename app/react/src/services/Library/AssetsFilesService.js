@@ -11,6 +11,17 @@ const getAssetsFiles = (organisationId, options = {}) => {
   return ApiService.getRequest(endpoint, params);
 };
 
+const deleteAssetsFile = (id, options = {}) => {
+  const endpoint = `asset_files/${id}`;
+
+  const params = {
+    ...options,
+  };
+
+  return ApiService.deleteRequest(endpoint, params);
+};
+
 export default {
   getAssetsFiles,
+  deleteAssetsFile,
 };

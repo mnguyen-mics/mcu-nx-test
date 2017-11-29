@@ -101,21 +101,33 @@ const libraryMenu = {
     },
     {
       key: 'library.bid_optimizers',
-      path: '/library/bidOptimizers',
+      path: '/library/bid_optimizers',
       translationId: 'BID_OPTIMIZER',
-      legacyPath: true,
+      legacyPath: false,
     },
     {
       key: 'library.attribution_models',
-      path: '/library/attributionmodels',
+      path: '/library/attribution_models',
       translationId: 'ATTRIBUTION_MODEL',
-      legacyPath: true,
+      legacyPath: false,
     },
     {
       key: 'library.visit_analyzers',
-      path: '/library/visitanalysers',
+      path: '/library/visit_analyzers',
       translationId: 'VISIT_ANALYZER',
-      legacyPath: true,
+      legacyPath: false,
+    },
+    {
+      key: 'library.email_routers',
+      path: '/library/email_routers',
+      translationId: 'EMAIL_ROUTERS',
+      legacyPath: false,
+    },
+    {
+      key: 'library.recommenders',
+      path: '/library/recommenders',
+      translationId: 'RECOMMENDERS',
+      legacyPath: false,
     },
     {
       key: 'library.catalog',
@@ -123,6 +135,7 @@ const libraryMenu = {
       translationId: 'CATALOG',
       legacyPath: true,
     },
+    // TO REMOVE WHEN AD RENDERER ARE CREATED
     {
       key: 'library.ad_layouts',
       path: '/library/adlayouts',
@@ -144,7 +157,7 @@ const libraryMenu = {
       key: 'library.exports',
       path: '/library/exports',
       translationId: 'EXPORTS',
-      legacyPath: true,
+      legacyPath: false,
     },
   ],
 };

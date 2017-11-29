@@ -1,7 +1,7 @@
-import KeywordActionBar from './KeywordActionBar';
-import KeywordTable from './KeywordTable';
+import KeywordListActionBar from './KeywordListActionBar.tsx';
+import KeywordListContent from './KeywordListContent.tsx';
 
-export {
-  KeywordActionBar,
-  KeywordTable,
+export default {
+  actionBarComponent: KeywordListActionBar,
+  contentComponent: KeywordListContent,
 };

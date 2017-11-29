@@ -1,7 +1,7 @@
-import PlacementActionBar from './PlacementActionBar';
-import PlacementTable from './PlacementTable';
+import PlacementListActionBar from './PlacementListActionBar.tsx';
+import PlacementListContent from './PlacementListContent.tsx';
 
-export {
-  PlacementActionBar,
-  PlacementTable,
+export default {
+  actionBarComponent: PlacementListActionBar,
+  contentComponent: PlacementListContent,
 };

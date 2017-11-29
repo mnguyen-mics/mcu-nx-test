@@ -63,7 +63,7 @@ class DisplayCreativeCreationEditor extends Component {
     } = this.props;
 
     const pluginFieldGenerated = this.props.rendererProperties.map(fieldDef => {
-      return <PluginFieldGenerator key={`${fieldDef.technical_name}`} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isLoading} rendererVersionId={versionId} organisationId={organisationId} />;
+      return <PluginFieldGenerator key={`${fieldDef.technical_name}`} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isLoading} pluginVersionId={versionId} organisationId={organisationId} />;
     });
     return (
       <Layout>

@@ -32,12 +32,12 @@ class FormStyleSheet extends Component {
   componentDidMount() {
     const {
       options: {
-        rendererVersionId,
+        pluginVersionId,
         organisationId,
       }
     } = this.props;
 
-    this.getStylesheets(organisationId, rendererVersionId);
+    this.getStylesheets(organisationId, pluginVersionId);
   }
 
   getStylesheets = (organisationId) => {
@@ -237,7 +237,7 @@ FormStyleSheet.propTypes = {
   }),
   options: PropTypes.shape({
     disabled: PropTypes.bool.isRequired,
-    rendererVersionId: PropTypes.string.isRequired,
+    pluginVersionId: PropTypes.string.isRequired,
     organisationId: PropTypes.string.isRequired,
   }).isRequired,
   helpToolTipProps: PropTypes.shape({

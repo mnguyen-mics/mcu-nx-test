@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
 
 import { Form } from '../../components/index.ts';
-import { FormAdLayout, FormStyleSheet } from './ConnectedFields';
+import { FormAdLayout, FormStyleSheet, FormDataFile } from './ConnectedFields';
 
 const { FormInput, FormTextArea, FormBoolean, FormUpload, withValidators } = Form;
 
@@ -52,6 +52,7 @@ class PluginFieldGenerator extends Component {
     const {
       fieldValidators: {
         isValidInteger,
+        isValidDouble,
       }
     } = this.props;
 
@@ -65,15 +66,22 @@ class PluginFieldGenerator extends Component {
       case 'PIXEL_TAG':
         return this.renderFieldBasedOnConfig(FormTextArea, `${fieldDefinition.technical_name}.value.value`, fieldDefinition, [], { rows: 4 });
       case 'STYLE_SHEET':
-        return this.renderFieldBasedOnConfig(FormStyleSheet, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], {}, { disabled: this.props.disabled, rendererVersionId: this.props.rendererVersionId, organisationId: organisationId });
+        return this.renderFieldBasedOnConfig(FormStyleSheet, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], {}, { disabled: this.props.disabled, pluginVersionId: this.props.pluginVersionId, organisationId: organisationId });
       case 'AD_LAYOUT':
-        return this.renderFieldBasedOnConfig(FormAdLayout, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], {}, { disabled: this.props.disabled, rendererVersionId: this.props.rendererVersionId, organisationId: organisationId });
+        return this.renderFieldBasedOnConfig(FormAdLayout, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], {}, { disabled: this.props.disabled, pluginVersionId: this.props.pluginVersionId, organisationId: organisationId });
       case 'BOOLEAN':
         return this.renderFieldBasedOnConfig(FormBoolean, `${fieldDefinition.technical_name}.value.value`, fieldDefinition);
+      // CHANGE TO IS VALID SCALA LONG
       case 'LONG':
-        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.url`, fieldDefinition, [isValidInteger]);
+        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.value`, fieldDefinition, [isValidDouble]);
+      // CHANGE TO IS VALID SCALA INT
+      case 'INT':
+        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.value`, fieldDefinition, [isValidInteger]);
+      // CHANGE TO IS VALID SCALA DOUBLE
+      case 'DOUBLE':
+        return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.value`, fieldDefinition, [isValidDouble]);
       case 'DATA_FILE':
-        return <div>DATA_FILE</div>;
+        return this.renderFieldBasedOnConfig(FormDataFile, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', accept: '.html,.json,.txt' });
       case 'MODEL_ID':
         return <div>MODEL_ID</div>;
       case 'DATAMART_ID':
@@ -81,7 +89,7 @@ class PluginFieldGenerator extends Component {
       case 'RECOMMENDER_ID':
         return <div>RECOMMENDER_ID</div>;
       default:
-        return <div>default</div>;
+        return <div>Please contact your support</div>;
     }
   }
 
@@ -109,7 +117,7 @@ PluginFieldGenerator.propTypes = {
   fieldValidators: PropTypes.shape().isRequired,
   definition: PropTypes.shape().isRequired,
   disabled: PropTypes.bool.isRequired,
-  rendererVersionId: PropTypes.string.isRequired,
+  pluginVersionId: PropTypes.string.isRequired,
   organisationId: PropTypes.string.isRequired,
 };
 

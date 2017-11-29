@@ -31,10 +31,10 @@ function EditLayoutActionbar({
 
   return (
     <Actionbar path={breadcrumbPaths} {...rest}>
-      <Button {...submitButtonProps} className="mcs-primary">
+      {message ? <Button {...submitButtonProps} className="mcs-primary">
         <McsIcons type="plus" />
         <FormattedMessage {...message} />
-      </Button>
+      </Button> : null}
 
       <McsIcons
         type="close"
@@ -50,6 +50,7 @@ EditLayoutActionbar.defaultProps = {
   onClose: () => {},
   pristine: null,
   submitting: false,
+  message: null
 };
 
 EditLayoutActionbar.propTypes = {
@@ -64,7 +65,7 @@ EditLayoutActionbar.propTypes = {
   message: PropTypes.shape({
     id: PropTypes.string.isRequired,
     defaultMessage: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
 
   onClose: PropTypes.func,
   submitting: PropTypes.bool,

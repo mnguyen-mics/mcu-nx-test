@@ -6,7 +6,9 @@ define(['./module'], function (module) {
     '$scope', 'Restangular', 'core/common/auth/Session', '$location', '$uibModal', '$filter',
     function ($scope, Restangular, Session, $location, $uibModal, $filter) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
-      
+
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/exports');
+
       $scope.currentPage = 1;
       $scope.itemsPerPage = 10;
 
