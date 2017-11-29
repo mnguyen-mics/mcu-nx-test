@@ -22,7 +22,7 @@ import {
   AdGroups
 } from './Sections';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -31,6 +31,7 @@ import AttributionModelsService from '../../../../../services/AttributionModelsS
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import * as AdGroupServiceWrapper from '../AdGroupServiceWrapper';
+import messages from '../messages';
 
 
 const { Content } = Layout;
@@ -39,6 +40,18 @@ const FORM_NAME = 'campaignForm';
 class CampaignForm extends Component {
 
   state = { loading: false }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) {
+      const {
+        intl: {
+          formatMessage
+        }
+      } = this.props;
+      formErrorMessage(formatMessage(messages.errorFormMessage));
+    }
+  }
+
 
   updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => {
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
@@ -112,14 +125,25 @@ class CampaignForm extends Component {
       formValues
     } = this.props;
 
+
     const body = {
       editor_version_id: '11',
       name: formValues.name,
-      per_day_impression_capping: formValues.per_day_impression_capping,
       time_zone: 'Europe/Paris',
-      total_impression_capping: formValues.total_impression_capping,
+      model_version: formValues.model_version,
       type: 'DISPLAY'
     };
+
+    const addFieldsBasedOnCondition = (id) => {
+      if (formValues[id]) {
+        body[id] = formValues[id];
+      }
+    };
+
+    addFieldsBasedOnCondition('total_impression_capping');
+    addFieldsBasedOnCondition('total_budget');
+    addFieldsBasedOnCondition('max_budget_per_period');
+    addFieldsBasedOnCondition('total_impression_capping');
 
     const request = (!editionMode
       ? DisplayCampaignService.createCampaign(organisationId, body)
@@ -128,6 +152,7 @@ class CampaignForm extends Component {
 
     return request.then(result => result.data.id);
   }
+
 
   createAdGroup = (campaignId, organisationId, value, options) => {
     const {
@@ -414,6 +439,7 @@ CampaignForm.propTypes = {
   organisationId: PropTypes.string.isRequired,
   notifyError: PropTypes.func.isRequired,
   hasFeature: PropTypes.func.isRequired,
+  submitFailed: PropTypes.bool.isRequired,
 };
 
 

@@ -10,10 +10,17 @@ function CreateCampaignPage({
   closeNextDrawer,
   openNextDrawer }) {
 
+  const initialValues = {
+    model_version: 'V2017_09',
+    max_budget_period: 'DAY',
+    adGroupsTable: []
+  };
+
   return (
     <CampaignContent
       closeNextDrawer={closeNextDrawer}
       openNextDrawer={openNextDrawer}
+      initialValues={initialValues}
     />
   );
 

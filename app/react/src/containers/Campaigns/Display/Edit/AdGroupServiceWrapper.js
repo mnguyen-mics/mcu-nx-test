@@ -264,11 +264,11 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
 
   const body = {
     bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
-    end_date: adGroupData.adGroupEndDate.valueOf(),
+    end_date: adGroupData.adGroupEndDate && adGroupData.adGroupEndDate.valueOf(),
     max_budget_per_period: adGroupData.adGroupMaxBudgetPerPeriod,
     max_budget_period: adGroupData.adGroupMaxBudgetPeriod,
     name: adGroupData.adGroupName,
-    start_date: adGroupData.adGroupStartDate.valueOf(),
+    start_date: adGroupData.adGroupStartDate && adGroupData.adGroupStartDate.valueOf(),
     technical_name: adGroupData.adGroupTechnicalName,
     total_budget: adGroupData.adGroupTotalBudget,
     per_day_impression_capping: adGroupData.adGroupPerDayImpressionCapping,

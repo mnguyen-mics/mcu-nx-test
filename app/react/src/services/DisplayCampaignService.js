@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { camelizeKeys, decamelizeKeys } from 'humps';
 import ApiService from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 
@@ -70,7 +69,7 @@ function deleteAdGroup({ campaignId, id, body }) {
 /* AUDIENCE SERVICES */
 function getAudienceSegments(campaignId, adGroupId) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.getRequest(endpoint).then(res => res.data.map(d => camelizeKeys(d)));
+  return ApiService.getRequest(endpoint).then(res => res.data);
 }
 
 // TODO delete, use getAudienceSegments instead
@@ -97,7 +96,7 @@ function createAudience({ campaignId, adGroupId, body }) {
 
 function createAudienceSegment({ campaignId, adGroupId, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-  return ApiService.postRequest(endpoint, decamelizeKeys(body)).then(res => camelizeKeys(res.data));
+  return ApiService.postRequest(endpoint, body).then(res => res.data);
 }
 
 function updateAudience({ campaignId, adGroupId, id, body }) {
@@ -107,7 +106,7 @@ function updateAudience({ campaignId, adGroupId, id, body }) {
 
 function updateAudienceSegment({ campaignId, adGroupId, id, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
-  return ApiService.putRequest(endpoint, decamelizeKeys(body)).then(res => camelizeKeys(res.data));
+  return ApiService.putRequest(endpoint, body).then(res => res.data);
 }
 
 function deleteAudience({ campaignId, adGroupId, id }) {
