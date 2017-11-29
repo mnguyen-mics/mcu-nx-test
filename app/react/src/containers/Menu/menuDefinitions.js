@@ -20,7 +20,7 @@ const audienceMenu = {
       translationId: 'AUDIENCE_PARTITIONS',
     },
     {
-      key: 'audience.queries',
+      key: 'audience.query_tool',
       path: '/datamart/queries',
       translationId: 'QUERY_TOOL',
       legacyPath: true,
