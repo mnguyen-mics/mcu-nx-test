@@ -27,6 +27,7 @@ class LocationSection extends React.Component<Props> {
           name="locationTargetingTable"
           component={LocationTargeting}
           RxF={this.props.RxF}
+          rerenderOnEveryChange={true}
         />
 
       </div>

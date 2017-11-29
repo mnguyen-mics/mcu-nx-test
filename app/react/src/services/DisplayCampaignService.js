@@ -94,11 +94,6 @@ function createAudience({ campaignId, adGroupId, body }) {
   return ApiService.postRequest(endpoint, body).then(res => res.data);
 }
 
-function createLocation({ campaignId, adGroupId, body }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
-  return ApiService.postRequest(endpoint, body).then(res => res.data);
-}
-
 function createAudienceSegment({ campaignId, adGroupId, body }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
   return ApiService.postRequest(endpoint, body).then(res => res.data);
@@ -119,11 +114,6 @@ function deleteAudience({ campaignId, adGroupId, id }) {
   return ApiService.deleteRequest(endpoint);
 }
 
-function deleteLocation({ campaignId, adGroupId, id }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
-  return ApiService.deleteRequest(endpoint);
-}
-
 /* PUBLISHER SERVICES */
 function getPublishers({ campaignId }) {
   const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
@@ -139,11 +129,6 @@ function getPublishers({ campaignId }) {
         toBeRemoved: false
       };
     }));
-}
-
-function getLocations({ campaignId, adGroupId }) {
-  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
-  return ApiService.getRequest(endpoint);
 }
 
 function createPublisher({ campaignId, body }) {
@@ -198,6 +183,29 @@ function deleteGoal({ campaignId, id, body }) {
   return ApiService.deleteRequest(endpoint, body);
 }
 
+/* LOCATION SERVICES */
+
+function createLocation({ campaignId, adGroupId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+  return ApiService.postRequest(endpoint, body).then(res => res.data);
+}
+
+function deleteLocation({ campaignId, adGroupId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+  return ApiService.deleteRequest(endpoint);
+}
+
+function getLocations({ campaignId, adGroupId }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+  return ApiService.getRequest(endpoint);
+}
+
+function updateLocation({ campaignId, adGroupId, body, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+  return ApiService.putRequest(endpoint, body);
+}
+
+
 export default {
   createAd,
   createAdGroup,
@@ -228,6 +236,7 @@ export default {
   updateAudienceSegment,
   updateCampaign,
   updateGoal,
+  updateLocation,
   deleteAdGroup,
   deleteCampaign,
 };

@@ -56,15 +56,6 @@ function getLocations({ campaignId, adGroupId }) {
   }).then(locationTargetingTable => ({ locationTargetingTable }));
 }
 
-// function getLocations({ campaignId, adGroupId }) {
-//   return DisplayCampaignService.getLocations({ campaignId, adGroupId })
-//     .then(({ data }) => {
-//       return {
-//         locationTargetingTable: data
-//       };
-//     });
-// }
-
 function getSegments({ adGroupId, campaignId, organisationId }) {
   const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
   const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
@@ -255,7 +246,7 @@ const saveLocations = (campaignId, adGroupId, formValue, initialFormValue) => {
     requests: {
       create: DisplayCampaignService.createLocation,
       delete: DisplayCampaignService.deleteLocation,
-      update: Promise.resolve(),
+      update: DisplayCampaignService.updateLocation,
     },
     tableName: 'locationTargetingTable',
   };

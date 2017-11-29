@@ -61,11 +61,13 @@ class LocationSelectionRenderer extends React.Component<Props, State> {
           justify="space-between"
           className={locationFields.length !== 0 ? 'search-result-box' : 'hide-section'}
         >
-          {locationFields.map(locationField => {
+          {locationFields.filter(field => !field.deleted).map(locationField => {
 
             const handleOnClick = () => onClickOnRemove(locationField);
             const iconType: McsIconType = locationField.resource.exclude ? 'close-big' : 'check';
-            const geonameName = geonameByGeonameId[locationField.resource.geoname_id].name;
+            const geonameName = geonameByGeonameId[locationField.resource.geoname_id] ?
+              geonameByGeonameId[locationField.resource.geoname_id].name :
+              '';
 
             return (
               <div className={'search-result-box-item'} key={locationField.id}>
