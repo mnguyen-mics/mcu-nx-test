@@ -102,7 +102,7 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
     onChange({
       rangeType: 'absolute',
       from: dates[0],
-      to: dates[1],
+      to: dates[1].add(1, 'day'),
       lookbackWindow: moment.duration({from: dates[0], to: dates[1]}),
     });
   }
