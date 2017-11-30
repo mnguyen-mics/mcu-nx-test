@@ -37,6 +37,20 @@ function getAds({ adGroupId, campaignId, organisationId }) {
     });
 }
 
+function getPlacements({ campaignId, adGroupId }) {
+  return DisplayCampaignService.getPlacementLists({ campaignId, adGroupId })
+    .then(res => {
+      return res.map(item => {
+        return {
+          ...item,
+          include: !item.exclude,
+          modelId: item.id,
+        };
+      });
+    })
+    .then(placementTable => ({ placementTable }));
+}
+
 function getPublishers({ campaignId }) {
   return DisplayCampaignService.getPublishers({ campaignId })
     .then(publisherTable => ({ publisherTable }));
@@ -79,6 +93,7 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
   return Promise.all([
     getGeneralInfo({ adGroupId, campaignId }),
     getPublishers({ campaignId }),
+    getPlacements({ campaignId, adGroupId }),
     getSegments({ adGroupId, campaignId, organisationId }),
     getAds({ campaignId, adGroupId, organisationId }),
     getAdGroupAudienceSegments(campaignId, adGroupId),
@@ -219,8 +234,19 @@ const saveDevices = (/* campaignId, adGroupId, formValue, initialFormValue */) =
   return Promise.resolve();
 };
 
-const savePlacements = (/* campaignId, adGroupId, formValue, initialFormValue */) => {
-  return Promise.resolve();
+const savePlacements = (campaignId, adGroupId, formValue, initialFormValue) => {
+  const options = {
+    campaignId,
+    adGroupId,
+    getBody: (row) => ({ placement_list_id: row.id, exclude: !row.include }),
+    requests: {
+      create: DisplayCampaignService.createPlacementList,
+      update: DisplayCampaignService.updatePlacementList,
+      delete: DisplayCampaignService.deletePlacementList,
+    },
+  };
+
+  return saveTableFields(options, formValue, initialFormValue);
 };
 
 const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
@@ -247,14 +273,14 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
   const audienceSegments = adGroupData && adGroupData.audienceSegmentTable ? adGroupData.audienceSegmentTable : [];
   const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
   const deviceTable = [];
-  const placementTable = [];
+  const placementTable = adGroupData && adGroupData.placementTable ? adGroupData.placementTable : [];
 
   const initialPublisherTable = adGroupInitialData && adGroupInitialData.publisherTable ? adGroupInitialData.publisherTable : [];
   const initialAudienceTable = adGroupInitialData && adGroupInitialData.audienceTable ? adGroupInitialData.audienceTable : [];
   const initialAdTable = adGroupInitialData && adGroupInitialData.adTable ? adGroupInitialData.adTable : [];
   const initialAudienceSegments = adGroupInitialData && adGroupInitialData.audienceSegmentTable ? adGroupInitialData.audienceSegmentTable : [];
   const initialDeviceTable = [];
-  const initialPlacementTable = [];
+  const initialPlacementTable = adGroupInitialData && adGroupInitialData.placementTable ? adGroupInitialData.placementTable : [];
 
   let bidOptimizer = null;
   if (optimizerTable && optimizerTable.length) {
