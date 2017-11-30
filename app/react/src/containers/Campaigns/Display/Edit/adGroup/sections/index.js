@@ -5,7 +5,7 @@ import General from './General';
 import Location from './Location';
 import Media from './Media';
 import Optimization from './Optimization';
-import Placement from './Placement/Placement';
+import Placements from './Placements';
 import Publisher from './Publisher';
 import Summary from './Summary';
 
@@ -16,7 +16,7 @@ export {
   General,
   Location,
   Media,
-  Placement,
+  Placements,
   Publisher,
   Optimization,
   Summary,

@@ -183,6 +183,28 @@ function deleteGoal({ campaignId, id, body }) {
   return ApiService.deleteRequest(endpoint, body);
 }
 
+/* PLACEMENT LIST SERVICES */
+function getPlacementLists({ campaignId, adGroupId, options = {} }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
+  return ApiService.getRequest(endpoint, options).then(res => res.data);
+}
+
+function createPlacementList({ campaignId, adGroupId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
+  return ApiService.postRequest(endpoint, body).then(res => res.data);
+}
+
+function updatePlacementList({ campaignId, adGroupId, id, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
+  return ApiService.putRequest(endpoint, body).then(res => res.data);
+}
+
+function deletePlacementList({ campaignId, adGroupId, id, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
+  return ApiService.deleteRequest(endpoint, body);
+}
+
+
 export default {
   createAd,
   createAdGroup,
@@ -212,4 +234,8 @@ export default {
   updateGoal,
   deleteAdGroup,
   deleteCampaign,
+  getPlacementLists,
+  createPlacementList,
+  updatePlacementList,
+  deletePlacementList,
 };
