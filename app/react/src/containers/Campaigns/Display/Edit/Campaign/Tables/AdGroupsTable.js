@@ -40,10 +40,10 @@ function AdGroupsTable(props) {
       className: 'text-right',
       render: (index, record) => (
         <span>
-          <ButtonStyleless onClick={(e) => { e.preventDefault(); openEditionMode(record); }}>
+          <ButtonStyleless onClick={() => { openEditionMode(record); }}>
             <McsIcons type="pen" additionalClass="big" />
           </ButtonStyleless>
-          <ButtonStyleless onClick={(e) => { e.preventDefault(); updateTableFieldStatus({ index, tableName }); }}>
+          <ButtonStyleless onClick={() => { updateTableFieldStatus({ index, tableName }); }}>
             <McsIcons type="delete" additionalClass="big" />
           </ButtonStyleless>
         </span>

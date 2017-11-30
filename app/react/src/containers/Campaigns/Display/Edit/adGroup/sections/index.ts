@@ -1,8 +1,8 @@
 import Ads from './Ads/Ads';
 import Audience from './Audience';
+import LocationSection from './Location/LocationSection';
 import Device from './Device/Device';
 import General from './General';
-import Location from './Location';
 import Media from './Media';
 import Optimization from './Optimization';
 import Placements from './Placements';
@@ -13,8 +13,8 @@ export {
   Ads,
   Audience,
   Device,
+  LocationSection,
   General,
-  Location,
   Media,
   Placements,
   Publisher,

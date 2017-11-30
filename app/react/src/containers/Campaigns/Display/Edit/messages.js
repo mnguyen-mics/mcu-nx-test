@@ -96,13 +96,13 @@ export default defineMessages({
     id: 'adGroupEditor.section.title.audience',
     defaultMessage: 'Audience',
   },
+  sectionTitleLocationTargeting: {
+    id: 'adGroupEditor.section.title3bis',
+    defaultMessage: 'Location Targeting',
+  },
   sectionTitleDevice: {
     id: 'adGroupEditor.section.title.device',
     defaultMessage: 'Device Targeting',
-  },
-  sectionTitleLocation: {
-    id: 'adGroupEditor.section.title.location',
-    defaultMessage: 'Location Targeting',
   },
   sectionTitlePublisher: {
     id: 'adGroupEditor.section.title.publisher',
@@ -148,7 +148,7 @@ export default defineMessages({
   },
   sectionSubtitleLocation: {
     id: 'adGroupEditor.section.subtitle.location',
-    defaultMessage: 'Be more specific on which location you want to advertise',
+    defaultMessage: 'Be more specific on which location you want to advertise (country, region or department)',
   },
   sectionSubtitlePublisher: {
     id: 'adGroupEditor.section.subtitle.publisher',
@@ -398,12 +398,29 @@ export default defineMessages({
 
   contentSectionLocationPart2Row1Label: {
     id: 'adGroupEditor.section.location.part2.row1.label',
-    defaultMessage: 'Location',
+    defaultMessage: 'Location : ',
   },
   contentSectionLocationPart2Row1Tooltip: {
     id: 'adGroupEditor.section.location.part2.row1.tooltip',
     defaultMessage: 'Lorem ipsum',
   },
+  contentSectionLocationInputPlaceholder: {
+    id: 'adGroupEditor.section.location.inputPlaceholder',
+    defaultMessage: 'Enter a location (country, region or department)',
+  },
+  contentSectionLocationTooltipMessage: {
+    id: 'adGroupEditor.section.location.tooltipMessage',
+    defaultMessage: 'Location is based on the IP address we receive during a bid request. Being too restrictive can alter your reach.',
+  },
+  contentSectionLocationOption1: {
+    id: 'adGroupEditor.section.location.option1',
+    defaultMessage: 'Include',
+  },
+  contentSectionLocationOption2: {
+    id: 'adGroupEditor.section.location.option2',
+    defaultMessage: 'Exclude',
+  },
+
 
   /* ----------------------------- SECTION MEDIA ---------------------------- */
 
@@ -536,8 +553,16 @@ export default defineMessages({
     id: 'adGroupEditor.section.summary.part5',
     defaultMessage: 'Your ad will target the following areas:',
   },
-  contentSectionSummaryPart6: {
-    id: 'adGroupEditor.section.summary.part6',
+  contentSectionIncludedLocations: {
+    id: 'adGroupEditor.PartIncludedLocations',
+    defaultMessage: 'Your ad will target the following locations:',
+  },
+  contentSectionExcludedLocations: {
+    id: 'adGroupEditor.PartExcludedLocations',
+    defaultMessage: 'And exclude the following ones:',
+  },
+  contentSection8Part6: {
+    id: 'adGroupEditor.section8.part6',
     defaultMessage: 'Your ad will be published on the following networks:',
   },
   contentSectionSummaryPart7: {

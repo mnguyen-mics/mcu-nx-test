@@ -183,6 +183,28 @@ function deleteGoal({ campaignId, id, body }) {
   return ApiService.deleteRequest(endpoint, body);
 }
 
+/* LOCATION SERVICES */
+
+function createLocation({ campaignId, adGroupId, body }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+  return ApiService.postRequest(endpoint, body).then(res => res.data);
+}
+
+function deleteLocation({ campaignId, adGroupId, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+  return ApiService.deleteRequest(endpoint);
+}
+
+function getLocations({ campaignId, adGroupId }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+  return ApiService.getRequest(endpoint);
+}
+
+function updateLocation({ campaignId, adGroupId, body, id }) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+  return ApiService.putRequest(endpoint, body);
+}
+
 /* PLACEMENT LIST SERVICES */
 function getPlacementLists({ campaignId, adGroupId, options = {} }) {
   const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
@@ -212,16 +234,19 @@ export default {
   createAudienceSegment,
   createCampaign,
   createGoal,
+  createLocation,
   createPublisher,
   deleteAd,
   deleteAudience,
   deleteGoal,
+  deleteLocation,
   deletePublisher,
   getAdGroup,
   getAdGroups,
   getAds,
   getCampaignDisplay,
   getCampaignName,
+  getLocations,
   getGoal,
   getPublishers,
   getAudiences,
@@ -232,6 +257,7 @@ export default {
   updateAudienceSegment,
   updateCampaign,
   updateGoal,
+  updateLocation,
   deleteAdGroup,
   deleteCampaign,
   getPlacementLists,
