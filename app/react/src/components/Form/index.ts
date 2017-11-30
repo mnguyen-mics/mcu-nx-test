@@ -21,7 +21,6 @@ import formErrorMessage from './formErrorMessage';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
-
 export default {
   FormCheckbox,
   FormDatePicker,

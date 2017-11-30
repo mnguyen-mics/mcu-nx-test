@@ -4,6 +4,7 @@ import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 import { FormTitle } from '../../../../components/Form';
+import DataFileService from '../../../../services/DataFileService.js';
 import messages from '../../messages';
 
 const Option = Select.Option;
@@ -48,6 +49,7 @@ interface FormDataFileDrawerState {
   type: string;
   editMode: boolean;
   fileName: string;
+  fileSelectorValue?: string;
 }
 
 class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFileDrawerState> {
@@ -64,6 +66,15 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
 
   onChange = (e: any) => {
     this.setState({ updatedContent: e });
+  }
+
+  parseFileName = (uri: string, basePath?: boolean) => {
+    const parsedUri = uri.split('/');
+    if (basePath) {
+      parsedUri.pop();
+      return parsedUri.join('/');
+    }
+    return parsedUri[parsedUri.length - 1];
   }
 
   defineMode = (type?: string) => {
@@ -116,6 +127,29 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
       this.setState({ fileName: e.target.value });
     };
 
+    const onFileSelectorValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      this.setState({ fileSelectorValue: e.target.value });
+    };
+
+    const onFileSelectorValidate = (e: React.ChangeEvent<HTMLInputElement>) => {
+      // test
+      const {
+        fileSelectorValue,
+      } = this.state;
+
+      if (fileSelectorValue) {
+        DataFileService.getDatafileData(fileSelectorValue).then(res => {
+          this.onFileUpdate(res);
+          const fileName = this.parseFileName(fileSelectorValue);
+          this.changeFileName(fileName);
+          this.setState({ editMode: true, fileName: fileName });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    };
+
     return (
       <Layout>
         <div className="edit-layout ant-layout">
@@ -161,14 +195,22 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
                   width={'100%'}
                 />
               </div>) :
-              (<div>
-                <FormTitle title={messages.datafileDrawerUpload} />
-                <Dragger {...uploadDetailProps}>
-                  Upload
+              (<div className="text-center">
+                <div className="m-t-20 m-b-20">
+                  <FormTitle title={messages.datafileDrawerUpload} />
+                </div>
+                <Dragger {...uploadDetailProps} >
+                  <div style={{ height: 300 }}>Upload</div>
                 </Dragger>
-                <FormTitle title={messages.datafileDrawerSelect} />
-                <Input />
-                <Button>Ok</Button>
+                <div className="m-t-20 m-b-20">
+                  <FormTitle title={messages.datafileDrawerSelect} />
+                </div>
+                <div>
+                  <Input style={{ maxWidth: 300 }} onChange={onFileSelectorValueChange} />
+                </div>
+                <div>
+                  <Button onClick={onFileSelectorValidate}>Ok</Button>
+                </div>
               </div>)}
             </Content>
           </Layout>
@@ -179,3 +221,4 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
 }
 
 export default FormDataFileDrawer;
+;
