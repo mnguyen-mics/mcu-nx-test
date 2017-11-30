@@ -48,7 +48,7 @@ define(['./module', 'jquery'], function (module, $) {
 
       function getAdLayouts() {
         $scope.adLayouts = [];
-        Restangular.all("ad_layouts").getList({organisation_id: organisationId}).then(function (adLayouts) {
+        Restangular.all("ad_layouts").getList({organisation_id: organisationId, max_results: 2000}).then(function (adLayouts) {
           for (var i = 0; i < adLayouts.length; ++i) {
             var adLayout = adLayouts[i];
             $scope.adLayouts.push(adLayout);
