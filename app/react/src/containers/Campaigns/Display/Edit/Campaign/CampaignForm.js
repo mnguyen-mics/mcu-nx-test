@@ -143,7 +143,7 @@ class CampaignForm extends Component {
     addFieldsBasedOnCondition('total_impression_capping');
     addFieldsBasedOnCondition('total_budget');
     addFieldsBasedOnCondition('max_budget_per_period');
-    addFieldsBasedOnCondition('total_impression_capping');
+    addFieldsBasedOnCondition('per_day_impression_capping');
 
     const request = (!editionMode
       ? DisplayCampaignService.createCampaign(organisationId, body)
