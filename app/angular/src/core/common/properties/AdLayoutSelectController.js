@@ -29,7 +29,8 @@ define(['./module'], function (module) {
       // Setup and select Ad Layout
       Restangular.one("ad_layouts").getList("", {
         "renderer_version_id": displayAdRenderer.versionId,
-        "organisation_id": $scope.organisationId
+        "organisation_id": $scope.organisationId,
+        max_results: 2000,
       }).then(function (adLayouts) {
         if (adLayouts.length) {
           $scope.adLayouts = adLayouts;
