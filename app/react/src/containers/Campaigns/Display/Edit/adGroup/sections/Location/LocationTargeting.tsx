@@ -34,6 +34,17 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
     };
   }
 
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const current = this.props.fields.getAll();
+    const next = nextProps.fields.getAll();
+    if (
+      this.getDisplayedLocations(next).length === 0 &&
+      this.getDisplayedLocations(current).length !== this.getDisplayedLocations(next).length
+    ) {
+      this.setState({ locationTargetingDisplayed: false });
+    }
+  }
+
   markAsDeleted = (locationField: LocationFieldModel) => {
     const {
       fields,
@@ -69,6 +80,10 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
     });
   }
 
+  getDisplayedLocations = (locationFields: LocationFieldModel[]) => {
+    return locationFields.filter(f => !f.deleted);
+  }
+
   handleCheckbox = () => {
     const {
       intl: {
@@ -77,7 +92,8 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
       fields,
       RxF,
     } = this.props;
-    if (fields && fields.length > 0) {
+
+    if (this.getDisplayedLocations(fields.getAll()).length > 0) {
       confirm({
         cancelText: formatMessage(messages.cancel),
         content: formatMessage(messages.notificationWarning),
@@ -96,8 +112,11 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
             }
           });
           RxF.change((fields as any).name, newLocationFields);
-          this.toggleDisplayLocationTargetingSection();
         },
+      });
+    } else if (fields.length === 0) {
+      this.setState({
+        locationTargetingDisplayed: !this.state.locationTargetingDisplayed,
       });
     } else {
       this.toggleDisplayLocationTargetingSection();
@@ -108,12 +127,20 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
 
     const {
       fields,
+      intl: {
+        formatMessage,
+      },
     } = this.props;
 
-    const { locationTargetingDisplayed } = this.state;
+    const {
+      locationTargetingDisplayed,
+    } = this.state;
 
     const locationFields = fields.getAll();
-    const showLocationTargeting = locationTargetingDisplayed || locationFields.length > 0;
+    const showLocationTargeting =
+      (locationTargetingDisplayed || this.getDisplayedLocations(locationFields).length > 0);
+
+    const excludedGeonamesIds = this.getDisplayedLocations(locationFields).map(field => field.resource.geoname_id);
 
     return (
       <div>
@@ -141,10 +168,11 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
             <Col span={10}>
               <SelectGeoname
                 onGeonameSelect={this.addLocationField}
+                excludedGeonamesIds={excludedGeonamesIds}
               />
             </Col>
             <Col span={2} className="field-tooltip">
-              <Tooltip placement="right" title={<FormattedMessage id="tooltip-location-message" defaultMessage="Lorem ipsum" />}>
+              <Tooltip placement="right" title={formatMessage(messages.contentSectionLocationTooltipMessage)}>
                 <McsIcons type="info" />
               </Tooltip>
             </Col>

@@ -408,6 +408,19 @@ export default defineMessages({
     id: 'adGroupEditor.section.location.inputPlaceholder',
     defaultMessage: 'Enter a location (country, region or department)',
   },
+  contentSectionLocationTooltipMessage: {
+    id: 'adGroupEditor.section.location.tooltipMessage',
+    defaultMessage: 'Location is based on the IP address we receive during a bid request. Being too restrictive can alter your reach.',
+  },
+  contentSectionLocationOption1: {
+    id: 'adGroupEditor.section.location.option1',
+    defaultMessage: 'Include',
+  },
+  contentSectionLocationOption2: {
+    id: 'adGroupEditor.section.location.option2',
+    defaultMessage: 'Exclude',
+  },
+
 
   /* ----------------------------- SECTION MEDIA ---------------------------- */
 

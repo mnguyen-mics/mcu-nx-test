@@ -13,6 +13,7 @@ const Option = Select.Option;
 
 interface Props {
   onGeonameSelect?: (locationField: LocationFieldModel) => void;
+  excludedGeonamesIds: string[];
 }
 
 interface State {
@@ -47,10 +48,14 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
   }
 
   fetchCountries = (value: string = '') => {
+    const { excludedGeonamesIds } = this.props;
     this.setState({ fetchingGeonames: true });
     GeonameService.getGeonames(value).then(geonames => {
       const listOfCountriesToDisplay = geonames.filter(country => {
-        return country.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) >= 0 || country.name.indexOf(value) >= 0;
+        return (
+          country.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) >= 0 ||
+          country.name.indexOf(value) >= 0
+        ) && !excludedGeonamesIds.includes(country.id);
       });
       this.setState({
         fetchingGeonames: false,
@@ -106,11 +111,11 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
           getPopupContainer={this.attachToDOM(this.randomId)}
           className="small-select"
         >
-          <Option value="INC">
+          <Option value="INC" title={formatMessage(messages.contentSectionLocationOption1)}>
             <McsIcons type="check" />
             <FormattedMessage id="geoname.include" defaultMessage="Include" />
           </Option>
-          <Option value="EXC">
+          <Option value="EXC" title={formatMessage(messages.contentSectionLocationOption2)}>
             <McsIcons type="close-big" />
             <FormattedMessage id="geoname.exclude" defaultMessage="Exclude" />
           </Option>
