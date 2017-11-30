@@ -134,7 +134,8 @@ class TableSelector extends Component {
       });
   }
 
-  toggleElementSelection = (elementId) => {
+  toggleElementSelection = (element) => {
+    const elementId = element.id;
     this.setState(prevState => {
       const isElementSelected = prevState.selectedElementsById[elementId];
 
