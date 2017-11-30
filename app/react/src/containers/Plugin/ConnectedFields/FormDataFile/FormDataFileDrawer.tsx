@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Layout, Button, Select, Upload, Input } from 'antd';
+import { FormattedMessage } from 'react-intl';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
@@ -8,7 +9,6 @@ import DataFileService from '../../../../services/DataFileService.js';
 import messages from '../../messages';
 
 const Option = Select.Option;
-const Dragger = Upload.Dragger;
 
 import AceEditor from 'react-ace';
 
@@ -58,7 +58,7 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
     super(props);
     this.state = {
       updatedContent: props.content,
-      type: this.defineMode(props.type),
+      type: this.defineMode(props.fileName),
       editMode: props.content !== '' ? true : false,
       fileName: props.fileName && props.fileName ? props.fileName : '',
     };
@@ -77,19 +77,29 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
     return parsedUri[parsedUri.length - 1];
   }
 
-  defineMode = (type?: string) => {
-
-    if (type && env.indexOf(type) > -1) {
-      return type;
+  defineMode = (fileName?: string) => {
+    const fileExtension = fileName && fileName.split('.').pop();
+    switch (fileExtension) {
+      case 'js':
+        return 'javascript';
+      case 'py':
+        return 'python';
+      case 'css':
+        return 'css';
+      case 'json':
+        return 'json';
+      case 'html':
+        return 'handlebars';
+      default:
+        return 'text';
     }
-    return 'javascript';
   }
 
   handleAdd = () => {
     this.props.close(this.state.updatedContent, this.state.fileName);
   }
 
-  handleEditorChange = (value: string) => this.defineMode(value);
+  handleEditorChange = (value: string) => this.setState({ type: value });
 
   onFileUpdate = (file: any) => {
     const fileReader = new FileReader();
@@ -118,7 +128,7 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
         const formData = new FormData(); /* global FormData */
         formData.append('file', file as any, file.name);
         this.onFileUpdate(file);
-        this.setState({ editMode: true });
+        this.setState({ editMode: true, type: this.defineMode(file.name) });
         return false;
       },
     };
@@ -132,7 +142,6 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
     };
 
     const onFileSelectorValidate = (e: React.ChangeEvent<HTMLInputElement>) => {
-      // test
       const {
         fileSelectorValue,
       } = this.state;
@@ -142,10 +151,10 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
           this.onFileUpdate(res);
           const fileName = this.parseFileName(fileSelectorValue);
           this.changeFileName(fileName);
-          this.setState({ editMode: true, fileName: fileName });
+          this.setState({ editMode: true, fileName: fileName, type: this.defineMode(fileName) });
         })
         .catch(err => {
-          console.log(err);
+          // TODO notify error
         });
       }
     };
@@ -153,7 +162,7 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <Actionbar path={[{ name: 'Add an audience' }]} edition={true}>
+          <Actionbar path={[{ name: 'Add a Data File' }]} edition={true}>
             <Button type="primary" className="mcs-primary" onClick={this.handleAdd}>
               <McsIcons type="plus" /><span>Add</span>
             </Button>
@@ -168,7 +177,7 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
             <Content className="mcs-table-edit-container">
               {editMode ? (<div>
                 <div style={{ marginBottom: 20 }}>
-                  <Select defaultValue={env[0]} style={{ width: 120, float: 'right' }} onChange={this.handleEditorChange}>
+                  <Select defaultValue={this.state.type} style={{ width: 120, float: 'right' }} onChange={this.handleEditorChange}>
                     { env.map(item => {
                       return (<Option key={item} value={item}>{item}</Option>);
                     }) }
@@ -193,23 +202,26 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
                   tabSize: 2,
                   }}
                   width={'100%'}
+                  wrapEnabled={true}
                 />
               </div>) :
               (<div className="text-center">
                 <div className="m-t-20 m-b-20">
                   <FormTitle title={messages.datafileDrawerUpload} />
                 </div>
-                <Dragger {...uploadDetailProps} >
-                  <div style={{ height: 300 }}>Upload</div>
-                </Dragger>
+                <Upload {...uploadDetailProps}>
+                  <Button>
+                    <FormattedMessage {...messages.datafileDrawerUpload} />
+                  </Button>
+                </Upload>
                 <div className="m-t-20 m-b-20">
                   <FormTitle title={messages.datafileDrawerSelect} />
                 </div>
                 <div>
                   <Input style={{ maxWidth: 300 }} onChange={onFileSelectorValueChange} />
                 </div>
-                <div>
-                  <Button onClick={onFileSelectorValidate}>Ok</Button>
+                <div className="m-t-20">
+                  <Button onClick={onFileSelectorValidate}><FormattedMessage {...messages.datafileDrawerSelectOk} /></Button>
                 </div>
               </div>)}
             </Content>
@@ -221,4 +233,3 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
 }
 
 export default FormDataFileDrawer;
-;

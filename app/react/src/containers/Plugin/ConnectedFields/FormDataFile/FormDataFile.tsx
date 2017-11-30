@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip, Col, Button } from 'antd';
+import { FormattedMessage } from 'react-intl';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
@@ -11,6 +12,8 @@ import DataFileService from '../../../../services/DataFileService.js';
 
 import {McsIcons, ButtonStyleless} from '../../../../components';
 import { FormFieldWrapper } from '../../../../components/Form';
+
+import messages from '../../messages';
 
 const defaultTooltipPlacement: TooltipPlacement = 'right';
 
@@ -214,7 +217,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           <Col span={22} >
            {!canEdit ? (<span>
               <Button onClick={click}>
-                Add a File
+                <FormattedMessage {...messages.datafileFileSelect} />
               </Button>
             </span>) : null}
 

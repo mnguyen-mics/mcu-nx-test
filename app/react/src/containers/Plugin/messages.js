@@ -41,6 +41,10 @@ export default defineMessages({
     id: 'form.stylesheet.modal.versions.label',
     defaultMessage: 'Select your StyleSheet Version'
   },
+  datafileFileSelect: {
+    id: 'form.datafile.button.upload',
+    defaultMessage: 'Select a File'
+  },
   datafileDrawerUpload: {
     id: 'form.datafile.drawer.select.upload',
     defaultMessage: 'Upload a file'
@@ -48,5 +52,9 @@ export default defineMessages({
   datafileDrawerSelect: {
     id: 'form.datafile.drawer.select.existing',
     defaultMessage: 'Or Select an Existing Data File'
+  },
+  datafileDrawerSelectOk: {
+    id: 'form.datafile.drawer.select.Ok',
+    defaultMessage: 'Ok'
   }
 });
