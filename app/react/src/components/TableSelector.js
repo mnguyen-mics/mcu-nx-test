@@ -66,7 +66,6 @@ class TableSelector extends Component {
             return (
               <Field
                 checked={!!selectedElementsById[record.id]}
-                onChange={() => this.toggleElementSelection(record.id)}
               >{text}
               </Field>
             );
