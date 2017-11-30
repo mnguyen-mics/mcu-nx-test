@@ -280,7 +280,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow6Tooltip: {
     id: 'adGroupEditor.section.general.row6.tooltip',
-    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping at the ad group level set it to 0 and the capping used will be the one defined at the campaign',
   },
 
   /* Row 7 */
@@ -294,7 +294,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow7Tooltip: {
     id: 'adGroupEditor.section.general.row7.tooltip',
-    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
+    defaultMessage: 'The capping is at the device level, if you don\'t want any capping at the ad group level set it to 0 and the capping used will be the one defined at the campaign',
   },
 
   /* Advanced part */

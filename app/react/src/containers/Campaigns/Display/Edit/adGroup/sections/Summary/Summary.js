@@ -3,16 +3,17 @@ import PropTypes from 'prop-types';
 import { FormattedNumber, FormattedPlural } from 'react-intl';
 import { Col, Row } from 'antd';
 
-import { FormSection } from '../../../../../../components/Form/index.ts';
-import messages from '../../messages';
-import { formatMetric } from '../../../../../../utils/MetricHelper';
-import { isToday, formatCalendarDate } from '../../../../../../utils/DateHelper';
+import { FormSection } from '../../../../../../../components/Form/index.ts';
+import messages from '../../../messages';
+import { formatMetric } from '../../../../../../../utils/MetricHelper';
+import { isToday, formatCalendarDate } from '../../../../../../../utils/DateHelper';
 import {
   filterTableByIncludeStatus,
   filterTableByRemovedStatus,
   filterTableByExcludeProperty,
   stringifyTable,
-} from '../../../../../../utils/TableUtils';
+} from '../../../../../../../utils/TableUtils';
+import GeonameRenderer from '../../../../../../Geoname/GeonameRenderer.tsx';
 
 function Summary({ displayAudience, formatMessage, formValues }) {
 
@@ -48,8 +49,6 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   )}${formatMessage(messages.contentSectionSummaryPart1Group8)}`;
   const includedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, true), 'name');
   const excludedSegments = stringifyTable(filterTableByIncludeStatus(audienceTable, false), 'name');
-  const includedLocations = stringifyTable(filterTableByExcludeProperty(locationTargetingTable, false), 'name');
-  const excludedLocations = stringifyTable(filterTableByExcludeProperty(locationTargetingTable, true), 'name');
   const publishers = stringifyTable(filterTableByRemovedStatus(publisherTable), 'display_network_name');
   const optimizers = stringifyTable(filterTableByRemovedStatus(optimizerTable), 'provider');
   const numberOfCreatives = (adTable ? adTable.filter(ad => !ad.toBeRemoved).length : 0);
@@ -66,6 +65,15 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   const P = ({ children, blue }) => ( // eslint-disable-line
     <p className={blue ? 'blue-text text' : 'text'}>{children || nothingToDisplay}</p>
   );
+
+  const renderGeoname = geoname => <P blue>{geoname.name}</P>;
+
+  const includedGeonames = filterTableByExcludeProperty(locationTargetingTable, false)
+    .map(id => <GeonameRenderer key={id} id={id} renderMethod={renderGeoname} />);
+
+  const excludedGeonames = filterTableByExcludeProperty(locationTargetingTable, true)
+    .map(id => <GeonameRenderer key={id} id={id} renderMethod={renderGeoname} />);
+
 
   return (
     <div id="summary">
@@ -115,10 +123,16 @@ function Summary({ displayAudience, formatMessage, formValues }) {
           </Section>}
 
           <Section>
-            {formatMessage(messages.contentSectionIncludedLocations)}
-            <P blue>{includedLocations}</P>
-            {formatMessage(messages.contentSectionExcludedLocations)}
-            <P blue>{excludedLocations}</P>
+            { includedGeonames.length > 0 ?
+              formatMessage(messages.contentSectionIncludedLocations) :
+              null
+            }
+            { includedGeonames }
+            { excludedGeonames.length > 0 ?
+              formatMessage(messages.contentSectionExcludedLocations) :
+              null
+            }
+            { excludedGeonames }
           </Section>
 
           <Section>

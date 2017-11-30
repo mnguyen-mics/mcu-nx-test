@@ -7,7 +7,8 @@ function filterTableByRemovedStatus(table = []) {
 }
 
 function filterTableByExcludeProperty(table = [], boolean) {
-  return table.filter(elem => elem.exclude === boolean && !elem.toBeRemoved);
+  return table.filter(elem => elem.resource.exclude === boolean && !elem.deleted)
+    .map(geoname => geoname.resource.geoname_id);
 }
 
 function stringifyTable(table = [], key) {

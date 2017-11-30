@@ -62,11 +62,10 @@ class General extends Component {
               name="adGroupMaxBudgetPerPeriod"
               component={FormInput}
               normalize={normalizeFloat}
-              validate={[isRequired, isValidFloat, isNotZero]}
+              validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow2Label),
-                  required: true,
                 },
                 inputProps: {
                   suffix: (<span>€</span>),
@@ -98,11 +97,10 @@ class General extends Component {
               name="adGroupTotalBudget"
               component={FormInput}
               normalize={normalizeFloat}
-              validate={[isRequired, isValidFloat, isNotZero]}
+              validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow3Label),
-                  required: true,
                 },
                 inputProps: {
                   suffix: (<span>€</span>),
@@ -123,7 +121,6 @@ class General extends Component {
                 label: formatMessage(messages.contentSectionGeneralRow4Label),
                 labelCol: { span: 3 },
                 wrapperCol: { span: 10, offset: 1 },
-                required: true,
               }}
 
               startProps={{
@@ -143,8 +140,6 @@ class General extends Component {
                 endDate: formValues && formValues.adGroupEndDate,
               }}
 
-              fieldValidators={{ start: [isRequired], end: [isRequired] }}
-
               helpToolTipProps={{
                 placement: 'right',
                 title: formatMessage(messages.contentSectionGeneralRow4Tooltip),
@@ -157,11 +152,10 @@ class General extends Component {
               name="adGroupMaxBidPrice"
               component={FormInput}
               normalize={normalizeFloat}
-              validate={[isRequired, isValidFloat, isNotZero]}
+              validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow5Label),
-                  required: true,
                 },
                 inputProps: {
                   suffix: (<span>€</span>),

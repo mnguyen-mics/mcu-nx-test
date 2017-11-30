@@ -5,6 +5,7 @@ import { Field } from 'redux-form';
 import { ButtonStyleless, Form, McsIcons } from '../components';
 import generateGuid from '../utils/generateGuid';
 import { McsIconType } from '../components/McsIcons';
+import { generateFakeId } from '../utils/FakeIdHelper';
 
 const { SwitchInput } = Form;
 
@@ -26,7 +27,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
 
   const columns = [
     {
-      colSpan: 8,
+      width: 60,
       dataIndex: 'type',
       key: 'type',
       render: (type: { image: McsIconType, name: string }) => (
@@ -42,7 +43,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
     ),
     },
     {
-      colSpan: 6,
+      colSpan: 11,
       dataIndex: 'info',
       key: 'info',
       /* In render, info is either an array of string of an array of { image: '', name: '' } */
@@ -54,12 +55,12 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
                 <p>{elem.name}</p>
               </div>
             )
-            : <p key={generateGuid()}>{elem}</p>
+            : <p key={generateGuid()}> {elem}</p>
           );
 
         return (
-          <div className="display-row data-content row-height">
-            {info.map(elem => elemToDisplay(elem))}
+          <div className="display-row row-height">
+            {info.map((elem, index) => <span key={generateFakeId()} className={index !== 0 ? 'm-l-10' : ''}>{elemToDisplay(elem)}</span>)}
           </div>
         );
       },
@@ -94,7 +95,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       },
     },
     {
-      colSpan: 1,
+      width: 60,
       dataIndex: 'toBeRemoved',
       key: 'toBeRemoved',
       render: (index: number) => {

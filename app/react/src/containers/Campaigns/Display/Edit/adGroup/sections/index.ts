@@ -5,7 +5,7 @@ import Device from './Device/Device';
 import General from './General';
 import Media from './Media';
 import Optimization from './Optimization';
-import Placement from './Placement/Placement';
+import Placements from './Placements';
 import Publisher from './Publisher';
 import Summary from './Summary';
 
@@ -16,7 +16,7 @@ export {
   LocationSection,
   General,
   Media,
-  Placement,
+  Placements,
   Publisher,
   Optimization,
   Summary,
