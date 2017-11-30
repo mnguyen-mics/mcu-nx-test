@@ -69,10 +69,10 @@ function Summary({ displayAudience, formatMessage, formValues }) {
   const renderGeoname = geoname => <P blue>{geoname.name}</P>;
 
   const includedGeonames = filterTableByExcludeProperty(locationTargetingTable, false)
-    .map(id => <GeonameRenderer key={id} id={id} renderMethod={renderGeoname} />);
+    .map(id => <GeonameRenderer key={id} geonameId={id} renderMethod={renderGeoname} />);
 
   const excludedGeonames = filterTableByExcludeProperty(locationTargetingTable, true)
-    .map(id => <GeonameRenderer key={id} id={id} renderMethod={renderGeoname} />);
+    .map(id => <GeonameRenderer key={id} geonameId={id} renderMethod={renderGeoname} />);
 
 
   return (

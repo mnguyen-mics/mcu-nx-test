@@ -2,7 +2,7 @@ import React from 'react';
 import GeonameService, { Geoname } from './../../services/GeonameService';
 
 interface GeonameRendererProps {
-    id: string;
+    geonameId: string;
     renderMethod: (geoname: Geoname) => JSX.Element;
 }
 
@@ -18,11 +18,11 @@ export default class GeonameRenderer extends React.Component<GeonameRendererProp
   }
 
   componentDidMount() {
-    this.fetchGeoname(this.props.id);
+    this.fetchGeoname(this.props.geonameId);
   }
 
   componentWillReceiveProps(nextProps: GeonameRendererProps) {
-    this.fetchGeoname(this.props.id);
+    this.fetchGeoname(this.props.geonameId);
   }
 
   fetchGeoname = (geonameId: string) => {

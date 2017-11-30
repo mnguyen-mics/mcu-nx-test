@@ -3,44 +3,19 @@ import { Row } from 'antd';
 import { ButtonStyleless } from '../../../../../../../components';
 import McsIcons, { McsIconType } from '../../../../../../../components/McsIcons';
 import { LocationFieldModel } from './domain';
-import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
-import { normalizeArrayOfObject } from '../../../../../../../utils/Normalizer';
+import { Geoname } from '../../../../../../../services/GeonameService';
+import GeonameRenderer from '../../../../../../../containers/Geoname/GeonameRenderer';
 
 interface Props {
   locationFields: LocationFieldModel[];
   onClickOnRemove: (locationField: LocationFieldModel) => void;
 }
 
-interface State {
-  geonameByGeonameId: { [geonameId: string]: Geoname };
-}
-
-class LocationSelectionRenderer extends React.Component<Props, State> {
+class LocationSelectionRenderer extends React.Component<Props> {
 
   static defaultProps: Partial<Props> = {
     locationFields: [],
   };
-
-  constructor(props: Props) {
-    super(props);
-    this.state = { geonameByGeonameId: {} };
-  }
-
-  componentDidMount() {
-    this.fetchGeonames(this.props.locationFields.map(s => s.resource.geoname_id));
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    this.fetchGeonames(nextProps.locationFields.map(s => s.resource.geoname_id));
-  }
-
-  fetchGeonames = (geonameIds: string[]) => {
-    Promise.all(
-      geonameIds.map(id => GeonameService.getGeoname(id)),
-    ).then(geonames => {
-      this.setState({ geonameByGeonameId: normalizeArrayOfObject(geonames, 'id')});
-    });
-  }
 
   render() {
 
@@ -48,10 +23,6 @@ class LocationSelectionRenderer extends React.Component<Props, State> {
       locationFields,
       onClickOnRemove,
     } = this.props;
-
-    const {
-      geonameByGeonameId,
-    } = this.state;
 
     return (
       <div>
@@ -65,14 +36,16 @@ class LocationSelectionRenderer extends React.Component<Props, State> {
 
             const handleOnClick = () => onClickOnRemove(locationField);
             const iconType: McsIconType = locationField.resource.exclude ? 'close-big' : 'check';
-            const geonameName = geonameByGeonameId[locationField.resource.geoname_id] ?
-              geonameByGeonameId[locationField.resource.geoname_id].name :
-              '';
+            const renderGeoname = (geoname: Geoname) => <span>{geoname.name}</span>;
 
             return (
               <div className={'search-result-box-item'} key={locationField.id}>
                 <McsIcons type={iconType} />
-                {geonameName}
+                <GeonameRenderer
+                  key={locationField.id}
+                  geonameId={locationField.resource.geoname_id}
+                  renderMethod={renderGeoname}
+                />
                 <ButtonStyleless
                   className="close-button"
                   onClick={handleOnClick}
