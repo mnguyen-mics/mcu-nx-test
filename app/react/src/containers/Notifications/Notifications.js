@@ -89,7 +89,6 @@ class Notifications extends Component {
       }
 
       if (notification.error.error_id) {
-        console.log(notification);
         if (!antNotifcationConfig.description) {
           antNotifcationConfig.description = notification.error.error ?
           (
