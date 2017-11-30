@@ -42,7 +42,7 @@ function withFilters(ViewComponent: HOCWrapped<TableViewProps>): React.Component
         visibilitySelectedColumns: this.props.columnsDefinitions ?
           (this.props.columnsDefinitions.dataColumnsDefinition
             .filter(column => column.isHideable && column.isVisibleByDefault)
-            .map(column => ({ key: column.translationKey, value: column.key }))
+            .map(column => ({ key: column.key, value: column.key }))
           ) : [],
       };
     }
@@ -117,7 +117,7 @@ function withFilters(ViewComponent: HOCWrapped<TableViewProps>): React.Component
             handleMenuClick: this.changeColumnVisibility,
             selectedItems: this.state.visibilitySelectedColumns,
             items: this.getHideableColumns().map(column => ({
-              key: column.translationKey,
+              key: column.key,
               value: column.key,
             })),
           })}
