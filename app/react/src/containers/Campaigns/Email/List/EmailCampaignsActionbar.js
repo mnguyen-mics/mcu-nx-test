@@ -156,7 +156,7 @@ EmailCampaignsActionbar.propTypes = {
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-EmailCampaignsActionbar = compose(withTranslations, withRouter)(
+EmailCampaignsActionbar = compose(withRouter, withTranslations)(
   EmailCampaignsActionbar
 );
 
