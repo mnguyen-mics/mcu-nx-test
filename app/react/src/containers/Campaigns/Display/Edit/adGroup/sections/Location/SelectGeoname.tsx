@@ -76,6 +76,9 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
         id: generateFakeId(),
         resource: {
           geoname_id: selectedCountry.id,
+          country: selectedCountry.country_iso,
+          admin1: selectedCountry.admin1,
+          admin2: selectedCountry.admin2,
           exclude: this.state.incOrExc === 'EXC',
         },
         deleted: false,
