@@ -32,6 +32,10 @@ interface DisplayCampaignActionBarProps {
   archiveCampaign?: any;
 }
 
+interface DisplayCampaignActionBarState {
+  exportIsRunning: boolean;
+}
+
 type JoinedProps =
   DisplayCampaignActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
@@ -169,7 +173,12 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
   });
 };
 
-class DisplayCampaignActionbar extends React.Component<JoinedProps> {
+class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampaignActionBarState> {
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = { exportIsRunning: false };
+  }
 
   handleRunExport = () => {
 
@@ -185,6 +194,8 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
       },
     } = this.props;
 
+    this.setState({ exportIsRunning: true });
+
     const filter = parseSearch(this.props.location.search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const hideExportLoadingMsg = message.loading(this.props.translations.EXPORT_IN_PROGRESS, 0);
@@ -198,13 +209,30 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
         exportData.adGroupData.items,
         exportData.adData.items,
         filter,
-        formatMessage);
+        formatMessage,
+      );
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
     }).catch((err) => {
       log.error(err);
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
+    });
+  }
+
+  exportIsRunningModal = (e: React.FormEvent<HTMLButtonElement>) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    Modal.warning({
+      title: formatMessage(modalMessages.exportIsRunningTitle),
+      content: formatMessage(modalMessages.exportIsRunningMessage),
+      iconType: 'exclamation-circle',
+      okText: formatMessage(modalMessages.confirm),
+      onOk() {
+        // closing modal
+      },
+      // onCancel() {},
     });
   }
 
@@ -220,6 +248,10 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
       campaign,
     } = this.props;
 
+    const {
+      exportIsRunning,
+    } = this.state;
+
     const actionElement = this.buildActionElement();
     const menu = this.buildMenu();
 
@@ -231,7 +263,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps> {
     return (
       <Actionbar path={breadcrumbPaths}>
         {actionElement}
-        <Button onClick={this.handleRunExport}>
+        <Button onClick={exportIsRunning ? this.exportIsRunningModal : this.handleRunExport}>
           <McsIcons type="download" />
           <FormattedMessage id="EXPORT" />
         </Button>

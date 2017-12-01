@@ -17,3 +17,5 @@ export type TargetedDevice = 'ALL' | 'ONLY_DESKTOP' | 'ONLY_MOBILE' | 'ONLY_TABL
 export type TargetedMedia = 'WEB' | 'MOBILE_APP';
 
 export type TargetedOperatingSystem = 'ALL' | 'IOS' | 'ANDROID' | 'WINDOWS_PHONE';
+
+export type CreativeAuditStatus = 'NOT_AUDITED' | 'AUDIT_PENDING' | 'AUDIT_FAILED' | 'AUDIT_PASSED' | 'AUDIT_PARTIALLY_PASSED';

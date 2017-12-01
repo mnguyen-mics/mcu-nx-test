@@ -38,7 +38,7 @@ function getAds({ adGroupId, campaignId, organisationId }) {
 }
 
 function getPublishers({ campaignId }) {
-  return DisplayCampaignService.getPublishers({ campaignId })
+  return DisplayCampaignService.getPublishers(campaignId)
     .then(publisherTable => ({ publisherTable }));
 }
 
@@ -148,7 +148,7 @@ const saveTableFields = (options, formValues, formInitialValues) => {
 
           if (isCreation) {
             /* creation */
-            newPromise = requests.create({ campaignId, adGroupId, body });
+            newPromise = requests.create(campaignId, adGroupId, body);
           } else if (requests.update) {
             const needsUpdating = formInitialValues.find(elem => (
               elem.modelId === modelId && elem.include !== include
@@ -156,12 +156,12 @@ const saveTableFields = (options, formValues, formInitialValues) => {
 
             /* update if modified element */
             if (needsUpdating) {
-              newPromise = requests.update({ campaignId, adGroupId, id: modelId, body });
+              newPromise = requests.update(campaignId, adGroupId, modelId, body);
             }
           }
         } else if (toBeRemoved && !isCreation) {
           /* In case we want to delete an existing element */
-          newPromise = requests.delete({ campaignId, adGroupId, id: modelId });
+          newPromise = requests.delete(campaignId, adGroupId, modelId);
         }
 
         return newPromise || Promise.resolve();

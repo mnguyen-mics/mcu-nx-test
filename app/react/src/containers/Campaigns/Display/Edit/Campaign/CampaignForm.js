@@ -244,15 +244,15 @@ class CampaignForm extends Component {
               const updatedObject = formValues[tableName].find(elem => (
                 elem.id === id
               ));
-              newPromise = requests.update({ campaignId: campaignId, id: main_id, organisationId: match.params.organisationId, body: updatedObject }); // eslint-disable-line
+              newPromise = requests.update(campaignId, main_id, match.params.organisationId, updatedObject); // eslint-disable-line
             }
           } else {
             /* addition of the goal to the campaign */
-            newPromise = requests.add({ campaignId, body });
+            newPromise = requests.add(campaignId, body);
           }
         } else if (id > 1000) {
           /* In case we want to delete an existing element */
-          newPromise = requests.delete({ campaignId, id: id });
+          newPromise = requests.delete(campaignId, id);
         }
 
         return newPromise || Promise.resolve();

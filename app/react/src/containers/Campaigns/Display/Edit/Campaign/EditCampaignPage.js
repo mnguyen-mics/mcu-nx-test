@@ -58,7 +58,7 @@ class EditCampaignPage extends Component {
   }
 
   fetchGoalsSelection = (campaignId) => {
-    return DisplayCampaignService.getGoal({ campaignId })
+    return DisplayCampaignService.getGoal(campaignId)
       .then(data => data.data)
       .then(data => data.map(item => {
         const newItem = item;

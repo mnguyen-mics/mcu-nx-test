@@ -196,7 +196,6 @@ function putCancelableRequest<T>(
 
 function deleteRequest<T>(
   endpoint: string,
-  body: object,
   params: object = {},
   headers: any = {},
   options: ApiOptions = {},
@@ -207,13 +206,12 @@ function deleteRequest<T>(
 
 function deleteCancelableRequest<T>(
   endpoint: string,
-  body: object,
   params: object = {},
   headers: any = {},
   options: ApiOptions = {},
 ): CancelablePromise<T> {
   return makeCancelable(
-    deleteRequest(endpoint, body, params, headers, options),
+    deleteRequest(endpoint, params, headers, options),
   ) as CancelablePromise<T>;
 }
 

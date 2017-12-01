@@ -1,4 +1,3 @@
-import { DataResponse } from './../../../services/ApiService';
 import {
   BudgetPeriod,
   CampaignStatus,
@@ -7,7 +6,7 @@ import {
   TargetedDevice,
   TargetedMedia,
   TargetedOperatingSystem,
- } from './../constants/';
+ } from './../constants';
 
 export interface DisplayCampaignResource {
   id: string;
@@ -37,5 +36,3 @@ export interface DisplayCampaignResource {
   time_zone: string;
   model_version: ModelVersion;
 }
-
-export type DisplayCampaignResponse = DataResponse<DisplayCampaignResource>;

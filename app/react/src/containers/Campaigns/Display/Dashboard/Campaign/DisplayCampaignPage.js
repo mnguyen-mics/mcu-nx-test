@@ -305,7 +305,7 @@ class DisplayCampaignPage extends Component {
       });
     });
 
-    DisplayCampaignService.getGoal({ campaignId: campaignId }).then(goals => goals.data).then(goals => {
+    DisplayCampaignService.getGoal(campaignId).then(goals => goals.data).then(goals => {
       const promises = goals.map(goal => {
         return GoalService.getAttributionModel(goal.goal_id).then(attribution => {
           return { ...goal, attribution: attribution.data };
