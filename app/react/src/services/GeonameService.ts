@@ -3,6 +3,9 @@ import ApiService from './ApiService.js';
 export interface Geoname {
   id: string;
   name: string;
+  country_iso: string;
+  admin1: string;
+  admin2: string;
 }
 
 export type Language = 'fr' | 'en';
