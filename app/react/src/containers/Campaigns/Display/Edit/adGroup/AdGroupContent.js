@@ -98,11 +98,13 @@ class AdGroupContent extends Component {
     sidebarItems = {
       ...sidebarItems,
       device: messages.sectionTitleDevice,
-      location: messages.sectionTitleLocation,
-      publisher: messages.sectionTitlePublisher,
+      locationTargeting: messages.sectionTitleLocationTargeting,
+      // media: messages.sectionTitleMedia,
+      // publisher: messages.sectionTitlePublisher,
       placement: messages.sectionTitlePlacement,
       ads: messages.sectionTitleAds,
       optimization: messages.sectionTitleOptimizer,
+      summary: messages.sectionTitleSummary,
     };
 
     sidebarItems = (editionMode
@@ -128,6 +130,7 @@ class AdGroupContent extends Component {
         mobile: mobilePlacements, // TODO: remove temp data
         web: webPlacements, // TODO: remove temp data
       },
+      locationTargetingTable: initialValues.locationTargetingTable || [],
       // adGroupDeviceType: ['1', '2']
     };
 

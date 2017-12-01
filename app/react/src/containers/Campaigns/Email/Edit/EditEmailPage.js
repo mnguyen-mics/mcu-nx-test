@@ -121,11 +121,11 @@ class EditEmailPage extends Component {
             return Promise.all([
               ...editedBlast.templates.map(template => {
                 // const templateResource = pick(template, ['email_template_id']);
-                const templateResource = { email_template_id: template.id };
+                const templateResource = { email_template_id: template.email_template_id };
                 return EmailCampaignService.addEmailTemplate(campaignId, editedBlast.id, templateResource);
               }),
               ...loadedBlast.templates.map(template => {
-                return EmailCampaignService.removeEmailTemplate(campaignId, editedBlast.id, template.id);
+                return EmailCampaignService.removeEmailTemplate(campaignId, editedBlast.id, template.email_template_id);
               }),
               ...editedBlast.consents.map(consent => {
                 const consentResource = pick(consent, ['consent_id']);

@@ -11,6 +11,10 @@ interface FormSectionProps {
     onClick: React.FormEventHandler<any>;
   };
   dropdownItems?: DropdownButtonItemProps[];
+  subtitle: {
+    defaultMessage: string;
+    id: string;
+  };
 }
 
 const FormSection: React.SFC<FormSectionProps & FormTitleProps> = props => {

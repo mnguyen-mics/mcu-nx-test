@@ -37,9 +37,37 @@ function getAds({ adGroupId, campaignId, organisationId }) {
     });
 }
 
+function getPlacements({ campaignId, adGroupId }) {
+  return DisplayCampaignService.getPlacementLists({ campaignId, adGroupId })
+    .then(res => {
+      return res.map(item => {
+        return {
+          ...item,
+          include: !item.exclude,
+          modelId: item.id,
+        };
+      });
+    })
+    .then(placementTable => ({ placementTable }));
+}
+
 function getPublishers({ campaignId }) {
   return DisplayCampaignService.getPublishers(campaignId)
     .then(publisherTable => ({ publisherTable }));
+}
+
+function getLocations({ campaignId, adGroupId }) {
+  return DisplayCampaignService.getLocations({ campaignId, adGroupId }).then(response => {
+    const locationSelections = response.data;
+    const locationFields = locationSelections.map(location => {
+      return {
+        id: location.id,
+        resource: location,
+        deleted: false,
+      };
+    });
+    return locationFields;
+  }).then(locationTargetingTable => ({ locationTargetingTable }));
 }
 
 function getSegments({ adGroupId, campaignId, organisationId }) {
@@ -79,8 +107,10 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
   return Promise.all([
     getGeneralInfo({ adGroupId, campaignId }),
     getPublishers({ campaignId }),
+    getPlacements({ campaignId, adGroupId }),
     getSegments({ adGroupId, campaignId, organisationId }),
     getAds({ campaignId, adGroupId, organisationId }),
+    getLocations({ campaignId, adGroupId }),
     getAdGroupAudienceSegments(campaignId, adGroupId),
   ])
     .then((results) => {
@@ -137,7 +167,7 @@ const saveTableFields = (options, formValues, formInitialValues) => {
   return sequentialPromisesResult.then(() => {
     return oldFormValues.reduce((promise, row) => {
       const body = getBody(row);
-      const { include, modelId, toBeRemoved } = row;
+      const { include, modelId, toBeRemoved, id } = row;
       const isCreation = isFakeId(modelId);
 
       return promise.then(() => {
@@ -161,7 +191,7 @@ const saveTableFields = (options, formValues, formInitialValues) => {
           }
         } else if (toBeRemoved && !isCreation) {
           /* In case we want to delete an existing element */
-          newPromise = requests.delete(campaignId, adGroupId, modelId);
+          newPromise = requests.delete(campaignId, adGroupId, (modelId || id));
         }
 
         return newPromise || Promise.resolve();
@@ -219,8 +249,35 @@ const saveDevices = (/* campaignId, adGroupId, formValue, initialFormValue */) =
   return Promise.resolve();
 };
 
-const savePlacements = (/* campaignId, adGroupId, formValue, initialFormValue */) => {
-  return Promise.resolve();
+const savePlacements = (campaignId, adGroupId, formValue, initialFormValue) => {
+  const options = {
+    campaignId,
+    adGroupId,
+    getBody: (row) => ({ placement_list_id: row.id, exclude: !row.include }),
+    requests: {
+      create: DisplayCampaignService.createPlacementList,
+      update: DisplayCampaignService.updatePlacementList,
+      delete: DisplayCampaignService.deletePlacementList,
+    },
+  };
+
+  return saveTableFields(options, formValue, initialFormValue);
+};
+
+const saveLocations = (campaignId, adGroupId, formValue, initialFormValue) => {
+  const options = {
+    campaignId,
+    adGroupId,
+    getBody: () => {},
+    requests: {
+      create: DisplayCampaignService.createLocation,
+      delete: DisplayCampaignService.deleteLocation,
+      update: DisplayCampaignService.updateLocation,
+    },
+    tableName: 'locationTargetingTable',
+  };
+
+  return saveTableFields(options, formValue, initialFormValue);
 };
 
 const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
@@ -247,14 +304,16 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
   const audienceSegments = adGroupData && adGroupData.audienceSegmentTable ? adGroupData.audienceSegmentTable : [];
   const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
   const deviceTable = [];
-  const placementTable = [];
+  const locationTargetingTable = adGroupData && adGroupData.locationTargetingTable ? adGroupData.locationTargetingTable : [];
+  const placementTable = adGroupData && adGroupData.placementTable ? adGroupData.placementTable : [];
 
   const initialPublisherTable = adGroupInitialData && adGroupInitialData.publisherTable ? adGroupInitialData.publisherTable : [];
   const initialAudienceTable = adGroupInitialData && adGroupInitialData.audienceTable ? adGroupInitialData.audienceTable : [];
   const initialAdTable = adGroupInitialData && adGroupInitialData.adTable ? adGroupInitialData.adTable : [];
   const initialAudienceSegments = adGroupInitialData && adGroupInitialData.audienceSegmentTable ? adGroupInitialData.audienceSegmentTable : [];
   const initialDeviceTable = [];
-  const initialPlacementTable = [];
+  const initialLocationTargetingTable = adGroupInitialData && adGroupInitialData.locationTargetingTable ? adGroupInitialData.locationTargetingTable : [];
+  const initialPlacementTable = adGroupInitialData && adGroupInitialData.placementTable ? adGroupInitialData.placementTable : [];
 
   let bidOptimizer = null;
   if (optimizerTable && optimizerTable.length) {
@@ -264,11 +323,11 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
 
   const body = {
     bid_optimizer_id: bidOptimizer ? bidOptimizer.id : null,
-    end_date: adGroupData.adGroupEndDate.valueOf(),
+    end_date: adGroupData.adGroupEndDate && adGroupData.adGroupEndDate.valueOf(),
     max_budget_per_period: adGroupData.adGroupMaxBudgetPerPeriod,
     max_budget_period: adGroupData.adGroupMaxBudgetPeriod,
     name: adGroupData.adGroupName,
-    start_date: adGroupData.adGroupStartDate.valueOf(),
+    start_date: adGroupData.adGroupStartDate && adGroupData.adGroupStartDate.valueOf(),
     technical_name: adGroupData.adGroupTechnicalName,
     total_budget: adGroupData.adGroupTotalBudget,
     per_day_impression_capping: adGroupData.adGroupPerDayImpressionCapping,
@@ -296,6 +355,7 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
       .then(() => savePublishers(campaignId, adGroupId, publisherTable, initialPublisherTable))
       .then(() => savePlacements(campaignId, adGroupId, placementTable, initialPlacementTable))
       .then(() => saveAds(campaignId, adGroupId, adTable, initialAdTable))
+      .then(() => saveLocations(campaignId, adGroupId, locationTargetingTable, initialLocationTargetingTable))
       .then(() => adGroupId);
   });
 };
