@@ -125,7 +125,7 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
             .then(resp => {
               return resp.length ? {
                 ...bidOptimizer,
-                name_2: (resp.find(elem => elem.technical_name === 'name')).value.value,
+                type: (resp.find(elem => elem.technical_name === 'name')).value.value,
                 provider: (resp.find(elem => elem.technical_name === 'provider')).value.value,
               } : {
                 ...bidOptimizer

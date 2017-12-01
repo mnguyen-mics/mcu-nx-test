@@ -22,7 +22,7 @@ class Optimization extends Component {
         bidList = res;
         return Promise.all(res.map(item => {
           return BidOptimizerServices.getBidOptimizerProperties(item.id).then(response => response.data).then(response => response.length && {
-            name_2: (response.find(elem => elem.technical_name === 'name')).value.value,
+            type: (response.find(elem => elem.technical_name === 'name')).value.value,
             provider: (response.find(elem => elem.technical_name === 'provider')).value.value,
           });
         }));
@@ -56,7 +56,7 @@ class Optimization extends Component {
       },
       {
         intlMessage: messages.sectionSelectorTitleType,
-        key: 'name_2',
+        key: 'type',
         isHideable: false,
         render: text => <span>{text}</span>,
       },
@@ -92,7 +92,7 @@ class Optimization extends Component {
         .then(res => {
           return BidOptimizerServices.getBidOptimizerProperties(newSelectedIds[0]).then(response => response.data).then(response => response.length && {
             ...res,
-            name_2: (response.find(elem => elem.technical_name === 'name')).value.value,
+            type: (response.find(elem => elem.technical_name === 'name')).value.value,
             provider: (response.find(elem => elem.technical_name === 'provider')).value.value,
           });
         }).then(result => {
@@ -113,7 +113,7 @@ class Optimization extends Component {
         {
           key: bidOptimizer.modelId,
           type: { image: 'optimization' },
-          info: [bidOptimizer.name, `${bidOptimizer.name_2} - ${bidOptimizer.provider}`],
+          info: [bidOptimizer.name, `${bidOptimizer.type} - ${bidOptimizer.provider}`],
           toBeRemoved: index,
         }
       ]
