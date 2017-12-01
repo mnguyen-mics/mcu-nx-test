@@ -1,11 +1,11 @@
+import moment from 'moment';
+import { InventorySourceResource } from './../models/campaign/display/InventorySourceResource';
 import { CampaignResource } from './../models/campaign/CampaignResource';
 import { AdGroupResponseList, AdGroupResource } from './../models/campaign/display/AdGroupResource';
 import { DisplayCampaignResource } from './../models/campaign/display/DisplayCampaignResource';
-import moment from 'moment';
 import ApiService, { DataResponse } from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
-import { InventorySourceResource } from '../models/campaign/display/InventorySourceResource';
 import { AdResource } from '../models/campaign/display/AdResource';
 import { GoalSelectionResource } from '../models/goal/GoalSelectionResource';
 
@@ -23,7 +23,8 @@ const DisplayCampaignService = {
   getCampaignName(
     campaignId: string,
   ): Promise<string> {
-    return DisplayCampaignService.getCampaignDisplay(campaignId).then((res: any) => res.data.name);
+    return DisplayCampaignService.getCampaignDisplay(campaignId)
+      .then((res: DataResponse<DisplayCampaignResource>) => res.data.name);
   },
 
   createCampaign(
@@ -109,7 +110,7 @@ const DisplayCampaignService = {
     adGroupId: string,
   ): Promise<AudienceSegmentSelectionResource[]> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-    return ApiService.getRequest(endpoint).then((res: any) => res.data);
+    return ApiService.getRequest(endpoint).then((res: DataResponse<AudienceSegmentSelectionResource[]>) => res.data);
   },
 
   // TODO delete, use getAudienceSegments instead
@@ -138,7 +139,7 @@ const DisplayCampaignService = {
     body: object,
   ): Promise<AudienceSegmentSelectionResource> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-    return ApiService.postRequest(endpoint, body).then((res: any) => res.data);
+    return ApiService.postRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
   },
 
   createAudienceSegment(
@@ -147,7 +148,7 @@ const DisplayCampaignService = {
     body: Partial<AudienceSegmentSelectionResource>,
   ) {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-    return ApiService.postRequest(endpoint, body).then((res: any) => res.data);
+    return ApiService.postRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
   },
 
   updateAudience(
@@ -169,7 +170,7 @@ const DisplayCampaignService = {
     const endpoint = `display_campaigns/
       ${campaignId}/ad_groups/
       ${adGroupId}/audience_segments/${audienceSegmentId}`;
-    return ApiService.putRequest(endpoint, body).then((res: any) => res.data);
+    return ApiService.putRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
   },
 
   deleteAudience(
@@ -184,10 +185,10 @@ const DisplayCampaignService = {
   /* PUBLISHER SERVICES */
   getPublishers(
       campaignId: string,
-    ): Promise<InventorySourceResource> {
+    ): Promise<InventorySourceResource[]> {
     const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
     return ApiService.getRequest(endpoint)
-      .then((res: any) => res.data.map((elem: any) => {
+      .then((res: DataResponse<InventorySourceResource[]>) => res.data.map((elem: InventorySourceResource) => {
         const { display_network_access_id, id, ...publisher } = elem;
 
         return {
