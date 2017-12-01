@@ -130,7 +130,7 @@ const ReportService = {
     objectId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string[],
+    dimension: string[] | undefined,
     metrics: string[],
     options: object = {},
   ): CancelablePromise<ReportViewResponse> {
