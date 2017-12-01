@@ -85,8 +85,8 @@ class Optimization extends Component {
         ...tableData,
         {
           key: bidOptimizer.modelId,
-          type: { image: 'question', name: bidOptimizer.provider },
-          info: [bidOptimizer.name],
+          type: { image: 'question' },
+          info: [bidOptimizer.name, bidOptimizer.provider],
           toBeRemoved: index,
         }
       ]

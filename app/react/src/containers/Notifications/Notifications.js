@@ -38,6 +38,10 @@ const messages = defineMessages({
     id: 'notification.error.default_custom_description_with_errorid',
     defaultMessage: 'Please contact your administrator with the following id:',
   },
+  errorDescriptionReason: {
+    id: 'notification.error.possible_reason',
+    defaultMessage: 'Possible Reason:'
+  }
 });
 
 class Notifications extends Component {
@@ -86,17 +90,31 @@ class Notifications extends Component {
 
       if (notification.error.error_id) {
         if (!antNotifcationConfig.description) {
-          antNotifcationConfig.description = (
-            <span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span>
-          );
-        } else {
-          // append errorId message
-          antNotifcationConfig.description = (
+          antNotifcationConfig.description = notification.error.error ?
+          (
+            <span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code>&nbsp;{formatMessage(messages.errorDescriptionReason)}&nbsp;<code>{notification.error.error}</code></span>
+          ) : (
             <div>
-              { antNotifcationConfig.description }
               <p><span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span></p>
             </div>
           );
+        } else {
+          // append errorId message
+          antNotifcationConfig.description = notification.error.error ?
+            (
+              <div>
+                { antNotifcationConfig.description }
+                <p><span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code>&nbsp;{formatMessage(messages.errorDescriptionReason)}&nbsp;<code>{notification.error.error}</code></span></p>
+              </div>
+            )
+          :
+            (
+              <div>
+                { antNotifcationConfig.description }
+                <p><span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span></p>
+              </div>
+            );
+
         }
       } else if (!antNotifcationConfig.description) {
         antNotifcationConfig.description = (

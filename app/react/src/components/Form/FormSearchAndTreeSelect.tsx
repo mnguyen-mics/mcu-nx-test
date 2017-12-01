@@ -88,8 +88,7 @@ export default class FormSearchAndTreeSelect
 
       leaves.forEach(leave => {
 
-        const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-          e.preventDefault();
+        const handleClick = () => {
           handleClickOnRemove(leave.key);
         };
 

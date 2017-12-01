@@ -125,14 +125,25 @@ class CampaignForm extends Component {
       formValues
     } = this.props;
 
+
     const body = {
       editor_version_id: '11',
       name: formValues.name,
-      per_day_impression_capping: formValues.per_day_impression_capping,
       time_zone: 'Europe/Paris',
-      total_impression_capping: formValues.total_impression_capping,
+      model_version: formValues.model_version,
       type: 'DISPLAY'
     };
+
+    const addFieldsBasedOnCondition = (id) => {
+      if (formValues[id]) {
+        body[id] = formValues[id];
+      }
+    };
+
+    addFieldsBasedOnCondition('total_impression_capping');
+    addFieldsBasedOnCondition('total_budget');
+    addFieldsBasedOnCondition('max_budget_per_period');
+    addFieldsBasedOnCondition('per_day_impression_capping');
 
     const request = (!editionMode
       ? DisplayCampaignService.createCampaign(organisationId, body)
@@ -141,6 +152,7 @@ class CampaignForm extends Component {
 
     return request.then(result => result.data.id);
   }
+
 
   createAdGroup = (campaignId, organisationId, value, options) => {
     const {

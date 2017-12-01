@@ -19,11 +19,10 @@ const Option = Select.Option;
 
 class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
 
-  static defaultprops = {
+  static defaultprops: Partial<FormSelectProps> = {
     formItemProps: {},
     selectProps: {},
     options: [],
-    helpToolTipProps: {},
   };
 
   componentDidMount() {

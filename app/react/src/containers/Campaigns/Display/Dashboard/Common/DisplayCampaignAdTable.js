@@ -142,7 +142,6 @@ class DisplayCampaignAdTable extends Component {
         render: (text, record) => (
           <span>
             <Switch
-              disabled={record.creative_audit_status !== 'AUDIT_PASSED'}
               className="mcs-table-switch"
               checked={text === 'ACTIVE'}
               onChange={(checked) => changeAdStatus(record, checked)}

@@ -1,26 +1,34 @@
 import * as React from 'react';
 import { Select } from 'antd';
-import { WrappedFieldProps } from 'redux-form';
-import { OptionProps } from 'antd/lib/select';
+import { OptionProps, SelectValue} from 'antd/lib/select';
 
 const { Option } = Select;
 import { generateFakeId } from '../../utils/FakeIdHelper';
 
 interface FormSelectAddonProps {
   options: OptionProps[];
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
+  input: {
+    value?: string;
+    onChange?: (value: SelectValue) => void;
+    onFocus?: (value: SelectValue) => void;
+  };
 }
 
-const FormSelectAddon: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props => {
+const FormSelectAddon: React.SFC<FormSelectAddonProps > = props => {
 
   const {
-    input: { value, onChange, onFocus },
+    input,
     style,
     options,
   } = props;
 
-  const formValue = value || options[0];
-  const filteredOptions = options.filter(option => option.value !== formValue.key);
+  const value = input.value;
+  const onChange = input.onChange;
+  const onFocus = input.onFocus;
+
+  const formValue: SelectValue | any = options[0].value;
+  const filteredOptions =  options.filter(option => option.value !== formValue.key);
 
   const optionsToDisplay = filteredOptions.map(option => (
     <Option key={option.value} value={option.value}>{option.title}</Option>
@@ -49,6 +57,9 @@ const FormSelectAddon: React.SFC<FormSelectAddonProps & WrappedFieldProps> = pro
 };
 
 FormSelectAddon.defaultProps = {
+  input: {
+    value: 'INC',
+  },
   style: { width: 100 },
 };
 

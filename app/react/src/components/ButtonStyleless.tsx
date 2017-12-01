@@ -1,17 +1,27 @@
 import * as React from 'react';
+import { Omit } from '../utils/Types';
 
-const ButtonStyleless: React.SFC<React.ButtonHTMLAttributes<HTMLButtonElement>> = props => {
+export interface ButtonStylelessProps {
+  onClick: () => void;
+}
 
-  const { children, className, ...rest } = props;
+const ButtonStyleless: React.SFC<
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> &
+  ButtonStylelessProps
+> = props => {
+
+  const { children, className, onClick, ...rest } = props;
+
+  const handleOnClick = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    onClick();
+  };
+
   return (
-    <button className={`button-styleless ${className}`} {...rest}>
+    <button className={`button-styleless ${className}`} onClick={handleOnClick} {...rest}>
       {children}
     </button>
   );
-};
-
-ButtonStyleless.defaultProps = {
-  className: '',
 };
 
 export default ButtonStyleless;
