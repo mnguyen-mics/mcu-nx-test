@@ -604,6 +604,10 @@ export default defineMessages({
     id: 'section.selector.title.name',
     defaultMessage: 'Name',
   },
+  sectionSelectorTitleType: {
+    id: 'section.selector.title.type',
+    defaultMessage: 'Type',
+  },
   sectionSelectorTitleProvider: {
     id: 'section.selector.title.provider',
     defaultMessage: 'Provider',
