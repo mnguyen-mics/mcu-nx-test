@@ -142,7 +142,6 @@ function getRequest<T>(
   return request('get', endpoint, params, headers, null, authenticated, options) as Promise<T>;
 }
 
-
 function postRequest<T>(
   endpoint: string,
   body: object,
