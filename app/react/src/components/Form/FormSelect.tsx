@@ -13,6 +13,7 @@ interface FormSelectProps {
   formItemProps?: FormItemProps;
   selectProps?: SelectProps;
   options?: OptionProps[];
+  disabled?: boolean;
 }
 
 const Option = Select.Option;
@@ -23,6 +24,7 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
     formItemProps: {},
     selectProps: {},
     options: [],
+    disabled: false,
   };
 
   componentDidMount() {
@@ -55,6 +57,7 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
       selectProps,
       options,
       helpToolTipProps,
+      disabled,
     } = this.props;
 
     let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -87,6 +90,7 @@ class FormSelect extends React.Component<FormSelectProps & FormFieldWrapperProps
                 onBlur={onChange as () => any}
                 onFocus={onFocus as () => any}
                 value={value}
+                disabled={disabled}
               >
                 {optionsToDisplay}
               </Select>

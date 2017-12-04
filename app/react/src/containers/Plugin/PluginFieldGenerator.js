@@ -43,7 +43,8 @@ class PluginFieldGenerator extends Component {
         options: {
           ...options
         },
-        helpToolTipProps: {}
+        helpToolTipProps: {},
+        noUploadModal: additionalInputProps.noUploadModal ? additionalInputProps.noUploadModal : undefined,
       }}
     />);
   }
@@ -61,7 +62,7 @@ class PluginFieldGenerator extends Component {
       case 'URL':
         return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.url`, fieldDefinition);
       case 'ASSET':
-        return this.renderFieldBasedOnConfig(FormUpload, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', accept: '.jpg,.jpeg,.png,.gif' });
+        return this.renderFieldBasedOnConfig(FormUpload, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', accept: '.jpg,.jpeg,.png,.gif', noUploadModal: this.props.noUploadModal });
       case 'PIXEL_TAG':
         return this.renderFieldBasedOnConfig(FormTextArea, `${fieldDefinition.technical_name}.value.value`, fieldDefinition, [], { rows: 4 });
       case 'STYLE_SHEET':
@@ -96,6 +97,10 @@ class PluginFieldGenerator extends Component {
   }
 }
 
+PluginFieldGenerator.defaultProps = {
+  noUploadModal: undefined,
+};
+
 PluginFieldGenerator.propTypes = {
   fieldGridConfig: PropTypes.shape({
     labelCol: PropTypes.shape({
@@ -111,6 +116,7 @@ PluginFieldGenerator.propTypes = {
   disabled: PropTypes.bool.isRequired,
   rendererVersionId: PropTypes.string.isRequired,
   organisationId: PropTypes.string.isRequired,
+  noUploadModal: PropTypes.func,
 };
 
 PluginFieldGenerator = withValidators(PluginFieldGenerator);

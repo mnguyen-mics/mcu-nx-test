@@ -5,7 +5,7 @@ import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
-
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import McsIcons from '../../components/McsIcons';
 
 const defaultTooltipPlacement: TooltipPlacement = 'right';
@@ -15,9 +15,12 @@ export interface FormUploadProps {
   inputProps?: UploadProps;
   helpToolTipProps: TooltipProps;
   buttonText: string;
+  noUploadModal?: () => void;
 }
 
-class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
+type JoinedProps = FormUploadProps & WrappedFieldProps & InjectedIntlProps;
+
+class FormUpload extends React.Component<JoinedProps> {
 
   static defaultprops = {
     formItemProps: {},
@@ -106,7 +109,7 @@ class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
               {...inputProps}
               {...uploadDetailProps}
             >
-              <Button>
+              <Button onClick={inputProps && inputProps.disabled ? this.props.noUploadModal : undefined}>
                 <Icon type="upload" /> {this.props.buttonText}
               </Button>
             </Upload>
@@ -125,4 +128,4 @@ class FormUpload extends React.Component<FormUploadProps & WrappedFieldProps> {
   }
 }
 
-export default FormUpload;
+export default injectIntl(FormUpload);

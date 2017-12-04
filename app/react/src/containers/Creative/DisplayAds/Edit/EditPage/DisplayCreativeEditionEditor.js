@@ -4,7 +4,7 @@ import { Field, reduxForm, Form } from 'redux-form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl, intlShape } from 'react-intl';
-import { Layout, Row } from 'antd';
+import { Layout, Row, Modal } from 'antd';
 
 import * as actions from '../../../../../state/Notifications/actions';
 import { withMcsRouter } from '../../../../Helpers';
@@ -12,6 +12,7 @@ import { FormInput, FormTitle, FormSelect, withValidators, formErrorMessage } fr
 import AuditComponent from './AuditComponent';
 import { PluginFieldGenerator } from '../../../../Plugin';
 import { Card } from '../../../../../components/Card/index.ts';
+import modalMessages from '../../../../../common/messages/modalMessages';
 
 import messages from '../messages';
 
@@ -101,6 +102,20 @@ class DisplayCreativeEditionEditor extends Component {
     return previewUrl;
   }
 
+  noUploadModal = () => {
+    const {
+      intl: {
+        formatMessage,
+      },
+      creative,
+    } = this.props;
+    Modal.warning({
+      title: formatMessage(modalMessages.noActionTitle),
+      content: creative.audit_status === 'AUDIT_PASSED' ? formatMessage(modalMessages.noUploadMessage) : formatMessage(modalMessages.noUpdateMessage),
+      iconType: 'exclamation-circle',
+      okText: formatMessage(modalMessages.confirm),
+    });
+  }
 
   render() {
     const {
@@ -115,7 +130,7 @@ class DisplayCreativeEditionEditor extends Component {
     } = this.props;
 
 
-    const isDisabled = isLoading || creative.audit_status === 'AUDIT_PASSED';
+    const isDisabled = isLoading || creative.audit_status === 'AUDIT_PASSED' || creative.audit_status === 'AUDIT_PENDING';
     return (
       <Layout>
         <Form
@@ -165,11 +180,11 @@ class DisplayCreativeEditionEditor extends Component {
                         key: format,
                         value: format,
                         title: format,
-                        disabled: isDisabled
                       })),
                       helpToolTipProps: {
                         title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
                       },
+                      disabled: isDisabled,
                     }}
                   />
                   <Field
@@ -218,7 +233,17 @@ class DisplayCreativeEditionEditor extends Component {
                 </Row>
                 <Row>
                   {this.props.rendererProperties && this.props.rendererProperties.length && this.props.rendererProperties.map(fieldDef => {
-                    return <PluginFieldGenerator key={fieldDef.technical_name} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isDisabled} rendererVersionId={creative.renderer_version_id} organisationId={organisationId} />;
+                    return (
+                      <PluginFieldGenerator
+                        key={fieldDef.technical_name}
+                        definition={fieldDef}
+                        fieldGridConfig={fieldGridConfig}
+                        disabled={isDisabled}
+                        rendererVersionId={creative.renderer_version_id}
+                        organisationId={organisationId}
+                        noUploadModal={this.noUploadModal}
+                      />
+                    );
                   })}
                 </Row>
               </div>

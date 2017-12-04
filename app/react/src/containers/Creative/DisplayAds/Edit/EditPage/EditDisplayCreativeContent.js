@@ -115,11 +115,12 @@ class EditDisplayCreativeContent extends Component {
       match: {
         params: {
           organisationId,
+          creativeId,
         }
       }
     } = this.props;
 
-    this.fetchAllData(organisationId);
+    this.fetchAllData(organisationId, creativeId);
   }
 
   formatProperties = () => {
