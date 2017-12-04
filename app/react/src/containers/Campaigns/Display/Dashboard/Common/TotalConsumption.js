@@ -58,7 +58,7 @@ class TotalConsumption extends Component {
       return nextState;
     }, () => {
 
-      ReportService.getSingleDisplayDeliveryReport(organisationId, id, from, to, '', ['impressions_cost']).promise.then(response => {
+      ReportService.getSingleDisplayDeliveryReport(organisationId, id, from, to, '', ['impressions_cost']).then(response => {
         this.setState(prevState => {
           const nextState = {
             ...prevState,

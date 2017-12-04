@@ -69,7 +69,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       undefined,
       defaultMetrics,
       { sort: '-clicks' },
-    ).promise,
+    ),
     ReportService.getAdDeliveryReport(
       organisationId,
       'campaign_id',
@@ -78,7 +78,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       filter.to,
       [],
       defaultMetrics,
-    ).promise,
+    ),
     ReportService.getAdGroupDeliveryReport(
       organisationId,
       'campaign_id',
@@ -87,7 +87,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       filter.to,
       [],
       defaultMetrics,
-    ).promise,
+    ),
     ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
@@ -95,7 +95,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       filter.to,
       dimensions,
       defaultMetrics,
-    ).promise,
+    ),
     DisplayCampaignService.getCampaignDisplay(
       campaignId,
       { view: 'deep' },

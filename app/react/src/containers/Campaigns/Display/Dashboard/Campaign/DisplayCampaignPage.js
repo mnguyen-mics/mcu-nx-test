@@ -13,9 +13,8 @@ import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import {
-  normalizeReportView,
-} from '../../../../../utils/MetricHelper';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { makeCancelable } from '../../../../../utils/ApiHelper';
 
 import {
   parseSearch,
@@ -181,38 +180,38 @@ class DisplayCampaignPage extends Component {
   fetchAllData = (organisationId, campaignId, filter) => {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
-    const getCampaignPerf = ReportService.getSingleDisplayDeliveryReport(
+    const getCampaignPerf = makeCancelable(ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
       filter.from,
       filter.to,
       dimensions,
-    );
-    const getOverallCampaignPerf = ReportService.getSingleDisplayDeliveryReport(
+    ));
+    const getOverallCampaignPerf = makeCancelable(ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,
       filter.from,
       filter.to,
       '',
       ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
-    );
-    const getAdGroupPerf = ReportService.getAdGroupDeliveryReport(
+    ));
+    const getAdGroupPerf = makeCancelable(ReportService.getAdGroupDeliveryReport(
       organisationId,
       'campaign_id',
       campaignId,
       filter.from,
       filter.to,
       '',
-    );
-    const getAdPerf = ReportService.getAdDeliveryReport(
+    ));
+    const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(
       organisationId,
       'campaign_id',
       campaignId,
       filter.from,
       filter.to,
       '',
-    );
-    const getMediaPerf = ReportService.getMediaDeliveryReport(
+    ));
+    const getMediaPerf = makeCancelable(ReportService.getMediaDeliveryReport(
       organisationId,
       'campaign_id',
       campaignId,
@@ -221,7 +220,7 @@ class DisplayCampaignPage extends Component {
       '',
       '',
       { sort: '-clicks', limit: 30 },
-    );
+    ));
 
     this.cancelablePromises.push(getCampaignPerf, getMediaPerf, getAdPerf, getAdGroupPerf, getOverallCampaignPerf, getOverallCampaignPerf);
 

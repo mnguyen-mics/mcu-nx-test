@@ -13,6 +13,7 @@ import AdGroup from './AdGroup';
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
+import { makeCancelable } from '../../../../../utils/ApiHelper';
 import {
   normalizeReportView,
 } from '../../../../../utils/MetricHelper';
@@ -99,10 +100,10 @@ class AdGroupPage extends Component {
   fetchAllData(organisationId, campaignId, adGroupId, filter) {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
-    const getAdGroupPerf = ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions);
-    const getAdPerf = ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '');
-    const getMediaPerf = ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 });
-    const getOverallAdGroupPerf = ReportService.getAdGroupDeliveryReport(
+    const getAdGroupPerf = makeCancelable(ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions));
+    const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, ''));
+    const getMediaPerf = makeCancelable(ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 }));
+    const getOverallAdGroupPerf = makeCancelable(ReportService.getAdGroupDeliveryReport(
       organisationId,
       'ad_group_id',
       adGroupId,
@@ -110,7 +111,7 @@ class AdGroupPage extends Component {
       filter.to,
       '',
       ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
-    );
+    ));
 
     this.cancelablePromises.push(getAdGroupPerf, getAdPerf, getMediaPerf, getOverallAdGroupPerf);
 

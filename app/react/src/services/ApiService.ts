@@ -1,6 +1,5 @@
 import 'whatwg-fetch';
 import { isEmpty } from 'lodash';
-import { makeCancelable } from '../utils/ApiHelper';
 
 import AuthService from './AuthService';
 
@@ -143,14 +142,6 @@ function getRequest<T>(
   return request('get', endpoint, params, headers, null, authenticated, options) as Promise<T>;
 }
 
-function getCancelableRequest<T>(
-  endpoint: string,
-  params: object = {},
-  headers: any = {},
-  options: ApiOptions = {},
-): CancelablePromise<T> {
-  return makeCancelable(getRequest(endpoint, params, headers, options)) as CancelablePromise<T>;
-}
 
 function postRequest<T>(
   endpoint: string,
@@ -161,16 +152,6 @@ function postRequest<T>(
 ): Promise<T> {
   const authenticated = options.authenticated !== undefined ? options.authenticated : true;
   return request('post', endpoint, params, headers, body, authenticated, options) as Promise<T>;
-}
-
-function postCancelableRequest<T>(
-  endpoint: string,
-  body: object,
-  params: object = {},
-  headers: any = {},
-  options: ApiOptions = {},
-): CancelablePromise<T> {
-  return makeCancelable(postRequest(endpoint, body, params, headers, options)) as CancelablePromise<T>;
 }
 
 function putRequest<T>(
@@ -184,16 +165,6 @@ function putRequest<T>(
   return request('put', endpoint, params, headers, body, authenticated, options) as Promise<T>;
 }
 
-function putCancelableRequest<T>(
-  endpoint: string,
-  body: object,
-  params: object = {},
-  headers: any = {},
-  options: ApiOptions = {},
-): CancelablePromise<T> {
-  return makeCancelable(putRequest(endpoint, body, params, headers, options)) as CancelablePromise<T>;
-}
-
 function deleteRequest<T>(
   endpoint: string,
   params: object = {},
@@ -204,25 +175,10 @@ function deleteRequest<T>(
   return request('delete', endpoint, params, headers, null, authenticated, options) as Promise<T>;
 }
 
-function deleteCancelableRequest<T>(
-  endpoint: string,
-  params: object = {},
-  headers: any = {},
-  options: ApiOptions = {},
-): CancelablePromise<T> {
-  return makeCancelable(
-    deleteRequest(endpoint, params, headers, options),
-  ) as CancelablePromise<T>;
-}
-
 export default {
   request,
   getRequest,
   postRequest,
   putRequest,
   deleteRequest,
-  getCancelableRequest,
-  postCancelableRequest,
-  putCancelableRequest,
-  deleteCancelableRequest,
 };

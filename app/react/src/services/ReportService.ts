@@ -1,5 +1,5 @@
 import moment from 'moment';
-import ApiService, { DataResponse, CancelablePromise } from './ApiService';
+import ApiService, { DataResponse } from './ApiService';
 import { ReportViewResource } from '../models/ReportView';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -57,7 +57,7 @@ const ReportService = {
     dimension: string[],
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewResponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'];
 
@@ -70,7 +70,7 @@ const ReportService = {
       dimension,
       metrics: metrics || DEFAULT_METRICS,
    };
-    return ApiService.getCancelableRequest(endpoint, params);
+    return ApiService.getRequest(endpoint, params);
   },
 
   getAdGroupDeliveryReport(
@@ -82,7 +82,7 @@ const ReportService = {
     dimension: string[],
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewResponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_group_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
@@ -96,7 +96,7 @@ const ReportService = {
       metrics: metrics || DEFAULT_METRICS,
     };
 
-    return ApiService.getCancelableRequest(endpoint, params);
+    return ApiService.getRequest(endpoint, params);
   },
 
   getAdDeliveryReport(
@@ -108,7 +108,7 @@ const ReportService = {
     dimension: string[],
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewResponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
@@ -121,7 +121,7 @@ const ReportService = {
       dimension,
       metrics: metrics || DEFAULT_METRICS,
     };
-    return ApiService.getCancelableRequest(endpoint, params);
+    return ApiService.getRequest(endpoint, params);
   },
 
   getMediaDeliveryReport(
@@ -133,7 +133,7 @@ const ReportService = {
     dimension: string[] | undefined,
     metrics: string[],
     options: object = {},
-  ): CancelablePromise<ReportViewResponse> {
+  ): Promise<ReportViewResponse> {
     const endpoint = 'reports/media_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
@@ -148,7 +148,7 @@ const ReportService = {
       metrics: metrics || DEFAULT_METRICS,
     };
 
-    return ApiService.getCancelableRequest(endpoint, params);
+    return ApiService.getRequest(endpoint, params);
   },
 
   getSingleEmailDeliveryReport(
