@@ -76,7 +76,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       campaignId,
       filter.from,
       filter.to,
-      [],
+      undefined,
       defaultMetrics,
     ),
     ReportService.getAdGroupDeliveryReport(
@@ -85,7 +85,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       campaignId,
       filter.from,
       filter.to,
-      [],
+      undefined,
       defaultMetrics,
     ),
     ReportService.getSingleDisplayDeliveryReport(

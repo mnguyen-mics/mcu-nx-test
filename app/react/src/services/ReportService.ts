@@ -12,7 +12,7 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     dimension: string[],
-    metrics: string[],
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
@@ -33,7 +33,7 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     dimension: string[],
-    metrics: string[],
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
@@ -54,8 +54,8 @@ const ReportService = {
     campaignId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string[],
-    metrics: string[],
+    dimension: string[] | undefined,
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
@@ -79,8 +79,8 @@ const ReportService = {
     objectId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string[],
-    metrics: string[],
+    dimension: string[] | undefined,
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_group_performance_report';
@@ -105,8 +105,8 @@ const ReportService = {
     objectId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    dimension: string[],
-    metrics: string[],
+    dimension: string[] | undefined,
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_performance_report';
@@ -131,7 +131,7 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     dimension: string[] | undefined,
-    metrics: string[],
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/media_performance_report';
@@ -157,7 +157,7 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     dimension: string[],
-    metrics: string[],
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
@@ -216,7 +216,7 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     dimension: string[],
-    metrics: string[],
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/conversion_performance_report';
@@ -239,7 +239,7 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     dimension: string[],
-    metrics: string[],
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/audience_segment_report';
@@ -269,7 +269,7 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     dimension: string[],
-    metrics: string[],
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
@@ -306,8 +306,8 @@ const ReportService = {
     startDate: moment.Moment,
     endDate: moment.Moment,
     filters: string[],
-    dimension: string[],
-    metrics?: string[],
+    dimension: string[] | undefined,
+    metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/conversion_attribution_performance_report';
