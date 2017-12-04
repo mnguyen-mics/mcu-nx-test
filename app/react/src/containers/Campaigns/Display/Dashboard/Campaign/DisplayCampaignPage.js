@@ -179,7 +179,7 @@ class DisplayCampaignPage extends Component {
 
   fetchAllData = (organisationId, campaignId, filter) => {
     const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
-    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplay(campaignId, { view: 'deep' });
+    const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, { view: 'deep' });
     const getCampaignPerf = makeCancelable(ReportService.getSingleDisplayDeliveryReport(
       organisationId,
       campaignId,

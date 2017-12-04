@@ -5,14 +5,15 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Layout, Button } from 'antd';
 import { compose } from 'recompose';
-
-import { CampaignResource, CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
+import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
+import { AdInfoResource, DisplayCampaignInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
+import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import DisplayCampaignHeader from '../Common/DisplayCampaignHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
 import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
 import Card from '../../../../../components/Card/Card';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -26,10 +27,10 @@ const { Content } = Layout;
 const DisplayCampaignAdGroupTableJS = DisplayCampaignAdGroupTable as any;
 const DisplayCampaignAdTableJS = DisplayCampaignAdTable as any;
 
-export interface CampaignSubProps {
+export interface CampaignSubProps<T> {
   isLoadingList?: boolean;
   isLoadingPerf?: boolean;
-  items?: object[];
+  items?: T[];
 }
 
 interface DashboardPerformanceSubProps {
@@ -39,9 +40,13 @@ interface DashboardPerformanceSubProps {
 }
 
 interface DisplayCampaignProps {
-  campaign: CampaignResource;
-  ads: CampaignSubProps;
-  adGroups: CampaignSubProps;
+  campaign: {
+    isLoadingList?: boolean;
+    isLoadingPerf?: boolean;
+    items: DisplayCampaignInfoResource;
+  };
+  ads: CampaignSubProps<AdInfoResource>;
+  adGroups: CampaignSubProps<AdGroupResource>;
   updateAd: (arg: any) => void;
   updateAdGroup: (arg: any) => void;
   updateCampaign: (campaignId: string, object: {
@@ -63,12 +68,7 @@ type JoinedProps =
 
 class DisplayCampaign extends React.Component<JoinedProps> {
 
-  updateLocationSearch(params: {
-    rangeType: string;
-    lookbackWindow: string;
-    from: string;
-    to: string;
-  }) {
+  updateLocationSearch(params: McsDateRangeValue) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
@@ -95,12 +95,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
       to: filter.to,
     };
 
-    const onChange = (newValues: {
-      rangeType: string;
-      lookbackWindow: string;
-      from: string;
-      to: string;
-    }): void => this.updateLocationSearch({
+    const onChange = (newValues: McsDateRangeValue): void => this.updateLocationSearch({
       rangeType: newValues.rangeType,
       lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,

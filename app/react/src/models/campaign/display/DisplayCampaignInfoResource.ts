@@ -21,19 +21,19 @@ export interface DisplayCampaignInfoResource {
   total_impression_capping: number;
   per_day_impression_capping: number;
   editor_version_id: string;
-  ad_groups: AdGroupInfoResource;
-  inventory_sources: InventorySourceResource;
+  ad_groups: AdGroupInfoResource[];
+  inventory_sources: InventorySourceResource[];
   start_date: string;
   end_date: string;
-  goal_selections: GoalSelectionResource;
+  goal_selections: GoalSelectionResource[];
 }
 
 interface AdGroupInfoResource extends AdGroupResource {
-  ads: AdInfoResource;
-  audience_segments: AudienceSegmentSelectionInfoResource;
+  ads: AdInfoResource[];
+  audience_segments: AudienceSegmentSelectionInfoResource[];
 }
 
-interface AdInfoResource extends AdResource {
+export interface AdInfoResource extends AdResource {
   name: string;
   format: string;
   creative_audit_status: CreativeAuditStatus;

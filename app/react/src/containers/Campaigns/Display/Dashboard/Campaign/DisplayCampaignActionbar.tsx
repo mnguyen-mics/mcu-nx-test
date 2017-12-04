@@ -26,7 +26,6 @@ interface DisplayCampaignActionBarProps {
   campaign: CampaignResource;
   updateCampaign: (campaignId: string, object: {
     status: string,
-    type: string,
   }) => void;
   isFetchingStats?: boolean;
   archiveCampaign?: any;
@@ -96,7 +95,7 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       dimensions,
       defaultMetrics,
     ),
-    DisplayCampaignService.getCampaignDisplay(
+    DisplayCampaignService.getCampaignDisplayViewDeep(
       campaignId,
       { view: 'deep' },
     ),
@@ -288,10 +287,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
       updateCampaign,
     } = this.props;
 
-    const onClickElement = (status: string) => () => updateCampaign(campaign.items.id, {
-      status,
-      type: 'EMAIL',
-    });
+    const onClickElement = (status: string) => () => updateCampaign(campaign.items.id, {status: status});
 
     const activeCampaignElement = (
       <Button

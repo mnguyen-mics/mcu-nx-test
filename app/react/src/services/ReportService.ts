@@ -60,6 +60,7 @@ const ReportService = {
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'];
+    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
 
     const params = {
       ...options,
@@ -67,7 +68,7 @@ const ReportService = {
       filters: `campaign_id==${campaignId}`,
       start_date: startDate.format(DATE_FORMAT),
       end_date: endDate.format(DATE_FORMAT),
-      dimension,
+      dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
    };
     return ApiService.getRequest(endpoint, params);
@@ -84,6 +85,7 @@ const ReportService = {
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_group_performance_report';
+    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
     const params = {
@@ -92,7 +94,7 @@ const ReportService = {
       filters: `${objectType}==${objectId}`,
       start_date: startDate.format(DATE_FORMAT),
       end_date: endDate.format(DATE_FORMAT),
-      dimension,
+      dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
     };
 
@@ -110,6 +112,7 @@ const ReportService = {
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_performance_report';
+    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
     const params = {
@@ -118,7 +121,7 @@ const ReportService = {
       filters: `${objectType}==${objectId}`,
       start_date: startDate.format(DATE_FORMAT),
       end_date: endDate.format(DATE_FORMAT),
-      dimension,
+      dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
     };
     return ApiService.getRequest(endpoint, params);

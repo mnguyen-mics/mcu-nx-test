@@ -1,8 +1,9 @@
 import moment from 'moment';
 import { InventorySourceResource } from './../models/campaign/display/InventorySourceResource';
-import { CampaignResource } from './../models/campaign/CampaignResource';
 import { AdGroupResponseList, AdGroupResource } from './../models/campaign/display/AdGroupResource';
 import { DisplayCampaignResource } from './../models/campaign/display/DisplayCampaignResource';
+import { CampaignResource } from '../models/campaign/CampaignResource';
+import { DisplayCampaignInfoResource } from './../models/campaign/display/DisplayCampaignInfoResource';
 import ApiService, { DataResponse } from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
@@ -16,6 +17,14 @@ const DisplayCampaignService = {
     campaignId: string,
     params: object = {},
   ): Promise<DataResponse<DisplayCampaignResource>> {
+    const endpoint = `display_campaigns/${campaignId}`;
+    return ApiService.getRequest(endpoint, params);
+  },
+
+  getCampaignDisplayViewDeep(
+    campaignId: string,
+    params: object = {},
+  ): Promise<DataResponse<DisplayCampaignInfoResource>> {
     const endpoint = `display_campaigns/${campaignId}`;
     return ApiService.getRequest(endpoint, params);
   },
