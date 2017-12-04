@@ -26,6 +26,7 @@ interface DisplayCampaignActionBarProps {
   campaign: CampaignResource;
   updateCampaign: (campaignId: string, object: {
     status: string,
+    type: string,
   }) => void;
   isFetchingStats?: boolean;
   archiveCampaign?: any;
@@ -287,7 +288,10 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
       updateCampaign,
     } = this.props;
 
-    const onClickElement = (status: string) => () => updateCampaign(campaign.items.id, {status: status});
+    const onClickElement = (status: string) => () => updateCampaign(campaign.items.id, {
+      status,
+      type: 'DISPLAY',
+    });
 
     const activeCampaignElement = (
       <Button
