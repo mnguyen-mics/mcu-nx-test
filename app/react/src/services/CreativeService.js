@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getCreatives = (organisationId, options = {}) => {
   const endpoint = 'creatives';

@@ -16,6 +16,7 @@ import {
   ServiceCategoryTree,
   AudienceSegmentServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
+import { DataListResponse } from '../../../../../../../services/ApiService';
 
 const AudienceCatatogFieldArray = FieldArray as new() => GenericFieldArray<Field, AudienceCatalogProps>;
 
@@ -122,7 +123,8 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
       this.fetchDetailedTargetingData(),
       CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.GENDER'] }),
       CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.AGE'] }),
-      AudienceSegmentService.getSegments(organisationId, datamartId, { max_results: 500 }).then(res => res.data),
+      AudienceSegmentService.getSegments(organisationId, datamartId, { max_results: 500 })
+        .then((res: DataListResponse<AudienceSegmentResource>) => res.data),
     ]).then(([audienceCategoryTree, genderServiceItems, ageServiceItems, audienceSegments]) => {
 
       this.setState(prevState => ({

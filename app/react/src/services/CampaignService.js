@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 function getCampaigns(organisationId, campaignType, options = {}) {
   const endpoint = 'campaigns';

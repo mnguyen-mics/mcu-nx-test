@@ -25,7 +25,7 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
 import AttributionModelsService from '../../../../../services/AttributionModelsService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
@@ -256,15 +256,15 @@ class CampaignForm extends Component {
               const updatedObject = formValues[tableName].find(elem => (
                 elem.id === id
               ));
-              newPromise = requests.update({ campaignId: campaignId, id: main_id, organisationId: match.params.organisationId, body: updatedObject }); // eslint-disable-line
+              newPromise = requests.update(campaignId, main_id, match.params.organisationId, updatedObject); // eslint-disable-line
             }
           } else {
             /* addition of the goal to the campaign */
-            newPromise = requests.add({ campaignId, body });
+            newPromise = requests.add(campaignId, body);
           }
         } else if (id > 1000) {
           /* In case we want to delete an existing element */
-          newPromise = requests.delete({ campaignId, id: id });
+          newPromise = requests.delete(campaignId, id);
         }
 
         return newPromise || Promise.resolve();

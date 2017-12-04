@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 function getEngineProperties(engineVersionId) {
   const endpoint = `plugins/${engineVersionId}/properties`;
