@@ -1,5 +1,6 @@
 import moment from 'moment';
 import ApiService from './ApiService';
+import { formatMcsDate } from '../utils/McsMoment.ts';
 
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -7,11 +8,11 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 const getDisplayCampaignPerformanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/display_campaign_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -23,11 +24,11 @@ const getDisplayCampaignPerformanceReport = (organisationId, startDate, endDate,
 const getEmailDeliveryReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/delivery_report';
   const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -39,13 +40,13 @@ const getEmailDeliveryReport = (organisationId, startDate, endDate, dimension, m
 const getSingleDisplayDeliveryReport = (organisationId, campaignId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/display_campaign_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
 
   const params = {
     organisation_id: organisationId,
     filters: `campaign_id==${campaignId}`,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -57,13 +58,13 @@ const getSingleDisplayDeliveryReport = (organisationId, campaignId, startDate, e
 const getAdGroupDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/ad_group_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
 
   const params = {
     organisation_id: organisationId,
     filters: `${objectType}==${objectId}`,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -75,13 +76,13 @@ const getAdGroupDeliveryReport = (organisationId, objectType, objectId, startDat
 const getAdDeliveryReport = (organisationId, objectType, objectId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/ad_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
 
   const params = {
     organisation_id: organisationId,
     filters: `${objectType}==${objectId}`,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -94,12 +95,12 @@ const getMediaDeliveryReport = (organisationId, objectType, objectId, startDate,
   const endpoint = 'reports/media_performance_report';
   const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
   const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
     filters: `${objectType}==${objectId}`,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension: dimension || DEFAULT_DIMENSIONS,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -126,12 +127,12 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
     'uniq_email_soft_bounced',
     'uniq_email_complaints',
   ];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
     filters: `campaign_id==${campaignId}`,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -163,11 +164,11 @@ const getSingleEmailDeliveryReport = (organisationId, campaignId, startDate, end
 const getConversionPerformanceReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/conversion_performance_report';
   const DEFAULT_METRICS = ['conversions', 'value'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -179,11 +180,11 @@ const getConversionPerformanceReport = (organisationId, startDate, endDate, dime
 const getAudienceSegmentReport = (organisationId, startDate, endDate, dimension, metrics, options = {}) => {
   const endpoint = 'reports/audience_segment_report';
   const DEFAULT_METRICS = ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -210,11 +211,11 @@ const getAllEmailBlastPerformance = (organisationId, campaignId, startDate, endD
     'uniq_email_soft_bounced',
     'uniq_email_complaints',
   ];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension,
     metrics: metrics || DEFAULT_METRICS,
     ...options,
@@ -227,11 +228,11 @@ const getConversionAttributionPerformance = (organisationId, startDate, endDate,
   const endpoint = 'reports/conversion_attribution_performance_report';
   const DEFAULT_DIMENSIONS = ['day', 'interaction_type'];
   const DEFAULT_METRICS = ['weighted_conversions', 'interaction_to_conversion_duration'];
-
+  const formattedDates = formatMcsDate({ from: startDate, to: endDate }, true);
   const params = {
     organisation_id: organisationId,
-    start_date: startDate.format(DATE_FORMAT),
-    end_date: endDate.format(DATE_FORMAT),
+    start_date: formattedDates.from,
+    end_date: formattedDates.to,
     dimension: dimension || DEFAULT_DIMENSIONS,
     metrics: metrics || DEFAULT_METRICS,
     filters: filters,

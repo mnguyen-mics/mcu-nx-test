@@ -215,16 +215,12 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType:  filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = (newValues: McsDateRangeValue) =>
     this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
         to: newValues.to,
       });
@@ -234,23 +230,17 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
 
   renderStackedAreaCharts() {
     const {
-      location: { search },
       colors,
       goal,
     } = this.props;
 
     const { performance, isFetchingPerformance } = this.state;
 
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-
-    const { lookbackWindow } = filter;
-
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
         { key: 'weighted_conversions', message: messages.weightedConversion },
       ],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: [colors['mcs-success']],
       isDraggable: false,
     };

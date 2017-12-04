@@ -48,15 +48,11 @@ class AdditionDeletion extends Component {
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
-      rangeType: newValues.rangeType,
-      lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
       to: newValues.to,
     });
@@ -66,17 +62,11 @@ class AdditionDeletion extends Component {
 
   renderStackedAreaCharts() {
     const {
-      location: {
-        search,
-      },
       dataSource,
       hasFetchedAudienceStat,
       colors,
     } = this.props;
 
-    const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-
-    const { lookbackWindow } = filter;
 
     const formattedDataSource = dataSource.map(item => {
       return {
@@ -91,7 +81,6 @@ class AdditionDeletion extends Component {
         { key: 'user_point_additions', message: messages.userPointAddition },
         { key: 'user_point_deletions', message: messages.UserPointDeletion },
       ],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: [colors['mcs-success'], colors['mcs-error']],
     };
     return hasFetchedAudienceStat

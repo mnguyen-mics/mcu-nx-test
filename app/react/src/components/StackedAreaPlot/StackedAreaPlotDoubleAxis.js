@@ -440,7 +440,6 @@ StackedAreaPlotDoubleAxis.propTypes = {
     color: PropTypes.string,
     yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
-    lookbackWindow: PropTypes.number,
     isDraggable: PropTypes.bool,
     onDragEnd: PropTypes.func,
   }).isRequired,

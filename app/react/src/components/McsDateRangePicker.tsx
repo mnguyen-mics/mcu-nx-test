@@ -4,12 +4,11 @@ import moment from 'moment';
 import { ClickParam } from 'antd/lib/menu';
 
 import withTranslations, { TranslationProps } from '../containers/Helpers/withTranslations';
+import McsMoment, { convertMcsDateToMoment } from '../utils/McsMoment';
 
 export interface McsDateRangeValue {
-  rangeType: string;
-  lookbackWindow?: moment.Duration;
-  from?: moment.Moment;
-  to?: moment.Moment;
+  from: McsMoment;
+  to: McsMoment;
 }
 
 export interface McsDateRangePickerProps {
@@ -24,35 +23,32 @@ interface McsDateRangePickerState {
 
 interface Range {
   name: 'TODAY' | 'YESTERDAY' | 'LAST_7_DAYS' | 'LAST_30_DAYS';
-  from: moment.Moment;
-  to: moment.Moment;
+  from: string;
+  to: string;
 }
 
 const { RangePicker } = DatePicker;
 
-const currentTimeStampInt = parseInt(moment().format('X'), 10); // radix is needed
-const numberOfSecondsInOneDay = 3600 * 24;
-
 const ranges: Range[] = [
   {
     name: 'TODAY',
-    from : moment.unix(currentTimeStampInt).startOf('day'),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
+    from : 'now',
+    to: 'now',
   },
   {
     name: 'YESTERDAY',
-    from : moment.unix(currentTimeStampInt - numberOfSecondsInOneDay).startOf('day'),
-    to: moment.unix(currentTimeStampInt).startOf('day'),
+    from : 'now-1d',
+    to: 'now-1d',
   },
   {
     name: 'LAST_7_DAYS',
-    from: moment.unix(currentTimeStampInt - (7 * numberOfSecondsInOneDay)).startOf('day'),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
+    from: 'now-7d',
+    to: 'now',
   },
   {
     name: 'LAST_30_DAYS',
-    from: moment.unix(currentTimeStampInt - (30 * numberOfSecondsInOneDay)).startOf('day'),
-    to: moment.unix(currentTimeStampInt + numberOfSecondsInOneDay).startOf('day'),
+    from: 'now-30d',
+    to: 'now',
   },
 ];
 
@@ -73,25 +69,15 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
   getSelectedPresettedRange() {
     const { values, translations, format } = this.props;
 
-    if (values.rangeType === 'absolute') {
-      return `${values.from!.format(format)} ~ ${values.to!.format(format)}`;
-    } else if (values.rangeType === 'relative') {
-      const selectedRange = ranges.find((range) => {
-        const ceil1 = Math.ceil(moment
-          .duration({ from: range.from, to: range.to })
-          .asSeconds(),
-        );
-        return (ceil1 === Math.ceil(values.lookbackWindow!.asSeconds())
-          && (range.to.unix() === (values.to ? values.to.unix() : null)));
-      });
+    const selectedRange = ranges.find((range) => {
+      return range.from === values.from.raw() && range.to ===  values.to.raw();
+    });
 
-      return (selectedRange
-        ? translations[selectedRange.name]
-        : Math.ceil(values.lookbackWindow!.asSeconds()).toString().concat(' ', translations.SECONDS)
-      );
+    if (selectedRange) {
+      return translations[selectedRange.name];
     }
+    return `${convertMcsDateToMoment(values.from.raw())!.format(format)} ~ ${convertMcsDateToMoment(values.to.raw())!.format(format)}`;
 
-    return translations.ERROR;
   }
 
   handleDatePickerMenuChange = (dates: [moment.Moment, moment.Moment]) => {
@@ -100,10 +86,8 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
     this.setState({ showRangePicker: false });
 
     onChange({
-      rangeType: 'absolute',
-      from: dates[0],
-      to: dates[1],
-      lookbackWindow: moment.duration({from: dates[0], to: dates[1]}),
+      from: new McsMoment(dates[0].format('YYYY-MM-DD')),
+      to: new McsMoment(dates[1].format('YYYY-MM-DD')),
     });
   }
 
@@ -124,10 +108,8 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
     });
 
     onChange({
-      lookbackWindow: moment.duration({ to: selectedRange!.to, from: selectedRange!.from }),
-      rangeType: 'relative',
-      from: selectedRange!.from,
-      to: selectedRange!.to,
+      from: new McsMoment(selectedRange!.from),
+      to:  new McsMoment(selectedRange!.to),
     });
   }
 
@@ -170,13 +152,14 @@ class McsDateRangePicker extends React.Component<McsDateRangePickerProps & Trans
   render() {
     const { values } = this.props;
     const { showRangePicker } = this.state;
-
+    const fromMoment = values.from.toMoment();
+    const toMoment = values.to.toMoment();
     return showRangePicker === true
       ? (
           <RangePicker
             allowClear={false}
             onChange={this.handleDatePickerMenuChange}
-            defaultValue={[values.from!, values.to!]}
+            defaultValue={[fromMoment, toMoment]}
             disabledDate={this.disableFutureDates}
             onOpenChange={this.onDatePickerOpenChange}
             open={showRangePicker}
