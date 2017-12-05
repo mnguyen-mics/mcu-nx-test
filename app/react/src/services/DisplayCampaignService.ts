@@ -4,11 +4,12 @@ import { AdGroupResponseList, AdGroupResource } from './../models/campaign/displ
 import { DisplayCampaignResource } from './../models/campaign/display/DisplayCampaignResource';
 import { CampaignResource } from '../models/campaign/CampaignResource';
 import { DisplayCampaignInfoResource } from './../models/campaign/display/DisplayCampaignInfoResource';
-import ApiService, { DataResponse } from './ApiService';
+import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
 import { AdResource } from '../models/campaign/display/AdResource';
 import { GoalSelectionResource } from '../models/goal/GoalSelectionResource';
+import { PlacementListSelectionResource } from '../models/placement/PlacementListResource';
 
 const DisplayCampaignService = {
 
@@ -176,9 +177,7 @@ const DisplayCampaignService = {
     audienceSegmentId: string,
     body: Partial<AudienceSegmentSelectionResource>,
    ): Promise<AudienceSegmentSelectionResource> {
-    const endpoint = `display_campaigns/
-      ${campaignId}/ad_groups/
-      ${adGroupId}/audience_segments/${audienceSegmentId}`;
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${audienceSegmentId}`;
     return ApiService.putRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
   },
 
@@ -230,7 +229,7 @@ const DisplayCampaignService = {
   getAds(
     campaignId: string,
     adGroupId: string,
-  ): Promise<AdResource> {
+  ): Promise<DataListResponse<AdResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.getRequest(endpoint);
   },
@@ -297,6 +296,79 @@ const DisplayCampaignService = {
     const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
     return ApiService.deleteRequest(endpoint, body);
   },
+
+  /* LOCATION SERVICES */
+
+  createLocation(
+    campaignId: string,
+    adGroupId: string,
+    body: object,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+    return ApiService.postRequest(endpoint, body);
+  },
+
+  deleteLocation(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+    return ApiService.deleteRequest(endpoint);
+  },
+  getLocations(
+    campaignId: string,
+    adGroupId: string,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+    return ApiService.getRequest(endpoint);
+  },
+  updateLocation(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+    body: object,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+    return ApiService.putRequest(endpoint, body);
+  },
+
+  /* PLACEMENT LIST SERVICES */
+  getPlacementLists(
+    campaignId: string,
+    adGroupId: string,
+    options: object = {},
+  ): Promise<DataListResponse<PlacementListSelectionResource>> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
+    return ApiService.getRequest(endpoint, options);
+  },
+
+  createPlacementList(
+      campaignId: string,
+      adGroupId: string,
+      body: Partial<PlacementListSelectionResource>,
+  ): Promise<DataResponse<PlacementListSelectionResource>> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
+    return ApiService.postRequest(endpoint, body);
+  },
+
+  updatePlacementList(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+    body: Partial<PlacementListSelectionResource>,
+  ): Promise<DataResponse<PlacementListSelectionResource>> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
+    return ApiService.putRequest(endpoint, body);
+  },
+  deletePlacementList(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  ): Promise<any> {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
+  return ApiService.deleteRequest(endpoint, {});
+},
 };
 
 export default DisplayCampaignService;

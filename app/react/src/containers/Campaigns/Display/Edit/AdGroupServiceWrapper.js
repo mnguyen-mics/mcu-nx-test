@@ -38,7 +38,8 @@ function getAds({ adGroupId, campaignId, organisationId }) {
 }
 
 function getPlacements({ campaignId, adGroupId }) {
-  return DisplayCampaignService.getPlacementLists({ campaignId, adGroupId })
+  return DisplayCampaignService.getPlacementLists(campaignId, adGroupId)
+    .then(res => res.data)
     .then(res => {
       return res.map(item => {
         return {
@@ -57,7 +58,7 @@ function getPublishers({ campaignId }) {
 }
 
 function getLocations({ campaignId, adGroupId }) {
-  return DisplayCampaignService.getLocations({ campaignId, adGroupId }).then(response => {
+  return DisplayCampaignService.getLocations(campaignId, adGroupId).then(response => {
     const locationSelections = response.data;
     const locationFields = locationSelections.map(location => {
       return {
@@ -142,14 +143,14 @@ const saveTableFields = (options, formValues, formInitialValues) => {
 
   // TODO IN UPDATE CASE => maybe compare resource between initial and current
   const createResources = newFormValues.filter(field => isFakeId(field.id)).map(field => {
-    return function promise() { return requests.create({ campaignId, adGroupId, body: field.resource }); };
+    return function promise() { return requests.create(campaignId, adGroupId, field.resource); };
   });
 
   const updateResources = newFormValues.filter(field => !isFakeId(field.id) && !field.deleted).map(field => {
-    return function promise() { return requests.update({ campaignId, adGroupId, id: field.id, body: field.resource }); };
+    return function promise() { return requests.update(campaignId, adGroupId, field.id, field.resource); };
   });
   const deleteResources = newFormValues.filter(field => field.deleted).map(field => {
-    return function promise() { return requests.delete({ campaignId, adGroupId, id: field.id }); };
+    return function promise() { return requests.delete(campaignId, adGroupId, field.id); };
   });
 
   const sequentialPromisesResult = [
