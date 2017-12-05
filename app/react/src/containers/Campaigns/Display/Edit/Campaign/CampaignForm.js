@@ -400,7 +400,6 @@ class CampaignForm extends Component {
             id={scrollLabelContentId}
           >
             <General {...commonProps} formValues={formValues} />
-
             <hr />
             <Goals {...commonProps} formValues={goalsTable} createUniqueGoal={this.createUniqueGoal} />
             <hr />
