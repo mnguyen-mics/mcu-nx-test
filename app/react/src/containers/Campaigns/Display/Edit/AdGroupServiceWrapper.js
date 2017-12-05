@@ -39,6 +39,7 @@ function getAds({ adGroupId, campaignId, organisationId }) {
 
 function getPlacements({ campaignId, adGroupId }) {
   return DisplayCampaignService.getPlacementLists(campaignId, adGroupId)
+    .then(res => res.data)
     .then(res => {
       return res.map(item => {
         return {
