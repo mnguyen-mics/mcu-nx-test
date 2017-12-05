@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Modal, Input, Alert } from 'antd';
+import { ArgsProps } from 'antd/lib/notification';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -27,6 +28,14 @@ const messages = defineMessages({
     id: 'email.campaign.sendTest.modal.input.error',
     defaultMessage: 'Please enter an valid email address',
   },
+  notifSuccessTitle: {
+    id: 'email.campaign.sendTest.notif.success.title',
+    defaultMessage: 'Success',
+  },
+  notifSuccessContent: {
+    id: 'email.campaign.sendTest.notif.success.content',
+    defaultMessage: 'The test email has been successfully sent!',
+  },
 });
 
 export interface EmailTestModalProps {
@@ -35,6 +44,7 @@ export interface EmailTestModalProps {
   selectedtemplateId: string;
   handleCancel: () => void;
   notifyError: (e: any) => void;
+  notifySuccess: (e: ArgsProps) => void;
  }
 
 interface EmailTestModalState {
@@ -55,10 +65,19 @@ class EmailTestModal extends React.Component<EmailTestModalProps & InjectedIntlP
   }
 
   handleOk = () => {
+    const {
+      intl: {
+        formatMessage,
+      },
+    } = this.props;
     if (this.state.inputValue && this.state.inputValue.length) {
       return this.setState({ isLoading: true }, () => {
         CreativeService.sendTestBlast(this.props.selectedtemplateId, this.props.organisationId, this.state.inputValue).then(() => {
           return this.setState({ isLoading: false }, () => {
+            this.props.notifySuccess({
+              message: formatMessage(messages.notifSuccessTitle),
+              description: formatMessage(messages.notifSuccessContent),
+            });
             this.props.handleCancel();
           });
         }).catch((e: any) => {
@@ -100,5 +119,5 @@ class EmailTestModal extends React.Component<EmailTestModalProps & InjectedIntlP
 
 export default compose(
   injectIntl,
-  connect(undefined, { notifyError: actions.notifyError }),
+  connect(undefined, { notifyError: actions.notifyError, notifySuccess: actions.notifySuccess }),
 )(EmailTestModal);
