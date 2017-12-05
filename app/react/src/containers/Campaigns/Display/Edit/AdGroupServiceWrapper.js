@@ -38,7 +38,7 @@ function getAds({ adGroupId, campaignId, organisationId }) {
 }
 
 function getPlacements({ campaignId, adGroupId }) {
-  return DisplayCampaignService.getPlacementLists({ campaignId, adGroupId })
+  return DisplayCampaignService.getPlacementLists(campaignId, adGroupId)
     .then(res => {
       return res.map(item => {
         return {
@@ -57,7 +57,7 @@ function getPublishers({ campaignId }) {
 }
 
 function getLocations({ campaignId, adGroupId }) {
-  return DisplayCampaignService.getLocations({ campaignId, adGroupId }).then(response => {
+  return DisplayCampaignService.getLocations(campaignId, adGroupId).then(response => {
     const locationSelections = response.data;
     const locationFields = locationSelections.map(location => {
       return {

@@ -9,6 +9,7 @@ import { filterEmptyValues } from '../utils/ReduxFormHelper';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
 import { AdResource } from '../models/campaign/display/AdResource';
 import { GoalSelectionResource } from '../models/goal/GoalSelectionResource';
+import { PlacementListResource } from '../models/placementList/PlacementListResource';
 
 const DisplayCampaignService = {
 
@@ -230,7 +231,7 @@ const DisplayCampaignService = {
   getAds(
     campaignId: string,
     adGroupId: string,
-  ): Promise<AdResource> {
+  ): Promise<AdResource[]> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.getRequest(endpoint);
   },
@@ -297,6 +298,78 @@ const DisplayCampaignService = {
     const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
     return ApiService.deleteRequest(endpoint, body);
   },
+
+  /* LOCATION SERVICES */
+
+  createLocation(
+    campaignId: string,
+    adGroupId: string,
+    body: object,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+    return ApiService.postRequest(endpoint, body).then((res: DataResponse<any>) => res.data);
+  },
+
+  deleteLocation(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+    return ApiService.deleteRequest(endpoint);
+  },
+  getLocations(
+    campaignId: string,
+    adGroupId: string,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
+    return ApiService.getRequest(endpoint);
+  },
+  updateLocation(
+    campaignId: string,
+    adGroupId: string,
+    body: object,
+    id: string,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+    return ApiService.putRequest(endpoint, body);
+  },
+
+  /* PLACEMENT LIST SERVICES */
+  getPlacementLists(
+    campaignId: string,
+    adGroupId: string,
+    options: object = {}): Promise<PlacementListResource[]> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
+    return ApiService.getRequest(endpoint, options).then((res: DataResponse<PlacementListResource[]>) => res.data);
+  },
+  createPlacementList(
+      campaignId: string,
+      adGroupId: string,
+      body: object,
+    ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
+    return ApiService.postRequest(endpoint, body).then((res: DataResponse<PlacementListResource>) => res.data);
+  },
+
+  updatePlacementList(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+    body: object,
+  ) {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
+    return ApiService.putRequest(endpoint, body).then((res: DataResponse<PlacementListResource>) => res.data);
+  },
+  deletePlacementList(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+    body: object,
+  ) {
+  const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
+  return ApiService.deleteRequest(endpoint, body);
+},
 };
 
 export default DisplayCampaignService;
