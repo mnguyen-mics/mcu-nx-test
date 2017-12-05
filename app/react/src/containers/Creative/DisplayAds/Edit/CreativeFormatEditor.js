@@ -33,8 +33,7 @@ class CreativeFormatEditor extends Component {
       : 'creativeCreationGeneralFormatFieldButtonStandard'
     ]);
 
-    const buttonOnClick = (e) => {
-      e.preventDefault();
+    const buttonOnClick = () => {
       this.setState({ standardFormat: !standardFormat });
     };
 
