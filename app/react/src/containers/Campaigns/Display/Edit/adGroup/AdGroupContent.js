@@ -9,7 +9,7 @@ import { EditContentLayout } from '../../../../../components/Layout/index.ts';
 import AdGroupForm from './AdGroupForm';
 import { withMcsRouter } from '../../../../Helpers';
 import * as SessionHelper from '../../../../../state/Session/selectors';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
 import { Loading } from '../../../../../components/index.ts';

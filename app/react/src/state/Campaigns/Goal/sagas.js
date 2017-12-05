@@ -9,7 +9,7 @@ import {
 } from './actions';
 
 import GoalService from '../../../services/GoalService';
-import ReportService from '../../../services/ReportService';
+import ReportService from '../../../services/ReportService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 

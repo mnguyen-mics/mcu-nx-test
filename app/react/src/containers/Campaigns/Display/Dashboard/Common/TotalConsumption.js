@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import ReportService from '../../../../../services/ReportService';
+import ReportService from '../../../../../services/ReportService.ts';
 import Progress from '../../../../../components/Progress.tsx';
 
 class TotalConsumption extends Component {
@@ -58,7 +58,7 @@ class TotalConsumption extends Component {
       return nextState;
     }, () => {
 
-      ReportService.getSingleDisplayDeliveryReport(organisationId, id, from, to, '', ['impressions_cost']).promise.then(response => {
+      ReportService.getSingleDisplayDeliveryReport(organisationId, id, from, to, '', ['impressions_cost']).then(response => {
         this.setState(prevState => {
           const nextState = {
             ...prevState,

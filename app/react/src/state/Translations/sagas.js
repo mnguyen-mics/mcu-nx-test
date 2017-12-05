@@ -3,7 +3,7 @@ import { call, fork, put } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 
-import ApiService from '../../services/ApiService';
+import ApiService from '../../services/ApiService.ts';
 
 import { loadTranslations } from './actions';
 import { LOAD_TRANSLATIONS } from '../action-types';

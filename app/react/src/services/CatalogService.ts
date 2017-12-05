@@ -30,7 +30,7 @@ const CatalogService = {
       category_type: options.categoryType,
       category_subtype: options.categorySubtype,
     };
-    return ApiService.getRequest(endpoint, params).then(res => res.data as ServiceCategoryTree[]);
+    return ApiService.getRequest(endpoint, params).then((res: any) => res.data as ServiceCategoryTree[]);
   },
 
   getCategory(
@@ -38,7 +38,7 @@ const CatalogService = {
     categoryId: string,
   ): Promise<ServiceCategoryPublicResource> {
     const endpoint = `subscribed_services/${organisationId}/categories/${categoryId}`;
-    return ApiService.getRequest(endpoint).then(res => res.data as ServiceCategoryPublicResource);
+    return ApiService.getRequest(endpoint).then((res: any) => res.data as ServiceCategoryPublicResource);
   },
 
   getCategories(
@@ -63,7 +63,7 @@ const CatalogService = {
       category_type: options.categoryType,
       category_subtype: options.categorySubtype,
     };
-    return ApiService.getRequest(endpoint, params).then(res => res.data as ServiceCategoryPublicResource[]);
+    return ApiService.getRequest(endpoint, params).then((res: any) => res.data as ServiceCategoryPublicResource[]);
   },
 
   getServices(
@@ -89,7 +89,7 @@ const CatalogService = {
       category_type: options.categoryType,
       category_subtype: options.categorySubtype,
     };
-    return ApiService.getRequest(endpoint, params).then(res => res.data as ServiceItemPublicResource[]);
+    return ApiService.getRequest(endpoint, params).then((res: any) => res.data as ServiceItemPublicResource[]);
   },
 
 };
