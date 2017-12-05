@@ -4,7 +4,7 @@ import { AdGroupResponseList, AdGroupResource } from './../models/campaign/displ
 import { DisplayCampaignResource } from './../models/campaign/display/DisplayCampaignResource';
 import { CampaignResource } from '../models/campaign/CampaignResource';
 import { DisplayCampaignInfoResource } from './../models/campaign/display/DisplayCampaignInfoResource';
-import ApiService, { DataResponse } from './ApiService';
+import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { filterEmptyValues } from '../utils/ReduxFormHelper';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
 import { AdResource } from '../models/campaign/display/AdResource';
@@ -229,7 +229,7 @@ const DisplayCampaignService = {
   getAds(
     campaignId: string,
     adGroupId: string,
-  ): Promise<AdResource[]> {
+  ): Promise<DataListResponse<AdResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.getRequest(endpoint);
   },
@@ -305,7 +305,7 @@ const DisplayCampaignService = {
     body: object,
   ) {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
-    return ApiService.postRequest(endpoint, body).then((res: DataResponse<any>) => res.data);
+    return ApiService.postRequest(endpoint, body);
   },
 
   deleteLocation(
