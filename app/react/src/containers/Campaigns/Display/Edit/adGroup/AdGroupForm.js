@@ -17,13 +17,13 @@ import {
   Audience,
   Device,
   General,
-  Location,
-  Media,
+  LocationSection,
+  // Media,
+  Placements,
   Optimization,
-  Placement,
-  Publisher,
+  // Publisher,
   Summary,
-} from './sections';
+} from './sections/index.ts';
 import { AudienceCatalogContainer } from './sections/AudienceCatalog/index.ts';
 import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 import FeatureSwitch from '../../../../../components/FeatureSwitch.tsx';
@@ -75,10 +75,7 @@ class AdGroupForm extends Component {
     this.props.save(formValues);
   }
 
-  updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => (e) => {
-    if (e) {
-      e.preventDefault();
-    }
+  updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => () => {
 
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
 
@@ -92,8 +89,7 @@ class AdGroupForm extends Component {
 
     if (prevFields.length > 0) {
       prevFields.forEach((prevField, index) => {
-        const toBeRemoved = !newFieldIds.includes(prevField.id);
-
+        const toBeRemoved = prevField.exclude === undefined ? !newFieldIds.includes(prevField.id) : false;
         this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
       });
     }
@@ -105,6 +101,15 @@ class AdGroupForm extends Component {
         this.props.RxF.array.push(tableName, { ...newField, modelId: generateFakeId(), toBeRemoved: false });
       }
     });
+  }
+
+  emptyTableFields = (tableName) => {
+    const prevFields = this.props.formValues[tableName] || [];
+    prevFields.forEach((prevField, index) => {
+      const toBeRemoved = true;
+      this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
+    });
+    this.props.RxF.change(tableName, []);
   }
 
   render() {
@@ -132,14 +137,16 @@ class AdGroupForm extends Component {
         openNextDrawer,
         updateTableFieldStatus: this.updateTableFieldStatus,
         updateTableFields: this.updateTableFields,
+        emptyTableFields: this.emptyTableFields,
       },
       organisationId,
     };
     const {
       audienceTable,
       optimizerTable,
-      placements,
-      publisherTable,
+      // placements,
+      // publisherTable,
+      placementTable,
       adTable,
     } = formValues;
 
@@ -174,13 +181,13 @@ class AdGroupForm extends Component {
             <hr />
             <Device {...commonProps} formValues={formValues} />
             <hr />
-            <Location {...commonProps} />
-            <hr />
+            <LocationSection RxF={this.props.RxF} />
+            {/* <hr />
             <Media {...commonProps} />
             <hr />
-            <Publisher {...commonProps} formValues={publisherTable} />
+            <Publisher {...commonProps} formValues={publisherTable} /> */}
             <hr />
-            <Placement {...commonProps} formValues={placements} />
+            <Placements {...commonProps} formValues={placementTable} />
             <hr />
             <Ads {...commonProps} formValues={adTable} />
             <hr />

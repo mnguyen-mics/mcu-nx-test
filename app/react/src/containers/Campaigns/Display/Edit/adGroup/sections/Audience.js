@@ -107,8 +107,9 @@ class Audience extends Component {
           ...tableData,
           {
             key: segment.modelId,
-            type: { image: 'users', name: segment.name },
+            type: { image: 'users' },
             info: [
+              segment.name,
               `${formatMetric(segment.user_points, '0,0')} ${formatMessage(messages.contentSectionAudienceMedium1)}`,
               `${formatMetric(segment.desktop_cookie_ids, '0,0')} ${formatMessage(messages.contentSectionAudienceMedium2)}`,
             ],

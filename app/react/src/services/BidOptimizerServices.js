@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 import PluginServices from './PluginServices';
 import { generateFakeId } from '../utils/FakeIdHelper';
 

@@ -36,7 +36,7 @@ class CreativeCardSelector extends Component {
 
   fetchAllData = () => {
     const { currentPage, pageSize, keywords } = this.state;
-    const options = { ...getPaginatedApiParam(currentPage, pageSize) };
+    const options = getPaginatedApiParam(currentPage, pageSize);
 
     if (keywords) {
       options.keywords = keywords;
@@ -96,7 +96,7 @@ class CreativeCardSelector extends Component {
   getColumnsDefinitions() {
     const { selectedData } = this.state;
     const selectedIds = selectedData
-      .map(selection => selection.id);
+      .map(selection => selection[this.props.filterKey]);
 
     return {
       title: {
@@ -148,9 +148,9 @@ class CreativeCardSelector extends Component {
   toggleSelection(id) {
     this.setState(prevState => {
       const { selectedData } = this.state;
-      const isElementSelected = prevState.selectedData.find(selection => selection.id === id);
-      const newSelection = { id };
-
+      const isElementSelected = prevState.selectedData.find(selection => selection[this.props.filterKey] === id);
+      const newSelection = { };
+      newSelection[this.props.filterKey] = id;
       if (this.props.singleSelection) {
         return {
           selectedData: (!isElementSelected ? [newSelection] : []),
@@ -160,7 +160,7 @@ class CreativeCardSelector extends Component {
       return {
         selectedData: (!isElementSelected
             ? [...selectedData, newSelection]
-            : selectedData.filter(selection => selection.id !== id)
+            : selectedData.filter(selection => selection[this.props.filterKey] !== id)
           )
       };
     });
@@ -241,6 +241,7 @@ CreativeCardSelector.propTypes = {
   save: PropTypes.func.isRequired,
   singleSelection: PropTypes.bool,
   close: PropTypes.func.isRequired,
+  filterKey: PropTypes.string.isRequired,
 };
 
 export default compose(

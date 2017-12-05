@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getRouters = (organisationId, options = {}) => {
   const endpoint = 'email_routers';

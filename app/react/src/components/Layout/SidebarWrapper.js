@@ -9,7 +9,6 @@ import McsIcons from '../McsIcons.tsx';
 const { Sider } = Layout;
 
 function SidebarWrapper({ items, scrollId, url }) {
-
   const scrollItems = Object.keys(items);
   const options = scrollItems.map((name) => (
     <li key={name}>

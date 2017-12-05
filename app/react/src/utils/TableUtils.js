@@ -6,6 +6,11 @@ function filterTableByRemovedStatus(table = []) {
   return table.filter(elem => !elem.toBeRemoved);
 }
 
+function filterTableByExcludeProperty(table = [], boolean) {
+  return table.filter(elem => elem.resource.exclude === boolean && !elem.deleted)
+    .map(geoname => geoname.resource.geoname_id);
+}
+
 function stringifyTable(table = [], key) {
   return table.reduce((acc, element, i) => (
     `${acc}${`${i > 0 && i < table.length ? ',' : ''} ${element[key]}`}`
@@ -19,6 +24,7 @@ function setTableRowIndex(table = []) {
 export {
   filterTableByIncludeStatus,
   filterTableByRemovedStatus,
+  filterTableByExcludeProperty,
   setTableRowIndex,
   stringifyTable,
 };

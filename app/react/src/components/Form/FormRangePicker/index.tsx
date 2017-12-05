@@ -39,7 +39,7 @@ class FormRangePicker extends React.Component<FormRangePickerProps & FormFieldWr
   static defaultProps: Partial<FormRangePickerProps> = {
     fieldsMetaData: undefined,
     fieldValidators: { start: [], end: [] },
-    syncErrors: undefined,
+    syncErrors: {},
   };
 
   disabledDate = (isStart: boolean) => (currentDate: moment.Moment) => {

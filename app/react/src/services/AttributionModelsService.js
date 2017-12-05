@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getAttributionModels = (organisationId, options = {}) => {
   const endpoint = 'attribution_models';

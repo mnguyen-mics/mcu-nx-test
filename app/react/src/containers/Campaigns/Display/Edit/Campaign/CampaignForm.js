@@ -25,7 +25,7 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
 import AttributionModelsService from '../../../../../services/AttributionModelsService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
@@ -125,14 +125,25 @@ class CampaignForm extends Component {
       formValues
     } = this.props;
 
+
     const body = {
       editor_version_id: '11',
       name: formValues.name,
-      per_day_impression_capping: formValues.per_day_impression_capping,
       time_zone: 'Europe/Paris',
-      total_impression_capping: formValues.total_impression_capping,
+      model_version: formValues.model_version,
       type: 'DISPLAY'
     };
+
+    const addFieldsBasedOnCondition = (id) => {
+      if (formValues[id]) {
+        body[id] = formValues[id];
+      }
+    };
+
+    addFieldsBasedOnCondition('total_impression_capping');
+    addFieldsBasedOnCondition('total_budget');
+    addFieldsBasedOnCondition('max_budget_per_period');
+    addFieldsBasedOnCondition('per_day_impression_capping');
 
     const request = (!editionMode
       ? DisplayCampaignService.createCampaign(organisationId, body)
@@ -141,6 +152,7 @@ class CampaignForm extends Component {
 
     return request.then(result => result.data.id);
   }
+
 
   createAdGroup = (campaignId, organisationId, value, options) => {
     const {
@@ -244,15 +256,15 @@ class CampaignForm extends Component {
               const updatedObject = formValues[tableName].find(elem => (
                 elem.id === id
               ));
-              newPromise = requests.update({ campaignId: campaignId, id: main_id, organisationId: match.params.organisationId, body: updatedObject }); // eslint-disable-line
+              newPromise = requests.update(campaignId, main_id, match.params.organisationId, updatedObject); // eslint-disable-line
             }
           } else {
             /* addition of the goal to the campaign */
-            newPromise = requests.add({ campaignId, body });
+            newPromise = requests.add(campaignId, body);
           }
         } else if (id > 1000) {
           /* In case we want to delete an existing element */
-          newPromise = requests.delete({ campaignId, id: id });
+          newPromise = requests.delete(campaignId, id);
         }
 
         return newPromise || Promise.resolve();

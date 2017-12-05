@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getEmailCampaign = campaignId => {
   const endpoint = `email_campaigns/${campaignId}`;
