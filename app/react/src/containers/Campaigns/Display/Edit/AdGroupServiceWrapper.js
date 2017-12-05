@@ -142,14 +142,14 @@ const saveTableFields = (options, formValues, formInitialValues) => {
 
   // TODO IN UPDATE CASE => maybe compare resource between initial and current
   const createResources = newFormValues.filter(field => isFakeId(field.id)).map(field => {
-    return function promise() { return requests.create({ campaignId, adGroupId, body: field.resource }); };
+    return function promise() { return requests.create(campaignId, adGroupId, field.resource); };
   });
 
   const updateResources = newFormValues.filter(field => !isFakeId(field.id) && !field.deleted).map(field => {
-    return function promise() { return requests.update({ campaignId, adGroupId, id: field.id, body: field.resource }); };
+    return function promise() { return requests.update(campaignId, adGroupId, field.id, field.resource); };
   });
   const deleteResources = newFormValues.filter(field => field.deleted).map(field => {
-    return function promise() { return requests.delete({ campaignId, adGroupId, id: field.id }); };
+    return function promise() { return requests.delete(campaignId, adGroupId, field.id); };
   });
 
   const sequentialPromisesResult = [

@@ -177,9 +177,7 @@ const DisplayCampaignService = {
     audienceSegmentId: string,
     body: Partial<AudienceSegmentSelectionResource>,
    ): Promise<AudienceSegmentSelectionResource> {
-    const endpoint = `display_campaigns/
-      ${campaignId}/ad_groups/
-      ${adGroupId}/audience_segments/${audienceSegmentId}`;
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${audienceSegmentId}`;
     return ApiService.putRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
   },
 
@@ -328,8 +326,8 @@ const DisplayCampaignService = {
   updateLocation(
     campaignId: string,
     adGroupId: string,
-    body: object,
     id: string,
+    body: object,
   ) {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
     return ApiService.putRequest(endpoint, body);
