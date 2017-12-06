@@ -4,7 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Col, Menu, Dropdown, Button, Icon } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import moment from 'moment';
 import { ClickParam } from 'antd/lib/menu';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index';
@@ -23,6 +22,7 @@ import { updateSearch,
   compareSearches } from '../../../../../utils/LocationSearchHelper';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
+import McsMoment from '../../../../../utils/McsMoment';
 
 const StackedAreaPlotTS = StackedAreaPlot as any;
 const LegendChartTS = LegendChart as any;
@@ -189,8 +189,8 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     campaignId: string,
     goal: Goal,
     attributionId: string | null,
-    from: moment.Moment,
-    to: moment.Moment,
+    from: McsMoment,
+    to: McsMoment,
   ) => {
     const filters = [`campaign_id==${campaignId}`, `goal_id==${goal.goal_id}`];
 

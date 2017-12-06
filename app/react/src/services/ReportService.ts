@@ -1,6 +1,7 @@
 import moment from 'moment';
 import ApiService, { DataResponse } from './ApiService';
 import { ReportViewResource } from '../models/ReportView';
+import McsMoment, { formatMcsDate } from '../utils/McsMoment';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -9,19 +10,21 @@ type ReportViewResponse = DataResponse<ReportViewResource>;
 const ReportService = {
   getDisplayCampaignPerformanceReport(
     organisationId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[],
     metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -30,19 +33,21 @@ const ReportService = {
 
   getEmailDeliveryReport(
     organisationId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[],
     metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
     const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions'];
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -52,8 +57,8 @@ const ReportService = {
   getSingleDisplayDeliveryReport(
     organisationId: string,
     campaignId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[] | undefined,
     metrics: string[] | undefined,
     options: object = {},
@@ -61,13 +66,15 @@ const ReportService = {
     const endpoint = 'reports/display_campaign_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'];
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
+    const range = { from: startDate, to: endDate };
 
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
       filters: `campaign_id==${campaignId}`,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
    };
@@ -78,8 +85,8 @@ const ReportService = {
     organisationId: string,
     objectType: string,
     objectId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[] | undefined,
     metrics: string[] | undefined,
     options: object = {},
@@ -87,13 +94,14 @@ const ReportService = {
     const endpoint = 'reports/ad_group_performance_report';
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
-
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
       filters: `${objectType}==${objectId}`,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -105,8 +113,8 @@ const ReportService = {
     organisationId: string,
     objectType: string,
     objectId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[] | undefined,
     metrics: string[] | undefined,
     options: object = {},
@@ -114,13 +122,14 @@ const ReportService = {
     const endpoint = 'reports/ad_performance_report';
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
-
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
       filters: `${objectType}==${objectId}`,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -131,8 +140,8 @@ const ReportService = {
     organisationId: string,
     objectType: string,
     objectId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[] | undefined,
     metrics: string[] | undefined,
     options: object = {},
@@ -140,13 +149,14 @@ const ReportService = {
     const endpoint = 'reports/media_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
-
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
       filters: `${objectType}==${objectId}`,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -157,8 +167,8 @@ const ReportService = {
   getSingleEmailDeliveryReport(
     organisationId: string,
     campaignId: number,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[],
     metrics: string[] | undefined,
     options: object = {},
@@ -180,13 +190,14 @@ const ReportService = {
       'uniq_email_soft_bounced',
       'uniq_email_complaints',
     ];
-
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
       filters: `campaign_id==${campaignId}`,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -216,20 +227,21 @@ const ReportService = {
 
   getConversionPerformanceReport(
     organisationId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[],
     metrics: string[] | undefined,
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/conversion_performance_report';
     const DEFAULT_METRICS = ['conversions', 'value'];
-
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -239,8 +251,8 @@ const ReportService = {
 
   getAudienceSegmentReport(
     organisationId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[],
     metrics: string[] | undefined,
     options: object = {},
@@ -254,12 +266,13 @@ const ReportService = {
       'user_point_additions',
       'user_point_deletions',
     ];
-
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -269,8 +282,8 @@ const ReportService = {
   getAllEmailBlastPerformance(
     organisationId: string,
     campaignId: number,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     dimension: string[],
     metrics: string[] | undefined,
     options: object = {},
@@ -292,12 +305,13 @@ const ReportService = {
       'uniq_email_soft_bounced',
       'uniq_email_complaints',
     ];
-
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension,
       metrics: metrics || DEFAULT_METRICS,
     };
@@ -306,8 +320,8 @@ const ReportService = {
 
   getConversionAttributionPerformance(
     organisationId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: McsMoment,
+    endDate: McsMoment,
     filters: string[],
     dimension: string[] | undefined,
     metrics: string[] | undefined,
@@ -316,11 +330,13 @@ const ReportService = {
     const endpoint = 'reports/conversion_attribution_performance_report';
     const DEFAULT_DIMENSIONS = ['day', 'interaction_type'];
     const DEFAULT_METRICS = ['weighted_conversions', 'interaction_to_conversion_duration'];
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
     const params = {
       ...options,
       organisation_id: organisationId,
-      start_date: startDate.format(DATE_FORMAT),
-      end_date: endDate.format(DATE_FORMAT),
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
       dimension: dimension || DEFAULT_DIMENSIONS,
       metrics: metrics || DEFAULT_METRICS,
       filters,
