@@ -56,6 +56,7 @@ class CreateCampaignPage extends React.Component<JoinedProps> {
         openNextDrawer={openNextDrawer}
         initialValues={initialValues}
         breadcrumbPaths={breadcrumbPaths}
+        editionMode={false}
       />
     );
   }

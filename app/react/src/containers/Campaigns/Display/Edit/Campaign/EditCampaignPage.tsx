@@ -136,6 +136,7 @@ class EditCampaignPage extends React.Component<JoinedProps, EditCampaignPageStat
         initialValues={this.state.initialValues}
         loading={this.state.loading}
         breadcrumbPaths={breadcrumbPaths}
+        editionMode={true}
       />
     );
   }
