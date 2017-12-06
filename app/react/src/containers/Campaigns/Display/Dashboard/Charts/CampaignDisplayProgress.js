@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { injectIntl, intlShape } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
