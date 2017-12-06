@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { isSubmitting } from 'redux-form';
 import { Layout } from 'antd';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl } from 'react-intl';
 
 import { EditContentLayout } from '../../../../../components/Layout/index.ts';
 import CampaignForm from './CampaignForm';
@@ -23,26 +23,14 @@ class CampaignContent extends Component {
       history,
       location,
       initialValues,
-      intl: { formatMessage },
       loading,
       match: {
         params: { organisationId },
         url
       },
       submitting,
+      breadcrumbPaths,
     } = this.props;
-
-
-    const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle1),
-        url: `/v2/o/${organisationId}/campaigns/display`,
-      },
-      {
-        name: 'Create new Campaign',
-        url: `/v2/o/${organisationId}/campaigns/display`,
-      }
-    ];
 
     let sidebarItems = {
       general: messages.sectionTitle1,
@@ -102,12 +90,15 @@ CampaignContent.propTypes = {
   editionMode: PropTypes.bool,
   history: ReactRouterPropTypes.history.isRequired,
   initialValues: PropTypes.shape(),
-  intl: intlShape.isRequired,
   location: PropTypes.shape().isRequired,
   loading: PropTypes.bool,
   match: ReactRouterPropTypes.match.isRequired,
   openNextDrawer: PropTypes.func.isRequired,
   submitting: PropTypes.bool,
+  breadcrumbPaths: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    url: PropTypes.string,
+  })).isRequired,
 };
 
 const mapStateToProps = (state) => ({
