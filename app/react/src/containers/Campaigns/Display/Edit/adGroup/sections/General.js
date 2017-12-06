@@ -25,7 +25,7 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { normalizeFloat, normalizeInteger },
+      fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       formatMessage,
       formValues,
