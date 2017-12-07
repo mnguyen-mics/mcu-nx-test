@@ -53,6 +53,7 @@
     "@types/d3": "^4.10.0",
     "@types/humps": "^1.1.2",
     "@types/lodash": "^4.14.77",
+    "@types/numeral": "0.0.22",
     "@types/prop-types": "^15.5.2",
     "@types/react": "^16.0.9",
     "@types/react-dom": "^16.0.0",

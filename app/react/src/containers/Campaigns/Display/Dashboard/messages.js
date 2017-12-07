@@ -169,6 +169,18 @@ export default defineMessages({
     id: 'campaign.chart.impressions',
     defaultMessage: 'Imp.',
   },
+  displayNetworkName: {
+    id: 'campaign.chart.displayNetworkName',
+    defaultMessage: 'Display Network',
+  },
+  format: {
+    id: 'campaign.chart.format',
+    defaultMessage: 'Format',
+  },
+  name: {
+    id: 'campaign.chart.name',
+    defaultMessage: 'Name',
+  },
   ctr: {
     id: 'campaign.chart.ctr',
     defaultMessage: 'CTR',
@@ -188,6 +200,10 @@ export default defineMessages({
   cpc: {
     id: 'campaign.chart.cpc',
     defaultMessage: 'CPC.',
+  },
+  cpa: {
+    id: 'campaign.chart.cpa',
+    defaultMessage: 'CPA.',
   },
   noGoalStatAvailable: {
     id: 'campaign.goal.chart.noStats',
