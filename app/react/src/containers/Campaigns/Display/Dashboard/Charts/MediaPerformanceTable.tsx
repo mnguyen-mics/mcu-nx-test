@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Col } from 'antd';
-
-import { TableView } from '../../../../../components/TableView/index.ts';
+import messages from '../messages';
+import { TableView } from '../../../../../components/TableView';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
+import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
 import {
@@ -14,9 +14,34 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
-class MediaPerformanceTable extends Component {
+interface MediaPerformance {
+  display_network_name: string;
+  impressions_cost: string;
+  impressions: string;
+  media_id: string;
+  clicks: string;
+  cpm: string;
+  ctr: string;
+  cpc: string;
+  cpa: string;
+}
 
-  updateLocationSearch(params) {
+interface MediaPerformanceTableProps {
+  isFetchingMediaStat: boolean;
+  dataSet: MediaPerformance[];
+}
+
+interface RouterProps {
+  organisationId: string;
+  campaignId: string;
+  adGroupId: string;
+}
+
+type JoinedProps = RouteComponentProps<RouterProps> & MediaPerformanceTableProps;
+
+class MediaPerformanceTable extends Component<JoinedProps> {
+
+  updateLocationSearch(params: any) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
@@ -39,7 +64,7 @@ class MediaPerformanceTable extends Component {
       to: filter.to,
     };
 
-    const onChange = newValues =>
+    const onChange = (newValues: McsDateRangeValue) =>
       this.updateLocationSearch({
         rangeType: newValues.rangeType,
         lookbackWindow: newValues.lookbackWindow,
@@ -57,7 +82,7 @@ class MediaPerformanceTable extends Component {
       dataSet,
     } = this.props;
 
-    const renderMetricData = (value, numeralFormat, currency = '') => {
+    const renderMetricData = (value: string | number, numeralFormat: string, currency = '') => {
       if (isFetchingMediaStat) {
         return (<i className="mcs-table-cell-loading" />);
       }
@@ -65,87 +90,93 @@ class MediaPerformanceTable extends Component {
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const sorter = (a, b, key) => {
+    const sorter = (a: MediaPerformance, b: MediaPerformance, key: keyof MediaPerformance) => {
       if (a[key] === '-') {
         return -1;
       }
       if (b[key] === '-') {
         return 1;
       }
-      return a[key] - b[key];
+      return parseFloat(a[key]) - parseFloat(b[key]);
     };
 
     const dataColumns = [
       {
+        intlMessage: messages.displayNetworkName,
         translationKey: 'DISPLAY_NETWORK_NAME',
         key: 'display_network_name',
         isHideable: false,
-        render: text => <span>{text}</span>,
+        render: (text: string) => <span>{text}</span>,
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messages.name,
         key: 'media_id',
         isHideable: false,
-        render: (text) => <span>{text}</span>,
+        render: (text: string) => <span>{text}</span>,
       },
       {
-        translationKey: 'IMPRESSIONS',
+        intlMessage: messages.format,
+        key: 'format',
+        isHideable: false,
+        render: (text: string) => <span>{text}</span>,
+      },
+      {
+        intlMessage: messages.impressions,
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,0'),
-        sorter: (a, b) => sorter(a, b, 'impressions'),
+        render: (text: string) => renderMetricData(text, '0,0'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions'),
       },
       {
-        translationKey: 'CLICKS',
+        intlMessage: messages.clicks,
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,0'),
-        sorter: (a, b) => sorter(a, b, 'clicks'),
+        render: (text: string) => renderMetricData(text, '0,0'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'clicks'),
       },
       {
-        translationKey: 'CPM',
+        intlMessage: messages.cpm,
         key: 'cpm',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a, b) => sorter(a, b, 'cpm'),
+        render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpm'),
       },
       {
-        translationKey: 'CTR',
+        intlMessage: messages.ctr,
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(parseFloat(text) / 100, '0.000 %'),
-        sorter: (a, b) => sorter(a, b, 'ctr'),
+        render: (text: string) => renderMetricData(parseFloat(text) / 100, '0.000 %'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'ctr'),
       },
       {
-        translationKey: 'CPC',
+        intlMessage: messages.cpc,
         key: 'cpc',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a, b) => sorter(a, b, 'cpc'),
+        render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpc'),
       },
       {
-        translationKey: 'IMPRESSIONS_COST',
+        intlMessage: messages.impressions_cost,
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a, b) => sorter(a, b, 'impressions_cost'),
+        render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions_cost'),
       },
       {
-        translationKey: 'CPA',
+        intlMessage: messages.cpa,
         key: 'cpa',
         isVisibleByDefault: true,
         isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a, b) => sorter(a, b, 'cpa'),
+        render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpa'),
       },
     ];
-
 
     const columnsDefinitions = {
       dataColumnsDefinition: dataColumns,
@@ -170,22 +201,13 @@ class MediaPerformanceTable extends Component {
 
 }
 
-MediaPerformanceTable.propTypes = {
-  location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
-  isFetchingMediaStat: PropTypes.bool.isRequired,
-  dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   translations: state.translations,
 });
 
-MediaPerformanceTable = connect(
-  mapStateToProps,
+export default compose(
+  connect(
+    mapStateToProps,
+  ),
+  withRouter,
 )(MediaPerformanceTable);
-
-
-MediaPerformanceTable = withRouter(MediaPerformanceTable);
-
-export default MediaPerformanceTable;

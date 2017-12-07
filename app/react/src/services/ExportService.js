@@ -232,6 +232,7 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
   const mediaHeaders = [
     { name: 'display_network_name', translation: formatMessage(displayCampaignMessages.display_network_name) },
     { name: 'media_id', translation: formatMessage(displayCampaignMessages.name) },
+    { name: 'format', translation: formatMessage(displayCampaignMessages.formats) },
     { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
     { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
     { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },

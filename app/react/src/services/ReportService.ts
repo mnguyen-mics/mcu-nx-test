@@ -139,7 +139,7 @@ const ReportService = {
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/media_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
-    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
+    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name', 'format'];
 
     const params = {
       ...options,
