@@ -62,8 +62,6 @@ class Navigator extends Component {
         this.props.setColorsStore(mcsColors);
       })
       .catch(() => this.setState({ adBlockOn: true }));
-
-
   }
 
   render() {

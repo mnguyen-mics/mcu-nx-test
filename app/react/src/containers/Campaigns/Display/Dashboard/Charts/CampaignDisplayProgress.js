@@ -92,38 +92,6 @@ class CampaignDisplayProgress extends Component {
       },
     } = this.props;
 
-    // let from = moment();
-    // let periodMessage = '';
-    // switch (campaign.max_budget_period) {
-    //   case 'DAY':
-    //     from = moment();
-    //     periodMessage = formatMessage(messages.dailyBudgetConsumption);
-    //     break;
-    //   case 'WEEK':
-    //     from = moment().subtract(1, 'weeks');
-    //     periodMessage = formatMessage(messages.weeklyBudgetConsumption);
-    //     break;
-    //   case 'MONTH':
-    //     from = moment().subtract(1, 'months');
-    //     periodMessage = formatMessage(messages.monthlyBudgetConsumption);
-    //     break;
-    //   default:
-    //     from = moment();
-    //     periodMessage = formatMessage(messages.dailyBudgetConsumption);
-    //     break;
-    // }
-
-    // from.seconds(0);
-    // from.millisecond(0);
-    // from.minute(0);
-    // from.hour(0);
-    // const fromInfititeAndBeyond = moment(0);
-    // const to = moment().add(1, 'days');
-
-    // to.seconds(0);
-    // to.millisecond(0);
-    // to.minute(0);
-    // to.hour(0);
     let from = new McsMoment('now');
     let periodMessage = '';
     switch (campaign.max_budget_period) {
