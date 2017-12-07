@@ -69,6 +69,14 @@ export default defineMessages({
     id: 'creatives.create.section.general.field.format.placeholder',
     defaultMessage: 'Creative Format',
   },
+  creativeCreationGeneralFormatFieldButtonCustom: {
+    id: 'creatives.create.section.general.field.format.button.custom',
+    defaultMessage: 'Custom',
+  },
+  creativeCreationGeneralFormatFieldButtonStandard: {
+    id: 'creatives.create.section.general.field.format.button.standard',
+    defaultMessage: 'Standard',
+  },
   creativeCreationGeneralFormatFieldHelper: {
     id: 'creatives.create.section.general.field.format.helper',
     defaultMessage: 'The format of the creative will be used in campaign by the platform. The format is as follow: width x height',

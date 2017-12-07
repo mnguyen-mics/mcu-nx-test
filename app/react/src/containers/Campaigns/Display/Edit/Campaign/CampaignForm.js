@@ -181,7 +181,7 @@ class CampaignForm extends Component {
     return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, saveOptions);
   }
 
-  updateAdGroup = ({ campaignId, organisationId, body }) => {
+  updateAdGroup = (campaignId, adGroupId, organisationId, body) => {
     const saveOptions = {
       editionMode: true,
       catalogMode: this.props.hasFeature('campaigns.display.edition.audience_catalog')
@@ -220,7 +220,7 @@ class CampaignForm extends Component {
       requests: {
         createThenAdd: this.createGoal,
         add: DisplayCampaignService.createGoal,
-        update: GoalService.updateGoal,
+        update: GoalService.updateGoalDeprecated,
         delete: DisplayCampaignService.deleteGoal,
       },
       tableName: 'goalsTable',
@@ -400,7 +400,6 @@ class CampaignForm extends Component {
             id={scrollLabelContentId}
           >
             <General {...commonProps} formValues={formValues} />
-
             <hr />
             <Goals {...commonProps} formValues={goalsTable} createUniqueGoal={this.createUniqueGoal} />
             <hr />

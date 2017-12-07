@@ -44,5 +44,9 @@ export default defineMessages({
   display_network_name: {
     id: 'display.metrics.display_network_name',
     defaultMessage: 'Display Network Name'
-  }
+  },
+  formats: {
+    id: 'display.metrics.formats',
+    defaultMessage: 'Formats'
+  },
 });

@@ -3,6 +3,8 @@ import { DatePicker } from 'antd';
 import { DatePickerProps } from 'antd/lib/date-picker';
 import { WrappedFieldProps } from 'redux-form';
 
+import { generateFakeId } from '../../../utils/FakeIdHelper';
+
 export type DateInputProps = WrappedFieldProps & DatePickerProps;
 
 const DateInput: React.StatelessComponent<DateInputProps> = props => {
@@ -22,18 +24,26 @@ const DateInput: React.StatelessComponent<DateInputProps> = props => {
     );
   }
 
+  const selectId = generateFakeId();
+  const getCalendarContainer = (triggerNode: Element) => {
+    return document.getElementById(selectId) as any;
+  };
+
   return (
-    <DatePicker
-      {...correctedInput}
-      {...otherProps}
-      allowClear={false}
-      onOpenChange={handleOnOpenChange}
-    />
+    <div id={selectId}>
+      <DatePicker
+        {...correctedInput}
+        {...otherProps}
+        getCalendarContainer={getCalendarContainer}
+        allowClear={false}
+        onOpenChange={handleOnOpenChange}
+      />
+    </div>
   );
 };
 
 DateInput.defaultProps = {
-  format: 'DD/MM/YYYY',
+  format:   'DD/MM/YYYY',
   placeholder: '',
   showTime: undefined,
 };
