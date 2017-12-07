@@ -13,28 +13,18 @@ function getGeneralInfo({ campaignId, adGroupId }) {
   return DisplayCampaignService.getAdGroup(campaignId, adGroupId);
 }
 
-function getAds({ adGroupId, campaignId, organisationId }) {
-  const fetchAllAds = CreativeService.getDisplayAds(organisationId)
-    .then(({ data }) => data);
+function getAds({ adGroupId, campaignId }) {
 
   const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)
     .then(({ data }) => data.map(ad => ({ id: ad.creative_id, modelId: ad.id })));
 
-  return Promise.all([fetchAllAds, fetchSelectedAds])
+  return fetchSelectedAds
     .then((results) => {
-      const allAds = results[0];
-      const selectedAds = results[1];
-      const selectedAdIds = selectedAds.map(ad => ad.id);
+      const selectedAdIds = results.map(ad => ad.id);
 
-      const adTable = allAds
-        .filter(ad => selectedAdIds.includes(ad.id))
-        .map(ad => ({
-          ...ad,
-          modelId: (selectedAds.find(selection => selection.id === ad.id)).modelId
-        }));
 
-      return { adTable };
-    });
+      return Promise.all(selectedAdIds.map(item => CreativeService.getCreative(item)));
+    }).then(results => { return { adTable: results }; });
 }
 
 function getPlacements({ campaignId, adGroupId }) {
