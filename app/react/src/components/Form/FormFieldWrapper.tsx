@@ -42,7 +42,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
         {...formInputProps}
       >
         <Row {...defaultRowProps} {...rowProps}>
-          {children}
+          <Col span={22}>{children}</Col>
 
           {!isEmpty(helpToolTipProps)
             && (

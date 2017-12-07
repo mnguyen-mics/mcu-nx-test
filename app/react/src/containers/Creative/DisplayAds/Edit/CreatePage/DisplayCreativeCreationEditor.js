@@ -6,8 +6,9 @@ import { injectIntl, intlShape } from 'react-intl';
 import { Layout, Row } from 'antd';
 
 import { withMcsRouter } from '../../../../Helpers';
-import { FormInput, FormTitle, FormSelect, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
+import { FormInput, FormTitle, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 import { PluginFieldGenerator } from '../../../../Plugin';
+import CreativeFormatEditor from '../CreativeFormatEditor';
 
 import messages from '../messages';
 
@@ -34,18 +35,20 @@ class DisplayCreativeCreationEditor extends Component {
   onSubmit = formValues => {
     const { save } = this.props;
 
+    const formattedProperties = this.props.rendererProperties
+      .filter(item => item.writable === true)
+      .map(item => ({
+        ...item,
+        value: (formValues.properties[item.technical_name]
+          ? formValues.properties[item.technical_name].value
+          : item.value
+        )
+      }));
+
     const creativeData = {
       ...formValues.creative,
+      ...formValues.creative,
     };
-
-    const formattedProperties = this.props.rendererProperties.filter(item => {
-      return item.writable === true;
-    }).map(item => {
-      return {
-        ...item,
-        value: formValues.properties[item.technical_name] ? formValues.properties[item.technical_name].value : item.value
-      };
-    });
 
     const rendererData = {
       renderer_artifact_id: this.props.adRenderer.artifactId,
@@ -59,7 +62,7 @@ class DisplayCreativeCreationEditor extends Component {
     const {
       intl: { formatMessage },
       handleSubmit,
-      fieldValidators: { isRequired },
+      fieldValidators: { isRequired, formatIsNotZero },
       isLoading,
       adRenderer: {
         versionId
@@ -70,8 +73,17 @@ class DisplayCreativeCreationEditor extends Component {
     } = this.props;
 
     const pluginFieldGenerated = this.props.rendererProperties.map(fieldDef => {
-      return <PluginFieldGenerator key={`${fieldDef.technical_name}`} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isLoading} rendererVersionId={versionId} organisationId={organisationId} />;
+      return (
+        <PluginFieldGenerator
+          key={`${fieldDef.technical_name}`}
+          definition={fieldDef}
+          fieldGridConfig={fieldGridConfig}
+          rendererVersionId={versionId}
+          organisationId={organisationId}
+        />
+      );
     });
+
     return (
       <Layout>
         <Form
@@ -110,30 +122,9 @@ class DisplayCreativeCreationEditor extends Component {
                   />
                   <Field
                     name="creative.format"
-                    component={FormSelect}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                        required: true,
-                        ...fieldGridConfig,
-                      },
-                      selectProps: {
-                        defaultValue: formats[0]
-                      },
-                      inputProps: {
-                        disabled: isLoading,
-                        defaultValue: formats[0]
-                      },
-                      options: formats && formats.map(format => ({
-                        key: format,
-                        value: format,
-                        title: format,
-                      })),
-                      helpToolTipProps: {
-                        title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
-                      },
-                    }}
+                    component={CreativeFormatEditor}
+                    validate={[formatIsNotZero]}
+                    formats={formats}
                   />
                   <Field
                     name="creative.destination_domain"
@@ -180,6 +171,7 @@ DisplayCreativeCreationEditor.defaultProps = {
   blasts: [],
   campaignName: '',
   submitFailed: false,
+  isLoading: true,
 };
 
 DisplayCreativeCreationEditor.propTypes = {
@@ -195,10 +187,10 @@ DisplayCreativeCreationEditor.propTypes = {
   }).isRequired,
   formats: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   rendererProperties: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
-  isLoading: PropTypes.bool.isRequired,
   organisationId: PropTypes.string.isRequired,
   formId: PropTypes.string.isRequired,
   submitFailed: PropTypes.bool,
+  isLoading: PropTypes.bool,
 };
 
 DisplayCreativeCreationEditor = compose(

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DatePicker, Col } from 'antd';
+import { DatePicker } from 'antd';
 
 // TS Interfaces
 import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form';
@@ -37,13 +37,11 @@ const FormDatePicker: React.SFC<FormDatePickerProps & FormFieldWrapperProps> = p
       validateStatus={validateStatus}
       {...props.formItemProps}
     >
-      <Col span={22}>
-        <DatePicker
-          allowClear={false}
-          {...props.input}
-          {...props.datePickerProps}
-        />
-      </Col>
+      <DatePicker
+        allowClear={false}
+        {...props.input}
+        {...props.datePickerProps}
+      />
     </FormFieldWrapper>
   );
 };

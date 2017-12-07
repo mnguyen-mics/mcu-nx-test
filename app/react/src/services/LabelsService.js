@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getLabels = (organisationId, options = {}) => {
   const endpoint = 'labels';

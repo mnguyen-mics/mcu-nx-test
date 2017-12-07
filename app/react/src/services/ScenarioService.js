@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getScenarios = (organisationId, options = {}) => {
   const endpoint = 'scenarios';

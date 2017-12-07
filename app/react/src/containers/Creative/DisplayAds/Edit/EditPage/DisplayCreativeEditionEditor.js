@@ -8,11 +8,12 @@ import { Layout, Row, Modal } from 'antd';
 
 import * as actions from '../../../../../state/Notifications/actions';
 import { withMcsRouter } from '../../../../Helpers';
-import { FormInput, FormTitle, FormSelect, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
+import { FormInput, FormTitle, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 import AuditComponent from './AuditComponent';
 import { PluginFieldGenerator } from '../../../../Plugin';
 import { Card } from '../../../../../components/Card/index.ts';
 import modalMessages from '../../../../../common/messages/modalMessages';
+import CreativeFormatEditor from '../CreativeFormatEditor';
 
 import messages from '../messages';
 
@@ -121,7 +122,7 @@ class DisplayCreativeEditionEditor extends Component {
     const {
       intl: { formatMessage },
       handleSubmit,
-      fieldValidators: { isRequired },
+      fieldValidators: { formatIsNotZero, isRequired },
       formats,
       creative,
       isLoading,
@@ -168,24 +169,10 @@ class DisplayCreativeEditionEditor extends Component {
                   />
                   <Field
                     name="creative.format"
-                    component={FormSelect}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                        required: true,
-                        ...fieldGridConfig,
-                      },
-                      options: formats && formats.map(format => ({
-                        key: format,
-                        value: format,
-                        title: format,
-                      })),
-                      helpToolTipProps: {
-                        title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
-                      },
-                      disabled: isDisabled,
-                    }}
+                    component={CreativeFormatEditor}
+                    validate={[formatIsNotZero]}
+                    formats={formats}
+                    disabled={isDisabled}
                   />
                   <Field
                     name="creative.destination_domain"

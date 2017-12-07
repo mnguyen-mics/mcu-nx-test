@@ -7,7 +7,7 @@ import CampaignContent from './CampaignContent';
 import withDrawer from '../../../../../components/Drawer';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
 import * as AdGroupWrapper from '../../../../../formServices/AdGroupServiceWrapper';
@@ -58,7 +58,7 @@ class EditCampaignPage extends Component {
   }
 
   fetchGoalsSelection = (campaignId) => {
-    return DisplayCampaignService.getGoal({ campaignId })
+    return DisplayCampaignService.getGoal(campaignId)
       .then(data => data.data)
       .then(data => data.map(item => {
         const newItem = item;

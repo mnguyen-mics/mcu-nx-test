@@ -169,9 +169,13 @@ export default defineMessages({
     id: 'campaign.chart.impressions',
     defaultMessage: 'Imp.',
   },
-  clicks: {
+  ctr: {
     id: 'campaign.chart.ctr',
     defaultMessage: 'CTR',
+  },
+  clicks: {
+    id: 'campaign.chart.clicks',
+    defaultMessage: 'Clicks',
   },
   impressions_cost: {
     id: 'campaign.chart.impressions_cost',

@@ -10,7 +10,7 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons.tsx';
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
-import ReportService from '../../../../services/ReportService';
+import ReportService from '../../../../services/ReportService.ts';
 
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';

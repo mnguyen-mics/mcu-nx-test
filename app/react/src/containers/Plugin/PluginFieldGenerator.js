@@ -99,6 +99,7 @@ class PluginFieldGenerator extends Component {
 
 PluginFieldGenerator.defaultProps = {
   noUploadModal: undefined,
+  disabled: false,
 };
 
 PluginFieldGenerator.propTypes = {
@@ -113,7 +114,7 @@ PluginFieldGenerator.propTypes = {
   }).isRequired,
   fieldValidators: PropTypes.shape().isRequired,
   definition: PropTypes.shape().isRequired,
-  disabled: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
   rendererVersionId: PropTypes.string.isRequired,
   organisationId: PropTypes.string.isRequired,
   noUploadModal: PropTypes.func,

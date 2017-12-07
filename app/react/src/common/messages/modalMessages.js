@@ -31,4 +31,12 @@ export default defineMessages({
     id: 'modal.update.message',
     defaultMessage: 'Your creative audit is pending. If you want to modify it, please wait until the audit is done, reset it, modify your creative and submit to audit again.'
   },
+  exportIsRunningTitle: {
+    id: 'modal.export.running.title',
+    defaultMessage: 'Export is running'
+  },
+  exportIsRunningMessage: {
+    id: 'modal.export.running.message',
+    defaultMessage: 'Please wait until the export is fully completed.'
+  },
 });

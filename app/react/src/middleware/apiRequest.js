@@ -1,5 +1,5 @@
 
-import ApiService from '../services/ApiService';
+import ApiService from '../services/ApiService.ts';
 
 export const CALL_API = Symbol('Call Api');
 
