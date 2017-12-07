@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -39,9 +39,9 @@ interface RouterProps {
 
 type JoinedProps = RouteComponentProps<RouterProps> & MediaPerformanceTableProps;
 
-class MediaPerformanceTable extends Component<JoinedProps> {
+class MediaPerformanceTable extends React.Component<JoinedProps> {
 
-  updateLocationSearch(params: any) {
+  updateLocationSearch(params: McsDateRangeValue) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
@@ -82,7 +82,7 @@ class MediaPerformanceTable extends Component<JoinedProps> {
       dataSet,
     } = this.props;
 
-    const renderMetricData = (value: string | number, numeralFormat: string, currency = '') => {
+    const renderMetricData = (value: string | number, numeralFormat: string, currency: string = '') => {
       if (isFetchingMediaStat) {
         return (<i className="mcs-table-cell-loading" />);
       }
