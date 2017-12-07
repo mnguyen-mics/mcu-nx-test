@@ -7,8 +7,10 @@ import { McsIcons } from '../../../../../../../components';
 import messages from '../../../messages';
 import LocationSelectionRenderer from './LocationSelectionRenderer';
 import { isFakeId } from '../../../../../../../utils/FakeIdHelper';
+import GeonameRenderer from '../../../../../../Geoname/GeonameRenderer';
 import SelectGeoname from './SelectGeoname';
 import { LocationFieldModel } from './domain';
+import { Geoname } from '../../../../../../../services/GeonameService';
 
 const confirm = Modal.confirm;
 
@@ -34,17 +36,6 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
     };
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const current = this.props.fields.getAll();
-    const next = nextProps.fields.getAll();
-    if (
-      this.getDisplayedLocations(next).length === 0 &&
-      this.getDisplayedLocations(current).length !== this.getDisplayedLocations(next).length
-    ) {
-      this.setState({ locationTargetingDisplayed: false });
-    }
-  }
-
   markAsDeleted = (locationField: LocationFieldModel) => {
     const {
       fields,
@@ -68,10 +59,98 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
     RxF.change((fields as any).name, newLocationFields);
   }
 
-  addLocationField = (localtionField: LocationFieldModel) => {
-    const { fields } = this.props;
+  addLocationField = (locationField: LocationFieldModel) => {
+    const { fields, intl: { formatMessage } } = this.props;
     const allFields = fields ? fields.getAll() : [];
-    this.props.RxF.change((fields as any).name, allFields.concat([localtionField]));
+
+    const formattedLocationField = {
+      ...locationField,
+    };
+
+    let isUnderneath = false;
+    let parentIsExcluded = false;
+    const idsToRemove: string[] = [];
+    allFields.forEach(item => {
+      if (item.resource.country === locationField.resource.country) {
+        if (item.resource.admin1 === '00') {
+          // is coutry
+          isUnderneath = true;
+          if (item.resource.exclude) {
+            parentIsExcluded = true;
+          }
+        } else if (item.resource.admin1 === locationField.resource.admin1 && locationField.resource.admin2 && !item.resource.admin2) {
+          // is same admin1
+          isUnderneath = true;
+          if (item.resource.exclude) {
+            parentIsExcluded = true;
+          }
+        }
+      }
+    });
+
+    // need to exclude
+    if (!parentIsExcluded && isUnderneath) {
+      formattedLocationField.resource.exclude = true;
+    }
+
+    allFields.forEach(item => {
+      if (item.resource.country === locationField.resource.country) {
+        if (locationField.resource.admin1 === '00') {
+          // adding a country so we need to remove subsequent underneath locations
+          if (locationField.resource.exclude) {
+            idsToRemove.push(item.id);
+          } else if (!item.resource.exclude) {
+            idsToRemove.push(item.id);
+          }
+
+        } else if (locationField.resource.admin1 === item.resource.admin1 && locationField.resource.admin2 === null) {
+          // is admin 1 and has subsequent underneath location
+          if (locationField.resource.exclude) {
+            idsToRemove.push(item.id);
+          } else if (!item.resource.exclude) {
+            idsToRemove.push(item.id);
+          }
+        }
+      }
+    });
+
+    if (parentIsExcluded) {
+      Modal.warning({
+        title: formatMessage(messages.contentSectionLocationModal1Title),
+        content: formatMessage(messages.contentSectionLocationModal1),
+      });
+    } else if (idsToRemove.length) {
+      const geonameIds = allFields.reduce((acc: string[], val, i) => {
+        if (idsToRemove.includes(val.id)) {
+          return [...acc, val.resource.geoname_id];
+        }
+        return acc;
+      }, []);
+      const renderGeoname = (el: Geoname) => (<div>{el.name}</div>);
+      const content = (
+        <div>
+          <div>{formatMessage(messages.contentSectionLocationModal2)}</div>
+          <br />
+          {
+            geonameIds.map(id => {
+              return (<GeonameRenderer key={id} geonameId={id} renderMethod={renderGeoname} />);
+            })
+          }
+
+        </div>
+      );
+      Modal.confirm({
+        title: formatMessage(messages.contentSectionLocationModal2Title),
+        content: content,
+        onOk: () => {
+          const newFields = allFields.filter(item => !idsToRemove.includes(item.id));
+          this.props.RxF.change((fields as any).name, newFields.concat([formattedLocationField]));
+        },
+      });
+    } else {
+      this.props.RxF.change((fields as any).name, allFields.concat([formattedLocationField]));
+    }
+
   }
 
   toggleDisplayLocationTargetingSection = () => {
