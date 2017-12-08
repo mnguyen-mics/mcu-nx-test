@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import ApiService from './ApiService.ts';
 import ReportService from './ReportService.ts';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
