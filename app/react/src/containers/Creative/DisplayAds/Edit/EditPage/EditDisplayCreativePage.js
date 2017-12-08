@@ -8,7 +8,7 @@ import { withMcsRouter } from '../../../../Helpers';
 import DisplayCreativeEditionEditor from './DisplayCreativeEditionEditor';
 
 
-import CreativeService from '../../../../../services/CreativeService';
+import CreativeService from '../../../../../services/CreativeService.ts';
 import * as actions from '../../../../../state/Notifications/actions';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import Loading from '../../../../../components/Loading.tsx';
@@ -33,9 +33,9 @@ class CreateDisplayCreativePage extends Component {
       notifyError
     } = this.props;
 
-    const getFormats = CreativeService.getCreativeFormats(organisationId);
-    const getRendererProperties = CreativeService.getCreativeRendererProperties(creativeId);
-    const getCreative = CreativeService.getCreative(creativeId);
+    const getFormats = CreativeService.getCreativeFormats(organisationId).then(res => res.data);
+    const getRendererProperties = CreativeService.getCreativeRendererProperties(creativeId).then(res => res.data);
+    const getCreative = CreativeService.getCreative(creativeId).then(res => res.data);
 
     this.setState(prevState => {
       const nextState = {
@@ -88,7 +88,7 @@ class CreateDisplayCreativePage extends Component {
     }, () => {
 
       CreativeService
-        .updateDisplayCreative(organisationId, creative.id, options)
+        .updateDisplayCreative(creative.id, options)
         .then(() => {
           const creativeId = creative.id;
           const propertiesPromises = [];
@@ -97,7 +97,7 @@ class CreateDisplayCreativePage extends Component {
           });
 
           Promise.all(propertiesPromises).then(() => {
-            CreativeService.takeScreenshot(creativeId, organisationId).then(() => {
+            CreativeService.takeScreenshot(creativeId).then(() => {
               this.setState(prevState => {
                 const nextState = {
                   ...prevState

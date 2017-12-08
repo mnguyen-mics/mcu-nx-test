@@ -8,9 +8,9 @@ import { pick } from 'lodash';
 
 import { withMcsRouter } from '../../../Helpers';
 import EmailBlastContent from './EmailBlastContent';
-import withDrawer from '../../../../components/Drawer';
+import withDrawer from '../../../../components/Drawer/index.tsx';
 import messages from './messages';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 import * as actions from '../../../../state/Notifications/actions';
 import log from '../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
@@ -45,7 +45,7 @@ class CreateBlastPage extends Component {
 
   loadCampaign = campaignId => {
     EmailCampaignService.getEmailCampaign(campaignId).then(result => {
-      this.setState({ emailCampaign: result });
+      this.setState({ emailCampaign: result.data });
     });
 
   }
@@ -68,20 +68,20 @@ class CreateBlastPage extends Component {
     };
 
     EmailCampaignService.createBlast(campaignId, blastResource).then(createdBlast => {
-      const blastId = createdBlast.id;
+      const blastId = createdBlast.data.id;
       return Promise.all([
         ...blast.templates.map(template => {
           // const templateResource = pick(template, ['email_template_id']);
           const templateResource = { email_template_id: template.email_template_id };
-          return EmailCampaignService.addEmailTemplate(campaignId, blastId, templateResource);
+          return EmailCampaignService.createEmailTemplate(campaignId, blastId, templateResource);
         }),
         ...blast.consents.map(consent => {
           const consentResource = pick(consent, ['consent_id']);
-          return EmailCampaignService.addConsent(campaignId, blastId, consentResource);
+          return EmailCampaignService.createConsent(campaignId, blastId, consentResource);
         }),
         ...blast.segments.map(segment => {
           const segmentResource = pick(segment, ['audience_segment_id']);
-          return EmailCampaignService.addSegment(campaignId, blastId, segmentResource);
+          return EmailCampaignService.createSegment(campaignId, blastId, segmentResource);
         }),
       ]);
     }).then(() => {

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Menu, Dropdown, Icon } from 'antd';
 
 import { TableView } from '../../../../components/TableView/index.ts';
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { withMcsRouter } from '../../../Helpers';
 import { getEmailBlastTableView } from '../../../../state/Campaign/Email/selectors';

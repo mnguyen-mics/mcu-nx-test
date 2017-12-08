@@ -9,7 +9,7 @@ import {
 
 import KeywordListsService from '../../../services/Library/KeywordListsService';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
     KEYWORD_LISTS_FETCH,

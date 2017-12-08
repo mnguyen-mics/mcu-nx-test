@@ -8,7 +8,7 @@ import messages from './messages';
 import CreativeCardSelector from './CreativeCardSelector';
 import { RecordElement, RelatedRecords } from '../../../../components/RelatedRecord/index.ts';
 import { FormSection } from '../../../../components/Form/index.ts';
-import CreativeService from '../../../../services/CreativeService';
+import CreativeService from '../../../../services/CreativeService.ts';
 import { withMcsRouter } from '../../../Helpers';
 
 class EmailTemplateSelection extends Component {
@@ -76,13 +76,13 @@ class EmailTemplateSelection extends Component {
       this.setState(() => ({ emailTemplate: [] }));
     } else {
 
-      CreativeService.getEmailTemplate(templateId).then(emailTemplate => {
+      CreativeService.getEmailTemplate(templateId).then(res => {
         const { emailTemplates } = this.state;
         const found = emailTemplates.find(t => t.id === templateId);
         if (!found) {
           this.setState(() => ({
             emailTemplates: [
-              emailTemplate,
+              res.data,
             ],
           }));
         }

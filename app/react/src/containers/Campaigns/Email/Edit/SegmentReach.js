@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { FormattedMessage, FormattedNumber, FormattedPlural } from 'react-intl';
 
 import { withMcsRouter } from '../../../Helpers';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class SegmentReach extends Component {

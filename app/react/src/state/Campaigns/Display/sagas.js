@@ -11,7 +11,7 @@ import {
 import CampaignService from '../../../services/CampaignService';
 import ReportService from '../../../services/ReportService.ts';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 
 import {

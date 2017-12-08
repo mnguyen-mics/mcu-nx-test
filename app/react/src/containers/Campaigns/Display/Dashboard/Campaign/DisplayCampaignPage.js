@@ -12,9 +12,9 @@ import DisplayCampaign from './DisplayCampaign.tsx';
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import { normalizeReportView } from '../../../../../utils/MetricHelper';
-import { makeCancelable } from '../../../../../utils/ApiHelper';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer.ts';
+import { normalizeReportView } from '../../../../../utils/MetricHelper.ts';
+import { makeCancelable } from '../../../../../utils/ApiHelper.ts';
 
 import {
   parseSearch,

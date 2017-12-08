@@ -17,7 +17,7 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
-import { formatMetric } from '../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../utils/MetricHelper.ts';
 
 class DisplayStackedAreaChart extends Component {
   constructor(props) {

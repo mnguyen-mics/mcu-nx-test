@@ -42,10 +42,9 @@ function AdGroupCardList({ className, data, updateTableFieldStatus }) {
 
               <div className="button-separator" />
 
-              <ButtonStyleless>
+              <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName: 'adTable' })}>
                 <McsIcons
                   className="button"
-                  onClick={updateTableFieldStatus({ index, tableName: 'adTable' })}
                   type="delete"
                 />
               </ButtonStyleless>

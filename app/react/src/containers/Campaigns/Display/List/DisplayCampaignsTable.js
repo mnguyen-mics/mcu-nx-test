@@ -16,7 +16,7 @@ import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
 import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
 
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';

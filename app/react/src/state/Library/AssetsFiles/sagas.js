@@ -9,7 +9,7 @@ import {
 
 import AssetsFilesService from '../../../services/Library/AssetsFilesService';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
     ASSETS_FILES_FETCH,

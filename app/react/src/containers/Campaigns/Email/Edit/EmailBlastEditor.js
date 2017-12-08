@@ -17,8 +17,8 @@ import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
-import ConsentService from '../../../../services/ConsentService';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import ConsentService from '../../../../services/ConsentService.ts';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 
 const { Content, Sider } = Layout;
 const { DefaultSelect } = FormSelect;
@@ -125,8 +125,8 @@ class EmailBlastEditor extends Component {
     });
 
     Promise.all(selectedAudienceSegmentIds.map(segmentId => {
-      return AudienceSegmentService.getSegment(segmentId).then(segment => {
-        return buildSegmentSelection(segment);
+      return AudienceSegmentService.getSegment(segmentId).then(res => {
+        return buildSegmentSelection(res.data);
       });
     })).then(segmentSelections => {
       this.setState({

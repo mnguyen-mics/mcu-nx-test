@@ -8,10 +8,10 @@ import { pick } from 'lodash';
 import moment from 'moment';
 
 import { withMcsRouter } from '../../../Helpers';
-import withDrawer from '../../../../components/Drawer';
+import withDrawer from '../../../../components/Drawer/index.tsx';
 import EmailBlastContent from './EmailBlastContent';
 import messages from './messages';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 import * as actions from '../../../../state/Notifications/actions';
 import log from '../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
@@ -56,8 +56,8 @@ class EditBlastPage extends Component {
     const { notifyError } = this.props;
 
     Promise.all([
-      EmailCampaignService.getEmailCampaign(campaignId),
-      EmailCampaignService.getBlast(campaignId, blastId).then(blast => {
+      EmailCampaignService.getEmailCampaign(campaignId).then(res => res.data),
+      EmailCampaignService.getBlast(campaignId, blastId).then(res => res.data).then(blast => {
         return Promise.all([
           EmailCampaignService.getEmailTemplates(campaignId, blast.id).then(res => res.data),
           EmailCampaignService.getConsents(campaignId, blast.id).then(res => res.data),
@@ -122,24 +122,24 @@ class EditBlastPage extends Component {
         ...updatedBlast.templates.map(template => {
           // const templateResource = pick(template, ['email_template_id']);
           const templateResource = { email_template_id: template.email_template_id };
-          return EmailCampaignService.addEmailTemplate(campaignId, blastId, templateResource);
+          return EmailCampaignService.createEmailTemplate(campaignId, blastId, templateResource);
         }),
         ...loadedBlast.templates.map(template => {
-          return EmailCampaignService.removeEmailTemplate(campaignId, blastId, template.email_template_id);
+          return EmailCampaignService.deleteEmailTemplate(campaignId, blastId, template.id);
         }),
         ...updatedBlast.consents.map(consent => {
           const consentResource = pick(consent, ['consent_id']);
-          return EmailCampaignService.addConsent(campaignId, blastId, consentResource);
+          return EmailCampaignService.createConsent(campaignId, blastId, consentResource);
         }),
         ...loadedBlast.consents.map(consent => {
-          return EmailCampaignService.removeConsent(campaignId, blastId, consent.id);
+          return EmailCampaignService.deleteConsent(campaignId, blastId, consent.id);
         }),
         ...updatedBlast.segments.map(segment => {
           const segmentResource = pick(segment, ['audience_segment_id']);
-          return EmailCampaignService.addSegment(campaignId, blastId, segmentResource);
+          return EmailCampaignService.createSegment(campaignId, blastId, segmentResource);
         }),
         ...loadedBlast.segments.map(segment => {
-          return EmailCampaignService.removeSegment(campaignId, blastId, segment.id);
+          return EmailCampaignService.deleteSegment(campaignId, blastId, segment.id);
         }),
       ]);
     }).then(() => {

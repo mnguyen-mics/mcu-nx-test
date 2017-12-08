@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { Layout, Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper.ts';
 import { withMcsRouter } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons.tsx';

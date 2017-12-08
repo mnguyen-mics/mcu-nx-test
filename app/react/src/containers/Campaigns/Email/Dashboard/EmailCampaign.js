@@ -28,7 +28,7 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 
 import * as NotificationActions from '../../../../state/Notifications/actions';
 
