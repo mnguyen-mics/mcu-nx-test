@@ -166,6 +166,17 @@ class StackedAreaPlotDoubleAxis extends Component {
       .padProportion(0.2);
   }
 
+  buildYScales(yKeys) {
+    const yScale = this.buildYScale();
+    const secondYScale = this.buildYScale();
+    const firstKey = yKeys[0];
+    const secondKey = yKeys[1];
+    const scales = {};
+    scales[firstKey] = yScale;
+    scales[secondKey] = secondYScale;
+    return scales;
+  }
+
   formatYAxis(yScale, side) {
     return new Plottable.Axes.Numeric(yScale, side).showEndTickLabels(false);
   }
@@ -200,62 +211,87 @@ class StackedAreaPlotDoubleAxis extends Component {
     return dragBox;
   }
 
-  buildPlots(plts, dataset, plottableDataSet, yKeys, options, xScale, yScale, secondYScale, identifier, colorScale, gridlines) {
-    const pnts = [];
+  buildPlot(
+    plotComponent,
+    item,
+    plottableDataSet,
+    options,
+    xScale,
+    yScales,
+    identifier,
+    colorScale
+  ) {
+    plotComponent
+      .addDataset(plottableDataSet)
+      .x(d => {
+        const date = new Date(d[options.xKey]);
+        truncateUpToHour(date, d.hour_of_day);
+        return date;
+      }, xScale)
+      .y(d => {
+        return d[item];
+      }, yScales[item])
+      .animated(true)
+      .attr('fill', `url(#${item}${identifier})`)
+      .attr(
+        'stroke',
+        () => {
+          return item;
+        },
+        colorScale,
+      );
+    return plotComponent;
+  }
+
+  buildPlots(
+    dataset,
+    plottableDataSet,
+    yKeys,
+    options,
+    xScale,
+    yScales,
+    identifier,
+    colorScale,
+    gridlines
+  ) {
+    const areaPlots = Object.keys(dataset[0])
+                                .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
+                                .map(item => {
+                                  return this.buildPlot(
+                                    new Plottable.Plots.Area(),
+                                    item,
+                                    plottableDataSet,
+                                    options,
+                                    xScale,
+                                    yScales,
+                                    identifier,
+                                    colorScale
+                                  );
+                                });
+
+    const pointComponents = Object.keys(dataset[0])
+                                   .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
+                                   .map(item => {
+                                     return this.buildPlot(
+                                       new Plottable.Plots.Scatter(),
+                                       item,
+                                       plottableDataSet,
+                                       options,
+                                       xScale,
+                                       yScales,
+                                       identifier,
+                                       colorScale
+                                     );
+                                   });
+
     const guideline = new Plottable.Components.GuideLineLayer(Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL).scale(xScale);
+    pointComponents.push(guideline);
 
-    pnts.push(guideline);
-    if (dataset.length > 0) {
-      let i = 0;
-      Object.keys(dataset[0]).forEach(item => {
-        if (item !== options.xKey && yKeys.indexOf(item) > -1) {
-          const plot = new Plottable.Plots.Area()
-            .addDataset(plottableDataSet)
-            .x(d => {
-              const date = new Date(d[options.xKey]);
-              truncateUpToHour(date, d.hour_of_day);
-              return date;
-            }, xScale)
-            .y(d => {
-              return d[item];
-            }, i === 0 ? yScale : secondYScale)
-            .animated(true)
-            .attr('fill', `url(#${item}${identifier})`)
-            .attr(
-              'stroke',
-              () => {
-                return item;
-              },
-              colorScale,
-            );
-
-          const selectedPoint = new Plottable.Plots.Scatter()
-            .x(d => {
-              const date = new Date(d[options.xKey]);
-              truncateUpToHour(date, d.hour_of_day);
-              return date;
-            }, xScale)
-            .y(d => {
-              return d[item];
-            }, i === 0 ? yScale : secondYScale)
-            .size(10)
-            .attr(
-              'fill',
-              () => {
-                return item;
-              },
-              colorScale,
-            )
-            .addDataset(plottableDataSet);
-
-          plts.push(plot);
-          pnts.push(selectedPoint);
-          i += 1;
-        }
-      });
-    }
-    const plots = new Plottable.Components.Group(plts.concat(pnts).concat(gridlines));
-    return plots;
+    return {
+      areaComponents: areaPlots,
+      pointComponents: pointComponents,
+      other: [gridlines]
+    };
   }
 
 
@@ -263,7 +299,7 @@ class StackedAreaPlotDoubleAxis extends Component {
     options,
     gridlines,
     plots,
-    plts,
+    areaComponents,
     identifier,
     dragBox,
     yAxis,
@@ -283,8 +319,7 @@ class StackedAreaPlotDoubleAxis extends Component {
       .attr('opacity', '0.6')
       .attr('stroke-dasharray', '2, 2');
 
-    plts.forEach(plot => {
-      // colorScale.range([plot.foreground().style('fill')]);
+    areaComponents.forEach(plot => {
       const crosshair = this.createDotsCrosshair(plot);
       const line = this.createLineCrosshair(plot, options);
       const pointer = new Plottable.Interactions.Pointer();
@@ -357,41 +392,43 @@ class StackedAreaPlotDoubleAxis extends Component {
     const xScale = this.buildXScale(dataset, hasHoursOfDay);
     const xAxis = this.formatXAxis(xScale, dataset, hasHoursOfDay);
 
-    const yScale = this.buildYScale();
-    const secondYScale = this.buildYScale();
-    const yAxis = this.formatYAxis(yScale, 'left');
-    const secondYAxis = this.formatYAxis(secondYScale, 'right');
+    const yScales = this.buildYScales();
+    const firstYScale = yScales[yKeys[0]];
+    const yAxis = this.formatYAxis(firstYScale, 'left');
+    const secondYAxis = this.formatYAxis(yScales[yKeys[1]], 'right');
 
     const colorScale = this.buildColorScale(yKeys, options);
     const dragBox = this.buildDragBox(options, xScale);
 
-    const gridlines = new Plottable.Components.Gridlines(xScale, yScale).addClass('gridline');
-    const plts = [];
-    const plots = this.buildPlots(
-      plts,
+    const gridlines = new Plottable.Components.Gridlines(xScale, firstYScale).addClass('gridline');
+    const plotComponents = this.buildPlots(
       dataset,
       plottableDataSet,
       yKeys,
       options,
       xScale,
-      yScale,
-      secondYScale,
+      yScales,
       identifier,
       colorScale,
       gridlines
     );
+    const plotComponentsToRender = new Plottable.Components.Group(plotComponents.pointComponents
+                                                                                .concat(plotComponents.areaComponents)
+                                                                                .concat(plotComponents.other))
 
     this.renderPlots(
       options,
       gridlines,
-      plots,
-      plts,
+      plotComponentsToRender,
+      plotComponents.areaComponents,
       identifier,
-      dragBox
+      dragBox,
+      yAxis,
+      secondYAxis,
+      xAxis
     );
 
     this.attachEventListeners(this.plot);
-
     console.log("CHART REFRESHED")
   }
 
