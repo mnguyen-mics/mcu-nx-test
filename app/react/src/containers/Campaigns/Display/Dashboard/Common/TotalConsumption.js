@@ -43,7 +43,7 @@ class TotalConsumption extends Component {
       to: nextTo,
     } = nextProps;
 
-    if (id !== nextId || organisationId !== nextOrganisationId || objectType !== nextObjectType || !from.isSame(nextFrom) || !to.isSame(nextTo)) {
+    if (id !== nextId || organisationId !== nextOrganisationId || objectType !== nextObjectType || !from.toMoment().isSame(nextFrom) || !to.toMoment().isSame(nextTo)) {
       this.fetchAll(organisationId, id, objectType, from, to);
     }
 
