@@ -1,4 +1,3 @@
-import React from 'react';
 import Plottable from 'plottable';
 import moment from 'moment';
 import { areDatesSameDay } from '../utils/DateHelper.ts';
