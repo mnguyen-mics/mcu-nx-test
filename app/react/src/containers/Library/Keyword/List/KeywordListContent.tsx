@@ -8,6 +8,7 @@ import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import KeywordListsService from '../../../../services/Library/KeywordListsService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { Keyword } from '../../../../models/keywordList/keywordList';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
 
@@ -16,13 +17,6 @@ const initialState = {
   data: [],
   total: 0,
 };
-
-interface Keyword {
-  id: string;
-  list_type: string;
-  name: string;
-  organisation_id: string;
-}
 
 interface KeywordListContentState {
   loading: boolean;

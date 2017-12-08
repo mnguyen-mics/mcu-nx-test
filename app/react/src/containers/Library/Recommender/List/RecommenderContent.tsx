@@ -10,6 +10,7 @@ import RecommenderService from '../../../../services/Library/RecommenderService'
 import PluginService from '../../../../services/PluginService';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { PluginProperty, Recommender, PluginVersion } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -18,24 +19,7 @@ const initialState = {
   total: 0,
 };
 
-interface PluginProperty {
-  deletable: boolean;
-  origin: string;
-  property_type: string;
-  technical_name: string;
-  value: any;
-  writable: boolean;
-}
-
-interface Recommender {
-  id: string;
-  artifact_id: string;
-  name: string;
-  group_id: string;
-  version_id: string;
-  version_value: string;
-  recommenders_plugin_id: string;
-  organisation_id: string;
+interface RecommenderInterface extends Recommender {
   properties?: PluginProperty[];
 }
 
@@ -68,9 +52,9 @@ class RecommenderContent extends Component<RouteComponentProps<RouterProps> & In
           const promises = results.data.map(va => {
             return new Promise((resolve, reject) => {
               PluginService.getEngineVersion(va.version_id)
-              .then((visitAnalyzer) => {
-                return PluginService.getEngineProperties(visitAnalyzer.id);
-              }).then(v => resolve(v));
+              .then((recommender: PluginVersion) => {
+                return PluginService.getEngineProperties(recommender.id);
+              }).then((v: PluginProperty[]) => resolve(v));
             });
           });
           Promise.all(promises).then((vaProperties: PluginProperty[]) => {
@@ -91,7 +75,7 @@ class RecommenderContent extends Component<RouteComponentProps<RouterProps> & In
     });
   }
 
-  onClickArchive = (visitAnalyzer: Recommender) => {
+  onClickArchive = (visitAnalyzer: RecommenderInterface) => {
     const {
       location: {
         search,
@@ -139,7 +123,7 @@ class RecommenderContent extends Component<RouteComponentProps<RouterProps> & In
     });
   }
 
-  onClickEdit = (visitAnalyzer: Recommender) => {
+  onClickEdit = (visitAnalyzer: RecommenderInterface) => {
     const {
       history,
       match: { params: { organisationId } },
@@ -179,7 +163,7 @@ class RecommenderContent extends Component<RouteComponentProps<RouterProps> & In
           intlMessage: messages.processor,
           key: 'name',
           isHideable: false,
-          render: (text: string, record: Recommender) => (
+          render: (text: string, record: RecommenderInterface) => (
             <Link
               className="mcs-campaigns-link"
               to={`/v2/o/${organisationId}/library/recommenders/${record.id}/edit`}
@@ -192,7 +176,7 @@ class RecommenderContent extends Component<RouteComponentProps<RouterProps> & In
           intlMessage: messages.provider,
           key: 'id',
           isHideable: false,
-          render: (text: string, record: Recommender) => {
+          render: (text: string, record: RecommenderInterface) => {
             const property = record && record.properties && record.properties.find(item => item.technical_name === 'name');
             const render = property && property.value && property.value.value ? property.value.value : null;
             return (
@@ -206,7 +190,7 @@ class RecommenderContent extends Component<RouteComponentProps<RouterProps> & In
           intlMessage: messages.name,
           key: 'version_id',
           isHideable: false,
-          render: (text: string, record: Recommender) => {
+          render: (text: string, record: RecommenderInterface) => {
             const property = record && record.properties && record.properties.find(item => item.technical_name === 'provider');
             const render = property && property.value && property.value.value ? property.value.value : null;
             return (

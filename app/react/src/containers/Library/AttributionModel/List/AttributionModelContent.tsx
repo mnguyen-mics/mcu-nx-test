@@ -10,6 +10,7 @@ import AttributionModelService from '../../../../services/Library/AttributionMod
 import PluginServices from '../../../../services/PluginServices';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { AttributionModel, PluginProperty } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -18,23 +19,7 @@ const initialState = {
   total: 0,
 };
 
-interface PluginProperty {
-  deletable: boolean;
-  origin: string;
-  property_type: string;
-  technical_name: string;
-  value: any;
-  writable: boolean;
-}
-
-interface AttributionModel {
-  artifact_id: string;
-  attribution_processor_id: string;
-  group_id: string;
-  id: string;
-  mode: string;
-  name: string;
-  organisation_id: string;
+interface AttributionModelInterface extends AttributionModel {
   properties?: PluginProperty[];
 }
 
@@ -62,12 +47,12 @@ class AttributionModelContent extends Component<RouteComponentProps<RouterProps>
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       AttributionModelService.getAttributionModels(organisationId, options)
-        .then((results: { data: AttributionModel[], total?: number, count: number}) => {
+        .then((results) => {
           const promises = results.data.map(am => {
             return PluginServices.getEngineProperties(am.attribution_processor_id);
           });
           Promise.all(promises).then(amProperties => {
-            const formattedResults: AttributionModel[] = results.data.map((am, i) => {
+            const formattedResults = results.data.map((am, i) => {
               return {
                 ...am,
                 properties: amProperties[i],
@@ -85,7 +70,7 @@ class AttributionModelContent extends Component<RouteComponentProps<RouterProps>
     });
   }
 
-  onClickArchive = (placement: AttributionModel) => {
+  onClickArchive = (placement: AttributionModelInterface) => {
     const {
       location: {
         pathname,
@@ -133,7 +118,7 @@ class AttributionModelContent extends Component<RouteComponentProps<RouterProps>
     });
   }
 
-  onClickEdit = (attribution: AttributionModel) => {
+  onClickEdit = (attribution: AttributionModelInterface) => {
     const {
       history,
       match: { params: { organisationId } },
@@ -173,7 +158,7 @@ class AttributionModelContent extends Component<RouteComponentProps<RouterProps>
           intlMessage: messages.name,
           key: 'name',
           isHideable: false,
-          render: (text: string, record: AttributionModel) => (
+          render: (text: string, record: AttributionModelInterface) => (
             <Link
               className="mcs-campaigns-link"
               to={`/v2/o/${organisationId}/library/attribution_models/${record.id}/edit`}
@@ -186,7 +171,7 @@ class AttributionModelContent extends Component<RouteComponentProps<RouterProps>
           intlMessage: messages.engine,
           key: 'id',
           isHideable: false,
-          render: (text: string, record: AttributionModel) => {
+          render: (text: string, record: AttributionModelInterface) => {
 
             const property = record && record.properties && record.properties.find(item => item.technical_name === 'name');
             const render = property && property.value && property.value.value ? property.value.value : null;
@@ -201,7 +186,7 @@ class AttributionModelContent extends Component<RouteComponentProps<RouterProps>
           intlMessage: messages.miner,
           key: '',
           isHideable: false,
-          render: (text: string, record: AttributionModel) => {
+          render: (text: string, record: AttributionModelInterface) => {
             const property = record && record.properties && record.properties.find(item => item.technical_name === 'provider');
             const render = property && property.value && property.value.value ? property.value.value : null;
             return (

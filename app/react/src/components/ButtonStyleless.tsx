@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Omit } from '../utils/Types';
 
 export interface ButtonStylelessProps {
-  onClick: () => void;
+  onClick: (e?: React.ReactEventHandler<HTMLButtonElement>) => void;
 }
 
 const ButtonStyleless: React.SFC<

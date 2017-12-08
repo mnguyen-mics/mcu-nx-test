@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
-import { PluginInterface, PluginProperty } from '../../../models/Plugins';
+import { PluginInterface, PluginProperty, PluginType } from '../../../models/Plugins';
 import PluginService from '../../../services/PluginService';
 import * as actions from '../../../state/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
@@ -14,13 +14,6 @@ import Loading from '../../../components/Loading';
 import messages from './messages';
 
 const formId = 'pluginForm';
-
-type PluginType = 'ACTIVITY_ANALYZER' |
-  'RECOMMENDER' |
-  'ACTIVITY_ANALYZER' |
-  'BID_OPTIMIZATION_ENGINE' |
-  'ATTRIBUTION_PROCESSOR' |
-  'EMAIL_ROUTER';
 
 interface RouterProps {
   organisationId: string;

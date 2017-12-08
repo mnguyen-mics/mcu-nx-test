@@ -42,7 +42,7 @@ class EmailRouterContent extends Component<RouteComponentProps<RouterProps> & In
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       EmailRoutersService.getEmailRouters(organisationId, options)
-        .then((results: { data: EmailRouter[], count: number, total?: number }) => {
+        .then((results) => {
           this.setState({
             loading: false,
             data: results.data,

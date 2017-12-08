@@ -9,6 +9,7 @@ import ItemList, { Filters } from '../../../../components/ItemList';
 import PlacementListsService from '../../../../services/Library/PlacementListsService';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { PlacementListResource } from '../../../../models/placement/PlacementListResource';
 import messages from './messages';
 
 const initialState = {
@@ -17,16 +18,9 @@ const initialState = {
   total: 0,
 };
 
-interface PlacementList {
-  id: string;
-  list_type: string;
-  name: string;
-  organisation_id: string;
-}
-
 interface PlacementListContentState {
   loading: boolean;
-  data: PlacementList[];
+  data: PlacementListResource[];
   total: number;
 }
 
@@ -58,7 +52,7 @@ class PlacementListContent extends Component<RouteComponentProps<RouterProps> & 
     });
   }
 
-  onClickArchive = (placement: PlacementList) => {
+  onClickArchive = (placement: PlacementListResource) => {
     const {
       location: {
         search,
@@ -106,7 +100,7 @@ class PlacementListContent extends Component<RouteComponentProps<RouterProps> & 
     });
   }
 
-  onClickEdit = (placement: PlacementList) => {
+  onClickEdit = (placement: PlacementListResource) => {
     const {
       history,
       match: { params: { organisationId } },
@@ -146,7 +140,7 @@ class PlacementListContent extends Component<RouteComponentProps<RouterProps> & 
           intlMessage: messages.name,
           key: 'name',
           isHideable: false,
-          render: (text: string, record: PlacementList) => (
+          render: (text: string, record: PlacementListResource) => (
             <Link
               className="mcs-campaigns-link"
               to={`/${organisationId}/library/placementlists/${record.id}`}

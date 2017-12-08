@@ -9,6 +9,7 @@ import ItemList, { Filters } from '../../../../components/ItemList';
 import ExportsService from '../../../../services/Library/ExportsService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import { Export } from '../../../../models/exports/exports';
 import messages from './messages';
 
 const initialState = {
@@ -16,16 +17,6 @@ const initialState = {
   data: [],
   total: 0,
 };
-
-interface Export {
-  datamart_id: string;
-  id: string;
-  name: string;
-  organisation_id: string;
-  output_format: string;
-  query_id: string;
-  type: string;
-}
 
 interface ExportContentState {
   loading: boolean;

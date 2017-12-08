@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import messages from '../messages';
 
 import McsIcons from '../../../components/McsIcons.tsx';
-import PluginService from '../../../services/PluginService';
+import PluginService from '../../../services/PluginService.ts';
 
 const Option = Select.Option;
 

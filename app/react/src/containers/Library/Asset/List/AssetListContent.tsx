@@ -7,6 +7,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import AssetsFilesService from '../../../../services/Library/AssetsFilesService';
+import { AssetFileResource } from '../../../../models/assets/assets';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import messages from './messages';
@@ -17,20 +18,9 @@ const initialState = {
   total: 0,
 };
 
-interface Asset {
- id: string;
- file_path: string;
- height: number;
- mime_type: string;
- organisation_id: string;
- original_filename: string;
- size: number;
- width: number;
-}
-
 interface AssetListContentState {
   loading: boolean;
-  data: Asset[];
+  data: AssetFileResource[];
   total: number;
 }
 
@@ -62,7 +52,7 @@ class AssetListContent extends Component<RouteComponentProps<RouterProps> & Inje
     });
   }
 
-  onClickArchive = (asset: Asset) => {
+  onClickArchive = (asset: AssetFileResource) => {
     const {
       location: {
         search,
@@ -137,7 +127,7 @@ class AssetListContent extends Component<RouteComponentProps<RouterProps> & Inje
           key: 'file_path',
           isHideable: false,
           className: 'mcs-table-image-col',
-          render: (text: string, record: Asset) => (
+          render: (text: string, record: AssetFileResource) => (
             <div className="mcs-table-cell-thumbnail">
               <a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`}>
                 <span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} />
@@ -150,7 +140,7 @@ class AssetListContent extends Component<RouteComponentProps<RouterProps> & Inje
           intlMessage: messages.name,
           key: 'original_filename',
           isHideable: false,
-          render: (text: string, record: Asset) => (
+          render: (text: string, record: AssetFileResource) => (
             <a
               href={`https://assets.mediarithmics.com${record.file_path}`}
               rel="noreferrer noopener"
@@ -171,7 +161,7 @@ class AssetListContent extends Component<RouteComponentProps<RouterProps> & Inje
           intlMessage: messages.dimensions,
           key: 'width',
           isHideable: false,
-          render: (text: string, record: Asset) => <span>{text}x{record.height}</span>,
+          render: (text: string, record: AssetFileResource) => <span>{text}x{record.height}</span>,
         },
       ],
     };

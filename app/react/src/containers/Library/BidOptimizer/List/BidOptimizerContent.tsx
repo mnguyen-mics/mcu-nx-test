@@ -9,6 +9,7 @@ import ItemList, { Filters } from '../../../../components/ItemList';
 import BidOptimizerService from '../../../../services/Library/BidOptimizerService';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { BidOptimizer, PluginProperty } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -17,22 +18,7 @@ const initialState = {
   total: 0,
 };
 
-interface PluginProperty {
-  deletable: boolean;
-  origin: string;
-  property_type: string;
-  technical_name: string;
-  value: any;
-  writable: boolean;
-}
-
-interface BidOptimizer {
-    engine_artifact_id: string;
-    engine_group_id: string;
-    engine_version_id: string;
-    id: string;
-    name: string;
-    organisation_id: string;
+interface BidOptimizerInterface extends BidOptimizer {
     properties?: PluginProperty[];
 }
 
@@ -60,12 +46,12 @@ class BidOptimizerContent extends Component<RouteComponentProps<RouterProps> & I
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       BidOptimizerService.getBidOptimizers(organisationId, options)
-        .then((results: { data: BidOptimizer[], total?: number, count: number}) => {
+        .then((results) => {
           const promises = results.data.map(bo => {
             return BidOptimizerService.getBidOptimizerProperties(bo.id);
           });
           Promise.all(promises).then(boProperties => {
-            const formattedResults: BidOptimizer[] = [];
+            const formattedResults: BidOptimizerInterface[] = [];
             boProperties.forEach(boProperty => {
               const foundBo = results.data.find(bo => bo.id === boProperty.id);
 
@@ -88,7 +74,7 @@ class BidOptimizerContent extends Component<RouteComponentProps<RouterProps> & I
     });
   }
 
-  onClickArchive = (placement: BidOptimizer) => {
+  onClickArchive = (placement: BidOptimizerInterface) => {
     const {
       location: {
         pathname,
@@ -136,7 +122,7 @@ class BidOptimizerContent extends Component<RouteComponentProps<RouterProps> & I
     });
   }
 
-  onClickEdit = (bo: BidOptimizer) => {
+  onClickEdit = (bo: BidOptimizerInterface) => {
     const {
       history,
       match: { params: { organisationId } },
@@ -176,7 +162,7 @@ class BidOptimizerContent extends Component<RouteComponentProps<RouterProps> & I
           intlMessage: messages.name,
           key: 'name',
           isHideable: false,
-          render: (text: string, record: BidOptimizer) => (
+          render: (text: string, record: BidOptimizerInterface) => (
             <Link
               className="mcs-campaigns-link"
               to={`/v2/o/${organisationId}/library/bid_optimizers/${record.id}/edit`}
@@ -189,7 +175,7 @@ class BidOptimizerContent extends Component<RouteComponentProps<RouterProps> & I
           intlMessage: messages.engine,
           key: 'id',
           isHideable: false,
-          render: (text: string, record: BidOptimizer) => {
+          render: (text: string, record: BidOptimizerInterface) => {
 
             const property = record && record.properties && record.properties.find(item => item.technical_name === 'name');
             const render = property && property.value && property.value.value ? property.value.value : null;
@@ -204,7 +190,7 @@ class BidOptimizerContent extends Component<RouteComponentProps<RouterProps> & I
           intlMessage: messages.miner,
           key: 'engine_group_id',
           isHideable: false,
-          render: (text: string, record: BidOptimizer) => {
+          render: (text: string, record: BidOptimizerInterface) => {
             const property = record && record.properties && record.properties.find(item => item.technical_name === 'provider');
             const render = property && property.value && property.value.value ? property.value.value : null;
             return (

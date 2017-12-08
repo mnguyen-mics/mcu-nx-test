@@ -8,7 +8,7 @@ import { withMcsRouter } from '../../../../Helpers';
 import DisplayCreativeCreationEditor from './DisplayCreativeCreationEditor';
 import DisplayCreativeTypePicker from './DisplayCreativeTypePicker';
 
-import PluginService from '../../../../../services/PluginService';
+import PluginService from '../../../../../services/PluginService.ts';
 import CreativeService from '../../../../../services/CreativeService';
 import * as actions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';

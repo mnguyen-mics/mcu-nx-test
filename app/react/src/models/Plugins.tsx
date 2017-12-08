@@ -16,6 +16,23 @@ export interface PluginProperty {
   writable: boolean;
 }
 
+export type PluginType = 'ACTIVITY_ANALYZER' |
+'RECOMMENDER' |
+'ACTIVITY_ANALYZER' |
+'BID_OPTIMIZATION_ENGINE' |
+'ATTRIBUTION_PROCESSOR' |
+'EMAIL_ROUTER';
+
+export interface PluginVersion {
+  id: string;
+  plugin_id: string;
+  organisation_id: string;
+  plugin_type: PluginType;
+  group_id: string;
+  artifact_id: string;
+  version_id: string;
+}
+
 export interface AttributionModel {
   artifact_id: string;
   attribution_processor_id: string;
@@ -33,7 +50,6 @@ export interface BidOptimizer {
   id: string;
   name: string;
   organisation_id: string;
-  properties?: PluginProperty[];
 }
 
 export interface BidOptimizer {
@@ -43,7 +59,6 @@ export interface BidOptimizer {
   id: string;
   name: string;
   organisation_id: string;
-  properties?: PluginProperty[];
 }
 export interface EmailRouter {
   id: string;
@@ -64,7 +79,6 @@ export interface VisitAnalyzer {
   version_value: string;
   visit_analyzer_plugin_id: string;
   organisation_id: string;
-  properties?: PluginProperty[];
 }
 
 export interface Recommender {
@@ -76,5 +90,4 @@ export interface Recommender {
   version_value: string;
   recommenders_plugin_id: string;
   organisation_id: string;
-  properties?: PluginProperty[];
 }

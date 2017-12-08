@@ -147,13 +147,13 @@ class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFile
       } = this.state;
 
       if (fileSelectorValue) {
-        DataFileService.getDatafileData(fileSelectorValue).then(res => {
+        DataFileService.getDatafileData(fileSelectorValue).then((res: any) => {
           this.onFileUpdate(res);
           const fileName = this.parseFileName(fileSelectorValue);
           this.changeFileName(fileName);
           this.setState({ editMode: true, fileName: fileName, type: this.defineMode(fileName) });
         })
-        .catch(err => {
+        .catch((err: any) => {
           // TODO notify error
         });
       }
