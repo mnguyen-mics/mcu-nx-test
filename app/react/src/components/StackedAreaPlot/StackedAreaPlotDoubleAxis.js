@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Plottable from 'plottable';
 import moment from 'moment';
-import { areDatesSameDay } from '../../utils/DateHelper';
+import { areDatesSameDay, truncateUpToHour } from '../../utils/DateHelper';
 
 import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index.ts';
 
@@ -42,6 +42,7 @@ class StackedAreaPlotDoubleAxis extends Component {
 
   componentDidMount() {
     this.renderStackedAreaPlotDoubleAxis();
+    console.log("COMPONENT DID MOUNT");
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
@@ -59,6 +60,7 @@ class StackedAreaPlotDoubleAxis extends Component {
   componentWillReceiveProps() {
     this.plot.detach();
     this.plot.destroy();
+    console.log("COMPONENT RECEIVED PROPS");
     this.renderStackedAreaPlotDoubleAxis();
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
@@ -211,15 +213,7 @@ class StackedAreaPlotDoubleAxis extends Component {
             .addDataset(plottableDataSet)
             .x(d => {
               const date = new Date(d[options.xKey]);
-              if (d.hour_of_day) {
-                date.setHours(d.hour_of_day);
-                date.setMinutes(0);
-                date.setSeconds(0);
-              } else {
-                date.setHours(0);
-                date.setMinutes(0);
-                date.setSeconds(0);
-              }
+              truncateUpToHour(date, d.hour_of_day);
               return date;
             }, xScale)
             .y(d => {
@@ -238,13 +232,7 @@ class StackedAreaPlotDoubleAxis extends Component {
           const selectedPoint = new Plottable.Plots.Scatter()
             .x(d => {
               const date = new Date(d[options.xKey]);
-              if (d.hour_of_day) {
-                date.setHours(d.hour_of_day);
-              } else {
-                date.setHours(0);
-              }
-              date.setMinutes(0);
-              date.setSeconds(0);
+              truncateUpToHour(date, d.hour_of_day);
               return date;
             }, xScale)
             .y(d => {
@@ -268,6 +256,73 @@ class StackedAreaPlotDoubleAxis extends Component {
     }
     const plots = new Plottable.Components.Group(plts.concat(pnts).concat(gridlines));
     return plots;
+  }
+
+
+  renderPlots(
+    options,
+    gridlines,
+    plots,
+    plts,
+    identifier,
+    dragBox,
+    yAxis,
+    secondYAxis,
+    xAxis
+  ) {
+    const chart = new Plottable.Components.Group([plots, dragBox]);
+    const table = new Plottable.Components.Table([[yAxis, chart, secondYAxis], [null, xAxis, null]]);
+
+    table.renderTo(`#${identifier}`);
+    this.plot = table;
+
+    //Needs to be done after rendering!
+    gridlines.content()
+      .selectAll('line')
+      .attr('stroke', '#8CA0B3')
+      .attr('opacity', '0.6')
+      .attr('stroke-dasharray', '2, 2');
+
+    plts.forEach(plot => {
+      // colorScale.range([plot.foreground().style('fill')]);
+      const crosshair = this.createDotsCrosshair(plot);
+      const line = this.createLineCrosshair(plot, options);
+      const pointer = new Plottable.Interactions.Pointer();
+      this.pointersAttached.push(pointer);
+      pointer.onPointerMove(p => {
+        const nearestEntity = plot.entityNearestByXThenY(p);
+        line.hide();
+        line.drawAt(nearestEntity.position, p, nearestEntity);
+        crosshair.drawAt(nearestEntity.position);
+      });
+      pointer.onPointerExit(() => {
+        line.hide();
+        crosshair.hide();
+        this.setTooltip({
+          xTooltip: -100,
+          yTooltip: -100,
+          visible: 'hidden',
+        });
+      });
+      pointer.attachTo(plot);
+      const point = {
+        pointer: pointer,
+        plot: plot,
+      };
+      this.pointers.push(point);
+    });
+  }
+
+  attachEventListeners(table) {
+    global.window.addEventListener('resize', () => {
+      table.redraw();
+    });
+
+    global.window.addEventListener('redraw', () => {
+      setTimeout(() => {
+        table.redraw();
+      }, 500);
+    });
   }
 
   renderStackedAreaPlotDoubleAxis() {
@@ -326,56 +381,18 @@ class StackedAreaPlotDoubleAxis extends Component {
       gridlines
     );
 
-    const chart = new Plottable.Components.Group([plots, dragBox]);
-    const table = new Plottable.Components.Table([[yAxis, chart, secondYAxis], [null, xAxis, null]]);
+    this.renderPlots(
+      options,
+      gridlines,
+      plots,
+      plts,
+      identifier,
+      dragBox
+    );
 
-    table.renderTo(`#${identifier}`);
-    this.plot = table;
-    gridlines.content()
-      .selectAll('line')
-      .attr('stroke', '#8CA0B3')
-      .attr('opacity', '0.6')
-      .attr('stroke-dasharray', '2, 2');
+    this.attachEventListeners(this.plot);
 
-    plts.forEach(plot => {
-      // colorScale.range([plot.foreground().style('fill')]);
-      const crosshair = this.createDotsCrosshair(plot);
-      const line = this.createLineCrosshair(plot, options);
-      const pointer = new Plottable.Interactions.Pointer();
-      this.pointersAttached.push(pointer);
-      pointer.onPointerMove(p => {
-        const nearestEntity = plot.entityNearestByXThenY(p);
-        line.hide();
-        line.drawAt(nearestEntity.position, p, nearestEntity);
-        crosshair.drawAt(nearestEntity.position);
-      });
-      pointer.onPointerExit(() => {
-        line.hide();
-        crosshair.hide();
-        this.setTooltip({
-          xTooltip: -100,
-          yTooltip: -100,
-          visible: 'hidden',
-        });
-      });
-      pointer.attachTo(plot);
-      const point = {
-        pointer: pointer,
-        plot: plot,
-      };
-      this.pointers.push(point);
-    });
-
-    global.window.addEventListener('resize', () => {
-      table.redraw();
-    });
-
-    global.window.addEventListener('redraw', () => {
-      setTimeout(() => {
-        table.redraw();
-      }, 500);
-    });
-
+    console.log("CHART REFRESHED")
   }
 
   createDotsCrosshair(plot) {
