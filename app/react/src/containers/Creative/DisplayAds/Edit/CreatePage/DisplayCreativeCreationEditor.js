@@ -11,8 +11,9 @@ import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { withMcsRouter } from '../../../../Helpers';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons.tsx';
-import { FormInput, FormTitle, FormSelect, withValidators } from '../../../../../components/Form/index.ts';
+import { FormInput, FormTitle, withValidators } from '../../../../../components/Form/index.ts';
 import { PluginFieldGenerator } from '../../../../Plugin';
+import CreativeFormatEditor from '../CreativeFormatEditor';
 
 import messages from '../messages';
 
@@ -25,24 +26,20 @@ const fieldGridConfig = {
 
 class DisplayCreativeCreationEditor extends Component {
 
-
   handleSaveDisplayCreative = formValues => {
     const { save } = this.props;
 
-    const creativeData = {
-      ...formValues.creative,
-    };
-
-    const formattedProperties = this.props.rendererProperties.filter(item => {
-      return item.writable === true;
-    }).map(item => {
-      return {
+    const formattedProperties = this.props.rendererProperties
+      .filter(item => item.writable === true)
+      .map(item => ({
         ...item,
-        value: formValues.properties[item.technical_name] ? formValues.properties[item.technical_name].value : item.value
-      };
-    });
+        value: (formValues.properties[item.technical_name]
+          ? formValues.properties[item.technical_name].value
+          : item.value
+        )
+      }));
 
-    save(creativeData, formattedProperties);
+    save(formValues.creative, formattedProperties);
   }
 
   render() {
@@ -51,10 +48,9 @@ class DisplayCreativeCreationEditor extends Component {
       intl: { formatMessage },
       handleSubmit,
       submitting,
-      fieldValidators: { isRequired },
+      fieldValidators: { formatIsNotZero, isRequired },
       breadcrumbPaths,
       changeType,
-      isLoading,
       adRenderer: {
         versionId
       },
@@ -63,8 +59,17 @@ class DisplayCreativeCreationEditor extends Component {
     } = this.props;
 
     const pluginFieldGenerated = this.props.rendererProperties.map(fieldDef => {
-      return <PluginFieldGenerator key={`${fieldDef.technical_name}`} definition={fieldDef} fieldGridConfig={fieldGridConfig} disabled={isLoading} rendererVersionId={versionId} organisationId={organisationId} />;
+      return (
+        <PluginFieldGenerator
+          key={`${fieldDef.technical_name}`}
+          definition={fieldDef}
+          fieldGridConfig={fieldGridConfig}
+          rendererVersionId={versionId}
+          organisationId={organisationId}
+        />
+      );
     });
+
     return (
       <Layout>
         <Form
@@ -93,25 +98,34 @@ class DisplayCreativeCreationEditor extends Component {
                 <li>
                   <Link className="validated" to={`${url}`} onClick={() => changeType()}>
                     <McsIcons type="check-rounded-inverted" />
-                    <span className="step-title"><FormattedMessage {...messages.creativeSiderMenuCreativeType} /></span>
+                    <span className="step-title">
+                      <FormattedMessage {...messages.creativeSiderMenuCreativeType} />
+                    </span>
                   </Link>
                 </li>
                 <li>
                   <Link to={`${url}#general`}>
                     <McsIcons type="check-rounded-inverted" />
-                    <span className="step-title"><FormattedMessage {...messages.creativeSiderMenuGeneralInformation} /></span>
+                    <span className="step-title">
+                      <FormattedMessage {...messages.creativeSiderMenuGeneralInformation} />
+                    </span>
                   </Link>
                 </li>
                 <li>
                   <Link to={`${url}#properties`}>
                     <McsIcons type="check-rounded-inverted" />
-                    <span className="step-title"><FormattedMessage {...messages.creativeSiderMenuProperties} /></span>
+                    <span className="step-title">
+                      <FormattedMessage {...messages.creativeSiderMenuProperties} />
+                    </span>
                   </Link>
                 </li>
               </Scrollspy>
             </Sider>
             <Layout>
-              <Content id={'displayCreativesSteps'} className="mcs-content-container mcs-form-container">
+              <Content
+                id={'displayCreativesSteps'}
+                className="mcs-content-container mcs-form-container"
+              >
                 <div id={'general'}>
                   <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
@@ -132,40 +146,20 @@ class DisplayCreativeCreationEditor extends Component {
                         },
                         inputProps: {
                           placeholder: formatMessage(messages.creativeCreationGeneralNameFieldPlaceHolder),
-                          disabled: isLoading,
                         },
                         helpToolTipProps: {
                           title: formatMessage(messages.creativeCreationGeneralNameFieldHelper),
                         },
                       }}
                     />
+
                     <Field
                       name="creative.format"
-                      component={FormSelect}
-                      validate={[isRequired]}
-                      props={{
-                        formItemProps: {
-                          label: formatMessage(messages.creativeCreationGeneralFormatFieldTitle),
-                          required: true,
-                          ...fieldGridConfig,
-                        },
-                        selectProps: {
-                          defaultValue: formats[0]
-                        },
-                        inputProps: {
-                          disabled: isLoading,
-                          defaultValue: formats[0]
-                        },
-                        options: formats && formats.map(format => ({
-                          key: format,
-                          value: format,
-                          title: format,
-                        })),
-                        helpToolTipProps: {
-                          title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
-                        },
-                      }}
+                      component={CreativeFormatEditor}
+                      validate={[formatIsNotZero]}
+                      formats={formats}
                     />
+
                     <Field
                       name="creative.destination_domain"
                       component={FormInput}
@@ -178,7 +172,6 @@ class DisplayCreativeCreationEditor extends Component {
                         },
                         inputProps: {
                           placeholder: formatMessage(messages.creativeCreationGeneralDomainFieldPlaceHolder),
-                          disabled: isLoading,
                         },
                         helpToolTipProps: {
                           title: formatMessage(messages.creativeCreationGeneralDomainFieldHelper),
@@ -232,7 +225,6 @@ DisplayCreativeCreationEditor.propTypes = {
   }).isRequired,
   formats: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   rendererProperties: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
-  isLoading: PropTypes.bool.isRequired,
   organisationId: PropTypes.string.isRequired,
 };
 

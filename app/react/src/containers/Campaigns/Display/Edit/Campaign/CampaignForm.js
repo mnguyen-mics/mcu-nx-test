@@ -22,15 +22,16 @@ import {
   AdGroups
 } from './Sections';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import { withNormalizer, withValidators } from '../../../../../components/Form/index.ts';
+import { withNormalizer, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
 
 import { withMcsRouter } from '../../../../Helpers';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
 import AttributionModelsService from '../../../../../services/AttributionModelsService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import * as AdGroupServiceWrapper from '../AdGroupServiceWrapper';
+import messages from '../messages';
 
 
 const { Content } = Layout;
@@ -39,6 +40,18 @@ const FORM_NAME = 'campaignForm';
 class CampaignForm extends Component {
 
   state = { loading: false }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) {
+      const {
+        intl: {
+          formatMessage
+        }
+      } = this.props;
+      formErrorMessage(formatMessage(messages.errorFormMessage));
+    }
+  }
+
 
   updateTableFieldStatus = ({ index, toBeRemoved = true, tableName }) => {
     const updatedField = { ...this.props.formValues[tableName][index], toBeRemoved };
@@ -112,14 +125,25 @@ class CampaignForm extends Component {
       formValues
     } = this.props;
 
+
     const body = {
       editor_version_id: '11',
       name: formValues.name,
-      per_day_impression_capping: formValues.per_day_impression_capping,
       time_zone: 'Europe/Paris',
-      total_impression_capping: formValues.total_impression_capping,
+      model_version: formValues.model_version,
       type: 'DISPLAY'
     };
+
+    const addFieldsBasedOnCondition = (id) => {
+      if (formValues[id]) {
+        body[id] = formValues[id];
+      }
+    };
+
+    addFieldsBasedOnCondition('total_impression_capping');
+    addFieldsBasedOnCondition('total_budget');
+    addFieldsBasedOnCondition('max_budget_per_period');
+    addFieldsBasedOnCondition('per_day_impression_capping');
 
     const request = (!editionMode
       ? DisplayCampaignService.createCampaign(organisationId, body)
@@ -128,6 +152,7 @@ class CampaignForm extends Component {
 
     return request.then(result => result.data.id);
   }
+
 
   createAdGroup = (campaignId, organisationId, value, options) => {
     const {
@@ -156,7 +181,7 @@ class CampaignForm extends Component {
     return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, saveOptions);
   }
 
-  updateAdGroup = ({ campaignId, organisationId, body }) => {
+  updateAdGroup = (campaignId, adGroupId, organisationId, body) => {
     const saveOptions = {
       editionMode: true,
       catalogMode: this.props.hasFeature('campaigns.display.edition.audience_catalog')
@@ -195,7 +220,7 @@ class CampaignForm extends Component {
       requests: {
         createThenAdd: this.createGoal,
         add: DisplayCampaignService.createGoal,
-        update: GoalService.updateGoal,
+        update: GoalService.updateGoalDeprecated,
         delete: DisplayCampaignService.deleteGoal,
       },
       tableName: 'goalsTable',
@@ -231,15 +256,15 @@ class CampaignForm extends Component {
               const updatedObject = formValues[tableName].find(elem => (
                 elem.id === id
               ));
-              newPromise = requests.update({ campaignId: campaignId, id: main_id, organisationId: match.params.organisationId, body: updatedObject }); // eslint-disable-line
+              newPromise = requests.update(campaignId, main_id, match.params.organisationId, updatedObject); // eslint-disable-line
             }
           } else {
             /* addition of the goal to the campaign */
-            newPromise = requests.add({ campaignId, body });
+            newPromise = requests.add(campaignId, body);
           }
         } else if (id > 1000) {
           /* In case we want to delete an existing element */
-          newPromise = requests.delete({ campaignId, id: id });
+          newPromise = requests.delete(campaignId, id);
         }
 
         return newPromise || Promise.resolve();
@@ -375,7 +400,6 @@ class CampaignForm extends Component {
             id={scrollLabelContentId}
           >
             <General {...commonProps} formValues={formValues} />
-
             <hr />
             <Goals {...commonProps} formValues={goalsTable} createUniqueGoal={this.createUniqueGoal} />
             <hr />
@@ -414,6 +438,7 @@ CampaignForm.propTypes = {
   organisationId: PropTypes.string.isRequired,
   notifyError: PropTypes.func.isRequired,
   hasFeature: PropTypes.func.isRequired,
+  submitFailed: PropTypes.bool.isRequired,
 };
 
 

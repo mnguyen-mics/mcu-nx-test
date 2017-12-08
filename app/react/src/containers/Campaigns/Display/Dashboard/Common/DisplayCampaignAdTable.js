@@ -142,7 +142,6 @@ class DisplayCampaignAdTable extends Component {
         render: (text, record) => (
           <span>
             <Switch
-              disabled={record.creative_audit_status !== 'AUDIT_PASSED'}
               className="mcs-table-switch"
               checked={text === 'ACTIVE'}
               onChange={(checked) => changeAdStatus(record, checked)}
@@ -163,7 +162,7 @@ class DisplayCampaignAdTable extends Component {
           >
             <Link
               className="mcs-campaigns-link"
-              to={`/${organisationId}/creatives/display-ad/default-editor/edit/${record.creative_id}`}
+              to={`v2/o/${organisationId}/creatives/display/edit/${record.creative_id}`}
             >{text}
             </Link>
           </Popover>

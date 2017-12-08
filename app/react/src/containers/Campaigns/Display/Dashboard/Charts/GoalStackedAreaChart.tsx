@@ -12,8 +12,7 @@ import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
-import { GoalSelection, AttributionModel } from '../../../../../models/Goal';
-
+import { GoalSelectionResource, AttributionSelectionResource } from '../../../../../models/goal';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
@@ -49,8 +48,8 @@ interface PerformanceValue {
   interaction_to_conversion_duration: string;
 }
 
-interface Goal extends GoalSelection {
-  attribution: AttributionModel[];
+interface Goal extends GoalSelectionResource {
+  attribution: AttributionSelectionResource[];
 }
 
 interface GoalStackedAreaChartProps {
@@ -60,7 +59,7 @@ interface GoalStackedAreaChartProps {
 
 interface GoalStackedAreaChartState {
   performance: PerformanceValue[];
-  selectedAttributionModel?: AttributionModel;
+  selectedAttributionModel?: AttributionSelectionResource;
   isFetchingPerformance: boolean;
   hasFetchedPerformance: boolean;
   hasData: boolean;
@@ -197,8 +196,8 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
 
     if (attributionId) { filters.push(`attribution_model_id==${attributionId}`); }
     return this.setState({ isFetchingPerformance: true }, () => {
-      ReportService.getConversionAttributionPerformance(organisationId, from, to, filters, ['day'])
-        .then(results => normalizeReportView(results.data.report_view))
+      ReportService.getConversionAttributionPerformance(organisationId, from, to, filters, ['day'], undefined)
+        .then((results) => normalizeReportView(results.data.report_view))
         .then(results => {
           this.setState({
             performance: results,

@@ -5,6 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
 import { TableViewFilters, EmptyTableView } from '../../../../components/TableView/index.ts';
+import EmailTestModal from './EmailTestModal.tsx';
 
 import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
@@ -20,6 +21,11 @@ class CreativeEmailsTable extends Component {
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveCreativeEmails = this.archiveCreativeEmails.bind(this);
     this.editCreativeEmails = this.editCreativeEmails.bind(this);
+    this.state = {
+      modalVisible: false,
+      selectedtemplateId: '',
+      inputValue: [],
+    };
   }
 
   componentDidMount() {
@@ -95,6 +101,15 @@ class CreativeEmailsTable extends Component {
     history.push(nextLocation);
   }
 
+  viewTestModal = (template) => {
+    this.setState({ modalVisible: true, selectedtemplateId: template.id });
+  }
+
+  handleCancel = () => {
+    this.setState({ modalVisible: false, selectedtemplateId: '' });
+  }
+
+
   render() {
     const {
       match: {
@@ -124,6 +139,7 @@ class CreativeEmailsTable extends Component {
       onShowSizeChange: (current, size) =>
         this.updateLocationSearch({
           pageSize: size,
+          currentPage: 1,
         }),
     };
 
@@ -164,6 +180,10 @@ class CreativeEmailsTable extends Component {
         key: 'action',
         actions: [
           {
+            translationKey: 'SEND_TEST',
+            callback: this.viewTestModal,
+          },
+          {
             translationKey: 'EDIT',
             callback: this.editCreativeEmails,
           },
@@ -182,6 +202,12 @@ class CreativeEmailsTable extends Component {
 
     return hasCreativeEmails ? (
       <div className="mcs-table-container">
+        <EmailTestModal
+          organisationId={this.props.match.params.organisationId}
+          isModalVisible={this.state.modalVisible}
+          selectedtemplateId={this.state.selectedtemplateId}
+          handleCancel={this.handleCancel}
+        />
         <TableViewFilters
           columnsDefinitions={columnsDefinitions}
           dataSource={dataSource}

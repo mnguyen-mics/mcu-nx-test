@@ -18,5 +18,13 @@ export default defineMessages({
   archiveCampaignMessage: {
     id: 'modal.archive.campaign.message',
     defaultMessage: 'By archiving this Campaign all its activities will be suspended. You\'ll be able to recover it from the archived campaign filter.'
-  }
+  },
+  exportIsRunningTitle: {
+    id: 'modal.export.running.title',
+    defaultMessage: 'Export is running'
+  },
+  exportIsRunningMessage: {
+    id: 'modal.export.running.message',
+    defaultMessage: 'Please wait until the export is fully completed.'
+  },
 });

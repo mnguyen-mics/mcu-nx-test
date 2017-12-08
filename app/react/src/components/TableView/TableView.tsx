@@ -53,7 +53,7 @@ export interface TableViewProps {
   loading?: boolean | SpinProps;
   pagination?: PaginationProps | boolean;
   onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
-  onRowClick?: (id: string) => any;
+  onRowClick?: (record?: object) => void;
   visibilitySelectedColumns?: VisibilitySelectedColumn[];
 }
 
@@ -193,7 +193,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
     };
 
     if (onRowClick) {
-      computedTableProps.onRowClick = (row: { id: string }) => onRowClick(row.id);
+      computedTableProps.onRowClick = (row) => onRowClick(row);
     }
 
     return (

@@ -21,6 +21,7 @@ import ConsentService from '../../../../services/ConsentService';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 
 const { Content, Sider } = Layout;
+const { DefaultSelect } = FormSelect;
 
 class EmailBlastEditor extends Component {
   constructor(props) {
@@ -274,7 +275,7 @@ class EmailBlastEditor extends Component {
                     />
                     <Field
                       name="blast.consents[0].consent_id"
-                      component={FormSelect}
+                      component={DefaultSelect}
                       validate={[isRequired]}
                       props={{
                         formItemProps: {

@@ -21,7 +21,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
 import CampaignService from '../../../../services/CampaignService';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
-import ReportService from '../../../../services/ReportService';
+import ReportService from '../../../../services/ReportService.ts';
 import * as notifyActions from '../../../../state/Notifications/actions';
 
 const messages = defineMessages({

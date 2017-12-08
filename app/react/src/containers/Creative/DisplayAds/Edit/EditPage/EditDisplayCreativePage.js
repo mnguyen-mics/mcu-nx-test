@@ -215,22 +215,29 @@ class CreateDisplayCreativePage extends Component {
       { name: formatMessage(messages.creativeCreationBreadCrumb) },
     ];
 
-    return this.state.isLoading ? <div style={{ display: 'flex', flex: 1 }}><Loading className="loading-full-screen" /></div> : (
-      <DisplayCreativeEditionEditor
-        save={this.updateDisplayCreative}
-        close={this.redirect}
-        breadcrumbPaths={breadcrumbPaths}
-        initialValues={{
-          creative: this.state.creative,
-          properties: this.formatProperties(),
-        }}
-        creative={this.state.creative}
-        rendererProperties={this.state.rendererProperties}
-        formats={this.state.formats}
-        refreshCreative={this.refreshCreative}
-        organisationId={organisationId}
-        isLoading={isLoading}
-      />
+    return (this.state.isLoading
+      ? (
+        <div style={{ display: 'flex', flex: 1 }}>
+          <Loading className="loading-full-screen" />
+        </div>
+      )
+      : (
+        <DisplayCreativeEditionEditor
+          save={this.updateDisplayCreative}
+          close={this.redirect}
+          breadcrumbPaths={breadcrumbPaths}
+          initialValues={{
+            creative: this.state.creative,
+            properties: this.formatProperties(),
+          }}
+          creative={this.state.creative}
+          rendererProperties={this.state.rendererProperties}
+          formats={this.state.formats}
+          refreshCreative={this.refreshCreative}
+          organisationId={organisationId}
+          isLoading={isLoading}
+        />
+      )
     );
   }
 }

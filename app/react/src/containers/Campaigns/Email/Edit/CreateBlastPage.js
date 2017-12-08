@@ -72,7 +72,7 @@ class CreateBlastPage extends Component {
       return Promise.all([
         ...blast.templates.map(template => {
           // const templateResource = pick(template, ['email_template_id']);
-          const templateResource = { email_template_id: template.id };
+          const templateResource = { email_template_id: template.email_template_id };
           return EmailCampaignService.addEmailTemplate(campaignId, blastId, templateResource);
         }),
         ...blast.consents.map(consent => {

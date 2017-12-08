@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import Trigger from 'rc-trigger';
 import Tree, { TreeNode } from 'rc-tree';
+import { Popover } from 'antd';
 import { loopAllChildren, flatToHierarchy, getValuePropValue, labelCompatible } from './util';
 
 const BUILT_IN_PLACEMENTS = {
@@ -272,9 +273,23 @@ class SelectTrigger extends Component {
           );
         }
         const isSearching = props.inputValue;
-        let title = child.props.title
+        const ancestorsPath = (child.props.ancestors || []).reduce((path, ancestor) => `${path ? `${path} > ` : ''}${ancestor.label}`, '');
+        const popupContent = (
+          <div className="mcs-popover-audience">
+            <span className="path">{ancestorsPath}</span>
+          </div>
+        )
+
+        function addPopup(component, childProps) {
+          if (childProps.title && childProps.parentLabel && ancestorsPath) {
+            return <Popover placement="right" content={popupContent} title={child.props.title} trigger="hover">{component}</Popover>
+          }
+          return component
+        }
+
+        let title = addPopup(<div style={{ width: '100%' }}>{child.props.title}</div>, child.props)
         if (isSearching && child.props.parentLabel) {
-          title=(<div>{child.props.title}<span style={{ float: 'right', color: '#a7a7a7' }}>{child.props.parentLabel}</span></div>)
+          title=addPopup(<div>{child.props.title}<span style={{ float: 'right', color: '#a7a7a7' }}>{child.props.parentLabel}</span></div>, child.props)
         }
         return <TreeNode {...child.props} title={title} key={child.key} />;
       });

@@ -10,21 +10,22 @@ const {
   FormInput,
   FormRangePicker,
   FormSection,
-  FormSelectAddon,
+  FormSelect,
 } = Form;
+
+const { AddonSelect } = FormSelect;
 
 class General extends Component {
 
   state = { advancedSectionDisplayed: false };
 
-  displayAdvancedSection = (e) => {
-    e.preventDefault();
+  displayAdvancedSection = () => {
     this.setState({ advancedSectionDisplayed: !this.state.advancedSectionDisplayed });
   }
 
   render() {
     const {
-      fieldNormalizer: { normalizeFloat, normalizeInteger },
+      fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       formatMessage,
       formValues,
@@ -62,19 +63,17 @@ class General extends Component {
             <Field
               name="adGroupMaxBudgetPerPeriod"
               component={FormInput}
-              normalize={normalizeFloat}
-              validate={[isRequired, isValidFloat, isNotZero]}
+              validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow2Label),
-                  required: true,
                 },
                 inputProps: {
                   suffix: (<span>€</span>),
                   addonAfter: (
                     <Field
                       name="adGroupMaxBudgetPeriod"
-                      component={FormSelectAddon}
+                      component={AddonSelect}
                       props={{
                         options: [
                         { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow2OptionDAY) },
@@ -98,12 +97,10 @@ class General extends Component {
             <Field
               name="adGroupTotalBudget"
               component={FormInput}
-              normalize={normalizeFloat}
-              validate={[isRequired, isValidFloat, isNotZero]}
+              validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow3Label),
-                  required: true,
                 },
                 inputProps: {
                   suffix: (<span>€</span>),
@@ -124,7 +121,6 @@ class General extends Component {
                 label: formatMessage(messages.contentSectionGeneralRow4Label),
                 labelCol: { span: 3 },
                 wrapperCol: { span: 10, offset: 1 },
-                required: true,
               }}
 
               startProps={{
@@ -144,8 +140,6 @@ class General extends Component {
                 endDate: formValues && formValues.adGroupEndDate,
               }}
 
-              fieldValidators={{ start: [isRequired], end: [isRequired] }}
-
               helpToolTipProps={{
                 placement: 'right',
                 title: formatMessage(messages.contentSectionGeneralRow4Tooltip),
@@ -157,12 +151,10 @@ class General extends Component {
             <Field
               name="adGroupMaxBidPrice"
               component={FormInput}
-              normalize={normalizeFloat}
-              validate={[isRequired, isValidFloat, isNotZero]}
+              validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.contentSectionGeneralRow5Label),
-                  required: true,
                 },
                 inputProps: {
                   suffix: (<span>€</span>),

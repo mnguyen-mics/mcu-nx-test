@@ -66,7 +66,6 @@ class TableSelector extends Component {
             return (
               <Field
                 checked={!!selectedElementsById[record.id]}
-                onChange={() => this.toggleElementSelection(record.id)}
               >{text}
               </Field>
             );
@@ -135,7 +134,8 @@ class TableSelector extends Component {
       });
   }
 
-  toggleElementSelection = (elementId) => {
+  toggleElementSelection = (element) => {
+    const elementId = element.id;
     this.setState(prevState => {
       const isElementSelected = prevState.selectedElementsById[elementId];
 
@@ -184,7 +184,7 @@ class TableSelector extends Component {
       pageSize,
       total,
       onChange: page => this.setState({ currentPage: page }),
-      onShowSizeChange: (current, size) => this.setState({ pageSize: size }),
+      onShowSizeChange: (current, size) => this.setState({ currentPage: 1, pageSize: size }),
     };
 
     const tableViewProps = {

@@ -8,8 +8,9 @@ import { Form } from '../../../../../../../components/index.ts';
 import messages from '../../../messages';
 import selectOptions from './selectOptions';
 
-const { FormSection, FormTagSelect } = Form;
+const { FormSection, FormSelect } = Form;
 const confirm = Modal.confirm;
+const { TagSelect } = FormSelect;
 
 class Device extends Component {
 
@@ -79,7 +80,7 @@ class Device extends Component {
             <div className="custom-content">
               <Field
                 name="adGroupDeviceType"
-                component={FormTagSelect}
+                component={TagSelect}
                 props={{
                   formItemProps: {
                     label: formatMessage(messages.contentSectionDevicePart1Row1Label),
@@ -96,7 +97,7 @@ class Device extends Component {
 
               <Field
                 name="adGroupDeviceOS"
-                component={FormTagSelect}
+                component={TagSelect}
                 props={{
                   formItemProps: {
                     label: formatMessage(messages.contentSectionDevicePart1Row2Label),
@@ -113,7 +114,7 @@ class Device extends Component {
 
               <Field
                 name="adGroupDeviceBrowser"
-                component={FormTagSelect}
+                component={TagSelect}
                 props={{
                   formItemProps: {
                     label: formatMessage(messages.contentSectionDevicePart1Row3Label),

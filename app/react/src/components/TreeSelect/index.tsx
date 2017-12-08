@@ -19,6 +19,7 @@ export interface TreeData {
   disableCheckbox?: boolean;
   isLeaf: boolean;
   children?: TreeData[];
+  ancestors?: TreeData[];
 }
 
 export interface TreeSelectProps extends AbstractSelectProps {
@@ -98,14 +99,16 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
     }
 
     return (
-      <RcTreeSelect
-        {...restProps}
-        prefixCls={prefixCls}
-        className={cls}
-        dropdownStyle={{ maxHeight: '100vh', overflow: 'auto', ...dropdownStyle }}
-        treeCheckable={checkable}
-        notFoundContent={notFoundContent}
-      />
+      <div>
+        <RcTreeSelect
+          {...restProps}
+          prefixCls={prefixCls}
+          className={cls}
+          dropdownStyle={{ maxHeight: '100vh', overflow: 'auto', ...dropdownStyle }}
+          treeCheckable={checkable}
+          notFoundContent={notFoundContent}
+        />
+    </div>
     );
   }
 }

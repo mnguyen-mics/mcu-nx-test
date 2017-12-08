@@ -29,6 +29,7 @@ class Ads extends Component {
       fetchData: this.getAllAds,
       selectedData: formValues.filter(ad => !ad.toBeRemoved),
       save: this.updateData,
+      filterKey: 'id',
     };
 
     const options = {
@@ -46,14 +47,13 @@ class Ads extends Component {
     this.setState({ loading: true });
     handlers.closeNextDrawer();
 
-    this.getAllAds()
-      .then(({ data }) => {
-        const newFields = data.filter((ad) => selectedIds.includes(ad.id));
+    Promise.all(selectedIds.map(item => {
+      return CreativeService.getCreative(item);
+    })).then(response => {
+      handlers.updateTableFields({ newFields: response, tableName: 'adTable' });
+      return this.setState({ loading: false });
+    });
 
-        handlers.updateTableFields({ newFields, tableName: 'adTable' });
-
-        return this.setState({ loading: false });
-      });
   }
 
   render() {
