@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Plottable from 'plottable';
 import moment from 'moment';
+import { areDatesSameDay } from '../../utils/DateHelper';
 
 import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index.ts';
+
+const HOUR_MILLIS = 3600 * 1000
+const DAY_MILLIS = 24 * HOUR_MILLIS
 
 class StackedAreaPlotDoubleAxis extends Component {
   constructor(props) {
@@ -128,6 +132,76 @@ class StackedAreaPlotDoubleAxis extends Component {
     );
   }
 
+  extractTickInterval(dataset, hasHoursOfDay) {
+    let tickInterval = 10;
+    if (dataset.length) {
+      if (hasHoursOfDay) {
+        const lastDate = new Date(dataset[dataset.length - 1].day);
+        const firstDate = new Date(dataset[0].day);
+        if (areDatesSameDay(lastDate, firstDate)) {
+          tickInterval = HOUR_MILLIS;
+        } else {
+          tickInterval = ((new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7);
+        }
+      } else {
+        const avgInterval = (new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7;
+        let avgDay = avgInterval / (DAY_MILLIS);
+        if (Math.round(avgDay) === 0) {
+          avgDay = 1;
+        }
+        tickInterval = Math.round(avgDay) * (DAY_MILLIS);
+      }
+    }
+    return tickInterval;
+  }
+
+  buildXScale(dataset, hasHoursOfDay) {
+    const xScale = new Plottable.Scales.Time().padProportion(0);
+    const tickInterval = this.extractTickInterval(dataset)
+    xScale.tickGenerator(Plottable.Scales.TickGenerators.intervalTickGenerator(tickInterval));
+    return xScale;
+  }
+
+  formatXAxis(xScale, dataset, hasHoursOfDay) {
+    const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
+    xAxis.formatter(d => {
+      const d1 = new Date(d);
+      const lastDate = new Date(dataset[dataset.length - 1].day);
+      const firstDate = new Date(dataset[0].day);
+      if (hasHoursOfDay && areDatesSameDay(lastDate, firstDate)) {
+        return moment(d1).format('HH:00');
+      } else if (hasHoursOfDay) {
+        return moment(d1).format('YYYY-MM-DD HH:00');
+      }
+      return moment(d1).format('YYYY-MM-DD');
+    });
+    return xAxis;
+  }
+
+  buildYScale() {
+    return new Plottable.Scales.Linear()
+      .addIncludedValuesProvider(() => {
+        return [0];
+      })
+      .addPaddingExceptionsProvider(() => {
+        return [0];
+      })
+      .padProportion(0.2);
+  }
+
+  formatYAxis(yScale, side) {
+    return new Plottable.Axes.Numeric(yScale, side).showEndTickLabels(false);
+  }
+
+  buildColorScale(yKeys, options) {
+    const colorScale = new Plottable.Scales.Color();
+    colorScale.range(options.colors);
+    colorScale.domain(yKeys);
+    return colorScale;
+  }
+
+  buildDragBox() {}
+
   renderStackedAreaPlotDoubleAxis(plottableDataSet, options) {
     const { identifier, dataset } = this.props;
     if (this.plot !== null) {
@@ -137,7 +211,6 @@ class StackedAreaPlotDoubleAxis extends Component {
     const yKeys = options.yKeys.map(item => {
       return item.key;
     });
-    const xScale = new Plottable.Scales.Time().padProportion(0);
       // .addPaddingExceptionsProvider(() => {
       //   const date = new Date();
       //   date.setHours(0);
@@ -147,62 +220,17 @@ class StackedAreaPlotDoubleAxis extends Component {
       // })
       // .padProportion(0);
 
-    let tickInterval = 10;
-    const hasHoursOfDay = dataset[0].hour_of_day !== undefined ? true : false;
-    let isSameDay = false;
-    if (dataset.length) {
-      if (hasHoursOfDay) {
-        if (new Date(dataset[dataset.length - 1].day).setHours(0) - new Date(dataset[0].day).setHours(0) === 0) {
-          isSameDay = true;
-          tickInterval = 3600 * 1000;
-        } else {
-          tickInterval = ((new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7);
-        }
-      } else {
-        const avgInterval = (new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7;
-        let avgDay = avgInterval / (24 * 3600 * 1000);
-        if (Math.round(avgDay) === 0) {
-          avgDay = 1;
-        }
-        tickInterval = Math.round(avgDay) * (24 * 3600 * 1000);
+    const hasHoursOfDay = dataset.length && dataset[0].hour_of_day !== undefined ? true : false;
+    const xScale = this.buildXScale(dataset, hasHoursOfDay);
+    const xAxis = this.formatXAxis(xScale, dataset, hasHoursOfDay);
 
-      }
-    }
-    xScale.tickGenerator(Plottable.Scales.TickGenerators.intervalTickGenerator(tickInterval));
+    const yScale = this.buildYScale();
+    const secondYScale = this.buildYScale();
+    const yAxis = this.formatYAxis(yScale, 'left');
+    const secondYAxis = this.formatYAxis(secondYScale, 'right');
 
-    const yScale = new Plottable.Scales.Linear()
-      .addIncludedValuesProvider(() => {
-        return [0];
-      })
-      .addPaddingExceptionsProvider(() => {
-        return [0];
-      })
-      .padProportion(0.2);
-    const secondYScale = new Plottable.Scales.Linear()
-      .addIncludedValuesProvider(() => {
-        return [0];
-      })
-      .addPaddingExceptionsProvider(() => {
-        return [0];
-      })
-      .padProportion(0.2);
+    const colorScale = this.buildColorScale(yKeys, options);
 
-    const colorScale = new Plottable.Scales.Color();
-    colorScale.range(options.colors);
-    colorScale.domain(yKeys);
-
-    const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
-    const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(false);
-    const secondYAxis = new Plottable.Axes.Numeric(secondYScale, 'right').showEndTickLabels(false);
-    xAxis.formatter(d => {
-      const d1 = new Date(d);
-      if (hasHoursOfDay && isSameDay) {
-        return moment(d1).format('HH:00');
-      } else if (hasHoursOfDay) {
-        return moment(d1).format('YYYY-MM-DD HH:00');
-      }
-      return moment(d1).format('YYYY-MM-DD');
-    });
     const plts = [];
     const pnts = [];
 
