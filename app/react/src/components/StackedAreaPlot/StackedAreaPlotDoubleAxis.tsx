@@ -1,35 +1,113 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Plottable from 'plottable';
+import * as React from 'react';
+import Plottable, {AxisOrientation, Plot, XYPlot} from 'plottable';
 import moment from 'moment';
+import ChartUtils from './ChartUtils';
+
 import { areDatesSameDay, truncateUpToHour } from '../../utils/DateHelper';
 
-import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index.ts';
+import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index';
+import {QuantitativeScale} from 'plottable/build/src/scales/quantitativeScale';
+import * as Plots from 'plottable/build/src/plots/commons';
+import {Component} from 'plottable/build/src/components/component';
+import {Pointer} from 'plottable/build/src/interactions';
+import {XDragBoxLayer} from 'plottable/build/src/components';
+import {ITickGenerator} from 'plottable/build/src/scales/tickGenerators';
 
-const HOUR_MILLIS = 3600 * 1000
-const DAY_MILLIS = 24 * HOUR_MILLIS
+const HOUR_MILLIS = 3600 * 1000;
+const DAY_MILLIS = 24 * HOUR_MILLIS;
 
-class StackedAreaPlotDoubleAxis extends Component {
-  constructor(props) {
+interface ChartOptions {
+  colors: string[];
+  yKeys: any[];
+  xKey: string;
+  lookbackWindow: number;
+  isDraggable: boolean;
+  onDragEnd: any;
+}
+
+interface StackedAreaPlotDoubleAxisProps {
+  identifier: string;
+  dataset: any[];
+  options: ChartOptions;
+  style: any;
+}
+
+interface StackedAreaPlotDoubleAxisState {
+  xTooltip: any;
+  yTooltip: any;
+  content: any;
+  visibility: string;
+}
+
+interface ChartTooltipProps {
+  xTooltip: number;
+  yTooltip: number;
+  content: any;
+  visibility: string;
+}
+
+interface Entry {
+  label: string;
+  value: number;
+  color: string;
+}
+
+interface LineCrossHair {
+  drawAt: any;
+  hide: any;
+  vLine: any;
+}
+
+interface DotsCrossHair {
+  drawAt: any;
+  hide: any;
+  circle: any;
+}
+
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface Point {
+  pointer: Pointer;
+  plot: Plot;
+}
+
+interface PlotComponents {
+  areaComponents: Array<XYPlot<Date, number>>;
+  pointComponents: Component[];
+  other: Component[];
+}
+
+class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxisProps, StackedAreaPlotDoubleAxisState> {
+
+  svgBoundingClientRect = {
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+  };
+  plot: any = null;
+  plotDataset = null;
+  pointers: Point[] = [];
+  pointersAttached: Pointer[] = [];
+  svg: any = null;
+
+  constructor(props: StackedAreaPlotDoubleAxisProps) {
     super(props);
     this.renderStackedAreaPlotDoubleAxis = this.renderStackedAreaPlotDoubleAxis.bind(this);
     this.defineSvg = this.defineSvg.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
-    this.plot = null;
-    this.plotDataset = null;
-    this.pointers = [];
-    this.pointersAttached = [];
     this.state = {
       xTooltip: null,
       yTooltip: null,
       content: null,
       visibility: 'hidden',
     };
-
-    this.svgBoundingClientRect = null;
   }
 
-  setTooltip(chartTooltipProps) {
+  setTooltip(chartTooltipProps: ChartTooltipProps) {
     if (chartTooltipProps) {
       this.setState({
         xTooltip: chartTooltipProps.xTooltip,
@@ -50,14 +128,14 @@ class StackedAreaPlotDoubleAxis extends Component {
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: StackedAreaPlotDoubleAxisProps) {
     this.renderStackedAreaPlotDoubleAxis(nextProps);
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
-  defineSvg = svg => {
+  defineSvg = (svg: any) => {
     this.svg = svg;
-  };
+  }
 
   render() {
     const { identifier, options } = this.props;
@@ -74,7 +152,14 @@ class StackedAreaPlotDoubleAxis extends Component {
           <defs>
             {options.colors.map((color, index) => {
               return (
-                <linearGradient key={options.yKeys[index].key} id={`${options.yKeys[index].key}${identifier}`} x1="0" y1="0" x2="0" y2="100%">
+                <linearGradient
+                  key={options.yKeys[index].key}
+                  id={`${options.yKeys[index].key}${identifier}`}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="100%"
+                >
                   <stop stopOpacity="0.4" offset="50%" stopColor={color} />
                   <stop stopOpacity="0" offset="100%" stopColor="#FFFFFF" />
                 </linearGradient>
@@ -99,19 +184,17 @@ class StackedAreaPlotDoubleAxis extends Component {
     );
   }
 
-  extractTickInterval(dataset, hasHoursOfDay) {
+  extractTickInterval(dataset: any[], hasHoursOfDay: boolean) {
     let tickInterval = 10;
     if (dataset.length) {
+      const lastDate = moment(new Date(dataset[dataset.length - 1].day));
+      const firstDate = moment(new Date(dataset[0].day));
+      const diffInMillis = lastDate.subtract(firstDate.milliseconds(), 'milliseconds').milliseconds();
       if (hasHoursOfDay) {
-        const lastDate = new Date(dataset[dataset.length - 1].day);
-        const firstDate = new Date(dataset[0].day);
-        if (areDatesSameDay(lastDate, firstDate)) {
-          tickInterval = HOUR_MILLIS;
-        } else {
-          tickInterval = ((new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7);
-        }
+        // TO FIX for using moment dates
+        tickInterval = areDatesSameDay(lastDate, firstDate) ? HOUR_MILLIS : (diffInMillis) / 7;
       } else {
-        const avgInterval = (new Date(dataset[dataset.length - 1].day) - new Date(dataset[0].day)) / 7;
+        const avgInterval = (diffInMillis) / 7;
         let avgDay = avgInterval / (DAY_MILLIS);
         if (Math.round(avgDay) === 0) {
           avgDay = 1;
@@ -122,30 +205,17 @@ class StackedAreaPlotDoubleAxis extends Component {
     return tickInterval;
   }
 
-  buildXScale(dataset) {
+  buildXScale(dataset: any[], hasHourOfDay: boolean): QuantitativeScale<Date> {
     const xScale = new Plottable.Scales.Time().padProportion(0);
-    const tickInterval = this.extractTickInterval(dataset);
-    xScale.tickGenerator(Plottable.Scales.TickGenerators.intervalTickGenerator(tickInterval));
+    const tickInterval: number = this.extractTickInterval(dataset, hasHourOfDay);
+
+    // UGLY HACK but it's Plottable fault for not providing a way to build a ITickGenerator<Date>
+    const tickGenerator: ITickGenerator<Date> = Plottable.Scales.TickGenerators.intervalTickGenerator(tickInterval) as any;
+    xScale.tickGenerator(tickGenerator);
     return xScale;
   }
 
-  formatXAxis(xScale, dataset, hasHoursOfDay) {
-    const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
-    xAxis.formatter(d => {
-      const d1 = new Date(d);
-      const lastDate = new Date(dataset[dataset.length - 1].day);
-      const firstDate = new Date(dataset[0].day);
-      if (hasHoursOfDay && areDatesSameDay(lastDate, firstDate)) {
-        return moment(d1).format('HH:00');
-      } else if (hasHoursOfDay) {
-        return moment(d1).format('YYYY-MM-DD HH:00');
-      }
-      return moment(d1).format('YYYY-MM-DD');
-    });
-    return xAxis;
-  }
-
-  buildYScale() {
+  buildYScale(): QuantitativeScale<number> {
     return new Plottable.Scales.Linear()
       .addIncludedValuesProvider(() => {
         return [0];
@@ -156,69 +226,72 @@ class StackedAreaPlotDoubleAxis extends Component {
       .padProportion(0.2);
   }
 
-  buildYScales(yKeys) {
+  buildYScales(yKeys: string[]): { [s: string]: QuantitativeScale<number> } {
     const yScale = this.buildYScale();
     const secondYScale = this.buildYScale();
     const firstKey = yKeys[0];
     const secondKey = yKeys[1];
-    const scales = {};
+    const scales: { [s: string]: QuantitativeScale<number> } = {};
     scales[firstKey] = yScale;
     scales[secondKey] = secondYScale;
     return scales;
   }
 
-  formatYAxis(yScale, side) {
+  formatYAxis(yScale: QuantitativeScale<number>, side: AxisOrientation) {
     return new Plottable.Axes.Numeric(yScale, side).showEndTickLabels(false);
   }
 
-  buildColorScale(yKeys, options) {
+  buildColorScale(yKeys: string[], colors: string[]) {
     const colorScale = new Plottable.Scales.Color();
-    colorScale.range(options.colors);
+    colorScale.range(colors);
     colorScale.domain(yKeys);
     return colorScale;
   }
 
-  buildDragBox(options, xScale) {
-    const dragBox = options.isDraggable ? new Plottable.Components.XDragBoxLayer() : null;
-    if (dragBox) {
-      dragBox.resizable(true);
-      dragBox.onDrag(() => {
+  buildDragBox(
+    xScale: QuantitativeScale<Date>,
+    onDragEnd: any,
+  ) {
+    const dragBox = new Plottable.Components.XDragBoxLayer();
+    dragBox.resizable(true);
+    dragBox.onDragEnd((bounds) => {
+      const min = moment(xScale.invert(bounds.topLeft.x));
+      const duration: number = (moment(xScale.invert(bounds.bottomRight.x)).diff(min, 'milliseconds'));
+      const max =  duration > DAY_MILLIS ?
+        moment(xScale.invert(bounds.bottomRight.x)) :
+        moment(xScale.invert(bounds.bottomRight.x)).add(1, 'days');
+
+      onDragEnd([min, max]);
+    });
+    xScale.onUpdate(() => {
+      dragBox.boxVisible(true);
+      const xDomain = xScale.domain();
+      dragBox.bounds({
+        topLeft: { x: xScale.scale(xDomain[0]), y: 0 },
+        bottomRight: { x: xScale.scale(xDomain[1]), y: 0 },
       });
-      dragBox.onDragEnd((bounds) => {
-        const min = moment(xScale.invert(bounds.topLeft.x));
-        const max = (moment(xScale.invert(bounds.bottomRight.x)) - min) > DAY_MILLIS ? moment(xScale.invert(bounds.bottomRight.x)) : moment(xScale.invert(bounds.bottomRight.x)).add(1, 'days');
-        options.onDragEnd([min, max]);
-      });
-      xScale.onUpdate(() => {
-        dragBox.boxVisible(true);
-        const xDomain = xScale.domain();
-        dragBox.bounds({
-          topLeft: { x: xScale.scale(xDomain[0]), y: null },
-          bottomRight: { x: xScale.scale(xDomain[1]), y: null },
-        });
-      });
-    }
+    });
     return dragBox;
   }
 
   buildPlot(
-    plotComponent,
-    item,
-    plottableDataSet,
-    options,
-    xScale,
-    yScales,
-    identifier,
-    colorScale
+    plotComponent: XYPlot<Date, number>,
+    item: string,
+    plottableDataSet: Plottable.Dataset,
+    options: ChartOptions,
+    xScale: QuantitativeScale<Date>,
+    yScales: { [s: string]: QuantitativeScale<number> },
+    identifier: string,
+    colorScale: Plottable.Scales.Color,
   ) {
     plotComponent
       .addDataset(plottableDataSet)
-      .x(d => {
+      .x((d: any) => {
         const date = new Date(d[options.xKey]);
         truncateUpToHour(date, d.hour_of_day);
         return date;
       }, xScale)
-      .y(d => {
+      .y((d: any) => {
         return d[item];
       }, yScales[item])
       .animated(true)
@@ -234,16 +307,16 @@ class StackedAreaPlotDoubleAxis extends Component {
   }
 
   buildPlots(
-    dataset,
-    plottableDataSet,
-    yKeys,
-    options,
-    xScale,
-    yScales,
-    identifier,
-    colorScale,
-    gridlines
-  ) {
+    dataset: any[],
+    plottableDataSet: Plottable.Dataset,
+    yKeys: string[],
+    options: ChartOptions,
+    xScale: QuantitativeScale<Date>,
+    yScales: { [s: string]: QuantitativeScale<number> },
+    identifier: string,
+    colorScale: Plottable.Scales.Color,
+    gridlines: Component,
+  ): PlotComponents {
     const areaPlots = Object.keys(dataset[0])
                                 .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
                                 .map(item => {
@@ -255,11 +328,11 @@ class StackedAreaPlotDoubleAxis extends Component {
                                     xScale,
                                     yScales,
                                     identifier,
-                                    colorScale
+                                    colorScale,
                                   );
                                 });
 
-    const pointComponents = Object.keys(dataset[0])
+    const pointComponents: Component[] = Object.keys(dataset[0])
                                    .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
                                    .map(item => {
                                      return this.buildPlot(
@@ -270,7 +343,7 @@ class StackedAreaPlotDoubleAxis extends Component {
                                        xScale,
                                        yScales,
                                        identifier,
-                                       colorScale
+                                       colorScale,
                                      );
                                    });
 
@@ -280,36 +353,35 @@ class StackedAreaPlotDoubleAxis extends Component {
     return {
       areaComponents: areaPlots,
       pointComponents: pointComponents,
-      other: [gridlines]
+      other: [gridlines],
     };
   }
 
-
   renderPlots(
-    options,
-    gridlines,
-    plots,
-    areaComponents,
-    identifier,
-    dragBox,
-    yAxis,
-    secondYAxis,
-    xAxis
+    options: ChartOptions,
+    gridlines: Component,
+    plots: Plottable.Components.Group,
+    areaComponents: Array<XYPlot<Date, number>>,
+    identifier: string,
+    dragBox: XDragBoxLayer | null,
+    yAxis: Plottable.Axes.Numeric,
+    secondYAxis: Plottable.Axes.Numeric,
+    xAxis: Plottable.Axes.Numeric,
   ) {
-    const chart = new Plottable.Components.Group([plots, dragBox]);
+    const chartComponents: Component[] = dragBox ? [plots, dragBox] : [plots];
+    const chart = new Plottable.Components.Group(chartComponents);
     const table = new Plottable.Components.Table([[yAxis, chart, secondYAxis], [null, xAxis, null]]);
 
     table.renderTo(`#${identifier}`);
     this.plot = table;
 
-    //Needs to be done after rendering!
     gridlines.content()
       .selectAll('line')
       .attr('stroke', '#8CA0B3')
       .attr('opacity', '0.6')
       .attr('stroke-dasharray', '2, 2');
 
-    areaComponents.forEach(plot => {
+    areaComponents.forEach((plot: Plottable.Plots.Area<Date>) => {
       const crosshair = this.createDotsCrosshair(plot);
       const line = this.createLineCrosshair(plot, options);
       const pointer = new Plottable.Interactions.Pointer();
@@ -326,7 +398,8 @@ class StackedAreaPlotDoubleAxis extends Component {
         this.setTooltip({
           xTooltip: -100,
           yTooltip: -100,
-          visible: 'hidden',
+          content: {},
+          visibility: 'hidden',
         });
       });
       pointer.attachTo(plot);
@@ -338,7 +411,7 @@ class StackedAreaPlotDoubleAxis extends Component {
     });
   }
 
-  attachEventListeners(table) {
+  attachEventListeners(table: Plottable.Components.Table) {
     global.window.addEventListener('resize', () => {
       table.redraw();
     });
@@ -350,47 +423,36 @@ class StackedAreaPlotDoubleAxis extends Component {
     });
   }
 
-  renderStackedAreaPlotDoubleAxis(nextProps) {
+  renderStackedAreaPlotDoubleAxis(nextProps: StackedAreaPlotDoubleAxisProps) {
     const { identifier } = this.props;
     const { dataset, options } = nextProps;
 
-    console.log("RENDERING WITH DATASET", JSON.stringify(dataset[0]));
-    const setMetadata = {};
+    const setMetadata: { [s: string]: string } = {};
     const yKeys = options.yKeys.map(item => {
       return item.key;
     });
+
     options.colors.forEach((color, i) => {
       setMetadata[yKeys[i]] = color;
     });
-    this.pointers.forEach(point => {
-      point.pointer.detachFrom(point.plot);
-    });
+
     const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
 
     if (this.plot !== null) {
       this.plot.destroy();
     }
 
-      // .addPaddingExceptionsProvider(() => {
-      //   const date = new Date();
-      //   date.setHours(0);
-      //   date.setMinutes(0);
-      //   date.setSeconds(0);
-      //   return [date];
-      // })
-      // .padProportion(0);
-
     const hasHoursOfDay = dataset.length && dataset[0].hour_of_day !== undefined ? true : false;
     const xScale = this.buildXScale(dataset, hasHoursOfDay);
-    const xAxis = this.formatXAxis(xScale, dataset, hasHoursOfDay);
+    const xAxis = ChartUtils.formatXAxis(xScale, dataset, hasHoursOfDay);
 
     const yScales = this.buildYScales(yKeys);
     const firstYScale = yScales[yKeys[0]];
     const yAxis = this.formatYAxis(firstYScale, 'left');
     const secondYAxis = this.formatYAxis(yScales[yKeys[1]], 'right');
 
-    const colorScale = this.buildColorScale(yKeys, options);
-    const dragBox = this.buildDragBox(options, xScale);
+    const colorScale = this.buildColorScale(yKeys, options.colors);
+    const dragBox = options.isDraggable ? this.buildDragBox(xScale, options.onDragEnd) : null;
 
     const gridlines = new Plottable.Components.Gridlines(xScale, firstYScale).addClass('gridline');
     const plotComponents = this.buildPlots(
@@ -402,53 +464,56 @@ class StackedAreaPlotDoubleAxis extends Component {
       yScales,
       identifier,
       colorScale,
-      gridlines
+      gridlines,
     );
-    const plotComponentsToRender = new Plottable.Components.Group(plotComponents.pointComponents
-                                                                                .concat(plotComponents.areaComponents)
-                                                                                .concat(plotComponents.other))
-
+    const componentsToRender: Component[] = plotComponents.other
+                                                          .concat(plotComponents.areaComponents)
+                                                          .concat(plotComponents.pointComponents);
+    const componentsGroupToRender = new Plottable.Components.Group(componentsToRender);
     this.renderPlots(
       options,
       gridlines,
-      plotComponentsToRender,
+      componentsGroupToRender,
       plotComponents.areaComponents,
       identifier,
       dragBox,
       yAxis,
       secondYAxis,
-      xAxis
+      xAxis,
     );
 
     this.attachEventListeners(this.plot);
-    console.log("CHART REFRESHED")
   }
 
-  createDotsCrosshair(plot) {
-    const crosshair = {};
-
+  createDotsCrosshair(plot: Plot): DotsCrossHair {
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
-    crosshair.circle = crosshairContainer.append('circle').attr('fill', 'white').attr('filter', 'url(#shadow)').attr('r', 8);
-    crosshair.drawAt = p => {
-      crosshair.circle.attr('cx', p.x);
-      crosshair.circle.attr('cy', p.y);
+    const circle = crosshairContainer.append('circle').attr('fill', 'white').attr('filter', 'url(#shadow)').attr('r', 8);
 
+    const drawAt = (p: Position) => {
+      circle.attr('cx', p.x);
+      circle.attr('cy', p.y);
       crosshairContainer.style('visibility', 'visible');
     };
-    crosshair.hide = () => {
+    const hide = () => {
       crosshairContainer.style('visibility', 'hidden');
     };
-    return crosshair;
+
+    return {
+      circle: circle,
+      drawAt: drawAt,
+      hide: hide,
+    };
   }
 
-  createLineCrosshair(plot, options) {
+  createLineCrosshair(plot: Plot, options: ChartOptions): LineCrossHair {
     const { xKey, yKeys } = options;
 
-    const crosshair = {};
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+    const svgBoundingClientRect = this.svgBoundingClientRect;
+    const setTooltip = this.setTooltip;
 
-    crosshair.vLine = crosshairContainer
+    const vLine = crosshairContainer
       .append('line')
       .attr('stroke', '#8ca0b3')
       .attr('opacity', 0.5)
@@ -457,11 +522,12 @@ class StackedAreaPlotDoubleAxis extends Component {
       .attr('y1', 0)
       .attr('y2', plot.height());
 
-    crosshair.drawAt = (p, mousePosition, navInfo) => {
-      crosshair.vLine.attr('x1', p.x);
-      crosshair.vLine.attr('x2', p.x);
+    const drawAt = (mousePosition: Position, navInfo: Plots.ILightweightPlotEntity) => {
+      const navPosition = navInfo.position;
+      vLine.attr('x1', navPosition.x);
+      vLine.attr('x2', navPosition.x);
 
-      const entries = [];
+      const entries: Entry[] = [];
       yKeys.forEach(item => {
         const entry = {
           label: item.message,
@@ -479,41 +545,30 @@ class StackedAreaPlotDoubleAxis extends Component {
         entries: entries,
       };
 
-      const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
-      const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
-      this.setTooltip({
+      const width = svgBoundingClientRect.right - svgBoundingClientRect.left;
+      const height = svgBoundingClientRect.bottom - svgBoundingClientRect.top;
+      setTooltip({
         xTooltip: mousePosition.x + 320 < width
-          ? (this.svgBoundingClientRect.left + mousePosition.x) + 80
-          : (this.svgBoundingClientRect.left + mousePosition.x) - 200,
+          ? (svgBoundingClientRect.left + mousePosition.x) + 80
+          : (svgBoundingClientRect.left + mousePosition.x) - 200,
         yTooltip: mousePosition.y + 120 < height
-          ? this.svgBoundingClientRect.top + mousePosition.y
-          : (this.svgBoundingClientRect.top + mousePosition.y) - 50,
+          ? svgBoundingClientRect.top + mousePosition.y
+          : (svgBoundingClientRect.top + mousePosition.y) - 50,
         content: tooltipContent,
         visibility: 'visible',
       });
 
       crosshairContainer.style('visibility', 'visible');
     };
-    crosshair.hide = () => {
+    const hide = () => {
       crosshairContainer.style('visibility', 'hidden');
     };
-    return crosshair;
+
+    return {
+      hide: hide,
+      drawAt: drawAt,
+      vLine: vLine,
+    };
   }
 }
-
-StackedAreaPlotDoubleAxis.propTypes = {
-  identifier: PropTypes.string.isRequired,
-  dataset: PropTypes.arrayOf(
-    PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  ).isRequired,
-  options: PropTypes.shape({
-    color: PropTypes.string,
-    yKeys: PropTypes.arrayOf(PropTypes.object),
-    xKey: PropTypes.string,
-    isDraggable: PropTypes.bool,
-    onDragEnd: PropTypes.func,
-  }).isRequired,
-  style: PropTypes.shape().isRequired,
-};
-
 export default StackedAreaPlotDoubleAxis;
