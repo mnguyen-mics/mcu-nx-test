@@ -20,7 +20,7 @@ const defaultErrorMessages = defineMessages({
   },
   invalidFloat: {
     id: 'common.form.field.error.invalid_float',
-    defaultMessage: 'invalid Number, please make sure you use a . instead of , and that your number doesn\'t exceed 2 decimals',
+    defaultMessage: 'invalid Number, please make sure you use a dot instead of a comma and that your number doesn\'t exceed 2 decimals',
   },
   invalidUrl: {
     id: 'common.form.field.error.invalid_url',
