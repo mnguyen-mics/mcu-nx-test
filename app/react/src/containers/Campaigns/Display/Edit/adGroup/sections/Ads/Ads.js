@@ -106,22 +106,38 @@ class Ads extends Component {
     });
   }
 
+  // updateData = (selectedAds) => {
+  //   const { handlers } = this.props;
+  //   const selectedIds = selectedAds.map(selection => selection.id);
+
+  //   this.setState({ loading: true });
+  //   handlers.closeNextDrawer();
+  //   const newFields = [];
+  //   const promises = selectedIds.map(selectedId => {
+  //     return CreativeService.getCreative(selectedId).then(data => {
+  //       newFields.push(data);
+  //     });
+  //   });
+  //   Promise.all(promises).then(() => {
+  //     handlers.updateTableFields({ newFields, tableName: 'adTable' });
+  //     return this.setState({ loading: false });
+  //   });
+  // }
+
   updateData = (selectedAds) => {
     const { handlers } = this.props;
     const selectedIds = selectedAds.map(selection => selection.id);
 
     this.setState({ loading: true });
     handlers.closeNextDrawer();
-    const newFields = [];
-    const promises = selectedIds.map(selectedId => {
-      return CreativeService.getCreative(selectedId).then(data => {
-        newFields.push(data);
-      });
-    });
-    Promise.all(promises).then(() => {
-      handlers.updateTableFields({ newFields, tableName: 'adTable' });
+
+    Promise.all(selectedIds.map(item => {
+      return CreativeService.getCreative(item);
+    })).then(response => {
+      handlers.updateTableFields({ newFields: response, tableName: 'adTable' });
       return this.setState({ loading: false });
     });
+
   }
 
   render() {

@@ -62,27 +62,28 @@ class Placements extends Component {
     this.setState({ loading: true });
     handlers.closeNextDrawer();
 
-    this.getPlacementLists({ newSelectedIds })()
-      .then(({ data }) => {
-        const newFields = data.reduce((acc, placementList) => {
-          if (newSelectedIds.includes(placementList.id)) {
-            if (!this.props.formValues.find(elem => elem.placement_list_id === placementList.id)) {
-              const formattedPlacementList = {
-                ...placementList,
-                modelId: placementList.id,
-                include: !placementList.exclude,
-                placement_list_id: placementList.id,
-              };
-              return [...acc, formattedPlacementList];
-            }
-            return [...acc, this.props.formValues.find(elem => elem.placement_list_id === placementList.id)];
-          }
-          return acc;
+    Promise.all(newSelectedIds.map(item => PlacementListServices.getPlacementList(item)))
+      .then(results => {
+        return results.map(placementList => {
+          const alreadyExistingElement = this.props.formValues.find(elem => elem.placement_list_id === placementList.id);
+          return !alreadyExistingElement ? {
+            ...placementList,
+            modelId: placementList.id,
+            include: !placementList.exclude,
+            placement_list_id: placementList.id,
+          } : alreadyExistingElement;
+        });
+      })
+      .then(results => {
+        return results.reduce((acc, value) => {
+          return value ? [...acc, value] : [...acc];
         }, []);
-
-        handlers.updateTableFields({ newFields, tableName: 'placementTable' });
+      })
+      .then(results => {
+        handlers.updateTableFields({ newFields: results, tableName: 'placementTable' });
         this.setState({ loading: false });
       });
+
   }
 
   render() {
