@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getPartitions = (organisationId, datamartId, options = {}) => {
   const endpoint = 'audience_partitions';

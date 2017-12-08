@@ -104,6 +104,10 @@ class PluginFieldGenerator extends Component {
   }
 }
 
+PluginFieldGenerator.defaultProps = {
+  disabled: false,
+};
+
 PluginFieldGenerator.propTypes = {
   fieldGridConfig: PropTypes.shape({
     labelCol: PropTypes.shape({

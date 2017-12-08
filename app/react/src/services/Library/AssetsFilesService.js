@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import ApiService from '../ApiService.ts';
 
 const getAssetsFiles = (organisationId, options = {}) => {
   const endpoint = 'asset_files';

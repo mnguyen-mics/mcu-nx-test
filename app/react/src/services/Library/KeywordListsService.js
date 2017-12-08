@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import ApiService from '../ApiService.ts';
 
 const getKeywordLists = (organisationId, options = {}) => {
   const endpoint = 'keyword_lists';

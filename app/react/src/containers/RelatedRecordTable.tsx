@@ -13,7 +13,7 @@ interface RelatedRecordTableProps {
   dataSource: Array<{}>;
   loading: boolean;
   tableName: string;
-  updateTableFieldStatus: (obj: { index: number, tableName: string }) => (e: any) => void;
+  updateTableFieldStatus: (obj: { index: number, tableName: string }) => () => void;
 }
 
 const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {

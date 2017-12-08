@@ -10,7 +10,7 @@ import { EmptyTableView, TableViewFilters } from '../../../../components/TableVi
 import McsIcons from '../../../../components/McsIcons.tsx';
 
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
-import DisplayCampaignsService from '../../../../services/DisplayCampaignService';
+import DisplayCampaignsService from '../../../../services/DisplayCampaignService.ts';
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 

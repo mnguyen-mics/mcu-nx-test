@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getDatafileData = (dataFilePath) => {
   const endpoint = 'data_file/data';

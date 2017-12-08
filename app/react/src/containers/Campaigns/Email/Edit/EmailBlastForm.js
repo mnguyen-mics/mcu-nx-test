@@ -19,6 +19,7 @@ import AudienceSegmentService from '../../../../services/AudienceSegmentService'
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 const { Content } = Layout;
+const { DefaultSelect } = FormSelect;
 
 class EmailBlastForm extends Component {
 
@@ -212,7 +213,7 @@ class EmailBlastForm extends Component {
             />
             <Field
               name="blast.consents[0].consent_id"
-              component={FormSelect}
+              component={DefaultSelect}
               validate={[isRequired]}
               props={{
                 formItemProps: {

@@ -1,3 +1,4 @@
+import FormBoolean from './FormBoolean';
 import FormCheckbox from './FormCheckbox';
 import FormDatePicker from './FormDatePicker';
 import FormFieldWrapper from './FormFieldWrapper';
@@ -6,10 +7,7 @@ import FormRadioGroup from './FormRadioGroup';
 import FormRangePicker from './FormRangePicker/index';
 import FormSection from './FormSection';
 import FormSelect from './FormSelect';
-import FormSelectAddon from './FormSelectAddon';
-import FormTagSelect from './FormTagSelect';
 import FormTitle from './FormTitle';
-import FormBoolean from './FormBoolean';
 import SwitchInput from './SwitchInput';
 import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
@@ -22,20 +20,18 @@ import formErrorMessage from './formErrorMessage';
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
 export default {
+  FormBoolean,
   FormCheckbox,
   FormDatePicker,
   FormFieldWrapper,
-  FormBoolean,
   FormRadio,
   FormRadioGroup,
   FormRangePicker,
   FormSection,
   FormSelect,
-  FormSelectAddon,
-  FormTagSelect,
+  FormTextArea,
   FormTitle,
   FormUpload,
-  FormTextArea,
   formErrorMessage,
   SwitchInput,
   FormInput,
@@ -54,8 +50,6 @@ export {
   FormRangePicker,
   FormSection,
   FormSelect,
-  FormSelectAddon,
-  FormTagSelect,
   FormTitle,
   SwitchInput,
   FormUpload,

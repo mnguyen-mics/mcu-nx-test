@@ -1,4 +1,4 @@
-import ApiService from '../ApiService';
+import ApiService from '../ApiService.ts';
 
 const getPlacementLists = (organisationId, options = {}) => {
   const endpoint = 'placement_lists';
@@ -16,7 +16,20 @@ const deletePlacementList = (id, options = {}) => {
   return ApiService.deleteRequest(endpoint, options);
 };
 
+
+const getPlacementList = (placementListId, options = {}) => {
+  const endpoint = `placement_lists/${placementListId}`;
+
+  const params = {
+    ...options,
+  };
+
+  return ApiService.getRequest(endpoint, params).then(res => res.data);
+};
+
+
 export default {
   getPlacementLists,
+  getPlacementList,
   deletePlacementList,
 };

@@ -18,7 +18,7 @@ import {
 import { notifyError } from '../../Notifications/actions';
 import AudienceSegmentService from '../../../services/AudienceSegmentService';
 import DataFileService from '../../../services/DataFileService';
-import ReportService from '../../../services/ReportService';
+import ReportService from '../../../services/ReportService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 

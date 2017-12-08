@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import TotalConsumption from '../Common/TotalConsumption';
 import messages from '../messages';
 

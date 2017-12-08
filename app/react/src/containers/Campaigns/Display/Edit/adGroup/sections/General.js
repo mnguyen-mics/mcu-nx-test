@@ -10,15 +10,16 @@ const {
   FormInput,
   FormRangePicker,
   FormSection,
-  FormSelectAddon,
+  FormSelect,
 } = Form;
+
+const { AddonSelect } = FormSelect;
 
 class General extends Component {
 
   state = { advancedSectionDisplayed: false };
 
-  displayAdvancedSection = (e) => {
-    e.preventDefault();
+  displayAdvancedSection = () => {
     this.setState({ advancedSectionDisplayed: !this.state.advancedSectionDisplayed });
   }
 
@@ -73,7 +74,7 @@ class General extends Component {
                   addonAfter: (
                     <Field
                       name="adGroupMaxBudgetPeriod"
-                      component={FormSelectAddon}
+                      component={AddonSelect}
                       props={{
                         options: [
                         { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow2OptionDAY) },

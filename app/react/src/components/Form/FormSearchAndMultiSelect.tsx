@@ -29,8 +29,7 @@ const FormSearchAndMultiSelect: React.SFC<FormSearchAndMultiSelectProps & FormFi
 
   const selectedItemsView = value.map(key => {
     const foundData = datasource.find(data => data.key === key);
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
+    const handleClick = () => {
       handleClickOnRemove(key);
     };
     return (

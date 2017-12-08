@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-
 import messages from '../messages';
 import { ButtonStyleless, Form, McsIcons } from '../../../../../../components/index.ts';
 
 const {
   FormInput,
   FormSection,
-  FormSelectAddon,
+  FormSelect,
 } = Form;
+
+const { AddonSelect } = FormSelect;
 
 class General extends Component {
 
   state = { advancedSectionDisplayed: false };
 
-  displayAdvancedSection = (e) => {
-    e.preventDefault();
+  displayAdvancedSection = () => {
     this.setState({ advancedSectionDisplayed: !this.state.advancedSectionDisplayed });
   }
 
@@ -128,7 +128,7 @@ class General extends Component {
                 addonAfter: (
                   <Field
                     name="max_budget_period"
-                    component={FormSelectAddon}
+                    component={AddonSelect}
                     props={{
                       options: [
                         { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow5OptionDAY) },

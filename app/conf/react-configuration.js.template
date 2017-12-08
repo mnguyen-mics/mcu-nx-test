@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const defaultFeatures = [
+ const defaultFeatures = [
     'audience.segments',
     'audience.partitions',
     'audience.query_tool',
@@ -26,20 +26,20 @@
     'library.recommenders',
   ];
 
-  const gravityFeatures = [
+ const gravityFeatures = [
     'audience.segments',
     'campaigns.display',
     'campaigns.display.edition.audience_catalog',
     'creatives.display',
   ]
 
-  var MCS_CONSTANTS = {
+ var MCS_CONSTANTS = {
     NAVIGATOR_URL: 'http://navigator.mediarithmics.local',
     API_URL: 'http://api.mediarithmics.local',
     FEATURES: defaultFeatures,
     SITE_NAME: 'mediarithmics | navigator'
   };
 
-  window.MCS_CONSTANTS = MCS_CONSTANTS;
+ window.MCS_CONSTANTS = MCS_CONSTANTS;
 
 })();

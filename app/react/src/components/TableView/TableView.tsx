@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Dropdown, Menu, Table } from 'antd';
+import { Dropdown, Menu } from 'antd';
 
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { SpinProps } from 'antd/lib/spin';
 import { ClickParam } from 'antd/lib/menu';
+import Table, { TableProps } from 'antd/lib/table/Table';
 
 import McsIcons from '../McsIcons';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
@@ -16,10 +17,10 @@ const DEFAULT_PAGINATION_OPTION = {
 };
 
 interface DataColumnDefinition {
-  intlMessage: FormattedMessage.Props;
-  translationKey: string;
+  intlMessage: FormattedMessage.MessageDescriptor;
+  translationKey?: string;
   key: string;
-  render?: (text: string, record: object, index: number) => JSX.Element;
+  render?: (text: string, record: object, index: number) => React.ReactNode;
   sorter?: boolean | ((a: any, b: any) => number);
   isHideable?: boolean;
   isVisibleByDefault?: boolean;
@@ -52,7 +53,7 @@ export interface TableViewProps {
   loading?: boolean | SpinProps;
   pagination?: PaginationProps | boolean;
   onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
-  onRowClick?: (id: string) => any;
+  onRowClick?: (record?: object) => void;
   visibilitySelectedColumns?: VisibilitySelectedColumn[];
 }
 
@@ -102,7 +103,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       visibilitySelectedColumns,
     } = this.props;
 
-    const visibilitySelectedColumnsValues: string[] = (visibilitySelectedColumns || []).map((column) => {
+    const visibilitySelectedColumnsValues: string[] = visibilitySelectedColumns!.map((column) => {
       return column.value;
     });
 
@@ -183,18 +184,22 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       };
     }
 
-    const handleRowClick: (row: { id: string }) => any = ({ id }) => onRowClick!(id);
-    const rowClassName = () => (onRowClick ? 'mcs-table-cursor' : '');
+    const computedTableProps: TableProps<any> = {
+      columns,
+      dataSource: dataSourceWithIds,
+      loading,
+      onChange,
+      pagination: newPagination,
+      rowClassName: () => 'mcs-table-cursor',
+    };
+
+    if (onRowClick) {
+      computedTableProps.onRowClick = (row) => onRowClick(row);
+    }
 
     return (
       <Table
-        columns={columns}
-        dataSource={dataSourceWithIds}
-        loading={loading}
-        onChange={onChange}
-        onRowClick={onRowClick ? handleRowClick : undefined}
-        pagination={newPagination}
-        rowClassName={rowClassName}
+        {...computedTableProps}
       />
     );
   }

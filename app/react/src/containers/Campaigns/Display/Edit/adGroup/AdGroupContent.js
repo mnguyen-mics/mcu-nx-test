@@ -9,7 +9,7 @@ import { EditContentLayout } from '../../../../../components/Layout/index.ts';
 import AdGroupForm from './AdGroupForm';
 import { withMcsRouter } from '../../../../Helpers';
 import * as SessionHelper from '../../../../../state/Session/selectors';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from '../messages';
 import { Loading } from '../../../../../components/index.ts';
@@ -98,11 +98,13 @@ class AdGroupContent extends Component {
     sidebarItems = {
       ...sidebarItems,
       device: messages.sectionTitleDevice,
-      location: messages.sectionTitleLocation,
+      locationTargeting: messages.sectionTitleLocationTargeting,
+      // media: messages.sectionTitleMedia,
       // publisher: messages.sectionTitlePublisher,
       placement: messages.sectionTitlePlacement,
       ads: messages.sectionTitleAds,
       optimization: messages.sectionTitleOptimizer,
+      summary: messages.sectionTitleSummary,
     };
 
     sidebarItems = (editionMode
@@ -128,6 +130,7 @@ class AdGroupContent extends Component {
         mobile: mobilePlacements, // TODO: remove temp data
         web: webPlacements, // TODO: remove temp data
       },
+      locationTargetingTable: initialValues.locationTargetingTable || [],
       // adGroupDeviceType: ['1', '2']
     };
 
