@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getMobileApplications = (organisationId, datamartId, options = {}) => {
   const endpoint = `datamarts/${datamartId}/mobile_applications`;

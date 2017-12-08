@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getGoals = (organisationId, options = {}) => {
   const endpoint = 'goals';
@@ -17,9 +17,13 @@ const getGoal = (goaldId, options = {}) => {
   return ApiService.getRequest(endpoint, options);
 };
 
-const updateGoal = ({ id, body = {} }) => {
+const updateGoal = (id, body) => {
   const endpoint = `goals/${id}`;
+  return ApiService.putRequest(endpoint, body);
+};
 
+const updateGoalDeprecated = (campaignId, id, orgId, body = {}) => {
+  const endpoint = `goals/${id}`;
   return ApiService.putRequest(endpoint, body);
 };
 
@@ -48,4 +52,5 @@ export default {
   createGoal,
   createAttributionModel,
   getAttributionModel,
+  updateGoalDeprecated,
 };

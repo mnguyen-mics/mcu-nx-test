@@ -10,8 +10,10 @@ const {
   FormInput,
   FormRangePicker,
   FormSection,
-  FormSelectAddon,
+  FormSelect,
 } = Form;
+
+const { AddonSelect } = FormSelect;
 
 class General extends Component {
 
@@ -23,7 +25,7 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { normalizeFloat, normalizeInteger },
+      fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       formatMessage,
       formValues,
@@ -61,7 +63,6 @@ class General extends Component {
             <Field
               name="adGroupMaxBudgetPerPeriod"
               component={FormInput}
-              normalize={normalizeFloat}
               validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
@@ -72,7 +73,7 @@ class General extends Component {
                   addonAfter: (
                     <Field
                       name="adGroupMaxBudgetPeriod"
-                      component={FormSelectAddon}
+                      component={AddonSelect}
                       props={{
                         options: [
                         { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow2OptionDAY) },
@@ -96,7 +97,6 @@ class General extends Component {
             <Field
               name="adGroupTotalBudget"
               component={FormInput}
-              normalize={normalizeFloat}
               validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
@@ -151,7 +151,6 @@ class General extends Component {
             <Field
               name="adGroupMaxBidPrice"
               component={FormInput}
-              normalize={normalizeFloat}
               validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {

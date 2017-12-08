@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getConsents = (organisationId, options = {}) => {
   const endpoint = 'consents';

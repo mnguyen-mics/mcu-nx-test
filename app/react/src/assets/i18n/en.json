@@ -238,5 +238,6 @@
 
   "AD_GROUP_STATUS_ACTIVE": "Ad Group Active",
   "AD_GROUP_STATUS_PENDING": "Ad Group Pending",
-  "AD_GROUP_STATUS_PAUSED": "Ad Group Paused"
+  "AD_GROUP_STATUS_PAUSED": "Ad Group Paused",
+  "SEND_TEST": "Send a test Email"
 }

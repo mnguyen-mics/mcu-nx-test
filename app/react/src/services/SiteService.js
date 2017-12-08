@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getSites = (organisationId, datamartId, options = {}) => {
   const endpoint = `datamarts/${datamartId}/sites`;

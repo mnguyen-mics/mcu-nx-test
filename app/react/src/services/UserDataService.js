@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getProfile = (organisationId, datamartId, identifierType, identifierId, options = {}) => {
   const endpoint = identifierType !== 'user_point_id' ? `datamarts/${datamartId}/user_profiles/${identifierType}=${identifierId}` : `datamarts/${datamartId}/user_profiles/${identifierId}`;

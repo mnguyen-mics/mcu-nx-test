@@ -6,6 +6,10 @@ const defaultErrorMessages = defineMessages({
     id: 'common.form.field.error.required',
     defaultMessage: 'required',
   },
+  formatNotZero: {
+    id: 'common.form.field.error.format_not_zero',
+    defaultMessage: 'Width and/or height cannot be 0',
+  },
   invalidEmail: {
     id: 'common.form.field.error.invalid_email',
     defaultMessage: 'invalid email address',
@@ -13,6 +17,10 @@ const defaultErrorMessages = defineMessages({
   invalidNumber: {
     id: 'common.form.field.error.invalid_number',
     defaultMessage: 'invalid number',
+  },
+  invalidFloat: {
+    id: 'common.form.field.error.invalid_float',
+    defaultMessage: 'invalid Number, please make sure you use a dot instead of a comma and that your number doesn\'t exceed 2 decimals',
   },
   invalidUrl: {
     id: 'common.form.field.error.invalid_url',
@@ -42,6 +50,15 @@ const isNotZero = formatMessage => value => {
   );
 };
 
+const formatIsNotZero = formatMessage => value => {
+  const format = value.split('x');
+
+  return (value && format && (Number(format[0]) === 0 || Number(format[1]) === 0)
+  ? formatMessage(defaultErrorMessages.formatNotZero)
+  : undefined
+  );
+};
+
 const isValidEmail = formatMessage => value => {
   return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value) ?
     formatMessage(defaultErrorMessages.invalidEmail) : undefined;
@@ -49,7 +66,7 @@ const isValidEmail = formatMessage => value => {
 
 const isValidFloat = formatMessage => value => {
   return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
-    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+    formatMessage(defaultErrorMessages.invalidFloat) : undefined;
 };
 
 const isValidInteger = formatMessage => value => {
@@ -61,6 +78,7 @@ const withValidators = compose(
   injectIntl,
   withProps(({ intl: { formatMessage } }) => ({
     fieldValidators: {
+      formatIsNotZero: formatIsNotZero(formatMessage),
       isNotZero: isNotZero(formatMessage),
       isRequired: isRequired(formatMessage),
       isValidEmail: isValidEmail(formatMessage),

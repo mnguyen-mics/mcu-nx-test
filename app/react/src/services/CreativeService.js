@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService.ts';
 
 const getCreatives = (organisationId, options = {}) => {
   const endpoint = 'creatives';
@@ -119,6 +119,15 @@ const getCreativeScreenshotStatus = creativeId => {
 };
 
 
+const sendTestBlast = (creativeId, organisationId, email) => {
+  const endpoint = `email_templates/${creativeId}/send_test`;
+  const options = {
+    organisation_id: organisationId,
+    email: email,
+  };
+  return ApiService.postRequest(endpoint, options);
+};
+
 export default {
   getCreatives,
   getCreative,
@@ -134,4 +143,5 @@ export default {
   takeScreenshot,
   updateDisplayCreative,
   getCreativeScreenshotStatus,
+  sendTestBlast,
 };

@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-
 import messages from '../messages';
 import { ButtonStyleless, Form, McsIcons } from '../../../../../../components/index.ts';
 
 const {
   FormInput,
   FormSection,
-  FormSelectAddon,
+  FormSelect,
 } = Form;
+
+const { AddonSelect } = FormSelect;
 
 class General extends Component {
 
@@ -21,7 +22,7 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { normalizeFloat, normalizeInteger },
+      fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       formatMessage,
     } = this.props;
@@ -97,7 +98,6 @@ class General extends Component {
           <Field
             name="total_budget"
             component={FormInput}
-            normalize={normalizeFloat}
             validate={[isValidFloat, isNotZero]}
             props={{
               formItemProps: {
@@ -116,7 +116,6 @@ class General extends Component {
           <Field
             name="max_budget_per_period"
             component={FormInput}
-            normalize={normalizeFloat}
             validate={[isValidFloat, isNotZero]}
             props={{
               formItemProps: {
@@ -127,7 +126,7 @@ class General extends Component {
                 addonAfter: (
                   <Field
                     name="max_budget_period"
-                    component={FormSelectAddon}
+                    component={AddonSelect}
                     props={{
                       options: [
                         { value: 'DAY', title: formatMessage(messages.contentSectionGeneralRow5OptionDAY) },
