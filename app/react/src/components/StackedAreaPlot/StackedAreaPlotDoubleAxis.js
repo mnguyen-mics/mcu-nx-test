@@ -40,28 +40,18 @@ class StackedAreaPlotDoubleAxis extends Component {
     }
   }
 
-  componentDidMount() {
-    this.renderStackedAreaPlotDoubleAxis();
-    console.log("COMPONENT DID MOUNT");
-    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
-  }
-
   componentWillUnmount() {
     this.pointersAttached.forEach(pointer => {
       pointer.enabled(false);
     });
-    this.plot.destroy();
   }
 
   componentDidUpdate() {
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
-  componentWillReceiveProps() {
-    this.plot.detach();
-    this.plot.destroy();
-    console.log("COMPONENT RECEIVED PROPS");
-    this.renderStackedAreaPlotDoubleAxis();
+  componentWillReceiveProps(nextProps) {
+    this.renderStackedAreaPlotDoubleAxis(nextProps);
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
@@ -360,9 +350,11 @@ class StackedAreaPlotDoubleAxis extends Component {
     });
   }
 
-  renderStackedAreaPlotDoubleAxis() {
-    const { identifier, dataset, options } = this.props;
+  renderStackedAreaPlotDoubleAxis(nextProps) {
+    const { identifier } = this.props;
+    const { dataset, options } = nextProps;
 
+    console.log("RENDERING WITH DATASET", JSON.stringify(dataset[0]));
     const setMetadata = {};
     const yKeys = options.yKeys.map(item => {
       return item.key;
@@ -392,7 +384,7 @@ class StackedAreaPlotDoubleAxis extends Component {
     const xScale = this.buildXScale(dataset, hasHoursOfDay);
     const xAxis = this.formatXAxis(xScale, dataset, hasHoursOfDay);
 
-    const yScales = this.buildYScales();
+    const yScales = this.buildYScales(yKeys);
     const firstYScale = yScales[yKeys[0]];
     const yAxis = this.formatYAxis(firstYScale, 'left');
     const secondYAxis = this.formatYAxis(yScales[yKeys[1]], 'right');
