@@ -1,9 +1,8 @@
-import moment from 'moment';
-
 import ApiService from './ApiService.ts';
 import ReportService from './ReportService.ts';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
+import McsMoment from '../utils/McsMoment.ts';
 
 const getSegments = (organisationId, datamartId, options = {}) => {
   const endpoint = 'audience_segments';
@@ -30,8 +29,8 @@ const getSegment = (segmentId, options = {}) => {
 const getSegmentMetaData = (organisationId) => {
   return ReportService.getAudienceSegmentReport(
     organisationId,
-    moment(),
-    moment().add(1, 'days'),
+    new McsMoment('now'),
+    new McsMoment('now'),
     'audience_segment_id',
   )
     .then(res => normalizeArrayOfObject(
