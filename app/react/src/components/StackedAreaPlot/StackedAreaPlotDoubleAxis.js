@@ -175,7 +175,28 @@ class StackedAreaPlotDoubleAxis extends Component {
     return colorScale;
   }
 
-  buildDragBox() {}
+  buildDragBox(options, xScale) {
+    const dragBox = options.isDraggable ? new Plottable.Components.XDragBoxLayer() : null;
+    if (dragBox) {
+      dragBox.resizable(true);
+      dragBox.onDrag(() => {
+      });
+      dragBox.onDragEnd((bounds) => {
+        const min = moment(xScale.invert(bounds.topLeft.x));
+        const max = (moment(xScale.invert(bounds.bottomRight.x)) - min) > DAY_MILLIS ? moment(xScale.invert(bounds.bottomRight.x)) : moment(xScale.invert(bounds.bottomRight.x)).add(1, 'days');
+        options.onDragEnd([min, max]);
+      });
+      xScale.onUpdate(() => {
+        dragBox.boxVisible(true);
+        const xDomain = xScale.domain();
+        dragBox.bounds({
+          topLeft: { x: xScale.scale(xDomain[0]), y: null },
+          bottomRight: { x: xScale.scale(xDomain[1]), y: null },
+        });
+      });
+    }
+    return dragBox;
+  }
 
   renderStackedAreaPlotDoubleAxis() {
     const { identifier, dataset, options } = this.props;
@@ -215,30 +236,10 @@ class StackedAreaPlotDoubleAxis extends Component {
     const secondYAxis = this.formatYAxis(secondYScale, 'right');
 
     const colorScale = this.buildColorScale(yKeys, options);
+    const dragBox = this.buildDragBox(options, xScale);
 
     const plts = [];
     const pnts = [];
-
-    const dragBox = options.isDraggable ? new Plottable.Components.XDragBoxLayer() : null;
-    if (dragBox) {
-      dragBox.resizable(true);
-      dragBox.onDrag(() => {
-      });
-      dragBox.onDragEnd((bounds) => {
-        const min = moment(xScale.invert(bounds.topLeft.x));
-        const max = (moment(xScale.invert(bounds.bottomRight.x)) - min) > 24 * 3600 * 1000 ? moment(xScale.invert(bounds.bottomRight.x)) : moment(xScale.invert(bounds.bottomRight.x)).add(1, 'days');
-        options.onDragEnd([min, max]);
-      });
-      xScale.onUpdate(() => {
-        dragBox.boxVisible(true);
-        const xDomain = xScale.domain();
-        dragBox.bounds({
-          topLeft: { x: xScale.scale(xDomain[0]), y: null },
-          bottomRight: { x: xScale.scale(xDomain[1]), y: null },
-        });
-      });
-    }
-
     const guideline = new Plottable.Components.GuideLineLayer(Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL).scale(xScale);
 
     pnts.push(guideline);
