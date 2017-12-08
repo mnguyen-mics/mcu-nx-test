@@ -40,8 +40,8 @@ class CreativeFormatEditor extends Component {
 
     /* For custom format only */
     const dimensions = input.value.split('x');
-    const width = dimensions[0];
-    const height = dimensions[1];
+    const width = dimensions[0] ? dimensions[0] : '';
+    const height = dimensions[1] ? dimensions[1] : '';
 
     const onDimensionChange = (type) => (e) => {
       const { value } = e.target;
