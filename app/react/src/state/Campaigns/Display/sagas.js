@@ -13,6 +13,7 @@ import ReportService from '../../../services/ReportService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
+
 import {
     DISPLAY_CAMPAIGNS_LIST_FETCH,
     DISPLAY_CAMPAIGNS_LOAD_ALL,
@@ -28,6 +29,7 @@ function* loadPerformanceReport({ payload }) {
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
+
 
     const startDate = filter.from;
     const endDate = filter.to;

@@ -166,7 +166,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -216,7 +216,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
 const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, mediasData, adGroupsData, adsData, filter, formatMessage) => {
 
   const campaignPageTitle = `${campaign.name} - ${campaign.id}`;
-  const hourlyPrecision = (datenum(filter.to) - datenum(filter.from)) <= 1;
+  const hourlyPrecision = (datenum(filter.to.raw()) - datenum(filter.from.raw())) <= 1;
   const dateHeader = hourlyPrecision ? { name: 'hour_of_day', translation: formatMessage(dateMessages.hour) } : { name: 'day', translation: formatMessage(dateMessages.day) };
   const campaignHeaders = [
     dateHeader,
@@ -259,8 +259,8 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
 
   const exportFilter = {
     ...filter,
-    from: filter.from.format('YYYY-MM-DD'),
-    to: filter.to.format('YYYY-MM-DD'),
+    from: filter.from.toMoment().format('YYYY-MM-DD'),
+    to: filter.to.toMoment().format('YYYY-MM-DD'),
   };
 
   const sheets = [
@@ -286,7 +286,7 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -382,7 +382,7 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -430,7 +430,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.format('YYYY-MM-DD')} ${translations.TO} ${filter.to.format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {

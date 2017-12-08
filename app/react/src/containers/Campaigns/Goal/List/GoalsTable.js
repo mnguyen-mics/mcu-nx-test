@@ -219,14 +219,10 @@ class GoalsTable extends Component {
     const dateRangePickerOptions = {
       isEnabled: true,
       onChange: (values) => this.updateLocationSearch({
-        rangeType: values.rangeType,
-        lookbackWindow: values.lookbackWindow,
         from: values.from,
         to: values.to,
       }),
       values: {
-        rangeType: filter.rangeType,
-        lookbackWindow: filter.lookbackWindow,
         from: filter.from,
         to: filter.to,
       },

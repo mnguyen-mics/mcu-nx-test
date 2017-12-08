@@ -1,8 +1,6 @@
 import queryString from 'query-string';
 import lodash from 'lodash';
-import moment from 'moment';
-
-const DATE_FORMAT = 'YYYY-MM-DD';
+import McsMoment from './McsMoment.ts';
 
 export const PAGINATION_SEARCH_SETTINGS = [
   {
@@ -49,33 +47,19 @@ export const FILTERS_SEARCH_SETTINGS = [
 
 export const DATE_SEARCH_SETTINGS = [
   {
-    paramName: 'rangeType',
-    defaultValue: 'relative',
-    deserialize: query => query.rangeType,
-    serialize: value => value,
-    isValid: query => query.rangeType,
-  },
-  {
-    paramName: 'lookbackWindow',
-    defaultValue: moment.duration(8, 'days'),
-    deserialize: query => moment.duration(parseInt(query.lookbackWindow, 0), 'seconds'),
-    serialize: value => Math.ceil(value.asSeconds()),
-    isValid: query => query.lookbackWindow,
-  },
-  {
     paramName: 'from',
-    defaultValue: moment().subtract(7, 'days'),
-    deserialize: query => moment(query.from, DATE_FORMAT),
-    serialize: value => value.format(DATE_FORMAT),
-    isValid: query => moment(query.from, DATE_FORMAT).isValid(),
+    defaultValue: new McsMoment('now-7d'),
+    deserialize: query => new McsMoment(query.from),
+    serialize: value => value.raw(),
+    isValid: query => query.from && query.from.length && new McsMoment(query.from).isValid(),
   },
   {
     paramName: 'to',
-    defaultValue: moment().add(1, 'days'),
-    deserialize: query => moment(query.to, DATE_FORMAT),
-    serialize: value => value.format(DATE_FORMAT),
-    isValid: query => moment(query.to, DATE_FORMAT).isValid(),
-  },
+    defaultValue: new McsMoment('now'),
+    deserialize: query => new McsMoment(query.to),
+    serialize: value => value.raw(),
+    isValid: query => query.to && query.to.length && new McsMoment(query.to).isValid(),
+  }
 ];
 
 export const isSearchValid = (search, settings) => {
