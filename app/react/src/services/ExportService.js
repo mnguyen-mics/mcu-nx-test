@@ -28,7 +28,7 @@ function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
   const sheet = [];
   const blankLine = [];
   sheet.push(titleLine);
-  sheet.push([`${formatMessage(dateMessages.from)} ${filter.from.toMoment().format('YYYY-MM-DD')} ${formatMessage(dateMessages.to)} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  sheet.push([`${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${filter.to}`]);
   if (otherInfos) {
     sheet.push([otherInfos.name]);
     sheet.push([otherInfos.id]);
