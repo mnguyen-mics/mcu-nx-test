@@ -72,7 +72,7 @@ class LabelsListPage extends Component<LabelsListProps, LabelsListState> {
         LabelsService.deleteLabel(label.id).then(() => {
           that.props.fetchLabels(that.props.organisationId, { limit: 1000 });
         })
-        .catch((err) => { that.setState({ isCreatingLabels: false }); that.props.notifyError(err); });
+        .catch((err: any) => { that.setState({ isCreatingLabels: false }); that.props.notifyError(err); });
       },
       onCancel() {
         // cancel
@@ -109,7 +109,7 @@ class LabelsListPage extends Component<LabelsListProps, LabelsListState> {
         this.setState({ modalVisible: false, isCreatingLabels: false, selectedLabelId: '', inputValue: '', edition: false });
         fetchLabels(this.props.organisationId, { limit: 1000 });
       })
-      .catch((err) => { notifyError(err); this.setState({ isCreatingLabels: false }); }),
+      .catch((err: any) => { notifyError(err); this.setState({ isCreatingLabels: false }); }),
     );
   }
 
