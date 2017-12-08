@@ -15,15 +15,17 @@ function getGeneralInfo({ campaignId, adGroupId }) {
 
 function getAds({ adGroupId, campaignId }) {
 
-  const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)
-    .then(({ data }) => data.map(ad => ({ id: ad.creative_id, modelId: ad.id })));
-
-  return fetchSelectedAds
-    .then((results) => {
-      const selectedAdIds = results.map(ad => ad.id);
-
-
-      return Promise.all(selectedAdIds.map(item => CreativeService.getCreative(item)));
+  return DisplayCampaignService.getAds(campaignId, adGroupId)
+    .then(({ data }) => {
+      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id)))
+        .then(creatives => {
+          return creatives.map(creative => {
+            return {
+              ...creative,
+              modelId: data.find(d => d.creative_id === creative.id).id,
+            };
+          });
+        });
     }).then(results => { return { adTable: results }; });
 }
 
