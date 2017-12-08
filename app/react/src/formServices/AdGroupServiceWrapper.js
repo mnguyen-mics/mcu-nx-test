@@ -13,7 +13,7 @@ function getGeneralInfo({ campaignId, adGroupId }) {
   return DisplayCampaignService.getAdGroup(campaignId, adGroupId);
 }
 
-function getAds(campaignId, adGroupId) {
+function getAds({ campaignId, adGroupId }) {
 
   const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)
     .then(({ data }) => data.map(ad => ({ id: ad.creative_id, modelId: ad.id })));
@@ -100,7 +100,7 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
     getPublishers({ campaignId }),
     getPlacements({ campaignId, adGroupId }),
     getSegments({ adGroupId, campaignId, organisationId }),
-    getAds(campaignId, adGroupId, organisationId),
+    getAds({ campaignId, adGroupId, organisationId }),
     getLocations({ campaignId, adGroupId }),
     getAdGroupAudienceSegments(campaignId, adGroupId),
   ])
