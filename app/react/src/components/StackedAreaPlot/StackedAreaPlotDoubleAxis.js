@@ -41,19 +41,7 @@ class StackedAreaPlotDoubleAxis extends Component {
   }
 
   componentDidMount() {
-    const { options, dataset } = this.props;
-
-    const setMetadata = {};
-
-    const yKeys = options.yKeys.map(item => {
-      return item.key;
-    });
-
-    options.colors.forEach((color, i) => {
-      setMetadata[yKeys[i]] = color;
-    });
-    const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
-    this.renderStackedAreaPlotDoubleAxis(plottableDataSet, options);
+    this.renderStackedAreaPlotDoubleAxis();
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
@@ -68,23 +56,10 @@ class StackedAreaPlotDoubleAxis extends Component {
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { dataset: nextDataset, options: nextOptions } = nextProps;
-
+  componentWillReceiveProps() {
     this.plot.detach();
     this.plot.destroy();
-    const setMetadata = {};
-    const yKeys = nextOptions.yKeys.map(item => {
-      return item.key;
-    });
-    nextOptions.colors.forEach((color, i) => {
-      setMetadata[yKeys[i]] = color;
-    });
-    this.pointers.forEach(point => {
-      point.pointer.detachFrom(point.plot);
-    });
-    const plottableDataSet = new Plottable.Dataset(nextDataset, setMetadata);
-    this.renderStackedAreaPlotDoubleAxis(plottableDataSet, nextOptions);
+    this.renderStackedAreaPlotDoubleAxis();
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
   }
 
@@ -155,9 +130,9 @@ class StackedAreaPlotDoubleAxis extends Component {
     return tickInterval;
   }
 
-  buildXScale(dataset, hasHoursOfDay) {
+  buildXScale(dataset) {
     const xScale = new Plottable.Scales.Time().padProportion(0);
-    const tickInterval = this.extractTickInterval(dataset)
+    const tickInterval = this.extractTickInterval(dataset);
     xScale.tickGenerator(Plottable.Scales.TickGenerators.intervalTickGenerator(tickInterval));
     return xScale;
   }
@@ -202,15 +177,25 @@ class StackedAreaPlotDoubleAxis extends Component {
 
   buildDragBox() {}
 
-  renderStackedAreaPlotDoubleAxis(plottableDataSet, options) {
-    const { identifier, dataset } = this.props;
+  renderStackedAreaPlotDoubleAxis() {
+    const { identifier, dataset, options } = this.props;
+
+    const setMetadata = {};
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
+    options.colors.forEach((color, i) => {
+      setMetadata[yKeys[i]] = color;
+    });
+    this.pointers.forEach(point => {
+      point.pointer.detachFrom(point.plot);
+    });
+    const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
+
     if (this.plot !== null) {
       this.plot.destroy();
     }
 
-    const yKeys = options.yKeys.map(item => {
-      return item.key;
-    });
       // .addPaddingExceptionsProvider(() => {
       //   const date = new Date();
       //   date.setHours(0);
