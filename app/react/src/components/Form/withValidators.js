@@ -18,6 +18,10 @@ const defaultErrorMessages = defineMessages({
     id: 'common.form.field.error.invalid_number',
     defaultMessage: 'invalid number',
   },
+  invalidFloat: {
+    id: 'common.form.field.error.invalid_float',
+    defaultMessage: 'invalid Number, please make sure you use a dot instead of a comma and that your number doesn\'t exceed 2 decimals',
+  },
   invalidUrl: {
     id: 'common.form.field.error.invalid_url',
     defaultMessage: 'invalid url',
@@ -62,7 +66,7 @@ const isValidEmail = formatMessage => value => {
 
 const isValidFloat = formatMessage => value => {
   return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value) ?
-    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+    formatMessage(defaultErrorMessages.invalidFloat) : undefined;
 };
 
 const isValidInteger = formatMessage => value => {

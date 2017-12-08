@@ -25,7 +25,7 @@ class General extends Component {
 
   render() {
     const {
-      fieldNormalizer: { normalizeFloat, normalizeInteger },
+      fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       formatMessage,
       formValues,
@@ -63,7 +63,6 @@ class General extends Component {
             <Field
               name="adGroupMaxBudgetPerPeriod"
               component={FormInput}
-              normalize={normalizeFloat}
               validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
@@ -98,7 +97,6 @@ class General extends Component {
             <Field
               name="adGroupTotalBudget"
               component={FormInput}
-              normalize={normalizeFloat}
               validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
@@ -153,7 +151,6 @@ class General extends Component {
             <Field
               name="adGroupMaxBidPrice"
               component={FormInput}
-              normalize={normalizeFloat}
               validate={[isValidFloat, isNotZero]}
               props={{
                 formItemProps: {
