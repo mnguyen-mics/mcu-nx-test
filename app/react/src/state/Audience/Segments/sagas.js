@@ -1,6 +1,5 @@
 import { takeLatest, delay } from 'redux-saga';
 import { call, fork, put, all, take, race } from 'redux-saga/effects';
-import moment from 'moment';
 
 import log from '../../../utils/Logger';
 import { normalizeReportView } from '../../../utils/MetricHelper';
@@ -19,6 +18,7 @@ import { notifyError } from '../../Notifications/actions';
 import AudienceSegmentService from '../../../services/AudienceSegmentService';
 import DataFileService from '../../../services/DataFileService';
 import ReportService from '../../../services/ReportService.ts';
+import McsMoment from '../../../utils/McsMoment.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
@@ -103,7 +103,7 @@ function* loadAudienceSegmentSingle({ payload }) {
     }
 
     const segment = yield call(AudienceSegmentService.getSegment, segmentId);
-    const perfResponse = yield call(ReportService.getAudienceSegmentReport, organisationId, moment().subtract(1, 'days'), moment().add(1, 'days'), 'day', ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'], { filters: `audience_segment_id==${segmentId}` });
+    const perfResponse = yield call(ReportService.getAudienceSegmentReport, organisationId, new McsMoment('now'), new McsMoment('now'), 'day', ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'], { filters: `audience_segment_id==${segmentId}` });
 
     const reportView = normalizeReportView(perfResponse.data.report_view);
     yield put(fetchAudienceSegmentSingle.success({

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import moment from 'moment';
 import { Button, Dropdown, Icon, Menu, Modal, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -21,6 +20,7 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { ReportView } from '../../../../../models/ReportView';
+import McsMoment from '../../../../../utils/McsMoment';
 
 interface DisplayCampaignActionBarProps {
   campaign: CampaignResource;
@@ -50,13 +50,12 @@ const formatReportView = (reportView: ReportView, key: string) => {
 };
 
 const fetchAllExportData = (organisationId: string, campaignId: string, filter: {
-  rangeType: string;
-  lookbackWindow: any;
-  from: moment.Moment;
-  to: moment.Moment;
+  from: McsMoment;
+  to: McsMoment;
 }) => {
 
-  const dimensions: string[] = filter.lookbackWindow.asSeconds() > 172800 ? ['day'] : ['day,hour_of_day'];
+  const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
+  const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
   const defaultMetrics: string[] = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
   const apiResults = Promise.all([

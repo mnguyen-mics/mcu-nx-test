@@ -51,15 +51,12 @@ class EmailPieCharts extends Component {
     const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
-      rangeType: newValues.rangeType,
-      lookbackWindow: newValues.lookbackWindow,
+
       from: newValues.from,
       to: newValues.to,
     });

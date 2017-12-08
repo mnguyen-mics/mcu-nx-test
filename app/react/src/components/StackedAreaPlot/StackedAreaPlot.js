@@ -430,7 +430,6 @@ StackedAreaPlot.propTypes = {
     endAngle: PropTypes.number,
     yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
-    lookbackWindow: PropTypes.number,
     isDraggable: PropTypes.bool,
     onDragEnd: PropTypes.func,
   }).isRequired,

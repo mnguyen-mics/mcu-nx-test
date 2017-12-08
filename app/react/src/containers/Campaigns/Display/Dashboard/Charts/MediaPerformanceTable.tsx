@@ -66,8 +66,6 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
 
     const onChange = (newValues: McsDateRangeValue) =>
       this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
         to: newValues.to,
       });

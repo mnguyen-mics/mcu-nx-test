@@ -98,7 +98,8 @@ class AdGroupPage extends Component {
   }
 
   fetchAllData(organisationId, campaignId, adGroupId, filter) {
-    const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
+    const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
+    const dimensions = lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, { view: 'deep' });
     const getAdGroupPerf = makeCancelable(ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions));
     const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, ''));

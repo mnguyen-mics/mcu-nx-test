@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { injectIntl } from 'react-intl';
-import { compose } from 'recompose';
-import moment from 'moment';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
@@ -79,16 +78,12 @@ class DisplayStackedAreaChart extends Component {
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = newValues =>
       this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
         to: newValues.to,
       });
@@ -98,7 +93,6 @@ class DisplayStackedAreaChart extends Component {
 
   renderStackedAreaCharts() {
     const {
-      location: { search },
       dataSource,
       hasFetchedCampaignStat,
       isFetchingCampaignStat,
@@ -109,25 +103,18 @@ class DisplayStackedAreaChart extends Component {
     } = this.props;
     const { key1, key2 } = this.state;
 
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-
-    const { lookbackWindow } = filter;
-
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
         { key: key1, message: messages[key1] },
         { key: key2, message: messages[key2] },
       ],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,
       onDragEnd: (values) => {
         this.updateLocationSearch({
           from: values[0],
           to: values[1],
-          lookbackWindow: moment.duration(values[1] - values[0]),
-          rangeType: 'absolute',
         });
       },
     };
