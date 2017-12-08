@@ -198,47 +198,7 @@ class StackedAreaPlotDoubleAxis extends Component {
     return dragBox;
   }
 
-  renderStackedAreaPlotDoubleAxis() {
-    const { identifier, dataset, options } = this.props;
-
-    const setMetadata = {};
-    const yKeys = options.yKeys.map(item => {
-      return item.key;
-    });
-    options.colors.forEach((color, i) => {
-      setMetadata[yKeys[i]] = color;
-    });
-    this.pointers.forEach(point => {
-      point.pointer.detachFrom(point.plot);
-    });
-    const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
-
-    if (this.plot !== null) {
-      this.plot.destroy();
-    }
-
-      // .addPaddingExceptionsProvider(() => {
-      //   const date = new Date();
-      //   date.setHours(0);
-      //   date.setMinutes(0);
-      //   date.setSeconds(0);
-      //   return [date];
-      // })
-      // .padProportion(0);
-
-    const hasHoursOfDay = dataset.length && dataset[0].hour_of_day !== undefined ? true : false;
-    const xScale = this.buildXScale(dataset, hasHoursOfDay);
-    const xAxis = this.formatXAxis(xScale, dataset, hasHoursOfDay);
-
-    const yScale = this.buildYScale();
-    const secondYScale = this.buildYScale();
-    const yAxis = this.formatYAxis(yScale, 'left');
-    const secondYAxis = this.formatYAxis(secondYScale, 'right');
-
-    const colorScale = this.buildColorScale(yKeys, options);
-    const dragBox = this.buildDragBox(options, xScale);
-
-    const plts = [];
+  buildPlots(plts, dataset, plottableDataSet, yKeys, options, xScale, yScale, secondYScale, identifier, colorScale, gridlines) {
     const pnts = [];
     const guideline = new Plottable.Components.GuideLineLayer(Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL).scale(xScale);
 
@@ -306,16 +266,66 @@ class StackedAreaPlotDoubleAxis extends Component {
         }
       });
     }
-    const gridlines = new Plottable.Components.Gridlines(xScale, yScale).addClass('gridline');
     const plots = new Plottable.Components.Group(plts.concat(pnts).concat(gridlines));
+    return plots;
+  }
 
-    // TODO KEEP IT AND MAKE IT SIMPLER
-    /*
-    new Plottable.Interactions.PanZoom(xScale, null)
-      .attachTo(plots)
-      .minDomainExtent(xScale, 1000 * 60 * 60 * 24 * 3)
-      .maxDomainExtent(xScale, options.lookbackWindow);
-    */
+  renderStackedAreaPlotDoubleAxis() {
+    const { identifier, dataset, options } = this.props;
+
+    const setMetadata = {};
+    const yKeys = options.yKeys.map(item => {
+      return item.key;
+    });
+    options.colors.forEach((color, i) => {
+      setMetadata[yKeys[i]] = color;
+    });
+    this.pointers.forEach(point => {
+      point.pointer.detachFrom(point.plot);
+    });
+    const plottableDataSet = new Plottable.Dataset(dataset, setMetadata);
+
+    if (this.plot !== null) {
+      this.plot.destroy();
+    }
+
+      // .addPaddingExceptionsProvider(() => {
+      //   const date = new Date();
+      //   date.setHours(0);
+      //   date.setMinutes(0);
+      //   date.setSeconds(0);
+      //   return [date];
+      // })
+      // .padProportion(0);
+
+    const hasHoursOfDay = dataset.length && dataset[0].hour_of_day !== undefined ? true : false;
+    const xScale = this.buildXScale(dataset, hasHoursOfDay);
+    const xAxis = this.formatXAxis(xScale, dataset, hasHoursOfDay);
+
+    const yScale = this.buildYScale();
+    const secondYScale = this.buildYScale();
+    const yAxis = this.formatYAxis(yScale, 'left');
+    const secondYAxis = this.formatYAxis(secondYScale, 'right');
+
+    const colorScale = this.buildColorScale(yKeys, options);
+    const dragBox = this.buildDragBox(options, xScale);
+
+    const gridlines = new Plottable.Components.Gridlines(xScale, yScale).addClass('gridline');
+    const plts = [];
+    const plots = this.buildPlots(
+      plts,
+      dataset,
+      plottableDataSet,
+      yKeys,
+      options,
+      xScale,
+      yScale,
+      secondYScale,
+      identifier,
+      colorScale,
+      gridlines
+    );
+
     const chart = new Plottable.Components.Group([plots, dragBox]);
     const table = new Plottable.Components.Table([[yAxis, chart, secondYAxis], [null, xAxis, null]]);
 
