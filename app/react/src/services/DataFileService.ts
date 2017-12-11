@@ -21,7 +21,6 @@ const editDataFile = (fileName: string, uri: string, formData: Blob): Promise<Da
   return ApiService.putRequest(endpoint, formData);
 };
 
-
 export default {
   getDatafileData,
   createDatafile,
