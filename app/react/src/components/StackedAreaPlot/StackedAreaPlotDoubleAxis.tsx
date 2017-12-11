@@ -1,13 +1,7 @@
 import * as React from 'react';
-<<<<<<< HEAD
-import Plottable, {AxisOrientation, Plot, SimpleSelection, XYPlot} from 'plottable';
-import moment, {Moment} from 'moment';
-import ChartUtils from '../ChartUtils';
-=======
 import Plottable, {AxisOrientation, Plot, XYPlot} from 'plottable';
 import moment from 'moment';
-import ChartUtils from './ChartUtils';
->>>>>>> Type all the things
+import ChartUtils from '../ChartUtils';
 
 import { areDatesSameDay, truncateUpToHour } from '../../utils/DateHelper';
 
@@ -18,10 +12,6 @@ import {Component} from 'plottable/build/src/components/component';
 import {Pointer} from 'plottable/build/src/interactions';
 import {XDragBoxLayer} from 'plottable/build/src/components';
 import {ITickGenerator} from 'plottable/build/src/scales/tickGenerators';
-<<<<<<< HEAD
-import {FormattedMessage} from 'react-intl';
-=======
->>>>>>> Type all the things
 
 const HOUR_MILLIS = 3600 * 1000;
 const DAY_MILLIS = 24 * HOUR_MILLIS;
@@ -42,14 +32,7 @@ interface StackedAreaPlotDoubleAxisProps {
 }
 
 interface StackedAreaPlotDoubleAxisState {
-<<<<<<< HEAD
   chartTooltipProps: ChartTooltipProps;
-=======
-  xTooltip: any;
-  yTooltip: any;
-  content: any;
-  visibility: string;
->>>>>>> Type all the things
 }
 
 interface ChartTooltipProps {
@@ -106,6 +89,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   pointers: Point[] = [];
   pointersAttached: Pointer[] = [];
   svg: any = null;
+  mountLock: boolean = false;
 
   constructor(props: StackedAreaPlotDoubleAxisProps) {
     super(props);
@@ -113,7 +97,6 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     this.defineSvg = this.defineSvg.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
     this.state = {
-<<<<<<< HEAD
       chartTooltipProps: {
         xTooltip: 0,
         yTooltip: 0,
@@ -123,12 +106,6 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
         },
         visibility: 'hidden',
       },
-=======
-      xTooltip: null,
-      yTooltip: null,
-      content: null,
-      visibility: 'hidden',
->>>>>>> Type all the things
     };
   }
 
@@ -149,6 +126,8 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     this.pointersAttached.forEach(pointer => {
       pointer.enabled(false);
     });
+    this.plot.detach();
+    this.plot.destroy();
   }
 
   updateBoundingRect() {
@@ -163,8 +142,15 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     this.updateBoundingRect();
   }
 
+  componentDidMount() {
+    if (!this.mountLock)
+      this.renderStackedAreaPlotDoubleAxis(this.props);
+  }
+
   componentWillReceiveProps(nextProps: StackedAreaPlotDoubleAxisProps) {
-    this.renderStackedAreaPlotDoubleAxis(nextProps);
+    if (this.mountLock)
+      this.renderStackedAreaPlotDoubleAxis(nextProps);
+    this.mountLock = true;
     this.updateBoundingRect();
   }
 
@@ -307,8 +293,6 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     options: ChartOptions,
     xScale: QuantitativeScale<Date>,
     yScales: { [s: string]: QuantitativeScale<number> },
-    identifier: string,
-    colorScale: Plottable.Scales.Color,
   ) {
     plotComponent
       .addDataset(plottableDataSet)
@@ -320,15 +304,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       .y((d: any) => {
         return d[item];
       }, yScales[item])
-      .animated(true)
-      .attr('fill', `url(#${item}${identifier})`)
-      .attr(
-        'stroke',
-        () => {
-          return item;
-        },
-        colorScale,
-      );
+      .animated(true);
     return plotComponent;
   }
 
@@ -346,36 +322,53 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     const areaPlots = Object.keys(dataset[0])
                                 .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
                                 .map(item => {
-                                  return this.buildPlot(
+                                  const plot = this.buildPlot(
                                     new Plottable.Plots.Area(),
                                     item,
                                     plottableDataSet,
                                     options,
                                     xScale,
                                     yScales,
-                                    identifier,
-                                    colorScale,
                                   );
+                                  return {
+                                    plot: plot,
+                                    item: item,
+                                  };
+                                })
+                                .map(plotitem => {
+                                  return plotitem.plot
+                                    .attr('fill', `url(#${plotitem.item}${identifier})`)
+                                    .attr(
+                                      'stroke',
+                                      () => {
+                                        return plotitem.item;
+                                      },
+                                      colorScale,
+                                    );
                                 });
 
     const pointComponents: Component[] = Object.keys(dataset[0])
                                    .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
                                    .map(item => {
-<<<<<<< HEAD
-                                     const scatter: Plottable.Plots.Scatter<Date, number> = new Plottable.Plots.Scatter();
-                                     scatter.size(10);
                                      const plot = this.buildPlot(
-                                       scatter,
-=======
-                                     return this.buildPlot(
                                        new Plottable.Plots.Scatter(),
->>>>>>> Type all the things
                                        item,
                                        plottableDataSet,
                                        options,
                                        xScale,
                                        yScales,
-                                       identifier,
+                                     );
+                                     return {
+                                       plot: plot,
+                                       item: item,
+                                     };
+                                   })
+                                   .map(plotitem => {
+                                     return plotitem.plot.attr(
+                                       'fill',
+                                       () => {
+                                         return plotitem.item;
+                                       },
                                        colorScale,
                                      );
                                    });
@@ -463,6 +456,9 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     const setMetadata: { [s: string]: string } = {};
     const yKeys = options.yKeys.map(item => {
       return item.key;
+    });
+    this.pointersAttached.forEach(pointer => {
+      pointer.enabled(false);
     });
 
     options.colors.forEach((color, i) => {
