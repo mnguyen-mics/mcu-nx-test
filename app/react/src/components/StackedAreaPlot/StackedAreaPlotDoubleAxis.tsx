@@ -151,13 +151,21 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     });
   }
 
+  updateBoundingRect() {
+    const newBoundingRect = this.svg.getBoundingClientRect();
+    this.svgBoundingClientRect.top = newBoundingRect.top;
+    this.svgBoundingClientRect.left = newBoundingRect.left;
+    this.svgBoundingClientRect.right = newBoundingRect.right;
+    this.svgBoundingClientRect.bottom = newBoundingRect.bottom;
+  }
+
   componentDidUpdate() {
-    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+    this.updateBoundingRect();
   }
 
   componentWillReceiveProps(nextProps: StackedAreaPlotDoubleAxisProps) {
     this.renderStackedAreaPlotDoubleAxis(nextProps);
-    this.svgBoundingClientRect = this.svg.getBoundingClientRect();
+    this.updateBoundingRect();
   }
 
   defineSvg = (svg: any) => {
@@ -414,7 +422,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       pointer.onPointerMove(p => {
         const nearestEntity = plot.entityNearestByXThenY(p);
         line.hide();
-        line.drawAt(nearestEntity.position, p, nearestEntity);
+        line.drawAt(p, nearestEntity);
         crosshair.drawAt(nearestEntity.position);
       });
       pointer.onPointerExit(() => {
@@ -572,13 +580,15 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
 
       const width = svgBoundingClientRect.right - svgBoundingClientRect.left;
       const height = svgBoundingClientRect.bottom - svgBoundingClientRect.top;
+      const xTooltip = mousePosition.x + 320 < width
+                        ? (svgBoundingClientRect.left + mousePosition.x) + 80
+                        : (svgBoundingClientRect.left + mousePosition.x) - 200;
+      const yTooltip = mousePosition.y + 120 < height
+                        ? svgBoundingClientRect.top + mousePosition.y
+                        : (svgBoundingClientRect.top + mousePosition.y) - 50;
       setTooltip({
-        xTooltip: mousePosition.x + 320 < width
-          ? (svgBoundingClientRect.left + mousePosition.x) + 80
-          : (svgBoundingClientRect.left + mousePosition.x) - 200,
-        yTooltip: mousePosition.y + 120 < height
-          ? svgBoundingClientRect.top + mousePosition.y
-          : (svgBoundingClientRect.top + mousePosition.y) - 50,
+        xTooltip: xTooltip,
+        yTooltip: yTooltip,
         content: tooltipContent,
         visibility: 'visible',
       });
