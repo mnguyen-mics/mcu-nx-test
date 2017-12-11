@@ -1,12 +1,12 @@
-import AssetList from '../containers/Library/Asset/List';
-import KeywordList from '../containers/Library/Keyword/List';
-import PlacementList from '../containers/Library/Placement/List';
-import BidOptimizerList from '../containers/Library/BidOptimizer/List';
+import AssetList from '../containers/Library/Asset/List/index.ts';
+import KeywordList from '../containers/Library/Keyword/List/index.ts';
+import PlacementList from '../containers/Library/Placement/List/index.ts';
+import BidOptimizerList from '../containers/Library/BidOptimizer/List/index.ts';
 import AttributionModelList from '../containers/Library/AttributionModel/List/index.ts';
-import VisitAnalyzerList from '../containers/Library/VisitAnalyzer/List';
-import EmailRoutersList from '../containers/Library/EmailRouter/List';
-import RecommendersList from '../containers/Library/Recommender/List';
-import ExportsList from '../containers/Library/Exports/List';
+import VisitAnalyzerList from '../containers/Library/VisitAnalyzer/List/index.ts';
+import EmailRoutersList from '../containers/Library/EmailRouter/List/index.ts';
+import RecommendersList from '../containers/Library/Recommender/List/index.ts';
+import ExportsList from '../containers/Library/Exports/List/index.ts';
 
 import { CreateEditAttributionModel } from '../containers/Library/AttributionModel/Edit/index.ts';
 import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit/index.ts';

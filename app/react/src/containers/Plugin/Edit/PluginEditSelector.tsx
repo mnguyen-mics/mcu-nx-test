@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Layout, Row } from 'antd';
 
@@ -15,7 +15,7 @@ interface PluginEditSelectorProps<T> {
   listSubTitle: FormattedMessage.MessageDescriptor;
 }
 
-class PluginEditSelector<T extends PluginInterface> extends Component<PluginEditSelectorProps<T> & InjectedIntlProps> {
+class PluginEditSelector<T extends PluginInterface> extends React.Component<PluginEditSelectorProps<T> & InjectedIntlProps> {
 
   onSelect = (item: T) => () => {
     this.props.onSelect(item);

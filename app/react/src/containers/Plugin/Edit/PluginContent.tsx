@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
@@ -61,7 +61,7 @@ function initEmptyPluginSelection() {
 
 type JoinedProps = PluginContentOuterProps & PluginContentInnerProps & RouteComponentProps<RouterProps>;
 
-class PluginContent extends Component<
+class PluginContent extends React.Component<
   JoinedProps,
   PluginContentState> {
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -28,7 +28,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class KeywordListContent extends Component<RouteComponentProps<RouterProps> & InjectedIntlProps, KeywordListContentState> {
+class KeywordListContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, KeywordListContentState> {
 
   state = initialState;
 

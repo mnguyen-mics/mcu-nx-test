@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { Button } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class KeywordActionbar extends Component<RouteComponentProps<RouterProps> & InjectedIntlProps> {
+class KeywordActionbar extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps> {
 
   render() {
 

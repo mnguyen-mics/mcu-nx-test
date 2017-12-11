@@ -1,6 +1,6 @@
-import ApiService from './ApiService.ts';
+import ApiService, { DataResponse } from './ApiService';
 
-const getDatafileData = (dataFilePath) => {
+const getDatafileData = (dataFilePath: string): Promise<DataResponse<any>> => {
   const endpoint = 'data_file/data';
   const params = {
     uri: dataFilePath,
@@ -9,14 +9,14 @@ const getDatafileData = (dataFilePath) => {
   return ApiService.getRequest(endpoint, params);
 };
 
-const createDatafile = (organisationId, object, objectId, fileName, formData) => {
+const createDatafile = (organisationId: string, object: any, objectId: string, fileName: string, formData: Blob): Promise<string> => {
   const uri = `mics://data_file/tenants/${organisationId}/bid_optimizer/${objectId}/${fileName}`;
   const endpoint = `data_file/data?uri=${uri}&name=${fileName}`;
 
   return ApiService.putRequest(endpoint, formData).then(() => uri);
 };
 
-const editDataFile = (fileName, uri, formData) => {
+const editDataFile = (fileName: string, uri: string, formData: Blob): Promise<DataResponse<any>> => {
   const endpoint = `data_file/data?uri=${uri}&name=${fileName}`;
   return ApiService.putRequest(endpoint, formData);
 };

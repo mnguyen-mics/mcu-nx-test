@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Layout, Button, Select, Upload, Input } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 import { FormTitle } from '../../../../components/Form';
-import DataFileService from '../../../../services/DataFileService.js';
+import DataFileService from '../../../../services/DataFileService';
 import messages from '../../messages';
 
 const Option = Select.Option;
@@ -52,7 +52,7 @@ interface FormDataFileDrawerState {
   fileSelectorValue?: string;
 }
 
-class FormDataFileDrawer extends Component<FormDataFileDrawerProps, FormDataFileDrawerState> {
+class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDataFileDrawerState> {
 
   constructor(props: FormDataFileDrawerProps) {
     super(props);

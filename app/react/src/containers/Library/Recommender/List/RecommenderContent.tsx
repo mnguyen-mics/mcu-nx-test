@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -33,7 +33,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class RecommenderContent extends Component<RouteComponentProps<RouterProps> & InjectedIntlProps, RecommenderContentState> {
+class RecommenderContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, RecommenderContentState> {
 
   state = initialState;
 

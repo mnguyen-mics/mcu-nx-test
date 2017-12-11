@@ -8,7 +8,7 @@ import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
 import FormDataFileDrawer from './FormDataFileDrawer';
 import withDrawer from '../../../../components/Drawer';
-import DataFileService from '../../../../services/DataFileService.js';
+import DataFileService from '../../../../services/DataFileService';
 
 import {McsIcons, ButtonStyleless} from '../../../../components';
 import { FormFieldWrapper } from '../../../../components/Form';
@@ -165,8 +165,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
     };
 
     const editProps = {
-      onClick: (e: any) => {
-        e.preventDefault();
+      onClick: () => {
         const additionalProps = {
           content: this.state.fileContent,
           type: this.state.type,
@@ -184,9 +183,8 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
     };
 
     const removeProps = {
-      onClick: (e: any) => {
+      onClick: () => {
         // remove data from store
-        e.preventDefault();
         this.setState({ fileContent: '', fileName: '', canEdit: false });
         input.onChange({});
       },

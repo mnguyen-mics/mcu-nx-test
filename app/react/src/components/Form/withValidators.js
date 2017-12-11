@@ -66,7 +66,7 @@ const isValidFloat = formatMessage => value => {
 };
 
 const isValidDouble = formatMessage => value => {
-  return value && isNaN(Number(value)) && value.length > 18 ?
+  return value && (isNaN(Number(value)) || value.length > 18) ?
     formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 

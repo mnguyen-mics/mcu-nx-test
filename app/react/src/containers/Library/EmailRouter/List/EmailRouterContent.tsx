@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -28,7 +28,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class EmailRouterContent extends Component<RouteComponentProps<RouterProps> & InjectedIntlProps, EmailRouterContentState> {
+class EmailRouterContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, EmailRouterContentState> {
 
   state = initialState;
 

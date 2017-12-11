@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { EmptyTableView, TableViewFilters } from './TableView';
@@ -54,7 +54,7 @@ interface ItemListProps {
 
 type ItemListProvidedProps = ItemListProps & RouteComponentProps<RouterParams>;
 
-class ItemList extends Component<ItemListProvidedProps> {
+class ItemList extends React.Component<ItemListProvidedProps> {
 
   componentDidMount() {
     const {

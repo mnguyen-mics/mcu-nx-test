@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Modal } from 'antd';
@@ -28,7 +28,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class AssetListContent extends Component<RouteComponentProps<RouterProps> & InjectedIntlProps, AssetListContentState> {
+class AssetListContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, AssetListContentState> {
 
   state = initialState;
 

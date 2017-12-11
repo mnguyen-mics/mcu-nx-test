@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -7,7 +7,6 @@ import PluginContent from '../../../Plugin/Edit/PluginContent';
 import RecommenderService from '../../../../services/Library/RecommenderService';
 import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, Recommender, PluginInterface} from '../../../../models/Plugins';
-// import log from '../../../../utils/Logger';
 
 import messages from './messages';
 
@@ -34,7 +33,7 @@ interface CreateRecommenderProps {
 
 type JoinedProps = CreateRecommenderProps & RouteComponentProps<RecommenderRouteParam> & InjectedIntlProps;
 
-class CreateEditRecommender extends Component<
+class CreateEditRecommender extends React.Component<
   JoinedProps,
   CreateRecommenderState
 > {

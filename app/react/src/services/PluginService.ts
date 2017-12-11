@@ -96,7 +96,7 @@ const pluginService = {
             uri: params.value.uri,
             last_modified: null,
           };
-          return ApiService.putRequest(endpoint, newParams);
+          return ApiService.putRequest(endpoint, newParams) as Promise<DataResponse<PluginProperty>>;
         });
 
       } else if (params.value.fileName && params.value.fileContent) {
@@ -110,7 +110,7 @@ const pluginService = {
               uri: res,
               last_modified: null,
             };
-            return ApiService.putRequest(endpoint, newParams);
+            return ApiService.putRequest(endpoint, newParams) as Promise<DataResponse<PluginProperty>>;
           });
       } else if (!params.value.fileName && !params.value.fileContent && !params.value.uri) {
         // delete

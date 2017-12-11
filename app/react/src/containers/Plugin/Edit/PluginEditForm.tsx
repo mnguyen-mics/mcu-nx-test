@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import {
   Form,
   getFormValues,
@@ -58,7 +58,7 @@ const fieldGridConfig = {
 
 const PluginFieldGeneratorJS = PluginFieldGenerator as any;
 
-class PluginEditForm extends Component<JoinedProps, PluginEditFormState> {
+class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   static defaultProps: Partial<JoinedProps> = {
     editionMode: false,
@@ -175,7 +175,7 @@ class PluginEditForm extends Component<JoinedProps, PluginEditFormState> {
             <div id={'properties'}>
               <Row type="flex" align="middle" justify="space-between" className="section-header">
                 <FormTitle
-                  title={messages.sectionGeneralTitle}
+                  title={messages.sectionPropertiesTitle}
                 />
               </Row>
               <Row>
