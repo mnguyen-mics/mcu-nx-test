@@ -167,6 +167,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       yTooltip,
       visibility,
     };
+    const feDropShadow = ChartUtils.renderFeDropShadow();
     return (
       <div className="mcs-plot-container" style={{ ...this.props.style }}>
         <svg style={{ height: '0px', width: '0px' }}>
@@ -187,7 +188,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
               );
             })}
             <filter id="shadow">
-              <feDropShadow dx="0" dy="0.5" opacity="0.5" stdDeviation="0.5" />
+              {feDropShadow}
             </filter>
           </defs>
         </svg>
@@ -437,18 +438,6 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     });
   }
 
-  attachEventListeners(table: Plottable.Components.Table) {
-    global.window.addEventListener('resize', () => {
-      table.redraw();
-    });
-
-    global.window.addEventListener('redraw', () => {
-      setTimeout(() => {
-        table.redraw();
-      }, 500);
-    });
-  }
-
   renderStackedAreaPlotDoubleAxis(nextProps: StackedAreaPlotDoubleAxisProps) {
     const { identifier } = this.props;
     const { dataset, options } = nextProps;
@@ -511,7 +500,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       xAxis,
     );
 
-    this.attachEventListeners(this.plot);
+    ChartUtils.attachEventListeners(this.plot);
   }
 
   createDotsCrosshair(plot: Plot): DotsCrossHair {
