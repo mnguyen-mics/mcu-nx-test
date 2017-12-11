@@ -18,7 +18,7 @@ const BasicTooltip: React.SFC<BasicTooltipProps> = ({ content }) => {
 
   let tooltipTableContent: JSX.Element | JSX.Element[];
 
-  if (content) {
+  if (content && content.entries) {
     tooltipTableContent = content.entries.map((entry, index) => {
 
       return (
