@@ -109,7 +109,7 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
       let bidOptimizer = {};
-      return BidOptimizerServices.getBidOptimizer(adGroup.bid_optimizer_id)
+      return adGroup.bid_optimizer_id ? BidOptimizerServices.getBidOptimizer(adGroup.bid_optimizer_id)
         .then(res => res.data)
         .then(res => {
           bidOptimizer = res;
@@ -124,10 +124,8 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
                 ...bidOptimizer
               };
             });
-        })
-        .catch(() => {
-          return Promise.resolve(null);
-        });
+        }) : Promise.resolve(null);
+
     }).then(result => {
       return { ...adGroup, optimizerTable: result ? [result] : [] };
     });
