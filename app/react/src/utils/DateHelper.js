@@ -21,7 +21,7 @@ function isToday(date) {
  * @param date2 Javascript date
  */
 function areDatesSameDay(date1, date2) {
-  return (date1.setHours(0) - date2.setHours(0) === 0)
+  return (date1.setHours(0) - date2.setHours(0) === 0);
 }
 
 function truncateUpToHour(date, hourOfDay) {
