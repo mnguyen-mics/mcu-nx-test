@@ -311,7 +311,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       .y((d: any) => {
         return d[item];
       }, yScales[item])
-      .animated(true)
+      .animated(true);
     return plotComponent;
   }
 
