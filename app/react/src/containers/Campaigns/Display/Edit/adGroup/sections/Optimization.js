@@ -100,7 +100,11 @@ class Optimization extends Component {
           handlers.updateTableFields({ newFields, tableName: 'optimizerTable' });
           this.setState({ loading: false });
         });
+    } else {
+      handlers.updateTableFields({ newFields: [], tableName: 'optimizerTable' });
+      this.setState({ loading: false });
     }
+
 
   }
 

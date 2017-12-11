@@ -124,9 +124,12 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
                 ...bidOptimizer
               };
             });
+        })
+        .catch(() => {
+          return Promise.resolve(null);
         });
     }).then(result => {
-      return { ...adGroup, optimizerTable: [result] };
+      return { ...adGroup, optimizerTable: result ? [result] : [] };
     });
 };
 
