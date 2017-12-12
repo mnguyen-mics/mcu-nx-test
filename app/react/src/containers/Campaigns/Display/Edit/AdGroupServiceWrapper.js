@@ -108,9 +108,26 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
   ])
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
-      return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroup.bid_optimizer_id] });
+      let bidOptimizer = {};
+      return adGroup.bid_optimizer_id ? BidOptimizerServices.getBidOptimizer(adGroup.bid_optimizer_id)
+        .then(res => res.data)
+        .then(res => {
+          bidOptimizer = res;
+          return BidOptimizerServices.getBidOptimizerProperties(res.id)
+            .then(resp => resp.data)
+            .then(resp => {
+              return resp.length ? {
+                ...bidOptimizer,
+                type: (resp.find(elem => elem.technical_name === 'name')).value.value,
+                provider: (resp.find(elem => elem.technical_name === 'provider')).value.value,
+              } : {
+                ...bidOptimizer
+              };
+            });
+        }) : Promise.resolve(null);
+
     }).then(result => {
-      return { ...adGroup, optimizerTable: result.data };
+      return { ...adGroup, optimizerTable: result ? [result] : [] };
     });
 };
 
