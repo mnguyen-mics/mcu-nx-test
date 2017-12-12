@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import lodash from 'lodash';
-import { Layout } from 'antd';
 
 import DrawerManager from './DrawerManager';
 
@@ -61,7 +60,7 @@ const withDrawer = WrappedComponent => {
 
     render() {
       return (
-        <Layout>
+        <div className="drawer-wrapper">
           <DrawerManager
             drawableContents={this.state.drawableContents}
             onEscapeKeyDown={this.closeForegroundDrawerIfPossible}
@@ -73,7 +72,7 @@ const withDrawer = WrappedComponent => {
             openNextDrawer={this.handleOpenNewDrawer}
             closeNextDrawer={this.closeForegroundDrawer}
           />
-        </Layout>
+        </div>
       );
     }
   };

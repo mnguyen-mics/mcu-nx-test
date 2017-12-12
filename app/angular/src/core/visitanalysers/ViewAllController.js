@@ -6,6 +6,7 @@ define(['./module'], function (module) {
     '$scope', 'Restangular', 'core/common/auth/Session', '$location', '$uibModal', '$state', '$stateParams',
     function ($scope, Restangular, Session, $location, $uibModal, $state, $stateParams) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/visit_analyzers');
       Restangular.all("visit_analyzer_models").getList({
         organisation_id: organisationId
       }).then(function (visitAnalysers) {

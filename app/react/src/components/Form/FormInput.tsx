@@ -4,13 +4,15 @@ import * as React from 'react';
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
+import { TooltipProps } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
-interface FormInputProps {
+export interface FormInputProps {
   formItemProps: FormItemProps;
   inputProps?: InputProps;
+  helpToolTipProps?: TooltipProps;
 }
 
 const FormInput: React.SFC<FormInputProps & FormFieldWrapperProps & WrappedFieldProps> = props => {

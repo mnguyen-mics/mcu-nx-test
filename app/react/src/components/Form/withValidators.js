@@ -69,6 +69,11 @@ const isValidFloat = formatMessage => value => {
     formatMessage(defaultErrorMessages.invalidFloat) : undefined;
 };
 
+const isValidDouble = formatMessage => value => {
+  return value && (isNaN(Number(value)) || value.length > 18) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+};
+
 const isValidInteger = formatMessage => value => {
   return value && !/^\d+$/.test(value) ?
     formatMessage(defaultErrorMessages.invalidNumber) : undefined;
@@ -84,6 +89,7 @@ const withValidators = compose(
       isValidEmail: isValidEmail(formatMessage),
       isValidFloat: isValidFloat(formatMessage),
       isValidInteger: isValidInteger(formatMessage),
+      isValidDouble: isValidDouble(formatMessage)
     },
   })),
 );

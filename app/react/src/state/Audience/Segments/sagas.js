@@ -16,7 +16,7 @@ import {
 
 import { notifyError } from '../../Notifications/actions';
 import AudienceSegmentService from '../../../services/AudienceSegmentService';
-import DataFileService from '../../../services/DataFileService';
+import DataFileService from '../../../services/DataFileService.ts';
 import ReportService from '../../../services/ReportService.ts';
 import McsMoment from '../../../utils/McsMoment.ts';
 
@@ -34,6 +34,20 @@ import {
 } from '../../action-types';
 
 import messages from '../../../containers/Audience/Segments/Dashboard/messages';
+
+const onFileUpdate = (file) => {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader(); /* global FileReader */
+    fileReader.onload = (fileLoadedEvent) => {
+      const textFromFileLoaded = fileLoadedEvent.target.result;
+      return resolve(JSON.parse(textFromFileLoaded));
+    };
+
+    fileReader.readAsText(file, 'UTF-8');
+  });
+
+};
+
 
 function* loadPerformanceReport({ payload }) {
   try {
@@ -217,7 +231,8 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
     if (response.data.length > 0) {
       if (response.data[0].status === 'SUCCEEDED') {
         const micsUri = response.data[0].output_result.result.data_file_uri;
-        const overlapData = yield call(DataFileService.getDatafileData, micsUri);
+        const overlapFile = yield call(DataFileService.getDatafileData, micsUri);
+        const overlapData = yield call(onFileUpdate, overlapFile);
         // sort on overlap number (same as sorting on percentage )
         const topOverlaps = overlapData.overlaps.sort((a, b) => {
           return a.overlap_number > b.overlap_number ? -1 : 1;
