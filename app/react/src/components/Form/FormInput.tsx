@@ -9,11 +9,7 @@ import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
-<<<<<<< HEAD
 export interface FormInputProps extends FormFieldWrapperProps {
-=======
-export interface FormInputProps {
->>>>>>> 44c26b945d02b0861df3001fdcf4a8f578a8a00c
   formItemProps: FormItemProps;
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
