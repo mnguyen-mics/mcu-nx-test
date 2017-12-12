@@ -60,7 +60,7 @@ const withDrawer = WrappedComponent => {
 
     render() {
       return (
-        <div>
+        <div className="drawer-wrapper">
           <DrawerManager
             drawableContents={this.state.drawableContents}
             onEscapeKeyDown={this.closeForegroundDrawerIfPossible}
