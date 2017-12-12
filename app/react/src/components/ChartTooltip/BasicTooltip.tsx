@@ -4,11 +4,11 @@ import { FormattedMessage } from 'react-intl';
 interface BasicTooltipProps {
   content: {
     xLabel: string | number | Date;
-    entries: [{
+    entries: {
       label?: FormattedMessage.Props;
       color: string;
       value: number;
-    }];
+    }[];
   };
 }
 

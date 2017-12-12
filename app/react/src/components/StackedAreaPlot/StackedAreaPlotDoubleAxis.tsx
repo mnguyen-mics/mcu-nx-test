@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Plottable, {AxisOrientation, Plot, XYPlot} from 'plottable';
-import moment from 'moment';
+import Plottable, {AxisOrientation, Plot, SimpleSelection, XYPlot} from 'plottable';
+import moment, {Moment} from 'moment';
 import ChartUtils from './ChartUtils';
 
 import { areDatesSameDay, truncateUpToHour } from '../../utils/DateHelper';
@@ -12,17 +12,28 @@ import {Component} from 'plottable/build/src/components/component';
 import {Pointer} from 'plottable/build/src/interactions';
 import {XDragBoxLayer} from 'plottable/build/src/components';
 import {ITickGenerator} from 'plottable/build/src/scales/tickGenerators';
+import {FormattedMessage} from "react-intl";
 
 const HOUR_MILLIS = 3600 * 1000;
 const DAY_MILLIS = 24 * HOUR_MILLIS;
 
+interface YKey {
+  key: string;
+  message: FormattedMessage.Props;
+}
+
+interface TooltipContent {
+  xLabel: string | number | Date;
+  entries: Entry[];
+}
+
 interface ChartOptions {
   colors: string[];
-  yKeys: any[];
+  yKeys: YKey[];
   xKey: string;
   lookbackWindow: number;
   isDraggable: boolean;
-  onDragEnd: any;
+  onDragEnd: (dateRange: [Moment, Moment]) => void;
 }
 
 interface StackedAreaPlotDoubleAxisProps {
@@ -33,35 +44,35 @@ interface StackedAreaPlotDoubleAxisProps {
 }
 
 interface StackedAreaPlotDoubleAxisState {
-  xTooltip: any;
-  yTooltip: any;
-  content: any;
+  xTooltip: number;
+  yTooltip: number;
+  content: TooltipContent;
   visibility: string;
 }
 
 interface ChartTooltipProps {
   xTooltip: number;
   yTooltip: number;
-  content: any;
+  content: TooltipContent;
   visibility: string;
 }
 
 interface Entry {
-  label: string;
-  value: number;
+  label?: FormattedMessage.Props;
   color: string;
+  value: number;
 }
 
 interface LineCrossHair {
   drawAt: (pos: Position, navInfo: Plots.IPlotEntity) => void;
   hide: () => void;
-  vLine: any;
+  vLine: SimpleSelection<void>;
 }
 
 interface DotsCrossHair {
   drawAt: (pos: Position) => void;
   hide: () => void;
-  circle: any;
+  circle: SimpleSelection<void>;
 }
 
 interface Position {
@@ -101,9 +112,12 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     this.defineSvg = this.defineSvg.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
     this.state = {
-      xTooltip: null,
-      yTooltip: null,
-      content: null,
+      xTooltip: 0,
+      yTooltip: 0,
+      content: {
+        xLabel: '',
+        entries: [],
+      },
       visibility: 'hidden',
     };
   }
@@ -431,7 +445,10 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
         this.setTooltip({
           xTooltip: -100,
           yTooltip: -100,
-          content: {},
+          content: {
+            xLabel: '',
+            entries: [],
+          },
           visibility: 'hidden',
         });
       });
