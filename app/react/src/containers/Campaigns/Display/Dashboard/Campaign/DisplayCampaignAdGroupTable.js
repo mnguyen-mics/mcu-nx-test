@@ -171,13 +171,14 @@ class DisplayCampaignAdGroupTable extends Component {
         isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-      },
+      // TODO UNCOMMENT WHEN BACKEND IS FIXED
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      // },
     ];
 
     const actionColumns = [

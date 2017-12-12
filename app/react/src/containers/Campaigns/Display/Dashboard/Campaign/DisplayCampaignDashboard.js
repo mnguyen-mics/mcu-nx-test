@@ -32,7 +32,6 @@ function DisplayCampaignDashboard({
       title: goal.goal_name,
       key: goal.id,
       display: <GoalStackedAreaChart goal={goal} />,
-      forceRender: true,
     };
   });
 

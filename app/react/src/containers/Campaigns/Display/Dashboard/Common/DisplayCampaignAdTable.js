@@ -216,14 +216,15 @@ class DisplayCampaignAdTable extends Component {
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'impressions_cost'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a, b) => sorter(a, b, 'cpa'),
-      },
+      // TODO UNCOMMENT WHEN BACKEND IS FIXED
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      //   sorter: (a, b) => sorter(a, b, 'cpa'),
+      // },
     ];
 
     const actionColumns = [
