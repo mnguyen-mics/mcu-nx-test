@@ -106,7 +106,7 @@ const AudienceSegmentService = {
       AudienceSegmentService.getSegmentMetaData(organisationId),
     ])
       .then(([segmentApiResp, metadata]) => {
-        const augmentedSegments = segmentApiResp.data.map(segment => {
+        const augmentedSegments = segmentApiResp.data.map((segment: any) => {
           const meta = metadata[segment.id];
           const userPoints = (meta && meta.user_points ? meta.user_points : '-');
           const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
