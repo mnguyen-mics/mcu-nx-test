@@ -9,7 +9,7 @@ import {
 
 import PlacementListsService from '../../../services/Library/PlacementListsService';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
     PLACEMENT_LISTS_FETCH,

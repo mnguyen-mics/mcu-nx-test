@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { normalizeArrayOfObject } from '../../utils/Normalizer';
+import { normalizeArrayOfObject } from '../../utils/Normalizer.ts';
 import { EMAIL_ROUTER_LIST_FETCH } from '../action-types';
 
 const emailRoutersById = (state = {}, action) => {

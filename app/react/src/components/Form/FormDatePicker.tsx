@@ -2,22 +2,18 @@ import * as React from 'react';
 import { DatePicker } from 'antd';
 
 // TS Interfaces
-import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form';
-import { InputProps } from 'antd/lib/input/Input';
+import { WrappedFieldProps } from 'redux-form';
 import { DatePickerProps } from 'antd/lib/date-picker';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 
-interface FormDatePickerProps {
-  input: WrappedFieldInputProps;
-  meta: WrappedFieldMetaProps;
+export interface FormDatePickerProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  inputProps?: InputProps;
   datePickerProps: DatePickerProps;
 }
 
-const FormDatePicker: React.SFC<FormDatePickerProps & FormFieldWrapperProps> = props => {
+const FormDatePicker: React.SFC<FormDatePickerProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';

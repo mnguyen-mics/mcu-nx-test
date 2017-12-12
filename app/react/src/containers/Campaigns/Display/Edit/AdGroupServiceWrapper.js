@@ -1,7 +1,7 @@
 import DisplayCampaignService from '../../../../services/DisplayCampaignService.ts';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 import BidOptimizerServices from '../../../../services/BidOptimizerServices';
-import CreativeService from '../../../../services/CreativeService';
+import CreativeService from '../../../../services/CreativeService.ts';
 import { isFakeId } from '../../../../utils/FakeIdHelper';
 
 
@@ -17,7 +17,7 @@ function getAds({ adGroupId, campaignId }) {
 
   return DisplayCampaignService.getAds(campaignId, adGroupId)
     .then(({ data }) => {
-      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id)))
+      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id).then(res => res.data)))
         .then(creatives => {
           return creatives.map(creative => {
             return {

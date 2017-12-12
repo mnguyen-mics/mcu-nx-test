@@ -5,9 +5,9 @@ import log from '../../../utils/Logger';
 
 import { fetchCreativeEmails } from './actions';
 
-import CreativeService from '../../../services/CreativeService';
+import CreativeService from '../../../services/CreativeService.ts';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import { CREATIVES_EMAIL_FETCH } from '../../action-types';
 

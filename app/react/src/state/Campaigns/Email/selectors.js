@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-import { normalizeReportView } from '../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+import { normalizeReportView } from '../../../utils/MetricHelper.ts';
+import { normalizeArrayOfObject } from '../../../utils/Normalizer.ts';
 
 const getEmailCampaigns = state => state.emailCampaignsTable.emailCampaignsApi.data;
 const getDeliveryReportView = state => state.emailCampaignsTable.deliveryReportApi.report_view;

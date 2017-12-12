@@ -12,11 +12,11 @@ import AdGroup from './AdGroup';
 
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import { makeCancelable } from '../../../../../utils/ApiHelper';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer.ts';
+import { makeCancelable } from '../../../../../utils/ApiHelper.ts';
 import {
   normalizeReportView,
-} from '../../../../../utils/MetricHelper';
+} from '../../../../../utils/MetricHelper.ts';
 
 
 import {

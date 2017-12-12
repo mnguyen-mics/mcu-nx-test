@@ -6,7 +6,7 @@ import { Tooltip, Popover, Switch } from 'antd';
 import { compose } from 'recompose';
 
 import { TableView } from '../../../../../components/TableView/index.ts';
-import { formatMetric } from '../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../utils/MetricHelper.ts';
 import McsIcons from '../../../../../components/McsIcons.tsx';
 import messages from '../messages';
 

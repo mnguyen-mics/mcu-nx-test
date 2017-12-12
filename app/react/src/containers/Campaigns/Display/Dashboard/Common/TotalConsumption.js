@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { formatMetric } from '../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../utils/MetricHelper.ts';
 import ReportService from '../../../../../services/ReportService.ts';
 import Progress from '../../../../../components/Progress.tsx';
 

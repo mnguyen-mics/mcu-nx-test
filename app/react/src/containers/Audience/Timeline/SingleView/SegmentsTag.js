@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Tag, Tooltip } from 'antd';
 
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 
 class SegmentsTag extends Component {
 
@@ -18,7 +18,7 @@ class SegmentsTag extends Component {
   fetchSegmentData = (segmentId) => {
     AudienceSegmentService.getSegment(segmentId).then((response) => {
       this.setState({
-        segment: response,
+        segment: response.data,
       });
     });
   }
