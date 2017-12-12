@@ -12,7 +12,7 @@ import {Component} from 'plottable/build/src/components/component';
 import {Pointer} from 'plottable/build/src/interactions';
 import {XDragBoxLayer} from 'plottable/build/src/components';
 import {ITickGenerator} from 'plottable/build/src/scales/tickGenerators';
-import {FormattedMessage} from "react-intl";
+import {FormattedMessage} from 'react-intl';
 
 const HOUR_MILLIS = 3600 * 1000;
 const DAY_MILLIS = 24 * HOUR_MILLIS;

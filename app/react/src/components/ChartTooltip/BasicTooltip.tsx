@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 
+interface Entry {
+  label?: FormattedMessage.Props;
+  color: string;
+  value: number;
+}
+
 interface BasicTooltipProps {
   content: {
     xLabel: string | number | Date;
-    entries: {
-      label?: FormattedMessage.Props;
-      color: string;
-      value: number;
-    }[];
+    entries: Entry[];
   };
 }
 

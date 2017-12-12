@@ -21,7 +21,7 @@ function isToday(date: Moment) {
  * @param date2 Javascript date
  */
 function areDatesSameDay(date1: Moment, date2: Moment) {
-  const format = 'YYYY-MM-DD'
+  const format = 'YYYY-MM-DD';
   return (date1.format(format) === date2.format(format));
 }
 
@@ -37,11 +37,10 @@ function truncateUpToHour(date: Date, hourOfDay: number) {
   }
 }
 
-
 export {
   formatCalendarDate,
   isPastDate,
   isToday,
   areDatesSameDay,
-  truncateUpToHour
+  truncateUpToHour,
 };
