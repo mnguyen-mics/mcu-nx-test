@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal } from 'antd';
 import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
@@ -218,8 +218,11 @@ class VisitAnalyzerContent extends Component<RouteComponentProps<RouterProps> & 
       ],
     };
 
-    const emptyTable = {
-      iconType: 'library' as McsIconType,
+    const emptyTable: {
+      iconType: McsIconType,
+      intlMessage: FormattedMessage.Props,
+    } = {
+      iconType: 'library',
       intlMessage: messages.empty,
     };
 

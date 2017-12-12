@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import ExportsService from '../../../../services/Library/ExportsService';
@@ -160,8 +160,11 @@ class ExportContent extends React.Component<RouteComponentProps<RouterProps> & I
       ],
     };
 
-    const emptyTable = {
-      iconType: 'library' as McsIconType,
+    const emptyTable: {
+      iconType: McsIconType,
+      intlMessage: FormattedMessage.Props,
+    } = {
+      iconType: 'library',
       intlMessage: messages.empty,
     };
 
