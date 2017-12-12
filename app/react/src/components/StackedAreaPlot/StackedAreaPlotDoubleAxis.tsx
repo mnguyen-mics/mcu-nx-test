@@ -29,7 +29,7 @@ interface StackedAreaPlotDoubleAxisProps {
   identifier: string;
   dataset: any[];
   options: ChartOptions;
-  style: any;
+  style: React.CSSProperties;
 }
 
 interface StackedAreaPlotDoubleAxisState {
@@ -53,14 +53,14 @@ interface Entry {
 }
 
 interface LineCrossHair {
-  drawAt: any;
-  hide: any;
+  drawAt: (pos: Position, navInfo: Plots.IPlotEntity) => void;
+  hide: () => void;
   vLine: any;
 }
 
 interface DotsCrossHair {
-  drawAt: any;
-  hide: any;
+  drawAt: (pos: Position) => void;
+  hide: () => void;
   circle: any;
 }
 
@@ -546,7 +546,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       .attr('y1', 0)
       .attr('y2', plot.height());
 
-    const drawAt = (mousePosition: Position, navInfo: Plots.ILightweightPlotEntity) => {
+    const drawAt = (mousePosition: Position, navInfo: Plots.IPlotEntity) => {
       const navPosition = navInfo.position;
       vLine.attr('x1', navPosition.x);
       vLine.attr('x2', navPosition.x);
