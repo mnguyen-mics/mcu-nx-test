@@ -1,23 +1,36 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from 'react-intl';
-import { withRouter } from 'react-router-dom';
+import * as React from 'react';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
-import McsMoment from '../../../../../utils/McsMoment.ts';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import McsMoment from '../../../../../utils/McsMoment';
+import log from '../../../../../utils/Logger';
 import TotalConsumption from '../Common/TotalConsumption';
 import messages from '../messages';
+import { DisplayCampaignResource } from '../../../../../models/campaign/display/DisplayCampaignResource';
 
+interface RouterProps {
+  organisationId: string;
+  campaignId: string;
+}
 
-class CampaignDisplayProgress extends Component {
+type CampaignDisplayProgressProps = InjectedIntlProps & RouteComponentProps<RouterProps>;
 
-  constructor(props) {
+interface CampaignDisplayProgressState {
+  isLoading: boolean;
+  campaign?: DisplayCampaignResource;
+  error: boolean;
+}
+
+class CampaignDisplayProgress extends React.Component<CampaignDisplayProgressProps, CampaignDisplayProgressState> {
+
+  constructor(props: CampaignDisplayProgressProps) {
     super(props);
     this.state = {
       isLoading: false,
-      campaign: {},
+      error: false,
     };
   }
 
@@ -33,7 +46,7 @@ class CampaignDisplayProgress extends Component {
     this.fetchAll(organisationId, campaignId);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: CampaignDisplayProgressProps) {
     const {
       match: {
         params: {
@@ -58,7 +71,7 @@ class CampaignDisplayProgress extends Component {
 
   }
 
-  fetchAll = (organisationId, id) => {
+  fetchAll = (organisationId: string, id: string) => {
     this.setState(prevState => {
       const nextState = {
         ...prevState,
@@ -74,6 +87,12 @@ class CampaignDisplayProgress extends Component {
           nextState.campaign = response.data;
           nextState.isLoading = false;
           return nextState;
+        });
+      }).catch(err => {
+        log.error(err);
+        this.setState({
+          isLoading: false,
+          error: true,
         });
       });
 
@@ -94,7 +113,7 @@ class CampaignDisplayProgress extends Component {
 
     let from = new McsMoment('now');
     let periodMessage = '';
-    switch (campaign.max_budget_period) {
+    switch (campaign && campaign.max_budget_period) {
       case 'DAY':
         from = new McsMoment('now');
         periodMessage = formatMessage(messages.dailyBudgetConsumption);
@@ -116,18 +135,18 @@ class CampaignDisplayProgress extends Component {
     const to = new McsMoment('now');
     const fromInfiniteAndBeyond = new McsMoment(0);
 
-    const totalBudgetGlobal = campaign.total_budget;
-    const totalBudgetPeriod = campaign.max_budget_per_period;
+    const totalBudgetGlobal = campaign && campaign.total_budget || 1;
+    const totalBudgetPeriod = campaign && campaign.max_budget_per_period || 1;
 
     const totalMessage = formatMessage(messages.totalBudgetConsumption);
 
-    return campaign.max_budget_period ? (
+    return campaign && campaign.id && campaign.organisation_id && campaign.max_budget_period ? (
       <Row gutter={100}>
         <Col span={12}>
           <TotalConsumption
             formattedMessage={totalMessage}
             loading={isLoading}
-            id={campaign.id}
+            id={campaign && campaign.id}
             organisationId={campaign.organisation_id}
             objectType="campaign"
             totalBudget={totalBudgetGlobal}
@@ -164,14 +183,8 @@ class CampaignDisplayProgress extends Component {
 
 }
 
-CampaignDisplayProgress.propTypes = {
-  match: PropTypes.shape().isRequired,
-  intl: intlShape.isRequired,
-};
 
-CampaignDisplayProgress = compose(
+export default compose(
   injectIntl,
   withRouter,
 )(CampaignDisplayProgress);
-
-export default CampaignDisplayProgress;

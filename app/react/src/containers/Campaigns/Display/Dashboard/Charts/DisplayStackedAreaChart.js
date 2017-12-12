@@ -11,7 +11,7 @@ import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
 import MetricsColumn from '../../../../../components/MetricsColumn.tsx';
-import CampaignDisplayProgress from './CampaignDisplayProgress';
+import CampaignDisplayProgress from './CampaignDisplayProgress.tsx';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
