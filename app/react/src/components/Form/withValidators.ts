@@ -50,6 +50,7 @@ export interface ValidatorProps {
     isValidEmail: Validator;
     isValidFloat: Validator;
     isValidInteger: Validator;
+    isValidDouble: Validator;
   };
 }
 
@@ -86,6 +87,11 @@ const isValidFloat = (formatMessage: FormatMessageHandler): Validator => value =
     formatMessage(defaultErrorMessages.invalidFloat) : undefined;
 };
 
+const isValidDouble = (formatMessage: FormatMessageHandler): Validator => value => {
+  return value && (isNaN(Number(value)) || value.length > 18) ?
+    formatMessage(defaultErrorMessages.invalidNumber) : undefined;
+};
+
 const isValidInteger = (formatMessage: FormatMessageHandler): Validator => value => {
   return value && !/^\d+$/.test(value) ?
     formatMessage(defaultErrorMessages.invalidNumber) : undefined;
@@ -104,6 +110,7 @@ export default compose<{}, ValidatorProps>(
           isValidEmail: isValidEmail(formatMessage),
           isValidFloat: isValidFloat(formatMessage),
           isValidInteger: isValidInteger(formatMessage),
+          isValidDouble: isValidDouble(formatMessage),
         },
       };
     }),

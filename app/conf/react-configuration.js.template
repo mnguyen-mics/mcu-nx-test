@@ -17,11 +17,13 @@
     'library.bid_optimizers',
     'library.attribution_models',
     'library.visit_analyzers',
+    'library.email_routers',
     'library.catalog',
     'library.ad_layouts',
     'library.stylesheets',
     'library.assets',
     'library.exports',
+    'library.recommenders',
   ];
 
  const gravityFeatures = [
@@ -35,7 +37,11 @@
     NAVIGATOR_URL: 'http://navigator.mediarithmics.local',
     API_URL: 'http://api.mediarithmics.local',
     FEATURES: defaultFeatures,
+<<<<<<< HEAD
     SITE_NAME: 'mediarithmics - navigator'
+=======
+    SITE_NAME: 'mediarithmics | navigator'
+>>>>>>> 44c26b945d02b0861df3001fdcf4a8f578a8a00c
   };
 
  window.MCS_CONSTANTS = MCS_CONSTANTS;

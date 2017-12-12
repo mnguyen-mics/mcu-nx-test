@@ -9,9 +9,6 @@ import { forgotPasswordSagas } from './ForgotPassword/sagas';
 import { automationsSagas } from './Automations/sagas';
 import { segmentsSagas } from './Audience/Segments/sagas';
 import { partitionsSagas } from './Audience/Partitions/sagas';
-import { placementListsSagas } from './Library/PlacementLists/sagas';
-import { keywordListsSagas } from './Library/KeywordLists/sagas';
-import { assetsFilesSagas } from './Library/AssetsFiles/sagas';
 import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
 import { labelsSagas } from './Labels/sagas';
@@ -34,9 +31,6 @@ export default function* sagas() {
     ...versionSagas,
     ...labelsSagas,
     ...partitionsSagas,
-    ...placementListsSagas,
-    ...keywordListsSagas,
-    ...assetsFilesSagas,
     ...creativeDisplaySagas,
     ...creativeEmailsSagas,
     ...accountSagas,

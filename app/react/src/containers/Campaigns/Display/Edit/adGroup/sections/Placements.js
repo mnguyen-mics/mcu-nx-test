@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
-import PlacementListServices from '../../../../../../services/Library/PlacementListsService';
+import PlacementListServices from '../../../../../../services/Library/PlacementListsService.ts';
 
 import messages from '../../messages';
 

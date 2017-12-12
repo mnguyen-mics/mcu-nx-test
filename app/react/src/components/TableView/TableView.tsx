@@ -67,6 +67,7 @@ interface TableViewState {
 class TableView extends React.Component<TableViewProps, TableViewState> {
 
   static defaultProps: Partial<TableViewProps> = {
+    onRowClick: undefined,
     pagination: false,
     visibilitySelectedColumns: [],
   };
@@ -163,8 +164,8 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       dataSource,
       loading,
       onChange,
-      pagination,
       onRowClick,
+      pagination,
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
