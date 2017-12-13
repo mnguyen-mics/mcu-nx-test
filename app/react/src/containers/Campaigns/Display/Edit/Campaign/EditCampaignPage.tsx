@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 
 import CampaignContent from './CampaignContent';
-import withDrawer from '../../../../../components/Drawer';
+import withDrawer, { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
@@ -15,7 +15,7 @@ import messages from './messages';
 
 interface EditCampaignPageProps {
   closeNextDrawer: () => void;
-  openNextDrawer: () => void;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
   notifyError: any;
 }
 

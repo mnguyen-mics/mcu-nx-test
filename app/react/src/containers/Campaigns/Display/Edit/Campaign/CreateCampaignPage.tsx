@@ -3,13 +3,13 @@ import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import CampaignContent from './CampaignContent';
-import withDrawer from '../../../../../components/Drawer';
+import withDrawer, { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
 import { withMcsRouter } from '../../../../Helpers';
 import messages from './messages';
 
 interface CreateCampaignPageProps {
   closeNextDrawer: () => void;
-  openNextDrawer: () => void;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
 }
 
 interface RouterMatchParams {

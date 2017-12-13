@@ -7,6 +7,7 @@ import { injectIntl } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 
 import { EditContentLayout } from '../../../../../components/Layout/index';
+import { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
 import CampaignForm from './CampaignForm';
 import { withMcsRouter } from '../../../../Helpers';
 import messages from './messages';
@@ -19,7 +20,7 @@ interface CampaignContentProps {
   editionMode: boolean;
   initialValues: object;
   loading?: boolean;
-  openNextDrawer: () => void;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
   breadcrumbPaths: Array<{
     name: string,
     url?: string,
