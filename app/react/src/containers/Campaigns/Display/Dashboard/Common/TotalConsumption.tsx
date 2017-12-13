@@ -1,10 +1,5 @@
 import * as React from 'react';
 
-<<<<<<< HEAD:app/react/src/containers/Campaigns/Display/Dashboard/Common/TotalConsumption.js
-import { formatMetric } from '../../../../../utils/MetricHelper.ts';
-import ReportService from '../../../../../services/ReportService.ts';
-import Progress from '../../../../../components/Progress.tsx';
-=======
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
 import Progress from '../../../../../components/Progress';
@@ -26,7 +21,6 @@ interface TotalConsumptionState {
   isLoading: boolean;
   consumedBudget: number;
 }
->>>>>>> 0f07c60d398efba17325624fe06a6191d44a99d1:app/react/src/containers/Campaigns/Display/Dashboard/Common/TotalConsumption.tsx
 
 class TotalConsumption extends React.Component<TotalConsumptionProps, TotalConsumptionState> {
 

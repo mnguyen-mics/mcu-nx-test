@@ -12,14 +12,9 @@ import AdGroup from './AdGroup';
 
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
-<<<<<<< HEAD
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer.ts';
 import { makeCancelable } from '../../../../../utils/ApiHelper.ts';
-=======
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import { makeCancelable } from '../../../../../utils/ApiHelper';
 import log from '../../../../../utils/Logger';
->>>>>>> 0f07c60d398efba17325624fe06a6191d44a99d1
 import {
   normalizeReportView,
 } from '../../../../../utils/MetricHelper.ts';

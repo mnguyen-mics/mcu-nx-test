@@ -16,12 +16,8 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
-<<<<<<< HEAD:app/react/src/containers/Campaigns/Display/Dashboard/Charts/DisplayStackedAreaChart.js
-import { formatMetric } from '../../../../../utils/MetricHelper.ts';
-=======
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsMoment from '../../../../../utils/McsMoment';
->>>>>>> 0f07c60d398efba17325624fe06a6191d44a99d1:app/react/src/containers/Campaigns/Display/Dashboard/Charts/DisplayStackedAreaChart.tsx
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
