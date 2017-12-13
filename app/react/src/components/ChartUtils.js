@@ -1,9 +1,9 @@
+import React from 'react';
 import Plottable from 'plottable';
 import moment from 'moment';
 import { areDatesSameDay } from '../utils/DateHelper.ts';
 
 class ChartUtils {
-
   static formatXAxis(xScale, dataset, hasHoursOfDay) {
     const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
     xAxis.formatter(d => {
