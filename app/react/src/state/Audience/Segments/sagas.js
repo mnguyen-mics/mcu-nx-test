@@ -248,7 +248,7 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
             return AudienceSegmentService.getSegment(s.segment_id).then(res => resolve(res)).catch(() => resolve(null));
           });
         };
-        const segmentResourceResponses = yield all(topSegments.map((s, i) => {
+        const segmentResourceResponses = yield all(topSegments.map((s) => {
           return call(myCall, s);
         }));
         const segmentResources = segmentResourceResponses.filter(res => res).map(res => res.data);
