@@ -42,6 +42,7 @@ class PieChart extends React.Component<PieChartProps> {
   }
 
   componentDidUpdate() {
+
     this.plot.destroy();
     this.renderPieChart(this.svg);
   }
@@ -62,14 +63,17 @@ class PieChart extends React.Component<PieChartProps> {
     const colorScale = new Plottable.Scales.InterpolatedColor();
     colorScale.range(options.colors);
 
-    const outerRadius = this.computeOuterRadius(svg, options);
+    const outerRadius = (svg.clientHeight > svg.clientWidth / 2
+        ? (svg.clientWidth / 2) - 20
+        : svg.clientHeight - 20
+    );
 
     const plotData = new Plottable.Dataset(dataset);
 
     const plot = new Plottable.Plots.Pie()
       .addDataset(plotData)
       .sectorValue((d) => { return d.val; }, scale)
-      .attr('fill', (d) => { return d.color; });
+      .attr('fill', (d) => { return d.val; }, colorScale);
 
     if (options.isHalf) {
       plot.outerRadius(outerRadius);
