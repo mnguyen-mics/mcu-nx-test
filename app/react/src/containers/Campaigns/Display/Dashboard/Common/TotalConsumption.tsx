@@ -1,13 +1,30 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import ReportService from '../../../../../services/ReportService.ts';
-import Progress from '../../../../../components/Progress.tsx';
+import ReportService from '../../../../../services/ReportService';
+import Progress from '../../../../../components/Progress';
+import log from '../../../../../utils/Logger';
+import McsMoment from '../../../../../utils/McsMoment';
 
-class TotalConsumption extends Component {
+interface TotalConsumptionProps {
+  id: string;
+  organisationId: string;
+  totalBudget: number;
+  loading: boolean;
+  objectType: string;
+  from: McsMoment;
+  to: McsMoment;
+  formattedMessage: string;
+}
 
-  constructor(props) {
+interface TotalConsumptionState {
+  isLoading: boolean;
+  consumedBudget: number;
+}
+
+class TotalConsumption extends React.Component<TotalConsumptionProps, TotalConsumptionState> {
+
+  constructor(props: TotalConsumptionProps) {
     super(props);
     this.state = {
       isLoading: false,
@@ -26,7 +43,7 @@ class TotalConsumption extends Component {
     this.fetchAll(organisationId, id, objectType, from, to);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: TotalConsumptionProps) {
     const {
       id,
       organisationId,
@@ -43,13 +60,18 @@ class TotalConsumption extends Component {
       to: nextTo,
     } = nextProps;
 
-    if (id !== nextId || organisationId !== nextOrganisationId || objectType !== nextObjectType || !from.toMoment().isSame(nextFrom) || !to.toMoment().isSame(nextTo)) {
+    if (id !== nextId ||
+      organisationId !== nextOrganisationId ||
+      objectType !== nextObjectType ||
+      !from.toMoment().isSame(nextFrom.toMoment()) ||
+      !to.toMoment().isSame(nextTo.toMoment())
+    ) {
       this.fetchAll(organisationId, id, objectType, from, to);
     }
 
   }
 
-  fetchAll = (organisationId, id, objectType, from, to) => {
+  fetchAll = (organisationId: string, id: string, objectType: string, from: McsMoment, to: McsMoment) => {
     this.setState(prevState => {
       const nextState = {
         ...prevState,
@@ -57,19 +79,21 @@ class TotalConsumption extends Component {
       nextState.isLoading = true;
       return nextState;
     }, () => {
-      ReportService.getSingleDisplayDeliveryReport(organisationId, id, from, to, '', ['impressions_cost']).then(response => {
+      ReportService.getSingleDisplayDeliveryReport(organisationId, id, from, to, undefined, ['impressions_cost']).then(response => {
         this.setState(prevState => {
           const nextState = {
             ...prevState,
           };
-          if (response.data && response.data.report_view && response.data.report_view.rows && response.data.report_view.rows[0]) {
-            nextState.consumedBudget = response.data.report_view.rows[0][1];
-          } else {
-            nextState.consumedBudget = 0;
-          }
+          nextState.consumedBudget = (
+            response.data && response.data.report_view && response.data.report_view.rows && response.data.report_view.rows[0]) ?
+            response.data.report_view.rows[0][1]
+          : 0;
           nextState.isLoading = false;
           return nextState;
         });
+      }).catch(err => {
+        log.error(err);
+        this.setState({ isLoading: false });
       });
 
     });
@@ -87,8 +111,8 @@ class TotalConsumption extends Component {
       formattedMessage,
     } = this.props;
 
-    const formatPercentage = (number) => {
-      return formatMetric(number / 100, '0.00%');
+    const formatPercentage = (n: number) => {
+      return formatMetric(n / 100, '0.00%');
     };
 
     const percent = (consumedBudget / totalBudget) * 100;
@@ -104,16 +128,5 @@ class TotalConsumption extends Component {
   }
 
 }
-
-TotalConsumption.propTypes = {
-  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-  organisationId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-  totalBudget: PropTypes.number.isRequired,
-  loading: PropTypes.bool.isRequired,
-  objectType: PropTypes.string.isRequired,
-  from: PropTypes.shape().isRequired,
-  to: PropTypes.shape().isRequired,
-  formattedMessage: PropTypes.string.isRequired,
-};
 
 export default TotalConsumption;

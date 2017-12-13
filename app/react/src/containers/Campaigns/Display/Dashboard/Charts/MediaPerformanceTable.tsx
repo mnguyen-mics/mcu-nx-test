@@ -166,14 +166,15 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions_cost'),
       },
-      {
-        intlMessage: messages.cpa,
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpa'),
-      },
+      // TODO UNCOMMENT WHEN BACKEND IS FIXED
+      // {
+      //   intlMessage: messages.cpa,
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
+      //   sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpa'),
+      // },
     ];
 
     const columnsDefinitions = {

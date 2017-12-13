@@ -1,39 +1,44 @@
 import * as React from 'react';
 
+interface Metric {
+  name?: string;
+  value?: string;
+}
+
 interface MetricsColumnProps {
-  metrics: [{
-    name?: string;
-    value?: string;
-  }];
+  metrics: Metric[];
   isLoading?: boolean;
 }
 
-const MetricsColumn: React.SFC<MetricsColumnProps> = props => {
+class MetricsColumn extends React.Component<MetricsColumnProps> {
 
-  const {
-    metrics,
-    isLoading,
-  } = props;
+  static defaultProps = {
+    isLoading: false,
+  };
 
-  const height = 375;
-  const nbOfVal: number = metrics ? metrics.length : 1;
-  const cellHeight: number = height / nbOfVal;
+  render() {
+    const {
+      metrics,
+      isLoading,
+    } = this.props;
 
-  return (
-    <div className="p-r-20 mcs-metrics-column">
-      {metrics.map(metric => {
-        return (
-          <div key={metric.name} style={{ height: `${cellHeight}px` }}>
-            <div className="title">{metric.name}</div>
-            <div className="metric">{isLoading ? <i className="mcs-table-cell-loading" style={{ width: '130px' }} /> : metric.value}</div>
-          </div>);
-      })}
-    </div>
-  );
-};
+    const height = 375;
+    const nbOfVal: number = metrics ? metrics.length : 1;
+    const cellHeight: number = height / nbOfVal;
 
-MetricsColumn.defaultProps = {
-  isLoading: false,
-};
+    return (
+      <div className="p-r-20 mcs-metrics-column">
+        {metrics.map(metric => {
+          return (
+            <div key={metric.name} style={{ height: `${cellHeight}px` }}>
+              <div className="title">{metric.name}</div>
+              <div className="metric">{isLoading ? <i className="mcs-table-cell-loading" style={{ width: '130px' }} /> : metric.value}</div>
+            </div>);
+        })}
+      </div>
+    );
+  }
+
+}
 
 export default MetricsColumn;

@@ -8,7 +8,7 @@ import McsTabs from '../../../../../components/McsTabs.tsx';
 import Card from '../../../../../components/Card/Card.tsx';
 import { DisplayStackedAreaChart, MediaPerformanceTable, GoalStackedAreaChart } from '../Charts';
 
-import messages from '../messages';
+import messages from '../messages.ts';
 
 
 function DisplayCampaignDashboard({
@@ -32,7 +32,6 @@ function DisplayCampaignDashboard({
       title: goal.goal_name,
       key: goal.id,
       display: <GoalStackedAreaChart goal={goal} />,
-      forceRender: true,
     };
   });
 
