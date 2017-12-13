@@ -64,7 +64,7 @@ EditContentLayout.propTypes = {
     message: PropTypes.shape({
       id: PropTypes.string.isRequired,
       defaultMessage: PropTypes.string.isRequired,
-    }).isRequired,
+    }),
     onClick: PropTypes.func,
   }).isRequired,
 

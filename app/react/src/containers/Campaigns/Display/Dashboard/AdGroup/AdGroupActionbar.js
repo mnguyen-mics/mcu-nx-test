@@ -7,7 +7,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../../Actionbar';
-import messages from '../messages';
+import messages from '../messages.ts';
 
 class AdGroupActionbar extends Component {
 

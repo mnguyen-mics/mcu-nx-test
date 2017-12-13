@@ -13,11 +13,11 @@ const ReportService = {
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],
-    metrics: string[] | undefined,
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const params = {
@@ -36,7 +36,7 @@ const ReportService = {
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],
-    metrics: string[] | undefined,
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
@@ -59,13 +59,13 @@ const ReportService = {
     campaignId: string,
     startDate: McsMoment,
     endDate: McsMoment,
-    dimension: string[] | undefined,
-    metrics: string[] | undefined,
+    dimension?: string[],
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
     const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'];
-    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
+    const DEFAULT_DIMENSIONS = [''];
     const range = { from: startDate, to: endDate };
 
     const formattedDates = formatMcsDate(range, true);
@@ -87,13 +87,13 @@ const ReportService = {
     objectId: string,
     startDate: McsMoment,
     endDate: McsMoment,
-    dimension: string[] | undefined,
-    metrics: string[] | undefined,
+    dimension?: string[],
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_group_performance_report';
-    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+    const DEFAULT_DIMENSIONS = [''];
+    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const params = {
@@ -115,13 +115,13 @@ const ReportService = {
     objectId: string,
     startDate: McsMoment,
     endDate: McsMoment,
-    dimension: string[] | undefined,
-    metrics: string[] | undefined,
+    dimension?: string[],
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_performance_report';
-    const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name'];
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+    const DEFAULT_DIMENSIONS = [''];
+    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const params = {
@@ -142,12 +142,12 @@ const ReportService = {
     objectId: string,
     startDate: McsMoment,
     endDate: McsMoment,
-    dimension: string[] | undefined,
-    metrics: string[] | undefined,
+    dimension?: string[],
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/media_performance_report';
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
+    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name', 'format'];
@@ -171,7 +171,7 @@ const ReportService = {
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],
-    metrics: string[] | undefined,
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
@@ -231,7 +231,7 @@ const ReportService = {
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],
-    metrics: string[] | undefined,
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/conversion_performance_report';
@@ -255,7 +255,7 @@ const ReportService = {
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],
-    metrics: string[] | undefined,
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/audience_segment_report';
@@ -286,7 +286,7 @@ const ReportService = {
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],
-    metrics: string[] | undefined,
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
@@ -324,8 +324,8 @@ const ReportService = {
     startDate: McsMoment,
     endDate: McsMoment,
     filters: string[],
-    dimension: string[] | undefined,
-    metrics: string[] | undefined,
+    dimension?: string[],
+    metrics?: string[],
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/conversion_attribution_performance_report';

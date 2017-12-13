@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
 import McsIcons from '../../../../../components/McsIcons.tsx';
-import CreativeService from '../../../../../services/CreativeService';
+import CreativeService from '../../../../../services/CreativeService.ts';
 import * as actionsRedux from '../../../../../state/Notifications/actions';
 import messages from '../messages';
 
@@ -25,12 +25,12 @@ class AuditComponent extends Component {
       notifyError
     } = this.props;
     if (creative && creative.id) {
-      CreativeService.getAuditStatus(creative.id).then(data => {
+      CreativeService.getAuditStatus(creative.id).then(res => {
         this.setState(prevState => {
           const nextState = {
             ...prevState
           };
-          nextState.status = data;
+          nextState.status = res.data;
           return nextState;
         });
       }).catch(e => {
@@ -44,12 +44,12 @@ class AuditComponent extends Component {
       notifyError
     } = this.props;
     if (nextProps.creative && nextProps.creative.id !== this.props.creative.id) {
-      CreativeService.getAuditStatus(nextProps.creative.id).then(data => {
+      CreativeService.getAuditStatus(nextProps.creative.id).then(res => {
         this.setState(prevState => {
           const nextState = {
             ...prevState
           };
-          nextState.status = data;
+          nextState.status = res.data;
           return nextState;
         });
       })

@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
 import DisplayCreativeContent from './DisplayCreativeContent';
-import withDrawer from '../../../../../components/Drawer';
+import withDrawer from '../../../../../components/Drawer/index.tsx';
 import { withMcsRouter } from '../../../../Helpers';
 import { createDisplayCreative } from '../../../../../formServices/CreativeServiceWrapper';
 

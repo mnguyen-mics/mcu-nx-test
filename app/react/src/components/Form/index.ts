@@ -2,7 +2,6 @@ import FormBoolean from './FormBoolean';
 import FormCheckbox from './FormCheckbox';
 import FormDatePicker from './FormDatePicker';
 import FormFieldWrapper from './FormFieldWrapper';
-import FormInput from './FormInput';
 import FormRadio from './FormRadio';
 import FormRadioGroup from './FormRadioGroup';
 import FormRangePicker from './FormRangePicker/index';
@@ -14,14 +13,17 @@ import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
 import FormUpload from './FormUpload';
 import FormTextArea from './FormTextArea';
+import { BaseFieldProps } from 'redux-form';
+import FormInput from './FormInput';
 import formErrorMessage from './formErrorMessage';
+
+export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
 export default {
   FormBoolean,
   FormCheckbox,
   FormDatePicker,
   FormFieldWrapper,
-  FormInput,
   FormRadio,
   FormRadioGroup,
   FormRangePicker,
@@ -32,6 +34,7 @@ export default {
   FormUpload,
   formErrorMessage,
   SwitchInput,
+  FormInput,
   withNormalizer,
   withValidators,
 };

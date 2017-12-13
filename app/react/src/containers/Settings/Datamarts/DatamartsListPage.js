@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { withMcsRouter } from '../../Helpers';
 import { ReactRouterPropTypes } from '../../../validators/proptypes';
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 import DatamartService from '../../../services/DatamartService';
 import * as notifyActions from '../../../state/Notifications/actions';
 

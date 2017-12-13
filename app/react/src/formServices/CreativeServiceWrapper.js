@@ -1,4 +1,4 @@
-import CreativeService from '../services/CreativeService';
+import CreativeService from '../services/CreativeService.ts';
 import log from '../utils/Logger';
 
 // ===========================================================================

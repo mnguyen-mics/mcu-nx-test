@@ -23,6 +23,7 @@ import { updateSearch,
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
 import McsMoment from '../../../../../utils/McsMoment';
+import log from '../../../../../utils/Logger';
 
 const StackedAreaPlotTS = StackedAreaPlot as any;
 const LegendChartTS = LegendChart as any;
@@ -63,6 +64,7 @@ interface GoalStackedAreaChartState {
   isFetchingPerformance: boolean;
   hasFetchedPerformance: boolean;
   hasData: boolean;
+  error: boolean;
 }
 
 type JoinedProps = GoalStackedAreaChartProps & RouteComponentProps<RouterMatchParams> & InjectedIntlProps;
@@ -76,6 +78,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
       isFetchingPerformance: false,
       hasFetchedPerformance: false,
       hasData: true,
+      error: false,
     };
   }
 
@@ -197,13 +200,23 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     if (attributionId) { filters.push(`attribution_model_id==${attributionId}`); }
     return this.setState({ isFetchingPerformance: true }, () => {
       ReportService.getConversionAttributionPerformance(organisationId, from, to, filters, ['day'], undefined)
-        .then((results) => normalizeReportView(results.data.report_view))
+        .then((results) => normalizeReportView<PerformanceValue>(results.data.report_view))
         .then(results => {
           this.setState({
             performance: results,
             isFetchingPerformance: false,
             hasData: !!results.length,
             hasFetchedPerformance: true,
+            error: false,
+          });
+        })
+        .catch(err => {
+          log.error(err);
+          this.setState({
+            isFetchingPerformance: false,
+            hasData: false,
+            hasFetchedPerformance: true,
+            error: true,
           });
         });
     });

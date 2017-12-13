@@ -1,8 +1,9 @@
-import AudienceSegmentService from '../services/AudienceSegmentService';
+
 import BidOptimizerServices from '../services/BidOptimizerServices';
-import CreativeService from '../services/CreativeService';
+import CreativeService from '../services/CreativeService.ts';
 import { isFakeId } from '../utils/FakeIdHelper';
 import DisplayCampaignService from '../services/DisplayCampaignService.ts';
+import AudienceSegmentService from '../services/AudienceSegmentService.ts';
 
 
 // ===========================================================================
@@ -17,7 +18,7 @@ function getAds({ campaignId, adGroupId }) {
 
   return DisplayCampaignService.getAds(campaignId, adGroupId)
     .then(({ data }) => {
-      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id)))
+      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id).then(res => res.data)))
         .then(creatives => {
           return creatives.map(creative => {
             return {
@@ -108,9 +109,26 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
   ])
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
-      return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroup.bid_optimizer_id] });
+      let bidOptimizer = {};
+      return adGroup.bid_optimizer_id ? BidOptimizerServices.getBidOptimizer(adGroup.bid_optimizer_id)
+        .then(res => res.data)
+        .then(res => {
+          bidOptimizer = res;
+          return BidOptimizerServices.getBidOptimizerProperties(res.id)
+            .then(resp => resp.data)
+            .then(resp => {
+              return resp.length ? {
+                ...bidOptimizer,
+                type: (resp.find(elem => elem.technical_name === 'name')).value.value,
+                provider: (resp.find(elem => elem.technical_name === 'provider')).value.value,
+              } : {
+                ...bidOptimizer
+              };
+            });
+        }) : Promise.resolve(null);
+
     }).then(result => {
-      return { ...adGroup, optimizerTable: result.data };
+      return { ...adGroup, optimizerTable: result ? [result] : [] };
     });
 };
 

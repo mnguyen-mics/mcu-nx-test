@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 
 import CampaignContent from './CampaignContent';
-import withDrawer from '../../../../../components/Drawer';
+import withDrawer from '../../../../../components/Drawer/index.tsx';
 
 
 function CreateCampaignPage({

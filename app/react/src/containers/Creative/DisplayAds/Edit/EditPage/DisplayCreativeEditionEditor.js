@@ -229,6 +229,7 @@ class DisplayCreativeEditionEditor extends Component {
                         rendererVersionId={creative.renderer_version_id}
                         organisationId={organisationId}
                         noUploadModal={this.noUploadModal}
+                        pluginVersionId={creative.renderer_version_id}
                       />
                     );
                   })}

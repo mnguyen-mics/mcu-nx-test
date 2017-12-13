@@ -5,10 +5,10 @@ import { Link, withRouter } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
 
-import messages from '../messages';
+import messages from '../messages.ts';
 
 import { TableView } from '../../../../../components/TableView/index.ts';
-import { formatMetric } from '../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../utils/MetricHelper.ts';
 import McsIcons from '../../../../../components/McsIcons.tsx';
 
 class DisplayCampaignAdGroupTable extends Component {
@@ -171,13 +171,14 @@ class DisplayCampaignAdGroupTable extends Component {
         isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-      },
+      // TODO UNCOMMENT WHEN BACKEND IS FIXED
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      // },
     ];
 
     const actionColumns = [

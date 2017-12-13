@@ -12,7 +12,7 @@ import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedArea
 import { LegendChart } from '../../../../../components/LegendChart';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import messages from '../messages';
+import messages from '../messages.ts';
 
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 

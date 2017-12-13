@@ -8,8 +8,8 @@ import { withMcsRouter } from '../../../../Helpers';
 import DisplayCreativeCreationEditor from './DisplayCreativeCreationEditor';
 import DisplayCreativeTypePicker from './DisplayCreativeTypePicker';
 
-import PluginService from '../../../../../services/PluginService';
-import CreativeService from '../../../../../services/CreativeService';
+import CreativeService from '../../../../../services/CreativeService.ts';
+import PluginService from '../../../../../services/PluginService.ts';
 import * as actions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
@@ -37,6 +37,92 @@ class DisplayCreativeContent extends Component {
     };
   }
 
+
+  createDisplayCreative = (creative, properties) => {
+
+    const { history, organisationId, notifyError } = this.props;
+
+    const options = {
+      renderer_artifact_id: this.state.adRenderer.artifactId,
+      renderer_group_id: this.state.adRenderer.groupId,
+      editor_artifact_id: 'default-editor',
+      editor_group_id: 'com.mediarithmics.creative.display',
+      subtype: 'BANNER',
+      format: creative.format,
+      destination_domain: creative.destination_domain,
+      name: creative.name,
+    };
+    this.setState(prevState => {
+      const nextState = {
+        ...prevState
+      };
+      nextState.isLoading = true;
+      return nextState;
+    }, () => {
+
+      CreativeService
+        .createDisplayCreative(organisationId, options)
+        .then(res => res.data)
+        .then(res => {
+          const creativeId = res.id;
+          const propertiesPromises = [];
+          properties.forEach(item => {
+            propertiesPromises.push(CreativeService.updateDisplayCreativeRendererProperty(organisationId, creativeId, item.technical_name, item));
+          });
+          Promise.all(propertiesPromises).then(() => {
+            CreativeService.takeScreenshot(creativeId).then(() => {
+              this.setState(prevState => {
+                const nextState = {
+                  ...prevState
+                };
+                return nextState;
+              });
+              history.push(`/v2/o/${organisationId}/creatives/display/edit/${creativeId}`);
+            }).catch(err => {
+              notifyError(err);
+
+              this.setState(prevState => {
+                const nextState = {
+                  ...prevState
+                };
+                nextState.isLoading = false;
+                return nextState;
+              });
+            });
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState(prevState => {
+              const nextState = {
+                ...prevState
+              };
+              nextState.isLoading = false;
+              return nextState;
+            });
+
+          });
+        })
+        .catch(err => {
+          // TODO NOTIFY ERR
+          notifyError(err);
+          this.setState(prevState => {
+            const nextState = {
+              ...prevState
+            };
+            nextState.isLoading = false;
+            return nextState;
+          });
+
+        });
+    });
+  }
+
+  redirect = () => {
+    const { history, organisationId } = this.props;
+    const emailCampaignListUrl = `/v2/o/${organisationId}/creatives/display`;
+    history.push(emailCampaignListUrl);
+  }
+
   onSelect = adRenderer => {
     const {
       notifyError,
@@ -55,7 +141,7 @@ class DisplayCreativeContent extends Component {
           const lastVersion = res.data[res.data.length - 1];
 
           const pluginPropertiesPromise = PluginService.getPluginVersionProperty(adRenderer, lastVersion.id);
-          const formatsPromises = CreativeService.getCreativeFormats(organisationId);
+          const formatsPromises = CreativeService.getCreativeFormats(organisationId).then(resp => resp.data);
 
           Promise.all([pluginPropertiesPromise, formatsPromises])
             .then(values => {
@@ -213,6 +299,7 @@ DisplayCreativeContent.propTypes = {
   onClose: PropTypes.func.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
   save: PropTypes.func.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
 };
 
 export default compose(

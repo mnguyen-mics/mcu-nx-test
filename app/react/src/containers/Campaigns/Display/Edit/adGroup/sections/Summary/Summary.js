@@ -5,7 +5,7 @@ import { Col, Row } from 'antd';
 
 import { FormSection } from '../../../../../../../components/Form/index.ts';
 import messages from '../../../messages';
-import { formatMetric } from '../../../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../../../utils/MetricHelper.ts';
 import { isToday, formatCalendarDate } from '../../../../../../../utils/DateHelper';
 import {
   filterTableByIncludeStatus,
@@ -122,6 +122,7 @@ function Summary({ displayAudience, formatMessage, formValues }) {
             <P blue>XXX</P>
           </Section>}
 
+          { (includedGeonames.length > 0 || excludedGeonames.length > 0) &&
           <Section>
             { includedGeonames.length > 0 ?
               formatMessage(messages.contentSectionIncludedLocations) :
@@ -133,7 +134,7 @@ function Summary({ displayAudience, formatMessage, formValues }) {
               null
             }
             { excludedGeonames }
-          </Section>
+          </Section>}
 
           <Section>
             {formatMessage(messages.contentSection8Part6)}

@@ -12,8 +12,8 @@ import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService.ts';
 
-import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 

@@ -13,7 +13,7 @@ import { Card } from '../../../../../components/Card/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import messages from '../messages';
+import messages from '../messages.ts';
 import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 
 const { Content } = Layout;

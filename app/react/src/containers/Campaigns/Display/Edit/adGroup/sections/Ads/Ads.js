@@ -9,9 +9,9 @@ import { EmptyRecords, Form } from '../../../../../../../components/index.ts';
 import AdGroupCardList from './AdGroupCardList';
 import messages from '../../../messages';
 import CreativeCardSelector from '../../../../../Email/Edit/CreativeCardSelector';
-import CreativeService from '../../../../../../../services/CreativeService';
 import { DisplayCreativeContent } from '../../../../../../Creative/DisplayAds/Edit';
 import { createDisplayCreative, updateDisplayCreative } from '../../../../../../../formServices/CreativeServiceWrapper';
+import CreativeService from '../../../../../../../services/CreativeService.ts';
 
 const { FormSection } = Form;
 
@@ -74,7 +74,7 @@ class Ads extends Component {
           createdCreativeData
         ];
         this.setState({ loading: true }, () => {
-          handlers.updateTableFields({ newFields: valuesToAdd, tableName: 'adTable' });
+          handlers.updateCreativeTableFields({ newFields: valuesToAdd, tableName: 'adTable' });
           this.props.handlers.closeNextDrawer();
         });
         this.setState({ loading: false });
@@ -131,8 +131,8 @@ class Ads extends Component {
     this.setState({ loading: true });
     handlers.closeNextDrawer();
 
-    Promise.all(selectedIds.map(item => {
-      return CreativeService.getCreative(item);
+    Promise.all(selectedIds.map(creativeId => {
+      return CreativeService.getCreative(creativeId).then(res => res.data);
     })).then(response => {
       handlers.updateTableFields({ newFields: response, tableName: 'adTable' });
       return this.setState({ loading: false });

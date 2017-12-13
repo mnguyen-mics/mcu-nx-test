@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
 import CampaignContent from './CampaignContent';
-import withDrawer from '../../../../../components/Drawer';
+import withDrawer from '../../../../../components/Drawer/index.tsx';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';

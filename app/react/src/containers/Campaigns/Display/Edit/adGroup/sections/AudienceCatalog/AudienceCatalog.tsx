@@ -20,7 +20,6 @@ import {
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import {
   AudienceSegmentResource,
-  AudienceSegmentSelectionResource,
 } from '../../../../../../../models/audiencesegment';
 
 import messages from '../../../messages';
@@ -163,7 +162,7 @@ class AudienceCatalog extends React.Component<JoinedProps, AudienceCatalogState>
 
   addSegment = (segmentId: string, exclude: boolean = false) => {
     const { fields } = this.props;
-    const resource: AudienceSegmentSelectionResource = {
+    const resource = {
       audience_segment_id: segmentId,
       exclude,
     };

@@ -54,6 +54,7 @@ EditLayoutActionbar.defaultProps = {
   pristine: null,
   submitting: false,
   isCreativetypePicker: false,
+  message: null,
 };
 
 EditLayoutActionbar.propTypes = {
@@ -68,7 +69,7 @@ EditLayoutActionbar.propTypes = {
   message: PropTypes.shape({
     id: PropTypes.string.isRequired,
     defaultMessage: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
 
   onClose: PropTypes.func,
   submitting: PropTypes.bool,

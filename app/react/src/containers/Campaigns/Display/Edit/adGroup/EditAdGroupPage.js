@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { camelCase } from 'lodash';
 
-import withDrawer from '../../../../../components/Drawer';
+import withDrawer from '../../../../../components/Drawer/index.tsx';
 import AdGroupContent from './AdGroupContent';
 import { withMcsRouter } from '../../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';

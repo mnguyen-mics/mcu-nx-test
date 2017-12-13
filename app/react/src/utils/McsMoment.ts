@@ -2,7 +2,7 @@ import moment from 'moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-type McsDate = string;
+type McsDate = Date | string | number;
 
 export type McsRange = {
   from: McsMoment,
@@ -10,9 +10,9 @@ export type McsRange = {
 };
 
 export function isValidMcsDate(date: McsDate) {
-  if (/^now-(\d+)d$/g.test(date)) {
+  if (typeof date === 'string' && /^now-(\d+)d$/g.test(date)) {
     return true;
-  } else if (/^now$/g.test(date)) {
+  } else if (typeof date === 'string' && /^now$/g.test(date)) {
     return true;
   } else if (moment(date).isValid()) {
     return true;
@@ -22,7 +22,7 @@ export function isValidMcsDate(date: McsDate) {
 
 export function convertMcsDateToMoment(date: McsDate): moment.Moment {
   // test if date is in format now-Xd
-  if (/^now-(\d+)d$/g.test(date)) {
+  if (typeof date === 'string' && /^now-(\d+)d$/g.test(date)) {
     const days = date.replace('now-', '').replace('d', '');
     return moment().subtract(days, 'days');
   } else if (date === 'now') {
