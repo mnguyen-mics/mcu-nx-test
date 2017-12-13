@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-import { normalizeReportView } from '../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+import { normalizeReportView } from '../../../utils/MetricHelper.ts';
+import { normalizeArrayOfObject } from '../../../utils/Normalizer.ts';
 
 const getGoals = state => state.goalsTable.goalsApi.data;
 const getPerformanceReportView = state => state.goalsTable.performanceReportApi.report_view;

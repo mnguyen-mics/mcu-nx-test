@@ -2,7 +2,7 @@ import { takeLatest, delay } from 'redux-saga';
 import { call, fork, put, all, take, race } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
-import { normalizeReportView } from '../../../utils/MetricHelper';
+import { normalizeReportView } from '../../../utils/MetricHelper.ts';
 
 import {
   fetchAudienceSegmentList,
@@ -15,12 +15,12 @@ import {
 } from './actions';
 
 import { notifyError } from '../../Notifications/actions';
-import AudienceSegmentService from '../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../services/AudienceSegmentService.ts';
 import DataFileService from '../../../services/DataFileService.ts';
 import ReportService from '../../../services/ReportService.ts';
 import McsMoment from '../../../utils/McsMoment.ts';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
   AUDIENCE_SEGMENTS_LIST_FETCH,
@@ -116,12 +116,12 @@ function* loadAudienceSegmentSingle({ payload }) {
       throw new Error('Payload is invalid');
     }
 
-    const segment = yield call(AudienceSegmentService.getSegment, segmentId);
     const perfResponse = yield call(ReportService.getAudienceSegmentReport, organisationId, new McsMoment('now'), new McsMoment('now'), 'day', ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'], { filters: `audience_segment_id==${segmentId}` });
+    const segmentResponse = yield call(AudienceSegmentService.getSegment, segmentId);
 
     const reportView = normalizeReportView(perfResponse.data.report_view);
     yield put(fetchAudienceSegmentSingle.success({
-      ...segment,
+      ...segmentResponse.data,
       report_view: reportView,
     }));
   } catch (error) {
@@ -242,9 +242,10 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
           return overlapData.segments.find(s => s.segment_id === overlap.segment_intersect_with);
         });
         // for each overlap we match it with its id related segment
-        const segmentResources = yield all(topSegments.map(s => {
+        const segmentResourceResponses = yield all(topSegments.map(s => {
           return call(AudienceSegmentService.getSegment, s.segment_id);
         }));
+        const segmentResources = segmentResourceResponses.map(res => res.data);
         // get segments names
         const segments = [
           ...topSegments.map(s => {

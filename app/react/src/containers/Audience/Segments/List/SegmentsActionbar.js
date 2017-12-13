@@ -11,11 +11,11 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons.tsx';
 
 import ExportService from '../../../../services/ExportService';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 import ReportService from '../../../../services/ReportService.ts';
 
-import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
 
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
@@ -47,15 +47,15 @@ const fetchExportData = (organisationId, datamartId, filter) => {
   ]);
 
   return apiResults.then(results => {
-    const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
+    const audienceSegments = normalizeArrayOfObject(results[0].data, 'id');
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
       'audience_segment_id',
     );
 
-    const mergedData = Object.keys(displayCampaigns).map((segmentId) => {
+    const mergedData = Object.keys(audienceSegments).map((segmentId) => {
       return {
-        ...displayCampaigns[segmentId],
+        ...audienceSegments[segmentId],
         ...performanceReport[segmentId],
       };
     });

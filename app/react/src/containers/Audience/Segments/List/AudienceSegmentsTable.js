@@ -21,7 +21,7 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 

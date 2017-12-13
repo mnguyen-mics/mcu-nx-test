@@ -65,12 +65,12 @@ class Placements extends Component {
     Promise.all(newSelectedIds.map(item => PlacementListServices.getPlacementList(item)))
       .then(results => {
         return results.map(placementList => {
-          const alreadyExistingElement = this.props.formValues.find(elem => elem.placement_list_id === placementList.id);
+          const alreadyExistingElement = this.props.formValues.find(elem => elem.placement_list_id === placementList.data.id);
           return !alreadyExistingElement ? {
-            ...placementList,
-            modelId: placementList.id,
-            include: !placementList.exclude,
-            placement_list_id: placementList.id,
+            ...placementList.data,
+            modelId: placementList.data.id,
+            include: !placementList.data.exclude,
+            placement_list_id: placementList.data.id,
           } : alreadyExistingElement;
         });
       })

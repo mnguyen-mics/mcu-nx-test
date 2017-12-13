@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { compose } from 'recompose';
+import { compose, Omit } from 'recompose';
 import { FieldArray, Field, GenericFieldArray, InjectedFormProps } from 'redux-form';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -16,7 +16,6 @@ import {
   ServiceCategoryTree,
   AudienceSegmentServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
-import { DataListResponse } from '../../../../../../../services/ApiService';
 
 const AudienceCatatogFieldArray = FieldArray as new() => GenericFieldArray<Field, AudienceCatalogProps>;
 
@@ -41,7 +40,7 @@ interface AudienceCatalogContainerState {
 
 export interface AudienceSegmentFieldModel {
   id: string;
-  resource: AudienceSegmentSelectionResource;
+  resource: AudienceSegmentSelectionResource | Omit<AudienceSegmentSelectionResource, 'id'>;
   deleted?: boolean;
 }
 
@@ -124,7 +123,7 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
       CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.GENDER'] }),
       CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.AGE'] }),
       AudienceSegmentService.getSegments(organisationId, datamartId, { max_results: 500 })
-        .then((res: DataListResponse<AudienceSegmentResource>) => res.data),
+        .then(res => res.data),
     ]).then(([audienceCategoryTree, genderServiceItems, ageServiceItems, audienceSegments]) => {
 
       this.setState(prevState => ({

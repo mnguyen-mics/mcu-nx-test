@@ -340,15 +340,16 @@ class CampaignForm extends Component {
     return new Promise((resolve, reject) => {
       this.createGoalWithoutLinkingToCampaign(organisationId, goalData)
         .then((goalSaved) => {
-          return DisplayCampaignService.createGoal({
-            campaignId: campaignId,
-            body: {
+          return DisplayCampaignService.createGoal(
+            campaignId,
+            {
               id: 'T2',
               goal_id: goalSaved.id,
               default: goalSaved.default,
               name: goalSaved.name,
               goal_selection_type: 'CONVERSION'
-            } });
+            }
+          );
         })
         .then(() => resolve())
         .catch(error => {

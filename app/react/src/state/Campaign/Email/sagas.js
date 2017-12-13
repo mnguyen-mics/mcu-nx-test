@@ -11,7 +11,7 @@ import {
   fetchAllEmailBlastPerformance,
 } from './actions';
 
-import EmailCampaignService from '../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../services/EmailCampaignService.ts';
 import ReportService from '../../../services/ReportService.ts';
 
 import {
@@ -34,7 +34,7 @@ function* loadEmailCampaign({ payload }) {
     if (!campaignId) throw new Error('Payload is invalid');
 
     const response = yield call(EmailCampaignService.getEmailCampaign, campaignId);
-    yield put(fetchEmailCampaign.success(response));
+    yield put(fetchEmailCampaign.success(response.data));
   } catch (error) {
     log.error(error);
     yield put(fetchEmailCampaign.failure(error));
@@ -75,8 +75,8 @@ function* modifyEmailCampaign({ payload }) {
 
     if (!campaignId) throw new Error('Payload is invalid');
 
-    const response = yield call(EmailCampaignService.updateCampaign, campaignId, body);
-    yield put(updateEmailCampaign.success(response));
+    const response = yield call(EmailCampaignService.updateEmailCampaign, campaignId, body);
+    yield put(updateEmailCampaign.success(response.data));
     yield put(fetchEmailCampaign.request(campaignId, body));
   } catch (error) {
     log.error(error);
@@ -113,7 +113,7 @@ function* loadAllEmailBlastPerformance({ payload }) {
 
     const startDate = filter.from;
     const endDate = filter.to;
-    const dimension = 'blast_id';
+    const dimension = 'sub_campaign_id';
 
     const response = yield call(ReportService.getAllEmailBlastPerformance, organisationId, campaignId, startDate, endDate, dimension);
     yield put(fetchAllEmailBlastPerformance.success(response));

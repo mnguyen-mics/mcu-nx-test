@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-import { normalizeReportView, formatNormalizeReportView } from '../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+import { normalizeReportView, formatNormalizeReportView } from '../../../utils/MetricHelper.ts';
+import { normalizeArrayOfObject } from '../../../utils/Normalizer.ts';
 
 const getEmailPerformanceData = state => state.emailCampaignSingle.emailCampaignPerformance.report_view;
 
@@ -31,7 +31,7 @@ const convertDeliveryReportToObjectArray = createSelector(
 
 const getStatByBlastId = createSelector(
   convertDeliveryReportToObjectArray,
-  (array) => normalizeArrayOfObject(array, 'blast_id'),
+  (array) => normalizeArrayOfObject(array, 'sub_campaign_id'),
 );
 
 const getEmailBlastTableView = createSelector(

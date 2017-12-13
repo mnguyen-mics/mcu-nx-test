@@ -9,7 +9,7 @@ import {
 
 import AudiencePartitionsService from '../../../services/AudiencePartitionsService';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
     AUDIENCE_PARTITIONS_LIST_FETCH,

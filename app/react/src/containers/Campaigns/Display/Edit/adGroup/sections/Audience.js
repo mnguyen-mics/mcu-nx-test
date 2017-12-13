@@ -6,11 +6,11 @@ import PropTypes from 'prop-types';
 
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import messages from '../../messages';
-import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../../../../services/AudienceSegmentService.ts';
 import { getDefaultDatamart } from '../../../../../../state/Session/selectors';
-import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper.ts';
 import RelatedRecordTable from '../../../../../RelatedRecordTable.tsx';
-import { formatMetric } from '../../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../../utils/MetricHelper.ts';
 
 const { FormSection } = Form;
 
@@ -72,7 +72,7 @@ class Audience extends Component {
   updateData = (selectedIds) => {
     const { formValues, handlers, organisationId } = this.props;
     const fetchSelectedSegments = Promise.all(selectedIds.map(segmentId => {
-      return AudienceSegmentService.getSegment(segmentId);
+      return AudienceSegmentService.getSegment(segmentId).then(res => res.data);
     }));
     const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
 

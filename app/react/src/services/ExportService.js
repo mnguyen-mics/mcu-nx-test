@@ -4,6 +4,7 @@ import emailCampaignMessages from '../containers/Campaigns/Email/messages';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages';
 import dateMessages from '../common/messages/dateMessages';
 import exportMessages from '../common/messages/exportMessages';
+import log from '../utils/Logger';
 
 const datenum = (v, date1904) => {
   let newV = v;
@@ -150,9 +151,12 @@ const exportData = (sheets, fileName, extension) => {
     workBook.Sheets[sheets[i].name] = workbookSheet;
     // }
   }
-
-  const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
-  saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
+  try {
+    const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
+    saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
+  } catch (error) {
+    log.error(error);
+  }
 };
 
 /**

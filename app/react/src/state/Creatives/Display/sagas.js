@@ -7,9 +7,9 @@ import {
     fetchCreativeDisplay,
 } from './actions';
 
-import CreativeService from '../../../services/CreativeService';
+import CreativeService from '../../../services/CreativeService.ts';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
     CREATIVES_DISPLAY_FETCH,

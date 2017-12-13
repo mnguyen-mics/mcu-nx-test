@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 
 import AdGroupContent from './AdGroupContent';
-import withDrawer from '../../../../../components/Drawer';
+import withDrawer from '../../../../../components/Drawer/index.tsx';
 import { withMcsRouter } from '../../../../Helpers';
 import { saveAdGroup } from '../AdGroupServiceWrapper';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
