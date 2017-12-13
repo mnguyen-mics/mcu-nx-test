@@ -10,15 +10,15 @@ interface TotalConsumptionProps {
   id: string;
   organisationId: string;
   totalBudget: number;
-  loading: Boolean
-  objectType: string
+  loading: boolean;
+  objectType: string;
   from: McsMoment;
   to: McsMoment;
   formattedMessage: string;
 }
 
 interface TotalConsumptionState {
-  isLoading: Boolean;
+  isLoading: boolean;
   consumedBudget: number;
 }
 
@@ -84,11 +84,10 @@ class TotalConsumption extends React.Component<TotalConsumptionProps, TotalConsu
           const nextState = {
             ...prevState,
           };
-          if (response.data && response.data.report_view && response.data.report_view.rows && response.data.report_view.rows[0]) {
-            nextState.consumedBudget = response.data.report_view.rows[0][1];
-          } else {
-            nextState.consumedBudget = 0;
-          }
+          nextState.consumedBudget = (
+            response.data && response.data.report_view && response.data.report_view.rows && response.data.report_view.rows[0]) ?
+            response.data.report_view.rows[0][1]
+          : 0;
           nextState.isLoading = false;
           return nextState;
         });
@@ -112,8 +111,8 @@ class TotalConsumption extends React.Component<TotalConsumptionProps, TotalConsu
       formattedMessage,
     } = this.props;
 
-    const formatPercentage = (number: number) => {
-      return formatMetric(number / 100, '0.00%');
+    const formatPercentage = (n: number) => {
+      return formatMetric(n / 100, '0.00%');
     };
 
     const percent = (consumedBudget / totalBudget) * 100;

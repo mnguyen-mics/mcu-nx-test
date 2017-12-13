@@ -167,7 +167,8 @@ class CampaignDisplayProgress extends React.Component<CampaignDisplayProgressPro
           />
         </Col>
       </Row>
-    ) : <Row gutter={100}>
+    ) : (
+    <Row gutter={100}>
       <Col span={12}>
         <div className="mcs-progress-wrapper">
           <i className="mcs-table-cell-loading" style={{ width: '100%' }} />
@@ -178,11 +179,10 @@ class CampaignDisplayProgress extends React.Component<CampaignDisplayProgressPro
           <i className="mcs-table-cell-loading" style={{ width: '100%' }} />
         </div>
       </Col>
-    </Row>;
+    </Row>);
   }
 
 }
-
 
 export default compose(
   injectIntl,

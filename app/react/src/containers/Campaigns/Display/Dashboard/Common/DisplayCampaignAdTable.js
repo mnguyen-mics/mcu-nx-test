@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 import { TableView } from '../../../../../components/TableView/index.ts';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsIcons from '../../../../../components/McsIcons.tsx';
-import messages from '../messages';
+import messages from '../messages.ts';
 
 class DisplayCampaignAdTable extends Component {
 

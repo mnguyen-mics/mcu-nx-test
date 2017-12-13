@@ -5,7 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
 
-import messages from '../messages';
+import messages from '../messages.ts';
 
 import { TableView } from '../../../../../components/TableView/index.ts';
 import { formatMetric } from '../../../../../utils/MetricHelper';

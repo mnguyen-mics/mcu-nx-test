@@ -64,7 +64,7 @@ interface GoalStackedAreaChartState {
   isFetchingPerformance: boolean;
   hasFetchedPerformance: boolean;
   hasData: boolean;
-  error: Boolean;
+  error: boolean;
 }
 
 type JoinedProps = GoalStackedAreaChartProps & RouteComponentProps<RouterMatchParams> & InjectedIntlProps;
@@ -217,7 +217,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
             hasData: false,
             hasFetchedPerformance: true,
             error: true,
-          })
+          });
         });
     });
   }

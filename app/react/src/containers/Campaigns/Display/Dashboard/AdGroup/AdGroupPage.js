@@ -7,7 +7,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { Button } from 'antd';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import messages from '../messages';
+import messages from '../messages.ts';
 import AdGroup from './AdGroup';
 
 import ReportService from '../../../../../services/ReportService.ts';
