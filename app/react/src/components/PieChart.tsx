@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Plottable from 'plottable';
+import ChartUtils from './ChartUtils';
 
 interface DatasetProps {
   key: string;
@@ -15,7 +16,7 @@ interface TextProps {
 interface OptionsProps {
   innerRadius: boolean;
   isHalf: boolean;
-  text: TextProps[];
+  text: TextProps;
   colors: string[];
 }
 
@@ -88,16 +89,7 @@ class PieChart extends React.Component<PieChartProps> {
 
     plot.renderTo(`#${identifier}`);
     this.plot = plot;
-    global.window.addEventListener('resize', () => {
-      plot.xAlignment('center');
-      plot.yAlignment('center');
-
-      const outerRadiusResized = this.computeOuterRadius(svg, options);
-
-      plot.outerRadius(outerRadiusResized);
-      plot.innerRadius(outerRadiusResized * 0.606);
-      plot.redraw();
-    });
+    ChartUtils.addResizeListener(plot, svg, options, this.computeOuterRadius);
   }
 
   render() {

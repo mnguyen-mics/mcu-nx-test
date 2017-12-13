@@ -1,7 +1,7 @@
 import React from 'react';
 import Plottable from 'plottable';
 import moment from 'moment';
-import { areDatesSameDay } from '../../utils/DateHelper.ts';
+import { areDatesSameDay } from '../utils/DateHelper.ts';
 
 class ChartUtils {
 
@@ -35,6 +35,19 @@ class ChartUtils {
 
   static renderFeDropShadow() {
     return <feDropShadow dx="0" dy="0.5" opacity="0.5" stdDeviation="0.5" />;
+  }
+
+  static addResizeListener(plot, svg, options, computeOuterRadius) {
+    global.window.addEventListener('resize', () => {
+      plot.xAlignment('center');
+      plot.yAlignment('center');
+
+      const outerRadiusResized = computeOuterRadius(svg, options);
+
+      plot.outerRadius(outerRadiusResized);
+      plot.innerRadius(outerRadiusResized * 0.606);
+      plot.redraw();
+    });
   }
 }
 export default ChartUtils;

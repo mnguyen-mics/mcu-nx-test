@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Plottable, {AxisOrientation, Plot, SimpleSelection, XYPlot} from 'plottable';
 import moment, {Moment} from 'moment';
-import ChartUtils from './ChartUtils';
+import ChartUtils from '../ChartUtils';
 
 import { areDatesSameDay, truncateUpToHour } from '../../utils/DateHelper';
 
