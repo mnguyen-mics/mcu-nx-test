@@ -39,7 +39,6 @@ class PieChart extends Component {
   }
 
   componentDidUpdate() {
-
     this.plot.destroy();
     this.renderPieChart(this.svg);
   }
@@ -48,17 +47,19 @@ class PieChart extends Component {
     this.plot.destroy();
   }
 
+  computeOuterRadius(svg, options) {
+    return options.isHalf ?
+      (svg.clientHeight) - 20 :
+      ((Math.min(svg.clientWidth, svg.clientHeight) / 2) - 20);
+  }
+
   renderPieChart = (svg) => {
     const { dataset, options, identifier } = this.props;
     const scale = new Plottable.Scales.Linear();
     const colorScale = new Plottable.Scales.InterpolatedColor();
     colorScale.range(options.colors);
 
-    const outerRadius = (svg.clientHeight > svg.clientWidth / 2
-      ? (svg.clientWidth / 2) - 20
-      : svg.clientHeight - 20
-    );
-
+    const outerRadius = this.computeOuterRadius(svg, options);
 
     const plotData = new Plottable.Dataset(dataset);
     this.plotDataset = plotData;
@@ -66,7 +67,7 @@ class PieChart extends Component {
     const plot = new Plottable.Plots.Pie()
       .addDataset(plotData)
       .sectorValue((d) => { return d.val; }, scale)
-      .attr('fill', (d) => { return d.val; }, colorScale);
+      .attr('fill', (d) => { return d.color; });
 
     if (options.isHalf) {
       plot.outerRadius(outerRadius);
@@ -90,10 +91,7 @@ class PieChart extends Component {
       plot.xAlignment('center');
       plot.yAlignment('center');
 
-      const outerRadiusResized = (svg.clientHeight > svg.clientWidth / 2
-        ? (svg.clientWidth / 2) - 20
-        : (svg.clientHeight - 20)
-      );
+      const outerRadiusResized = this.computeOuterRadius(svg, options);
 
       plot.outerRadius(outerRadiusResized);
       plot.innerRadius(outerRadiusResized * 0.606);
