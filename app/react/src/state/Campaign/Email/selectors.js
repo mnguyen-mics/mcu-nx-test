@@ -31,7 +31,7 @@ const convertDeliveryReportToObjectArray = createSelector(
 
 const getStatByBlastId = createSelector(
   convertDeliveryReportToObjectArray,
-  (array) => normalizeArrayOfObject(array, 'blast_id'),
+  (array) => normalizeArrayOfObject(array, 'sub_campaign_id'),
 );
 
 const getEmailBlastTableView = createSelector(

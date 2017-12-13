@@ -113,7 +113,7 @@ function* loadAllEmailBlastPerformance({ payload }) {
 
     const startDate = filter.from;
     const endDate = filter.to;
-    const dimension = 'blast_id';
+    const dimension = 'sub_campaign_id';
 
     const response = yield call(ReportService.getAllEmailBlastPerformance, organisationId, campaignId, startDate, endDate, dimension);
     yield put(fetchAllEmailBlastPerformance.success(response));

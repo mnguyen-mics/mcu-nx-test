@@ -49,7 +49,7 @@ const fetchAllEmailBlast = {
 };
 
 const fetchAllEmailBlastPerformance = {
-  request: (campaignId, body) => createAction(EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST)({ campaignId, body }),
+  request: (campaignId, body) => createAction(EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST)({ campaignId, filter: body }),
   success: createAction(EMAIL_BLAST_FETCH_PERFORMANCE.SUCCESS),
   failure: createAction(EMAIL_BLAST_FETCH_PERFORMANCE.FAILURE),
 };

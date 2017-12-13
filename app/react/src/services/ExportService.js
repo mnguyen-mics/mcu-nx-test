@@ -150,7 +150,6 @@ const exportData = (sheets, fileName, extension) => {
     workBook.Sheets[sheets[i].name] = workbookSheet;
     // }
   }
-
   const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
   saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
 };
