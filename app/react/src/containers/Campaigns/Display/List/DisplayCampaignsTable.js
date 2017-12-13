@@ -321,13 +321,14 @@ class DisplayCampaignsTable extends Component {
         isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-      },
+      // TODO UNCOMMENT WHEN THE CPA IS FIXED ON BACKEND SIDE
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      // },
     ];
 
     const actionColumns = [

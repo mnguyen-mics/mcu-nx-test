@@ -207,6 +207,10 @@ export default defineMessages({
   },
   noGoalStatAvailable: {
     id: 'campaign.goal.chart.noStats',
-    defaultMessage: 'There is no conversion associated to this attribution model and campaign on the given period.'
-  }
-});
+    defaultMessage: 'There is no conversion associated to this attribution model and campaign on the given period.',
+  },
+  noStatAvailable: {
+    id: 'campaign.stat.chart.noStats',
+    defaultMessage: 'There is no stats available for this period of time.',
+  },
+}) as { [key: string]: { id: string, defaultMessage: string } };
