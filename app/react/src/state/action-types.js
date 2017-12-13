@@ -105,18 +105,6 @@ export const LABELS_UNPAIR = createRequestTypes('LABELS_UNPAIR');
 export const LABELS_RESET = 'LABELS_FETCH';
 export const LABELS_OBJECT_FETCH = createRequestTypes('LABELS_OBJECT_FETCH');
 
-export const PLACEMENT_LISTS_DELETE = createRequestTypes('PLACEMENT_LISTS_DELETE');
-export const PLACEMENT_LISTS_FETCH = createRequestTypes('PLACEMENT_LISTS_FETCH');
-export const PLACEMENT_LISTS_RESET = 'PLACEMENT_LISTS_RESET';
-
-export const KEYWORD_LISTS_DELETE = createRequestTypes('KEYWORD_LISTS_DELETE');
-export const KEYWORD_LISTS_FETCH = createRequestTypes('KEYWORD_LISTS_FETCH');
-export const KEYWORD_LISTS_RESET = 'KEYWORD_LISTS_RESET';
-
-export const ASSETS_FILES_DELETE = createRequestTypes('ASSETS_FILES_DELETE');
-export const ASSETS_FILES_FETCH = createRequestTypes('ASSETS_FILES_FETCH');
-export const ASSETS_FILES_RESET = 'ASSETS_FILES_RESET';
-
 export const CREATIVES_DISPLAY_DELETE = createRequestTypes('CREATIVES_DISPLAY_DELETE');
 export const CREATIVES_DISPLAY_FETCH = createRequestTypes('CREATIVES_DISPLAY_FETCH');
 export const CREATIVES_DISPLAY_RESET = 'CREATIVES_DISPLAY_RESET';

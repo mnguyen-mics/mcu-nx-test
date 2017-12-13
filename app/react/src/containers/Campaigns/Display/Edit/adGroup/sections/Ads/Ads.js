@@ -6,7 +6,7 @@ import { EmptyRecords, Form } from '../../../../../../../components/index.ts';
 import AdGroupCardList from './AdGroupCardList';
 import messages from '../../../messages';
 import CreativeCardSelector from '../../../../../Email/Edit/CreativeCardSelector';
-import CreativeService from '../../../../../../../services/CreativeService';
+import CreativeService from '../../../../../../../services/CreativeService.ts';
 
 const { FormSection } = Form;
 
@@ -47,14 +47,13 @@ class Ads extends Component {
     this.setState({ loading: true });
     handlers.closeNextDrawer();
 
-    this.getAllAds()
-      .then(({ data }) => {
-        const newFields = data.filter((ad) => selectedIds.includes(ad.id));
+    Promise.all(selectedIds.map(creativeId => {
+      return CreativeService.getCreative(creativeId).then(res => res.data);
+    })).then(response => {
+      handlers.updateTableFields({ newFields: response, tableName: 'adTable' });
+      return this.setState({ loading: false });
+    });
 
-        handlers.updateTableFields({ newFields, tableName: 'adTable' });
-
-        return this.setState({ loading: false });
-      });
   }
 
   render() {

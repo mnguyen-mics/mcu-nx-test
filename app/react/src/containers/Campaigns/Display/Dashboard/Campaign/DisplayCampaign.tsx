@@ -89,15 +89,11 @@ class DisplayCampaign extends React.Component<JoinedProps> {
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = (newValues: McsDateRangeValue): void => this.updateLocationSearch({
-      rangeType: newValues.rangeType,
-      lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
       to: newValues.to,
     });

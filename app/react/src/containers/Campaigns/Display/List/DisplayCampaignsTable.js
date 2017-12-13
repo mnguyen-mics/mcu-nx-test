@@ -16,7 +16,7 @@ import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
 import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
 
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
@@ -208,14 +208,10 @@ class DisplayCampaignsTable extends Component {
     const dateRangePickerOptions = {
       isEnabled: true,
       onChange: (values) => this.updateLocationSearch({
-        rangeType: values.rangeType,
-        lookbackWindow: values.lookbackWindow,
         from: values.from,
         to: values.to,
       }),
       values: {
-        rangeType: filter.rangeType,
-        lookbackWindow: filter.lookbackWindow,
         from: filter.from,
         to: filter.to,
       },
@@ -325,13 +321,14 @@ class DisplayCampaignsTable extends Component {
         isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-      },
+      // TODO UNCOMMENT WHEN THE CPA IS FIXED ON BACKEND SIDE
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      // },
     ];
 
     const actionColumns = [

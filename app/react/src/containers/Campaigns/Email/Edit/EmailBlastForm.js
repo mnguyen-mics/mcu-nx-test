@@ -13,9 +13,9 @@ import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
-import ConsentService from '../../../../services/ConsentService';
+import ConsentService from '../../../../services/ConsentService.ts';
 import { isPastDate } from '../../../../utils/DateHelper';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 const { Content } = Layout;
@@ -214,7 +214,6 @@ class EmailBlastForm extends Component {
             <Field
               name="blast.consents[0].consent_id"
               component={DefaultSelect}
-              validate={[isRequired]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.emailEditorProviderSelectLabel),

@@ -6,7 +6,7 @@ define(['./module'], function (module) {
     function ($scope, Restangular, Session, $location, $uibModal, $state, $stateParams, PropertyContainer, $q) {
       $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
 
-
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/bid_optimizers');
       function updateUsedModelId(bidOptimizerId, bidOptimizersUsedModel) {
 
         $q.all([

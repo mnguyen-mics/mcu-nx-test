@@ -13,7 +13,7 @@ import { Card } from '../../../../../components/Card/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import messages from '../messages';
+import messages from '../messages.ts';
 import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 
 const { Content } = Layout;
@@ -36,16 +36,12 @@ class AdGroup extends Component {
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = newValues =>
       this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
         to: newValues.to,
       });

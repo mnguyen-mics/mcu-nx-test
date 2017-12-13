@@ -11,7 +11,7 @@ import {
 } from '../../../../components/TableView/index.ts';
 import { McsIcons } from '../../../../components/index.ts';
 import messages from './messages';
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
 
 function EmailCampaignsTable({
@@ -38,14 +38,10 @@ function EmailCampaignsTable({
   const dateRangePickerOptions = {
     isEnabled: true,
     onChange: (values) => onFilterChange({
-      rangeType: values.rangeType,
-      lookbackWindow: values.lookbackWindow,
       from: values.from,
       to: values.to,
     }),
     values: {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     },

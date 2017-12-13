@@ -559,7 +559,7 @@ export default defineMessages({
   },
   contentSectionExcludedLocations: {
     id: 'adGroupEditor.PartExcludedLocations',
-    defaultMessage: 'And exclude the following ones:',
+    defaultMessage: 'Your ad will exclude the following locations:',
   },
   contentSection8Part6: {
     id: 'adGroupEditor.section8.part6',
@@ -603,6 +603,10 @@ export default defineMessages({
   sectionSelectorTitleName: {
     id: 'section.selector.title.name',
     defaultMessage: 'Name',
+  },
+  sectionSelectorTitleType: {
+    id: 'section.selector.title.type',
+    defaultMessage: 'Type',
   },
   sectionSelectorTitleProvider: {
     id: 'section.selector.title.provider',

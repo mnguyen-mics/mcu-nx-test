@@ -7,16 +7,17 @@ import { injectIntl, intlShape } from 'react-intl';
 import { Button } from 'antd';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import messages from '../messages';
+import messages from '../messages.ts';
 import AdGroup from './AdGroup';
 
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import { makeCancelable } from '../../../../../utils/ApiHelper';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer.ts';
+import { makeCancelable } from '../../../../../utils/ApiHelper.ts';
+import log from '../../../../../utils/Logger';
 import {
   normalizeReportView,
-} from '../../../../../utils/MetricHelper';
+} from '../../../../../utils/MetricHelper.ts';
 
 
 import {
@@ -61,16 +62,19 @@ class AdGroupPage extends Component {
           performance: [],
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
         performance: {
           performance: [],
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
         mediaPerformance: {
           performance: [],
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
       },
       ads: {
@@ -87,6 +91,7 @@ class AdGroupPage extends Component {
           performanceById: {},
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
       },
     };
@@ -98,11 +103,12 @@ class AdGroupPage extends Component {
   }
 
   fetchAllData(organisationId, campaignId, adGroupId, filter) {
-    const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
+    const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
+    const dimensions = lookbackWindow > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, { view: 'deep' });
     const getAdGroupPerf = makeCancelable(ReportService.getAdGroupDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, dimensions));
     const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, ''));
-    const getMediaPerf = makeCancelable(ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: '-clicks', limit: 30 }));
+    const getMediaPerf = makeCancelable(ReportService.getMediaDeliveryReport(organisationId, 'ad_group_id', adGroupId, filter.from, filter.to, '', '', { sort: 'clicks', limit: 30 }));
     const getOverallAdGroupPerf = makeCancelable(ReportService.getAdGroupDeliveryReport(
       organisationId,
       'ad_group_id',
@@ -159,41 +165,54 @@ class AdGroupPage extends Component {
     });
 
     getOverallAdGroupPerf.promise.then(response => {
-      this.updateStateOnPerf('adGroups', 'overallPerformance', normalizeReportView(response.data.report_view));
-    }).catch(this.catchCancellablePromises);
+      this.updateStateOnPerf('adGroups', 'overallPerformance', 'performance', normalizeReportView(response.data.report_view));
+    }).catch(err => this.catchCancellablePromises(err, 'adGroups', 'overallPerformance'));
 
     getAdGroupPerf.promise.then(response => {
-      this.updateStateOnPerf('adGroups', 'performance', normalizeReportView(response.data.report_view));
-    }).catch(this.catchCancellablePromises);
+      this.updateStateOnPerf('adGroups', 'performance', 'performance', normalizeReportView(response.data.report_view));
+    }).catch(err => this.catchCancellablePromises(err, 'adGroups', 'performance'));
 
     getAdPerf.promise.then(response => {
-      this.updateStateOnPerf('ads', 'performance', this.formatReportView(response.data.report_view, 'ad_id'));
-    }).catch(this.catchCancellablePromises);
+      this.updateStateOnPerf('ads', 'performance', 'performanceById', this.formatReportView(response.data.report_view, 'message_id'));
+    }).catch(err => this.catchCancellablePromises(err, 'ads', 'performance'));
+
     getMediaPerf.promise.then(response => {
-      this.updateStateOnPerf('adGroups', 'mediaPerformance', normalizeReportView(response.data.report_view, 'media_id'));
-    }).catch(this.catchCancellablePromises);
+      const formattedResponse = {
+        ...response.data.report_view,
+      };
+      formattedResponse.rows = formattedResponse.rows.splice(0, 30);
+      this.updateStateOnPerf('adGroups', 'mediaPerformance', 'performance', normalizeReportView(formattedResponse, 'media_id'));
+    }).catch(err => this.catchCancellablePromises(err, 'adGroups', 'mediaPerformance'));
   }
 
-  updateStateOnPerf(firstLevelKey, secondLevelKey, performanceReport) {
+  updateStateOnPerf(firstLevelKey, secondLevelKey, thirdLevel, performanceReport) {
     this.setState((prevState) => {
       const nextState = {
         ...prevState,
       };
       nextState[firstLevelKey][secondLevelKey].isLoading = false;
       nextState[firstLevelKey][secondLevelKey].hasFetched = true;
-      nextState[firstLevelKey][secondLevelKey].performance = performanceReport;
+      nextState[firstLevelKey][secondLevelKey][thirdLevel] = performanceReport;
 
       return nextState;
     });
   }
 
-  catchCancellablePromises = (err) => {
-    const {
-      notifyError
-    } = this.props;
+  catchCancellablePromises = (err, firstLevelKey, secondLevelKey) => {
     if (!err.isCanceled) {
-      notifyError(err);
+      log.error(err);
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState[firstLevelKey][secondLevelKey].isLoading = false;
+        nextState[firstLevelKey][secondLevelKey].error = true;
+        nextState[firstLevelKey][secondLevelKey].hasFetched = true;
+
+        return nextState;
+      });
     }
+
   }
 
   updateAdGroup(adGroupId, body) {

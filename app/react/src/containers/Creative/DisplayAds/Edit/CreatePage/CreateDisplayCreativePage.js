@@ -8,8 +8,8 @@ import { withMcsRouter } from '../../../../Helpers';
 import DisplayCreativeCreationEditor from './DisplayCreativeCreationEditor';
 import DisplayCreativeTypePicker from './DisplayCreativeTypePicker';
 
-import PluginService from '../../../../../services/PluginService';
-import CreativeService from '../../../../../services/CreativeService';
+import CreativeService from '../../../../../services/CreativeService.ts';
+import PluginService from '../../../../../services/PluginService.ts';
 import * as actions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
 import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
@@ -60,6 +60,7 @@ class CreateDisplayCreativePage extends Component {
 
       CreativeService
         .createDisplayCreative(organisationId, options)
+        .then(res => res.data)
         .then(res => {
           const creativeId = res.id;
           const propertiesPromises = [];
@@ -67,7 +68,7 @@ class CreateDisplayCreativePage extends Component {
             propertiesPromises.push(CreativeService.updateDisplayCreativeRendererProperty(organisationId, creativeId, item.technical_name, item));
           });
           Promise.all(propertiesPromises).then(() => {
-            CreativeService.takeScreenshot(creativeId, organisationId).then(() => {
+            CreativeService.takeScreenshot(creativeId).then(() => {
               this.setState(prevState => {
                 const nextState = {
                   ...prevState
@@ -138,7 +139,7 @@ class CreateDisplayCreativePage extends Component {
           const lastVersion = res.data[res.data.length - 1];
 
           const pluginPropertiesPromise = PluginService.getPluginVersionProperty(adRenderer, lastVersion.id);
-          const formatsPromises = CreativeService.getCreativeFormats(organisationId);
+          const formatsPromises = CreativeService.getCreativeFormats(organisationId).then(resp => resp.data);
 
           Promise.all([pluginPropertiesPromise, formatsPromises])
             .then(values => {

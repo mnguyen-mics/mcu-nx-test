@@ -7,6 +7,8 @@
   "DISPLAY": "Display",
   "CREATIVES": "Creatives",
   "LIBRARY": "Bibliothèque",
+  "RECOMMENDERS": "Recommandeurs",
+  "EMAIL_ROUTERS":"Email Routers",
   "FILTERED_BY": "Filtered By",
   "LOGIN": "Connexion",
   "LOGOUT": "Déconnexion",

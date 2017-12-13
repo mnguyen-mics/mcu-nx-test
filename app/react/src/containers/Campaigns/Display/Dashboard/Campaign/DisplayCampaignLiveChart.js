@@ -12,7 +12,7 @@ import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedArea
 import { LegendChart } from '../../../../../components/LegendChart';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import messages from '../messages';
+import messages from '../messages.ts';
 
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 
@@ -79,16 +79,12 @@ class DisplayCampaignLiveChart extends Component {
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = newValues =>
       this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
         to: newValues.to,
       });
@@ -97,12 +93,8 @@ class DisplayCampaignLiveChart extends Component {
   }
 
   renderStackedAreaCharts() {
-    const { location: { search }, dataSource, hasFetchedCampaignStat } = this.props;
+    const { dataSource, hasFetchedCampaignStat } = this.props;
     const { key1, key2 } = this.state;
-
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-
-    const { lookbackWindow } = filter;
 
     const optionsForChart = {
       xKey: 'day',
@@ -110,7 +102,6 @@ class DisplayCampaignLiveChart extends Component {
         { key: key1, message: messages[key1] },
         { key: key2, message: messages[key2] },
       ],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: ['#ff9012', '#00a1df'],
     };
     return hasFetchedCampaignStat

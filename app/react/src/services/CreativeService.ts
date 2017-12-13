@@ -1,0 +1,200 @@
+import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import {
+  CreativeType,
+  GenericCreativeResource,
+  CreativeStatus,
+  CreativeResourceShape,
+  DisplayAdResource,
+  EmailTemplateResource,
+  AdFormatResource,
+  AdType,
+  AuditResource,
+  CreativeAuditAction,
+  CreativeScreenshotResource,
+} from '../models/creative/CreativeResource';
+
+interface GetCreativesOptions {
+  creative_type?: CreativeType;
+  scope?: string;
+  keywords?: string[];
+  statuses?: CreativeStatus[];
+  archived?: boolean;
+  label_ids?: string[];
+  order_by?: string[];
+  first_result?: number;
+  max_results?: number;
+}
+
+const CreativeService = {
+
+  getCreatives<T extends GenericCreativeResource>(
+    organisationId: string,
+    options: GetCreativesOptions = {},
+  ): Promise<DataListResponse<T>> {
+    const endpoint = 'creatives';
+
+    const params = {
+      organisation_id: organisationId,
+      ...options,
+    };
+    return ApiService.getRequest(endpoint, params);
+  },
+
+  getCreative(
+    creativeId: string,
+  ): Promise<DataResponse<CreativeResourceShape>> {
+    const endpoint = `creatives/${creativeId}`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  getDisplayAds(
+    organisationId: string,
+    options: GetCreativesOptions = {},
+  ): Promise<DataListResponse<DisplayAdResource>> {
+    return CreativeService.getCreatives(organisationId, { creative_type: 'DISPLAY_AD', ...options });
+  },
+
+  getEmailTemplates(
+    organisationId: string,
+    options: GetCreativesOptions = {},
+  ): Promise<DataListResponse<EmailTemplateResource>> {
+    return CreativeService.getCreatives(organisationId, { creative_type: 'EMAIL_TEMPLATE', ...options });
+  },
+
+  getEmailTemplate(
+    templateId: string,
+  ): Promise<DataResponse<EmailTemplateResource>> {
+    return CreativeService.getCreative(templateId) as Promise<DataResponse<EmailTemplateResource>>;
+  },
+
+  getCreativeFormats(
+    organisationId: string,
+    options: {
+      width?: number,
+      height?: number,
+      type?: AdType,
+    } = {},
+  ): Promise<DataListResponse<AdFormatResource>> {
+    const endpoint = 'reference_tables/formats';
+    const params = {
+      ...options,
+      organisation_id: organisationId,
+    };
+    return ApiService.getRequest(endpoint, params);
+  },
+
+  createDisplayCreative(
+    organisationId: string,
+    resource: Partial<DisplayAdResource>,
+  ): Promise<DataResponse<DisplayAdResource>> {
+    const endpoint = 'display_ads';
+    const body = {
+      ...resource,
+      type: 'DISPLAY_AD',
+      organisation_id: organisationId,
+    };
+    return ApiService.postRequest(endpoint, body);
+  },
+
+  updateDisplayCreative(
+    creativeId: string,
+    resource: Partial<DisplayAdResource>,
+  ): Promise<DataResponse<DisplayAdResource>> {
+    const endpoint = `display_ads/${creativeId}`;
+    return ApiService.putRequest(endpoint, resource);
+  },
+
+  updateDisplayCreativeRendererProperty(
+    organisationId: string,
+    creativeId: string,
+    technicalName: string,
+    body: { [key: string]: any} = {},
+  ): Promise<DataResponse<any> | any> {
+    const endpoint = `display_ads/${creativeId}/renderer_properties/technical_name=${technicalName}`;
+    if (body.property_type === 'ASSET') {
+      const uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
+      if (body.value && body.value.length === 0) {
+        return new Promise(resolve => {
+          return resolve();
+        });
+      }
+
+      const fileValue = (body.value && body.value.file) ? body.value.file : null;
+
+      if (fileValue !== null) {
+        const formData = new FormData(); /* global FormData */
+        formData.append('file', fileValue, fileValue.name);
+        return ApiService.postRequest(uploadEndpoint, formData)
+        .then((res: any) => {
+          const newBody = {
+            ...body,
+          };
+          newBody.value = {
+            original_file_name: res.data.original_filename,
+            file_path: res.data.file_path,
+            asset_id: res.data.id,
+          };
+          ApiService.putRequest(endpoint, newBody);
+        });
+      }
+      return Promise.resolve();
+
+    }
+    // } else if (technicalName === 'DATA_FILE') {
+      // TODO UPLOAD DATA FILE
+    // }
+    return ApiService.putRequest(endpoint, body);
+  },
+
+  getCreativeRendererProperties(
+    creativeId: string,
+  ): Promise<DataListResponse<any>> {
+    const endpoint = `display_ads/${creativeId}/renderer_properties`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  getAuditStatus(
+    creativeId: string,
+  ): Promise<DataResponse<AuditResource>> {
+    const endpoint = `display_ads/${creativeId}/audits`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  makeAuditAction(
+    creativeId: string,
+    auditAction: CreativeAuditAction,
+  ): Promise<any> {
+    const endpoint = `display_ads/${creativeId}/action`;
+    return ApiService.postRequest(endpoint, { audit_action: auditAction });
+  },
+
+  takeScreenshot(
+    creativeId: string,
+    options: Array<Partial<CreativeScreenshotResource>> = [],
+  ): Promise<DataListResponse<CreativeScreenshotResource>> {
+    const endpoint = `creatives/${creativeId}/screenshots`;
+    return ApiService.postRequest(endpoint, options);
+  },
+
+  getCreativeScreenshotStatus(
+    creativeId: string,
+  ): Promise<DataResponse<CreativeScreenshotResource>> {
+    const endpoint = `creatives/${creativeId}/screenshots/last`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  sendTestBlast(
+    creativeId: string,
+    organisationId: string,
+    email: string,
+  ): Promise<any> {
+    const endpoint = `email_templates/${creativeId}/send_test`;
+    const options = {
+      organisation_id: organisationId,
+      email: email,
+    };
+    return ApiService.postRequest(endpoint, options);
+  },
+};
+
+export default CreativeService;

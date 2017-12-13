@@ -292,7 +292,6 @@ VerticalBarChart.propTypes = {
   options: PropTypes.shape({
     yKeys: PropTypes.arrayOf(PropTypes.string),
     xKey: PropTypes.string,
-    lookbackWindow: PropTypes.number,
   }).isRequired,
   colors: PropTypes.shape({
     base: PropTypes.string,

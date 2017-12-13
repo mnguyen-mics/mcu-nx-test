@@ -1,5 +1,4 @@
 import * as React from 'react';
-import moment from 'moment';
 import { Button, Dropdown, Icon, Menu, Modal, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -9,6 +8,7 @@ import { compose } from 'recompose';
 import withTranslations, { TranslationProps } from '../../../../Helpers/withTranslations';
 import messages from '../messages';
 import { CampaignResource, CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
+import { AdInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons';
@@ -21,6 +21,7 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { ReportView } from '../../../../../models/ReportView';
+import McsMoment from '../../../../../utils/McsMoment';
 
 interface DisplayCampaignActionBarProps {
   campaign: CampaignResource;
@@ -50,13 +51,12 @@ const formatReportView = (reportView: ReportView, key: string) => {
 };
 
 const fetchAllExportData = (organisationId: string, campaignId: string, filter: {
-  rangeType: string;
-  lookbackWindow: any;
-  from: moment.Moment;
-  to: moment.Moment;
+  from: McsMoment;
+  to: McsMoment;
 }) => {
 
-  const dimensions: string[] = filter.lookbackWindow.asSeconds() > 172800 ? ['day'] : ['day,hour_of_day'];
+  const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
+  const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
   const defaultMetrics: string[] = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost', 'cpa'];
 
   const apiResults = Promise.all([
@@ -102,12 +102,12 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
     ),
   ]);
 
-  return apiResults.then((response: any) => {
-    const mediaData = normalizeReportView(response[0].data.report_view);
-    const adPerformanceById = formatReportView(response[1].data.report_view, 'ad_id');
-    const adGroupPerformanceById = formatReportView(response[2].data.report_view, 'ad_group_id');
-    const overallDisplayData = normalizeReportView(response[3].data.report_view);
-    const data = response[4].data;
+  return apiResults.then((responses) => {
+    const mediaData = normalizeReportView(responses[0].data.report_view);
+    const adPerformanceById = formatReportView(responses[1].data.report_view, 'ad_id');
+    const adGroupPerformanceById = formatReportView(responses[2].data.report_view, 'ad_group_id');
+    const overallDisplayData = normalizeReportView(responses[3].data.report_view);
+    const data = responses[4].data;
     const campaign = {
       ...data,
     };
@@ -124,11 +124,11 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
       return formattedItem;
     });
 
-    const ads: object[] = [];
-    const adAdGroup: object[] = [];
+    const ads: AdInfoResource[] = [];
+    const adAdGroup: Array<{ ad_id: string, ad_group_id: string, campaign_id: string }> = [];
 
-    data.ad_groups.forEach((adGroup: any) => {
-      adGroup.ads.forEach((ad: any) => {
+    data.ad_groups.forEach(adGroup => {
+      adGroup.ads.forEach(ad => {
         ads.push(ad);
         adAdGroup.push({
           ad_id: ad.id,

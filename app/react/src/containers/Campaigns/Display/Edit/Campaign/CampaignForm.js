@@ -181,7 +181,7 @@ class CampaignForm extends Component {
     return AdGroupServiceWrapper.saveAdGroup(campaignId, formattedFormValue, formattedInitialFormValue, saveOptions);
   }
 
-  updateAdGroup = ({ campaignId, organisationId, body }) => {
+  updateAdGroup = (campaignId, adGroupId, organisationId, body) => {
     const saveOptions = {
       editionMode: true,
       catalogMode: this.props.hasFeature('campaigns.display.edition.audience_catalog')
@@ -220,7 +220,7 @@ class CampaignForm extends Component {
       requests: {
         createThenAdd: this.createGoal,
         add: DisplayCampaignService.createGoal,
-        update: GoalService.updateGoal,
+        update: GoalService.updateGoalDeprecated,
         delete: DisplayCampaignService.deleteGoal,
       },
       tableName: 'goalsTable',
@@ -340,15 +340,16 @@ class CampaignForm extends Component {
     return new Promise((resolve, reject) => {
       this.createGoalWithoutLinkingToCampaign(organisationId, goalData)
         .then((goalSaved) => {
-          return DisplayCampaignService.createGoal({
-            campaignId: campaignId,
-            body: {
+          return DisplayCampaignService.createGoal(
+            campaignId,
+            {
               id: 'T2',
               goal_id: goalSaved.id,
               default: goalSaved.default,
               name: goalSaved.name,
               goal_selection_type: 'CONVERSION'
-            } });
+            }
+          );
         })
         .then(() => resolve())
         .catch(error => {

@@ -1,7 +1,7 @@
 import DisplayCampaignService from '../../../../services/DisplayCampaignService.ts';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 import BidOptimizerServices from '../../../../services/BidOptimizerServices';
-import CreativeService from '../../../../services/CreativeService';
+import CreativeService from '../../../../services/CreativeService.ts';
 import { isFakeId } from '../../../../utils/FakeIdHelper';
 
 
@@ -13,28 +13,20 @@ function getGeneralInfo({ campaignId, adGroupId }) {
   return DisplayCampaignService.getAdGroup(campaignId, adGroupId);
 }
 
-function getAds({ adGroupId, campaignId, organisationId }) {
-  const fetchAllAds = CreativeService.getDisplayAds(organisationId)
-    .then(({ data }) => data);
+function getAds({ adGroupId, campaignId }) {
 
-  const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)
-    .then(({ data }) => data.map(ad => ({ id: ad.creative_id, modelId: ad.id })));
-
-  return Promise.all([fetchAllAds, fetchSelectedAds])
-    .then((results) => {
-      const allAds = results[0];
-      const selectedAds = results[1];
-      const selectedAdIds = selectedAds.map(ad => ad.id);
-
-      const adTable = allAds
-        .filter(ad => selectedAdIds.includes(ad.id))
-        .map(ad => ({
-          ...ad,
-          modelId: (selectedAds.find(selection => selection.id === ad.id)).modelId
-        }));
-
-      return { adTable };
-    });
+  return DisplayCampaignService.getAds(campaignId, adGroupId)
+    .then(({ data }) => {
+      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id).then(res => res.data)))
+        .then(creatives => {
+          return creatives.map(creative => {
+            return {
+              ...creative,
+              modelId: data.find(d => d.creative_id === creative.id).id,
+            };
+          });
+        });
+    }).then(results => { return { adTable: results }; });
 }
 
 function getPlacements({ campaignId, adGroupId }) {
@@ -116,9 +108,26 @@ const getAdGroup = (organisationId, campaignId, adGroupId) => {
   ])
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
-      return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroup.bid_optimizer_id] });
+      let bidOptimizer = {};
+      return adGroup.bid_optimizer_id ? BidOptimizerServices.getBidOptimizer(adGroup.bid_optimizer_id)
+        .then(res => res.data)
+        .then(res => {
+          bidOptimizer = res;
+          return BidOptimizerServices.getBidOptimizerProperties(res.id)
+            .then(resp => resp.data)
+            .then(resp => {
+              return resp.length ? {
+                ...bidOptimizer,
+                type: (resp.find(elem => elem.technical_name === 'name')).value.value,
+                provider: (resp.find(elem => elem.technical_name === 'provider')).value.value,
+              } : {
+                ...bidOptimizer
+              };
+            });
+        }) : Promise.resolve(null);
+
     }).then(result => {
-      return { ...adGroup, optimizerTable: result.data };
+      return { ...adGroup, optimizerTable: result ? [result] : [] };
     });
 };
 

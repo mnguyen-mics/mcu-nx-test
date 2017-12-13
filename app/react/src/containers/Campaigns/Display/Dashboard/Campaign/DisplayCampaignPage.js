@@ -12,9 +12,10 @@ import DisplayCampaign from './DisplayCampaign.tsx';
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
 import GoalService from '../../../../../services/GoalService';
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import { normalizeReportView } from '../../../../../utils/MetricHelper';
-import { makeCancelable } from '../../../../../utils/ApiHelper';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer.ts';
+import { normalizeReportView } from '../../../../../utils/MetricHelper.ts';
+import { makeCancelable } from '../../../../../utils/ApiHelper.ts';
+import log from '../../../../../utils/Logger';
 
 import {
   parseSearch,
@@ -46,16 +47,19 @@ class DisplayCampaignPage extends Component {
           performance: [],
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
         performance: {
           performance: [],
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
         mediaPerformance: {
           performance: [],
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
       },
       adGroups: {
@@ -72,6 +76,7 @@ class DisplayCampaignPage extends Component {
           performanceById: {},
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
       },
       ads: {
@@ -88,6 +93,7 @@ class DisplayCampaignPage extends Component {
           performanceById: {},
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
       },
       goals: {
@@ -101,6 +107,7 @@ class DisplayCampaignPage extends Component {
           performanceById: {},
           isLoading: false,
           hasFetched: false,
+          error: false,
         },
       }
     };
@@ -178,7 +185,8 @@ class DisplayCampaignPage extends Component {
   }
 
   fetchAllData = (organisationId, campaignId, filter) => {
-    const dimensions = filter.lookbackWindow.asSeconds() > 172800 ? 'day' : 'day,hour_of_day';
+    const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
+    const dimensions = lookbackWindow > 172800 ? 'day' : 'day,hour_of_day';
     const getCampaignAdGroupAndAd = () => DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, { view: 'deep' });
     const getCampaignPerf = makeCancelable(ReportService.getSingleDisplayDeliveryReport(
       organisationId,
@@ -192,7 +200,7 @@ class DisplayCampaignPage extends Component {
       campaignId,
       filter.from,
       filter.to,
-      '',
+      undefined,
       ['cpa', 'cpm', 'ctr', 'cpc', 'impressions_cost'],
     ));
     const getAdGroupPerf = makeCancelable(ReportService.getAdGroupDeliveryReport(
@@ -201,7 +209,7 @@ class DisplayCampaignPage extends Component {
       campaignId,
       filter.from,
       filter.to,
-      '',
+      undefined,
     ));
     const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(
       organisationId,
@@ -209,7 +217,7 @@ class DisplayCampaignPage extends Component {
       campaignId,
       filter.from,
       filter.to,
-      '',
+      undefined,
     ));
     const getMediaPerf = makeCancelable(ReportService.getMediaDeliveryReport(
       organisationId,
@@ -217,8 +225,8 @@ class DisplayCampaignPage extends Component {
       campaignId,
       filter.from,
       filter.to,
-      '',
-      '',
+      undefined,
+      undefined,
       { sort: '-clicks', limit: 30 },
     ));
 
@@ -326,35 +334,39 @@ class DisplayCampaignPage extends Component {
 
     getCampaignPerf.promise.then(response => {
       this.updateStateOnPerf('campaign', 'performance', 'performance', normalizeReportView(response.data.report_view));
-    }).catch(this.catchCancellablePromises);
+    }).catch(err => this.catchCancellablePromises(err, 'campaign', 'performance'));
 
     getAdGroupPerf.promise.then(response => {
       this.updateStateOnPerf('adGroups', 'performance', 'performanceById', DisplayCampaignPage.formatReportView(
         response.data.report_view,
-        'ad_group_id',
+        'sub_campaign_id',
       ));
-    }).catch(this.catchCancellablePromises);
+    }).catch(err => this.catchCancellablePromises(err, 'adGroups', 'performance'));
 
     getAdPerf.promise.then(response => {
       this.updateStateOnPerf('ads', 'performance', 'performanceById', DisplayCampaignPage.formatReportView(
         response.data.report_view,
-        'ad_id',
+        'message_id',
       ));
-    }).catch(this.catchCancellablePromises);
+    }).catch(err => this.catchCancellablePromises(err, 'ads', 'performance'));
 
     getMediaPerf.promise.then(response => {
+      const formattedReportView = {
+        ...response.data.report_view
+      };
+      formattedReportView.rows = response.data.report_view.rows.splice(0, 30);
       this.updateStateOnPerf('campaign', 'mediaPerformance', 'performance', normalizeReportView(
-        response.data.report_view,
+        formattedReportView,
         'campaign_id',
       ));
-    }).catch(this.catchCancellablePromises);
+    }).catch(err => this.catchCancellablePromises(err, 'campaign', 'mediaPerformance'));
 
     getOverallCampaignPerf.promise.then(response => {
       this.updateStateOnPerf('campaign', 'overallPerformance', 'performance', normalizeReportView(
         response.data.report_view,
         'campaign_id',
       ));
-    }).catch(this.catchCancellablePromises);
+    }).catch(err => this.catchCancellablePromises(err, 'campaign', 'overallPerformance'));
   }
 
   updateStateOnPerf(firstLevelKey, secondLevelKey, thirdLevel, performanceReport) {
@@ -370,12 +382,20 @@ class DisplayCampaignPage extends Component {
     });
   }
 
-  catchCancellablePromises = (err) => {
-    const {
-      notifyError
-    } = this.props;
+  catchCancellablePromises = (err, firstLevelKey, secondLevelKey) => {
+
     if (!err.isCanceled) {
-      notifyError(err);
+      log.error(err);
+      this.setState((prevState) => {
+        const nextState = {
+          ...prevState,
+        };
+        nextState[firstLevelKey][secondLevelKey].isLoading = false;
+        nextState[firstLevelKey][secondLevelKey].hasFetched = true;
+        nextState[firstLevelKey][secondLevelKey].error = true;
+
+        return nextState;
+      });
     }
   }
 

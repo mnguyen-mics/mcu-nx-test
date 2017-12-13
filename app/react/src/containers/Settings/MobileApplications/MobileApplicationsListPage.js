@@ -7,7 +7,7 @@ import { Button } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { withMcsRouter } from '../../Helpers';
 import { ReactRouterPropTypes } from '../../../validators/proptypes';
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 import MobileApplicationService from '../../../services/MobileApplicationService';
 import * as notifyActions from '../../../state/Notifications/actions';
 
