@@ -10,12 +10,12 @@ interface NewUsersProps {
 
 class NewUsers extends React.Component<NewUsersProps> {
 
-  buildDataSet() {
+  buildDataSet(a: number, b: number) {
     // const { report } = this.props;
-    const value = 10;
-    const totalValue = 40;
+    const value = a;
+    const totalValue = b;
     return [
-      { key: 'delivered', val: 10, color: '#ff9012' },
+      { key: 'delivered', val: value, color: '#ff9012' },
       { key: 'rest', val: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' }
     ];
   }
@@ -45,15 +45,39 @@ class NewUsers extends React.Component<NewUsersProps> {
     return options;
   };
 
-  render() {
-    const dataset = this.buildDataSet();
-    const pieChartsOptions = this.generateOptions(true, 'blue', 'mykey', 1, 2);
+  extractRatio(report: any) {
+    const unique = report.reduce((accu: number, elem: any) => {
+      return accu + elem.unique_user;
+    }, 0);
 
-    return <PieChart
-      identifier="newUsers"
-      dataset={dataset}
-      options={pieChartsOptions}
-    />;
+    const count = report.reduce((accu: number, elem: any) => {
+      return accu + elem.count;
+    }, 0);
+
+    return {a: unique, b: count};
+  }
+
+  render() {
+
+    const {report, hasFetchedVisitReport} = this.props;
+    let chartComponent;
+    if (hasFetchedVisitReport) {
+      const ratio = this.extractRatio(report);
+      const dataset = this.buildDataSet(ratio.a, ratio.b);
+      const pieChartsOptions = this.generateOptions(true, 'blue', 'mykey', ratio.a, ratio.b);
+      chartComponent =
+        (
+          <PieChart
+            identifier="newUsers"
+            dataset={dataset}
+            options={pieChartsOptions}
+          />
+        );
+    } else {
+      chartComponent = <div />;
+    }
+
+    return chartComponent;
   }
 }
 export default NewUsers;

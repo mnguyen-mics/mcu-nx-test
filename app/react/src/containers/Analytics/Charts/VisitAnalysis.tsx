@@ -69,75 +69,34 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     });
   }
 
-  updateLocationSearch(params: McsDateRangeValue) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, ANALYTICS_DASHBOARD_SEARCH_SETTINGS),
-    };
-
-    history.push(nextLocation);
-  }
-
-  renderDatePicker() {
-    const { history: { location: { search } } } = this.props;
-
-    const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
-
-    const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
-      from: filter.from,
-      to: filter.to,
-    };
-
-    const onChange = (newValues: McsDateRangeValue) =>
-      this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
-        from: newValues.from,
-        to: newValues.to,
-      });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
-  }
-
   extractUsers(report: any[]) {
+   if (report)
     return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
   }
 
   extractSessionDuration(report: any[]) {
-    return report.reduce((accu: number, row: any) => { return accu + row.min_duration; }, 0);
+    if (report)
+      return report.reduce((accu: number, row: any) => { return accu + row.min_duration; }, 0);
   }
 
   render() {
-    const { report, history: { location: { search } } } = this.props;
-    const hasFetchedOverallStat = true;
-    const isFetchingOverallStat = false;
-    const overallStat = {
-      users: this.extractUsers(report),
-      sessions: this.extractUsers(report),
-      bounce_rate: this.extractUsers(report),
-      session_duration: this.extractSessionDuration(report),
-    };
-
+    const { report, history: { location: { search } }, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
     const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
 
     const { key1, key2 } = this.state;
 
     const metrics = [{
       name: 'Users',
-      value: hasFetchedOverallStat ? formatMetric(overallStat.users, '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
       name: 'Sessions',
-      value: hasFetchedOverallStat ? formatMetric(overallStat.sessions, '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
       name: 'Bounce Rate',
-      value: hasFetchedOverallStat ? formatMetric(overallStat.bounce_rate, '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
       name: 'Session Duration',
-      value: hasFetchedOverallStat ? formatMetric(overallStat.session_duration, '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractSessionDuration(report), '0') : undefined,
     }];
 
     const optionsForChart = {
@@ -174,30 +133,25 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {datasource.length === 0 && (hasFetchedOverallStat)
+            {datasource && datasource.length === 0 && (hasFetchedVisitReport)
               ? <div />
               : <LegendChartWithModal
-                  identifier="chartLegend"
-                  options={legendOptions}
-                  legends={legends}
-                  onLegendChange={onLegendChange}
-                />}
-          </Col>
-          <Col span={12}>
-            <span className="mcs-card-button">
-              {this.renderDatePicker()}
-            </span>
+                identifier="chartLegend"
+                options={legendOptions}
+                legends={legends}
+                onLegendChange={onLegendChange}
+              />}
           </Col>
         </Row>
         <Row>
           <Col span={5}>
-            <MetricsColumn
-              metrics={metrics}
-              isLoading={isFetchingOverallStat || !hasFetchedOverallStat}
-            />
+          <MetricsColumn
+            metrics={metrics}
+            isLoading={isFetchingVisitReport || !hasFetchedVisitReport}
+          />
           </Col>
           <Col span={19}>
-            {datasource.length === 0 || !this.props.hasFetchedVisitReport
+            {datasource && datasource.length === 0 || !hasFetchedVisitReport
                 // TODO INTL
                 ? <EmptyCharts title="NO VISIT STAT" />
                 : this.renderStackedAreaChart(datasource, optionsForChart)}

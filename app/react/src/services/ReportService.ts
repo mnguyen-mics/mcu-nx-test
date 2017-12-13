@@ -423,6 +423,32 @@ const ReportService = {
     }
     return ApiService.getRequest(endpoint, params);
   },
+
+  getVisitReport(
+    organisationId: string,
+    startDate: McsMoment,
+    endDate: McsMoment,
+    filters: string[],
+    dimension: string[] | undefined,
+    metrics: string[] | undefined,
+    options: object = {},
+  ): Promise<ReportViewResponse> {
+    const endpoint = 'reports/visit_report';
+    const DEFAULT_DIMENSIONS = ['day'];
+    const DEFAULT_METRICS = ['max_duration', 'min_duration', 'unique_user', 'count', 'unique_visitor'];
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
+    const params = {
+      ...options,
+      organisation_id: organisationId,
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
+      dimension: dimension || DEFAULT_DIMENSIONS,
+      metrics: metrics || DEFAULT_METRICS,
+      filters,
+    };
+    return ApiService.getRequest(endpoint, params);
+  },
 };
 
 export default ReportService;

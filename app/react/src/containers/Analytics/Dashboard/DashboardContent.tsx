@@ -2,35 +2,56 @@ import * as React from 'react';
 import { Row } from 'antd';
 import moment from 'moment';
 import Card from '../../../components/Card/Card';
-import DashboardVisitAreaChart from '../Charts/DashboardVisitAreaChart';
+import VisitAnalysis from '../Charts/VisitAnalysis';
 import ReportService from '../../../services/ReportService';
 import DashboardHeader from '../Common/DashboardHeader';
+import NewUsers from '../Charts/NewUsers';
+import Col from 'antd/lib/grid/col';
+import {compose} from "recompose";
+import {withRouter} from 'react-router-dom';
+import {parseSearch, updateSearch} from '../../../utils/LocationSearchHelper';
+import {ANALYTICS_DASHBOARD_SEARCH_SETTINGS} from '../constants';
+import {RouteComponentProps} from 'react-router';
+import {default as McsDateRangePicker, McsDateRangeValue} from '../../../components/McsDateRangePicker';
+import DeviceType from '../Charts/DeviceType';
 
 interface DashboardContentProps {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
 }
 
+interface RouterMatchParams {
+  organisationId: string;
+  campaignId: string;
+}
+
+type DashboardContentAllProps = DashboardContentProps & RouteComponentProps<RouterMatchParams>;
+
 interface DashboardContentState {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
-  report: any;
+  isFetchingVisitReportFormFactor: boolean;
+  hasFetchedVisitReportFormFactor: boolean;
+  visitReportFormFactor: any;
+  visitReport: any;
 }
 
-class DashboardContent extends React.Component<DashboardContentProps, DashboardContentState> {
+class DashboardContent extends React.Component<DashboardContentAllProps, DashboardContentState> {
 
-    constructor(props: DashboardContentProps) {
+    constructor(props: DashboardContentAllProps) {
         super(props);
 
         this.state = {
           report: [],
           isFetchingVisitReport: false,
           hasFetchedVisitReport: false,
+          isFetchingVisitReportFormFactor: false,
+          hasFetchedVisitReportFormFactor: false,
         };
     }
 
     extractReportObject(headers: string[], row: any[]) {
-        const result = {}
+        const result: {[ s: string ]: any} = {};
         headers.forEach((header: string, index: number) => {
             result[header] = row[index];
         });
@@ -44,69 +65,144 @@ class DashboardContent extends React.Component<DashboardContentProps, DashboardC
         });
     }
 
-    fetchAllData = (organisationId: string, datamartId: string, filter: any) => {
-        const getMediaPerf = ReportService.getVisitReport(
-            organisationId,
-            'datamart_id',
-            datamartId,
-            filter.from,
-            filter.to,
-            '',
-            '',
-            { sort: '-clicks', limit: 30 },
-        );
+    fetchAllData(organisationId: string, datamartId: string, filter: any) {
+      const getVisitReport = ReportService.getVisitReport(
+          organisationId,
+          filter.from,
+          filter.to,
+        ['datamart_id==' + datamartId],
+          undefined,
+          undefined,
+      );
+
+      const getVisitReportFormFactor = ReportService.getVisitReport(
+        organisationId,
+        filter.from,
+        filter.to,
+        ['datamart_id==' + datamartId],
+        ['form_factor'],
+        undefined,
+      );
+
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          isFetchingVisitReport: true,
+        };
+      });
+
+      getVisitReport.then((response: any) => {
         this.setState((prevState) => {
+          const dataset = this.extractReportDataset(response.data.report_view);
           return {
             ...prevState,
-            isFetchingVisitReport: true,
+            isFetchingVisitReport: false,
+            hasFetchedVisitReport: true,
+            visitReport: dataset,
           };
         });
-        getMediaPerf.promise.then((response: any) => {
-          this.setState((prevState) => {
-            return {
-              ...prevState,
-              isFetchingVisitReport: false,
-            };
-          });
-          const report = response.data.report_view;
-          this.updateStateOnPerf(report);
-        }).catch(console.error);
-    }
+      }).catch(console.error);
 
-    updateStateOnPerf(performanceReport: any) {
+      getVisitReportFormFactor.then((response: any) => {
         this.setState((prevState) => {
-            const nextState: DashboardContentState = {
-                ...prevState,
-            };
-            nextState.hasFetchedVisitReport = true;
-            nextState.report = this.extractReportDataset(performanceReport);
-            return nextState;
+          const dataset = this.extractReportDataset(response.data.report_view);
+          return {
+            ...prevState,
+            isFetchingVisitReportFormFactor: false,
+            hasFetchedVisitReportFormFactor: true,
+            visitReportFormFactor: dataset,
+          };
         });
+      });
     }
 
     componentDidMount() {
-        const filter = { from: moment('2017-11-01'), to: moment('2017-12-04') };
-        this.fetchAllData('1', '1048', filter);
+      const { history: { location: { search } } } = this.props;
+      const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+      this.fetchAllData('1', '1048', filter);
+    }
+
+    componentWillReceiveProps(nextProps: DashboardContentAllProps) {
+      const { history: { location: { search } } } = nextProps;
+      const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+      this.fetchAllData('1', '1048', filter);
+    }
+
+    updateLocationSearch(params: McsDateRangeValue) {
+      const { history, location: { search: currentSearch, pathname } } = this.props;
+
+      const nextLocation = {
+        pathname,
+        search: updateSearch(currentSearch, params, ANALYTICS_DASHBOARD_SEARCH_SETTINGS),
+      };
+
+      history.push(nextLocation);
+    }
+
+    renderDatePicker() {
+      const { history: { location: { search } } } = this.props;
+
+      const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+
+      const values = {
+        lookbackWindow: filter.lookbackWindow,
+        from: filter.from,
+        to: filter.to,
+      };
+
+      const onChange = (newValues: McsDateRangeValue) =>
+        this.updateLocationSearch({
+          rangeType: newValues.rangeType,
+          lookbackWindow: newValues.lookbackWindow,
+          from: newValues.from,
+          to: newValues.to,
+        });
+
+      return <McsDateRangePicker values={values} onChange={onChange} />;
     }
 
     render() {
-        const buttons = (<div />)
+        const buttons = this.renderDatePicker();
         return (
             <div>
                 <DashboardHeader object={{ name: 'Overview' }} translationKey="CAMPAIGN" />
                 <Row gutter={10} className="table-line">
-                    <Card buttons={buttons} >
-                        <Row gutter={10} className="table-line">
-                            <DashboardVisitAreaChart
-                                hasFetchedVisitReport={this.state.hasFetchedVisitReport}
-                                isFetchingVisitReport={this.state.isFetchingVisitReport}
-                                report={this.state.report}
-                            />
-                        </Row>
+                  <Col span={24}>
+                    <Card buttons={buttons} title={'Visit analysis'} >
+                      <VisitAnalysis
+                        hasFetchedVisitReport={this.state.hasFetchedVisitReport}
+                        isFetchingVisitReport={this.state.isFetchingVisitReport}
+                        report={this.state.visitReport}
+                      />
                     </Card>
+                  </Col>
+                </Row>
+                <Row gutter={10} className="table-line">
+                  <Col span={12}>
+                    <Card buttons={buttons} title={'New Users vs returning users'}>
+                        <NewUsers
+                          hasFetchedVisitReport={this.state.hasFetchedVisitReport}
+                          isFetchingVisitReport={this.state.isFetchingVisitReport}
+                          report={this.state.visitReport}
+                          colors={{}}
+                        />
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card buttons={buttons} title={'Device type'}>
+                        <DeviceType
+                          hasFetchedVisitReportFormFactor={this.state.hasFetchedVisitReportFormFactor}
+                          isFetchingVisitReportFormFactor={this.state.isFetchingVisitReportFormFactor}
+                          report={this.state.visitReportFormFactor}
+                          colors={{}}
+                        />
+                    </Card>
+                  </Col>
                 </Row>
             </div>);
     }
 }
-
-export default DashboardContent;
+export default compose(
+  withRouter,
+)
+(DashboardContent);

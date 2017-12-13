@@ -65,6 +65,20 @@ const campaignsMenu = {
   ],
 };
 
+const analyticsMenu = {
+  key: 'analytics',
+  iconType: 'display',
+  path: '/analytics',
+  translationId: 'ANALYTICS',
+  subMenuItems: [
+    {
+      key: 'analytics.dashboard',
+      path: '/analytics/dashboard',
+      translationId: 'DASHBOARD',
+    },
+  ]
+};
+
 const automationsMenu = {
   key: 'automations',
   iconType: 'automation',
@@ -204,4 +218,5 @@ export const itemDefinitions = [
   creativesMenu,
   libraryMenu,
   dataStudio,
+  analyticsMenu
 ];

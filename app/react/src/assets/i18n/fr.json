@@ -176,6 +176,9 @@
   "ASSETS": "Assets",
   "EXPORTS": "Exports",
 
+  "ANALYTICS": "Analytics",
+  "DASHBOARD": "Dashboard",
+
   "NEW_PLACEMENT_LIST": "Nouvelle Liste de Placement",
   "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE":  "Etes vous sur de vouloir supprimer cette Liste de Placements?",
   "PLACEMENT_MODAL_CONFIRM_ARCHIVED_BODY": "Etes vous sur de vouloir supprimer cette Liste de Placements?",

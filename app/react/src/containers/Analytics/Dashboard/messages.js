@@ -1,12 +1,24 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-  impressions: {
+  max_duration: {
     id: 'max_duration',
-    defaultMessage: 'Impressions',
+    defaultMessage: 'Max duration',
   },
-  clicks: {
+  min_duration: {
     id: 'min_duration',
-    defaultMessage: 'Clicks',
-  }
+    defaultMessage: 'Min duration',
+  },
+  unique_user: {
+    id: 'unique_user',
+    defaultMessage: 'Unique user',
+  },
+  count: {
+    id: 'count',
+    defaultMessage: 'Count',
+  },
+  unique_visitor: {
+    id: 'unique_visitor',
+    defaultMessage: 'Unique visitor',
+  },
 });
