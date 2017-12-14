@@ -74,7 +74,7 @@ class Ads extends Component {
           createdCreativeData
         ];
         this.setState({ loading: true }, () => {
-          handlers.updateCreativeTableFields({ newFields: valuesToAdd, tableName: 'adTable' });
+          handlers.updateTableFields({ newFields: valuesToAdd, tableName: 'adTable' });
           this.props.handlers.closeNextDrawer();
         });
         this.setState({ loading: false });

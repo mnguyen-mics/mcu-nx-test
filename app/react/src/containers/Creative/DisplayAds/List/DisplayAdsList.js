@@ -12,6 +12,7 @@ import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSe
 import { getDisplayCreatives, getDisplayCreativesTotal, hasDisplayCreatives, isFetchingDisplayCreatives } from '../../../../state/Creatives/Display/selectors';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import messages from './message.ts';
+import CreativeService from '../../../../services/CreativeService.ts';
 
 class CreativeDisplayTable extends Component {
   constructor(props) {
@@ -198,7 +199,7 @@ class CreativeDisplayTable extends Component {
     history.push(`/v2/o/${organisationId}/creatives/display/edit/${creative.id}`);
   }
 
-  archiveCreativeDisplay(campaign) {
+  archiveCreativeDisplay(creative) {
     const {
       match: {
         params: {
@@ -206,11 +207,14 @@ class CreativeDisplayTable extends Component {
         }
       },
       location: {
-        search
+        search,
+        pathname,
+        state,
       },
-      archiveCreativeDisplay,
       fetchCreativeDisplay,
       intl: { formatMessage },
+      history,
+      dataSource,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -222,8 +226,22 @@ class CreativeDisplayTable extends Component {
       okText: formatMessage(messages.creativeModalConfirmArchivedOk),
       cancelText: formatMessage(messages.cancelText),
       onOk() {
-        return archiveCreativeDisplay(campaign.id).then(() => {
-          fetchCreativeDisplay(organisationId, filter);
+        CreativeService.updateDisplayCreative(creative.id, { ...creative, archived: true }).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            fetchCreativeDisplay(organisationId, filter, true);
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state
+            });
+            return Promise.resolve();
+          }
+          fetchCreativeDisplay(organisationId, filter, true);
+          return Promise.resolve();
         });
       },
       onCancel() {},

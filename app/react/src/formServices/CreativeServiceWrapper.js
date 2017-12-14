@@ -22,7 +22,7 @@ const createDisplayCreative = (creative, properties, organisationId, rendererDat
   return CreativeService
     .createDisplayCreative(organisationId, options)
     .then(newCreative => {
-      const creativeId = newCreative.id;
+      const creativeId = newCreative.data.id;
       return Promise.all([
         ...properties.map(item => CreativeService.updateDisplayCreativeRendererProperty(organisationId, creativeId, item.technical_name, item)),
         CreativeService.takeScreenshot(creativeId)

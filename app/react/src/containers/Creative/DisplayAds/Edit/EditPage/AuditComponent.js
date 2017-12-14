@@ -107,7 +107,7 @@ class AuditComponent extends Component {
           title: modalMessages.title,
           content: modalMessages.content,
           onOk() {
-            CreativeService.postCreativeStatus(creative.id, { audit_action: action }).then(() => {
+            CreativeService.makeAuditAction(creative.id, action).then(() => {
               onAuditChange();
             }).catch(e => {
               // TODO NOTIFY
