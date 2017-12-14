@@ -225,7 +225,7 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
       ...filter,
     };
 
-    const response = yield call(AudienceSegmentService.retrieveOverlap, segmentId, formatedFilters.first_result, formatedFilters.max_results);
+    const response = yield call(AudienceSegmentService.retrieveOverlap, segmentId, { first_result: formatedFilters.first_result, max_result: formatedFilters.max_results });
 
     let formatedResponse;
     if (response.data.length > 0) {
@@ -242,25 +242,32 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
           return overlapData.segments.find(s => s.segment_id === overlap.segment_intersect_with);
         });
         // for each overlap we match it with its id related segment
-        const segmentResourceResponses = yield all(topSegments.map(s => {
-          return call(AudienceSegmentService.getSegment, s.segment_id);
+
+        const myCall = (s) => {
+          return new Promise(resolve => {
+            return AudienceSegmentService.getSegment(s.segment_id).then(res => resolve(res)).catch(() => resolve(null));
+          });
+        };
+        const segmentResourceResponses = yield all(topSegments.map((s) => {
+          return call(myCall, s);
         }));
-        const segmentResources = segmentResourceResponses.map(res => res.data);
+        const segmentResources = segmentResourceResponses.filter(res => res).map(res => res.data);
         // get segments names
         const segments = [
           ...topSegments.map(s => {
             const name = (segmentResources.find(res => res.id === s.segment_id.toString()) || {}).name;
-            return {
+            return name ? {
               ...s,
               name
-            };
+            } : null;
           }),
           overlapData.segments.find(s => s.segment_id.toString() === segmentId)
-        ];
+        ].filter(seg => seg);
+        const filteredTopOverlap = topOverlaps.filter(ov => segments.find(seg => seg.segment_id === ov.segment_intersect_with));
         // we formate the data chart
         formatedResponse = {
           ...overlapData,
-          overlaps: topOverlaps,
+          overlaps: filteredTopOverlap,
           segments,
           hasOverlap: true,
         };
