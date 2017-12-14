@@ -4,7 +4,7 @@ export default defineMessages({
   // Segment
   audienceSegment: {
     id: 'segment',
-    defaultMessage: 'Audience Segment',
+    defaultMessage: 'Segments',
   },
   userPoints: {
     id: 'segment.user_points',

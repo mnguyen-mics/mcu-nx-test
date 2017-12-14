@@ -1,52 +1,67 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { isSubmitting } from 'redux-form';
 import { Layout } from 'antd';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl } from 'react-intl';
+import { RouteComponentProps } from 'react-router';
 
-import { EditContentLayout } from '../../../../../components/Layout/index.ts';
+import { EditContentLayout } from '../../../../../components/Layout/index';
+import { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
 import CampaignForm from './CampaignForm';
 import { withMcsRouter } from '../../../../Helpers';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import messages from './messages';
-import { Loading } from '../../../../../components/index.ts';
-
+import { Loading } from '../../../../../components/index';
 
 const formId = 'campaignForm';
 
-class CampaignContent extends Component {
+interface CampaignContentProps {
+  closeNextDrawer: () => void;
+  editionMode: boolean;
+  initialValues: object;
+  loading?: boolean;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
+  breadcrumbPaths: Array<{
+    name: string,
+    url?: string,
+  }>;
+}
+
+interface RouterMatchParams {
+  organisationId: string;
+}
+
+interface MapStateProps {
+  submitting: boolean;
+}
+
+type JoinedProps = CampaignContentProps & MapStateProps & RouteComponentProps<RouterMatchParams>;
+
+class CampaignContent extends React.Component<JoinedProps> {
+
+  static defaultProps = {
+    editionMode: false,
+    initialValues: {},
+    loading: false,
+    submitting: false,
+  };
+
   render() {
     const {
       editionMode,
       history,
       location,
       initialValues,
-      intl: { formatMessage },
       loading,
       match: {
         params: { organisationId },
-        url
+        url,
       },
       submitting,
+      breadcrumbPaths,
     } = this.props;
 
-
-    const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle1),
-        url: `/v2/o/${organisationId}/campaigns/display`,
-      },
-      {
-        name: 'Create new Campaign',
-        url: `/v2/o/${organisationId}/campaigns/display`,
-      }
-    ];
-
-    let sidebarItems = {
-      general: messages.sectionTitle1,
-    };
+    let sidebarItems = {};
 
     sidebarItems = {
       general: messages.sectionTitle1,
@@ -60,7 +75,7 @@ class CampaignContent extends Component {
       onClose: () => (location.state && location.state.goBack
             ? history.goBack()
             : history.push(`/v2/o/${organisationId}/campaigns/display/`)
-          )
+          ),
     };
 
     return (
@@ -90,31 +105,11 @@ class CampaignContent extends Component {
   }
 }
 
-CampaignContent.defaultProps = {
-  editionMode: false,
-  initialValues: {},
-  loading: false,
-  submitting: false,
-};
-
-CampaignContent.propTypes = {
-  closeNextDrawer: PropTypes.func.isRequired,
-  editionMode: PropTypes.bool,
-  history: ReactRouterPropTypes.history.isRequired,
-  initialValues: PropTypes.shape(),
-  intl: intlShape.isRequired,
-  location: PropTypes.shape().isRequired,
-  loading: PropTypes.bool,
-  match: ReactRouterPropTypes.match.isRequired,
-  openNextDrawer: PropTypes.func.isRequired,
-  submitting: PropTypes.bool,
-};
-
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: any) => ({
   submitting: isSubmitting(formId)(state),
 });
 
-export default compose(
+export default compose<JoinedProps, CampaignContentProps>(
   injectIntl,
   withMcsRouter,
   connect(mapStateToProps),

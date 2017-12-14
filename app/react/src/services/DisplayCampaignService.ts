@@ -265,8 +265,8 @@ const DisplayCampaignService = {
   /* GOAL SERVICES */
   getGoal(
     campaignId: string,
-    options: object,
-  ): Promise<GoalSelectionResource> {
+    options: object = {},
+  ): Promise<DataListResponse<GoalSelectionResource>> {
     const endpoint = `campaigns/${campaignId}/goal_selections`;
     return ApiService.getRequest(endpoint, options);
   },

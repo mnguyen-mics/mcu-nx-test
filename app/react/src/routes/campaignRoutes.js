@@ -16,7 +16,7 @@ import {
 import {
   CreateCampaignPage,
   EditCampaignPage,
-} from '../containers/Campaigns/Display/Edit/Campaign';
+} from '../containers/Campaigns/Display/Edit/Campaign/index.ts';
 
 import {
   CreateEmailPage,
