@@ -133,7 +133,7 @@ class CampaignDisplayProgress extends React.Component<CampaignDisplayProgressPro
     }
 
     const to = new McsMoment('now');
-    const fromInfiniteAndBeyond = new McsMoment(0);
+    const fromInfiniteAndBeyond = new McsMoment(1325376000000);
 
     const totalBudgetGlobal = campaign && campaign.total_budget || 1;
     const totalBudgetPeriod = campaign && campaign.max_budget_per_period || 1;
