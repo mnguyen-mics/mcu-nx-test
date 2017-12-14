@@ -17,7 +17,7 @@ import {
   AudienceSegmentServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 
-const AudienceCatatogFieldArray = FieldArray as new() => GenericFieldArray<Field, AudienceCatalogProps>;
+const AudienceCatatogFieldArray = FieldArray as new () => GenericFieldArray<Field, AudienceCatalogProps>;
 
 interface RouterMatchParams {
   organisationId: string;
@@ -87,7 +87,7 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
         );
 
         return Promise.all([servicesP, childrenCategoryP])
-          .then(([ services, childrenCategory ]) => {
+          .then(([services, childrenCategory]) => {
             return {
               node: category.node,
               children: childrenCategory,
@@ -120,8 +120,8 @@ class AudienceCatalogContainer extends React.Component<JoinedProps, AudienceCata
 
     Promise.all([
       this.fetchDetailedTargetingData(),
-      CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.GENDER'] }),
-      CatalogService.getServices(organisationId, { categorySubtype: ['AUDIENCE.AGE'] }),
+      CatalogService.getAudienceSegmentServices(organisationId, { categorySubtype: ['AUDIENCE.GENDER'] }),
+      CatalogService.getAudienceSegmentServices(organisationId, { categorySubtype: ['AUDIENCE.AGE'] }),
       AudienceSegmentService.getSegments(organisationId, datamartId, { max_results: 500 })
         .then(res => res.data),
     ]).then(([audienceCategoryTree, genderServiceItems, ageServiceItems, audienceSegments]) => {
