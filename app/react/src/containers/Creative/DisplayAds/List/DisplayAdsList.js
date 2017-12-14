@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { injectIntl, intlShape } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 
 import { TableViewFilters, EmptyTableView } from '../../../../components/TableView/index.ts';
-
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
-
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
-
 import { getDisplayCreatives, getDisplayCreativesTotal, hasDisplayCreatives, isFetchingDisplayCreatives } from '../../../../state/Creatives/Display/selectors';
-
 import CreativeScreenshot from '../../CreativeScreenshot';
+import messages from './message.ts';
 
 class CreativeDisplayTable extends Component {
   constructor(props) {
@@ -201,16 +199,28 @@ class CreativeDisplayTable extends Component {
   }
 
   archiveCreativeDisplay(campaign) {
-    const { match: { params: { organisationId } }, location: { search }, archiveCreativeDisplay, fetchCreativeDisplay, translations } = this.props;
+    const {
+      match: {
+        params: {
+          organisationId
+        }
+      },
+      location: {
+        search
+      },
+      archiveCreativeDisplay,
+      fetchCreativeDisplay,
+      intl: { formatMessage },
+    } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
 
     Modal.confirm({
-      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: formatMessage(messages.creativeModalConfirmArchivedTitle),
+      content: formatMessage(messages.creativeModalConfirmArchivedContent),
       iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      okText: formatMessage(messages.creativeModalConfirmArchivedOk),
+      cancelText: formatMessage(messages.cancelText),
       onOk() {
         return archiveCreativeDisplay(campaign.id).then(() => {
           fetchCreativeDisplay(organisationId, filter);
@@ -229,8 +239,7 @@ CreativeDisplayTable.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
-
+  intl: intlShape.isRequired,
   isFetchingCreativeDisplay: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalCreativeDisplay: PropTypes.number.isRequired,
@@ -257,4 +266,4 @@ CreativeDisplayTable = connect(mapStateToProps, mapDispatchToProps)(CreativeDisp
 
 CreativeDisplayTable = withRouter(CreativeDisplayTable);
 
-export default CreativeDisplayTable;
+export default injectIntl(CreativeDisplayTable);

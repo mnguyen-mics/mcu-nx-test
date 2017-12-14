@@ -25,7 +25,7 @@ const createDisplayCreative = (creative, properties, organisationId, rendererDat
       const creativeId = newCreative.id;
       return Promise.all([
         ...properties.map(item => CreativeService.updateDisplayCreativeRendererProperty(organisationId, creativeId, item.technical_name, item)),
-        CreativeService.takeScreenshot(creativeId, organisationId)
+        CreativeService.takeScreenshot(creativeId)
       ]).then(() => newCreative);
     });
 };
@@ -39,7 +39,7 @@ const createDisplayCreative = (creative, properties, organisationId, rendererDat
 const updateDisplayCreative = (organisationId, creative, rendererProperties) => {
 
   return CreativeService
-    .updateDisplayCreative(organisationId, creative.id, creative)
+    .updateDisplayCreative(creative.id, creative)
     .then(() => {
       const creativeId = creative.id;
       const propertiesPromises = [];
@@ -48,7 +48,7 @@ const updateDisplayCreative = (organisationId, creative, rendererProperties) => 
       );
 
       return Promise.all(propertiesPromises).then(() => {
-        return CreativeService.takeScreenshot(creativeId, organisationId).then(() => {
+        return CreativeService.takeScreenshot(creativeId).then(() => {
           return creativeId;
         }).catch(err => {
           log.error(err);
