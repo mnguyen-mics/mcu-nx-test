@@ -1,6 +1,6 @@
 import React from 'react';
 import { Radio } from 'antd';
-import { RadioProps } from 'antd/lib/radio/radio';
+import { RadioProps } from 'antd/lib/radio';
 
 interface FormRadioProps {
   title: string;

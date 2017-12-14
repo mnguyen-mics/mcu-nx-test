@@ -4,8 +4,8 @@ import { SHOW_ALL, SHOW_PARENT, SHOW_CHILD } from './strategies';
 import React from 'react';
 import Select from './Select';
 import classNames from 'classnames';
-import { AbstractSelectProps } from 'antd/lib/select';
-import injectLocale from 'antd/lib/locale-provider/injectLocale';
+import {AbstractSelectProps, SelectLocale} from 'antd/lib/select';
+import LocaleReceiver from 'antd/lib/locale-provider/LocaleReceiver';
 
 const RcTreeSelect = Select as any;
 
@@ -77,8 +77,7 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
 
   abstract getLocale(): any;
 
-  render() {
-    const locale = this.getLocale();
+  renderSelect(locale: SelectLocale) {
     const {
       prefixCls,
       className,
@@ -108,12 +107,22 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
           treeCheckable={checkable}
           notFoundContent={notFoundContent}
         />
-    </div>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <LocaleReceiver
+        componentName={'Select'}
+        defaultLocale={{}}
+      >
+        {this.renderSelect}
+      </LocaleReceiver>
     );
   }
 }
 
 // Use Select's locale
-const injectSelectLocale = injectLocale('Select', {});
-export default injectSelectLocale<TreeSelectProps>(TreeSelect as any);
+export default TreeSelect;
 export { TreeNode };
