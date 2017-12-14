@@ -22,7 +22,7 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 
 import {
   getTableDataSource,

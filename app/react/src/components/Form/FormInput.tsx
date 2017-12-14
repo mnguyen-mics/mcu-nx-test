@@ -9,13 +9,13 @@ import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
-export interface FormInputProps {
+export interface FormInputProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
 }
 
-const FormInput: React.SFC<FormInputProps & FormFieldWrapperProps & WrappedFieldProps> = props => {
+const FormInput: React.SFC<FormInputProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 

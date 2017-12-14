@@ -9,7 +9,7 @@ import {
 
 import ScenarioService from '../../services/ScenarioService';
 
-import { getPaginatedApiParam } from '../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../utils/ApiHelper.ts';
 
 import {
     AUTOMATIONS_LIST_FETCH,

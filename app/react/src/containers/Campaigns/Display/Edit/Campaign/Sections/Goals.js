@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { EmptyRecords, Form, TableSelector } from '../../../../../../components/index.ts';
 import messages from '../messages';
 import GoalService from '../../../../../../services/GoalService';
-import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../../../../utils/ApiHelper.ts';
 import { GoalsTable } from '../Tables';
 import GoalContent from '../Goal/GoalContent';
 import * as SessionHelpers from '../../../../../../state/Session/selectors';

@@ -1,15 +1,28 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
+import { DrawableContent, DrawerSize } from './index';
 
 const viewportDrawerRatio = {
   large: 0.85,
   small: 0.4,
 };
 
-class DrawerManager extends Component {
+export interface DrawerManagerProps {
+  drawableContents: DrawableContent[];
+  onEscapeKeyDown: () => void;
+  onClickOnBackground: () => void;
+}
 
-  constructor(props) {
+export interface DrawerManagerState {
+  drawerMaxWidth: number;
+  viewportWidth: number;
+}
+
+class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerState> {
+
+  drawerDiv: HTMLDivElement | null;
+
+  constructor(props: DrawerManagerProps) {
     super(props);
     this.state = {
       drawerMaxWidth: this.getDimensions('large'),
@@ -21,7 +34,7 @@ class DrawerManager extends Component {
     window.addEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: DrawerManagerProps) {
     const prevContents = this.props.drawableContents;
     const nextContents = nextProps.drawableContents;
 
@@ -41,29 +54,30 @@ class DrawerManager extends Component {
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  getDimensions = (size) => window.innerWidth * viewportDrawerRatio[size]
+  getDimensions = (size: DrawerSize) => window.innerWidth * viewportDrawerRatio[size];
 
-  getDrawerStyle(xPos, size = 'large') {
+  getDrawerStyle(xPos: number, size: DrawerSize = 'large') {
     return {
       transform: `translate(${xPos}px, 0px)`,
       maxWidth: `${window.innerWidth * viewportDrawerRatio[size]}px`,
     };
   }
 
-  getForegroundContentSize = (drawableContents) => {
-    return (drawableContents && drawableContents.length
-      ? drawableContents[drawableContents.length - 1].size
+  getForegroundContentSize = (drawableContents: DrawableContent[]): DrawerSize => {
+    const foregroundContent = drawableContents.length > 0 && drawableContents[drawableContents.length - 1];
+    return (foregroundContent && foregroundContent.size
+      ? foregroundContent.size
       : 'large'
     );
   }
 
-  handleOnKeyDown = (event) => {
+  handleOnKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       this.props.onEscapeKeyDown();
     }
   }
 
-  updateDimensions = (nextDrawableContents) => {
+  updateDimensions = (nextDrawableContents: DrawableContent[]) => {
     const drawableContents = (nextDrawableContents.length
       ? nextDrawableContents
       : this.props.drawableContents
@@ -88,14 +102,14 @@ class DrawerManager extends Component {
     };
 
     // TODO fix react unique key issue
-    const drawersWithOverlay = [];
+    const drawersWithOverlay: JSX.Element[] = [];
 
-    drawableContents.forEach(({
-      component: WrappedComponent,
-      additionalProps,
-      size,
-      ...others
-    }, index) => {
+    drawableContents.forEach((
+      { component: WrappedComponent,
+        additionalProps,
+        size,
+        ...others },
+      index) => {
       const lastElement = index === drawableContents.length - 1;
       const displayInForeground = lastElement;
 
@@ -103,7 +117,7 @@ class DrawerManager extends Component {
         <div
           className={'drawer-overlay'}
           onClick={onClickOnBackground}
-        />
+        />,
       );
 
       drawersWithOverlay.push(
@@ -119,7 +133,7 @@ class DrawerManager extends Component {
           }
         >
           <WrappedComponent {...additionalProps} {...others} />
-        </div>
+        </div>,
       );
     });
 
@@ -133,24 +147,5 @@ class DrawerManager extends Component {
     );
   }
 }
-
-DrawerManager.defaultProps = {
-  drawableContents: [],
-};
-
-DrawerManager.propTypes = {
-  drawableContents: PropTypes.arrayOf(
-    PropTypes.shape({
-      component: PropTypes.func.isRequired,
-      additionalProps: PropTypes.object,
-      size: PropTypes.string.isRequired,
-      openNextDrawer: PropTypes.func,
-      closeNextDrawer: PropTypes.func,
-    }),
-  ),
-
-  onEscapeKeyDown: PropTypes.func.isRequired,
-  onClickOnBackground: PropTypes.func.isRequired,
-};
 
 export default DrawerManager;
