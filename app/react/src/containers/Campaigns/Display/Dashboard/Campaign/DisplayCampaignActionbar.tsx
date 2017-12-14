@@ -104,8 +104,8 @@ const fetchAllExportData = (organisationId: string, campaignId: string, filter: 
 
   return apiResults.then((responses) => {
     const mediaData = normalizeReportView(responses[0].data.report_view);
-    const adPerformanceById = formatReportView(responses[1].data.report_view, 'ad_id');
-    const adGroupPerformanceById = formatReportView(responses[2].data.report_view, 'ad_group_id');
+    const adPerformanceById = formatReportView(responses[1].data.report_view, 'message_id');
+    const adGroupPerformanceById = formatReportView(responses[2].data.report_view, 'sub_campaign_id');
     const overallDisplayData = normalizeReportView(responses[3].data.report_view);
     const data = responses[4].data;
     const campaign = {
