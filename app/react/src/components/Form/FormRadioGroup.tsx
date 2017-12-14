@@ -1,7 +1,6 @@
 import React from 'react';
 import { Radio } from 'antd';
-import { RadioProps } from 'antd/lib/radio';
-import { RadioGroupProps } from 'antd/lib/radio';
+import { RadioProps, RadioGroupProps } from 'antd/lib/radio';
 import { WrappedFieldProps } from 'redux-form';
 
 import FormRadio from './FormRadio';

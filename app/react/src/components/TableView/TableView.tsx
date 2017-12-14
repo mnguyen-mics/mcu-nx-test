@@ -5,7 +5,7 @@ import { Dropdown, Menu, Table } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { SpinProps } from 'antd/lib/spin';
 import { ClickParam } from 'antd/lib/menu';
-import { TableProps } from 'antd/lib/table'
+import { TableProps } from 'antd/lib/table';
 
 import McsIcons from '../McsIcons';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
