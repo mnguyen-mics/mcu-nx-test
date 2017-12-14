@@ -29,8 +29,6 @@ interface CampaignContentProps {
 
 interface RouterMatchParams {
   organisationId: string;
-  campaignId: string;
-  adGroupId?: string;
 }
 
 interface MapStateProps {
