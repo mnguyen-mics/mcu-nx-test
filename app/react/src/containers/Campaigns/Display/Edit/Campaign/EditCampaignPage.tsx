@@ -22,7 +22,6 @@ interface EditCampaignPageProps {
 interface RouterMatchParams {
   organisationId: string;
   campaignId: string;
-  adGroupId?: string;
 }
 
 interface EditCampaignPageState {

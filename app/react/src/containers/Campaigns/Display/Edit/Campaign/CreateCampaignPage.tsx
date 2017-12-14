@@ -14,8 +14,6 @@ interface CreateCampaignPageProps {
 
 interface RouterMatchParams {
   organisationId: string;
-  campaignId: string;
-  adGroupId?: string;
 }
 
 type JoinedProps = CreateCampaignPageProps & InjectedIntlProps & RouteComponentProps<RouterMatchParams>;
