@@ -1,33 +1,69 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { camelCase } from 'lodash';
 
-import withDrawer from '../../../../../components/Drawer/index.tsx';
+import withDrawer, { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer/index';
 import AdGroupContent from './AdGroupContent';
-import { withMcsRouter } from '../../../../Helpers';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import log from '../../../../../utils/Logger';
 
+interface EditAdGroupPageProps {
+  closeNextDrawer: () => void;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
+  notifyError: any;
+  hasFeature: (feature: string) => boolean;
+}
 
-class EditAdGroupPage extends Component {
+interface RouterProps {
+  organisationId: string;
+  campaignId: string;
+  adGroupId?: string;
+}
 
-  state = {
-    initialValues: {},
-    loading: true,
+interface EditAdGroupPageState {
+  initialValues: any;
+  loading: boolean;
+  editionMode: boolean;
+}
+
+type JoinedProps = EditAdGroupPageProps & RouteComponentProps<RouterProps>;
+
+class EditAdGroupPage extends React.Component<JoinedProps, EditAdGroupPageState> {
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      initialValues: {},
+      editionMode: ((props.location.state && props.location.state.adGroupId) || !props.match.params.adGroupId) ? false : true,
+      loading: true,
+    };
   }
 
   componentDidMount() {
     const { adGroupId, campaignId, organisationId } = this.props.match.params;
 
-    getAdGroup(organisationId, campaignId, adGroupId).then(adGroup => {
+    const stateAdGroupnId = this.props.location.state && this.props.location.state.adGroupId;
+
+    if (adGroupId) {
+      this.fetchAll(organisationId, campaignId, adGroupId);
+    } else if (stateAdGroupnId) {
+      this.fetchAll(organisationId, campaignId, stateAdGroupnId, true);
+    } else {
+      this.setState({
+        loading: false,
+      });
+    }
+  }
+
+  fetchAll = (organisationId: string, campaignId: string, adGroupId: string, duplicate: boolean = false) => {
+    return getAdGroup(organisationId, campaignId, adGroupId, duplicate).then((adGroup: any) => {
       const initialAdGroupFormatted = Object.keys(adGroup).reduce((acc, key) => ({
         ...acc,
-        [key.indexOf('Table') === -1 ? camelCase(`adGroup-${key}`) : key]: adGroup[key]
+        [key.indexOf('Table') === -1 ? camelCase(`adGroup-${key}`) : key]: adGroup[key],
       }), {});
 
       this.setState({
@@ -41,26 +77,26 @@ class EditAdGroupPage extends Component {
     });
   }
 
-  onSave = (object) => {
+  onSave = (object: any) => {
     const {
       history,
       match: {
         params: { campaignId, organisationId },
       },
       notifyError,
-      hasFeature
+      hasFeature,
     } = this.props;
 
     const saveOptions = {
       editionMode: true,
-      catalogMode: hasFeature('campaigns.display.edition.audience_catalog')
+      catalogMode: hasFeature('campaigns.display.edition.audience_catalog'),
     };
 
     saveAdGroup(campaignId, object, this.state.initialValues, saveOptions)
-      .then((adGroupId) => {
+      .then((adGroupId: string) => {
         history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`);
       })
-      .catch(err => {
+      .catch((err: any) => {
         log.error(err);
         notifyError(err);
       });
@@ -74,22 +110,22 @@ class EditAdGroupPage extends Component {
         params: {
           adGroupId,
           campaignId,
-          organisationId
-        }
-      }
+          organisationId,
+        },
+      },
     } = this.props;
 
     return (location.state && location.state.from
     ? history.push(location.state.from)
     : history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`)
     );
-  };
+  }
 
   render() {
     return (
       <AdGroupContent
         closeNextDrawer={this.props.closeNextDrawer}
-        editionMode
+        editionMode={this.state.editionMode}
         initialValues={this.state.initialValues}
         loading={this.state.loading}
         onClose={this.onClose}
@@ -100,21 +136,11 @@ class EditAdGroupPage extends Component {
   }
 }
 
-EditAdGroupPage.propTypes = {
-  closeNextDrawer: PropTypes.func.isRequired,
-  location: ReactRouterPropTypes.location.isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-  openNextDrawer: PropTypes.func.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  hasFeature: PropTypes.func.isRequired,
-};
-
 export default compose(
-  withMcsRouter,
+  withRouter,
   withDrawer,
   connect(
     state => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
-    { notifyError: NotificationActions.notifyError }
-  )
+    { notifyError: NotificationActions.notifyError },
+  ),
 )(EditAdGroupPage);
