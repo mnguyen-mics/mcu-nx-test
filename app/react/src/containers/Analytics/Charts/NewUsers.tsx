@@ -15,8 +15,8 @@ class NewUsers extends React.Component<NewUsersProps> {
     const value = a;
     const totalValue = b;
     return [
-      { key: 'delivered', val: value, color: '#ff9012' },
-      { key: 'rest', val: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' }
+      { key: 'delivered', value: value, color: '#ff9012' },
+      { key: 'rest', value: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' }
     ];
   }
 

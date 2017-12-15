@@ -10,7 +10,7 @@ interface DeviceTypeProps {
 
 interface PieChartDatum {
   key: string;
-  val: number;
+  value: number;
   color: string;
 }
 
@@ -33,24 +33,21 @@ class DeviceType extends React.Component<DeviceTypeProps> {
     Object.keys(datasetObject).forEach((key: string) => {
       pieChartData.push(datasetObject[key]);
     });
-    console.log("PIE CHART DATA", JSON.stringify(datasetObject))
     return pieChartData;
   }
 
   buildDatasetObject(rows: any[], key: string): DatasetObject {
     let colorIndex = 0;
-    console.log("Starting the reduce:", JSON.stringify(rows));
     return rows.reduce((datasetObject: DatasetObject, row: any) => {
       if (!datasetObject[row[key]]) {
         datasetObject[row[key]] = {
           key: row[key],
-          val: 0,
+          value: 0,
           color: this.colors[colorIndex],
         };
         colorIndex++;
       }
-      datasetObject[row[key]].val += row.count;
-      console.log("reducing:", JSON.stringify(row));
+      datasetObject[row[key]].value += row.count;
       return datasetObject;
     }, {});
   }

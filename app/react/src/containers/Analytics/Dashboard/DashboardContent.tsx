@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Row } from 'antd';
-import moment from 'moment';
 import Card from '../../../components/Card/Card';
 import VisitAnalysis from '../Charts/VisitAnalysis';
 import ReportService from '../../../services/ReportService';
@@ -42,7 +41,8 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
         super(props);
 
         this.state = {
-          report: [],
+          visitReportFormFactor: [],
+          visitReport: [],
           isFetchingVisitReport: false,
           hasFetchedVisitReport: false,
           isFetchingVisitReportFormFactor: false,
@@ -152,8 +152,6 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
 
       const onChange = (newValues: McsDateRangeValue) =>
         this.updateLocationSearch({
-          rangeType: newValues.rangeType,
-          lookbackWindow: newValues.lookbackWindow,
           from: newValues.from,
           to: newValues.to,
         });
@@ -162,44 +160,47 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
     }
 
     render() {
-        const buttons = this.renderDatePicker();
-        return (
-            <div>
-                <DashboardHeader object={{ name: 'Overview' }} translationKey="CAMPAIGN" />
-                <Row gutter={10} className="table-line">
-                  <Col span={24}>
-                    <Card buttons={buttons} title={'Visit analysis'} >
-                      <VisitAnalysis
-                        hasFetchedVisitReport={this.state.hasFetchedVisitReport}
-                        isFetchingVisitReport={this.state.isFetchingVisitReport}
-                        report={this.state.visitReport}
-                      />
-                    </Card>
-                  </Col>
-                </Row>
-                <Row gutter={10} className="table-line">
-                  <Col span={12}>
-                    <Card buttons={buttons} title={'New Users vs returning users'}>
-                        <NewUsers
-                          hasFetchedVisitReport={this.state.hasFetchedVisitReport}
-                          isFetchingVisitReport={this.state.isFetchingVisitReport}
-                          report={this.state.visitReport}
-                          colors={{}}
-                        />
-                    </Card>
-                  </Col>
-                  <Col span={12}>
-                    <Card buttons={buttons} title={'Device type'}>
-                        <DeviceType
-                          hasFetchedVisitReportFormFactor={this.state.hasFetchedVisitReportFormFactor}
-                          isFetchingVisitReportFormFactor={this.state.isFetchingVisitReportFormFactor}
-                          report={this.state.visitReportFormFactor}
-                          colors={{}}
-                        />
-                    </Card>
-                  </Col>
-                </Row>
-            </div>);
+      const { history: { location: { search } } } = this.props;
+      const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+      const buttons = this.renderDatePicker();
+      return (
+        <div>
+          <DashboardHeader object={{ name: 'Overview' }} translationKey="CAMPAIGN" />
+          <Row gutter={10} className="table-line">
+            <Col span={24}>
+              <Card buttons={buttons} title={'Visit analysis'} >
+                <VisitAnalysis
+                  hasFetchedVisitReport={this.state.hasFetchedVisitReport}
+                  isFetchingVisitReport={this.state.isFetchingVisitReport}
+                  report={this.state.visitReport}
+                  lookbackWindow={filter.lookbackWindow}
+                />
+              </Card>
+            </Col>
+          </Row>
+          <Row gutter={10} className="table-line">
+            <Col span={12}>
+              <Card buttons={buttons} title={'New Users vs returning users'}>
+                  <NewUsers
+                    hasFetchedVisitReport={this.state.hasFetchedVisitReport}
+                    isFetchingVisitReport={this.state.isFetchingVisitReport}
+                    report={this.state.visitReport}
+                    colors={{}}
+                  />
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card buttons={buttons} title={'Device type'}>
+                  <DeviceType
+                    hasFetchedVisitReportFormFactor={this.state.hasFetchedVisitReportFormFactor}
+                    isFetchingVisitReportFormFactor={this.state.isFetchingVisitReportFormFactor}
+                    report={this.state.visitReportFormFactor}
+                    colors={{}}
+                  />
+              </Card>
+            </Col>
+          </Row>
+        </div>);
     }
 }
 export default compose(

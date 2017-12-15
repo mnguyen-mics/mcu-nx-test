@@ -1,11 +1,33 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Modal, Row, Col, Radio } from 'antd';
-import McsIcon from '../McsIcon.tsx';
+import McsIcon from '../McsIcon';
 
-class LegendChartWithModal extends Component {
+interface Legend {
+  key: string;
+  domain: string;
+}
 
-  constructor(props) {
+interface LegendOption {
+  key: string;
+  color: string;
+  domain: string;
+}
+
+interface LegendChartWithModalProps {
+  identifier: string;
+  options: LegendOption[];
+  legends: Legend[];
+  onLegendChange: (a: string, b: string) => void;
+}
+
+interface LegendChartWithModalState {
+  key1: string;
+  key2: string;
+}
+
+class LegendChartWithModal extends React.Component<LegendChartWithModalProps, LegendChartWithModalState> {
+
+  constructor(props: LegendChartWithModalProps) {
     super(props);
 
     this.state = {
@@ -16,7 +38,7 @@ class LegendChartWithModal extends Component {
 
   render() {
     const { options } = this.props;
-    const renderPicker = (that) => {
+    const renderPicker = () => {
       const { legends } = this.props;
       const radioStyle = {
         display: 'block',
@@ -24,16 +46,16 @@ class LegendChartWithModal extends Component {
         lineHeight: '30px',
       };
 
-      that.setState({
+      this.setState({
         key1: options[0].key,
         key2: options[1].key,
       });
 
-      const onChangeValueLeft = e => {
-        that.setState({ key1: e.target.value });
+      const onChangeValueLeft = (e: any) => {
+        this.setState({ key1: e.target.value });
       };
-      const onChangeValueRight = e => {
-        that.setState({ key2: e.target.value });
+      const onChangeValueRight = (e: any) => {
+        this.setState({ key2: e.target.value });
       };
 
       return (
@@ -41,9 +63,7 @@ class LegendChartWithModal extends Component {
           <Col span={12}>
             <Radio.Group
               defaultValue={options[0].key}
-              onChange={e => {
-                onChangeValueLeft(e, 0);
-              }}
+              onChange={onChangeValueLeft}
             >
               {legends.map(legend => {
                 return (
@@ -57,7 +77,7 @@ class LegendChartWithModal extends Component {
           <Col span={12}>
             <Radio.Group
               defaultValue={options[1].key}
-              onChange={e => onChangeValueRight(e, 1)}
+              onChange={onChangeValueRight}
             >
               {legends.map(legend => {
                 return (
@@ -72,16 +92,17 @@ class LegendChartWithModal extends Component {
       );
     };
 
-    const renderModal = (that) => {
+    const renderModal = () => {
       const { onLegendChange } = this.props;
+      const key1 = this.state.key1;
+      const key2 = this.state.key2;
       Modal.confirm({
-        title: 'Please select two items to display',
-        content: renderPicker(that),
+        title: 'Do you Want to delete these items?',
+        content: renderPicker(),
         onOk() {
-          onLegendChange(that.state.key1, that.state.key2);
+          onLegendChange(key1, key2);
         },
-        onCancel() {
-        },
+        onCancel() {},
       });
     };
 
@@ -107,7 +128,9 @@ class LegendChartWithModal extends Component {
                   lineHeight: '40px',
                   marginLeft: '5px',
                 }}
-              >{option.domain}</span>
+              >
+                {option.domain}
+              </span>
             </div>
           );
         })}
@@ -122,9 +145,7 @@ class LegendChartWithModal extends Component {
         >
           <button
             className="mcs-invisible-button"
-            onClick={() => {
-              renderModal(this);
-            }}
+            onClick={renderModal}
           >
             <McsIcon
               style={{ marginLeft: '10px', color: '#d0d0d0' }}
@@ -136,27 +157,5 @@ class LegendChartWithModal extends Component {
     );
   }
 }
-
-LegendChartWithModal.defaultProps = {
-  legends: [],
-  onLegendChange: () => {},
-};
-
-LegendChartWithModal.propTypes = {
-  legends: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      domain: PropTypes.string.isRequired,
-    }),
-  ),
-  onLegendChange: PropTypes.func,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      keys: PropTypes.arrayOf(PropTypes.string),
-      colors: PropTypes.arrayOf(PropTypes.string),
-      domains: PropTypes.arrayOf(PropTypes.string),
-    }),
-  ).isRequired,
-};
 
 export default LegendChartWithModal;

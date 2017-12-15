@@ -1,7 +1,4 @@
 import * as React from 'react';
-import {InjectedIntlProps} from "react-intl";
-import {RouteComponentProps} from 'react-router';
-import { withRouter } from 'react-router-dom';
 
 import { EmptyCharts } from '../../../components/EmptyCharts/index';
 import MetricsColumn from '../../../components/MetricsColumn';
@@ -11,28 +8,18 @@ import messages from '../Dashboard/messages';
 import StackedAreaPlotDoubleAxis from '../../../components/StackedAreaPlot/StackedAreaPlotDoubleAxis';
 import Col from 'antd/lib/grid/col';
 import Row from 'antd/lib/grid/row';
-import {parseSearch, updateSearch} from '../../../utils/LocationSearchHelper';
-import { ANALYTICS_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import McsDateRangePicker, {McsDateRangeValue} from '../../../components/McsDateRangePicker';
-import {compose} from "recompose";
-
-interface RouterMatchParams {
-  organisationId: string;
-  campaignId: string;
-}
 
 interface VisitAnalysisProps {
   hasFetchedVisitReport: boolean;
   isFetchingVisitReport: boolean;
   report: any[];
+  lookbackWindow: number;
 }
-type JoinedProps = VisitAnalysisProps & RouteComponentProps<RouterMatchParams> & InjectedIntlProps;
+type JoinedProps = VisitAnalysisProps;
 
 interface VisitAnalysisState {
   key1: string;
   key2: string;
-  hasFetchedOverallStat?: boolean;
-  isFetchingOverallStat?: boolean;
 }
 
 const _messages: { [s: string]: any } = messages;
@@ -80,9 +67,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
   }
 
   render() {
-    const { report, history: { location: { search } }, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
-    const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
-
+    const { report, lookbackWindow, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
     const { key1, key2 } = this.state;
 
     const metrics = [{
@@ -105,7 +90,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
         { key: key1, message: _messages[key1] },
         { key: key2, message: _messages[key2] },
       ],
-      lookbackWindow: filter.lookbackWindow,
+      lookbackWindow: lookbackWindow,
       colors: ['#ff9012', '#00a1df'],
     };
 
@@ -161,7 +146,4 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     );
   }
 }
-export default compose(
-  withRouter,
-)
-(VisitAnalysis);
+export default VisitAnalysis;
