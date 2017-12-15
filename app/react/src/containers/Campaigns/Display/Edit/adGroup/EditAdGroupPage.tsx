@@ -10,6 +10,7 @@ import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import log from '../../../../../utils/Logger';
+import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 
 interface EditAdGroupPageProps {
   closeNextDrawer: () => void;
@@ -61,10 +62,17 @@ class EditAdGroupPage extends React.Component<JoinedProps, EditAdGroupPageState>
 
   fetchAll = (organisationId: string, campaignId: string, adGroupId: string, duplicate: boolean = false) => {
     return getAdGroup(organisationId, campaignId, adGroupId, duplicate).then((adGroup: any) => {
-      const initialAdGroupFormatted = Object.keys(adGroup).reduce((acc, key) => ({
+      let initialAdGroupFormatted = Object.keys(adGroup).reduce((acc, key) => ({
         ...acc,
         [key.indexOf('Table') === -1 ? camelCase(`adGroup-${key}`) : key]: adGroup[key],
       }), {});
+
+      if (duplicate) {
+        initialAdGroupFormatted = {
+          ...initialAdGroupFormatted,
+          adGroupId: generateFakeId(),
+        };
+      }
 
       this.setState({
         initialValues: initialAdGroupFormatted,
@@ -88,7 +96,7 @@ class EditAdGroupPage extends React.Component<JoinedProps, EditAdGroupPageState>
     } = this.props;
 
     const saveOptions = {
-      editionMode: true,
+      editionMode: this.state.editionMode,
       catalogMode: hasFeature('campaigns.display.edition.audience_catalog'),
     };
 
