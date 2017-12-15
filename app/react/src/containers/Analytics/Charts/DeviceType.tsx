@@ -89,7 +89,6 @@ class DeviceType extends React.Component<DeviceTypeProps> {
     const {report, hasFetchedVisitReportFormFactor} = this.props;
     let chartComponent;
 
-    console.log("REPORT", JSON.stringify(report))
     if (hasFetchedVisitReportFormFactor) {
       const ratio = this.extractRatio(report);
       const datasetObject = this.buildDatasetObject(report, 'form_factor');

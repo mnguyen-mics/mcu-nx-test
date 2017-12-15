@@ -112,7 +112,13 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     ];
     const legends = this.createLegend();
 
-    const onLegendChange = (a: string, b: string) => this.setState({ key1: a, key2: b });
+    const onLegendChange = (a: string, b: string) => this.setState((previousState: VisitAnalysisState) => {
+      return {
+        ...previousState,
+        key1: a,
+        key2: b,
+      };
+    });
     const datasource = report;
     return (
       <div>

@@ -52,10 +52,22 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
       });
 
       const onChangeValueLeft = (e: any) => {
-        this.setState({ key1: e.target.value });
+        this.setState(
+          (oldState: LegendChartWithModalState) => {
+            return {
+              ...oldState,
+              key1: e.target.value
+            };
+          });
       };
       const onChangeValueRight = (e: any) => {
-        this.setState({ key2: e.target.value });
+        this.setState(
+      (oldState: LegendChartWithModalState) => {
+          return {
+            ...oldState,
+            key2: e.target.value
+          };
+        });
       };
 
       return (
@@ -92,15 +104,13 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
       );
     };
 
-    const renderModal = () => {
+    const renderModal = (that: LegendChartWithModal) => {
       const { onLegendChange } = this.props;
-      const key1 = this.state.key1;
-      const key2 = this.state.key2;
       Modal.confirm({
         title: 'Do you Want to delete these items?',
         content: renderPicker(),
         onOk() {
-          onLegendChange(key1, key2);
+          onLegendChange(that.state.key1, that.state.key2);
         },
         onCancel() {},
       });
@@ -145,7 +155,7 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
         >
           <button
             className="mcs-invisible-button"
-            onClick={renderModal}
+            onClick={() => renderModal(this)}
           >
             <McsIcon
               style={{ marginLeft: '10px', color: '#d0d0d0' }}
