@@ -1,8 +1,23 @@
-import { AudienceSegmentResource } from './AudienceSegmentResource';
-import { AudienceSegmentSelectionResource, AudienceSegmentSelectionCreateRequest } from './AudienceSegmentSelectionResource';
+import {
+  AudienceSegmentResource,
+  AudienceSegment,
+  AudienceSegmentType,
+  FeedType,
+  UserListSegment
+} from './AudienceSegmentResource';
+import {
+  AudienceSegmentSelectionResource,
+  AudienceSegmentSelectionCreateRequest
+} from './AudienceSegmentSelectionResource';
 
 export {
   AudienceSegmentResource,
+  UserListSegment,
+  FeedType,
+  AudienceSegmentType,
   AudienceSegmentSelectionResource,
-  AudienceSegmentSelectionCreateRequest
+  AudienceSegmentSelectionCreateRequest,
+  AudienceSegment
+
+
 };

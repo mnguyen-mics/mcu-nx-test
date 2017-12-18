@@ -153,6 +153,11 @@ class SegmentsActionbar extends Component {
             <FormattedMessage id="USER_LIST" />
           </Link>
         </Menu.Item>
+        <Menu.Item key="USER_PIXEL">
+          <Link to={{ pathname: `/v2/o/${organisationId}/audience/segments/create/USER_PIXEL` }}>
+            <FormattedMessage id="USER_PIXEL" />
+          </Link>
+        </Menu.Item>
         <Menu.Item key="USER_QUERY">
           <Link to={`/o${organisationId}d${datamartId}/datamart/segments/USER_QUERY`}>
             <FormattedMessage id="USER_QUERY" />

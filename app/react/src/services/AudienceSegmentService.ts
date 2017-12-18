@@ -4,6 +4,8 @@ import {
   AudienceSegmentResource,
   AudienceSegmentType,
   UserQueryEvaluationMode,
+  AudienceSegment,
+  UserListSegment
 } from '../models/audiencesegment/AudienceSegmentResource';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
@@ -39,9 +41,40 @@ const AudienceSegmentService = {
 
   getSegment(
     segmentId: string,
-  ): Promise<DataResponse<AudienceSegmentResource>> {
+  ): Promise<DataResponse<AudienceSegment>> {
     const endpoint = `audience_segments/${segmentId}`;
     return ApiService.getRequest(endpoint);
+  },
+
+  updateAudienceSegment(
+    segmentId: string,
+    body: object,
+  ): Promise<DataResponse<AudienceSegment>> {
+    const endpoint = `audience_segments/${segmentId}`
+    return ApiService.putRequest(endpoint, body);
+  },
+
+  deleteAudienceSegment(
+    segmentId: string,
+  ): Promise<any> {
+    const endpoint = `audience_segments/${segmentId}`
+    return ApiService.deleteRequest(endpoint);
+  },
+
+  saveSegment(
+    organisationId: string,
+    audienceSegment: Partial<UserListSegment>
+  ): Promise<DataResponse<AudienceSegment>> {
+
+    let createOrUpdatePromise;
+    if (audienceSegment.id) {
+      createOrUpdatePromise = this.updateAudienceSegment(audienceSegment.id, audienceSegment)
+    } else {
+      createOrUpdatePromise = this.createAudienceSegment(organisationId, audienceSegment)
+    }
+
+    return createOrUpdatePromise;
+
   },
 
   // TODO return type (JobExec...)
@@ -120,6 +153,14 @@ const AudienceSegmentService = {
         data: augmentedSegments,
       };
     });
+  },
+
+  createAudienceSegment(organisationId: string, options: object = {}): Promise<DataResponse<AudienceSegment>> {
+    const endpoint = `audience_segments?organisation_id=${organisationId}`;
+    const params = {
+      ...options,
+    };
+    return ApiService.postRequest(endpoint, params);
   },
 };
 

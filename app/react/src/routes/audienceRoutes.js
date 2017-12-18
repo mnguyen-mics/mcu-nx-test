@@ -6,6 +6,10 @@ import {
 import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage.tsx';
 
 import {
+  EditAudienceSegmentPage
+} from '../containers/Audience/Segments/Edit/index.ts';
+
+import {
   AudienceSegment,
   AudienceSegmentActionbar,
 } from '../containers/Audience/Segments/Dashboard';
@@ -26,6 +30,16 @@ const audienceRoutes = [
     layout: 'main',
     contentComponent: AudienceSegmentsTable,
     actionBarComponent: SegmentsActionbar,
+  },
+  {
+    path: '/audience/segments/create/:type?',
+    layout: 'edit',
+    editComponent: EditAudienceSegmentPage,
+  },
+  {
+    path: '/audience/segments/:segmentId/edit',
+    layout: 'edit',
+    editComponent: EditAudienceSegmentPage,
   },
   {
     path: '/audience/segments/:segmentId',

@@ -293,6 +293,12 @@ class AudienceSegmentsTable extends Component {
                   <Icon type="solution" />
                 </Tooltip>
               );
+            case 'USER_PIXEL':
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="global" />
+                </Tooltip>
+              );
             default:
               return (
                 <Tooltip placement="top" title={translations[text]}>
@@ -386,7 +392,7 @@ class AudienceSegmentsTable extends Component {
       },
     ];
 
-    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY']
+    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_PIXEL', 'USER_QUERY']
       .map(type => ({ key: type, value: type }));
 
     const filtersOptions = [
