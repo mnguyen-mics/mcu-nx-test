@@ -16,7 +16,7 @@ class NewUsers extends React.Component<NewUsersProps> {
     const totalValue = b;
     return [
       { key: 'delivered', value: value, color: '#ff9012' },
-      { key: 'rest', value: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' }
+      { key: 'rest', value: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' },
     ];
   }
 
@@ -37,13 +37,13 @@ class NewUsers extends React.Component<NewUsersProps> {
             ? '0%'
             : this.generateRatio(ratioValeA, ratioValeB)
         ),
-        //TODO INTL
+        // TODO INTL
         text: 'New Users vs old users',
       },
       colors: [colorFormated, gray],
     };
     return options;
-  };
+  }
 
   extractRatio(report: any) {
     const unique = report.reduce((accu: number, elem: any) => {
@@ -64,7 +64,7 @@ class NewUsers extends React.Component<NewUsersProps> {
     if (hasFetchedVisitReport) {
       const ratio = this.extractRatio(report);
       const dataset = this.buildDataSet(ratio.a, ratio.b);
-      const pieChartsOptions = this.generateOptions(true, 'blue', 'mykey', ratio.a, ratio.b);
+      const pieChartsOptions = this.generateOptions(false, 'blue', 'mykey', ratio.a, ratio.b);
       chartComponent =
         (
           <PieChart
