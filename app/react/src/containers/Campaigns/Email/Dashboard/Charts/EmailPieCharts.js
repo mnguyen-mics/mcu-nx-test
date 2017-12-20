@@ -6,7 +6,7 @@ import { Row, Col } from 'antd';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
-import PieChart from '../../../../../components/PieChart';
+import PieChart from '../../../../../components/PieChart.tsx';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 

@@ -1,37 +1,40 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import Plottable from 'plottable';
+import ChartUtils from './ChartUtils';
 
-// interface DatasetProps {
-//   key: string;
-//   value: number;
-//   color: string;
-// }
-//
-// interface TextProps {
-//   value?: string;
-//   text?: string;
-// }
-//
-// interface OptionsProps {
-//   innerRadius: boolean;
-//   isHalf: boolean;
-//   text: TextProps[];
-// }
-//
-// interface PieChartProps {
-//   identifier: string;
-//   dataset: DatasetProps[];
-//   options: OptionsProps[];
-// }
+interface DatasetProps {
+  key: string;
+  value: number;
+  color: string;
+}
 
-class PieChart extends Component {
+interface TextProps {
+  value?: string;
+  text?: string;
+}
 
-  constructor(props) {
+interface OptionsProps {
+  innerRadius: boolean;
+  isHalf: boolean;
+  text: TextProps;
+  colors: string[];
+}
+
+interface PieChartProps {
+  identifier: string;
+  dataset: DatasetProps[];
+  options: OptionsProps;
+}
+
+class PieChart extends React.Component<PieChartProps> {
+
+  svg: any;
+  plot: any;
+
+  constructor(props: PieChartProps) {
     super(props);
 
     this.plot = null;
-    this.plotDataset = null;
   }
 
   componentDidMount() {
@@ -39,7 +42,6 @@ class PieChart extends Component {
   }
 
   componentDidUpdate() {
-
     this.plot.destroy();
     this.renderPieChart(this.svg);
   }
@@ -48,25 +50,26 @@ class PieChart extends Component {
     this.plot.destroy();
   }
 
-  renderPieChart = (svg) => {
+  computeOuterRadius(svg: any, options: OptionsProps) {
+    return options.isHalf ?
+      (svg.clientHeight) - 20 :
+      ((Math.min(svg.clientWidth, svg.clientHeight) / 2) - 20);
+  }
+
+  renderPieChart = (svg: any) => {
     const { dataset, options, identifier } = this.props;
     const scale = new Plottable.Scales.Linear();
     const colorScale = new Plottable.Scales.InterpolatedColor();
     colorScale.range(options.colors);
 
-    const outerRadius = (svg.clientHeight > svg.clientWidth / 2
-      ? (svg.clientWidth / 2) - 20
-      : svg.clientHeight - 20
-    );
-
+    const outerRadius = this.computeOuterRadius(svg, options);
 
     const plotData = new Plottable.Dataset(dataset);
-    this.plotDataset = plotData;
 
     const plot = new Plottable.Plots.Pie()
       .addDataset(plotData)
       .sectorValue((d) => { return d.val; }, scale)
-      .attr('fill', (d) => { return d.val; }, colorScale);
+      .attr('fill', (d) => { return d.color; });
 
     if (options.isHalf) {
       plot.outerRadius(outerRadius);
@@ -86,19 +89,7 @@ class PieChart extends Component {
 
     plot.renderTo(`#${identifier}`);
     this.plot = plot;
-    global.window.addEventListener('resize', () => {
-      plot.xAlignment('center');
-      plot.yAlignment('center');
-
-      const outerRadiusResized = (svg.clientHeight > svg.clientWidth / 2
-        ? (svg.clientWidth / 2) - 20
-        : (svg.clientHeight - 20)
-      );
-
-      plot.outerRadius(outerRadiusResized);
-      plot.innerRadius(outerRadiusResized * 0.606);
-      plot.redraw();
-    });
+    ChartUtils.addResizeListener(plot, svg, options, this.computeOuterRadius);
   }
 
   render() {
@@ -155,22 +146,4 @@ class PieChart extends Component {
     );
   }
 }
-
-PieChart.propTypes = {
-  identifier: PropTypes.string.isRequired,
-  dataset: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string,
-    value: PropTypes.number,
-    color: PropTypes.string,
-  })).isRequired,
-  options: PropTypes.shape({
-    innerRadius: PropTypes.bool,
-    isHalf: PropTypes.bool,
-    text: PropTypes.shape({
-      value: PropTypes.string,
-      text: PropTypes.string,
-    }),
-  }).isRequired,
-};
-
 export default PieChart;
