@@ -1,14 +1,14 @@
 import {
-    DashboardContent,
-    DashboardActionBar,
-} from '../containers/Analytics/Dashboard/index';
+    OverviewContent,
+    OverviewActionBar,
+} from '../containers/Analytics/Overview/index';
 
 const analyticsRoutes = [
   {
-    path: '/analytics/dashboard',
+    path: '/analytics/overview',
     layout: 'main',
-    contentComponent: DashboardContent,
-    actionBarComponent: DashboardActionBar,
+    contentComponent: OverviewContent,
+    actionBarComponent: OverviewActionBar,
   },
 ];
 

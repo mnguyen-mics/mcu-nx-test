@@ -4,7 +4,7 @@ import { EmptyCharts } from '../../../components/EmptyCharts/index';
 import MetricsColumn from '../../../components/MetricsColumn';
 import { formatMetric } from '../../../utils/MetricHelper';
 import { LegendChartWithModal } from '../../../components/LegendChart';
-import messages from '../Dashboard/messages';
+import messages from '../Overview/messages';
 import StackedAreaPlotDoubleAxis from '../../../components/StackedAreaPlot/StackedAreaPlotDoubleAxis';
 import Col from 'antd/lib/grid/col';
 import Row from 'antd/lib/grid/row';
@@ -13,7 +13,6 @@ interface VisitAnalysisProps {
   hasFetchedVisitReport: boolean;
   isFetchingVisitReport: boolean;
   report: any[];
-  lookbackWindow: number;
 }
 type JoinedProps = VisitAnalysisProps;
 
@@ -67,7 +66,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
   }
 
   render() {
-    const { report, lookbackWindow, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
+    const { report, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
     const { key1, key2 } = this.state;
 
     const metrics = [{
@@ -90,7 +89,6 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
         { key: key1, message: _messages[key1] },
         { key: key2, message: _messages[key2] },
       ],
-      lookbackWindow: lookbackWindow,
       colors: ['#ff9012', '#00a1df'],
     };
 

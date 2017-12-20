@@ -72,9 +72,9 @@ const analyticsMenu = {
   translationId: 'ANALYTICS',
   subMenuItems: [
     {
-      key: 'analytics.dashboard',
-      path: '/analytics/dashboard',
-      translationId: 'DASHBOARD',
+      key: 'analytics.overview',
+      path: '/analytics/overview',
+      translationId: 'OVERVIEW',
     },
   ]
 };

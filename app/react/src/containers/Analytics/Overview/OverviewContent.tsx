@@ -14,7 +14,7 @@ import {RouteComponentProps} from 'react-router';
 import {default as McsDateRangePicker, McsDateRangeValue} from '../../../components/McsDateRangePicker';
 import DeviceType from '../Charts/DeviceType';
 
-interface DashboardContentProps {
+interface OverviewContentProps {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
 }
@@ -24,9 +24,9 @@ interface RouterMatchParams {
   campaignId: string;
 }
 
-type DashboardContentAllProps = DashboardContentProps & RouteComponentProps<RouterMatchParams>;
+type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<RouterMatchParams>;
 
-interface DashboardContentState {
+interface OverviewContentState {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
   isFetchingVisitReportFormFactor: boolean;
@@ -35,9 +35,9 @@ interface DashboardContentState {
   visitReport: any;
 }
 
-class DashboardContent extends React.Component<DashboardContentAllProps, DashboardContentState> {
+class OverviewContent extends React.Component<OverviewContentAllProps, OverviewContentState> {
 
-    constructor(props: DashboardContentAllProps) {
+    constructor(props: OverviewContentAllProps) {
         super(props);
 
         this.state = {
@@ -122,7 +122,7 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
       this.fetchAllData('1', '1048', filter);
     }
 
-    componentWillReceiveProps(nextProps: DashboardContentAllProps) {
+    componentWillReceiveProps(nextProps: OverviewContentAllProps) {
       const { history: { location: { search } } } = nextProps;
       const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
       this.fetchAllData('1', '1048', filter);
@@ -145,7 +145,6 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
       const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
 
       const values = {
-        lookbackWindow: filter.lookbackWindow,
         from: filter.from,
         to: filter.to,
       };
@@ -160,8 +159,6 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
     }
 
     render() {
-      const { history: { location: { search } } } = this.props;
-      const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
       const buttons = this.renderDatePicker();
       return (
         <div>
@@ -173,7 +170,6 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
                   hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                   isFetchingVisitReport={this.state.isFetchingVisitReport}
                   report={this.state.visitReport}
-                  lookbackWindow={filter.lookbackWindow}
                 />
               </Card>
             </Col>
@@ -206,4 +202,4 @@ class DashboardContent extends React.Component<DashboardContentAllProps, Dashboa
 export default compose(
   withRouter,
 )
-(DashboardContent);
+(OverviewContent);
