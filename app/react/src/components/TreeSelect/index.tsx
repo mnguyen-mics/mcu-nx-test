@@ -65,6 +65,8 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
     dropdownClassName: 'ant-select-tree-dropdown',
   };
 
+  private rcTreeSelect: any;
+
   constructor(props: TreeSelectProps) {
     super(props);
 
@@ -75,14 +77,24 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
     // );
   }
 
-  abstract getLocale(): any;
+  focus() {
+    this.rcTreeSelect.focus();
+  }
 
-  renderSelect(locale: SelectLocale) {
+  blur() {
+    this.rcTreeSelect.blur();
+  }
+
+  saveTreeSelect = (node: typeof RcTreeSelect) => {
+    this.rcTreeSelect = node;
+  }
+
+  renderTreeSelect = (locale: SelectLocale) => {
     const {
       prefixCls,
       className,
       size,
-      notFoundContent = locale.notFoundContent,
+      notFoundContent,
       dropdownStyle,
       ...restProps,
     } = this.props;
@@ -105,7 +117,8 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
           className={cls}
           dropdownStyle={{ maxHeight: '100vh', overflow: 'auto', ...dropdownStyle }}
           treeCheckable={checkable}
-          notFoundContent={notFoundContent}
+          notFoundContent={notFoundContent || locale.notFoundContent}
+          ref={this.saveTreeSelect}
         />
       </div>
     );
@@ -114,10 +127,10 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
   render() {
     return (
       <LocaleReceiver
-        componentName={'Select'}
+        componentName="Select"
         defaultLocale={{}}
       >
-        {this.renderSelect}
+        {this.renderTreeSelect}
       </LocaleReceiver>
     );
   }
