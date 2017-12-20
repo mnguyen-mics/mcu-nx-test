@@ -34,8 +34,9 @@ class EmailTemplateSelection extends Component {
       return (
         <RecordElement
           key={template.id}
+          record={template}
           recordIconType={'email'}
-          title={template.name}
+          title={(record) => record.name}
         />
       );
     });

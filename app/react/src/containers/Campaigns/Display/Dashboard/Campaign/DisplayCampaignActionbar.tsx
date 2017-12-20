@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, Dropdown, Icon, Menu, Modal, message } from 'antd';
-import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
@@ -236,12 +235,27 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
     });
   }
 
+  editCampaign = () => {
+    const {
+      location,
+      history,
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+        },
+      },
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
+    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}` } });
+  }
+
   render() {
     const {
       match: {
         params: {
           organisationId,
-          campaignId,
         },
       },
       intl: { formatMessage },
@@ -267,12 +281,10 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
           <McsIcons type="download" />
           <FormattedMessage id="EXPORT" />
         </Button>
-        <Link to={`/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`}>
-          <Button>
-            <McsIcons type="pen" />
-            <FormattedMessage {...messages.editCampaign} />
-          </Button>
-        </Link>
+        <Button onClick={this.editCampaign}>
+          <McsIcons type="pen" />
+          <FormattedMessage {...messages.editCampaign} />
+        </Button>
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />

@@ -55,16 +55,12 @@ class EmailForm extends Component {
         <RecordElement
           key={blast.id}
           recordIconType={'email'}
-          title={blast.blast_name}
-          actionButtons={[
-            { iconType: 'edit', onClick: () => this.handleClickOnEditBlast(blast) },
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveBlast(blast) },
-          ]}
-        >
-          <span>
-            {blast.send_date.format('DD/MM/YYYY HH:mm')}
-          </span>
-        </RecordElement>
+          record={blast}
+          title={(record) => record.blast_name}
+          additionalData={(record) => <span>Send Date: {record.send_date.format('DD/MM/YYYY HH:mm')}</span>}
+          onEdit={() => this.handleClickOnEditBlast(blast)}
+          onRemove={() => this.handleClickOnRemoveBlast(blast)}
+        />
       );
     });
 
