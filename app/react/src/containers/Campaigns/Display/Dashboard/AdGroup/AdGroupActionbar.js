@@ -38,6 +38,38 @@ class AdGroupActionbar extends Component {
     return adGroup.id ? ((adGroup.status === 'PAUSED' || adGroup.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement) : null;
   }
 
+  editCampaign = () => {
+    const {
+      location,
+      history,
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+        },
+      },
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
+  }
+
+  duplicateCampaign = () => {
+    const {
+      location,
+      history,
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+        },
+      },
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}`, campaignId: campaignId } });
+  }
+
   buildMenu = () => {
 
     const {
@@ -64,6 +96,10 @@ class AdGroupActionbar extends Component {
       switch (event.key) {
         case 'ARCHIVED':
           return handleArchiveGoal(adGroup.id);
+        case 'EDIT':
+          return this.editAdGroup();
+        case 'DUPLICATE':
+          return handleArchiveGoal(adGroup.id);
         default:
           return () => {};
       }
@@ -71,6 +107,12 @@ class AdGroupActionbar extends Component {
 
     const addMenu = (
       <Menu onClick={onClick}>
+        <Menu.Item key="EDIT">
+          <FormattedMessage {...messages.editAdGroup} />
+        </Menu.Item>
+        <Menu.Item key="DUPLICATE">
+          <FormattedMessage {...messages.duplicate} />
+        </Menu.Item>
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveAdGroup} />
         </Menu.Item>
@@ -110,17 +152,6 @@ class AdGroupActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
-        <Link
-          to={{
-            pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
-            state: { from: `${location.pathname}${location.search}` },
-          }}
-        >
-          <Button>
-            <Icon type="edit" />
-            <FormattedMessage {...messages.editAdGroup} />
-          </Button>
-        </Link>
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />
@@ -136,6 +167,7 @@ AdGroupActionbar.propTypes = {
   location: PropTypes.shape().isRequired,
   translations: PropTypes.shape().isRequired,
   match: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   adGroup: PropTypes.shape().isRequired,
   displayCampaign: PropTypes.shape().isRequired,
   updateAdGroup: PropTypes.func.isRequired,
