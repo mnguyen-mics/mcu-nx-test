@@ -3,16 +3,19 @@ import { Row } from 'antd';
 import Card from '../../../components/Card/Card';
 import VisitAnalysis from '../Charts/VisitAnalysis';
 import ReportService from '../../../services/ReportService';
-import DashboardHeader from '../Common/DashboardHeader';
+import OverviewHeader from '../Common/OverviewHeader';
 import NewUsers from '../Charts/NewUsers';
 import Col from 'antd/lib/grid/col';
 import {compose} from "recompose";
+import messages from './messages';
 import {withRouter} from 'react-router-dom';
 import {parseSearch, updateSearch} from '../../../utils/LocationSearchHelper';
 import {ANALYTICS_DASHBOARD_SEARCH_SETTINGS} from '../constants';
 import {RouteComponentProps} from 'react-router';
 import {default as McsDateRangePicker, McsDateRangeValue} from '../../../components/McsDateRangePicker';
 import DeviceType from '../Charts/DeviceType';
+import InjectedIntlProps = ReactIntl.InjectedIntlProps;
+import injectIntl = ReactIntl.injectIntl;
 
 interface OverviewContentProps {
   isFetchingVisitReport: boolean;
@@ -24,7 +27,7 @@ interface RouterMatchParams {
   campaignId: string;
 }
 
-type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<RouterMatchParams>;
+type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<RouterMatchParams> & InjectedIntlProps;
 
 interface OverviewContentState {
   isFetchingVisitReport: boolean;
@@ -159,13 +162,15 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
     }
 
     render() {
+      const { intl: { formatMessage } } = this.props;
+
       const buttons = this.renderDatePicker();
       return (
         <div>
-          <DashboardHeader object={{ name: 'Overview' }} translationKey="CAMPAIGN" />
+          <OverviewHeader object={{ name: formatMessage(messages.overview) }} />
           <Row gutter={10} className="table-line">
             <Col span={24}>
-              <Card buttons={buttons} title={'Visit analysis'} >
+              <Card buttons={buttons} title={formatMessage(messages.visit_analysis)}>
                 <VisitAnalysis
                   hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                   isFetchingVisitReport={this.state.isFetchingVisitReport}
@@ -176,7 +181,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
           </Row>
           <Row gutter={10} className="table-line">
             <Col span={12}>
-              <Card buttons={buttons} title={'New Users vs returning users'}>
+              <Card buttons={buttons} title={formatMessage(messages.new_users)}>
                   <NewUsers
                     hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                     isFetchingVisitReport={this.state.isFetchingVisitReport}
@@ -186,7 +191,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
               </Card>
             </Col>
             <Col span={12}>
-              <Card buttons={buttons} title={'Device type'}>
+              <Card buttons={buttons} title={formatMessage(messages.device_type)}>
                   <DeviceType
                     hasFetchedVisitReportFormFactor={this.state.hasFetchedVisitReportFormFactor}
                     isFetchingVisitReportFormFactor={this.state.isFetchingVisitReportFormFactor}
@@ -201,5 +206,6 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
 }
 export default compose(
   withRouter,
+  injectIntl,
 )
 (OverviewContent);

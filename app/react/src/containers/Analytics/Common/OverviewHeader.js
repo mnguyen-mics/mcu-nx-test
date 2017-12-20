@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 
 import TitleAndStatusHeader from '../../../components/TitleAndStatusHeader.tsx';
 
-function DashboardHeader({
+function OverviewHeader({
   object: {
     name: displayCampaignName
   },
-  translationKey,
 }) {
 
   return displayCampaignName ? (
@@ -23,9 +22,8 @@ function DashboardHeader({
 
 }
 
-DashboardHeader.propTypes = {
-  translationKey: PropTypes.string.isRequired,
+OverviewHeader.propTypes = {
   object: PropTypes.shape().isRequired,
 };
 
-export default DashboardHeader;
+export default OverviewHeader;
