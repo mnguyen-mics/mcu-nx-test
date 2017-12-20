@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
@@ -130,12 +130,10 @@ class AdGroupActionbar extends Component {
       intl: {
         formatMessage,
       },
-      location,
       match: {
         params: {
           organisationId,
           campaignId,
-          adGroupId,
         },
       },
     } = this.props;
