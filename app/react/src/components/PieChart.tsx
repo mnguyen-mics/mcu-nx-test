@@ -142,11 +142,7 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
     const colorScale = new Plottable.Scales.InterpolatedColor();
     colorScale.range(options.colors);
 
-    const outerRadius = (svg.clientHeight > svg.clientWidth / 2
-        ? (svg.clientWidth / 2) - 20
-        : svg.clientHeight - 20
-    );
-
+    const outerRadius = this.computeOuterRadius(svg, options);
     const plotData = new Plottable.Dataset(dataset);
 
     const plot = new Plottable.Plots.Pie()
