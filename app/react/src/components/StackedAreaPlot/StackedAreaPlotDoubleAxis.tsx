@@ -31,7 +31,6 @@ interface ChartOptions {
   colors: string[];
   yKeys: YKey[];
   xKey: string;
-  lookbackWindow: number;
   isDraggable: boolean;
   onDragEnd: (dateRange: [Moment, Moment]) => void;
 }
@@ -44,10 +43,7 @@ interface StackedAreaPlotDoubleAxisProps {
 }
 
 interface StackedAreaPlotDoubleAxisState {
-  xTooltip: number;
-  yTooltip: number;
-  content: TooltipContent;
-  visibility: string;
+  chartTooltipProps: ChartTooltipProps;
 }
 
 interface ChartTooltipProps {
@@ -112,23 +108,27 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     this.defineSvg = this.defineSvg.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
     this.state = {
-      xTooltip: 0,
-      yTooltip: 0,
-      content: {
-        xLabel: '',
-        entries: [],
+      chartTooltipProps: {
+        xTooltip: 0,
+        yTooltip: 0,
+        content: {
+          xLabel: '',
+          entries: [],
+        },
+        visibility: 'hidden',
       },
-      visibility: 'hidden',
     };
   }
 
   setTooltip(chartTooltipProps: ChartTooltipProps) {
     if (chartTooltipProps) {
       this.setState({
-        xTooltip: chartTooltipProps.xTooltip,
-        yTooltip: chartTooltipProps.yTooltip,
-        content: chartTooltipProps.content,
-        visibility: chartTooltipProps.visibility,
+        chartTooltipProps: {
+          xTooltip: chartTooltipProps.xTooltip,
+          yTooltip: chartTooltipProps.yTooltip,
+          content: chartTooltipProps.content,
+          visibility: chartTooltipProps.visibility,
+        },
       });
     }
   }
@@ -172,7 +172,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   render() {
     const { identifier, options } = this.props;
 
-    const { xTooltip, yTooltip, content, visibility } = this.state;
+    const { chartTooltipProps: {xTooltip, yTooltip, content, visibility} } = this.state;
     const tooltipStyle = {
       xTooltip,
       yTooltip,
@@ -371,8 +371,10 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     const pointComponents: Component[] = Object.keys(dataset[0])
                                    .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
                                    .map(item => {
+                                     const scatter: Plottable.Plots.Scatter<Date, number> = new Plottable.Plots.Scatter();
+                                     scatter.size(10);
                                      const plot = this.buildPlot(
-                                       new Plottable.Plots.Scatter(),
+                                       scatter,
                                        item,
                                        plottableDataSet,
                                        options,
