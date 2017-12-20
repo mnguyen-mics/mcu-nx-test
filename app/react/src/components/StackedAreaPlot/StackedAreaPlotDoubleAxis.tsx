@@ -222,18 +222,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     if (dataset.length) {
       const lastDate = moment(new Date(dataset[dataset.length - 1].day));
       const firstDate = moment(new Date(dataset[0].day));
-      const diffInMillis = lastDate.subtract(firstDate.milliseconds(), 'milliseconds').milliseconds();
-      if (hasHoursOfDay) {
-        // TO FIX for using moment dates
-        tickInterval = areDatesSameDay(lastDate, firstDate) ? HOUR_MILLIS : (diffInMillis) / 7;
-      } else {
-        const avgInterval = (diffInMillis) / 7;
-        let avgDay = avgInterval / (DAY_MILLIS);
-        if (Math.round(avgDay) === 0) {
-          avgDay = 1;
-        }
-        tickInterval = Math.round(avgDay) * (DAY_MILLIS);
-      }
+      tickInterval = areDatesSameDay(lastDate, firstDate) && hasHoursOfDay ? HOUR_MILLIS : DAY_MILLIS;
     }
     return tickInterval;
   }
