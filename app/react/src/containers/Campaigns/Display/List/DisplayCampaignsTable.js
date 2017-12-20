@@ -18,7 +18,7 @@ import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, update
 
 import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
-
+import messages from '../messages';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 
 class DisplayCampaignsTable extends Component {
@@ -356,7 +356,7 @@ class DisplayCampaignsTable extends Component {
             callback: this.editCampaign,
           },
           {
-            translationKey: 'DUPLICATION',
+            intlMessage: messages.duplication,
             callback: this.duplicateCampaign,
           },
           {

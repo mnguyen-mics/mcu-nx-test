@@ -213,4 +213,8 @@ export default defineMessages({
     id: 'campaign.stat.chart.noStats',
     defaultMessage: 'There is no stats available for this period of time.',
   },
+  duplicate: {
+    id: 'campaign.display.dashboard.duplicate',
+    defaultMessage: 'Duplicate',
+  },
 }) as { [key: string]: { id: string, defaultMessage: string } };

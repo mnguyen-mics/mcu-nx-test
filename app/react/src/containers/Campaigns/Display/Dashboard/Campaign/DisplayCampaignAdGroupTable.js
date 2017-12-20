@@ -209,7 +209,7 @@ class DisplayCampaignAdGroupTable extends Component {
             callback: this.editCampaign,
           },
           {
-            translationKey: 'DUPLICATE',
+            intlMessage: messages.duplicate,
             callback: this.duplicateCampaign,
           },
           // Commented for now to be improved later
