@@ -22,7 +22,7 @@ class DisplayCampaignAdTable extends Component {
       history,
     } = this.props;
 
-    const editUrl = `/${organisationId}/creatives/display-ad/default-editor/edit/${ad.id}`;
+    const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${ad.id}`;
 
     history.push(editUrl);
   };

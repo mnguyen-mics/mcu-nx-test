@@ -7,6 +7,7 @@ import {
   ServiceCategorySubType,
   ServiceCategoryPublicResource,
   ServiceItemPublicResource,
+  AudienceSegmentServiceItemPublicResource,
 } from '../models/servicemanagement/PublicServiceItemResource';
 import { Locale } from '../models/Locale';
 
@@ -90,6 +91,23 @@ const CatalogService = {
       category_subtype: options.categorySubtype,
     };
     return ApiService.getRequest(endpoint, params).then((res: any) => res.data as ServiceItemPublicResource[]);
+  },
+
+  getAudienceSegmentServices(
+    organisationId: string,
+    options: {
+      root?: boolean,
+      parentCategoryId?: string,
+      locale?: Locale,
+      categoryType?: ServiceCategoryType[],
+      categorySubtype?: ServiceCategorySubType[],
+      searchDepth?: number,
+    } = {},
+  ): Promise<AudienceSegmentServiceItemPublicResource[]> {
+    return CatalogService.getServices(
+      organisationId,
+      {...options, serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT']},
+    ) as Promise<AudienceSegmentServiceItemPublicResource[]>;
   },
 
 };
