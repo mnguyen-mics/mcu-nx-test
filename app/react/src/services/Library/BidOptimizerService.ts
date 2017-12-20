@@ -1,6 +1,6 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginService from '../PluginService';
-import { PluginProperty, BidOptimizer } from '../../models/Plugins';
+import { PropertyResourceShape, BidOptimizer } from '../../models/Plugins';
 
 const bidOptimizerService = {
   getBidOptimizers(organisationId: string, options: object = {}): Promise<DataListResponse<BidOptimizer>> {
@@ -18,7 +18,7 @@ const bidOptimizerService = {
 
     return ApiService.deleteRequest(endpoint, options);
   },
-  getBidOptimizerProperty(id: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
+  getBidOptimizerProperty(id: string, options: object = {}): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `bid_optimizers/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
@@ -56,7 +56,7 @@ const bidOptimizerService = {
     return ApiService.putRequest(endpoint, params);
   },
   updateBidOptimizerProperty(
-    organisationId: string, id: string, technicalName: string, params: object = {}): Promise<DataResponse<PluginProperty> | void> {
+    organisationId: string, id: string, technicalName: string, params: object = {}): Promise<DataResponse<PropertyResourceShape> | void> {
     const endpoint = `bid_optimizers/${id}/properties/technical_name=${technicalName}`;
     return PluginService.handleSaveOfProperties(params, organisationId, 'bid_optimizers', id, endpoint);
   },

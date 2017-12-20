@@ -42,16 +42,18 @@ type FormatMessageHandler = (
   values?: {[key: string]: string | number | boolean | Date},
 ) => string;
 
+export interface FieldValidatorsProps {
+  formatIsNotZero: Validator;
+  isRequired: Validator;
+  isNotZero: Validator;
+  isValidEmail: Validator;
+  isValidFloat: Validator;
+  isValidInteger: Validator;
+  isValidDouble: Validator;
+}
+
 export interface ValidatorProps {
-  fieldValidators: {
-    formatIsNotZero: Validator;
-    isRequired: Validator;
-    isNotZero: Validator;
-    isValidEmail: Validator;
-    isValidFloat: Validator;
-    isValidInteger: Validator;
-    isValidDouble: Validator;
-  };
+  fieldValidators: FieldValidatorsProps;
 }
 
 const isRequired = (formatMessage: FormatMessageHandler): Validator => value => {

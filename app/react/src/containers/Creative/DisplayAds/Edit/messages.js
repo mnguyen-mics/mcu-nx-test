@@ -5,6 +5,10 @@ export default defineMessages({
     id: 'message.submit.saveCreative',
     defaultMessage: 'Save',
   },
+  addCreative: {
+    id: 'message.add.saveCreative',
+    defaultMessage: 'Add',
+  },
   creativesTypePickerTitle: {
     id: 'creatives.create.typePicker.title',
     defaultMessage: 'Creative Type',

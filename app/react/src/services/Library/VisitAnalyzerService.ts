@@ -1,6 +1,6 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginService from '../PluginService';
-import { VisitAnalyzer, PluginProperty } from '../../models/Plugins';
+import { VisitAnalyzer, PropertyResourceShape } from '../../models/Plugins';
 
 const visitAnalyzerService = {
   getVisitAnalyzers(organisationId: string, options: object = {}): Promise<DataListResponse<VisitAnalyzer>> {
@@ -18,7 +18,7 @@ const visitAnalyzerService = {
 
     return ApiService.deleteRequest(endpoint, options);
   },
-  getVisitAnalyzerProperty(id: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
+  getVisitAnalyzerProperty(id: string, options: object = {}): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `visit_analyzer_models/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
@@ -50,7 +50,7 @@ const visitAnalyzerService = {
     return ApiService.putRequest(endpoint, params);
   },
   updateVisitAnalyzerProperty(
-    organisationId: string, id: string, technicalName: string, params: object = {}): Promise<DataResponse<PluginProperty> | void> {
+    organisationId: string, id: string, technicalName: string, params: object = {}): Promise<DataResponse<PropertyResourceShape> | void> {
     const endpoint = `visit_analyzer_models/${id}/properties/technical_name=${technicalName}`;
     return PluginService.handleSaveOfProperties(params, organisationId, 'visit_analyzer_models', id, endpoint);
   },

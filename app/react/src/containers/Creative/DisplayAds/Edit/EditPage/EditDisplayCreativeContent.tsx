@@ -1,39 +1,64 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { RouteComponentProps } from 'react-router';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCreativeEditionEditor from './DisplayCreativeEditionEditor';
-
-import CreativeService from '../../../../../services/CreativeService.ts';
+import CreativeService from '../../../../../services/CreativeService';
 import * as actions from '../../../../../state/Notifications/actions';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import Loading from '../../../../../components/Loading.tsx';
+import Loading from '../../../../../components/Loading';
 import log from '../../../../../utils/Logger';
-import { EditContentLayout } from '../../../../../components/Layout/index.ts';
-
+import { EditContentLayout } from '../../../../../components/Layout';
 import messages from '../messages';
+import { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
+import { FormattedPropertiesProps } from '../../../../../models/campaign/display/AdResource';
+import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import { PropertyResourceShape } from '../../../../../models/plugin';
 
 const formId = 'creativeEditionForm';
 
-class EditDisplayCreativeContent extends Component {
+interface EditDisplayCreativeContentProps {
+  creativeId: string;
+  organisationId?: string;
+  onClose: () => void; // check type
+  save: (
+    creativeData: Partial<DisplayAdResource>,
+    formattedProperties: PropertyResourceShape[],
+    // rendererData: RendererDataProps,
+  ) => void;
+  closeNextDrawer: () => void;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
+}
 
-  constructor(props) {
+interface RouteProps {
+  organisationId: string;
+  creativeId: string;
+}
+
+interface EditDisplayCreativeContentState {
+  formats: string[];
+  rendererProperties: FormattedPropertiesProps[];
+  creative: DisplayAdResource | {};
+  isLoading: boolean;
+}
+
+type JoinedProps = EditDisplayCreativeContentProps & InjectedIntlProps & RouteComponentProps<RouteProps>;
+
+class EditDisplayCreativeContent extends React.Component<JoinedProps, EditDisplayCreativeContentState> {
+
+  constructor(props: JoinedProps) {
     super(props);
     this.state = {
       formats: [],
       rendererProperties: [],
       creative: {},
-      isLoading: false
+      isLoading: false,
     };
   }
 
-  fetchAllData = (organisationId, creativeId) => {
-    const {
-      notifyError,
-    } = this.props;
+  fetchAllData = (organisationId: string, creativeId: string) => {
 
     const getFormats = CreativeService.getCreativeFormats(organisationId).then(res => res.data);
     const getRendererProperties = CreativeService.getCreativeRendererProperties(creativeId).then(res => res.data);
@@ -41,7 +66,7 @@ class EditDisplayCreativeContent extends Component {
 
     this.setState(prevState => {
       const nextState = {
-        ...prevState
+        ...prevState,
       };
       nextState.isLoading = true;
       return nextState;
@@ -49,7 +74,7 @@ class EditDisplayCreativeContent extends Component {
       Promise.all([getFormats, getRendererProperties, getCreative]).then(values => {
         this.setState(prevState => {
           const nextState = {
-            ...prevState
+            ...prevState,
           };
           nextState.formats = values[0].filter(item => {
             return item.type === 'DISPLAY_AD';
@@ -68,7 +93,7 @@ class EditDisplayCreativeContent extends Component {
       })
       .catch(err => {
         log.error(err);
-        notifyError(err);
+        actions.notifyError(err);
       });
     });
   }
@@ -78,30 +103,30 @@ class EditDisplayCreativeContent extends Component {
       match: {
         params: {
           organisationId,
-        }
+        },
       },
       creativeId,
     } = this.props;
     this.fetchAllData(organisationId, creativeId);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       match: {
         params: {
           organisationId: nextOrganisationId,
           creativeId: nextCreativeId,
-        }
-      }
+        },
+      },
     } = nextProps;
 
     const {
       match: {
         params: {
           organisationId,
-          creativeId
-        }
-      }
+          creativeId,
+        },
+      },
     } = this.props;
 
     if (organisationId !== nextOrganisationId || creativeId !== nextCreativeId) {
@@ -115,8 +140,8 @@ class EditDisplayCreativeContent extends Component {
         params: {
           organisationId,
           creativeId,
-        }
-      }
+        },
+      },
     } = this.props;
 
     this.fetchAllData(organisationId, creativeId);
@@ -124,10 +149,10 @@ class EditDisplayCreativeContent extends Component {
 
   formatProperties = () => {
     const {
-      rendererProperties
+      rendererProperties,
     } = this.state;
 
-    const formattedProperties = {};
+    const formattedProperties: any = {};
     rendererProperties.forEach(item => {
       formattedProperties[item.technical_name] = { value: item.value };
     });
@@ -144,7 +169,7 @@ class EditDisplayCreativeContent extends Component {
     } = this.props;
 
     const {
-      isLoading
+      isLoading,
     } = this.state;
 
     const sidebarItems = {
@@ -165,31 +190,28 @@ class EditDisplayCreativeContent extends Component {
     ];
 
     return this.state.isLoading ?
+    (
       <div style={{ display: 'flex', flex: 1 }}>
         <Loading className="loading-full-screen" />
-      </div> :
-      (<EditContentLayout
+      </div>
+    ) :
+    (
+      <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
         sidebarItems={sidebarItems}
         buttonMetadata={buttonMetadata}
         url={url}
+        isCreativetypePicker={false}
+        changeType={undefined}
       >
         <DisplayCreativeEditionEditor
           save={this.props.save}
-          close={this.redirect}
-          breadcrumbPaths={breadcrumbPaths}
-          initialValues={{
-            creative: this.state.creative,
-            properties: this.formatProperties(),
-          }}
           creative={this.state.creative}
           rendererProperties={this.state.rendererProperties}
           formats={this.state.formats}
           refreshCreative={this.refreshCreative}
           organisationId={organisationId}
           isLoading={isLoading}
-          closeNextDrawer={this.props.closeNextDrawer}
-          openNextDrawer={this.props.openNextDrawer}
           formId={formId}
         />
       </EditContentLayout>
@@ -197,19 +219,7 @@ class EditDisplayCreativeContent extends Component {
   }
 }
 
-EditDisplayCreativeContent.propTypes = {
-  creativeId: PropTypes.string.isRequired,
-  organisationId: PropTypes.string.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
-  onClose: PropTypes.func.isRequired,
-  save: PropTypes.func.isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
-  closeNextDrawer: PropTypes.func.isRequired,
-  openNextDrawer: PropTypes.func.isRequired,
-};
-
-export default compose(
+export default compose<JoinedProps, EditDisplayCreativeContentProps>(
   withMcsRouter,
   injectIntl,
   connect(

@@ -103,7 +103,7 @@ class AdGroupForm extends Component {
     });
   }
 
-  updateCreativeTableFields = ({ newFields, tableName }) => {
+  updateDisplayAdTableFields = ({ newFields, tableName }) => {
     const newFieldIds = newFields.map(field => field.id);
     const prevFields = this.props.formValues[tableName] || [];
     const prevFieldIds = prevFields.map(field => field.id);
@@ -167,7 +167,7 @@ class AdGroupForm extends Component {
         openNextDrawer,
         updateTableFieldStatus: this.updateTableFieldStatus,
         updateTableFields: this.updateTableFields,
-        updateCreativeTableFields: this.updateCreativeTableFields,
+        updateDisplayAdTableFields: this.updateDisplayAdTableFields,
         emptyTableFields: this.emptyTableFields,
       },
       organisationId,

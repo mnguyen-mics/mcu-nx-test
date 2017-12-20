@@ -29,7 +29,6 @@ class LocationSection extends React.Component<Props> {
           RxF={this.props.RxF}
           rerenderOnEveryChange={true}
         />
-
       </div>
 
     );

@@ -1,21 +1,48 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { injectIntl, intlShape } from 'react-intl';
+import {  InjectedIntlProps } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
+import { RouteComponentProps } from 'react-router';
+import { compose } from 'recompose';
 
-import { TableViewFilters, EmptyTableView } from '../../../../components/TableView/index.ts';
+import { TableViewFilters, EmptyTableView } from '../../../../components/TableView';
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
-import { getDisplayCreatives, getDisplayCreativesTotal, hasDisplayCreatives, isFetchingDisplayCreatives } from '../../../../state/Creatives/Display/selectors';
+import {
+  getDisplayCreatives,
+  getDisplayCreativesTotal,
+  hasDisplayCreatives,
+  isFetchingDisplayCreatives,
+} from '../../../../state/Creatives/Display/selectors';
 import CreativeScreenshot from '../../CreativeScreenshot';
-import messages from './message.ts';
-import CreativeService from '../../../../services/CreativeService.ts';
+import messages from './message';
+import CreativeService from '../../../../services/CreativeService';
+import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
+import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 
-class CreativeDisplayTable extends Component {
-  constructor(props) {
+interface DisplayAdsListProps {
+  isFetchingCreativeDisplay: boolean;
+  dataSource: object[]; // type better
+  totalCreativeDisplay: number;
+  hasCreativeDisplay: boolean;
+  fetchCreativeDisplay: (organisationId: string, filter: object, bool: boolean) => void;
+  resetCreativeDisplay: () => void;
+  archiveCreativeDisplay: () => void;
+}
+
+type JoinedProps = DisplayAdsListProps &
+  RouteComponentProps<CampaignRouteParams> &
+  InjectedIntlProps;
+
+class CreativeDisplayTable extends React.Component<JoinedProps> {
+
+  static defaultProps: Partial<JoinedProps> = {
+    archiveCreativeDisplay: () => undefined,
+  };
+
+  constructor(props: JoinedProps) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveCreativeDisplay = this.archiveCreativeDisplay.bind(this);
@@ -23,7 +50,19 @@ class CreativeDisplayTable extends Component {
   }
 
   componentDidMount() {
-    const { history, location: { search, pathname }, match: { params: { organisationId } }, fetchCreativeDisplay } = this.props;
+    const {
+      history,
+      location: {
+        search,
+        pathname,
+      },
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      fetchCreativeDisplay,
+    } = this.props;
 
     if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
@@ -37,7 +76,7 @@ class CreativeDisplayTable extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       location: {
         search,
@@ -84,7 +123,7 @@ class CreativeDisplayTable extends Component {
     this.props.resetCreativeDisplay();
   }
 
-  updateLocationSearch(params) {
+  updateLocationSearch(params: object) {
     const { history, location: { search: currentSearch, pathname } } = this.props;
 
     const nextLocation = {
@@ -117,11 +156,11 @@ class CreativeDisplayTable extends Component {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeDisplay,
-      onChange: page =>
+      onChange: (page: number) =>
         this.updateLocationSearch({
           currentPage: page,
         }),
-      onShowSizeChange: (current, size) =>
+      onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
           pageSize: size,
           currentPage: 1,
@@ -134,7 +173,7 @@ class CreativeDisplayTable extends Component {
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
-        render: (text, record) => (
+        render: (text: string, record: DisplayAdResource) => (
           <CreativeScreenshot item={record} />
         ),
       },
@@ -142,7 +181,7 @@ class CreativeDisplayTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text, record) => (
+        render: (text: string, record: DisplayAdResource) => (
           <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/creatives/display/edit/${record.id}`}>{text}</Link>
         ),
       },
@@ -150,13 +189,13 @@ class CreativeDisplayTable extends Component {
         translationKey: 'AUDIT_STATUS',
         key: 'audit_status',
         isHideable: false,
-        render: text => <span>{text}</span>,
+        render: (text: string) => <span>{text}</span>,
       },
       {
         translationKey: 'PUBLISHED_VERSION',
         key: 'published_version',
         isHideable: false,
-        render: text => <span>{text}</span>,
+        render: (text: string) => <span>{text}</span>,
       },
     ];
 
@@ -193,18 +232,18 @@ class CreativeDisplayTable extends Component {
 
   }
 
-  editCreativeDisplay(creative) {
+  editCreativeDisplay(creative: DisplayAdResource) {
     const { match: { params: { organisationId } }, history } = this.props;
 
     history.push(`/v2/o/${organisationId}/creatives/display/edit/${creative.id}`);
   }
 
-  archiveCreativeDisplay(creative) {
+  archiveCreativeDisplay(creative: DisplayAdResource) {
     const {
       match: {
         params: {
-          organisationId
-        }
+          organisationId,
+        },
       },
       location: {
         search,
@@ -236,7 +275,7 @@ class CreativeDisplayTable extends Component {
             history.replace({
               pathname: pathname,
               search: updateSearch(search, newFilter),
-              state: state
+              state: state,
             });
             return Promise.resolve();
           }
@@ -244,30 +283,14 @@ class CreativeDisplayTable extends Component {
           return Promise.resolve();
         });
       },
-      onCancel() {},
+      onCancel() {
+        //
+      },
     });
   }
 }
 
-CreativeDisplayTable.defaultProps = {
-  archiveCreativeDisplay: () => {},
-};
-
-CreativeDisplayTable.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  intl: intlShape.isRequired,
-  isFetchingCreativeDisplay: PropTypes.bool.isRequired,
-  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  totalCreativeDisplay: PropTypes.number.isRequired,
-  hasCreativeDisplay: PropTypes.bool.isRequired,
-  fetchCreativeDisplay: PropTypes.func.isRequired,
-  archiveCreativeDisplay: PropTypes.func.isRequired,
-  resetCreativeDisplay: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   translations: state.translations,
   hasCreativeDisplay: hasDisplayCreatives(state),
   isFetchingCreativeDisplay: isFetchingDisplayCreatives(state),
@@ -280,8 +303,9 @@ const mapDispatchToProps = {
   resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay,
 };
 
-CreativeDisplayTable = connect(mapStateToProps, mapDispatchToProps)(CreativeDisplayTable);
-
-CreativeDisplayTable = withRouter(CreativeDisplayTable);
-
-export default injectIntl(CreativeDisplayTable);
+export default compose<JoinedProps, DisplayAdsListProps>(
+  withRouter,
+  connect(
+    mapStateToProps, mapDispatchToProps,
+  ),
+)(CreativeDisplayTable);

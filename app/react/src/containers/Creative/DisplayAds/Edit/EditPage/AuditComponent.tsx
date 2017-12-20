@@ -1,65 +1,81 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { Button, Modal, Row, Col, Popover } from 'antd';
-import PropTypes from 'prop-types';
+import { ButtonType } from 'antd/lib/button/button';
 import moment from 'moment';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
-import McsIcons from '../../../../../components/McsIcons.tsx';
-import CreativeService from '../../../../../services/CreativeService.ts';
+import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+
+import McsIcons, { McsIconType } from '../../../../../components/McsIcons';
+import CreativeService from '../../../../../services/CreativeService';
 import * as actionsRedux from '../../../../../state/Notifications/actions';
 import messages from '../messages';
+import { AuditResource, DisplayAdResource, CreativeAuditAction } from '../../../../../models/creative/CreativeResource';
 
 const confirm = Modal.confirm;
 
-class AuditComponent extends Component {
+interface AuditComponentProps {
+  creative: DisplayAdResource;
+  onAuditChange?: () => void;
+  mode: string;
+}
 
-  state = {
-    status: [],
-    visible: false
+interface AuditComponentState {
+  status: AuditResource[];
+  visible: boolean;
+  mode: string;
+}
+
+type JoinedProps = AuditComponentProps & InjectedIntlProps;
+
+class AuditComponent extends React.Component<JoinedProps, AuditComponentState> {
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      status: [],
+      visible: false,
+      mode: '',
+    };
   }
 
   componentDidMount() {
     const {
       creative,
-      notifyError
     } = this.props;
     if (creative && creative.id) {
       CreativeService.getAuditStatus(creative.id).then(res => {
         this.setState(prevState => {
           const nextState = {
-            ...prevState
+            ...prevState,
           };
-          nextState.status = res.data;
+          nextState.status = [res.data];
           return nextState;
         });
       }).catch(e => {
-        notifyError(e);
+        actionsRedux.notifyError(e);
       });
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const {
-      notifyError
-    } = this.props;
+  componentWillReceiveProps(nextProps: JoinedProps) {
     if (nextProps.creative && nextProps.creative.id !== this.props.creative.id) {
       CreativeService.getAuditStatus(nextProps.creative.id).then(res => {
         this.setState(prevState => {
           const nextState = {
-            ...prevState
+            ...prevState,
           };
-          nextState.status = res.data;
+          nextState.status = [res.data];
           return nextState;
         });
       })
-      .catch(e => {
-        notifyError(e);
-      });
+        .catch(e => {
+          actionsRedux.notifyError(e);
+        });
     }
   }
 
-  showHideModal = () => {
+  showHideModal = () => () => {
     this.setState(prevState => {
       const nextState = { ...prevState };
       nextState.visible = !nextState.visible;
@@ -71,34 +87,32 @@ class AuditComponent extends Component {
     this.showHideModal();
   }
 
-  actionAudit = (action) => {
+  actionAudit = (action: CreativeAuditAction) => {
     const {
       creative,
       intl: {
-        formatMessage
+        formatMessage,
       },
-      notifyError,
-      onAuditChange
+      onAuditChange,
     } = this.props;
 
-    let type = 'primary';
+    let type: ButtonType = 'primary';
     let modalMessages = {
       title: formatMessage(messages.creativeAuditStatusConfirmTitle),
-      content: formatMessage(messages.creativeAuditStatusConfirmDescription)
+      content: formatMessage(messages.creativeAuditStatusConfirmDescription),
     };
     let message = messages.creativeAuditStatusStart;
     if (action === 'RESET_AUDIT') {
       message = messages.creativeAuditStatusReset;
-      type = 'default';
+      // type = 'default'; no default value in ButtonType => ommited meaning default
       modalMessages = {
         title: formatMessage(messages.creativeAuditStatusConfirmResetTitle),
-        content: formatMessage(messages.creativeAuditStatusConfirmResetDescription)
+        content: formatMessage(messages.creativeAuditStatusConfirmResetDescription),
       };
     } else if (action === 'START_AUDIT') {
       message = messages.creativeAuditStatusStart;
       type = 'primary';
     }
-
 
     return {
       type: type,
@@ -108,10 +122,12 @@ class AuditComponent extends Component {
           content: modalMessages.content,
           onOk() {
             CreativeService.makeAuditAction(creative.id, action).then(() => {
-              onAuditChange();
+              if (onAuditChange) {
+                onAuditChange();
+              }
             }).catch(e => {
               // TODO NOTIFY
-              notifyError(e);
+              actionsRedux.notifyError(e);
             });
           },
           onCancel() {
@@ -119,7 +135,7 @@ class AuditComponent extends Component {
           },
         });
       },
-      message: message
+      message: message,
     };
   }
 
@@ -127,11 +143,11 @@ class AuditComponent extends Component {
     const {
       creative: {
         audit_status: auditStatus,
-      }
+      },
     } = this.props;
 
     let message = messages.creativeAuditStatusFailed;
-    let icon = 'close-big';
+    let icon: McsIconType = 'close-big';
     let color = '#CECECE';
     if (auditStatus === 'AUDIT_FAILED') {
       message = messages.creativeAuditStatusFailed;
@@ -173,7 +189,10 @@ class AuditComponent extends Component {
     return actions ? actions.map(item => {
       return (
         <div key={item} className={mode && mode === 'creativeCard' ? '' : 'float-right m-l-10'}>
-          <Button type={this.actionAudit(item).type} onClick={this.actionAudit(item).action}>
+          <Button
+            type={this.actionAudit(item).type}
+            onClick={this.actionAudit(item).action}
+          >
             <FormattedMessage {...this.actionAudit(item).message} />
           </Button>
         </div>
@@ -188,11 +207,13 @@ class AuditComponent extends Component {
     } = this.state;
 
     return status.length ?
-      <div className={mode && mode === 'creativeCard' ? '' : 'float-right m-l-10'}>
-        <Button onClick={() => { this.showHideModal(); }}>
-          <FormattedMessage {...messages.creativeAuditStatusDetails} />
-        </Button>
-      </div>
+      (
+        <div className={mode && mode === 'creativeCard' ? '' : 'float-right m-l-10'}>
+          <Button onClick={this.showHideModal()}>
+            <FormattedMessage {...messages.creativeAuditStatusDetails} />
+          </Button>
+        </div>
+      )
       : null;
   }
 
@@ -203,17 +224,17 @@ class AuditComponent extends Component {
     } = this.props;
 
     const {
-      status
+      status,
     } = this.state;
 
     const PopoverButtons = (
       <div>
         <Row type="flex">
           <Col span={12}>
-            { this.renderAuditAction() }
+            {this.renderAuditAction()}
           </Col>
           <Col span={12}>
-            { this.renderStatusButton() }
+            {this.renderStatusButton()}
           </Col>
         </Row>
       </div>
@@ -221,21 +242,25 @@ class AuditComponent extends Component {
 
     const iconAndTextStatus = (
       <div className="float-left" style={{ lineHeight: '34px' }}>
-        <McsIcons type={this.renderAuditStatus().icon} className="m-r-10" style={{ verticalAlign: 'middle', color: this.renderAuditStatus().color }} />
+        <McsIcons
+          type={this.renderAuditStatus().icon}
+          className="m-r-10"
+          style={{ verticalAlign: 'middle', color: this.renderAuditStatus().color }}
+        />
         <FormattedMessage {...this.renderAuditStatus().message} />
       </div>
     );
 
     return creative && (
       <div>
-        { mode && mode === 'creativeCard' ?
+        {mode && mode === 'creativeCard' ?
           <Popover content={PopoverButtons} title="Audit">
-            { iconAndTextStatus }
+            {iconAndTextStatus}
           </Popover> :
           <div>
-            { this.renderAuditAction() }
-            { this.renderStatusButton() }
-            { iconAndTextStatus }
+            {this.renderAuditAction()}
+            {this.renderStatusButton()}
+            {iconAndTextStatus}
           </div>
         }
         <Modal
@@ -244,11 +269,15 @@ class AuditComponent extends Component {
           onCancel={this.handleCancel}
           footer={null}
         >
-          {status && status.map(item => {
+          {status && status.map((item: AuditResource) => {
             return (<Row key={item.date}>
-              <Col span={item.feedback ? 8 : 12}>{item.display_network}: <FormattedMessage {...this.renderAuditStatus(item.status).message} /></Col>
+              <Col span={item.feedback ? 8 : 12}>
+                {item.display_network}: <FormattedMessage {...this.renderAuditStatus().message} />
+              </Col>
               {item.feedback ? <Col span={8}>{item.feedback}</Col> : null}
-              <Col span={item.feedback ? 8 : 12}>{moment(item.date).format('DD/MM/YYYY HH:mm:ss')}</Col>
+              <Col span={item.feedback ? 8 : 12}>
+                {moment(item.date).format('DD/MM/YYYY HH:mm:ss')}
+              </Col>
             </Row>);
           })}
         </Modal>
@@ -257,25 +286,10 @@ class AuditComponent extends Component {
   }
 }
 
-AuditComponent.defaultProps = {
-  creative: null,
-  onAuditChange: () => {}
-};
-
-AuditComponent.propTypes = {
-  intl: intlShape.isRequired,
-  creative: PropTypes.shape(),
-  onAuditChange: PropTypes.func,
-  notifyError: PropTypes.func.isRequired,
-  mode: PropTypes.string.isRequired,
-};
-
-AuditComponent = compose(
+export default compose<JoinedProps, AuditComponentProps>(
   injectIntl,
   connect(
     undefined,
     { notifyError: actionsRedux.notifyError },
   ),
 )(AuditComponent);
-
-export default AuditComponent;

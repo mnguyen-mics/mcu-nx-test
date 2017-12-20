@@ -1,4 +1,4 @@
-import Ads from './Ads/Ads';
+import Ads from './Ads/AdsSection';
 import Audience from './Audience';
 import LocationSection from './Location/LocationSection';
 import Device from './Device/Device';

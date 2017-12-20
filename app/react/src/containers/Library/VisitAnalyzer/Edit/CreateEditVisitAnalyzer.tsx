@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import VisitAnalyzerService from '../../../../services/Library/VisitAnalyzerService';
 import * as actions from '../../../../state/Notifications/actions';
-import { PluginProperty, VisitAnalyzer, PluginInterface} from '../../../../models/Plugins';
+import { PropertyResourceShape, VisitAnalyzer, PluginInterface} from '../../../../models/Plugins';
 
 import messages from './messages';
 
@@ -17,7 +17,7 @@ interface VisitAnalyzerRouteParam {
 
 interface VisitAnalyzerForm {
   plugin: any;
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 interface CreateVisitAnalyzerState {
@@ -102,7 +102,7 @@ class CreateEditVisitAnalyzer extends React.Component<
     history.push(attributionModelUrl);
   }
 
-  saveOrCreatePluginInstance = (plugin: VisitAnalyzer, properties: PluginProperty[]) => {
+  saveOrCreatePluginInstance = (plugin: VisitAnalyzer, properties: PropertyResourceShape[]) => {
 
     const {
       edition,
@@ -152,7 +152,7 @@ class CreateEditVisitAnalyzer extends React.Component<
     });
   }
 
-  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
+  updatePropertiesValue = (properties: PropertyResourceShape[], organisationId: string, id: string) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(VisitAnalyzerService.updateVisitAnalyzerProperty(organisationId, id, item.technical_name, item));

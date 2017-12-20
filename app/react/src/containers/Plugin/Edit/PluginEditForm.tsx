@@ -17,7 +17,7 @@ import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 
 import * as actions from '../../../state/Notifications/actions';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
-import { PluginProperty } from '../../../models/Plugins';
+import { PropertyResourceShape } from '../../../models/Plugins';
 import { PluginFieldGenerator } from '../../Plugin';
 
 import messages from './messages';
@@ -29,8 +29,8 @@ interface PluginEditFormProps {
   formValues: any;
   editionMode: boolean;
   organisationId: string;
-  save: (pluginValue: any, propertiesValue: PluginProperty[]) => void;
-  pluginProperties: PluginProperty[];
+  save: (pluginValue: any, propertiesValue: PropertyResourceShape[]) => void;
+  pluginProperties: PropertyResourceShape[];
   isLoading: boolean;
   pluginVersionId: string;
   formId: string;
@@ -104,7 +104,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       pluginProperties,
     } = this.props;
 
-    return pluginProperties.map((fieldDef: PluginProperty) => {
+    return pluginProperties.map((fieldDef: PropertyResourceShape) => {
       return (
         <PluginFieldGeneratorJS
           key={`${fieldDef.technical_name}`}

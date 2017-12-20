@@ -10,7 +10,7 @@ import AttributionModelService from '../../../../services/Library/AttributionMod
 import PluginServices from '../../../../services/PluginServices';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { AttributionModel, PluginProperty } from '../../../../models/Plugins';
+import { AttributionModel, PropertyResourceShape } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -20,7 +20,7 @@ const initialState = {
 };
 
 interface AttributionModelInterface extends AttributionModel {
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 interface AttributionModelContentState {

@@ -12,7 +12,7 @@ import {
   EmptyTableView,
   CollectionViewFilters,
 } from '../../../../components/TableView/index.ts';
-import CreativeCard from './CreativeCard';
+import CreativeCard from './../../Common/CreativeCard.tsx';
 import messages from './messages';
 
 const { Content } = Layout;

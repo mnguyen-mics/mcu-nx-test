@@ -1,21 +1,23 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Field, reduxForm, Form } from 'redux-form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Layout, Row, Modal } from 'antd';
 
 import * as actions from '../../../../../state/Notifications/actions';
 import { withMcsRouter } from '../../../../Helpers';
-import { FormInput, FormTitle, withValidators, formErrorMessage } from '../../../../../components/Form/index.ts';
+import { FormInput, FormTitle, withValidators, formErrorMessage, FieldCtor } from '../../../../../components/Form';
+import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import AuditComponent from './AuditComponent';
 import { PluginFieldGenerator } from '../../../../Plugin';
-import { Card } from '../../../../../components/Card/index.ts';
+import { Card } from '../../../../../components/Card';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import CreativeFormatEditor from '../CreativeFormatEditor';
-
 import messages from '../messages';
+import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import { PropertyResourceShape } from '../../../../../models/plugin';
+import { FormInputProps } from '../../../../../components/Form/FormInput';
 
 const { Content } = Layout;
 
@@ -25,48 +27,78 @@ const fieldGridConfig = {
 };
 
 const configuration = {
-  ADS_PREVIEW_URL: '//ads.mediarithmics.com/ads/render'
+  ADS_PREVIEW_URL: '//ads.mediarithmics.com/ads/render',
 };
 
-class DisplayCreativeEditionEditor extends Component {
+interface DisplayCreativeEditionEditorProps {
+  handleSubmit?: () => void; // check type
+  save: (
+    creativeData: Partial<DisplayAdResource>,
+    formattedProperties: PropertyResourceShape[],
+  ) => void;
+  creative: DisplayAdResource;
+  rendererProperties: PropertyResourceShape[];
+  formats: string[];
+  refreshCreative: () => void;
+  isLoading: boolean;
+  organisationId: string;
+  formId: string;
+  submitFailed?: boolean;
+  formValues?: any;
+}
 
-  state = {
-    formats: [],
-    rendererProperties: [],
-    creative: {},
-  };
+interface DisplayCreativeEditionEditorState {
+  formats: string[];
+  rendererProperties: PropertyResourceShape[];
+  creative: Partial<DisplayAdResource>;
+}
 
-  componentWillReceiveProps(nextProps) {
+type JoinedProps = DisplayCreativeEditionEditorProps & ValidatorProps & InjectedIntlProps;
+
+class DisplayCreativeEditionEditor extends React.Component<JoinedProps, DisplayCreativeEditionEditorState> {
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      formats: [],
+      rendererProperties: [],
+      creative: {
+        name: '',
+      },
+    };
+  }
+
+  componentWillReceiveProps(nextProps: JoinedProps) {
     if (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) {
       const {
         intl: {
-          formatMessage
-        }
+          formatMessage,
+        },
       } = this.props;
       formErrorMessage(formatMessage(messages.errorFormMessage));
     }
   }
 
-  handleSaveDisplayCreative = formValues => {
-    const { save } = this.props;
+  handleSaveDisplayCreative = () => {
+    const { save, formValues } = this.props;
 
     const creativeData = {
       ...formValues.creative,
     };
 
-    const formattedProperties = this.props.rendererProperties.filter(item => {
+    const formattedProperties = this.props.rendererProperties.filter((item: PropertyResourceShape) => {
       return item.writable === true;
-    }).map(item => {
+    }).map((item: PropertyResourceShape) => {
       return {
         ...item,
-        value: formValues.properties[item.technical_name] ? formValues.properties[item.technical_name].value : item.value
+        value: formValues.properties[item.technical_name] ? formValues.properties[item.technical_name].value : item.value,
       };
     });
 
     save(creativeData, formattedProperties);
   }
 
-  formatDimension = (format) => {
+  formatDimension = (format: string) => {
     if (format) {
       return {
         width: parseInt(format.split('x')[0], 10),
@@ -74,8 +106,8 @@ class DisplayCreativeEditionEditor extends Component {
       };
     }
     return {
-      width: null,
-      height: null
+      width: '',
+      height: '',
     };
   }
 
@@ -83,21 +115,31 @@ class DisplayCreativeEditionEditor extends Component {
     const {
       creative,
       rendererProperties,
-      notifyError
     } = this.props;
 
     let tagType = 'iframe';
-    if (rendererProperties.length) {
-      try {
-        tagType = rendererProperties.find((prop) => { return prop.technical_name === 'tag_type'; }).value.value || 'iframe';
-      } catch (e) {
-        notifyError(e);
+
+    const foundTagType = rendererProperties.find((prop: PropertyResourceShape) => {
+      return prop.technical_name === 'tag_type';
+    });
+
+    if (foundTagType) {
+      switch (foundTagType.property) {
+        case 'STRING':
+          tagType = foundTagType!.value.value;
+          break;
+        case 'URL':
+          tagType = foundTagType!.value.url;
+          break;
       }
     }
 
     let previewUrl = `${configuration.ADS_PREVIEW_URL}?ctx=PREVIEW&rid=${creative.id}&caid=preview`;
     if (tagType === 'script') {
-      previewUrl = `data:text/html;charset=utf-8,${encodeURI(`<html><body style="margin-left: 0%; margin-right: 0%; margin-top: 0%; margin-bottom: 0%"><script type="text/javascript" src="https:${configuration.ADS_PREVIEW_URL}?ctx=PREVIEW&rid=${creative.id}&caid=preview"></script></body></html>`)}`;
+      previewUrl = `data:text/html;charset=utf-8,` +
+      `${encodeURI(`<html><body style="margin-left: 0%; margin-right: 0%; margin-top: 0%; margin-bottom: 0%">` +
+      `<script type="text/javascript" src="https:${configuration.ADS_PREVIEW_URL}?ctx=PREVIEW&rid=${creative.id}&caid=preview"></script>` +
+      `</body></html>`)}`;
     }
 
     return previewUrl;
@@ -112,7 +154,9 @@ class DisplayCreativeEditionEditor extends Component {
     } = this.props;
     Modal.warning({
       title: formatMessage(modalMessages.noActionTitle),
-      content: creative.audit_status === 'AUDIT_PASSED' ? formatMessage(modalMessages.noUploadMessage) : formatMessage(modalMessages.noUpdateMessage),
+      content: creative.audit_status === 'AUDIT_PASSED' ?
+        formatMessage(modalMessages.noUploadMessage) :
+        formatMessage(modalMessages.noUpdateMessage),
       iconType: 'exclamation-circle',
       okText: formatMessage(modalMessages.confirm),
     });
@@ -130,42 +174,61 @@ class DisplayCreativeEditionEditor extends Component {
       formId,
     } = this.props;
 
-
     const isDisabled = isLoading || creative.audit_status === 'AUDIT_PASSED' || creative.audit_status === 'AUDIT_PENDING';
+
+    const InputField: FieldCtor<FormInputProps> = Field;
+    const nameFieldProps: FormInputProps = {
+      formItemProps: {
+        label: formatMessage(messages.creativeCreationGeneralNameFieldTitle),
+        required: true,
+        ...fieldGridConfig,
+      },
+      inputProps: {
+        placeholder: formatMessage(messages.creativeCreationGeneralNameFieldPlaceHolder),
+        disabled: isDisabled,
+      },
+      helpToolTipProps: {
+        title: formatMessage(messages.creativeCreationGeneralNameFieldHelper),
+      },
+    };
+    const destinationDomainFieldProps: FormInputProps = {
+      formItemProps: {
+        label: formatMessage(messages.creativeCreationGeneralDomainFieldTitle),
+        required: true,
+        ...fieldGridConfig,
+      },
+      inputProps: {
+        placeholder: formatMessage(messages.creativeCreationGeneralDomainFieldPlaceHolder),
+        defaultValue: this.state.creative && this.state.creative.name,
+        disabled: isDisabled,
+      },
+      helpToolTipProps: {
+        title: formatMessage(messages.creativeCreationGeneralDomainFieldHelper),
+      },
+    };
+
     return (
       <Layout>
         <Form
           className="edit-layout ant-layout"
           onSubmit={handleSubmit(this.handleSaveDisplayCreative)}
+          id={formId}
         >
           <Layout>
-            <Content id={formId} className="mcs-content-container mcs-form-container">
+            <Content className="mcs-content-container mcs-form-container">
               <div id={'general_infos'}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                   <FormTitle
                     title={messages.creativeSectionGeneralTitle}
-                    subTitle={messages.creativeSectionGeneralSubTitle}
+                    subtitle={messages.creativeSectionGeneralSubTitle}
                   />
                 </Row>
                 <Row>
-                  <Field
+                  <InputField
                     name="creative.name"
                     component={FormInput}
                     validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.creativeCreationGeneralNameFieldTitle),
-                        required: true,
-                        ...fieldGridConfig,
-                      },
-                      inputProps: {
-                        placeholder: formatMessage(messages.creativeCreationGeneralNameFieldPlaceHolder),
-                        disabled: isDisabled
-                      },
-                      helpToolTipProps: {
-                        title: formatMessage(messages.creativeCreationGeneralNameFieldHelper),
-                      },
-                    }}
+                    {...nameFieldProps}
                   />
                   <Field
                     name="creative.format"
@@ -174,25 +237,11 @@ class DisplayCreativeEditionEditor extends Component {
                     formats={formats}
                     disabled={isDisabled}
                   />
-                  <Field
+                  <InputField
                     name="creative.destination_domain"
                     component={FormInput}
                     validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: formatMessage(messages.creativeCreationGeneralDomainFieldTitle),
-                        required: true,
-                        ...fieldGridConfig,
-                      },
-                      inputProps: {
-                        placeholder: formatMessage(messages.creativeCreationGeneralDomainFieldPlaceHolder),
-                        defaultValue: this.state.creative && this.state.creative.name,
-                        disabled: isDisabled
-                      },
-                      helpToolTipProps: {
-                        title: formatMessage(messages.creativeCreationGeneralDomainFieldHelper),
-                      },
-                    }}
+                    {...destinationDomainFieldProps}
                   />
                 </Row>
               </div>
@@ -201,12 +250,16 @@ class DisplayCreativeEditionEditor extends Component {
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                   <FormTitle
                     title={messages.creativeSectionAuditTitle}
-                    subTitle={messages.creativeSectionAuditSubTitle}
+                    subtitle={messages.creativeSectionAuditSubTitle}
                   />
                 </Row>
                 <Row>
                   <Card>
-                    <AuditComponent creative={creative} onAuditChange={this.props.refreshCreative} mode="card" />
+                    <AuditComponent
+                      creative={creative}
+                      onAuditChange={this.props.refreshCreative}
+                      mode="card"
+                    />
                   </Card>
                 </Row>
               </div>
@@ -215,7 +268,7 @@ class DisplayCreativeEditionEditor extends Component {
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                   <FormTitle
                     title={messages.creativeSectionPropertyTitle}
-                    subTitle={messages.creativeSectionPropertySubTitle}
+                    subtitle={messages.creativeSectionPropertySubTitle}
                   />
                 </Row>
                 <Row>
@@ -240,11 +293,18 @@ class DisplayCreativeEditionEditor extends Component {
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                   <FormTitle
                     title={messages.creativeSectionPreviewTitle}
-                    subTitle={messages.creativeSectionPreviewSubTitle}
+                    subtitle={messages.creativeSectionPreviewSubTitle}
                   />
                 </Row>
                 <Row>
-                  <iframe className="renderer" src={this.renderIframeCreative()} frameBorder="0" scrolling="no" width={this.formatDimension(this.props.creative.format).width} height={this.formatDimension(this.props.creative.format).height} />
+                  <iframe
+                    className="renderer"
+                    src={this.renderIframeCreative()}
+                    frameBorder="0"
+                    scrolling="no"
+                    width={this.formatDimension(this.props.creative.format).width}
+                    height={this.formatDimension(this.props.creative.format).height}
+                  />
                 </Row>
               </div>
             </Content>
@@ -255,30 +315,7 @@ class DisplayCreativeEditionEditor extends Component {
   }
 }
 
-DisplayCreativeEditionEditor.defaultProps = {
-  creative: {},
-  rendererProperties: [],
-  formats: [],
-  submitFailed: false,
-};
-
-DisplayCreativeEditionEditor.propTypes = {
-  intl: intlShape.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  fieldValidators: PropTypes.shape().isRequired,
-  save: PropTypes.func.isRequired,
-  creative: PropTypes.shape(),
-  rendererProperties: PropTypes.arrayOf(PropTypes.shape()),
-  formats: PropTypes.arrayOf(PropTypes.string),
-  refreshCreative: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  organisationId: PropTypes.string.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  formId: PropTypes.string.isRequired,
-  submitFailed: PropTypes.bool,
-};
-
-DisplayCreativeEditionEditor = compose(
+export default compose<JoinedProps, DisplayCreativeEditionEditor>(
   withMcsRouter,
   injectIntl,
   reduxForm({
@@ -291,5 +328,3 @@ DisplayCreativeEditionEditor = compose(
   ),
   withValidators,
 )(DisplayCreativeEditionEditor);
-
-export default DisplayCreativeEditionEditor;

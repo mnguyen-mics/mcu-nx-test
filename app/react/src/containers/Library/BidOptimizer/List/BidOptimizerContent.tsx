@@ -9,7 +9,7 @@ import ItemList, { Filters } from '../../../../components/ItemList';
 import BidOptimizerService from '../../../../services/Library/BidOptimizerService';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { BidOptimizer, PluginProperty } from '../../../../models/Plugins';
+import { BidOptimizer, PropertyResourceShape } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -19,7 +19,7 @@ const initialState = {
 };
 
 interface BidOptimizerInterface extends BidOptimizer {
-    properties?: PluginProperty[];
+    properties?: PropertyResourceShape[];
 }
 
 interface BidOptimizerContentState {

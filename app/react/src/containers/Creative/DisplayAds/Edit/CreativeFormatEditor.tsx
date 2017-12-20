@@ -1,23 +1,58 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { Input, Select } from 'antd';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { WrappedFieldInputProps } from 'redux-form';
 
-import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper.tsx';
-import ButtonStyleless from '../../../../components/ButtonStyleless.tsx';
-import FormSelect from '../../../../components/Form/FormSelect/FormSelect.tsx';
+import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper';
+import ButtonStyleless from '../../../../components/ButtonStyleless';
+import FormSelect from '../../../../components/Form/FormSelect/FormSelect';
 import messages from '../Edit/messages';
 
 const Option = Select.Option;
 
-class CreativeFormatEditor extends Component {
+interface CreativeFormatEditorProps {
+  formats: string[];
+  // input: {
+  //   onChange: (type: string) => void;
+  //   value?: string;
+  // };
+  input: WrappedFieldInputProps;
+  meta: {
+    active: boolean;
+    asyncValidating: boolean;
+    autofilled: boolean;
+    dirty: boolean;
+    dispatch: () => void;
+    form: string;
+    initial: string;
+    invalid: boolean;
+    pristine: boolean;
+    submitFailed: boolean;
+    submitting: boolean;
+    touched: boolean;
+    valid: boolean;
+    visited: boolean;
+    warning: boolean;
+  };
+  disabled: boolean;
+}
 
-  state = { standardFormat: true }
+type JoinedProps = CreativeFormatEditorProps & InjectedIntlProps;
+
+class CreativeFormatEditor extends React.Component<JoinedProps> {
+
+  static defaultProps: Partial<JoinedProps> = {
+    disabled: false,
+  };
+
+  state = { standardFormat: true };
 
   render() {
     const {
-      intl: { formatMessage },
+      intl: {
+        formatMessage,
+      },
       formats,
       input,
       meta,
@@ -39,27 +74,27 @@ class CreativeFormatEditor extends Component {
     };
 
     /* For custom format only */
-    const dimensions = input.value.split('x');
+    const dimensions = input.value ? input.value.split('x') : '';
     const width = dimensions[0] ? dimensions[0] : '';
     const height = dimensions[1] ? dimensions[1] : '';
 
-    const onDimensionChange = (type) => (e) => {
-      const { value } = e.target;
-      const isDimension = !value || (/^\d+$/i.test(value) && value.length < 15);
+    const onDimensionChange = (type: string) => (e: React.FormEvent<HTMLButtonElement>) => {
+      // const { value } = e.target;
+      const isDimension = !input.value || (/^\d+$/i.test(input.value) && input.value.length < 15);
 
       if (isDimension) {
-        input.onChange(type === 'width' ? `${value}x${height}` : `${width}x${value}`);
+        input.onChange(type === 'width' ? `${input.value}x${height}` : `${width}x${input.value}`);
       }
     };
 
     return (
       <FormFieldWrapper
-        help={meta.warning || meta.error}
+        // help={meta.warning || meta.error}
         helpToolTipProps={{
           title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
         }}
         label={formatMessage(messages.creativeCreationGeneralFormatFieldTitle)}
-        required
+        required={true}
         validateStatus={validateStatus}
       >
         <div className="creative-format">
@@ -107,21 +142,6 @@ class CreativeFormatEditor extends Component {
   }
 }
 
-CreativeFormatEditor.defaultProps = {
-  disabled: false,
-};
-
-CreativeFormatEditor.propTypes = {
-  formats: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  input: PropTypes.shape({
-    onChange: PropTypes.func.isRequired,
-    value: PropTypes.string,
-  }).isRequired,
-  intl: intlShape.isRequired,
-  meta: PropTypes.shape().isRequired,
-  disabled: PropTypes.bool,
-};
-
-export default compose(
+export default compose<JoinedProps, CreativeFormatEditorProps>(
     injectIntl,
   )(CreativeFormatEditor);

@@ -1,6 +1,6 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginService from '../PluginService';
-import { PluginProperty, Recommender } from '../../models/Plugins';
+import { PropertyResourceShape, Recommender } from '../../models/Plugins';
 
 const recommenderService = {
   getRecommenders(organisationId: string, options: object = {}): Promise<DataListResponse<Recommender>> {
@@ -13,7 +13,7 @@ const recommenderService = {
 
     return ApiService.getRequest(endpoint, params);
   },
-  getRecommenderProperty(id: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
+  getRecommenderProperty(id: string, options: object = {}): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `recommenders/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
@@ -53,7 +53,7 @@ const recommenderService = {
     return ApiService.putRequest(endpoint, params);
   },
   updateRecommenderProperty(
-    organisationId: string, id: string, technicalName: string, params: object = {}): Promise<DataResponse<PluginProperty> | void> {
+    organisationId: string, id: string, technicalName: string, params: object = {}): Promise<DataResponse<PropertyResourceShape> | void> {
     const endpoint = `recommenders/${id}/properties/technical_name=${technicalName}`;
     return PluginService.handleSaveOfProperties(params, organisationId, 'recommenders', id, endpoint);
   },

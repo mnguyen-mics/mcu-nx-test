@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import EmailRouterService from '../../../../services/Library/EmailRoutersService';
 import * as actions from '../../../../state/Notifications/actions';
-import { PluginProperty, EmailRouter, PluginInterface} from '../../../../models/Plugins';
+import { PropertyResourceShape, EmailRouter, PluginInterface} from '../../../../models/Plugins';
 
 import messages from './messages';
 
@@ -17,7 +17,7 @@ interface EmailRouterRouteParam {
 
 interface EmailRouterForm {
   plugin: any;
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 interface CreateEmailRouterState {
@@ -102,7 +102,7 @@ class CreateEditEmailRouter extends React.Component<
     history.push(attributionModelUrl);
   }
 
-  saveOrCreatePluginInstance = (plugin: EmailRouter, properties: PluginProperty[]) => {
+  saveOrCreatePluginInstance = (plugin: EmailRouter, properties: PropertyResourceShape[]) => {
 
     const {
       edition,
@@ -152,7 +152,7 @@ class CreateEditEmailRouter extends React.Component<
     });
   }
 
-  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
+  updatePropertiesValue = (properties: PropertyResourceShape[], organisationId: string, id: string) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(EmailRouterService.updateEmailRouterProperty(organisationId, id, item.technical_name, item));

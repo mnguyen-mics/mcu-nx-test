@@ -1,17 +1,30 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { RouteComponentProps } from 'react-router';
 
 import * as actions from '../../../../../state/Notifications/actions';
 import { withMcsRouter } from '../../../../Helpers';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
 import EditDisplayCreativeContent from './EditDisplayCreativeContent';
-import withDrawer from '../../../../../components/Drawer/index.tsx';
+import withDrawer, { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
 import { updateDisplayCreative } from '../../../../../formServices/CreativeServiceWrapper';
+import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import { PropertyResourceShape } from '../../../../../models/plugin';
 
-class EditDisplayCreativePage extends Component {
+interface EditDisplayCreativePageProps {
+  closeNextDrawer: () => void;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
+}
+
+interface RouteProps {
+  organisationId: string;
+  creativeId: string;
+}
+
+type JoinedProps = EditDisplayCreativePageProps & InjectedIntlProps & RouteComponentProps<RouteProps>;
+
+class EditDisplayCreativePage extends React.Component<JoinedProps> {
 
   onClose = () => {
     const {
@@ -19,25 +32,24 @@ class EditDisplayCreativePage extends Component {
       match: {
         params: {
           organisationId,
-        }
-      }
+        },
+      },
     } = this.props;
     history.push(`/v2/o/${organisationId}/creatives/display`);
   }
 
-  save = (creative, properties) => {
+  save = (creative: DisplayAdResource, properties: PropertyResourceShape[]) => {
     const {
       history,
       match: {
         params: {
           organisationId,
-        }
-      }
+        },
+      },
     } = this.props;
     updateDisplayCreative(organisationId, creative, properties);
     history.push(`/v2/o/${organisationId}/creatives/display`);
   }
-
 
   render() {
 
@@ -59,19 +71,7 @@ class EditDisplayCreativePage extends Component {
   }
 }
 
-EditDisplayCreativePage.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      organisationId: PropTypes.string.isRequired,
-      creativeId: PropTypes.string.isRequired,
-    })
-  }).isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-  closeNextDrawer: PropTypes.func.isRequired,
-  openNextDrawer: PropTypes.func.isRequired,
-};
-
-export default compose(
+export default compose<JoinedProps, EditDisplayCreativePageProps>(
   withMcsRouter,
   injectIntl,
   withDrawer,

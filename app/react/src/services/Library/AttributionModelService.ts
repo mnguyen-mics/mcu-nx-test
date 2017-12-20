@@ -1,6 +1,6 @@
 import ApiService, { DataResponse, DataListResponse } from '../ApiService';
 import PluginService from '../PluginService';
-import { PluginProperty, AttributionModel } from '../../models/Plugins';
+import { PropertyResourceShape, AttributionModel } from '../../models/Plugins';
 
 const AttributionModelService = {
   getAttributionModels(organisationId: string, options: object = {}): Promise<DataListResponse<AttributionModel>> {
@@ -27,7 +27,7 @@ const AttributionModelService = {
     };
     return ApiService.deleteRequest(endpoint, params);
   },
-  getAttributionModelProperties(id: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
+  getAttributionModelProperties(id: string, options: object = {}): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `attribution_models/${id}/properties`;
 
     const params = {
@@ -42,7 +42,7 @@ const AttributionModelService = {
     };
     return ApiService.postRequest(endpoint, params);
   },
-  updateAttributionModel(id: string, options: object = {}): Promise<DataResponse<PluginProperty>> {
+  updateAttributionModel(id: string, options: object = {}): Promise<DataResponse<PropertyResourceShape>> {
     const endpoint = `attribution_models/${id}`;
     const params = {
       ...options,
@@ -54,7 +54,7 @@ const AttributionModelService = {
     id: string,
     technicalName: string,
     params: object = {},
-  ): Promise<DataResponse<PluginProperty> | void> {
+  ): Promise<DataResponse<PropertyResourceShape> | void> {
     const endpoint = `attribution_models/${id}/properties/technical_name=${technicalName}`;
     return PluginService.handleSaveOfProperties(params, organisationId, 'attribution_models', id, endpoint);
   },

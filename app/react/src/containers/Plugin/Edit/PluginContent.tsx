@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
-import { PluginInterface, PluginProperty, PluginType } from '../../../models/Plugins';
+import { PluginInterface, PropertyResourceShape, PluginType } from '../../../models/Plugins';
 import PluginService from '../../../services/PluginService';
 import * as actions from '../../../state/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
@@ -33,7 +33,7 @@ interface PluginContentOuterProps {
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
   breadcrumbPaths: BreadcrumbPaths[];
-  saveOrCreatePluginInstance: (plugin: any, properties: PluginProperty[]) => void;
+  saveOrCreatePluginInstance: (plugin: any, properties: PropertyResourceShape[]) => void;
   onClose: () => void;
   editionMode: boolean;
   onSelect: (t: any) => void;
@@ -44,7 +44,7 @@ interface PluginContentOuterProps {
 interface PluginContentState {
   plugin: PluginInterface;
   isLoading: boolean;
-  pluginProperties: PluginProperty[];
+  pluginProperties: PropertyResourceShape[];
   availablePlugins: PluginInterface[];
 }
 
@@ -115,7 +115,7 @@ class PluginContent extends React.Component<
     });
   }
 
-  createPlugin = (plugin: PluginInterface, properties: PluginProperty[]) => {
+  createPlugin = (plugin: PluginInterface, properties: PropertyResourceShape[]) => {
     this.props.saveOrCreatePluginInstance(plugin, properties);
   }
 
@@ -155,7 +155,7 @@ class PluginContent extends React.Component<
     const formattedProperties: any = {};
 
     if (initialValues.properties) {
-      initialValues.properties.forEach((property: PluginProperty) => {
+      initialValues.properties.forEach((property: PropertyResourceShape) => {
         formattedProperties[property.technical_name] = { value: property.value };
       });
     }

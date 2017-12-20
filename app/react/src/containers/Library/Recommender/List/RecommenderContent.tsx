@@ -10,7 +10,7 @@ import RecommenderService from '../../../../services/Library/RecommenderService'
 import PluginService from '../../../../services/PluginService';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { PluginProperty, Recommender, PluginVersion } from '../../../../models/Plugins';
+import { PropertyResourceShape, Recommender, PluginVersion } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -20,7 +20,7 @@ const initialState = {
 };
 
 interface RecommenderInterface extends Recommender {
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 interface RecommenderContentState {
@@ -54,10 +54,10 @@ class RecommenderContent extends React.Component<RouteComponentProps<RouterProps
               PluginService.getEngineVersion(va.version_id)
               .then((recommender: PluginVersion) => {
                 return PluginService.getEngineProperties(recommender.id);
-              }).then((v: PluginProperty[]) => resolve(v));
+              }).then((v: PropertyResourceShape[]) => resolve(v));
             });
           });
-          Promise.all(promises).then((vaProperties: PluginProperty[]) => {
+          Promise.all(promises).then((vaProperties: PropertyResourceShape[]) => {
             const formattedResults: any = results.data.map((va, i) => {
               return {
                 ...va,

@@ -1,56 +1,94 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { RouteComponentProps } from 'react-router';
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCreativeCreationEditor from './DisplayCreativeCreationEditor';
 import DisplayCreativeTypePicker from './DisplayCreativeTypePicker';
-
-import CreativeService from '../../../../../services/CreativeService.ts';
-import PluginService from '../../../../../services/PluginService.ts';
+import CreativeService from '../../../../../services/CreativeService';
+import PluginService from '../../../../../services/PluginService';
 import * as actions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
-import { ReactRouterPropTypes } from '../../../../../validators/proptypes';
-import Loading from '../../../../../components/Loading.tsx';
-import { EditContentLayout } from '../../../../../components/Layout/index.ts';
-
+import Loading from '../../../../../components/Loading';
+import { EditContentLayout } from '../../../../../components/Layout/';
+import { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
 import messages from '../messages';
+import { RendererDataProps, AdRendererProps } from '../../../../../models/campaign/display/AdResource';
+import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import { PropertyResourceShape } from '../../../../../models/plugin';
 
 const formId = 'creativeEditor';
 
-class DisplayCreativeContent extends Component {
+interface DisplayCreativeContentProps {
+  closeNextDrawer: () => void;
+  openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
+  onClose: () => void;
+  save: (
+    creativeData: Partial<DisplayAdResource>,
+    formattedProperties: PropertyResourceShape[],
+    rendererData: RendererDataProps,
+  ) => void;
+  drawerMode: boolean;
+}
 
-  constructor(props) {
+interface DisplayCreativeContentState {
+  adRenderer: AdRendererProps;
+  isLoading: boolean;
+  rendererProperties: PropertyResourceShape[];
+  formats: string[];
+}
+
+type JoinedProps = DisplayCreativeContentProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
+
+class DisplayCreativeContent extends React.Component<JoinedProps, DisplayCreativeContentState> {
+
+  static defaultProps: Partial<DisplayCreativeContentProps> = {
+    drawerMode: false,
+  };
+
+  constructor(props: JoinedProps) {
     super(props);
     this.state = {
       adRenderer: {
-        id: null,
-        versionId: null,
-        artifactId: null,
-        groupId: null,
+        id: '',
+        version_id: '',
+        artifact_id: '',
+        group_id: '',
       },
       isLoading: false,
       rendererProperties: [],
-      formats: []
+      formats: [],
     };
   }
 
   redirect = () => {
-    const { history, organisationId } = this.props;
+    const {
+      history,
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+    } = this.props;
     const emailCampaignListUrl = `/v2/o/${organisationId}/creatives/display`;
     history.push(emailCampaignListUrl);
   }
 
-  onSelect = adRenderer => {
+  onSelect = (adRenderer: string) => {
     const {
-      notifyError,
-      organisationId
+      match: {
+        params: {
+          organisationId,
+        },
+      },
     } = this.props;
     this.setState(prevState => {
       const nextState = {
-        ...prevState
+        ...prevState,
       };
       nextState.isLoading = true;
       return nextState;
@@ -67,7 +105,7 @@ class DisplayCreativeContent extends Component {
             .then(values => {
               this.setState(prevState => {
                 const nextState = {
-                  ...prevState
+                  ...prevState,
                 };
                 nextState.rendererProperties = values[0].sort((a) => {
                   return a.writable === false ? -1 : 1;
@@ -82,28 +120,28 @@ class DisplayCreativeContent extends Component {
 
                 nextState.adRenderer = {
                   id: adRenderer,
-                  versionId: lastVersion.id,
-                  artifactId: lastVersion.artifact_id,
-                  groupId: lastVersion.group_id
+                  version_id: lastVersion.id,
+                  artifact_id: lastVersion.artifact_id,
+                  group_id: lastVersion.group_id,
                 };
                 nextState.isLoading = false;
                 return nextState;
               });
             })
             .catch(err => {
-              notifyError(err);
+              actions.notifyError(err);
               this.setState(() => {
                 return { isLoading: false };
               });
             });
 
         })
-        .catch(err => {
+        .catch((err: any) => {
           log.debug(err);
-          notifyError(err);
+          actions.notifyError(err);
           this.setState(prevState => {
             const nextState = {
-              ...prevState
+              ...prevState,
             };
             nextState.isLoading = true;
             return nextState;
@@ -115,11 +153,13 @@ class DisplayCreativeContent extends Component {
   onReset = () => {
     this.setState(prevState => {
       const nextState = {
-        ...prevState
+        ...prevState,
       };
       nextState.adRenderer = {
-        id: null,
-        versionId: null
+        id: '',
+        version_id: '',
+        artifact_id: '',
+        group_id: '',
       };
       return nextState;
     });
@@ -128,17 +168,22 @@ class DisplayCreativeContent extends Component {
 
   render() {
     const {
-      organisationId,
+      match: {
+        params: {
+          organisationId,
+        },
+      },
       intl: { formatMessage },
       onClose,
       match: {
         url,
       },
+      drawerMode,
     } = this.props;
 
     const {
       adRenderer,
-      isLoading
+      isLoading,
     } = this.state;
 
     const sidebarItems = {
@@ -149,16 +194,13 @@ class DisplayCreativeContent extends Component {
 
     const buttonMetadata = {
       formId: formId,
-      message: messages.saveCreative,
+      message: drawerMode ? messages.addCreative : messages.saveCreative,
       onClose: onClose,
     };
 
     const breadcrumbPaths = [
       { name: formatMessage(messages.creativeCreationBreadCrumb) },
     ];
-
-
-    const isCreativetypePicker = true;
 
     return (
       <div className="ant-layout">
@@ -167,13 +209,14 @@ class DisplayCreativeContent extends Component {
             <Loading className="loading-full-screen" />
           </div>
           :
-          (adRenderer.id && adRenderer.versionId) ?
+          (adRenderer.id && adRenderer.version_id) ?
             <EditContentLayout
               breadcrumbPaths={breadcrumbPaths}
               sidebarItems={sidebarItems}
               buttonMetadata={buttonMetadata}
               url={url}
               changeType={this.onReset}
+              isCreativetypePicker={false}
             >
               <DisplayCreativeCreationEditor
                 save={this.props.save}
@@ -182,8 +225,6 @@ class DisplayCreativeContent extends Component {
                 formats={this.state.formats}
                 rendererProperties={this.state.rendererProperties}
                 organisationId={organisationId}
-                closeNextDrawer={this.props.closeNextDrawer}
-                openNextDrawer={this.props.openNextDrawer}
                 formId={formId}
               />
             </EditContentLayout>
@@ -191,17 +232,15 @@ class DisplayCreativeContent extends Component {
             <div className="ant-layout">
               <EditContentLayout
                 breadcrumbPaths={breadcrumbPaths}
+                sidebarItems={undefined}
                 buttonMetadata={buttonMetadata}
                 url={url}
-                isCreativetypePicker={isCreativetypePicker}
+                isCreativetypePicker={true}
+                changeType={undefined}
               >
                 <DisplayCreativeTypePicker
-                  save={this.props.save}
                   onSelect={this.onSelect}
                   formId={formId}
-                  closeNextDrawer={this.props.closeNextDrawer}
-                  openNextDrawer={this.props.openNextDrawer}
-                  organisationId={organisationId}
                 />
               </EditContentLayout>
             </div>}
@@ -210,19 +249,7 @@ class DisplayCreativeContent extends Component {
   }
 }
 
-DisplayCreativeContent.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
-  closeNextDrawer: PropTypes.func.isRequired,
-  openNextDrawer: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
-  save: PropTypes.func.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-};
-
-export default compose(
+export default compose<JoinedProps, DisplayCreativeContentProps>(
   injectIntl,
   withMcsRouter,
   connect(

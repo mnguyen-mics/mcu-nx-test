@@ -152,6 +152,7 @@ const saveTableFields = (options, formValues, formInitialValues) => {
   const newFormValues = formValues.filter(field => field.resource && Object.keys(field.resource).length > 0);
 
   // TODO IN UPDATE CASE => maybe compare resource between initial and current
+  // TODO to tasks
   const createResources = newFormValues.filter(field => isFakeId(field.id)).map(field => {
     return function promise() { return requests.create(campaignId, adGroupId, field.resource); };
   });
@@ -163,10 +164,13 @@ const saveTableFields = (options, formValues, formInitialValues) => {
     return function promise() { return requests.delete(campaignId, adGroupId, field.id); };
   });
 
+  const tasks = options.tasks || [];
+
   const sequentialPromisesResult = [
     ...createResources,
     ...updateResources,
     ...deleteResources,
+    ...tasks,
   ].reduce((previousPromise, promise) => {
     return previousPromise.then(() => {
       return promise();
@@ -211,20 +215,46 @@ const saveTableFields = (options, formValues, formInitialValues) => {
   });
 };
 
-const saveAds = (campaignId, adGroupId, formValue, initialFormValue) => {
+const saveAdResources = (organisationId, campaignId, adGroupId, adTable, initialAdTable) => {
+
+  const createAds = adTable.filter(field => field.resource.displayAdResource.id === undefined && field.resource.creativeResource === null).map(field => {
+    return function promise() {
+      return DisplayCampaignService.createAd(campaignId, adGroupId, field.resource.displayAdResource);
+    };
+  });
+
+  const deleteAds = adTable.filter(field => field.deleted).map(field => {
+    return function promise() {
+      return DisplayCampaignService.deleteAd(campaignId, adGroupId, field.resource.displayAdResource.id);
+    };
+  });
+
+  const createCreativeThenLinkToAdGroup = adTable.filter(field => isFakeId(field.id) && field.resource.creativeResource !== null).map(field => {
+    return function promise() {
+      return CreativeService.createDisplayCreative(organisationId, field.resource.creativeResource).then(res => {
+        const creativeId = res.data.id;
+        const adResource = { creative_id: creativeId };
+        return DisplayCampaignService.createAd(campaignId, adGroupId, adResource);
+      });
+    };
+  });
+
   const options = {
     adGroupId,
     campaignId,
-    getBody: (row) => ({ creative_id: row.id }),
-    requests: {
-      create: DisplayCampaignService.createAd,
-      delete: DisplayCampaignService.deleteAd,
-    },
-    tableName: 'ads',
+    getBody: () => {},
+    tasks: [
+      ...createAds,
+      ...deleteAds,
+      ...createCreativeThenLinkToAdGroup,
+    ],
+    tableName: 'newAds',
   };
 
-  return saveTableFields(options, formValue, initialFormValue);
+  // TODO return tasks: [() => Promise] or execTasks(tasks): Promise
+  return saveTableFields(options, adTable, initialAdTable);
 };
+
 
 const saveAudience = (campaignId, adGroupId, formValue, initialFormValue) => {
   const options = {
@@ -365,7 +395,7 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
       .then(() => saveDevices(campaignId, adGroupId, deviceTable, initialDeviceTable))
       .then(() => savePublishers(campaignId, adGroupId, publisherTable, initialPublisherTable))
       .then(() => savePlacements(campaignId, adGroupId, placementTable, initialPlacementTable))
-      .then(() => saveAds(campaignId, adGroupId, adTable, initialAdTable))
+      .then(() => saveAdResources(campaignId, adGroupId, adTable, initialAdTable))
       .then(() => saveLocations(campaignId, adGroupId, locationTargetingTable, initialLocationTargetingTable))
       .then(() => adGroupId);
   });

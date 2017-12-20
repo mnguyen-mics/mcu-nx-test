@@ -247,7 +247,7 @@ const DisplayCampaignService = {
   createAd(
       campaignId: string,
       adGroupId: string,
-      body: object,
+      body: Partial<AdResource>,
     ): Promise<AdResource> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.postRequest(endpoint, body);
