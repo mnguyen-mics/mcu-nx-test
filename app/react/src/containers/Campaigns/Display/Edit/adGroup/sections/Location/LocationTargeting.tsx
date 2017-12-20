@@ -61,7 +61,7 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
 
   addLocationField = (locationField: LocationFieldModel) => {
     const { fields, intl: { formatMessage } } = this.props;
-    const allFields = fields ? fields.getAll() : [];
+    const allFields = fields ? fields.getAll().filter(item => !item.deleted) : [];
 
     const formattedLocationField = {
       ...locationField,
