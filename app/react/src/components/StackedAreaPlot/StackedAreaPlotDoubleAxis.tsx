@@ -288,11 +288,13 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     const dragBox = new Plottable.Components.XDragBoxLayer();
     dragBox.resizable(true);
     dragBox.onDragEnd((bounds) => {
-      const min = moment(xScale.invert(bounds.topLeft.x));
-      const duration: number = (moment(xScale.invert(bounds.bottomRight.x)).diff(min, 'milliseconds'));
+      const startDragDate = moment(xScale.invert(bounds.topLeft.x));
+      const endDragDate = moment(xScale.invert(bounds.bottomRight.x));
+      const min = startDragDate;
+      const duration: number = (endDragDate).diff(min, 'milliseconds');
       const max =  duration > DAY_MILLIS ?
-        moment(xScale.invert(bounds.bottomRight.x)) :
-        moment(xScale.invert(bounds.bottomRight.x)).add(1, 'days');
+        endDragDate :
+        endDragDate.add(1, 'days');
 
       onDragEnd([min, max]);
     });
