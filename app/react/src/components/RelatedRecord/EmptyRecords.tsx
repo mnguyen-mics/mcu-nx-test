@@ -4,12 +4,12 @@ import McsIcons, { McsIconType } from '../McsIcons';
 export interface EmptyRecordsProps {
   iconType: McsIconType;
   message: string;
-  className: string;
+  className?: string;
 }
 
 const EmptyRecords: React.SFC<EmptyRecordsProps> = props => {
   return (
-    <div className={`empty-related-records ${props.className}`}>
+    <div className={`empty-related-records ${props.className ? props.className : ''}`}>
       <McsIcons type={props.iconType} />
       {props.message}
     </div>

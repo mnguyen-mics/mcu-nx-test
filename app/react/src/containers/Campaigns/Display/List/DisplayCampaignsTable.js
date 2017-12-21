@@ -18,7 +18,7 @@ import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, update
 
 import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
-
+import messages from '../messages';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 
 class DisplayCampaignsTable extends Component {
@@ -152,13 +152,29 @@ class DisplayCampaignsTable extends Component {
           organisationId,
         },
       },
+      location,
       history,
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaign.id}/edit`;
 
-    history.push(editUrl);
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
   };
+
+  duplicateCampaign = (campaign) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
+
+    history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
+  }
 
   updateLocationSearch = (params) => {
     const {
@@ -338,7 +354,12 @@ class DisplayCampaignsTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,
-          }, {
+          },
+          {
+            intlMessage: messages.duplication,
+            callback: this.duplicateCampaign,
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archiveCampaign,
           },

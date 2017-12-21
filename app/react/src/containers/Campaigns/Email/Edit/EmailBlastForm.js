@@ -94,11 +94,10 @@ class EmailBlastForm extends Component {
     return segments.filter(segment => !segment.isDeleted).map(segment => (
       <RecordElement
         key={segment.audience_segment_id}
+        record={segment}
         recordIconType={'users'}
-        title={segment.name}
-        actionButtons={[
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) },
-        ]}
+        title={(record) => record.name}
+        onRemove={() => this.handleClickOnRemoveSegment(segment)}
       />
     ));
   }

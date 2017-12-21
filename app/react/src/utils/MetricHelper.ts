@@ -33,11 +33,13 @@ export function unformatMetric(
  *
  * TO
  *
- * {
- *  campaign_id: ["1812","1814"]
- *  impressions: [4, 38258]
- *  clicks: [0, 86]
- * }
+ * [
+ *  {
+ *    campaign_id: "1812",
+ *    impressions: 4
+ *  },
+ *  ...
+ * ]
  *
  * @param {Object} reportView an object comming from performance api
  * @return {Object} normalized object

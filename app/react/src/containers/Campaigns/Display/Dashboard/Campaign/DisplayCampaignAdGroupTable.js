@@ -32,6 +32,25 @@ class DisplayCampaignAdGroupTable extends Component {
     });
   }
 
+  duplicateCampaign = (adGroup) => {
+    const {
+      match: {
+        params: {
+          campaignId,
+          organisationId
+        },
+      },
+      history,
+      location,
+
+    } = this.props;
+
+    history.push({
+      pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
+      state: { from: `${location.pathname}${location.search}`, adGroupId: adGroup.id },
+    });
+  }
+
   archiveAdGroup = () => {
     // TODO
   }
@@ -188,6 +207,10 @@ class DisplayCampaignAdGroupTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,
+          },
+          {
+            intlMessage: messages.duplicate,
+            callback: this.duplicateCampaign,
           },
           // Commented for now to be improved later
           // {
