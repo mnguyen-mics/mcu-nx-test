@@ -14,7 +14,7 @@ import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
 import ConsentService from '../../../../services/ConsentService.ts';
-import { isPastDate } from '../../../../utils/DateHelper';
+import { isPastDate } from '../../../../utils/DateHelper.ts';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
