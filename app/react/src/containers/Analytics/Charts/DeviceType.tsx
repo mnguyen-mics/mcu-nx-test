@@ -3,6 +3,7 @@ import PieChart from '../../../components/PieChart';
 import {compose} from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../Overview/messages';
+import {connect} from 'react-redux';
 
 interface DeviceTypeProps {
   hasFetchedVisitReportFormFactor: boolean;
@@ -21,13 +22,13 @@ type DatasetObject = {[s: string]: PieChartDatum};
 
 class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
 
-  // TODO more robust way
-  colors = [
-    '#00a1df',
-    '#00ab67',
-    '#fc3f48',
-    '#fd7c12',
-    '#d9d9d9',
+  colorNames = [
+   'mcs-error',
+   'mcs-warning',
+   'mcs-success',
+   'mcs-info',
+   'mcs-primary',
+   'mcs-highlight',
   ];
 
   buildDataset(datasetObject: DatasetObject): PieChartDatum[] {
@@ -39,13 +40,15 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
   }
 
   buildDatasetObject(rows: any[], key: string): DatasetObject {
+    const { colors } = this.props;
     let colorIndex = 0;
+    const colorsArray = this.colorNames.map((name: string) => colors[name]);
     return rows.reduce((datasetObject: DatasetObject, row: any) => {
       if (!datasetObject[row[key]]) {
         datasetObject[row[key]] = {
           key: row[key],
           value: 0,
-          color: this.colors[colorIndex],
+          color: colorsArray[colorIndex],
         };
         colorIndex++;
       }
@@ -60,9 +63,9 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
   }
 
   generateOptions(isHalf: boolean) {
-    const { intl: { formatMessage } } = this.props;
-    const colorFormated = '#ff9012';
-    const gray = '#eaeaea';
+    const { intl: { formatMessage }, colors } = this.props;
+    const colorFormated = colors['mcs-warn'];
+    const gray = colors['mcs-normal'];
 
     const options = {
       innerRadius: true,
@@ -111,4 +114,9 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
 }
 export default compose<DeviceTypeProps, any>(
   injectIntl,
+  connect(
+    (state: any) => ({
+      colors: state.theme.colors,
+    }),
+  ),
 )(DeviceType);

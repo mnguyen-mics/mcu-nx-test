@@ -17,6 +17,7 @@ import {withRouter} from 'react-router-dom';
 import {ANALYTICS_DASHBOARD_SEARCH_SETTINGS} from '../constants';
 import {McsDateRangeValue} from '../../../components/McsDateRangePicker';
 import {RouteComponentProps} from 'react-router';
+import {connect} from 'react-redux';
 
 const _messages: {[s: string]: MessageDescriptor} = messages;
 
@@ -24,6 +25,7 @@ interface VisitAnalysisProps {
   hasFetchedVisitReport: boolean;
   isFetchingVisitReport: boolean;
   report: any[];
+  colors: { [s: string]: string };
 }
 type JoinedProps = VisitAnalysisProps & InjectedIntlProps & RouteComponentProps<any>;
 
@@ -88,7 +90,15 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
   }
 
   render() {
-    const { intl: { formatMessage }, report, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
+    const {
+      intl: {
+        formatMessage
+      },
+      report,
+      hasFetchedVisitReport,
+      isFetchingVisitReport,
+      colors
+    } = this.props;
     const { key1, key2 } = this.state;
 
     const metrics = [{
@@ -111,7 +121,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
         { key: key1, message: formatMessage(_messages[key1]) },
         { key: key2, message: formatMessage(_messages[key2]) },
       ],
-      colors: ['#ff9012', '#00a1df'],
+      colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,
       onDragEnd: (values: string[]) => {
         this.updateLocationSearch({
@@ -124,15 +134,13 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     const legendOptions = [
       {
         key: key1,
-        domain: formatMessage(_messages[key1]), // translations[key1.toUpperCase()],
-        // TODO COLOR
-        color: '#ff9012', // colors['mcs-warning'],
+        domain: formatMessage(_messages[key1]),
+        color: colors['mcs-warning'],
       },
       {
         key: key2,
-        domain: formatMessage(_messages[key2]), // translations[key2.toUpperCase()],
-        // TODO COLOR
-        color: '#00a1df', // colors['mcs-info'],
+        domain: formatMessage(_messages[key2]),
+        color: colors['mcs-info'],
       },
     ];
     const legends = this.createLegend();
@@ -168,7 +176,6 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
           </Col>
           <Col span={19}>
             {datasource && datasource.length === 0 || !hasFetchedVisitReport
-                // TODO INTL
                 ? <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
                 : this.renderStackedAreaChart(datasource, optionsForChart)}
           </Col>
@@ -180,4 +187,9 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
 export default compose<JoinedProps, any>(
   withRouter,
   injectIntl,
+  connect(
+    (state: any) => ({
+      colors: state.theme.colors,
+    }),
+  ),
 )(VisitAnalysis);

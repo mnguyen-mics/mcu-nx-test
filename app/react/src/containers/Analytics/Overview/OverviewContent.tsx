@@ -215,7 +215,6 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
                     hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                     isFetchingVisitReport={this.state.isFetchingVisitReport}
                     report={this.state.visitReport}
-                    colors={{}}
                   />
               </Card>
             </Col>
@@ -225,7 +224,6 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
                     hasFetchedVisitReportFormFactor={this.state.hasFetchedVisitReportFormFactor}
                     isFetchingVisitReportFormFactor={this.state.isFetchingVisitReportFormFactor}
                     report={this.state.visitReportFormFactor}
-                    colors={{}}
                   />
               </Card>
             </Col>
@@ -238,8 +236,9 @@ export default compose<OverviewContentAllProps, OverviewContentState>(
   withRouter,
   injectIntl,
   connect(
-    state => ({
+    (state: any) => ({
       getDefaultDatamart: SessionSelectors.getDefaultDatamart(state),
+      colors: state.theme.colors,
     }),
   ),
 )

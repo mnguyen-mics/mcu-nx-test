@@ -3,6 +3,7 @@ import PieChart from '../../../components/PieChart';
 import messages from '../Overview/messages';
 import {compose} from 'recompose';
 import {injectIntl, InjectedIntlProps} from 'react-intl';
+import {connect} from 'react-redux';
 
 interface NewUsersProps {
   hasFetchedVisitReport: boolean;
@@ -16,12 +17,12 @@ type JoinedProps = NewUsersProps & InjectedIntlProps;
 class NewUsers extends React.Component<JoinedProps> {
 
   buildDataSet(a: number, b: number) {
-    const { intl: { formatMessage }} = this.props;
+    const { intl: { formatMessage }, colors } = this.props;
     const value = a;
     const totalValue = b;
     return [
-      { key: formatMessage(messages.delivered), value: value, color: '#ff9012' },
-      { key: formatMessage(messages.rest), value: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' },
+      { key: formatMessage(messages.delivered), value: value, color: colors['mcs-warning'] },
+      { key: formatMessage(messages.rest), value: (!value) ? 100 : Math.abs(totalValue - value), color: colors['mcs-normal'] },
     ];
   }
 
@@ -31,9 +32,9 @@ class NewUsers extends React.Component<JoinedProps> {
   }
 
   generateOptions(isHalf: boolean, color: string, translationKey: string, ratioValeA: number, ratioValeB: number) {
-    const { intl: { formatMessage }} = this.props;
-    const colorFormated = '#ff9012';
-    const gray = '#eaeaea';
+    const { intl: { formatMessage }, colors} = this.props;
+    const colorFormated = colors['mcs-warning'];
+    const gray = colors['mcs-normal'];
 
     const options = {
       innerRadius: true,
@@ -87,4 +88,9 @@ class NewUsers extends React.Component<JoinedProps> {
 
 export default compose<JoinedProps, any>(
   injectIntl,
+  connect(
+    (state: any) => ({
+      colors: state.theme.colors,
+    }),
+  ),
 )(NewUsers);
