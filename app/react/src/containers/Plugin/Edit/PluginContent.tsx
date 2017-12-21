@@ -211,8 +211,6 @@ class PluginContent extends React.Component<
           sidebarItems={sidebarItems}
           buttonMetadata={buttonMetadata}
           url={url}
-          isCreativetypePicker={false}
-          changeType={undefined}
         >
           <PluginEditForm
             formValues={{}}
@@ -230,10 +228,7 @@ class PluginContent extends React.Component<
       <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
         buttonMetadata={buttonMetadata}
-        sidebarItems={null}
         url={url}
-        isCreativetypePicker={false}
-        changeType={undefined}
       >
         <PluginEditSelector
           onSelect={this.onSelectPlugin}

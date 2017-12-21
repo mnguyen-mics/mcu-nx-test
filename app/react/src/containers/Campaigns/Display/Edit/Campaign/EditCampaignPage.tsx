@@ -10,7 +10,7 @@ import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
-import * as AdGroupWrapper from '../AdGroupServiceWrapper';
+import * as AdGroupWrapper from '../../../../../formServices/AdGroupServiceWrapper';
 import messages from './messages';
 
 interface EditCampaignPageProps {

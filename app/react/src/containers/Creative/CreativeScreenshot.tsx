@@ -1,13 +1,22 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Spin } from 'antd';
-import McsIcons from '../../components/McsIcons.tsx';
-import CreativeService from '../../services/CreativeService.ts';
+import McsIcons from '../../components/McsIcons';
+import CreativeService from '../../services/CreativeService';
+import { DisplayAdResource } from '../../models/creative/CreativeResource';
 
+interface CreativeScreenshotProps {
+  item: DisplayAdResource;
+}
 
-class CreativeScreenshot extends Component {
+interface CreativeScreenshotState {
+  loading: boolean;
+  error: boolean;
+  success: boolean;
+}
 
-  constructor(props) {
+class CreativeScreenshot extends React.Component<CreativeScreenshotProps, CreativeScreenshotState> {
+
+  constructor(props: CreativeScreenshotProps) {
     super(props);
     this.state = {
       loading: false,
@@ -18,18 +27,18 @@ class CreativeScreenshot extends Component {
 
   componentDidMount() {
     const {
-      item
+      item,
     } = this.props;
     this.fetchData(item.id);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: CreativeScreenshotProps) {
     const {
-      item
+      item,
     } = this.props;
 
     const {
-      item: nextItem
+      item: nextItem,
     } = nextProps;
 
     if (item.id !== nextItem.id) {
@@ -38,15 +47,14 @@ class CreativeScreenshot extends Component {
 
   }
 
-
-  fetchData = (id) => {
+  fetchData = (id: string) => {
     CreativeService.getCreativeScreenshotStatus(id)
     .then(response => {
       if (response && response.data && response.data.status) {
         if (response.data.status === 'SUCCEEDED') {
           this.setState(prevState => {
             const nextState = {
-              ...prevState
+              ...prevState,
             };
             nextState.success = true;
             return nextState;
@@ -54,7 +62,7 @@ class CreativeScreenshot extends Component {
         } else if (response.data.status === 'PENDING' || response.data.status === 'PROCESSING') {
           this.setState(prevState => {
             const nextState = {
-              ...prevState
+              ...prevState,
             };
             nextState.loading = true;
             return nextState;
@@ -62,7 +70,7 @@ class CreativeScreenshot extends Component {
         } else if (response.data.status === 'FAILED' || response.data.status === 'NOT_TAKEN') {
           this.setState(prevState => {
             const nextState = {
-              ...prevState
+              ...prevState,
             };
             nextState.error = true;
             return nextState;
@@ -73,7 +81,7 @@ class CreativeScreenshot extends Component {
     }).catch(() => {
       this.setState(prevState => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         nextState.error = true;
         return nextState;
@@ -81,7 +89,7 @@ class CreativeScreenshot extends Component {
     });
   }
 
-  renderSuccessScreenshot = (record) => {
+  renderSuccessScreenshot = (record: DisplayAdResource) => {
     return (
       <a target="_blank" rel="noreferrer noopener" href={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`}>
         <span className="thumbnail-helper" /><img src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.id}`} alt={record.name} />
@@ -112,20 +120,14 @@ class CreativeScreenshot extends Component {
       success,
     } = this.state;
 
-
     return (
       <div className="mcs-table-cell-thumbnail">
-        { error ? this.renderErrorScreenshot() : null }
-        { loading ? this.renderLoadingScreenshot() : null }
-        { success ? this.renderSuccessScreenshot(item) : null }
+        {error ? this.renderErrorScreenshot() : null}
+        {loading ? this.renderLoadingScreenshot() : null}
+        {success ? this.renderSuccessScreenshot(item) : null}
       </div>
     );
   }
 }
-
-
-CreativeScreenshot.propTypes = {
-  item: PropTypes.shape().isRequired,
-};
 
 export default CreativeScreenshot;

@@ -55,7 +55,7 @@ class AdGroupContent extends Component {
         this.setState({ campaignName: 'New Campaign' });
       });
   }
-
+  formValues
   render() {
     const {
       editionMode,

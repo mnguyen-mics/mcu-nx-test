@@ -82,10 +82,10 @@ class CreativeCardSelector extends Component {
     return (data
       ? data.map(elem => (
         <CreativeCard
-          footer={columnDef.footer}
-          item={elem}
+          renderFooter={columnDef.footer.render}
+          creative={elem}
           key={elem.id}
-          title={columnDef.title}
+          // renderTitle={columnDef.title}
         />
         )
       )

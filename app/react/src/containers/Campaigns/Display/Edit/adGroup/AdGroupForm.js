@@ -13,7 +13,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { isEqual } from 'lodash';
 
 import {
-  Ads,
+  AdsSection,
   Audience,
   Device,
   General,
@@ -103,36 +103,36 @@ class AdGroupForm extends Component {
     });
   }
 
-  updateDisplayAdTableFields = ({ newFields, tableName }) => {
-    const newFieldIds = newFields.map(field => field.id);
-    const prevFields = this.props.formValues[tableName] || [];
-    const prevFieldIds = prevFields.map(field => field.id);
-    if (prevFields.length > 0) {
-      prevFields.forEach((prevField, index) => {
-        this.props.RxF.array.remove(tableName, index);
-        const toBeRemoved = !newFieldIds.includes(prevField.id);
-        this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
-        if (toBeRemoved) {
-          if (prevField.modelId) {
-            // removing with API call
-            this.props.RxF.array.insert(tableName, index, { ...prevField, toBeRemoved });
-          } else {
-            // can safely remove from list
-            this.props.RxF.array.remove(tableName, index);
-          }
-        }
-      });
-    }
-    newFieldIds.forEach((newId, index) => {
-      if (prevFieldIds.includes(newId)) {
-        this.props.RxF.array.insert(tableName, index, newFields[index]);
-      } else if (!prevFieldIds.includes(newId) && (!prevFields.length
-        || !prevFields.find(prevField => (prevField.id === newId))
-      )) {
-        this.props.RxF.array.push(tableName, { ...newFields[index], modelId: generateFakeId(), toBeRemoved: false });
-      }
-    });
-  }
+  // updateDisplayAdTableFields = ({ newFields, tableName }) => {
+  //   const newFieldIds = newFields.map(field => field.id);
+  //   const prevFields = this.props.formValues[tableName] || [];
+  //   const prevFieldIds = prevFields.map(field => field.id);
+  //   if (prevFields.length > 0) {
+  //     prevFields.forEach((prevField, index) => {
+  //       this.props.RxF.array.remove(tableName, index);
+  //       const toBeRemoved = !newFieldIds.includes(prevField.id);
+  //       this.updateTableFieldStatus({ index, toBeRemoved, tableName })();
+  //       if (toBeRemoved) {
+  //         if (prevField.modelId) {
+  //           // removing with API call
+  //           this.props.RxF.array.insert(tableName, index, { ...prevField, toBeRemoved });
+  //         } else {
+  //           // can safely remove from list
+  //           this.props.RxF.array.remove(tableName, index);
+  //         }
+  //       }
+  //     });
+  //   }
+  //   newFieldIds.forEach((newId, index) => {
+  //     if (prevFieldIds.includes(newId)) {
+  //       this.props.RxF.array.insert(tableName, index, newFields[index]);
+  //     } else if (!prevFieldIds.includes(newId) && (!prevFields.length
+  //       || !prevFields.find(prevField => (prevField.id === newId))
+  //     )) {
+  //       this.props.RxF.array.push(tableName, { ...newFields[index], modelId: generateFakeId(), toBeRemoved: false });
+  //     }
+  //   });
+  // }
   emptyTableFields = (tableName) => {
     const prevFields = this.props.formValues[tableName] || [];
     prevFields.forEach((prevField, index) => {
@@ -178,7 +178,7 @@ class AdGroupForm extends Component {
       // placements,
       // publisherTable,
       placementTable,
-      adTable,
+      // adTable,
     } = formValues;
 
     return (
@@ -220,7 +220,7 @@ class AdGroupForm extends Component {
             <hr />
             <Placements {...commonProps} formValues={placementTable} />
             <hr />
-            <Ads {...commonProps} formValues={adTable} />
+            <AdsSection {...commonProps} RxF={this.props.RxF} />
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
             {!editionMode

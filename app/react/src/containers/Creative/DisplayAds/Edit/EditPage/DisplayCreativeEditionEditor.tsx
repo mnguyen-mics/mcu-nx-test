@@ -68,7 +68,7 @@ class DisplayCreativeEditionEditor extends React.Component<JoinedProps, DisplayC
     };
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
+  componentWillReceiveProps(nextProps: DisplayCreativeEditionEditorProps) {
     if (nextProps.submitFailed && (this.props.submitFailed !== nextProps.submitFailed)) {
       const {
         intl: {
@@ -124,7 +124,7 @@ class DisplayCreativeEditionEditor extends React.Component<JoinedProps, DisplayC
     });
 
     if (foundTagType) {
-      switch (foundTagType.property) {
+      switch (foundTagType.property_type) {
         case 'STRING':
           tagType = foundTagType!.value.value;
           break;

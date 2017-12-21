@@ -1,4 +1,4 @@
-import Ads from './Ads/AdsSection';
+import AdsSection from './Ads/AdsSection';
 import Audience from './Audience';
 import LocationSection from './Location/LocationSection';
 import Device from './Device/Device';
@@ -10,7 +10,7 @@ import Publisher from './Publisher';
 import Summary from './Summary';
 
 export {
-  Ads,
+  AdsSection,
   Audience,
   Device,
   LocationSection,

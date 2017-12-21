@@ -1,9 +1,12 @@
-export interface AdResource {
+export interface AdCreateRequest {
+    creative_id: string;
+}
+
+export interface AdResource extends AdCreateRequest {
     id: string;
     status: string;
     name: string;
-    creative_id: string;
-    technical_name: string;
+    technical_name?: string;
 }
 
 // TODO: use PropertyResource in models/plugin

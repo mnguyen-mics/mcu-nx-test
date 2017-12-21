@@ -12,12 +12,14 @@ import { PropertyResourceShape } from '../../../.../../../../../../models/plugin
 import { RendererDataProps } from '../../../.../../../../../../models/campaign/display/AdResource';
 import CreativeService from '../../../../../../../services/CreativeService';
 import CreativeCardSelector from '../../../../../Email/Edit/CreativeCardSelector';
+import { DisplayAdResource } from '../../../.../../../../../../models/creative/CreativeResource';
+import { generateFakeId } from '../../../../../../../utils/FakeIdHelper';
 
 const AdsFieldArray = FieldArray as new() => GenericFieldArray<Field, AdsProps>;
 
 export interface AdsSectionProps {
-  formValues: AdFieldModel[];
-  RxF: InjectedFormProps;
+  adFields: AdFieldModel[];
+  RxF: InjectedFormProps<any>;
   handlers: {
     closeNextDrawer: () => void;
     openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
@@ -27,27 +29,51 @@ export interface AdsSectionProps {
   };
 }
 
-type JoinedProps = AdsSectionProps & RouteComponentProps<{ organisationId: string }>;
+interface AdsSectionState {
+  loading: boolean;
+}
 
-class AdsSection extends React.Component<JoinedProps> {
+interface RouteProps {
+  organisationId: string;
+}
+
+type JoinedProps = AdsSectionProps & RouteComponentProps<RouteProps>;
+
+class AdsSection extends React.Component<JoinedProps, AdsSectionState> {
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      loading: false,
+    };
+  }
 
   getAllAds = (options: object) => {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-    } = this.props;
 
-    return CreativeService.getDisplayAds(organisationId, options)
+    // const {
+    //   match: {
+    //     params: {
+    //       organisationId,
+    //     },
+    //   },
+    // } = this.props;
+
+    return CreativeService.getDisplayAds(this.props.organisationId, options)
       .then(({ data, total }) => ({ data, total }));
   }
 
   openWindowNewCreativeDrawer = () => {
     const { handlers } = this.props;
 
-    const additionalProps = {
+    const additionalProps: {
+      onClose: () => void;
+      save: (
+        creativeData: Partial<DisplayAdResource>,
+        formattedProperties: PropertyResourceShape[],
+        rendererData: RendererDataProps,
+      ) => void;
+      drawerMode?: boolean;
+    } = {
       onClose: handlers.closeNextDrawer,
       save: this.addNewCreativeToAdSelection,
       drawerMode: true,
@@ -62,22 +88,33 @@ class AdsSection extends React.Component<JoinedProps> {
   }
 
   openExistingAdsDrawer = () => {
-    const { formValues, handlers } = this.props;
+    const {
+      handlers: {
+        updateTableFields,
+        closeNextDrawer,
+        openNextDrawer,
+      },
+      RxF: {
+        initialValues: {
+          adTable,
+        },
+      },
+    } = this.props;
 
-    const emailTemplateSelectorProps = {
-      close: handlers.closeNextDrawer,
+    const displayAdsSelectorProps = {
+      close: closeNextDrawer,
       fetchData: this.getAllAds,
-      selectedData: formValues.filter((ad: AdFieldModel) => !ad.toBeRemoved),
+      selectedData: adTable.filter((ad: AdFieldModel) => !ad.deleted),
       save: this.addExistingAdsToAdSelection,
-      filterKey: 'id',
+      filterKey: 'id', updateTableFields,
     };
 
     const options = {
-      additionalProps: emailTemplateSelectorProps,
+      additionalProps: displayAdsSelectorProps,
       isModal: true,
     };
 
-    handlers.openNextDrawer(CreativeCardSelector, options);
+    openNextDrawer(CreativeCardSelector, options);
   }
 
   addNewCreativeToAdSelection =
@@ -85,23 +122,23 @@ class AdsSection extends React.Component<JoinedProps> {
    formattedProperties: PropertyResourceShape[],
    rendererData: RendererDataProps,
   ) => {
-    const { formValues, handlers } = this.props;
+    const { adFields, handlers } = this.props;
     const valuesToAdd: Array<Partial<AdFieldModel>> = [];
-    formValues.map((item: Partial<AdFieldModel>) => {
+    adFields.map((item: Partial<AdFieldModel>) => {
       const displayAd = {
         id: generateFakeId(),
         resource: {
           displayAdResource: item,
-          creativeResource: null,
+          creativeResource: undefined,
         },
-        deleted: item.toBeRemoved,
+        deleted: item.deleted,
       };
       valuesToAdd.push(displayAd);
     });
     const creative = {
       id: generateFakeId(),
       resource: {
-        displayAdResource: null,
+        displayAdResource: undefined,
         creativeResource: creativeData,
       },
       deleted: false,
@@ -132,10 +169,8 @@ class AdsSection extends React.Component<JoinedProps> {
 
   render() {
 
-    const adFields = fields.getAll();
-
     return (
-      <div id="locationTargeting" className="locationTargeting">
+      <div>
         <FormSection
           dropdownItems={[
             {
@@ -160,7 +195,6 @@ class AdsSection extends React.Component<JoinedProps> {
           rerenderOnEveryChange={true}
           handlers={this.props.handlers}
         />
-
       </div>
 
     );

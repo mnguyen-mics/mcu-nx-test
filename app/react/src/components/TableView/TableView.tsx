@@ -17,7 +17,7 @@ const DEFAULT_PAGINATION_OPTION = {
 };
 
 interface DataColumnDefinition {
-  intlMessage: FormattedMessage.MessageDescriptor;
+  intlMessage?: FormattedMessage.MessageDescriptor;
   translationKey?: string;
   key: string;
   render?: (text: string, record: object, index: number) => React.ReactNode;
@@ -114,7 +114,7 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       return column;
     }).map(dataColumn => {
       // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
-      const titleProps = (isValidFormattedMessageProps(dataColumn.intlMessage)
+      const titleProps = (isValidFormattedMessageProps(dataColumn.intlMessage) && dataColumn.intlMessage
         ? { title: <FormattedMessage {...dataColumn.intlMessage} /> } // spreading values...
         : (dataColumn.translationKey
             ? { title: <FormattedMessage id={dataColumn.translationKey} /> } // support for legacy translation key constant (en/fr.json) ...

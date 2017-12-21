@@ -9,14 +9,14 @@ import { PropertyResourceShape } from '../models/plugin';
 //                             CREATE CREATIVE
 // ===========================================================================
 
-const createDisplayCreative = (
-  creative: Partial<DisplayAdResource>,
-  properties: PropertyResourceShape[],
-  organisationId: string,
-  rendererData: RendererDataProps,
-) => {
+const createDisplayCreative =
+  (creative: Partial<DisplayAdResource>,
+   properties: PropertyResourceShape[],
+   organisationId: string,
+   rendererData: RendererDataProps,
+  ) => {
 
-  const resource = {
+  const resource: Partial<DisplayAdResource> = {
     renderer_artifact_id: rendererData.renderer_artifact_id,
     renderer_group_id: rendererData.renderer_group_id,
     editor_artifact_id: 'default-editor',
@@ -43,11 +43,11 @@ const createDisplayCreative = (
 //                             UPDATE CREATIVE
 // ===========================================================================
 
-const updateDisplayCreative = (
-  organisationId: string,
-  creative: Partial<DisplayAdResource>,
-  rendererProperties: PropertyResourceShape[],
-) => {
+const updateDisplayCreative =
+  (organisationId: string,
+   creative: DisplayAdResource,
+   rendererProperties: PropertyResourceShape[],
+  ) => {
 
   return CreativeService
     .updateDisplayCreative(creative.id, creative)

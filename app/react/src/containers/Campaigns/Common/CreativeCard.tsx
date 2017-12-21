@@ -94,7 +94,7 @@ class CreativeCard<T extends GenericCreativeResource> extends React.Component<Cr
     } = this.props;
 
     // use formatmessage
-    const renderedTitle = renderTitle ? renderTitle(creative) : (creative.name || 'No title');
+    const renderedTitle = renderTitle ? renderTitle(creative) : creative ? creative.name : 'No title';
 
     return (
       <div className="mcs-creative-card">

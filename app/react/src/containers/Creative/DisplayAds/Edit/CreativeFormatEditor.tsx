@@ -60,7 +60,7 @@ class CreativeFormatEditor extends React.Component<JoinedProps> {
     } = this.props;
     const { standardFormat } = this.state;
 
-    let validateStatus = 'success';
+    let validateStatus: 'error' | 'success' | 'warning' | 'validating' = 'success';
     if (meta.invalid) validateStatus = 'error';
     if (meta.warning) validateStatus = 'warning';
 

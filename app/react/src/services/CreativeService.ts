@@ -67,6 +67,12 @@ const CreativeService = {
     return CreativeService.getCreative(templateId) as Promise<DataResponse<EmailTemplateResource>>;
   },
 
+  getDisplayAd(
+    displayAdId: string,
+  ): Promise<DataResponse<DisplayAdResource>> {
+    return CreativeService.getCreative(displayAdId) as Promise<DataResponse<DisplayAdResource>>;
+  },
+
   getCreativeFormats(
     organisationId: string,
     options: {

@@ -3,9 +3,12 @@ import { Field, Validator } from 'redux-form';
 import { compose } from 'recompose';
 
 import { Form } from '../../components/index';
+import { FieldCtor } from '../../components/Form';
+import { FormInputProps } from '../../components/Form/FormInput';
 import { FormAdLayout, FormStyleSheet, FormDataFile } from './ConnectedFields';
 import { FieldValidatorsProps, ValidatorProps } from '../../components/Form/withValidators';
 import { PropertyResourceShape } from '../../models/plugin';
+import { FormTextArea } from '../../components/Form/FormTextArea';
 
 const { FormInput, FormTextArea, FormBoolean, FormUpload, withValidators } = Form;
 
@@ -30,6 +33,16 @@ interface PluginFieldGeneratorProps {
 
 type JoinedProps = PluginFieldGeneratorProps & ValidatorProps & FieldValidatorsProps;
 
+interface AdditionalInputProps {
+  buttonText?: string;
+  accept?: any; // type
+  options?: any; // type
+  noUploadModal?: () => void;
+  rows?: number;
+}
+
+type CustomInputProps = FormInputProps & AdditionalInputProps;
+
 class PluginFieldGenerator extends React.Component<JoinedProps> {
 
   static defaultProps: Partial<PluginFieldGeneratorProps> = {
@@ -44,44 +57,54 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     }).join(' ');
   }
 
-  renderFieldBasedOnConfig= (
-    component: React.ComponentClass | React.SFC,
-    name: string,
-    fieldDefinition: PropertyResourceShape,
-    validation: Validator[] = [],
-    additionalInputProps = {},
-    options = {},
+  renderFieldBasedOnConfig =
+  (component: React.ComponentType<any> | 'input' | 'select' | 'textarea',
+    // React.ComponentType<FormInputProps>
+    // | React.ComponentType<FormUploadProps>
+    // | React.ComponentType<FormTextArea>
+    // | React.ComponentType<FormStyleSheetProps>
+    // | React.ComponentType< FormAdLayoutProps>
+    // | React.ComponentType<FormBooleanProps>
+    // | React.ComponentType<FormDatafileProps>,
+   name: string,
+   fieldDefinition: PropertyResourceShape,
+   validation: Validator[] = [],
+   additionalInputProps: AdditionalInputProps = {},
+   options = {},
   ) => {
     const {
       fieldGridConfig,
       disabled,
     } = this.props;
 
+    const InputField: FieldCtor<CustomInputProps> = Field;
+    const customInputProps: CustomInputProps = {
+      formItemProps: {
+        label: this.technicalNameToName(fieldDefinition.technical_name),
+        ...fieldGridConfig,
+      },
+      inputProps: {
+        // placeholder: this.technicalNameToName(fieldDefinition.technical_name),
+        disabled: !fieldDefinition.writable || disabled,
+        // defaultValue: fieldDefinition.value.value,
+        ...additionalInputProps,
+      },
+      buttonText: additionalInputProps.buttonText ? additionalInputProps.buttonText : undefined,
+      accept: additionalInputProps.accept ? additionalInputProps.accept : undefined,
+      options: {
+        ...options,
+      },
+      helpToolTipProps: {},
+      noUploadModal: additionalInputProps.noUploadModal ? additionalInputProps.noUploadModal : undefined,
+    };
+
     return (
-      <Field
+      <InputField
         key={`properties.${name}`}
         name={`properties.${name}`}
         component={component}
         validate={validation}
-        props={{
-          formItemProps: {
-            label: this.technicalNameToName(fieldDefinition.technical_name),
-            ...fieldGridConfig,
-          },
-          inputProps: {
-            placeholder: this.technicalNameToName(fieldDefinition.technical_name),
-            disabled: !fieldDefinition.writable || disabled,
-            defaultValue: fieldDefinition.value.value,
-            ...additionalInputProps,
-          },
-          buttonText: additionalInputProps.buttonText ? additionalInputProps.buttonText : null,
-          accept: additionalInputProps.accept ? additionalInputProps.accept : null,
-          options: {
-            ...options,
-          },
-          helpToolTipProps: {},
-          noUploadModal: additionalInputProps.noUploadModal ? additionalInputProps.noUploadModal : undefined,
-        }}
+        {...customInputProps}
       />
     );
   }

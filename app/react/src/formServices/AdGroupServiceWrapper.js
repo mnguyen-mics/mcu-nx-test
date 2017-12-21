@@ -1,6 +1,6 @@
 
 import BidOptimizerServices from '../services/BidOptimizerServices';
-import CreativeService from '../services/CreativeService.ts';
+import CreativeServiceWrapper from './CreativeServiceWrapper.ts';
 import { isFakeId } from '../utils/FakeIdHelper';
 import DisplayCampaignService from '../services/DisplayCampaignService.ts';
 import AudienceSegmentService from '../services/AudienceSegmentService.ts';
@@ -18,15 +18,14 @@ function getAds({ campaignId, adGroupId }) {
 
   return DisplayCampaignService.getAds(campaignId, adGroupId)
     .then(({ data }) => {
-      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id).then(res => res.data)))
-        .then(creatives => {
-          return creatives.map(creative => {
-            return {
-              ...creative,
-              modelId: data.find(d => d.creative_id === creative.id).id,
-            };
-          });
-        });
+      return data.map(ad => {
+        return {
+          id: ad.id,
+          resource: ad,
+          // ...creative,
+          // modelId: data.find(d => d.creative_id === creative.id).id,
+        };
+      });
     }).then(results => { return { adTable: results }; });
 }
 
@@ -231,7 +230,7 @@ const saveAdResources = (organisationId, campaignId, adGroupId, adTable, initial
 
   const createCreativeThenLinkToAdGroup = adTable.filter(field => isFakeId(field.id) && field.resource.creativeResource !== null).map(field => {
     return function promise() {
-      return CreativeService.createDisplayCreative(organisationId, field.resource.creativeResource).then(res => {
+      return CreativeServiceWrapper.createDisplayCreative(organisationId, field.resource.creativeResource).then(res => {
         const creativeId = res.data.id;
         const adResource = { creative_id: creativeId };
         return DisplayCampaignService.createAd(campaignId, adGroupId, adResource);

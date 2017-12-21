@@ -30,7 +30,7 @@ interface DisplayCreativeContentProps {
     formattedProperties: PropertyResourceShape[],
     rendererData: RendererDataProps,
   ) => void;
-  drawerMode: boolean;
+  drawerMode?: boolean;
 }
 
 interface DisplayCreativeContentState {
@@ -232,11 +232,9 @@ class DisplayCreativeContent extends React.Component<JoinedProps, DisplayCreativ
             <div className="ant-layout">
               <EditContentLayout
                 breadcrumbPaths={breadcrumbPaths}
-                sidebarItems={undefined}
                 buttonMetadata={buttonMetadata}
                 url={url}
                 isCreativetypePicker={true}
-                changeType={undefined}
               >
                 <DisplayCreativeTypePicker
                   onSelect={this.onSelect}
