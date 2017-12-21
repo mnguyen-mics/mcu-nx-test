@@ -9,7 +9,7 @@ import Col from 'antd/lib/grid/col';
 import {compose} from 'recompose';
 import messages from './messages';
 import {withRouter} from 'react-router-dom';
-import {parseSearch, updateSearch} from '../../../utils/LocationSearchHelper';
+import {buildDefaultSearch, isSearchValid, parseSearch, updateSearch} from '../../../utils/LocationSearchHelper';
 import {ANALYTICS_DASHBOARD_SEARCH_SETTINGS} from '../constants';
 import {RouteComponentProps} from 'react-router';
 import {default as McsDateRangePicker, McsDateRangeValue} from '../../../components/McsDateRangePicker';
@@ -118,11 +118,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
 
     componentDidMount() {
       const {
-        history: {
-          location: {
-            search,
-          },
-        },
+        history,
         match: {
           params: {
             organisationId,
@@ -130,7 +126,15 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         },
         getDefaultDatamart
       } = this.props;
-      const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+      const filter = parseSearch(history.location.search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+
+      if (!isSearchValid(history.location.search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: history.location.pathname,
+          search: buildDefaultSearch(history.location.search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS),
+          state: {reloadDataSource: true},
+        });
+      }
       const defaultDatamart = getDefaultDatamart(organisationId)
       const defaultDatamartId = defaultDatamart ? defaultDatamart.id : '0';
       this.fetchAllData(organisationId, defaultDatamartId, filter);
