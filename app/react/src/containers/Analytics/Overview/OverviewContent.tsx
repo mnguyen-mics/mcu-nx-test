@@ -15,10 +15,13 @@ import {RouteComponentProps} from 'react-router';
 import {default as McsDateRangePicker, McsDateRangeValue} from '../../../components/McsDateRangePicker';
 import DeviceType from '../Charts/DeviceType';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
+import * as SessionSelectors from '../../../state/Session/selectors';
+import {connect} from 'react-redux';
 
 interface OverviewContentProps {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
+  getDefaultDatamart: (organisationId: string) => { id: string };
 }
 
 type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<any> & InjectedIntlProps;
@@ -114,15 +117,43 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
     }
 
     componentDidMount() {
-      const { history: { location: { search } } } = this.props;
+      const {
+        history: {
+          location: {
+            search,
+          },
+        },
+        match: {
+          params: {
+            organisationId,
+          },
+        },
+        getDefaultDatamart
+      } = this.props;
       const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
-      this.fetchAllData('1', '1048', filter);
+      const defaultDatamart = getDefaultDatamart(organisationId)
+      const defaultDatamartId = defaultDatamart ? defaultDatamart.id : '0';
+      this.fetchAllData(organisationId, defaultDatamartId, filter);
     }
 
     componentWillReceiveProps(nextProps: OverviewContentAllProps) {
-      const { history: { location: { search } } } = nextProps;
+      const {
+        history: {
+          location: {
+            search,
+          },
+        },
+        match: {
+          params: {
+            organisationId,
+          },
+        },
+        getDefaultDatamart
+      } = this.props;
       const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
-      this.fetchAllData('1', '1048', filter);
+      const defaultDatamart = getDefaultDatamart(organisationId)
+      const defaultDatamartId = defaultDatamart ? defaultDatamart.id : '0';
+      this.fetchAllData(organisationId, defaultDatamartId, filter);
     }
 
     updateLocationSearch(params: McsDateRangeValue) {
@@ -202,5 +233,10 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
 export default compose<OverviewContentAllProps, OverviewContentState>(
   withRouter,
   injectIntl,
+  connect(
+    state => ({
+      getDefaultDatamart: SessionSelectors.getDefaultDatamart(state),
+    }),
+  ),
 )
 (OverviewContent);
