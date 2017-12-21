@@ -281,6 +281,12 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
           <McsIcons type="download" />
           <FormattedMessage id="EXPORT" />
         </Button>
+
+          <Button onClick={this.editCampaign}>
+            <McsIcons type="pen" />
+            <FormattedMessage {...messages.editCampaign} />
+          </Button>
+
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />
@@ -375,8 +381,6 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
           return handleArchiveGoal(campaign.items.id);
         case 'DUPLICATE':
           return this.duplicateCampaign();
-        case 'EDIT':
-          return this.editCampaign();
         default:
           return () => {
             log.error('onclick error');
@@ -386,9 +390,6 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="EDIT">
-          <FormattedMessage {...messages.editCampaign} />
-        </Menu.Item>
         <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item>

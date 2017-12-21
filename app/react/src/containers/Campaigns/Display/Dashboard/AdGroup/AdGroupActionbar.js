@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Dropdown, Icon, Menu, Modal } from 'antd';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../../Actionbar';
 import messages from '../messages.ts';
+import { McsIcons } from '../../../../../components/index.ts';
 
 class AdGroupActionbar extends Component {
 
@@ -24,13 +25,13 @@ class AdGroupActionbar extends Component {
 
     const activeCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('ACTIVE')}>
-        <Icon type="play-circle-o" />
+        <McsIcons type="play" />
         <FormattedMessage {...messages.activateAdGroup} />
       </Button>
     );
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('PAUSED')}>
-        <Icon type="pause-circle-o" />
+        <McsIcons type="pause" />
         <FormattedMessage {...messages.pauseAdGroup} />
       </Button>
     );
@@ -38,7 +39,7 @@ class AdGroupActionbar extends Component {
     return adGroup.id ? ((adGroup.status === 'PAUSED' || adGroup.status === 'PENDING') ? activeCampaignElement : pauseCampaignElement) : null;
   }
 
-  editCampaign = () => {
+  duplicateAdGroup = () => {
     const {
       location,
       history,
@@ -46,28 +47,13 @@ class AdGroupActionbar extends Component {
         params: {
           organisationId,
           campaignId,
+          adGroupId,
         },
       },
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
-    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
-  }
-
-  duplicateCampaign = () => {
-    const {
-      location,
-      history,
-      match: {
-        params: {
-          organisationId,
-          campaignId,
-        },
-      },
-    } = this.props;
-
-    const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
-    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}`, campaignId: campaignId } });
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`;
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}`, adGroupId: adGroupId } });
   }
 
   buildMenu = () => {
@@ -96,10 +82,8 @@ class AdGroupActionbar extends Component {
       switch (event.key) {
         case 'ARCHIVED':
           return handleArchiveGoal(adGroup.id);
-        case 'EDIT':
-          return this.editAdGroup();
         case 'DUPLICATE':
-          return handleArchiveGoal(adGroup.id);
+          return this.duplicateAdGroup(adGroup.id);
         default:
           return () => {};
       }
@@ -107,9 +91,6 @@ class AdGroupActionbar extends Component {
 
     const addMenu = (
       <Menu onClick={onClick}>
-        <Menu.Item key="EDIT">
-          <FormattedMessage {...messages.editAdGroup} />
-        </Menu.Item>
         <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item>
@@ -134,8 +115,10 @@ class AdGroupActionbar extends Component {
         params: {
           organisationId,
           campaignId,
+          adGroupId,
         },
       },
+      location
     } = this.props;
 
     const actionElement = this.buildActionElement();
@@ -150,6 +133,17 @@ class AdGroupActionbar extends Component {
     return (
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
+        <Link
+          to={{
+            pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
+            state: { from: `${location.pathname}${location.search}` },
+          }}
+        >
+          <Button>
+            <McsIcons type="pen" />
+            <FormattedMessage {...messages.editAdGroup} />
+          </Button>
+        </Link>
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />
