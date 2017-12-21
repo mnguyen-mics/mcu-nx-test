@@ -1,5 +1,8 @@
 import * as React from 'react';
 import PieChart from '../../../components/PieChart';
+import {compose} from 'recompose';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import messages from '../Overview/messages';
 
 interface DeviceTypeProps {
   hasFetchedVisitReportFormFactor: boolean;
@@ -16,8 +19,7 @@ interface PieChartDatum {
 
 type DatasetObject = {[s: string]: PieChartDatum};
 
-// TODO factor with NewUsers
-class DeviceType extends React.Component<DeviceTypeProps> {
+class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
 
   // TODO more robust way
   colors = [
@@ -57,7 +59,8 @@ class DeviceType extends React.Component<DeviceTypeProps> {
     return `${ratio.toFixed(2)}%`;
   }
 
-  generateOptions(isHalf: boolean, color: string, translationKey: string, ratioValeA: number, ratioValeB: number) {
+  generateOptions(isHalf: boolean) {
+    const { intl: { formatMessage } } = this.props;
     const colorFormated = '#ff9012';
     const gray = '#eaeaea';
 
@@ -65,12 +68,12 @@ class DeviceType extends React.Component<DeviceTypeProps> {
       innerRadius: true,
       isHalf: isHalf,
       text: {
-        text: 'Device type',
+        text: formatMessage(messages.device_type),
       },
       colors: [colorFormated, gray],
     };
     return options;
-  };
+  }
 
   extractRatio(report: any) {
     const unique = report.reduce((accu: number, elem: any) => {
@@ -85,15 +88,13 @@ class DeviceType extends React.Component<DeviceTypeProps> {
   }
 
   render() {
-
     const {report, hasFetchedVisitReportFormFactor} = this.props;
     let chartComponent;
 
     if (hasFetchedVisitReportFormFactor) {
-      const ratio = this.extractRatio(report);
       const datasetObject = this.buildDatasetObject(report, 'form_factor');
       const dataset = this.buildDataset(datasetObject);
-      const pieChartsOptions = this.generateOptions(false, 'blue', 'mykey', ratio.a, ratio.b);
+      const pieChartsOptions = this.generateOptions(false);
       chartComponent =
         (
           <PieChart
@@ -108,4 +109,6 @@ class DeviceType extends React.Component<DeviceTypeProps> {
     return chartComponent;
   }
 }
-export default DeviceType;
+export default compose<DeviceTypeProps, any>(
+  injectIntl,
+)(DeviceType);

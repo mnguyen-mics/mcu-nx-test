@@ -6,7 +6,7 @@ import ReportService from '../../../services/ReportService';
 import OverviewHeader from '../Common/OverviewHeader';
 import NewUsers from '../Charts/NewUsers';
 import Col from 'antd/lib/grid/col';
-import {compose} from "recompose";
+import {compose} from 'recompose';
 import messages from './messages';
 import {withRouter} from 'react-router-dom';
 import {parseSearch, updateSearch} from '../../../utils/LocationSearchHelper';
@@ -14,20 +14,14 @@ import {ANALYTICS_DASHBOARD_SEARCH_SETTINGS} from '../constants';
 import {RouteComponentProps} from 'react-router';
 import {default as McsDateRangePicker, McsDateRangeValue} from '../../../components/McsDateRangePicker';
 import DeviceType from '../Charts/DeviceType';
-import InjectedIntlProps = ReactIntl.InjectedIntlProps;
-import injectIntl = ReactIntl.injectIntl;
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 interface OverviewContentProps {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
 }
 
-interface RouterMatchParams {
-  organisationId: string;
-  campaignId: string;
-}
-
-type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<RouterMatchParams> & InjectedIntlProps;
+type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<any> & InjectedIntlProps;
 
 interface OverviewContentState {
   isFetchingVisitReport: boolean;
@@ -204,7 +198,8 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         </div>);
     }
 }
-export default compose(
+
+export default compose<OverviewContentAllProps, OverviewContentState>(
   withRouter,
   injectIntl,
 )

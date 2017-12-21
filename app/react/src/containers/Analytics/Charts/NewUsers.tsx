@@ -1,5 +1,8 @@
 import * as React from 'react';
 import PieChart from '../../../components/PieChart';
+import messages from '../Overview/messages';
+import {compose} from 'recompose';
+import {injectIntl, InjectedIntlProps} from 'react-intl';
 
 interface NewUsersProps {
   hasFetchedVisitReport: boolean;
@@ -8,15 +11,17 @@ interface NewUsersProps {
   colors: { [s: string]: string };
 }
 
-class NewUsers extends React.Component<NewUsersProps> {
+type JoinedProps = NewUsersProps & InjectedIntlProps;
+
+class NewUsers extends React.Component<JoinedProps> {
 
   buildDataSet(a: number, b: number) {
-    // const { report } = this.props;
+    const { intl: { formatMessage }} = this.props;
     const value = a;
     const totalValue = b;
     return [
-      { key: 'delivered', value: value, color: '#ff9012' },
-      { key: 'rest', value: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' },
+      { key: formatMessage(messages.delivered), value: value, color: '#ff9012' },
+      { key: formatMessage(messages.rest), value: (!value) ? 100 : Math.abs(totalValue - value), color: '#eaeaea' },
     ];
   }
 
@@ -26,6 +31,7 @@ class NewUsers extends React.Component<NewUsersProps> {
   }
 
   generateOptions(isHalf: boolean, color: string, translationKey: string, ratioValeA: number, ratioValeB: number) {
+    const { intl: { formatMessage }} = this.props;
     const colorFormated = '#ff9012';
     const gray = '#eaeaea';
 
@@ -37,8 +43,7 @@ class NewUsers extends React.Component<NewUsersProps> {
             ? '0%'
             : this.generateRatio(ratioValeA, ratioValeB)
         ),
-        // TODO INTL
-        text: 'New Users vs old users',
+        text: formatMessage(messages.new_users),
       },
       colors: [colorFormated, gray],
     };
@@ -58,7 +63,6 @@ class NewUsers extends React.Component<NewUsersProps> {
   }
 
   render() {
-
     const {report, hasFetchedVisitReport} = this.props;
     let chartComponent;
     if (hasFetchedVisitReport) {
@@ -80,4 +84,7 @@ class NewUsers extends React.Component<NewUsersProps> {
     return chartComponent;
   }
 }
-export default NewUsers;
+
+export default compose<JoinedProps, any>(
+  injectIntl,
+)(NewUsers);

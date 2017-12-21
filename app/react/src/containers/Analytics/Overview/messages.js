@@ -37,4 +37,32 @@ export default defineMessages({
     id: 'unique_visitor',
     defaultMessage: 'Unique visitor',
   },
+  no_visit_stat: {
+    id: 'no_visit_stat',
+    defaultMessage: 'NO VISIT STAT',
+  },
+  users: {
+    id: 'users',
+    defaultMessage: 'Users'
+  },
+  sessions: {
+    id: 'sessions',
+    defaultMessage: 'Sessions'
+  },
+  bounce_rate: {
+    id: 'bounce_rate',
+    defaultMessage: 'Bounce rate'
+  },
+  session_duration: {
+    id: 'session_duration',
+    defaultMessage: 'Session duration'
+  },
+  delivered: {
+    id: 'delivered',
+    defaultMessage: 'Delivered'
+  },
+  rest: {
+    id: 'rest',
+    defaultMessage: 'Rest'
+  },
 });

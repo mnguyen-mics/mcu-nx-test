@@ -8,20 +8,29 @@ import messages from '../Overview/messages';
 import StackedAreaPlotDoubleAxis from '../../../components/StackedAreaPlot/StackedAreaPlotDoubleAxis';
 import Col from 'antd/lib/grid/col';
 import Row from 'antd/lib/grid/row';
+import {compose} from 'recompose';
+import {injectIntl, InjectedIntlProps} from 'react-intl';
+import MessageDescriptor = ReactIntl.FormattedMessage.MessageDescriptor;
+import McsMoment from '../../../utils/McsMoment';
+import {updateSearch} from '../../../utils/LocationSearchHelper';
+import {withRouter} from 'react-router-dom';
+import {ANALYTICS_DASHBOARD_SEARCH_SETTINGS} from '../constants';
+import {McsDateRangeValue} from '../../../components/McsDateRangePicker';
+import {RouteComponentProps} from 'react-router';
+
+const _messages: {[s: string]: MessageDescriptor} = messages;
 
 interface VisitAnalysisProps {
   hasFetchedVisitReport: boolean;
   isFetchingVisitReport: boolean;
   report: any[];
 }
-type JoinedProps = VisitAnalysisProps;
+type JoinedProps = VisitAnalysisProps & InjectedIntlProps & RouteComponentProps<any>;
 
 interface VisitAnalysisState {
   key1: string;
   key2: string;
 }
-
-const _messages: { [s: string]: any } = messages;
 
 class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
 
@@ -41,16 +50,18 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
         dataset={report}
         options={options}
         style={{ flex: '1' }}
+        intlMessages={_messages}
       />
     );
   }
 
   createLegend() {
+    const { intl: { formatMessage } } = this.props;
     const keys = ['max_duration', 'min_duration', 'unique_user', 'count', 'unique_visitor'];
     return keys.map(key => {
       return {
         key: key,
-        domain: _messages[key].defaultMessage,
+        domain: formatMessage(_messages[key]),
       };
     });
   }
@@ -65,45 +76,61 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
       return report.reduce((accu: number, row: any) => { return accu + row.min_duration; }, 0);
   }
 
+  updateLocationSearch(params: McsDateRangeValue) {
+    const { history, location: { search: currentSearch, pathname } } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, ANALYTICS_DASHBOARD_SEARCH_SETTINGS),
+    };
+
+    history.push(nextLocation);
+  }
+
   render() {
-    const { report, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
+    const { intl: { formatMessage }, report, hasFetchedVisitReport, isFetchingVisitReport } = this.props;
     const { key1, key2 } = this.state;
 
     const metrics = [{
-      name: 'Users',
+      name: formatMessage(messages.users),
       value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
-      name: 'Sessions',
+      name: formatMessage(messages.sessions),
       value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
-      name: 'Bounce Rate',
+      name: formatMessage(messages.bounce_rate),
       value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
-      name: 'Session Duration',
+      name: formatMessage(messages.session_duration),
       value: hasFetchedVisitReport ? formatMetric(this.extractSessionDuration(report), '0') : undefined,
     }];
 
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
-        { key: key1, message: _messages[key1] },
-        { key: key2, message: _messages[key2] },
+        { key: key1, message: formatMessage(_messages[key1]) },
+        { key: key2, message: formatMessage(_messages[key2]) },
       ],
       colors: ['#ff9012', '#00a1df'],
+      isDraggable: true,
+      onDragEnd: (values: string[]) => {
+        this.updateLocationSearch({
+          from: new McsMoment(values[0]),
+          to: new McsMoment(values[1]),
+        });
+      },
     };
 
     const legendOptions = [
       {
         key: key1,
-        // TODO INTL
-        domain: _messages[key1].defaultMessage, // translations[key1.toUpperCase()],
+        domain: formatMessage(_messages[key1]), // translations[key1.toUpperCase()],
         // TODO COLOR
         color: '#ff9012', // colors['mcs-warning'],
       },
       {
         key: key2,
-        // TODO INTL
-        domain: _messages[key2].defaultMessage, // translations[key2.toUpperCase()],
+        domain: formatMessage(_messages[key2]), // translations[key2.toUpperCase()],
         // TODO COLOR
         color: '#00a1df', // colors['mcs-info'],
       },
@@ -142,7 +169,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
           <Col span={19}>
             {datasource && datasource.length === 0 || !hasFetchedVisitReport
                 // TODO INTL
-                ? <EmptyCharts title="NO VISIT STAT" />
+                ? <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
                 : this.renderStackedAreaChart(datasource, optionsForChart)}
           </Col>
         </Row>
@@ -150,4 +177,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     );
   }
 }
-export default VisitAnalysis;
+export default compose<JoinedProps, any>(
+  withRouter,
+  injectIntl,
+)(VisitAnalysis);
