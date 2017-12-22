@@ -177,15 +177,12 @@ class CreativeDisplayTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     return hasCreativeDisplay ? (
       <div className="mcs-table-container">
         <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
           loading={isFetchingCreativeDisplay}
           pagination={pagination}

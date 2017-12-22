@@ -7,7 +7,11 @@ import { Modal } from 'antd';
 import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import PlacementListsService from '../../../../services/Library/PlacementListsService';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { PlacementListResource } from '../../../../models/placement/PlacementListResource';
 import messages from './messages';
@@ -28,57 +32,53 @@ interface RouterProps {
   organisationId: string;
 }
 
-class PlacementListContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, PlacementListContentState> {
-
+class PlacementListContent extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  PlacementListContentState
+> {
   state = initialState;
 
   archivePlacementList = (placementId: string) => {
     return PlacementListsService.deletePlacementList(placementId);
-  }
+  };
 
   fetchPlacementList = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      PlacementListsService.getPlacementLists(organisationId, options)
-        .then((results) => {
+      PlacementListsService.getPlacementLists(organisationId, options).then(
+        results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        });
+        },
+      );
     });
-  }
+  };
 
   onClickArchive = (placement: PlacementListResource) => {
     const {
-      location: {
-        search,
-        state,
-        pathname,
-      },
+      location: { search, state, pathname },
       history,
       match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      data,
-    } = this.state;
+    const { data } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title:  formatMessage(messages.placementArchiveTitle),
+      title: formatMessage(messages.placementArchiveTitle),
       content: formatMessage(messages.placementArchiveMessage),
       okText: formatMessage(messages.placementArchiveOk),
       cancelText: formatMessage(messages.placementArchiveCancel),
       onOk: () => {
-        this.archivePlacementList(placement.id)
-        .then(() => {
+        this.archivePlacementList(placement.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -98,62 +98,47 @@ class PlacementListContent extends React.Component<RouteComponentProps<RouterPro
         // cancel
       },
     });
-  }
+  };
 
   onClickEdit = (placement: PlacementListResource) => {
-    const {
-      history,
-      match: { params: { organisationId } },
-    } = this.props;
+    const { history, match: { params: { organisationId } } } = this.props;
 
     history.push(`/${organisationId}/library/placementlists/${placement.id}`);
-  }
-
-  resetPlacementList = () => {
-    this.setState(initialState);
-  }
+  };
 
   render() {
-    const {
-      match: { params: { organisationId } },
-    } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
 
-    const actions = {
-      fetchList: this.fetchPlacementList,
-      resetList: this.resetPlacementList,
-    };
+    const actionsColumnsDefinition = [
+      {
+        key: 'action',
+        actions: [
+          { translationKey: 'EDIT', callback: this.onClickEdit },
+          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+        ],
+      },
+    ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            { translationKey: 'EDIT', callback: this.onClickEdit },
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
-        },
-      ],
-
-      dataColumnsDefinition: [
-        {
-          translationKey: 'NAME',
-          intlMessage: messages.name,
-          key: 'name',
-          isHideable: false,
-          render: (text: string, record: PlacementListResource) => (
-            <Link
-              className="mcs-campaigns-link"
-              to={`/${organisationId}/library/placementlists/${record.id}`}
-            >{text}
-            </Link>
-          ),
-        },
-      ],
-    };
+    const dataColumnsDefinition = [
+      {
+        translationKey: 'NAME',
+        intlMessage: messages.name,
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: PlacementListResource) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/${organisationId}/library/placementlists/${record.id}`}
+          >
+            {text}
+          </Link>
+        ),
+      },
+    ];
 
     const emptyTable: {
-      iconType: McsIconType,
-      intlMessage: FormattedMessage.Props,
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
     } = {
       iconType: 'library',
       intlMessage: messages.empty,
@@ -161,11 +146,12 @@ class PlacementListContent extends React.Component<RouteComponentProps<RouterPro
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchPlacementList}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />
@@ -173,7 +159,4 @@ class PlacementListContent extends React.Component<RouteComponentProps<RouterPro
   }
 }
 
-export default compose(
-    withRouter,
-    injectIntl,
-  )(PlacementListContent);
+export default compose(withRouter, injectIntl)(PlacementListContent);

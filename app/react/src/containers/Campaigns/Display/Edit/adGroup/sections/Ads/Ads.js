@@ -5,7 +5,7 @@ import { FieldArray } from 'redux-form';
 import { EmptyRecords, Form } from '../../../../../../../components/index.ts';
 import AdGroupCardList from './AdGroupCardList';
 import messages from '../../../messages';
-import CreativeCardSelector from '../../../../../Email/Edit/CreativeCardSelector';
+import CreativeCardSelector from '../../../../../Common/CreativeCardSelector.tsx';
 import CreativeService from '../../../../../../../services/CreativeService.ts';
 import {} from '../../../AdGroupServiceWrapper';
 
@@ -15,22 +15,14 @@ class Ads extends Component {
 
   state = { loading: false }
 
-  getAllAds = (options) => {
-    const { organisationId } = this.props;
-
-    return CreativeService.getDisplayAds(organisationId, options)
-      .then(({ data, total }) => ({ data, total }));
-  }
-
   openWindow = () => {
     const { formValues, handlers } = this.props;
 
     const emailTemplateSelectorProps = {
       close: handlers.closeNextDrawer,
-      fetchData: this.getAllAds,
-      selectedData: formValues.filter(ad => !ad.toBeRemoved),
+      creativeType: 'DISPLAY_AD',
+      selectedCreativeIds: formValues.filter(ad => !ad.toBeRemoved).map(ad => ad.id),
       save: this.updateData,
-      filterKey: 'id',
     };
 
     const options = {
@@ -111,8 +103,6 @@ Ads.propTypes = {
     openNextDrawer: PropTypes.func.isRequired,
     updateTableFieldStatus: PropTypes.func.isRequired,
   }).isRequired,
-
-  organisationId: PropTypes.string.isRequired
 };
 
 export default Ads;

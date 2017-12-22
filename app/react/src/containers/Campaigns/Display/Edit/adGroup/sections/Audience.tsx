@@ -19,6 +19,7 @@ import {
 import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord/index';
 import { DrawableContentProps, DrawableContentOptions } from '../../../../../../components/Drawer';
 import McsMoment from '../../../../../../utils/McsMoment';
+import { AudienceSegmentSelectionResource } from '../../../../../../models/audiencesegment/index';
 
 const { FormSection } = Form;
 
@@ -215,8 +216,8 @@ class Audience extends React.Component<JoinedProps, AudienceState> {
       message: formatMessage(messages.contentSectionAudienceEmptyTitle),
     };
 
-    const titleRender = (record: AudienceSegmentFieldModel) => {
-        return <span>{record.resource.name}</span>;
+    const titleRender = (record: AudienceSegmentFieldModel) => {       
+        return <span>{(record.resource as AudienceSegmentSelectionResource ).name}</span>;
     };
 
     const additionalDataRender = (record: AudienceSegmentFieldModel) => {

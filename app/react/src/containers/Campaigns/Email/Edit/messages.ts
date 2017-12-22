@@ -35,28 +35,29 @@ export default defineMessages({
   },
   emailEditorNameInputHelper: {
     id: 'emailEditor.step.input.helper.campaign_name',
-    defaultMessage: 'Give your Campaign a name and make it as memorable as you can. It will be displayed accorss all the screens.',
+    defaultMessage:
+      'Give your Campaign a name and make it as memorable as you can. It will be displayed accorss all the screens.',
   },
   emailEditorSave: {
     id: 'emailEditor.button.save',
-    defaultMessage: 'Save'
+    defaultMessage: 'Save',
   },
   emailEditorSaveCampaign: {
     id: 'emailEditor.button.save_campaign',
-    defaultMessage: 'Save Campaign'
+    defaultMessage: 'Save Campaign',
   },
 
   emailEditorSectionTitle1: {
     id: 'emailEditor.section.title1',
-    defaultMessage: 'General Information'
+    defaultMessage: 'General Information',
   },
   emailEditorSectionTitle2: {
     id: 'emailEditor.breadcrumb.title2',
-    defaultMessage: 'Router Config'
+    defaultMessage: 'Router Config',
   },
   emailEditorSectionTitle3: {
     id: 'emailEditor.breadcrumb.title3',
-    defaultMessage: 'Email Blasts'
+    defaultMessage: 'Email Blasts',
   },
 
   emailEditorTechnicalNameInputLabel: {
@@ -69,7 +70,8 @@ export default defineMessages({
   },
   emailEditorTechnicalNameInputHelper: {
     id: 'emailEditor.steps.general.name_helper',
-    defaultMessage: 'Give your Campaign a Technical Name if you need (can be useful when using integrations)',
+    defaultMessage:
+      'Give your Campaign a Technical Name if you need (can be useful when using integrations)',
   },
   emailEditorRouterTitle: {
     id: 'emailEditor.step.title.router',
@@ -77,7 +79,8 @@ export default defineMessages({
   },
   emailEditorRouterSubTitle: {
     id: 'emailEditor.step.subtitle.router',
-    defaultMessage: 'The router you select will be the same for all blast. You can use only one router per campaign.',
+    defaultMessage:
+      'The router you select will be the same for all blast. You can use only one router per campaign.',
   },
   emailEditorRouterSelectLabel: {
     id: 'emailEditor.step.select.label.router',
@@ -85,7 +88,8 @@ export default defineMessages({
   },
   emailEditorRouterSelectHelper: {
     id: 'emailEditor.step.select.helper.router',
-    defaultMessage: 'Choose your Router. A Router is basically a channel through which you will send your email.',
+    defaultMessage:
+      'Choose your Router. A Router is basically a channel through which you will send your email.',
   },
   emailEditorProviderSelectLabel: {
     id: 'emailEditor.step.select.label.provider',
@@ -93,7 +97,8 @@ export default defineMessages({
   },
   emailEditorProviderSelectHelper: {
     id: 'emailEditor.step.select.helper.provider',
-    defaultMessage: 'A Provider helps you target the user that have given you an explicit consent on being targeted by email',
+    defaultMessage:
+      'A Provider helps you target the user that have given you an explicit consent on being targeted by email',
   },
   emailEditorEmailBlastTitle: {
     id: 'emailEditor.step.title.email_blast',
@@ -101,7 +106,8 @@ export default defineMessages({
   },
   emailEditorEmailBlastSubTitle: {
     id: 'emailEditor.step.subtitle.email_blast',
-    defaultMessage: 'Add a Blast to your Campaign. A Blast has a send date and a template and is sent to a particular Audience.',
+    defaultMessage:
+      'Add a Blast to your Campaign. A Blast has a send date and a template and is sent to a particular Audience.',
   },
   emailEditorEmailBlastEmpty: {
     id: 'emailEditor.email_blast.no-blast',
@@ -161,7 +167,8 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperBlastName: {
     id: 'emailBlastEditor.input.helper.blast_name',
-    defaultMessage: 'The blast name will reflect accross all the screen so make it memorable!',
+    defaultMessage:
+      'The blast name will reflect accross all the screen so make it memorable!',
   },
   emailBlastEditorDatePickerLabelSentDate: {
     id: 'emailBlastEditor.datepicker.label.send_date',
@@ -197,7 +204,8 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperSubjectLine: {
     id: 'emailBlastEditor.input.helper.subject_line',
-    defaultMessage: 'Your Subject is what your audience will see first when the open their mailbox. So make it catchy!',
+    defaultMessage:
+      'Your Subject is what your audience will see first when the open their mailbox. So make it catchy!',
   },
   emailBlastEditorInputPlaceholderSubjectLine: {
     id: 'emailBlastEditor.input.placeholder.subject_line',
@@ -209,7 +217,8 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperFromEmail: {
     id: 'emailBlastEditor.input.helper.from_email',
-    defaultMessage: 'The From email is the email address your audience will receive the mail from.',
+    defaultMessage:
+      'The From email is the email address your audience will receive the mail from.',
   },
   emailBlastEditorInputPlaceholderFromEmail: {
     id: 'emailBlastEditor.input.placeholder.from_email',
@@ -221,7 +230,8 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperFromName: {
     id: 'emailBlastEditor.input.helper.from_name',
-    defaultMessage: 'The From Name is the Name your audience will receive the mail from.',
+    defaultMessage:
+      'The From Name is the Name your audience will receive the mail from.',
   },
   emailBlastEditorInputPlaceholderFromName: {
     id: 'emailBlastEditor.input.placeholder.from_name',
@@ -233,7 +243,8 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperReplyTo: {
     id: 'emailBlastEditor.input.helper.reply_to',
-    defaultMessage: 'The reply to email is the email address your audience will be able to reply to from the email you are about to send.',
+    defaultMessage:
+      'The reply to email is the email address your audience will be able to reply to from the email you are about to send.',
   },
   emailBlastEditorInputPlaceholderReplyTo: {
     id: 'emailBlastEditor.input.placeholder.reply_to',
@@ -254,14 +265,6 @@ export default defineMessages({
   blastTemplateAddButton: {
     id: 'blastTemplate.addButton',
     defaultMessage: 'Add',
-  },
-  blastTemplateSelectButton: {
-    id: 'blastTemplate.selectButton',
-    defaultMessage: 'Select',
-  },
-  blastTemplateSelectedButton: {
-    id: 'blastTemplate.selectedButton',
-    defaultMessage: 'Selected !',
   },
   blastSegmentSelectionEmpty: {
     id: 'blastSegmentSelection.empty',

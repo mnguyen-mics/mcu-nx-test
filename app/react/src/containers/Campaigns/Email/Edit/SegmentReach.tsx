@@ -1,27 +1,44 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { FormattedMessage, FormattedNumber, FormattedPlural } from 'react-intl';
+import { withRouter, RouteComponentProps } from 'react-router';
 
-import { withMcsRouter } from '../../../Helpers';
-import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
+import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { EditEmailBlastRouteMatchParam } from './domain';
 
-class SegmentReach extends Component {
+interface SegmentReachProps {
+  segmentIds: string[];
+  providerTechnicalNames: string[];
+}
 
-  state = {
-    loading: false,
-    hasLoaded: false,
-    count: 0
+interface State {
+  count: number;
+}
+
+interface MapStateProps {
+  defaultDatamart: (organisationId: string) => { id: string };
+}
+
+type Props =
+  SegmentReachProps &
+  MapStateProps &
+  RouteComponentProps<EditEmailBlastRouteMatchParam>;
+
+class SegmentReach extends React.Component<Props, State> {
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { count: 0 };
   }
 
-  computeSegmentReach = (props) => {
+  computeSegmentReach = (props: Props) => {
     const {
-      organisationId,
+      match: { params: { organisationId }},
       defaultDatamart,
       segmentIds,
-      providerTechnicalNames
+      providerTechnicalNames,
     } = props;
 
     const datamartId = defaultDatamart(organisationId).id;
@@ -39,20 +56,14 @@ class SegmentReach extends Component {
     this.computeSegmentReach(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     this.computeSegmentReach(nextProps);
   }
 
   render() {
 
-    const {
-      count
-    } = this.state;
-
-    const {
-      segmentIds,
-      providerTechnicalNames
-    } = this.props;
+    const { count } = this.state;
+    const { segmentIds, providerTechnicalNames } = this.props;
 
     if (segmentIds && segmentIds.length > 0) {
 
@@ -74,7 +85,9 @@ class SegmentReach extends Component {
 
       return (
         <div className="segment-user-reach">
-          <FormattedMessage id="potential-reach" defaultMessage="Potential Reach" />: <span className="reach-number"><FormattedNumber value={count} /></span> <FormattedPlural value={count} one="email" other="emails" />
+          <FormattedMessage id="potential-reach" defaultMessage="Potential Reach" />:
+          <span className="reach-number"><FormattedNumber value={count} /></span>
+          <FormattedPlural value={count} one="email" other="emails" />
         </div>
       );
     }
@@ -83,15 +96,8 @@ class SegmentReach extends Component {
   }
 }
 
-SegmentReach.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  defaultDatamart: PropTypes.func.isRequired,
-  segmentIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-  providerTechnicalNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-export default compose(
-  withMcsRouter,
+export default compose<Props, SegmentReachProps>(
+  withRouter,
   connect(
     state => ({
       defaultDatamart: getDefaultDatamart(state),

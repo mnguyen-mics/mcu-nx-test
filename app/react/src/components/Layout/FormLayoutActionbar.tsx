@@ -47,10 +47,10 @@ const FormLayoutActionbar: React.SFC<FormLayoutActionbarProvidedProps> = props =
 
   return (
     <ActionBar edition={true} {...props}>
-      <Button {...submitButtonProps} className="mcs-primary">
+      { message ? <Button {...submitButtonProps} className="mcs-primary">
         <McsIcons type="plus"/>
         <FormattedMessage {...message} />
-      </Button>
+      </Button> : null }
 
       <McsIcons
         type="close"

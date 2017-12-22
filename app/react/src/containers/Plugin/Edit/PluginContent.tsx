@@ -228,7 +228,6 @@ class PluginContent extends React.Component<
       <EditContentLayout
         breadcrumbPaths={breadcrumbPaths}
         buttonMetadata={buttonMetadata}
-        sidebarItems={null}
         url={url}
       >
         <PluginEditSelector

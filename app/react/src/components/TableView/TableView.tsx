@@ -1,140 +1,119 @@
 import * as React from 'react';
+import cuid from 'cuid';
 import { FormattedMessage } from 'react-intl';
 import { Dropdown, Menu, Table } from 'antd';
-
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
-import { SpinProps } from 'antd/lib/spin';
 import { ClickParam } from 'antd/lib/menu';
-import { TableProps } from 'antd/lib/table';
+import { TableProps, ColumnProps } from 'antd/lib/table';
 
 import McsIcons from '../McsIcons';
-import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
-import generateGuid from '../../utils/generateGuid';
+import withTranslations, {
+  TranslationProps,
+} from '../../containers/Helpers/withTranslations';
 
 const DEFAULT_PAGINATION_OPTION = {
   size: 'small',
   showSizeChanger: true,
 };
 
-interface DataColumnDefinition {
-  intlMessage: FormattedMessage.MessageDescriptor;
+export interface DataColumnDefinition<T> extends ColumnProps<T> {
+  intlMessage?: FormattedMessage.MessageDescriptor;
   translationKey?: string;
   key: string;
-  render?: (text: string, record: object, index: number) => React.ReactNode;
+  render?: (text: string, record: T, index: number) => React.ReactNode;
   sorter?: boolean | ((a: any, b: any) => number);
   isHideable?: boolean;
   isVisibleByDefault?: boolean;
 }
 
-interface ActionDefinition {
+export interface ActionDefinition<T> {
   translationKey?: string;
   intlMessage?: FormattedMessage.MessageDescriptor;
-  callback: (record: object) => void;
+  callback: (record: T) => void;
 }
-interface ActionsColumnDefinition {
+
+export interface ActionsColumnDefinition<T> extends ColumnProps<T> {
   key: string;
-  actions: ActionDefinition[];
+  actions: Array<ActionDefinition<T>>;
 }
 
-export interface VisibilitySelectedColumn {
-  key: string;
-  value: string;
+export interface TableViewProps<T> extends TableProps<T> {
+  columns?: Array<DataColumnDefinition<T>>;
+  visibilitySelectedColumns?: Array<DataColumnDefinition<T>>;
+  actionsColumnsDefinition?: Array<ActionsColumnDefinition<T>>;
 }
 
-export interface ColumnsDefinitions {
-  dataColumnsDefinition: DataColumnDefinition[];
-  actionsColumnsDefinition?: ActionsColumnDefinition[];
-}
-
-export interface TableViewProps {
-  columnsDefinitions: ColumnsDefinitions;
-  // TODO use generics T[]
-  dataSource: object[];
-  loading?: boolean | SpinProps;
-  pagination?: PaginationProps | false;
-  onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
-  onRowClick?: (record?: object) => void;
-  visibilitySelectedColumns?: VisibilitySelectedColumn[];
-}
-
-interface TableViewState {
-  visibilitySelectedColumns: [{
-    key: string;
-    value: string;
-  }];
-}
-
-class TableView extends React.Component<TableViewProps, TableViewState> {
-
-  static defaultProps: Partial<TableViewProps> = {
-    onRowClick: undefined,
+class TableView<T> extends React.Component<
+  TableViewProps<T> & TranslationProps
+> {
+  static defaultProps: Partial<TableViewProps<any>> = {
     pagination: false,
     visibilitySelectedColumns: [],
+    actionsColumnsDefinition: [],
   };
 
-  buildActionsColumns = (actionsColumnsDefinition: ActionsColumnDefinition[]) => {
-    const actionColumns = actionsColumnsDefinition.map(column => {
-      return {
-        dataIndex: generateGuid(),
-        key: generateGuid(),
-        width: 30,
-        render: (text: string, record: object) => {
+  buildActionsColumns = (
+    actionsColumnsDefinition: Array<ActionsColumnDefinition<T>>,
+  ): Array<ColumnProps<T>> => {
+    return actionsColumnsDefinition.map(column => ({
+      key: column.key,
+      width: 30,
+      render: (text: string, record: T) => {
+        return (
+          <Dropdown
+            overlay={this.renderActionsMenu(column.actions, record)}
+            trigger={['click']}
+          >
+            <a className="ant-dropdown-link">
+              <McsIcons type="chevron" />
+            </a>
+          </Dropdown>
+        );
+      },
+      sorter: false,
+    }));
+  };
+
+  buildDataColumns = (): Array<ColumnProps<T>> => {
+    const { columns, visibilitySelectedColumns } = this.props;
+
+    const visibilitySelectedColumnsValues: string[] = visibilitySelectedColumns!.map(
+      column => {
+        return column.key;
+      },
+    );
+
+    if (columns === undefined)
+      throw new Error('Undefined columns in TableView');
+
+    return columns
+      .filter(column => {
+        if (visibilitySelectedColumnsValues.length >= 1) {
           return (
-            <Dropdown
-              overlay={this.renderActionsMenu(column.actions, record)}
-              trigger={['click']}
-            >
-              <a className="ant-dropdown-link">
-                <McsIcons type="chevron" />
-              </a>
-            </Dropdown>
+            !column.isHideable ||
+            visibilitySelectedColumnsValues.includes(column.key)
           );
-        },
-        sorter: false,
-      };
-    });
+        }
+        return column;
+      })
+      .map(dataColumn => {
+        return {
+          title: dataColumn.intlMessage ? (
+            <FormattedMessage {...dataColumn.intlMessage} />
+          ) : dataColumn.translationKey ? (
+            this.props.translations[dataColumn.translationKey]
+          ) : (
+            undefined
+          ),
+          dataIndex: dataColumn.key,
+          key: dataColumn.key,
+          render: dataColumn.render ? dataColumn.render : (text: any) => text,
+          sorter: dataColumn.sorter ? dataColumn.sorter : false,
+        };
+      });
+  };
 
-    return actionColumns;
-  }
-
-  buildDataColumns = () => {
-    const {
-      columnsDefinitions: { dataColumnsDefinition },
-      visibilitySelectedColumns,
-    } = this.props;
-
-    const visibilitySelectedColumnsValues: string[] = visibilitySelectedColumns!.map((column) => {
-      return column.value;
-    });
-
-    const dataColumns = dataColumnsDefinition.filter(column => {
-      if (visibilitySelectedColumnsValues.length >= 1) {
-        return !column.isHideable || visibilitySelectedColumnsValues.includes(column.key);
-      }
-      return column;
-    }).map(dataColumn => {
-      // intlMessage shape is standard FormattedMessage props { id: '', defaultMessage: ''}
-      const titleProps = (isValidFormattedMessageProps(dataColumn.intlMessage)
-        ? { title: <FormattedMessage {...dataColumn.intlMessage} /> } // spreading values...
-        : (dataColumn.translationKey
-            ? { title: <FormattedMessage id={dataColumn.translationKey} /> } // support for legacy translation key constant (en/fr.json) ...
-            : null
-          )
-      );
-
-      return {
-        ...titleProps, // allow empty column title
-        dataIndex: dataColumn.key,
-        key: dataColumn.key,
-        render: dataColumn.render ? dataColumn.render : (text: any) => text,
-        sorter: dataColumn.sorter ? dataColumn.sorter : false,
-      };
-    });
-
-    return dataColumns;
-  }
-
-  renderActionsMenu(actions: ActionDefinition[], record: any) {
+  renderActionsMenu = (actions: Array<ActionDefinition<T>>, record: T) => {
     const onClick = (item: ClickParam) => {
       actions[parseInt(item.key, 0)].callback(record);
     };
@@ -145,46 +124,55 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
           return (
             <Menu.Item key={index.toString()}>
               <a>
-                {
-                  isValidFormattedMessageProps(action.intlMessage) ?
-                    <FormattedMessage {...action.intlMessage!} /> :
-                    <FormattedMessage id={action.translationKey!} />
-                }
+                {action.intlMessage ? (
+                  <FormattedMessage {...action.intlMessage!} />
+                ) : action.translationKey ? (
+                  this.props.translations[action.translationKey]
+                ) : (
+                  index
+                )}
               </a>
             </Menu.Item>
           );
         })}
       </Menu>
     );
-  }
+  };
 
   render() {
     const {
-      columnsDefinitions,
       dataSource,
       loading,
       onChange,
-      onRowClick,
       pagination,
+      actionsColumnsDefinition,
+      visibilitySelectedColumns,
+      translations,
+      children,
+      ...rest
     } = this.props;
 
-    const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(
-      columnsDefinitions.actionsColumnsDefinition,
-    ) : [];
+    const columns: Array<ColumnProps<T>> = this.buildDataColumns().concat(
+      this.buildActionsColumns(actionsColumnsDefinition!),
+    );
 
-    const columns = columnsDefinitions.actionsColumnsDefinition ? this.buildDataColumns().concat(actionsColumns) : this.buildDataColumns();
+    if (dataSource === undefined)
+      throw new Error('Undefined dataSource in TableView');
 
-    const dataSourceWithIds = dataSource.map(elem => ({ key: generateGuid(), ...elem }));
+    const dataSourceWithIds = dataSource.map((elem: T) => {
+      return { ...(elem as any), key: cuid() };
+    });
 
     let newPagination = pagination;
     if (pagination) {
       newPagination = {
         ...DEFAULT_PAGINATION_OPTION,
-        ...pagination as PaginationProps,
+        ...(pagination as PaginationProps),
       };
     }
 
-    const computedTableProps: TableProps<any> = {
+    const computedTableProps: TableProps<T> = {
+      ...rest,
       columns,
       dataSource: dataSourceWithIds,
       loading,
@@ -193,16 +181,10 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       rowClassName: () => 'mcs-table-cursor',
     };
 
-    if (onRowClick) {
-      computedTableProps.onRowClick = (row) => onRowClick(row);
-    }
-
-    return (
-      <Table
-        {...computedTableProps}
-      />
-    );
+    return <Table {...computedTableProps} />;
   }
 }
 
-export default TableView;
+export default withTranslations(TableView) as React.ComponentClass<
+  TableViewProps<any>
+>;

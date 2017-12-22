@@ -13,7 +13,7 @@ import {
   CreativeScreenshotResource,
 } from '../models/creative/CreativeResource';
 
-interface GetCreativesOptions {
+export interface GetCreativesOptions {
   creative_type?: CreativeType;
   scope?: string;
   keywords?: string[];
@@ -26,7 +26,6 @@ interface GetCreativesOptions {
 }
 
 const CreativeService = {
-
   getCreatives<T extends GenericCreativeResource>(
     organisationId: string,
     options: GetCreativesOptions = {},
@@ -51,28 +50,36 @@ const CreativeService = {
     organisationId: string,
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<DisplayAdResource>> {
-    return CreativeService.getCreatives(organisationId, { creative_type: 'DISPLAY_AD', ...options });
+    return CreativeService.getCreatives(organisationId, {
+      creative_type: 'DISPLAY_AD',
+      ...options,
+    });
   },
 
   getEmailTemplates(
     organisationId: string,
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<EmailTemplateResource>> {
-    return CreativeService.getCreatives(organisationId, { creative_type: 'EMAIL_TEMPLATE', ...options });
+    return CreativeService.getCreatives(organisationId, {
+      creative_type: 'EMAIL_TEMPLATE',
+      ...options,
+    });
   },
 
   getEmailTemplate(
     templateId: string,
   ): Promise<DataResponse<EmailTemplateResource>> {
-    return CreativeService.getCreative(templateId) as Promise<DataResponse<EmailTemplateResource>>;
+    return CreativeService.getCreative(templateId) as Promise<
+      DataResponse<EmailTemplateResource>
+    >;
   },
 
   getCreativeFormats(
     organisationId: string,
     options: {
-      width?: number,
-      height?: number,
-      type?: AdType,
+      width?: number;
+      height?: number;
+      type?: AdType;
     } = {},
   ): Promise<DataListResponse<AdFormatResource>> {
     const endpoint = 'reference_tables/formats';
@@ -108,7 +115,7 @@ const CreativeService = {
     organisationId: string,
     creativeId: string,
     technicalName: string,
-    body: { [key: string]: any} = {},
+    body: { [key: string]: any } = {},
   ): Promise<DataResponse<any> | any> {
     const endpoint = `display_ads/${creativeId}/renderer_properties/technical_name=${technicalName}`;
     if (body.property_type === 'ASSET') {
@@ -119,29 +126,29 @@ const CreativeService = {
         });
       }
 
-      const fileValue = (body.value && body.value.file) ? body.value.file : null;
+      const fileValue = body.value && body.value.file ? body.value.file : null;
 
       if (fileValue !== null) {
         const formData = new FormData(); /* global FormData */
         formData.append('file', fileValue, fileValue.name);
-        return ApiService.postRequest(uploadEndpoint, formData)
-        .then((res: any) => {
-          const newBody = {
-            ...body,
-          };
-          newBody.value = {
-            original_file_name: res.data.original_filename,
-            file_path: res.data.file_path,
-            asset_id: res.data.id,
-          };
-          ApiService.putRequest(endpoint, newBody);
-        });
+        return ApiService.postRequest(uploadEndpoint, formData).then(
+          (res: any) => {
+            const newBody = {
+              ...body,
+            };
+            newBody.value = {
+              original_file_name: res.data.original_filename,
+              file_path: res.data.file_path,
+              asset_id: res.data.id,
+            };
+            ApiService.putRequest(endpoint, newBody);
+          },
+        );
       }
       return Promise.resolve();
-
     }
     // } else if (technicalName === 'DATA_FILE') {
-      // TODO UPLOAD DATA FILE
+    // TODO UPLOAD DATA FILE
     // }
     return ApiService.putRequest(endpoint, body);
   },
@@ -153,9 +160,7 @@ const CreativeService = {
     return ApiService.getRequest(endpoint);
   },
 
-  getAuditStatus(
-    creativeId: string,
-  ): Promise<DataResponse<AuditResource>> {
+  getAuditStatus(creativeId: string): Promise<DataResponse<AuditResource>> {
     const endpoint = `display_ads/${creativeId}/audits`;
     return ApiService.getRequest(endpoint);
   },
