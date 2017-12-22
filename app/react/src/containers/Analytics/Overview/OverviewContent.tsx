@@ -5,6 +5,7 @@ import VisitAnalysis from '../Charts/VisitAnalysis';
 import ReportService from '../../../services/ReportService';
 import OverviewHeader from '../Common/OverviewHeader';
 import NewUsers from '../Charts/NewUsers';
+import UsersMap from '../Charts/UsersMap';
 import Col from 'antd/lib/grid/col';
 import {compose} from 'recompose';
 import messages from './messages';
@@ -22,6 +23,7 @@ interface OverviewContentProps {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
   getDefaultDatamart: (organisationId: string) => { id: string };
+  colors: { [s: string]: string };
 }
 
 type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<any> & InjectedIntlProps;
@@ -33,6 +35,9 @@ interface OverviewContentState {
   hasFetchedVisitReportFormFactor: boolean;
   visitReportFormFactor: any;
   visitReport: any;
+  isFetchingVisitReportCountry: boolean;
+  hasFetchedVisitReportCountry: boolean;
+  visitReportCountry: any;
 }
 
 class OverviewContent extends React.Component<OverviewContentAllProps, OverviewContentState> {
@@ -47,6 +52,9 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
           hasFetchedVisitReport: false,
           isFetchingVisitReportFormFactor: false,
           hasFetchedVisitReportFormFactor: false,
+          isFetchingVisitReportCountry: false,
+          hasFetchedVisitReportCountry: false,
+          visitReportCountry: [],
         };
     }
 
@@ -84,6 +92,15 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         undefined,
       );
 
+      const getVisitReportCountry = ReportService.getVisitReport(
+        organisationId,
+        filter.from,
+        filter.to,
+        ['datamart_id==' + datamartId],
+        ['country'],
+        undefined,
+      );
+
       this.setState((prevState) => {
         return {
           ...prevState,
@@ -114,6 +131,18 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
           };
         });
       });
+
+      getVisitReportCountry.then((response: any) => {
+        this.setState((prevState) => {
+          const dataset = this.extractReportDataset(response.data.report_view);
+          return {
+            ...prevState,
+            isFetchingVisitReportCountry: false,
+            hasFetchedVisitReportCountry: true,
+            visitReportCountry: dataset,
+          };
+        });
+      });
     }
 
     componentDidMount() {
@@ -124,7 +153,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
             organisationId,
           },
         },
-        getDefaultDatamart
+        getDefaultDatamart,
       } = this.props;
       const filter = parseSearch(history.location.search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
 
@@ -152,7 +181,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
             organisationId,
           },
         },
-        getDefaultDatamart
+        getDefaultDatamart,
       } = this.props;
       const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
       const defaultDatamart = getDefaultDatamart(organisationId)
@@ -191,7 +220,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
     }
 
     render() {
-      const { intl: { formatMessage } } = this.props;
+      const { intl: { formatMessage }, colors } = this.props;
 
       const buttons = this.renderDatePicker();
       return (
@@ -225,6 +254,20 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
                     isFetchingVisitReportFormFactor={this.state.isFetchingVisitReportFormFactor}
                     report={this.state.visitReportFormFactor}
                   />
+              </Card>
+            </Col>
+          </Row>
+          <Row gutter={10} className="table-line">
+            <Col span={24}>
+              <Card buttons={buttons} title={formatMessage(messages.locations)}>
+                <UsersMap
+                  hasFetchedVisitReport={this.state.hasFetchedVisitReportCountry}
+                  isFetchingVisitReport={this.state.isFetchingVisitReportCountry}
+                  report={this.state.visitReportCountry}
+                  projection={'times'}
+                  scale={200}
+                  colors={colors}
+                />
               </Card>
             </Col>
           </Row>

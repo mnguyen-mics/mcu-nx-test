@@ -9,6 +9,10 @@ export default defineMessages({
     id: 'visit_analysis',
     defaultMessage: 'Visit analysis',
   },
+  locations: {
+    id: 'locations',
+    defaultMessage: 'Locations',
+  },
   new_users: {
     id: 'new_users',
     defaultMessage: 'New Users vs returning users',
