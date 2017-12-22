@@ -4,6 +4,7 @@ import {compose} from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../Overview/messages';
 import {connect} from 'react-redux';
+import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
 
 interface DeviceTypeProps {
   hasFetchedVisitReportFormFactor: boolean;
@@ -91,7 +92,7 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
   }
 
   render() {
-    const {report, hasFetchedVisitReportFormFactor} = this.props;
+    const {report, hasFetchedVisitReportFormFactor, intl: {formatMessage}} = this.props;
     let chartComponent;
 
     if (hasFetchedVisitReportFormFactor) {
@@ -99,7 +100,9 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
       const dataset = this.buildDataset(datasetObject);
       const pieChartsOptions = this.generateOptions(false);
       chartComponent =
-        (
+        (dataset && dataset.length === 0 || !hasFetchedVisitReportFormFactor) ?
+          <EmptyCharts title={formatMessage(messages.no_visit_stat)} /> :
+          (
           <PieChart
             identifier="DeviceType"
             dataset={dataset}

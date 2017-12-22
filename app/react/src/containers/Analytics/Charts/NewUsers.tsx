@@ -4,6 +4,7 @@ import messages from '../Overview/messages';
 import {compose} from 'recompose';
 import {injectIntl, InjectedIntlProps} from 'react-intl';
 import {connect} from 'react-redux';
+import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
 
 interface NewUsersProps {
   hasFetchedVisitReport: boolean;
@@ -64,20 +65,22 @@ class NewUsers extends React.Component<JoinedProps> {
   }
 
   render() {
-    const {report, hasFetchedVisitReport} = this.props;
+    const {report, hasFetchedVisitReport, intl: {formatMessage} } = this.props;
     let chartComponent;
     if (hasFetchedVisitReport) {
       const ratio = this.extractRatio(report);
       const dataset = this.buildDataSet(ratio.a, ratio.b);
       const pieChartsOptions = this.generateOptions(false, 'blue', 'mykey', ratio.a, ratio.b);
       chartComponent =
-        (
-          <PieChart
-            identifier="newUsers"
-            dataset={dataset}
-            options={pieChartsOptions}
-          />
-        );
+          (report && report.length === 0 || !hasFetchedVisitReport) ?
+          <EmptyCharts title={formatMessage(messages.no_visit_stat)} /> :
+          (
+            <PieChart
+              identifier="newUsers"
+              dataset={dataset}
+              options={pieChartsOptions}
+            />
+          );
     } else {
       chartComponent = <div />;
     }

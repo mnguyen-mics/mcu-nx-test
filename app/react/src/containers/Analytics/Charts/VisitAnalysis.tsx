@@ -73,7 +73,17 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
   }
 
+  extractBounceRate(report: any[]) {
+    if (report)
+      return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
+  }
+
   extractSessionDuration(report: any[]) {
+    if (report)
+      return report.reduce((accu: number, row: any) => { return accu + row.min_duration; }, 0);
+  }
+
+  extractSessions(report: any[]) {
     if (report)
       return report.reduce((accu: number, row: any) => { return accu + row.min_duration; }, 0);
   }
@@ -92,12 +102,11 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
   render() {
     const {
       intl: {
-        formatMessage
+        formatMessage,
       },
       report,
       hasFetchedVisitReport,
-      isFetchingVisitReport,
-      colors
+      colors,
     } = this.props;
     const { key1, key2 } = this.state;
 
@@ -106,13 +115,13 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
       value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
       name: formatMessage(messages.sessions),
-      value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractSessions(report), '0') : undefined,
     }, {
       name: formatMessage(messages.bounce_rate),
-      value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractBounceRate(report), '0.0', '', '%') : undefined,
     }, {
       name: formatMessage(messages.session_duration),
-      value: hasFetchedVisitReport ? formatMetric(this.extractSessionDuration(report), '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractSessionDuration(report), '0.0', '', 's') : undefined,
     }];
 
     const optionsForChart = {
@@ -171,7 +180,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
           <Col span={5}>
           <MetricsColumn
             metrics={metrics}
-            isLoading={isFetchingVisitReport || !hasFetchedVisitReport}
+            isLoading={datasource && datasource.length === 0 || !hasFetchedVisitReport}
           />
           </Col>
           <Col span={19}>
