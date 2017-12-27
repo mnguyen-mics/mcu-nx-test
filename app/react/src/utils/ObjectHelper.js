@@ -1,4 +1,4 @@
-const customBlackList = ['intl']
+const customBlackList = ['intl'];
 
 function copyToDepthHelper(obj, res, seen) {
   if (obj !== null && obj !== undefined) {
@@ -7,8 +7,8 @@ function copyToDepthHelper(obj, res, seen) {
         if (seen.indexOf(obj[key]) === -1 &&
           customBlackList.indexOf(key) === -1 &&
           key.charAt(0) !== '_') {
-          res[key] = {}
-          seen.push(obj[key])
+          res[key] = {};
+          seen.push(obj[key]);
           res[key] = copyToDepthHelper(obj[key], res[key], seen);
         } else {
           res[key] = '-seen-';
@@ -22,7 +22,7 @@ function copyToDepthHelper(obj, res, seen) {
 }
 
 function copyToDepth(obj) {
-  const res = {}
+  const res = {};
   const seen = [];
   return copyToDepthHelper(obj, res, seen);
 }
