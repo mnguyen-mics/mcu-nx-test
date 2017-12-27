@@ -27,7 +27,7 @@ export default defineMessages({
   },
   device_type: {
     id: 'device_type',
-    defaultMessage: 'Device type'
+    defaultMessage: 'Device type',
   },
   max_duration: {
     id: 'max_duration',

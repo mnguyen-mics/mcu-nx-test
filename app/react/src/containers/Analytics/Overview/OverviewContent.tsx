@@ -176,7 +176,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
           state: {reloadDataSource: true},
         });
       }
-      const defaultDatamart = getDefaultDatamart(organisationId)
+      const defaultDatamart = getDefaultDatamart(organisationId);
       const defaultDatamartId = defaultDatamart ? defaultDatamart.id : '0';
       this.fetchAllData(organisationId, defaultDatamartId, filter);
     }
@@ -196,7 +196,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         getDefaultDatamart,
       } = this.props;
       const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
-      const defaultDatamart = getDefaultDatamart(organisationId)
+      const defaultDatamart = getDefaultDatamart(organisationId);
       const defaultDatamartId = defaultDatamart ? defaultDatamart.id : '0';
       this.fetchAllData(organisationId, defaultDatamartId, filter);
     }

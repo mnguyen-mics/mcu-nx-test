@@ -56,7 +56,7 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
           (oldState: LegendChartWithModalState) => {
             return {
               ...oldState,
-              key1: e.target.value
+              key1: e.target.value,
             };
           });
       };
@@ -65,7 +65,7 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
       (oldState: LegendChartWithModalState) => {
           return {
             ...oldState,
-            key2: e.target.value
+            key2: e.target.value,
           };
         });
       };
@@ -112,10 +112,13 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
         onOk() {
           onLegendChange(that.state.key1, that.state.key2);
         },
-        onCancel() {},
+        onCancel() {
+          return;
+        },
       });
     };
 
+    const onClick =  () => renderModal(this);
     return (
       <div className="mcs-legend-container">
         {options.map(option => {
@@ -155,7 +158,7 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
         >
           <button
             className="mcs-invisible-button"
-            onClick={() => renderModal(this)}
+            onClick={onClick}
           >
             <McsIcon
               style={{ marginLeft: '10px', color: '#d0d0d0' }}

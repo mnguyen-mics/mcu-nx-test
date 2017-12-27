@@ -3,5 +3,5 @@ import OverviewContent from './OverviewContent';
 
 export {
   OverviewActionBar,
-  OverviewContent
+  OverviewContent,
 };

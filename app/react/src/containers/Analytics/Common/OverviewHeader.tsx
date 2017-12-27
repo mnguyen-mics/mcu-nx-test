@@ -11,7 +11,7 @@ class OverviewHeader extends React.Component<OverviewHeaderProps> {
   render() {
     const {
       object: {
-        name: displayCampaignName
+        name: displayCampaignName,
       },
     } = this.props;
     return displayCampaignName ? (
