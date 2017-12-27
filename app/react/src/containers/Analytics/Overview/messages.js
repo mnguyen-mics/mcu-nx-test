@@ -13,9 +13,17 @@ export default defineMessages({
     id: 'locations',
     defaultMessage: 'Locations',
   },
+  new_users_vs_returning: {
+    id: 'new_users_vs_returning',
+    defaultMessage: 'New Users vs returning users',
+  },
   new_users: {
     id: 'new_users',
-    defaultMessage: 'New Users vs returning users',
+    defaultMessage: 'New Users',
+  },
+  returning_users: {
+    id: 'returning_users',
+    defaultMessage: 'Returning users',
   },
   device_type: {
     id: 'device_type',

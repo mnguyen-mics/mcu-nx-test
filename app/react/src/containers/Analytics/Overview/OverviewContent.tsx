@@ -18,6 +18,7 @@ import DeviceType from '../Charts/DeviceType';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import * as SessionSelectors from '../../../state/Session/selectors';
 import {connect} from 'react-redux';
+import McsMoment from '../../../utils/McsMoment';
 
 interface OverviewContentProps {
   isFetchingVisitReport: boolean;
@@ -31,13 +32,11 @@ type OverviewContentAllProps = OverviewContentProps & RouteComponentProps<any> &
 interface OverviewContentState {
   isFetchingVisitReport: boolean;
   hasFetchedVisitReport: boolean;
-  isFetchingVisitReportFormFactor: boolean;
-  hasFetchedVisitReportFormFactor: boolean;
   visitReportFormFactor: any;
   visitReport: any;
-  isFetchingVisitReportCountry: boolean;
-  hasFetchedVisitReportCountry: boolean;
   visitReportCountry: any;
+  visitReportPreviousPeriod: any;
+  visitReportSignificantDuration: any;
 }
 
 class OverviewContent extends React.Component<OverviewContentAllProps, OverviewContentState> {
@@ -46,15 +45,13 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         super(props);
 
         this.state = {
-          visitReportFormFactor: [],
-          visitReport: [],
           isFetchingVisitReport: false,
           hasFetchedVisitReport: false,
-          isFetchingVisitReportFormFactor: false,
-          hasFetchedVisitReportFormFactor: false,
-          isFetchingVisitReportCountry: false,
-          hasFetchedVisitReportCountry: false,
+          visitReportFormFactor: [],
+          visitReport: [],
           visitReportCountry: [],
+          visitReportPreviousPeriod: [],
+          visitReportSignificantDuration: [],
         };
     }
 
@@ -71,6 +68,13 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         return report.rows.map((row: any) => {
             return this.extractReportObject(headers, row);
         });
+    }
+
+    extractPreviousPeriod(from: McsMoment, to: McsMoment): any {
+      const diff = to.toMoment().diff(from.toMoment());
+      const newFrom  = new McsMoment(from.toMoment().subtract(diff).toISOString());
+      const newTo  = new McsMoment(to.toMoment().subtract(diff).toISOString());
+      return {to: newTo, from: newFrom};
     }
 
     fetchAllData(organisationId: string, datamartId: string, filter: any) {
@@ -101,47 +105,55 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         undefined,
       );
 
+      const previousPeriod = this.extractPreviousPeriod(filter.from, filter.to);
+      const getVisitReportPreviousPeriod = ReportService.getVisitReport(
+        organisationId,
+        previousPeriod.from,
+        previousPeriod.to,
+        ['datamart_id==' + datamartId],
+        ['country'],
+        undefined,
+      );
+
+      const getVisitReportSignificantDuration = ReportService.getVisitReport(
+        organisationId,
+        filter.from,
+        filter.to,
+        ['datamart_id==' + datamartId, 'avg_duration>' + 30],
+        undefined,
+        undefined,
+      );
+
+      Promise.all([
+                   getVisitReport,
+                   getVisitReportSignificantDuration,
+                   getVisitReportPreviousPeriod,
+                   getVisitReportFormFactor,
+                   getVisitReportCountry,
+                 ]).then((result: any[]) => {
+        const visitReport = this.extractReportDataset(result[0].data.report_view);
+        const visitReportSignificantDuration = this.extractReportDataset(result[1].data.report_view);
+        const visitReportPreviousReport = this.extractReportDataset(result[2].data.report_view);
+        const visitReportFormFactor = this.extractReportDataset(result[3].data.report_view);
+        const visitReportCountry = this.extractReportDataset(result[4].data.report_view);
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            hasFetchedVisitReport: true,
+            visitReport: visitReport,
+            visitReportSignificantDuration: visitReportSignificantDuration,
+            visitReportPreviousPeriod: visitReportPreviousReport,
+            visitReportFormFactor: visitReportFormFactor,
+            visitReportCountry: visitReportCountry,
+          };
+        });
+      }).catch(console.error);
+
       this.setState((prevState) => {
         return {
           ...prevState,
           isFetchingVisitReport: true,
         };
-      });
-
-      getVisitReport.then((response: any) => {
-        this.setState((prevState) => {
-          const dataset = this.extractReportDataset(response.data.report_view);
-          return {
-            ...prevState,
-            isFetchingVisitReport: false,
-            hasFetchedVisitReport: true,
-            visitReport: dataset,
-          };
-        });
-      }).catch(console.error);
-
-      getVisitReportFormFactor.then((response: any) => {
-        this.setState((prevState) => {
-          const dataset = this.extractReportDataset(response.data.report_view);
-          return {
-            ...prevState,
-            isFetchingVisitReportFormFactor: false,
-            hasFetchedVisitReportFormFactor: true,
-            visitReportFormFactor: dataset,
-          };
-        });
-      });
-
-      getVisitReportCountry.then((response: any) => {
-        this.setState((prevState) => {
-          const dataset = this.extractReportDataset(response.data.report_view);
-          return {
-            ...prevState,
-            isFetchingVisitReportCountry: false,
-            hasFetchedVisitReportCountry: true,
-            visitReportCountry: dataset,
-          };
-        });
       });
     }
 
@@ -231,7 +243,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
               <Card buttons={buttons} title={formatMessage(messages.visit_analysis)}>
                 <VisitAnalysis
                   hasFetchedVisitReport={this.state.hasFetchedVisitReport}
-                  isFetchingVisitReport={this.state.isFetchingVisitReport}
+                  reportSignificantDuration={this.state.visitReportSignificantDuration}
                   report={this.state.visitReport}
                 />
               </Card>
@@ -239,19 +251,18 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
           </Row>
           <Row gutter={10} className="table-line">
             <Col span={12}>
-              <Card buttons={buttons} title={formatMessage(messages.new_users)}>
+              <Card buttons={buttons} title={formatMessage(messages.new_users_vs_returning)}>
                   <NewUsers
                     hasFetchedVisitReport={this.state.hasFetchedVisitReport}
-                    isFetchingVisitReport={this.state.isFetchingVisitReport}
                     report={this.state.visitReport}
+                    reportPreviousPeriod={this.state.visitReportPreviousPeriod}
                   />
               </Card>
             </Col>
             <Col span={12}>
               <Card buttons={buttons} title={formatMessage(messages.device_type)}>
                   <DeviceType
-                    hasFetchedVisitReportFormFactor={this.state.hasFetchedVisitReportFormFactor}
-                    isFetchingVisitReportFormFactor={this.state.isFetchingVisitReportFormFactor}
+                    hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                     report={this.state.visitReportFormFactor}
                   />
               </Card>
@@ -261,8 +272,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
             <Col span={24}>
               <Card buttons={buttons} title={formatMessage(messages.locations)}>
                 <UsersMap
-                  hasFetchedVisitReport={this.state.hasFetchedVisitReportCountry}
-                  isFetchingVisitReport={this.state.isFetchingVisitReportCountry}
+                  hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                   report={this.state.visitReportCountry}
                   projection={'times'}
                   scale={200}

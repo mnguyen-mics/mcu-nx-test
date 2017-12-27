@@ -25,6 +25,7 @@ interface VisitAnalysisProps {
   hasFetchedVisitReport: boolean;
   isFetchingVisitReport: boolean;
   report: any[];
+  reportSignificantDuration: any[];
   colors: { [s: string]: string };
 }
 type JoinedProps = VisitAnalysisProps & InjectedIntlProps & RouteComponentProps<any>;
@@ -69,23 +70,25 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
   }
 
   extractUsers(report: any[]) {
-   if (report)
+    // total number of users
     return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
   }
 
-  extractBounceRate(report: any[]) {
-    if (report)
-      return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
+  extractBounceRate(report: any[], reportSignificantDuration: any[]) {
+    // Sessions of duration > 30secs / total number of sessions
+    const usersCount = report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
+    const sessionCount = reportSignificantDuration.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
+    return usersCount ? (1 - sessionCount / usersCount) : 0;
   }
 
   extractSessionDuration(report: any[]) {
-    if (report)
-      return report.reduce((accu: number, row: any) => { return accu + row.min_duration; }, 0);
+    const sumDurations = report.reduce((accu: number, row: any) => { return accu + row.avg_duration; }, 0);
+    return report.length ? sumDurations / report.length : 0;
   }
 
   extractSessions(report: any[]) {
-    if (report)
-      return report.reduce((accu: number, row: any) => { return accu + row.min_duration; }, 0);
+    // total number of sessions > 30 secs
+    return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
   }
 
   updateLocationSearch(params: McsDateRangeValue) {
@@ -106,6 +109,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
       },
       report,
       hasFetchedVisitReport,
+      reportSignificantDuration,
       colors,
     } = this.props;
     const { key1, key2 } = this.state;
@@ -115,10 +119,12 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
       value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
     }, {
       name: formatMessage(messages.sessions),
-      value: hasFetchedVisitReport ? formatMetric(this.extractSessions(report), '0') : undefined,
+      value: hasFetchedVisitReport ? formatMetric(this.extractSessions(reportSignificantDuration), '0') : undefined,
     }, {
       name: formatMessage(messages.bounce_rate),
-      value: hasFetchedVisitReport ? formatMetric(this.extractBounceRate(report), '0.0', '', '%') : undefined,
+      value: hasFetchedVisitReport ?
+             formatMetric(this.extractBounceRate(report, reportSignificantDuration), '0.0', '', '%') :
+             undefined,
     }, {
       name: formatMessage(messages.session_duration),
       value: hasFetchedVisitReport ? formatMetric(this.extractSessionDuration(report), '0.0', '', 's') : undefined,
@@ -161,12 +167,11 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
         key2: b,
       };
     });
-    const datasource = report;
     return (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {datasource && datasource.length === 0 && (hasFetchedVisitReport)
+            {report && report.length === 0 && (hasFetchedVisitReport)
               ? <div />
               : <LegendChartWithModal
                 identifier="chartLegend"
@@ -180,13 +185,16 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
           <Col span={5}>
           <MetricsColumn
             metrics={metrics}
-            isLoading={datasource && datasource.length === 0 || !hasFetchedVisitReport}
+            isLoading={(report && report.length === 0) ||
+                         reportSignificantDuration === undefined ||
+                         !hasFetchedVisitReport }
           />
           </Col>
           <Col span={19}>
-            {datasource && datasource.length === 0 || !hasFetchedVisitReport
-                ? <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
-                : this.renderStackedAreaChart(datasource, optionsForChart)}
+            {report && report.length === 0 ||
+              !hasFetchedVisitReport
+              ? <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
+              : this.renderStackedAreaChart(report, optionsForChart)}
           </Col>
         </Row>
       </div>

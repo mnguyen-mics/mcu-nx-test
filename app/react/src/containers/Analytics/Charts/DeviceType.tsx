@@ -7,8 +7,8 @@ import {connect} from 'react-redux';
 import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
 
 interface DeviceTypeProps {
-  hasFetchedVisitReportFormFactor: boolean;
-  isFetchingVisitReportFormFactor: boolean;
+  hasFetchedVisitReport: boolean;
+  isFetchingVisitReport: boolean;
   report: any[];
   colors: { [s: string]: string };
 }
@@ -92,15 +92,15 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
   }
 
   render() {
-    const {report, hasFetchedVisitReportFormFactor, intl: {formatMessage}} = this.props;
+    const {report, hasFetchedVisitReport, intl: {formatMessage}} = this.props;
     let chartComponent;
 
-    if (hasFetchedVisitReportFormFactor) {
+    if (hasFetchedVisitReport) {
       const datasetObject = this.buildDatasetObject(report, 'form_factor');
       const dataset = this.buildDataset(datasetObject);
       const pieChartsOptions = this.generateOptions(false);
       chartComponent =
-        (dataset && dataset.length === 0 || !hasFetchedVisitReportFormFactor) ?
+        (dataset && dataset.length === 0 || !hasFetchedVisitReport) ?
           <EmptyCharts title={formatMessage(messages.no_visit_stat)} /> :
           (
           <PieChart

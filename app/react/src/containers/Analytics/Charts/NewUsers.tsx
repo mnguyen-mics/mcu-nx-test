@@ -9,6 +9,7 @@ import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
 interface NewUsersProps {
   hasFetchedVisitReport: boolean;
   isFetchingVisitReport: boolean;
+  reportPreviousPeriod: any[];
   report: any[];
   colors: { [s: string]: string };
 }
@@ -19,11 +20,9 @@ class NewUsers extends React.Component<JoinedProps> {
 
   buildDataSet(a: number, b: number) {
     const { intl: { formatMessage }, colors } = this.props;
-    const value = a;
-    const totalValue = b;
     return [
-      { key: formatMessage(messages.delivered), value: value, color: colors['mcs-warning'] },
-      { key: formatMessage(messages.rest), value: (!value) ? 100 : Math.abs(totalValue - value), color: colors['mcs-normal'] },
+      { key: formatMessage(messages.new_users), value: a, color: colors['mcs-warning'] },
+      { key: formatMessage(messages.returning_users), value: b, color: colors['mcs-normal'] },
     ];
   }
 
@@ -52,27 +51,36 @@ class NewUsers extends React.Component<JoinedProps> {
     return options;
   }
 
-  extractRatio(report: any) {
+  extractRatio(report: any, reportPreviousPeriod: any) {
     const unique = report.reduce((accu: number, elem: any) => {
       return accu + elem.unique_user;
     }, 0);
 
-    const count = report.reduce((accu: number, elem: any) => {
-      return accu + elem.count;
+    const uniquePreviousPeriod = reportPreviousPeriod.reduce((accu: number, elem: any) => {
+      return accu + elem.unique_user;
     }, 0);
 
-    return {a: unique, b: count};
+    return {a: unique, b: uniquePreviousPeriod};
   }
 
   render() {
-    const {report, hasFetchedVisitReport, intl: {formatMessage} } = this.props;
+    const {
+      report,
+      reportPreviousPeriod,
+      hasFetchedVisitReport,
+      intl: {
+        formatMessage,
+      },
+    } = this.props;
     let chartComponent;
     if (hasFetchedVisitReport) {
-      const ratio = this.extractRatio(report);
+      const ratio = this.extractRatio(report, reportPreviousPeriod);
       const dataset = this.buildDataSet(ratio.a, ratio.b);
-      const pieChartsOptions = this.generateOptions(false, 'blue', 'mykey', ratio.a, ratio.b);
+      const pieChartsOptions = this.generateOptions(false, 'blue', 'mykey', ratio.a, ratio.a + ratio.b);
       chartComponent =
-          (report && report.length === 0 || !hasFetchedVisitReport) ?
+          ((report && report.length === 0) ||
+            (reportPreviousPeriod && reportPreviousPeriod.length === 0) ||
+            !hasFetchedVisitReport) ?
           <EmptyCharts title={formatMessage(messages.no_visit_stat)} /> :
           (
             <PieChart

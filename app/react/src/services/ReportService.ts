@@ -435,7 +435,7 @@ const ReportService = {
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/visit_report';
     const DEFAULT_DIMENSIONS = ['day'];
-    const DEFAULT_METRICS = ['max_duration', 'min_duration', 'unique_user', 'count', 'unique_visitor'];
+    const DEFAULT_METRICS = ['max_duration', 'min_duration', 'avg_duration', 'unique_user', 'count', 'unique_visitor'];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const params = {
