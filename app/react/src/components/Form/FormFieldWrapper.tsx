@@ -10,6 +10,7 @@ import McsIcons from '../McsIcons';
 export interface FormFieldWrapperProps {
   hasMarginBottom?: boolean;
   helpToolTipProps?: TooltipProps;
+  renderFieldAction?: () => React.ReactNode;
   rowProps?: RowProps;
 }
 
@@ -31,6 +32,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
     helpToolTipProps,
     rowProps,
     label,
+    renderFieldAction,
     ...formInputProps,
   } = props;
 
@@ -42,15 +44,26 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
         {...formInputProps}
       >
         <Row {...defaultRowProps} {...rowProps}>
-          <Col span={22}>{children}</Col>
+          <Col span={20}>{children}</Col>
 
           {!isEmpty(helpToolTipProps)
-            && (
+            ? (
               <Col span={2} className={`field-tooltip`}>
                 <Tooltip {...helpToolTipProps} placement="right">
                   <McsIcons type="info" />
                 </Tooltip>
               </Col>
+            ) : (
+              <Col span={2} className="no-field-tooltip"/>
+            )
+          }
+          {(typeof renderFieldAction !== 'undefined')
+            ? (
+              <Col span={2} className="renderFieldAction">
+                {renderFieldAction()}
+              </Col>
+            ) : (
+              <Col span={2} className="no-renderFieldAction"/>
             )
           }
         </Row>

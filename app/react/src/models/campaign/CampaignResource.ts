@@ -1,5 +1,6 @@
 export interface CampaignResource {
    // TODO to be defined/generated in mcs-services
+  id: string;
   [key: string]: any;
 }
 

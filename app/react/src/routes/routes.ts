@@ -5,6 +5,7 @@ import creativeRoutes from './creativeRoutes';
 import libraryRoutes from './libraryRoutes';
 import settingsRoutes from './settingsRoutes';
 import accountRoutes from './accountRoutes';
+import reportRoutes from './reportRoutes';
 
 /**
  * Route object definition
@@ -26,6 +27,7 @@ const routes = [
   ...libraryRoutes,
   ...settingsRoutes,
   ...accountRoutes,
+  ...reportRoutes,
 ];
 
 export default routes;

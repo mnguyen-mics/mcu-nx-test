@@ -162,10 +162,25 @@ const libraryMenu = {
   ],
 };
 
+const reportMenu = {
+  key: 'report',
+  iconType: 'library',
+  path: '/report',
+  translationId: 'REPORT',
+  subMenuItems: [
+    {
+      key: 'report.create',
+      path: '/report/create',
+      translationId: 'CREATE',
+    },
+  ],
+};
+
 export const itemDefinitions = [
   audienceMenu,
   campaignsMenu,
   automationsMenu,
   creativesMenu,
   libraryMenu,
+  reportMenu,
 ];

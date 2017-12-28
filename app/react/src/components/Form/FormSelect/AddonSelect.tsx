@@ -31,7 +31,10 @@ const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props =
 
   return (
     <FormSelect
-      input={input}
+      onBlur={input.onBlur as () => any}
+      onChange={input.onChange as () => any}
+      onFocus={input.onFocus as () => any}
+      value={input.value}
       style={{ display: 'flex', justifyContent: 'center', ...style }}
       disabled={disabled}
     >{optionsToDisplay}

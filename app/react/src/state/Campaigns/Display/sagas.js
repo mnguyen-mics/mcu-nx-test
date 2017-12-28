@@ -8,7 +8,7 @@ import {
   fetchDisplayCampaignsPerformanceReport
 } from './actions';
 
-import CampaignService from '../../../services/CampaignService';
+import CampaignService from '../../../services/CampaignService.ts';
 import ReportService from '../../../services/ReportService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';

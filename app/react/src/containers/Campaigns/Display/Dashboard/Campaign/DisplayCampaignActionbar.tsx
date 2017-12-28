@@ -6,8 +6,8 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import withTranslations, { TranslationProps } from '../../../../Helpers/withTranslations';
 import messages from '../messages';
-import { CampaignResource, CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
-import { AdInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
+import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
+import { AdInfoResource, DisplayCampaignInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
 import McsIcons from '../../../../../components/McsIcons';
@@ -23,7 +23,11 @@ import { ReportView } from '../../../../../models/ReportView';
 import McsMoment from '../../../../../utils/McsMoment';
 
 interface DisplayCampaignActionBarProps {
-  campaign: CampaignResource;
+  campaign: {
+    isLoadingList?: boolean;
+    isLoadingPerf?: boolean;
+    items: DisplayCampaignInfoResource;
+  };
   updateCampaign: (campaignId: string, object: {
     status: string,
     type: string,
@@ -361,7 +365,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
       intl: { formatMessage },
     } = this.props;
 
-    const handleArchiveGoal = (displayCampaignId: number) => {
+    const handleArchiveGoal = (displayCampaignId: string) => {
       Modal.confirm({
         title: formatMessage(modalMessages.archiveCampaignConfirm),
         content: formatMessage(modalMessages.archiveCampaignMessage),

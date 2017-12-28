@@ -43,8 +43,8 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
           return a.width - b.width;
         })
         .map(
-          adFormat => `${adFormat.width}x${adFormat.height}`,
-        );
+        adFormat => `${adFormat.width}x${adFormat.height}`,
+      );
       this.setState({ availableFormats: formats });
     });
   }
@@ -60,9 +60,9 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
 
     const buttonLabel = formatMessage(
       messages[
-        standardFormat
-          ? 'creativeCreationGeneralFormatFieldButtonCustom'
-          : 'creativeCreationGeneralFormatFieldButtonStandard'
+      standardFormat
+        ? 'creativeCreationGeneralFormatFieldButtonCustom'
+        : 'creativeCreationGeneralFormatFieldButtonStandard'
       ],
     );
 
@@ -105,32 +105,39 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
         <div className="creative-format">
           <div className="field">
             {standardFormat ? (
-              <FormSelect input={input} disabled={disabled}>
+              <FormSelect 
+                onBlur={input.onBlur as () => any}
+                onChange={input.onChange as () => any}
+                onFocus={input.onFocus as () => any}
+                value={input.value} 
+                disabled={disabled}>
+                
                 {availableFormats.map(option => (
                   <Option key={option} value={option}>
                     {option}
                   </Option>
                 ))}
+
               </FormSelect>
             ) : (
-              <div className="custom">
-                <div className="input">
-                  <Input
-                    value={width}
-                    onChange={onDimensionChange('width')}
-                    disabled={disabled}
-                  />
+                <div className="custom">
+                  <div className="input">
+                    <Input
+                      value={width}
+                      onChange={onDimensionChange('width')}
+                      disabled={disabled}
+                    />
+                  </div>
+                  <div className="separator">x</div>
+                  <div className="input">
+                    <Input
+                      value={height}
+                      onChange={onDimensionChange('height')}
+                      disabled={disabled}
+                    />
+                  </div>
                 </div>
-                <div className="separator">x</div>
-                <div className="input">
-                  <Input
-                    value={height}
-                    onChange={onDimensionChange('height')}
-                    disabled={disabled}
-                  />
-                </div>
-              </div>
-            )}
+              )}
           </div>
 
           <div className="button">
