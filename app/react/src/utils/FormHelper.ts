@@ -1,4 +1,5 @@
 import cuid from 'cuid';
+import { FormattedMessage } from 'react-intl';
 
 export interface FieldArrayModel<T = any> {
   key: string;
@@ -9,6 +10,16 @@ export interface FieldArrayModelWithMeta<T = any, Y = any> {
   key: string;
   model: T;
   meta: Y;
+}
+
+export interface ReduxFormChangeProps {
+  formChange: (fieldName: string, value: any) => void;
+}
+
+export interface McsFormSection {
+  id: string;
+  title: FormattedMessage.MessageDescriptor;
+  component: React.ReactNode;
 }
 
 // take the model id key if present
@@ -41,46 +52,3 @@ export function executeTasksInSequence(tasks: Task[]): Promise<any> {
     });
   }, Promise.resolve());
 }
-
-// export function buildEditableResource<T extends { id?: string }>(resource: T) {
-//   return {
-//     id: resource.id ? resource.id : generateFakeId(),
-//     resource,
-//   };
-// }
-
-// export function getModifiedResources<T>(
-//   modifiedArray: Array<EditableResource<T>>,
-//   initialArray: Array<EditableResource<T>>,
-// ): {
-//   createResources: T[];
-//   updateResources: T[];
-//   deleteResources: T[];
-// } {
-//   return {
-//     createResources: modifiedArray
-//       .filter(
-//         modifiedElement =>
-//           !initialArray.find(
-//             initialElement => initialElement.id === modifiedElement.id,
-//           ),
-//       )
-//       .map(el => el.resource),
-//     updateResources: initialArray
-//       .filter(
-//         initialElement =>
-//           !!modifiedArray.find(
-//             modifiedElement => modifiedElement.id === initialElement.id,
-//           ),
-//       )
-//       .map(el => el.resource),
-//     deleteResources: initialArray
-//       .filter(
-//         initialElement =>
-//           !modifiedArray.find(
-//             modifiedElement => modifiedElement.id === initialElement.id,
-//           ),
-//       )
-//       .map(el => el.resource),
-//   };
-// }

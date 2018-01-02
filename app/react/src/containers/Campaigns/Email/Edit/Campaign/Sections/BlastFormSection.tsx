@@ -13,14 +13,17 @@ import {
   RecordElement,
 } from '../../../../../../components/RelatedRecord';
 import messages from '../../messages';
-import { BlastFieldModel, EmailBlastFormData, INITIAL_EMAIL_BLAST_FORM_DATA } from '../../domain';
+import {
+  BlastFieldModel,
+  EmailBlastFormData,
+  INITIAL_EMAIL_BLAST_FORM_DATA,
+} from '../../domain';
 import EmailBlastForm, {
   EmailBlastFormProps,
 } from '../../Blast/EmailBlastForm';
+import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 
-export interface BlastFormSectionProps extends DrawableContentProps {
-  formChange: (fieldName: string, value: any) => void;
-}
+export interface BlastFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<BlastFieldModel> &
@@ -42,7 +45,7 @@ class BlastFormSection extends React.Component<Props> {
         } else {
           newFields.push(field);
         }
-      })
+      });
     } else {
       newFields.push(...fields.getAll());
       newFields.push({
@@ -73,8 +76,8 @@ class BlastFormSection extends React.Component<Props> {
       },
     ];
 
-    const handleSave = (formData: EmailBlastFormData) => 
-      this.updateBlasts(formData, field && field.key)
+    const handleSave = (formData: EmailBlastFormData) =>
+      this.updateBlasts(formData, field && field.key);
 
     const props: EmailBlastFormProps = {
       breadCrumbPaths,
@@ -94,7 +97,7 @@ class BlastFormSection extends React.Component<Props> {
   };
 
   getBlastRecords = () => {
-    const { fields } = this.props;
+    const { fields, intl: { formatMessage } } = this.props;
 
     const getBlastName = (blastField: BlastFieldModel) =>
       blastField.model.blast.blast_name;
@@ -103,7 +106,10 @@ class BlastFormSection extends React.Component<Props> {
       const sendDate = blastField.model.blast.send_date;
       if (sendDate) {
         return (
-          <span>Send Date: {moment(sendDate).format('DD/MM/YYYY HH:mm')}</span>
+          <span>
+            {formatMessage(messages.emailBlastEditorDatePickerLabelSentDate)}:{' '}
+            {moment(sendDate).format('DD/MM/YYYY HH:mm')}
+          </span>
         );
       }
       return null;

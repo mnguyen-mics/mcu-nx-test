@@ -8,14 +8,13 @@ import {
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
 import McsMoment from '../utils/McsMoment';
+import { PaginatedApiParam } from '../utils/ApiHelper';
 
-export interface GetSegmentsOption {
+export interface GetSegmentsOption extends PaginatedApiParam {
   name?: string;
   technical_name?: string;
   type?: AudienceSegmentType;
   evaluation_mode?: UserQueryEvaluationMode;
-  first_result?: number;
-  max_results?: number;
   with_source_datamarts?: boolean;
   campaign_id?: string;
   audience_partition_id?: string;

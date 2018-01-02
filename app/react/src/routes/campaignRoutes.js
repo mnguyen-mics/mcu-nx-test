@@ -10,11 +10,11 @@ import {
 
 import {
   EditAdGroupPage,
-} from '../containers/Campaigns/Display/Edit';
+} from '../containers/Campaigns/Display/Edit/AdGroup/index.ts';
 
 import {
   EditCampaignPage,
-} from '../containers/Campaigns/Display/Edit/Campaign/index.ts';
+} from '../containers/Campaigns/Display/Edit/index.ts';
 
 // import {
 //   CreateEmailPage,

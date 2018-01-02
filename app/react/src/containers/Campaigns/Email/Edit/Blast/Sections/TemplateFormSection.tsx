@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
+import cuid from 'cuid';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
 
@@ -18,11 +19,9 @@ import {
 } from '../../../../../../models/creative/CreativeResource';
 import messages from '../../messages';
 import { TemplateFieldModel } from '../../domain';
-import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
+import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 
-export interface TemplateFormSectionProps extends DrawableContentProps {
-  formChange: (fieldName: string, value: any) => void;
-}
+export interface TemplateFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<TemplateFieldModel> &
@@ -43,7 +42,7 @@ class TemplateFormSection extends React.Component<Props> {
     const addedCreatives = creatives
       .filter(s => !fieldCreativeIds.includes(s.id))
       .map(creative => ({
-        key: generateFakeId(),
+        key: cuid(),
         model: {
           email_template_id: creative.id,
         },

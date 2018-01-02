@@ -26,7 +26,7 @@ import { formatMetric } from '../../../../utils/MetricHelper.ts';
 
 import { getTableDataSource } from '../../../../state/Campaigns/Goal/selectors';
 
-import GoalService from '../../../../services/GoalService';
+import GoalService from '../../../../services/GoalService.ts';
 
 class GoalsTable extends Component {
   componentDidMount() {

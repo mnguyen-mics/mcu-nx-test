@@ -52,20 +52,22 @@ class EditBlastPage extends React.Component<Props, State> {
       blastId
         ? EmailCampaignFormService.loadBlast(campaignId, blastId)
         : Promise.resolve(INITIAL_EMAIL_BLAST_FORM_DATA),
-    ]).then(([campaignApiRes, blastFormData]) => {
-      this.setState(prevState => {
-        const newState: Partial<State> = {
-          ...prevState,
-          campaign: campaignApiRes.data,
-          loading: false,
-        };
-        newState.blastFormData = blastFormData;
-        return newState;
+    ])
+      .then(([campaignApiRes, blastFormData]) => {
+        this.setState(prevState => {
+          const newState: Partial<State> = {
+            ...prevState,
+            campaign: campaignApiRes.data,
+            loading: false,
+          };
+          if (blastFormData) newState.blastFormData = blastFormData;
+          return newState;
+        });
+      })
+      .catch(err => {
+        this.setState({ loading: false });
+        this.props.notifyError(err);
       });
-    }).catch(err => {
-      this.setState({ loading:false });
-      this.props.notifyError(err);
-    });
   }
 
   // TODO create a generic component ErrorBoundary

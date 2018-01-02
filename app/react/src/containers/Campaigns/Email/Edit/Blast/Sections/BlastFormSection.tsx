@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { Field, GenericField } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import { FormSection } from '../../../../../../components/Form';
+import { FormSection, FormInputField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
-import FormInput, { FormInputProps } from '../../../../../../components/Form/FormInput';
+import FormInput from '../../../../../../components/Form/FormInput';
 import messages from '../../messages';
-
-const FormInputField = Field as new() => GenericField<FormInputProps>;
 
 class BlastFormSection extends React.Component<
   InjectedIntlProps & ValidatorProps

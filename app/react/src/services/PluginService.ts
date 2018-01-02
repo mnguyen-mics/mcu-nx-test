@@ -12,6 +12,10 @@ const pluginService = {
     const endpoint = `plugins/${pluginId}/versions`;
     return ApiService.getRequest(endpoint, params);
   },
+  getPluginVersion(pluginId: string, versionId: string): Promise<DataResponse<PluginInterface>> {
+    const endpoint = `plugins/${pluginId}/versions/${versionId}`;
+    return ApiService.getRequest(endpoint);
+  },
   getPluginVersionProperty(pluginId: string, pluginVersionId: string, params: object = {}): Promise<PropertyResourceShape[]> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties`;
     return ApiService.getRequest(endpoint, params).then((res: DataListResponse<PropertyResourceShape>) => res.data);

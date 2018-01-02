@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { isSubmitting, submit, FormAction } from 'redux-form';
+import { connect, DispatchProp } from 'react-redux';
+import { isSubmitting, submit } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'antd';
 import { ButtonType } from 'antd/lib/button/button';
@@ -17,14 +17,12 @@ interface EditLayoutActionbarProps {
     name: string,
     url?: string,
   }>;
-  dispatch: Dispatch<FormAction>;
   formId: string;
   message: {
     id: string;
     defaultMessage: string;
   };
   onClose: () => void;
-  submitting: boolean;
   isCreativetypePicker: boolean;
   rest?: any; // ???
 }
@@ -36,9 +34,15 @@ interface SubmittingProps {
   type: ButtonType;
 }
 
-class EditLayoutActionbar extends React.Component<EditLayoutActionbarProps> {
+interface MapStateToProps {
+  submitting: boolean;
+}
 
-  static defaultProps: Partial<EditLayoutActionbarProps> = {
+type Props = EditLayoutActionbarProps & DispatchProp<any> & MapStateToProps
+
+class EditLayoutActionbar extends React.Component<Props> {
+
+  static defaultProps: Partial<Props> = {
     submitting: false,
     isCreativetypePicker: false,
   };
@@ -59,7 +63,7 @@ class EditLayoutActionbar extends React.Component<EditLayoutActionbarProps> {
     const submitButtonProps: SubmittingProps = {
       disabled: submitting,
       htmlType: 'submit',
-      onClick: () => dispatch(submit(formId)),
+      onClick: () => dispatch!(submit(formId)),
       type: 'primary',
     };
     return (

@@ -108,9 +108,9 @@ export type AuditStatus =
   'AUDIT_FAILURE' |
   'AUDIT_SUCCESS';
 
-export interface AuditResource {
+export interface AuditStatusResource {
   display_network: string;
-  date: string;
+  date: number;
   status: AuditStatus;
   feedback: string;
 }

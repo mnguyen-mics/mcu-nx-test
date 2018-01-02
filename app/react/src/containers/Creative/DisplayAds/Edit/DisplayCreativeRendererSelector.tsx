@@ -25,14 +25,13 @@ const nativeQuantumAdRendererId = '1047';
 const imageSkinsAdRendererId = '1026';
 
 export interface DisplayCreativeRendererSelectorProps {
-  onSelect: (id: string) => void;
+  onSelect: (adRendererId: string) => void;
   close: () => void;
 }
 
-type JoinedProps = DisplayCreativeRendererSelectorProps & InjectedIntlProps;
+type Props = DisplayCreativeRendererSelectorProps & InjectedIntlProps;
 
-class DisplayCreativeRendererSelector extends React.Component<JoinedProps> {
-
+class DisplayCreativeRendererSelector extends React.Component<Props> {
   renderNativeSubmenu = () => {
     const { onSelect, intl: { formatMessage } } = this.props;
 
@@ -59,15 +58,17 @@ class DisplayCreativeRendererSelector extends React.Component<JoinedProps> {
       formId: 'typePickerForm',
       // message: messages.saveCreative,
       onClose: this.props.close,
-      paths: [{
-        name: messages.creativeCreationBreadCrumb,
-      }],
+      paths: [
+        {
+          name: messages.creativeCreationBreadCrumb,
+        },
+      ],
     };
 
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-        <FormLayoutActionbar {...actionBarProps} />
+          <FormLayoutActionbar {...actionBarProps} />
           <Layout>
             <Content className="mcs-content-container mcs-form-container text-center">
               <FormTitle

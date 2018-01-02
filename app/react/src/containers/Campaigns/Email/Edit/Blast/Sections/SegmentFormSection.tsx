@@ -32,10 +32,10 @@ import {
 } from '../../../../../../utils/MetricHelper';
 import messages from '../../messages';
 import McsMoment from '../../../../../../utils/McsMoment';
+import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 
-export interface SegmentFormSectionProps extends DrawableContentProps {
+export interface SegmentFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {
   formName: string;
-  formChange: (fieldName: string, value: any) => void;
 }
 
 type Props = MapStateProps &

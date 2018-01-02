@@ -19,7 +19,7 @@ interface State {
   error?: Error;
 }
 
-class CreativeCard<T extends GenericCreativeResource & { id: string }> extends React.Component<CreativeCardProps<T>, State> {
+class CreativeCard<T extends GenericCreativeResource & { id?: string }> extends React.Component<CreativeCardProps<T>, State> {
 
   cancelablePromise: CancelablePromise<DataResponse<CreativeScreenshotResource>>;
 
@@ -28,13 +28,13 @@ class CreativeCard<T extends GenericCreativeResource & { id: string }> extends R
     this.state = { creativeScreenshot: null };
   }
 
-  componentDidMount() {
-    this.fetchData(this.props.creative);
+  componentDidMount() {    
+    this.fetchScreenshotIfNeeded(this.props.creative);
   }
 
   componentWillReceiveProps(nextProps: CreativeCardProps<T>) {
     if (this.props.creative.id !== nextProps.creative.id) {
-      this.fetchData(nextProps.creative);
+      this.fetchScreenshotIfNeeded(nextProps.creative);
     }
   }
 
@@ -42,14 +42,16 @@ class CreativeCard<T extends GenericCreativeResource & { id: string }> extends R
     this.cancelablePromise.cancel();
   }
 
-  fetchData = (creative: T) => {
-    this.cancelablePromise = makeCancelable(CreativeService.getCreativeScreenshotStatus(creative.id));
-
-    this.cancelablePromise.promise.then(response => {
-      this.setState({ creativeScreenshot: response.data });
-    }).catch(err => {
-      this.setState({ error: err });
-    });
+  fetchScreenshotIfNeeded = (creative: T) => {
+    if (creative.id) {
+      this.cancelablePromise = makeCancelable(CreativeService.getCreativeScreenshotStatus(creative.id));
+  
+      this.cancelablePromise.promise.then(response => {
+        this.setState({ creativeScreenshot: response.data });
+      }).catch(err => {
+        this.setState({ error: err });
+      });
+    }
   }
 
   renderScreenshot = () => {

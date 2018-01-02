@@ -7,10 +7,10 @@ import FormSelect from './FormSelect';
 
 const { Option } = Select;
 
-interface FormSelectAddonProps {
+export interface FormSelectAddonProps {
   options: OptionProps[];
-  style: React.CSSProperties;
-  disabled: boolean;
+  style?: React.CSSProperties;
+  disabled?: boolean;
 }
 
 const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props => {

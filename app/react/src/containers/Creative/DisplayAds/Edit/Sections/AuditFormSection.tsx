@@ -3,18 +3,15 @@ import * as React from 'react';
 import { Card } from '../../../../../components/Card';
 import { FormSection } from '../../../../../components/Form/index';
 import messages from '../messages';
-import AuditComponent from '../../Common/AuditComponent';
-import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import { AuditComponentContainer } from '../../Audit';
 
 interface AuditFormSectionProps {
-  creative: DisplayAdResource;
-  mode?: string;
-  refreshCreative: (organisationId: string, creativeId: string) => void;
+  creativeId: string;
 }
 
 class AuditFormSection extends React.Component<AuditFormSectionProps> {
   render() {
-    const { creative } = this.props;
+    const { creativeId } = this.props;
 
     return (
       <div>
@@ -23,10 +20,7 @@ class AuditFormSection extends React.Component<AuditFormSectionProps> {
           subtitle={messages.creativeSectionAuditSubTitle}
         />
         <Card>
-          <AuditComponent
-          creative={creative}
-          // onAuditChange={refreshCreative}
-          mode="card" />
+          <AuditComponentContainer creativeId={creativeId} />
         </Card>
       </div>
     );

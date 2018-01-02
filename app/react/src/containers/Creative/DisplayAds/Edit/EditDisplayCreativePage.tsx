@@ -1,111 +1,69 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { RouteComponentProps } from 'react-router';
-import { ConfigProps, Omit } from 'redux-form';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 import * as actions from '../../../../state/Notifications/actions';
-import { withMcsRouter } from '../../../Helpers';
-import { PropertyResourceShape } from '../../../../models/plugin';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
-import {  DisplayCreativeCreator } from './index';
-import Loading from '../../../../components/Loading';
-import { AdRendererProps } from '../../../../models/campaign/display/AdResource';
+import { DisplayCreativeCreator } from './index';
 import messages from './messages';
-import { DrawableContentProps } from '../../../../components/Drawer/index';
-import { DisplayCreativeFormData } from './domain';
+import {
+  DisplayCreativeFormData,
+  EditDisplayCreativeRouteMatchParams,
+} from './domain';
+import DisplayCreativeFormService from './DisplayCreativeFormService';
 
-interface EditDisplayCreativePageProps extends DrawableContentProps,
-Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
-
+interface MapStateProps {
+  notifyError: (err: any) => void;
 }
 
-interface EditDisplayCreativePageState {
-  adRenderer: AdRendererProps;
-  isLoading: boolean;
-  rendererProperties: PropertyResourceShape[];
-  formats: string[];
-}
+type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> & MapStateProps;
 
-interface RouteProps {
-  organisationId: string;
-  creativeId?: string;
-}
-
-type JoinedProps = EditDisplayCreativePageProps &
-  InjectedIntlProps &
-  RouteComponentProps<RouteProps>;
-
-class EditDisplayCreativePage extends React.Component<
-  JoinedProps,
-  EditDisplayCreativePageState
-> {
-  constructor(props: JoinedProps) {
-    super(props);
-    this.state = {
-      adRenderer: {
-        id: '',
-        version_id: '',
-        artifact_id: '',
-        group_id: '',
-      },
-      isLoading: false,
-      rendererProperties: [],
-      formats: [],
-    };
-  }
-
-  onClose = () => {
+class EditDisplayCreativePage extends React.Component<Props> {
+  redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     history.push(`/v2/o/${organisationId}/creatives/display`);
   };
 
   onSave = (creativeData: DisplayCreativeFormData) => {
-		const { history, match: { params: { organisationId } } } = this.props;
-		// if creativeId -> update sinon create
-    // updateDisplayCreative(organisationId, creative, properties);
-    // updateDisplayCreative(organisationId, creative);
-    history.push(`/v2/o/${organisationId}/creatives/display`);
+    const { match: { params: { organisationId } } } = this.props;
+    DisplayCreativeFormService.saveDisplayCreative(
+      organisationId,
+      creativeData,
+    ).then(() => {
+      this.redirect();
+    }).catch(err => this.props.notifyError(err));
   };
 
   render() {
-		const { match: { params: { creativeId } } } = this.props;
-		
-    const { isLoading } = this.state;
-    
-    const actionBarButtonText = messages.creativeCreationSaveButton;
-  
-    const breadCrumbPaths = [{
-      name: creativeId ? messages.creativeEditionBreadCrumb : messages.creativeCreationBreadCrumb,
-    }];
+    const { match: { params: { creativeId } } } = this.props;
 
-    return isLoading ? (
-			<div style={{ display: 'flex', flex: 1 }}>
-				<Loading className="loading-full-screen" />
-      </div>
-    ) : creativeId ? (
-      <DisplayCreativeFormLoader
-        close={this.onClose}
-        save={this.onSave}
-        creativeId={creativeId}
-        actionBarButtonText={actionBarButtonText}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
-        breadCrumbPaths={breadCrumbPaths}
-      />
-    ) : <DisplayCreativeCreator
-          close={this.onClose}
-          save={this.onSave}
-          openNextDrawer={this.props.openNextDrawer}
-          closeNextDrawer={this.props.closeNextDrawer}
-          actionBarButtonText={actionBarButtonText}
-        /> ;
+    const actionBarButtonText = messages.creativeCreationSaveButton;
+
+    const breadCrumbPaths = [
+      {
+        name: creativeId
+          ? messages.creativeEditionBreadCrumb
+          : messages.creativeCreationBreadCrumb,
+      },
+    ];
+
+    const props = {
+      close: this.redirect,
+      onSubmit: this.onSave,
+      actionBarButtonText: actionBarButtonText,
+      breadCrumbPaths: breadCrumbPaths,
+    };
+
+    return creativeId ? (
+      <DisplayCreativeFormLoader {...props} creativeId={creativeId} />
+    ) : (
+      <DisplayCreativeCreator {...props} />
+    );
   }
 }
 
-export default compose<JoinedProps, EditDisplayCreativePageProps>(
-  withMcsRouter,
-  injectIntl,
+export default compose<Props, {}>(
+  withRouter,
   connect(undefined, { notifyError: actions.notifyError }),
 )(EditDisplayCreativePage);

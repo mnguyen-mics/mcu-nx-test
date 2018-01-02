@@ -8,7 +8,7 @@ import {
   Field,
   ConfigProps,
 } from 'redux-form';
-import { Layout } from 'antd';
+import { Layout, message } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 
 import {
@@ -51,6 +51,15 @@ type Props = InjectedFormProps<EmailCampaignFormData, EmailCampaignFormProps> &
 const FORM_ID = 'emailCampaignForm';
 
 class EmailCampaignForm extends React.Component<Props> {
+
+  componentWillReceiveProps(nextProps: Props) {
+    // const { submitFailed } = this.props;
+    const { submitFailed: nextSubmitFailed } = nextProps;
+    if (nextSubmitFailed) {
+      message.error('submitFailed')
+    }
+  }
+
   render() {
     const {
       breadCrumbPaths,
@@ -59,7 +68,7 @@ class EmailCampaignForm extends React.Component<Props> {
       handleSubmit,
       save,
       close,
-      change,
+      change,    
     } = this.props;
 
     const sections = {

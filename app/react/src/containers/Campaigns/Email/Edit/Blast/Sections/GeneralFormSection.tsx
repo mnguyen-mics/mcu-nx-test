@@ -1,24 +1,18 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { Field, GenericField } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { FormSection } from '../../../../../../components/Form';
+import { FormSection, FormInputField, FormDatePickerField, FormDatePicker, FormSelectField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
-import FormInput, { FormInputProps } from '../../../../../../components/Form/FormInput';
-import FormDatePicker, { FormDatePickerProps } from '../../../../../../components/Form/FormDatePicker';
-import DefaultSelect, { DefaultSelectProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 import messages from '../../messages';
 import { ConsentResource } from '../../../../../../models/consent/ConsentResource';
 import ConsentService from '../../../../../../services/ConsentService';
 import { EditEmailBlastRouteMatchParam } from '../../domain';
-
-const FormInputField = Field as new() => GenericField<FormInputProps>;
-const FormDatePickerField = Field as new() => GenericField<FormDatePickerProps>;
-const FormSelectField = Field as new() => GenericField<DefaultSelectProps>;
+import FormInput from '../../../../../../components/Form/FormInput';
+import DefaultSelect from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
 interface State {
   consents: ConsentResource[];

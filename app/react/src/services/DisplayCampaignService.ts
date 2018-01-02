@@ -1,25 +1,23 @@
-import moment from 'moment';
 import { InventorySourceResource } from './../models/campaign/display/InventorySourceResource';
-import { AdGroupResponseList, AdGroupResource } from './../models/campaign/display/AdGroupResource';
+import { AdGroupResource } from './../models/campaign/display/AdGroupResource';
 import { DisplayCampaignResource } from './../models/campaign/display/DisplayCampaignResource';
-import { CampaignResource } from '../models/campaign/CampaignResource';
 import { DisplayCampaignInfoResource } from './../models/campaign/display/DisplayCampaignInfoResource';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
-import { filterEmptyValues } from '../utils/ReduxFormHelper';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
 import { AdResource } from '../models/campaign/display/AdResource';
 import { GoalSelectionResource } from '../models/goal/GoalSelectionResource';
 import { PlacementListSelectionResource } from '../models/placement/PlacementListResource';
+import { LocationSelectionResource, LocationSelectionCreateRequest } from '../containers/Campaigns/Display/Edit/AdGroup/sections/Location/domain';
+import { GoalSelectionCreateRequest } from '../models/goal/index';
 
 const DisplayCampaignService = {
 
   /* CAMPAIGN SERVICES */
   getCampaignDisplay(
     campaignId: string,
-    params: object = {},
   ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/${campaignId}`;
-    return ApiService.getRequest(endpoint, params);
+    return ApiService.getRequest(endpoint);
   },
 
   getCampaignDisplayViewDeep(
@@ -39,52 +37,39 @@ const DisplayCampaignService = {
 
   createCampaign(
     organisationId: string,
-    body: object,
-  ): Promise<CampaignResource> {
+    body: Partial<DisplayCampaignResource>,
+  ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, body);
   },
 
   updateCampaign(
     campaignId: string,
-    body: object,
-  ): Promise<CampaignResource> {
+    body: Partial<DisplayCampaignResource>,
+  ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/${campaignId}`;
     return ApiService.putRequest(endpoint, body);
   },
 
   deleteCampaign(
     campaignId: string,
-    body: object,
-  ): Promise<CampaignResource> {
+  ): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}`;
-    return ApiService.deleteRequest(endpoint, body);
+    return ApiService.deleteRequest(endpoint);
   },
 
   /* AD GROUP SERVICES */
   getAdGroup(
     campaignId: string,
     adGroupId: string,
-  ): Promise<AdGroupResource> {
+  ): Promise<DataResponse<AdGroupResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
-    return ApiService.getRequest(endpoint)
-      .then(({ data }) => (
-        filterEmptyValues(data).reduce((acc, key) => {
-          let value = data[key];
-
-          if (key === 'start_date') {
-            value = moment(value);
-          } else if (key === 'end_date') {
-            value = moment(value);
-          }
-          return { ...acc, [key]: value };
-        }, {})
-      )) as Promise<AdGroupResource>;
+    return ApiService.getRequest(endpoint);
   },
 
   getAdGroups(
     campaignId: string,
-  ): Promise<AdGroupResponseList> {
+  ): Promise<DataListResponse<AdGroupResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups`;
     return ApiService.getRequest(endpoint);
   },
@@ -92,7 +77,7 @@ const DisplayCampaignService = {
   createAdGroup(
     campaignId: string,
     body: object,
-  ): Promise<AdGroupResource> {
+  ): Promise<DataResponse<AdGroupResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups`;
     return ApiService.postRequest(endpoint, body);
   },
@@ -101,7 +86,7 @@ const DisplayCampaignService = {
     campaignId: string,
     adGroupId: string,
     body: object,
-  ): Promise<AdGroupResource> {
+  ): Promise<DataResponse<AdGroupResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
     return ApiService.putRequest(endpoint, body);
   },
@@ -118,9 +103,9 @@ const DisplayCampaignService = {
   getAudienceSegments(
     campaignId: string,
     adGroupId: string,
-  ): Promise<AudienceSegmentSelectionResource[]> {
+  ): Promise<DataListResponse<AudienceSegmentSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-    return ApiService.getRequest(endpoint).then((res: DataResponse<AudienceSegmentSelectionResource[]>) => res.data);
+    return ApiService.getRequest(endpoint);
   },
 
   // TODO delete, use getAudienceSegments instead
@@ -143,32 +128,13 @@ const DisplayCampaignService = {
     }));
   },
 
-  createAudience(
-    campaignId: string,
-    adGroupId: string,
-    body: object,
-  ): Promise<AudienceSegmentSelectionResource> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-    return ApiService.postRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
-  },
-
   createAudienceSegment(
     campaignId: string,
     adGroupId: string,
     body: Partial<AudienceSegmentSelectionResource>,
-  ) {
+  ): Promise<DataResponse<AudienceSegmentSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
-    return ApiService.postRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
-  },
-
-  updateAudience(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-    body: object,
-  ): Promise<AudienceSegmentSelectionResource> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
-    return ApiService.putRequest(endpoint, body);
+    return ApiService.postRequest(endpoint, body);
   },
 
   updateAudienceSegment(
@@ -176,16 +142,16 @@ const DisplayCampaignService = {
     adGroupId: string,
     audienceSegmentId: string,
     body: Partial<AudienceSegmentSelectionResource>,
-   ): Promise<AudienceSegmentSelectionResource> {
+   ): Promise<DataResponse<AudienceSegmentSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${audienceSegmentId}`;
-    return ApiService.putRequest(endpoint, body).then((res: DataResponse<AudienceSegmentSelectionResource>) => res.data);
+    return ApiService.putRequest(endpoint, body);
   },
 
-  deleteAudience(
+  deleteAudienceSegment(
       campaignId: string,
       adGroupId: string,
       id: string,
-    ): Promise<AudienceSegmentSelectionResource> {
+    ): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
     return ApiService.deleteRequest(endpoint);
   },
@@ -263,17 +229,16 @@ const DisplayCampaignService = {
   },
 
   /* GOAL SERVICES */
-  getGoal(
+  getGoals(
     campaignId: string,
-    options: object = {},
   ): Promise<DataListResponse<GoalSelectionResource>> {
     const endpoint = `campaigns/${campaignId}/goal_selections`;
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest(endpoint);
   },
 
   createGoal(
     campaignId: string,
-    body: object,
+    body: Partial<GoalSelectionCreateRequest>,
   ): Promise<GoalSelectionResource> {
     const endpoint = `campaigns/${campaignId}/goal_selections`;
     return ApiService.postRequest(endpoint, body);
@@ -282,7 +247,7 @@ const DisplayCampaignService = {
   updateGoal(
     campaignId: string,
     id: string,
-    body: object,
+    body: Partial<GoalSelectionCreateRequest>,
   ): Promise<GoalSelectionResource> {
     const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
     return ApiService.putRequest(endpoint, body);
@@ -291,10 +256,9 @@ const DisplayCampaignService = {
   deleteGoal(
     campaignId: string,
     id: string,
-    body: object,
-  ): Promise<GoalSelectionResource> {
+  ): Promise<any> {
     const endpoint = `campaigns/${campaignId}/goal_selections/${id}`;
-    return ApiService.deleteRequest(endpoint, body);
+    return ApiService.deleteRequest(endpoint);
   },
 
   /* LOCATION SERVICES */
@@ -302,8 +266,8 @@ const DisplayCampaignService = {
   createLocation(
     campaignId: string,
     adGroupId: string,
-    body: object,
-  ) {
+    body: Partial<LocationSelectionCreateRequest>,
+  ): Promise<DataResponse<LocationSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
     return ApiService.postRequest(endpoint, body);
   },
@@ -312,14 +276,14 @@ const DisplayCampaignService = {
     campaignId: string,
     adGroupId: string,
     id: string,
-  ) {
+  ): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
     return ApiService.deleteRequest(endpoint);
   },
   getLocations(
     campaignId: string,
     adGroupId: string,
-  ) {
+  ): Promise<DataListResponse<LocationSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations`;
     return ApiService.getRequest(endpoint);
   },
@@ -327,8 +291,8 @@ const DisplayCampaignService = {
     campaignId: string,
     adGroupId: string,
     id: string,
-    body: object,
-  ) {
+    body: Partial<LocationSelectionCreateRequest>,
+  ): Promise<DataResponse<LocationSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
     return ApiService.putRequest(endpoint, body);
   },
@@ -337,10 +301,9 @@ const DisplayCampaignService = {
   getPlacementLists(
     campaignId: string,
     adGroupId: string,
-    options: object = {},
   ): Promise<DataListResponse<PlacementListSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest(endpoint);
   },
 
   createPlacementList(

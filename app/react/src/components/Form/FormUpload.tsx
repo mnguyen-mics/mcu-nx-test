@@ -18,11 +18,6 @@ export interface FormUploadProps {
 type JoinedProps = FormUploadProps & WrappedFieldProps & InjectedIntlProps;
 
 class FormUpload extends React.Component<JoinedProps> {
-  static defaultprops = {
-    formItemProps: {},
-    inputProps: {},
-    helpToolTipProps: {},
-  };
 
   state = {
     fileName: '',

@@ -1,33 +1,30 @@
 import * as React from 'react';
 import { FormSection } from '../../../../../components/Form';
 import messages from '../messages';
-import { PropertyResourceShape } from '../../../../../models/plugin/index';
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import {
+  DisplayCreativeFormData,
+  DISPLAY_CREATIVE_FORM,
+  isDisplayAdResource,
+} from '../domain';
+import { connect } from 'react-redux';
+import { getFormInitialValues } from 'redux-form';
 
-interface PreviewFormSectionProps {
-  creative: DisplayAdResource;
-  rendererProperties: PropertyResourceShape[];
+interface MapStateProps {
+  initialValue: DisplayCreativeFormData;
 }
 
 const configuration = {
   ADS_PREVIEW_URL: '//ads.mediarithmics.com/ads/render',
 };
 
-class PreviewFormSection extends React.Component<PreviewFormSectionProps> {
-
-	renderIframeCreative = (creative: DisplayAdResource) => {
-
-    const {
-      rendererProperties,
-    } = this.props;
+class PreviewFormSection extends React.Component<MapStateProps> {
+  renderIframeCreative = (creative: DisplayAdResource) => {
+    const { initialValue: { properties: rendererProperties } } = this.props;
 
     let tagType = 'iframe';
 
-    const foundTagType = rendererProperties.find(
-      (prop: PropertyResourceShape) => {
-        return prop.technical_name === 'tag_type';
-      },
-    );
+    const foundTagType = rendererProperties.tag_type;
 
     if (foundTagType) {
       switch (foundTagType.property_type) {
@@ -55,18 +52,20 @@ class PreviewFormSection extends React.Component<PreviewFormSectionProps> {
         )}`;
     }
     return previewUrl;
-	};
-	
-	formatDimension = (format: string) => {
+  };
+
+  formatDimension = (format: string) => {
     return {
       width: parseInt(format.split('x')[0], 10),
       height: parseInt(format.split('x')[1], 10),
     };
-	};
-	
-  render() {
+  };
 
-		const { creative } = this.props;
+  render() {
+    const { initialValue: { creative } } = this.props;
+
+    if (!isDisplayAdResource(creative)) return null;
+
     return (
       <div>
         <FormSection
@@ -86,4 +85,8 @@ class PreviewFormSection extends React.Component<PreviewFormSectionProps> {
   }
 }
 
-export default PreviewFormSection;
+export default connect((state: any) => ({
+  initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
+    state,
+  ) as DisplayCreativeFormData,
+}))(PreviewFormSection);

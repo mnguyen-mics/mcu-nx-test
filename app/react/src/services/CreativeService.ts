@@ -8,10 +8,11 @@ import {
   EmailTemplateResource,
   AdFormatResource,
   AdType,
-  AuditResource,
+  AuditStatusResource,
   CreativeAuditAction,
   CreativeScreenshotResource,
 } from '../models/creative/CreativeResource';
+import { PropertyResourceShape } from '../models/plugin/index';
 
 export interface GetCreativesOptions {
   creative_type?: CreativeType;
@@ -161,12 +162,12 @@ const CreativeService = {
 
   getCreativeRendererProperties(
     creativeId: string,
-  ): Promise<DataListResponse<any>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `display_ads/${creativeId}/renderer_properties`;
     return ApiService.getRequest(endpoint);
   },
 
-  getAuditStatus(creativeId: string): Promise<DataResponse<AuditResource>> {
+  getAuditStatus(creativeId: string): Promise<DataListResponse<AuditStatusResource>> {
     const endpoint = `display_ads/${creativeId}/audits`;
     return ApiService.getRequest(endpoint);
   },

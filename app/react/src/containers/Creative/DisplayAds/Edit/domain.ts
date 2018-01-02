@@ -1,18 +1,19 @@
 import { PropertyResourceShape } from './../../../../models/plugin/index';
 import { DisplayAdCreateRequest } from './../../../../models/creative/CreativeResource';
-import { DisplayAdResource } from "../../../../models/creative/CreativeResource";
+import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
+import { PluginInterface } from '../../../../models/Plugins';
 
-type DisplayAdShape = DisplayAdResource | Partial<DisplayAdCreateRequest>;
+export type DisplayAdShape =
+  | DisplayAdResource
+  | Partial<DisplayAdCreateRequest>;
+
+export const DISPLAY_CREATIVE_FORM = 'displayCreativeForm';
 
 export interface DisplayCreativeFormData {
   creative: DisplayAdShape;
-  rendererProperties: PropertyResourceShape[];
+  rendererPlugin: PluginInterface;
+  properties:  { [technicalName: string]: PropertyResourceShape }
 }
-
-export const INITIAL_DISPLAY_CREATIVE_FORM_DATA: DisplayCreativeFormData = {
-  creative: {},
-  rendererProperties: []
-};
 
 export interface EditDisplayCreativeRouteMatchParams {
   organisationId: string;

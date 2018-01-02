@@ -6,21 +6,20 @@ import { Form } from '../../components/index';
 import { FieldCtor } from '../../components/Form';
 import { FormInputProps } from '../../components/Form/FormInput';
 import { FormAdLayout, FormStyleSheet, FormDataFile } from './ConnectedFields';
-import { FieldValidatorsProps, ValidatorProps } from '../../components/Form/withValidators';
+import { ValidatorProps } from '../../components/Form/withValidators';
 import { PropertyResourceShape } from '../../models/plugin';
 
 const { FormInput, FormBoolean, FormUpload, withValidators } = Form;
 
-interface PluginFieldGeneratorProps {
-  fieldValidators?: FieldValidatorsProps;
+interface PluginFieldGeneratorProps {  
   definition: PropertyResourceShape;
   disabled?: boolean;
   organisationId: string;
   noUploadModal?: () => void; // check type
-  rendererVersionId: string;
+  pluginVersionId: string;
 }
 
-type JoinedProps = PluginFieldGeneratorProps & ValidatorProps & FieldValidatorsProps;
+type JoinedProps = PluginFieldGeneratorProps & ValidatorProps;
 
 interface AdditionalInputProps {
   buttonText?: string;
@@ -28,19 +27,12 @@ interface AdditionalInputProps {
   options?: any; // type
   noUploadModal?: () => void;
   rows?: number;
-  textArea?: boolean;
   disabled?: boolean;
 }
 
 type CustomInputProps = FormInputProps & AdditionalInputProps;
 
 class PluginFieldGenerator extends React.Component<JoinedProps> {
-
-  // static defaultProps: Partial<PluginFieldGeneratorProps> = {
-  //   noUploadModal: undefined,
-  //   disabled: false,
-  //   rendererVersionId: '',
-  // };
 
   technicalNameToName = (technicalName: string) => {
     return technicalName.split('_').map((s) => {
@@ -78,14 +70,13 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
         // defaultValue: fieldDefinition.value.value,
         ...additionalInputProps,
       },
+      options,
       buttonText: additionalInputProps.buttonText ? additionalInputProps.buttonText : undefined,
       accept: additionalInputProps.accept ? additionalInputProps.accept : undefined,
-      options: {
-        ...options,
-      },
       helpToolTipProps: {},
       noUploadModal: additionalInputProps.noUploadModal ? additionalInputProps.noUploadModal : undefined,
-      ...additionalInputProps
+      ...additionalInputProps,
+      ...options,
     };
 
     return (
@@ -134,7 +125,8 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value.value`,
           fieldDefinition,
           [],
-          { rows: 4, textArea: true },
+          { rows: 4 },
+          { textArea: true }
         );
       case 'STYLE_SHEET':
         return this.renderFieldBasedOnConfig(
@@ -143,7 +135,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           fieldDefinition,
           [],
           {},
-          { disabled: this.props.disabled, pluginVersionId: this.props.rendererVersionId, organisationId: organisationId },
+          { disabled: this.props.disabled, pluginVersionId: this.props.pluginVersionId, organisationId: organisationId },
         );
       case 'AD_LAYOUT':
         return this.renderFieldBasedOnConfig(
@@ -152,7 +144,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           fieldDefinition,
           [],
           {},
-          { disabled: this.props.disabled, pluginVersionId: this.props.rendererVersionId, organisationId: organisationId },
+          { disabled: this.props.disabled, pluginVersionId: this.props.pluginVersionId, organisationId: organisationId },
         );
       case 'BOOLEAN':
         return this.renderFieldBasedOnConfig(

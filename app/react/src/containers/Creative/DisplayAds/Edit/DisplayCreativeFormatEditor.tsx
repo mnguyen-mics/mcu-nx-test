@@ -3,13 +3,13 @@ import { compose } from 'recompose';
 import { Input, Select } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper';
 import ButtonStyleless from '../../../../components/ButtonStyleless';
 import FormSelect from '../../../../components/Form/FormSelect/FormSelect';
 import CreativeService from '../../../../services/CreativeService';
 import messages from '../Edit/messages';
-import { withRouter, RouteComponentProps } from 'react-router';
 
 const Option = Select.Option;
 

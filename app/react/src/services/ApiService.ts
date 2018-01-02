@@ -21,6 +21,14 @@ export interface DataListResponse<T> extends ApiResponse {
   total?: number;
 }
 
+export function extractData<T>(dataResponse: DataResponse<T>) {
+  return dataResponse.data;
+}
+
+export function extractDataList<T>(dataResponse: DataListResponse<T>) {
+  return dataResponse.data;
+}
+
 interface ApiOptions {
   localUrl?: string;
   adminApi?: object;

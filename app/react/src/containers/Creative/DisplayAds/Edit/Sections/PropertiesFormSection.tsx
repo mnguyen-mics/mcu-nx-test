@@ -2,41 +2,31 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Modal } from 'antd';
+import { connect } from 'react-redux';
+import { getFormInitialValues } from 'redux-form';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import messages from '../messages';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { FormSection } from '../../../../../components/Form/index';
-import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import { PluginFieldGenerator } from '../../../../Plugin';
-import { PropertyResourceShape } from '../../../../../models/plugin/index';
+import {
+  EditDisplayCreativeRouteMatchParams,
+  DisplayCreativeFormData,
+  DISPLAY_CREATIVE_FORM,
+  isDisplayAdResource,
+} from '../domain';
+import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 
-interface PropertiesFormSectionProps {
-  rendererProperties: PropertyResourceShape[],
-  rendererVersionId: string;
-  creative?: DisplayAdResource;
+interface MapStateProps {
+  initialValue: DisplayCreativeFormData;
 }
 
-type JoinedProps = PropertiesFormSectionProps &
-InjectedIntlProps & 
-RouteComponentProps<{ organisationId: string }>;
+type Props = MapStateProps &
+  InjectedIntlProps &
+  RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
-interface PropertiesFormSectionState {
-  isLoading: boolean;
-}
-
-class PropertiesFormSection extends React.Component<
-  JoinedProps,
-  PropertiesFormSectionState
-> {
-
-	constructor(props: JoinedProps) {
-		super(props);
-		this.state = {
-			isLoading: false,
-		};
-  }
-  
+class PropertiesFormSection extends React.Component<Props> {
   noUploadModal = (creative: DisplayAdResource) => () => {
     const { intl: { formatMessage } } = this.props;
     Modal.warning({
@@ -52,44 +42,60 @@ class PropertiesFormSection extends React.Component<
 
   render() {
     const {
-      rendererProperties,
-      creative,
-      match: {
-        params: {
-          organisationId,
-        },
+      initialValue: {
+        creative,
+        rendererPlugin: { current_version_id: rendererPluginVersionId },
+        properties,
       },
-      rendererVersionId,
+      match: { params: { organisationId } },
     } = this.props;
 
-    const isDisabled = creative && creative.audit_status &&
-    (creative.audit_status === 'AUDIT_PASSED' || creative.audit_status === 'AUDIT_PENDING');
+    // TODO the following properties of PluginFieldGenerator should
+    // not be passed directly : isDisabled, noUploadModal, plugingVersionId?, organisationId
+    // because they aren't used for every property type
+    // I'm sure we can find a better pattern
+
+    let isDisabled = false;
+    const additionnalProps: any = {};
+
+    if (isDisplayAdResource(creative)) {
+      isDisabled =
+        creative.audit_status === 'AUDIT_PASSED' ||
+        creative.audit_status === 'AUDIT_PENDING';
+
+      additionnalProps.noUploadModal = this.noUploadModal(creative);
+    }
+
     return (
       <div>
         <FormSection
           title={messages.creativeSectionPropertyTitle}
           subtitle={messages.creativeSectionPropertySubTitle}
         />
-        {rendererProperties &&
-          rendererProperties.length &&
-          rendererProperties.map(fieldDef => {
-            return (
-              <PluginFieldGenerator
-                key={fieldDef.technical_name}
-                definition={fieldDef}
-                disabled={isDisabled}
-                rendererVersionId={rendererVersionId}
-                organisationId={organisationId}
-                noUploadModal={creative ? this.noUploadModal(creative) : undefined}
-              />
-            );
-          })}
+        {Object.keys(properties).map(key => {
+          const fieldDef = properties[key]
+          return (
+            <PluginFieldGenerator
+              key={fieldDef.technical_name}
+              definition={fieldDef}
+              disabled={isDisabled}
+              pluginVersionId={rendererPluginVersionId}
+              organisationId={organisationId}
+              {...additionnalProps}
+            />
+          );
+        })}
       </div>
     );
   }
 }
 
-export default compose<JoinedProps, PropertiesFormSectionProps>(
+export default compose<Props, {}>(
   withRouter,
   injectIntl,
+  connect((state: any, ownProps: Props) => ({
+    initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
+      state,
+    ) as DisplayCreativeFormData,
+  })),
 )(PropertiesFormSection);
