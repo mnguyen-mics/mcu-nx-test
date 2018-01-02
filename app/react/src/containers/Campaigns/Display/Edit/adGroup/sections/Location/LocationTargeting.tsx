@@ -47,7 +47,7 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
 
     locationFields.forEach(field => {
       const found = field.id === locationField.id;
-      if (found && !isFakeId(field.id)) {
+      if (found && !isFakeId(field.id) && field.deleted !== true) {
         newLocationFields.push({
           ...field,
           deleted: true,
@@ -62,6 +62,7 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
   addLocationField = (locationField: LocationFieldModel) => {
     const { fields, intl: { formatMessage } } = this.props;
     const allFields = fields ? fields.getAll().filter(item => !item.deleted) : [];
+    const allFieldsWithDeleted = fields ? fields.getAll() : [];
 
     const formattedLocationField = {
       ...locationField,
@@ -143,12 +144,12 @@ class LocationTargeting extends React.Component<JoinedProps, LocationTargetingSt
         title: formatMessage(messages.contentSectionLocationModal2Title),
         content: content,
         onOk: () => {
-          const newFields = allFields.filter(item => !idsToRemove.includes(item.id));
+          const newFields = allFieldsWithDeleted.filter(item => !idsToRemove.includes(item.id));
           this.props.RxF.change((fields as any).name, newFields.concat([formattedLocationField]));
         },
       });
     } else {
-      this.props.RxF.change((fields as any).name, allFields.concat([formattedLocationField]));
+      this.props.RxF.change((fields as any).name, allFieldsWithDeleted.concat([formattedLocationField]));
     }
 
   }
