@@ -40,6 +40,10 @@ class Optimization extends Component {
       });
   }
 
+  getBidOptimizer = (bidOptimizerId) => {
+    return BidOptimizerServices.getBidOptimizer(bidOptimizerId);
+  }
+
   getSelectedIds = () => {
     return this.props.formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
   }
@@ -72,7 +76,8 @@ class Optimization extends Component {
       actionBarTitle: 'Add a Bid Optimizer',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
-      fetchSelectorData: this.getBidOptimizers(),
+      fetchDataList: this.getBidOptimizers(),
+      fetchData: this.getBidOptimizer,
       save: this.updateData,
       singleSelection: true,
       selectedIds: this.getSelectedIds(),

@@ -1,174 +1,334 @@
 import * as React from 'react';
-import { GenericFieldArray, Field, FieldArray, InjectedFormProps } from 'redux-form';
-import { RouteComponentProps } from 'react-router';
+import { WrappedFieldArrayProps } from 'redux-form';
+import cuid from 'cuid';
+import { split } from 'lodash';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { Row, Col, Spin } from 'antd';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { compose } from 'recompose';
 
 import messages from '../../../messages';
+import { DrawableContentProps } from '../../../../../../../components/Drawer';
 import { FormSection } from '../../../../../../../components/Form';
-import { AdFieldModel } from './domain';
-import Ads, { AdsProps } from './Ads';
-import { DrawableContentProps, DrawableContentOptions } from '../../../../../../../components/Drawer';
-import DisplayCreativeContent from '../../../../../../../containers/Creative/DisplayAds/Edit/CreatePage/DisplayCreativeContent';
-import { PropertyResourceShape } from '../../../.../../../../../../models/plugin';
-import { RendererDataProps } from '../../../.../../../../../../models/campaign/display/AdResource';
+import { AdFieldModel, isDisplayCreativeFormData } from './domain';
+import CreativeCard from '../../../../../../../containers/Campaigns/Common/CreativeCard';
 import CreativeService from '../../../../../../../services/CreativeService';
-import CreativeCardSelector from '../../../../../Email/Edit/CreativeCardSelector';
-import { DisplayAdResource } from '../../../.../../../../../../models/creative/CreativeResource';
-import { generateFakeId } from '../../../../../../../utils/FakeIdHelper';
+import { computeDimensionsByRatio } from '../../../../../../../utils/ShapeHelper';
+import CreativeCardSelector, {
+  CreativeCardSelectorProps,
+} from '../../../../../Common/CreativeCardSelector';
+import {
+  DisplayAdResource,
+  CreativeResourceShape,
+  DisplayAdCreateRequest,
+} from '../../../.../../../../../../models/creative/CreativeResource';
+import { Index } from '../../../../../../../utils/index';
+import { normalizeArrayOfObject } from '../../../../../../../utils/Normalizer';
+import {
+  ButtonStyleless,
+  McsIcons,
+  EmptyRecords,
+} from '../../../../../../../components/index';
+import AuditComponent from '../../../../../../Creative/DisplayAds/Common/AuditComponent';
+import { DisplayCreativeFormData } from '../../../../../../Creative/DisplayAds/Edit/domain';
+import {
+  DisplayCreativeForm,
+  DisplayCreativeFormLoader,
+  DisplayCreativeCreator,
+} from '../../../../../../Creative/DisplayAds/Edit/index';
+import { DisplayCreativeCreatorProps } from '../../../../../../Creative/DisplayAds/Edit/DisplayCreativeCreator';
+import { DisplayCreativeFormLoaderProps } from '../../../../../../Creative/DisplayAds/Edit/DisplayCreativeFormLoader';
+import { DisplayCreativeFormProps } from '../../../../../../Creative/DisplayAds/Edit/DisplayCreativeForm';
+export interface AdsSectionProps extends DrawableContentProps {
+  formChange: (fieldName: string, value: any) => void;
+}
 
-const AdsFieldArray = FieldArray as new() => GenericFieldArray<Field, AdsProps>;
-
-export interface AdsSectionProps {
-  adFields: AdFieldModel[];
-  RxF: InjectedFormProps<any>;
-  handlers: {
-    closeNextDrawer: () => void;
-    openNextDrawer: <T>(component: React.ComponentClass<T & DrawableContentProps | T>, options: DrawableContentOptions<T>) => void;
-    updateTableFieldStatus: (obj: { index: number, tableName: string }) => () => void;
-    updateTableFields: (obj: { newFields: any[], tableName: string }) => () => void;
-    updateDisplayAdTableFields: (obj: {newFields: AdFieldModel[], tableName: string }) => () => void;
-  };
+export interface DisplayAdResourceWithFieldIndex {
+  creativeResource: DisplayAdResource | DisplayAdCreateRequest;
+  fieldModel: AdFieldModel;
+  fieldIndex: number;
 }
 
 interface AdsSectionState {
+  displayCreativeCacheById: Index<DisplayAdResource>;
   loading: boolean;
 }
 
-interface RouteProps {
-  organisationId: string;
-}
-
-type JoinedProps = AdsSectionProps & RouteComponentProps<RouteProps>;
+type JoinedProps = AdsSectionProps &
+  RouteComponentProps<{ organisationId: string }> &
+  WrappedFieldArrayProps<AdFieldModel> &
+  InjectedIntlProps;
 
 class AdsSection extends React.Component<JoinedProps, AdsSectionState> {
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
       loading: false,
+      displayCreativeCacheById: {},
     };
   }
 
-  getAllAds = (options: object) => {
-
-    // const {
-    //   match: {
-    //     params: {
-    //       organisationId,
-    //     },
-    //   },
-    // } = this.props;
-
-    return CreativeService.getDisplayAds(this.props.organisationId, options)
-      .then(({ data, total }) => ({ data, total }));
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const loadedCreativeIds = Object.keys(this.state.displayCreativeCacheById);
+    const creativeIdsToBeLoaded: string[] = [];
+    nextProps.fields.getAll().forEach((field, index) => {
+      if (
+        !isDisplayCreativeFormData(field.resource) &&
+        !loadedCreativeIds.includes(field.resource.creative_id)
+      ) {
+        creativeIdsToBeLoaded.push(field.resource.creative_id);
+      }
+    });
+    Promise.all(
+      creativeIdsToBeLoaded.map(id =>
+        CreativeService.getDisplayAd(id).then(res => res.data),
+      ),
+    ).then(creatives => {
+      this.setState(prevState => ({
+        displayCreativeCacheById: {
+          ...prevState.displayCreativeCacheById,
+          ...normalizeArrayOfObject(creatives, 'id'),
+        },
+      }));
+    });
   }
 
-  openWindowNewCreativeDrawer = () => {
-    const { handlers } = this.props;
+  openNewCreativeForm = () => {
+    const { openNextDrawer, closeNextDrawer } = this.props;
 
-    const additionalProps: {
-      onClose: () => void;
-      save: (
-        creativeData: Partial<DisplayAdResource>,
-        formattedProperties: PropertyResourceShape[],
-        rendererData: RendererDataProps,
-      ) => void;
-      drawerMode?: boolean;
-    } = {
-      onClose: handlers.closeNextDrawer,
+    const additionalProps = {
+      closeNextDrawer: closeNextDrawer,
+      openNextDrawer: openNextDrawer,
       save: this.addNewCreativeToAdSelection,
       drawerMode: true,
+      actionBarButtonText: messages.addNewCreative,
+      close: closeNextDrawer,
     };
 
     const options = {
       additionalProps: additionalProps,
-      isModal: true,
     };
 
-    handlers.openNextDrawer(DisplayCreativeContent, options);
-  }
+    openNextDrawer<DisplayCreativeCreatorProps>(
+      DisplayCreativeCreator,
+      options,
+    );
+  };
 
-  openExistingAdsDrawer = () => {
-    const {
-      handlers: {
-        updateTableFields,
-        closeNextDrawer,
-        openNextDrawer,
-      },
-      RxF: {
-        initialValues: {
-          adTable,
-        },
-      },
-    } = this.props;
+  openCreativeCardSelector = () => {
+    const { closeNextDrawer, openNextDrawer, fields } = this.props;
 
-    const displayAdsSelectorProps = {
+    const creativeIds: string[] = [];
+    fields.getAll().forEach(field => {
+      if (!isDisplayCreativeFormData(field.resource)) {
+        creativeIds.push(field.resource.creative_id);
+      }
+    });
+
+    const displayAdsSelectorProps: CreativeCardSelectorProps = {
       close: closeNextDrawer,
-      fetchData: this.getAllAds,
-      selectedData: adTable.filter((ad: AdFieldModel) => !ad.deleted),
-      save: this.addExistingAdsToAdSelection,
-      filterKey: 'id', updateTableFields,
+      save: this.updateExistingAds,
+      creativeType: 'DISPLAY_AD',
+      selectedCreativeIds: creativeIds,
     };
 
     const options = {
       additionalProps: displayAdsSelectorProps,
-      isModal: true,
     };
 
-    openNextDrawer(CreativeCardSelector, options);
-  }
+    openNextDrawer<CreativeCardSelectorProps>(CreativeCardSelector, options);
+  };
 
-  addNewCreativeToAdSelection =
-  (creativeData: Partial<AdFieldModel>,
-   formattedProperties: PropertyResourceShape[],
-   rendererData: RendererDataProps,
-  ) => {
-    const { adFields, handlers } = this.props;
-    const valuesToAdd: Array<Partial<AdFieldModel>> = [];
-    adFields.map((item: Partial<AdFieldModel>) => {
-      const displayAd = {
-        id: generateFakeId(),
+  addNewCreativeToAdSelection = (creativeData: DisplayCreativeFormData) => {
+    const { fields, formChange, closeNextDrawer } = this.props;
+    const createCreativeData: AdFieldModel = {
+      id: cuid(),
+      resource: creativeData,
+    };
+    formChange(
+      (fields as any).name,
+      fields.getAll().concat(createCreativeData),
+    );
+    closeNextDrawer();
+  };
+
+  updateExistingAds = (creatives: CreativeResourceShape[]) => {
+    const { fields, formChange, closeNextDrawer } = this.props;
+    const creativeIds = creatives.map(c => c.id);
+
+    const fieldCreativeIds: string[] = [];
+    fields.getAll().forEach(field => {
+      if (!isDisplayCreativeFormData(field.resource)) {
+        fieldCreativeIds.push(field.resource.creative_id);
+      }
+    });
+
+    const keptFields: AdFieldModel[] = [];
+    fields.getAll().forEach(field => {
+      if (
+        isDisplayCreativeFormData(field.resource) ||
+        creativeIds.includes(field.resource.creative_id)
+      ) {
+        keptFields.push(field);
+      }
+    });
+
+    const newFields: AdFieldModel[] = creatives
+      .filter(s => !fieldCreativeIds.includes(s.id))
+      .map(creative => ({
+        id: cuid(),
         resource: {
-          displayAdResource: item,
-          creativeResource: undefined,
+          creative_id: creative.id,
         },
-        deleted: item.deleted,
-      };
-      valuesToAdd.push(displayAd);
-    });
-    const creative = {
-      id: generateFakeId(),
-      resource: {
-        displayAdResource: undefined,
-        creativeResource: creativeData,
-      },
-      deleted: false,
+      }));
+
+    formChange((fields as any).name, keptFields.concat(newFields));
+    closeNextDrawer();
+  };
+
+  openCreativeEditionDrawer = (data: DisplayAdResourceWithFieldIndex) => () => {
+    const {
+      openNextDrawer,
+      closeNextDrawer,
+      match: { params: { organisationId } },
+    } = this.props;
+
+    const commonProps = {
+      close: closeNextDrawer,
+      breadCrumbPaths: [
+        {
+          name: messages.editDisplayCreative,
+        },
+      ],
+      actionBarButtonText: messages.updateDisplayCreative,
+      openNextDrawer: openNextDrawer,
+      closeNextDrawer: closeNextDrawer,
     };
-    valuesToAdd.push(creative);
-    this.setState({ loading: true }, () => {
-      handlers.updateTableFields({ newFields: valuesToAdd, tableName: 'adTable' });
-      this.props.handlers.closeNextDrawer();
-    });
-    this.setState({ loading: false });
-  }
 
-  addExistingAdsToAdSelection = (selectedAds: DisplayAdResource[]) => {
-    const { handlers } = this.props;
-    const selectedIds = selectedAds.map(selection => selection.id);
+    // EDIT NEW
+    if (isDisplayCreativeFormData(data.fieldModel.resource)) {
+      const additionalProps = {
+        initialValues: data.fieldModel.resource,
+        save: (formData: DisplayCreativeFormData) => {
+          //
+        },
+        rendererProperties: data.fieldModel.resource.rendererProperties,
+        rendererVersionId: (data.fieldModel.resource.creative.renderer_version_id || ''),
+        ...commonProps,
+      };
+      const options = {
+        additionalProps: additionalProps,
+      };
+      openNextDrawer<DisplayCreativeFormProps>(DisplayCreativeForm, options);
+    } else {
+      // EDIT EXISTING
+      const additionalProps = {
+        creativeId: data.fieldModel.resource.creative_id,
+        save: (formData: DisplayCreativeFormData) => {
+          // updateDisplayCreative(organisationId, formData, rendererProperties)
+        },
+        rendererVersionId: ,
+        rendererProperties: ,
+        ...commonProps,
+      };
+      const options = {
+        additionalProps: additionalProps,
+      };
+      openNextDrawer<DisplayCreativeFormLoaderProps>(
+        DisplayCreativeFormLoader,
+        options,
+      );
+    }
+  };
 
-    this.setState({ loading: true });
-    handlers.closeNextDrawer();
+  getCreativeCardFooter = (data: DisplayAdResourceWithFieldIndex) => {
+    const { fields } = this.props;
 
-    Promise.all(selectedIds.map((creativeId: string) => {
-      return CreativeService.getCreative(creativeId).then(res => res.data);
-    })).then(response => {
-      handlers.updateTableFields({ newFields: response, tableName: 'adTable' });
-      return this.setState({ loading: false });
-    });
+    const format = split(data.creativeResource.format, 'x');
+    const dimensions = computeDimensionsByRatio(
+      Number(format[0]),
+      Number(format[1]),
+    );
 
-  }
+    const shapeStyle = {
+      backgroundColor: '#e8e8e8',
+      border: 'solid 1px #c7c7c7',
+      height: `${dimensions.width}em`,
+      width: `${dimensions.height}em`,
+    };
+
+    const removeField = () => fields.remove(data.fieldIndex);
+
+    return (
+      <div>
+        <Row className="footer">
+          <Col className="inline formatWrapper" span={16}>
+            <div style={shapeStyle} />
+            <div className="dimensions">{data.creativeResource.format}</div>
+          </Col>
+          <Col className="inline buttons" span={6}>
+            <ButtonStyleless onClick={this.openCreativeEditionDrawer(data)}>
+              <McsIcons className="button" type="pen" />
+            </ButtonStyleless>
+
+            <div className="button-separator" />
+
+            <ButtonStyleless onClick={removeField}>
+              <McsIcons className="button" type="delete" />
+            </ButtonStyleless>
+          </Col>
+        </Row>
+        <Row className="footer">
+          <Col className="inline formatWrapper" span={22}>
+            <AuditComponent
+              creative={data.creativeResource}
+              mode="creativeCard"
+            />
+          </Col>
+        </Row>
+      </div>
+    );
+  };
 
   render() {
+    const { intl: { formatMessage }, fields } = this.props;
 
+    const { displayCreativeCacheById } = this.state;
+
+    const allCreatives: DisplayAdResourceWithFieldIndex[] = [];
+    if (fields.getAll()) {
+      fields.getAll().forEach((field, index) => {
+        if (isDisplayCreativeFormData(field.resource)) {
+          allCreatives.push({
+            creativeResource: field.resource.creative as DisplayAdCreateRequest,
+            fieldIndex: index,
+            fieldModel: field,
+          });
+        } else if (displayCreativeCacheById[field.resource.creative_id]) {
+          allCreatives.push({
+            creativeResource:
+              displayCreativeCacheById[field.resource.creative_id],
+            fieldIndex: index,
+            fieldModel: field,
+          });
+        }
+      });
+    }
+
+    const cards = allCreatives.map(data => {
+      const getFooter = () => this.getCreativeCardFooter(data);
+      return (
+        <Col key={data.fieldModel.id} span={6}>
+          <div className="ad-group-card">
+            <CreativeCard
+              key={data.fieldModel.id}
+              creative={data.creativeResource}
+              renderFooter={getFooter}
+            />
+          </div>
+        </Col>
+      );
+    });
     return (
       <div>
         <FormSection
@@ -176,29 +336,39 @@ class AdsSection extends React.Component<JoinedProps, AdsSectionState> {
             {
               id: messages.dropdownNew.id,
               message: messages.dropdownNew,
-              onClick: this.openWindowNewCreativeDrawer,
+              onClick: this.openNewCreativeForm,
             },
             {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
-              onClick: this.openExistingAdsDrawer,
+              onClick: this.openCreativeCardSelector,
             },
           ]}
           subtitle={messages.sectionSubtitleAds}
           title={messages.sectionTitleAds}
         />
 
-        <AdsFieldArray
-          name="adTable"
-          component={Ads}
-          RxF={this.props.RxF}
-          rerenderOnEveryChange={true}
-          handlers={this.props.handlers}
-        />
-      </div>
+        <div id="ads">
+          <Spin spinning={this.state.loading}>
+            <div className="ad-group-ad-section">
+              <div className={`mcs-table-card content`}>
+                <Row gutter={20}>{cards}</Row>
+              </div>
 
+              {!fields.length && (
+                <EmptyRecords
+                  iconType="ads"
+                  message={formatMessage(messages.contentSectionAdEmptyTitle)}
+                />
+              )}
+            </div>
+          </Spin>
+        </div>
+      </div>
     );
   }
 }
 
-export default AdsSection;
+export default compose<JoinedProps, AdsSectionProps>(withRouter, injectIntl)(
+  AdsSection,
+);

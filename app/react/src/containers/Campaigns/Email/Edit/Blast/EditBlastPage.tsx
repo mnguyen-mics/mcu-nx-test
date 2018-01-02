@@ -51,7 +51,7 @@ class EditBlastPage extends React.Component<Props, State> {
       EmailCampaignService.getEmailCampaign(campaignId),
       blastId
         ? EmailCampaignFormService.loadBlast(campaignId, blastId)
-        : Promise.resolve(null),
+        : Promise.resolve(INITIAL_EMAIL_BLAST_FORM_DATA),
     ]).then(([campaignApiRes, blastFormData]) => {
       this.setState(prevState => {
         const newState: Partial<State> = {
@@ -59,7 +59,7 @@ class EditBlastPage extends React.Component<Props, State> {
           campaign: campaignApiRes.data,
           loading: false,
         };
-        if (blastFormData) newState.blastFormData = blastFormData;
+        newState.blastFormData = blastFormData;
         return newState;
       });
     }).catch(err => {

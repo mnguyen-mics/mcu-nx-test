@@ -8,24 +8,13 @@ import { FormInputProps } from '../../components/Form/FormInput';
 import { FormAdLayout, FormStyleSheet, FormDataFile } from './ConnectedFields';
 import { FieldValidatorsProps, ValidatorProps } from '../../components/Form/withValidators';
 import { PropertyResourceShape } from '../../models/plugin';
-import { FormTextArea } from '../../components/Form/FormTextArea';
 
-const { FormInput, FormTextArea, FormBoolean, FormUpload, withValidators } = Form;
+const { FormInput, FormBoolean, FormUpload, withValidators } = Form;
 
 interface PluginFieldGeneratorProps {
-  fieldGridConfig: {
-    labelCol: {
-      span: number;
-    };
-    wrapperCol: {
-      span: number;
-      offset: number;
-    }
-  };
   fieldValidators?: FieldValidatorsProps;
   definition: PropertyResourceShape;
   disabled?: boolean;
-  pluginVersionId?: string;
   organisationId: string;
   noUploadModal?: () => void; // check type
   rendererVersionId: string;
@@ -39,17 +28,19 @@ interface AdditionalInputProps {
   options?: any; // type
   noUploadModal?: () => void;
   rows?: number;
+  textArea?: boolean;
+  disabled?: boolean;
 }
 
 type CustomInputProps = FormInputProps & AdditionalInputProps;
 
 class PluginFieldGenerator extends React.Component<JoinedProps> {
 
-  static defaultProps: Partial<PluginFieldGeneratorProps> = {
-    noUploadModal: undefined,
-    disabled: false,
-    pluginVersionId: '',
-  };
+  // static defaultProps: Partial<PluginFieldGeneratorProps> = {
+  //   noUploadModal: undefined,
+  //   disabled: false,
+  //   rendererVersionId: '',
+  // };
 
   technicalNameToName = (technicalName: string) => {
     return technicalName.split('_').map((s) => {
@@ -73,7 +64,6 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
    options = {},
   ) => {
     const {
-      fieldGridConfig,
       disabled,
     } = this.props;
 
@@ -81,10 +71,9 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     const customInputProps: CustomInputProps = {
       formItemProps: {
         label: this.technicalNameToName(fieldDefinition.technical_name),
-        ...fieldGridConfig,
       },
       inputProps: {
-        // placeholder: this.technicalNameToName(fieldDefinition.technical_name),
+        placeholder: this.technicalNameToName(fieldDefinition.technical_name),
         disabled: !fieldDefinition.writable || disabled,
         // defaultValue: fieldDefinition.value.value,
         ...additionalInputProps,
@@ -96,6 +85,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
       },
       helpToolTipProps: {},
       noUploadModal: additionalInputProps.noUploadModal ? additionalInputProps.noUploadModal : undefined,
+      ...additionalInputProps
     };
 
     return (
@@ -136,15 +126,15 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
           [],
-          { buttonText: 'Upload File', accept: '.jpg,.jpeg,.png,.gif', noUploadModal: this.props.noUploadModal },
+          { disabled: this.props.disabled, buttonText: 'Upload File', accept: '.jpg,.jpeg,.png,.gif', noUploadModal: this.props.noUploadModal },
         );
       case 'PIXEL_TAG':
         return this.renderFieldBasedOnConfig(
-          FormTextArea,
+          FormInput,
           `${fieldDefinition.technical_name}.value.value`,
           fieldDefinition,
           [],
-          { rows: 4 },
+          { rows: 4, textArea: true },
         );
       case 'STYLE_SHEET':
         return this.renderFieldBasedOnConfig(
@@ -153,7 +143,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           fieldDefinition,
           [],
           {},
-          { disabled: this.props.disabled, pluginVersionId: this.props.pluginVersionId, organisationId: organisationId },
+          { disabled: this.props.disabled, pluginVersionId: this.props.rendererVersionId, organisationId: organisationId },
         );
       case 'AD_LAYOUT':
         return this.renderFieldBasedOnConfig(
@@ -162,7 +152,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           fieldDefinition,
           [],
           {},
-          { disabled: this.props.disabled, pluginVersionId: this.props.pluginVersionId, organisationId: organisationId },
+          { disabled: this.props.disabled, pluginVersionId: this.props.rendererVersionId, organisationId: organisationId },
         );
       case 'BOOLEAN':
         return this.renderFieldBasedOnConfig(

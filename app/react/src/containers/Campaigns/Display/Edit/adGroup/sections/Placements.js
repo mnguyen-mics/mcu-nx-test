@@ -21,6 +21,10 @@ class Placements extends Component {
     return PlacementListServices.getPlacementLists(organisationId, options);
   }
 
+  getPlacementList = (placementListId) => {
+    return PlacementListServices.getPlacementLists(placementListId);
+  }
+
   getSelectedIds = () => {
     return this.props.formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.placement_list_id);
   }
@@ -47,7 +51,8 @@ class Placements extends Component {
       actionBarTitle: 'Add a Placement List',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
-      fetchSelectorData: this.getPlacementLists({ getAll: true }),
+      fetchDataList: this.getPlacementLists({ getAll: true }),
+      fetchdata: this.getPlacementList,
       save: this.updateData,
       singleSelection: false,
       selectedIds: this.getSelectedIds(),

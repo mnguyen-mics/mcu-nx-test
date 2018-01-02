@@ -13,7 +13,7 @@ export interface FormLayoutActionbarProps extends ActionBarProps {
 
   formId: string;
 
-  message: FormattedMessage.MessageDescriptor;
+  message?: FormattedMessage.MessageDescriptor;
 
   onClose: React.MouseEventHandler<HTMLSpanElement>;
 }

@@ -1,3 +1,4 @@
+import { DisplayAdCreateRequest } from './CreativeResource';
 export type CreativeType =
   'DISPLAY_AD' |
   'VIDEO_AD' |
@@ -46,7 +47,6 @@ export interface AdFormatResource {
 }
 
 export interface GenericCreativeResource {
-  id: string;
   organisation_id: string;
   name: string;
   technical_name: string;
@@ -65,19 +65,24 @@ export interface GenericCreativeResource {
   subtype: CreativeSubtype;
 }
 
-export interface DisplayAdResource extends GenericCreativeResource {
+export interface DisplayAdCreateRequest extends GenericCreativeResource {
   type: 'DISPLAY_AD';
   format: string;
+  destination_domain: string;
+}
+
+export interface DisplayAdResource extends DisplayAdCreateRequest {
+  id: string;
   published_version: number;
   creative_kit: string;
   ad_layout: string;
-  locale: string;
-  destination_domain: string;
+  locale: string;  
   audit_status: CreativeAuditStatus;
   available_user_audit_actions: CreativeAuditAction[];
 }
 
 export interface VideoAdResource extends GenericCreativeResource {
+  id: string;
   type: 'VIDEO_AD';
   format: string;
   published_version: number;
@@ -89,6 +94,7 @@ export interface VideoAdResource extends GenericCreativeResource {
 }
 
 export interface EmailTemplateResource extends GenericCreativeResource {
+  id: string;
   type: 'EMAIL_TEMPLATE';
 }
 

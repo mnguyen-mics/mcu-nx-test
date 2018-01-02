@@ -97,8 +97,12 @@ class CreativeCardSelector extends React.Component<Props> {
     return CreativeService.getDisplayAds(organisationId, options);
   };
 
+  fetchCreative = (creativeId: string) => {
+    return CreativeService.getCreative(creativeId);
+  };
+
   renderCreativeTitle = (creative: CreativeResourceShape) => (
-    <span>{creative.name}</span>
+    <span>{creative.name ? creative.name : 'No Title'}</span>
   );
 
   renderCreativeFooter = (
@@ -171,7 +175,8 @@ class CreativeCardSelector extends React.Component<Props> {
         searchPlaceholder={placeholder}
         selectedIds={selectedCreativeIds}
         singleSelection={singleSelection}
-        fetchSelectorData={this.fetchCreatives}
+        fetchDataList={this.fetchCreatives}
+        fetchData={this.fetchCreative}
         renderCollectionItem={this.renderCreative}
         save={this.saveCreatives}
         close={close}

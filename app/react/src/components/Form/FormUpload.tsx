@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { Form, Upload, Tooltip, Row, Col, Button, Icon } from 'antd';
+import { Upload, Button, Icon } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
-import { isEmpty } from 'lodash';
+import { TooltipProps } from 'antd/lib/tooltip';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import McsIcons from '../../components/McsIcons';
-
-const defaultTooltipPlacement: TooltipPlacement = 'right';
+import { FormFieldWrapper } from './index';
 
 export interface FormUploadProps {
   formItemProps?: FormItemProps;
@@ -21,7 +18,6 @@ export interface FormUploadProps {
 type JoinedProps = FormUploadProps & WrappedFieldProps & InjectedIntlProps;
 
 class FormUpload extends React.Component<JoinedProps> {
-
   static defaultprops = {
     formItemProps: {},
     inputProps: {},
@@ -34,15 +30,12 @@ class FormUpload extends React.Component<JoinedProps> {
   };
 
   componentDidMount() {
-    const {
-      input,
-    } = this.props;
+    const { input } = this.props;
 
     if (input.value.asset_id) {
       input.onChange([input.value]);
       this.changeFileName(input.value.original_file_name);
       this.changeCanRemoveFile(false);
-
     } else {
       input.onChange([]);
       this.changeCanRemoveFile(true);
@@ -51,19 +44,17 @@ class FormUpload extends React.Component<JoinedProps> {
 
   changeCanRemoveFile = (canRemoveFile: boolean) => {
     this.setState({ canRemoveFile: canRemoveFile });
-  }
+  };
 
   changeFileName = (fileName: string) => {
     this.setState({ fileName: fileName });
-  }
+  };
 
   onRemoveFile = () => {
-    const {
-      input,
-    } = this.props;
+    const { input } = this.props;
     this.changeFileName('');
     input.onChange([]);
-  }
+  };
 
   render() {
     const {
@@ -74,16 +65,13 @@ class FormUpload extends React.Component<JoinedProps> {
       helpToolTipProps,
     } = this.props;
 
-    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    let validateStatus = 'success' as
+      | 'success'
+      | 'warning'
+      | 'error'
+      | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
-
-    const displayHelpToolTip = !isEmpty(helpToolTipProps);
-
-    const mergedTooltipProps = {
-      placement: defaultTooltipPlacement,
-      ...helpToolTipProps,
-    };
 
     const uploadDetailProps = {
       action: '/',
@@ -97,33 +85,24 @@ class FormUpload extends React.Component<JoinedProps> {
     };
 
     return (
-      <Form.Item
+      <FormFieldWrapper
         help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
         {...formItemProps}
       >
-        <Row align="middle" type="flex" className="m-b-20">
-          <Col span={22} >
-            <Upload
-              {...input}
-              {...inputProps}
-              {...uploadDetailProps}
-            >
-              <Button onClick={inputProps && inputProps.disabled ? this.props.noUploadModal : undefined}>
-                <Icon type="upload" /> {this.props.buttonText}
-              </Button>
-            </Upload>
-
-          </Col>
-          {displayHelpToolTip &&
-            <Col span={2} className="field-tooltip">
-              <Tooltip {...mergedTooltipProps}>
-                <McsIcons type="info" />
-              </Tooltip>
-            </Col>
-          }
-        </Row>
-      </Form.Item>
+        <Upload {...input} {...inputProps} {...uploadDetailProps}>
+          <Button
+            onClick={
+              inputProps && inputProps.disabled
+                ? this.props.noUploadModal
+                : undefined
+            }
+          >
+            <Icon type="upload" /> {this.props.buttonText}
+          </Button>
+        </Upload>
+      </FormFieldWrapper>
     );
   }
 }

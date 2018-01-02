@@ -17,14 +17,14 @@ interface EditLayoutActionbarProps {
     name: string,
     url?: string,
   }>;
-  dispatch?: Dispatch<FormAction>;
+  dispatch: Dispatch<FormAction>;
   formId: string;
   message: {
     id: string;
     defaultMessage: string;
   };
   onClose: () => void;
-  submitting?: boolean;
+  submitting: boolean;
   isCreativetypePicker: boolean;
   rest?: any; // ???
 }

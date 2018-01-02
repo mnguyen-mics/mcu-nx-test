@@ -30,6 +30,10 @@ class Goals extends Component {
     return GoalService.getGoals(organisationId, params);
   }
 
+  getOrgGoal = (goalId) => {
+    return GoalService.getGoal(goalId);
+  }
+
   openWindow = () => {
     const { formValues, handlers } = this.props;
     const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => { return elem.main_id ? elem.main_id : elem.id; });
@@ -48,6 +52,7 @@ class Goals extends Component {
       columnsDefinitions,
       displayFiltering: true,
       fetchSelectorData: this.getOrgGoals,
+      fetchData: this.getOrgGoal,
       save: this.updateData,
       selectedIds,
     };

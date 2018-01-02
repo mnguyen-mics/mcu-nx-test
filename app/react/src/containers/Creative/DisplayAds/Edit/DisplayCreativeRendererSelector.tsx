@@ -2,10 +2,18 @@ import * as React from 'react';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Layout, Row } from 'antd';
 
-import { FormTitle } from '../../../../../components/Form';
-import { MenuList, MenuPresentational, MenuSubList } from '../../../../../components/FormMenu';
+import { FormTitle } from '../../../../components/Form';
+import {
+  MenuList,
+  MenuPresentational,
+  MenuSubList,
+} from '../../../../components/FormMenu';
+import messages from './messages';
+import FormLayoutActionbar, {
+  FormLayoutActionbarProps,
+} from '../../../../components/Layout/FormLayoutActionbar';
 
-import messages from '../messages';
+// import { FormSectionProps } from './DispayCreativeForm';
 
 const { Content } = Layout;
 
@@ -16,51 +24,50 @@ const nativeIvidenceAdRendererId = '1032';
 const nativeQuantumAdRendererId = '1047';
 const imageSkinsAdRendererId = '1026';
 
-interface DisplayCreativeTypePickerProps {
+export interface DisplayCreativeRendererSelectorProps {
   onSelect: (id: string) => void;
-  formId: string;
+  close: () => void;
 }
 
-type JoinedProps = DisplayCreativeTypePickerProps & InjectedIntlProps;
+type JoinedProps = DisplayCreativeRendererSelectorProps & InjectedIntlProps;
 
-class DisplayCreativeTypePicker extends React.Component<JoinedProps> {
+class DisplayCreativeRendererSelector extends React.Component<JoinedProps> {
 
   renderNativeSubmenu = () => {
-    const {
-      onSelect,
-      intl: {
-        formatMessage,
-      },
-    } = this.props;
+    const { onSelect, intl: { formatMessage } } = this.props;
 
-    return [{
-      title: formatMessage(messages.creativeTypeQuantum),
-      select: () => onSelect(nativeQuantumAdRendererId),
-    }, {
-      title: formatMessage(messages.creativeTypeIvidence),
-      select: () => onSelect(nativeIvidenceAdRendererId),
-    }];
-  }
+    return [
+      {
+        title: formatMessage(messages.creativeTypeQuantum),
+        select: () => onSelect(nativeQuantumAdRendererId),
+      },
+      {
+        title: formatMessage(messages.creativeTypeIvidence),
+        select: () => onSelect(nativeIvidenceAdRendererId),
+      },
+    ];
+  };
 
   render() {
-    const {
-      onSelect,
-      intl: {
-        formatMessage,
-      },
-      formId: scrollLabelContentId,
-    } = this.props;
+    const { onSelect, intl: { formatMessage } } = this.props;
 
     const onTypeSelect = (adRendererId: string) => () => {
       onSelect(adRendererId);
     };
 
+    const actionBarProps: FormLayoutActionbarProps = {
+      formId: 'typePickerForm',
+      // message: messages.saveCreative,
+      onClose: this.props.close,
+      paths: [{
+        name: messages.creativeCreationBreadCrumb,
+      }],
+    };
+
     return (
       <Layout>
-        <div
-          id={scrollLabelContentId}
-          className="edit-layout ant-layout"
-        >
+        <div className="edit-layout ant-layout">
+        <FormLayoutActionbar {...actionBarProps} />
           <Layout>
             <Content className="mcs-content-container mcs-form-container text-center">
               <FormTitle
@@ -75,7 +82,9 @@ class DisplayCreativeTypePicker extends React.Component<JoinedProps> {
                       type="image"
                       select={onTypeSelect(imageAdRendererId)}
                     />
-                    <div className="separator"><FormattedMessage {...messages.creativeTypeOr} /></div>
+                    <div className="separator">
+                      <FormattedMessage {...messages.creativeTypeOr} />
+                    </div>
                     <MenuPresentational
                       title={formatMessage(messages.creativeTypeHtml)}
                       type="code"
@@ -97,7 +106,10 @@ class DisplayCreativeTypePicker extends React.Component<JoinedProps> {
                   />
                   <MenuSubList
                     title={formatMessage(messages.creativeTypeNative)}
-                    subtitles={[formatMessage(messages.creativeTypeQuantum), formatMessage(messages.creativeTypeIvidence)]}
+                    subtitles={[
+                      formatMessage(messages.creativeTypeQuantum),
+                      formatMessage(messages.creativeTypeIvidence),
+                    ]}
                     submenu={this.renderNativeSubmenu()}
                   />
                 </Row>
@@ -110,4 +122,4 @@ class DisplayCreativeTypePicker extends React.Component<JoinedProps> {
   }
 }
 
-export default injectIntl(DisplayCreativeTypePicker);
+export default injectIntl(DisplayCreativeRendererSelector);

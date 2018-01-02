@@ -485,6 +485,21 @@ export default defineMessages({
     defaultMessage: 'Click on the pen to add an ad to your ad group',
   },
 
+  updateDisplayCreative: {
+    id: 'adGroupEditor.section.ad.updateAd',
+    defaultMessage: 'Update',
+  },
+
+  editDisplayCreative: {
+    id: 'adGroupEditor.section.ad.editDisplayCreative',
+    defaultMessage: 'Edit Display Creative',
+  },
+
+  addNewCreative: {
+    id: 'adGroupEditor.section.ad.addNewCreative',
+    defaultMessage: 'Add',
+  },
+
   /* --------------------------- SECTION OPTIMIZER -------------------------- */
 
   contentSectionOptimizerEmptyTitle: {

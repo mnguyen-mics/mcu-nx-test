@@ -5,7 +5,7 @@ import { PaginationProps } from 'antd/lib/pagination';
 import { TableView, TableViewFilters } from '../TableView';
 import { DataColumnDefinition, TableViewProps } from '../TableView/TableView';
 import { normalizeArrayOfObject } from '../../utils/Normalizer';
-import { DataListResponse } from '../../services/ApiService';
+import { DataListResponse, DataResponse } from '../../services/ApiService';
 import { SearchFilter, SelectableItem } from './';
 import SelectorLayout from './SelectorLayout';
 
@@ -15,7 +15,8 @@ export interface TableSelectorProps<T extends SelectableItem> {
   displayFiltering?: boolean;
   searchPlaceholder?: string;
   selectedIds?: string[];
-  fetchSelectorData: (filter?: SearchFilter) => Promise<DataListResponse<T>>;
+  fetchDataList: (filter?: SearchFilter) => Promise<DataListResponse<T>>;
+  fetchData: (id: string) => Promise<DataResponse<T>>;
   singleSelection?: boolean;
   save: (selectedIds: string[], selectedElement: T[]) => void;
   close: () => void;
@@ -59,13 +60,35 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   }
 
   componentDidMount() {
-    this.populateTable(this.props.selectedIds).then(response => {
-      if (response.length === 0) {
-        this.setState({
-          noElement: true,
-        });
-      }
+    this.setState({ isLoading: true});
+    Promise.all([
+      this.populateTable(this.props.selectedIds).then(response => {
+        if (response.length === 0) {
+          this.setState({
+            noElement: true,
+          });
+        }
+      }),
+      this.loadSelectedElementsById(),
+    ]).then(() => {
+      this.setState({ isLoading: false });
     });
+  }
+
+  loadSelectedElementsById = () => {
+    const { selectedIds } = this.props;
+    
+    if (selectedIds) {
+      const promises: Array<Promise<T>> = [];
+      selectedIds.forEach((id) => {
+        promises.push(this.props.fetchData(id).then(resp => resp.data));
+      });
+      Promise.all(promises).then(selectedElements => {
+        this.setState({
+          selectedElementsById: normalizeArrayOfObject(selectedElements, 'id'),
+        });
+      });
+    }
   }
 
   componentDidUpdate(prevProps: TableSelectorProps<T>, prevState: State<T>) {
@@ -136,7 +159,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       : undefined;
 
     return this.props
-      .fetchSelectorData(filterOptions)
+      .fetchDataList(filterOptions)
       .then(({ data, total }) => {
         const allElementIds = data.map(element => element.id);
         const elementsById = normalizeArrayOfObject(data, 'id');

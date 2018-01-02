@@ -16,7 +16,6 @@ export interface FormTextArea {
   formItemProps?: FormItemProps;
   inputProps?: TextAreaProps;
   helpToolTipProps: TooltipProps;
-  buttonText: string;
 }
 
 const FormTextArea: React.SFC<FormTextArea & WrappedFieldProps> = props => {

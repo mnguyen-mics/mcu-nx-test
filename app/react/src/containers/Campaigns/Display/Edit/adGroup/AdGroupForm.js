@@ -233,7 +233,14 @@ class AdGroupForm extends Component {
             <hr />
             <Placements {...commonProps} formValues={placementTable} />
             <hr />
-            <AdsSection {...commonProps} RxF={this.props.RxF} />
+            <FieldArray
+              name="adTable"
+              component={AdsSection}
+              formChange={this.props.RxF.change}
+              openNextDrawer={openNextDrawer}
+              closeNextDrawer={closeNextDrawer}
+              rerenderOnEveryChange
+            />
             <hr />
             <Optimization {...commonProps} formValues={optimizerTable} />
             {!editionMode

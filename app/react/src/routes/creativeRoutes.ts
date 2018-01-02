@@ -4,9 +4,12 @@ import {
 } from '../containers/Creative/DisplayAds/List';
 
 import {
-  CreateCreativePage,
-  EditDisplayCreativePage,
+  // CreateCreativePage,
 } from '../containers/Creative/DisplayAds/Edit';
+
+import {
+  EditDisplayCreativePage,
+} from '../containers/Creative/DisplayAds/Edit/index'
 
 import {
   EmailActionBar,
@@ -23,7 +26,7 @@ const creativesRoutes = [
   {
     path: '/creatives/display/create',
     layout: 'edit',
-    editComponent: CreateCreativePage,
+    editComponent: EditDisplayCreativePage,
   },
   {
     path: '/creatives/display/edit/:creativeId(\\d+)',

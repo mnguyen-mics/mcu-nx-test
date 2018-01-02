@@ -122,6 +122,10 @@ export class AudienceSegmentSelector extends React.Component<Props, State> {
     return AudienceSegmentService.getSegments(undefined, datamartId, options);
   };
 
+  fetchSegment = (segmentId: string) => {
+    return AudienceSegmentService.getSegment(segmentId);
+  }
+
   render() {
     const { selectedSegmentIds, close, intl: { formatMessage } } = this.props;
 
@@ -162,7 +166,8 @@ export class AudienceSegmentSelector extends React.Component<Props, State> {
           messages.segmentSelectorSearchPlaceholder,
         )}
         selectedIds={selectedSegmentIds}
-        fetchSelectorData={this.fetchSegments}
+        fetchDataList={this.fetchSegments}
+        fetchData={this.fetchSegment}
         columnsDefinitions={columns}
         save={this.saveSegments}
         close={close}

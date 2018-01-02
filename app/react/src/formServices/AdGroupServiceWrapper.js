@@ -1,9 +1,9 @@
-import DisplayCampaignService from '../../../../services/DisplayCampaignService.ts';
-import BidOptimizerServices from '../../../../services/BidOptimizerServices.ts';
-import CreativeService from '../../../../services/CreativeService.ts';
-import PlacementListServices from '../../../../services/Library/PlacementListsService.ts';
-import GeonameService from '../../../../services/GeonameService.ts';
-import { isFakeId, generateFakeId } from '../../../../utils/FakeIdHelper.ts';
+import DisplayCampaignService from '../services/DisplayCampaignService.ts';
+import BidOptimizerServices from '../services/BidOptimizerServices';
+import CreativeService from '../services/CreativeService.ts';
+import PlacementListServices from '../services/Library/PlacementListsService.ts';
+import GeonameService from '../services/GeonameService.ts';
+import { isFakeId, generateFakeId } from '../utils/FakeIdHelper';
 
 
 // ===========================================================================
@@ -306,13 +306,14 @@ const saveAdResources = (organisationId, campaignId, adGroupId, adTable, initial
   });
 
   const createCreativeThenLinkToAdGroup = adTable.filter(field => isFakeId(field.id) && field.resource.creativeResource !== null).map(field => {
-    return function promise() {
-      return CreativeServiceWrapper.createDisplayCreative(organisationId, field.resource.creativeResource).then(res => {
-        const creativeId = res.data.id;
-        const adResource = { creative_id: creativeId };
-        return DisplayCampaignService.createAd(campaignId, adGroupId, adResource);
-      });
-    };
+    // return function promise() {
+    //   return CreativeServiceWrapper.createDisplayCreative(organisationId, field.resource.creativeResource).then(res => {
+    //     const creativeId = res.data.id;
+    //     const adResource = { creative_id: creativeId };
+    //     return DisplayCampaignService.createAd(campaignId, adGroupId, adResource);
+    //   });
+    // };
+    return Promise.resolve();
   });
 
   const options = {

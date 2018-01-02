@@ -1,24 +1,19 @@
-import { CreateCreativeResource } from './domain';
-import { PropertyResourceShape } from './../../../../../../../models/Plugins';
-import { DisplayAdResource } from './../../../../../../../models/creative/CreativeResource';
-import { AdResource, AdCreateRequest, RendererDataProps } from '../../../../../../../models/campaign/display/AdResource';
 
-export interface CreateCreativeResource {
-  creative: DisplayAdResource;
-  properties: PropertyResourceShape[];
-  rendererData: RendererDataProps;
-}
-export type AdFieldModelResourceShape = AdResource | AdCreateRequest | CreateCreativeResource;
+import { AdResource, AdCreateRequest } from '../../../../../../../models/campaign/display/AdResource';
+import { DisplayCreativeFormData } from '../../../../../../Creative/DisplayAds/Edit/domain';
+
+
+export type AdFieldModelResourceShape = AdResource | AdCreateRequest | DisplayCreativeFormData;
 export interface AdFieldModel {
   id: string;
   resource: AdFieldModelResourceShape;
 }
 
-export function isCreateCreativeResource(
+export function isDisplayCreativeFormData(
   resource: AdFieldModelResourceShape,
-): resource is CreateCreativeResource {
-  return (resource as CreateCreativeResource).creative !== undefined &&
-    (resource as CreateCreativeResource).rendererData !== undefined;
+): resource is DisplayCreativeFormData {
+  return (resource as DisplayCreativeFormData).creative !== undefined &&
+    (resource as DisplayCreativeFormData).rendererProperties !== undefined;
 }
 
 export function isAdResource(

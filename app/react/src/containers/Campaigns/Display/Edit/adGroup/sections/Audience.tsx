@@ -117,6 +117,10 @@ class Audience extends React.Component<JoinedProps, AudienceState> {
     return AudienceSegmentService.getSegmentsWithMetadata(organisationId, datamartId, options);
   }
 
+  getSingleAudience = (audienceSegmentId: string) => {
+    return AudienceSegmentService.getSegmentMetaData(audienceSegmentId);
+  }
+
   openWindow = () => {
     const { handlers } = this.props;
     const selectedIds = this.props.fields.getAll() &&
@@ -148,7 +152,8 @@ class Audience extends React.Component<JoinedProps, AudienceState> {
       close: handlers.closeNextDrawer,
       columnsDefinitions,
       displayFiltering: true,
-      fetchSelectorData: this.getAudience,
+      fetchDataList: this.getAudience,
+      fetchData: this.getSingleAudience,
       save: this.updateData,
       selectedIds,
     };

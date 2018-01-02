@@ -17,6 +17,10 @@ class Publisher extends Component {
     return DisplayNetworkServices.getAllPublishers(this.props.organisationId);
   }
 
+  getPublisher = (displayNetworkId) => {
+    return DisplayNetworkServices.getPublisher(displayNetworkId);
+  }
+
   openWindow = () => {
     const { formValues, handlers } = this.props;
     const selectedIds = formValues.filter(elem => !elem.toBeRemoved).map(elem => elem.id);
@@ -34,7 +38,8 @@ class Publisher extends Component {
       actionBarTitle: 'Add a Publisher',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
-      fetchSelectorData: this.getAllPublishers,
+      fetchDataList: this.getAllPublishers,
+      fetchData: this.getPublisher,
       save: this.updateData,
       selectedIds,
     };

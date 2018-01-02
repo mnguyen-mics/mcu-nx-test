@@ -6,7 +6,7 @@ import { camelCase } from 'lodash';
 
 import withDrawer, { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer/index';
 import AdGroupContent from './AdGroupContent';
-import { saveAdGroup, getAdGroup } from '../AdGroupServiceWrapper';
+import { saveAdGroup, getAdGroup } from '../../../../../formServices/AdGroupServiceWrapper';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import log from '../../../../../utils/Logger';

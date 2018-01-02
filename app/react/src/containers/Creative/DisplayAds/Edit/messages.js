@@ -9,6 +9,10 @@ export default defineMessages({
     id: 'message.add.saveCreative',
     defaultMessage: 'Add',
   },
+  updateCreative: {
+    id: 'message.update.saveCreative',
+    defaultMessage: 'Update',
+  },
   creativesTypePickerTitle: {
     id: 'creatives.create.typePicker.title',
     defaultMessage: 'Creative Type',
@@ -56,6 +60,10 @@ export default defineMessages({
   creativeCreationBreadCrumb: {
     id: 'creatives.create.actionbar.breadcrumb.label',
     defaultMessage: 'New Display Creative',
+  },
+  creativeEditionBreadCrumb: {
+    id: 'creatives.edition.actionbar.breadcrumb.label',
+    defaultMessage: 'Edit Display Creative',
   },
   creativeCreationGeneralNameFieldTitle: {
     id: 'creatives.create.section.general.field.name.title',
