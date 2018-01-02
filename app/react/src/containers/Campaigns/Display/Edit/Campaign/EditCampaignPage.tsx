@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 
 import CampaignContent from './CampaignContent';
 import withDrawer, { DrawableContentProps, DrawableContentOptions } from '../../../../../components/Drawer';
-import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import log from '../../../../../utils/Logger';
 import * as AdGroupWrapper from '../../../../../formServices/AdGroupServiceWrapper';
 import messages from './messages';
+import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 
 interface EditCampaignPageProps {
   closeNextDrawer: () => void;
@@ -21,31 +21,54 @@ interface EditCampaignPageProps {
 
 interface RouterMatchParams {
   organisationId: string;
-  campaignId: string;
+  campaignId?: string;
 }
 
 interface EditCampaignPageState {
-  initialValues: object;
+  initialValues: any;
   loading: boolean;
+  editionMode: boolean;
 }
 
 type JoinedProps = EditCampaignPageProps & InjectedIntlProps & RouteComponentProps<RouterMatchParams>;
 
 class EditCampaignPage extends React.Component<JoinedProps, EditCampaignPageState> {
 
-  state = {
-    initialValues: {
-      name: '',
-    },
-    loading: true,
-  };
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      initialValues: {
+        name: '',
+      },
+      loading: true,
+      editionMode: ((props.location.state && props.location.state.campaignId) || !props.match.params.campaignId) ? false : true,
+    };
+  }
 
   componentDidMount() {
     const {
       campaignId,
       organisationId,
     } = this.props.match.params;
-    this.fetchAll(campaignId, organisationId);
+
+    const stateCampaignId = this.props.location.state && this.props.location.state.campaignId;
+
+    if (campaignId) {
+      this.fetchAll(campaignId, organisationId);
+    } else if (stateCampaignId) {
+      this.fetchAll(stateCampaignId, organisationId, true);
+    } else {
+      this.setState({
+        initialValues: {
+          model_version: 'V2017_09',
+          max_budget_period: 'DAY',
+          adGroupsTable: [],
+          name: '',
+        },
+        loading: false,
+      });
+    }
+
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
@@ -54,20 +77,62 @@ class EditCampaignPage extends React.Component<JoinedProps, EditCampaignPageStat
       organisationId,
     } = this.props.match.params;
     const { campaignId: nextCampaignId, organisationId: nextOrganisationId } = nextProps.match.params;
-    if (campaignId !== nextCampaignId || organisationId !== nextOrganisationId) {
-      this.fetchAll(nextCampaignId, nextOrganisationId);
+
+    const { campaignId: stateCampaignId } =  this.props.location.state;
+    const { campaignId: nextStateCampaignId } =  nextProps.location.state;
+    if (campaignId !== nextCampaignId || organisationId !== nextOrganisationId || stateCampaignId !== nextStateCampaignId) {
+      const cId = nextCampaignId ? nextCampaignId : nextStateCampaignId;
+      const duplication = nextCampaignId ? false : true;
+      this.fetchAll(cId, nextOrganisationId, duplication);
     }
   }
 
-  fetchAll = (campaignId: string, organisationId: string) => {
+  fetchAll = (campaignId: string, organisationId: string, duplication?: boolean) => {
     Promise.all([
       this.fetchCampaignInfo(campaignId),
       this.fetchGoalsSelection(campaignId),
-      this.fetchAdGroups(campaignId, organisationId),
+      this.fetchAdGroups(campaignId, organisationId, duplication),
     ])
     .then((results) => {
+      let campaignInfo: any = results[0];
+      let goalTable = results[1];
+      let adGroupTable = results[2];
+      if (duplication) {
+
+        campaignInfo = {
+          model_version: campaignInfo.model_version,
+          max_budget_period: campaignInfo.max_budget_period,
+          name: campaignInfo.name,
+          total_impression_capping: campaignInfo.total_impression_capping,
+          per_day_impression_capping: campaignInfo.per_day_impression_capping,
+          total_budget: campaignInfo.total_budget,
+          max_budget_per_period: campaignInfo.max_budget_per_period,
+        };
+
+        goalTable = goalTable.map((goalSelection: any) => {
+          return {
+            id: goalSelection.goal_id,
+            name: goalSelection.goal_name,
+          };
+        });
+
+        adGroupTable = adGroupTable.map((adGroup: any) => {
+          return {
+            ...adGroup,
+            id: generateFakeId(),
+            toBeCreated: true,
+            optimizerTable: adGroup.optimizerTable.map((item: any) => {
+              return {
+                ...item,
+                modelId: generateFakeId(),
+                toBeRemoved: false,
+              };
+            }),
+          };
+        });
+      }
       this.setState({
-        initialValues: { ...results[0], goalsTable: results[1], adGroupsTable: results[2] },
+        initialValues: { ...campaignInfo, goalsTable: goalTable, adGroupsTable: adGroupTable },
         loading: false,
       });
     })
@@ -91,8 +156,8 @@ class EditCampaignPage extends React.Component<JoinedProps, EditCampaignPageStat
       }));
   }
 
-  fetchAdGroups = (campaignId: string, organisationId: string) => {
-    return AdGroupWrapper.getAdGroups(organisationId, campaignId)
+  fetchAdGroups = (campaignId: string, organisationId: string, duplication: boolean = false) => {
+    return AdGroupWrapper.getAdGroups(organisationId, campaignId, duplication)
     .then((data: any) => data.map((item: any) => {
       const newItem = item;
       newItem.main_id = item.id;
@@ -108,7 +173,6 @@ class EditCampaignPage extends React.Component<JoinedProps, EditCampaignPageStat
       match: {
         params: {
           organisationId,
-          campaignId,
         },
       },
     } = this.props;
@@ -123,8 +187,7 @@ class EditCampaignPage extends React.Component<JoinedProps, EditCampaignPageStat
         url: `/v2/o/${organisationId}/campaigns/display`,
       },
       {
-        name: initialValues.name,
-        url: `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`,
+        name: initialValues.name ? initialValues.name : formatMessage(messages.createCampaingTitle),
       },
     ];
 
@@ -135,14 +198,14 @@ class EditCampaignPage extends React.Component<JoinedProps, EditCampaignPageStat
         initialValues={this.state.initialValues}
         loading={this.state.loading}
         breadcrumbPaths={breadcrumbPaths}
-        editionMode={true}
+        editionMode={this.state.editionMode}
       />
     );
   }
 }
 
 export default compose(
-  withMcsRouter,
+  withRouter,
   withDrawer,
   injectIntl,
   connect(

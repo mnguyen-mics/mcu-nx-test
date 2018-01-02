@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, Dropdown, Icon, Menu, Modal, message } from 'antd';
-import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
@@ -236,12 +235,27 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
     });
   }
 
+  editCampaign = () => {
+    const {
+      location,
+      history,
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+        },
+      },
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
+    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}` } });
+  }
+
   render() {
     const {
       match: {
         params: {
           organisationId,
-          campaignId,
         },
       },
       intl: { formatMessage },
@@ -267,12 +281,12 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
           <McsIcons type="download" />
           <FormattedMessage id="EXPORT" />
         </Button>
-        <Link to={`/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`}>
-          <Button>
+
+          <Button onClick={this.editCampaign}>
             <McsIcons type="pen" />
             <FormattedMessage {...messages.editCampaign} />
           </Button>
-        </Link>
+
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />
@@ -324,6 +338,22 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
     );
   }
 
+  duplicateCampaign = () => {
+    const {
+      location,
+      history,
+      match: {
+        params: {
+          organisationId,
+          campaignId,
+        },
+      },
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
+    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}`, campaignId: campaignId } });
+  }
+
   buildMenu = () => {
     const {
       campaign,
@@ -349,6 +379,8 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
       switch (event.key) {
         case 'ARCHIVED':
           return handleArchiveGoal(campaign.items.id);
+        case 'DUPLICATE':
+          return this.duplicateCampaign();
         default:
           return () => {
             log.error('onclick error');
@@ -358,6 +390,9 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
 
     return (
       <Menu onClick={onClick}>
+        <Menu.Item key="DUPLICATE">
+          <FormattedMessage {...messages.duplicate} />
+        </Menu.Item>
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveCampaign} />
         </Menu.Item>

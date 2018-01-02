@@ -5,6 +5,7 @@ import {
   getFormValues,
   reduxForm,
   formPropTypes,
+  FieldArray,
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose, mapProps } from 'recompose';
@@ -32,10 +33,13 @@ import { Loading } from '../../../../../components/index.ts';
 import { withMcsRouter } from '../../../../Helpers';
 import * as actions from '../../../../../state/Notifications/actions';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
+import { getDefaultDatamart } from '../../../../../state/Session/selectors';
 import messages from '../messages';
 
 const { Content } = Layout;
 const FORM_NAME = 'adGroupForm';
+
+const AudienceFieldArray = FieldArray;
 
 class AdGroupForm extends Component {
 
@@ -155,6 +159,7 @@ class AdGroupForm extends Component {
       intl: { formatMessage },
       openNextDrawer,
       organisationId,
+      defaultDatamart,
     } = this.props;
 
     const commonProps = {
@@ -172,8 +177,13 @@ class AdGroupForm extends Component {
       },
       organisationId,
     };
+
+    const handlers = {
+      closeNextDrawer,
+      openNextDrawer,
+    };
+
     const {
-      audienceTable,
       optimizerTable,
       // placements,
       // publisherTable,
@@ -205,7 +215,14 @@ class AdGroupForm extends Component {
                   <FeatureSwitch
                     featureName="campaigns.display.edition.audience_catalog"
                     enabledComponent={<AudienceCatalogContainer RxF={this.props.RxF} />}
-                    disabledComponent={<Audience {...commonProps} formValues={audienceTable} />}
+                    disabledComponent={<AudienceFieldArray
+                      name="audienceSegmentTable"
+                      component={Audience}
+                      handlers={handlers}
+                      RxF={this.props.RxF}
+                      organisationId={organisationId}
+                      datamartId={defaultDatamart(organisationId).id}
+                    />}
                   />
                 </div>
             }
@@ -213,10 +230,6 @@ class AdGroupForm extends Component {
             <Device {...commonProps} formValues={formValues} />
             <hr />
             <LocationSection RxF={this.props.RxF} />
-            {/* <hr />
-            <Media {...commonProps} />
-            <hr />
-            <Publisher {...commonProps} formValues={publisherTable} /> */}
             <hr />
             <Placements {...commonProps} formValues={placementTable} />
             <hr />
@@ -255,11 +268,13 @@ AdGroupForm.propTypes = {
   save: PropTypes.func.isRequired,
   RxF: PropTypes.shape(formPropTypes).isRequired,
   submitFailed: PropTypes.bool,
+  defaultDatamart: PropTypes.func.isRequired,
 };
 
 
 const mapStateToProps = (state, ownProps) => ({
   formValues: getFormValues(ownProps.RxF.form)(state),
+  defaultDatamart: getDefaultDatamart(state),
 });
 
 const mapDispatchToProps = {

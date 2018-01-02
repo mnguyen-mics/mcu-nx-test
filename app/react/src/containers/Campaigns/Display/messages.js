@@ -49,4 +49,8 @@ export default defineMessages({
     id: 'display.metrics.formats',
     defaultMessage: 'Formats'
   },
+  duplication: {
+    id: 'display.duplication',
+    defaultMessage: 'Duplicate'
+  }
 });

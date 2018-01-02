@@ -8,7 +8,11 @@ import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import AssetsFilesService from '../../../../services/Library/AssetsFilesService';
 import { AssetFileResource } from '../../../../models/assets/assets';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import messages from './messages';
 
@@ -28,45 +32,42 @@ interface RouterProps {
   organisationId: string;
 }
 
-class AssetListContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, AssetListContentState> {
-
+class AssetListContent extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  AssetListContentState
+> {
   state = initialState;
 
   archiveAssetList = (assetId: string) => {
     return AssetsFilesService.deleteAssetsFile(assetId);
-  }
+  };
 
   fetchAssetList = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      AssetsFilesService.getAssetsFiles(organisationId, options)
-        .then((results) => {
+      AssetsFilesService.getAssetsFiles(organisationId, options).then(
+        results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        });
+        },
+      );
     });
-  }
+  };
 
   onClickArchive = (asset: AssetFileResource) => {
     const {
-      location: {
-        search,
-        state,
-        pathname,
-      },
+      location: { search, state, pathname },
       history,
       match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      data,
-    } = this.state;
+    const { data } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
@@ -77,8 +78,7 @@ class AssetListContent extends React.Component<RouteComponentProps<RouterProps> 
       okText: formatMessage(messages.assetArchiveOk),
       cancelText: formatMessage(messages.assetArchiveCancel),
       onOk: () => {
-        this.archiveAssetList(asset.id)
-        .then(() => {
+        this.archiveAssetList(asset.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -98,77 +98,77 @@ class AssetListContent extends React.Component<RouteComponentProps<RouterProps> 
         // cancel
       },
     });
-  }
-
-  resetAssetList = () => {
-    this.setState(initialState);
-  }
+  };
 
   render() {
-    const actions = {
-      fetchList: this.fetchAssetList,
-      resetList: this.resetAssetList,
-    };
+    const actionsColumnsDefinition = [
+      {
+        key: 'action',
+        actions: [{ translationKey: 'ARCHIVE', callback: this.onClickArchive }],
+      },
+    ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
-        },
-      ],
-
-      dataColumnsDefinition: [
-        {
-          translationKey: 'PREVIEW',
-          intlMessage: messages.preview,
-          key: 'file_path',
-          isHideable: false,
-          className: 'mcs-table-image-col',
-          render: (text: string, record: AssetFileResource) => (
-            <div className="mcs-table-cell-thumbnail">
-              <a target="_blank" rel="noreferrer noopener" href={`https://assets.mediarithmics.com${text}`}>
-                <span className="thumbnail-helper" /><img src={`https://assets.mediarithmics.com${text}`} alt={record.original_filename} />
-              </a>
-            </div>
-          ),
-        },
-        {
-          translationKey: 'NAME',
-          intlMessage: messages.name,
-          key: 'original_filename',
-          isHideable: false,
-          render: (text: string, record: AssetFileResource) => (
+    const dataColumnsDefinition = [
+      {
+        translationKey: 'PREVIEW',
+        intlMessage: messages.preview,
+        key: 'file_path',
+        isHideable: false,
+        className: 'mcs-table-image-col',
+        render: (text: string, record: AssetFileResource) => (
+          <div className="mcs-table-cell-thumbnail">
             <a
-              href={`https://assets.mediarithmics.com${record.file_path}`}
-              rel="noreferrer noopener"
               target="_blank"
-            >{text}
+              rel="noreferrer noopener"
+              href={`https://assets.mediarithmics.com${text}`}
+            >
+              <span className="thumbnail-helper" />
+              <img
+                src={`https://assets.mediarithmics.com${text}`}
+                alt={record.original_filename}
+              />
             </a>
-          ),
-        },
-        {
-          translationKey: 'TYPE',
-          intlMessage: messages.type,
-          key: 'mime_type',
-          isHideable: false,
-          render: (text: string) => <span>{text}</span>,
-        },
-        {
-          translationKey: 'DIMENSIONS',
-          intlMessage: messages.dimensions,
-          key: 'width',
-          isHideable: false,
-          render: (text: string, record: AssetFileResource) => <span>{text}x{record.height}</span>,
-        },
-      ],
-    };
+          </div>
+        ),
+      },
+      {
+        translationKey: 'NAME',
+        intlMessage: messages.name,
+        key: 'original_filename',
+        isHideable: false,
+        render: (text: string, record: AssetFileResource) => (
+          <a
+            href={`https://assets.mediarithmics.com${record.file_path}`}
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            {text}
+          </a>
+        ),
+      },
+      {
+        translationKey: 'TYPE',
+        intlMessage: messages.type,
+        key: 'mime_type',
+        isHideable: false,
+        render: (text: string) => <span>{text}</span>,
+      },
+      {
+        translationKey: 'DIMENSIONS',
+        intlMessage: messages.dimensions,
+        key: 'width',
+        isHideable: false,
+        render: (text: string, record: AssetFileResource) => (
+          <span>
+            {text}x{record.height}
+          </span>
+        ),
+      },
+    ];
 
     const emptyTable: {
-      iconType: McsIconType,
-      intlMessage: FormattedMessage.Props,
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
     } = {
       iconType: 'library',
       intlMessage: messages.empty,
@@ -176,11 +176,12 @@ class AssetListContent extends React.Component<RouteComponentProps<RouterProps> 
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchAssetList}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />
@@ -188,7 +189,4 @@ class AssetListContent extends React.Component<RouteComponentProps<RouterProps> 
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(AssetListContent);
+export default compose(withRouter, injectIntl)(AssetListContent);

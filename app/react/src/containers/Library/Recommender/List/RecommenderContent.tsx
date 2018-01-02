@@ -8,7 +8,11 @@ import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import RecommenderService from '../../../../services/Library/RecommenderService';
 import PluginService from '../../../../services/PluginService';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { PropertyResourceShape, Recommender, PluginVersion } from '../../../../models/Plugins';
 import messages from './messages';
@@ -33,22 +37,23 @@ interface RouterProps {
   organisationId: string;
 }
 
-class RecommenderContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, RecommenderContentState> {
-
+class RecommenderContent extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  RecommenderContentState
+> {
   state = initialState;
 
   archiveRecommender = (recommenderId: string) => {
     return RecommenderService.deleteRecommender(recommenderId);
-  }
+  };
 
   fetchRecommender = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      RecommenderService.getRecommenders(organisationId, options)
-        .then((results: { data: Recommender[], total?: number, count: number}) => {
-
+      RecommenderService.getRecommenders(organisationId, options).then(
+        (results: { data: Recommender[]; total?: number; count: number }) => {
           const promises = results.data.map(va => {
             return new Promise((resolve, reject) => {
               PluginService.getEngineVersion(va.version_id)
@@ -70,38 +75,31 @@ class RecommenderContent extends React.Component<RouteComponentProps<RouterProps
               total: results.total || results.count,
             });
           });
-
-        });
+        },
+      );
     });
-  }
+  };
 
   onClickArchive = (visitAnalyzer: RecommenderInterface) => {
     const {
-      location: {
-        search,
-        pathname,
-        state,
-      },
+      location: { search, pathname, state },
       history,
       match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      data,
-    } = this.state;
+    const { data } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title:  formatMessage(messages.recommenderArchiveTitle),
+      title: formatMessage(messages.recommenderArchiveTitle),
       content: formatMessage(messages.recommenderArchiveMessage),
       okText: formatMessage(messages.recommenderArchiveOk),
       cancelText: formatMessage(messages.recommenderArchiveCancel),
       onOk: () => {
-        this.archiveRecommender(visitAnalyzer.id)
-        .then(() => {
+        this.archiveRecommender(visitAnalyzer.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -121,90 +119,85 @@ class RecommenderContent extends React.Component<RouteComponentProps<RouterProps
         // cancel
       },
     });
-  }
+  };
 
   onClickEdit = (visitAnalyzer: RecommenderInterface) => {
-    const {
-      history,
-      match: { params: { organisationId } },
-    } = this.props;
+    const { history, match: { params: { organisationId } } } = this.props;
 
-    history.push(`/v2/o/${organisationId}/library/recommenders/${visitAnalyzer.id}/edit`);
-  }
-
-  resetRecommender = () => {
-    this.setState(initialState);
-  }
+    history.push(
+      `/v2/o/${organisationId}/library/recommenders/${visitAnalyzer.id}/edit`,
+    );
+  };
 
   render() {
-    const {
-      match: { params: { organisationId } },
-    } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
 
-    const actions = {
-      fetchList: this.fetchRecommender,
-      resetList: this.resetRecommender,
-    };
+    const actionsColumnsDefinition = [
+      {
+        key: 'action',
+        actions: [
+          { translationKey: 'EDIT', callback: this.onClickEdit },
+          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+        ],
+      },
+    ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            { translationKey: 'EDIT', callback: this.onClickEdit },
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
+    const dataColumnsDefinition = [
+      {
+        translationKey: 'PROCESSOR',
+        intlMessage: messages.processor,
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: RecommenderInterface) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/library/recommenders/${
+              record.id
+            }/edit`}
+          >
+            {text}
+          </Link>
+        ),
+      },
+      {
+        translationKey: 'PROVIDER',
+        intlMessage: messages.provider,
+        key: 'id',
+        isHideable: false,
+        render: (text: string, record: RecommenderInterface) => {
+          const property =
+            record &&
+            record.properties &&
+            record.properties.find(item => item.technical_name === 'name');
+          const render =
+            property && property.value && property.value.value
+              ? property.value.value
+              : null;
+          return <span>{render}</span>;
         },
-      ],
-
-      dataColumnsDefinition: [
-        {
-          translationKey: 'PROCESSOR',
-          intlMessage: messages.processor,
-          key: 'name',
-          isHideable: false,
-          render: (text: string, record: RecommenderInterface) => (
-            <Link
-              className="mcs-campaigns-link"
-              to={`/v2/o/${organisationId}/library/recommenders/${record.id}/edit`}
-            >{text}
-            </Link>
-          ),
+      },
+      {
+        translationKey: 'NAME',
+        intlMessage: messages.name,
+        key: 'version_id',
+        isHideable: false,
+        render: (text: string, record: RecommenderInterface) => {
+          const property =
+            record &&
+            record.properties &&
+            record.properties.find(item => item.technical_name === 'provider');
+          const render =
+            property && property.value && property.value.value
+              ? property.value.value
+              : null;
+          return <span>{render}</span>;
         },
-        {
-          translationKey: 'PROVIDER',
-          intlMessage: messages.provider,
-          key: 'id',
-          isHideable: false,
-          render: (text: string, record: RecommenderInterface) => {
-            const property = record && record.properties && record.properties.find(item => item.technical_name === 'name');
-            const render = property && property.value && property.value.value ? property.value.value : null;
-            return (
-            <span>{
-              render
-            }</span>
-          ); },
-        },
-        {
-          translationKey: 'NAME',
-          intlMessage: messages.name,
-          key: 'version_id',
-          isHideable: false,
-          render: (text: string, record: RecommenderInterface) => {
-            const property = record && record.properties && record.properties.find(item => item.technical_name === 'provider');
-            const render = property && property.value && property.value.value ? property.value.value : null;
-            return (
-            <span>{
-              render
-            }</span>
-          ); },
-        },
-      ],
-    };
+      },
+    ];
 
     const emptyTable: {
-      iconType: McsIconType,
-      intlMessage: FormattedMessage.Props,
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
     } = {
       iconType: 'library',
       intlMessage: messages.empty,
@@ -212,11 +205,12 @@ class RecommenderContent extends React.Component<RouteComponentProps<RouterProps
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchRecommender}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />
@@ -224,7 +218,4 @@ class RecommenderContent extends React.Component<RouteComponentProps<RouterProps
   }
 }
 
-export default compose(
-    withRouter,
-    injectIntl,
-  )(RecommenderContent);
+export default compose(withRouter, injectIntl)(RecommenderContent);

@@ -75,7 +75,7 @@ class LegendChartWithModal extends Component {
     const renderModal = (that) => {
       const { onLegendChange } = this.props;
       Modal.confirm({
-        title: 'Do you Want to delete these items?',
+        title: 'Please select two items to display',
         content: renderPicker(that),
         onOk() {
           onLegendChange(that.state.key1, that.state.key2);

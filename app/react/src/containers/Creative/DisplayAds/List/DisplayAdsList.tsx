@@ -7,7 +7,6 @@ import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 
 import { TableViewFilters, EmptyTableView } from '../../../../components/TableView';
-import { ColumnsDefinitions } from '../../../../components/TableView/TableView';
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
@@ -216,15 +215,12 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
       },
     ];
 
-    const columnsDefinitions: ColumnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     return hasCreativeDisplay ? (
       <div className="mcs-table-container">
         <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
           loading={isFetchingCreativeDisplay}
           pagination={pagination}

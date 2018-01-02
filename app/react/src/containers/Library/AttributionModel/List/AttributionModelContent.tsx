@@ -127,22 +127,12 @@ class AttributionModelContent extends React.Component<RouteComponentProps<Router
     history.push(`/v2/o/${organisationId}/library/attribution_models/${attribution.id}/edit`);
   }
 
-  resetAttributionModel = () => {
-    this.setState(initialState);
-  }
-
   render() {
     const {
       match: { params: { organisationId } },
     } = this.props;
 
-    const actions = {
-      fetchList: this.fetchAttributionModel,
-      resetList: this.resetAttributionModel,
-    };
-
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
+      const actionsColumnsDefinition = [
         {
           key: 'action',
           actions: [
@@ -150,9 +140,9 @@ class AttributionModelContent extends React.Component<RouteComponentProps<Router
             { translationKey: 'ARCHIVE', callback: this.onClickArchive },
           ],
         },
-      ],
+      ];
 
-      dataColumnsDefinition: [
+      const dataColumnsDefinition = [
         {
           translationKey: 'NAME',
           intlMessage: messages.name,
@@ -195,8 +185,7 @@ class AttributionModelContent extends React.Component<RouteComponentProps<Router
             }</span>
           ); },
         },
-      ],
-    };
+      ];
 
     const emptyTable: {
       iconType: McsIconType,
@@ -208,11 +197,12 @@ class AttributionModelContent extends React.Component<RouteComponentProps<Router
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchAttributionModel}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />

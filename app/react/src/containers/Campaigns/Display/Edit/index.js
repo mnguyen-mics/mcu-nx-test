@@ -1,9 +1,7 @@
-import CreateAdGroupPage from './adGroup/CreateAdGroupPage';
-import EditAdGroupPage from './adGroup/EditAdGroupPage';
+import EditAdGroupPage from './adGroup/EditAdGroupPage.tsx';
 import messages from './messages';
 
 export {
-  CreateAdGroupPage,
   EditAdGroupPage,
   messages,
 };

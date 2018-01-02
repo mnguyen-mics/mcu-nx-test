@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 
+interface Entry {
+  label?: FormattedMessage.Props;
+  color: string;
+  value: number;
+}
+
 interface BasicTooltipProps {
   content: {
     xLabel: string | number | Date;
-    entries: [{
-      label?: FormattedMessage.Props;
-      color: string;
-      value: number;
-    }];
+    entries: Entry[];
   };
 }
 
@@ -18,7 +20,7 @@ const BasicTooltip: React.SFC<BasicTooltipProps> = ({ content }) => {
 
   let tooltipTableContent: JSX.Element | JSX.Element[];
 
-  if (content) {
+  if (content && content.entries) {
     tooltipTableContent = content.entries.map((entry, index) => {
 
       return (

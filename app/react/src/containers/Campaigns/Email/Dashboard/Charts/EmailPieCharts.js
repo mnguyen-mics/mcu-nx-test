@@ -6,7 +6,7 @@ import { Row, Col } from 'antd';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
-import PieChart from '../../../../../components/PieChart';
+import PieChart from '../../../../../components/PieChart.tsx';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
@@ -84,31 +84,35 @@ class EmailPieCharts extends Component {
 
     const generateData = (type) => {
 
+      const {
+        colors
+      } = this.props;
+
       switch (type) {
         case 'delivered':
           return [
-            { key: 'delivered', val: emailDelivered ? emailDelivered : 0, color: '#ff9012' },
+            { key: 'delivered', val: emailDelivered ? emailDelivered : 0, color: colors['mcs-warning'] },
             { key: 'rest', val: (emailDelivered === 0) ? 100 : Math.abs(emailSent - emailDelivered), color: '#eaeaea' },
           ];
         case 'opens':
           return [
-            { key: 'delivered', val: emailOpened ? emailOpened : 0 },
-            { key: 'rest', val: emailOpened === 0 ? 100 : Math.abs(emailSent - emailOpened) },
+            { key: 'delivered', val: emailOpened ? emailOpened : 0, color: colors['mcs-info'] },
+            { key: 'rest', val: emailOpened === 0 ? 100 : Math.abs(emailSent - emailOpened), color: '#eaeaea' },
           ];
         case 'clicks2open':
           return [
-            { key: 'clicks', val: emailClicks ? emailClicks : 0 },
-            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailOpened - emailClicks) },
+            { key: 'clicks', val: emailClicks ? emailClicks : 0, color: colors['mcs-info'] },
+            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailOpened - emailClicks), color: '#eaeaea' },
           ];
         case 'clicks':
           return [
-            { key: 'clicks', val: emailClicks ? emailClicks : 0 },
-            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailSent - emailClicks) },
+            { key: 'clicks', val: emailClicks ? emailClicks : 0, color: colors['mcs-info'] },
+            { key: 'rest', val: emailClicks === 0 ? 100 : Math.abs(emailSent - emailClicks), color: '#eaeaea' },
           ];
         case 'unsubscribe':
           return [
-            { key: 'unsubscribe', val: emailUnsubscribe ? emailUnsubscribe : 0 },
-            { key: 'rest', val: emailUnsubscribe === 0 ? 100 : Math.abs(emailSent - emailUnsubscribe) },
+            { key: 'unsubscribe', val: emailUnsubscribe ? emailUnsubscribe : 0, color: colors['mcs-info'] },
+            { key: 'rest', val: emailUnsubscribe === 0 ? 100 : Math.abs(emailSent - emailUnsubscribe), color: '#eaeaea' },
           ];
         default:
           return [];

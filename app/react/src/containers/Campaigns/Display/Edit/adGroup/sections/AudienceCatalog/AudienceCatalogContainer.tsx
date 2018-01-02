@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { compose, Omit } from 'recompose';
+import { compose } from 'recompose';
 import { FieldArray, Field, GenericFieldArray, InjectedFormProps } from 'redux-form';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -11,6 +11,7 @@ import AudienceCatalog, { AudienceCatalogProps } from './AudienceCatalog';
 import {
   AudienceSegmentResource,
   AudienceSegmentSelectionResource,
+  AudienceSegmentSelectionCreateRequest
 } from '../../../../../../../models/audiencesegment';
 import {
   ServiceCategoryTree,
@@ -40,7 +41,7 @@ interface AudienceCatalogContainerState {
 
 export interface AudienceSegmentFieldModel {
   id: string;
-  resource: AudienceSegmentSelectionResource | Omit<AudienceSegmentSelectionResource, 'id'>;
+  resource: AudienceSegmentSelectionResource | AudienceSegmentSelectionCreateRequest;
   deleted?: boolean;
 }
 

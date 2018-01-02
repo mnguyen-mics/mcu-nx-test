@@ -195,11 +195,6 @@ class CreativeEmailsTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
     return hasCreativeEmails ? (
       <div className="mcs-table-container">
         <EmailTestModal
@@ -209,7 +204,8 @@ class CreativeEmailsTable extends Component {
           handleCancel={this.handleCancel}
         />
         <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
           loading={isFetchingCreativeEmails}
           pagination={pagination}

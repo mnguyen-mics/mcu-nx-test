@@ -177,11 +177,6 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
       // },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: [],
-    };
-
     return (
       <Row>
         <Col span={24}>
@@ -189,7 +184,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         </Col>
         <Col span={24}>
           <TableView
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
             dataSource={dataSet}
             loading={isFetchingMediaStat}
           />

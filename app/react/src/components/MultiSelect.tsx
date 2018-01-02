@@ -1,58 +1,59 @@
 import * as React from 'react';
-import { Icon, Dropdown, Menu, Button } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
+import {Icon, Dropdown, Menu, Button} from 'antd';
+import {ClickParam} from 'antd/lib/menu';
+import {ReactNode} from 'react-redux';
 
-interface Item {
-  key: string;
-  value: string;
-}
-interface MenuItem {
-  handleMenuClick?: (obj: { [name: string]: object[] }) => void;
-  selectedItems: Item[];
-  items: Item[];
-}
-export interface MultiSelectProps {
-  name: string;
+export interface MultiSelectProps<T> {
   displayElement: JSX.Element;
-  onCloseMenu?: (selectedItems: Item[]) => void;
-  menuItems: MenuItem;
+
+  items: T[];
+  selectedItems: T[];
+
+  display?: (t: T) => ReactNode;
+  getKey: (t: T) => string;
+
+  handleItemClick?: (item: T) => void;
+  handleMenuClick?: (selectedItems: T[]) => void;
+  onCloseMenu?: (selectedItems: T[]) => void;
+
+  singleSelectOnly?: boolean;
   buttonClass?: string;
 }
 
-interface MultiSelectState {
-  selectedItems: Item[];
+export interface MultiSelectState<T> {
+  selectedItems: T[];
   overlayVisible: boolean;
 }
 
-class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
+class MultiSelect<T> extends React.Component<MultiSelectProps<T>, MultiSelectState<T>> {
 
-  static defaultprops: Partial<MultiSelectProps> = {
+  static defaultProps: Partial<MultiSelectProps<any>> = {
     buttonClass: '',
+    display: t => t.toString(),
   };
 
   state = {
     overlayVisible: false,
-    selectedItems: this.props.menuItems.selectedItems,
+    selectedItems: this.props.selectedItems,
   };
 
   buildMenuItems = () => {
-    const { menuItems: { items } } = this.props;
-    const { selectedItems } = this.state;
+    const {items, display, getKey} = this.props;
+    const {selectedItems} = this.state;
 
     return (
       <Menu onClick={this.onMenuClick}>
-        { items.map(item => {
-          const isItemSelected = selectedItems.find(selectedItem => selectedItem.value === item.value);
+        {items.map(item => {
+          const isItemSelected = selectedItems.findIndex(selectedItem => getKey(selectedItem) === getKey(item)) !== -1;
           return (
-            <Menu.Item key={item.value}>
-              {isItemSelected && (<Icon type="check" />)}
-              <span>{item.key}</span>
+            <Menu.Item key={getKey(item)}>
+              {isItemSelected && (<Icon type="check"/>)}
+              <span>{display!(item)}</span>
             </Menu.Item>
           );
         })}
       </Menu>
     );
-
   }
 
   handleVisibleChange = (isVisible: boolean) => {
@@ -64,34 +65,38 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
   }
 
   onMenuClick = (param: ClickParam) => {
-    const { name, menuItems: { items, handleMenuClick } } = this.props;
-    const { selectedItems } = this.state;
+    const {items, handleMenuClick, getKey, handleItemClick, singleSelectOnly} = this.props;
+    const {selectedItems} = this.state;
 
-    const clickedItem = items.find(item => item.value === param.key);
+    const clickedItem = items.find(item => getKey(item) === param.key);
 
     // Add or remove item on selectedItems
-    let newArray: Item[] = [];
-    const index = selectedItems!.findIndex(selectedItem => selectedItem.value === clickedItem!.value);
+    let newArray: T[] = [];
+    const index = selectedItems!.findIndex(selectedItem => getKey(selectedItem) === getKey(clickedItem!));
 
     if (index !== -1) {
-      newArray = [
-        ...selectedItems.slice(0, index),
-        ...selectedItems.slice(index + 1),
-      ];
+      newArray = singleSelectOnly ? [] :
+        [
+          ...selectedItems.slice(0, index),
+          ...selectedItems.slice(index + 1),
+        ];
     } else {
-      newArray = [
-        ...selectedItems,
-        clickedItem!,
-      ];
+      newArray = singleSelectOnly ? [clickedItem!] :
+        [
+          ...selectedItems,
+          clickedItem!,
+        ];
     }
 
-    this.setState({ selectedItems: newArray });
+    this.setState({selectedItems: newArray});
 
-    if (typeof handleMenuClick === 'function') {
-      handleMenuClick({
-        [name]: newArray,
-      });
+    if (handleMenuClick) {
+      handleMenuClick(newArray);
     }
+    if (handleItemClick) {
+      handleItemClick(clickedItem!);
+    }
+
   }
 
   setVisibility(isVisible: boolean) {
@@ -101,8 +106,8 @@ class MultiSelect extends React.Component<MultiSelectProps, MultiSelectState> {
   }
 
   render() {
-    const { displayElement, buttonClass } = this.props;
-    const { overlayVisible } = this.state;
+    const {displayElement, buttonClass} = this.props;
+    const {overlayVisible} = this.state;
     const menu = this.buildMenuItems();
 
     return (

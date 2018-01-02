@@ -9,13 +9,14 @@ import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 
 export interface CreativeCardProps<T> {
   creative: T;
-  renderTitle?: (creative: T) => React.ReactNode;
+  renderTitle: (creative: T) => React.ReactNode;
   renderFooter: (creative: T) => React.ReactNode;
   renderSubtitles?: Array<(creative: T) => React.ReactNode>;
 }
 
 interface State {
   creativeScreenshot: CreativeScreenshotResource | null;
+  error?: Error;
 }
 
 class CreativeCard<T extends GenericCreativeResource> extends React.Component<CreativeCardProps<T>, State> {
@@ -46,6 +47,8 @@ class CreativeCard<T extends GenericCreativeResource> extends React.Component<Cr
 
     this.cancelablePromise.promise.then(response => {
       this.setState({ creativeScreenshot: response.data });
+    }).catch(err => {
+      this.setState({ error: err });
     });
   }
 
