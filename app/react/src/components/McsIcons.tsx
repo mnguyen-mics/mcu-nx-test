@@ -25,6 +25,7 @@ export type McsIconType =
   'extend' |
   'filters' |
   'full-users' |
+  'file' |
   'gears' |
   'goals-rounded' |
   'goals' |

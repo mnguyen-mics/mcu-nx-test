@@ -4,7 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Col, Menu, Dropdown, Button, Icon } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import moment from 'moment';
 import { ClickParam } from 'antd/lib/menu';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index';
@@ -23,6 +22,8 @@ import { updateSearch,
   compareSearches } from '../../../../../utils/LocationSearchHelper';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
+import McsMoment from '../../../../../utils/McsMoment';
+import log from '../../../../../utils/Logger';
 
 const StackedAreaPlotTS = StackedAreaPlot as any;
 const LegendChartTS = LegendChart as any;
@@ -63,6 +64,7 @@ interface GoalStackedAreaChartState {
   isFetchingPerformance: boolean;
   hasFetchedPerformance: boolean;
   hasData: boolean;
+  error: boolean;
 }
 
 type JoinedProps = GoalStackedAreaChartProps & RouteComponentProps<RouterMatchParams> & InjectedIntlProps;
@@ -76,6 +78,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
       isFetchingPerformance: false,
       hasFetchedPerformance: false,
       hasData: true,
+      error: false,
     };
   }
 
@@ -189,21 +192,31 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     campaignId: string,
     goal: Goal,
     attributionId: string | null,
-    from: moment.Moment,
-    to: moment.Moment,
+    from: McsMoment,
+    to: McsMoment,
   ) => {
     const filters = [`campaign_id==${campaignId}`, `goal_id==${goal.goal_id}`];
 
     if (attributionId) { filters.push(`attribution_model_id==${attributionId}`); }
     return this.setState({ isFetchingPerformance: true }, () => {
       ReportService.getConversionAttributionPerformance(organisationId, from, to, filters, ['day'], undefined)
-        .then((results) => normalizeReportView(results.data.report_view))
+        .then((results) => normalizeReportView<PerformanceValue>(results.data.report_view))
         .then(results => {
           this.setState({
             performance: results,
             isFetchingPerformance: false,
             hasData: !!results.length,
             hasFetchedPerformance: true,
+            error: false,
+          });
+        })
+        .catch(err => {
+          log.error(err);
+          this.setState({
+            isFetchingPerformance: false,
+            hasData: false,
+            hasFetchedPerformance: true,
+            error: true,
           });
         });
     });
@@ -215,16 +228,12 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType:  filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = (newValues: McsDateRangeValue) =>
     this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
         to: newValues.to,
       });
@@ -234,23 +243,17 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
 
   renderStackedAreaCharts() {
     const {
-      location: { search },
       colors,
       goal,
     } = this.props;
 
     const { performance, isFetchingPerformance } = this.state;
 
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-
-    const { lookbackWindow } = filter;
-
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
         { key: 'weighted_conversions', message: messages.weightedConversion },
       ],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: [colors['mcs-success']],
       isDraggable: false,
     };

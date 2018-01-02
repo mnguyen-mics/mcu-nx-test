@@ -575,7 +575,7 @@ export default defineMessages({
   },
   contentSectionExcludedLocations: {
     id: 'adGroupEditor.PartExcludedLocations',
-    defaultMessage: 'And exclude the following ones:',
+    defaultMessage: 'Your ad will exclude the following locations:',
   },
   contentSection8Part6: {
     id: 'adGroupEditor.section8.part6',
@@ -620,6 +620,10 @@ export default defineMessages({
     id: 'section.selector.title.name',
     defaultMessage: 'Name',
   },
+  sectionSelectorTitleType: {
+    id: 'section.selector.title.type',
+    defaultMessage: 'Type',
+  },
   sectionSelectorTitleProvider: {
     id: 'section.selector.title.provider',
     defaultMessage: 'Provider',
@@ -655,5 +659,5 @@ export default defineMessages({
   errorFormMessage: {
     id: 'campaign.form.generic.error.message',
     defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
-  }
+  },
 });

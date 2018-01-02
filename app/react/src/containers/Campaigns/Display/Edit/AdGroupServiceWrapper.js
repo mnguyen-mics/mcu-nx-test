@@ -1,8 +1,9 @@
 import DisplayCampaignService from '../../../../services/DisplayCampaignService.ts';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import BidOptimizerServices from '../../../../services/BidOptimizerServices';
-import CreativeService from '../../../../services/CreativeService';
-import { isFakeId } from '../../../../utils/FakeIdHelper';
+import CreativeService from '../../../../services/CreativeService.ts';
+import PlacementListServices from '../../../../services/Library/PlacementListsService.ts';
+import GeonameService from '../../../../services/GeonameService.ts';
+import { isFakeId, generateFakeId } from '../../../../utils/FakeIdHelper';
 
 
 // ===========================================================================
@@ -15,19 +16,28 @@ function getGeneralInfo({ campaignId, adGroupId }) {
 
 function getAds({ adGroupId, campaignId }) {
 
-  const fetchSelectedAds = DisplayCampaignService.getAds(campaignId, adGroupId)
-    .then(({ data }) => data.map(ad => ({ id: ad.creative_id, modelId: ad.id })));
-
-  return fetchSelectedAds
-    .then((results) => {
-      const selectedAdIds = results.map(ad => ad.id);
-
-
-      return Promise.all(selectedAdIds.map(item => CreativeService.getCreative(item)));
+  return DisplayCampaignService.getAds(campaignId, adGroupId)
+    .then(({ data }) => {
+      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id).then(res => res.data)))
+        .then(creatives => {
+          return creatives.map(creative => {
+            return {
+              ...creative,
+              modelId: data.find(d => d.creative_id === creative.id).id,
+            };
+          });
+        });
     }).then(results => { return { adTable: results }; });
 }
 
-function getPlacements({ campaignId, adGroupId }) {
+export function getCreatives({ adGroupId, campaignId }) {
+  return DisplayCampaignService.getAds(campaignId, adGroupId)
+    .then(({ data }) => {
+      return Promise.all(data.map(sel => CreativeService.getCreative(sel.creative_id).then(res => res.data)));
+    }).then(results => { return { adTable: results }; });
+}
+
+function getPlacementSelection({ campaignId, adGroupId }) {
   return DisplayCampaignService.getPlacementLists(campaignId, adGroupId)
     .then(res => res.data)
     .then(res => {
@@ -42,46 +52,89 @@ function getPlacements({ campaignId, adGroupId }) {
     .then(placementTable => ({ placementTable }));
 }
 
-function getPublishers({ campaignId }) {
+export function getPlacement({ campaignId, adGroupId }) {
+  return DisplayCampaignService.getPlacementLists(campaignId, adGroupId)
+    .then(res => res.data)
+    .then(res => {
+      return res.map(item => {
+        return { id: item.placement_list_id, exclude: item.exclude };
+      });
+    })
+    .then(results => {
+      return Promise.all(
+        results.map(item => {
+          return PlacementListServices.getPlacementList(item.id).then(placementList => {
+            return {
+              ...placementList.data,
+              modelId: generateFakeId(),
+              include: !item.exclude,
+              placement_list_id: placementList.data.id,
+              toBeRemoved: false,
+            };
+          });
+        })
+      );
+    })
+    .then(placementTable => ({ placementTable }));
+}
+
+
+function getPublisherSelection({ campaignId }) {
   return DisplayCampaignService.getPublishers(campaignId)
     .then(publisherTable => ({ publisherTable }));
 }
 
-function getLocations({ campaignId, adGroupId }) {
+function getLocationSelection({ campaignId, adGroupId }) {
   return DisplayCampaignService.getLocations(campaignId, adGroupId).then(response => {
     const locationSelections = response.data;
-    const locationFields = locationSelections.map(location => {
+    return locationSelections.map(location => {
       return {
         id: location.id,
         resource: location,
         deleted: false,
       };
     });
-    return locationFields;
   }).then(locationTargetingTable => ({ locationTargetingTable }));
 }
 
-function getSegments({ adGroupId, campaignId, organisationId }) {
-  const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
-  const fetchMetadata = AudienceSegmentService.getSegmentMetaData(organisationId);
+export function getLocation({ campaignId, adGroupId }) {
+  return DisplayCampaignService.getLocations(campaignId, adGroupId).then(response => {
+    const locationSelections = response.data;
+    return Promise.all(locationSelections.map(item => {
+      return GeonameService.getGeoname(item.geoname_id)
+        .then(res => {
+          return {
+            id: generateFakeId(),
+            resource: {
+              geoname_id: res.id,
+              country: res.country_iso,
+              admin1: res.admin1,
+              admin2: res.admin2,
+              exclude: item.exclude
+            },
+            deleted: false,
+          };
+        });
+    }));
+  })
+  .then(locationTargetingTable => ({ locationTargetingTable }));
+}
 
-  return Promise.all([fetchSegments, fetchMetadata])
-    .then((results) => {
-      const segments = results[0];
-      const metadata = results[1];
+function getSegmentSelection({ adGroupId, campaignId }) {
+  const fetchSegments = DisplayCampaignService.getAudiences(campaignId, adGroupId);
+
+  return fetchSegments
+    .then((segments) => {
 
       return segments.map(segment => {
-        const meta = metadata[segment.id];
-        const userPoints = (meta && meta.user_points ? meta.user_points : '-');
-        const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
-
-        return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
+        return { id: segment.id, resource: segment };
       });
     })
     .then(audienceTable => ({ audienceTable }));
 }
 
-function getAdGroupAudienceSegments(campaignId, adGroupId) {
+
+function getAudienceSegmentSelection(campaignId, adGroupId) {
   return DisplayCampaignService.getAudienceSegments(campaignId, adGroupId).then(segments => {
     return segments.map(segment => {
       return {
@@ -92,29 +145,73 @@ function getAdGroupAudienceSegments(campaignId, adGroupId) {
   }).then(audienceSegmentTable => ({ audienceSegmentTable }));
 }
 
-const getAdGroup = (organisationId, campaignId, adGroupId) => {
+export function getAudienceSegment(campaignId, adGroupId) {
+  return DisplayCampaignService.getAudienceSegments(campaignId, adGroupId).then(segments => {
+    return segments.map(segment => {
+      return {
+        id: generateFakeId(),
+        resource: segment,
+      };
+    });
+  }).then(audienceSegmentTable => ({ audienceSegmentTable }));
+}
+
+const getAdGroup = (organisationId, campaignId, adGroupId, duplication = false) => {
   let adGroup = {};
 
-  return Promise.all([
-    getGeneralInfo({ adGroupId, campaignId }),
-    getPublishers({ campaignId }),
-    getPlacements({ campaignId, adGroupId }),
-    getSegments({ adGroupId, campaignId, organisationId }),
-    getAds({ campaignId, adGroupId, organisationId }),
-    getLocations({ campaignId, adGroupId }),
-    getAdGroupAudienceSegments(campaignId, adGroupId),
-  ])
+  let promiseEdition;
+
+  if (duplication) {
+    promiseEdition = [
+      getGeneralInfo({ adGroupId, campaignId }),
+      getCreatives({ adGroupId, campaignId }),
+      getPlacement({ campaignId, adGroupId }),
+      getLocation({ adGroupId, campaignId }),
+      getSegmentSelection({ adGroupId, campaignId, organisationId }),
+      getAudienceSegment(campaignId, adGroupId),
+    ];
+  } else {
+    promiseEdition = [
+      getGeneralInfo({ adGroupId, campaignId }),
+      getPublisherSelection({ campaignId }),
+      getPlacementSelection({ campaignId, adGroupId }),
+      getSegmentSelection({ adGroupId, campaignId, organisationId }),
+      getAds({ campaignId, adGroupId, organisationId }),
+      getLocationSelection({ campaignId, adGroupId }),
+      getAudienceSegmentSelection(campaignId, adGroupId),
+    ];
+
+  }
+
+  return Promise.all(promiseEdition)
     .then((results) => {
       adGroup = results.reduce((acc, result) => ({ ...acc, ...result }), {});
-      return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds: [adGroup.bid_optimizer_id] });
+      let bidOptimizer = {};
+      return adGroup.bid_optimizer_id ? BidOptimizerServices.getBidOptimizer(adGroup.bid_optimizer_id)
+        .then(res => res.data)
+        .then(res => {
+          bidOptimizer = res;
+          return BidOptimizerServices.getBidOptimizerProperties(res.id)
+            .then(resp => resp.data)
+            .then(resp => {
+              return resp.length ? {
+                ...bidOptimizer,
+                type: (resp.find(elem => elem.technical_name === 'name')).value.value,
+                provider: (resp.find(elem => elem.technical_name === 'provider')).value.value,
+              } : {
+                ...bidOptimizer
+              };
+            });
+        }) : Promise.resolve(null);
+
     }).then(result => {
-      return { ...adGroup, optimizerTable: result.data };
+      return { ...adGroup, optimizerTable: result ? [result] : [] };
     });
 };
 
-const getAdGroups = (organisationId, campaignId) => {
+const getAdGroups = (organisationId, campaignId, duplication) => {
   return DisplayCampaignService.getAdGroups(campaignId).then((results) => {
-    const listIds = results.data.map(item => getAdGroup(organisationId, campaignId, item.id));
+    const listIds = results.data.map(item => getAdGroup(organisationId, campaignId, item.id, duplication));
     return Promise.all(listIds);
   });
 };
@@ -206,20 +303,6 @@ const saveAds = (campaignId, adGroupId, formValue, initialFormValue) => {
   return saveTableFields(options, formValue, initialFormValue);
 };
 
-const saveAudience = (campaignId, adGroupId, formValue, initialFormValue) => {
-  const options = {
-    campaignId,
-    adGroupId,
-    getBody: (row) => ({ audience_segment_id: row.id, exclude: !row.include }),
-    requests: {
-      create: DisplayCampaignService.createAudience,
-      update: DisplayCampaignService.updateAudience,
-      delete: DisplayCampaignService.deleteAudience,
-    },
-  };
-
-  return saveTableFields(options, formValue, initialFormValue);
-};
 
 const saveAudienceSegments = (campaignId, adGroupId, formValue, initialFormValue) => {
   const options = {
@@ -287,10 +370,9 @@ const savePublishers = (campaignId, adGroupId, formValue, initialFormValue) => {
 
 const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { editionMode: false, catalogMode: false }) => {
 
-  const { editionMode, catalogMode } = options;
+  const { editionMode } = options;
 
   const publisherTable = adGroupData && adGroupData.publisherTable ? adGroupData.publisherTable : [];
-  const audienceTable = adGroupData && adGroupData.audienceTable ? adGroupData.audienceTable : [];
   const adTable = adGroupData && adGroupData.adTable ? adGroupData.adTable : [];
   const audienceSegments = adGroupData && adGroupData.audienceSegmentTable ? adGroupData.audienceSegmentTable : [];
   const optimizerTable = adGroupData && adGroupData.optimizerTable ? adGroupData.optimizerTable : [];
@@ -299,7 +381,6 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
   const placementTable = adGroupData && adGroupData.placementTable ? adGroupData.placementTable : [];
 
   const initialPublisherTable = adGroupInitialData && adGroupInitialData.publisherTable ? adGroupInitialData.publisherTable : [];
-  const initialAudienceTable = adGroupInitialData && adGroupInitialData.audienceTable ? adGroupInitialData.audienceTable : [];
   const initialAdTable = adGroupInitialData && adGroupInitialData.adTable ? adGroupInitialData.adTable : [];
   const initialAudienceSegments = adGroupInitialData && adGroupInitialData.audienceSegmentTable ? adGroupInitialData.audienceSegmentTable : [];
   const initialDeviceTable = [];
@@ -335,10 +416,10 @@ const saveAdGroup = (campaignId, adGroupData, adGroupInitialData, options = { ed
     const adGroupId = response.data.id;
 
     const handleSaveAudience = () => {
-      if (catalogMode) {
-        return saveAudienceSegments(campaignId, adGroupId, audienceSegments, initialAudienceSegments);
-      }
-      return saveAudience(campaignId, adGroupId, audienceTable, initialAudienceTable);
+      // if (catalogMode) {
+      return saveAudienceSegments(campaignId, adGroupId, audienceSegments, initialAudienceSegments);
+      // }
+      // return saveAudience(campaignId, adGroupId, audienceTable, initialAudienceTable);
     };
 
     return handleSaveAudience()

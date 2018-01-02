@@ -14,12 +14,30 @@ class Optimization extends Component {
 
   state = { loading: false }
 
-  getBidOptimizers = ({ getAll, newSelectedIds }) => () => {
-    const { organisationId } = this.props;
-    const selectedIds = newSelectedIds || this.getSelectedIds();
-    const options = { getAll };
-
-    return BidOptimizerServices.getBidOptimizers({ organisationId, selectedIds, options });
+  getBidOptimizers = () => () => {
+    let bidList = [];
+    return BidOptimizerServices.getAllBidOptimizers(this.props.organisationId)
+      .then(res => res.data)
+      .then(res => {
+        bidList = res;
+        return Promise.all(res.map(item => {
+          return BidOptimizerServices.getBidOptimizerProperties(item.id).then(response => response.data).then(response => response.length && {
+            type: (response.find(elem => elem.technical_name === 'name')).value.value,
+            provider: (response.find(elem => elem.technical_name === 'provider')).value.value,
+          });
+        }));
+      })
+      .then(results => {
+        return {
+          status: 'ok',
+          data: bidList.map((bo, i) => {
+            return {
+              ...bo,
+              ...results[i]
+            };
+          })
+        };
+      });
   }
 
   getSelectedIds = () => {
@@ -31,14 +49,20 @@ class Optimization extends Component {
 
     const columnsDefinitions = [
       {
-        intlMessage: messages.sectionSelectorTitleProvider,
-        key: 'provider',
+        intlMessage: messages.sectionSelectorTitleName,
+        key: 'name',
         isHideable: false,
         render: text => <span>{text}</span>,
       },
       {
-        intlMessage: messages.sectionSelectorTitleName,
-        key: 'name',
+        intlMessage: messages.sectionSelectorTitleType,
+        key: 'type',
+        isHideable: false,
+        render: text => <span>{text}</span>,
+      },
+      {
+        intlMessage: messages.sectionSelectorTitleProvider,
+        key: 'provider',
         isHideable: false,
         render: text => <span>{text}</span>,
       },
@@ -48,7 +72,7 @@ class Optimization extends Component {
       actionBarTitle: 'Add a Bid Optimizer',
       columnsDefinitions,
       close: handlers.closeNextDrawer,
-      fetchSelectorData: this.getBidOptimizers({ getAll: true }),
+      fetchSelectorData: this.getBidOptimizers(),
       save: this.updateData,
       singleSelection: true,
       selectedIds: this.getSelectedIds(),
@@ -62,19 +86,26 @@ class Optimization extends Component {
 
     this.setState({ loading: true });
     handlers.closeNextDrawer();
+    if (newSelectedIds.length) {
+      BidOptimizerServices.getBidOptimizer(newSelectedIds[0])
+        .then(res => res.data)
+        .then(res => {
+          return BidOptimizerServices.getBidOptimizerProperties(newSelectedIds[0]).then(response => response.data).then(response => response.length && {
+            ...res,
+            type: (response.find(elem => elem.technical_name === 'name')).value.value,
+            provider: (response.find(elem => elem.technical_name === 'provider')).value.value,
+          });
+        }).then(result => {
+          const newFields = [result];
+          handlers.updateTableFields({ newFields, tableName: 'optimizerTable' });
+          this.setState({ loading: false });
+        });
+    } else {
+      handlers.updateTableFields({ newFields: [], tableName: 'optimizerTable' });
+      this.setState({ loading: false });
+    }
 
-    this.getBidOptimizers({ newSelectedIds })()
-      .then(({ data }) => {
-        const newFields = data.reduce((acc, optimizer) => {
-          return (newSelectedIds.includes(optimizer.id)
-            ? [...acc, optimizer]
-            : acc
-          );
-        }, []);
 
-        handlers.updateTableFields({ newFields, tableName: 'optimizerTable' });
-        this.setState({ loading: false });
-      });
   }
 
   render() {
@@ -85,8 +116,8 @@ class Optimization extends Component {
         ...tableData,
         {
           key: bidOptimizer.modelId,
-          type: { image: 'question' },
-          info: [bidOptimizer.name, bidOptimizer.provider],
+          type: { image: 'optimization' },
+          info: [bidOptimizer.name, `${bidOptimizer.type} - ${bidOptimizer.provider}`],
           toBeRemoved: index,
         }
       ]

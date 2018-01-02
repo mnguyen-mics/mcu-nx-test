@@ -6,9 +6,9 @@ import { Tooltip, Popover, Switch } from 'antd';
 import { compose } from 'recompose';
 
 import { TableView } from '../../../../../components/TableView/index.ts';
-import { formatMetric } from '../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../utils/MetricHelper.ts';
 import McsIcons from '../../../../../components/McsIcons.tsx';
-import messages from '../messages';
+import messages from '../messages.ts';
 
 class DisplayCampaignAdTable extends Component {
 
@@ -22,7 +22,7 @@ class DisplayCampaignAdTable extends Component {
       history,
     } = this.props;
 
-    const editUrl = `/${organisationId}/creatives/display-ad/default-editor/edit/${ad.id}`;
+    const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${ad.id}`;
 
     history.push(editUrl);
   };
@@ -216,14 +216,15 @@ class DisplayCampaignAdTable extends Component {
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'impressions_cost'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a, b) => sorter(a, b, 'cpa'),
-      },
+      // TODO UNCOMMENT WHEN BACKEND IS FIXED
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      //   sorter: (a, b) => sorter(a, b, 'cpa'),
+      // },
     ];
 
     const actionColumns = [

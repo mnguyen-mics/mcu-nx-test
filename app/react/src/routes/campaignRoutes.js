@@ -9,14 +9,12 @@ import {
 } from '../containers/Campaigns/Display/Dashboard';
 
 import {
-  CreateAdGroupPage,
   EditAdGroupPage,
 } from '../containers/Campaigns/Display/Edit';
 
 import {
-  CreateCampaignPage,
   EditCampaignPage,
-} from '../containers/Campaigns/Display/Edit/Campaign';
+} from '../containers/Campaigns/Display/Edit/Campaign/index.ts';
 
 import {
   CreateEmailPage,
@@ -49,7 +47,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/display/create',
     layout: 'edit',
-    editComponent: CreateCampaignPage,
+    editComponent: EditCampaignPage,
   },
   {
     path: '/campaigns/display/:campaignId(\\d+)/edit',
@@ -69,7 +67,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/display/:campaignId(\\d+)/adgroups/create',
     layout: 'edit',
-    editComponent: CreateAdGroupPage,
+    editComponent: EditAdGroupPage,
   },
   {
     path: '/campaigns/display/:campaignId(\\d+)/adgroups/edit/:adGroupId(\\d+)',

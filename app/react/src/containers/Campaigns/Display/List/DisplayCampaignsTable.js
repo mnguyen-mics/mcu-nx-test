@@ -16,9 +16,9 @@ import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
 import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
-
+import messages from '../messages';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 
 class DisplayCampaignsTable extends Component {
@@ -152,13 +152,29 @@ class DisplayCampaignsTable extends Component {
           organisationId,
         },
       },
+      location,
       history,
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaign.id}/edit`;
 
-    history.push(editUrl);
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
   };
+
+  duplicateCampaign = (campaign) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
+
+    history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
+  }
 
   updateLocationSearch = (params) => {
     const {
@@ -208,14 +224,10 @@ class DisplayCampaignsTable extends Component {
     const dateRangePickerOptions = {
       isEnabled: true,
       onChange: (values) => this.updateLocationSearch({
-        rangeType: values.rangeType,
-        lookbackWindow: values.lookbackWindow,
         from: values.from,
         to: values.to,
       }),
       values: {
-        rangeType: filter.rangeType,
-        lookbackWindow: filter.lookbackWindow,
         from: filter.from,
         to: filter.to,
       },
@@ -325,13 +337,14 @@ class DisplayCampaignsTable extends Component {
         isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-      },
+      // TODO UNCOMMENT WHEN THE CPA IS FIXED ON BACKEND SIDE
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      // },
     ];
 
     const actionColumns = [
@@ -341,7 +354,12 @@ class DisplayCampaignsTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,
-          }, {
+          },
+          {
+            intlMessage: messages.duplication,
+            callback: this.duplicateCampaign,
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archiveCampaign,
           },

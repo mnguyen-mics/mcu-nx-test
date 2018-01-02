@@ -25,7 +25,7 @@ export default defineMessages({
   },
   audienceSegmentAdditionsDeletionsExportTitle: {
     id: 'export.title.segment.additions_deletions',
-    defaultMessage: 'Audience Segment Addition Deletion'
+    defaultMessage: 'Audience Segment Add Del'
   },
   overlapExportTitle: {
     id: 'segment.overlap.export_title',

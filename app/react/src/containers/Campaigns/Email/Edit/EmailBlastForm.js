@@ -13,9 +13,9 @@ import EmailTemplateSelection from './EmailTemplateSelection';
 import SegmentReach from './SegmentReach';
 import SegmentSelector from './SegmentSelector';
 import messages from './messages';
-import ConsentService from '../../../../services/ConsentService';
-import { isPastDate } from '../../../../utils/DateHelper';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import ConsentService from '../../../../services/ConsentService.ts';
+import { isPastDate } from '../../../../utils/DateHelper.ts';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 const { Content } = Layout;
@@ -94,11 +94,10 @@ class EmailBlastForm extends Component {
     return segments.filter(segment => !segment.isDeleted).map(segment => (
       <RecordElement
         key={segment.audience_segment_id}
+        record={segment}
         recordIconType={'users'}
-        title={segment.name}
-        actionButtons={[
-            { iconType: 'delete', onClick: () => this.handleClickOnRemoveSegment(segment) },
-        ]}
+        title={(record) => record.name}
+        onRemove={() => this.handleClickOnRemoveSegment(segment)}
       />
     ));
   }
@@ -214,7 +213,6 @@ class EmailBlastForm extends Component {
             <Field
               name="blast.consents[0].consent_id"
               component={DefaultSelect}
-              validate={[isRequired]}
               props={{
                 formItemProps: {
                   label: formatMessage(messages.emailEditorProviderSelectLabel),

@@ -9,6 +9,10 @@ export default defineMessages({
     id: 'campaignEditor.breadcrumb.title',
     defaultMessage: 'Display',
   },
+  createCampaingTitle: {
+    id: 'campaignEditor.breadcrumb.create.campaign',
+    defaultMessage: 'New Campaign',
+  },
   /*
   ==============================================================================
   =============================== DROPDOWN OPTIONS =============================

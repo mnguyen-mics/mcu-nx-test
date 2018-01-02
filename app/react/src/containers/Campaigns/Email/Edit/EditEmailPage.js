@@ -10,10 +10,10 @@ import { pick } from 'lodash';
 import { EditContentLayout } from '../../../../components/Layout/index.ts';
 import EmailForm from './EmailForm';
 import { withMcsRouter } from '../../../Helpers';
-import withDrawer from '../../../../components/Drawer';
+import withDrawer from '../../../../components/Drawer/index.tsx';
 
 import messages from './messages';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 import * as actions from '../../../../state/Notifications/actions';
 import log from '../../../../utils/Logger';
 import { isFakeId } from '../../../../utils/FakeIdHelper';
@@ -68,7 +68,7 @@ class EditEmailPage extends Component {
       ...pick(updatedEmailCampaign, ['name', 'technical_name', 'type']),
     };
 
-    EmailCampaignService.updateCampaign(
+    EmailCampaignService.updateEmailCampaign(
       campaignId,
       campaingResource,
     ).then(() => {
@@ -79,11 +79,11 @@ class EditEmailPage extends Component {
 
       return Promise.all([
         ...loadedEmailCampaign.routers.map(router => {
-          return EmailCampaignService.removeRouter(campaignId, router.id);
+          return EmailCampaignService.deleteRouter(campaignId, router.id);
         }),
         ...updatedEmailCampaign.routers.map(router => {
           const routerResource = pick(router, ['email_router_id']);
-          return EmailCampaignService.addRouter(campaignId, routerResource);
+          return EmailCampaignService.createRouter(campaignId, routerResource);
         }),
         ...deletedBlasts.map(deletedBlast => {
           return EmailCampaignService.deleteBlast(campaignId, deletedBlast.id);
@@ -94,19 +94,19 @@ class EditEmailPage extends Component {
             send_date: parseInt(newBlast.send_date.format('x'), 0),
           };
           return EmailCampaignService.createBlast(campaignId, blastResource).then(createdBlast => {
-            const blastId = createdBlast.id;
+            const blastId = createdBlast.data.id;
             return Promise.all([
               ...newBlast.templates.map(template => {
                 const templateResource = pick(template, ['email_template_id']);
-                return EmailCampaignService.addEmailTemplate(campaignId, blastId, templateResource);
+                return EmailCampaignService.createEmailTemplate(campaignId, blastId, templateResource);
               }),
               ...newBlast.consents.map(consent => {
                 const consentResource = pick(consent, ['consent_id']);
-                return EmailCampaignService.addConsent(campaignId, blastId, consentResource);
+                return EmailCampaignService.createConsent(campaignId, blastId, consentResource);
               }),
               ...newBlast.segments.map(segment => {
                 const segmentResource = pick(segment, ['audience_segment_id']);
-                return EmailCampaignService.addSegment(campaignId, blastId, segmentResource);
+                return EmailCampaignService.createSegment(campaignId, blastId, segmentResource);
               }),
             ]);
           });
@@ -122,24 +122,24 @@ class EditEmailPage extends Component {
               ...editedBlast.templates.map(template => {
                 // const templateResource = pick(template, ['email_template_id']);
                 const templateResource = { email_template_id: template.email_template_id };
-                return EmailCampaignService.addEmailTemplate(campaignId, editedBlast.id, templateResource);
+                return EmailCampaignService.createEmailTemplate(campaignId, editedBlast.id, templateResource);
               }),
               ...loadedBlast.templates.map(template => {
-                return EmailCampaignService.removeEmailTemplate(campaignId, editedBlast.id, template.email_template_id);
+                return EmailCampaignService.deleteEmailTemplate(campaignId, editedBlast.id, template.id);
               }),
               ...editedBlast.consents.map(consent => {
                 const consentResource = pick(consent, ['consent_id']);
-                return EmailCampaignService.addConsent(campaignId, editedBlast.id, consentResource);
+                return EmailCampaignService.createConsent(campaignId, editedBlast.id, consentResource);
               }),
               ...loadedBlast.consents.map(consent => {
-                return EmailCampaignService.removeConsent(campaignId, editedBlast.id, consent.id);
+                return EmailCampaignService.deleteConsent(campaignId, editedBlast.id, consent.id);
               }),
               ...editedBlast.segments.map(segment => {
                 const segmentResource = pick(segment, ['audience_segment_id']);
-                return EmailCampaignService.addSegment(campaignId, editedBlast.id, segmentResource);
+                return EmailCampaignService.createSegment(campaignId, editedBlast.id, segmentResource);
               }),
               ...loadedBlast.segments.map(segment => {
-                return EmailCampaignService.removeSegment(campaignId, editedBlast.id, segment.id);
+                return EmailCampaignService.deleteSegment(campaignId, editedBlast.id, segment.id);
               }),
             ]);
           });
@@ -158,7 +158,7 @@ class EditEmailPage extends Component {
   loadEmailCampaign = (campaignId) => {
     const { notifyError } = this.props;
 
-    EmailCampaignService.getEmailCampaign(campaignId)
+    EmailCampaignService.getEmailCampaign(campaignId).then(res => res.data)
       .then(emailCampaign => {
         return Promise.all([
           EmailCampaignService.getRouters(campaignId).then(res => res.data),

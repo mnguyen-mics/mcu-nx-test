@@ -48,7 +48,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       key: 'info',
       /* In render, info is either an array of string of an array of { image: '', name: '' } */
       render: (info: Array<{ image?: McsIconType, name: string }>) => {
-        const elemToDisplay = (elem: { image?: McsIconType, name: string }) => (elem.image
+        const elemToDisplay = (elem: { image?: McsIconType, name: string }) => (elem && elem.image
             ? (
               <div className="display-row" key={generateGuid()}>
                 <McsIcons type={elem.image} additionalClass="big" />

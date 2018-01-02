@@ -30,6 +30,7 @@ import { logOut } from '../../state/Login/actions';
 import { setColorsStore } from '../../state/Theme/actions';
 import errorMessages from './messages';
 
+
 addLocaleData([enLocaleData, frLocaleData]);
 
 class Navigator extends Component {
@@ -37,6 +38,7 @@ class Navigator extends Component {
   state = { adBlockOn: false }
 
   componentDidMount() {
+
     NavigatorService.isAdBlockOn()
       .then(() => {
         // Read theme colors in DOM and store them in redux for future usage

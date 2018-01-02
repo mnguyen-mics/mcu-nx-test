@@ -15,10 +15,6 @@ import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/
 import { getDefaultDatamart } from '../../../../../state/Session/selectors';
 import messages from '../messages';
 
-import { SEGMENT_QUERY_SETTINGS } from '../constants';
-
-import { parseSearch } from '../../../../../utils/LocationSearchHelper';
-
 import { getOverlapView } from '../../../../../state/Audience/Segments/selectors';
 
 
@@ -42,22 +38,16 @@ class Overlap extends Component {
 
   renderStackedAreaCharts() {
     const {
-      location: {
-        search,
-      },
       dataSource,
       isFetchingOverlap,
       colors,
     } = this.props;
 
-    const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-    const { lookbackWindow } = filter;
     const data = dataSource.data.slice(0, 20);
 
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: ['yKey'],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: [colors['mcs-info']],
     };
 
@@ -160,7 +150,6 @@ class Overlap extends Component {
 Overlap.propTypes = {
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
   hasFetchedAudienceStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.shape({
     date: PropTypes.number.isRequired,

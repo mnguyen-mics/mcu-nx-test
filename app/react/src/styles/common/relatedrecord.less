@@ -1,19 +1,58 @@
 .related-records-container{
     border-radius: 2px;
-    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
+    border-left: 1px solid #dcdcdc;
+    border-right: 1px solid #dcdcdc;
+    border-top: 1px solid #D3DBE1;
     background-color: #fff;
 
-    :hover {
+    .related-record:hover {
       background: #ebeff2;
     }
 
     .related-record {
-      padding: 15px 15px;
       border-bottom: solid 1px #dcdcdc;
-      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 60px;
+      padding: 0 15px;
+      transition: all .3s;
 
-      i {
-        font-size: 18px;
+      .additional-data {
+        width: 50%;
+      }
+
+      .additional-data-action-buttons {
+        width: 33%;
+      }
+
+      .data {
+        width: 100%;
+      }
+
+      .action-button {
+        width: 30px;
+      }
+
+      .icon-round-border {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #dcdcdc;
+        border-radius: 50%;
+        margin-left: 0.5em;
+        margin-right: 1em;
+        width: 40px;
+        height: 40px;
+        .icon {
+          color: @info-color;
+          font-size: 24px;
+          margin: auto;
+        }
+      }
+
+      .icon.big {
+        font-size: 20px;
       }
 
       .invisible-button {

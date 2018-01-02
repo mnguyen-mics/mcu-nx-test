@@ -11,11 +11,11 @@ import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../../components/TableView/index.ts';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper.ts';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import messages from './messages';
 
 const { Content } = Layout;

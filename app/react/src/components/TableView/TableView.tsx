@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Dropdown, Menu } from 'antd';
+import { Dropdown, Menu, Table } from 'antd';
 
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { SpinProps } from 'antd/lib/spin';
 import { ClickParam } from 'antd/lib/menu';
-import Table, { TableProps } from 'antd/lib/table/Table';
+import { TableProps } from 'antd/lib/table';
 
 import McsIcons from '../McsIcons';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
@@ -51,7 +51,7 @@ export interface TableViewProps {
   // TODO use generics T[]
   dataSource: object[];
   loading?: boolean | SpinProps;
-  pagination?: PaginationProps | boolean;
+  pagination?: PaginationProps | false;
   onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: object) => any;
   onRowClick?: (record?: object) => void;
   visibilitySelectedColumns?: VisibilitySelectedColumn[];
@@ -67,6 +67,7 @@ interface TableViewState {
 class TableView extends React.Component<TableViewProps, TableViewState> {
 
   static defaultProps: Partial<TableViewProps> = {
+    onRowClick: undefined,
     pagination: false,
     visibilitySelectedColumns: [],
   };
@@ -163,8 +164,8 @@ class TableView extends React.Component<TableViewProps, TableViewState> {
       dataSource,
       loading,
       onChange,
-      pagination,
       onRowClick,
+      pagination,
     } = this.props;
 
     const actionsColumns = columnsDefinitions.actionsColumnsDefinition ? this.buildActionsColumns(

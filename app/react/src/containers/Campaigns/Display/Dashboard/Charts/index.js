@@ -1,5 +1,5 @@
-import DisplayStackedAreaChart from './DisplayStackedAreaChart';
-import MediaPerformanceTable from './MediaPerformanceTable';
+import DisplayStackedAreaChart from './DisplayStackedAreaChart.tsx';
+import MediaPerformanceTable from './MediaPerformanceTable.tsx';
 import GoalStackedAreaChart from './GoalStackedAreaChart.tsx';
 
 export {
