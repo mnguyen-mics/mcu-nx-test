@@ -213,7 +213,6 @@ class PluginContent extends React.Component<
           url={url}
         >
           <PluginEditForm
-            formValues={{}}
             editionMode={editionMode}
             organisationId={organisationId}
             save={this.createPlugin}

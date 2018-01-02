@@ -1,32 +1,28 @@
 import * as React from 'react';
 import {
   Form,
-  getFormValues,
   reduxForm,
   InjectedFormProps,
   Field,
+  ConfigProps,
 } from 'redux-form';
-import { connect } from 'react-redux';
-import { compose, mapProps } from 'recompose';
+import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
-import { Loading } from '../../../components';
 import { FormTitle, withValidators, FieldCtor } from '../../../components/Form';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
-
-import * as actions from '../../../state/Notifications/actions';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { PluginProperty } from '../../../models/Plugins';
 import { PluginFieldGenerator } from '../../Plugin';
+import { Omit } from '../../../utils/Types';
 
 import messages from './messages';
 
 const { Content } = Layout;
 const FORM_NAME = 'pluginForm';
 
-interface PluginEditFormProps {
-  formValues: any;
+interface PluginEditFormProps extends  Omit<ConfigProps<any>, 'form'> {
+  // formValues: any;
   editionMode: boolean;
   organisationId: string;
   save: (pluginValue: any, propertiesValue: PluginProperty[]) => void;
@@ -38,12 +34,12 @@ interface PluginEditFormProps {
 }
 
 interface InjectedProps {
-  RxF: InjectedFormProps;
   fieldValidators: any;
 }
 
 type JoinedProps =
   PluginEditFormProps &
+  InjectedFormProps &
   InjectedProps &
   InjectedIntlProps;
 
@@ -71,9 +67,8 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     };
   }
 
-  onSubmit = () => {
+  onSubmit = (formValues: any) => {
     const {
-      formValues,
       editionMode,
       save,
     } = this.props;
@@ -120,11 +115,11 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   render() {
     const {
-      RxF: { handleSubmit },
-      isLoading,
+      handleSubmit,
       formId,
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      isLoading,
     } = this.props;
 
     const InputField: FieldCtor<FormInputProps> = Field;
@@ -144,7 +139,6 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     };
     return (
       <Layout>
-        {this.state.loading ? <Loading className="loading-full-screen" /> : null}
 
         <Form
           className={this.state.loading ? 'hide-section' : 'edit-layout ant-layout'}
@@ -189,51 +183,11 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   }
 }
 
-const mapStateToProps = (state: any, ownProps: JoinedProps) => ({
-  formValues: getFormValues(ownProps.RxF.form)(state),
-});
-
-const mapDispatchToProps = {
-  notifyError: actions.notifyError,
-};
-
 export default compose<JoinedProps, PluginEditFormProps>(
   injectIntl,
   reduxForm({
     form: FORM_NAME,
     enableReinitialize: true,
-    propNamespace: 'RxF',
   }),
   withValidators,
-  mapProps<any, any>(
-    // https://github.com/erikras/redux-form/issues/3529
-    // Add missing redux form props to the namespace
-    props => {
-      const {
-        RxF,
-        array,
-        pure,
-        autofill,
-        clearAsyncError,
-        clearSubmit,
-        clearSubmitErrors,
-        submit,
-        ...rest,
-      } = props;
-      return {
-        RxF: {
-          ...RxF,
-          array,
-          pure,
-          autofill,
-          clearAsyncError,
-          clearSubmit,
-          clearSubmitErrors,
-          submit,
-        },
-        ...rest,
-      };
-    },
-  ),
-  connect(mapStateToProps, mapDispatchToProps),
 )(PluginEditForm);
