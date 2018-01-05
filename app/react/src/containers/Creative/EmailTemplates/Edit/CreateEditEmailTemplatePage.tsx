@@ -11,6 +11,7 @@ import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, PluginInterface } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { GenericCreativeResource } from '../../../../models/creative/CreativeResource';
+import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 import messages from './messages';
 
@@ -33,7 +34,7 @@ interface CreateEmailTemplateState {
   emailTemplateRenderer?: PluginInterface;
 }
 
-interface CreateEmailTemplateProps {
+interface CreateEmailTemplateProps extends DrawableContentProps {
   notifyError: (err?: any) => void;
 }
 
@@ -103,6 +104,10 @@ class CreateEmailTemplate extends React.Component<
               nextState.initialValues = {
                 properties:  values.sort((a) => {
                   return a.writable === false ? -1 : 1;
+                }).map(prop => {
+                  return prop.technical_name === 'template_file' && prop.property_type === 'DATA_FILE' ?
+                    { ...prop, value: { ...prop.value, acceptedFile: 'text/html' } } :
+                    prop;
                 }),
               };
 
@@ -136,7 +141,11 @@ class CreateEmailTemplate extends React.Component<
           isLoading: false,
           initialValues: {
             plugin: res[0],
-            properties: res[1],
+            properties: res[1].map(prop => {
+              return prop.technical_name === 'template_file' && prop.property_type === 'DATA_FILE' ?
+                { ...prop, value: { ...prop.value, acceptedFile: 'text/html' } } :
+                prop;
+            }),
           },
         });
       });
@@ -281,6 +290,8 @@ class CreateEmailTemplate extends React.Component<
           pluginVersionId={(this.state.emailTemplateRenderer && this.state.emailTemplateRenderer.id) || ''}
           formId={formId}
           initialValues={this.formatInitialValues(this.state.initialValues)}
+          openNextDrawer={this.props.openNextDrawer}
+          closeNextDrawer={this.props.closeNextDrawer}
         />
       </EditContentLayout>
     );
@@ -289,6 +300,7 @@ class CreateEmailTemplate extends React.Component<
 
 export default compose(
   injectIntl,
+  withDrawer,
   withRouter,
   connect(
     undefined,

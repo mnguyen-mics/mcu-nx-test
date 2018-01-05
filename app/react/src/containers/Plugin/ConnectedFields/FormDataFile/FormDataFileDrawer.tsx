@@ -5,8 +5,13 @@ import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { Actionbar } from '../../../Actionbar';
 import McsIcons from '../../../../components/McsIcons';
 import { FormTitle } from '../../../../components/Form';
+import { DrawableContentProps } from '../../../../components/Drawer';
 import DataFileService from '../../../../services/DataFileService';
 import messages from '../../messages';
+import {  Content } from './HtmlEditor/ContentArea';
+import { HtmlEditor } from './HtmlEditor'
+
+import { AcceptedFile } from './FormDataFile';
 
 const Option = Select.Option;
 
@@ -32,16 +37,32 @@ import 'brace/theme/monokai';
 
 const { Content } = Layout;
 
-const env = ['javascript', 'java',
-'python', 'xml', 'ruby', 'sass', 'markdown', 'mysql', 'json', 'html',
-'handlebars', 'golang', 'csharp', 'elixir', 'typescript', 'css'];
+const env = [
+  'javascript',
+  'java',
+  'python',
+  'xml',
+  'ruby',
+  'sass',
+  'markdown',
+  'mysql',
+  'json',
+  'html',
+  'handlebars',
+  'golang',
+  'csharp',
+  'elixir',
+  'typescript',
+  'css',
+];
 
-interface FormDataFileDrawerProps {
+interface FormDataFileDrawerProps extends DrawableContentProps {
   content: string;
   close: (e: any, name?: string) => void;
   type?: string;
   fileName?: string;
   inputProps: UploadProps;
+  accept: AcceptedFile;
 }
 
 interface FormDataFileDrawerState {
@@ -50,10 +71,13 @@ interface FormDataFileDrawerState {
   editMode: boolean;
   fileName: string;
   fileSelectorValue?: string;
+  iframeHeight: number;
 }
 
-class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDataFileDrawerState> {
-
+class FormDataFileDrawer extends React.Component<
+  FormDataFileDrawerProps,
+  FormDataFileDrawerState
+> {
   constructor(props: FormDataFileDrawerProps) {
     super(props);
     this.state = {
@@ -61,12 +85,13 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
       type: this.defineMode(props.fileName),
       editMode: props.content !== '' ? true : false,
       fileName: props.fileName && props.fileName ? props.fileName : '',
+      iframeHeight: 0,
     };
   }
 
   onChange = (e: any) => {
     this.setState({ updatedContent: e });
-  }
+  };
 
   parseFileName = (uri: string, basePath?: boolean) => {
     const parsedUri = uri.split('/');
@@ -75,7 +100,7 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
       return parsedUri.join('/');
     }
     return parsedUri[parsedUri.length - 1];
-  }
+  };
 
   defineMode = (fileName?: string) => {
     const fileExtension = fileName && fileName.split('.').pop();
@@ -93,11 +118,11 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
       default:
         return 'text';
     }
-  }
+  };
 
   handleAdd = () => {
     this.props.close(this.state.updatedContent, this.state.fileName);
-  }
+  };
 
   handleEditorChange = (value: string) => this.setState({ type: value });
 
@@ -105,22 +130,21 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
     const fileReader = new FileReader();
     fileReader.onload = (fileLoadedEvent: any) => {
       const textFromFileLoaded = fileLoadedEvent.target.result;
-      this.setState({  updatedContent: textFromFileLoaded, type: file.type });
+      this.setState({ updatedContent: textFromFileLoaded });
     };
 
     fileReader.readAsText(file, 'UTF-8');
-  }
+  };
 
   changeFileName = (fileName: string) => {
     this.setState({ fileName: fileName });
-  }
+  };
+
 
   render() {
-    const {
-      editMode,
-    } = this.state;
+    const { editMode } = this.state;
 
-    const uploadDetailProps = {
+    let uploadDetailProps: any = {
       action: '/',
       beforeUpload: (file: UploadFile) => {
         // add data to store
@@ -133,38 +157,136 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
       },
     };
 
+    if (this.props.accept !== '*') {
+      uploadDetailProps = {
+        ...uploadDetailProps,
+        accept: this.props.accept,
+      };
+    }
+
     const onFileNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       this.setState({ fileName: e.target.value });
     };
 
-    const onFileSelectorValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onFileSelectorValueChange = (
+      e: React.ChangeEvent<HTMLInputElement>,
+    ) => {
       this.setState({ fileSelectorValue: e.target.value });
     };
 
     const onFileSelectorValidate = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const {
-        fileSelectorValue,
-      } = this.state;
+      const { fileSelectorValue } = this.state;
 
       if (fileSelectorValue) {
-        DataFileService.getDatafileData(fileSelectorValue).then((res: any) => {
-          this.onFileUpdate(res);
-          const fileName = this.parseFileName(fileSelectorValue);
-          this.changeFileName(fileName);
-          this.setState({ editMode: true, fileName: fileName, type: this.defineMode(fileName) });
-        })
-        .catch((err: any) => {
-          // TODO notify error
-        });
+        DataFileService.getDatafileData(fileSelectorValue)
+          .then((res: any) => {
+            this.onFileUpdate(res);
+            const fileName = this.parseFileName(fileSelectorValue);
+            this.changeFileName(fileName);
+            this.setState({
+              editMode: true,
+              fileName: fileName,
+              type: this.defineMode(fileName),
+            });
+          })
+          .catch((err: any) => {
+            // TODO notify error
+          });
       }
     };
+
+    const FileSelectionRendered = (
+      <div className="text-center">
+        <div className="m-t-20 m-b-20">
+          <FormTitle title={messages.datafileDrawerUpload} />
+        </div>
+        <Upload {...uploadDetailProps}>
+          <Button>
+            <FormattedMessage {...messages.datafileDrawerUpload} />
+          </Button>
+        </Upload>
+        <div className="m-t-20 m-b-20">
+          <FormTitle title={messages.datafileDrawerSelect} />
+        </div>
+        <div>
+          <Input
+            style={{ maxWidth: 300 }}
+            onChange={onFileSelectorValueChange}
+          />
+        </div>
+        <div className="m-t-20">
+          <Button onClick={onFileSelectorValidate}>
+            <FormattedMessage {...messages.datafileDrawerSelectOk} />
+          </Button>
+        </div>
+      </div>
+    );
+
+    const EditorRendered = (
+      <AceEditor
+        mode={this.state.type}
+        theme="monokai"
+        name="blah2"
+        onChange={this.onChange}
+        fontSize={14}
+        showPrintMargin={true}
+        showGutter={true}
+        highlightActiveLine={true}
+        value={this.state.updatedContent}
+        setOptions={{
+          enableBasicAutocompletion: false,
+          enableLiveAutocompletion: false,
+          enableSnippets: false,
+          showLineNumbers: true,
+          tabSize: 2,
+        }}
+        width={'100%'}
+        wrapEnabled={true}
+      />
+    );
+
+    const EditModeAnyFile = (
+      <div>
+        <div style={{ marginBottom: 20 }}>
+          <Select
+            defaultValue={this.state.type}
+            style={{ width: 120, float: 'right' }}
+            onChange={this.handleEditorChange}
+          >
+            {env.map(item => {
+              return (
+                <Option key={item} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+          <Input
+            defaultValue={this.state.fileName}
+            style={{ width: '50%' }}
+            onChange={onFileNameChange}
+          />
+        </div>
+        {EditorRendered}
+      </div>
+    );
+    
+
+    const EditModeHtmlFile = <HtmlEditor onChange={this.onChange} content={this.state.updatedContent} openNextDrawer={this.props.openNextDrawer} closeNextDrawer={this.props.closeNextDrawer} />
+
+    const RenderedEditMode = this.props.accept === 'text/html' ? EditModeHtmlFile : EditModeAnyFile;
 
     return (
       <Layout>
         <div className="edit-layout ant-layout">
           <Actionbar path={[{ name: 'Add a Data File' }]} edition={true}>
-            <Button type="primary" className="mcs-primary" onClick={this.handleAdd}>
-              <McsIcons type="plus" /><span>Add</span>
+            <Button
+              type="primary"
+              className="mcs-primary"
+              onClick={this.handleAdd}
+            >
+              <McsIcons type="plus" />
+              <span>Add</span>
             </Button>
             <McsIcons
               type="close"
@@ -175,55 +297,7 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
           </Actionbar>
           <Layout>
             <Content className="mcs-table-edit-container">
-              {editMode ? (<div>
-                <div style={{ marginBottom: 20 }}>
-                  <Select defaultValue={this.state.type} style={{ width: 120, float: 'right' }} onChange={this.handleEditorChange}>
-                    { env.map(item => {
-                      return (<Option key={item} value={item}>{item}</Option>);
-                    }) }
-                  </Select>
-                  <Input defaultValue={this.state.fileName} style={{ width: '50%' }} onChange={onFileNameChange} />
-                </div>
-                <AceEditor
-                  mode={this.state.type}
-                  theme="monokai"
-                  name="blah2"
-                  onChange={this.onChange}
-                  fontSize={14}
-                  showPrintMargin={true}
-                  showGutter={true}
-                  highlightActiveLine={true}
-                  value={this.state.updatedContent}
-                  setOptions={{
-                  enableBasicAutocompletion: false,
-                  enableLiveAutocompletion: false,
-                  enableSnippets: false,
-                  showLineNumbers: true,
-                  tabSize: 2,
-                  }}
-                  width={'100%'}
-                  wrapEnabled={true}
-                />
-              </div>) :
-              (<div className="text-center">
-                <div className="m-t-20 m-b-20">
-                  <FormTitle title={messages.datafileDrawerUpload} />
-                </div>
-                <Upload {...uploadDetailProps}>
-                  <Button>
-                    <FormattedMessage {...messages.datafileDrawerUpload} />
-                  </Button>
-                </Upload>
-                <div className="m-t-20 m-b-20">
-                  <FormTitle title={messages.datafileDrawerSelect} />
-                </div>
-                <div>
-                  <Input style={{ maxWidth: 300 }} onChange={onFileSelectorValueChange} />
-                </div>
-                <div className="m-t-20">
-                  <Button onClick={onFileSelectorValidate}><FormattedMessage {...messages.datafileDrawerSelectOk} /></Button>
-                </div>
-              </div>)}
+              {editMode ? RenderedEditMode : FileSelectionRendered}
             </Content>
           </Layout>
         </div>

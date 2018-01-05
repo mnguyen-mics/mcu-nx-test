@@ -5,6 +5,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import RecommenderService from '../../../../services/Library/RecommenderService';
+import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, Recommender, PluginInterface} from '../../../../models/Plugins';
 
@@ -27,7 +28,7 @@ interface CreateRecommenderState {
   selectedRecommender?: PluginInterface;
 }
 
-interface CreateRecommenderProps {
+interface CreateRecommenderProps extends DrawableContentProps {
   notifyError: (err?: any) => void;
 }
 
@@ -191,6 +192,8 @@ class CreateEditRecommender extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
+        openNextDrawer={this.props.openNextDrawer}
+        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -199,6 +202,7 @@ class CreateEditRecommender extends React.Component<
 export default compose(
   injectIntl,
   withRouter,
+  withDrawer,
   connect(
     undefined,
     { notifyError: actions.notifyError },

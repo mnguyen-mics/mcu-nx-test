@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip, Col, Button } from 'antd';
+import { Tooltip, Col, Button, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps } from 'antd/lib/upload/interface';
@@ -7,7 +7,7 @@ import { WrappedFieldProps } from 'redux-form';
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
 import FormDataFileDrawer from './FormDataFileDrawer';
-import withDrawer from '../../../../components/Drawer';
+import { DrawableContentProps } from '../../../../components/Drawer';
 import DataFileService from '../../../../services/DataFileService';
 
 import {McsIcons, ButtonStyleless} from '../../../../components';
@@ -17,13 +17,14 @@ import messages from '../../messages';
 
 const defaultTooltipPlacement: TooltipPlacement = 'right';
 
+export type AcceptedFile = 'text/html' | '*';
+
 export interface FormDataFileProps {
   formItemProps?: FormItemProps;
   inputProps?: UploadProps;
   helpToolTipProps: TooltipProps;
   buttonText: string;
-  closeNextDrawer: () => void;
-  openNextDrawer: (a: React.ComponentClass, options: { additionalProps: any; isModal: boolean; }) => void;
+  accept: AcceptedFile;
 }
 
 export interface FormDataFileState {
@@ -36,7 +37,7 @@ export interface FormDataFileState {
   basePath?: string;
 }
 
-type JoinedProps = FormDataFileProps & WrappedFieldProps;
+type JoinedProps = FormDataFileProps & WrappedFieldProps & DrawableContentProps;
 
 class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
 
@@ -44,6 +45,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
     formItemProps: {},
     inputProps: {},
     helpToolTipProps: {},
+    accept: '*',
   };
 
   constructor(props: JoinedProps) {
@@ -171,6 +173,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           type: this.state.type,
           fileName: this.state.fileName,
           close: this.onDrawerClose,
+          accept: this.props.accept,
         };
 
         const options = {
@@ -178,15 +181,28 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           isModal: true,
         };
 
-        this.props.openNextDrawer(FormDataFileDrawer, options);
+        this.props.openNextDrawer<any>(FormDataFileDrawer, options);
       },
     };
+    
+    const remove = () => {
+      this.setState({ fileContent: '', fileName: '', canEdit: false });
+      input.onChange({});
+    }
 
     const removeProps = {
       onClick: () => {
         // remove data from store
-        this.setState({ fileContent: '', fileName: '', canEdit: false });
-        input.onChange({});
+        Modal.confirm({
+          title: 'Do you want to delete this datafile',
+          content: 'If you delete an unsaved file you will loose all your work, are you sure you want to proceed?',
+          okText: 'Yes',
+          cancelText: 'No',
+          onOk() {
+            remove()
+          },
+        })
+        
       },
     };
 
@@ -195,6 +211,9 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
       const additionalProps = {
         content: this.state.fileContent,
         close: this.onDrawerClose,
+        accept: this.props.accept,
+        openNextDrawer: this.props.openNextDrawer,
+        closeNextDrawer: this.props.closeNextDrawer,
       };
 
       const options = {
@@ -247,4 +266,4 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   }
 }
 
-export default withDrawer(FormDataFile);
+export default FormDataFile;

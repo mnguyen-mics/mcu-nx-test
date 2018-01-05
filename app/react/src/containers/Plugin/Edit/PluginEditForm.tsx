@@ -11,6 +11,7 @@ import { Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle, withValidators, FieldCtor } from '../../../components/Form';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
+import { DrawableContentProps } from '../../../components/Drawer';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { PluginProperty } from '../../../models/Plugins';
 import { PluginFieldGenerator } from '../../Plugin';
@@ -41,7 +42,8 @@ type JoinedProps =
   PluginEditFormProps &
   InjectedFormProps &
   InjectedProps &
-  InjectedIntlProps;
+  InjectedIntlProps & 
+  DrawableContentProps;
 
 interface PluginEditFormState {
   loading: boolean;
@@ -108,6 +110,8 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           disabled={isLoading}
           pluginVersionId={pluginVersionId}
           organisationId={organisationId}
+          openNextDrawer={this.props.openNextDrawer}
+          closeNextDrawer={this.props.closeNextDrawer}
         />
       );
     });
@@ -183,7 +187,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   }
 }
 
-export default compose<JoinedProps, PluginEditFormProps>(
+export default compose<JoinedProps, PluginEditFormProps & DrawableContentProps>(
   injectIntl,
   reduxForm({
     form: FORM_NAME,
