@@ -85,7 +85,7 @@
     "karma-ng-scenario": "0.1.0",
     "load-grunt-tasks": "~0.2.0",
     "lodash": "^2.4.1",
-    "mustache": "^0.8.2",
+    "mustache": "^2.3.0",
     "node-sass": "^4.4.0",
     "optimize-css-assets-webpack-plugin": "^1.3.0",
     "properties": "^1.2.1",
