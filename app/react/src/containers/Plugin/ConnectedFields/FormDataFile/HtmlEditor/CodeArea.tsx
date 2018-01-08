@@ -4,18 +4,18 @@ import { defineMessages } from 'react-intl';
 import { Layout, } from 'antd';
 import { FieldCtor, FormSection, FormCodeEdit } from '../../../../../components/Form';
 import { FormCodeEditProps } from '../../../../../components/Form/FormCodeEdit';
-import { reduxForm, InjectedFormProps, Field, Form } from 'redux-form';
+import { reduxForm, InjectedFormProps, Field, Form, ConfigProps } from 'redux-form';
 import { EditContentLayout } from '../../../../../components/Layout'
 import { DrawableContentProps } from '../../../../../components/Drawer'
-
+import { Omit } from '../../../../../utils/Types';
 const { Content } = Layout;
 
 const FormCodeField: FieldCtor<FormCodeEditProps> = Field;
 
-export interface CodeAreaProps extends DrawableContentProps {
+export interface CodeAreaProps extends DrawableContentProps, Omit<ConfigProps<any>, 'form' > {
 }
 
-type Props = InjectedFormProps<{}, CodeAreaProps> & CodeAreaProps;
+type Props = InjectedFormProps<any, CodeAreaProps> & CodeAreaProps;
 
 const messages = defineMessages({
   quickEdit: {
@@ -64,7 +64,7 @@ class CodeArea extends React.Component<Props> {
       >
         <Layout>
           <Form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit as any}
             className={'edit-layout ant-layout'}
           >
             <Content
@@ -109,4 +109,4 @@ class CodeArea extends React.Component<Props> {
   }
 }
 
-export default  reduxForm<{}, CodeAreaProps>({})(CodeArea);
+export default reduxForm<{}, CodeAreaProps>({})(CodeArea);
