@@ -12,6 +12,7 @@ import { PluginProperty, PluginInterface } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { GenericCreativeResource } from '../../../../models/creative/CreativeResource';
 import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
+import { DataResponse } from '../../../../services/ApiService';
 
 import messages from './messages';
 
@@ -210,7 +211,7 @@ class CreateEmailTemplate extends React.Component<
   }
 
   updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
-    const propertiesPromises: Array<Promise<any>> = [];
+    const propertiesPromises: Array<Promise<DataResponse<PluginProperty>>> = [];
     properties.forEach(item => {
       propertiesPromises.push(CreativeService.updateEmailTemplateProperty(organisationId, id, item.technical_name, item));
     });

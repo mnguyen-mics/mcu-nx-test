@@ -56,12 +56,12 @@ const env = [
   'css',
 ];
 
-interface FormDataFileDrawerProps extends DrawableContentProps {
+export interface FormDataFileDrawerProps extends DrawableContentProps {
   content: string;
   close: (e: any, name?: string) => void;
   type?: string;
   fileName?: string;
-  inputProps: UploadProps;
+  inputProps?: UploadProps;
   accept: AcceptedFile;
 }
 

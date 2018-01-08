@@ -6,7 +6,7 @@ import { UploadProps } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
-import FormDataFileDrawer from './FormDataFileDrawer';
+import FormDataFileDrawer, { FormDataFileDrawerProps } from './FormDataFileDrawer';
 import { DrawableContentProps } from '../../../../components/Drawer';
 import DataFileService from '../../../../services/DataFileService';
 
@@ -174,6 +174,8 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           fileName: this.state.fileName,
           close: this.onDrawerClose,
           accept: this.props.accept,
+          openNextDrawer: this.props.openNextDrawer,
+          closeNextDrawer: this.props.closeNextDrawer,
         };
 
         const options = {
@@ -181,7 +183,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           isModal: true,
         };
 
-        this.props.openNextDrawer<any>(FormDataFileDrawer, options);
+        this.props.openNextDrawer<FormDataFileDrawerProps>(FormDataFileDrawer, options);
       },
     };
     

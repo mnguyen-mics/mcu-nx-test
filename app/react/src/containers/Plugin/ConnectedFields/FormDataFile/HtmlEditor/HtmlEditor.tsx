@@ -15,7 +15,7 @@ export interface HtmlEditorProps extends DrawableContentProps  {
   content: string;
 }
 
-export default class HtmlEditor extends React.Component<HtmlEditorProps, any> {
+export default class HtmlEditor extends React.Component<HtmlEditorProps> {
 
   buildQuickInitialValues = () => {
     const values = this.buildContent();

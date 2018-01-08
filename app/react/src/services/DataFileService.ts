@@ -10,7 +10,7 @@ const getDatafileData = (dataFilePath: string): Promise<DataResponse<any>> => {
 };
 
 const createDatafile = (organisationId: string,
-                        objectType: string, objectId: string, fileName: string, formData: Blob): Promise<string> => {
+  objectType: string, objectId: string, fileName: string, formData: Blob): Promise<string> => {
   const uri = `mics://data_file/tenants/${organisationId}/${objectType}/${objectId}/${fileName}`;
   const endpoint = `data_file/data?uri=${uri}&name=${fileName}`;
 

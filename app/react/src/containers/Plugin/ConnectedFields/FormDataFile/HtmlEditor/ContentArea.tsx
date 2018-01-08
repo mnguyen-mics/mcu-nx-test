@@ -51,7 +51,7 @@ const messages = defineMessages({
   }
 })
 
-class ContentArea extends React.Component<Props, any> {
+class ContentArea extends React.Component<Props> {
 
   buildItems = (content: Content) => {
     switch (content.type) {

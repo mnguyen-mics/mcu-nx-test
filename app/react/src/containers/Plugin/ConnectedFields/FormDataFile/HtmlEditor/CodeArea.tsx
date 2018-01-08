@@ -37,7 +37,7 @@ const fieldGridConfig = {
   wrapperCol: { span: 19, offset: 1 },
 };
 
-class CodeArea extends React.Component<Props, any> {
+class CodeArea extends React.Component<Props> {
 
   
   render() {

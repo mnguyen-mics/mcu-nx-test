@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   emailTemplateBreadCrumb: {
     id: 'creatives.email.create.breadcrumb.title',
-    defaultMessage: 'New Email Templates',
+    defaultMessage: 'New Email Template',
   },
   creativesTypePickerSubTitle: {
     id: 'creatives.create.typePicker.subtitle',

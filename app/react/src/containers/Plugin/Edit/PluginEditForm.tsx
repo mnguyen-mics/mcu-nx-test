@@ -10,6 +10,7 @@ import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle, withValidators, FieldCtor } from '../../../components/Form';
+import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 import { DrawableContentProps } from '../../../components/Drawer';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
@@ -34,20 +35,25 @@ interface PluginEditFormProps extends  Omit<ConfigProps<any>, 'form'> {
   initialValues: any;
 }
 
-interface InjectedProps {
-  fieldValidators: any;
-}
 
 type JoinedProps =
   PluginEditFormProps &
   InjectedFormProps &
-  InjectedProps &
+  ValidatorProps &
   InjectedIntlProps & 
   DrawableContentProps;
 
 interface PluginEditFormState {
   loading: boolean;
 }
+
+export interface FormModel {
+  id?: string;
+  plugin: {
+    name: string;
+  },
+  properties: any;
+} 
 
 const fieldGridConfig = {
   labelCol: { span: 3 },
@@ -69,7 +75,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     };
   }
 
-  onSubmit = (formValues: any) => {
+  onSubmit = (formValues: FormModel) => {
     const {
       editionMode,
       save,
