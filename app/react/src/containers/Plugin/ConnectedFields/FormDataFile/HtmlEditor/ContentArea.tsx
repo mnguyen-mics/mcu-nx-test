@@ -134,7 +134,7 @@ class ContentArea extends React.Component<Props> {
       >
         <Layout>
           <Form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit  as any}
             className={'edit-layout ant-layout'}
           >
             <Content

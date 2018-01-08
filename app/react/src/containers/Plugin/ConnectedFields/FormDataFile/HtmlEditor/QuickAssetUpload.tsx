@@ -130,7 +130,7 @@ class QuickAssetUpload extends React.Component<
   }
 }
 
-export default compose<InnerProps, QuickAssetUploadProps>(
+export default compose<InnerProps, QuickAssetUploadProps & WrappedFieldProps>(
   withRouter, 
   connect(
     undefined,
