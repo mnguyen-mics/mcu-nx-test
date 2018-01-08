@@ -45,5 +45,21 @@ export default defineMessages({
     id: 'asssets.table.empty',
     defaultMessage: 'There is no Assets created yet! Click on New to get started',
   },
+  uploadMessage: {
+    id: 'assets.modal.upload.message',
+    defaultMessage: 'You can upload one or multiple file at the time. You can only upload image files with the following format .jpg,.jpeg,.png,.gif with a maximum size of 200kB',
+  },
+  uploadTitle: {
+    id: 'assets.modal.upload.title',
+    defaultMessage: 'Click or drag file to this area to upload',
+  },
+  uploadError: {
+    id: 'assets.modal.upload.error',
+    defaultMessage: 'is above 200kB!',
+  },
+  uploadButton: {
+    id: 'assets.modal.upload.button',
+    defaultMessage: 'Upload',
+  },
 })
 ;

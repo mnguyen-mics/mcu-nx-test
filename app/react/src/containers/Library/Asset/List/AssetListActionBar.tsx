@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Upload, message } from 'antd';
+import { Button, Modal, Upload, message, Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
@@ -11,6 +11,8 @@ import messages from './messages';
 
 import { UploadFile } from 'antd/lib/upload/interface';
 import { notifyError } from '../../../../state/Notifications/actions';
+
+const maxFileSize = 200 * 1024;
 
 const Dragger = Upload.Dragger;
 
@@ -60,29 +62,41 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     }).catch(err => notifyError(err));
   }
 
-  checkIfSizeOK = (fileList: UploadFile[]) => {
-    fileList.forEach(file => {
-      const isSizeOK = file.size < 200 * 1024;
-      if (!isSizeOK) {
-        message.error(`${file.name} is above 200kB!`, 2);
-      }
-    });
-    return fileList.filter(file => {
-      const isSizeOK = file.size < 200 * 1024;
+  checkIfSizeOK = (file: UploadFile) => {
+    const {
+      intl: {
+        formatMessage,
+      },
+    } = this.props;
+    const isSizeOK = file.size < maxFileSize;
+    if (!isSizeOK) {
+      message.error(`${file.name} ${formatMessage(messages.uploadError)}`, 2);
+    }
+  }
 
-      return isSizeOK;
+  filterFileList = (fileList: UploadFile[]) => {
+    return fileList.filter(item => {
+      return item.size < maxFileSize;
     });
   }
 
   renderModal = () => {
+
+    const {
+      intl: {
+        formatMessage,
+      },
+    } = this.props;
+
     const props = {
       name: 'file',
       multiple: true,
       action: '/',
       accept: '.jpg,.jpeg,.png,.gif',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
-        const newFiles = this.checkIfSizeOK(fileList)];
-        this.setState({ fileList: [ ...this.state.fileList, ...newFiles });
+        this.checkIfSizeOK(file);
+        const newFileList = [ ...this.state.fileList, ...this.filterFileList(fileList) ];
+        this.setState({ fileList: newFileList });
         return false;
       },
       fileList: this.state.fileList,
@@ -93,18 +107,20 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
 
     return (
       <Modal
-        title="Basic Modal"
+        title={formatMessage(messages.newAsset)}
         visible={this.state.isModalOpen}
         onOk={this.handleOnUpload}
-        okText="Upload"
+        okText={formatMessage(messages.uploadButton)}
         onCancel={this.handleOpenClose}
+        confirmLoading={this.state.isLoading}
       >
-        <Dragger {...props}>
-        <p className="ant-upload-text">Click or drag file to this area to upload</p>
-        <p className="ant-upload-hint">
-          You can upload one or multiple file at the time.
-          You can only upload image files with the following format .jpg,.jpeg,.png,.gif</p>
-      </Dragger>
+        <Spin spinning={this.state.isLoading}>
+          <Dragger {...props}>
+            <p className="ant-upload-text">{formatMessage(messages.uploadTitle)}</p>
+            <p className="ant-upload-hint">
+            {formatMessage(messages.uploadMessage)}</p>
+          </Dragger>
+        </Spin>
       </Modal>
     );
   }
