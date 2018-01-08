@@ -7,6 +7,7 @@ import PluginContent from '../../../Plugin/Edit/PluginContent';
 import EmailRouterService from '../../../../services/Library/EmailRoutersService';
 import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, EmailRouter, PluginInterface} from '../../../../models/Plugins';
+import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 import messages from './messages';
 
@@ -27,7 +28,7 @@ interface CreateEmailRouterState {
   selectedEmailRouter?: PluginInterface;
 }
 
-interface CreateEmailRouterProps {
+interface CreateEmailRouterProps extends DrawableContentProps {
   notifyError: (err?: any) => void;
 }
 
@@ -191,6 +192,8 @@ class CreateEditEmailRouter extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
+        openNextDrawer={this.props.openNextDrawer}
+        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -198,6 +201,7 @@ class CreateEditEmailRouter extends React.Component<
 
 export default compose(
   injectIntl,
+  withDrawer,
   withRouter,
   connect(
     undefined,

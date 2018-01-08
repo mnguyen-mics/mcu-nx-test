@@ -7,6 +7,7 @@ import PluginContent from '../../../Plugin/Edit/PluginContent';
 import AttributionModelService from '../../../../services/Library/AttributionModelService';
 import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, AttributionModel} from '../../../../models/Plugins';
+import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 import messages from './messages';
 
@@ -26,7 +27,7 @@ interface CreateAttributionModelState {
   initialValues?: AttributionModelForm;
 }
 
-interface CreateAttributionModelProps {
+interface CreateAttributionModelProps extends DrawableContentProps {
   notifyError: (err?: any) => void;
 }
 
@@ -190,6 +191,8 @@ class CreateAttributionModel extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
+        openNextDrawer={this.props.openNextDrawer}
+        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -197,6 +200,7 @@ class CreateAttributionModel extends React.Component<
 
 export default compose(
   injectIntl,
+  withDrawer,
   withRouter,
   connect(
     undefined,

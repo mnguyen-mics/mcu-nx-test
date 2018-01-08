@@ -15,6 +15,7 @@ import FormUpload from './FormUpload';
 import FormTextArea from './FormTextArea';
 import { BaseFieldProps } from 'redux-form';
 import FormInput from './FormInput';
+import FormCodeEdit from './FormCodeEdit';
 import formErrorMessage from './formErrorMessage';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
@@ -35,6 +36,7 @@ export default {
   formErrorMessage,
   SwitchInput,
   FormInput,
+  FormCodeEdit,
   withNormalizer,
   withValidators,
 };
@@ -55,6 +57,7 @@ export {
   FormUpload,
   FormTextArea,
   formErrorMessage,
+  FormCodeEdit,
   withNormalizer,
   withValidators,
 };

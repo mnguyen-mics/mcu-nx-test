@@ -43,7 +43,9 @@ class PluginFieldGenerator extends Component {
         options: {
           ...options
         },
-        helpToolTipProps: {}
+        helpToolTipProps: {},
+        openNextDrawer: this.props.openNextDrawer,
+        closeNextDrawer: this.props.closeNextDrawer,
       }}
     />);
   }
@@ -81,7 +83,7 @@ class PluginFieldGenerator extends Component {
       case 'DOUBLE':
         return this.renderFieldBasedOnConfig(FormInput, `${fieldDefinition.technical_name}.value.value`, fieldDefinition, [isValidDouble]);
       case 'DATA_FILE':
-        return this.renderFieldBasedOnConfig(FormDataFile, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', accept: '.html,.json,.txt' });
+        return this.renderFieldBasedOnConfig(FormDataFile, `${fieldDefinition.technical_name}.value`, fieldDefinition, [], { buttonText: 'Upload File', accept: fieldDefinition.value.acceptedFile ? fieldDefinition.value.acceptedFile : '*' });
       case 'MODEL_ID':
         return <div>MODEL_ID</div>;
       case 'DATAMART_ID':
@@ -123,6 +125,8 @@ PluginFieldGenerator.propTypes = {
   disabled: PropTypes.bool.isRequired,
   pluginVersionId: PropTypes.string.isRequired,
   organisationId: PropTypes.string.isRequired,
+  openNextDrawer: PropTypes.func.isRequired,
+  closeNextDrawer: PropTypes.func.isRequired,
 };
 
 PluginFieldGenerator = withValidators(PluginFieldGenerator);
