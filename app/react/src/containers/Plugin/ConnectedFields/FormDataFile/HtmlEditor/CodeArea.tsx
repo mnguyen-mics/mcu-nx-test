@@ -24,7 +24,7 @@ const messages = defineMessages({
   },
   save: {
     id: 'htmlEditor.codearea.breadcrumb.save',
-    defaultMessage: 'Save',
+    defaultMessage: 'Update',
   },
   formTitle: {
     id: 'htmlEditor.codearea.form.title',

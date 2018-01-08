@@ -122,10 +122,10 @@ export default class HtmlEditor extends React.Component<HtmlEditorProps> {
           <McsIcons type="code" />
           Code Edit
         </Button>
-        <Button style={{ float: 'right', marginBottom: 20, marginRight: 20 }} onClick={this.onQuickEditClick}>
+        {this.buildContent().length ? <Button style={{ float: 'right', marginBottom: 20, marginRight: 20 }} onClick={this.onQuickEditClick}>
           <McsIcons type="pen" />
           Quick Edit
-        </Button>
+        </Button> : null}
         {iframe}
       </div>
           

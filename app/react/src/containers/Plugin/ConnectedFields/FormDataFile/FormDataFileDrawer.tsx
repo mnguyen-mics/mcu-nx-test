@@ -286,7 +286,7 @@ class FormDataFileDrawer extends React.Component<
               onClick={this.handleAdd}
             >
               <McsIcons type="plus" />
-              <span>Add</span>
+              <span>Update</span>
             </Button>
             <McsIcons
               type="close"

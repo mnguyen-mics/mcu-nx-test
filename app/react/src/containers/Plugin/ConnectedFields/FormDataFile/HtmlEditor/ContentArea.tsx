@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   save: {
     id: 'htmlEditor.breadcrumb.save',
-    defaultMessage: 'Save',
+    defaultMessage: 'Update',
   },
   formTitle: {
     id: 'htmlEditor.form.title',
