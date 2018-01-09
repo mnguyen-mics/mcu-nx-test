@@ -5,10 +5,11 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Input, Card } from 'antd';
 import { connect } from 'react-redux';
 import log from '../../utils/Logger';
-import _ from 'lodash'
+import _ from 'lodash';
+import pathToRegexp from 'path-to-regexp';
 
 import * as SessionHelper from '../../state/Session/selectors';
-import pathToRegexp from 'path-to-regexp';
+import OrgLogo from '../Logo/OrgLogo';
 import { ButtonStyleless } from '../../components/index';
 
 const Search = Input.Search;
@@ -38,7 +39,6 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
     this.state = {
       search: '',
     };
-    console.log(props.workspaces)
   }
 
   changeWorkspace = ({ key }: { key: string }) => {
@@ -64,47 +64,48 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
   }
 
   onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ search: e.target.value })
+    this.setState({ search: e.target.value });
   }
 
   onCardClick = (key: string) => {
-    return () => this.changeWorkspace({ key })
+    return () => this.changeWorkspace({ key });
   }
 
   render() {
-
+    const filteredWorkspaces = this.props.workspaces &&
+    this.props.workspaces
+      .filter(item => {
+        if (this.state.search !== '') {
+          return _.includes(item.organisation_name.toUpperCase(), this.state.search.toUpperCase());
+        }
+        return true;
+      });
     return (
-      <div>
+      <div className="mcs-org-selector">
         <Search
           placeholder="Search Organisation"
           onSearch={this.onSearch}
-          style={{ width: 160, marginLeft: 20, marginRight: 20, marginTop: 20 }}
+          className="search-input"
           onChange={this.onChange}
         />
-        {this.props.workspaces &&
-            this.props.workspaces
-              .filter(item => {
-                if (this.state.search !== '') {
-                  return _.includes(item.organisation_name.toUpperCase(), this.state.search.toUpperCase())
-                }
-                return true;
-              })
-              .map(item =>
-                <ButtonStyleless
-                  key={item.organisation_id}
-                  onClick={this.onCardClick(item.organisation_id)}
-                >
-                  <Card
-                    hoverable={true}
-                    style={{ width: 160, marginLeft: 20, marginTop: 20 }}
-                    cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                  >
-                    <Meta
-                      description={item.organisation_name}
-                    />
-                  </Card>
-                </ButtonStyleless>,
-            )}
+        {(filteredWorkspaces && filteredWorkspaces.length) ? filteredWorkspaces
+          .map(item =>
+            <ButtonStyleless
+              key={item.organisation_id}
+              onClick={this.onCardClick(item.organisation_id)}
+            >
+              <Card
+                hoverable={true}
+                className="mcs-org-card"
+                cover={<OrgLogo organisationId={item.organisation_id} />}
+              >
+                <Meta
+                  className="mcs-card-body"
+                  description={item.organisation_name}
+                />
+              </Card>
+            </ButtonStyleless>,
+            ) : <div className="mcs-no-results">No Results</div>}
       </div>
     );
   }
