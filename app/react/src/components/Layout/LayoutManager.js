@@ -13,6 +13,8 @@ function LayoutManager({
   contentComponent,
   editComponent,
   actionBarComponent,
+  organisationSelector,
+  showOrgSelector,
 }) {
 
   log.trace(`Render ${layout} layout with component`, contentComponent);
@@ -23,6 +25,8 @@ function LayoutManager({
         <MainLayout
           contentComponent={contentComponent}
           actionBarComponent={actionBarComponent}
+          organisationSelector={organisationSelector}
+          showOrgSelector={showOrgSelector}
         />
       );
 
@@ -40,6 +44,8 @@ function LayoutManager({
 LayoutManager.defaultProps = {
   contentComponent: () => <div>no content</div>,
   editComponent: () => <div>no edit</div>,
+  organisationSelector: () => <div>no org selector</div>,
+  showOrgSelector: false,
   actionBarComponent: null,
 };
 
@@ -48,6 +54,8 @@ LayoutManager.propTypes = {
   contentComponent: PropTypes.func,
   editComponent: PropTypes.func,
   actionBarComponent: PropTypes.func,
+  organisationSelector: PropTypes.func,
+  showOrgSelector: PropTypes.bool,
 };
 
 export default LayoutManager;

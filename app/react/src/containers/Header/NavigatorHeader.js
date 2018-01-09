@@ -11,6 +11,7 @@ import * as SessionHelper from '../../state/Session/selectors';
 import McsIcons from '../../components/McsIcons.tsx';
 import log from '../../utils/Logger';
 import messages from './messages';
+import OrganisationSelector from './OrganisationSelector.tsx';
 
 const { Header } = Layout;
 
@@ -74,6 +75,8 @@ function NavigatorHeader({
     </Menu>
     );
 
+  const menuOptions = Object.keys(workspaces).map(orgId => (workspaces[orgId]));
+
   return (
     <Header className="mcs-header">
       <Row>
@@ -81,12 +84,13 @@ function NavigatorHeader({
           {
             hasMoreThanOneWorkspace
               ? (
-                <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
-                  <a className="organisation-name-clickable">
-                    { organisationName }&nbsp;
-                    <McsIcons type="chevron" />
-                  </a>
-                </Dropdown>
+                <OrganisationSelector selectedItem={workspace(organisationId)} itemList={menuOptions} />
+                // <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
+                //   <a className="organisation-name-clickable">
+                //     { organisationName }&nbsp;
+                //     <McsIcons type="chevron" />
+                //   </a>
+                // </Dropdown>
               )
               : <span className="organisation-name">{ organisationName }</span>
             }

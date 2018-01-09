@@ -28,6 +28,7 @@ import NavigatorService from '../../services/NavigatorService';
 import { isAppInitialized } from '../../state/App/selectors';
 import { logOut } from '../../state/Login/actions';
 import { setColorsStore } from '../../state/Theme/actions';
+import OrgSelector from './OrgSelector.tsx';
 import errorMessages from './messages';
 
 
@@ -111,6 +112,8 @@ class Navigator extends Component {
                       contentComponent={route.contentComponent}
                       actionBarComponent={route.actionBarComponent}
                       editComponent={route.editComponent}
+                      organisationSelector={OrgSelector}
+                      showOrgSelector
                       {...props}
                     />
                   </div>
