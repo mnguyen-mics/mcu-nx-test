@@ -1,68 +1,41 @@
 import React from 'react';
-import { Form, Input, Tooltip, Row, Col } from 'antd';
-import { isEmpty } from 'lodash';
+import { Input } from 'antd';
 
-import McsIcons from '../../components/McsIcons';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TextAreaProps } from 'antd/lib/input/TextArea';
 
-const defaultTooltipPlacement: TooltipPlacement = 'right';
-
-export interface FormTextArea {
+export interface FormTextAreaProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
-  inputProps?: TextAreaProps;
-  helpToolTipProps: TooltipProps;
-  buttonText: string;
+  inputProps?: TextAreaProps & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+  helpToolTipProps?: TooltipProps;
 }
 
-const FormTextArea: React.SFC<FormTextArea & WrappedFieldProps> = props => {
+const FormTextArea: React.SFC<FormTextAreaProps & WrappedFieldProps> = props => {
 
-  const {
-    input,
-    meta,
-    formItemProps,
-    inputProps,
-    helpToolTipProps,
-  } = props;
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
-  if (meta.touched && meta.invalid) validateStatus = 'error';
-  if (meta.touched && meta.warning) validateStatus = 'warning';
+  if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
+  if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
-  const displayHelpToolTip = !isEmpty(helpToolTipProps);
-
-  const mergedTooltipProps = {
-    placement: defaultTooltipPlacement,
-    ...helpToolTipProps,
-  };
 
   return (
-    <Form.Item
-      help={meta.touched && (meta.warning || meta.error)}
+    <FormFieldWrapper
+      help={props.meta.touched && (props.meta.warning || props.meta.error)}
+      helpToolTipProps={props.helpToolTipProps}
       validateStatus={validateStatus}
-      {...formItemProps}
+      {...props.formItemProps}
     >
-
-      <Row align="middle" type="flex" className="m-b-20">
-        <Col span={22} >
-          <Input.TextArea
-            {...input}
-            {...inputProps}
-          />
-        </Col>
-        {displayHelpToolTip &&
-          <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
-              <McsIcons type="info" />
-            </Tooltip>
-          </Col>
-        }
-      </Row>
-    </Form.Item>
+      <Input.TextArea
+        id={props.input.name}
+        {...props.input}
+        {...props.inputProps}
+      />
+    </FormFieldWrapper>
   );
 };
 

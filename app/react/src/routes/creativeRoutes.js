@@ -9,6 +9,10 @@ import {
 } from '../containers/Creative/DisplayAds/Edit';
 
 import {
+  CreateEmailTemplate
+} from '../containers/Creative/EmailTemplates/Edit/index.ts';
+
+import {
   EmailActionBar,
   EmailList,
 } from '../containers/Creative/EmailTemplates/List';
@@ -35,6 +39,16 @@ const creativesRoutes = [
     layout: 'main',
     contentComponent: EmailList,
     actionBarComponent: EmailActionBar,
+  },
+  {
+    path: '/creatives/email/create',
+    layout: 'edit',
+    editComponent: CreateEmailTemplate,
+  },
+  {
+    path: '/creatives/email/:creativeId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: CreateEmailTemplate,
   },
 ];
 
