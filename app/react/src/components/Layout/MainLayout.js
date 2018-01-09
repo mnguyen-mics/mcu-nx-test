@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Icon } from 'antd';
 import { connect } from 'react-redux';
 import { push as PushMenu } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
