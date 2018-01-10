@@ -22,7 +22,7 @@ export interface DataListResponse<T> extends ApiResponse {
 }
 
 interface ApiOptions {
-  localUrl?: string;
+  localUrl?: boolean;
   adminApi?: object;
   withCredentials?: boolean;
   authenticated?: boolean;

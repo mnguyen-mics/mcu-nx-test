@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Input, Card } from 'antd';
+import { Input, Card, Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import log from '../../utils/Logger';
 import _ from 'lodash';
@@ -11,14 +11,11 @@ import pathToRegexp from 'path-to-regexp';
 import * as SessionHelper from '../../state/Session/selectors';
 import OrgLogo from '../Logo/OrgLogo';
 import { ButtonStyleless } from '../../components/index';
+import { Workspace } from '../../models/organisation/organisation';
 
 const Search = Input.Search;
 const { Meta } = Card;
 
-export interface Workspace {
-  organisation_id: string;
-  organisation_name: string;
-}
 
 export interface OrgSelectorProps {
   workspaces: Workspace[];
@@ -80,32 +77,55 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
         }
         return true;
       });
+
+    let rowSize = 1;
+
+    if (this.props.workspaces.length > 16) {
+      rowSize = 4;
+    } else if (this.props.workspaces.length > 4) {
+      rowSize = 2;
+    }
+
     return (
       <div className="mcs-org-selector">
-        <Search
-          placeholder="Search Organisation"
-          onSearch={this.onSearch}
-          className="search-input"
-          onChange={this.onChange}
-        />
-        {(filteredWorkspaces && filteredWorkspaces.length) ? filteredWorkspaces
-          .map(item =>
-            <ButtonStyleless
-              key={item.organisation_id}
-              onClick={this.onCardClick(item.organisation_id)}
-            >
-              <Card
-                hoverable={true}
-                className="mcs-org-card"
-                cover={<OrgLogo organisationId={item.organisation_id} />}
+        <Row gutter={20} style={{ marginRight: 20, marginLeft: 20 }}>
+          <Col span={24}>
+            <Search
+              placeholder="Search Organisation"
+              onSearch={this.onSearch}
+              className="search-input"
+              onChange={this.onChange}
+            />
+          </Col>
+        
+          <Row gutter={24}
+          >
+          {(filteredWorkspaces && filteredWorkspaces.length) ? filteredWorkspaces
+            .map(item =>
+              <Col
+                span={24 / rowSize}
+                key={item.organisation_id}
               >
-                <Meta
-                  className="mcs-card-body"
-                  description={item.organisation_name}
-                />
-              </Card>
-            </ButtonStyleless>,
-            ) : <div className="mcs-no-results">No Results</div>}
+                <ButtonStyleless
+                  onClick={this.onCardClick(item.organisation_id)}
+                  style={{ height: 134, marginBottom: 20 }}
+                >
+                  <Card
+                    hoverable={true}
+                    className="mcs-org-card"
+                    cover={<OrgLogo organisationId={item.organisation_id} />}
+                    style={{ height: '100%' }}
+                  >
+                    <Meta
+                      className="mcs-card-body"
+                      description={item.organisation_name}
+                    />
+                  </Card>
+                </ButtonStyleless>
+              </Col>
+              ) : <div className="mcs-no-results">No Results</div>}
+            </Row>
+          </Row>
       </div>
     );
   }

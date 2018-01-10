@@ -118,7 +118,7 @@ class MainLayout extends Component {
           outerContainerId={'mcs-full-page'}
           isOpen={this.state.isOpen}
           onStateChange={(state) => this.setState({ isOpen: state.isOpen })}
-          width={200}
+          width={800}
         >
           <OrganisationSelector />
         </PushMenu>
