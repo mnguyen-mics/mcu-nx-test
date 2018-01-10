@@ -108,6 +108,7 @@ class MainLayout extends Component {
       organisationSelector: OrganisationSelector,
       collapsed,
       mode,
+      orgSelectorSize,
     } = this.props;
 
     return (
@@ -118,9 +119,9 @@ class MainLayout extends Component {
           outerContainerId={'mcs-full-page'}
           isOpen={this.state.isOpen}
           onStateChange={(state) => this.setState({ isOpen: state.isOpen })}
-          width={800}
+          width={orgSelectorSize}
         >
-          <OrganisationSelector />
+          <OrganisationSelector size={orgSelectorSize} />
         </PushMenu>
 
         <Layout id="mcs-main-layout" className="mcs-fullscreen">
@@ -174,6 +175,7 @@ MainLayout.propTypes = {
   openCloseMenu: PropTypes.func,
   showOrgSelector: PropTypes.bool.isRequired,
   organisationSelector: PropTypes.func.isRequired,
+  orgSelectorSize: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({

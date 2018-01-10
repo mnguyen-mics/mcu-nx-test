@@ -15,6 +15,7 @@ function LayoutManager({
   actionBarComponent,
   organisationSelector,
   showOrgSelector,
+  orgSelectorSize,
 }) {
 
   log.trace(`Render ${layout} layout with component`, contentComponent);
@@ -27,6 +28,7 @@ function LayoutManager({
           actionBarComponent={actionBarComponent}
           organisationSelector={organisationSelector}
           showOrgSelector={showOrgSelector}
+          orgSelectorSize={orgSelectorSize}
         />
       );
 
@@ -56,6 +58,7 @@ LayoutManager.propTypes = {
   actionBarComponent: PropTypes.func,
   organisationSelector: PropTypes.func,
   showOrgSelector: PropTypes.bool,
+  orgSelectorSize: PropTypes.number.isRequired,
 };
 
 export default LayoutManager;

@@ -77,6 +77,14 @@ class Navigator extends Component {
     if (initializationError) return (<Error message={formatMessage(errorMessages.generic)} />);
     if (!initialized) return (<Loading />); // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
+    let selectorSize = 400;
+
+    if (this.props.workspaces.length > 20) {
+      selectorSize = 800;
+    } else if (this.props.workspaces.length > 8) {
+      selectorSize = 400;
+    }
+
     const basePath = '/v2/o/:organisationId(\\d+)';
     const homeUrl = `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
     return (
@@ -114,6 +122,7 @@ class Navigator extends Component {
                       editComponent={route.editComponent}
                       organisationSelector={OrgSelector}
                       showOrgSelector={this.props.hasWorkspaces}
+                      orgSelectorSize={selectorSize}
                       {...props}
                     />
                   </div>
@@ -160,12 +169,14 @@ Navigator.propTypes = {
   logOut: PropTypes.func.isRequired,
   setColorsStore: PropTypes.func.isRequired,
   hasWorkspaces: PropTypes.bool.isRequired,
+  workspaces: PropTypes.arrayOf(PropTypes.shape()).isRequired,
 };
 
 const mapStateToProps = state => ({
   initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
   hasWorkspaces: Object.keys(SessionHelper.getWorkspaces(state)).length > 1,
+  workspaces: Object.keys(SessionHelper.getWorkspaces(state)).map(item => SessionHelper.getWorkspaces(state)[item]),
   defaultWorkspaceOrganisationId: SessionHelper.getDefaultWorkspaceOrganisationId(state),
 });
 

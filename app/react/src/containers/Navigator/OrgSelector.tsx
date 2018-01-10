@@ -21,6 +21,7 @@ export interface OrgSelectorProps {
   workspaces: Workspace[];
   workspace: Workspace;
   hasDatamarts: boolean;
+  size: number;
 }
 
 interface OrgSelectorState {
@@ -80,9 +81,9 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
 
     let rowSize = 1;
 
-    if (this.props.workspaces.length > 16) {
+    if (this.props.size === 800) {
       rowSize = 4;
-    } else if (this.props.workspaces.length > 4) {
+    } else if (this.props.size === 400) {
       rowSize = 2;
     }
 
