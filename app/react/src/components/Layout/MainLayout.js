@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import { Layout, Icon } from 'antd';
 import { connect } from 'react-redux';
@@ -14,6 +15,17 @@ import { ButtonStyleless } from '../index.ts';
 
 const { Content, Sider } = Layout;
 
+const messages = defineMessages({
+  switchOrg: {
+    id: 'navigator.sideMenu.switchOrg',
+    defaultMessage: 'Switch Org.'
+  },
+  collapse: {
+    id: 'navigator.sideMenu.collapse',
+    defaultMessage: 'Collapse'
+  }
+});
+
 class MainLayout extends Component {
 
   constructor(props) {
@@ -23,12 +35,6 @@ class MainLayout extends Component {
       left: 12,
       right: 12,
     };
-  }
-
-  getActionBar() {
-    const { actionBarComponent: ActionBarComponent } = this.props;
-
-    return (ActionBarComponent ? <ActionBarComponent /> : null);
   }
 
   onCollapse = (collapsed) => {
@@ -81,12 +87,12 @@ class MainLayout extends Component {
       <Row>
         <Col span={this.state.left} className="left" onMouseEnter={() => resizeBox('left')} onMouseLeave={() => resizeBox()} >
           <ButtonStyleless onClick={orgSelector} style={{ width: '100%' }}>
-            <span><Icon type="bars" /> <span className={this.state.left > 12 && !this.props.collapsed ? 'visible' : 'hidden'}>Switch Org.</span></span>
+            <span><Icon type="bars" /> <span className={this.state.left > 12 && !this.props.collapsed ? 'visible' : 'hidden'}><FormattedMessage {...messages.switchOrg} /></span></span>
           </ButtonStyleless>
         </Col>
         <Col span={this.state.right} className="right" onMouseEnter={() => resizeBox('right')} onMouseLeave={() => resizeBox()}>
           <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}>Collapse</span></span>}
+            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </ButtonStyleless>
         </Col>
       </Row>
@@ -94,7 +100,7 @@ class MainLayout extends Component {
       <Row>
         <Col span={24} className="all">
           <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }} onMouseEnter={() => resizeBox('right')} onMouseLeave={() => resizeBox()}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}>Collapse</span></span>}
+            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </ButtonStyleless>
         </Col>
       </Row>
