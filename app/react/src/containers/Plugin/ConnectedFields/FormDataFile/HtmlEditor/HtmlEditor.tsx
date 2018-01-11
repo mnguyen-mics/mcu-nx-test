@@ -41,6 +41,10 @@ export default class HtmlEditor extends React.Component<HtmlEditorProps> {
       if (listOfSelector[i].getAttribute('data-mcs-type') === 'image') {
         const element = listOfSelector[i] as HTMLImageElement;
         element.src = values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
+      } else if (listOfSelector[i].getAttribute('data-mcs-type') === 'link') {
+        const element = listOfSelector[i] as HTMLLinkElement;
+        element.href = values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
+        element.target = '_blank'
       } else {
         listOfSelector[i].innerHTML = values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
       }
@@ -69,6 +73,13 @@ export default class HtmlEditor extends React.Component<HtmlEditorProps> {
           type: type,
           name: listOfSelector[i].getAttribute('data-mcs-name') as string,
           content: elem.src,
+        }
+      } else if (type === 'link') {
+        const elem = listOfSelector[i] as HTMLLinkElement;
+        value = {
+          type: type,
+          name: listOfSelector[i].getAttribute('data-mcs-name') as string,
+          content: elem.href,
         }
       } else {
         value = {

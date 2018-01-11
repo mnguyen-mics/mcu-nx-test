@@ -13,7 +13,7 @@ import { DrawableContentProps } from '../../../../../components/Drawer'
 
 const { Content } = Layout;
 
-export type ContentType = 'title' | 'text' | 'image';
+export type ContentType = 'title' | 'text' | 'image' | 'link';
 
 export interface Content {
   type: ContentType;
@@ -56,6 +56,24 @@ class ContentArea extends React.Component<Props> {
   buildItems = (content: Content) => {
     switch (content.type) {
       case 'title':
+        return (
+          <Row key={content.name}>
+            <FormInputField
+              name={content.name}
+              component={FormInput}
+              props={{
+                formItemProps: {
+                  label: content.name,
+                  ...fieldGridConfig,
+                },
+                inputProps: {
+                  placeholder: content.name,
+                  defaultValue: content.content,
+                },
+              }}
+            />
+          </Row>);
+      case 'link':
         return (
           <Row key={content.name}>
             <FormInputField
