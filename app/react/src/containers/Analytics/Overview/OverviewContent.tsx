@@ -183,11 +183,7 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
 
     componentWillReceiveProps(nextProps: OverviewContentAllProps) {
       const {
-        history: {
-          location: {
-            search,
-          },
-        },
+        history,
         match: {
           params: {
             organisationId,
@@ -195,7 +191,16 @@ class OverviewContent extends React.Component<OverviewContentAllProps, OverviewC
         },
         getDefaultDatamart,
       } = this.props;
-      const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+
+      const filter = parseSearch(history.location.search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
+      if (!isSearchValid(history.location.search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: history.location.pathname,
+          search: buildDefaultSearch(history.location.search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS),
+          state: {reloadDataSource: true},
+        });
+      }
+
       const defaultDatamart = getDefaultDatamart(organisationId);
       const defaultDatamartId = defaultDatamart ? defaultDatamart.id : '0';
       this.fetchAllData(organisationId, defaultDatamartId, filter);

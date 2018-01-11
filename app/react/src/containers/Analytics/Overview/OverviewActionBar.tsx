@@ -4,8 +4,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../Actionbar';
 import {RouteComponentProps} from 'react-router';
-import {InjectedIntlProps} from 'react-intl';
-import injectIntl = ReactIntl.injectIntl;
+import { InjectedIntlProps, injectIntl } from 'react-intl'
 
 import messages from './messages';
 

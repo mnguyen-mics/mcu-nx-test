@@ -213,10 +213,12 @@ const dataStudio = {
 
 export const itemDefinitions = [
   audienceMenu,
+  analyticsMenu,
   campaignsMenu,
   automationsMenu,
   creativesMenu,
   libraryMenu,
   dataStudio,
-  analyticsMenu
+  analyticsMenu,
+  libraryMenu
 ];

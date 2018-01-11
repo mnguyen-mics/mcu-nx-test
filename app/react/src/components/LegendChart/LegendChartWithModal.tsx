@@ -51,21 +51,21 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
         key2: options[1].key,
       });
 
-      const onChangeValueLeft = (e: any) => {
+      const onChangeValueLeft = (e: React.FormEvent<HTMLInputElement>) => {
         this.setState(
           (oldState: LegendChartWithModalState) => {
             return {
               ...oldState,
-              key1: e.target.value,
+              key1: e.currentTarget.value,
             };
           });
       };
-      const onChangeValueRight = (e: any) => {
+      const onChangeValueRight = (e: React.FormEvent<HTMLInputElement>) => {
         this.setState(
       (oldState: LegendChartWithModalState) => {
           return {
             ...oldState,
-            key2: e.target.value,
+            key2: e.currentTarget.value,
           };
         });
       };
