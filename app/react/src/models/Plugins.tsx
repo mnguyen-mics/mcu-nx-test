@@ -7,7 +7,7 @@ export interface PluginInterface {
   current_version_id: string;
 }
 
-export interface PropertyResourceShape {
+export interface PluginProperty {
   deletable: boolean;
   origin: string;
   property_type: string;

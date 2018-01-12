@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
-import { PluginInterface, PropertyResourceShape, PluginType } from '../../../models/Plugins';
+import { PluginInterface, PluginProperty, PluginType } from '../../../models/Plugins';
 import { DrawableContentProps } from '../../../components/Drawer';
 import PluginService from '../../../services/PluginService';
 import * as actions from '../../../state/Notifications/actions';
@@ -34,7 +34,7 @@ interface PluginContentOuterProps extends DrawableContentProps {
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
   breadcrumbPaths: BreadcrumbPaths[];
-  saveOrCreatePluginInstance: (plugin: any, properties: PropertyResourceShape[]) => void;
+  saveOrCreatePluginInstance: (plugin: any, properties: PluginProperty[]) => void;
   onClose: () => void;
   editionMode: boolean;
   onSelect: (t: any) => void;
@@ -45,7 +45,7 @@ interface PluginContentOuterProps extends DrawableContentProps {
 interface PluginContentState {
   plugin: PluginInterface;
   isLoading: boolean;
-  pluginProperties: PropertyResourceShape[];
+  pluginProperties: PluginProperty[];
   availablePlugins: PluginInterface[];
 }
 
@@ -116,7 +116,7 @@ class PluginContent extends React.Component<
     });
   }
 
-  createPlugin = (plugin: PluginInterface, properties: PropertyResourceShape[]) => {
+  createPlugin = (plugin: PluginInterface, properties: PluginProperty[]) => {
     this.props.saveOrCreatePluginInstance(plugin, properties);
   }
 
@@ -156,7 +156,7 @@ class PluginContent extends React.Component<
     const formattedProperties: any = {};
 
     if (initialValues.properties) {
-      initialValues.properties.forEach((property: PropertyResourceShape) => {
+      initialValues.properties.forEach((property: PluginProperty) => {
         formattedProperties[property.technical_name] = { value: property.value };
       });
     }

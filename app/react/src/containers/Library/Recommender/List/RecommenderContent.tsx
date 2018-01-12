@@ -14,7 +14,7 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { PropertyResourceShape, Recommender, PluginVersion } from '../../../../models/Plugins';
+import { PluginProperty, Recommender, PluginVersion } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -24,7 +24,7 @@ const initialState = {
 };
 
 interface RecommenderInterface extends Recommender {
-  properties?: PropertyResourceShape[];
+  properties?: PluginProperty[];
 }
 
 interface RecommenderContentState {
@@ -59,10 +59,10 @@ class RecommenderContent extends React.Component<
               PluginService.getEngineVersion(va.version_id)
               .then((recommender: PluginVersion) => {
                 return PluginService.getEngineProperties(recommender.id);
-              }).then((v: PropertyResourceShape[]) => resolve(v));
+              }).then((v: PluginProperty[]) => resolve(v));
             });
           });
-          Promise.all(promises).then((vaProperties: PropertyResourceShape[]) => {
+          Promise.all(promises).then((vaProperties: PluginProperty[]) => {
             const formattedResults: any = results.data.map((va, i) => {
               return {
                 ...va,

@@ -10,7 +10,7 @@ import { EditContentLayout } from '../../../../components/Layout';
 import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, PluginInterface } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
-import { GenericCreativeResource } from '../../../../models/creative/CreativeResource';
+import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 import { DataResponse } from '../../../../services/ApiService';
 
@@ -24,7 +24,7 @@ interface EmailTemplateRouteParam {
 }
 
 interface EmailTemplateForm {
-  plugin?: GenericCreativeResource;
+  plugin?: EmailTemplateResource;
   properties?: PluginProperty[];
 }
 
@@ -159,7 +159,7 @@ class CreateEmailTemplate extends React.Component<
     history.push(attributionModelUrl);
   }
 
-  saveOrCreatePluginInstance = (plugin: GenericCreativeResource, properties: PluginProperty[]) => {
+  saveOrCreatePluginInstance = (plugin: EmailTemplateResource, properties: PluginProperty[]) => {
 
     const {
       edition,

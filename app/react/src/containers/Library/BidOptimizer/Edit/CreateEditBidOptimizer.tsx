@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import BidOptimizerService from '../../../../services/Library/BidOptimizerService';
 import * as actions from '../../../../state/Notifications/actions';
-import { PropertyResourceShape, BidOptimizer, PluginInterface} from '../../../../models/Plugins';
+import { PluginProperty, BidOptimizer, PluginInterface} from '../../../../models/Plugins';
 
 import messages from './messages';
 import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
@@ -18,7 +18,7 @@ interface BidOptimizerRouteParam {
 
 interface BidOptimizerForm {
   plugin: any;
-  properties?: PropertyResourceShape[];
+  properties?: PluginProperty[];
 }
 
 interface CreateBidOptimizerState {
@@ -103,7 +103,7 @@ class CreateEditBidOptimizer extends React.Component<
     history.push(attributionModelUrl);
   }
 
-  saveOrCreatePluginInstance = (plugin: BidOptimizer, properties: PropertyResourceShape[]) => {
+  saveOrCreatePluginInstance = (plugin: BidOptimizer, properties: PluginProperty[]) => {
 
     const {
       edition,
@@ -154,7 +154,7 @@ class CreateEditBidOptimizer extends React.Component<
     });
   }
 
-  updatePropertiesValue = (properties: PropertyResourceShape[], organisationId: string, id: string) => {
+  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(BidOptimizerService.updateBidOptimizerProperty(organisationId, id, item.technical_name, item));

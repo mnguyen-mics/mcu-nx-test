@@ -7,7 +7,7 @@ import PluginContent from '../../../Plugin/Edit/PluginContent';
 import VisitAnalyzerService from '../../../../services/Library/VisitAnalyzerService';
 import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 import * as actions from '../../../../state/Notifications/actions';
-import { PropertyResourceShape, VisitAnalyzer, PluginInterface} from '../../../../models/Plugins';
+import { PluginProperty, VisitAnalyzer, PluginInterface} from '../../../../models/Plugins';
 
 import messages from './messages';
 
@@ -18,7 +18,7 @@ interface VisitAnalyzerRouteParam {
 
 interface VisitAnalyzerForm {
   plugin: any;
-  properties?: PropertyResourceShape[];
+  properties?: PluginProperty[];
 }
 
 interface CreateVisitAnalyzerState {
@@ -103,7 +103,7 @@ class CreateEditVisitAnalyzer extends React.Component<
     history.push(attributionModelUrl);
   }
 
-  saveOrCreatePluginInstance = (plugin: VisitAnalyzer, properties: PropertyResourceShape[]) => {
+  saveOrCreatePluginInstance = (plugin: VisitAnalyzer, properties: PluginProperty[]) => {
 
     const {
       edition,
@@ -153,7 +153,7 @@ class CreateEditVisitAnalyzer extends React.Component<
     });
   }
 
-  updatePropertiesValue = (properties: PropertyResourceShape[], organisationId: string, id: string) => {
+  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(VisitAnalyzerService.updateVisitAnalyzerProperty(organisationId, id, item.technical_name, item));

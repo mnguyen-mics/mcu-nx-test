@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import AttributionModelService from '../../../../services/Library/AttributionModelService';
 import * as actions from '../../../../state/Notifications/actions';
-import { AttributionModel, PropertyResourceShape } from '../../../../models/Plugins';
+import { AttributionModel, PluginProperty } from '../../../../models/Plugins';
 import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 import messages from './messages';
@@ -18,7 +18,7 @@ interface AttributionModelRouteParam {
 
 interface AttributionModelForm {
   plugin: AttributionModel;
-  properties?: PropertyResourceShape[];
+  properties?: PluginProperty[];
 }
 
 interface CreateAttributionModelState {
@@ -102,7 +102,7 @@ class CreateAttributionModel extends React.Component<
     history.push(attributionModelUrl);
   }
 
-  saveOrCreatePluginInstance = (plugin: AttributionModel, properties: PropertyResourceShape[]) => {
+  saveOrCreatePluginInstance = (plugin: AttributionModel, properties: PluginProperty[]) => {
 
     const {
       edition,
@@ -152,7 +152,7 @@ class CreateAttributionModel extends React.Component<
     });
   }
 
-  updatePropertiesValue = (properties: PropertyResourceShape[], organisationId: string, id: string) => {
+  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(AttributionModelService.updateAttributionModelProperty(organisationId, id, item.technical_name, item));

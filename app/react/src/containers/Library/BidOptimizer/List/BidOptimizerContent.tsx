@@ -13,7 +13,7 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { BidOptimizer, PropertyResourceShape } from '../../../../models/Plugins';
+import { BidOptimizer, PluginProperty } from '../../../../models/Plugins';
 import messages from './messages';
 
 const initialState = {
@@ -23,7 +23,7 @@ const initialState = {
 };
 
 interface BidOptimizerInterface extends BidOptimizer {
-  properties?: PropertyResourceShape[];
+  properties?: PluginProperty[];
 }
 
 interface BidOptimizerContentState {

@@ -14,7 +14,7 @@ import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 import { DrawableContentProps } from '../../../components/Drawer';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
-import { PropertyResourceShape } from '../../../models/Plugins';
+import { PluginProperty } from '../../../models/Plugins';
 import { PluginFieldGenerator } from '../../Plugin';
 import { Omit } from '../../../utils/Types';
 
@@ -27,8 +27,8 @@ interface PluginEditFormProps extends  Omit<ConfigProps<any>, 'form'> {
   // formValues: any;
   editionMode: boolean;
   organisationId: string;
-  save: (pluginValue: any, propertiesValue: PropertyResourceShape[]) => void;
-  pluginProperties: PropertyResourceShape[];
+  save: (pluginValue: any, propertiesValue: PluginProperty[]) => void;
+  pluginProperties: PluginProperty[];
   isLoading: boolean;
   pluginVersionId: string;
   formId: string;
@@ -107,7 +107,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       pluginProperties,
     } = this.props;
 
-    return pluginProperties.map((fieldDef: PropertyResourceShape) => {
+    return pluginProperties.map((fieldDef: PluginProperty) => {
       return (
         <PluginFieldGeneratorJS
           key={`${fieldDef.technical_name}`}

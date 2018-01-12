@@ -113,8 +113,8 @@ const CreativeService = {
 
   createEmailTemplate(
     organisationId: string,
-    resource: Partial<DisplayAdResource>,
-  ): Promise<DataResponse<DisplayAdResource>> {
+    resource: Partial<EmailTemplateResource>,
+  ): Promise<DataResponse<EmailTemplateResource>> {
     const endpoint = 'email_templates';
     const body = {
       ...resource,
@@ -134,8 +134,8 @@ const CreativeService = {
 
   updateEmailTemplate(
     creativeId: string,
-    resource: Partial<DisplayAdResource>,
-  ): Promise<DataResponse<DisplayAdResource>> {
+    resource: Partial<EmailTemplateResource>,
+  ): Promise<DataResponse<EmailTemplateResource>> {
     const endpoint = `email_templates/${creativeId}`;
     return ApiService.putRequest(endpoint, resource);
   },
@@ -176,7 +176,7 @@ const CreativeService = {
 
   getAuditStatus(
     creativeId: string,
-  ): Promise<DataResponse<AuditStatusResource>> {
+  ): Promise<DataListResponse<AuditStatusResource>> {
     const endpoint = `display_ads/${creativeId}/audits`;
     return ApiService.getRequest(endpoint);
   },

@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import withDrawer, {
   DrawableContentProps,

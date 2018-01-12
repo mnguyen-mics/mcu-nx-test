@@ -7,7 +7,7 @@ import PluginContent from '../../../Plugin/Edit/PluginContent';
 import RecommenderService from '../../../../services/Library/RecommenderService';
 import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 import * as actions from '../../../../state/Notifications/actions';
-import { PropertyResourceShape, Recommender, PluginInterface} from '../../../../models/Plugins';
+import { PluginProperty, Recommender, PluginInterface} from '../../../../models/Plugins';
 
 import messages from './messages';
 
@@ -18,7 +18,7 @@ interface RecommenderRouteParam {
 
 interface RecommenderForm {
   plugin: any;
-  properties?: PropertyResourceShape[];
+  properties?: PluginProperty[];
 }
 
 interface CreateRecommenderState {
@@ -103,7 +103,7 @@ class CreateEditRecommender extends React.Component<
     history.push(attributionModelUrl);
   }
 
-  saveOrCreatePluginInstance = (plugin: Recommender, properties: PropertyResourceShape[]) => {
+  saveOrCreatePluginInstance = (plugin: Recommender, properties: PluginProperty[]) => {
 
     const {
       edition,
@@ -153,7 +153,7 @@ class CreateEditRecommender extends React.Component<
     });
   }
 
-  updatePropertiesValue = (properties: PropertyResourceShape[], organisationId: string, id: string) => {
+  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(RecommenderService.updateRecommenderProperty(organisationId, id, item.technical_name, item));
