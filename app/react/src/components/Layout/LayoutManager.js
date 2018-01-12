@@ -49,6 +49,7 @@ LayoutManager.defaultProps = {
   organisationSelector: () => <div>no org selector</div>,
   showOrgSelector: false,
   actionBarComponent: null,
+  orgSelectorSize: 200,
 };
 
 LayoutManager.propTypes = {
@@ -58,7 +59,7 @@ LayoutManager.propTypes = {
   actionBarComponent: PropTypes.func,
   organisationSelector: PropTypes.func,
   showOrgSelector: PropTypes.bool,
-  orgSelectorSize: PropTypes.number.isRequired,
+  orgSelectorSize: PropTypes.number,
 };
 
 export default LayoutManager;
