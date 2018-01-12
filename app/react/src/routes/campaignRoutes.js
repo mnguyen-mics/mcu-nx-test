@@ -1,6 +1,5 @@
 import {
-  DisplayCampaignsActionbar,
-  DisplayCampaignsTable,
+  DisplayCampaignsPage,
 } from '../containers/Campaigns/Display/List';
 
 import {
@@ -40,8 +39,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/display',
     layout: 'main',
-    contentComponent: DisplayCampaignsTable,
-    actionBarComponent: DisplayCampaignsActionbar,
+    contentComponent: DisplayCampaignsPage,
   },
   {
     path: '/campaigns/display/create',

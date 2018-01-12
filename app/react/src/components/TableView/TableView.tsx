@@ -43,7 +43,7 @@ export interface TableViewProps<T> extends TableProps<T> {
   actionsColumnsDefinition?: Array<ActionsColumnDefinition<T>>;
 }
 
-class TableView<T> extends React.Component<
+class TableView<T extends { id?: string}> extends React.Component<
   TableViewProps<T> & TranslationProps
 > {
   static defaultProps: Partial<TableViewProps<any>> = {
@@ -159,10 +159,7 @@ class TableView<T> extends React.Component<
     if (dataSource === undefined)
       throw new Error('Undefined dataSource in TableView');
 
-
-    const dataSourceWithIds = dataSource.map((elem: T) => {
-      return { ...(elem as any), key: cuid() };
-    });
+    const dataSourceWithIds = dataSource.map((elem) => ({ key: elem.id ? elem.id : cuid(), ...(elem as any) }));
 
     let newPagination = pagination;
     if (pagination) {
@@ -179,7 +176,6 @@ class TableView<T> extends React.Component<
       loading,
       onChange,
       pagination: newPagination,
-      rowClassName: () => 'mcs-table-cursor',
     };
 
     return <Table {...computedTableProps} />;

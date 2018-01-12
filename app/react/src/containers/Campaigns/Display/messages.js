@@ -56,5 +56,13 @@ export default defineMessages({
   filterByLabel: {
     id: 'display.filterByLabel',
     defaultMessage: 'Filter by Label'
+  },
+  archiveCampaignsModalTitle: {
+    id: 'display.campaigns.archive.title',
+    defaultMessage: 'Archive Campaigns'
+  },
+  archiveCampaignsModalMessage: {
+    id: 'display.campaigns.archive',
+    defaultMessage: 'Are you sure to archive all the selected campaigns ?'
   }
 });

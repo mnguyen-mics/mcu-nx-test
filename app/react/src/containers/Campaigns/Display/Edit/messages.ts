@@ -22,6 +22,22 @@ export default defineMessages({
     defaultMessage: 'Save',
   },
 
+  saveCampaigns: {
+    id: 'message.submit.campaigns',
+    defaultMessage: 'Save',
+  },
+
+   /*
+  ==============================================================================
+  =================================== EDIT CAMPAIGNS ==================================
+  ==============================================================================
+  */
+
+  editCampaigns: {
+    id: 'editCampaigns.breadCrumb',
+    defaultMessage: 'Edit Campaigns',
+  },
+
   /*
   ==============================================================================
   ============================== BREADCRUMB TITLES =============================

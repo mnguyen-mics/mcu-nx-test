@@ -6,7 +6,7 @@ export type BidOptimizationObjectiveType = 'CPC' | 'CPA' | 'CTR' | 'CPV';
 
 export type BudgetPeriod = 'DAY' | 'WEEK' | 'MONTH';
 
-export type CampaignStatus = 'PENDING' | 'ACTIVE' | 'PAUSED';
+export type CampaignStatus = 'PENDING' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED';
 
 export type DisplayCampaignSubType = 'PROGRAMMATIC' | 'AD_SERVING' | 'TRACKING';
 

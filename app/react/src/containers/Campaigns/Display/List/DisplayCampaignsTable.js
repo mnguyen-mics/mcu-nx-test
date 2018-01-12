@@ -131,13 +131,9 @@ class DisplayCampaignsTable extends Component {
     });
   };
 
-  editCampaign = (campaign) => {
+  editCampaign = campaign => {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      match: { params: { organisationId } },
       location,
       history,
     } = this.props;
@@ -146,25 +142,21 @@ class DisplayCampaignsTable extends Component {
       campaign.id
     }/edit`;
 
-    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   };
 
-  duplicateCampaign = (campaign) => {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      history,
-    } = this.props;
+  duplicateCampaign = campaign => {
+    const { match: { params: { organisationId } }, history } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
 
     history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
-  }
+  };
 
-  updateLocationSearch = (params) => {
+  updateLocationSearch = params => {
     const {
       history,
       location: { search: currentSearch, pathname },
@@ -187,7 +179,8 @@ class DisplayCampaignsTable extends Component {
       isFetchingCampaignsStat,
       dataSource,
       totalDisplayCampaigns,
-      labels
+      labels,
+      rowSelection,
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -403,6 +396,7 @@ class DisplayCampaignsTable extends Component {
             loading={isFetchingDisplayCampaigns}
             pagination={pagination}
             labelsOptions={labelsOptions}
+            rowSelection={rowSelection}
           />
         </div>
     )
@@ -412,6 +406,8 @@ class DisplayCampaignsTable extends Component {
 }
 
 DisplayCampaignsTable.propTypes = {
+  rowSelection: PropTypes.shape().isRequired,
+
   match: PropTypes.shape().isRequired,
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,

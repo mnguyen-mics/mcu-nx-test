@@ -3,7 +3,7 @@ import { CampaignResource } from '../models/campaign/CampaignResource';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import { CampaignStatus } from '../models/campaign/constants/index';
 
-interface GetCampaignsOptions extends PaginatedApiParam {
+export interface GetCampaignsOptions extends PaginatedApiParam {
   administration_id?: string;
   scope?: string;
   keywords?: string[];
