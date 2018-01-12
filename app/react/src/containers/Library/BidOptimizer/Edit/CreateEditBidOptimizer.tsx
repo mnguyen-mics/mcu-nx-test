@@ -9,6 +9,7 @@ import * as actions from '../../../../state/Notifications/actions';
 import { PropertyResourceShape, BidOptimizer, PluginInterface} from '../../../../models/Plugins';
 
 import messages from './messages';
+import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 interface BidOptimizerRouteParam {
   organisationId: string;
@@ -27,7 +28,7 @@ interface CreateBidOptimizerState {
   selectedBidOptimizer?: PluginInterface;
 }
 
-interface CreateBidOptimizerProps {
+interface CreateBidOptimizerProps extends DrawableContentProps {
   notifyError: (err?: any) => void;
 }
 
@@ -192,6 +193,8 @@ class CreateEditBidOptimizer extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
+        openNextDrawer={this.props.openNextDrawer}
+        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -199,6 +202,7 @@ class CreateEditBidOptimizer extends React.Component<
 
 export default compose(
   injectIntl,
+  withDrawer,
   withRouter,
   connect(
     undefined,

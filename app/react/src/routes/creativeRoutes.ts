@@ -4,12 +4,12 @@ import {
 } from '../containers/Creative/DisplayAds/List';
 
 import {
-  // CreateCreativePage,
-} from '../containers/Creative/DisplayAds/Edit';
+  EditDisplayCreativePage,
+} from '../containers/Creative/DisplayAds/Edit'
 
 import {
-  EditDisplayCreativePage,
-} from '../containers/Creative/DisplayAds/Edit/index'
+  CreateEmailTemplate
+} from '../containers/Creative/EmailTemplates/Edit';
 
 import {
   EmailActionBar,
@@ -38,6 +38,16 @@ const creativesRoutes = [
     layout: 'main',
     contentComponent: EmailList,
     actionBarComponent: EmailActionBar,
+  },
+  {
+    path: '/creatives/email/create',
+    layout: 'edit',
+    editComponent: CreateEmailTemplate,
+  },
+  {
+    path: '/creatives/email/:creativeId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: CreateEmailTemplate,
   },
 ];
 

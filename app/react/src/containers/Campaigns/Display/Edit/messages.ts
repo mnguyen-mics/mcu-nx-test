@@ -424,6 +424,22 @@ export default defineMessages({
     id: 'adGroupEditor.section.location.option2',
     defaultMessage: 'Exclude',
   },
+  contentSectionLocationModal1: {
+    id: 'adGroupEditor.section.location.modal1',
+    defaultMessage: 'You can\'t add a area that is inside an already included or excluded area.',
+  },
+  contentSectionLocationModal1Title: {
+    id: 'adGroupEditor.section.location.modal1Title',
+    defaultMessage: 'Warning',
+  },
+  contentSectionLocationModal2: {
+    id: 'adGroupEditor.section.location.modal2',
+    defaultMessage: 'By adding this location the following location will be removed, do you want to proceed?',
+  },
+  contentSectionLocationModal2Title: {
+    id: 'adGroupEditor.section.location.modal2Title',
+    defaultMessage: 'Warning',
+  },
 
 
   /* ----------------------------- SECTION MEDIA ---------------------------- */

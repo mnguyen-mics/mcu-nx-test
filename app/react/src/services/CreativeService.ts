@@ -13,6 +13,7 @@ import {
   CreativeScreenshotResource,
 } from '../models/creative/CreativeResource';
 import { PropertyResourceShape } from '../models/plugin/index';
+import PluginService from './PluginService';
 
 export interface GetCreativesOptions {
   creative_type?: CreativeType;
@@ -110,6 +111,19 @@ const CreativeService = {
     return ApiService.postRequest(endpoint, body);
   },
 
+  createEmailTemplate(
+    organisationId: string,
+    resource: Partial<DisplayAdResource>,
+  ): Promise<DataResponse<DisplayAdResource>> {
+    const endpoint = 'email_templates';
+    const body = {
+      ...resource,
+      type: 'EMAIL_TEMPLATE',
+      organisation_id: organisationId,
+    };
+    return ApiService.postRequest(endpoint, body);
+  },
+
   updateDisplayCreative(
     creativeId: string,
     resource: Partial<DisplayAdResource>,
@@ -118,46 +132,32 @@ const CreativeService = {
     return ApiService.putRequest(endpoint, resource);
   },
 
+  updateEmailTemplate(
+    creativeId: string,
+    resource: Partial<DisplayAdResource>,
+  ): Promise<DataResponse<DisplayAdResource>> {
+    const endpoint = `email_templates/${creativeId}`;
+    return ApiService.putRequest(endpoint, resource);
+  },
+
   updateDisplayCreativeRendererProperty(
     organisationId: string,
-    creativeId: string,
+    id: string,
     technicalName: string,
-    body: { [key: string]: any } = {},
+    params: object = {},
   ): Promise<DataResponse<any> | any> {
-    const endpoint = `display_ads/${creativeId}/renderer_properties/technical_name=${technicalName}`;
-    if (body.property_type === 'ASSET') {
-      const uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
-      if (body.value && body.value.length === 0) {
-        return new Promise(resolve => {
-          return resolve();
-        });
-      }
+    const endpoint = `display_ads/${id}/renderer_properties/technical_name=${technicalName}`;
+    return PluginService.handleSaveOfProperties(params, organisationId, 'display_ads', id, endpoint);
+  },
 
-      const fileValue = body.value && body.value.file ? body.value.file : null;
-
-      if (fileValue !== null) {
-        const formData = new FormData(); /* global FormData */
-        formData.append('file', fileValue, fileValue.name);
-        return ApiService.postRequest(uploadEndpoint, formData).then(
-          (res: any) => {
-            const newBody = {
-              ...body,
-            };
-            newBody.value = {
-              original_file_name: res.data.original_filename,
-              file_path: res.data.file_path,
-              asset_id: res.data.id,
-            };
-            ApiService.putRequest(endpoint, newBody);
-          },
-        );
-      }
-      return Promise.resolve();
-    }
-    // } else if (technicalName === 'DATA_FILE') {
-    // TODO UPLOAD DATA FILE
-    // }
-    return ApiService.putRequest(endpoint, body);
+  updateEmailTemplateProperty(
+    organisationId: string,
+    id: string,
+    technicalName: string,
+    params: object = {},
+  ): Promise<DataResponse<any> | any> {
+    const endpoint = `email_templates/${id}/renderer_properties/technical_name=${technicalName}`;
+    return PluginService.handleSaveOfProperties(params, organisationId, 'email_templates', id, endpoint);
   },
 
   getCreativeRendererProperties(
@@ -167,7 +167,16 @@ const CreativeService = {
     return ApiService.getRequest(endpoint);
   },
 
-  getAuditStatus(creativeId: string): Promise<DataListResponse<AuditStatusResource>> {
+  getEmailTemplateProperties(
+    creativeId: string,
+  ): Promise<DataListResponse<any>> {
+    const endpoint = `email_templates/${creativeId}/renderer_properties`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  getAuditStatus(
+    creativeId: string,
+  ): Promise<DataResponse<AuditStatusResource>> {
     const endpoint = `display_ads/${creativeId}/audits`;
     return ApiService.getRequest(endpoint);
   },

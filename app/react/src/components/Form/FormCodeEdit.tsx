@@ -1,29 +1,28 @@
 import * as React from 'react';
 
 // TS Interfaces
-import { Input } from 'antd';
-import { InputProps } from 'antd/lib/input/Input';
+import AceEditor from 'react-ace';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TooltipProps } from 'antd/lib/tooltip';
+import { AceEditorProps } from 'react-ace/types'
 import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
-export interface FormInputProps extends FormFieldWrapperProps {
+export interface FormCodeEditProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
-  inputProps?: InputProps;
+  inputProps?: AceEditorProps;
   helpToolTipProps?: TooltipProps;
-  textArea?: boolean;
 }
 
-const FormInput: React.SFC<FormInputProps & WrappedFieldProps> = props => {
+const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
-
-  const InputComponent = props.textArea ? Input.TextArea : Input;
+  const onBlur = () => props.input.onBlur(undefined);
+  const onFocus = () => props.input.onFocus(undefined!);
 
   return (
     <FormFieldWrapper
@@ -32,19 +31,19 @@ const FormInput: React.SFC<FormInputProps & WrappedFieldProps> = props => {
       validateStatus={validateStatus}
       {...props.formItemProps}
     >
-      <InputComponent
-        id={props.input.name}
-        {...props.input}
+      <AceEditor
+        value={props.input.value}
         {...props.inputProps}
+        theme="monokai"
+        name={props.input.name}
+        onBlur={onBlur}
+        onFocus={onFocus}
+        width={'100%'}
+        onChange={props.input.onChange}
       />
     </FormFieldWrapper>
   );
 };
 
-FormInput.defaultProps = {
-  formItemProps: {},
-  inputProps: {},
-  helpToolTipProps: {},
-};
 
-export default FormInput;
+export default FormCodeEdit;

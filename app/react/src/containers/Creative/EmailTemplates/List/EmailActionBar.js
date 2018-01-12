@@ -26,7 +26,7 @@ class EmailActionBar extends Component {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/${organisationId}/creatives/email-template/default-editor/create`}>
+        <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcons type="plus" /> <FormattedMessage id="NEW_EMAIL_TEMPLATE" />
           </Button>

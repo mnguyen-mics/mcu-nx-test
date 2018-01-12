@@ -30,7 +30,7 @@ export function extractDataList<T>(dataResponse: DataListResponse<T>) {
 }
 
 interface ApiOptions {
-  localUrl?: string;
+  localUrl?: boolean;
   adminApi?: object;
   withCredentials?: boolean;
   authenticated?: boolean;

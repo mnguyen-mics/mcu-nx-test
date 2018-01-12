@@ -6,6 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
 import { PluginInterface, PropertyResourceShape, PluginType } from '../../../models/Plugins';
+import { DrawableContentProps } from '../../../components/Drawer';
 import PluginService from '../../../services/PluginService';
 import * as actions from '../../../state/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
@@ -28,7 +29,7 @@ interface PluginContentInnerProps {
   notifyError: (err: any) => void;
 }
 
-interface PluginContentOuterProps {
+interface PluginContentOuterProps extends DrawableContentProps {
   pluginType: PluginType;
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
@@ -213,7 +214,6 @@ class PluginContent extends React.Component<
           url={url}
         >
           <PluginEditForm
-            formValues={{}}
             editionMode={editionMode}
             organisationId={organisationId}
             save={this.createPlugin}
@@ -222,6 +222,8 @@ class PluginContent extends React.Component<
             pluginVersionId={plugin.id}
             formId={formId}
             initialValues={this.formatInitialValues(initialValue)}
+            openNextDrawer={this.props.openNextDrawer}
+            closeNextDrawer={this.props.closeNextDrawer}
           />
         </EditContentLayout>
     ) : (

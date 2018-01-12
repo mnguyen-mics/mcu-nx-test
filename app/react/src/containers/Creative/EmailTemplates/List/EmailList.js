@@ -158,7 +158,7 @@ class CreativeEmailsTable extends Component {
         key: 'name',
         isHideable: false,
         render: (text, record) => (
-          <Link className="mcs-campaigns-link" to={`/${organisationId}/creatives/email-template/default-editor/edit/${record.id}`}>{text}</Link>
+          <Link className="mcs-campaigns-link" to={`/v2/o/${organisationId}/creatives/email/${record.id}/edit`}>{text}</Link>
         ),
       },
       {

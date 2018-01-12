@@ -1,3 +1,4 @@
+import { BaseFieldProps, Field, GenericField } from 'redux-form';
 import FormBoolean from './FormBoolean';
 import FormCheckbox from './FormCheckbox';
 import FormDatePicker, { FormDatePickerProps } from './FormDatePicker';
@@ -14,11 +15,11 @@ import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
 import FormUpload from './FormUpload';
 import FormTextArea from './FormTextArea';
-import { BaseFieldProps, Field, GenericField } from 'redux-form';
 import FormInput, { FormInputProps } from './FormInput';
 import { DefaultSelectProps } from './FormSelect/DefaultSelect';
 import { FormSelectAddonProps } from './FormSelect/AddonSelect';
 import FormDateRangePicker, { FormDateRangePickerProps } from './FormDateRangePicker';
+import FormCodeEdit from './FormCodeEdit';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -39,6 +40,7 @@ export default {
   SwitchInput,
   FormSwitch,
   FormInput,
+  FormCodeEdit,
   withNormalizer,
   withValidators,
 };
@@ -60,6 +62,7 @@ export {
   FormSwitch,
   FormUpload,
   FormTextArea,
+  FormCodeEdit,
   withNormalizer,
   withValidators,
 };

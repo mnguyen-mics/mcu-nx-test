@@ -3,7 +3,7 @@ import { call, put, fork } from 'redux-saga/effects';
 
 import { addNotification } from '../Notifications/actions';
 import log from '../../utils/Logger';
-import OrganisationService from '../../services/OrganisationService';
+import OrganisationService from '../../services/OrganisationService.ts';
 
 import {
   WORKSPACE,
@@ -23,7 +23,7 @@ function* fetchOrganisationWorkspace({ payload }) {
   try {
     const organisationId = payload;
     const response = yield call(OrganisationService.getWorkspace, organisationId);
-    yield put(getWorkspace.success(response));
+    yield put(getWorkspace.success(response.data));
     yield put(getCookies.request());
   } catch (e) {
     log.error(e);
@@ -34,7 +34,7 @@ function* fetchOrganisationWorkspace({ payload }) {
 function* fetchUserCookies() {
   try {
     const response = yield call(OrganisationService.getCookies);
-    yield put(getCookies.success(response));
+    yield put(getCookies.success(response.data));
   } catch (e) {
     log.error(e);
     yield put(getCookies.failure(e));
