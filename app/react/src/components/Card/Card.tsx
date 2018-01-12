@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Col, Spin } from 'antd';
 
 interface CardProps {
-  buttons: JSX.Element;
+  buttons?: JSX.Element;
   title?: string;
   isLoading?: boolean;
 }

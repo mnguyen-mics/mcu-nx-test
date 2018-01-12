@@ -26,7 +26,7 @@ import { withNormalizer, withValidators, formErrorMessage } from '../../../../..
 
 import { withMcsRouter } from '../../../../Helpers';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
-import GoalService from '../../../../../services/GoalService';
+import GoalService from '../../../../../services/GoalService.ts';
 import AttributionModelsService from '../../../../../services/AttributionModelsService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';

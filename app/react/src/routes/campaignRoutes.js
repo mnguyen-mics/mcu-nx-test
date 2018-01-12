@@ -37,6 +37,8 @@ import {
   GoalsTable,
 } from '../containers/Campaigns/Goal/List';
 
+import GoalDashboard from '../containers/Campaigns/Goal/Dashboard/GoalDashboard.tsx';
+
 const campaignsRoutes = [
   {
     path: '/campaigns/display',
@@ -110,6 +112,11 @@ const campaignsRoutes = [
     layout: 'main',
     contentComponent: GoalsTable,
     actionBarComponent: GoalsActionbar,
+  },
+  {
+    path: '/campaigns/goal/:goalId(\\d+)',
+    layout: 'main',
+    contentComponent: GoalDashboard,
   },
 ];
 

@@ -8,7 +8,7 @@ import {
   fetchGoalsPerformanceReport,
 } from './actions';
 
-import GoalService from '../../../services/GoalService';
+import GoalService from '../../../services/GoalService.ts';
 import ReportService from '../../../services/ReportService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';

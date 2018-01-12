@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Col } from 'antd';
 
 interface Metric {
   name?: string;
@@ -23,18 +24,17 @@ class MetricsColumn extends React.Component<MetricsColumnProps> {
       isLoading,
     } = this.props;
 
-    const height = 375;
     const nbOfVal: number = metrics ? metrics.length : 1;
-    const cellHeight: number = height / nbOfVal;
+    const cellSize: number = Math.round(24 / nbOfVal);
 
     return (
-      <div className="p-r-20 mcs-metrics-column">
+      <div className="mcs-metrics-column">
         {metrics.map(metric => {
           return (
-            <div key={metric.name} style={{ height: `${cellHeight}px` }}>
+            <Col key={metric.name} span={cellSize}>
               <div className="title">{metric.name}</div>
               <div className="metric">{isLoading ? <i className="mcs-table-cell-loading" style={{ width: '130px' }} /> : metric.value}</div>
-            </div>);
+            </Col>);
         })}
       </div>
     );

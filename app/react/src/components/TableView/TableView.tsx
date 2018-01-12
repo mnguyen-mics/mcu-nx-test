@@ -16,7 +16,7 @@ const DEFAULT_PAGINATION_OPTION = {
   showSizeChanger: true,
 };
 
-interface DataColumnDefinition {
+export interface DataColumnDefinition {
   intlMessage: FormattedMessage.MessageDescriptor;
   translationKey?: string;
   key: string;

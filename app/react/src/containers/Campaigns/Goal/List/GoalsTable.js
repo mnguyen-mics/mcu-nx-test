@@ -28,7 +28,7 @@ import {
   getTableDataSource,
 } from '../../../../state/Campaigns/Goal/selectors';
 
-import GoalService from '../../../../services/GoalService';
+import GoalService from '../../../../services/GoalService.ts';
 
 class GoalsTable extends Component {
 
@@ -261,7 +261,7 @@ class GoalsTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/${organisationId}/goals/${record.id}/report`}
+            to={`/v2/o/${organisationId}/campaigns/goal/${record.id}`}
           >{text}
           </Link>
         ),
