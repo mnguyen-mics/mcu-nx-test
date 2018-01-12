@@ -77,11 +77,13 @@ class Navigator extends Component {
     if (initializationError) return (<Error message={formatMessage(errorMessages.generic)} />);
     if (!initialized) return (<Loading />); // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
-    let selectorSize = 400;
+    let selectorSize = 200;
 
-    if (this.props.workspaces.length > 20) {
+    const nbWorkspaces = Object.keys(this.props.workspaces).length;
+
+    if (nbWorkspaces > 20) {
       selectorSize = 800;
-    } else if (this.props.workspaces.length > 8) {
+    } else if (nbWorkspaces > 8) {
       selectorSize = 400;
     }
 
@@ -121,7 +123,7 @@ class Navigator extends Component {
                       actionBarComponent={route.actionBarComponent}
                       editComponent={route.editComponent}
                       organisationSelector={OrgSelector}
-                      showOrgSelector={this.props.hasWorkspaces}
+                      showOrgSelector={nbWorkspaces > 0}
                       orgSelectorSize={selectorSize}
                       {...props}
                     />
@@ -168,15 +170,13 @@ Navigator.propTypes = {
   defaultWorkspaceOrganisationId: PropTypes.string.isRequired,
   logOut: PropTypes.func.isRequired,
   setColorsStore: PropTypes.func.isRequired,
-  hasWorkspaces: PropTypes.bool.isRequired,
-  workspaces: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  workspaces: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
-  hasWorkspaces: Object.keys(SessionHelper.getWorkspaces(state)).length > 1,
-  workspaces: Object.keys(SessionHelper.getWorkspaces(state)).map(item => SessionHelper.getWorkspaces(state)[item]),
+  workspaces: SessionHelper.getWorkspaces(state),
   defaultWorkspaceOrganisationId: SessionHelper.getDefaultWorkspaceOrganisationId(state),
 });
 
