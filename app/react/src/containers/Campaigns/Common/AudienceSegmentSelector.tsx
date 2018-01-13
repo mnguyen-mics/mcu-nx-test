@@ -67,7 +67,7 @@ type Props = AudienceSegmentSelectorProps &
   MapStateProps &
   RouteComponentProps<{ organisationId: string }>;
 
-export class AudienceSegmentSelector extends React.Component<Props, State> {
+class AudienceSegmentSelector extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {

@@ -13,13 +13,12 @@ import messages from '../Edit/messages';
 
 const Option = Select.Option;
 
-export interface CreativeFormatEditorProps {
+export interface CreativeFormatEditorProps extends WrappedFieldProps {
   disabled?: boolean;
 }
 
 type JoinedProps = CreativeFormatEditorProps &
   InjectedIntlProps &
-  WrappedFieldProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {

@@ -104,14 +104,14 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
     const startDateValue =
-      input.value[startDateFieldName] === ''
+      input.value[startDateFieldName] === undefined
         ? undefined
         : unixTimestamp
           ? moment(input.value[startDateFieldName])
           : input.value[startDateFieldName];
 
     const endDateValue =
-      input.value[endDateFieldName] === ''
+      input.value[endDateFieldName] === undefined
         ? undefined
         : unixTimestamp
           ? moment(input.value[endDateFieldName])

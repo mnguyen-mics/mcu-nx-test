@@ -9,8 +9,7 @@ import { RecordElement } from '../../../../../../components/RelatedRecord/index'
 import { FormSwitchField } from '../../../../../../components/Form/index';
 import FormSwitch from '../../../../../../components/Form/FormSwitch';
 import { DrawableContentProps } from '../../../../../../components/Drawer/index';
-import {
-  PlacementListSelector,
+import PlacementListSelector, {
   PlacementListSelectorProps,
 } from '../../../../Common/PlacementListSelector';
 import { PlacementListResource } from '../../../../../../models/placement/PlacementListResource';
@@ -18,7 +17,9 @@ import RelatedRecords from '../../../../../../components/RelatedRecord/RelatedRe
 import FormSection from '../../../../../../components/Form/FormSection';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 
-export interface PlacementListFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface PlacementListFormSectionProps
+  extends DrawableContentProps,
+    ReduxFormChangeProps {}
 
 type Props = PlacementListFormSectionProps &
   InjectedIntlProps &
@@ -83,8 +84,9 @@ class PlacementListFormSection extends React.Component<Props> {
         return (
           <span>
             <FormSwitchField
-              name={`${name}.exclude`}
+              name={`${name}.model.exclude`}
               component={FormSwitch}
+              invert={true}
               className="mcs-table-switch m-r-10"
             />
             {record.model.exclude ? 'Exclude' : 'Target'}

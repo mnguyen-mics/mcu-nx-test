@@ -40,7 +40,7 @@ type Props = GoalSelectorProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-export class GoalSelector extends React.Component<Props> {
+class GoalSelector extends React.Component<Props> {
   saveGoals = (goalIds: string[], goals: GoalResource[]) => {
     this.props.save(goals);
   };

@@ -194,7 +194,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
       fields.remove(index);
 
     return (
-      <div>
+      <div className="locationTargeting">
         <FormSection
           subtitle={messages.sectionSubtitleLocation}
           title={messages.sectionTitleLocationTargeting}

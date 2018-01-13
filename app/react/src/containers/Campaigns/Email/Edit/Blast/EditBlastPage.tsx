@@ -55,7 +55,7 @@ class EditBlastPage extends React.Component<Props, State> {
     ])
       .then(([campaignApiRes, blastFormData]) => {
         this.setState(prevState => {
-          const newState: Partial<State> = {
+          const newState = {
             ...prevState,
             campaign: campaignApiRes.data,
             loading: false,

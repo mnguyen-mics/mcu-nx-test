@@ -162,8 +162,9 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
         return (
           <span>
             <FormSwitchField
-              name={`${name}.exclude`}
+              name={`${name}.model.exclude`}
               component={FormSwitch}
+              invert={true}
               className="mcs-table-switch m-r-10"
             />
             {record.model.exclude ? 'Exclude' : 'Target'}

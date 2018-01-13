@@ -40,7 +40,7 @@ type Props = PlacementListSelectorProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-export class PlacementListSelector extends React.Component<Props> {
+class PlacementListSelector extends React.Component<Props> {
 
   savePlacementLists = (placementIds: string[], placements: PlacementListResource[]) => {
     this.props.save(placements);
@@ -83,7 +83,6 @@ export class PlacementListSelector extends React.Component<Props> {
         selectedIds={selectedPlacementListIds}
         fetchDataList={this.fetchPlacementLists}
         fetchData={fetchPlacementList}
-        singleSelection={true}
         columnsDefinitions={columns}
         save={this.savePlacementLists}
         close={close}

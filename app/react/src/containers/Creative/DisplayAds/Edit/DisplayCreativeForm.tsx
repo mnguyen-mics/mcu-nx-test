@@ -128,7 +128,10 @@ class DisplayCreativeForm extends React.Component<Props> {
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form className="edit-layout ant-layout" onSubmit={handleSubmit}>
+          <Form
+            className="edit-layout ant-layout"
+            onSubmit={handleSubmit as any}
+          >
             <Content
               id={DISPLAY_CREATIVE_FORM}
               className="mcs-content-container mcs-form-container"

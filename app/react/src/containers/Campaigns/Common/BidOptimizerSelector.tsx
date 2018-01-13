@@ -47,7 +47,7 @@ export interface BidOptimizerSelectorProps {
 
 interface State {
   metadataByBidOptmizerId: {
-    [id: string]: { type: string, provider: string };
+    [id: string]: { type?: string, provider?: string, fetching: boolean; };
   }
 }
 
@@ -55,18 +55,20 @@ type Props = BidOptimizerSelectorProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-export class BidOptimizerSelector extends React.Component<Props, State> {
+class BidOptimizerSelector extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { metadataByBidOptmizerId: {} };
+    this.state = { 
+      metadataByBidOptmizerId: {}
+     };
   }
 
   saveBidOptimizers = (bidOptimizerIds: string[], bidOptimizers: BidOptimizer[]) => {
     this.props.save(bidOptimizers);
   };
 
-  fetchBidOptimizerss = (filter: SearchFilter) => {
+  fetchBidOptimizers = (filter: SearchFilter) => {
     const { match: { params: { organisationId } } } = this.props;
 
     const options: any = {
@@ -79,16 +81,27 @@ export class BidOptimizerSelector extends React.Component<Props, State> {
 
     return BidOptimizerService.getBidOptimizers(organisationId, options).then(res => {
       // fetch properties to update state
+      this.setState(() => ({ 
+        metadataByBidOptmizerId: res.data.reduce((acc, value) => ({
+          ...acc,
+          [value.id]: {
+            fetching: true
+          }
+        }), {})
+       }));
       Promise.all(res.data.map(bidOptimzer => {
         return BidOptimizerService.getBidOptimizerProperty(bidOptimzer.id).then(propsRes => {
           const nameProp = propsRes.data.find(prop => prop.technical_name === 'name');
           const providerProp = propsRes.data.find(prop => prop.technical_name === 'provider');
           if (nameProp && providerProp){
             this.setState((prevState) => ({
-              ...prevState,
-              [bidOptimzer.id]: { 
-                type: (nameProp as StringPropertyResource).value.value,
-                provider: (providerProp as StringPropertyResource).value.value
+              metadataByBidOptmizerId: {
+                ...prevState.metadataByBidOptmizerId,
+                [bidOptimzer.id]: { 
+                  type: (nameProp as StringPropertyResource).value.value,
+                  provider: (providerProp as StringPropertyResource).value.value,
+                  fetching: false,
+                }
               }
             }));
           }
@@ -113,12 +126,18 @@ export class BidOptimizerSelector extends React.Component<Props, State> {
       {
         intlMessage: messages.bidOptimizerSelectorColumnType,
         key: 'type',
-        render: (text, record) => <span>{metadataByBidOptmizerId[record.id].type}</span>,
+        render: (text, record) => {
+          if (metadataByBidOptmizerId[record.id].fetching) return <i className="mcs-table-cell-loading" />;
+          return <span>{metadataByBidOptmizerId[record.id].type}</span>
+        },
       },
       {
         intlMessage: messages.bidOptimizerSelectorColumnProvider,
         key: 'provider',
-        render: (text, record) => <span>{metadataByBidOptmizerId[record.id].provider}</span>,
+        render: (text, record) => {
+          if (metadataByBidOptmizerId[record.id].fetching) return <i className="mcs-table-cell-loading" />;
+          return <span>{metadataByBidOptmizerId[record.id].provider}</span>
+        },
       },
     ];
 
@@ -132,7 +151,7 @@ export class BidOptimizerSelector extends React.Component<Props, State> {
           messages.bidOptimizerSelectorSearchPlaceholder,
         )}
         selectedIds={selectedBidOptimizerIds}
-        fetchDataList={this.fetchBidOptimizerss}
+        fetchDataList={this.fetchBidOptimizers}
         fetchData={fetchBidOptimizer}
         singleSelection={true}
         columnsDefinitions={columns}

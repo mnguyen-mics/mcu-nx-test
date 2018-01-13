@@ -122,6 +122,7 @@ class AdGroupForm extends React.Component<Props> {
       formChange: change,
       openNextDrawer,
       closeNextDrawer,
+      rerenderOnEveryChange: true,
     };
 
     const displaySummaryFirst = !!(
@@ -263,7 +264,7 @@ class AdGroupForm extends React.Component<Props> {
           <ScrollspySider {...sideBarProps} />
           <Form
             className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit as any}
           >
             <Content
               id={FORM_ID}
