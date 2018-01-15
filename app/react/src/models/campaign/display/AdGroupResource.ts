@@ -18,15 +18,15 @@ import {
   ab_selection: boolean;
   ab_selection_min: number;
   ab_selection_max: number;
-  start_date: string | null;
-  end_date: string | null;
+  start_date: number | null;
+  end_date: number | null;
   max_bid_price: number;
   per_day_impression_capping: number;
   total_impression_capping: number;
   budget_relative_to_campaign: boolean;
   total_budget: number;
   max_budget_per_period: number | null;
-  max_budget_period: BudgetPeriod | null;
+  max_budget_period: BudgetPeriod;
  }
 
 export interface AdGroupResource extends AdGroupCreateRequest {

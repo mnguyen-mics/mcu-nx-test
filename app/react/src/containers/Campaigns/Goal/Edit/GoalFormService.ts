@@ -1,24 +1,24 @@
-import { GoalFormData, isGoalResource, LoopbackWindow } from './domain';
+import { GoalFormData, isGoalResource, LookbackWindow } from './domain';
 import {
   AttributionModelResource,
   AttributionSelectionResource,
+  GoalResource
 } from '../../../../models/goal';
 import { IntPropertyResource } from '../../../../models/plugin';
 import GoalService from '../../../../services/GoalService';
 import AttributionModelService from '../../../../services/AttributionModelService';
 
-type TGoalId = string;
-const LoopbackWindowArtifactId = 'loopback_window';
+const LookbackWindowArtifactId = 'lookback_window';
 
 const GoalFormService = {
   loadGoal(goalId: string): Promise<GoalFormData> {
     return Promise.all([
       GoalService.getGoal(goalId).then(res => res.data),
-      getLoopbackWindow(goalId),
-    ]).then(([goal, loopbackWindow]) => {
+      getLookbackWindow(goalId),
+    ]).then(([goal, lookbackWindow]) => {
       return {
         goal,
-        loopbackWindow,
+        lookbackWindow,
       };
     });
   },
@@ -26,7 +26,7 @@ const GoalFormService = {
   saveGoal(
     organisationId: string,
     goalFormData: GoalFormData,
-  ): Promise<TGoalId> {
+  ): Promise<GoalResource> {
     let createOrUpdateGoalPromise;
     if (goalFormData.goal && isGoalResource(goalFormData.goal)) {
       createOrUpdateGoalPromise = GoalService.updateGoal(
@@ -41,34 +41,34 @@ const GoalFormService = {
     }
 
     return createOrUpdateGoalPromise.then(resp => {
-      const goalId = resp.data.id;
-      if (goalFormData.loopbackWindow) {
-        return persistLoopbackWindow(
+      const goalResource = resp.data;
+      if (goalFormData.lookbackWindow) {
+        return persistLookbackWindow(
           organisationId,
-          goalId,
-          goalFormData.loopbackWindow,
-        ).then(() => goalId);
+          goalResource.id,
+          goalFormData.lookbackWindow,
+        ).then(() => goalResource);
       }
-      return goalId;
+      return goalResource;
     });
   },
 };
 
 export default GoalFormService;
 
-function getLoopbackWindow(
+function getLookbackWindow(
   goalId: string,
-): Promise<LoopbackWindow | undefined> {
-  const noLoolbackWindow = undefined;
+): Promise<LookbackWindow | undefined> {
+  const noLookbackWindow = undefined;
   return GoalService.getAttributionModels(goalId).then(res => {
-    const loopbackWindowFound = res.data.find(
-      ats => ats.artifact_id === LoopbackWindowArtifactId && ats.default,
+    const lookbackWindowFound = res.data.find(
+      ats => ats.artifact_id === LookbackWindowArtifactId && ats.default,
     );
-    if (!loopbackWindowFound) {
-      return noLoolbackWindow;
+    if (!lookbackWindowFound) {
+      return noLookbackWindow;
     }
     return AttributionModelService.getAttributionModelProperties(
-      loopbackWindowFound.attribution_model_id,
+      lookbackWindowFound.attribution_model_id,
     ).then(propsRes => {
       const postViewProp = propsRes.data.find(
         prop => prop.technical_name === 'post_view',
@@ -76,7 +76,7 @@ function getLoopbackWindow(
       const postClickProp = propsRes.data.find(
         prop => prop.technical_name === 'post_click',
       );
-      if (!postViewProp && !postClickProp) return noLoolbackWindow;
+      if (!postViewProp && !postClickProp) return noLookbackWindow;
       return {
         postView: (postViewProp as IntPropertyResource).value.value,
         postClick: (postClickProp as IntPropertyResource).value.value,
@@ -85,14 +85,14 @@ function getLoopbackWindow(
   });
 }
 
-function persistLoopbackWindow(
+function persistLookbackWindow(
   organisationId: string,
   goalId: string,
-  loopbackWindow: LoopbackWindow,
+  lookbackWindow: LookbackWindow,
 ): Promise<AttributionSelectionResource> {
-  return getOrCreateLoopbackWindowAttributionModel(
+  return getOrCreateLookbackWindowAttributionModel(
     organisationId,
-    loopbackWindow,
+    lookbackWindow,
   ).then(lpAttributionModel => {
     return GoalService.createAttributionModel(goalId, {
       attribution_model_id: lpAttributionModel.id,
@@ -102,41 +102,41 @@ function persistLoopbackWindow(
   });
 }
 
-function getOrCreateLoopbackWindowAttributionModel(
+function getOrCreateLookbackWindowAttributionModel(
   organisationId: string,
-  loopbackWindow: LoopbackWindow,
+  lookbackWindow: LookbackWindow,
 ): Promise<AttributionModelResource> {
-  const predefinedAttributionModelName = `PV${loopbackWindow.postView}PC${
-    loopbackWindow.postClick
+  const predefinedAttributionModelName = `PV${lookbackWindow.postView}PC${
+    lookbackWindow.postClick
   }`;
   return AttributionModelService.getAttributionModels(organisationId).then(
     resp => {
       const found = resp.data.find(
         model =>
           model.name === predefinedAttributionModelName &&
-          model.artifact_id === LoopbackWindowArtifactId,
+          model.artifact_id === LookbackWindowArtifactId,
       );
 
       if (!found) {
         return AttributionModelService.createAttributionModel(organisationId, {
-          artifact_id: LoopbackWindowArtifactId,
+          artifact_id: LookbackWindowArtifactId,
           group_id: 'com.mediarithmics.attribution',
           mode: 'DISCOVERY',
           name: predefinedAttributionModelName,
         }).then(res => {
-          const newLoopbackWindowAttributionModel = res.data;
+          const newLookbackWindowAttributionModel = res.data;
           return Promise.all([
             AttributionModelService.updateAttributionProperty(
-              newLoopbackWindowAttributionModel.id,
+              newLookbackWindowAttributionModel.id,
               'post_view',
-              loopbackWindow.postView,
+              lookbackWindow.postView,
             ),
             AttributionModelService.updateAttributionProperty(
-              newLoopbackWindowAttributionModel.id,
+              newLookbackWindowAttributionModel.id,
               'post_click',
-              loopbackWindow.postClick,
+              lookbackWindow.postClick,
             ),
-          ]).then(() => newLoopbackWindowAttributionModel);
+          ]).then(() => newLookbackWindowAttributionModel);
         });
       }
 

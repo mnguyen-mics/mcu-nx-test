@@ -23,7 +23,9 @@ import EmailBlastForm, {
 } from '../../Blast/EmailBlastForm';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 
-export interface BlastFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface BlastFormSectionProps
+  extends DrawableContentProps,
+    ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<BlastFieldModel> &
@@ -135,10 +137,6 @@ class BlastFormSection extends React.Component<Props> {
   render() {
     const { intl: { formatMessage } } = this.props;
 
-    const emptyOption = {
-      message: formatMessage(messages.emailEditorEmailBlastEmpty),
-    };
-
     const newBlast = () => this.openEmailBlastForm();
 
     return (
@@ -153,7 +151,12 @@ class BlastFormSection extends React.Component<Props> {
           subtitle={messages.emailEditorEmailBlastSubTitle}
           title={messages.emailEditorEmailBlastTitle}
         />
-        <RelatedRecords emptyOption={emptyOption}>
+        <RelatedRecords
+          emptyOption={{
+            iconType: 'email',
+            message: formatMessage(messages.emailEditorEmailBlastEmpty),
+          }}
+        >
           {this.getBlastRecords()}
         </RelatedRecords>
       </div>

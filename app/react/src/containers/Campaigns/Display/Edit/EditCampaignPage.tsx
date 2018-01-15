@@ -44,10 +44,14 @@ class EditCampaignPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { campaignId } } } = this.props;
+    const { match: { params: { campaignId: campaignIdFromURLParam } }, location } = this.props;
 
+    const campaignIdFromLocState = location.state && location.state.campaignId
+
+    const campaignId = campaignIdFromURLParam || campaignIdFromLocState;
+    
     if (campaignId) {
-      DisplayCampaignFormService.loadCampaign(campaignId)
+      DisplayCampaignFormService.loadCampaign(campaignId, !!campaignIdFromLocState)
         .then(formData => {
           this.setState({
             loading: false,
@@ -63,43 +67,56 @@ class EditCampaignPage extends React.Component<Props, State> {
     }
   }
 
-  redirect = () => {
+  save = (displayCampaignFormData: DisplayCampaignFormData) => {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: { params: { organisationId } },
+      notifyError,
       history,
     } = this.props;
 
-    if (campaignId) {
-      history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
-    } else {
-      history.push(`/v2/o/${organisationId}/campaigns/display`);
-    }
-  };
+    const {
+      displayCampaignFormData: initialDisplayCampaignFormData,
+    } = this.state;
 
-  save = (displayCampaignFormData: DisplayCampaignFormData) => {
-    const { match: { params: { organisationId } }, notifyError } = this.props;
+    const hideSaveInProgress = message.loading('Saving in progress', 0);
 
-    const { displayCampaignFormData: initialDisplayCampaignFormData } = this.state;
-
-
-    const hideSaveInProgress = message.loading(
-      "Saving in progress",
-      0,
-    );
+    this.setState({
+      loading: true,
+    });
 
     return DisplayCampaignFormService.saveCampaign(
       organisationId,
       displayCampaignFormData,
       initialDisplayCampaignFormData,
     )
-      .then(() => {
+      .then(campaignId => {
         hideSaveInProgress();
-        this.redirect();
+        const displayCampaignDashboardUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}`;
+        history.push(displayCampaignDashboardUrl);
       })
       .catch(err => {
         hideSaveInProgress();
         notifyError(err);
+        this.setState({
+          loading: false,
+        });
       });
+  };
+
+  onClose = () => {
+    const {
+      history,
+      location,
+      match: { params: { campaignId, organisationId } },
+    } = this.props;
+
+    const defaultRedirectUrl = campaignId
+      ? `/v2/o/${organisationId}/campaigns/display/${campaignId}`
+      : `/v2/o/${organisationId}/campaigns/display`;
+
+    return location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(defaultRedirectUrl);
   };
 
   render() {
@@ -116,16 +133,17 @@ class EditCampaignPage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
-    const campaignName = displayCampaignFormData.campaign && displayCampaignFormData.campaign.name
-    ? formatMessage(messages.breadcrumbTitle3, {
-        campaignName: displayCampaignFormData.campaign.name,
-      })
-    : formatMessage(messages.createCampaingTitle);    
+    const campaignName =
+      displayCampaignFormData.campaign && displayCampaignFormData.campaign.name
+        ? formatMessage(messages.breadcrumbTitle3, {
+            name: displayCampaignFormData.campaign.name,
+          })
+        : formatMessage(messages.createCampaingTitle);
 
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle1,
-        path: `/v2/o/${organisationId}/campaigns/diplay`,
+        path: `/v2/o/${organisationId}/campaigns/display`,
       },
       {
         name: campaignName,
@@ -136,7 +154,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       <DisplayCampaignForm
         initialValues={displayCampaignFormData}
         onSubmit={this.save}
-        close={this.redirect}
+        close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         openNextDrawer={openNextDrawer}
         closeNextDrawer={closeNextDrawer}

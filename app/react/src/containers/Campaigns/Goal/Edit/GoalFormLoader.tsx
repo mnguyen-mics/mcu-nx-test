@@ -45,6 +45,6 @@ class GoalFormLoader extends React.Component<Props, State> {
   }
 }
 
-export default compose<GoalFormProps, GoalFormProps>(
+export default compose<Props, GoalFormProps>(
   connect(undefined, { notifyError: NotificationActions.notifyError }),
 )(GoalFormLoader);

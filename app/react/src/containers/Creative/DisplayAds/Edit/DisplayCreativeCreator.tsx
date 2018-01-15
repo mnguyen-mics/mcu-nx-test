@@ -52,13 +52,25 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
       });
   };
 
+  resetFormData = () => {
+    this.setState({
+      creativeFormData: {},
+    });
+  };
+
   render() {
     const { creativeFormData, isLoading } = this.state;
 
     if (isLoading) return <Loading className="loading-full-screen" />;
 
-    return Object.keys(creativeFormData).length > 0 ? (
-      <DisplayCreativeForm {...this.props} initialValues={creativeFormData} />
+    const initialValues = this.props.initialValues || creativeFormData;
+
+    return Object.keys(initialValues).length > 0 ? (
+      <DisplayCreativeForm 
+        {...this.props} 
+        initialValues={initialValues} 
+        goToCreativeTypeSelection={this.resetFormData}
+      />
     ) : (
       <DisplayCreativeRendererSelector
         onSelect={this.loadFormData}

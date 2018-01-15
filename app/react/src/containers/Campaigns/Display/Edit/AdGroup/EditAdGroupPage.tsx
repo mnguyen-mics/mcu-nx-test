@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import withDrawer, {
   DrawableContentProps,
@@ -47,12 +47,16 @@ class EditAdGroupPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { campaignId, adGroupId } } } = this.props;
+    const { match: { params: { campaignId, adGroupId: adGroupIdFromURLParam } }, location } = this.props;
+
+    const adGroupIdFromLocState = location.state && location.state.adGroupId
+
+    const adGroupId = adGroupIdFromURLParam || adGroupIdFromLocState;
 
     Promise.all([
       DisplayCampaignService.getCampaignDisplay(campaignId),
       adGroupId
-        ? AdGroupFormService.loadAdGroup(campaignId, adGroupId)
+        ? AdGroupFormService.loadAdGroup(campaignId, adGroupId, !!adGroupIdFromLocState)
         : Promise.resolve(null),
     ])
       .then(([campaignApiRes, adGroupFormData]) => {
@@ -72,42 +76,42 @@ class EditAdGroupPage extends React.Component<Props, State> {
       });
   }
 
-  redirect = () => {
+  onSubmitFail = () => {
+    message.loading('Error in form');
+  }
+
+  save = (adGroupFormData: AdGroupFormData) => {
     const {
       match: { params: { organisationId, campaignId } },
+      notifyError,
       history,
     } = this.props;
 
-    const displayCampaignDashboardUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}`;
-
-    history.push(displayCampaignDashboardUrl);
-  };
-
-  save = (adGroupFormData: AdGroupFormData) => {
-    const { match: { params: { campaignId } }, notifyError } = this.props;
-
     const { adGroupFormData: initialAdGroupFormData } = this.state;
 
-    const hideSaveInProgress = message.loading(
-      <FormattedMessage
-        id="ad-group-editing-save-in-progress"
-        defaultMessage="Saving in progress"
-      />,
-      0,
-    );
+    const hideSaveInProgress = message.loading('Saving in progress', 0);
+
+    this.setState({
+      loading: true,
+    });
 
     return AdGroupFormService.saveAdGroup(
+      organisationId,
       campaignId,
       adGroupFormData,
       initialAdGroupFormData,
     )
-      .then(() => {
+      .then(adGroupId => {
         hideSaveInProgress();
-        this.redirect();
+        const adGroupDashboardUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`;
+        history.push(adGroupDashboardUrl);
       })
       .catch(err => {
         hideSaveInProgress();
         notifyError(err);
+        this.setState({
+          loading: false,
+        });
       });
   };
 
@@ -118,11 +122,13 @@ class EditAdGroupPage extends React.Component<Props, State> {
       match: { params: { adGroupId, campaignId, organisationId } },
     } = this.props;
 
+    const defaultRedirectUrl = adGroupId
+      ? `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`
+      : `/v2/o/${organisationId}/campaigns/display/${campaignId}`;
+
     return location.state && location.state.from
       ? history.push(location.state.from)
-      : history.push(
-          `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`,
-        );
+      : history.push(defaultRedirectUrl);
   };
 
   render() {
@@ -142,7 +148,7 @@ class EditAdGroupPage extends React.Component<Props, State> {
     const campaignName = campaign ? campaign.name : campaignId;
     const adGroupName = adGroupId
       ? formatMessage(messages.breadcrumbTitle3, {
-          blastName:
+          name:
             adGroupFormData.adGroup && adGroupFormData.adGroup.name
               ? adGroupFormData.adGroup.name
               : adGroupId,
@@ -152,11 +158,11 @@ class EditAdGroupPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle1,
-        path: `/v2/o/${organisationId}/campaigns/email/${campaignId}`,
+        path: `/v2/o/${organisationId}/campaigns/display`,
       },
       {
         name: campaignName,
-        path: `/v2/o/${organisationId}/campaigns/email/${campaignId}`,
+        path: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
       },
       {
         name: adGroupName,
@@ -167,10 +173,11 @@ class EditAdGroupPage extends React.Component<Props, State> {
       <AdGroupForm
         initialValues={adGroupFormData}
         onSubmit={this.save}
-        close={this.redirect}
+        close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         openNextDrawer={openNextDrawer}
         closeNextDrawer={closeNextDrawer}
+        onSubmitFail={this.onSubmitFail}
       />
     );
   }

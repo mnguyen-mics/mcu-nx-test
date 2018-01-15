@@ -5,7 +5,7 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { Row, Col } from 'antd/lib/grid';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import AudienceCatalogProvider from './AudienceCatalogProvider';
+import AudienceCatalogProvider, { DataLoadingContainer } from './AudienceCatalogProvider';
 import { DrawableContentProps } from '../../../../../../../components/Drawer/index';
 import { SegmentFieldModel, EditAdGroupRouteMatchParam } from '../../domain';
 import FormSection from '../../../../../../../components/Form/FormSection';
@@ -176,17 +176,17 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
   };
 
   renderAudienceCatalogForm = (
-    audienceCategoryTree: ServiceCategoryTree[],
-    genderServiceItems: AudienceSegmentServiceItemPublicResource[],
-    ageServiceItems: AudienceSegmentServiceItemPublicResource[],
-    audienceSegments: AudienceSegmentResource[],
+    audienceCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>,
+    genderServiceItems: DataLoadingContainer<AudienceSegmentServiceItemPublicResource[]>,
+    ageServiceItems: DataLoadingContainer<AudienceSegmentServiceItemPublicResource[]>,
+    audienceSegments: DataLoadingContainer<AudienceSegmentResource[]>,
   ) => {
     const { intl: { formatMessage }, fields } = this.props;
 
-    const genderServiceItemDataSource = genderServiceItems.map(toMenuItemProps);
-    const ageServiceItemDataSource = ageServiceItems.map(toMenuItemProps);
+    const genderServiceItemDataSource = genderServiceItems.data.map(toMenuItemProps);
+    const ageServiceItemDataSource = ageServiceItems.data.map(toMenuItemProps);
 
-    const detailedTargetingDataSource = audienceCategoryTree
+    const detailedTargetingDataSource = audienceCategoryTree.data
       .map(child =>
         toTreeData(child, [
           {
@@ -197,9 +197,9 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
         ]),
       )
       .concat(
-        audienceSegments.length > 0
+        audienceSegments.data.length > 0
           ? // add datamart's segments to tree if any
-            this.buildTreeDataFromOwnSegments(audienceSegments)
+            this.buildTreeDataFromOwnSegments(audienceSegments.data)
           : [],
       );
 
@@ -219,10 +219,11 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
           label={formatMessage(audienceCatalogMsgs.genderLabel)}
           placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
           datasource={genderServiceItemDataSource}
+          loading={genderServiceItems.loading}
           tooltipProps={{
             title: formatMessage(audienceCatalogMsgs.genderTooltip),
           }}
-          value={this.getSelectedSegment(genderServiceItems)}
+          value={this.getSelectedSegment(genderServiceItems.data)}
           handleClickOnRemove={this.markAsDeleted()}
           handleClickOnItem={this.toggleSelected}
         />
@@ -235,10 +236,11 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
           label={formatMessage(audienceCatalogMsgs.ageLabel)}
           placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
           datasource={ageServiceItemDataSource}
+          loading={ageServiceItems.loading}
           tooltipProps={{
             title: formatMessage(audienceCatalogMsgs.ageTooltip),
           }}
-          value={this.getSelectedSegment(ageServiceItems)}
+          value={this.getSelectedSegment(ageServiceItems.data)}
           handleClickOnRemove={this.markAsDeleted()}
           handleClickOnItem={this.toggleSelected}
         />
@@ -253,17 +255,18 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
           label={formatMessage(audienceCatalogMsgs.detailedTargetingLabel)}
           placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
           datasource={detailedTargetingDataSource}
+          loading={audienceCategoryTree.loading || audienceSegments.loading}
           tooltipProps={{
             title: formatMessage(audienceCatalogMsgs.detailedTargetingTooltip),
           }}
           value={this.getSelectedSegment(
-            getServices(audienceCategoryTree),
-            audienceSegments,
+            getServices(audienceCategoryTree.data),
+            audienceSegments.data,
           )}
           handleClickOnRemove={this.markAsDeleted()}
           handleOnChange={this.handleChange(
-            audienceCategoryTree,
-            audienceSegments,
+            audienceCategoryTree.data,
+            audienceSegments.data,
           )}
         />
         <div className={showExclude ? '' : 'hide-section'}>
@@ -280,20 +283,21 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
             )}
             placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
             datasource={detailedTargetingDataSource}
+            loading={audienceCategoryTree.loading || audienceSegments.loading}
             tooltipProps={{
               title: formatMessage(
                 audienceCatalogMsgs.detailedTargetingExclusionTooltip,
               ),
             }}
             value={this.getSelectedSegment(
-              getServices(audienceCategoryTree),
-              audienceSegments,
+              getServices(audienceCategoryTree.data),
+              audienceSegments.data,
               true,
             )}
             handleClickOnRemove={this.markAsDeleted(true)}
             handleOnChange={this.handleChange(
-              audienceCategoryTree,
-              audienceSegments,
+              audienceCategoryTree.data,
+              audienceSegments.data,
               true,
             )}
           />
@@ -314,7 +318,7 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <div className="audience-catalog">
         <FormSection
           subtitle={messages.sectionSubtitleAudience}
           title={messages.sectionTitleAudience}

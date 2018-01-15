@@ -127,8 +127,7 @@ class PlacementListFormSection extends React.Component<Props> {
 
         <RelatedRecords
           emptyOption={{
-            // iconType="placementLists",
-            message: formatMessage(messages.contentSectionOptimizerEmptyTitle),
+            message: formatMessage(messages.contentSectionPlacementEmptyTitle),
           }}
         >
           {this.getPlacementListRecords()}

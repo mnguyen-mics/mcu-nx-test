@@ -12,6 +12,11 @@ import {
   EditDisplayCreativeRouteMatchParams,
 } from './domain';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
+import Loading from '../../../../components/Loading';
+
+interface State {
+  loading: boolean;
+}
 
 interface MapStateProps {
   notifyError: (err: any) => void;
@@ -19,7 +24,14 @@ interface MapStateProps {
 
 type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> & MapStateProps;
 
-class EditDisplayCreativePage extends React.Component<Props> {
+class EditDisplayCreativePage extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      loading: false,
+    };
+  }
+
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     history.push(`/v2/o/${organisationId}/creatives/display`);
@@ -27,12 +39,22 @@ class EditDisplayCreativePage extends React.Component<Props> {
 
   onSave = (creativeData: DisplayCreativeFormData) => {
     const { match: { params: { organisationId } } } = this.props;
+
+    this.setState({
+      loading: true,
+    });
+
     DisplayCreativeFormService.saveDisplayCreative(
       organisationId,
       creativeData,
     ).then(() => {
       this.redirect();
-    }).catch(err => this.props.notifyError(err));
+    }).catch(err => {
+      this.props.notifyError(err)
+      this.setState({
+        loading: false,
+      });
+    });
   };
 
   render() {
@@ -54,6 +76,10 @@ class EditDisplayCreativePage extends React.Component<Props> {
       actionBarButtonText: actionBarButtonText,
       breadCrumbPaths: breadCrumbPaths,
     };
+
+    if (this.state.loading) {
+      return <Loading className="loading-full-screen" />;
+    }
 
     return creativeId ? (
       <DisplayCreativeFormLoader {...props} creativeId={creativeId} />

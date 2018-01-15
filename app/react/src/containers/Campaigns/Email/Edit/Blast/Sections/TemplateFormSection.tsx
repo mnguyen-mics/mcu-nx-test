@@ -14,14 +14,14 @@ import {
   RelatedRecords,
   RecordElement,
 } from '../../../../../../components/RelatedRecord';
-import {
-  CreativeResourceShape,
-} from '../../../../../../models/creative/CreativeResource';
+import { CreativeResourceShape } from '../../../../../../models/creative/CreativeResource';
 import messages from '../../messages';
 import { TemplateFieldModel } from '../../domain';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 
-export interface TemplateFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface TemplateFormSectionProps
+  extends DrawableContentProps,
+    ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<TemplateFieldModel> &
@@ -46,7 +46,7 @@ class TemplateFormSection extends React.Component<Props> {
         model: {
           email_template_id: creative.id,
         },
-        meta: { name: creative.name }
+        meta: { name: creative.name },
       }));
 
     formChange((fields as any).name, keptCreatives.concat(addedCreatives));
@@ -78,9 +78,8 @@ class TemplateFormSection extends React.Component<Props> {
   getEmailTemplateRecords = () => {
     const { fields } = this.props;
 
-    const getTemplateName = (
-      templateField: TemplateFieldModel,
-    ) => templateField.meta.name;
+    const getTemplateName = (templateField: TemplateFieldModel) =>
+      templateField.meta.name;
 
     return fields.getAll().map(templateField => {
       return (
@@ -99,13 +98,6 @@ class TemplateFormSection extends React.Component<Props> {
 
     const showError = meta.error;
 
-    const emptyOption = {
-      message: showError
-        ? formatMessage(messages.blastTemplateSelectionRequired)
-        : formatMessage(messages.blastTemplateSelectionEmpty),
-      className: showError ? 'required' : '',
-    };
-
     return (
       <div>
         <FormSection
@@ -116,7 +108,15 @@ class TemplateFormSection extends React.Component<Props> {
           subtitle={messages.emailBlastEditorStepSubTitleTemplateSelection}
           title={messages.emailBlastEditorStepTitleTemplateSelection}
         />
-        <RelatedRecords emptyOption={emptyOption}>
+        <RelatedRecords
+          emptyOption={{
+            iconType: 'email',
+            message: showError
+              ? formatMessage(messages.blastTemplateSelectionRequired)
+              : formatMessage(messages.blastTemplateSelectionEmpty),
+            className: showError ? 'required' : '',
+          }}
+        >
           {this.getEmailTemplateRecords()}
         </RelatedRecords>
       </div>

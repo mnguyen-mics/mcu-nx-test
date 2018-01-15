@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import { extractDataList, extractData } from '../../../../services/ApiService';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import {
@@ -20,15 +21,18 @@ import GoalFormService from '../../Goal/Edit/GoalFormService';
 type TDisplayCampaignId = string;
 
 const DisplayCampaignFormService = {
-  loadCampaign(displayCampaignId: string): Promise<DisplayCampaignFormData> {
+  loadCampaign(
+    displayCampaignId: string,
+    duplicate?: boolean,
+  ): Promise<DisplayCampaignFormData> {
     return Promise.all([
       DisplayCampaignService.getCampaignDisplay(displayCampaignId).then(
         extractData,
       ),
-      DisplayCampaignFormService.loadCampaignDependencies(displayCampaignId),
+      DisplayCampaignFormService.loadCampaignDependencies(displayCampaignId, duplicate),
     ]).then(([campaign, dependencies]) => {
       return {
-        campaign,
+        campaign: duplicate ? omit(campaign, 'id') : campaign,
         ...dependencies,
       };
     });
@@ -36,6 +40,7 @@ const DisplayCampaignFormService = {
 
   loadCampaignDependencies(
     displayCampaignId: string,
+    duplicate?: boolean,
   ): Promise<{
     goalFields: GoalFieldModel[];
     adGroupFields: AdGroupFieldModel[];
@@ -48,16 +53,19 @@ const DisplayCampaignFormService = {
             return AdGroupFormService.loadAdGroup(
               displayCampaignId,
               adGroup.id,
+              duplicate,
             );
           }),
         );
       }),
     ]).then(([goalSelections, adGroupFormDataList]) => {
       const goalFields = goalSelections.map(el => ({
-        ...createFieldArrayModelWithMeta(el, { name: el.goal_name }),
+        ...createFieldArrayModelWithMeta(duplicate ? omit(el, 'id') : el, {
+          name: el.goal_name,
+        }),
       }));
       const adGroupFields = adGroupFormDataList.map(el =>
-        createFieldArrayModel(el),
+        createFieldArrayModel(duplicate ? omit(el, 'id') : el),
       );
       return {
         goalFields,
@@ -98,6 +106,7 @@ const DisplayCampaignFormService = {
           initialFormData.goalFields,
         ),
         ...getAdGroupTasks(
+          organisationId,
           campaignId,
           formData.adGroupFields,
           initialFormData.adGroupFields,
@@ -137,9 +146,11 @@ function getGoalTasks(
       const goalFormData = field.model;
       tasks.push(() => {
         return GoalFormService.saveGoal(organisationId, goalFormData).then(
-          goalId => {
+          goalResource => {
             return DisplayCampaignService.createGoal(campaignId, {
-              goal_id: goalId,
+              goal_id: goalResource.id,
+              goal_selection_type: 'CONVERSION',
+              default: true,
             });
           },
         );
@@ -163,6 +174,7 @@ function getGoalTasks(
 }
 
 function getAdGroupTasks(
+  organisationId: string,
   campaignId: string,
   adGroupFields: AdGroupFieldModel[],
   initialAdGroupFields: AdGroupFieldModel[],
@@ -183,7 +195,9 @@ function getAdGroupTasks(
 
   const tasks: Task[] = [];
   adGroupFields.forEach(field => {
-    tasks.push(() => AdGroupFormService.saveAdGroup(campaignId, field.model));
+    tasks.push(() =>
+      AdGroupFormService.saveAdGroup(organisationId, campaignId, field.model),
+    );
   });
 
   initialIds.filter(id => !currentIds.includes(id)).forEach(id => {

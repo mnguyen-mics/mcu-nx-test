@@ -1,42 +1,48 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import cuid from 'cuid';
+import { Modal } from 'antd';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 
 import messages from '../messages';
 import { DrawableContentProps } from '../../../../../components/Drawer/index';
-import { GoalFieldModel, isGoalFormData } from '../domain';
-import GoalSelector, {
-  GoalSelectorProps,
-} from '../../../Common/GoalSelector';
+import {
+  EditDisplayCampaignRouteMatchParam,
+  GoalFieldModel,
+  isGoalFormData,
+} from '../domain';
+import GoalSelector, { GoalSelectorProps } from '../../../Common/GoalSelector';
+import { InjectedDatamartProps, injectDatamart } from '../../../../Datamart';
+import { McsIcons, ButtonStyleless } from '../../../../../components';
 import {
   RelatedRecords,
   RecordElement,
 } from '../../../../../components/RelatedRecord';
-import { GoalResource } from '../../../../../models/goal';
+import { GoalResource, GoalSelectionCreateRequest } from '../../../../../models/goal';
 import { FormSection } from '../../../../../components/Form';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
-import { isGoalResource, GoalFormData, INITIAL_GOAL_FORM_DATA } from '../../../Goal/Edit/domain';
+import {
+  isGoalResource,
+  GoalFormData,
+  INITIAL_GOAL_FORM_DATA,
+} from '../../../Goal/Edit/domain';
 import GoalForm, { GoalFormProps } from '../../../Goal/Edit/GoalForm';
-import { GoalFormLoaderProps } from '../../../Goal/Edit/GoalFormLoader';
+import GoalFormLoader, { GoalFormLoaderProps } from '../../../Goal/Edit/GoalFormLoader';
+import GoalFormService from '../../../Goal/Edit/GoalFormService';
 
-export interface GoalFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface GoalFormSectionProps
+  extends DrawableContentProps,
+    ReduxFormChangeProps {}
 
 type Props = GoalFormSectionProps &
   InjectedIntlProps &
+  InjectedDatamartProps &
+  RouteComponentProps<EditDisplayCampaignRouteMatchParam> &
   WrappedFieldArrayProps<GoalFieldModel>;
 
-interface State {
-  showPixelModal: boolean;
-}
-
-class GoalFormSection extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { showPixelModal: false };
-  }
-
+class GoalFormSection extends React.Component<Props> {
   openGoalSelector = () => {
     const { fields, openNextDrawer, closeNextDrawer } = this.props;
 
@@ -81,13 +87,18 @@ class GoalFormSection extends React.Component<Props, State> {
     const existingGoalIds = getExistingGoalIds(fields.getAll());
     const newFields = goals
       .filter(goal => !existingGoalIds.includes(goal.id))
-      .map(goal => ({
-        key: cuid(),
-        model: {
+      .map(goal => {
+        const model: GoalSelectionCreateRequest = {
           goal_id: goal.id,
-        },
-        meta: { name: goal.name },
-      }));
+          goal_selection_type: 'CONVERSION',
+          default: true,
+        };
+        return {
+          key: cuid(),
+          model,
+          meta: { name: goal.name },
+        };
+      });
 
     formChange((fields as any).name, keptFields.concat(newFields));
   };
@@ -151,24 +162,105 @@ class GoalFormSection extends React.Component<Props, State> {
       onSubmit: handleOnSubmit,
     };
 
+    const options = {
+      additionalProps: props,
+    };
+
+    let FormComponent = GoalForm
+
     if (!field) {
       props.initialValues = INITIAL_GOAL_FORM_DATA;
     } else if (isGoalFormData(field.model)) {
       props.initialValues = field.model;
     } else {
       // TODO fix this ugly cast
+      FormComponent = GoalFormLoader;
       (props as GoalFormLoaderProps).goalId = field.model.goal_id;
     }
 
-    const options = {
-      additionalProps: props,
-    };
-
-    openNextDrawer<GoalFormProps>(GoalForm, options);
+    openNextDrawer<GoalFormProps>(FormComponent, options);
   };
 
-  getPixelTag = (field: GoalFieldModel) => {
-    return <span>get pixel</span>;
+  getPixelSnippet = (field: GoalFieldModel) => {
+    const {
+      intl: { formatMessage },
+      datamart,
+      fields,
+      formChange,
+    } = this.props;
+
+    const showPixelSnippet = (goalId: string, handleOnOk?: () => void) => {
+      Modal.info({
+        width: 520,
+        title: formatMessage(messages.goalPixelModalTitle),
+        content: (
+          <div>
+            <p>{formatMessage(messages.goalPixelModalContent)}</p>
+            <br />
+            <pre>
+              <code
+              >{`<img src="//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
+                datamart.token
+              }&$goal_id=${goalId}" />`}</code>
+            </pre>
+          </div>
+        ),
+        onOk() {
+          if (handleOnOk) handleOnOk();
+        },
+      });
+    };
+
+    const updateFields = (goalId: string, goalName: string) => {
+      const newFields: GoalFieldModel[] = [];
+      fields.getAll().forEach(_field => {
+        if (_field.key === field.key) {
+          newFields.push({
+            key: cuid(),
+            model: { 
+              goal_id: goalId,
+              goal_selection_type: 'CONVERSION',
+              default: true,
+            },
+            meta: { name: goalName },
+          });
+        } else {
+          newFields.push(_field);
+        }
+      });
+      formChange((fields as any).name, newFields);
+    };
+
+    const handleOnClick = () => {
+      if (!isGoalFormData(field.model)) {
+        showPixelSnippet(field.model.goal_id);
+      } else if (isGoalResource(field.model.goal)) {
+        showPixelSnippet(field.model.goal.id);
+      } else {
+        // 
+        const goalFormData = field.model;
+        const organisationId = this.props.match.params.organisationId;
+        Modal.confirm({
+          title: formatMessage(messages.goalPixelModalTitle),
+          content: <div>{formatMessage(messages.goalPixelModalSaveGoal)}</div>,
+          onOk() {
+            GoalFormService.saveGoal(organisationId, goalFormData).then(
+              goalResource => {
+                showPixelSnippet(goalResource.id, () =>
+                  updateFields(goalResource.id, goalResource.name),
+                );
+              },
+            );
+          },
+        });
+      }
+    };
+
+    return (
+      <ButtonStyleless onClick={handleOnClick}>
+        <McsIcons type="settings" additionalClass="big" />
+      </ButtonStyleless>
+    );
   };
 
   getGoalRecords = () => {
@@ -178,14 +270,14 @@ class GoalFormSection extends React.Component<Props, State> {
 
     return fields.getAll().map((field, index) => {
       const handleRemove = () => fields.remove(index);
-      const handleEdit = () => this.openGoalForm(field); 
+      const handleEdit = () => this.openGoalForm(field);
       return (
         <RecordElement
           key={field.key}
           recordIconType={'goals'}
           record={field}
           title={getGoalName}
-          additionalActionButtons={this.getPixelTag}
+          additionalActionButtons={this.getPixelSnippet}
           onEdit={handleEdit}
           onRemove={handleRemove}
         />
@@ -195,8 +287,6 @@ class GoalFormSection extends React.Component<Props, State> {
 
   render() {
     const { intl: { formatMessage } } = this.props;
-
-    const pixelModal = 'pixelModal';
 
     return (
       <div id="goals">
@@ -219,19 +309,22 @@ class GoalFormSection extends React.Component<Props, State> {
 
         <RelatedRecords
           emptyOption={{
-            iconType: "goals",
+            iconType: 'goals',
             message: formatMessage(messages.campaignGoalSelectionEmpty),
           }}
         >
           {this.getGoalRecords()}
         </RelatedRecords>
-        {pixelModal}
       </div>
     );
   }
 }
 
-export default compose<Props, GoalFormSectionProps>(injectIntl)(GoalFormSection);
+export default compose<Props, GoalFormSectionProps>(
+  injectIntl,
+  withRouter,
+  injectDatamart,
+)(GoalFormSection);
 
 function getExistingGoalIds(goalFields: GoalFieldModel[]) {
   const existingGoalIds: string[] = [];

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Col } from 'antd';
+import { Col, Spin } from 'antd';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { groupBy } from 'lodash';
 import { ButtonStyleless, McsIcons } from '../';
@@ -9,33 +9,33 @@ export interface FormSearchAndTreeSelectProps {
   label: string;
   placeholder?: string;
   datasource: TreeData[];
+  loading?: boolean;
   tooltipProps: TooltipProps;
   value: string[];
   handleClickOnRemove: (key: string) => void;
   handleOnChange: (checkedKeys: string[]) => void;
 }
 
-export default class FormSearchAndTreeSelect
-  extends React.Component<FormSearchAndTreeSelectProps & FormFieldWrapperProps> {
-
-  treeLeavesCache: { [treeValue: string]: { treeData: TreeData, ancestors: TreeData[] } } = {};
+export default class FormSearchAndTreeSelect extends React.Component<
+  FormSearchAndTreeSelectProps & FormFieldWrapperProps
+> {
+  treeLeavesCache: {
+    [treeValue: string]: { treeData: TreeData; ancestors: TreeData[] };
+  } = {};
 
   initTreeLeaves = (treeData: TreeData[]) => {
-
     const traverse = (tree: TreeData[], ancestors: TreeData[] = []) => {
       tree.forEach(node => {
-
         if (node.children && node.children.length) {
           traverse(node.children, ancestors.concat([node]));
         }
 
         this.treeLeavesCache[node.value] = { treeData: node, ancestors };
-
       });
     };
 
     traverse(treeData);
-  }
+  };
 
   componentDidMount() {
     this.initTreeLeaves(this.props.datasource);
@@ -49,18 +49,22 @@ export default class FormSearchAndTreeSelect
   }
 
   render() {
-
     const {
       label,
       placeholder,
       datasource,
       tooltipProps,
       value,
+      loading,
       handleClickOnRemove,
       handleOnChange,
     } = this.props;
 
-    const selectedLeaves: Array<{ key: string, label: string, category: string }> = [];
+    const selectedLeaves: Array<{
+      key: string;
+      label: string;
+      category: string;
+    }> = [];
 
     Object.keys(this.treeLeavesCache).forEach(key => {
       if (value.includes(key)) {
@@ -68,7 +72,10 @@ export default class FormSearchAndTreeSelect
         selectedLeaves.push({
           key,
           label: treeLeave.treeData.label,
-          category: treeLeave.ancestors.reduce((acc, t) => `${acc ? `${acc} > ` : ''}${t.label}`, ''),
+          category: treeLeave.ancestors.reduce(
+            (acc, t) => `${acc ? `${acc} > ` : ''}${t.label}`,
+            '',
+          ),
         });
       }
     });
@@ -77,7 +84,6 @@ export default class FormSearchAndTreeSelect
 
     const selectedItemsView: JSX.Element[] = [];
     Object.keys(groupedByCategories).forEach(category => {
-
       selectedItemsView.push(
         <div key={category} className="audience-service-item as-category">
           {category}
@@ -87,7 +93,6 @@ export default class FormSearchAndTreeSelect
       const leaves = groupedByCategories[category];
 
       leaves.forEach(leave => {
-
         const handleClick = () => {
           handleClickOnRemove(leave.key);
         };
@@ -95,10 +100,7 @@ export default class FormSearchAndTreeSelect
         selectedItemsView.push(
           <div key={leave.key} className="audience-service-subitem">
             {leave.label}
-            <ButtonStyleless
-              className="remove-button"
-              onClick={handleClick}
-            >
+            <ButtonStyleless className="remove-button" onClick={handleClick}>
               <McsIcons type="close" />
             </ButtonStyleless>
           </div>,
@@ -115,8 +117,20 @@ export default class FormSearchAndTreeSelect
         helpToolTipProps={tooltipProps}
       >
         <Col span={22}>
-          <div className={value.length ? 'selected-audience-services-container' : ''}>
-            {selectedItemsView}
+          <div
+            className={
+              value.length || loading
+                ? 'selected-audience-services-container'
+                : ''
+            }
+          >
+            {loading ? (
+              <div className="text-center">
+                <Spin size="small" />
+              </div>
+            ) : (
+              selectedItemsView
+            )}
           </div>
           <SearchAndTreeSelect
             onChange={handleOnChange}

@@ -137,7 +137,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       }
       const report = reportBySegmentId[segmentId];
       const metric = report && report[metricName];
-      return formatMetric(metric, '0.0');
+      return formatMetric(metric, '0,0');
     };
 
     const columns: Array<DataColumnDefinition<AudienceSegmentResource>> = [

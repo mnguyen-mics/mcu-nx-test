@@ -9,7 +9,9 @@ import {
   FieldArray,
 } from 'redux-form';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { Layout, message } from 'antd';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { DrawableContentProps } from '../../../../components/Drawer';
@@ -31,6 +33,7 @@ import GoalFormSection, {
 import AdGroupFormSection, {
   AdGroupFormSectionProps,
 } from './Sections/AdGroupFormSection';
+import * as SessionSelectors from '../../../../state/Session/selectors';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -53,12 +56,18 @@ export interface DisplayCampaignFormProps
   breadCrumbPaths: Path[];
 }
 
+interface MapStateToProps {
+  hasDatamarts: (organisationId: string) => boolean;
+}
+
 type Props = InjectedFormProps<
   DisplayCampaignFormData,
   DisplayCampaignFormProps
 > &
   DisplayCampaignFormProps &
-  InjectedIntlProps;
+  MapStateToProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 const FORM_ID = 'campaignForm';
 
@@ -80,12 +89,15 @@ class DisplayCampaignForm extends React.Component<Props> {
       breadCrumbPaths,
       close,
       change,
+      match: { params: { organisationId } },
+      hasDatamarts,
     } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
       openNextDrawer,
       closeNextDrawer,
+      rerenderOnEveryChange: true,
     };
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -102,17 +114,19 @@ class DisplayCampaignForm extends React.Component<Props> {
       component: <GeneralFormSection />,
     });
 
-    sections.push({
-      id: 'goals',
-      title: messages.sectionTitle2,
-      component: (
-        <GoalFieldArray
-          name="goalFields"
-          component={GoalFormSection}
-          {...genericFieldArrayProps}
-        />
-      ),
-    });
+    if (hasDatamarts(organisationId)) {
+      sections.push({
+        id: 'goals',
+        title: messages.sectionTitle2,
+        component: (
+          <GoalFieldArray
+            name="goalFields"
+            component={GoalFormSection}
+            {...genericFieldArrayProps}
+          />
+        ),
+      });
+    }
 
     sections.push({
       id: 'adGroups',
@@ -166,8 +180,10 @@ class DisplayCampaignForm extends React.Component<Props> {
 
 export default compose<Props, DisplayCampaignFormProps>(
   injectIntl,
+  withRouter,
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
   }),
+  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
 )(DisplayCampaignForm);

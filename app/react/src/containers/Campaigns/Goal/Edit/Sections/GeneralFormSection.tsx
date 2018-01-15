@@ -64,7 +64,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         <div>
           <ButtonStyleless
             className="optional-section-title"
-            onClick={this.state.displayAdvancedSection}
+            onClick={this.toggleAdvancedSection}
           >
             <McsIcons type="settings" />
             <span className="step-title">

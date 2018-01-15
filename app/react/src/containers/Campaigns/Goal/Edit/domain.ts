@@ -5,14 +5,14 @@ import {
 
 export type GoalResourceShape = GoalResource | Partial<GoalCreateRequest>;
 
-export interface LoopbackWindow {
+export interface LookbackWindow {
   postView: number;
   postClick: number;
 }
 
 export interface GoalFormData {
   goal: GoalResourceShape;
-  loopbackWindow?: LoopbackWindow;
+  lookbackWindow?: LookbackWindow;
 }
 
 export const INITIAL_GOAL_FORM_DATA: GoalFormData = {

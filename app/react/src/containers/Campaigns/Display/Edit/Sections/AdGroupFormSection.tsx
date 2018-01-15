@@ -17,7 +17,9 @@ import AdGroupForm, { AdGroupFormProps } from '../AdGroup/AdGroupForm';
 import { AdGroupFieldModel } from '../domain';
 import { AdGroupFormData, INITIAL_AD_GROUP_FORM_DATA } from '../AdGroup/domain';
 
-export interface AdGroupFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface AdGroupFormSectionProps
+  extends DrawableContentProps,
+    ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<AdGroupFieldModel> &
@@ -102,7 +104,7 @@ class AdGroupFormSection extends React.Component<Props> {
       return (
         <RecordElement
           key={adGroupField.key}
-          recordIconType={'email'}
+          recordIconType={'adGroups'}
           record={adGroupField}
           title={getAdGroupName}
           onEdit={editRecord}
@@ -115,25 +117,24 @@ class AdGroupFormSection extends React.Component<Props> {
   render() {
     const { intl: { formatMessage } } = this.props;
 
-    const emptyOption = {
-      message: formatMessage(messages.contentSection3EmptyTitle),
-    };
-
     const newAdGroup = () => this.openAdGroupForm();
 
     return (
       <div>
         <FormSection
           button={{
-            message: formatMessage(
-              messages.breadcrumbTitle2,
-            ),
+            message: formatMessage(messages.breadcrumbTitle2),
             onClick: newAdGroup,
           }}
           subtitle={messages.sectionSubtitle3}
           title={messages.sectionTitle3}
         />
-        <RelatedRecords emptyOption={emptyOption}>
+        <RelatedRecords
+          emptyOption={{
+            iconType: 'adGroups',
+            message: formatMessage(messages.contentSection3EmptyTitle),
+          }}
+        >
           {this.getAdGroupRecords()}
         </RelatedRecords>
       </div>

@@ -6,7 +6,7 @@ import log from '../../utils/Logger';
 import * as SessionHelper from '../../state/Session/selectors';
 
 export interface InjectedDatamartProps {
-  datamart: { id: string };
+  datamart: { id: string; token: string };
 }
 
 const mapStateToProps = (state: any) => {
@@ -24,14 +24,15 @@ export default compose<any, InjectedDatamartProps>(
         getDefaultDatamart: (orgId: string) => InjectedDatamartProps;
       } & { [key: string]: any },
     ) => {
-      const {
-        match: { params: { organisationId } },
-        getDefaultDatamart,
-        ...rest,
-      } = props;
-      const defaultDatamart = getDefaultDatamart(organisationId);
+      const { getDefaultDatamart, ...rest } = props;
+      const defaultDatamart = getDefaultDatamart(
+        rest.match.params.organisationId,
+      );
       if (!defaultDatamart)
-        log.error('No datamart found for organisationId ', organisationId);
+        log.error(
+          'No datamart found for organisationId ',
+          rest.match.params.organisationId,
+        );
       return {
         datamart: defaultDatamart,
         ...rest,

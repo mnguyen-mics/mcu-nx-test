@@ -15,13 +15,30 @@ addLocaleData([...enLocaleData, ...frLocaleData]);
 
 interface IntlAppProps {
   locale?: string;
-  translations: {[id: string]: string};
+  translations: { [id: string]: string };
 }
 
-const IntlApp: React.SFC<IntlAppProps> = ({ locale, translations }) => {
+const formats = {
+  number: {
+    USD: {
+      style: 'currency',
+      currency: 'USD',
+    },
+    EUR: {
+      style: 'currency',
+      currency: 'EUR',
+    },
+  },
+};
 
+const IntlApp: React.SFC<IntlAppProps> = ({ locale, translations }) => {
   return (
-    <IntlProvider locale={locale} messages={translations}>
+    <IntlProvider
+      locale={locale}
+      messages={translations}
+      formats={formats}
+      defaultFormats={formats}
+    >
       <LocaleProvider locale={enUS}>
         <Navigator />
       </LocaleProvider>

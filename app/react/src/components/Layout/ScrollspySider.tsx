@@ -1,51 +1,58 @@
 import * as React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {Layout} from 'antd';
-import {compose} from 'recompose';
-import {injectIntl, InjectedIntlProps, FormattedMessage} from 'react-intl';
+import { Layout } from 'antd';
+import { compose } from 'recompose';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 
 import Scrollspy from '../Scrollspy';
 import McsIcons from '../McsIcons';
+import ButtonStyleless from '../ButtonStyleless';
 
 const { Sider } = Layout;
 
 export interface SideBarItem {
   sectionId: string;
   title: FormattedMessage.MessageDescriptor;
+  onClick?: (sectionId: string) => void;
+  type?: 'validated' // potential other values : 'error' | 'warning'
 }
 
 export interface SidebarWrapperProps {
   items: SideBarItem[];
   scrollId: string;
-  url?: string;
 }
 
-type Props =
-  SidebarWrapperProps &
-  RouteComponentProps<{}> &
-  InjectedIntlProps;
+type Props = SidebarWrapperProps & RouteComponentProps<{}> & InjectedIntlProps;
 
-class ScrollspySider extends React.Component<Props>  {
-
+class ScrollspySider extends React.Component<Props> {
   render() {
-    const {
-      items,
-      scrollId,
-      intl,
-      url: providedUrl,
-      match: { url },
-    } = this.props;
+    const { items, scrollId, intl, match: { url } } = this.props;
 
     const scrollItems: string[] = items.map(d => d.sectionId);
-    const options = items.map((item) => (
-      <li key={item.sectionId}>
-        <Link to={`${providedUrl || url}#${item.sectionId}`}>
-          <McsIcons type="check-rounded-inverted"/>
+    const options = items.map(item => {
+      const iconAndText = (
+        <div>
+          <McsIcons type="check-rounded-inverted" />
           <span className="step-title">{intl.formatMessage(item.title)}</span>
-        </Link>
-      </li>
-    ));
+        </div>
+      );
+      if (item.onClick) {
+        const handleOnClick = () => item.onClick!(item.sectionId);
+        return (
+          <li key={item.sectionId}>
+            <ButtonStyleless className={item.type} onClick={handleOnClick}>
+              {iconAndText}
+            </ButtonStyleless>
+          </li>
+        );
+      }
+      return (
+        <li key={item.sectionId}>
+          <Link to={`${url}#${item.sectionId}`}>{iconAndText}</Link>
+        </li>
+      );
+    });
 
     return (
       <Sider className="stepper">
@@ -67,7 +74,6 @@ class ScrollspySider extends React.Component<Props>  {
  */
 // (ScrollspySider as any).__ANT_LAYOUT_SIDER = true; // eslint-disable-line
 
-export default compose<Props, SidebarWrapperProps>(
-    injectIntl,
-    withRouter,
-)(ScrollspySider);
+export default compose<Props, SidebarWrapperProps>(injectIntl, withRouter)(
+  ScrollspySider,
+);

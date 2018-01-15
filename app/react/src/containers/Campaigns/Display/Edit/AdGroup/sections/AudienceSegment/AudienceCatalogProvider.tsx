@@ -16,18 +16,31 @@ import injectDatamart, {
 
 interface AudienceCatalogProviderProps {
   renderProp: (
-    audienceCategoryTree: ServiceCategoryTree[],
-    genderServiceItems: AudienceSegmentServiceItemPublicResource[],
-    ageServiceItems: AudienceSegmentServiceItemPublicResource[],
-    audienceSegments: AudienceSegmentResource[],
+    audienceCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>,
+    genderServiceItems: DataLoadingContainer<
+      AudienceSegmentServiceItemPublicResource[]
+    >,
+    ageServiceItems: DataLoadingContainer<
+      AudienceSegmentServiceItemPublicResource[]
+    >,
+    audienceSegments: DataLoadingContainer<AudienceSegmentResource[]>,
   ) => React.ReactNode;
 }
 
+export interface DataLoadingContainer<T> {
+  data: T;
+  loading: boolean;
+}
+
 interface AudienceCatalogContainerState {
-  audienceCategoryTree: ServiceCategoryTree[];
-  genderServiceItems: AudienceSegmentServiceItemPublicResource[];
-  ageServiceItems: AudienceSegmentServiceItemPublicResource[];
-  audienceSegments: AudienceSegmentResource[];
+  audienceCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>;
+  genderServiceItems: DataLoadingContainer<
+    AudienceSegmentServiceItemPublicResource[]
+  >;
+  ageServiceItems: DataLoadingContainer<
+    AudienceSegmentServiceItemPublicResource[]
+  >;
+  audienceSegments: DataLoadingContainer<AudienceSegmentResource[]>;
 }
 
 type Props = AudienceCatalogProviderProps &
@@ -41,21 +54,43 @@ class AudienceCatalogProvider extends React.Component<
   constructor(props: Props) {
     super(props);
     this.state = {
-      audienceCategoryTree: [],
-      genderServiceItems: [],
-      ageServiceItems: [],
-      audienceSegments: [],
+      audienceCategoryTree: {
+        data: [],
+        loading: false,
+      },
+      genderServiceItems: {
+        data: [],
+        loading: false,
+      },
+      ageServiceItems: {
+        data: [],
+        loading: false,
+      },
+      audienceSegments: {
+        data: [],
+        loading: false,
+      },
     };
   }
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchDetailedTargetingData();
+    this.fetchGenderServiceItems();
+    this.fetchAgeServiceItems();
+    this.fetchOwnDatamartSegments();
   }
 
-  fetchDetailedTargetingData = (): Promise<ServiceCategoryTree[]> => {
+  fetchDetailedTargetingData = () => {
     const { match: { params: { organisationId } } } = this.props;
 
-    return CatalogService.getCategoryTree(organisationId, {
+    this.setState(prevState => ({
+      audienceCategoryTree: {
+        ...prevState.audienceCategoryTree,
+        loading: true,
+      },
+    }));
+
+    CatalogService.getCategoryTree(organisationId, {
       serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
     })
       .then(categoryTree => {
@@ -93,43 +128,85 @@ class AudienceCatalogProvider extends React.Component<
         );
       })
       .then(categoryTree => {
-        // if 1 catalog only, hide root
-        if (categoryTree.length === 1) {
-          return categoryTree[0].children;
-        }
-        return categoryTree;
+        this.setState(prevState => ({
+          audienceCategoryTree: {
+            // if 1 catalog only, hide root
+            data:
+              categoryTree.length === 1
+                ? categoryTree[0].children
+                : categoryTree,
+            loading: false,
+          },
+        }));
       });
   };
 
-  fetchData = () => {
+  fetchGenderServiceItems = () => {
+    const { match: { params: { organisationId } } } = this.props;
+
+    this.setState(prevState => ({
+      genderServiceItems: {
+        ...prevState.genderServiceItems,
+        loading: true,
+      },
+    }));
+
+    CatalogService.getAudienceSegmentServices(organisationId, {
+      categorySubtype: ['AUDIENCE.GENDER'],
+    }).then(genderServiceItems => {
+      this.setState(prevState => ({
+        genderServiceItems: {
+          data: genderServiceItems,
+          loading: false,
+        },
+      }));
+    });
+  };
+
+  fetchAgeServiceItems = () => {
+    const { match: { params: { organisationId } } } = this.props;
+
+    this.setState(prevState => ({
+      ageServiceItems: {
+        ...prevState.ageServiceItems,
+        loading: true,
+      },
+    }));
+
+    CatalogService.getAudienceSegmentServices(organisationId, {
+      categorySubtype: ['AUDIENCE.AGE'],
+    }).then(ageServiceItems => {
+      this.setState(prevState => ({
+        ageServiceItems: {
+          data: ageServiceItems,
+          loading: false,
+        },
+      }));
+    });
+  };
+
+  fetchOwnDatamartSegments = () => {
     const { match: { params: { organisationId } }, datamart } = this.props;
 
-    Promise.all([
-      this.fetchDetailedTargetingData(),
-      CatalogService.getAudienceSegmentServices(organisationId, {
-        categorySubtype: ['AUDIENCE.GENDER'],
-      }),
-      CatalogService.getAudienceSegmentServices(organisationId, {
-        categorySubtype: ['AUDIENCE.AGE'],
-      }),
-      AudienceSegmentService.getSegments(organisationId, datamart.id, {
-        max_results: 500,
-      }).then(res => res.data),
-    ]).then(
-      ([
-        audienceCategoryTree,
-        genderServiceItems,
-        ageServiceItems,
-        audienceSegments,
-      ]) => {
-        this.setState(prevState => ({
-          audienceCategoryTree,
-          genderServiceItems,
-          ageServiceItems,
-          audienceSegments,
-        }));
+    this.setState(prevState => ({
+      audienceSegments: {
+        ...prevState.audienceSegments,
+        loading: true,
       },
-    );
+    }));
+
+    AudienceSegmentService.getSegments(organisationId, datamart.id, {
+      max_results: 500,
+    })
+      .then(res => res.data)
+      .then(audienceSegments => {
+        this.setState(prevState => ({
+          audienceSegments: {
+            data: audienceSegments,
+            loading: false,
+          },
+        }));
+      });
   };
 
   render() {

@@ -198,6 +198,7 @@ class SegmentFormSection extends React.Component<Props, State> {
         />
         <RelatedRecords
           emptyOption={{
+            iconType: 'users',
             message: formatMessage(messages.blastSegmentSelectionEmpty),
           }}
         >

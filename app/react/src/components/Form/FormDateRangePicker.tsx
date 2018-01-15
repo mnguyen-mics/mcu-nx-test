@@ -6,6 +6,7 @@ import { DatePickerProps } from 'antd/lib/date-picker';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
+import { DEFAULT_DATE_FORMAT } from '../../utils/DateHelper';
 
 export interface FormDateRangePickerProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
@@ -85,7 +86,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
   render() {
     const {
       input,
-      meta,
+      // meta,
       formItemProps,
       helpToolTipProps,
       startDatePickerProps,
@@ -95,13 +96,19 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
       unixTimestamp,
     } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
-    if (meta.touched && meta.invalid) validateStatus = 'error';
-    if (meta.touched && meta.warning) validateStatus = 'warning';
+    // TODO properly handle required/validation case
+    // let validateStatus = 'success' as
+    //   | 'success'
+    //   | 'warning'
+    //   | 'error'
+    //   | 'validating';
+
+    // const errorOnField = meta.error && Object.keys(meta.error).find(field => {
+    //   return field === startDateFieldName || field === endDateFieldName
+    // });
+
+    // if (meta.touched && meta.invalid && errorOnField) validateStatus = 'error';
+    // if (meta.touched && meta.warning) validateStatus = 'warning';
 
     const startDateValue =
       input.value[startDateFieldName] === undefined
@@ -119,9 +126,9 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
 
     return (
       <FormFieldWrapper
-        help={meta.touched && (meta.warning || meta.error)}
+        // help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
-        validateStatus={validateStatus}
+        // validateStatus={validateStatus}
         {...formItemProps}
       >
         <div className="range-picker">
@@ -132,6 +139,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
               value={startDateValue}
               onChange={this.updateStartDate}
               disabledDate={this.disabledStartDate}
+              format={DEFAULT_DATE_FORMAT}
             />
           </div>
 
@@ -146,6 +154,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
               value={endDateValue}
               onChange={this.updateEndDate}
               disabledDate={this.disabledEndDate}
+              format={DEFAULT_DATE_FORMAT}
             />
           </div>
         </div>

@@ -32,7 +32,7 @@ class AttributionFormSection extends React.Component<Props> {
 
         <div>
           <FormInputField
-            name="attribution.post_click"
+            name="lookbackWindow.postClick"
             component={FormInput}
             normalize={normalizeInteger}
             validate={[isRequired, isValidInteger]}
@@ -53,7 +53,7 @@ class AttributionFormSection extends React.Component<Props> {
 
         <div>
           <FormInputField
-            name="attribution.post_view"
+            name="lookbackWindow.postView"
             component={FormInput}
             normalize={normalizeInteger}
             validate={[isRequired, isValidInteger]}

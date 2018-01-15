@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Field } from 'redux-form';
+import { Field, getFormInitialValues } from 'redux-form';
+import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -13,25 +14,35 @@ import {
 } from '../../../../../components/Form';
 import messages from '../messages';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import { EditDisplayCreativeRouteMatchParams } from '../domain';
+import { EditDisplayCreativeRouteMatchParams, DisplayCreativeFormData, DISPLAY_CREATIVE_FORM, isDisplayAdResource } from '../domain';
 // import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
 
-interface GeneralFormSectionProps {
-  // creative?: Partial<DisplayAdResource>
+interface MapStateProps {
+  initialValue: DisplayCreativeFormData;
 }
 
-type JoinedProps = GeneralFormSectionProps &
+type Props = 
   ValidatorProps &
   InjectedIntlProps &
+  MapStateProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
-class GeneralFormSection extends React.Component<JoinedProps> {
+class GeneralFormSection extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
       fieldValidators: { isRequired },
+      initialValue: { creative },
     } = this.props;
+
+    let isDisabled = false;
+
+    if (isDisplayAdResource(creative)) {
+      isDisabled =
+        creative.audit_status === 'AUDIT_PASSED' ||
+        creative.audit_status === 'AUDIT_PENDING';
+    }
 
     const CreativeFormatEditorField: FieldCtor<{ disabled?: boolean }> = Field;
 
@@ -54,9 +65,8 @@ class GeneralFormSection extends React.Component<JoinedProps> {
           inputProps={{
             placeholder: formatMessage(
               messages.creativeCreationGeneralNameFieldPlaceHolder,
-            ),
-            // set isDisabled to true if creative audit status is pending or success
-            // disabled: isDisabled,
+            ),            
+            disabled: isDisabled,
           }}
           helpToolTipProps={{
             title: formatMessage(
@@ -68,7 +78,7 @@ class GeneralFormSection extends React.Component<JoinedProps> {
           name="creative.format"
           component={DisplayCreativeFormatEditor}
           validate={[]}
-          // disabled={isDisabled}
+          disabled={isDisabled}
         />
         <FormInputField
           name="creative.destination_domain"
@@ -84,8 +94,7 @@ class GeneralFormSection extends React.Component<JoinedProps> {
             placeholder: formatMessage(
               messages.creativeCreationGeneralDomainFieldPlaceHolder,
             ),
-            // set isDisabled to true if creative audit status is pending or success
-            // disabled: isDisabled,
+            disabled: isDisabled,
           }}
           helpToolTipProps={{
             title: formatMessage(
@@ -98,8 +107,13 @@ class GeneralFormSection extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, GeneralFormSectionProps>(
+export default compose<Props, {}>(
   injectIntl,
   withRouter,
   withValidators,
+  connect((state: any, ownProps: Props) => ({
+    initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
+      state,
+    ) as DisplayCreativeFormData,
+  })),
 )(GeneralFormSection);

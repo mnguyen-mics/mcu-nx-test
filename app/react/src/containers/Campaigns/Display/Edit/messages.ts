@@ -37,7 +37,7 @@ export default defineMessages({
   },
   breadcrumbTitle3: {
     id: 'adGroupEditor.breadcrumb.title3',
-    defaultMessage: 'Edit',
+    defaultMessage: 'Edit {name}',
   },
 
   /*
@@ -550,19 +550,7 @@ export default defineMessages({
   contentSectionSummaryPart1Group5: {
     id: 'adGroupEditor.section.summary.part1.group5',
     defaultMessage: 'with a',
-  },
-  contentSectionSummaryPart1Group6OptionDAY: {
-    id: 'adGroupEditor.section.summary.part1.group6.optionDAY',
-    defaultMessage: 'DAILY',
-  },
-  contentSectionSummaryPart1Group6OptionWEEK: {
-    id: 'adGroupEditor.section.summary.part1.group6.optionWEEK',
-    defaultMessage: 'WEEKLY',
-  },
-  contentSectionSummaryPart1Group6OptionMONTH: {
-    id: 'adGroupEditor.section.summary.part1.group6.optionMONTH',
-    defaultMessage: 'MONTHLY',
-  },
+  },  
   contentSectionSummaryPart1Group7: {
     id: 'adGroupEditor.section.summary.part1.group7',
     defaultMessage: 'budget of',

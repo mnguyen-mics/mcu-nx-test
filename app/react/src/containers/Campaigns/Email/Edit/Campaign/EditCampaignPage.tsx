@@ -93,6 +93,10 @@ class EditCampaignPage extends React.Component<Props, State> {
       0,
     );
 
+    this.setState({
+      loading: true,
+    });
+
     return EmailCampaignFormService.saveCampaign(
       organisationId,
       campaignFormData,
@@ -105,6 +109,9 @@ class EditCampaignPage extends React.Component<Props, State> {
       .catch(err => {
         hideSaveInProgress();
         notifyError(err);
+        this.setState({
+          loading: false,
+        });
       });
   };
 

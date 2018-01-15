@@ -4,7 +4,7 @@ import { DisplayCampaignResource } from './../models/campaign/display/DisplayCam
 import { DisplayCampaignInfoResource } from './../models/campaign/display/DisplayCampaignInfoResource';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
-import { AdResource } from '../models/campaign/display/AdResource';
+import { AdResource, AdCreateRequest } from '../models/campaign/display/AdResource';
 import { GoalSelectionResource } from '../models/goal/GoalSelectionResource';
 import { PlacementListSelectionResource } from '../models/placement/PlacementListResource';
 import { LocationSelectionResource, LocationSelectionCreateRequest } from '../containers/Campaigns/Display/Edit/AdGroup/sections/Location/domain';
@@ -213,7 +213,7 @@ const DisplayCampaignService = {
   createAd(
       campaignId: string,
       adGroupId: string,
-      body: Partial<AdResource>,
+      body: AdCreateRequest,
     ): Promise<AdResource> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.postRequest(endpoint, body);
@@ -223,7 +223,7 @@ const DisplayCampaignService = {
     campaignId: string,
     adGroupId: string,
     id: string,
-  ): Promise<AdResource>  {
+  ): Promise<any>  {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${id}`;
     return ApiService.deleteRequest(endpoint);
   },
@@ -238,7 +238,7 @@ const DisplayCampaignService = {
 
   createGoal(
     campaignId: string,
-    body: Partial<GoalSelectionCreateRequest>,
+    body: GoalSelectionCreateRequest,
   ): Promise<GoalSelectionResource> {
     const endpoint = `campaigns/${campaignId}/goal_selections`;
     return ApiService.postRequest(endpoint, body);

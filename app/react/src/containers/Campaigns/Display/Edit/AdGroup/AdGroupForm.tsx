@@ -9,14 +9,15 @@ import {
   FieldArray,
 } from 'redux-form';
 import { connect } from 'react-redux';
-import { Layout, message } from 'antd';
+import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { compose } from 'recompose';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 import FeatureSwitch from '../../../../../components/FeatureSwitch';
 import messages from '../messages';
 import { DrawableContentProps } from '../../../../../components/Drawer/index';
-import { AdGroupFormData } from './domain';
+import { AdGroupFormData, EditAdGroupRouteMatchParam } from './domain';
 import { Omit } from '../../../../../utils/Types';
 import { Path } from '../../../../../components/ActionBar';
 import FormLayoutActionbar, {
@@ -25,7 +26,8 @@ import FormLayoutActionbar, {
 import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../../components/Layout/ScrollspySider';
-import { GeneralFormSection, SummaryFormSection } from './sections';
+import { GeneralFormSection } from './sections';
+import { SummaryFormSection } from './sections/Summary';
 import LocationTargetingFormSection, {
   LocationTargetingFormSectionProps,
 } from './sections/Location/LocationTargetingFormSection';
@@ -42,7 +44,6 @@ import BidOptimizerFormSection, {
   BidOptimizerFormSectionProps,
 } from './sections/BidOptimizerFormSection';
 import * as SessionSelectors from '../../../../../state/Session/selectors';
-import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
 
@@ -94,21 +95,12 @@ interface MapStateToProps {
 type Props = InjectedFormProps<AdGroupFormData, AdGroupFormProps> &
   AdGroupFormProps &
   MapStateToProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<EditAdGroupRouteMatchParam>;
 
 const FORM_ID = 'adGroupForm';
 
 class AdGroupForm extends React.Component<Props> {
-  componentWillReceiveProps(nextProps: Props) {
-    // const { submitFailed } = this.props;
-    const { submitFailed: nextSubmitFailed } = nextProps;
-    if (nextSubmitFailed) {
-      message.error('submitFailed');
-    }
-  }
-
   buildFormSections = () => {
-    
     const {
       match: { params: { organisationId } },
       openNextDrawer,
@@ -201,7 +193,7 @@ class AdGroupForm extends React.Component<Props> {
 
     const bidOptimizer = {
       id: 'bidOptimizer',
-      title: messages.sectionTitlePlacement,
+      title: messages.sectionTitleOptimizer,
       component: (
         <BidOptimizerFieldArray
           name="bidOptimizerFields"
@@ -222,15 +214,10 @@ class AdGroupForm extends React.Component<Props> {
     sections.splice(insertIndice, 0, summary);
 
     return sections;
-  }
+  };
 
   render() {
-    const {
-      breadCrumbPaths,
-      handleSubmit,
-      close,
-    } = this.props;
-    
+    const { breadCrumbPaths, handleSubmit, close } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -270,7 +257,7 @@ class AdGroupForm extends React.Component<Props> {
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"
             >
-              {renderedSections}
+              <div className="ad-group-form">{renderedSections}</div>
             </Content>
           </Form>
         </Layout>

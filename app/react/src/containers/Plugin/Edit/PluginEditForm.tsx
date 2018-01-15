@@ -23,7 +23,7 @@ import messages from './messages';
 const { Content } = Layout;
 const FORM_NAME = 'pluginForm';
 
-interface PluginEditFormProps extends  Omit<ConfigProps<any>, 'form'> {
+interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   // formValues: any;
   editionMode: boolean;
   organisationId: string;
@@ -35,12 +35,10 @@ interface PluginEditFormProps extends  Omit<ConfigProps<any>, 'form'> {
   initialValues: any;
 }
 
-
-type JoinedProps =
-  PluginEditFormProps &
+type JoinedProps = PluginEditFormProps &
   InjectedFormProps &
   ValidatorProps &
-  InjectedIntlProps & 
+  InjectedIntlProps &
   DrawableContentProps;
 
 interface PluginEditFormState {
@@ -51,19 +49,11 @@ export interface FormModel {
   id?: string;
   plugin: {
     name: string;
-  },
+  };
   properties: any;
-} 
-
-const fieldGridConfig = {
-  labelCol: { span: 3 },
-  wrapperCol: { span: 10, offset: 1 },
-};
-
-const PluginFieldGeneratorJS = PluginFieldGenerator as any;
+}
 
 class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
-
   static defaultProps: Partial<JoinedProps> = {
     editionMode: false,
   };
@@ -76,10 +66,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   }
 
   onSubmit = (formValues: FormModel) => {
-    const {
-      editionMode,
-      save,
-    } = this.props;
+    const { editionMode, save } = this.props;
     if (editionMode === false) {
       formValues.id = formValues.id ? formValues.id : generateFakeId();
     }
@@ -88,16 +75,20 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       ...formValues.plugin,
     };
 
-    const formattedProperties = this.props.pluginProperties.filter(item => {
-      return item.writable === true;
-    }).map(item => {
-      return {
-        ...item,
-        value: formValues.properties[item.technical_name] ? formValues.properties[item.technical_name].value : item.value,
-      };
-    });
+    const formattedProperties = this.props.pluginProperties
+      .filter(item => {
+        return item.writable === true;
+      })
+      .map(item => {
+        return {
+          ...item,
+          value: formValues.properties[item.technical_name]
+            ? formValues.properties[item.technical_name].value
+            : item.value,
+        };
+      });
     save(pluginData, formattedProperties);
-  }
+  };
 
   pluginFieldGenerated = () => {
     const {
@@ -109,10 +100,9 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
     return pluginProperties.map((fieldDef: PluginProperty) => {
       return (
-        <PluginFieldGeneratorJS
+        <PluginFieldGenerator
           key={`${fieldDef.technical_name}`}
           definition={fieldDef}
-          fieldGridConfig={fieldGridConfig}
           disabled={isLoading}
           pluginVersionId={pluginVersionId}
           organisationId={organisationId}
@@ -121,7 +111,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
         />
       );
     });
-  }
+  };
 
   render() {
     const {
@@ -137,7 +127,6 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       formItemProps: {
         label: formatMessage(messages.sectionGeneralName),
         required: true,
-        ...fieldGridConfig,
       },
       inputProps: {
         placeholder: formatMessage(messages.sectionGeneralPlaceholder),
@@ -149,9 +138,10 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     };
     return (
       <Layout>
-
         <Form
-          className={this.state.loading ? 'hide-section' : 'edit-layout ant-layout'}
+          className={
+            this.state.loading ? 'hide-section' : 'edit-layout ant-layout'
+          }
           onSubmit={handleSubmit(this.onSubmit)}
           id={formId}
         >
@@ -160,10 +150,13 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             // add ID?
           >
             <div id={'general'}>
-              <Row type="flex" align="middle" justify="space-between" className="section-header">
-                <FormTitle
-                  title={messages.sectionGeneralTitle}
-                />
+              <Row
+                type="flex"
+                align="middle"
+                justify="space-between"
+                className="section-header"
+              >
+                <FormTitle title={messages.sectionGeneralTitle} />
               </Row>
               <Row>
                 <InputField
@@ -172,19 +165,19 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                   validate={[isRequired]}
                   {...fieldProps}
                 />
-
               </Row>
             </div>
             <hr />
             <div id={'properties'}>
-              <Row type="flex" align="middle" justify="space-between" className="section-header">
-                <FormTitle
-                  title={messages.sectionPropertiesTitle}
-                />
+              <Row
+                type="flex"
+                align="middle"
+                justify="space-between"
+                className="section-header"
+              >
+                <FormTitle title={messages.sectionPropertiesTitle} />
               </Row>
-              <Row>
-                {this.pluginFieldGenerated()}
-              </Row>
+              <Row>{this.pluginFieldGenerated()}</Row>
             </div>
           </Content>
         </Form>

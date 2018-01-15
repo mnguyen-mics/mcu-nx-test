@@ -8,18 +8,32 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
 import messages from '../../messages';
-import { EditAdGroupRouteMatchParam, AdFieldModel, isDisplayCreativeFormData } from '../domain';
+import {
+  EditAdGroupRouteMatchParam,
+  AdFieldModel,
+  isDisplayCreativeFormData,
+} from '../domain';
 import { DrawableContentProps } from '../../../../../../components/Drawer/index';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
-import { DisplayAdResource, DisplayAdCreateRequest } from '../../../../../../models/creative/CreativeResource';
+import {
+  DisplayAdResource,
+  DisplayAdCreateRequest,
+} from '../../../../../../models/creative/CreativeResource';
 import { Index } from '../../../../../../utils/index';
 import CreativeService from '../../../../../../services/CreativeService';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
 import { DisplayCreativeCreatorProps } from '../../../../../Creative/DisplayAds/Edit/DisplayCreativeCreator';
 import { DisplayCreativeCreator } from '../../../../../Creative/DisplayAds/Edit/index';
-import CreativeCardSelector, { CreativeCardSelectorProps } from '../../../../Common/CreativeCardSelector';
-import DisplayCreativeFormLoader, { DisplayCreativeFormLoaderProps } from '../../../../../Creative/DisplayAds/Edit/DisplayCreativeFormLoader';
-import { DisplayCreativeFormData, isDisplayAdResource } from '../../../../../Creative/DisplayAds/Edit/domain';
+import CreativeCardSelector, {
+  CreativeCardSelectorProps,
+} from '../../../../Common/CreativeCardSelector';
+import DisplayCreativeFormLoader, {
+  DisplayCreativeFormLoaderProps,
+} from '../../../../../Creative/DisplayAds/Edit/DisplayCreativeFormLoader';
+import {
+  DisplayCreativeFormData,
+  isDisplayAdResource,
+} from '../../../../../Creative/DisplayAds/Edit/domain';
 import { computeDimensionsByRatio } from '../../../../../../utils/ShapeHelper';
 import { ButtonStyleless } from '../../../../../../components/index';
 import McsIcons from '../../../../../../components/McsIcons';
@@ -28,7 +42,9 @@ import CreativeCard from '../../../../Common/CreativeCard';
 import FormSection from '../../../../../../components/Form/FormSection';
 import EmptyRecords from '../../../../../../components/RelatedRecord/EmptyRecords';
 
-export interface AdFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface AdFormSectionProps
+  extends DrawableContentProps,
+    ReduxFormChangeProps {}
 
 export interface DisplayAdResourceWithFieldIndex {
   creativeResource: DisplayAdResource | DisplayAdCreateRequest;
@@ -80,7 +96,10 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     });
   }
 
-  updateAds = (creativeFormData: DisplayCreativeFormData, fieldKey?: string) => {
+  updateAds = (
+    creativeFormData: DisplayCreativeFormData,
+    fieldKey?: string,
+  ) => {
     const { fields, formChange } = this.props;
 
     const newFields: AdFieldModel[] = [];
@@ -130,16 +149,14 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     if (field) {
       if (!isDisplayCreativeFormData(field.model)) {
         FormComponent = DisplayCreativeFormLoader;
-        (additionalProps as DisplayCreativeFormLoaderProps).creativeId = field.model.creative_id;
+        (additionalProps as DisplayCreativeFormLoaderProps).creativeId =
+          field.model.creative_id;
       } else {
         additionalProps.initialValues = field.model;
       }
     }
 
-    openNextDrawer(
-      FormComponent,
-      options,
-    );
+    openNextDrawer(FormComponent, options);
   };
 
   openCreativeCardSelector = () => {
@@ -149,11 +166,13 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     fields.getAll().forEach(field => {
       if (!isDisplayCreativeFormData(field.model)) {
         creativeIds.push(field.model.creative_id);
+      } else if (isDisplayAdResource(field.model.creative)) {
+        creativeIds.push(field.model.creative.id);
       }
     });
 
     const handleSave = (creatives: DisplayAdResource[]) => {
-      this.updateExistingAds (creatives);
+      this.updateExistingAds(creatives);
       closeNextDrawer();
     };
 
@@ -191,11 +210,11 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     const existingCreativeIds: string[] = [];
     fields.getAll().forEach(field => {
       if (!isDisplayCreativeFormData(field.model)) {
-        creativeIds.push(field.model.creative_id);
+        existingCreativeIds.push(field.model.creative_id);
       }
     });
     const newFields = creatives
-      .filter(creative => existingCreativeIds.includes(creative.id))
+      .filter(creative => !existingCreativeIds.includes(creative.id))
       .map(creative => ({
         key: cuid(),
         model: {
@@ -205,61 +224,6 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
 
     formChange((fields as any).name, keptFields.concat(newFields));
   };
-
-  // openCreativeEditionDrawer = (data: DisplayAdResourceWithFieldIndex) => () => {
-  //   const {
-  //     openNextDrawer,
-  //     closeNextDrawer,
-  //     match: { params: { organisationId } },
-  //   } = this.props;
-
-  //   const commonProps = {
-  //     close: closeNextDrawer,
-  //     breadCrumbPaths: [
-  //       {
-  //         name: messages.editDisplayCreative,
-  //       },
-  //     ],
-  //     actionBarButtonText: messages.updateDisplayCreative,
-  //     openNextDrawer: openNextDrawer,
-  //     closeNextDrawer: closeNextDrawer,
-  //   };
-
-  //   // EDIT NEW
-  //   if (isDisplayCreativeFormData(data.fieldModel.resource)) {
-  //     const additionalProps = {
-  //       initialValues: data.fieldModel.resource,
-  //       save: (formData: DisplayCreativeFormData) => {
-  //         //
-  //       },
-  //       rendererProperties: data.fieldModel.resource.rendererProperties,
-  //       rendererVersionId: (data.fieldModel.resource.creative.renderer_version_id || ''),
-  //       ...commonProps,
-  //     };
-  //     const options = {
-  //       additionalProps: additionalProps,
-  //     };
-  //     openNextDrawer<DisplayCreativeFormProps>(DisplayCreativeForm, options);
-  //   } else {
-  //     // EDIT EXISTING
-  //     const additionalProps = {
-  //       creativeId: data.fieldModel.resource.creative_id,
-  //       save: (formData: DisplayCreativeFormData) => {
-  //         // updateDisplayCreative(organisationId, formData, rendererProperties)
-  //       },
-  //       rendererVersionId: ,
-  //       rendererProperties: ,
-  //       ...commonProps,
-  //     };
-  //     const options = {
-  //       additionalProps: additionalProps,
-  //     };
-  //     openNextDrawer<DisplayCreativeFormLoaderProps>(
-  //       DisplayCreativeFormLoader,
-  //       options,
-  //     );
-  //   }
-  // };
 
   getCreativeCardFooter = (data: DisplayAdResourceWithFieldIndex) => {
     const { fields } = this.props;
@@ -281,10 +245,12 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     const handleEdit = () => {
       const field = fields.get(data.fieldIndex);
       this.openCreativeForm(field);
-    }
-    
-    const auditStatus = isDisplayAdResource(data.creativeResource) ? data.creativeResource.audit_status : undefined;
-    
+    };
+
+    const auditStatus = isDisplayAdResource(data.creativeResource)
+      ? data.creativeResource.audit_status
+      : undefined;
+
     return (
       <div>
         <Row className="footer">
@@ -329,8 +295,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
           });
         } else if (displayCreativeCacheById[field.model.creative_id]) {
           allCreatives.push({
-            creativeResource:
-              displayCreativeCacheById[field.model.creative_id],
+            creativeResource: displayCreativeCacheById[field.model.creative_id],
             fieldIndex: index,
             fieldModel: field,
           });
@@ -370,23 +335,20 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
           subtitle={messages.sectionSubtitleAds}
           title={messages.sectionTitleAds}
         />
-
-        <div id="ads">
-          <Spin spinning={this.state.loading}>
-            <div className="ad-group-ad-section">
-              <div className={`mcs-table-card content`}>
-                <Row gutter={20}>{cards}</Row>
-              </div>
-
-              {!fields.length && (
-                <EmptyRecords
-                  iconType="ads"
-                  message={formatMessage(messages.contentSectionAdEmptyTitle)}
-                />
-              )}
+        <Spin spinning={this.state.loading}>
+          <div className="ad-group-ad-section" style={{ overflow: 'hidden' }}>
+            <div className="mcs-table-card content">
+              <Row gutter={20}>{cards}</Row>
             </div>
-          </Spin>
-        </div>
+
+            {!fields.length && (
+              <EmptyRecords
+                iconType="ads"
+                message={formatMessage(messages.contentSectionAdEmptyTitle)}
+              />
+            )}
+          </div>
+        </Spin>
       </div>
     );
   }

@@ -135,7 +135,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
       return (
         <RecordElement
           key={field.key}
-          recordIconType="question"
+          recordIconType="optimization"
           record={field}
           title={getName}
           onRemove={removeField}
@@ -163,7 +163,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
 
         <RelatedRecords
           emptyOption={{
-            // iconType="optimization",
+            iconType: 'optimization',
             message: formatMessage(messages.contentSectionOptimizerEmptyTitle),
           }}
         >

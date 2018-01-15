@@ -171,6 +171,8 @@ class FormStyleSheet extends Component {
       <Form.Item
         help={meta.touched && (meta.warning || meta.error)}
         validateStatus={validateStatus}
+        labelCol={{ span: 3 }}
+        wrapperCol={{ span: 10, offset: 1 }}
         {...formItemProps}
       >
 

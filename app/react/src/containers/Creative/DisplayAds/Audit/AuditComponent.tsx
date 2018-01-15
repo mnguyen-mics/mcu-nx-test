@@ -45,22 +45,23 @@ class AuditComponent extends React.Component<AuditComponentProps, State> {
       />
     );
 
+    const auditDetailsButton = auditStatuses.length > 0 && (
+      <div className="float-right m-l-10">
+        <Button onClick={this.toggleDisplayModal}>{auditDetailsMessage}</Button>
+      </div>
+    );
+
     return (
       <div>
         <div>
-          <div className ={"float-left"} style={{ lineHeight: '34px' }}>
+          <div className={'float-left'} style={{ lineHeight: '34px' }}>
             <AuditStatusRenderer auditStatus={creative.audit_status} />
           </div>
           <AuditActionButtonList
             auditActions={creative.available_user_audit_actions}
             confirmAuditAction={onMakeAuditAction}
           />
-    
-          <div className="float-right m-l-10">
-            <Button onClick={this.toggleDisplayModal}>
-              {auditDetailsMessage}
-            </Button>
-          </div>
+          {auditDetailsButton}
         </div>
         <Modal
           title={auditDetailsMessage}

@@ -18,7 +18,7 @@ const ButtonStyleless: React.SFC<
   };
 
   return (
-    <button className={`button-styleless ${className}`} onClick={handleOnClick} {...rest}>
+    <button className={`button-styleless ${className ? className : ''}`} onClick={handleOnClick} {...rest}>
       {children}
     </button>
   );

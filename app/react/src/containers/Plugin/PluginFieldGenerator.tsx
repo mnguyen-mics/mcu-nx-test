@@ -7,9 +7,9 @@ import { FormAdLayout, FormStyleSheet, FormDataFile } from './ConnectedFields';
 import { ValidatorProps } from '../../components/Form/withValidators';
 import { DrawableContentProps } from '../../components/Drawer';
 import {
-  PropertyResourceShape,
   StringPropertyResource,
 } from '../../models/plugin';
+import { PluginProperty } from '../../models/Plugins';
 
 const { FormInput, FormBoolean, FormUpload, withValidators } = Form;
 
@@ -18,7 +18,7 @@ interface AcceptedFilePropertyResource extends StringPropertyResource {
 }
 
 interface PluginFieldGeneratorProps extends DrawableContentProps {
-  definition: PropertyResourceShape;
+  definition: PluginProperty;
   disabled?: boolean;
   organisationId: string;
   noUploadModal?: () => void; // check type
@@ -56,7 +56,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     // | React.ComponentType<FormBooleanProps>
     // | React.ComponentType<FormDatafileProps>,
     name: string,
-    fieldDefinition: PropertyResourceShape,
+    fieldDefinition: PluginProperty,
     validation: Validator[] = [],
     additionalInputProps: AdditionalInputProps = {},
     options = {},
@@ -101,7 +101,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
   };
 
   generateFielBasedOnDefinition = (
-    fieldDefinition: PropertyResourceShape,
+    fieldDefinition: PluginProperty,
     organisationId: string,
   ) => {
     const { fieldValidators: { isValidInteger, isValidDouble } } = this.props;
@@ -216,7 +216,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
         return <div>MODEL_ID</div>;
       case 'DATAMART_ID':
         return <div>DATAMART_ID</div>;
-      case 'RECOMMENDER_ID':
+      case 'RECOMMENDER':
         return <div>RECOMMENDER_ID</div>;
       default:
         return <div>Please contact your support</div>;

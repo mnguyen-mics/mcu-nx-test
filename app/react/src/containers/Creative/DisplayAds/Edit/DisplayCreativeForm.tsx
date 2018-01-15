@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { reduxForm, Form, InjectedFormProps, ConfigProps } from 'redux-form';
+import { compose } from 'recompose';
 import { FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
 
@@ -35,6 +36,7 @@ export interface DisplayCreativeFormProps
   actionBarButtonText: FormattedMessage.MessageDescriptor;
   close: () => void;
   breadCrumbPaths: Path[];
+  goToCreativeTypeSelection?: () => void;
 }
 
 type Props = DisplayCreativeFormProps &
@@ -96,6 +98,7 @@ class DisplayCreativeForm extends React.Component<Props> {
       actionBarButtonText,
       breadCrumbPaths,
       close,
+      goToCreativeTypeSelection,
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -111,6 +114,15 @@ class DisplayCreativeForm extends React.Component<Props> {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),
       scrollId: DISPLAY_CREATIVE_FORM,
     };
+
+    if (goToCreativeTypeSelection) {
+      sideBarProps.items.unshift({
+        sectionId: 'type',
+        title:messages.creativeSiderMenuCreativeType,
+        onClick: goToCreativeTypeSelection,
+        type: 'validated',
+      });
+    }
 
     const renderedSections = sections.map((section, index) => {
       return (
@@ -145,7 +157,9 @@ class DisplayCreativeForm extends React.Component<Props> {
   }
 }
 
-export default reduxForm({
-  form: DISPLAY_CREATIVE_FORM,
-  enableReinitialize: true,
-})(DisplayCreativeForm);
+export default compose<Props, DisplayCreativeFormProps>(
+  reduxForm({
+    form: DISPLAY_CREATIVE_FORM,
+    enableReinitialize: true,
+  }),
+)(DisplayCreativeForm);

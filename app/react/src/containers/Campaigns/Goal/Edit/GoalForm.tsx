@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
+import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 
@@ -86,7 +87,9 @@ class GoalForm extends React.Component<Props> {
   }
 }
 
-export default reduxForm<GoalFormData, GoalFormProps>({
-  form: FORM_ID,
-  enableReinitialize: true,
-})(GoalForm);
+export default compose<Props, GoalFormProps>(
+  reduxForm({
+    form: FORM_ID,
+    enableReinitialize: true,
+  }),
+)(GoalForm);

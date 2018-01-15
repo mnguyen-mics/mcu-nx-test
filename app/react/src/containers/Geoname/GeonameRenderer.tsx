@@ -2,16 +2,18 @@ import React from 'react';
 import GeonameService, { Geoname } from './../../services/GeonameService';
 
 interface GeonameRendererProps {
-    geonameId: string;
-    renderMethod: (geoname: Geoname) => JSX.Element;
+  geonameId: string;
+  renderMethod?: (geoname: Geoname) => JSX.Element;
 }
 
 interface GeonameRendererState {
   geoname?: Geoname;
 }
 
-export default class GeonameRenderer extends React.Component<GeonameRendererProps, GeonameRendererState> {
-
+export default class GeonameRenderer extends React.Component<
+  GeonameRendererProps,
+  GeonameRendererState
+> {
   constructor(props: GeonameRendererProps) {
     super(props);
     this.state = { geoname: undefined };
@@ -26,24 +28,22 @@ export default class GeonameRenderer extends React.Component<GeonameRendererProp
   }
 
   fetchGeoname = (geonameId: string) => {
-   return GeonameService.getGeoname(geonameId)
-   .then(geoname => {
-     this.setState({
-      geoname: geoname,
-     });
+    return GeonameService.getGeoname(geonameId).then(geoname => {
+      this.setState({
+        geoname: geoname,
+      });
     });
-  }
+  };
 
   render() {
+    const { renderMethod } = this.props;
 
-    const {
-      geoname,
-    } = this.state;
+    const { geoname } = this.state;
 
-    const element = geoname ? this.props.renderMethod(geoname) : null;
+    const element = geoname
+      ? renderMethod ? renderMethod(geoname) : geoname.name
+      : null;
 
-    return (
-      <span>{element}</span>
-    );
+    return <span>{element}</span>;
   }
 }
