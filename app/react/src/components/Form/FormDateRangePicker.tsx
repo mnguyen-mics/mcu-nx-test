@@ -32,30 +32,54 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
   };
 
   updateStartDate = (date: Moment) => {
-    const { input, startDateFieldName, unixTimestamp } = this.props;
-    if (unixTimestamp) {
-      return input.onChange({ ...input.value, [startDateFieldName]: date && parseInt(date.format('x'), 0) })
+    const { input, startDateFieldName, unixTimestamp, startDatePickerProps: { showTime } } = this.props;
+
+    let computedStartDate: Moment | number = date;
+    if (date) {
+      if (!showTime) {
+        computedStartDate = computedStartDate.startOf('day');
+      }
+      
+      if (unixTimestamp) {
+        computedStartDate = parseInt(computedStartDate.format('x'), 0);
+      }
     }
-    return input.onChange({ ...input.value, [startDateFieldName]: date });
+    
+    return input.onChange({
+      ...input.value,
+      [startDateFieldName]: date 
+    })    
   };
 
   updateEndDate = (date: Moment) => {
-    const { input, endDateFieldName, unixTimestamp } = this.props;
-    if (unixTimestamp) {
-      return input.onChange({ ...input.value, [endDateFieldName]: date && parseInt(date.format('x'), 0) })
+    const { input, endDateFieldName, unixTimestamp, endDatePickerProps: { showTime } } = this.props;
+    
+    let computedEndDate: Moment | number = date;
+    if (date) {
+      if (!showTime) {
+        computedEndDate = computedEndDate.endOf('day');
+      }
+      
+      if (unixTimestamp) {
+        computedEndDate = parseInt(computedEndDate.format('x'), 0);
+      }
     }
-    input.onChange({ ...input.value, [endDateFieldName]: date });
+    
+    return input.onChange({
+      ...input.value,
+      [endDateFieldName]: date 
+    })    
   };
 
-  disabledStartDate = (dateValue: Moment) => {
+  disabledStartDate = (dateValue?: Moment) => {
     const { input, endDateFieldName } = this.props;
     const endDate = input.value[endDateFieldName];
     const allowPastDate = this.props.allowPastDate;
 
-    if (allowPastDate !== undefined) {
-      if (!allowPastDate && dateValue.valueOf() < moment().valueOf()) {
-        return true;
-      }
+    const startOfToday = moment().startOf('day');
+
+    if (!allowPastDate && dateValue && dateValue.isBefore(startOfToday)) {
+      return true;
     }
 
     if (!dateValue || !endDate) {
@@ -65,15 +89,15 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
     return dateValue.valueOf() > endDate.valueOf();
   };
 
-  disabledEndDate = (dateValue: Moment) => {
+  disabledEndDate = (dateValue?: Moment) => {
     const { input, startDateFieldName } = this.props;
     const startDate = input.value[startDateFieldName];
     const allowPastDate = this.props.allowPastDate;
 
-    if (allowPastDate !== undefined) {
-      if (!allowPastDate && dateValue.valueOf() < moment().valueOf()) {
-        return true;
-      }
+    const startOfToday = moment().startOf('day');
+
+    if (!allowPastDate && dateValue && dateValue.isBefore(startOfToday)) {
+      return true;
     }
 
     if (!dateValue || !startDate) {

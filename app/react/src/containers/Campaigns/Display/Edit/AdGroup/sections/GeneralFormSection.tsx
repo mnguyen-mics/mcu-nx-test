@@ -142,7 +142,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             startDateFieldName="start_date"
             endDateFieldName="end_date"
             unixTimestamp={true}
-            allowPastDate={true}
+            allowPastDate={false}
             formItemProps={{
               label: formatMessage(messages.contentSectionGeneralRow4Label),
             }}
