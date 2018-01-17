@@ -11,7 +11,9 @@ import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, PluginInterface } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
-import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
+import withDrawer, {
+  DrawableContentProps,
+} from '../../../../components/Drawer';
 import { DataResponse } from '../../../../services/ApiService';
 
 import messages from './messages';
@@ -39,13 +41,14 @@ interface CreateEmailTemplateProps extends DrawableContentProps {
   notifyError: (err?: any) => void;
 }
 
-type JoinedProps = CreateEmailTemplateProps & RouteComponentProps<EmailTemplateRouteParam> & InjectedIntlProps;
+type JoinedProps = CreateEmailTemplateProps &
+  RouteComponentProps<EmailTemplateRouteParam> &
+  InjectedIntlProps;
 
 class CreateEmailTemplate extends React.Component<
   JoinedProps,
   CreateEmailTemplateState
 > {
-
   constructor(props: JoinedProps) {
     super(props);
 
@@ -53,16 +56,11 @@ class CreateEmailTemplate extends React.Component<
       edition: props.match.params.creativeId ? true : false,
       isLoading: true,
     };
-
   }
 
   componentDidMount() {
-    const {
-      edition,
-    } = this.state;
-    const {
-      match: { params: { organisationId, creativeId } },
-    } = this.props;
+    const { edition } = this.state;
+    const { match: { params: { organisationId, creativeId } } } = this.props;
     if (edition && creativeId) {
       this.fetchInitialValues(creativeId);
     } else {
@@ -71,99 +69,123 @@ class CreateEmailTemplate extends React.Component<
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
+    const { match: { params: { organisationId, creativeId } } } = this.props;
     const {
-      match: { params: { organisationId, creativeId } },
-    } = this.props;
-    const {
-      match: { params: { organisationId: nextOrganisationId, creativeId: nextEmailTemplateId } },
+      match: {
+        params: {
+          organisationId: nextOrganisationId,
+          creativeId: nextEmailTemplateId,
+        },
+      },
     } = nextProps;
 
-    if ((organisationId !== nextOrganisationId || creativeId !== nextEmailTemplateId) && nextEmailTemplateId) {
+    if (
+      (organisationId !== nextOrganisationId ||
+        creativeId !== nextEmailTemplateId) &&
+      nextEmailTemplateId
+    ) {
       this.fetchInitialValues(nextEmailTemplateId);
     }
   }
 
   fetchCreationValue = (organisationId: string) => {
-    const {
-      notifyError,
-    } = this.props;
+    const { notifyError } = this.props;
 
-    PluginService
-      .getPluginVersions(CreativeRendererId)
-      .then(res => {
-        const lastVersion = res.data[res.data.length - 1];
+    PluginService.getPluginVersions(CreativeRendererId).then(res => {
+      const lastVersion = res.data[res.data.length - 1];
 
-        const pluginPropertiesPromise = PluginService.getPluginVersionProperty(CreativeRendererId, lastVersion.id);
+      const pluginPropertiesPromise = PluginService.getPluginVersionProperty(
+        CreativeRendererId,
+        lastVersion.id,
+      );
 
-        pluginPropertiesPromise
-          .then(values => {
-            this.setState(prevState => {
-              const nextState = {
-                ...prevState,
-              };
+      pluginPropertiesPromise
+        .then(values => {
+          this.setState(prevState => {
+            const nextState = {
+              ...prevState,
+            };
 
-              nextState.initialValues = {
-                properties:  values.sort((a) => {
+            nextState.initialValues = {
+              properties: values
+                .sort(a => {
                   return a.writable === false ? -1 : 1;
-                }).map(prop => {
-                  return prop.technical_name === 'template_file' && prop.property_type === 'DATA_FILE' ?
-                    { ...prop, value: { ...prop.value, acceptedFile: 'text/html' } } :
-                    prop;
+                })
+                .map(prop => {
+                  return prop.technical_name === 'template_file' &&
+                    prop.property_type === 'DATA_FILE'
+                    ? {
+                        ...prop,
+                        value: { ...prop.value, acceptedFile: 'text/html' },
+                      }
+                    : prop;
                 }),
-              };
+            };
 
-              nextState.emailTemplateRenderer = {
-                id: CreativeRendererId,
-                ...lastVersion,
-              };
-              nextState.isLoading = false;
+            nextState.emailTemplateRenderer = {
+              id: CreativeRendererId,
+              ...lastVersion,
+            };
+            nextState.isLoading = false;
 
-              return nextState;
-            });
-          })
-          .catch(err => {
-            notifyError(err);
-            this.setState(() => {
-              return { isLoading: false };
-            });
+            return nextState;
           });
+        })
+        .catch(err => {
+          notifyError(err);
+          this.setState(() => {
+            return { isLoading: false };
+          });
+        });
     });
-  }
+  };
 
   fetchInitialValues = (emailTemplateId: string) => {
-    const fetchEmailTemplate = CreativeService.getEmailTemplate(emailTemplateId).then(res => res.data);
-    const fetchEmailTemplateProperties = CreativeService.getEmailTemplateProperties(emailTemplateId)
-      .then(res => res.data);
-    this.setState({
-      isLoading: true,
-    }, () => {
-      Promise.all([fetchEmailTemplate, fetchEmailTemplateProperties]).then(res => {
-        this.setState({
-          isLoading: false,
-          initialValues: {
-            plugin: res[0],
-            properties: res[1].map(prop => {
-              return prop.technical_name === 'template_file' && prop.property_type === 'DATA_FILE' ?
-                { ...prop, value: { ...prop.value, acceptedFile: 'text/html' } } :
-                prop;
-            }),
+    const fetchEmailTemplate = CreativeService.getEmailTemplate(
+      emailTemplateId,
+    ).then(res => res.data);
+    const fetchEmailTemplateProperties = CreativeService.getEmailTemplateProperties(
+      emailTemplateId,
+    ).then(res => res.data);
+    this.setState(
+      {
+        isLoading: true,
+      },
+      () => {
+        Promise.all([fetchEmailTemplate, fetchEmailTemplateProperties]).then(
+          res => {
+            this.setState({
+              isLoading: false,
+              initialValues: {
+                plugin: res[0],
+                properties: res[1].map(prop => {
+                  return prop.technical_name === 'template_file' &&
+                    prop.property_type === 'DATA_FILE'
+                    ? {
+                        ...prop,
+                        value: { ...prop.value, acceptedFile: 'text/html' },
+                      }
+                    : prop;
+                }),
+              },
+            });
           },
-        });
-      });
-    });
-  }
+        );
+      },
+    );
+  };
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/creatives/email`;
     history.push(attributionModelUrl);
-  }
+  };
 
-  saveOrCreatePluginInstance = (plugin: EmailTemplateResource, properties: PluginProperty[]) => {
-
-    const {
-      edition,
-    } = this.state;
+  saveOrCreatePluginInstance = (
+    plugin: EmailTemplateResource,
+    properties: PluginProperty[],
+  ) => {
+    const { edition } = this.state;
 
     const {
       match: { params: { organisationId } },
@@ -175,14 +197,19 @@ class CreateEmailTemplate extends React.Component<
     if (edition) {
       return this.setState({ isLoading: true }, () => {
         CreativeService.updateEmailTemplate(plugin.id, plugin)
-        .then(res => {
-          return this.updatePropertiesValue(properties, organisationId, plugin.id);
-        }).then(res => {
-          this.setState({ isLoading: false }, () => {
-            history.push(`/v2/o/${organisationId}/creatives/email`);
-          });
-        })
-        .catch(err => notifyError(err));
+          .then(res => {
+            return this.updatePropertiesValue(
+              properties,
+              organisationId,
+              plugin.id,
+            );
+          })
+          .then(res => {
+            this.setState({ isLoading: false }, () => {
+              history.push(`/v2/o/${organisationId}/creatives/email`);
+            });
+          })
+          .catch(err => notifyError(err));
       });
     }
     // if creation save and redirect
@@ -190,40 +217,53 @@ class CreateEmailTemplate extends React.Component<
       ...plugin,
     };
     if (this.state.initialValues && this.state.emailTemplateRenderer) {
-      formattedFormValues.renderer_artifact_id =  this.state.emailTemplateRenderer.artifact_id;
+      formattedFormValues.renderer_artifact_id = this.state.emailTemplateRenderer.artifact_id;
       formattedFormValues.renderer_group_id = this.state.emailTemplateRenderer.group_id;
       formattedFormValues.editor_artifact_id = 'default-editor';
       formattedFormValues.editor_group_id = 'com.mediarithmics.template.email';
     }
     return this.setState({ isLoading: true }, () => {
       CreativeService.createEmailTemplate(organisationId, formattedFormValues)
-      .then(res => res.data)
-      .then(res => {
-        return this.updatePropertiesValue(properties, organisationId, res.id);
-      })
-      .then(res => {
-        this.setState({ isLoading: false }, () => {
-          history.push(`/v2/o/${organisationId}/creatives/email`);
-        });
-      })
-      .catch(err => notifyError(err));
+        .then(res => res.data)
+        .then(res => {
+          return this.updatePropertiesValue(properties, organisationId, res.id);
+        })
+        .then(res => {
+          this.setState({ isLoading: false }, () => {
+            history.push(`/v2/o/${organisationId}/creatives/email`);
+          });
+        })
+        .catch(err => notifyError(err));
     });
-  }
+  };
 
-  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
+  updatePropertiesValue = (
+    properties: PluginProperty[],
+    organisationId: string,
+    id: string,
+  ) => {
     const propertiesPromises: Array<Promise<DataResponse<PluginProperty>>> = [];
     properties.forEach(item => {
-      propertiesPromises.push(CreativeService.updateEmailTemplateProperty(organisationId, id, item.technical_name, item));
+      propertiesPromises.push(
+        CreativeService.updateEmailTemplateProperty(
+          organisationId,
+          id,
+          item.technical_name,
+          item,
+        ),
+      );
     });
     return Promise.all(propertiesPromises);
-  }
+  };
 
   formatInitialValues = (initialValues: any) => {
     const formattedProperties: any = {};
 
     if (initialValues.properties) {
       initialValues.properties.forEach((property: PluginProperty) => {
-        formattedProperties[property.technical_name] = { value: property.value };
+        formattedProperties[property.technical_name] = {
+          value: property.value,
+        };
       });
     }
 
@@ -231,64 +271,67 @@ class CreateEmailTemplate extends React.Component<
       plugin: initialValues.plugin,
       properties: formattedProperties,
     };
-  }
+  };
 
   render() {
     const {
-      match: {
-        url,
-        params: {
-          organisationId,
-        },
-      },
+      match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      isLoading,
-    } = this.state;
+    const { isLoading } = this.state;
 
     const breadcrumbPaths = [
       { name: formatMessage(messages.emailTemplateBreadCrumb) },
     ];
 
-    const sidebarItems = {
-      general: messages.menuGeneralInformation,
-      properties: messages.menuProperties,
-    };
+    const sidebarItems = [
+      { sectionId: 'general', title: messages.menuGeneralInformation },
+      { sectionId: 'properties', title: messages.menuProperties },
+    ];
 
     const formId = 'pluginForm';
 
-    const buttonMetadata = (this.state.initialValues &&
-      this.state.initialValues.properties && this.state.initialValues.properties.length) || this.state.edition ? {
-      formId,
-      message: messages.save,
-      onClose: this.redirect,
-    } : {
-      formId,
-      onClose: this.redirect,
-    };
+    const actionbarProps =
+      (this.state.initialValues &&
+        this.state.initialValues.properties &&
+        this.state.initialValues.properties.length) ||
+      this.state.edition
+        ? {
+            formId,
+            message: messages.save,
+            onClose: this.redirect,
+          }
+        : {
+            formId,
+            onClose: this.redirect,
+          };
 
-    return (isLoading) ?
-    (
+    return isLoading ? (
       <div style={{ display: 'flex', flex: 1 }}>
         <Loading className="loading-full-screen" />
       </div>
-    ) :
-    (
+    ) : (
       <EditContentLayout
-        breadcrumbPaths={breadcrumbPaths}
-        sidebarItems={sidebarItems}
-        buttonMetadata={buttonMetadata}
-        url={url}
+        paths={breadcrumbPaths}
+        items={sidebarItems}
+        scrollId={formId}
+        {...actionbarProps}
       >
         <PluginEditForm
           editionMode={this.state.edition}
           organisationId={organisationId}
           save={this.saveOrCreatePluginInstance}
-          pluginProperties={(this.state.initialValues && this.state.initialValues.properties) || []}
+          pluginProperties={
+            (this.state.initialValues && this.state.initialValues.properties) ||
+            []
+          }
           isLoading={isLoading}
-          pluginVersionId={(this.state.emailTemplateRenderer && this.state.emailTemplateRenderer.id) || ''}
+          pluginVersionId={
+            (this.state.emailTemplateRenderer &&
+              this.state.emailTemplateRenderer.id) ||
+            ''
+          }
           formId={formId}
           initialValues={this.formatInitialValues(this.state.initialValues)}
           openNextDrawer={this.props.openNextDrawer}
@@ -303,8 +346,5 @@ export default compose(
   injectIntl,
   withDrawer,
   withRouter,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  connect(undefined, { notifyError: actions.notifyError }),
 )(CreateEmailTemplate);

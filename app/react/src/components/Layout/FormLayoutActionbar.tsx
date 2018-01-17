@@ -8,8 +8,9 @@ import {compose} from 'recompose';
 
 import McsIcons from '../McsIcons';
 import ActionBar, { ActionBarProps } from '../ActionBar';
+import { Omit } from '../../utils/Types';
 
-export interface FormLayoutActionbarProps extends ActionBarProps {
+export interface FormLayoutActionbarProps extends Omit<ActionBarProps, 'edition'> {
 
   formId: string;
 

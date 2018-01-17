@@ -135,9 +135,7 @@ class ContentArea extends React.Component<Props> {
       { name: 'Quick Edit' },
     ];
 
-    const sidebarItems = {};
-
-    const buttonMetadata = {
+    const actionbarProps = {
       formId: 'contentAreaForm',
       message: messages.save,
       onClose: this.props.closeNextDrawer,
@@ -145,10 +143,8 @@ class ContentArea extends React.Component<Props> {
 
     return (
       <EditContentLayout
-        breadcrumbPaths={breadcrumbPaths}
-        sidebarItems={sidebarItems}
-        buttonMetadata={buttonMetadata}
-        url={''}
+        paths={breadcrumbPaths}
+        {...actionbarProps}
       >
         <Layout>
           <Form

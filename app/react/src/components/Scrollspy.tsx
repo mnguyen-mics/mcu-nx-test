@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import ScrollspyImport from 'react-scrollspy';
 
-export interface ScrollspyProps {
+interface ScrollspyProps {
     items: string[];
     currentClassName: string;
     scrolledPastClassName?: string;

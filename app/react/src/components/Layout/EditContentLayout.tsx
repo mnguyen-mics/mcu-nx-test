@@ -1,59 +1,35 @@
 import * as React from 'react';
 import { Layout } from 'antd';
-import { FormattedMessage } from 'react-intl';
-import { Path } from '../ActionBar';
-import EditLayoutActionbar from './EditLayoutActionbar';
-import SidebarWrapper from './SidebarWrapper';
+import FormLayoutActionbar, { FormLayoutActionbarProps } from './FormLayoutActionbar';
+import ScrollspySider, { SideBarItem } from './ScrollspySider';
 
-const EditLayoutActionbarJS = EditLayoutActionbar as any;
-
-export interface EditContentLayoutProps {
-  breadcrumbPaths: Path[];
-  sidebarItems?: { [key: string]: FormattedMessage.MessageDescriptor };
-  buttonMetadata: {
-    message?: FormattedMessage.MessageDescriptor,
-    formId: string,
-    onClose: () => void,
-  };
-  url: string;
-  isCreativetypePicker?: boolean;
-  changeType?: () => void; // check type
+export interface EditContentLayoutProps extends FormLayoutActionbarProps {
+  scrollId?: string
+  items?: SideBarItem[]
 }
+
 
 class EditContentLayout extends React.Component<EditContentLayoutProps> {
 
   render() {
     const {
-      breadcrumbPaths,
+      scrollId,
+      items,
       children,
-      sidebarItems,
-      buttonMetadata,
-      url,
-      changeType,
-      isCreativetypePicker,
+      ...rest,
     } = this.props;
 
-    const eventualSidebar = sidebarItems && (
-      <SidebarWrapper
-        items={sidebarItems}
-        scrollId={
-          /* scrollId must be the same id as in the scrollable stuff
-          * ex. at EmailForm: <Form id="emailForm" />
-          */
-          buttonMetadata.formId
-        }
-        url={url}
-        changeType={changeType}
+    const eventualSidebar = items && items.length && (
+      <ScrollspySider
+        items={items}
+        scrollId={scrollId || rest.formId}
       />
     );
 
     return (
       <Layout className="edit-layout">
-        <EditLayoutActionbarJS
-          {...buttonMetadata}
-          edition={true}
-          breadcrumbPaths={breadcrumbPaths}
-          isCreativetypePicker={isCreativetypePicker}
+        <FormLayoutActionbar          
+          {...rest}
         />
 
         <Layout>

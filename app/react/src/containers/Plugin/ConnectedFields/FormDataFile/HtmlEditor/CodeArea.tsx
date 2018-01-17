@@ -1,26 +1,36 @@
-
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
-import { Layout, } from 'antd';
-import { FieldCtor, FormSection, FormCodeEdit } from '../../../../../components/Form';
+import { Layout } from 'antd';
+import {
+  FieldCtor,
+  FormSection,
+  FormCodeEdit,
+} from '../../../../../components/Form';
 import { FormCodeEditProps } from '../../../../../components/Form/FormCodeEdit';
-import { reduxForm, InjectedFormProps, Field, Form, ConfigProps } from 'redux-form';
-import { EditContentLayout } from '../../../../../components/Layout'
-import { DrawableContentProps } from '../../../../../components/Drawer'
+import {
+  reduxForm,
+  InjectedFormProps,
+  Field,
+  Form,
+  ConfigProps,
+} from 'redux-form';
+import { EditContentLayout } from '../../../../../components/Layout';
+import { DrawableContentProps } from '../../../../../components/Drawer';
 import { Omit } from '../../../../../utils/Types';
 const { Content } = Layout;
 
 const FormCodeField: FieldCtor<FormCodeEditProps> = Field;
 
-export interface CodeAreaProps extends DrawableContentProps, Omit<ConfigProps<any>, 'form' > {
-}
+export interface CodeAreaProps
+  extends DrawableContentProps,
+    Omit<ConfigProps<any>, 'form'> {}
 
 type Props = InjectedFormProps<any, CodeAreaProps> & CodeAreaProps;
 
 const messages = defineMessages({
   quickEdit: {
     id: 'htmlEditor.codearea.breadcrumb.title',
-    defaultMessage: 'Code Edit'
+    defaultMessage: 'Code Edit',
   },
   save: {
     id: 'htmlEditor.codearea.breadcrumb.save',
@@ -29,8 +39,8 @@ const messages = defineMessages({
   formTitle: {
     id: 'htmlEditor.codearea.form.title',
     defaultMessage: 'Code Edit',
-  }
-})
+  },
+});
 
 const fieldGridConfig = {
   labelCol: { span: 3 },
@@ -38,41 +48,29 @@ const fieldGridConfig = {
 };
 
 class CodeArea extends React.Component<Props> {
-
-  
   render() {
     const { handleSubmit } = this.props;
 
-    const breadcrumbPaths = [
-      { name: 'Code Edit' },
-    ];
+    const breadcrumbPaths = [{ name: 'Code Edit' }];
 
-    const sidebarItems = {};
-
-    const buttonMetadata = {
+    const actionbarProps = {
       formId: 'codeAreaForm',
       message: messages.save,
       onClose: this.props.closeNextDrawer,
-    }
+    };
 
     return (
       <EditContentLayout
-        breadcrumbPaths={breadcrumbPaths}
-        sidebarItems={sidebarItems}
-        buttonMetadata={buttonMetadata}
-        url={''}
+        paths={breadcrumbPaths}
+        {...actionbarProps}
       >
         <Layout>
           <Form
             onSubmit={handleSubmit as any}
             className={'edit-layout ant-layout'}
           >
-            <Content
-              className="mcs-content-container mcs-form-container ad-group-form"
-            >
-              <FormSection
-                title={messages.formTitle}
-              />
+            <Content className="mcs-content-container mcs-form-container ad-group-form">
+              <FormSection title={messages.formTitle} />
               <FormCodeField
                 name={'code'}
                 component={FormCodeEdit}
@@ -97,7 +95,7 @@ class CodeArea extends React.Component<Props> {
                       tabSize: 2,
                     },
                     width: '100%',
-                    wrapEnabled: true
+                    wrapEnabled: true,
                   },
                 }}
               />
