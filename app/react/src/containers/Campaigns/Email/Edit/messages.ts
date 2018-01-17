@@ -286,4 +286,8 @@ export default defineMessages({
     id: 'segment.title.column3',
     defaultMessage: 'Desktop Cookie Ids',
   },
+  errorFormMessage: {
+    id: 'campaign.form.generic.error.message',
+    defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
+  },
 });

@@ -72,15 +72,6 @@ type Props = InjectedFormProps<
 const FORM_ID = 'campaignForm';
 
 class DisplayCampaignForm extends React.Component<Props> {
-  componentWillReceiveProps(nextProps: Props) {
-    // const { submitFailed } = this.props;
-    const { intl: { formatMessage } } = this.props;
-    const { submitFailed: nextSubmitFailed } = nextProps;
-    if (nextSubmitFailed) {
-      message.error(formatMessage(messages.errorFormMessage));
-    }
-  }
-
   render() {
     const {
       closeNextDrawer,

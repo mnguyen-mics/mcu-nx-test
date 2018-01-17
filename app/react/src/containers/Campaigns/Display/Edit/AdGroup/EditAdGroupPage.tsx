@@ -47,16 +47,23 @@ class EditAdGroupPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { campaignId, adGroupId: adGroupIdFromURLParam } }, location } = this.props;
+    const {
+      match: { params: { campaignId, adGroupId: adGroupIdFromURLParam } },
+      location,
+    } = this.props;
 
-    const adGroupIdFromLocState = location.state && location.state.adGroupId
+    const adGroupIdFromLocState = location.state && location.state.adGroupId;
 
     const adGroupId = adGroupIdFromURLParam || adGroupIdFromLocState;
 
     Promise.all([
       DisplayCampaignService.getCampaignDisplay(campaignId),
       adGroupId
-        ? AdGroupFormService.loadAdGroup(campaignId, adGroupId, !!adGroupIdFromLocState)
+        ? AdGroupFormService.loadAdGroup(
+            campaignId,
+            adGroupId,
+            !!adGroupIdFromLocState,
+          )
         : Promise.resolve(null),
     ])
       .then(([campaignApiRes, adGroupFormData]) => {
@@ -77,19 +84,24 @@ class EditAdGroupPage extends React.Component<Props, State> {
   }
 
   onSubmitFail = () => {
-    message.loading('Error in form');
-  }
+    const { intl } = this.props;
+    message.error(intl.formatMessage(messages.errorFormMessage));
+  };
 
   save = (adGroupFormData: AdGroupFormData) => {
     const {
       match: { params: { organisationId, campaignId } },
       notifyError,
       history,
+      intl,
     } = this.props;
 
     const { adGroupFormData: initialAdGroupFormData } = this.state;
 
-    const hideSaveInProgress = message.loading('Saving in progress', 0);
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
 
     this.setState({
       loading: true,

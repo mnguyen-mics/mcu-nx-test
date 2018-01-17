@@ -67,18 +67,27 @@ class EditCampaignPage extends React.Component<Props, State> {
     }
   }
 
+  onSubmitFail = () => {
+    const { intl } = this.props;
+    message.error(intl.formatMessage(messages.errorFormMessage));
+  };
+
   save = (displayCampaignFormData: DisplayCampaignFormData) => {
     const {
       match: { params: { organisationId } },
       notifyError,
       history,
+      intl,
     } = this.props;
 
     const {
       displayCampaignFormData: initialDisplayCampaignFormData,
     } = this.state;
 
-    const hideSaveInProgress = message.loading('Saving in progress', 0);
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
 
     this.setState({
       loading: true,
@@ -158,6 +167,7 @@ class EditCampaignPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         openNextDrawer={openNextDrawer}
         closeNextDrawer={closeNextDrawer}
+        onSubmitFail={this.onSubmitFail}
       />
     );
   }

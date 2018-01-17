@@ -122,6 +122,11 @@ class EditBlastPage extends React.Component<Props, State> {
       });
   };
 
+  onSubmitFail = () => {
+    const { intl } = this.props;
+    message.error(intl.formatMessage(messages.errorFormMessage));
+  };
+
   render() {
     const {
       match: { params: { organisationId, campaignId, blastId } },
@@ -164,6 +169,7 @@ class EditBlastPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         openNextDrawer={openNextDrawer}
         closeNextDrawer={closeNextDrawer}
+        onSubmitFail={this.onSubmitFail}
       />
     );
   }

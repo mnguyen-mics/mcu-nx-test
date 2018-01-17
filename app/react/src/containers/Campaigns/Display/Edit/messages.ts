@@ -837,5 +837,9 @@ export default defineMessages({
     id: 'campaignEditor.adGroup-form.edit',
     defaultMessage: 'Edit {adGroupName}'
   },
+  savingInProgress: {
+    id: 'form.saving.in.progress',
+    defaultMessage: 'Saving in progress',
+  },
 
 });
