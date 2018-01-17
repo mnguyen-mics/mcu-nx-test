@@ -8,7 +8,7 @@ import {
   Field,
   ConfigProps,
 } from 'redux-form';
-import { Layout, message } from 'antd';
+import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 
 import {

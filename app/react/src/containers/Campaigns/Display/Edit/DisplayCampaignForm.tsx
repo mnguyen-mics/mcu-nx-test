@@ -10,7 +10,7 @@ import {
 } from 'redux-form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Layout, message } from 'antd';
+import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
