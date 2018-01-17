@@ -33,8 +33,13 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   }
 
   redirect = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
-    history.push(`/v2/o/${organisationId}/creatives/display`);
+    const { history, location, match: { params: { organisationId } } } = this.props;
+    
+    const url = location.state && location.state.from
+      ? location.state.from
+      : `/v2/o/${organisationId}/creatives/display`
+
+    history.push(url);
   };
 
   onSave = (creativeData: DisplayCreativeFormData) => {
