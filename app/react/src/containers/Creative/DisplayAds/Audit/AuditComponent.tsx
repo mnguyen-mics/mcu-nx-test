@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Button, Modal, Row, Col } from 'antd';
 import moment from 'moment';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  injectIntl,
+  InjectedIntlProps,
+} from 'react-intl';
 import {
   AuditStatusResource,
   CreativeAuditAction,
@@ -21,8 +26,10 @@ interface State {
   modalVisible: boolean;
 }
 
-class AuditComponent extends React.Component<AuditComponentProps, State> {
-  constructor(props: AuditComponentProps) {
+type Props = AuditComponentProps & InjectedIntlProps;
+
+class AuditComponent extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       modalVisible: false,
@@ -36,7 +43,7 @@ class AuditComponent extends React.Component<AuditComponentProps, State> {
   };
 
   render() {
-    const { auditStatuses, creative, onMakeAuditAction } = this.props;
+    const { auditStatuses, creative, onMakeAuditAction, intl } = this.props;
 
     const auditDetailsMessage = (
       <FormattedMessage
@@ -52,7 +59,7 @@ class AuditComponent extends React.Component<AuditComponentProps, State> {
     );
 
     return (
-      <div>
+      <div style={{ overflow: 'hidden' }}>
         <div>
           <div className={'float-left'} style={{ lineHeight: '34px' }}>
             <AuditStatusRenderer auditStatus={creative.audit_status} />
@@ -66,6 +73,7 @@ class AuditComponent extends React.Component<AuditComponentProps, State> {
         <Modal
           title={auditDetailsMessage}
           visible={this.state.modalVisible}
+          footer={null}
           onCancel={this.toggleDisplayModal}
         >
           {auditStatuses.map(auditStatus => {
@@ -73,9 +81,11 @@ class AuditComponent extends React.Component<AuditComponentProps, State> {
               <Row key={auditStatus.date}>
                 <Col span={auditStatus.feedback ? 8 : 12}>
                   {auditStatus.display_network}:{' '}
-                  <FormattedMessage
-                    {...auditStatusMessageMap[auditStatus.status]}
-                  />
+                  <span>
+                    {intl.formatMessage(
+                      auditStatusMessageMap[auditStatus.status],
+                    )}
+                  </span>
                 </Col>
                 {auditStatus.feedback ? (
                   <Col span={8}>{auditStatus.feedback}</Col>
@@ -92,7 +102,7 @@ class AuditComponent extends React.Component<AuditComponentProps, State> {
   }
 }
 
-export default AuditComponent;
+export default injectIntl(AuditComponent);
 
 export const auditStatusMessageMap: {
   [key in AuditStatus]: FormattedMessage.MessageDescriptor

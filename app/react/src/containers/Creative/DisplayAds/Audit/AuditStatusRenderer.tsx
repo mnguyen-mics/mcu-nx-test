@@ -10,10 +10,7 @@ export interface AuditStatusRendererProps {
 
 const defaultAuditStatus: CreativeAuditStatus = 'NOT_AUDITED';
 
-class AuditStatusRenderer extends React.Component<
-  AuditStatusRendererProps,
-  any
-> {
+class AuditStatusRenderer extends React.Component<AuditStatusRendererProps> {
   render() {
     const { auditStatus } = this.props;
     const status = auditStatus || defaultAuditStatus;

@@ -1,23 +1,26 @@
 import * as React from 'react';
 import { Modal, Button } from 'antd';
 import { CreativeAuditAction } from '../../../../models/creative/CreativeResource';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  injectIntl,
+  InjectedIntlProps,
+} from 'react-intl';
 
 export interface AuditActionButtonListProps {
   auditActions: CreativeAuditAction[];
   confirmAuditAction: (auditAction: CreativeAuditAction) => void;
 }
 
-export default class AuditActionButtonList extends React.Component<
-  AuditActionButtonListProps
+class AuditActionButtonList extends React.Component<
+  AuditActionButtonListProps & InjectedIntlProps
 > {
   confirmMakeAuditAction = (auditAction: CreativeAuditAction) => {
-    const { confirmAuditAction } = this.props;
+    const { confirmAuditAction, intl } = this.props;
     Modal.confirm({
-      title: <FormattedMessage {...confirmAuditActionTitleMap[auditAction]} />,
-      content: (
-        <FormattedMessage {...confirmAuditActionContentMap[auditAction]} />
-      ),
+      title: intl.formatMessage(confirmAuditActionTitleMap[auditAction]),
+      content: intl.formatMessage(confirmAuditActionContentMap[auditAction]),
       onOk() {
         confirmAuditAction(auditAction);
       },
@@ -43,6 +46,8 @@ export default class AuditActionButtonList extends React.Component<
     );
   }
 }
+
+export default injectIntl(AuditActionButtonList);
 
 export const auditActionMessageMap: {
   [key in CreativeAuditAction]: FormattedMessage.MessageDescriptor
