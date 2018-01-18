@@ -32,43 +32,53 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
   };
 
   updateStartDate = (date: Moment) => {
-    const { input, startDateFieldName, unixTimestamp, startDatePickerProps: { showTime } } = this.props;
+    const {
+      input,
+      startDateFieldName,
+      unixTimestamp,
+      startDatePickerProps: { showTime },
+    } = this.props;
 
     let computedStartDate: Moment | number = date;
     if (date) {
       if (!showTime) {
         computedStartDate = computedStartDate.startOf('day');
       }
-      
+
       if (unixTimestamp) {
         computedStartDate = parseInt(computedStartDate.format('x'), 0);
       }
     }
-    
+
     return input.onChange({
       ...input.value,
-      [startDateFieldName]: date 
-    })    
+      [startDateFieldName]: date,
+    });
   };
 
   updateEndDate = (date: Moment) => {
-    const { input, endDateFieldName, unixTimestamp, endDatePickerProps: { showTime } } = this.props;
-    
+    const {
+      input,
+      endDateFieldName,
+      unixTimestamp,
+      endDatePickerProps: { showTime },
+    } = this.props;
+
     let computedEndDate: Moment | number = date;
     if (date) {
       if (!showTime) {
         computedEndDate = computedEndDate.endOf('day');
       }
-      
+
       if (unixTimestamp) {
         computedEndDate = parseInt(computedEndDate.format('x'), 0);
       }
     }
-    
+
     return input.onChange({
       ...input.value,
-      [endDateFieldName]: date 
-    })    
+      [endDateFieldName]: date,
+    });
   };
 
   disabledStartDate = (dateValue?: Moment) => {
@@ -135,14 +145,16 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
     // if (meta.touched && meta.warning) validateStatus = 'warning';
 
     const startDateValue =
-      input.value[startDateFieldName] === undefined
+      input.value[startDateFieldName] === undefined ||
+      input.value[startDateFieldName] === null
         ? undefined
         : unixTimestamp
           ? moment(input.value[startDateFieldName])
           : input.value[startDateFieldName];
 
     const endDateValue =
-      input.value[endDateFieldName] === undefined
+      input.value[endDateFieldName] === undefined ||
+      input.value[endDateFieldName] === null
         ? undefined
         : unixTimestamp
           ? moment(input.value[endDateFieldName])
@@ -160,7 +172,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
             <DatePicker
               allowClear={false}
               {...startDatePickerProps}
-              value={startDateValue}
+              {...{value:startDateValue}}
               onChange={this.updateStartDate}
               disabledDate={this.disabledStartDate}
               format={DEFAULT_DATE_FORMAT}
@@ -175,7 +187,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
             <DatePicker
               allowClear={false}
               {...endDatePickerProps}
-              value={endDateValue}
+              {...{value:endDateValue}}
               onChange={this.updateEndDate}
               disabledDate={this.disabledEndDate}
               format={DEFAULT_DATE_FORMAT}
