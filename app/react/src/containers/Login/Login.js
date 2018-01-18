@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
-
-import Alert from 'mcs-react-alert';
+import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
 
 import log from '../../utils/Logger';
 
@@ -33,7 +31,7 @@ class Login extends Component {
       hasError,
      } = this.props;
 
-    const errorMsg = hasError ? <Alert type="danger" text={<FormattedMessage id="LOG_IN_ERROR" />} /> : null;
+    const errorMsg = hasError ? <Alert type="error" style={{ marginBottom: 24 }} message={<FormattedMessage id="LOG_IN_ERROR" />} /> : null;
 
     return (
       <div className="mcs-login-container">

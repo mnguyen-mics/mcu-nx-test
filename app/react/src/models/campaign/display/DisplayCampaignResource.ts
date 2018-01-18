@@ -35,4 +35,5 @@ export interface DisplayCampaignResource {
   targeted_operating_systems: TargetedOperatingSystem;
   time_zone: string;
   model_version: ModelVersion;
+  type: string;
 }

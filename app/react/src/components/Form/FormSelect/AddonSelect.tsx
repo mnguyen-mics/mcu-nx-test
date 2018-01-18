@@ -7,9 +7,10 @@ import FormSelect from './FormSelect';
 
 const { Option } = Select;
 
-interface FormSelectAddonProps {
+export interface FormSelectAddonProps {
   options: OptionProps[];
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
+  disabled?: boolean;
 }
 
 const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props => {
@@ -18,6 +19,7 @@ const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props =
     input,
     style,
     options,
+    disabled,
   } = props;
 
   const formValue = input.value || options[0];
@@ -31,6 +33,7 @@ const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props =
     <FormSelect
       input={input}
       style={{ display: 'flex', justifyContent: 'center', ...style }}
+      disabled={disabled}
     >{optionsToDisplay}
     </FormSelect>
   );
@@ -38,6 +41,7 @@ const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props =
 
 AddonSelect.defaultProps = {
   style: { width: 100 },
+  disabled: false,
 };
 
 export default AddonSelect;

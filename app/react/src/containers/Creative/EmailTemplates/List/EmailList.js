@@ -13,7 +13,7 @@ import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 
 import { getEmailTemplates, isFetchingEmailTemplates, hasEmailTemplates, getEmailTemplatesTotal } from '../../../../state/Creatives/Emails/selectors';
-import CreativeScreenshot from '../../CreativeScreenshot';
+import CreativeScreenshot from '../../CreativeScreenshot.tsx';
 
 class CreativeEmailsTable extends Component {
   constructor(props) {
@@ -195,11 +195,6 @@ class CreativeEmailsTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
     return hasCreativeEmails ? (
       <div className="mcs-table-container">
         <EmailTestModal
@@ -209,7 +204,8 @@ class CreativeEmailsTable extends Component {
           handleCancel={this.handleCancel}
         />
         <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
           loading={isFetchingCreativeEmails}
           pagination={pagination}

@@ -5,7 +5,7 @@ import log from '../../utils/Logger';
 
 import { fetchEmailRouters } from './actions';
 
-import EmailRouterService from '../../services/EmailRouterService';
+import EmailRouterService from '../../services/EmailRouterService.ts';
 
 import { EMAIL_ROUTER_LIST_FETCH } from '../action-types';
 

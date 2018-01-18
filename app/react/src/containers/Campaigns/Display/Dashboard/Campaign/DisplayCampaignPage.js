@@ -11,7 +11,7 @@ import DisplayCampaign from './DisplayCampaign.tsx';
 
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
-import GoalService from '../../../../../services/GoalService';
+import GoalService from '../../../../../services/GoalService.ts';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer.ts';
 import { normalizeReportView } from '../../../../../utils/MetricHelper.ts';
 import { makeCancelable } from '../../../../../utils/ApiHelper.ts';
@@ -312,9 +312,9 @@ class DisplayCampaignPage extends Component {
       });
     });
 
-    DisplayCampaignService.getGoal(campaignId).then(goals => goals.data).then(goals => {
+    DisplayCampaignService.getGoals(campaignId).then(goals => goals.data).then(goals => {
       const promises = goals.map(goal => {
-        return GoalService.getAttributionModel(goal.goal_id).then(attribution => {
+        return GoalService.getAttributionModels(goal.goal_id).then(attribution => {
           return { ...goal, attribution: attribution.data };
         });
       });

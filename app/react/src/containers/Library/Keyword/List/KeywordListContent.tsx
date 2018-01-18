@@ -9,7 +9,11 @@ import ItemList, { Filters } from '../../../../components/ItemList';
 import KeywordListsService from '../../../../services/Library/KeywordListsService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { Keyword } from '../../../../models/keywordList/keywordList';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
 
 const initialState = {
@@ -28,45 +32,42 @@ interface RouterProps {
   organisationId: string;
 }
 
-class KeywordListContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, KeywordListContentState> {
-
+class KeywordListContent extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  KeywordListContentState
+> {
   state = initialState;
 
   archiveKeywordList = (keywordId: string) => {
     return KeywordListsService.deleteKeywordLists(keywordId);
-  }
+  };
 
   fetchKeywordList = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      KeywordListsService.getKeywordLists(organisationId, options)
-        .then((results) => {
+      KeywordListsService.getKeywordLists(organisationId, options).then(
+        results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        });
+        },
+      );
     });
-  }
+  };
 
   onClickArchive = (keyword: Keyword) => {
     const {
-      location: {
-        search,
-        pathname,
-        state,
-      },
+      location: { search, pathname, state },
       history,
       match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      data,
-    } = this.state;
+    const { data } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
@@ -77,8 +78,7 @@ class KeywordListContent extends React.Component<RouteComponentProps<RouterProps
       okText: formatMessage(messages.keywordArchiveOk),
       cancelText: formatMessage(messages.keywordArchiveCancel),
       onOk: () => {
-        this.archiveKeywordList(keyword.id)
-        .then(() => {
+        this.archiveKeywordList(keyword.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -98,74 +98,60 @@ class KeywordListContent extends React.Component<RouteComponentProps<RouterProps
         // cancel
       },
     });
-  }
+  };
 
   onClickEdit = (keyword: Keyword) => {
-    const {
-      history,
-      match: { params: { organisationId } },
-    } = this.props;
+    const { history, match: { params: { organisationId } } } = this.props;
 
     history.push(`/${organisationId}/library/keywordslists/${keyword.id}`);
-  }
-
-  resetKeywordList = () => {
-    this.setState(initialState);
-  }
+  };
 
   render() {
-    const {
-      match: { params: { organisationId } },
-    } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
 
-    const actions = {
-      fetchList: this.fetchKeywordList,
-      resetList: this.resetKeywordList,
-    };
+    const actionsColumnsDefinition = [
+      {
+        key: 'action',
+        actions: [
+          { translationKey: 'EDIT', callback: this.onClickEdit },
+          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+        ],
+      },
+    ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            { translationKey: 'EDIT', callback: this.onClickEdit },
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
-        },
-      ],
-
-      dataColumnsDefinition: [
-        {
-          translationKey: 'NAME',
-          intlMessage: messages.name,
-          key: 'name',
-          isHideable: false,
-          render: (text: string, record: Keyword) => (
-            <Link
-              className="mcs-campaigns-link"
-              to={`/${organisationId}/library/keywordslists/${record.id}`}
-            >{text}
-            </Link>
-          ),
-        },
-      ],
-    };
+    const dataColumnsDefinition = [
+      {
+        translationKey: 'NAME',
+        intlMessage: messages.name,
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: Keyword) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/${organisationId}/library/keywordslists/${record.id}`}
+          >
+            {text}
+          </Link>
+        ),
+      },
+    ];
 
     const emptyTable: {
-      iconType: McsIconType,
-      intlMessage: FormattedMessage.Props,
-      } = {
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
+    } = {
       iconType: 'library',
       intlMessage: messages.empty,
     };
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchKeywordList}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />
@@ -173,7 +159,4 @@ class KeywordListContent extends React.Component<RouteComponentProps<RouterProps
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(KeywordListContent);
+export default compose(withRouter, injectIntl)(KeywordListContent);

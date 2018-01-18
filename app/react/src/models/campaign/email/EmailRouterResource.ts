@@ -8,8 +8,11 @@ export interface EmailRouterResource {
   version_id: string;
 }
 
-export interface EmailRouterSelectionResource {
+export interface EmailRouterSelectionCreateRequest {
+  consent_id: string;
+}
+
+export interface EmailRouterSelectionResource extends EmailRouterSelectionCreateRequest {
   id: string;
   name: string;
-  email_router_version_id: string;
 }

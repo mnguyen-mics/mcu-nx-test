@@ -1,31 +1,24 @@
-import moment, {Moment} from 'moment';
-
-function formatCalendarDate(date: Date) {
-  return moment(date).locale('fr').format('L');
-}
-
-function isPastDate(date: Moment) {
-  const now = moment();
-
-  return date && date.isBefore(now, 'day');
-}
-
-function isToday(date: Moment) {
-  const now = moment();
-
-  return date && date.isSame(now, 'day');
-}
+import moment, { Moment } from 'moment';
 
 /**
  * @param date1 Javascript date
  * @param date2 Javascript date
  */
-function areDatesSameDay(date1: Moment, date2: Moment) {
+export function areDatesSameDay(date1: Moment, date2: Moment) {
   const format = 'YYYY-MM-DD';
-  return (date1.format(format) === date2.format(format));
+  return date1.format(format) === date2.format(format);
 }
 
-function truncateUpToHour(date: Date, hourOfDay: number) {
+export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY';
+
+export function formatUnixTimestamp(
+  ts: number | null | undefined
+) {
+  if (!ts) return '--/--/----';
+  return moment(ts).format(DEFAULT_DATE_FORMAT);
+}
+
+export function truncateUpToHour(date: Date, hourOfDay: number) {
   if (hourOfDay) {
     date.setHours(hourOfDay);
     date.setMinutes(0);
@@ -36,11 +29,3 @@ function truncateUpToHour(date: Date, hourOfDay: number) {
     date.setSeconds(0);
   }
 }
-
-export {
-  formatCalendarDate,
-  isPastDate,
-  isToday,
-  areDatesSameDay,
-  truncateUpToHour,
-};

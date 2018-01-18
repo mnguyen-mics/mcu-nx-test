@@ -1,15 +1,15 @@
-import EditLayoutActionbar from './EditLayoutActionbar';
+import FormLayoutActionbar from './FormLayoutActionbar';
 import EditContentLayout from './EditContentLayout';
 import EditLayout from './EditLayout';
 import LayoutManager from './LayoutManager';
 import MainLayout from './MainLayout';
-import SidebarWrapper from './SidebarWrapper';
+import ScrollspySider from './ScrollspySider';
 
 export {
-  EditLayoutActionbar,
+  FormLayoutActionbar,
   EditContentLayout,
   EditLayout,
   LayoutManager,
   MainLayout,
-  SidebarWrapper,
+  ScrollspySider,
 };

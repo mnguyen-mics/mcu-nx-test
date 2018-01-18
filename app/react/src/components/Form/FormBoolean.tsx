@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { Form, Tooltip, Row, Col, Checkbox } from 'antd';
-import { isEmpty } from 'lodash';
+import { Checkbox } from 'antd';
 
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
+import { TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
 
-import McsIcons from '../../components/McsIcons';
+import FormFieldWrapper from './FormFieldWrapper';
 
 interface FormBooleanProps {
   formItemProps?: FormItemProps;
@@ -16,14 +15,14 @@ interface FormBooleanProps {
   helpToolTipProps: TooltipProps;
 }
 
-const defaultTooltipPlacement: TooltipPlacement = 'right';
-
-interface StateInterface  {
+interface StateInterface {
   checked: boolean;
 }
 
-class FormBoolean extends React.Component<FormBooleanProps & WrappedFieldProps, StateInterface> {
-
+class FormBoolean extends React.Component<
+  FormBooleanProps & WrappedFieldProps,
+  StateInterface
+> {
   static defaultprops = {
     formItemProps: {},
     inputProps: {},
@@ -43,7 +42,7 @@ class FormBoolean extends React.Component<FormBooleanProps & WrappedFieldProps, 
     this.setState({
       checked: checked,
     });
-  }
+  };
 
   render() {
     const {
@@ -54,40 +53,28 @@ class FormBoolean extends React.Component<FormBooleanProps & WrappedFieldProps, 
       input,
     } = this.props;
 
-    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    let validateStatus = 'success' as
+      | 'success'
+      | 'warning'
+      | 'error'
+      | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
-    const displayHelpToolTip = !isEmpty(helpToolTipProps);
-
-    const mergedTooltipProps = {
-      placement: defaultTooltipPlacement,
-      ...helpToolTipProps,
-    };
-
     return (
-      <Form.Item
+      <FormFieldWrapper
         help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
+        rowProps={{ className: 'm-b-20' }}
         {...formItemProps}
       >
-        <Row align="middle" type="flex" className="m-b-20">
-          <Col span={22} >
-            <Checkbox
-              {...input}
-              {...inputProps}
-              defaultChecked={this.state.checked}
-            />
-          </Col>
-          {displayHelpToolTip &&
-            <Col span={2} className="field-tooltip">
-              <Tooltip {...mergedTooltipProps}>
-                <McsIcons type="info" />
-              </Tooltip>
-            </Col>
-          }
-        </Row>
-      </Form.Item>
+        <Checkbox
+          {...input}
+          {...inputProps}
+          defaultChecked={this.state.checked}
+        />
+      </FormFieldWrapper>
     );
   }
 }

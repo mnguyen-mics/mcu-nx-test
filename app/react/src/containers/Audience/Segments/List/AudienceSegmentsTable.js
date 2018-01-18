@@ -383,28 +383,24 @@ class AudienceSegmentsTable extends Component {
 
     const filtersOptions = [
       {
-        name: 'types',
         displayElement: <div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>,
-        menuItems: {
-          handleMenuClick: (value => this.updateLocationSearch({
-            types: value.types.map(item => item.value),
-          })),
-          selectedItems: filter.types.map(type => ({ key: type, value: type })),
-          items: typeItems,
-        },
+        selectedItems: filter.types.map(type => ({ key: type, value: type })),
+        items: typeItems,
+        getKey: item => item.key,
+        display: item => item.value,
+        handleMenuClick: values =>
+          this.updateLocationSearch({
+            types: values.map(v => v.value),
+          }),
       },
     ];
-
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     return (hasAudienceSegments
       ? (
         <div className="mcs-table-container">
           <TableViewFilters
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
+            actionsColumnsDefinition={actionColumns}
             searchOptions={searchOptions}
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}

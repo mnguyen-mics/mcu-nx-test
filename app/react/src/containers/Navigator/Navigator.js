@@ -20,7 +20,7 @@ import { AuthenticatedRoute } from '../../containers/Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../ForgotPassword';
 import { Login } from '../Login';
-import routes from '../../routes/routes';
+import routes from '../../routes/routes.ts';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
 import NavigatorService from '../../services/NavigatorService';

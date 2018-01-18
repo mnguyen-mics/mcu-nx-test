@@ -7,6 +7,7 @@ import { generateFakeId } from '../../../utils/FakeIdHelper';
 
 interface FormSelect {
   input: WrappedFieldInputProps;
+  disabled?: boolean;
 }
 
 const FormSelect: React.SFC<SelectProps & FormSelect> = props => {
@@ -14,6 +15,7 @@ const FormSelect: React.SFC<SelectProps & FormSelect> = props => {
   const {
     children,
     input: { value, onChange, onFocus },
+    disabled,
     ...otherProps,
   } = props;
 
@@ -31,6 +33,7 @@ const FormSelect: React.SFC<SelectProps & FormSelect> = props => {
         onChange={onChange as () => any}
         onFocus={onFocus as () => any}
         value={value}
+        disabled={disabled}
         {...otherProps}
       >
         {children}

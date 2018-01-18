@@ -1,8 +1,11 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
-import { PlacementList } from '../../models/placementList/placementList';
+import { PlacementList } from '../../models/placementList/PlacementList';
 
-const placementListService = {
-  getPlacementLists(organisationId: string, options: object = {}): Promise<DataListResponse<PlacementList>> {
+const PlacementListService = {
+  getPlacementLists(
+    organisationId: string,
+    options: object = {},
+  ): Promise<DataListResponse<PlacementList>> {
     const endpoint = 'placement_lists';
 
     const params = {
@@ -12,19 +15,19 @@ const placementListService = {
 
     return ApiService.getRequest(endpoint, params);
   },
-  getPlacementList(placementListId: string, options: object = {}): Promise<DataResponse<PlacementList>> {
+  getPlacementList(
+    placementListId: string,
+  ): Promise<DataResponse<PlacementList>> {
     const endpoint = `placement_lists/${placementListId}`;
 
-    const params = {
-      ...options,
-    };
-
-    return ApiService.getRequest(endpoint, params);
+    return ApiService.getRequest(endpoint);
   },
-  deletePlacementList(id: string, options: object = {}): Promise<DataResponse<any>> {
-    const endpoint = `placement_lists/${id}`;
-    return ApiService.deleteRequest(endpoint, options);
+  deletePlacementList(
+    placementListId: string,
+  ): Promise<DataResponse<any>> {
+    const endpoint = `placement_lists/${placementListId}`;
+    return ApiService.deleteRequest(endpoint);
   },
 };
 
-export default placementListService;
+export default PlacementListService;

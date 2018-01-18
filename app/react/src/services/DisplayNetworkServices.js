@@ -5,6 +5,12 @@ function getAllPublishers(organisationId) {
   return ApiService.getRequest(endpoint);
 }
 
+function getPublisher(displayNetworkId) {
+  const endpoint = `display_networks/${displayNetworkId}`;
+  return ApiService.getRequest(endpoint);
+}
+
 export default {
-  getAllPublishers
+  getAllPublishers,
+  getPublisher,
 };

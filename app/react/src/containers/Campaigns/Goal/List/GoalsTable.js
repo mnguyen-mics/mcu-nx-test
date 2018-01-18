@@ -24,26 +24,16 @@ import {
 
 import { formatMetric } from '../../../../utils/MetricHelper.ts';
 
-import {
-  getTableDataSource,
-} from '../../../../state/Campaigns/Goal/selectors';
+import { getTableDataSource } from '../../../../state/Campaigns/Goal/selectors';
 
-import GoalService from '../../../../services/GoalService';
+import GoalService from '../../../../services/GoalService.ts';
 
 class GoalsTable extends Component {
-
   componentDidMount() {
     const {
       history,
-      location: {
-        search,
-        pathname,
-      },
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      location: { search, pathname },
+      match: { params: { organisationId } },
       loadGoalsDataSource,
     } = this.props;
 
@@ -61,34 +51,23 @@ class GoalsTable extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      location: {
-        search,
-      },
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      location: { search },
+      match: { params: { organisationId } },
       history,
       loadGoalsDataSource,
     } = this.props;
 
     const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-        state,
-      },
-      match: {
-        params: {
-          organisationId: nextOrganisationId,
-        },
-      },
+      location: { pathname: nextPathname, search: nextSearch, state },
+      match: { params: { organisationId: nextOrganisationId } },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
       if (!isSearchValid(nextSearch, GOAL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -106,18 +85,10 @@ class GoalsTable extends Component {
     this.props.resetGoalsTable();
   }
 
-  handleArchiveGoal = (goal) => {
+  handleArchiveGoal = goal => {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        pathname,
-        state,
-        search,
-      },
+      match: { params: { organisationId } },
+      location: { pathname, state, search },
       history,
       dataSource,
       loadGoalsDataSource,
@@ -137,47 +108,39 @@ class GoalsTable extends Component {
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return GoalService.updateGoal({ id: goal.id, body: newGoal }).then(() => {
-          if (dataSource.length === 1 && filter.currentPage !== 1) {
-            const newFilter = {
-              ...filter,
-              currentPage: filter.currentPage - 1
-            };
-            loadGoalsDataSource(organisationId, filter);
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state
-            });
-          } else {
-            loadGoalsDataSource(organisationId, filter);
-          }
-        });
+        return GoalService.updateGoal({ id: goal.id, body: newGoal }).then(
+          () => {
+            if (dataSource.length === 1 && filter.currentPage !== 1) {
+              const newFilter = {
+                ...filter,
+                currentPage: filter.currentPage - 1,
+              };
+              loadGoalsDataSource(organisationId, filter);
+              history.replace({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
+            } else {
+              loadGoalsDataSource(organisationId, filter);
+            }
+          },
+        );
       },
-      onCancel() { },
+      onCancel() {},
     });
-  }
+  };
 
-  handleEditGoal = (goal) => {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      history,
-    } = this.props;
+  handleEditGoal = goal => {
+    const { match: { params: { organisationId } }, history } = this.props;
 
     history.push(`/${organisationId}/goals/${goal.id}`);
-  }
+  };
 
-  updateLocationSearch = (params) => {
+  updateLocationSearch = params => {
     const {
       history,
-      location: {
-        search: currentSearch,
-        pathname,
-      },
+      location: { search: currentSearch, pathname },
     } = this.props;
 
     const nextLocation = {
@@ -186,18 +149,12 @@ class GoalsTable extends Component {
     };
 
     history.push(nextLocation);
-  }
+  };
 
   render() {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
+      match: { params: { organisationId } },
+      location: { search },
       translations,
       isFetchingGoals,
       isFetchingGoalsStat,
@@ -210,18 +167,20 @@ class GoalsTable extends Component {
 
     const searchOptions = {
       placeholder: translations.SEARCH_DISPLAY_CAMPAIGNS,
-      onSearch: value => this.updateLocationSearch({
-        keywords: value,
-      }),
+      onSearch: value =>
+        this.updateLocationSearch({
+          keywords: value,
+        }),
       defaultValue: filter.keywords,
     };
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (values) => this.updateLocationSearch({
-        from: values.from,
-        to: values.to,
-      }),
+      onChange: values =>
+        this.updateLocationSearch({
+          from: values.from,
+          to: values.to,
+        }),
       values: {
         from: filter.from,
         to: filter.to,
@@ -236,18 +195,20 @@ class GoalsTable extends Component {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalGoals,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page,
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        pageSize: size,
-        currentPage: 1,
-      }),
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page,
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          pageSize: size,
+          currentPage: 1,
+        }),
     };
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingGoalsStat) {
-        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
+        return <i className="mcs-table-cell-loading" />; // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -262,7 +223,8 @@ class GoalsTable extends Component {
           <Link
             className="mcs-campaigns-link"
             to={`/${organisationId}/goals/${record.id}/report`}
-          >{text}
+          >
+            {text}
           </Link>
         ),
       },
@@ -289,7 +251,8 @@ class GoalsTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.handleEditGoal,
-          }, {
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.handleArchiveGoal,
           },
@@ -299,31 +262,31 @@ class GoalsTable extends Component {
 
     const filtersOptions = [
       {
-        name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
-        menuItems: {
-          handleMenuClick: value => {
-            this.updateLocationSearch({
-              statuses: value.status.map(item => item.value),
-            });
-          },
-          selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
-          items: [
-            { key: 'ARCHIVED', value: 'ARCHIVED' },
-          ],
+        displayElement: (
+          <div>
+            <FormattedMessage id="STATUS" /> <Icon type="down" />
+          </div>
+        ),
+        selectedItems: filter.statuses.map(status => ({
+          key: status,
+          value: status,
+        })),
+        items: [{ key: 'ARCHIVED', value: 'ARCHIVED' }],
+        getKey: item => item.key,
+        display: item => item.value,
+        handleMenuClick: values => {
+          this.updateLocationSearch({
+            statuses: values.map(item => item.value),
+          });
         },
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
-    return (hasGoals) ? (
+    return hasGoals ? (
       <div className="mcs-table-container">
         <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
           searchOptions={searchOptions}
           dateRangePickerOptions={dateRangePickerOptions}
           filtersOptions={filtersOptions}
@@ -333,8 +296,9 @@ class GoalsTable extends Component {
           pagination={pagination}
         />
       </div>
-    ) : (<EmptyTableView iconType="goals" text="EMPTY_GOALS" />);
-
+    ) : (
+      <EmptyTableView iconType="goals" text="EMPTY_GOALS" />
+    );
   }
 }
 
@@ -354,7 +318,7 @@ GoalsTable.propTypes = {
   resetGoalsTable: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   translations: state.translations,
 
   hasGoals: state.goalsTable.goalsApi.hasItems,
@@ -369,10 +333,7 @@ const mapDispatchToProps = {
   resetGoalsTable: GoalsActions.resetGoalsTable,
 };
 
-GoalsTable = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GoalsTable);
+GoalsTable = connect(mapStateToProps, mapDispatchToProps)(GoalsTable);
 
 GoalsTable = withRouter(GoalsTable);
 

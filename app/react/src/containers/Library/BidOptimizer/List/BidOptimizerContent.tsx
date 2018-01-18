@@ -7,7 +7,11 @@ import { Modal } from 'antd';
 import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import BidOptimizerService from '../../../../services/Library/BidOptimizerService';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { BidOptimizer, PluginProperty } from '../../../../models/Plugins';
 import messages from './messages';
@@ -19,7 +23,7 @@ const initialState = {
 };
 
 interface BidOptimizerInterface extends BidOptimizer {
-    properties?: PluginProperty[];
+  properties?: PluginProperty[];
 }
 
 interface BidOptimizerContentState {
@@ -32,21 +36,23 @@ interface RouterProps {
   organisationId: string;
 }
 
-class BidOptimizerContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, BidOptimizerContentState> {
-
+class BidOptimizerContent extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  BidOptimizerContentState
+> {
   state = initialState;
 
   archiveBidOptimizer = (boId: string) => {
     return BidOptimizerService.deleteBidOptimizer(boId);
-  }
+  };
 
   fetchBidOptimizer = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      BidOptimizerService.getBidOptimizers(organisationId, options)
-        .then((results) => {
+      BidOptimizerService.getBidOptimizers(organisationId, options).then(
+        results => {
           const promises = results.data.map(bo => {
             return BidOptimizerService.getBidOptimizerProperties(bo.id);
           });
@@ -58,7 +64,9 @@ class BidOptimizerContent extends React.Component<RouteComponentProps<RouterProp
               if (foundBo) {
                 formattedResults.push({
                   ...foundBo,
-                  properties: Object.keys(boProperty).map((value: any) => boProperty[value]),
+                  properties: Object.keys(boProperty).map(
+                    (value: any) => boProperty[value],
+                  ),
                 });
               }
             });
@@ -69,38 +77,31 @@ class BidOptimizerContent extends React.Component<RouteComponentProps<RouterProp
               total: results.total || results.count,
             });
           });
-
-        });
+        },
+      );
     });
-  }
+  };
 
   onClickArchive = (placement: BidOptimizerInterface) => {
     const {
-      location: {
-        pathname,
-        state,
-        search,
-      },
+      location: { pathname, state, search },
       history,
       match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      data,
-    } = this.state;
+    const { data } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title:  formatMessage(messages.bidOptimizerArchiveTitle),
+      title: formatMessage(messages.bidOptimizerArchiveTitle),
       content: formatMessage(messages.bidOptimizerArchiveMessage),
       okText: formatMessage(messages.bidOptimizerArchiveOk),
       cancelText: formatMessage(messages.bidOptimizerArchiveCancel),
       onOk: () => {
-        this.archiveBidOptimizer(placement.id)
-        .then(() => {
+        this.archiveBidOptimizer(placement.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -120,91 +121,85 @@ class BidOptimizerContent extends React.Component<RouteComponentProps<RouterProp
         // cancel
       },
     });
-  }
+  };
 
   onClickEdit = (bo: BidOptimizerInterface) => {
-    const {
-      history,
-      match: { params: { organisationId } },
-    } = this.props;
+    const { history, match: { params: { organisationId } } } = this.props;
 
-    history.push(`/v2/o/${organisationId}/library/bid_optimizers/${bo.id}/edit`);
-  }
-
-  resetBidOptimizer = () => {
-    this.setState(initialState);
-  }
+    history.push(
+      `/v2/o/${organisationId}/library/bid_optimizers/${bo.id}/edit`,
+    );
+  };
 
   render() {
-    const {
-      match: { params: { organisationId } },
-    } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
 
-    const actions = {
-      fetchList: this.fetchBidOptimizer,
-      resetList: this.resetBidOptimizer,
-    };
+    const actionsColumnsDefinition = [
+      {
+        key: 'action',
+        actions: [
+          { translationKey: 'EDIT', callback: this.onClickEdit },
+          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+        ],
+      },
+    ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            { translationKey: 'EDIT', callback: this.onClickEdit },
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
+    const dataColumnsDefinition = [
+      {
+        translationKey: 'NAME',
+        intlMessage: messages.name,
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: BidOptimizerInterface) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/library/bid_optimizers/${
+              record.id
+            }/edit`}
+          >
+            {text}
+          </Link>
+        ),
+      },
+      {
+        translationKey: 'ENGINE',
+        intlMessage: messages.engine,
+        key: 'id',
+        isHideable: false,
+        render: (text: string, record: BidOptimizerInterface) => {
+          const property =
+            record &&
+            record.properties &&
+            record.properties.find(item => item.technical_name === 'name');
+          const render =
+            property && property.value && property.value.value
+              ? property.value.value
+              : null;
+          return <span>{render}</span>;
         },
-      ],
-
-      dataColumnsDefinition: [
-        {
-          translationKey: 'NAME',
-          intlMessage: messages.name,
-          key: 'name',
-          isHideable: false,
-          render: (text: string, record: BidOptimizerInterface) => (
-            <Link
-              className="mcs-campaigns-link"
-              to={`/v2/o/${organisationId}/library/bid_optimizers/${record.id}/edit`}
-            >{text}
-            </Link>
-          ),
+      },
+      {
+        translationKey: 'MINER',
+        intlMessage: messages.miner,
+        key: 'engine_group_id',
+        isHideable: false,
+        render: (text: string, record: BidOptimizerInterface) => {
+          const property =
+            record &&
+            record.properties &&
+            record.properties.find(item => item.technical_name === 'provider');
+          const render =
+            property && property.value && property.value.value
+              ? property.value.value
+              : null;
+          return <span>{render}</span>;
         },
-        {
-          translationKey: 'ENGINE',
-          intlMessage: messages.engine,
-          key: 'id',
-          isHideable: false,
-          render: (text: string, record: BidOptimizerInterface) => {
-
-            const property = record && record.properties && record.properties.find(item => item.technical_name === 'name');
-            const render = property && property.value && property.value.value ? property.value.value : null;
-            return (
-            <span>{
-              render
-            }</span>
-          ); },
-        },
-        {
-          translationKey: 'MINER',
-          intlMessage: messages.miner,
-          key: 'engine_group_id',
-          isHideable: false,
-          render: (text: string, record: BidOptimizerInterface) => {
-            const property = record && record.properties && record.properties.find(item => item.technical_name === 'provider');
-            const render = property && property.value && property.value.value ? property.value.value : null;
-            return (
-            <span>{
-              render
-            }</span>
-          ); },
-        },
-      ],
-    };
+      },
+    ];
 
     const emptyTable: {
-      iconType: McsIconType,
-      intlMessage: FormattedMessage.Props,
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
     } = {
       iconType: 'library',
       intlMessage: messages.empty,
@@ -212,11 +207,12 @@ class BidOptimizerContent extends React.Component<RouteComponentProps<RouterProp
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchBidOptimizer}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />
@@ -224,7 +220,4 @@ class BidOptimizerContent extends React.Component<RouteComponentProps<RouterProp
   }
 }
 
-export default compose(
-    withRouter,
-    injectIntl,
-  )(BidOptimizerContent);
+export default compose(withRouter, injectIntl)(BidOptimizerContent);

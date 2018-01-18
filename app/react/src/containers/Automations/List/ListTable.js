@@ -238,16 +238,12 @@ class AutomationsListTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
     return (hasAutomations
       ? (
         <div className="mcs-table-container">
           <TableViewFilters
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
+            actionsColumnsDefinition={actionColumns}
             dataSource={dataSource}
             loading={isFetchingAutomationList}
             pagination={pagination}

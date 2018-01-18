@@ -284,16 +284,12 @@ class AudiencePartitionsTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
     return (hasAudiencePartitions
       ? (
         <div className="mcs-table-container">
           <TableViewFilters
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
+            actionsColumnsDefinition={actionColumns}
             searchOptions={searchOptions}
             dataSource={dataSource}
             loading={isFetchingAudiencePartitions}

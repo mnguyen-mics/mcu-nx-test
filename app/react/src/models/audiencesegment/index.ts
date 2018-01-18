@@ -1,7 +1,8 @@
 import { AudienceSegmentResource } from './AudienceSegmentResource';
-import { AudienceSegmentSelectionResource } from './AudienceSegmentSelectionResource';
+import { AudienceSegmentSelectionResource, AudienceSegmentSelectionCreateRequest } from './AudienceSegmentSelectionResource';
 
 export {
   AudienceSegmentResource,
   AudienceSegmentSelectionResource,
+  AudienceSegmentSelectionCreateRequest
 };

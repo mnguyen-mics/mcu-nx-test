@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import AttributionModelService from '../../../../services/Library/AttributionModelService';
 import * as actions from '../../../../state/Notifications/actions';
-import { PluginProperty, AttributionModel} from '../../../../models/Plugins';
+import { AttributionModel, PluginProperty } from '../../../../models/Plugins';
 import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 import messages from './messages';
