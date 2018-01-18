@@ -37,10 +37,10 @@ class DisplayCreativeFormLoader extends React.Component<
 
   componentDidMount() {
     const { match: { params: { organisationId } }, creativeId } = this.props;
-    this.fetchAllData(organisationId, creativeId);
+    this.loadFormData(organisationId, creativeId);
   }
 
-  fetchAllData = (organisationId: string, creativeId: string) => {
+  loadFormData = (organisationId: string, creativeId: string) => {
     this.setState({ isLoading: true });
 
     DisplayCreativeFormService.loadFormData(creativeId)
@@ -59,6 +59,10 @@ class DisplayCreativeFormLoader extends React.Component<
         });
       });
   };
+
+  saveFormData = () => {
+    this.setState({ isLoading: true });
+  }
 
   render() {
     const { creativeId, ...rest } = this.props;

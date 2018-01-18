@@ -21,6 +21,7 @@ class AuditActionButtonList extends React.Component<
     Modal.confirm({
       title: intl.formatMessage(confirmAuditActionTitleMap[auditAction]),
       content: intl.formatMessage(confirmAuditActionContentMap[auditAction]),
+      okText: intl.formatMessage(confirmAuditActionOkTestMap[auditAction]),
       onOk() {
         confirmAuditAction(auditAction);
       },
@@ -97,7 +98,7 @@ export const confirmAuditActionContentMap: {
   START_AUDIT: {
     id: 'creatives.audit.action.start.confirm.content',
     defaultMessage:
-      "You are about to submit your creative to an external audit. It can take approximatly between 24 to 48 hours. You won't be able to modify your creative during the audit process. Are you sure you want to proceed ?",
+      "You are about to submit your creative to an external audit. Please be sure to save any modification on your creative before starting the audit. It can take approximatly between 24 to 48 hours. You won't be able to modify your creative during the audit process. Are you sure you want to proceed ?",
   },
   FAIL_AUDIT: {
     id: 'creatives.audit.action.fail.confirm.content',
@@ -111,5 +112,28 @@ export const confirmAuditActionContentMap: {
     id: 'creatives.audit.action.reset.confirm.content',
     defaultMessage:
       'You are about to reset your creative audit status, which means that you will need to pass the audit again to use it in a campaign. Are you sure you want to proceed ?',
+  },
+});
+
+export const confirmAuditActionOkTestMap: {
+  [key in CreativeAuditAction]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  START_AUDIT: {
+    id: 'creatives.audit.action.start.confirm.oktext',
+    defaultMessage:
+      "Start the audit",
+  },
+  FAIL_AUDIT: {
+    id: 'creatives.audit.action.fail.confirm.oktext',
+    defaultMessage: 'Fail the audit',
+  },
+  PASS_AUDIT: {
+    id: 'creatives.audit.action.pass.confirm.oktext',
+    defaultMessage: 'Pass the audit',
+  },
+  RESET_AUDIT: {
+    id: 'creatives.audit.action.reset.confirm.oktext',
+    defaultMessage:
+      'Reset the audit',
   },
 });
