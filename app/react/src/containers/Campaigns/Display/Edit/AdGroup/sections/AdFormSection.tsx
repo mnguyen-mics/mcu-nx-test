@@ -41,6 +41,10 @@ import AuditStatusRenderer from '../../../../../Creative/DisplayAds/Audit/AuditS
 import CreativeCard from '../../../../Common/CreativeCard';
 import FormSection from '../../../../../../components/Form/FormSection';
 import EmptyRecords from '../../../../../../components/RelatedRecord/EmptyRecords';
+import {
+  makeCancelable,
+  CancelablePromise,
+} from '../../../../../../utils/ApiHelper';
 
 export interface AdFormSectionProps
   extends DrawableContentProps,
@@ -63,6 +67,8 @@ type Props = AdFormSectionProps &
   InjectedIntlProps;
 
 class AdFormSection extends React.Component<Props, AdsSectionState> {
+  cancelablePromise: CancelablePromise<DisplayAdResource[]>;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -82,11 +88,16 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
         creativeIdsToBeLoaded.push(field.model.creative_id);
       }
     });
-    Promise.all(
-      creativeIdsToBeLoaded.map(id =>
-        CreativeService.getDisplayAd(id).then(res => res.data),
+
+    this.cancelablePromise = makeCancelable(
+      Promise.all(
+        creativeIdsToBeLoaded.map(id =>
+          CreativeService.getDisplayAd(id).then(res => res.data),
+        ),
       ),
-    ).then(creatives => {
+    );
+
+    this.cancelablePromise.promise.then(creatives => {
       this.setState(prevState => ({
         displayCreativeCacheById: {
           ...prevState.displayCreativeCacheById,
@@ -94,6 +105,10 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
         },
       }));
     });
+  }
+
+  componentWillUnmount() {
+    if (this.cancelablePromise) this.cancelablePromise.cancel();
   }
 
   updateAds = (

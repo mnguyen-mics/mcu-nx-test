@@ -19,6 +19,14 @@ import {
 } from '../../../../../../models/plugin/index';
 import BidOptimizerService from '../../../../../../services/Library/BidOptimizerService';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import {
+  DataResponse,
+  DataListResponse,
+} from '../../../../../../services/ApiService';
+import {
+  makeCancelable,
+  CancelablePromise,
+} from '../../../../../../utils/ApiHelper';
 
 export interface BidOptimizerFormSectionProps
   extends DrawableContentProps,
@@ -37,6 +45,10 @@ interface State {
 }
 
 class BidOptimizerFormSection extends React.Component<Props, State> {
+  cancelablePromise: CancelablePromise<
+    [DataResponse<BidOptimizer>, DataListResponse<PropertyResourceShape>]
+  >;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -58,11 +70,19 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
       this.fetchBidOptimizer(bidOptimizerField.model.bid_optimizer_id);
   }
 
+  componentWillUnmount() {
+    if (this.cancelablePromise) this.cancelablePromise.cancel();
+  }
+
   fetchBidOptimizer = (bidOptimizerId: string) => {
-    Promise.all([
-      BidOptimizerService.getBidOptimizer(bidOptimizerId),
-      BidOptimizerService.getBidOptimizerProperty(bidOptimizerId),
-    ]).then(results => {
+    this.cancelablePromise = makeCancelable(
+      Promise.all([
+        BidOptimizerService.getBidOptimizer(bidOptimizerId),
+        BidOptimizerService.getBidOptimizerProperty(bidOptimizerId),
+      ]),
+    );
+
+    this.cancelablePromise.promise.then(results => {
       this.setState({
         bidOptimizerData: {
           bidOptimizer: results[0].data,
