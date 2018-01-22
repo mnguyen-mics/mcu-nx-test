@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, message, Modal } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
@@ -10,23 +10,25 @@ import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
-import EditCampaignsForm, {
-  EditCampaignsFormProps,
-} from '../Edit/Campaign/MutiEdit/EditCampaignsForm';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../components/Drawer/index';
+import withDrawer from '../../../../components/Drawer/index';
 import { RouteComponentProps } from 'react-router';
 import McsMoment from '../../../../utils/McsMoment';
 import messages from '../messages';
+import Slider from '../../../../components/TableView/Slider';
 
-interface DisplayCampaignsActionbarProps extends DrawableContentProps {
-  translations?: object; // type
-  hasSelected: boolean
+interface DisplayCampaignsActionbarProps {
+  selectedRowKeys?: string[];
+  multiEditProps: {
+    archiveCampaigns: () => void;
+    visible: boolean;
+    handleOk: () => void;
+    handleCancel: () => void;
+    openEditCampaignsDrawer: () => void;
+  };
 }
 
 interface FilterProps {
@@ -39,14 +41,15 @@ interface FilterProps {
 }
 
 interface OptionsProps {
-  archived: any;
-  first_result: number;
-  max_results: number;
-  keywords: string[];
-  status: string[];
+  archived?: boolean;
+  first_result?: number;
+  max_results?: number;
+  keywords?: string[];
+  status?: string[];
 }
 
 type JoinedProps = DisplayCampaignsActionbarProps &
+  InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface DisplayCampaignsActionbarState {
@@ -116,7 +119,10 @@ class DisplayCampaignsActionbar extends React.Component<
   state = { exportIsRunning: false, visible: false };
 
   handleRunExport = () => {
-    const { match: { params: { organisationId } }, translations } = this.props;
+    const {
+      match: { params: { organisationId } },
+      intl: { formatMessage },
+    } = this.props;
 
     const filter = parseSearch(
       this.props.location.search,
@@ -126,18 +132,16 @@ class DisplayCampaignsActionbar extends React.Component<
     this.setState({ exportIsRunning: true });
 
     const hideExportLoadingMsg = message.loading(
-      translations.EXPORT_IN_PROGRESS,
+      formatMessage({
+        id: 'display.campaigns.actionbar',
+        defaultMessage: 'Export in progress',
+      }),
       0,
     );
 
     fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportDisplayCampaigns(
-          organisationId,
-          data,
-          filter,
-          translations,
-        );
+        ExportService.exportDisplayCampaigns(organisationId, data, filter);
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
       })
@@ -148,56 +152,29 @@ class DisplayCampaignsActionbar extends React.Component<
       });
   };
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-  handleOk = e => {
-    console.log('campaings archived');
-    this.setState({
-      visible: false,
-    });
-  };
-  handleCancel = e => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-  editCampaigns = () => {
-    console.log('campaigns saved !');
-    this.props.closeNextDrawer();
-  };
-
-  openEditCampaignsDrawer = () => {
-    const additionalProps = {
-      close: this.props.closeNextDrawer,
-      openNextDrawer: this.props.openNextDrawer,
-      closeNextDrawer: this.props.closeNextDrawer,
-      save: this.editCampaigns,
-    };
-    const options = {
-      additionalProps: additionalProps,
-    };
-    this.props.openNextDrawer<EditCampaignsFormProps>(
-      EditCampaignsForm,
-      options,
-    );
-  };
-
-  archiveCampaigns = () => {
-    this.showModal();
-    console.log('archive');
-  };
-
   render() {
     const { exportIsRunning } = this.state;
-    const { match: { params: { organisationId } }, translations, hasSelected } = this.props;
+    const {
+      match: { params: { organisationId } },
+      intl: { formatMessage },
+      selectedRowKeys,
+      multiEditProps: {
+        archiveCampaigns,
+        visible,
+        handleOk,
+        handleCancel,
+        openEditCampaignsDrawer,
+      },
+    } = this.props;
+
+    const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const breadcrumbPaths = [
       {
-        name: translations.DISPLAY,
+        name: formatMessage({
+          id: 'display.campaigns.breadCrumb',
+          defaultMessage: 'Display',
+        }),
         url: `/v2/o/${organisationId}/campaigns/display`,
       },
     ];
@@ -215,32 +192,42 @@ class DisplayCampaignsActionbar extends React.Component<
           <FormattedMessage id="EXPORT" />
         </Button>
 
-        {hasSelected ? (
-          <Button onClick={this.archiveCampaigns}>
-            <McsIcon type="delete" />
-            <FormattedMessage id="ARCHIVE" />
-          </Button>
-        ) : null}
+        <Slider
+          toShow={hasSelected}
+          horizontal={true}
+          content={
+            <Button onClick={archiveCampaigns}>
+              <McsIcons type="delete" />
+              <FormattedMessage id="ARCHIVE" />
+            </Button>
+          }
+        />
 
         {hasSelected ? (
           <Modal
-            title={<FormattedMessage {...messages.archiveCampaignsModalTitle} /> }
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
+            title={
+              <FormattedMessage {...messages.archiveCampaignsModalTitle} />
+            }
+            visible={visible}
+            onOk={handleOk}
+            onCancel={handleCancel}
           >
             <p>
-              <FormattedMessage {...messages.archiveCampaignsModalMessage} /> 
+              <FormattedMessage {...messages.archiveCampaignsModalMessage} />
             </p>
           </Modal>
         ) : null}
 
-        {hasSelected ? (
-          <Button onClick={this.openEditCampaignsDrawer}>
-            <McsIcon type="pen" />
-            <FormattedMessage id="EDIT" />
-          </Button>
-        ) : null}
+        <Slider
+          toShow={hasSelected}
+          horizontal={true}
+          content={
+            <Button onClick={openEditCampaignsDrawer}>
+              <McsIcons type="pen" />
+              <FormattedMessage id="EDIT" />
+            </Button>
+          }
+        />
       </Actionbar>
     );
   }
@@ -250,4 +237,5 @@ export default compose<JoinedProps, DisplayCampaignsActionbarProps>(
   withRouter,
   withTranslations,
   withDrawer,
+  injectIntl,
 )(DisplayCampaignsActionbar);

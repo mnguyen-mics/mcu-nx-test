@@ -37,7 +37,10 @@ export default defineMessages({
     id: 'editCampaigns.breadCrumb',
     defaultMessage: 'Edit Campaigns',
   },
-
+  multiEditTitle: {
+    id: 'editCampaigns.title',
+    defaultMessage: 'Multi Campaign Edit'
+  },
   /*
   ==============================================================================
   ============================== BREADCRUMB TITLES =============================

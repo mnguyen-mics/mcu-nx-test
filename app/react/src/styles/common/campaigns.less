@@ -1,15 +1,35 @@
 .mcs-campaigns-filter-view {
-    padding: 20px 40px;
+  padding: 20px 40px;
 }
 
 .mcs-campaigns-status-active {
-    color: @success-color;
+  color: @success-color;
 }
 
 .mcs-campaigns-status-pending {
-    color: @primary-color;
+  color: @primary-color;
 }
 
 .mcs-campaigns-status-paused {
-    color: @warning-color;
+  color: @warning-color;
+}
+
+.edit-campaigns-form {
+  .delete-campaigns-fieldarray {
+    background: transparent;
+    border: none;
+  }
+  .AddFieldButton {
+    p {
+      text-align: center;
+    }
+    border: dashed;
+    border-width: 1px;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    cursor: pointer;
+    &:hover {
+      background-color: #dcdcdc;
+    }
+  }
 }

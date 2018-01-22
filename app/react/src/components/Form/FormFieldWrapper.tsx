@@ -39,7 +39,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
   return (
     <div className={hasMarginBottom ? '' : 'form-field-wrapper'}>
       <Form.Item
-        label={<span className="field-label">{label}</span>}
+        label={ label && <span className="field-label">{label}</span>}
         {...defaultFieldGridConfig}
         {...formInputProps}
       >
