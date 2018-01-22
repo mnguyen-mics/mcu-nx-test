@@ -10,7 +10,8 @@ import McsIcons from '../../../../components/McsIcons';
 import messages from './messages';
 
 import { UploadFile } from 'antd/lib/upload/interface';
-import { notifyError } from '../../../../state/Notifications/actions';
+import * as actions from '../../../../state/Notifications/actions';
+import { connect } from 'react-redux';
 
 const maxFileSize = 200 * 1024;
 
@@ -20,16 +21,19 @@ interface RouterProps {
   organisationId: string;
 }
 
+interface ReduxProps {
+  notifyError: (err: any) => void;
+}
+
 interface AssetsActionbarState {
   isModalOpen: boolean;
   fileList: UploadFile[];
   isLoading: boolean;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & ReduxProps;
 
 class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -41,52 +45,46 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
 
   handleOpenClose = () => {
     this.setState({ isModalOpen: !this.state.isModalOpen, fileList: [] });
-  }
+  };
 
   handleOnUpload = () => {
-    const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-    } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
     this.setState({ isLoading: true });
-    return Promise.all(this.state.fileList.map(item => {
-      const formData = new FormData(); /* global FormData */
-      formData.append('file', item as any, item.name);
-      return AssetsFilesService.uploadAssetsFile(organisationId, formData);
-    })).then(item => {
-      this.setState({ isLoading: false, isModalOpen: false, fileList: [] });
-      this.props.history.push(`${this.props.location.pathname}${this.props.location.search}`);
-    }).catch(err => notifyError(err));
-  }
+    return Promise.all(
+      this.state.fileList.map(item => {
+        const formData = new FormData(); /* global FormData */
+        formData.append('file', item as any, item.name);
+        return AssetsFilesService.uploadAssetsFile(organisationId, formData);
+      }),
+    )
+      .then(item => {
+        this.setState({ isLoading: false, isModalOpen: false, fileList: [] });
+        this.props.history.push(
+          `${this.props.location.pathname}${this.props.location.search}`,
+        );
+      })
+      .catch(err => {
+        this.setState({ isLoading: false, fileList: [] });
+        this.props.notifyError(err);
+      });
+  };
 
   checkIfSizeOK = (file: UploadFile) => {
-    const {
-      intl: {
-        formatMessage,
-      },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
     const isSizeOK = file.size < maxFileSize;
     if (!isSizeOK) {
       message.error(`${file.name} ${formatMessage(messages.uploadError)}`, 2);
     }
-  }
+  };
 
   filterFileList = (fileList: UploadFile[]) => {
     return fileList.filter(item => {
       return item.size < maxFileSize;
     });
-  }
+  };
 
   renderModal = () => {
-
-    const {
-      intl: {
-        formatMessage,
-      },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
     const props = {
       name: 'file',
@@ -95,13 +93,18 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
       accept: '.jpg,.jpeg,.png,.gif',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
         this.checkIfSizeOK(file);
-        const newFileList = [ ...this.state.fileList, ...this.filterFileList(fileList) ];
+        const newFileList = [
+          ...this.state.fileList,
+          ...this.filterFileList(fileList),
+        ];
         this.setState({ fileList: newFileList });
         return false;
       },
       fileList: this.state.fileList,
       onRemove: (file: UploadFile) => {
-        this.setState({ fileList: this.state.fileList.filter(item => item.uid !== file.uid) });
+        this.setState({
+          fileList: this.state.fileList.filter(item => item.uid !== file.uid),
+        });
       },
     };
 
@@ -116,44 +119,48 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
       >
         <Spin spinning={this.state.isLoading}>
           <Dragger {...props}>
-            <p className="ant-upload-text">{formatMessage(messages.uploadTitle)}</p>
+            <p className="ant-upload-text">
+              {formatMessage(messages.uploadTitle)}
+            </p>
             <p className="ant-upload-hint">
-            {formatMessage(messages.uploadMessage)}</p>
+              {formatMessage(messages.uploadMessage)}
+            </p>
           </Dragger>
         </Spin>
       </Modal>
     );
-  }
+  };
 
   render() {
-
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      intl: {
-        formatMessage,
-      },
+      match: { params: { organisationId } },
+      intl: { formatMessage },
     } = this.props;
 
-    const breadcrumbPaths = [{ name: formatMessage(messages.assets), url: `/v2/o/${organisationId}/library/assets` }];
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.assets),
+        url: `/v2/o/${organisationId}/library/assets`,
+      },
+    ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
         {this.renderModal()}
-        <Button className="mcs-primary" type="primary" onClick={this.handleOpenClose}>
+        <Button
+          className="mcs-primary"
+          type="primary"
+          onClick={this.handleOpenClose}
+        >
           <McsIcons type="plus" /> <FormattedMessage {...messages.newAsset} />
         </Button>
       </Actionbar>
     );
-
   }
-
 }
 
 export default compose(
   injectIntl,
   withRouter,
+  connect(undefined, { notifyError: actions.notifyError }),
 )(AssetsActionbar);
