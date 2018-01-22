@@ -1,6 +1,10 @@
 import { AdResource } from './AdResource';
 import { AdGroupResource } from './AdGroupResource';
-import { CampaignStatus, DisplayCampaignSubType, CreativeAuditStatus } from './../constants';
+import {
+  CampaignStatus,
+  DisplayCampaignSubType,
+  CreativeAuditStatus,
+} from './../constants';
 import { InventorySourceResource } from './InventorySourceResource';
 import { GoalSelectionResource } from './../../goal/GoalSelectionResource';
 
@@ -28,7 +32,7 @@ export interface DisplayCampaignInfoResource {
   goal_selections: GoalSelectionResource[];
 }
 
-interface AdGroupInfoResource extends AdGroupResource {
+export interface AdGroupInfoResource extends AdGroupResource {
   ads: AdInfoResource[];
   audience_segments: AudienceSegmentSelectionInfoResource[];
 }
@@ -44,7 +48,7 @@ export interface AdInfoResource extends AdResource {
   creative_technical_name: string;
 }
 
-interface AudienceSegmentSelectionInfoResource {
+export interface AudienceSegmentSelectionInfoResource {
   id: string;
   technical_name: string;
   audience_segment_id: string;

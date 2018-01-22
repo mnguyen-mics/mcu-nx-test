@@ -1,5 +1,6 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { PluginInterface, PluginVersion, PluginProperty } from '../models/Plugins';
+import { PluginInterface, PluginVersion } from '../models/Plugins';
+import { PropertyResourceShape } from '../models/plugin';
 import DataFileService from './DataFileService';
 
 const pluginService = {
@@ -11,14 +12,18 @@ const pluginService = {
     const endpoint = `plugins/${pluginId}/versions`;
     return ApiService.getRequest(endpoint, params);
   },
-  getPluginVersionProperty(pluginId: string, pluginVersionId: string, params: object = {}): Promise<PluginProperty[]> {
-    const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties`;
-    return ApiService.getRequest(endpoint, params).then((res: DataListResponse<PluginProperty>) => res.data);
+  getPluginVersion(pluginId: string, versionId: string): Promise<DataResponse<PluginInterface>> {
+    const endpoint = `plugins/${pluginId}/versions/${versionId}`;
+    return ApiService.getRequest(endpoint);
   },
-  getEngineProperties(engineVersionId: string): Promise<PluginProperty[]> {
+  getPluginVersionProperty(pluginId: string, pluginVersionId: string, params: object = {}): Promise<PropertyResourceShape[]> {
+    const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties`;
+    return ApiService.getRequest(endpoint, params).then((res: DataListResponse<PropertyResourceShape>) => res.data);
+  },
+  getEngineProperties(engineVersionId: string): Promise<PropertyResourceShape[]> {
     const endpoint = `plugins/${engineVersionId}/properties`;
 
-    return ApiService.getRequest(endpoint).then((res: DataListResponse<PluginProperty>) => res.data);
+    return ApiService.getRequest(endpoint).then((res: DataListResponse<PropertyResourceShape>) => res.data);
   },
   getEngineVersion(engineVersionId: string): Promise<PluginVersion> {
     const endpoint = `plugins/version/${engineVersionId}`;
@@ -56,7 +61,7 @@ const pluginService = {
     objectType: string,
     objectId: string,
     endpoint: string,
-  ): Promise<DataResponse<PluginProperty> | void> {
+  ): Promise<DataResponse<PropertyResourceShape> | void> {
     if (params.property_type === 'ASSET') {
       const uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
       if (params.value && params.value.length === 0) {
@@ -96,7 +101,7 @@ const pluginService = {
             uri: params.value.uri,
             last_modified: null,
           };
-          return ApiService.putRequest(endpoint, newParams) as Promise<DataResponse<PluginProperty>>;
+          return ApiService.putRequest(endpoint, newParams) as Promise<DataResponse<PropertyResourceShape>>;
         });
 
       } else if (params.value.fileName && params.value.fileContent) {
@@ -110,7 +115,7 @@ const pluginService = {
               uri: res,
               last_modified: null,
             };
-            return ApiService.putRequest(endpoint, newParams) as Promise<DataResponse<PluginProperty>>;
+            return ApiService.putRequest(endpoint, newParams) as Promise<DataResponse<PropertyResourceShape>>;
           });
       } else if (!params.value.fileName && !params.value.fileContent && !params.value.uri) {
         // delete

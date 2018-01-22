@@ -221,14 +221,10 @@ class DisplayCampaignAdGroupTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
     return (
       <TableView
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumns}
+        actionsColumnsDefinition={actionColumns}
         dataSource={dataSet}
         loading={isFetching}
       />

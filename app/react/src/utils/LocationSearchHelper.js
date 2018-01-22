@@ -62,6 +62,18 @@ export const DATE_SEARCH_SETTINGS = [
   }
 ];
 
+export const ARCHIVED_SEARCH_SETTINGS = [
+  {
+    paramName: 'archived',
+    defaultValue: false,
+    deserialize: query => query.archived === 'true',
+    serialize: value => value.toString(),
+    isValid: query => {
+      return (query.archived === 'true' || query.archived === 'false');
+    },
+  },
+];
+
 export const isSearchValid = (search, settings) => {
   const query = queryString.parse(search);
     // notEmpty and must forall settings query isValid

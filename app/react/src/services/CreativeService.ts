@@ -8,13 +8,14 @@ import {
   EmailTemplateResource,
   AdFormatResource,
   AdType,
-  AuditResource,
+  AuditStatusResource,
   CreativeAuditAction,
   CreativeScreenshotResource,
 } from '../models/creative/CreativeResource';
+import { PropertyResourceShape } from '../models/plugin/index';
 import PluginService from './PluginService';
 
-interface GetCreativesOptions {
+export interface GetCreativesOptions {
   creative_type?: CreativeType;
   scope?: string;
   keywords?: string[];
@@ -27,7 +28,6 @@ interface GetCreativesOptions {
 }
 
 const CreativeService = {
-
   getCreatives<T extends GenericCreativeResource>(
     organisationId: string,
     options: GetCreativesOptions = {},
@@ -52,28 +52,42 @@ const CreativeService = {
     organisationId: string,
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<DisplayAdResource>> {
-    return CreativeService.getCreatives(organisationId, { creative_type: 'DISPLAY_AD', ...options });
+    return CreativeService.getCreatives(organisationId, {
+      creative_type: 'DISPLAY_AD',
+      ...options,
+    });
   },
 
   getEmailTemplates(
     organisationId: string,
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<EmailTemplateResource>> {
-    return CreativeService.getCreatives(organisationId, { creative_type: 'EMAIL_TEMPLATE', ...options });
+    return CreativeService.getCreatives(organisationId, {
+      creative_type: 'EMAIL_TEMPLATE',
+      ...options,
+    });
   },
 
   getEmailTemplate(
     templateId: string,
   ): Promise<DataResponse<EmailTemplateResource>> {
-    return CreativeService.getCreative(templateId) as Promise<DataResponse<EmailTemplateResource>>;
+    return CreativeService.getCreative(templateId) as Promise<
+      DataResponse<EmailTemplateResource>
+    >;
+  },
+
+  getDisplayAd(
+    displayAdId: string,
+  ): Promise<DataResponse<DisplayAdResource>> {
+    return CreativeService.getCreative(displayAdId) as Promise<DataResponse<DisplayAdResource>>;
   },
 
   getCreativeFormats(
     organisationId: string,
     options: {
-      width?: number,
-      height?: number,
-      type?: AdType,
+      width?: number;
+      height?: number;
+      type?: AdType;
     } = {},
   ): Promise<DataListResponse<AdFormatResource>> {
     const endpoint = 'reference_tables/formats';
@@ -99,8 +113,8 @@ const CreativeService = {
 
   createEmailTemplate(
     organisationId: string,
-    resource: Partial<DisplayAdResource>,
-  ): Promise<DataResponse<DisplayAdResource>> {
+    resource: Partial<EmailTemplateResource>,
+  ): Promise<DataResponse<EmailTemplateResource>> {
     const endpoint = 'email_templates';
     const body = {
       ...resource,
@@ -120,8 +134,8 @@ const CreativeService = {
 
   updateEmailTemplate(
     creativeId: string,
-    resource: Partial<DisplayAdResource>,
-  ): Promise<DataResponse<DisplayAdResource>> {
+    resource: Partial<EmailTemplateResource>,
+  ): Promise<DataResponse<EmailTemplateResource>> {
     const endpoint = `email_templates/${creativeId}`;
     return ApiService.putRequest(endpoint, resource);
   },
@@ -148,7 +162,7 @@ const CreativeService = {
 
   getCreativeRendererProperties(
     creativeId: string,
-  ): Promise<DataListResponse<any>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `display_ads/${creativeId}/renderer_properties`;
     return ApiService.getRequest(endpoint);
   },
@@ -162,7 +176,7 @@ const CreativeService = {
 
   getAuditStatus(
     creativeId: string,
-  ): Promise<DataResponse<AuditResource>> {
+  ): Promise<DataListResponse<AuditStatusResource>> {
     const endpoint = `display_ads/${creativeId}/audits`;
     return ApiService.getRequest(endpoint);
   },

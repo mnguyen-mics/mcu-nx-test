@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { compose } from 'recompose';
 
 import { EmptyTableView, TableViewFilters } from './TableView';
-import { ColumnsDefinitions } from './TableView/TableView';
 import { FormattedMessage } from 'react-intl';
 import { McsIconType } from './McsIcons';
 import {
@@ -12,24 +12,19 @@ import {
   parseSearch,
   updateSearch,
 } from '../utils/LocationSearchHelper';
+import { ViewComponentWithFiltersProps } from './TableView/TableViewFilters';
 
 export interface Filters {
   currentPage?: number;
   pageSize?: number;
-  label_id?: string[];
   status?: string[];
-}
-
-interface ActionProps {
-  fetchList: (organisationId: string, filter: Filters, isInitialFetch?: boolean) => void;
-  resetList: () => void;
 }
 
 interface RouterParams {
   organisationId: string;
 }
 
-interface PageSetting {
+export interface PageSetting {
   paramName: string;
   defaultValue: number;
   deserialize: (query: any) => number;
@@ -42,23 +37,21 @@ interface EmptyTableProps {
   intlMessage: FormattedMessage.Props;
 }
 
-interface ItemListProps {
-  actions: ActionProps;
-  dataSource: Array<{}>;
-  isLoading: boolean;
+export interface ItemListProps<T = any> extends ViewComponentWithFiltersProps<T> {
+  fetchList: (organisationId: string, filter: Filters, isInitialFetch?: boolean) => void;
+  dataSource: T[];
   total: number;
-  columnsDefinitions: ColumnsDefinitions;
   pageSettings: PageSetting[];
   emptyTable: EmptyTableProps;
 }
 
-type ItemListProvidedProps = ItemListProps & RouteComponentProps<RouterParams>;
+type Props<T = any> = ItemListProps<T> & RouteComponentProps<RouterParams>
 
-class ItemList extends React.Component<ItemListProvidedProps> {
+class ItemList<T> extends React.Component<Props<T>> {
 
   componentDidMount() {
     const {
-      actions: { fetchList },
+      fetchList,
       history,
       location: { search, pathname },
       match: { params: { organisationId } },
@@ -78,9 +71,9 @@ class ItemList extends React.Component<ItemListProvidedProps> {
     }
   }
 
-  componentWillReceiveProps(nextProps: ItemListProvidedProps) {
+  componentWillReceiveProps(nextProps: Props<T>) {
     const {
-      actions: { fetchList },
+      fetchList,
       history,
       location: {
         search,
@@ -119,10 +112,6 @@ class ItemList extends React.Component<ItemListProvidedProps> {
     }
   }
 
-  componentWillUnmount() {
-    this.props.actions.resetList();
-  }
-
   updateLocationSearch = (params: Filters) => {
     const {
       history,
@@ -140,9 +129,6 @@ class ItemList extends React.Component<ItemListProvidedProps> {
 
   render() {
     const {
-      columnsDefinitions,
-      dataSource,
-      isLoading,
       total,
       location: { search },
       pageSettings,
@@ -150,9 +136,10 @@ class ItemList extends React.Component<ItemListProvidedProps> {
         iconType,
         intlMessage,
       },
+      ...rest,
     } = this.props;
 
-    if (!dataSource.length && !isLoading) {
+    if (!rest.dataSource.length && !rest.loading) {
       return <EmptyTableView iconType={iconType} intlMessage={intlMessage} />;
     }
 
@@ -166,6 +153,7 @@ class ItemList extends React.Component<ItemListProvidedProps> {
         }),
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
+          currentPage: 1,
           pageSize: size,
         }),
       total,
@@ -174,14 +162,14 @@ class ItemList extends React.Component<ItemListProvidedProps> {
     return (
       <div className="mcs-table-container">
         <TableViewFilters
-          columnsDefinitions={columnsDefinitions}
-          dataSource={dataSource}
-          loading={isLoading}
           pagination={pagination}
+          {...rest}
         />
       </div>
     );
   }
 }
 
-export default withRouter(ItemList) as React.ComponentClass<ItemListProps>;
+export default compose<Props, ItemListProps>(
+  withRouter,
+)(ItemList);

@@ -8,9 +8,12 @@ export interface ConsentResource {
   purpose: ConsentPurpose;
 }
 
-export interface ConsentSelectionResource {
+export interface ConsentSelectionCreateRequest {
+  consent_id: string;
+}
+
+export interface ConsentSelectionResource extends ConsentSelectionCreateRequest {
   id: string;
   name: string;
   technical_name: string;
-  consent_id: string;
 }

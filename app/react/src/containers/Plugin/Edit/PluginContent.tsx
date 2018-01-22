@@ -5,7 +5,11 @@ import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
-import { PluginInterface, PluginProperty, PluginType } from '../../../models/Plugins';
+import {
+  PluginInterface,
+  PluginProperty,
+  PluginType,
+} from '../../../models/Plugins';
 import { DrawableContentProps } from '../../../components/Drawer';
 import PluginService from '../../../services/PluginService';
 import * as actions from '../../../state/Notifications/actions';
@@ -13,16 +17,12 @@ import { EditContentLayout } from '../../../components/Layout';
 // import log from '../../../../utils/Logger';
 import Loading from '../../../components/Loading';
 import messages from './messages';
+import { Path } from '../../../components/ActionBar';
 
 const formId = 'pluginForm';
 
 interface RouterProps {
   organisationId: string;
-}
-
-interface BreadcrumbPaths {
-  name: string;
-  url?: string;
 }
 
 interface PluginContentInnerProps {
@@ -33,8 +33,11 @@ interface PluginContentOuterProps extends DrawableContentProps {
   pluginType: PluginType;
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
-  breadcrumbPaths: BreadcrumbPaths[];
-  saveOrCreatePluginInstance: (plugin: any, properties: PluginProperty[]) => void;
+  breadcrumbPaths: Path[];
+  saveOrCreatePluginInstance: (
+    plugin: any,
+    properties: PluginProperty[],
+  ) => void;
   onClose: () => void;
   editionMode: boolean;
   onSelect: (t: any) => void;
@@ -60,12 +63,11 @@ function initEmptyPluginSelection() {
   };
 }
 
-type JoinedProps = PluginContentOuterProps & PluginContentInnerProps & RouteComponentProps<RouterProps>;
+type JoinedProps = PluginContentOuterProps &
+  PluginContentInnerProps &
+  RouteComponentProps<RouterProps>;
 
-class PluginContent extends React.Component<
-  JoinedProps,
-  PluginContentState> {
-
+class PluginContent extends React.Component<JoinedProps, PluginContentState> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -80,7 +82,10 @@ class PluginContent extends React.Component<
     const { editionMode, initialValue } = this.props;
     if (editionMode) {
       this.setState({
-        pluginProperties: initialValue && initialValue.properties ? initialValue.properties : [],
+        pluginProperties:
+          initialValue && initialValue.properties
+            ? initialValue.properties
+            : [],
         isLoading: false,
       });
       return;
@@ -92,7 +97,10 @@ class PluginContent extends React.Component<
     const { editionMode, initialValue } = nextProps;
     if (editionMode) {
       this.setState({
-        pluginProperties: initialValue && initialValue.properties ? initialValue.properties : [],
+        pluginProperties:
+          initialValue && initialValue.properties
+            ? initialValue.properties
+            : [],
         isLoading: false,
       });
       return;
@@ -100,46 +108,54 @@ class PluginContent extends React.Component<
   }
 
   getPluginsList = () => {
-    this.setState({
-      isLoading: true,
-    }, () => {
-      PluginService.getPlugins({
-        plugin_type: this.props.pluginType,
-      })
-      .then(res => res.data)
-      .then((response: PluginInterface[]) => {
-        this.setState({
-          availablePlugins: response,
-          isLoading: false,
-        });
-      });
-    });
-  }
+    this.setState(
+      {
+        isLoading: true,
+      },
+      () => {
+        PluginService.getPlugins({
+          plugin_type: this.props.pluginType,
+        })
+          .then(res => res.data)
+          .then((response: PluginInterface[]) => {
+            this.setState({
+              availablePlugins: response,
+              isLoading: false,
+            });
+          });
+      },
+    );
+  };
 
   createPlugin = (plugin: PluginInterface, properties: PluginProperty[]) => {
     this.props.saveOrCreatePluginInstance(plugin, properties);
-  }
+  };
 
   onSelectPlugin = (plugin: PluginInterface) => {
-    this.setState({
-      isLoading: true,
-      plugin: plugin,
-    }, () => {
-      this.props.onSelect(plugin);
-      PluginService
-        .getPluginVersions(plugin.id)
-        .then(res => {
-          const lastVersion = res.data[res.data.length - 1];
-          return PluginService.getPluginVersionProperty(plugin.id, lastVersion.id);
-        })
-        .then(res => {
-          this.setState({
-            pluginProperties: res,
-            isLoading: false,
+    this.setState(
+      {
+        isLoading: true,
+        plugin: plugin,
+      },
+      () => {
+        this.props.onSelect(plugin);
+        PluginService.getPluginVersions(plugin.id)
+          .then(res => {
+            const lastVersion = res.data[res.data.length - 1];
+            return PluginService.getPluginVersionProperty(
+              plugin.id,
+              lastVersion.id,
+            );
+          })
+          .then(res => {
+            this.setState({
+              pluginProperties: res,
+              isLoading: false,
+            });
           });
-        });
-    });
-  }
+      },
+    );
+  };
 
   onReset = () => {
     this.setState(prevState => {
@@ -149,15 +165,16 @@ class PluginContent extends React.Component<
       nextState.plugin = initEmptyPluginSelection();
       return nextState;
     });
-
-  }
+  };
 
   formatInitialValues = (initialValues: any) => {
     const formattedProperties: any = {};
 
     if (initialValues.properties) {
       initialValues.properties.forEach((property: PluginProperty) => {
-        formattedProperties[property.technical_name] = { value: property.value };
+        formattedProperties[property.technical_name] = {
+          value: property.value,
+        };
       });
     }
 
@@ -165,14 +182,11 @@ class PluginContent extends React.Component<
       plugin: initialValues.plugin,
       properties: formattedProperties,
     };
-  }
+  };
 
   render() {
     const {
-      match: {
-        url,
-        params: { organisationId },
-      },
+      match: { params: { organisationId } },
       breadcrumbPaths,
       onClose,
       editionMode,
@@ -180,58 +194,59 @@ class PluginContent extends React.Component<
       loading,
     } = this.props;
 
-    const {
-      pluginProperties,
-      isLoading,
-      plugin,
-    } = this.state;
+    const { pluginProperties, isLoading, plugin } = this.state;
 
-    const sidebarItems = {
-      general: messages.menuGeneralInformation,
-      properties: messages.menuProperties,
-    };
+    const sidebarItems = [
+      {
+        sectionId: 'general',
+        title: messages.menuGeneralInformation,
+      },
+      {
+        sectionId: 'properties',
+        title: messages.menuProperties,
+      },
+    ];
 
-    const buttonMetadata = pluginProperties.length || editionMode ? {
-      formId,
-      message: messages.save,
-      onClose: onClose,
-    } : {
-      formId,
-      onClose: onClose,
-    };
+    const actionbarProps =
+      pluginProperties.length || editionMode
+        ? {
+            formId,
+            message: messages.save,
+            onClose: onClose,
+          }
+        : {
+            formId,
+            onClose: onClose,
+          };
 
-    return (isLoading || loading) ?
-      (
-        <div style={{ display: 'flex', flex: 1 }}>
-          <Loading className="loading-full-screen" />
-        </div>
-      ) :
-      (pluginProperties.length || editionMode ? (
-        <EditContentLayout
-          breadcrumbPaths={breadcrumbPaths}
-          sidebarItems={sidebarItems}
-          buttonMetadata={buttonMetadata}
-          url={url}
-        >
-          <PluginEditForm
-            editionMode={editionMode}
-            organisationId={organisationId}
-            save={this.createPlugin}
-            pluginProperties={pluginProperties}
-            isLoading={isLoading}
-            pluginVersionId={plugin.id}
-            formId={formId}
-            initialValues={this.formatInitialValues(initialValue)}
-            openNextDrawer={this.props.openNextDrawer}
-            closeNextDrawer={this.props.closeNextDrawer}
-          />
-        </EditContentLayout>
+    return isLoading || loading ? (
+      <div style={{ display: 'flex', flex: 1 }}>
+        <Loading className="loading-full-screen" />
+      </div>
+    ) : pluginProperties.length || editionMode ? (
+      <EditContentLayout
+        paths={breadcrumbPaths}
+        items={sidebarItems}
+        scrollId={formId}
+        {...actionbarProps}
+      >
+        <PluginEditForm
+          editionMode={editionMode}
+          organisationId={organisationId}
+          save={this.createPlugin}
+          pluginProperties={pluginProperties}
+          isLoading={isLoading}
+          pluginVersionId={plugin.id}
+          formId={formId}
+          initialValues={this.formatInitialValues(initialValue)}
+          openNextDrawer={this.props.openNextDrawer}
+          closeNextDrawer={this.props.closeNextDrawer}
+        />
+      </EditContentLayout>
     ) : (
       <EditContentLayout
-        breadcrumbPaths={breadcrumbPaths}
-        buttonMetadata={buttonMetadata}
-        sidebarItems={null}
-        url={url}
+        paths={breadcrumbPaths}
+        {...actionbarProps}
       >
         <PluginEditSelector
           onSelect={this.onSelectPlugin}
@@ -239,14 +254,12 @@ class PluginContent extends React.Component<
           listTitle={this.props.listTitle}
           listSubTitle={this.props.listSubTitle}
         />
-      </EditContentLayout>));
+      </EditContentLayout>
+    );
   }
 }
 
 export default compose<JoinedProps, PluginContentOuterProps>(
   withRouter,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  connect(undefined, { notifyError: actions.notifyError }),
 )(PluginContent);

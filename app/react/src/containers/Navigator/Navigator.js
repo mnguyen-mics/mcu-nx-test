@@ -20,14 +20,15 @@ import { AuthenticatedRoute } from '../../containers/Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../ForgotPassword';
 import { Login } from '../Login';
-import { getDefaultWorkspaceOrganisationId } from '../../state/Session/selectors';
-import routes from '../../routes/routes';
+import routes from '../../routes/routes.ts';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
 import NavigatorService from '../../services/NavigatorService';
 import { isAppInitialized } from '../../state/App/selectors';
 import { logOut } from '../../state/Login/actions';
 import { setColorsStore } from '../../state/Theme/actions';
+import * as SessionHelper from '../../state/Session/selectors';
+import OrgSelector from './OrgSelector.tsx';
 import errorMessages from './messages';
 
 
@@ -76,6 +77,16 @@ class Navigator extends Component {
     if (initializationError) return (<Error message={formatMessage(errorMessages.generic)} />);
     if (!initialized) return (<Loading />); // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
+    let selectorSize = 200;
+
+    const nbWorkspaces = Object.keys(this.props.workspaces).length;
+
+    if (nbWorkspaces > 20) {
+      selectorSize = 800;
+    } else if (nbWorkspaces > 8) {
+      selectorSize = 400;
+    }
+
     const basePath = '/v2/o/:organisationId(\\d+)';
     const homeUrl = `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
     return (
@@ -111,6 +122,9 @@ class Navigator extends Component {
                       contentComponent={route.contentComponent}
                       actionBarComponent={route.actionBarComponent}
                       editComponent={route.editComponent}
+                      organisationSelector={OrgSelector}
+                      showOrgSelector={nbWorkspaces > 0}
+                      orgSelectorSize={selectorSize}
                       {...props}
                     />
                   </div>
@@ -156,12 +170,14 @@ Navigator.propTypes = {
   defaultWorkspaceOrganisationId: PropTypes.string.isRequired,
   logOut: PropTypes.func.isRequired,
   setColorsStore: PropTypes.func.isRequired,
+  workspaces: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
-  defaultWorkspaceOrganisationId: getDefaultWorkspaceOrganisationId(state),
+  workspaces: SessionHelper.getWorkspaces(state),
+  defaultWorkspaceOrganisationId: SessionHelper.getDefaultWorkspaceOrganisationId(state),
 });
 
 const mapDispatchToProps = {

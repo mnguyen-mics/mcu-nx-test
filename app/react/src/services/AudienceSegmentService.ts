@@ -1,17 +1,20 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import ReportService from './ReportService';
-import { AudienceSegmentResource, AudienceSegmentType, UserQueryEvaluationMode } from '../models/audiencesegment/AudienceSegmentResource';
+import {
+  AudienceSegmentResource,
+  AudienceSegmentType,
+  UserQueryEvaluationMode,
+} from '../models/audiencesegment/AudienceSegmentResource';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
 import McsMoment from '../utils/McsMoment';
+import { PaginatedApiParam } from '../utils/ApiHelper';
 
-interface GetSegmentsOption {
+export interface GetSegmentsOption extends PaginatedApiParam {
   name?: string;
   technical_name?: string;
   type?: AudienceSegmentType;
   evaluation_mode?: UserQueryEvaluationMode;
-  first_result?: number;
-  max_results?: number;
   with_source_datamarts?: boolean;
   campaign_id?: string;
   audience_partition_id?: string;
@@ -19,7 +22,6 @@ interface GetSegmentsOption {
 }
 
 const AudienceSegmentService = {
-
   getSegments(
     organisationId?: string,
     datamartId?: string,
@@ -43,10 +45,7 @@ const AudienceSegmentService = {
   },
 
   // TODO return type (JobExec...)
-  createOverlap(
-    datamartId: string,
-    segmentId: string,
-  ): Promise<any> {
+  createOverlap(datamartId: string, segmentId: string): Promise<any> {
     const endpoint = `datamarts/${datamartId}/overlap_analysis`;
     const header = { 'Content-Type': 'application/json' };
     const body = {
@@ -66,8 +65,8 @@ const AudienceSegmentService = {
   retrieveOverlap(
     segmentId: string,
     options: {
-      first_result?: number,
-      max_results?: number,
+      first_result?: number;
+      max_results?: number;
     } = {},
   ): Promise<any> {
     const endpoint = `audience_segments/${segmentId}/overlap_analysis`;
@@ -80,19 +79,18 @@ const AudienceSegmentService = {
   },
 
   // DEPRECATED, will be removed in a near future
-  getSegmentMetaData(
-    organisationId: string,
-  ): Promise<any> {
+  getSegmentMetaData(organisationId: string): Promise<any> {
     return ReportService.getAudienceSegmentReport(
       organisationId,
       new McsMoment('now'),
       new McsMoment('now'),
       ['audience_segment_id'],
-    )
-      .then(res => normalizeArrayOfObject(
+    ).then(res =>
+      normalizeArrayOfObject(
         normalizeReportView(res.data.report_view),
         'audience_segment_id',
-      ));
+      ),
+    );
   },
 
   // DEPRECATED, will be removed in a near future
@@ -104,23 +102,26 @@ const AudienceSegmentService = {
     return Promise.all([
       AudienceSegmentService.getSegments(organisationId, datamartId, options),
       AudienceSegmentService.getSegmentMetaData(organisationId),
-    ])
-      .then(([segmentApiResp, metadata]) => {
-        const augmentedSegments = segmentApiResp.data.map((segment: any) => {
-          const meta = metadata[segment.id];
-          const userPoints = (meta && meta.user_points ? meta.user_points : '-');
-          const desktopCookieIds = (meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-');
-
-          return { ...segment, user_points: userPoints, desktop_cookie_ids: desktopCookieIds };
-        });
+    ]).then(([segmentApiResp, metadata]) => {
+      const augmentedSegments = segmentApiResp.data.map((segment: any) => {
+        const meta = metadata[segment.id];
+        const userPoints = meta && meta.user_points ? meta.user_points : '-';
+        const desktopCookieIds =
+          meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-';
 
         return {
-          ...segmentApiResp,
-          data: augmentedSegments,
+          ...segment,
+          user_points: userPoints,
+          desktop_cookie_ids: desktopCookieIds,
         };
       });
-  },
 
+      return {
+        ...segmentApiResp,
+        data: augmentedSegments,
+      };
+    });
+  },
 };
 
 export default AudienceSegmentService;

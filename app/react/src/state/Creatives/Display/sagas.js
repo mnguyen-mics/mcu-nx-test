@@ -28,6 +28,7 @@ function* loadCreativeDisplay({ payload }) {
 
     const options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      archived: filter.archived,
     };
 
     const initialOptions = {

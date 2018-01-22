@@ -70,11 +70,6 @@ class MobileApplicationsTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
     const searchOptions = {
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: value => onFilterChange({
@@ -86,7 +81,8 @@ class MobileApplicationsTable extends Component {
     return (noMobileApplicationYet) ? (<EmptyTableView iconType="display" intlMessage={messages.emptyMobileApplications} />) :
            (
              <TableViewFilters
-               columnsDefinitions={columnsDefinitions}
+               columns={dataColumns}
+               actionsColumnsDefinition={actionColumns}
                searchOptions={searchOptions}
                dataSource={dataSource}
                loading={isFetchingMobileApplications}

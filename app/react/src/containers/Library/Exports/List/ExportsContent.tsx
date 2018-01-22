@@ -8,7 +8,11 @@ import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import ExportsService from '../../../../services/Library/ExportsService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 import { Export } from '../../../../models/exports/exports';
 import messages from './messages';
 
@@ -28,45 +32,40 @@ interface RouterProps {
   organisationId: string;
 }
 
-class ExportContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, ExportContentState> {
-
+class ExportContent extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  ExportContentState
+> {
   state = initialState;
 
   archiveExport = (exportId: string) => {
     return ExportsService.deleteExport(exportId);
-  }
+  };
 
   fetchExport = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      ExportsService.getExports(organisationId, options)
-        .then((results) => {
-          this.setState({
-            loading: false,
-            data: results.data,
-            total: results.total || results.count,
-          });
+      ExportsService.getExports(organisationId, options).then(results => {
+        this.setState({
+          loading: false,
+          data: results.data,
+          total: results.total || results.count,
         });
+      });
     });
-  }
+  };
 
   onClickArchive = (ex: Export) => {
     const {
-      location: {
-        search,
-        pathname,
-        state,
-      },
+      location: { search, pathname, state },
       history,
       match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      data,
-    } = this.state;
+    const { data } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
@@ -77,8 +76,7 @@ class ExportContent extends React.Component<RouteComponentProps<RouterProps> & I
       okText: formatMessage(messages.exportsArchiveOk),
       cancelText: formatMessage(messages.exportsArchiveCancel),
       onOk: () => {
-        this.archiveExport(ex.id)
-        .then(() => {
+        this.archiveExport(ex.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -98,71 +96,54 @@ class ExportContent extends React.Component<RouteComponentProps<RouterProps> & I
         // cancel
       },
     });
-  }
+  };
 
   onClickEdit = (keyword: Export) => {
-    const {
-      history,
-      match: { params: { organisationId } },
-    } = this.props;
+    const { history, match: { params: { organisationId } } } = this.props;
 
     history.push(`/${organisationId}/library/exports/${keyword.id}`);
-  }
-
-  resetExport = () => {
-    this.setState(initialState);
-  }
+  };
 
   render() {
-    const {
-      match: { params: { organisationId } },
-    } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
 
-    const actions = {
-      fetchList: this.fetchExport,
-      resetList: this.resetExport,
-    };
+    const actionsColumnsDefinition = [
+      {
+        key: 'action',
+        actions: [
+          { translationKey: 'EDIT', callback: this.onClickEdit },
+          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+        ],
+      },
+    ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            { translationKey: 'EDIT', callback: this.onClickEdit },
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
-        },
-      ],
-
-      dataColumnsDefinition: [
-        {
-          translationKey: 'NAME',
-          intlMessage: messages.name,
-          key: 'name',
-          isHideable: false,
-          render: (text: string, record: Export) => (
-            <Link
-              className="mcs-campaigns-link"
-              to={`/${organisationId}/library/keywordslists/${record.id}`}
-            >{text}
-            </Link>
-          ),
-        },
-        {
-          translationKey: 'type',
-          intlMessage: messages.type,
-          key: 'type',
-          isHideable: false,
-          render: (text: string, record: Export) => (
-            <span>{text}</span>
-          ),
-        },
-      ],
-    };
+    const dataColumnsDefinition = [
+      {
+        translationKey: 'NAME',
+        intlMessage: messages.name,
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: Export) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/${organisationId}/library/keywordslists/${record.id}`}
+          >
+            {text}
+          </Link>
+        ),
+      },
+      {
+        translationKey: 'type',
+        intlMessage: messages.type,
+        key: 'type',
+        isHideable: false,
+        render: (text: string, record: Export) => <span>{text}</span>,
+      },
+    ];
 
     const emptyTable: {
-      iconType: McsIconType,
-      intlMessage: FormattedMessage.Props,
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
     } = {
       iconType: 'library',
       intlMessage: messages.empty,
@@ -170,11 +151,12 @@ class ExportContent extends React.Component<RouteComponentProps<RouterProps> & I
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchExport}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />
@@ -182,7 +164,4 @@ class ExportContent extends React.Component<RouteComponentProps<RouterProps> & I
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(ExportContent);
+export default compose(withRouter, injectIntl)(ExportContent);
