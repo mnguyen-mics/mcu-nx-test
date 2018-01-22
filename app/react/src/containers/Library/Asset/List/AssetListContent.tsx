@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Modal } from 'antd';
+import { Modal, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 
 import { McsIconType } from '../../../../components/McsIcons';
@@ -10,7 +10,10 @@ import AssetsFilesService from '../../../../services/Library/AssetsFilesService'
 import { AssetFileResource } from '../../../../models/assets/assets';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import AssetListActionBar from './AssetListActionBar'
 import messages from './messages';
+
+const { Content } = Layout;
 
 const initialState = {
   loading: false,
@@ -175,15 +178,22 @@ class AssetListContent extends React.Component<RouteComponentProps<RouterProps> 
     };
 
     return (
-      <ItemList
-        actions={actions}
-        dataSource={this.state.data}
-        isLoading={this.state.loading}
-        total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
-        pageSettings={PAGINATION_SEARCH_SETTINGS}
-        emptyTable={emptyTable}
-      />
+      <div className="ant-layout">
+        <AssetListActionBar onUploadDone={this.fetchAssetList} />
+        <div className="ant-layout">
+          <Content className="mcs-content-container">
+            <ItemList
+              actions={actions}
+              dataSource={this.state.data}
+              isLoading={this.state.loading}
+              total={this.state.total}
+              columnsDefinitions={columnsDefinitions}
+              pageSettings={PAGINATION_SEARCH_SETTINGS}
+              emptyTable={emptyTable}
+            />
+          </Content>
+        </div>
+      </div>
     );
   }
 }

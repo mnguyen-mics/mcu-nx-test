@@ -12,6 +12,7 @@ import messages from './messages';
 import { UploadFile } from 'antd/lib/upload/interface';
 import * as actions from '../../../../state/Notifications/actions';
 import { connect } from 'react-redux';
+import { Filters } from '../../../../components/ItemList';
 
 const maxFileSize = 200 * 1024;
 
@@ -25,13 +26,17 @@ interface ReduxProps {
   notifyError: (err: any) => void;
 }
 
+interface AssetsActionbarProps {
+  onUploadDone: (organisationId: string, filter: Filters) => void
+}
+
 interface AssetsActionbarState {
   isModalOpen: boolean;
   fileList: UploadFile[];
   isLoading: boolean;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & ReduxProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & ReduxProps & AssetsActionbarProps;
 
 class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
   constructor(props: Props) {
@@ -59,9 +64,9 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     )
       .then(item => {
         this.setState({ isLoading: false, isModalOpen: false, fileList: [] });
-        this.props.history.push(
-          `${this.props.location.pathname}${this.props.location.search}`,
-        );
+        this.props.onUploadDone(this.props.match.params.organisationId, { 
+          currentPage: 1,
+          pageSize: 10 })
       })
       .catch(err => {
         this.setState({ isLoading: false, fileList: [] });
@@ -159,7 +164,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
   }
 }
 
-export default compose(
+export default compose<Props, AssetsActionbarProps>(
   injectIntl,
   withRouter,
   connect(undefined, { notifyError: actions.notifyError }),
