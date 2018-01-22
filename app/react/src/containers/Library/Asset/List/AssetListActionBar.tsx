@@ -13,6 +13,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import * as actions from '../../../../state/Notifications/actions';
 import { connect } from 'react-redux';
 import { Filters } from '../../../../components/ItemList';
+import { updateSearch, PAGINATION_SEARCH_SETTINGS, parseSearch } from '../../../../utils/LocationSearchHelper';
 
 const maxFileSize = 200 * 1024;
 
@@ -27,7 +28,7 @@ interface ReduxProps {
 }
 
 interface AssetsActionbarProps {
-  onUploadDone: (organisationId: string, filter: Filters) => void
+  onUploadDone: (organisationId: string, filter: Filters) => void;
 }
 
 interface AssetsActionbarState {
@@ -36,7 +37,10 @@ interface AssetsActionbarState {
   isLoading: boolean;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & ReduxProps & AssetsActionbarProps;
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  ReduxProps &
+  AssetsActionbarProps;
 
 class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
   constructor(props: Props) {
@@ -53,7 +57,11 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
   };
 
   handleOnUpload = () => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: { params: { organisationId } },
+      history,
+      location: { pathname, search },
+    } = this.props;
     this.setState({ isLoading: true });
     return Promise.all(
       this.state.fileList.map(item => {
@@ -64,9 +72,21 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     )
       .then(item => {
         this.setState({ isLoading: false, isModalOpen: false, fileList: [] });
-        this.props.onUploadDone(this.props.match.params.organisationId, { 
-          currentPage: 1,
-          pageSize: 10 })
+        const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
+        if (filter.currentPage !== 1) {
+          history.replace({
+            pathname: pathname,
+            search: updateSearch(search, {
+              currentPage: 1,
+              pageSize: 10,
+            }, PAGINATION_SEARCH_SETTINGS),
+          });
+        } else {
+          this.props.onUploadDone(this.props.match.params.organisationId, {
+            currentPage: 1,
+            pageSize: 10,
+          });
+        }
       })
       .catch(err => {
         this.setState({ isLoading: false, fileList: [] });
