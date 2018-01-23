@@ -7,7 +7,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { Layout, Button, Modal } from 'antd';
 
 import EmailCampaignActionbar from './EmailCampaignActionbar';
-import EmailCampaignHeader from './EmailCampaignHeader';
+import CampaignDashboardHeader from '../../Common/CampaignDashboardHeader.tsx';
 import EmailCampaignDashboard from './EmailCampaignDashboard';
 import { Labels } from '../../../Labels/index.ts';
 import { Card } from '../../../../components/Card/index.ts';
@@ -206,7 +206,7 @@ class EmailCampaign extends Component {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <EmailCampaignHeader />
+            <CampaignDashboardHeader campaign={campaign} />
             <Labels labellableId={campaignId} labellableType="EMAIL_CAMPAIGN" organisationId={organisationId} />
             <EmailCampaignDashboard />
             <Card title={formatMessage(messages.emailBlast)} buttons={buttons}>

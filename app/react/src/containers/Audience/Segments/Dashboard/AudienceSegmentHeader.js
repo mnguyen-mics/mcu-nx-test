@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
-import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader.tsx';
+import ContentHeader from '../../../../components/ContentHeader.tsx';
 
 function AudienceSegmentHeader({ segment, translations }) {
 
@@ -18,17 +18,13 @@ function AudienceSegmentHeader({ segment, translations }) {
     iconType = 'solution';
   }
 
-  const attributes = [
-    <span><Icon type={iconType} /> {translations[segment.type]}</span>,
-  ];
+  const segmentType = <span><Icon type={iconType} /> {translations[segment.type]}</span>;
 
   return (
-    <div className="mcs-campaign-header">
-      <TitleAndStatusHeader
-        headerTitle={segment.name || ''}
-        headerAttributes={attributes}
-      />
-    </div>
+    <ContentHeader
+      title={segment.name || ''}
+      subTitle={segmentType}
+    />
   );
 }
 
