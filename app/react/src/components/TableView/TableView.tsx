@@ -6,7 +6,7 @@ import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { ClickParam } from 'antd/lib/menu';
 import { TableProps, ColumnProps } from 'antd/lib/table';
 
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 import withTranslations, {
   TranslationProps,
 } from '../../containers/Helpers/withTranslations';
@@ -65,7 +65,7 @@ class TableView<T> extends React.Component<
             trigger={['click']}
           >
             <a className="ant-dropdown-link">
-              <McsIcons type="chevron" />
+              <McsIcon type="chevron" />
             </a>
           </Dropdown>
         );

@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import Breadcrumb, { BreadcrumbProps } from 'antd/lib/breadcrumb';
-import McsIcons from './McsIcons';
+import McsIcon from './McsIcon';
 
 export interface Path {
   name: FormattedMessage.MessageDescriptor | string;
@@ -49,7 +49,7 @@ class ActionBar extends React.Component<Props> {
       >
         <Breadcrumb
           className={edition ? 'mcs-breadcrumb-edit' : 'mcs-breadcrumb'}
-          separator={<McsIcons type="chevron-right" />}
+          separator={<McsIcon type="chevron-right" />}
           {...rest}
         >
           {paths.map(this.buildItem)}

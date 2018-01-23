@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../../../Actionbar';
 import messages from '../messages.ts';
-import { McsIcons } from '../../../../../components/index.ts';
+import { McsIcon } from '../../../../../components/index.ts';
 
 class AdGroupActionbar extends Component {
 
@@ -25,13 +25,13 @@ class AdGroupActionbar extends Component {
 
     const activeCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('ACTIVE')}>
-        <McsIcons type="play" />
+        <McsIcon type="play" />
         <FormattedMessage {...messages.activateAdGroup} />
       </Button>
     );
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={() => onClickElement('PAUSED')}>
-        <McsIcons type="pause" />
+        <McsIcon type="pause" />
         <FormattedMessage {...messages.pauseAdGroup} />
       </Button>
     );
@@ -140,7 +140,7 @@ class AdGroupActionbar extends Component {
           }}
         >
           <Button>
-            <McsIcons type="pen" />
+            <McsIcon type="pen" />
             <FormattedMessage {...messages.editAdGroup} />
           </Button>
         </Link>

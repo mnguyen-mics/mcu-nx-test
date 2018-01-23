@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
 interface RouterProps {
@@ -34,7 +34,7 @@ class PlacementListsActionbar extends React.Component<RouteComponentProps<Router
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/${organisationId}/library/placementlists/new`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /> <FormattedMessage {...messages.newPlacement} />
+            <McsIcon type="plus" /> <FormattedMessage {...messages.newPlacement} />
           </Button>
         </Link>
       </Actionbar>

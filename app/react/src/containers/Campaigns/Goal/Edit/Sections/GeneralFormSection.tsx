@@ -7,7 +7,7 @@ import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
 import FormInput from '../../../../../components/Form/FormInput';
-import { ButtonStyleless, McsIcons } from '../../../../../components';
+import { ButtonStyleless, McsIcon } from '../../../../../components';
 import messages from '../messages';
 
 interface State {
@@ -66,11 +66,11 @@ class GeneralFormSection extends React.Component<Props, State> {
             className="optional-section-title"
             onClick={this.toggleAdvancedSection}
           >
-            <McsIcons type="settings" />
+            <McsIcon type="settings" />
             <span className="step-title">
               {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
-            <McsIcons type="chevron" />
+            <McsIcon type="chevron" />
           </ButtonStyleless>
 
           <div

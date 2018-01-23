@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { Layout, Menu, Dropdown, Row, Col } from 'antd';
 
 import * as SessionHelper from '../../state/Session/selectors';
-import McsIcons from '../../components/McsIcons.tsx';
+import McsIcon from '../../components/McsIcon.tsx';
 import messages from './messages';
 
 const { Header } = Layout;
@@ -56,12 +56,12 @@ function NavigatorHeader({
           <Row >
             <Col span={12} className="icon-right-align">
               <Link to={{ pathname: `/v2/o/${organisationId}/settings`, search: 'tab=labels' }}>
-                <McsIcons type="options" className="menu-icon" />
+                <McsIcon type="options" className="menu-icon" />
               </Link>
             </Col>
             <Col span={12} className="icon-right-align">
               <Dropdown overlay={accountMenu} trigger={['click']} placement="bottomRight">
-                <a><McsIcons type="user" className="menu-icon" /></a>
+                <a><McsIcon type="user" className="menu-icon" /></a>
               </Dropdown>
             </Col>
           </Row>

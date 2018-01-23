@@ -2,7 +2,7 @@ import * as React from 'react';
 import cuid from 'cuid';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Select, Input, Spin } from 'antd';
-import McsIcons from '../../../../../../../components/McsIcons';
+import McsIcon from '../../../../../../../components/McsIcon';
 import messages from '../../../messages';
 import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
 import { LocationFieldModel } from '../../domain';
@@ -113,11 +113,11 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
           className="small-select"
         >
           <Option value="INC" title={formatMessage(messages.contentSectionLocationOption1)}>
-            <McsIcons type="check" />
+            <McsIcon type="check" />
             <FormattedMessage id="geoname.include" defaultMessage="Include" />
           </Option>
           <Option value="EXC" title={formatMessage(messages.contentSectionLocationOption2)}>
-            <McsIcons type="close-big" />
+            <McsIcon type="close-big" />
             <FormattedMessage id="geoname.exclude" defaultMessage="Exclude" />
           </Option>
         </Select>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Col, Spin } from 'antd';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { groupBy } from 'lodash';
-import { ButtonStyleless, McsIcons } from '../';
+import { ButtonStyleless, McsIcon } from '../';
 import SearchAndTreeSelect, { TreeData } from '../SearchAndTreeSelect';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 export interface FormSearchAndTreeSelectProps {
@@ -101,7 +101,7 @@ export default class FormSearchAndTreeSelect extends React.Component<
           <div key={leave.key} className="audience-service-subitem">
             {leave.label}
             <ButtonStyleless className="remove-button" onClick={handleClick}>
-              <McsIcons type="close" />
+              <McsIcon type="close" />
             </ButtonStyleless>
           </div>,
         );

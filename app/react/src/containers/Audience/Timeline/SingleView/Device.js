@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Icon } from 'antd';
 
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 
 const Device = (props) => {
   const {
@@ -13,11 +13,11 @@ const Device = (props) => {
   const formFactorIcon = (f) => {
     switch (f) {
       case 'TABLET':
-        return (<McsIcons type="tablet" />);
+        return (<McsIcon type="tablet" />);
       case 'SMARTPHONE':
-        return (<McsIcons type="smartphone" />);
+        return (<McsIcon type="smartphone" />);
       case 'PERSONAL_COMPUTER':
-        return (<McsIcons type="laptop" />);
+        return (<McsIcon type="laptop" />);
       default:
         return (<Icon type="question" />);
 

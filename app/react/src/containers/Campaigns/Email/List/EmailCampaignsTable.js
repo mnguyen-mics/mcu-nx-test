@@ -8,7 +8,7 @@ import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView/index.ts';
-import { McsIcons } from '../../../../components/index.ts';
+import { McsIcon } from '../../../../components/index.ts';
 import messages from './messages';
 import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
@@ -83,7 +83,7 @@ function EmailCampaignsTable({
       render: text => (
         <Tooltip placement="top" title={formatMessage(messages[text])}>
           <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-            <McsIcons type="status" />
+            <McsIcon type="status" />
           </span>
         </Tooltip>
       ),

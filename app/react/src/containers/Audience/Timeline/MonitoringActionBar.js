@@ -6,7 +6,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../Actionbar';
-import McsIcons from '../../../components/McsIcons.tsx';
+import McsIcon from '../../../components/McsIcon.tsx';
 import messages from './messages';
 
 const InputGroup = Input.Group;
@@ -111,7 +111,7 @@ class MonitoringActionbar extends Component {
 
         </Modal>
         <Button className="mcs-primary" type="primary" onClick={() => { this.setModalVisible(true); }}>
-          <McsIcons type="refresh" /> <FormattedMessage {...messages.lookUpUser} />
+          <McsIcon type="refresh" /> <FormattedMessage {...messages.lookUpUser} />
         </Button>
       </Actionbar>
     );

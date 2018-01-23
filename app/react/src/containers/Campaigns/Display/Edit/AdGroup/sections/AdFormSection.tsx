@@ -36,7 +36,7 @@ import {
 } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { computeDimensionsByRatio } from '../../../../../../utils/ShapeHelper';
 import { ButtonStyleless } from '../../../../../../components/index';
-import McsIcons from '../../../../../../components/McsIcons';
+import McsIcon from '../../../../../../components/McsIcon';
 import AuditStatusRenderer from '../../../../../Creative/DisplayAds/Audit/AuditStatusRenderer';
 import CreativeCard from '../../../../Common/CreativeCard';
 import FormSection from '../../../../../../components/Form/FormSection';
@@ -275,13 +275,13 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
           </Col>
           <Col className="inline buttons" span={6}>
             <ButtonStyleless onClick={handleEdit}>
-              <McsIcons className="button" type="pen" />
+              <McsIcon className="button" type="pen" />
             </ButtonStyleless>
 
             <div className="button-separator" />
 
             <ButtonStyleless onClick={removeField}>
-              <McsIcons className="button" type="delete" />
+              <McsIcon className="button" type="delete" />
             </ButtonStyleless>
           </Col>
         </Row>

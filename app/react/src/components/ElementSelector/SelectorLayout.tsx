@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Layout } from 'antd';
 import ActionBar from '../ActionBar';
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 import { FormattedMessage } from 'react-intl';
 import { EmptyTableView } from '../TableView';
 
@@ -33,9 +33,9 @@ export default class SelectorLayout extends React.Component<SelectorLayoutProps,
         <div className="edit-layout ant-layout">
           <ActionBar paths={[{ name: actionBarTitle }]} edition={true}>
             <Button type="primary" className="mcs-primary" onClick={handleAdd}>
-              <McsIcons type="plus" /><FormattedMessage id="table-selector-add-button" defaultMessage="Add" />
+              <McsIcon type="plus" /><FormattedMessage id="table-selector-add-button" defaultMessage="Add" />
             </Button>
-            <McsIcons
+            <McsIcon
               type="close"
               className="close-icon mcs-table-cursor"
               onClick={handleClose}

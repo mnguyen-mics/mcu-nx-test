@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 
 import ExportService from '../../../../services/ExportService';
 import GoalService from '../../../../services/GoalService.ts';
@@ -122,11 +122,11 @@ class GoalsActionbar extends Component {
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/${organisationId}/goals/`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /><FormattedMessage id="NEW_GOAL" />
+            <McsIcon type="plus" /><FormattedMessage id="NEW_GOAL" />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcons type="download" />}<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <McsIcon type="download" />}<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

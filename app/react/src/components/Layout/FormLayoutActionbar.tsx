@@ -6,7 +6,7 @@ import {Button} from 'antd';
 import {ButtonProps} from 'antd/lib/button/button';
 import {compose} from 'recompose';
 
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 import ActionBar, { ActionBarProps } from '../ActionBar';
 import { Omit } from '../../utils/Types';
 
@@ -49,11 +49,11 @@ const FormLayoutActionbar: React.SFC<FormLayoutActionbarProvidedProps> = props =
   return (
     <ActionBar edition={true} {...props}>
       { message ? <Button {...submitButtonProps} className="mcs-primary">
-        <McsIcons type="plus"/>
+        <McsIcon type="plus"/>
         <FormattedMessage {...message} />
       </Button> : null }
 
-      <McsIcons
+      <McsIcon
         type="close"
         className="close-icon"
         style={{cursor: 'pointer'}}

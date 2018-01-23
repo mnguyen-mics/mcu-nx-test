@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 import lodash from 'lodash';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 
 import ExportService from '../../../../services/ExportService';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
@@ -175,11 +175,11 @@ class SegmentsActionbar extends Component {
       <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
+            <McsIcon type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcons type="download" />}<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <McsIcon type="download" />}<FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>
     );

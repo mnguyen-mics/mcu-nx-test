@@ -13,7 +13,7 @@ import ExportService from '../../../../services/ExportService';
 import { Actionbar } from '../../../Actionbar';
 import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 
 class EmailCampaignActionbar extends Component {
 
@@ -134,7 +134,7 @@ class EmailCampaignActionbar extends Component {
       <Actionbar path={breadcrumbPaths}>
         { actionElement }
         <Button onClick={this.handleRunExport}>
-          { !isFetchingStats && <McsIcons type="download" /> }<FormattedMessage id="EXPORT" />
+          { !isFetchingStats && <McsIcon type="download" /> }<FormattedMessage id="EXPORT" />
         </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>

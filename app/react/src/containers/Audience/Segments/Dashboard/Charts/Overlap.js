@@ -10,7 +10,7 @@ import { compose } from 'recompose';
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import { VerticalBarChart } from '../../../../../components/BarCharts/index.ts';
 import { LegendChart } from '../../../../../components/LegendChart';
-import McsIcons from '../../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../../components/McsIcon.tsx';
 import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/actions';
 import { getDefaultDatamart } from '../../../../../state/Session/selectors';
 import messages from '../messages';
@@ -127,7 +127,7 @@ class Overlap extends Component {
                 && hasFetchedAudienceStat
                 && (
                   <Button onClick={this.renderModalExtend}>
-                    <McsIcons type="extend" /> {hasOverlap
+                    <McsIcon type="extend" /> {hasOverlap
                       ? <FormattedMessage {...messages.refresh} />
                       : <FormattedMessage {...messages.createOverlap} />
                     }

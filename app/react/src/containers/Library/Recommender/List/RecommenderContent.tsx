@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal } from 'antd';
-import { McsIconType } from '../../../../components/McsIcons';
+import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import RecommenderService from '../../../../services/Library/RecommenderService';
 import PluginService from '../../../../services/PluginService';

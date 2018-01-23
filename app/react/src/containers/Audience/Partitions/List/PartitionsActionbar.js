@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 import { withTranslations } from '../../../Helpers';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
@@ -46,7 +46,7 @@ function PartitionsActionbar({
     <Actionbar path={breadcrumbPaths}>
       <Dropdown overlay={addMenu} trigger={['click']}>
         <Button className="mcs-primary" type="primary">
-          <McsIcons type="plus" /> <FormattedMessage id="NEW_PARTITION" />
+          <McsIcon type="plus" /> <FormattedMessage id="NEW_PARTITION" />
         </Button>
       </Dropdown>
     </Actionbar>

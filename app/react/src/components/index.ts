@@ -3,7 +3,7 @@ import EmptyRecords from './RelatedRecord/EmptyRecords';
 import Form from './Form';
 import List from './List';
 import Loading from './Loading';
-import McsIcons from './McsIcons';
+import McsIcon from './McsIcon';
 import TableSelector from './ElementSelector/TableSelector';
 import MultiSelect from './MultiSelect';
 import SearchAndMultiSelect from './SearchAndMultiSelect';
@@ -17,7 +17,7 @@ export {
   List,
   Loading,
   LabelsSelector,
-  McsIcons,
+  McsIcon,
   TableSelector,
   MultiSelect,
   SearchAndMultiSelect,

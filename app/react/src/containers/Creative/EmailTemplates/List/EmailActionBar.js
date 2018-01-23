@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
 import { withTranslations } from '../../../Helpers';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 
 class EmailActionBar extends Component {
 
@@ -28,7 +28,7 @@ class EmailActionBar extends Component {
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /> <FormattedMessage id="NEW_EMAIL_TEMPLATE" />
+            <McsIcon type="plus" /> <FormattedMessage id="NEW_EMAIL_TEMPLATE" />
           </Button>
         </Link>
       </Actionbar>

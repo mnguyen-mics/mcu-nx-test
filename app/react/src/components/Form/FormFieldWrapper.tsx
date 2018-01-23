@@ -5,7 +5,7 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { RowProps } from 'antd/lib/grid/row';
 import { TooltipProps } from 'antd/lib/tooltip';
 
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 
 export interface FormFieldWrapperProps {
   hasMarginBottom?: boolean;
@@ -50,7 +50,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
             ? (
               <Col span={2} className={`field-tooltip`}>
                 <Tooltip {...helpToolTipProps} placement="right">
-                  <McsIcons type="info" />
+                  <McsIcon type="info" />
                 </Tooltip>
               </Col>
             ) : (

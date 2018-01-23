@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   hasDatamarts,
   getDefaultDatamart } from '../../state/Session/selectors';
-import McsIcons, { McsIconType } from '../../components/McsIcons';
+import McsIcon, { McsIconType } from '../../components/McsIcon';
 import { getOrgFeatures } from '../../state/Features/selectors';
 import {
   itemDefinitions,
@@ -141,7 +141,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       if (buildSubMenu) {
         const onTitleClick = () => { this.setState({ inlineOpenKeys: [itemDef.key] }); this.props.onMenuItemClick(); }
         return (
-          <SubMenu key={itemDef.key} onTitleClick={onTitleClick} title={<span><McsIcons type={itemDef.iconType as McsIconType} /><span className="nav-text"><FormattedMessage {...itemDef.translation} /></span></span>}>
+          <SubMenu key={itemDef.key} onTitleClick={onTitleClick} title={<span><McsIcon type={itemDef.iconType as McsIconType} /><span className="nav-text"><FormattedMessage {...itemDef.translation} /></span></span>}>
             {
               itemDef.subMenuItems.map(subMenuItem => {
                 let linkUrl = `${baseUrl}${subMenuItem.path}`;
@@ -159,7 +159,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
         );
       }
 
-      return (<Menu.Item key={itemDef.key}><Link to={`${baseUrl}${itemDef.path}`}><McsIcons type={itemDef.iconType as McsIconType} /><span className="nav-text"><FormattedMessage {...itemDef.translation} /></span></Link></Menu.Item>);
+      return (<Menu.Item key={itemDef.key}><Link to={`${baseUrl}${itemDef.path}`}><McsIcon type={itemDef.iconType as McsIconType} /><span className="nav-text"><FormattedMessage {...itemDef.translation} /></span></Link></Menu.Item>);
     });
   }
 

@@ -3,7 +3,7 @@ import { Layout, Button, Select, Upload, Input } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcon from '../../../../components/McsIcon';
 import { FormTitle } from '../../../../components/Form';
 import { DrawableContentProps } from '../../../../components/Drawer';
 import DataFileService from '../../../../services/DataFileService';
@@ -285,10 +285,10 @@ class FormDataFileDrawer extends React.Component<
               className="mcs-primary"
               onClick={this.handleAdd}
             >
-              <McsIcons type="plus" />
+              <McsIcon type="plus" />
               <span>Update</span>
             </Button>
-            <McsIcons
+            <McsIcon
               type="close"
               className="close-icon"
               style={{ cursor: 'pointer' }}

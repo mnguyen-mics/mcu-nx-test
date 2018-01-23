@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
-import { ButtonStyleless, McsIcons } from '../../../../../components';
+import { ButtonStyleless, McsIcon } from '../../../../../components';
 import {
   FormInput,
   FormSection,
@@ -191,11 +191,11 @@ class GeneralFormSection extends React.Component<Props, State> {
             className="optional-section-title"
             onClick={this.toggleAdvancedSection}
           >
-            <McsIcons type="settings" />
+            <McsIcon type="settings" />
             <span className="step-title">
               {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
-            <McsIcons type="chevron" />
+            <McsIcon type="chevron" />
           </ButtonStyleless>
 
           <div

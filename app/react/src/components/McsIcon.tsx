@@ -57,12 +57,12 @@ export type McsIconType =
   'video' |
   'warning';
 
-interface McsIconsProps {
+interface McsIconProps {
     type: McsIconType;
     additionalClass?: string;
 }
 
-const McsIcons: React.SFC<McsIconsProps & React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> > = props => {
+const McsIcon: React.SFC<McsIconProps & React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> > = props => {
 
   const {
     type,
@@ -77,4 +77,4 @@ const McsIcons: React.SFC<McsIconsProps & React.DetailedHTMLProps<React.HTMLAttr
   );
 };
 
-export default McsIcons;
+export default McsIcon;

@@ -15,7 +15,7 @@ import {
 } from '../domain';
 import GoalSelector, { GoalSelectorProps } from '../../../Common/GoalSelector';
 import { InjectedDatamartProps, injectDatamart } from '../../../../Datamart';
-import { McsIcons, ButtonStyleless } from '../../../../../components';
+import { McsIcon, ButtonStyleless } from '../../../../../components';
 import {
   RelatedRecords,
   RecordElement,
@@ -258,7 +258,7 @@ class GoalFormSection extends React.Component<Props> {
 
     return (
       <ButtonStyleless onClick={handleOnClick}>
-        <McsIcons type="settings" additionalClass="big" />
+        <McsIcon type="settings" additionalClass="big" />
       </ButtonStyleless>
     );
   };

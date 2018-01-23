@@ -4,7 +4,7 @@ import { Row, Tooltip, Modal, Col, Button } from 'antd';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import { Card } from '../../../../components/Card/index.ts';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 import { TableView } from '../../../../components/TableView/index.ts';
 import messages from '../messages';
 
@@ -39,7 +39,7 @@ class EmailCard extends Component {
         return <span><i><FormattedMessage {...messages.nullEmail} /></i></span>;
       }
       if (typeof text === 'boolean') {
-        return <span>{text ? <McsIcons type="check" /> : <McsIcons type="close" /> }</span>;
+        return <span>{text ? <McsIcon type="check" /> : <McsIcon type="close" /> }</span>;
       }
       return <span>{text ? text : (<i><FormattedMessage {...messages.nullEmail} /></i>)}</span>;
     };
@@ -144,7 +144,7 @@ class EmailCard extends Component {
             <div key={agent.email + agent.hash}>
               <Row gutter={10} className="table-line">
                 <div className="icon-left">
-                  <McsIcons type="email" />
+                  <McsIcon type="email" />
                 </div>
                 <div className="info-right">
                   <div><Tooltip placement="topRight" title={agent.email}>{agent.email}</Tooltip></div>

@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
 import AssetsFilesService from '../../../../services/Library/AssetsFilesService';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -177,7 +177,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
           type="primary"
           onClick={this.handleOpenClose}
         >
-          <McsIcons type="plus" /> <FormattedMessage {...messages.newAsset} />
+          <McsIcon type="plus" /> <FormattedMessage {...messages.newAsset} />
         </Button>
       </Actionbar>
     );
