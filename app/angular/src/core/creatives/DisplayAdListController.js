@@ -19,7 +19,7 @@ define(['./module'], function (module) {
       // Archived
       $scope.displayArchived = false;
       var options = {
-        max_results: 1000,
+        max_results: 3000,
         organisation_id: $scope.organisationId,
         creative_type: 'DISPLAY_AD'
       };
