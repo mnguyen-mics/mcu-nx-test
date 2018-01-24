@@ -26,7 +26,6 @@ class Slider extends React.Component<SliderProps> {
           height: '0px',
           opacity: 0,
           textAlign: 'center',
-          display: 'inline-block',
         };
 
     const transitionStyles: React.CSSProperties = !this.props.horizontal
@@ -36,7 +35,7 @@ class Slider extends React.Component<SliderProps> {
         }
       : {
           entering: { width: '0px', opacity: 0 },
-          entered: { width: '85px', opacity: 1 },
+          entered: { width: '85px', opacity: 1, display: 'inline-block' },
         };
 
     return (
