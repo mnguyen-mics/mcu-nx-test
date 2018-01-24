@@ -14,6 +14,7 @@ import CampaignService, {
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import EditCampaignsForm, {
   EditCampaignsFormProps,
+  EditCampaignsFormData,
 } from '../Edit/Campaign/MutiEdit/EditCampaignsForm';
 import {
   parseSearch,
@@ -23,9 +24,9 @@ import {
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import operation from '../Edit/Campaign/domain';
 
 const { Content } = Layout;
-
 interface DisplayCampaignsPageProps {
   totalDisplayCampaigns: number;
   dataSource: DisplayCampaignResource[];
@@ -110,8 +111,32 @@ class DisplayCampaignsPage extends React.Component<
     });
   };
 
-  saveCampaigns = () => {
+  saveCampaigns = (formData: EditCampaignsFormData) => {
     const { intl: { formatMessage } } = this.props;
+
+    const { selectedRowKeys } = this.state;
+    selectedRowKeys.map(campaignId => {
+      DisplayCampaignService.getCampaignDisplay(campaignId)
+        .then(apiRes => apiRes.data)
+        .then((campaignData: any) => {
+          const updatedData = formData.fields.reduce(
+            (acc, field) => {
+              const campaignProperty: keyof DisplayCampaignResource =
+                field.campaignProperty;
+              return {
+                ...acc,
+                [field.campaignProperty]: operation(
+                  field.action,
+                  campaignData[campaignProperty],
+                  parseInt(field.value, 10),
+                ),
+              };
+            },
+            { type: 'DISPLAY' },
+          );
+          DisplayCampaignService.updateCampaign(campaignId, updatedData);
+        });
+    });
 
     this.setState({
       visible: false,

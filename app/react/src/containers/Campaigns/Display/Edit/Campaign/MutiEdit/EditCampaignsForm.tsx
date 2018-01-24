@@ -20,8 +20,7 @@ import FormLayoutActionbar, {
 import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
-import operation, { CampaignsInfosFieldModel } from '../domain';
-import { DisplayCampaignResource } from '../../../../../../models/campaign/display/index';
+import { CampaignsInfosFieldModel } from '../domain';
 
 const FORM_ID = 'editCampaignsForm';
 
@@ -29,7 +28,7 @@ const CampaignsInfosFieldArray = FieldArray as new () => GenericFieldArray<
   Field
 >;
 
-interface EditCampaignsFormData {
+export interface EditCampaignsFormData {
   [key: string]: Array<{ [property in keyof CampaignsInfosFieldModel]: any }>;
 }
 
@@ -88,32 +87,6 @@ class EditCampaignsForm extends React.Component<
       this.setState({
         campaignNames: campaignNames,
       });
-    });
-  };
-
-  onSave = (formData: EditCampaignsFormData) => {
-    const { selectedRowKeys } = this.props;
-    selectedRowKeys.map(campaignId => {
-      DisplayCampaignService.getCampaignDisplay(campaignId)
-        .then(apiRes => apiRes.data)
-        .then((campaignData: any) => {
-          const updatedData = formData.fields.reduce(
-            (acc, field) => {
-              const campaignProperty: keyof DisplayCampaignResource =
-                field.campaignProperty;
-              return {
-                ...acc,
-                [field.campaignProperty]: operation(
-                  field.action,
-                  campaignData[campaignProperty],
-                  parseInt(field.value, 10),
-                ),
-              };
-            },
-            { type: 'DISPLAY' },
-          );
-          DisplayCampaignService.updateCampaign(campaignId, updatedData);
-        });
     });
   };
 
