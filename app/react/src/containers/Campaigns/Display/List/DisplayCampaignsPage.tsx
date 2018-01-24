@@ -81,16 +81,19 @@ class DisplayCampaignsPage extends React.Component<
         });
       }),
     ).then(() => {
-      // case we archive a campaigns on page 1. refresh page ?
-      const newFilter = {
-        ...filter,
-        currentPage: 1,
-      };
-      history.push({
-        pathname: pathname,
-        search: updateSearch(search, newFilter),
-        state: state,
-      });
+      if (filter.currentPage !== 1) {
+        const newFilter = {
+          ...filter,
+          currentPage: 1,
+        };
+        history.push({
+          pathname: pathname,
+          search: updateSearch(search, newFilter),
+          state: state,
+        });
+      } else {
+        window.location.reload();
+      }
 
       this.setState({
         visible: false,
