@@ -53,7 +53,6 @@ type JoinedProps = MapStateToProps &
 addLocaleData(enLocaleData || frLocaleData);
 
 class Navigator extends React.Component<JoinedProps, NavigatorState> {
-  
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -160,17 +159,18 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           <Notifications />
           <div className="drawer-wrapper">
             <DrawerManager />
-            <LayoutManager
-              layout={route.layout}
-              contentComponent={route.contentComponent}
-              actionBarComponent={route.actionBarComponent}
-              editComponent={route.editComponent}
-              organisationSelector={OrgSelector}
-              showOrgSelector={nbWorkspaces > 0}
-              orgSelectorSize={selectorSize}
-              {...this.props}
-            />
           </div>
+
+          <LayoutManager
+            layout={route.layout}
+            contentComponent={route.contentComponent}
+            actionBarComponent={route.actionBarComponent}
+            editComponent={route.editComponent}
+            organisationSelector={OrgSelector}
+            showOrgSelector={nbWorkspaces > 0}
+            orgSelectorSize={selectorSize}
+            {...this.props}
+          />
         </div>
       );
       log.trace(`Available route : ${basePath}${route.path}`);
