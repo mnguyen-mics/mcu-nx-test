@@ -2,13 +2,13 @@ import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import cuid from 'cuid';
+import { compose } from 'recompose';
 
 import messages from '../../messages';
 import { PlacementListFieldModel } from '../domain';
 import { RecordElement } from '../../../../../../components/RelatedRecord/index';
 import { FormSwitchField } from '../../../../../../components/Form/index';
 import FormSwitch from '../../../../../../components/Form/FormSwitch';
-import { DrawableContentProps } from '../../../../../../components/Drawer/index';
 import PlacementListSelector, {
   PlacementListSelectorProps,
 } from '../../../../Common/PlacementListSelector';
@@ -16,18 +16,19 @@ import { PlacementListResource } from '../../../../../../models/placement/Placem
 import RelatedRecords from '../../../../../../components/RelatedRecord/RelatedRecords';
 import FormSection from '../../../../../../components/Form/FormSection';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import { injectDrawer } from '../../../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface PlacementListFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface PlacementListFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = PlacementListFormSectionProps &
   InjectedIntlProps &
+  InjectDrawerProps &
   WrappedFieldArrayProps<PlacementListFieldModel>;
 
 class PlacementListFormSection extends React.Component<Props> {
   updatePlacementLists = (placementLists: PlacementListResource[]) => {
-    const { fields, formChange, closeNextDrawer } = this.props;
+    const { fields, formChange } = this.props;
     const placementListIds = placementLists.map(s => s.id);
     const fieldPlacementListIds = fields
       .getAll()
@@ -50,11 +51,10 @@ class PlacementListFormSection extends React.Component<Props> {
       }));
 
     formChange((fields as any).name, keptFields.concat(addedFields));
-    closeNextDrawer();
   };
 
   openPlacementListSelector = () => {
-    const { openNextDrawer, closeNextDrawer, fields } = this.props;
+    const { fields } = this.props;
 
     const selectedPlacementListIds = fields
       .getAll()
@@ -62,11 +62,11 @@ class PlacementListFormSection extends React.Component<Props> {
 
     const props: PlacementListSelectorProps = {
       selectedPlacementListIds,
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
       save: this.updatePlacementLists,
     };
 
-    openNextDrawer<PlacementListSelectorProps>(PlacementListSelector, {
+    this.props.openNextDrawer(PlacementListSelector, {
       additionalProps: props,
     });
   };
@@ -137,4 +137,7 @@ class PlacementListFormSection extends React.Component<Props> {
   }
 }
 
-export default injectIntl(PlacementListFormSection);
+export default compose<PlacementListFormSectionProps, Props>(
+  injectIntl,
+  injectDrawer,
+)(PlacementListFormSection);

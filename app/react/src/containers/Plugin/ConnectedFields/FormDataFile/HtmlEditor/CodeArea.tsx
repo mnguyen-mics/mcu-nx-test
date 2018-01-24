@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
 import { Layout } from 'antd';
+import { compose } from 'recompose';
 import {
   FieldCtor,
   FormSection,
@@ -15,17 +16,18 @@ import {
   ConfigProps,
 } from 'redux-form';
 import { EditContentLayout } from '../../../../../components/Layout';
-import { DrawableContentProps } from '../../../../../components/Drawer';
 import { Omit } from '../../../../../utils/Types';
+import { injectDrawer } from '../../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 const { Content } = Layout;
 
 const FormCodeField: FieldCtor<FormCodeEditProps> = Field;
 
-export interface CodeAreaProps
-  extends DrawableContentProps,
-    Omit<ConfigProps<any>, 'form'> {}
+export interface CodeAreaProps extends Omit<ConfigProps<any>, 'form'> {}
 
-type Props = InjectedFormProps<any, CodeAreaProps> & CodeAreaProps;
+type Props = InjectedFormProps<any, CodeAreaProps> &
+  CodeAreaProps &
+  InjectDrawerProps;
 
 const messages = defineMessages({
   quickEdit: {
@@ -60,10 +62,7 @@ class CodeArea extends React.Component<Props> {
     };
 
     return (
-      <EditContentLayout
-        paths={breadcrumbPaths}
-        {...actionbarProps}
-      >
+      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
         <Layout>
           <Form
             onSubmit={handleSubmit as any}
@@ -107,4 +106,6 @@ class CodeArea extends React.Component<Props> {
   }
 }
 
-export default reduxForm<{}, CodeAreaProps>({})(CodeArea);
+export default compose(reduxForm<{}, CodeAreaProps>({}), injectDrawer)(
+  CodeArea,
+);

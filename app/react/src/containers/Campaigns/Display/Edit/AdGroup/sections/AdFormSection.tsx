@@ -13,7 +13,7 @@ import {
   AdFieldModel,
   isDisplayCreativeFormData,
 } from '../domain';
-import { DrawableContentProps } from '../../../../../../components/Drawer/index';
+import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import {
   DisplayAdResource,
@@ -45,10 +45,9 @@ import {
   makeCancelable,
   CancelablePromise,
 } from '../../../../../../utils/ApiHelper';
+import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface AdFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface AdFormSectionProps extends ReduxFormChangeProps {}
 
 export interface DisplayAdResourceWithFieldIndex {
   creativeResource: DisplayAdResource | DisplayAdCreateRequest;
@@ -64,7 +63,8 @@ interface AdsSectionState {
 type Props = AdFormSectionProps &
   RouteComponentProps<EditAdGroupRouteMatchParam> &
   WrappedFieldArrayProps<AdFieldModel> &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  InjectDrawerProps;
 
 class AdFormSection extends React.Component<Props, AdsSectionState> {
   cancelablePromise: CancelablePromise<DisplayAdResource[]>;
@@ -141,18 +141,16 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
   };
 
   openCreativeForm = (field?: AdFieldModel) => {
-    const { openNextDrawer, closeNextDrawer } = this.props;
-
     const handleOnSubmit = (formData: DisplayCreativeFormData) => {
       this.updateAds(formData, field && field.key);
-      closeNextDrawer();
+      this.props.closeNextDrawer();
     };
 
     const additionalProps: DisplayCreativeCreatorProps = {
       onSubmit: handleOnSubmit,
       actionBarButtonText: messages.addNewCreative,
       breadCrumbPaths: [],
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
     };
 
     const options = {
@@ -171,11 +169,11 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       }
     }
 
-    openNextDrawer(FormComponent, options);
+    this.props.openNextDrawer(FormComponent, options);
   };
 
   openCreativeCardSelector = () => {
-    const { closeNextDrawer, openNextDrawer, fields } = this.props;
+    const { fields } = this.props;
 
     const creativeIds: string[] = [];
     fields.getAll().forEach(field => {
@@ -188,11 +186,11 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
 
     const handleSave = (creatives: DisplayAdResource[]) => {
       this.updateExistingAds(creatives);
-      closeNextDrawer();
+      this.props.closeNextDrawer();
     };
 
     const displayAdsSelectorProps: CreativeCardSelectorProps = {
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
       save: handleSave,
       creativeType: 'DISPLAY_AD',
       selectedCreativeIds: creativeIds,
@@ -202,7 +200,10 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       additionalProps: displayAdsSelectorProps,
     };
 
-    openNextDrawer<CreativeCardSelectorProps>(CreativeCardSelector, options);
+    this.props.openNextDrawer<CreativeCardSelectorProps>(
+      CreativeCardSelector,
+      options,
+    );
   };
 
   updateExistingAds = (creatives: DisplayAdResource[]) => {
@@ -369,6 +370,8 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
   }
 }
 
-export default compose<Props, AdFormSectionProps>(withRouter, injectIntl)(
-  AdFormSection,
-);
+export default compose<Props, AdFormSectionProps>(
+  withRouter,
+  injectIntl,
+  injectDrawer,
+)(AdFormSection);

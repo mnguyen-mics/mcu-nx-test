@@ -3,6 +3,7 @@ import { Button, message, Modal } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
@@ -14,11 +15,15 @@ import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
-import withDrawer from '../../../../components/Drawer/index';
+// import withDrawer from '../../../../components/Drawer/index';
 import { RouteComponentProps } from 'react-router';
 import McsMoment from '../../../../utils/McsMoment';
 import messages from '../messages';
 import Slider from '../../../../components/TableView/Slider';
+import {
+  DrawableContent,
+  injectDrawer,
+} from '../../../../components/Drawer/index';
 
 interface DisplayCampaignsActionbarProps {
   selectedRowKeys?: string[];
@@ -233,9 +238,16 @@ class DisplayCampaignsActionbar extends React.Component<
   }
 }
 
+const mapStateToProps = (state: { drawableContents: DrawableContent[] }) => ({
+  drawableContents: state.drawableContents,
+});
+
 export default compose<JoinedProps, DisplayCampaignsActionbarProps>(
   withRouter,
   withTranslations,
-  withDrawer,
+  injectDrawer,
+  connect(mapStateToProps, undefined),
+  // mapStateToProps,
+  // mapDispatchToProps,
   injectIntl,
 )(DisplayCampaignsActionbar);

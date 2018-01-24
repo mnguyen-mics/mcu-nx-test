@@ -1,6 +1,9 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import * as React from 'react';
 import { DrawableContent, DrawerSize } from './index';
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
+import { DrawerStore } from './DrawerStore';
 
 const viewportDrawerRatio = {
   large: 0.85,
@@ -18,8 +21,10 @@ export interface DrawerManagerState {
   viewportWidth: number;
 }
 
-class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerState> {
-
+class DrawerManager extends React.Component<
+  DrawerManagerProps,
+  DrawerManagerState
+> {
   drawerDiv: HTMLDivElement | null;
 
   constructor(props: DrawerManagerProps) {
@@ -38,7 +43,11 @@ class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerSta
     const prevContents = this.props.drawableContents;
     const nextContents = nextProps.drawableContents;
 
-    if (prevContents.length !== nextContents.length) {
+    if (
+      prevContents &&
+      nextContents &&
+      prevContents.length !== nextContents.length
+    ) {
       this.updateDimensions(nextContents);
     }
   }
@@ -54,7 +63,8 @@ class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerSta
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  getDimensions = (size: DrawerSize) => window.innerWidth * viewportDrawerRatio[size];
+  getDimensions = (size: DrawerSize) =>
+    window.innerWidth * viewportDrawerRatio[size];
 
   getDrawerStyle(xPos: number, size: DrawerSize = 'large') {
     return {
@@ -63,82 +73,92 @@ class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerSta
     };
   }
 
-  getForegroundContentSize = (drawableContents: DrawableContent[]): DrawerSize => {
-    const foregroundContent = drawableContents.length > 0 && drawableContents[drawableContents.length - 1];
-    return (foregroundContent && foregroundContent.size
+  getForegroundContentSize = (
+    drawableContents: DrawableContent[],
+  ): DrawerSize => {
+    const foregroundContent =
+      drawableContents &&
+      drawableContents.length > 0 &&
+      drawableContents[drawableContents.length - 1];
+    return foregroundContent && foregroundContent.size
       ? foregroundContent.size
-      : 'large'
-    );
-  }
+      : 'large';
+  };
 
   handleOnKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       this.props.onEscapeKeyDown();
     }
-  }
+  };
 
   updateDimensions = (nextDrawableContents: DrawableContent[]) => {
-    const drawableContents = (nextDrawableContents.length
+    const drawableContents = nextDrawableContents.length
       ? nextDrawableContents
-      : this.props.drawableContents
+      : this.props.drawableContents;
+    const foregroundContentSize = this.getForegroundContentSize(
+      drawableContents,
     );
-    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
     this.setState({
       drawerMaxWidth: this.getDimensions(foregroundContentSize),
       viewportWidth: window.innerWidth,
     });
-  }
+  };
 
   render() {
     const { drawableContents, onClickOnBackground } = this.props;
     const { drawerMaxWidth, viewportWidth } = this.state;
-    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
+    const foregroundContentSize = this.getForegroundContentSize(
+      drawableContents,
+    );
 
     const drawerStyles = {
       ready: this.getDrawerStyle(viewportWidth),
-      foreground: this.getDrawerStyle(viewportWidth - drawerMaxWidth, foregroundContentSize),
+      foreground: this.getDrawerStyle(
+        viewportWidth - drawerMaxWidth,
+        foregroundContentSize,
+      ),
       background: this.getDrawerStyle(0),
     };
 
     // TODO fix react unique key issue
     const drawersWithOverlay: JSX.Element[] = [];
 
-    drawableContents.forEach((
-      { component: WrappedComponent,
-        additionalProps,
-        size,
-        ...others },
-      index) => {
-      const lastElement = index === drawableContents.length - 1;
-      const displayInForeground = lastElement;
+    drawableContents.forEach(
+      (
+        { component: WrappedComponent, additionalProps, size, ...others },
+        index,
+      ) => {
+        const lastElement = index === drawableContents.length - 1;
+        const displayInForeground = lastElement;
 
-      drawersWithOverlay.push(
-        <div
-          className={'drawer-overlay'}
-          onClick={onClickOnBackground}
-        />,
-      );
+        drawersWithOverlay.push(
+          <div className={'drawer-overlay'} onClick={onClickOnBackground} />,
+        );
 
-      drawersWithOverlay.push(
-        <div
-          ref={div => {
-            this.drawerDiv = div;
-          }}
-          tabIndex={0}
-          className={'drawer'}
-          style={displayInForeground
-            ? drawerStyles.foreground
-            : drawerStyles.background
-          }
-        >
-          <WrappedComponent {...additionalProps} {...others} />
-        </div>,
-      );
-    });
+        drawersWithOverlay.push(
+          <div
+            ref={div => {
+              this.drawerDiv = div;
+            }}
+            tabIndex={0}
+            className={'drawer'}
+            style={
+              displayInForeground
+                ? drawerStyles.foreground
+                : drawerStyles.background
+            }
+          >
+            <WrappedComponent {...additionalProps} {...others} />
+          </div>,
+        );
+      },
+    );
 
     drawersWithOverlay.push(<div className="drawer-overlay" />);
-    drawersWithOverlay.push(<div className="drawer" style={drawerStyles.ready} />);
+    drawersWithOverlay.push(
+      <div className="drawer" style={drawerStyles.ready} />,
+    );
 
     return (
       <div onKeyDown={this.handleOnKeyDown} className="drawer-container">
@@ -148,4 +168,10 @@ class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerSta
   }
 }
 
-export default DrawerManager;
+const mapStatetoProps = (state: DrawerStore) => ({
+  drawableContents: state.drawableContents,
+});
+
+export default compose<DrawerManagerProps, {}>(connect(mapStatetoProps))(
+  DrawerManager,
+);

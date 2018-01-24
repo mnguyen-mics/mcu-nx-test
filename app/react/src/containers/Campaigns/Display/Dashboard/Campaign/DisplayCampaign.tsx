@@ -202,7 +202,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
   }
 }
 
-export default compose(
+export default compose<DisplayCampaignProps, JoinedProps>(
   injectIntl,
   withRouter,
 )(DisplayCampaign);

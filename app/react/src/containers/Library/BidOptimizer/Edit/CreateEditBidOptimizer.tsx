@@ -6,10 +6,13 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import BidOptimizerService from '../../../../services/Library/BidOptimizerService';
 import * as actions from '../../../../state/Notifications/actions';
-import { PluginProperty, BidOptimizer, PluginInterface} from '../../../../models/Plugins';
+import {
+  PluginProperty,
+  BidOptimizer,
+  PluginInterface,
+} from '../../../../models/Plugins';
 
 import messages from './messages';
-import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 interface BidOptimizerRouteParam {
   organisationId: string;
@@ -28,17 +31,18 @@ interface CreateBidOptimizerState {
   selectedBidOptimizer?: PluginInterface;
 }
 
-interface CreateBidOptimizerProps extends DrawableContentProps {
+interface CreateBidOptimizerProps {
   notifyError: (err?: any) => void;
 }
 
-type JoinedProps = CreateBidOptimizerProps & RouteComponentProps<BidOptimizerRouteParam> & InjectedIntlProps;
+type JoinedProps = CreateBidOptimizerProps &
+  RouteComponentProps<BidOptimizerRouteParam> &
+  InjectedIntlProps;
 
 class CreateEditBidOptimizer extends React.Component<
   JoinedProps,
   CreateBidOptimizerState
 > {
-
   constructor(props: JoinedProps) {
     super(props);
 
@@ -46,16 +50,11 @@ class CreateEditBidOptimizer extends React.Component<
       edition: props.match.params.bidOptimizerId ? true : false,
       isLoading: true,
     };
-
   }
 
   componentDidMount() {
-    const {
-      edition,
-    } = this.state;
-    const {
-      match: { params: { bidOptimizerId } },
-    } = this.props;
+    const { edition } = this.state;
+    const { match: { params: { bidOptimizerId } } } = this.props;
     if (edition && bidOptimizerId) {
       this.fetchInitialValues(bidOptimizerId);
     } else {
@@ -70,44 +69,61 @@ class CreateEditBidOptimizer extends React.Component<
       match: { params: { organisationId, bidOptimizerId } },
     } = this.props;
     const {
-      match: { params: { organisationId: nextOrganisationId, bidOptimizerId: nextBidOptimizerId } },
+      match: {
+        params: {
+          organisationId: nextOrganisationId,
+          bidOptimizerId: nextBidOptimizerId,
+        },
+      },
     } = nextProps;
 
-    if ((organisationId !== nextOrganisationId || bidOptimizerId !== nextBidOptimizerId) && nextBidOptimizerId) {
+    if (
+      (organisationId !== nextOrganisationId ||
+        bidOptimizerId !== nextBidOptimizerId) &&
+      nextBidOptimizerId
+    ) {
       this.fetchInitialValues(nextBidOptimizerId);
     }
   }
 
   fetchInitialValues = (bidOptimizerId: string) => {
-    const fetchBidOptimizer = BidOptimizerService.getBidOptimizer(bidOptimizerId).then(res => res.data);
-    const fetchBidOptimizerProperties = BidOptimizerService.getBidOptimizerProperty(bidOptimizerId)
-      .then(res => res.data);
-    this.setState({
-      isLoading: true,
-    }, () => {
-      Promise.all([fetchBidOptimizer, fetchBidOptimizerProperties]).then(res => {
-        this.setState({
-          isLoading: false,
-          initialValues: {
-            plugin: res[0],
-            properties: res[1],
+    const fetchBidOptimizer = BidOptimizerService.getBidOptimizer(
+      bidOptimizerId,
+    ).then(res => res.data);
+    const fetchBidOptimizerProperties = BidOptimizerService.getBidOptimizerProperty(
+      bidOptimizerId,
+    ).then(res => res.data);
+    this.setState(
+      {
+        isLoading: true,
+      },
+      () => {
+        Promise.all([fetchBidOptimizer, fetchBidOptimizerProperties]).then(
+          res => {
+            this.setState({
+              isLoading: false,
+              initialValues: {
+                plugin: res[0],
+                properties: res[1],
+              },
+            });
           },
-        });
-      });
-    });
-  }
+        );
+      },
+    );
+  };
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/library/bid_optimizers`;
     history.push(attributionModelUrl);
-  }
+  };
 
-  saveOrCreatePluginInstance = (plugin: BidOptimizer, properties: PluginProperty[]) => {
-
-    const {
-      edition,
-    } = this.state;
+  saveOrCreatePluginInstance = (
+    plugin: BidOptimizer,
+    properties: PluginProperty[],
+  ) => {
+    const { edition } = this.state;
 
     const {
       match: { params: { organisationId } },
@@ -119,14 +135,19 @@ class CreateEditBidOptimizer extends React.Component<
     if (edition) {
       return this.setState({ isLoading: true }, () => {
         BidOptimizerService.updateBidOptimizer(plugin.id, plugin)
-        .then(res => {
-          return this.updatePropertiesValue(properties, organisationId, plugin.id);
-        }).then(res => {
-          this.setState({ isLoading: false }, () => {
-            history.push(`/v2/o/${organisationId}/library/bid_optimizers`);
-          });
-        })
-        .catch(err => notifyError(err));
+          .then(res => {
+            return this.updatePropertiesValue(
+              properties,
+              organisationId,
+              plugin.id,
+            );
+          })
+          .then(res => {
+            this.setState({ isLoading: false }, () => {
+              history.push(`/v2/o/${organisationId}/library/bid_optimizers`);
+            });
+          })
+          .catch(err => notifyError(err));
       });
     }
     // if creation save and redirect
@@ -140,42 +161,52 @@ class CreateEditBidOptimizer extends React.Component<
       formattedFormValues.engine_group_id = this.state.initialValues.plugin.group_id;
     }
     return this.setState({ isLoading: true }, () => {
-      BidOptimizerService.createBidOptimizer(organisationId, formattedFormValues)
-      .then(res => res.data)
-      .then(res => {
-        return this.updatePropertiesValue(properties, organisationId, res.id);
-      })
-      .then(res => {
-        this.setState({ isLoading: false }, () => {
-          history.push(`/v2/o/${organisationId}/library/bid_optimizers`);
-        });
-      })
-      .catch(err => notifyError(err));
+      BidOptimizerService.createBidOptimizer(
+        organisationId,
+        formattedFormValues,
+      )
+        .then(res => res.data)
+        .then(res => {
+          return this.updatePropertiesValue(properties, organisationId, res.id);
+        })
+        .then(res => {
+          this.setState({ isLoading: false }, () => {
+            history.push(`/v2/o/${organisationId}/library/bid_optimizers`);
+          });
+        })
+        .catch(err => notifyError(err));
     });
-  }
+  };
 
-  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
+  updatePropertiesValue = (
+    properties: PluginProperty[],
+    organisationId: string,
+    id: string,
+  ) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
-      propertiesPromises.push(BidOptimizerService.updateBidOptimizerProperty(organisationId, id, item.technical_name, item));
+      propertiesPromises.push(
+        BidOptimizerService.updateBidOptimizerProperty(
+          organisationId,
+          id,
+          item.technical_name,
+          item,
+        ),
+      );
     });
     return Promise.all(propertiesPromises);
-  }
+  };
 
   onSelect = (bo: PluginInterface) => {
     this.setState({
       initialValues: { plugin: bo },
     });
-  }
+  };
 
   render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
-    const {
-      isLoading,
-    } = this.state;
+    const { isLoading } = this.state;
 
     const breadcrumbPaths = [
       { name: formatMessage(messages.attributionModelBreadcrumb) },
@@ -193,8 +224,6 @@ class CreateEditBidOptimizer extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -202,10 +231,7 @@ class CreateEditBidOptimizer extends React.Component<
 
 export default compose(
   injectIntl,
-  withDrawer,
+  // withDrawer,
   withRouter,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  connect(undefined, { notifyError: actions.notifyError }),
 )(CreateEditBidOptimizer);

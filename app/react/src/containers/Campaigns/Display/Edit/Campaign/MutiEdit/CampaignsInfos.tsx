@@ -72,7 +72,10 @@ class CampaignsInfos extends React.Component<JoinedProps> {
       fieldValidators: { isRequired, isValidInteger, isNotZero, isValidFloat },
     } = this.props;
 
-    const actionOptions: Array<{ title: string; value: string }> = [
+    const actionOptions: Array<{
+      title: string;
+      value: string; // { [key: string]: FormattedMessage.MessageDescriptor }
+    }> = [
       {
         title: '=',
         value: 'equals',

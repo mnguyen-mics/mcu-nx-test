@@ -12,7 +12,7 @@ import { RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
-import { DrawableContentProps } from '../../../../../../components/Drawer';
+
 import CampaignsInfos from './CampaignsInfos';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -30,25 +30,22 @@ const CampaignsInfosFieldArray = FieldArray as new () => GenericFieldArray<
 >;
 
 interface EditCampaignsFormData {
-  [key: string]: Array<
-    { [property in keyof CampaignsInfosFieldModel]: any}
-  >;
+  [key: string]: Array<{ [property in keyof CampaignsInfosFieldModel]: any }>;
 }
 
 interface EditCampaignsFormState {
   campaignNames: string[];
 }
 
-export interface EditCampaignsFormProps extends DrawableContentProps {
-  save: () => void; // type later
+export interface EditCampaignsFormProps {
   close: () => void;
   selectedRowKeys: string[];
-  RxF: InjectedFormProps<EditCampaignsFormData>;
 }
 
 type JoinedProps = EditCampaignsFormProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedFormProps<EditCampaignsFormData>;
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -95,31 +92,33 @@ class EditCampaignsForm extends React.Component<
   };
 
   onSave = (formData: EditCampaignsFormData) => {
-    const { save, selectedRowKeys } = this.props;
+    const { selectedRowKeys } = this.props;
     selectedRowKeys.map(campaignId => {
       DisplayCampaignService.getCampaignDisplay(campaignId)
         .then(apiRes => apiRes.data)
         .then((campaignData: any) => {
-          const updatedData = formData.fields.reduce((acc, field) => {
-            const campaignProperty: keyof DisplayCampaignResource =
-              field.campaignProperty;
-            return {
-              ...acc,
-              [field.campaignProperty]: operation(
-                field.action,
-                campaignData[campaignProperty],
-                parseInt(field.value, 10),
-              ),
-            };
-          }, {'type': 'DISPLAY'});
+          const updatedData = formData.fields.reduce(
+            (acc, field) => {
+              const campaignProperty: keyof DisplayCampaignResource =
+                field.campaignProperty;
+              return {
+                ...acc,
+                [field.campaignProperty]: operation(
+                  field.action,
+                  campaignData[campaignProperty],
+                  parseInt(field.value, 10),
+                ),
+              };
+            },
+            { type: 'DISPLAY' },
+          );
           DisplayCampaignService.updateCampaign(campaignId, updatedData);
         });
     });
-    save();
   };
 
   render() {
-    const { RxF: { handleSubmit } } = this.props;
+    const { handleSubmit, close } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -129,7 +128,7 @@ class EditCampaignsForm extends React.Component<
         },
       ],
       message: messages.saveCampaigns,
-      onClose: this.props.closeNextDrawer,
+      onClose: close,
     };
 
     const multiEditSubtitle = {
@@ -143,7 +142,7 @@ class EditCampaignsForm extends React.Component<
         <Layout className={'ant-layout-has-sider'}>
           <Form
             className="edit-layout ant-layout edit-campaigns-form"
-            onSubmit={handleSubmit(this.onSave)}
+            onSubmit={handleSubmit as any}
           >
             <Content
               id={FORM_ID}
@@ -179,7 +178,6 @@ export default compose<JoinedProps, EditCampaignsFormProps>(
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
-    propNamespace: 'RxF',
   }),
   injectIntl,
 )(EditCampaignsForm);

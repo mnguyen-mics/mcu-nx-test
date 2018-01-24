@@ -2,14 +2,12 @@ import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Layout, message } from 'antd';
-import { compose } from 'redux';
+import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
 import DisplayCampaignsActionbar from './DisplayCampaignsActionbar';
 import DisplayCampaignsTable from './DisplayCampaignsTable';
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../components/Drawer/index';
+import { injectDrawer } from '../../../../components/Drawer';
 import CampaignService, {
   GetCampaignsOptions,
 } from '../../../../services/CampaignService';
@@ -24,10 +22,11 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
+import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 
 const { Content } = Layout;
 
-interface DisplayCampaignsPageProps extends DrawableContentProps {
+interface DisplayCampaignsPageProps {
   totalDisplayCampaigns: number;
   dataSource: DisplayCampaignResource[];
 }
@@ -40,6 +39,7 @@ interface DisplayCampaignsPageState {
 
 type JoinedProps = DisplayCampaignsPageProps &
   InjectedIntlProps &
+  InjectDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsPage extends React.Component<
@@ -129,11 +129,8 @@ class DisplayCampaignsPage extends React.Component<
   openEditCampaignsDrawer = () => {
     const additionalProps = {
       close: this.props.closeNextDrawer,
-      openNextDrawer: this.props.openNextDrawer,
-      closeNextDrawer: this.props.closeNextDrawer,
-      save: this.saveCampaigns,
+      onSubmit: this.saveCampaigns,
       selectedRowKeys: this.state.selectedRowKeys,
-      
     };
     const options = {
       additionalProps: additionalProps,
@@ -238,13 +235,14 @@ class DisplayCampaignsPage extends React.Component<
   }
 }
 
-export default compose(
+const mapStateToProps = (state: any) => ({
+  totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
+  dataSource: getTableDataSource(state),
+});
+
+export default compose<DisplayCampaignsPageProps, JoinedProps>(
   withRouter,
   injectIntl,
-  withDrawer,
-  connect((state: any) => ({
-    totalDisplayCampaigns:
-      state.displayCampaignsTable.displayCampaignsApi.total,
-    dataSource: getTableDataSource(state),
-  })),
+  injectDrawer,
+  connect(mapStateToProps, undefined),
 )(DisplayCampaignsPage);

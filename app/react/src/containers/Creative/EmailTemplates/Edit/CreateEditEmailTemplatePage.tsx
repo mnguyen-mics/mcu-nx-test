@@ -11,9 +11,6 @@ import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, PluginInterface } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../components/Drawer';
 import { DataResponse } from '../../../../services/ApiService';
 
 import messages from './messages';
@@ -37,7 +34,7 @@ interface CreateEmailTemplateState {
   emailTemplateRenderer?: PluginInterface;
 }
 
-interface CreateEmailTemplateProps extends DrawableContentProps {
+interface CreateEmailTemplateProps {
   notifyError: (err?: any) => void;
 }
 
@@ -334,8 +331,6 @@ class CreateEmailTemplate extends React.Component<
           }
           formId={formId}
           initialValues={this.formatInitialValues(this.state.initialValues)}
-          openNextDrawer={this.props.openNextDrawer}
-          closeNextDrawer={this.props.closeNextDrawer}
         />
       </EditContentLayout>
     );
@@ -344,7 +339,6 @@ class CreateEmailTemplate extends React.Component<
 
 export default compose(
   injectIntl,
-  withDrawer,
   withRouter,
   connect(undefined, { notifyError: actions.notifyError }),
 )(CreateEmailTemplate);

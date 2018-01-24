@@ -14,9 +14,6 @@ import messages from '../messages';
 import EmailCampaignFormService from '../EmailCampaignFormService';
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 import { Loading } from '../../../../../components';
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../../components/Drawer';
 
 interface State {
   campaignFormData: EmailCampaignFormData;
@@ -29,7 +26,6 @@ interface MapStateProps {
 
 type Props = InjectedIntlProps &
   MapStateProps &
-  DrawableContentProps &
   RouteComponentProps<EditEmailCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
@@ -124,8 +120,6 @@ class EditCampaignPage extends React.Component<Props, State> {
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
-      openNextDrawer,
-      closeNextDrawer,
     } = this.props;
 
     const { campaignFormData, loading } = this.state;
@@ -157,8 +151,6 @@ class EditCampaignPage extends React.Component<Props, State> {
         save={this.save}
         close={this.redirect}
         breadCrumbPaths={breadcrumbPaths}
-        openNextDrawer={openNextDrawer}
-        closeNextDrawer={closeNextDrawer}
         onSubmitFail={this.onSubmitFail}
       />
     );
@@ -169,5 +161,4 @@ export default compose(
   injectIntl,
   withRouter,
   connect(undefined, { notifyError: NotificationActions.notifyError }),
-  withDrawer,
 )(EditCampaignPage);

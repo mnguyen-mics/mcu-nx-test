@@ -14,7 +14,6 @@ import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { DrawableContentProps } from '../../../../components/Drawer';
 import { Path } from '../../../../components/ActionBar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -50,8 +49,7 @@ const AdGroupFieldArray = FieldArray as new () => GenericFieldArray<
 >;
 
 export interface DisplayCampaignFormProps
-  extends DrawableContentProps,
-    Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
+  extends Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
 }
@@ -74,8 +72,6 @@ const FORM_ID = 'campaignForm';
 class DisplayCampaignForm extends React.Component<Props> {
   render() {
     const {
-      closeNextDrawer,
-      openNextDrawer,
       handleSubmit,
       breadCrumbPaths,
       close,
@@ -86,8 +82,6 @@ class DisplayCampaignForm extends React.Component<Props> {
 
     const genericFieldArrayProps = {
       formChange: change,
-      openNextDrawer,
-      closeNextDrawer,
       rerenderOnEveryChange: true,
     };
 

@@ -16,9 +16,6 @@ import * as NotificationActions from '../../../../../state/Notifications/actions
 import { EmailCampaignResource } from '../../../../../models/campaign/email';
 import EmailCampaignService from '../../../../../services/EmailCampaignService';
 import { Loading } from '../../../../../components';
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../../components/Drawer';
 
 interface State {
   campaign?: EmailCampaignResource;
@@ -32,7 +29,6 @@ interface MapStateProps {
 
 type Props = InjectedIntlProps &
   MapStateProps &
-  DrawableContentProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class EditBlastPage extends React.Component<Props, State> {
@@ -131,8 +127,6 @@ class EditBlastPage extends React.Component<Props, State> {
     const {
       match: { params: { organisationId, campaignId, blastId } },
       intl: { formatMessage },
-      openNextDrawer,
-      closeNextDrawer,
     } = this.props;
 
     const { loading, campaign, blastFormData } = this.state;
@@ -167,8 +161,6 @@ class EditBlastPage extends React.Component<Props, State> {
         save={this.save}
         close={this.redirect}
         breadCrumbPaths={breadcrumbPaths}
-        openNextDrawer={openNextDrawer}
-        closeNextDrawer={closeNextDrawer}
         onSubmitFail={this.onSubmitFail}
       />
     );
@@ -179,5 +171,4 @@ export default compose(
   injectIntl,
   withRouter,
   connect(undefined, { notifyError: NotificationActions.notifyError }),
-  withDrawer,
 )(EditBlastPage);

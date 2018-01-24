@@ -5,9 +5,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../components/Drawer/index';
 import * as NotificationActions from '../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 import {
@@ -31,7 +28,6 @@ interface MapStateProps {
 
 type Props = InjectedIntlProps &
   MapStateProps &
-  DrawableContentProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
@@ -44,14 +40,20 @@ class EditCampaignPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { campaignId: campaignIdFromURLParam } }, location } = this.props;
+    const {
+      match: { params: { campaignId: campaignIdFromURLParam } },
+      location,
+    } = this.props;
 
-    const campaignIdFromLocState = location.state && location.state.campaignId
+    const campaignIdFromLocState = location.state && location.state.campaignId;
 
     const campaignId = campaignIdFromURLParam || campaignIdFromLocState;
-    
+
     if (campaignId) {
-      DisplayCampaignFormService.loadCampaign(campaignId, !!campaignIdFromLocState)
+      DisplayCampaignFormService.loadCampaign(
+        campaignId,
+        !!campaignIdFromLocState,
+      )
         .then(formData => {
           this.setState({
             loading: false,
@@ -132,8 +134,6 @@ class EditCampaignPage extends React.Component<Props, State> {
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
-      openNextDrawer,
-      closeNextDrawer,
     } = this.props;
 
     const { loading, displayCampaignFormData } = this.state;
@@ -165,8 +165,6 @@ class EditCampaignPage extends React.Component<Props, State> {
         onSubmit={this.save}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
-        openNextDrawer={openNextDrawer}
-        closeNextDrawer={closeNextDrawer}
         onSubmitFail={this.onSubmitFail}
       />
     );
@@ -176,7 +174,6 @@ class EditCampaignPage extends React.Component<Props, State> {
 export default compose(
   withRouter,
   injectIntl,
-  withDrawer,
   connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) }), {
     notifyError: NotificationActions.notifyError,
   }),

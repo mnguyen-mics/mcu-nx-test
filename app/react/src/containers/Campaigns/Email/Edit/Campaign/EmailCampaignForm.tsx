@@ -19,7 +19,6 @@ import {
 import { BlastFormSectionProps } from './Sections/BlastFormSection';
 import { EmailCampaignFormData } from '../domain';
 import messages from '../messages';
-import { DrawableContentProps } from '../../../../../components/Drawer';
 import { Path } from '../../../../../components/ActionBar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -38,8 +37,7 @@ const BlastSectionFieldArray = FieldArray as new () => GenericFieldArray<
 >;
 
 export interface EmailCampaignFormProps
-  extends DrawableContentProps,
-    Omit<ConfigProps<EmailCampaignFormData>, 'form'> {
+  extends Omit<ConfigProps<EmailCampaignFormData>, 'form'> {
   save: (formData: EmailCampaignFormData) => void;
   close: () => void;
   breadCrumbPaths: Path[];
@@ -52,15 +50,7 @@ const FORM_ID = 'emailCampaignForm';
 
 class EmailCampaignForm extends React.Component<Props> {
   render() {
-    const {
-      breadCrumbPaths,
-      openNextDrawer,
-      closeNextDrawer,
-      handleSubmit,
-      save,
-      close,
-      change,
-    } = this.props;
+    const { breadCrumbPaths, handleSubmit, save, close, change } = this.props;
 
     const sections = {
       general: {
@@ -114,8 +104,6 @@ class EmailCampaignForm extends React.Component<Props> {
                 <BlastSectionFieldArray
                   name="blastFields"
                   component={BlastFormSection}
-                  openNextDrawer={openNextDrawer}
-                  closeNextDrawer={closeNextDrawer}
                   formChange={change}
                   rerenderOnEveryChange={true}
                 />

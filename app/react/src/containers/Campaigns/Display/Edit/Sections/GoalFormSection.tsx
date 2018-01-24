@@ -7,7 +7,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 
 import messages from '../messages';
-import { DrawableContentProps } from '../../../../../components/Drawer/index';
+import { injectDrawer } from '../../../../../components/Drawer/index';
 import {
   EditDisplayCampaignRouteMatchParam,
   GoalFieldModel,
@@ -20,7 +20,10 @@ import {
   RelatedRecords,
   RecordElement,
 } from '../../../../../components/RelatedRecord';
-import { GoalResource, GoalSelectionCreateRequest } from '../../../../../models/goal';
+import {
+  GoalResource,
+  GoalSelectionCreateRequest,
+} from '../../../../../models/goal';
 import { FormSection } from '../../../../../components/Form';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import {
@@ -29,33 +32,35 @@ import {
   INITIAL_GOAL_FORM_DATA,
 } from '../../../Goal/Edit/domain';
 import GoalForm, { GoalFormProps } from '../../../Goal/Edit/GoalForm';
-import GoalFormLoader, { GoalFormLoaderProps } from '../../../Goal/Edit/GoalFormLoader';
+import GoalFormLoader, {
+  GoalFormLoaderProps,
+} from '../../../Goal/Edit/GoalFormLoader';
 import GoalFormService from '../../../Goal/Edit/GoalFormService';
+import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
-export interface GoalFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface GoalFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = GoalFormSectionProps &
   InjectedIntlProps &
   InjectedDatamartProps &
+  InjectDrawerProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam> &
   WrappedFieldArrayProps<GoalFieldModel>;
 
 class GoalFormSection extends React.Component<Props> {
   openGoalSelector = () => {
-    const { fields, openNextDrawer, closeNextDrawer } = this.props;
+    const { fields } = this.props;
 
     const selectedGoalIds = getExistingGoalIds(fields.getAll());
 
     const handleSave = (goals: GoalResource[]) => {
       this.updateExistingGoals(goals);
-      closeNextDrawer();
+      this.props.closeNextDrawer();
     };
 
     const goalSelectorProps: GoalSelectorProps = {
       selectedGoalIds,
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
       save: handleSave,
     };
 
@@ -63,7 +68,7 @@ class GoalFormSection extends React.Component<Props> {
       additionalProps: goalSelectorProps,
     };
 
-    openNextDrawer<GoalSelectorProps>(GoalSelector, options);
+    this.props.openNextDrawer<GoalSelectorProps>(GoalSelector, options);
   };
 
   updateExistingGoals = (goals: GoalResource[]) => {
@@ -132,11 +137,7 @@ class GoalFormSection extends React.Component<Props> {
   };
 
   openGoalForm = (field?: GoalFieldModel) => {
-    const {
-      intl: { formatMessage },
-      openNextDrawer,
-      closeNextDrawer,
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
     const breadCrumbPaths = [
       {
@@ -151,14 +152,12 @@ class GoalFormSection extends React.Component<Props> {
 
     const handleOnSubmit = (formData: GoalFormData) => {
       this.updateGoals(formData, field && field.key);
-      closeNextDrawer();
+      this.props.closeNextDrawer();
     };
 
     const props: GoalFormProps = {
       breadCrumbPaths,
-      closeNextDrawer,
-      openNextDrawer,
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
       onSubmit: handleOnSubmit,
     };
 
@@ -166,7 +165,7 @@ class GoalFormSection extends React.Component<Props> {
       additionalProps: props,
     };
 
-    let FormComponent = GoalForm
+    let FormComponent = GoalForm;
 
     if (!field) {
       props.initialValues = INITIAL_GOAL_FORM_DATA;
@@ -178,7 +177,7 @@ class GoalFormSection extends React.Component<Props> {
       (props as GoalFormLoaderProps).goalId = field.model.goal_id;
     }
 
-    openNextDrawer<GoalFormProps>(FormComponent, options);
+    this.props.openNextDrawer<GoalFormProps>(FormComponent, options);
   };
 
   getPixelSnippet = (field: GoalFieldModel) => {
@@ -217,7 +216,7 @@ class GoalFormSection extends React.Component<Props> {
         if (_field.key === field.key) {
           newFields.push({
             key: cuid(),
-            model: { 
+            model: {
               goal_id: goalId,
               goal_selection_type: 'CONVERSION',
               default: true,
@@ -237,7 +236,7 @@ class GoalFormSection extends React.Component<Props> {
       } else if (isGoalResource(field.model.goal)) {
         showPixelSnippet(field.model.goal.id);
       } else {
-        // 
+        //
         const goalFormData = field.model;
         const organisationId = this.props.match.params.organisationId;
         Modal.confirm({
@@ -324,6 +323,7 @@ export default compose<Props, GoalFormSectionProps>(
   injectIntl,
   withRouter,
   injectDatamart,
+  injectDrawer,
 )(GoalFormSection);
 
 function getExistingGoalIds(goalFields: GoalFieldModel[]) {

@@ -5,9 +5,12 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import RecommenderService from '../../../../services/Library/RecommenderService';
-import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 import * as actions from '../../../../state/Notifications/actions';
-import { PluginProperty, Recommender, PluginInterface} from '../../../../models/Plugins';
+import {
+  PluginProperty,
+  Recommender,
+  PluginInterface,
+} from '../../../../models/Plugins';
 
 import messages from './messages';
 
@@ -28,17 +31,18 @@ interface CreateRecommenderState {
   selectedRecommender?: PluginInterface;
 }
 
-interface CreateRecommenderProps extends DrawableContentProps {
+interface CreateRecommenderProps {
   notifyError: (err?: any) => void;
 }
 
-type JoinedProps = CreateRecommenderProps & RouteComponentProps<RecommenderRouteParam> & InjectedIntlProps;
+type JoinedProps = CreateRecommenderProps &
+  RouteComponentProps<RecommenderRouteParam> &
+  InjectedIntlProps;
 
 class CreateEditRecommender extends React.Component<
   JoinedProps,
   CreateRecommenderState
 > {
-
   constructor(props: JoinedProps) {
     super(props);
 
@@ -46,16 +50,11 @@ class CreateEditRecommender extends React.Component<
       edition: props.match.params.recommenderId ? true : false,
       isLoading: true,
     };
-
   }
 
   componentDidMount() {
-    const {
-      edition,
-    } = this.state;
-    const {
-      match: { params: { recommenderId } },
-    } = this.props;
+    const { edition } = this.state;
+    const { match: { params: { recommenderId } } } = this.props;
     if (edition && recommenderId) {
       this.fetchInitialValues(recommenderId);
     } else {
@@ -66,48 +65,63 @@ class CreateEditRecommender extends React.Component<
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
+    const { match: { params: { organisationId, recommenderId } } } = this.props;
     const {
-      match: { params: { organisationId, recommenderId } },
-    } = this.props;
-    const {
-      match: { params: { organisationId: nextOrganisationId, recommenderId: nextRecommenderId } },
+      match: {
+        params: {
+          organisationId: nextOrganisationId,
+          recommenderId: nextRecommenderId,
+        },
+      },
     } = nextProps;
 
-    if ((organisationId !== nextOrganisationId || recommenderId !== nextRecommenderId) && nextRecommenderId) {
+    if (
+      (organisationId !== nextOrganisationId ||
+        recommenderId !== nextRecommenderId) &&
+      nextRecommenderId
+    ) {
       this.fetchInitialValues(nextRecommenderId);
     }
   }
 
   fetchInitialValues = (recommenderId: string) => {
-    const fetchRecommender = RecommenderService.getRecommender(recommenderId).then(res => res.data);
-    const fetchRecommenderProperties = RecommenderService.getRecommenderProperty(recommenderId)
-      .then(res => res.data);
-    this.setState({
-      isLoading: true,
-    }, () => {
-      Promise.all([fetchRecommender, fetchRecommenderProperties]).then(res => {
-        this.setState({
-          isLoading: false,
-          initialValues: {
-            plugin: res[0],
-            properties: res[1],
+    const fetchRecommender = RecommenderService.getRecommender(
+      recommenderId,
+    ).then(res => res.data);
+    const fetchRecommenderProperties = RecommenderService.getRecommenderProperty(
+      recommenderId,
+    ).then(res => res.data);
+    this.setState(
+      {
+        isLoading: true,
+      },
+      () => {
+        Promise.all([fetchRecommender, fetchRecommenderProperties]).then(
+          res => {
+            this.setState({
+              isLoading: false,
+              initialValues: {
+                plugin: res[0],
+                properties: res[1],
+              },
+            });
           },
-        });
-      });
-    });
-  }
+        );
+      },
+    );
+  };
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/library/recommenders`;
     history.push(attributionModelUrl);
-  }
+  };
 
-  saveOrCreatePluginInstance = (plugin: Recommender, properties: PluginProperty[]) => {
-
-    const {
-      edition,
-    } = this.state;
+  saveOrCreatePluginInstance = (
+    plugin: Recommender,
+    properties: PluginProperty[],
+  ) => {
+    const { edition } = this.state;
 
     const {
       match: { params: { organisationId } },
@@ -119,14 +133,19 @@ class CreateEditRecommender extends React.Component<
     if (edition) {
       return this.setState({ isLoading: true }, () => {
         RecommenderService.updateRecommender(plugin.id, plugin)
-        .then(res => {
-          return this.updatePropertiesValue(properties, organisationId, plugin.id);
-        }).then(res => {
-          this.setState({ isLoading: false }, () => {
-            history.push(`/v2/o/${organisationId}/library/recommenders`);
-          });
-        })
-        .catch(err => notifyError(err));
+          .then(res => {
+            return this.updatePropertiesValue(
+              properties,
+              organisationId,
+              plugin.id,
+            );
+          })
+          .then(res => {
+            this.setState({ isLoading: false }, () => {
+              history.push(`/v2/o/${organisationId}/library/recommenders`);
+            });
+          })
+          .catch(err => notifyError(err));
       });
     }
     // if creation save and redirect
@@ -140,41 +159,48 @@ class CreateEditRecommender extends React.Component<
     }
     return this.setState({ isLoading: true }, () => {
       RecommenderService.createRecommender(organisationId, formattedFormValues)
-      .then(res => res.data)
-      .then(res => {
-        return this.updatePropertiesValue(properties, organisationId, res.id);
-      })
-      .then(res => {
-        this.setState({ isLoading: false }, () => {
-          history.push(`/v2/o/${organisationId}/library/recommenders`);
-        });
-      })
-      .catch(err => notifyError(err));
+        .then(res => res.data)
+        .then(res => {
+          return this.updatePropertiesValue(properties, organisationId, res.id);
+        })
+        .then(res => {
+          this.setState({ isLoading: false }, () => {
+            history.push(`/v2/o/${organisationId}/library/recommenders`);
+          });
+        })
+        .catch(err => notifyError(err));
     });
-  }
+  };
 
-  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
+  updatePropertiesValue = (
+    properties: PluginProperty[],
+    organisationId: string,
+    id: string,
+  ) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
-      propertiesPromises.push(RecommenderService.updateRecommenderProperty(organisationId, id, item.technical_name, item));
+      propertiesPromises.push(
+        RecommenderService.updateRecommenderProperty(
+          organisationId,
+          id,
+          item.technical_name,
+          item,
+        ),
+      );
     });
     return Promise.all(propertiesPromises);
-  }
+  };
 
   onSelect = (bo: PluginInterface) => {
     this.setState({
       initialValues: { plugin: bo },
     });
-  }
+  };
 
   render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
-    const {
-      isLoading,
-    } = this.state;
+    const { isLoading } = this.state;
 
     const breadcrumbPaths = [
       { name: formatMessage(messages.attributionModelBreadcrumb) },
@@ -192,8 +218,6 @@ class CreateEditRecommender extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -202,9 +226,6 @@ class CreateEditRecommender extends React.Component<
 export default compose(
   injectIntl,
   withRouter,
-  withDrawer,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  // withDrawer,
+  connect(undefined, { notifyError: actions.notifyError }),
 )(CreateEditRecommender);

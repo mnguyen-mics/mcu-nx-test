@@ -5,7 +5,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import VisitAnalyzerService from '../../../../services/Library/VisitAnalyzerService';
-import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, VisitAnalyzer, PluginInterface} from '../../../../models/Plugins';
 
@@ -28,7 +27,7 @@ interface CreateVisitAnalyzerState {
   selectedVisitAnalyzer?: PluginInterface;
 }
 
-interface CreateVisitAnalyzerProps extends DrawableContentProps {
+interface CreateVisitAnalyzerProps {
   notifyError: (err?: any) => void;
 }
 
@@ -192,8 +191,6 @@ class CreateEditVisitAnalyzer extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -202,7 +199,7 @@ class CreateEditVisitAnalyzer extends React.Component<
 export default compose(
   injectIntl,
   withRouter,
-  withDrawer,
+  // withDrawer,
   connect(
     undefined,
     { notifyError: actions.notifyError },

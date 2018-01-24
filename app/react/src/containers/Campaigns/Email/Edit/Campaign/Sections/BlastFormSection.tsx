@@ -6,7 +6,6 @@ import { compose } from 'recompose';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { DrawableContentProps } from '../../../../../../components/Drawer';
 import { FormSection } from '../../../../../../components/Form';
 import {
   RelatedRecords,
@@ -22,14 +21,15 @@ import EmailBlastForm, {
   EmailBlastFormProps,
 } from '../../Blast/EmailBlastForm';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import { injectDrawer } from '../../../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface BlastFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface BlastFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<BlastFieldModel> &
   BlastFormSectionProps &
+  InjectDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class BlastFormSection extends React.Component<Props> {
@@ -83,8 +83,6 @@ class BlastFormSection extends React.Component<Props> {
 
     const props: EmailBlastFormProps = {
       breadCrumbPaths,
-      openNextDrawer,
-      closeNextDrawer,
       close: closeNextDrawer,
       save: handleSave,
     };
@@ -164,6 +162,8 @@ class BlastFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, BlastFormSectionProps>(injectIntl, withRouter)(
-  BlastFormSection,
-);
+export default compose<Props, BlastFormSectionProps>(
+  injectIntl,
+  withRouter,
+  injectDrawer,
+)(BlastFormSection);

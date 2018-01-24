@@ -5,7 +5,7 @@ import {
   NOTIFICATIONS_ADD,
   NOTIFICATIONS_REMOVE,
   NOTIFICATIONS_RESET,
- } from '../action-types';
+} from '../action-types';
 
 const addNotification = (opts, level = 'success') => {
   return createAction(NOTIFICATIONS_ADD)({
@@ -23,33 +23,45 @@ const resetNotifications = createAction(NOTIFICATIONS_RESET);
 
 const notifyError = (error, notifConfig = {}) => {
   log.error(error);
-  return addNotification({
-    duration: 0,
-    ...notifConfig,
-    error,
-  }, 'error');
+  return addNotification(
+    {
+      duration: 0,
+      ...notifConfig,
+      error,
+    },
+    'error',
+  );
 };
 
 const notifySuccess = notifConfig => {
-  return addNotification({
-    // default success duration is 4.5 secondes
-    duration: 4.5,
-    ...notifConfig,
-  }, 'success');
+  return addNotification(
+    {
+      // default success duration is 4.5 secondes
+      duration: 4.5,
+      ...notifConfig,
+    },
+    'success',
+  );
 };
 
 const notifyWarning = notifConfig => {
-  return addNotification({
-    duration: 0,
-    ...notifConfig,
-  }, 'warning');
+  return addNotification(
+    {
+      duration: 0,
+      ...notifConfig,
+    },
+    'warning',
+  );
 };
 
 const notifyInfo = notifConfig => {
-  return addNotification({
-    duration: 0,
-    ...notifConfig,
-  }, 'info');
+  return addNotification(
+    {
+      duration: 0,
+      ...notifConfig,
+    },
+    'info',
+  );
 };
 
 export {

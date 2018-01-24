@@ -12,13 +12,14 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle, withValidators, FieldCtor } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
-import { DrawableContentProps } from '../../../components/Drawer';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { PluginProperty } from '../../../models/Plugins';
 import { PluginFieldGenerator } from '../../Plugin';
 import { Omit } from '../../../utils/Types';
 
 import messages from './messages';
+import { InjectDrawerProps } from '../../../components/Drawer/injectDrawer';
+import { injectDrawer } from '../../../components/Drawer/index';
 
 const { Content } = Layout;
 const FORM_NAME = 'pluginForm';
@@ -39,7 +40,7 @@ type JoinedProps = PluginEditFormProps &
   InjectedFormProps &
   ValidatorProps &
   InjectedIntlProps &
-  DrawableContentProps;
+  InjectDrawerProps;
 
 interface PluginEditFormState {
   loading: boolean;
@@ -106,8 +107,6 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           disabled={isLoading}
           pluginVersionId={pluginVersionId}
           organisationId={organisationId}
-          openNextDrawer={this.props.openNextDrawer}
-          closeNextDrawer={this.props.closeNextDrawer}
         />
       );
     });
@@ -186,8 +185,9 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   }
 }
 
-export default compose<JoinedProps, PluginEditFormProps & DrawableContentProps>(
+export default compose<JoinedProps, PluginEditFormProps>(
   injectIntl,
+  injectDrawer,
   reduxForm({
     form: FORM_NAME,
     enableReinitialize: true,
