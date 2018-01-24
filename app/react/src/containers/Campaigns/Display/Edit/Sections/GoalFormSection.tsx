@@ -258,7 +258,7 @@ class GoalFormSection extends React.Component<Props> {
 
     return (
       <ButtonStyleless onClick={handleOnClick}>
-        <McsIcon type="settings" additionalClass="big" />
+        <McsIcon type="settings" className="big" />
       </ButtonStyleless>
     );
   };

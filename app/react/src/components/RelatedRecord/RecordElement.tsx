@@ -72,7 +72,7 @@ class RecordElement<T> extends React.Component<RecordElementProps<T>> {
             className="action-button"
             onClick={this.editTableField}
           >
-            <McsIcon type="pen" additionalClass="big" />
+            <McsIcon type="pen" className="big" />
           </ButtonStyleless>
         )}
         {onRemove && (
@@ -80,7 +80,7 @@ class RecordElement<T> extends React.Component<RecordElementProps<T>> {
             className="action-button"
             onClick={this.removeTableField}
           >
-            <McsIcon type="delete" additionalClass="big" />
+            <McsIcon type="delete" className="big" />
           </ButtonStyleless>
         )}
       </Row>

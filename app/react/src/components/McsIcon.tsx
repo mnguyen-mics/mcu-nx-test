@@ -58,23 +58,24 @@ export type McsIconType =
   'warning';
 
 interface McsIconProps {
-    type: McsIconType;
-    additionalClass?: string;
+  type: McsIconType;
 }
 
-const McsIcon: React.SFC<McsIconProps & React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> > = props => {
-
-  const {
-    type,
-    additionalClass,
-    ...rest,
-  } = props;
-
-  return (
-    <span className={`icon ${additionalClass}`} {...rest} >
-      <i className={`mcs-${props.type}`} />
-    </span>
-  );
-};
+class McsIcon extends React.Component<
+  McsIconProps &
+    React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLSpanElement>,
+      HTMLSpanElement
+    >
+> {
+  render() {
+    const { type, className, ...rest } = this.props;
+    return (
+      <span className={`icon ${className ? className : ''}`} {...rest}>
+        <i className={`mcs-${type}`} />
+      </span>
+    );
+  }
+}
 
 export default McsIcon;

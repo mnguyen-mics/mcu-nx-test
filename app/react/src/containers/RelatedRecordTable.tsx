@@ -35,7 +35,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
           <div className="icon-round-border">
             <McsIcon
               type={type.image}
-              additionalClass="related-records"
+              className="related-records"
             />
           </div>
           {type.name}
@@ -51,7 +51,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
         const elemToDisplay = (elem: { image?: McsIconType, name: string }) => (elem && elem.image
             ? (
               <div className="display-row" key={generateGuid()}>
-                <McsIcon type={elem.image} additionalClass="big" />
+                <McsIcon type={elem.image} className="big" />
                 <p>{elem.name}</p>
               </div>
             )
@@ -101,7 +101,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       render: (index: number) => {
         return (
           <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
-            <McsIcon type="delete" additionalClass="big" />
+            <McsIcon type="delete" className="big" />
           </ButtonStyleless>
         );
       },

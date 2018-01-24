@@ -18,7 +18,7 @@ class AuditStatusRenderer extends React.Component<AuditStatusRendererProps> {
       <div>
         <McsIcon
           type={auditIconConfig[status].type}
-          additionalClass="m-r-10"
+          className="m-r-10"
           style={{
             verticalAlign: 'middle',
             color: auditIconConfig[status].color,
