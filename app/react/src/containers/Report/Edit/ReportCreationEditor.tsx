@@ -7,7 +7,6 @@ import { compose } from 'recompose';
 import { Layout, Row, Button, Col } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import moment from 'moment';
 
 import { Actionbar } from '../../Actionbar';
 import McsIcons from '../../../components/McsIcons';
@@ -20,7 +19,7 @@ import messages from './messages';
 import ReportFilterFields from './ReportFilterFields';
 import TableView, { DataColumnDefinition } from '../../../components/TableView/TableView';
 import { ValidatorProps } from '../../../components/Form/withValidators';
-import ReportCreationService from './ReportCreationService';
+import ReportCreationService, { FormValueInterface } from './ReportCreationService';
 import {
   typeOptions,
   availableDimensions,
@@ -36,7 +35,7 @@ interface ReportCreationEditorProps {
 }
 
 interface MapStateToProps {
-  formValue: any;
+  formValue: FormValueInterface;
   isFormValid: boolean;
 }
 
@@ -44,31 +43,11 @@ interface MapDispatchToProps {
   notifyError: any;
 }
 
-interface DurationInterface {
-  startDate: moment.Moment;
-  endDate: moment.Moment;
-}
-
-interface FilterInterface {
-  leftValue: string;
-  rightValue: string;
-}
-
-interface FormValueInterface {
-  type: string;
-  dimensions: string[];
-  metrics: string[];
-  duration: DurationInterface;
-  filter?: FilterInterface;
-  additionalFilters?: FilterInterface[];
-}
-
 interface State {
   dataSource: any[];
   columns: Array<DataColumnDefinition<any>>;
   loadingData: boolean;
   noPreviewValues: boolean;
-  doubleSelectOptionValues: string[] | undefined;
 }
 
 type JoinedProps =
@@ -98,7 +77,6 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
       columns: [],
       loadingData: false,
       noPreviewValues: false,
-      doubleSelectOptionValues: undefined,
     };
   }
 
@@ -213,7 +191,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
               </Scrollspy>
             </Sider>
             <Layout>
-              <div id={'reportSteps'}>
+              <div id={'reportSteps'} className="ant-layout">
                 <Content className="mcs-content-container mcs-form-container">
                   <div id={'general_information'}>
                     <Row type="flex" align="middle" justify="space-between" className="section-header">
@@ -228,8 +206,8 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         component={DefaultSelect}
                         validate={[isRequired]}
                         options={typeOptions}
-                        formItemProps={{ label: 'Report Type', colon: false, required: true }}
-                        helpToolTipProps={{ title: 'tooltip' }}
+                        formItemProps={{ label: intl.formatMessage(messages.reportSectionGeneralTypeLabel), colon: false, required: true }}
+                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionGeneralTypeTooltip) }}
                       />
                     </Row>
                   </div>
@@ -247,16 +225,16 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         component={TagSelect}
                         validate={[isRequired]}
                         selectProps={{ options: availableDimensions }}
-                        formItemProps={{ label: 'Dimensions', colon: false, required: true }}
-                        helpToolTipProps={{ title: 'tooltip' }}
+                        formItemProps={{ label: intl.formatMessage(messages.reportSectionDetailedDimensionsLabel), colon: false, required: true }}
+                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedDimensionsTooltip) }}
                       />
                       <TagSelectField
                         name="metrics"
                         component={TagSelect}
                         validate={[isRequired]}
                         selectProps={selectPropsMetrics}
-                        formItemProps={{ label: 'Metrics', colon: false, required: true }}
-                        helpToolTipProps={{ title: 'tooltip' }}
+                        formItemProps={{ label: intl.formatMessage(messages.reportSectionDetailedMetricsLabel), colon: false, required: true }}
+                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedMetricsTooltip) }}
                       />
                       <FormDateRangePickerField
                         name="duration"
@@ -267,7 +245,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                           colon: false,
                           required: true,
                         }}
-                        helpToolTipProps={{ title: 'tooltip' }}
+                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedDurationTooltip) }}
                         allowPastDate={true}
                         startDatePickerProps={{
                           placeholder: intl.formatMessage(messages.reportSectionDetailedDurationStartDatePlaceholder),
@@ -280,6 +258,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         name="filter"
                         component={FormLinkedSelectInput}
                         formItemProps={{ label: intl.formatMessage(messages.reportSectionDetailedFilterLabel), colon: false }}
+                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedFilterTooltip) }}
                         leftFormSelectProps={{
                           placeholder: intl.formatMessage(messages.reportSectionDetailedFilterLeftSelectPlaceholder),
                         }}

@@ -7,17 +7,17 @@ import ReportService, { Filter } from '../../../services/ReportService';
 import ExportService from '../../../services/ExportService';
 import { normalizeReportView } from '../../../utils/MetricHelper';
 
-interface DurationInterface {
+export interface DurationInterface {
   startDate: moment.Moment;
   endDate: moment.Moment;
 }
 
-interface FilterInterface {
+export interface FilterInterface {
   leftValue: string;
   rightValue: string;
 }
 
-interface FormValueInterface {
+export interface FormValueInterface {
   type: string;
   dimensions: string[];
   metrics: string[];

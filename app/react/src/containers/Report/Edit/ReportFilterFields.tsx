@@ -72,7 +72,7 @@ class ReportFilterFields extends React.Component<JoinedProps> {
                   <McsIcons
                     type="plus"
                   />
-                  Add Filter
+                  {intl.formatMessage(messages.AddFilterButtonText)}
                 </p>
               </Col>
             </div>

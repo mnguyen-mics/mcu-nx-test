@@ -5,7 +5,6 @@ import { Select } from 'antd';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 import FormSelect, { FormSelectProps } from './FormSelect/FormSelect';
-// import { Omit } from '../../utils/Types';
 
 export interface OptionsProps {
   label: string;
@@ -29,7 +28,6 @@ class FormDoubleLinkedSelect extends React.Component<JoinedProps> {
 
   updateLeftSelect = (leftValue: string) => {
     const { input } = this.props;
-    // const { rightOptions } = optionsProps;
     input.onChange({ leftValue: leftValue });
   }
   updateRightSelect = (rightValue: string) => {

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Select } from 'antd';
-// import { WrappedFieldInputProps } from 'redux-form';
 import { SelectProps } from 'antd/lib/select';
 
 import { generateFakeId } from '../../../utils/FakeIdHelper';

@@ -164,7 +164,7 @@ const libraryMenu = {
 
 const reportMenu = {
   key: 'report',
-  iconType: 'library',
+  iconType: 'data',
   path: '/report',
   translationId: 'REPORT',
   subMenuItems: [
