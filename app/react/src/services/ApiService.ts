@@ -48,71 +48,79 @@ const ADMIN_API_URL = `${MCS_CONSTANTS.ADMIN_API_URL}/v1/`;
 
 type RequestMethod = 'get' | 'post' | 'put' | 'delete';
 
+function paramsToQueryString(paramsArg: { [key: string]: any } = {}) {
+  if (!paramsArg) return '';
+  const paramsToArray: string[] = Object.keys(paramsArg);
+  const str: string = paramsToArray
+    .filter(key => paramsArg[key] !== undefined)
+    .map(
+      key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`,
+    )
+    .join('&');
+  return str.length ? `?${str}` : '';
+}
+
 function request(
   method: RequestMethod,
   endpoint: string,
-  params: object,
-  headers: any,
-  body: any,
-  authenticated: boolean = true,
-  options: ApiOptions = {},
+  options: {
+    params?: { [key: string]: any };
+    body?: any;
+    headers?: { [key: string]: any };
+    localUrl?: boolean;
+    adminApi?: object;
+    withCredentials?: boolean;
+    authenticated?: boolean;
+  } = {},
 ) {
-  const paramsToQueryString = (paramsArg: { [key: string]: any }) => {
-    if (!paramsArg) return '';
-    const paramsToArray: string[] = Object.keys(paramsArg);
-    const str: string = paramsToArray
-      .filter(key => paramsArg[key] !== undefined)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`)
-      .join('&');
-    return str.length ? `?${str}` : '';
-  };
+  const baseUrl = options.adminApi
+    ? ADMIN_API_URL
+    : options.localUrl ? LOCAL_URL : API_URL;
 
-  let url = options.adminApi ? ADMIN_API_URL : options.localUrl ? LOCAL_URL : API_URL;
-  url = `${url}${endpoint}${paramsToQueryString(params)}`;
+  const url = `${baseUrl}${endpoint}${paramsToQueryString(options.params)}`;
 
-  const token = AuthService.getAccessToken();
+  const requestHeaders = new Headers(options.headers || {});
+  requestHeaders.append('X-Requested-By', 'mediarithmics-navigator');
 
-  const config: any = {
-    method,
-  };
-
-  if (!options.localUrl && authenticated) {
+  if (!options.localUrl && options.authenticated) {
+    const token = AuthService.getAccessToken();
     if (token) {
-      config.headers = {
-        Authorization: token,
-      };
+      requestHeaders.append('Authorization', token);
     } else {
-      throw new Error(`Error. Authenticated without token, endpoint:${endpoint}`);
+      throw new Error(
+        `Error. Authenticated without token, endpoint:${endpoint}`,
+      );
     }
   }
 
-  const bodyIsFormData = (body instanceof FormData); /* global FormData */
-  const bodyIsBlob = (body instanceof Blob); /* global Blob */
+  const config: RequestInit = {
+    method,
+    headers: requestHeaders,
+  };
 
-  if (headers && !isEmpty(headers)) {
-    config.headers = {...config.headers, ...headers};
-  } else if (!bodyIsFormData) {
-    config.headers = {...config.headers,
-                      'Accept': 'application/json', // eslint-disable-line
-                      'Content-Type': 'application/json'};
+  if (options.body instanceof FormData || options.body instanceof Blob) {
+    config.body = options.body;
+  } else if (options.body) {
+    if (isEmpty(options.headers)) {
+      // default headers: application/json
+      requestHeaders.append('Accept', 'application/json');
+      requestHeaders.append('Content-Type', 'application/json');
+    }
+    config.body = JSON.stringify(options.body);
   }
 
   if (options.withCredentials) {
     config.credentials = 'include';
   }
-  config.headers['X-Requested-By'] = 'mediarithmics-navigator';
-
-  if (bodyIsFormData || bodyIsBlob) {
-    config.body = body; // body passed as a formdata object or blob
-  } else if (body) {
-    config.body = JSON.stringify(body);
-  }
 
   const checkAndParse = (response: Response) => {
-
     const contentType = response.headers.get('Content-Type');
 
-    if (contentType && contentType.indexOf('image/png') !== -1) {
+    if (
+      contentType &&
+      (contentType.indexOf('image/png') !== -1 ||
+        contentType.indexOf('application/octet-stream') !== -1)
+    ) {
       return response.blob().then(blob => {
         if (!response.ok) {
           Promise.reject(blob);
@@ -120,18 +128,9 @@ function request(
         return blob;
       });
     } else if (contentType && contentType.indexOf('text/html') !== -1) {
-      return (response.status < 400
+      return response.status < 400
         ? Promise.resolve()
-        : Promise.reject(response)
-      );
-    } else if (contentType && contentType.indexOf('application/octet-stream') !== -1) {
-      return response.blob().then(blob => {
-        if (!response.ok) {
-          Promise.reject(blob);
-        }
-
-        return blob;
-      });
+        : Promise.reject(response);
     }
 
     // Considered as a json response by default
@@ -142,7 +141,6 @@ function request(
 
       return json;
     });
-
   };
 
   return fetch(url, config) // eslint-disable-line no-undef
@@ -151,44 +149,66 @@ function request(
 
 function getRequest<T>(
   endpoint: string,
-  params: object = {},
-  headers: any = {},
+  params: { [key: string]: any } = {},
+  headers: HeadersInit = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
-  return request('get', endpoint, params, headers, null, authenticated, options) as Promise<T>;
+  return request('get', endpoint, {
+    params,
+    headers,
+    ...options,
+    authenticated:
+      options.authenticated !== undefined ? options.authenticated : true,
+  }) as Promise<T>;
 }
 
 function postRequest<T>(
   endpoint: string,
-  body: object,
-  params: object = {},
-  headers: any = {},
+  body: any,
+  params: { [key: string]: any } = {},
+  headers: HeadersInit = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
-  return request('post', endpoint, params, headers, body, authenticated, options) as Promise<T>;
+  return request('post', endpoint, {
+    params,
+    headers,
+    body,
+    ...options,
+    authenticated:
+      options.authenticated !== undefined ? options.authenticated : true,
+  }) as Promise<T>;
 }
 
 function putRequest<T>(
   endpoint: string,
-  body: object,
-  params: object = {},
-  headers: any = {},
+  body: any,
+  params: { [key: string]: any } = {},
+  headers: HeadersInit = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
-  return request('put', endpoint, params, headers, body, authenticated, options) as Promise<T>;
+  return request('put', endpoint, {
+    params,
+    headers,
+    body,
+    ...options,
+    authenticated:
+      options.authenticated !== undefined ? options.authenticated : true,
+  }) as Promise<T>;
 }
 
 function deleteRequest<T>(
   endpoint: string,
-  params: object = {},
-  headers: any = {},
+  params: { [key: string]: any } = {},
+  headers: HeadersInit = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  const authenticated = options.authenticated !== undefined ? options.authenticated : true;
-  return request('delete', endpoint, params, headers, null, authenticated, options) as Promise<T>;
+  return request('delete', endpoint, {
+    params,
+    headers,
+    ...options,
+    authenticated:
+      options.authenticated !== undefined ? options.authenticated : true,
+  }) as Promise<T>;
 }
 
 export default {
