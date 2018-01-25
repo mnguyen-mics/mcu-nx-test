@@ -30,6 +30,7 @@ import { setColorsStore } from '../../state/Theme/actions';
 import * as SessionHelper from '../../state/Session/selectors';
 import OrgSelector from './OrgSelector.tsx';
 import errorMessages from './messages';
+import { getCookies } from '../../state/Session/actions';
 
 
 addLocaleData([enLocaleData, frLocaleData]);
@@ -39,7 +40,7 @@ class Navigator extends Component {
   state = { adBlockOn: false }
 
   componentDidMount() {
-
+    this.props.getCookies();
     NavigatorService.isAdBlockOn()
       .then(() => {
         // Read theme colors in DOM and store them in redux for future usage
@@ -171,6 +172,7 @@ Navigator.propTypes = {
   logOut: PropTypes.func.isRequired,
   setColorsStore: PropTypes.func.isRequired,
   workspaces: PropTypes.shape().isRequired,
+  getCookies: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -183,6 +185,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   logOut: logOut,
   setColorsStore: setColorsStore,
+  getCookies: getCookies.request,
 };
 
 export default compose(
