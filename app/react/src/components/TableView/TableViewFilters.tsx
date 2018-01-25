@@ -6,6 +6,7 @@ import { SearchProps } from 'antd/lib/input/Search';
 import McsDateRangePicker, { McsDateRangePickerProps } from '../McsDateRangePicker';
 import MultiSelect, { MultiSelectProps } from '../MultiSelect';
 import TableView, { DataColumnDefinition, TableViewProps } from './TableView';
+import LabelsSelector, { LabelsSelectorProps } from '../LabelsSelector';
 
 const Search = Input.Search;
 
@@ -16,6 +17,7 @@ export interface ViewComponentWithFiltersProps<T> extends TableViewProps<T> {
   columnsVisibilityOptions?: {
     isEnabled?: boolean;
   };
+  labelsOptions?: LabelsSelectorProps;
 }
 
 export interface FiltersState<T> {
@@ -63,6 +65,7 @@ class TableViewFilters<T> extends React.Component<ViewComponentWithFiltersProps<
       dateRangePickerOptions,
       filtersOptions,
       columnsVisibilityOptions,
+      labelsOptions,
       } = this.props;
 
     const searchInput = searchOptions
@@ -120,6 +123,10 @@ class TableViewFilters<T> extends React.Component<ViewComponentWithFiltersProps<
             {visibilityMultiSelect}
           </Col>
         </Row>
+        {(labelsOptions) ?
+          <Row className="mcs-table-labels">
+            <LabelsSelector {...labelsOptions} />
+          </Row> : null}
         <Row className="mcs-table-body">
           <Col span={24}>
             <TableView

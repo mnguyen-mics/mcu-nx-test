@@ -195,7 +195,7 @@ export default compose(
   injectIntl,
   withMcsRouter,
   connect(
-    state => ({
+    (state: any) => ({
       labels: state.labels.labelsApi.data,
       isFetching: state.labels.labelsApi.isFetching,
     }),

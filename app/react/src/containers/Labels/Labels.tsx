@@ -112,5 +112,5 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
 }
 
 export default connect(
-  state => ({ orgLabels: state.labels.labelsApi.data }),
+  (state: any) => ({ orgLabels: state.labels.labelsApi.data }),
 )(Labels);

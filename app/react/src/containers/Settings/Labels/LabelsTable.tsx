@@ -80,10 +80,6 @@ function LabelsTable(props: LabelsTableProps) {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     return (noLabelYet) ? (
             <EmptyTableView
@@ -91,12 +87,13 @@ function LabelsTable(props: LabelsTableProps) {
               intlMessage={messages.emptyLabels}
             />
           ) : (
-             <TableView
-               columnsDefinitions={columnsDefinitions}
-               dataSource={dataSource}
-               loading={isFetchingLabels}
-               pagination={pagination}
-             />
+            <TableView
+              actionsColumnsDefinition={actionColumns}
+              columns={dataColumns}
+              dataSource={dataSource}
+              loading={isFetchingLabels}
+              pagination={pagination}
+            />
            );
 }
 

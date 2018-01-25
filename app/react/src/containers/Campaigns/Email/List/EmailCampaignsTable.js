@@ -196,6 +196,7 @@ function EmailCampaignsTable({
         dataSource={dataSource}
         loading={isFetchingCampaigns}
         pagination={pagination}
+        labelsOptions={labelsOptions}
       />
     </div>
   );
