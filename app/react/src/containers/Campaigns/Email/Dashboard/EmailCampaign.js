@@ -29,7 +29,7 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 
 import * as NotificationActions from '../../../../state/Notifications/actions';
 
@@ -51,10 +51,9 @@ class EmailCampaign extends Component {
         }
       },
       loadEmailCampaignAndDeliveryReport,
-      fetchAllEmailBlast,
-      fetchAllEmailBlastPerformance
+      // fetchAllEmailBlast,
+      // fetchAllEmailBlastPerformance
     } = this.props;
-
     if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
@@ -62,8 +61,8 @@ class EmailCampaign extends Component {
       });
     } else {
       const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
-      fetchAllEmailBlast(campaignId);
-      fetchAllEmailBlastPerformance(campaignId, filter);
+      // fetchAllEmailBlast(campaignId);
+      // fetchAllEmailBlastPerformance(campaignId, filter);
       loadEmailCampaignAndDeliveryReport(organisationId, campaignId, filter);
     }
   }
@@ -80,8 +79,8 @@ class EmailCampaign extends Component {
       },
       history,
       loadEmailCampaignAndDeliveryReport,
-      fetchAllEmailBlast,
-      fetchAllEmailBlastPerformance
+      // fetchAllEmailBlast,
+      // fetchAllEmailBlastPerformance
     } = this.props;
 
     const {
@@ -96,8 +95,8 @@ class EmailCampaign extends Component {
         }
       }
     } = nextProps;
-
     if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
+
       if (!isSearchValid(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -105,8 +104,8 @@ class EmailCampaign extends Component {
         });
       } else {
         const filter = parseSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS);
-        fetchAllEmailBlast(nextCampaignId);
-        fetchAllEmailBlastPerformance(nextCampaignId, filter);
+        // fetchAllEmailBlast(nextCampaignId);
+        // fetchAllEmailBlastPerformance(nextCampaignId, filter);
         loadEmailCampaignAndDeliveryReport(nextOrganisationId, nextCampaignId, filter);
       }
     }

@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
 import { Layout, Button } from 'antd';
 import { compose } from 'recompose';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
@@ -90,15 +89,11 @@ class DisplayCampaign extends React.Component<JoinedProps> {
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = (newValues: McsDateRangeValue): void => this.updateLocationSearch({
-      rangeType: newValues.rangeType,
-      lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
       to: newValues.to,
     });
@@ -124,23 +119,26 @@ class DisplayCampaign extends React.Component<JoinedProps> {
       updateCampaign,
       dashboardPerformance,
       goals,
+      history,
       intl: {
         formatMessage,
       },
     } = this.props;
 
+    const onClick = () => {
+      history.push({
+        pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
+        state: { from: `${location.pathname}${location.search}` },
+      });
+    };
+
     const adGroupButtons: JSX.Element = (
       <span>
-        <Link
-          to={{
-            pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
-            state: { from: `${location.pathname}${location.search}` },
-          }}
-        >
-          <Button className="m-r-10" type="primary">
-            <FormattedMessage {...messages.newAdGroups} />
-          </Button>
-        </Link>
+
+        <Button className="m-r-10" type="primary" onClick={onClick}>
+          <FormattedMessage {...messages.newAdGroups} />
+        </Button>
+
         {this.renderDatePicker()}
       </span>
     );

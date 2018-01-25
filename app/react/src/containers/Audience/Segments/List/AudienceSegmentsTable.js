@@ -21,7 +21,7 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
@@ -232,14 +232,10 @@ class AudienceSegmentsTable extends Component {
     const dateRangePickerOptions = {
       isEnabled: true,
       onChange: (values) => this.updateLocationSearch({
-        rangeType: values.rangeType,
-        lookbackWindow: values.lookbackWindow,
         from: values.from,
         to: values.to,
       }),
       values: {
-        rangeType: filter.rangeType,
-        lookbackWindow: filter.lookbackWindow,
         from: filter.from,
         to: filter.to,
       },
@@ -395,22 +391,18 @@ class AudienceSegmentsTable extends Component {
 
     const filtersOptions = [
       {
-        name: 'types',
         displayElement: <div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>,
-        menuItems: {
-          handleMenuClick: (value => this.updateLocationSearch({
-            types: value.types.map(item => item.value),
-          })),
-          selectedItems: filter.types.map(type => ({ key: type, value: type })),
-          items: typeItems,
-        },
+        selectedItems: filter.types.map(type => ({ key: type, value: type })),
+        items: typeItems,
+        getKey: item => item.key,
+        display: item => item.value,
+        handleMenuClick: values =>
+          this.updateLocationSearch({
+            types: values.map(v => v.value),
+          }),
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     const labelsOptions = {
       labels: this.props.labels,
@@ -428,7 +420,8 @@ class AudienceSegmentsTable extends Component {
       ? (
         <div className="mcs-table-container">
           <TableViewFilters
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
+            actionsColumnsDefinition={actionColumns}
             searchOptions={searchOptions}
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}

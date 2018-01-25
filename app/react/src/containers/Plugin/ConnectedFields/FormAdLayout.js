@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import messages from '../messages';
 
 import McsIcons from '../../../components/McsIcons.tsx';
-import PluginService from '../../../services/PluginService';
+import PluginService from '../../../services/PluginService.ts';
 
 
 const Option = Select.Option;
@@ -33,31 +33,31 @@ class FormAdLayout extends Component {
   componentDidMount() {
     const {
       options: {
-        rendererVersionId,
+        pluginVersionId,
         organisationId,
       },
     } = this.props;
 
-    this.getAdLayout(organisationId, rendererVersionId);
+    this.getAdLayout(organisationId, pluginVersionId);
   }
 
   componentWillReceiveProps(nextProps) {
     const {
       options: {
-        rendererVersionId,
+        pluginVersionId,
         organisationId,
       },
     } = this.props;
 
     const {
       options: {
-        rendererVersionId: nextRendererVersionId,
+        pluginVersionId: nextPluginVersionId,
         organisationId: nextOrganisationId,
       },
     } = nextProps;
 
-    if (rendererVersionId !== nextRendererVersionId || organisationId !== nextOrganisationId) {
-      this.getAdLayout(nextOrganisationId, nextRendererVersionId);
+    if (pluginVersionId !== nextPluginVersionId || organisationId !== nextOrganisationId) {
+      this.getAdLayout(nextOrganisationId, nextPluginVersionId);
     }
   }
 
@@ -258,7 +258,7 @@ FormAdLayout.propTypes = {
   }),
   options: PropTypes.shape({
     disabled: PropTypes.bool.isRequired,
-    rendererVersionId: PropTypes.string.isRequired,
+    pluginVersionId: PropTypes.string.isRequired,
     organisationId: PropTypes.string.isRequired,
   }).isRequired,
   helpToolTipProps: PropTypes.shape({

@@ -66,8 +66,6 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
 
     const onChange = (newValues: McsDateRangeValue) =>
       this.updateLocationSearch({
-        rangeType: newValues.rangeType,
-        lookbackWindow: newValues.lookbackWindow,
         from: newValues.from,
         to: newValues.to,
       });
@@ -168,20 +166,16 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions_cost'),
       },
-      {
-        intlMessage: messages.cpa,
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpa'),
-      },
+      // TODO UNCOMMENT WHEN BACKEND IS FIXED
+      // {
+      //   intlMessage: messages.cpa,
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
+      //   sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpa'),
+      // },
     ];
-
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: [],
-    };
 
     return (
       <Row>
@@ -190,7 +184,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         </Col>
         <Col span={24}>
           <TableView
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
             dataSource={dataSet}
             loading={isFetchingMediaStat}
           />

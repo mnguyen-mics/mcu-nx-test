@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import { createRequestMetadataReducer } from '../../../utils/ReduxHelper';
-import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+import { normalizeArrayOfObject } from '../../../utils/Normalizer.ts';
 
 import {
   CREATIVES_EMAIL_FETCH,

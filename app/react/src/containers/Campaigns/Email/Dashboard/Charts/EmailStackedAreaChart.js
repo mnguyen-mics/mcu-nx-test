@@ -60,15 +60,11 @@ class EmailStackedAreaChart extends Component {
     const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
 
     const values = {
-      rangeType: filter.rangeType,
-      lookbackWindow: filter.lookbackWindow,
       from: filter.from,
       to: filter.to,
     };
 
     const onChange = (newValues) => this.updateLocationSearch({
-      rangeType: newValues.rangeType,
-      lookbackWindow: newValues.lookbackWindow,
       from: newValues.from,
       to: newValues.to,
     });
@@ -78,16 +74,9 @@ class EmailStackedAreaChart extends Component {
 
   renderStackedAreaCharts() {
     const {
-      location: {
-        search,
-      },
       dataSource,
       hasFetchedCampaignStat,
     } = this.props;
-
-    const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
-
-    const { lookbackWindow } = filter;
 
     const optionsForChart = {
       xKey: 'day',
@@ -97,7 +86,6 @@ class EmailStackedAreaChart extends Component {
         { key: 'impressions', message: messages.emailImpressions },
         { key: 'email_hard_bounced', message: messages.emailHardBounce },
       ],
-      lookbackWindow: lookbackWindow.as('milliseconds'),
       colors: this.generateColors(),
     };
     return hasFetchedCampaignStat

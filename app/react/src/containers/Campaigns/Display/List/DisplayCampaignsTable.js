@@ -6,7 +6,10 @@ import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import { EmptyTableView, TableViewFilters } from '../../../../components/TableView/index.ts';
+import {
+  EmptyTableView,
+  TableViewFilters,
+} from '../../../../components/TableView/index.ts';
 import McsIcons from '../../../../components/McsIcons.tsx';
 
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
@@ -14,29 +17,26 @@ import DisplayCampaignsService from '../../../../services/DisplayCampaignService
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 
-import { buildDefaultSearch, compareSearches, isSearchValid, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  buildDefaultSearch,
+  compareSearches,
+  isSearchValid,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
-
+import messages from '../messages';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
-import messages from './messages';
 
 class DisplayCampaignsTable extends Component {
-
   componentDidMount() {
     const {
       history,
-      location: {
-        search,
-        pathname,
-      },
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      loadDisplayCampaignsDataSource
+      location: { search, pathname },
+      match: { params: { organisationId } },
+      loadDisplayCampaignsDataSource,
     } = this.props;
 
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
@@ -53,34 +53,23 @@ class DisplayCampaignsTable extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      location: {
-        search,
-      },
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      location: { search },
+      match: { params: { organisationId } },
       history,
-      loadDisplayCampaignsDataSource
+      loadDisplayCampaignsDataSource,
     } = this.props;
 
     const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-        state,
-      },
-      match: {
-        params: {
-          organisationId: nextOrganisationId,
-        },
-      },
+      location: { pathname: nextPathname, search: nextSearch, state },
+      match: { params: { organisationId: nextOrganisationId } },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
       if (!isSearchValid(nextSearch, DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -89,7 +78,11 @@ class DisplayCampaignsTable extends Component {
         });
       } else {
         const filter = parseSearch(nextSearch, DISPLAY_SEARCH_SETTINGS);
-        loadDisplayCampaignsDataSource(nextOrganisationId, filter, checkEmptyDataSource);
+        loadDisplayCampaignsDataSource(
+          nextOrganisationId,
+          filter,
+          checkEmptyDataSource,
+        );
       }
     }
   }
@@ -98,18 +91,10 @@ class DisplayCampaignsTable extends Component {
     this.props.resetDisplayCampaignsTable();
   }
 
-  archiveCampaign = (campaign) => {
+  archiveCampaign = campaign => {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        pathname,
-        state,
-        search,
-      },
+      match: { params: { organisationId } },
+      location: { pathname, state, search },
       loadDisplayCampaignsDataSource,
       history,
       dataSource,
@@ -129,20 +114,20 @@ class DisplayCampaignsTable extends Component {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
-              currentPage: filter.currentPage - 1
+              currentPage: filter.currentPage - 1,
             };
             loadDisplayCampaignsDataSource(organisationId, filter);
             history.replace({
               pathname: pathname,
               search: updateSearch(search, newFilter),
-              state: state
+              state: state,
             });
           } else {
             loadDisplayCampaignsDataSource(organisationId, filter);
           }
         });
       },
-      onCancel() { },
+      onCancel() {},
     });
   };
 
@@ -153,21 +138,36 @@ class DisplayCampaignsTable extends Component {
           organisationId,
         },
       },
+      location,
       history,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaign.id}/edit`;
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/${
+      campaign.id
+    }/edit`;
 
-    history.push(editUrl);
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
   };
+
+  duplicateCampaign = (campaign) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+      history,
+    } = this.props;
+
+    const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
+
+    history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
+  }
 
   updateLocationSearch = (params) => {
     const {
       history,
-      location: {
-        search: currentSearch,
-        pathname,
-      },
+      location: { search: currentSearch, pathname },
     } = this.props;
 
     const nextLocation = {
@@ -179,14 +179,8 @@ class DisplayCampaignsTable extends Component {
 
   render() {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
+      match: { params: { organisationId } },
+      location: { search },
       hasDisplayCampaigns,
       translations,
       isFetchingDisplayCampaigns,
@@ -200,23 +194,21 @@ class DisplayCampaignsTable extends Component {
 
     const searchOptions = {
       placeholder: translations.SEARCH_DISPLAY_CAMPAIGNS,
-      onSearch: value => this.updateLocationSearch({
-        keywords: value,
-      }),
+      onSearch: value =>
+        this.updateLocationSearch({
+          keywords: value,
+        }),
       defaultValue: filter.keywords,
     };
 
     const dateRangePickerOptions = {
       isEnabled: true,
-      onChange: (values) => this.updateLocationSearch({
-        rangeType: values.rangeType,
-        lookbackWindow: values.lookbackWindow,
-        from: values.from,
-        to: values.to,
-      }),
+      onChange: values =>
+        this.updateLocationSearch({
+          from: values.from,
+          to: values.to,
+        }),
       values: {
-        rangeType: filter.rangeType,
-        lookbackWindow: filter.lookbackWindow,
         from: filter.from,
         to: filter.to,
       },
@@ -230,18 +222,20 @@ class DisplayCampaignsTable extends Component {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalDisplayCampaigns,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page,
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        currentPage: 1,
-        pageSize: size,
-      }),
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page,
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          currentPage: 1,
+          pageSize: size,
+        }),
     };
 
     const renderMetricData = (value, numeralFormat, currency = '') => {
       if (isFetchingCampaignsStat) {
-        return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
+        return <i className="mcs-table-cell-loading" />; // (<span>loading...</span>);
       }
       switch (currency) {
         case 'EUR': {
@@ -276,7 +270,8 @@ class DisplayCampaignsTable extends Component {
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/campaigns/display/${record.id}`}
-          >{text}
+          >
+            {text}
           </Link>
         ),
       },
@@ -299,7 +294,7 @@ class DisplayCampaignsTable extends Component {
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text) => {
+        render: text => {
           // TODO find campaign currency (with getDisplayCampaignsById(record['campaign_id']))
           const campaignCurrency = 'EUR';
           return renderMetricData(text, '0,0.00', campaignCurrency);
@@ -326,13 +321,14 @@ class DisplayCampaignsTable extends Component {
         isHideable: true,
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-      },
+      // TODO UNCOMMENT WHEN THE CPA IS FIXED ON BACKEND SIDE
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      // },
     ];
 
     const actionColumns = [
@@ -342,7 +338,12 @@ class DisplayCampaignsTable extends Component {
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,
-          }, {
+          },
+          {
+            intlMessage: messages.duplication,
+            callback: this.duplicateCampaign,
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archiveCampaign,
           },
@@ -350,26 +351,31 @@ class DisplayCampaignsTable extends Component {
       },
     ];
 
-    const statusItems = campaignStatuses.map(status => ({ key: status, value: status }));
+    const statusItems = campaignStatuses.map(status => ({
+      key: status,
+      value: status,
+    }));
 
     const filtersOptions = [
       {
-        name: 'status',
-        displayElement: (<div><FormattedMessage id="STATUS" /> <Icon type="down" /></div>),
-        menuItems: {
-          handleMenuClick: value => this.updateLocationSearch({
-            statuses: value.status.map(item => item.value),
+        displayElement: (
+          <div>
+            <FormattedMessage id="STATUS" /> <Icon type="down" />
+          </div>
+        ),
+        selectedItems: filter.statuses.map(status => ({
+          key: status,
+          value: status,
+        })),
+        items: statusItems,
+        getKey: item => item.key,
+        display: item => item.value,
+        handleMenuClick: values =>
+          this.updateLocationSearch({
+            statuses: values.map(v => v.value),
           }),
-          selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
-          items: statusItems,
-        },
       },
     ];
-
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     const labelsOptions = {
       labels: this.props.labels,
@@ -387,7 +393,8 @@ class DisplayCampaignsTable extends Component {
       ? (
         <div className="mcs-table-container">
           <TableViewFilters
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
+            actionsColumnsDefinition={actionColumns}
             searchOptions={searchOptions}
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}
@@ -403,7 +410,6 @@ class DisplayCampaignsTable extends Component {
     );
   }
 }
-
 
 DisplayCampaignsTable.propTypes = {
   match: PropTypes.shape().isRequired,
@@ -425,21 +431,22 @@ const mapStateToProps = state => ({
   labels: state.labels.labelsApi.data,
   translations: state.translations,
   hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
-  isFetchingDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.isFetching,
-  isFetchingCampaignsStat: state.displayCampaignsTable.performanceReportApi.isFetching,
+  isFetchingDisplayCampaigns:
+    state.displayCampaignsTable.displayCampaignsApi.isFetching,
+  isFetchingCampaignsStat:
+    state.displayCampaignsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
   totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
 });
 
 const mapDispatchToProps = {
-  loadDisplayCampaignsDataSource: DisplayCampaignsActions.loadDisplayCampaignsDataSource,
-  resetDisplayCampaignsTable: DisplayCampaignsActions.resetDisplayCampaignsTable,
+  loadDisplayCampaignsDataSource:
+    DisplayCampaignsActions.loadDisplayCampaignsDataSource,
+  resetDisplayCampaignsTable:
+    DisplayCampaignsActions.resetDisplayCampaignsTable,
 };
 
 export default compose(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+  connect(mapStateToProps, mapDispatchToProps),
 )(DisplayCampaignsTable);

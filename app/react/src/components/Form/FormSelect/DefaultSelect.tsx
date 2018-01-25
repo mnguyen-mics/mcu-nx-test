@@ -9,20 +9,22 @@ import { SelectProps, OptionProps } from 'antd/lib/select';
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
 import FormSelect from './FormSelect';
 
-interface FormSelectProps {
+export interface DefaultSelectProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   selectProps?: SelectProps;
   options?: OptionProps[];
+  disabled?: boolean;
 }
 
 const Option = Select.Option;
 
-class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperProps & WrappedFieldProps> {
+class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldProps> {
 
-  static defaultprops: Partial<FormSelectProps> = {
+  static defaultprops: Partial<DefaultSelectProps> = {
     formItemProps: {},
     selectProps: {},
     options: [],
+    disabled: false,
   };
 
   componentDidMount() {
@@ -51,6 +53,7 @@ class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperPr
     const {
       formItemProps,
       helpToolTipProps,
+      disabled,
       input,
       meta,
       options,
@@ -75,6 +78,7 @@ class DefaultSelect extends React.Component<FormSelectProps & FormFieldWrapperPr
           <FormSelect
             {...selectProps}
             input={input}
+            disabled={disabled}
           >{optionsToDisplay}
           </FormSelect>
         </FormFieldWrapper>

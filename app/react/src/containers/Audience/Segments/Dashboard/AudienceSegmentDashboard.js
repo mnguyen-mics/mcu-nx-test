@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { CardWithHeader } from '../../../../components/Card/index.ts';
 import McsTabs from '../../../../components/McsTabs.tsx';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper.ts';
 
 function AudienceSegmentDashboard({ segment, translations }) {
 

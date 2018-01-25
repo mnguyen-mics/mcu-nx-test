@@ -7,9 +7,9 @@ import {
     fetchCreativeDisplay,
 } from './actions';
 
-import CreativeService from '../../../services/CreativeService';
+import CreativeService from '../../../services/CreativeService.ts';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
     CREATIVES_DISPLAY_FETCH,
@@ -28,6 +28,7 @@ function* loadCreativeDisplay({ payload }) {
 
     const options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      archived: filter.archived,
     };
 
     const initialOptions = {

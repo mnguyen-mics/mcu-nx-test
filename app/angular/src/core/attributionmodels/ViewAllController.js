@@ -6,6 +6,7 @@ define(['./module'], function (module) {
     '$scope', 'Restangular', 'core/common/auth/Session', '$location', '$uibModal', '$state', '$stateParams',
     function($scope, Restangular, Session, $location, $uibModal, $state, $stateParams) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/attribution_models');
       $scope.attributionModels = Restangular.all("attribution_models").getList({
         organisation_id : organisationId
       }).$object;

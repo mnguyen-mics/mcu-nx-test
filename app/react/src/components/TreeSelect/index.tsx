@@ -4,8 +4,8 @@ import { SHOW_ALL, SHOW_PARENT, SHOW_CHILD } from './strategies';
 import React from 'react';
 import Select from './Select';
 import classNames from 'classnames';
-import { AbstractSelectProps } from 'antd/lib/select';
-import injectLocale from 'antd/lib/locale-provider/injectLocale';
+import {AbstractSelectProps, SelectLocale} from 'antd/lib/select';
+import LocaleReceiver from 'antd/lib/locale-provider/LocaleReceiver';
 
 const RcTreeSelect = Select as any;
 
@@ -65,6 +65,8 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
     dropdownClassName: 'ant-select-tree-dropdown',
   };
 
+  private rcTreeSelect: any;
+
   constructor(props: TreeSelectProps) {
     super(props);
 
@@ -75,15 +77,24 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
     // );
   }
 
-  abstract getLocale(): any;
+  focus() {
+    this.rcTreeSelect.focus();
+  }
 
-  render() {
-    const locale = this.getLocale();
+  blur() {
+    this.rcTreeSelect.blur();
+  }
+
+  saveTreeSelect = (node: typeof RcTreeSelect) => {
+    this.rcTreeSelect = node;
+  }
+
+  renderTreeSelect = (locale: SelectLocale) => {
     const {
       prefixCls,
       className,
       size,
-      notFoundContent = locale.notFoundContent,
+      notFoundContent,
       dropdownStyle,
       ...restProps,
     } = this.props;
@@ -106,14 +117,25 @@ abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
           className={cls}
           dropdownStyle={{ maxHeight: '100vh', overflow: 'auto', ...dropdownStyle }}
           treeCheckable={checkable}
-          notFoundContent={notFoundContent}
+          notFoundContent={notFoundContent || locale.notFoundContent}
+          ref={this.saveTreeSelect}
         />
-    </div>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <LocaleReceiver
+        componentName="Select"
+        defaultLocale={{}}
+      >
+        {this.renderTreeSelect}
+      </LocaleReceiver>
     );
   }
 }
 
 // Use Select's locale
-const injectSelectLocale = injectLocale('Select', {});
-export default injectSelectLocale<TreeSelectProps>(TreeSelect as any);
+export default TreeSelect;
 export { TreeNode };

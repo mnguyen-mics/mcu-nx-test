@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions';
+import log from '../../utils/Logger';
 
 import {
   NOTIFICATIONS_ADD,
@@ -21,6 +22,7 @@ const removeNotification = key => {
 const resetNotifications = createAction(NOTIFICATIONS_RESET);
 
 const notifyError = (error, notifConfig = {}) => {
+  log.error(error);
   return addNotification({
     duration: 0,
     ...notifConfig,

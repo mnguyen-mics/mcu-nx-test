@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from 'react-intl';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Tooltip, Popover, Switch } from 'antd';
 import { compose } from 'recompose';
 
 import { TableView } from '../../../../../components/TableView/index.ts';
-import { formatMetric } from '../../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../../utils/MetricHelper.ts';
 import McsIcons from '../../../../../components/McsIcons.tsx';
-import messages from '../messages';
+import ButtonStyleless from '../../../../../components/ButtonStyleless.tsx';
+import messages from '../messages.ts';
 
 class DisplayCampaignAdTable extends Component {
 
@@ -20,11 +21,15 @@ class DisplayCampaignAdTable extends Component {
         },
       },
       history,
+      location,
     } = this.props;
 
-    const editUrl = `/${organisationId}/creatives/display-ad/default-editor/edit/${ad.id}`;
+    const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${ad.id}`;
 
-    history.push(editUrl);
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` }
+    });
   };
 
   render() {
@@ -35,6 +40,8 @@ class DisplayCampaignAdTable extends Component {
           organisationId,
         },
       },
+      location,
+      history,
       isFetching,
       isFetchingStat,
       dataSet,
@@ -155,18 +162,22 @@ class DisplayCampaignAdTable extends Component {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text, record) => (
-          <Popover
-            content={renderPopover(record.creative_id, text)}
-            title={text}
-          >
-            <Link
-              className="mcs-campaigns-link"
-              to={`v2/o/${organisationId}/creatives/display/edit/${record.creative_id}`}
-            >{text}
-            </Link>
-          </Popover>
-        ),
+        render: (text, record) => {
+          const editCreative = () => {
+            history.push({
+              pathname: `/v2/o/${organisationId}/creatives/display/edit/${record.creative_id}`,
+              state: { from: `${location.pathname}${location.search}` },
+            });
+          };
+          return (
+            <Popover
+              content={renderPopover(record.creative_id, text)}
+              title={text}
+            >
+              <ButtonStyleless onClick={editCreative}>{text}</ButtonStyleless>
+            </Popover>
+          );
+        },
       },
       {
         translationKey: 'IMPRESSIONS',
@@ -216,14 +227,15 @@ class DisplayCampaignAdTable extends Component {
         render: text => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a, b) => sorter(a, b, 'impressions_cost'),
       },
-      {
-        translationKey: 'CPA',
-        key: 'cpa',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: text => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a, b) => sorter(a, b, 'cpa'),
-      },
+      // TODO UNCOMMENT WHEN BACKEND IS FIXED
+      // {
+      //   translationKey: 'CPA',
+      //   key: 'cpa',
+      //   isVisibleByDefault: true,
+      //   isHideable: true,
+      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
+      //   sorter: (a, b) => sorter(a, b, 'cpa'),
+      // },
     ];
 
     const actionColumns = [
@@ -241,14 +253,10 @@ class DisplayCampaignAdTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
-
     return (
       <TableView
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumns}
+        actionsColumnsDefinition={actionColumns}
         dataSource={dataSet}
         loading={isFetching}
       />
@@ -264,6 +272,7 @@ DisplayCampaignAdTable.propTypes = {
   dataSet: PropTypes.arrayOf(PropTypes.object).isRequired,
   updateAd: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  location: PropTypes.shape().isRequired,
 };
 
 DisplayCampaignAdTable = compose(

@@ -15,12 +15,12 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper';
-import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper.ts';
+import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
 import CampaignService from '../../../../services/CampaignService';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 import ReportService from '../../../../services/ReportService.ts';
 import * as notifyActions from '../../../../state/Notifications/actions';
 

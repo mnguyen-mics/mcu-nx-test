@@ -1,34 +1,45 @@
 import * as React from 'react';
 import { DatePicker } from 'antd';
+import moment from 'moment';
 
 // TS Interfaces
-import { WrappedFieldInputProps, WrappedFieldMetaProps } from 'redux-form';
-import { InputProps } from 'antd/lib/input/Input';
+import { WrappedFieldProps } from 'redux-form';
 import { DatePickerProps } from 'antd/lib/date-picker';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 
-interface FormDatePickerProps {
-  input: WrappedFieldInputProps;
-  meta: WrappedFieldMetaProps;
+export interface FormDatePickerProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  inputProps?: InputProps;
   datePickerProps: DatePickerProps;
+  unixTimestamp?: boolean;
 }
 
-const FormDatePicker: React.SFC<FormDatePickerProps & FormFieldWrapperProps> = props => {
-
-  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+const FormDatePicker: React.SFC<
+  FormDatePickerProps & WrappedFieldProps
+> = props => {
+  let validateStatus = 'success' as
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'validating';
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
   // By default, input.value is initialised to '' by redux-form
   // But antd DatePicker doesn't like that
   // So we don't pass this props if equal to ''
-  if (props.input.value === '') {
-    delete props.input.value;
-  }
+  const value =
+    props.input.value === ''
+      ? undefined
+      : props.unixTimestamp ? moment(props.input.value) : props.input.value;
+
+  const onChange = (date: moment.Moment, dateString: string) => {
+    if (props.unixTimestamp) {
+      return props.input.onChange(date && parseInt(date.format('x'), 0));
+    }
+    return props.input.onChange(date);
+  };
 
   return (
     <FormFieldWrapper
@@ -40,6 +51,8 @@ const FormDatePicker: React.SFC<FormDatePickerProps & FormFieldWrapperProps> = p
       <DatePicker
         allowClear={false}
         {...props.input}
+        value={value}
+        onChange={onChange}
         {...props.datePickerProps}
       />
     </FormFieldWrapper>

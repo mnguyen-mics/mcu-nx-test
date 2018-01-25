@@ -11,7 +11,8 @@ import {
 import CampaignService from '../../../services/CampaignService';
 import ReportService from '../../../services/ReportService.ts';
 
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
+
 
 import {
     DISPLAY_CAMPAIGNS_LIST_FETCH,
@@ -28,6 +29,7 @@ function* loadPerformanceReport({ payload }) {
     } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
+
 
     const startDate = filter.from;
     const endDate = filter.to;

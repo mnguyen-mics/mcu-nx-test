@@ -5,19 +5,15 @@ import FormTitle, { FormTitleProps } from './FormTitle';
 
 import DropdownButton, { DropdownButtonItemProps } from '../DropdownButton';
 
-interface FormSectionProps {
+interface FormSectionProps extends FormTitleProps {
   button?: {
     message: string;
     onClick: React.FormEventHandler<any>;
   };
   dropdownItems?: DropdownButtonItemProps[];
-  subtitle: {
-    defaultMessage: string;
-    id: string;
-  };
 }
 
-const FormSection: React.SFC<FormSectionProps & FormTitleProps> = props => {
+const FormSection: React.SFC<FormSectionProps> = props => {
 
   return (
     <Row

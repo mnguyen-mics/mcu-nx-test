@@ -1,16 +1,21 @@
 import React from 'react';
 import GeonameService, { Geoname } from './../../services/GeonameService';
+import { makeCancelable, CancelablePromise } from '../../utils/ApiHelper';
 
 interface GeonameRendererProps {
-    geonameId: string;
-    renderMethod: (geoname: Geoname) => JSX.Element;
+  geonameId: string;
+  renderMethod?: (geoname: Geoname) => JSX.Element;
 }
 
 interface GeonameRendererState {
   geoname?: Geoname;
 }
 
-export default class GeonameRenderer extends React.Component<GeonameRendererProps, GeonameRendererState> {
+export default class GeonameRenderer extends React.Component<
+  GeonameRendererProps,
+  GeonameRendererState
+> {
+  cancelablePromise: CancelablePromise<Geoname>;
 
   constructor(props: GeonameRendererProps) {
     super(props);
@@ -25,25 +30,31 @@ export default class GeonameRenderer extends React.Component<GeonameRendererProp
     this.fetchGeoname(this.props.geonameId);
   }
 
-  fetchGeoname = (geonameId: string) => {
-   return GeonameService.getGeoname(geonameId)
-   .then(geoname => {
-     this.setState({
-      geoname: geoname,
-     });
-    });
+  componentWillUnmount() {
+    if (this.cancelablePromise) this.cancelablePromise.cancel();
   }
 
-  render() {
-
-    const {
-      geoname,
-    } = this.state;
-
-    const element = geoname ? this.props.renderMethod(geoname) : null;
-
-    return (
-      <span>{element}</span>
+  fetchGeoname = (geonameId: string) => {
+    this.cancelablePromise = makeCancelable(
+      GeonameService.getGeoname(geonameId),
     );
+
+    return this.cancelablePromise.promise.then(geoname => {
+      this.setState({
+        geoname: geoname,
+      });
+    });
+  };
+
+  render() {
+    const { renderMethod } = this.props;
+
+    const { geoname } = this.state;
+
+    const element = geoname
+      ? renderMethod ? renderMethod(geoname) : geoname.name
+      : null;
+
+    return <span>{element}</span>;
   }
 }

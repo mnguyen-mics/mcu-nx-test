@@ -4,21 +4,26 @@ import * as React from 'react';
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
+import { TooltipProps } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
-interface FormInputProps {
-  formItemProps: FormItemProps;
+export interface FormInputProps extends FormFieldWrapperProps {
+  formItemProps?: FormItemProps;
   inputProps?: InputProps;
+  helpToolTipProps?: TooltipProps;
+  textArea?: boolean;
 }
 
-const FormInput: React.SFC<FormInputProps & FormFieldWrapperProps & WrappedFieldProps> = props => {
+const FormInput: React.SFC<FormInputProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
+
+  const InputComponent = props.textArea ? Input.TextArea : Input;
 
   return (
     <FormFieldWrapper
@@ -27,7 +32,7 @@ const FormInput: React.SFC<FormInputProps & FormFieldWrapperProps & WrappedField
       validateStatus={validateStatus}
       {...props.formItemProps}
     >
-      <Input
+      <InputComponent
         id={props.input.name}
         {...props.input}
         {...props.inputProps}

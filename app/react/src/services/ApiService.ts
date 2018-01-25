@@ -21,8 +21,16 @@ export interface DataListResponse<T> extends ApiResponse {
   total?: number;
 }
 
+export function extractData<T>(dataResponse: DataResponse<T>) {
+  return dataResponse.data;
+}
+
+export function extractDataList<T>(dataResponse: DataListResponse<T>) {
+  return dataResponse.data;
+}
+
 interface ApiOptions {
-  localUrl?: string;
+  localUrl?: boolean;
   adminApi?: object;
   withCredentials?: boolean;
   authenticated?: boolean;
@@ -79,6 +87,7 @@ function request(
   }
 
   const bodyIsFormData = (body instanceof FormData); /* global FormData */
+  const bodyIsBlob = (body instanceof Blob); /* global Blob */
 
   if (headers && !isEmpty(headers)) {
     config.headers = {...config.headers, ...headers};
@@ -93,8 +102,8 @@ function request(
   }
   config.headers['X-Requested-By'] = 'mediarithmics-navigator';
 
-  if (bodyIsFormData) {
-    config.body = body; // body passed as a formdata object
+  if (bodyIsFormData || bodyIsBlob) {
+    config.body = body; // body passed as a formdata object or blob
   } else if (body) {
     config.body = JSON.stringify(body);
   }
@@ -115,6 +124,14 @@ function request(
         ? Promise.resolve()
         : Promise.reject(response)
       );
+    } else if (contentType && contentType.indexOf('application/octet-stream') !== -1) {
+      return response.blob().then(blob => {
+        if (!response.ok) {
+          Promise.reject(blob);
+        }
+
+        return blob;
+      });
     }
 
     // Considered as a json response by default
