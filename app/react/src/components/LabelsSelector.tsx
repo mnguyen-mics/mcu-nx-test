@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { Dropdown, Tag, Tooltip, Input, Button, Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
 import McsIcons from './McsIcons';
@@ -33,7 +33,7 @@ const messages = defineMessages({
   },
 });
 
-class LabelsSelector extends Component<LabelsSelectorProps, LabelsSelectorState> {
+class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelectorState> {
 
   constructor(props: LabelsSelectorProps) {
     super(props);
@@ -54,7 +54,7 @@ class LabelsSelector extends Component<LabelsSelectorProps, LabelsSelectorState>
     this.setState({ inputVisible: true }, () => this.state.input && this.state.input.focus());
   }
 
-  handleInputChange = (e: any) => {
+  handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ inputValue: e.target.value });
   }
 
@@ -110,7 +110,7 @@ class LabelsSelector extends Component<LabelsSelectorProps, LabelsSelectorState>
 
     const overlayMenu = () => {
       return (
-        <Menu onClick={onClick} style={{ width: 100, maxHeight: 300, overflow: 'hidden', overflowY: 'scroll' }}>
+        <Menu onClick={onClick} className="mcs-label-dropdown" style={{  }}>
           {results.length ? results.map(label => {
             return <Menu.Item key={label.id}>{label.name}</Menu.Item>;
           }) :
