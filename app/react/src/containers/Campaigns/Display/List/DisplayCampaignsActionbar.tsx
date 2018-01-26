@@ -199,7 +199,7 @@ class DisplayCampaignsActionbar extends React.Component<
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button onClick={archiveCampaigns}>
+            <Button onClick={archiveCampaigns} className="button-slider">
               <McsIcons type="delete" />
               <FormattedMessage id="ARCHIVE" />
             </Button>
@@ -225,7 +225,7 @@ class DisplayCampaignsActionbar extends React.Component<
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button onClick={openEditCampaignsDrawer}>
+            <Button onClick={openEditCampaignsDrawer} className="button-slider">
               <McsIcons type="pen" />
               <FormattedMessage id="EDIT" />
             </Button>

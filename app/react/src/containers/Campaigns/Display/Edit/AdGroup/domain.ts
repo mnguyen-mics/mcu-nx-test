@@ -1,8 +1,8 @@
+import { AdGroupResource } from './../../../../../models/campaign/display/AdGroupResource';
 import {
   FieldArrayModel,
   FieldArrayModelWithMeta,
 } from '../../../../../utils/FormHelper';
-import { AdGroupResource } from '../../../../../models/campaign/display';
 import {
   AudienceSegmentSelectionResource,
   AudienceSegmentSelectionCreateRequest,
@@ -83,6 +83,32 @@ export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
   placementListFields: [],
   bidOptimizerFields: [],
 };
+
+export type operationType = 'equals' | 'increase' | 'decrease';
+
+export interface AdGroupsInfosFieldModel {
+  adGroupProperty: keyof AdGroupResource;
+  action?: operationType;
+  value?: string;
+}
+
+const operationMap = {
+  equals: (propertyValue: number, targetValue: number) => targetValue,
+  increase: (propertyValue: number, percentValue: number) =>
+    propertyValue + propertyValue * percentValue * 0.01,
+  decrease: (propertyValue: number, percentValue: number) =>
+    propertyValue - propertyValue * percentValue * 0.01,
+};
+
+const operation = (chosenOperation: operationType,
+  propertyValue: number,
+  targetValue: number,
+) => {
+  return operationMap[chosenOperation](propertyValue, targetValue);
+};
+
+export default operation;
+
 
 ///////////////////////////
 // PREDEFINED TYPE GUARD //

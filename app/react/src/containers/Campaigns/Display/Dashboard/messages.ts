@@ -21,6 +21,18 @@ export default defineMessages({
     id: 'display.card.newAdGroup',
     defaultMessage: 'New Ad Group',
   },
+  editAdGroups: {
+    id: 'display.card.editAdGroup',
+    defaultMessage: 'Edit Ad Groups',
+  },
+  activateAdGroups: {
+    id: 'display.card.activateAdGroups',
+    defaultMessage: 'Activate',
+  },
+  pauseAdGroups: {
+    id: 'display.card.pauseAdGroups',
+    defaultMessage: 'Pause',
+  },
   creatives: {
     id: 'display.card.creatives',
     defaultMessage: 'Creatives',
@@ -84,6 +96,14 @@ export default defineMessages({
   archiveAdGroup: {
     id: 'display.adGroup.actionBar.archiveAdGroup',
     defaultMessage: 'Archive',
+  },
+  archiveAdGroupsModalTitle: {
+    id: 'display.adGroup.archiveAdGroupsTitle',
+    defaultMessage: 'Archive Ad Groups',
+  },
+  archiveAdGroupsModalMessage: {
+    id: 'display.adGroup.archiveAdGroupsMessage',
+    defaultMessage: 'Are you sure to archive all the selected Ad Groups ?',
   },
   display: {
     id: 'display.campaign.actionBar.display',

@@ -1,7 +1,6 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-
   /*
   ==============================================================================
   =================================== BUTTONS ==================================
@@ -27,7 +26,7 @@ export default defineMessages({
     defaultMessage: 'Save',
   },
 
-   /*
+  /*
   ==============================================================================
   =================================== EDIT CAMPAIGNS ==================================
   ==============================================================================
@@ -37,13 +36,22 @@ export default defineMessages({
     id: 'editCampaigns.breadCrumb',
     defaultMessage: 'Edit Campaigns',
   },
+  editAdGroups: {
+    id: 'editAdGroups.breadCrumb',
+    defaultMessage: 'Edit Ad Groups',
+  },
   multiEditTitle: {
     id: 'editCampaigns.title',
-    defaultMessage: 'Multi Campaign Edit'
+    defaultMessage: 'Multi Campaign Edit',
   },
   multiEditSubtitle: {
     id: 'editCampaigns.subtitle',
-    defaultMessage: 'In this section you will be able to edit campaigns you just selected : '
+    defaultMessage:
+      'In this section you will be able to edit campaigns you just selected : ',
+  },
+  multiEditAdGroupsTitle: {
+    id: 'editAdGroups.title',
+    defaultMessage: 'Multi Ad Group Edit',
   },
   /*
   ==============================================================================
@@ -107,7 +115,8 @@ export default defineMessages({
   */
   notificationWarning: {
     id: 'notification.warning',
-    defaultMessage: 'Click on this button and you will lose your custom targeting.',
+    defaultMessage:
+      'Click on this button and you will lose your custom targeting.',
   },
 
   /*
@@ -175,7 +184,8 @@ export default defineMessages({
   },
   sectionSubtitleLocation: {
     id: 'adGroupEditor.section.subtitle.location',
-    defaultMessage: 'Be more specific on which location you want to advertise (country, region or department)',
+    defaultMessage:
+      'Be more specific on which location you want to advertise (country, region or department)',
   },
   sectionSubtitlePublisher: {
     id: 'adGroupEditor.section.subtitle.publisher',
@@ -183,7 +193,8 @@ export default defineMessages({
   },
   sectionSubtitleMedia: {
     id: 'adGroupEditor.section.subtitle.media',
-    defaultMessage: 'Define on which websites you want your content to appear or which section of the website',
+    defaultMessage:
+      'Define on which websites you want your content to appear or which section of the website',
   },
   sectionSubtitlePlacement: {
     id: 'adGroupEditor.section.subtitle.placement',
@@ -221,7 +232,8 @@ export default defineMessages({
   },
   contentSectionGeneralRow1Tooltip: {
     id: 'adGroupEditor.section.general.row1.tooltip',
-    defaultMessage: 'The campaign\'s name will help you identify it on the different screens. Make it as memorable as you want your results to be!',
+    defaultMessage:
+      "The campaign's name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
   },
 
   /* Row 2 */
@@ -307,7 +319,8 @@ export default defineMessages({
   },
   contentSectionGeneralRow6Tooltip: {
     id: 'adGroupEditor.section.general.row6.tooltip',
-    defaultMessage: 'The capping is at the device level, if you don\'t want any capping at the ad group level set it to 0 and the capping used will be the one defined at the campaign',
+    defaultMessage:
+      "The capping is at the device level, if you don't want any capping at the ad group level set it to 0 and the capping used will be the one defined at the campaign",
   },
 
   /* Row 7 */
@@ -321,7 +334,8 @@ export default defineMessages({
   },
   contentSectionGeneralRow7Tooltip: {
     id: 'adGroupEditor.section.general.row7.tooltip',
-    defaultMessage: 'The capping is at the device level, if you don\'t want any capping at the ad group level set it to 0 and the capping used will be the one defined at the campaign',
+    defaultMessage:
+      "The capping is at the device level, if you don't want any capping at the ad group level set it to 0 and the capping used will be the one defined at the campaign",
   },
 
   /* Advanced part */
@@ -437,7 +451,8 @@ export default defineMessages({
   },
   contentSectionLocationTooltipMessage: {
     id: 'adGroupEditor.section.location.tooltipMessage',
-    defaultMessage: 'Location is based on the IP address we receive during a bid request. Being too restrictive can alter your reach.',
+    defaultMessage:
+      'Location is based on the IP address we receive during a bid request. Being too restrictive can alter your reach.',
   },
   contentSectionLocationOption1: {
     id: 'adGroupEditor.section.location.option1',
@@ -449,7 +464,8 @@ export default defineMessages({
   },
   contentSectionLocationModal1: {
     id: 'adGroupEditor.section.location.modal1',
-    defaultMessage: 'You can\'t add a area that is inside an already included or excluded area.',
+    defaultMessage:
+      "You can't add a area that is inside an already included or excluded area.",
   },
   contentSectionLocationModal1Title: {
     id: 'adGroupEditor.section.location.modal1Title',
@@ -457,13 +473,13 @@ export default defineMessages({
   },
   contentSectionLocationModal2: {
     id: 'adGroupEditor.section.location.modal2',
-    defaultMessage: 'By adding this location the following location will be removed, do you want to proceed?',
+    defaultMessage:
+      'By adding this location the following location will be removed, do you want to proceed?',
   },
   contentSectionLocationModal2Title: {
     id: 'adGroupEditor.section.location.modal2Title',
     defaultMessage: 'Warning',
   },
-
 
   /* ----------------------------- SECTION MEDIA ---------------------------- */
 
@@ -573,7 +589,7 @@ export default defineMessages({
   contentSectionSummaryPart1Group5: {
     id: 'adGroupEditor.section.summary.part1.group5',
     defaultMessage: 'with a',
-  },  
+  },
   contentSectionSummaryPart1Group7: {
     id: 'adGroupEditor.section.summary.part1.group7',
     defaultMessage: 'budget of',
@@ -651,20 +667,23 @@ export default defineMessages({
 
   goalPixelModalTitle: {
     id: 'goal.pixel.modal.title',
-    defaultMessage: 'Your Goal Pixel'
+    defaultMessage: 'Your Goal Pixel',
   },
 
   goalPixelModalContent: {
     id: 'goal.pixel.modal.content',
-    defaultMessage: 'Please find your goal pixel below. Give this code to your web administrator or your web developer so that it can be placed on the page that will trigger the goal. For instance, place it on your receipt page to get all the users that have bought something from your store.'
+    defaultMessage:
+      'Please find your goal pixel below. Give this code to your web administrator or your web developer so that it can be placed on the page that will trigger the goal. For instance, place it on your receipt page to get all the users that have bought something from your store.',
   },
   goalPixelModalSaveGoal: {
     id: 'goal.pixel.modal.saveGoal',
-    defaultMessage: 'Before Getting your pixel, we need to save your Goal. After saving you won\'t be able to modify your goal. Are you sure you want to save your Goal?'
+    defaultMessage:
+      "Before Getting your pixel, we need to save your Goal. After saving you won't be able to modify your goal. Are you sure you want to save your Goal?",
   },
   errorFormMessage: {
     id: 'campaign.form.generic.error.message',
-    defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
+    defaultMessage:
+      'There is an error with some fields in your form. Please review the data you entered.',
   },
 
   /*
@@ -714,11 +733,13 @@ export default defineMessages({
   },
   sectionSubtitle2: {
     id: 'campaignEditor.section.subtitle2',
-    defaultMessage: 'Create a Goal that reflects your campaign objectives. You will get a pixel code afterwards to track who has converted to your goal.',
+    defaultMessage:
+      'Create a Goal that reflects your campaign objectives. You will get a pixel code afterwards to track who has converted to your goal.',
   },
   sectionSubtitle3: {
     id: 'campaignEditor.section.subtitle3',
-    defaultMessage: 'Create one or severals Ad Groups. An Ad Group is basically a Campaign Strategy that has its own Budget, and targeting.',
+    defaultMessage:
+      'Create one or severals Ad Groups. An Ad Group is basically a Campaign Strategy that has its own Budget, and targeting.',
   },
 
   /*
@@ -752,7 +773,8 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow1Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row1.tooltip',
-    defaultMessage: 'Use the Technical Name for custom integration with other DSPs',
+    defaultMessage:
+      'Use the Technical Name for custom integration with other DSPs',
   },
 
   /* Row 3 */
@@ -766,7 +788,8 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow2Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row2.tooltip',
-    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
+    defaultMessage:
+      "The capping is at the device level, if you don't want any capping set it to 0",
   },
 
   /* Row 4 */
@@ -780,7 +803,8 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow3Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row3.tooltip',
-    defaultMessage: 'The capping is at the device level, if you don\'t want any capping set it to 0',
+    defaultMessage:
+      "The capping is at the device level, if you don't want any capping set it to 0",
   },
 
   /* Row 4 */
@@ -797,7 +821,7 @@ export default defineMessages({
     defaultMessage: 'Define the total budget of your campaign.',
   },
 
-   /* Row 5 */
+  /* Row 5 */
   contentSectionGeneralAdvancedPartRow5Label: {
     id: 'campaignEditor.section1.advancedPart.row5.label',
     defaultMessage: 'Budget Split',
@@ -853,16 +877,15 @@ export default defineMessages({
 
   editGoal: {
     id: 'campaignEditor.goal-form.edit',
-    defaultMessage: 'Edit {goalName}'
+    defaultMessage: 'Edit {goalName}',
   },
 
   editAdGroup: {
     id: 'campaignEditor.adGroup-form.edit',
-    defaultMessage: 'Edit {adGroupName}'
+    defaultMessage: 'Edit {adGroupName}',
   },
   savingInProgress: {
     id: 'form.saving.in.progress',
     defaultMessage: 'Saving in progress',
   },
-
 });

@@ -12,10 +12,13 @@
   box-shadow: 2px 4px 4px 0 rgba(200, 200, 200, 0.14);
   z-index: 10;
 
+  .left-part-margin {
+    overflow: hidden;
+  }
+
   .left-part-margin > * {
     margin-left: 10px;
   }
-
 }
 
 .mcs-actionbar-edit {
@@ -27,9 +30,12 @@
   .left-part-margin > * {
     margin-left: 10px;
   }
+  .left-part-margin > div:last-child {
+    margin-left: 0px;
+  }
 
   .close-icon {
-    color: @text-color-dark ;
+    color: @text-color-dark;
     transition: 0.5s;
   }
   .close-icon:hover {
@@ -38,11 +44,11 @@
 
   .mcs-breadcrumb-edit.ant-breadcrumb {
     a {
-      transition: color .3s;
+      transition: color 0.3s;
       color: @text-color-dark!important;
     }
     a:hover {
-      color: fade(@text-color-dark, 80%)!important;
+      color: fade(@text-color-dark, 80%) !important;
     }
     .ant-breadcrumb-link {
       color: @text-color-dark!important;
@@ -83,12 +89,12 @@
 }
 
 .mcs-actionbar-checkbox {
-    height: 40px;
-    line-height: 40px;
+  height: 40px;
+  line-height: 40px;
 }
 
 .selectionArrow {
-  position:relative;
+  position: relative;
   width: 40px;
   height: 10px;
   border-bottom: solid 1px #ffffff;
@@ -97,4 +103,3 @@
 .hidden {
   visibility: hidden;
 }
-

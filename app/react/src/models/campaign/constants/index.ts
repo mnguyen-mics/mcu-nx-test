@@ -1,4 +1,4 @@
-export type AdGroupStatus = 'ACTIVE' | 'PAUSED';
+export type AdGroupStatus = 'ACTIVE' | 'PAUSED' | 'PENDING';
 
 export type AdSlotVisibilityFilter = 'ABOVE_THE_FOLD' | 'BELOW_THE_FOLD' | 'ANY_POSITION';
 

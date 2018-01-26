@@ -36,7 +36,7 @@ interface DisplayCampaignsPageProps {
 
 interface DisplayCampaignsPageState {
   selectedRowKeys: string[];
-  selected: boolean;
+  // selected: boolean;
   visible: boolean;
   loading: boolean;
 }
@@ -59,7 +59,6 @@ class DisplayCampaignsPage extends React.Component<
     super(props);
     this.state = {
       selectedRowKeys: [],
-      selected: true,
       visible: false,
       loading: false,
     };
@@ -163,7 +162,7 @@ class DisplayCampaignsPage extends React.Component<
     this.setState({ selectedRowKeys });
   };
 
-  selectAllItemIds = (selected: boolean) => {
+  selectAllItemIds = (selected: boolean = true) => {
     const {
       totalDisplayCampaigns,
       match: { params: { organisationId } },
@@ -181,19 +180,17 @@ class DisplayCampaignsPage extends React.Component<
           });
           this.setState({
             selectedRowKeys: allCampaignsIds,
-            selected: false,
           });
         },
       );
     } else {
       this.setState({
         selectedRowKeys: allCampaignsIds,
-        selected: true,
       });
     }
   };
 
-  unselectAllItemIds = () => {
+  unselectAllItemIds = (selected = false) => {
     this.selectAllItemIds(false);
   };
 

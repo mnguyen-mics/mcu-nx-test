@@ -2,17 +2,24 @@
 import * as React from 'react';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout, Button } from 'antd';
+import { Layout, Button, message, Modal } from 'antd';
 import { compose } from 'recompose';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
-import { AdInfoResource, DisplayCampaignInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
+import {
+  AdInfoResource,
+  DisplayCampaignInfoResource,
+} from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
-import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
+import DisplayCampaignAdGroupTable, {
+  UpdateMessage,
+} from './DisplayCampaignAdGroupTable';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
 import Card from '../../../../../components/Card/Card';
-import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
+import McsDateRangePicker, {
+  McsDateRangeValue,
+} from '../../../../../components/McsDateRangePicker';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
 import { Labels } from '../../../../../containers/Labels';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
@@ -21,15 +28,25 @@ import {
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
+import { injectDrawer } from '../../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import EditAdGroupsForm, {
+  EditAdGroupsFormProps,
+  EditAdGroupsFormData,
+} from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
+import Slider from '../../../../../components/TableView/Slider';
+import { McsIcons } from '../../../../../components/index';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import operation from '../../Edit/AdGroup/domain';
+import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
+import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 
 const { Content } = Layout;
-
-const DisplayCampaignAdGroupTableJS = DisplayCampaignAdGroupTable as any;
 const DisplayCampaignAdTableJS = DisplayCampaignAdTable as any;
 
 export interface CampaignSubProps<T> {
-  isLoadingList?: boolean;
-  isLoadingPerf?: boolean;
+  isLoadingList: boolean;
+  isLoadingPerf: boolean;
   items?: T[];
 }
 
@@ -47,12 +64,27 @@ interface DisplayCampaignProps {
   };
   ads: CampaignSubProps<AdInfoResource>;
   adGroups: CampaignSubProps<AdGroupResource>;
-  updateAd: (arg: any) => void;
-  updateAdGroup: (arg: any) => void;
-  updateCampaign: (campaignId: string, object: {
-    status: string,
-    type: string,
-  }) => void;
+  updateAd: (
+    adId: string,
+    body: Partial<DisplayAdResource>,
+    successMessage: UpdateMessage,
+    errorMessage: UpdateMessage,
+    undoBody: Partial<DisplayAdResource>
+  ) => void;
+  updateAdGroup: (
+    adGroupId: string,
+    body: Partial<AdGroupResource>,
+    successMessage?: UpdateMessage,
+    errorMessage?: UpdateMessage,
+    undoBody?: Partial<AdGroupResource>,
+  ) => void;
+  updateCampaign: (
+    campaignId: string,
+    object: {
+      status: string;
+      type: string;
+    },
+  ) => void;
   dashboardPerformance: {
     media: DashboardPerformanceSubProps;
     overall: DashboardPerformanceSubProps;
@@ -61,30 +93,52 @@ interface DisplayCampaignProps {
   goals: object[];
 }
 
-type JoinedProps =
-  DisplayCampaignProps &
+interface DisplaycampaignState {
+  selectedRowKeys: string[];
+  visible: boolean;
+  allAdGroupsActivated: boolean;
+  allAdGroupsPaused: boolean;
+}
+
+type JoinedProps = DisplayCampaignProps &
   RouteComponentProps<CampaignRouteParams> &
+  InjectDrawerProps &
   InjectedIntlProps;
 
-class DisplayCampaign extends React.Component<JoinedProps> {
+class DisplayCampaign extends React.Component<
+  JoinedProps,
+  DisplaycampaignState
+> {
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      selectedRowKeys: [],
+      visible: false,
+      allAdGroupsActivated: false,
+      allAdGroupsPaused: false,
+    };
+  }
 
   updateLocationSearch(params: McsDateRangeValue) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+      search: updateSearch(
+        currentSearch,
+        params,
+        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
+      ),
     };
 
     history.push(nextLocation);
   }
 
   renderDatePicker() {
-    const {
-        location: {
-          search,
-        },
-    } = this.props;
+    const { location: { search } } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
@@ -93,23 +147,105 @@ class DisplayCampaign extends React.Component<JoinedProps> {
       to: filter.to,
     };
 
-    const onChange = (newValues: McsDateRangeValue): void => this.updateLocationSearch({
-      from: newValues.from,
-      to: newValues.to,
-    });
+    const onChange = (newValues: McsDateRangeValue): void =>
+      this.updateLocationSearch({
+        from: newValues.from,
+        to: newValues.to,
+      });
 
     return <McsDateRangePicker values={values} onChange={onChange} />;
   }
 
-  render() {
-
+  saveAdGroups = (formData: EditAdGroupsFormData) => {
     const {
-      match: {
-        params: {
-          campaignId,
-          organisationId,
-        },
-      },
+      intl: { formatMessage },
+      match: { params: { campaignId } },
+      updateAdGroup,
+    } = this.props;
+
+    const { selectedRowKeys } = this.state;
+    selectedRowKeys.map(adGroupId => {
+      DisplayCampaignService.getAdGroup(campaignId, adGroupId)
+        .then(apiRes => apiRes.data)
+        .then((adGroupData: any) => {
+          const updatedData = formData.fields.reduce((acc, field) => {
+            const campaignProperty: keyof AdGroupResource =
+              field.adGroupProperty;
+            return {
+              ...acc,
+              [field.adGroupProperty]: operation(
+                field.action,
+                adGroupData[campaignProperty],
+                parseInt(field.value, 10),
+              ),
+            };
+          }, {});
+          updateAdGroup(adGroupId, updatedData);
+          // DisplayCampaignService.updateAdGroup(
+          //   campaignId,
+          //   adGroupId,
+          //   updatedData,
+          // );
+        });
+    });
+
+    this.setState({
+      selectedRowKeys: [],
+    });
+    this.props.closeNextDrawer();
+    message.success(
+      formatMessage({
+        id: 'edit.campaigns.success.msg',
+        defaultMessage: 'Campaigns successfully saved',
+      }),
+    );
+  };
+
+  handleOk = () => {
+    const { intl: { formatMessage } } = this.props;
+    this.setState({
+      visible: false,
+      selectedRowKeys: [],
+    });
+    message.success(
+      formatMessage({
+        id: 'archive.adGroups.success.msg',
+        defaultMessage: 'Ad Groups successfully archived',
+      }),
+    );
+  };
+
+  handleCancel = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
+  openEditAdGroupsDrawer = () => {
+    const additionalProps = {
+      close: this.props.closeNextDrawer,
+      onSubmit: this.saveAdGroups,
+      selectedRowKeys: this.state.selectedRowKeys,
+    };
+    const options = {
+      additionalProps: additionalProps,
+    };
+    this.props.openNextDrawer<EditAdGroupsFormProps>(EditAdGroupsForm, options);
+  };
+
+  onSelectChange = (selectedRowKeys: string[]) => {
+    this.setState({ selectedRowKeys });
+  };
+
+  archiveAdGroups = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  render() {
+    const {
+      match: { params: { campaignId, organisationId } },
       campaign,
       ads,
       adGroups,
@@ -120,10 +256,16 @@ class DisplayCampaign extends React.Component<JoinedProps> {
       dashboardPerformance,
       goals,
       history,
-      intl: {
-        formatMessage,
-      },
+      intl: { formatMessage },
     } = this.props;
+
+    const {
+      selectedRowKeys,
+      allAdGroupsActivated,
+      allAdGroupsPaused,
+    } = this.state;
+
+    const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const onClick = () => {
       history.push({
@@ -131,23 +273,123 @@ class DisplayCampaign extends React.Component<JoinedProps> {
         state: { from: `${location.pathname}${location.search}` },
       });
     };
+    const adGroupsStatus: string[] = [];
+    if (hasSelected) {
+      Promise.all(
+        selectedRowKeys.map(adGroupId => {
+          return DisplayCampaignService.getAdGroup(campaignId, adGroupId);
+        }),
+      ).then(apiResp => {
+        apiResp.map(adGroup => adGroupsStatus.push(adGroup.data.status));
+        this.setState({
+          allAdGroupsActivated: !!!(
+            adGroupsStatus.includes('PAUSED') ||
+            adGroupsStatus.includes('PENDING')
+          ),
+          allAdGroupsPaused: !adGroupsStatus.includes('ACTIVE'),
+        });
+      });
+    }
+
+    const buildActionElement = () => {
+      const onClickElement = (status: AdGroupStatus) => () => {
+        selectedRowKeys.map(adGroupId => {
+          updateAdGroup(adGroupId, {
+            status,
+          });
+        });
+        this.setState({
+          selectedRowKeys: [],
+        });
+      };
+
+      if (allAdGroupsActivated) {
+        return (
+          <Button
+            className="mcs-primary button-slider"
+            type="primary"
+            onClick={onClickElement('PAUSED')}
+          >
+            <McsIcons type="pause" />
+            <FormattedMessage {...messages.pauseAdGroups} />
+          </Button>
+        );
+      } else if (allAdGroupsPaused) {
+        return (
+          <Button
+            className="mcs-primary button-slider"
+            type="primary"
+            onClick={onClickElement('ACTIVE')}
+          >
+            <McsIcons type="play" />
+            <FormattedMessage {...messages.activateAdGroups} />
+          </Button>
+        );
+      } else {
+        return null;
+      }
+    };
 
     const adGroupButtons: JSX.Element = (
       <span>
-
         <Button className="m-r-10" type="primary" onClick={onClick}>
           <FormattedMessage {...messages.newAdGroups} />
         </Button>
-
         {this.renderDatePicker()}
+        <Slider
+          toShow={hasSelected}
+          horizontal={true}
+          content={
+            <Button
+              className="m-r-10 button-slider"
+              onClick={this.archiveAdGroups}
+            >
+              <McsIcons type="delete" />
+              <FormattedMessage {...messages.archiveAdGroup} />
+            </Button>
+          }
+        />
+        {hasSelected ? (
+          <Modal
+            title={<FormattedMessage {...messages.archiveAdGroupsModalTitle} />}
+            visible={this.state.visible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+          >
+            <p>
+              <FormattedMessage {...messages.archiveAdGroupsModalMessage} />
+            </p>
+          </Modal>
+        ) : null}
+        <Slider
+          toShow={hasSelected}
+          horizontal={true}
+          content={
+            <Button
+              className="m-r-10 button-slider"
+              onClick={this.openEditAdGroupsDrawer}
+            >
+              <McsIcons type="pen" />
+              <FormattedMessage {...messages.editAdGroup} />
+            </Button>
+          }
+        />
+        {(allAdGroupsActivated || allAdGroupsPaused) && (
+          <Slider
+            toShow={hasSelected}
+            horizontal={true}
+            content={buildActionElement()}
+          />
+        )}
       </span>
     );
 
-    const adButtons: JSX.Element = (
-      <span>
-        {this.renderDatePicker()}
-      </span>
-    );
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+    };
+
+    const adButtons: JSX.Element = <span>{this.renderDatePicker()}</span>;
 
     return (
       <div className="ant-layout">
@@ -179,12 +421,16 @@ class DisplayCampaign extends React.Component<JoinedProps> {
               overallStat={dashboardPerformance.overall.items}
               goals={goals}
             />
-            <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
-              <DisplayCampaignAdGroupTableJS
+            <Card
+              title={formatMessage(messages.adGroups)}
+              buttons={adGroupButtons}
+            >
+              <DisplayCampaignAdGroupTable
                 isFetching={adGroups.isLoadingList}
                 isFetchingStat={adGroups.isLoadingPerf}
                 dataSet={adGroups.items}
                 updateAdGroup={updateAdGroup}
+                rowSelection={rowSelection}
               />
             </Card>
             <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
@@ -205,4 +451,5 @@ class DisplayCampaign extends React.Component<JoinedProps> {
 export default compose<DisplayCampaignProps, JoinedProps>(
   injectIntl,
   withRouter,
+  injectDrawer,
 )(DisplayCampaign);

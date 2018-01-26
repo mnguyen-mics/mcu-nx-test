@@ -9,47 +9,48 @@ import {
   FormattedMessage,
 } from 'react-intl';
 
-import { CampaignsInfosFieldModel } from '../domain';
+import { AdGroupsInfosFieldModel } from '../domain';
 import { McsIcons } from '../../../../../../components/index';
 import {
   FormInput,
   FormSelect,
   FormSelectField,
   FormInputField,
+  FormDatePickerField,
+  FormDatePicker,
 } from '../../../../../../components/Form/index';
-import { DisplayCampaignResource } from '../../../../../../models/campaign/display/index';
+import { AdGroupResource } from '../../../../../../models/campaign/display/AdGroupResource';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
 
 const { DefaultSelect } = FormSelect;
 
-const editableCampaignProperties: Array<keyof DisplayCampaignResource> = [
-  'total_impression_capping',
-  'per_day_impression_capping',
+const editableAdGroupProperties: Array<keyof AdGroupResource> = [
   'total_budget',
+  'max_bid_price',
   'max_budget_per_period',
+  'start_date',
+  'end_date',
 ];
 
-type JoinedProps = WrappedFieldArrayProps<CampaignsInfosFieldModel> &
+type JoinedProps = WrappedFieldArrayProps<AdGroupsInfosFieldModel> &
   InjectedIntlProps &
   ValidatorProps;
 
-class CampaignsInfos extends React.Component<JoinedProps> {
+class AdGroupsInfos extends React.Component<JoinedProps> {
   getAvailableOptions = () => {
     const { fields, intl } = this.props;
 
     const selected = fields.getAll()
-      ? fields.getAll().map(f => f.campaignProperty)
+      ? fields.getAll().map(f => f.adGroupProperty)
       : [];
 
-    return editableCampaignProperties.map(campaignProperty => {
+    return editableAdGroupProperties.map(adGroupProperty => {
       return {
-        title: intl.formatMessage(
-          campaignPropertiesMessageMap[campaignProperty],
-        ),
-        value: campaignProperty,
-        disabled: selected.includes(campaignProperty),
+        title: intl.formatMessage(adGroupPropertiesMessageMap[adGroupProperty]),
+        value: adGroupProperty,
+        disabled: selected.includes(adGroupProperty),
       };
     });
   };
@@ -57,7 +58,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
   componentDidMount() {
     const { fields } = this.props;
     fields.push({
-      campaignProperty: this.getAvailableOptions()[0].value,
+      adGroupProperty: this.getAvailableOptions()[0].value,
       action: 'equals',
     });
   }
@@ -70,25 +71,22 @@ class CampaignsInfos extends React.Component<JoinedProps> {
     const {
       fields,
       fieldValidators: { isRequired, isValidInteger, isNotZero, isValidFloat },
-      intl,
     } = this.props;
-    const equals = 'equals';
-    const increase = 'increase';
-    const decrease = 'decrease';
+
     const actionOptions: Array<{
       title: string;
       value: string; // { [key: string]: FormattedMessage.MessageDescriptor }
     }> = [
       {
-        title: intl.formatMessage(campaignsActionsMessageMap[equals]),
+        title: '=',
         value: 'equals',
       },
       {
-        title: intl.formatMessage(campaignsActionsMessageMap[increase]),
+        title: 'Increase %',
         value: 'increase',
       },
       {
-        title: intl.formatMessage(campaignsActionsMessageMap[decrease]),
+        title: 'Decrease %',
         value: 'decrease',
       },
     ];
@@ -98,7 +96,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
         option => !option.disabled,
       );
       fields.push({
-        campaignProperty: firstSelectableOptions[0].value,
+        adGroupProperty: firstSelectableOptions[0].value,
         action: 'equals',
       });
     };
@@ -108,12 +106,12 @@ class CampaignsInfos extends React.Component<JoinedProps> {
         <Row>
           {fields.map((name: string, index: number) => {
             const removeField = () => fields.remove(index);
+            const isTimeInput =
+              fields.get(index).adGroupProperty === 'start_date' ||
+              fields.get(index).adGroupProperty === 'end_date';
             let validates: Validator[] = [];
-            switch (fields.get(index).campaignProperty) {
-              case 'total_impression_capping':
-                validates = [isRequired, isValidInteger];
-                break;
-              case 'per_day_impression_capping':
+            switch (fields.get(index).adGroupProperty) {
+              case 'max_bid_price':
                 validates = [isRequired, isValidInteger];
                 break;
               case 'total_budget':
@@ -123,12 +121,14 @@ class CampaignsInfos extends React.Component<JoinedProps> {
               case 'max_budget_per_period':
                 validates = [isRequired, isValidFloat, isNotZero];
                 break;
+              case 'start_date' || 'end_date':
+                validates = [isRequired];
             }
             return (
               <Row key={index} gutter={16}>
                 <Col className="gutter-row" span={7}>
                   <FormSelectField
-                    name={`${name}.campaignProperty`}
+                    name={`${name}.adGroupProperty`}
                     component={DefaultSelect}
                     options={this.getAvailableOptions()}
                     formItemProps={{
@@ -147,27 +147,39 @@ class CampaignsInfos extends React.Component<JoinedProps> {
                       labelCol: { span: 4 },
                       wrapperCol: { span: 20 },
                     }}
-                    options={actionOptions}
+                    options={isTimeInput ? [actionOptions[0]] : actionOptions}
                   />
                 </Col>
                 <Col className="gutter-row" span={7}>
-                  <FormInputField
-                    name={`${name}.value`}
-                    component={FormInput}
-                    validate={validates}
-                    formItemProps={{
-                      label: 'Value',
-                      labelCol: { span: 4 },
-                      wrapperCol: { span: 20 },
-                    }}
-                    inputProps={{}}
-                  />
+                  {isTimeInput ? (
+                    <FormDatePickerField
+                      name={`${name}.value`}
+                      component={FormDatePicker}
+                      validate={validates}
+                      unixTimestamp={true}
+                      formItemProps={{
+                        label: 'Value',
+                        labelCol: { span: 4 },
+                        wrapperCol: { span: 20 },
+                      }}
+                      datePickerProps={{ style: { width: '100%' } }}
+                    />
+                  ) : (
+                    <FormInputField
+                      name={`${name}.value`}
+                      component={FormInput}
+                      validate={validates}
+                      formItemProps={{
+                        label: 'Value',
+                        labelCol: { span: 4 },
+                        wrapperCol: { span: 20 },
+                      }}
+                      inputProps={{}}
+                    />
+                  )}
                 </Col>
                 <Col className="gutter-row" span={3}>
-                  <Button
-                    className="delete-fieldarray"
-                    onClick={removeField}
-                  >
+                  <Button className="delete-fieldarray" onClick={removeField}>
                     <McsIcons type="close" />
                   </Button>
                 </Col>
@@ -176,10 +188,10 @@ class CampaignsInfos extends React.Component<JoinedProps> {
           })}
         </Row>
         {fields.getAll() &&
-          fields.getAll().length <= editableCampaignProperties.length - 1 && (
+          fields.getAll().length <= editableAdGroupProperties.length - 1 && (
             <Row>
               <div onClick={adField}>
-                <Col span={22} offset={1} className="gutter-row add-field-button">
+                <Col span={22} offset={1} className="gutter-row AddFieldButton">
                   <p>
                     <McsIcons type="plus" />
                     Add Field
@@ -193,44 +205,31 @@ class CampaignsInfos extends React.Component<JoinedProps> {
   }
 }
 
-export default compose(injectIntl, withValidators)(CampaignsInfos);
+export default compose(injectIntl, withValidators)(AdGroupsInfos);
 
-const campaignPropertiesMessageMap: {
+const adGroupPropertiesMessageMap: {
   [propertyName in keyof Partial<
-    DisplayCampaignResource
+    AdGroupResource
   >]: FormattedMessage.MessageDescriptor
 } = defineMessages({
-  total_impression_capping: {
-    id: 'edit.campaigns.option.total.impression.capping',
-    defaultMessage: 'Total Impression Capping',
-  },
-  per_day_impression_capping: {
-    id: 'edit.campaigns.option.daily.impression.capping',
-    defaultMessage: 'Daily Impression Capping',
+  max_bid_price: {
+    id: 'edit.adgroups.option.max.bid.price',
+    defaultMessage: 'Max Bid Price',
   },
   total_budget: {
-    id: 'edit.campaigns.option.total.budget',
+    id: 'edit.adgroups.option.total.budget',
     defaultMessage: 'Total Budget',
   },
   max_budget_per_period: {
-    id: 'edit.campaigns.option.budget.split',
+    id: 'edit.adgroups.option.budget.split',
     defaultMessage: 'Budget Split',
   },
+  start_date: {
+    id: 'edit.adgroups.option.start.date',
+    defaultMessage: 'Start Date',
+  },
+  end_date: {
+    id: 'edit.adgroups.option.end.date',
+    defaultMessage: 'End Date',
+  },
 });
-
-const campaignsActionsMessageMap: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor
-} = defineMessages({
-  equals: {
-    id: 'edit.adgroups.form.option.equals',
-    defaultMessage: '=',
-  },
-  increase: {
-    id: 'edit.adgroups.form.option.increase',
-    defaultMessage: 'Increase %',
-  },
-  decrease: {
-    id: 'edit.adgroups.form.option.decrease',
-    defaultMessage: 'Decrease %',
-  }
-})

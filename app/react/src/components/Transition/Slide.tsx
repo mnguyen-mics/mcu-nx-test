@@ -3,7 +3,7 @@ import { Transition } from 'react-transition-group';
 
 interface SlideProps {
   toShow: boolean;
-  content: JSX.Element;
+  content: React.ReactNode;
   horizontal?: boolean;
 }
 
@@ -18,7 +18,6 @@ class Slide extends React.Component<SlideProps> {
           height: '0px',
           opacity: 0,
           textAlign: 'center',
-          marginBottom: '25px',
         }
       : {
           transition: `width ${duration}ms ease-in-out`,
@@ -26,6 +25,7 @@ class Slide extends React.Component<SlideProps> {
           height: '0px',
           opacity: 0,
           textAlign: 'center',
+          display: 'inline-block',
         };
 
     const transitionStyles: React.CSSProperties = !this.props.horizontal
@@ -35,7 +35,7 @@ class Slide extends React.Component<SlideProps> {
         }
       : {
           entering: { width: '0px', opacity: 0 },
-          entered: { width: '85px', opacity: 1, display: 'inline-block' },
+          entered: { width: '120px', opacity: 1 }, // pas scalable
         };
 
     return (
