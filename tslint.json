@@ -36,6 +36,7 @@
     "jsx-no-multiline-js": false,
     "curly": false,
     "no-submodule-imports": false,
-    "no-var-requires": false
+    "no-var-requires": false,
+    "prefer-conditional-expression": false,
   }
 }

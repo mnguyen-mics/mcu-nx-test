@@ -1,3 +1,5 @@
+import messages from './messages';
+
 export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'automations', 'campaigns.email'];
 
 
@@ -7,28 +9,31 @@ const audienceMenu = {
   key: 'audience',
   iconType: 'users',
   path: '/audience',
-  translationId: 'AUDIENCE',
+  translation: messages.audienceTitle,
   subMenuItems: [
     {
       key: 'audience.segments',
       path: '/audience/segments',
-      translationId: 'AUDIENCE_SEGMENTS',
+      translation: messages.audienceSegment,
+      legacyPath: false,
     },
     {
       key: 'audience.partitions',
       path: '/audience/partitions',
-      translationId: 'AUDIENCE_PARTITIONS',
+      translation: messages.audiencePartitions,
+      legacyPath: false,
     },
     {
       key: 'audience.query_tool',
       path: '/datamart/queries',
-      translationId: 'QUERY_TOOL',
+      translation: messages.audienceSegmentBuilder,
       legacyPath: true,
     },
     {
       key: 'audience.monitoring',
       path: '/audience/timeline',
-      translationId: 'MONITORING',
+      translation: messages.audienceMonitoring,
+      legacyPath: false,
     },
   ],
 };
@@ -37,22 +42,25 @@ const campaignsMenu = {
   key: 'campaigns',
   iconType: 'display',
   path: '/campaigns',
-  translationId: 'CAMPAIGNS',
+  translation: messages.campaignTitle,
   subMenuItems: [
     {
       key: 'campaigns.display',
       path: '/campaigns/display',
-      translationId: 'DISPLAY',
+      translation: messages.campaignDisplay,
+      legacyPath: false,
     },
     {
       key: 'campaigns.email',
       path: '/campaigns/email',
-      translationId: 'EMAILS',
+      translation: messages.campaignEmail,
+      legacyPath: false,
     },
     {
       key: 'campaigns.goals',
       path: '/campaigns/goal',
-      translationId: 'GOALS',
+      translation: messages.campaignGoals,
+      legacyPath: false,
     },
   ],
 };
@@ -61,24 +69,27 @@ const automationsMenu = {
   key: 'automations',
   iconType: 'automation',
   path: '/automations',
-  translationId: 'AUTOMATIONS_LIST',
+  translation: messages.automationTitle,
+  subMenuItems: [],
 };
 
 const creativesMenu = {
   key: 'creatives',
   iconType: 'creative',
   path: '/creatives',
-  translationId: 'CREATIVES',
+  translation: messages.creativesTitle,
   subMenuItems: [
     {
       key: 'creatives.display',
       path: '/creatives/display',
-      translationId: 'DISPLAY',
+      translation: messages.creativesDisplay,
+      legacyPath: false,
     },
     {
       key: 'creatives.email',
       path: '/creatives/email',
-      translationId: 'EMAILS',
+      translation: messages.creativesEmails,
+      legacyPath: false,
     },
   ],
 };
@@ -87,77 +98,95 @@ const libraryMenu = {
   key: 'library',
   iconType: 'library',
   path: '/library',
-  translationId: 'LIBRARY',
+  translation: messages.libraryTitle,
   subMenuItems: [
     {
       key: 'library.placements',
       path: '/library/placements',
-      translationId: 'PLACEMENT_LIST',
+      translation: messages.libraryPlacement,
+      legacyPath: false,
     },
     {
       key: 'library.keywords',
       path: '/library/keywords',
-      translationId: 'KEYWORD_LIST',
+      translation: messages.libraryKeyword,
+      legacyPath: false,
     },
     {
       key: 'library.bid_optimizers',
       path: '/library/bid_optimizers',
-      translationId: 'BID_OPTIMIZER',
+      translation: messages.libraryBidOptimizer,
       legacyPath: false,
     },
     {
       key: 'library.attribution_models',
       path: '/library/attribution_models',
-      translationId: 'ATTRIBUTION_MODEL',
+      translation: messages.libraryAttributionModel,
       legacyPath: false,
     },
     {
       key: 'library.visit_analyzers',
       path: '/library/visit_analyzers',
-      translationId: 'VISIT_ANALYZER',
+      translation: messages.libraryVisitAnalyzer,
       legacyPath: false,
     },
     {
       key: 'library.email_routers',
       path: '/library/email_routers',
-      translationId: 'EMAIL_ROUTERS',
+      translation: messages.libraryEmailRouter,
       legacyPath: false,
     },
     {
       key: 'library.recommenders',
       path: '/library/recommenders',
-      translationId: 'RECOMMENDERS',
+      translation: messages.libraryRecommenders,
       legacyPath: false,
     },
     {
       key: 'library.catalog',
       path: '/datamart/items',
-      translationId: 'CATALOG',
+      translation: messages.libraryCatalog,
       legacyPath: true,
     },
     // TO REMOVE WHEN AD RENDERER ARE CREATED
     {
       key: 'library.ad_layouts',
       path: '/library/adlayouts',
-      translationId: 'AD_LAYOUTS',
+      translation: messages.libraryAdLayouts,
       legacyPath: true,
     },
     {
       key: 'library.stylesheets',
       path: '/library/stylesheets',
-      translationId: 'STYLESHEETS',
+      translation: messages.libraryStylesheets,
       legacyPath: true,
     },
     {
       key: 'library.assets',
       path: '/library/assets',
-      translationId: 'ASSETS',
+      translation: messages.libraryAssets,
+      legacyPath: false,
     },
     {
       key: 'library.exports',
       path: '/library/exports',
-      translationId: 'EXPORTS',
+      translation: messages.libraryExports,
       legacyPath: false,
+    },
+  ],
+};
+
+const dataStudio = {
+  key: 'datastudio',
+  iconType: 'data',
+  path: '/datastudio',
+  translation: messages.dataStudioTitle,
+  subMenuItems: [
+    {
+      key: 'datastudio.query_tool',
+      path: '/datamart/queries',
+      translation: messages.dataStudioQuery,
+      legacyPath: true,
     },
   ],
 };
@@ -168,4 +197,5 @@ export const itemDefinitions = [
   automationsMenu,
   creativesMenu,
   libraryMenu,
+  dataStudio,
 ];

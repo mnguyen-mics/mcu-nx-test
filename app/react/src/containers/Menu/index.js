@@ -1,4 +1,4 @@
-import NavigatorMenu from './NavigatorMenu';
+import NavigatorMenu from './NavigatorMenu.tsx';
 
 export {
   NavigatorMenu,
