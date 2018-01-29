@@ -19,7 +19,7 @@ import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper.ts
 import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
-import CampaignService from '../../../../services/CampaignService';
+import CampaignService from '../../../../services/CampaignService.ts';
 import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 import ReportService from '../../../../services/ReportService.ts';
 import * as notifyActions from '../../../../state/Notifications/actions';

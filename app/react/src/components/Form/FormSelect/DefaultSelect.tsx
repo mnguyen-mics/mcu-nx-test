@@ -77,7 +77,10 @@ class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldPro
         >
           <FormSelect
             {...selectProps}
-            input={input}
+            onBlur={input.onBlur as () => any}
+            onChange={input.onChange as () => any}
+            onFocus={input.onFocus as () => any}
+            value={input.value}
             disabled={disabled}
           >{optionsToDisplay}
           </FormSelect>

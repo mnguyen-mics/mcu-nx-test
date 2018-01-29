@@ -24,6 +24,7 @@
     'library.assets',
     'library.exports',
     'library.recommenders',
+    'datastudio.report',
     'datastudio.query_tool',
   ];
 

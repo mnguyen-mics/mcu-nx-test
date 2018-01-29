@@ -126,5 +126,9 @@ export default defineMessages({
     dataStudioQuery: {
         id: 'menu.dataStudio.query',
         defaultMessage: 'Query Tool',
+    },
+    dataStudioReport: {
+        id: 'menu.dataStudio.report',
+        defaultMessage: 'Report',
     }
 })

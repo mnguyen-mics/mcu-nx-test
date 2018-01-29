@@ -1,21 +1,15 @@
 import * as React from 'react';
 import { Select } from 'antd';
-import { WrappedFieldInputProps } from 'redux-form';
 import { SelectProps } from 'antd/lib/select';
 
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 
-interface FormSelect {
-  input: WrappedFieldInputProps;
-  disabled?: boolean;
-}
+export interface FormSelectProps extends SelectProps {}
 
-const FormSelect: React.SFC<SelectProps & FormSelect> = props => {
+const FormSelect: React.SFC<FormSelectProps> = props => {
 
   const {
     children,
-    input: { value, onChange, onFocus },
-    disabled,
     ...otherProps,
   } = props;
 
@@ -28,12 +22,6 @@ const FormSelect: React.SFC<SelectProps & FormSelect> = props => {
     <div id={selectId}>
       <Select
         getPopupContainer={getPopupContainer}
-        // difficulties to map some WrappedFieldInputProps with SelectProps
-        onBlur={onChange as () => any}
-        onChange={onChange as () => any}
-        onFocus={onFocus as () => any}
-        value={value}
-        disabled={disabled}
         {...otherProps}
       >
         {children}

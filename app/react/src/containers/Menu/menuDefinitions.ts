@@ -188,6 +188,12 @@ const dataStudio = {
       translation: messages.dataStudioQuery,
       legacyPath: true,
     },
+    {
+      key: 'datastudio.report',
+      path: '/datastudio/report',
+      translation: messages.dataStudioReport,
+      legacyPath: false,
+    }
   ],
 };
 
