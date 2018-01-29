@@ -11,7 +11,7 @@ import {
   fetchAudienceSegmentSinglePerformanceReport,
   createAudienceSegmentOverlap,
   fetchAudienceSegmentOverlap,
-  exportAudienceSegmentDashboard
+  exportAudienceSegmentDashboard,
 } from './actions';
 
 import { notifyError } from '../../Notifications/actions';
@@ -30,32 +30,26 @@ import {
   AUDIENCE_SEGMENT_SINGLE_RESET,
   AUDIENCE_SEGMENT_CREATE_OVERLAP,
   AUDIENCE_SEGMENT_RETRIEVE_OVERLAP,
-  AUDIENCE_SEGMENT_DASHBOARD_EXPORT
+  AUDIENCE_SEGMENT_DASHBOARD_EXPORT,
 } from '../../action-types';
 
 import messages from '../../../containers/Audience/Segments/Dashboard/messages';
 
-const onFileUpdate = (file) => {
-  return new Promise((resolve) => {
+const onFileUpdate = file => {
+  return new Promise(resolve => {
     const fileReader = new FileReader(); /* global FileReader */
-    fileReader.onload = (fileLoadedEvent) => {
+    fileReader.onload = fileLoadedEvent => {
       const textFromFileLoaded = fileLoadedEvent.target.result;
       return resolve(JSON.parse(textFromFileLoaded));
     };
 
     fileReader.readAsText(file, 'UTF-8');
   });
-
 };
-
 
 function* loadPerformanceReport({ payload }) {
   try {
-
-    const {
-      organisationId,
-      filter,
-    } = payload;
+    const { organisationId, filter } = payload;
 
     if (!(organisationId || filter)) {
       throw new Error('Payload is invalid');
@@ -66,7 +60,13 @@ function* loadPerformanceReport({ payload }) {
     const dimension = 'audience_segment_id';
     // filters: `organisation_id==${organisationId}`,
 
-    const response = yield call(ReportService.getAudienceSegmentReport, organisationId, startDate, endDate, dimension);
+    const response = yield call(
+      ReportService.getAudienceSegmentReport,
+      organisationId,
+      startDate,
+      endDate,
+      dimension,
+    );
     yield put(fetchAudienceSegmentsPerformanceReport.success(response));
   } catch (error) {
     log.error(error);
@@ -77,12 +77,7 @@ function* loadPerformanceReport({ payload }) {
 
 function* loadSinglePerformanceReport({ payload }) {
   try {
-
-    const {
-      segmentId,
-      organisationId,
-      filter,
-    } = payload;
+    const { segmentId, organisationId, filter } = payload;
 
     if (!(segmentId || organisationId || filter)) {
       throw new Error('Payload is invalid');
@@ -91,11 +86,28 @@ function* loadSinglePerformanceReport({ payload }) {
     const startDate = filter.from;
     const endDate = filter.to;
     const dimension = 'day';
-    const filters = {
-      filters: `audience_segment_id==${segmentId}`,
-    };
+    const filters = [
+      {
+        name: 'audience_segment_id',
+        value: segmentId,
+      },
+    ];
 
-    const response = yield call(ReportService.getAudienceSegmentReport, organisationId, startDate, endDate, dimension, ['user_points', 'user_accounts', 'emails,desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'], filters);
+    const response = yield call(
+      ReportService.getAudienceSegmentReport,
+      organisationId,
+      startDate,
+      endDate,
+      dimension,
+      [
+        'user_points',
+        'user_accounts',
+        'emails,desktop_cookie_ids',
+        'user_point_additions',
+        'user_point_deletions',
+      ],
+      filters,
+    );
     yield put(fetchAudienceSegmentSinglePerformanceReport.success(response));
   } catch (error) {
     log.error(error);
@@ -106,24 +118,40 @@ function* loadSinglePerformanceReport({ payload }) {
 
 function* loadAudienceSegmentSingle({ payload }) {
   try {
+    const { segmentId, organisationId } = payload;
 
-    const {
-      segmentId,
-      organisationId,
-    } = payload;
-
-    if (!(segmentId)) {
+    if (!segmentId) {
       throw new Error('Payload is invalid');
     }
 
-    const perfResponse = yield call(ReportService.getAudienceSegmentReport, organisationId, new McsMoment('now'), new McsMoment('now'), 'day', ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'], { filters: `audience_segment_id==${segmentId}` });
-    const segmentResponse = yield call(AudienceSegmentService.getSegment, segmentId);
+    const filters = [
+      {
+        name: 'audience_segment_id',
+        value: segmentId,
+      },
+    ];
+
+    const perfResponse = yield call(
+      ReportService.getAudienceSegmentReport,
+      organisationId,
+      new McsMoment('now'),
+      new McsMoment('now'),
+      'day',
+      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
+      filters,
+    );
+    const segmentResponse = yield call(
+      AudienceSegmentService.getSegment,
+      segmentId,
+    );
 
     const reportView = normalizeReportView(perfResponse.data.report_view);
-    yield put(fetchAudienceSegmentSingle.success({
-      ...segmentResponse.data,
-      report_view: reportView,
-    }));
+    yield put(
+      fetchAudienceSegmentSingle.success({
+        ...segmentResponse.data,
+        report_view: reportView,
+      }),
+    );
   } catch (error) {
     log.error(error);
     yield put(notifyError(error));
@@ -133,13 +161,7 @@ function* loadAudienceSegmentSingle({ payload }) {
 
 function* loadAudienceSegmentList({ payload }) {
   try {
-
-    const {
-      organisationId,
-      datamartId,
-      filter,
-      isInitialRender,
-    } = payload;
+    const { organisationId, datamartId, filter, isInitialRender } = payload;
 
     if (!(organisationId || datamartId || filter)) {
       throw new Error('Payload is invalid');
@@ -149,9 +171,15 @@ function* loadAudienceSegmentList({ payload }) {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
-    if (filter.keywords) { options.name = filter.keywords; }
-    if (filter.label_id.length) { options.label_id = filter.label_id; }
-    if (filter.types) { options.types = filter.types; }
+    if (filter.keywords) {
+      options.name = filter.keywords;
+    }
+    if (filter.label_id.length) {
+      options.label_id = filter.label_id;
+    }
+    if (filter.types) {
+      options.types = filter.types;
+    }
 
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
@@ -161,12 +189,27 @@ function* loadAudienceSegmentList({ payload }) {
 
     if (isInitialRender) {
       allCalls = {
-        initialFetch: call(AudienceSegmentService.getSegments, organisationId, datamartId, initialOptions),
-        response: call(AudienceSegmentService.getSegments, organisationId, datamartId, options),
+        initialFetch: call(
+          AudienceSegmentService.getSegments,
+          organisationId,
+          datamartId,
+          initialOptions,
+        ),
+        response: call(
+          AudienceSegmentService.getSegments,
+          organisationId,
+          datamartId,
+          options,
+        ),
       };
     } else {
       allCalls = {
-        response: call(AudienceSegmentService.getSegments, organisationId, datamartId, options),
+        response: call(
+          AudienceSegmentService.getSegments,
+          organisationId,
+          datamartId,
+          options,
+        ),
       };
     }
 
@@ -185,20 +228,26 @@ function* loadAudienceSegmentList({ payload }) {
 
 function* postAudienceSegmentOverlap({ payload }) {
   try {
-    const {
-      datamartId,
-      segmentId,
-      organisationId,
-      filter,
-    } = payload;
+    const { datamartId, segmentId, organisationId, filter } = payload;
 
     if (!(datamartId || segmentId || filter)) {
       throw new Error('Payload is invalid');
     }
 
-    const response = yield call(AudienceSegmentService.createOverlap, datamartId, segmentId, filter);
+    const response = yield call(
+      AudienceSegmentService.createOverlap,
+      datamartId,
+      segmentId,
+      filter,
+    );
     yield put(createAudienceSegmentOverlap.success(response));
-    yield put(fetchAudienceSegmentOverlap.request(segmentId, organisationId, datamartId));
+    yield put(
+      fetchAudienceSegmentOverlap.request(
+        segmentId,
+        organisationId,
+        datamartId,
+      ),
+    );
   } catch (error) {
     log.error(error);
     yield put(notifyError(error));
@@ -208,13 +257,7 @@ function* postAudienceSegmentOverlap({ payload }) {
 
 function* retrieveAudienceSegmentOverlap({ payload }) {
   try {
-
-    const {
-      segmentId,
-      filter,
-      organisationId,
-      datamartId,
-    } = payload;
+    const { segmentId, filter, organisationId, datamartId } = payload;
 
     if (!(segmentId || filter)) {
       throw new Error('Payload is invalid');
@@ -226,13 +269,23 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
       ...filter,
     };
 
-    const response = yield call(AudienceSegmentService.retrieveOverlap, segmentId, { first_result: formatedFilters.first_result, max_result: formatedFilters.max_results });
+    const response = yield call(
+      AudienceSegmentService.retrieveOverlap,
+      segmentId,
+      {
+        first_result: formatedFilters.first_result,
+        max_result: formatedFilters.max_results,
+      },
+    );
 
     let formatedResponse;
     if (response.data.length > 0) {
       if (response.data[0].status === 'SUCCEEDED') {
         const micsUri = response.data[0].output_result.result.data_file_uri;
-        const overlapFile = yield call(DataFileService.getDatafileData, micsUri);
+        const overlapFile = yield call(
+          DataFileService.getDatafileData,
+          micsUri,
+        );
         const overlapData = yield call(onFileUpdate, overlapFile);
         // sort on overlap number (same as sorting on percentage )
         const topOverlaps = overlapData.overlaps.sort((a, b) => {
@@ -240,31 +293,47 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
         }); // select 20 biggest overlpas
 
         const topSegments = topOverlaps.map(overlap => {
-          return overlapData.segments.find(s => s.segment_id === overlap.segment_intersect_with);
+          return overlapData.segments.find(
+            s => s.segment_id === overlap.segment_intersect_with,
+          );
         });
         // for each overlap we match it with its id related segment
 
-        const myCall = (s) => {
+        const myCall = s => {
           return new Promise(resolve => {
-            return AudienceSegmentService.getSegment(s.segment_id).then(res => resolve(res)).catch(() => resolve(null));
+            return AudienceSegmentService.getSegment(s.segment_id)
+              .then(res => resolve(res))
+              .catch(() => resolve(null));
           });
         };
-        const segmentResourceResponses = yield all(topSegments.map((s) => {
-          return call(myCall, s);
-        }));
-        const segmentResources = segmentResourceResponses.filter(res => res).map(res => res.data);
+        const segmentResourceResponses = yield all(
+          topSegments.map(s => {
+            return call(myCall, s);
+          }),
+        );
+        const segmentResources = segmentResourceResponses
+          .filter(res => res)
+          .map(res => res.data);
         // get segments names
         const segments = [
           ...topSegments.map(s => {
-            const name = (segmentResources.find(res => res.id === s.segment_id.toString()) || {}).name;
-            return name ? {
-              ...s,
-              name
-            } : null;
+            const name = (
+              segmentResources.find(
+                res => res.id === s.segment_id.toString(),
+              ) || {}
+            ).name;
+            return name
+              ? {
+                ...s,
+                name,
+              }
+              : null;
           }),
-          overlapData.segments.find(s => s.segment_id.toString() === segmentId)
+          overlapData.segments.find(s => s.segment_id.toString() === segmentId),
         ].filter(seg => seg);
-        const filteredTopOverlap = topOverlaps.filter(ov => segments.find(seg => seg.segment_id === ov.segment_intersect_with));
+        const filteredTopOverlap = topOverlaps.filter(ov =>
+          segments.find(seg => seg.segment_id === ov.segment_intersect_with),
+        );
         // we formate the data chart
         formatedResponse = {
           ...overlapData,
@@ -272,17 +341,27 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
           segments,
           hasOverlap: true,
         };
-      } else if (response.data[0].status === 'PENDING' || response.data[0].status === 'RUNNING') {
-
+      } else if (
+        response.data[0].status === 'PENDING' ||
+        response.data[0].status === 'RUNNING'
+      ) {
         let responseStatus = response.data[0].status;
 
         while (responseStatus !== 'SUCCEEDED') {
           yield call(delay, 1 * 1000);
-          const test = yield call(AudienceSegmentService.retrieveOverlap, segmentId, formatedFilters.first_result, formatedFilters.max_results);
+          const test = yield call(
+            AudienceSegmentService.retrieveOverlap,
+            segmentId,
+            formatedFilters.first_result,
+            formatedFilters.max_results,
+          );
           if (test.data[0].status === 'SUCCEEDED') {
             responseStatus = test.data[0].status;
             const micsUri = test.data[0].output_result.result.data_file_uri;
-            const overlapData = yield call(DataFileService.getDatafileData, micsUri);
+            const overlapData = yield call(
+              DataFileService.getDatafileData,
+              micsUri,
+            );
             formatedResponse = {
               ...overlapData,
               hasOverlap: true,
@@ -303,7 +382,12 @@ function* retrieveAudienceSegmentOverlap({ payload }) {
       ...getPaginatedApiParam(1, formatedResponse.segments.length - 1),
     };
     if (formatedResponse.overlaps.length > 0) {
-      const segmentList = yield call(AudienceSegmentService.getSegments, organisationId, datamartId, options);
+      const segmentList = yield call(
+        AudienceSegmentService.getSegments,
+        organisationId,
+        datamartId,
+        options,
+      );
       yield put(fetchAudienceSegmentList.success(segmentList));
     }
 
@@ -329,10 +413,12 @@ function* doExportAudienceSegmentDashboard(action) {
     }
     yield put(exportAudienceSegmentDashboard.success());
   } catch (error) {
-    yield put(notifyError(error, {
-      intlMessage: messages.exportErrorNotificationTitle,
-      intlDescription: messages.exportErrorNotificationMessage
-    }));
+    yield put(
+      notifyError(error, {
+        intlMessage: messages.exportErrorNotificationTitle,
+        intlDescription: messages.exportErrorNotificationMessage,
+      }),
+    );
     yield put(exportAudienceSegmentDashboard.failure());
   }
 }
@@ -348,11 +434,17 @@ function* loadSingleSegmentAndPerformance(action) {
 }
 
 function* watchFetchAudienceSegmentsList() {
-  yield* takeLatest(AUDIENCE_SEGMENTS_LIST_FETCH.REQUEST, loadAudienceSegmentList);
+  yield* takeLatest(
+    AUDIENCE_SEGMENTS_LIST_FETCH.REQUEST,
+    loadAudienceSegmentList,
+  );
 }
 
 function* watchFetchPerformanceReport() {
-  yield* takeLatest(AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
+  yield* takeLatest(
+    AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.REQUEST,
+    loadPerformanceReport,
+  );
 }
 
 function* watchLoadSegmentsAndPerformance() {
@@ -360,11 +452,17 @@ function* watchLoadSegmentsAndPerformance() {
 }
 
 function* watchLoadSingleSegmentAndPerformance() {
-  yield* takeLatest(AUDIENCE_SEGMENT_SINGLE_LOAD_ALL, loadSingleSegmentAndPerformance);
+  yield* takeLatest(
+    AUDIENCE_SEGMENT_SINGLE_LOAD_ALL,
+    loadSingleSegmentAndPerformance,
+  );
 }
 
 function* watchCreateAudienceSegmentOverlap() {
-  yield* takeLatest(AUDIENCE_SEGMENT_CREATE_OVERLAP.REQUEST, postAudienceSegmentOverlap);
+  yield* takeLatest(
+    AUDIENCE_SEGMENT_CREATE_OVERLAP.REQUEST,
+    postAudienceSegmentOverlap,
+  );
 }
 
 function* watchRetrieveAudienceSegmentOverlap() {
@@ -372,7 +470,10 @@ function* watchRetrieveAudienceSegmentOverlap() {
 }
 
 function* watchExportAudienceSegmentDashboard() {
-  yield* takeLatest(AUDIENCE_SEGMENT_DASHBOARD_EXPORT.REQUEST, doExportAudienceSegmentDashboard);
+  yield* takeLatest(
+    AUDIENCE_SEGMENT_DASHBOARD_EXPORT.REQUEST,
+    doExportAudienceSegmentDashboard,
+  );
 }
 
 export const segmentsSagas = [
@@ -382,5 +483,5 @@ export const segmentsSagas = [
   fork(watchLoadSingleSegmentAndPerformance),
   fork(watchCreateAudienceSegmentOverlap),
   fork(watchRetrieveAudienceSegmentOverlap),
-  fork(watchExportAudienceSegmentDashboard)
+  fork(watchExportAudienceSegmentDashboard),
 ];
