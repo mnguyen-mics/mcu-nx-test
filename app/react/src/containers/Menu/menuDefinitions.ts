@@ -1,6 +1,6 @@
 import messages from './messages';
 
-export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'automations', 'campaigns.email'];
+export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'automations', 'campaigns.email', 'datastudio.query_tool'];
 
 
 // ATTENTION : ALL KEYS MUST BE UNIQUE !
@@ -24,7 +24,7 @@ const audienceMenu = {
       legacyPath: false,
     },
     {
-      key: 'audience.query_tool',
+      key: 'audience.segment_builder',
       path: '/datamart/queries',
       translation: messages.audienceSegmentBuilder,
       legacyPath: true,

@@ -4,7 +4,7 @@
  const defaultFeatures = [
     'audience.segments',
     'audience.partitions',
-    'audience.query_tool',
+    'audience.segment_builder',
     'audience.monitoring',
     'campaigns.display',
     'campaigns.email',
