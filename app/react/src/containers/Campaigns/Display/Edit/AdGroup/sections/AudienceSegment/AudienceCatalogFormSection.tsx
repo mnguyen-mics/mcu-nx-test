@@ -3,11 +3,12 @@ import cuid from 'cuid';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { Row, Col } from 'antd/lib/grid';
-import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import AudienceCatalogProvider, { DataLoadingContainer } from './AudienceCatalogProvider';
+import provideAudienceCatalog, {
+  InjectedAudienceCatalogProps,
+} from './provideAudienceCatalog';
 import { DrawableContentProps } from '../../../../../../../components/Drawer/index';
-import { SegmentFieldModel, EditAdGroupRouteMatchParam } from '../../domain';
+import { SegmentFieldModel } from '../../domain';
 import FormSection from '../../../../../../../components/Form/FormSection';
 import messages from '../../../messages';
 import audienceCatalogMsgs from './messages';
@@ -23,12 +24,14 @@ import { TreeData } from '../../../../../../../components/SearchAndTreeSelect';
 import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 
-export interface AudienceCatalogFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface AudienceCatalogFormSectionProps
+  extends DrawableContentProps,
+    ReduxFormChangeProps {}
 
 type Props = WrappedFieldArrayProps<SegmentFieldModel> &
   InjectedIntlProps &
-  AudienceCatalogFormSectionProps &
-  RouteComponentProps<EditAdGroupRouteMatchParam>;
+  InjectedAudienceCatalogProps &
+  AudienceCatalogFormSectionProps;
 
 interface State {
   showExclude: boolean;
@@ -175,15 +178,19 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
     this.setState(prevState => ({ showExclude: !prevState.showExclude }));
   };
 
-  renderAudienceCatalogForm = (
-    audienceCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>,
-    genderServiceItems: DataLoadingContainer<AudienceSegmentServiceItemPublicResource[]>,
-    ageServiceItems: DataLoadingContainer<AudienceSegmentServiceItemPublicResource[]>,
-    audienceSegments: DataLoadingContainer<AudienceSegmentResource[]>,
-  ) => {
-    const { intl: { formatMessage }, fields } = this.props;
+  render() {
+    const {
+      intl,
+      fields,
+      audienceCategoryTree,
+      genderServiceItems,
+      ageServiceItems,
+      audienceSegments,
+    } = this.props;
 
-    const genderServiceItemDataSource = genderServiceItems.data.map(toMenuItemProps);
+    const genderServiceItemDataSource = genderServiceItems.data.map(
+      toMenuItemProps,
+    );
     const ageServiceItemDataSource = ageServiceItems.data.map(toMenuItemProps);
 
     const detailedTargetingDataSource = audienceCategoryTree.data
@@ -209,129 +216,136 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
     const showExclude = excludedSegmentFound || this.state.showExclude;
 
     return (
-      <Row>
-        <Row className="audience-selection-notice">
-          <Col span={10} offset={4}>
-            <FormattedMessage {...audienceCatalogMsgs.genderNotice} />
-          </Col>
-        </Row>
-        <FormSearchAndMultiSelect
-          label={formatMessage(audienceCatalogMsgs.genderLabel)}
-          placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
-          datasource={genderServiceItemDataSource}
-          loading={genderServiceItems.loading}
-          tooltipProps={{
-            title: formatMessage(audienceCatalogMsgs.genderTooltip),
-          }}
-          value={this.getSelectedSegment(genderServiceItems.data)}
-          handleClickOnRemove={this.markAsDeleted()}
-          handleClickOnItem={this.toggleSelected}
-        />
-        <Row className="audience-selection-notice">
-          <Col span={10} offset={4}>
-            <FormattedMessage {...audienceCatalogMsgs.ageNotice} />
-          </Col>
-        </Row>
-        <FormSearchAndMultiSelect
-          label={formatMessage(audienceCatalogMsgs.ageLabel)}
-          placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
-          datasource={ageServiceItemDataSource}
-          loading={ageServiceItems.loading}
-          tooltipProps={{
-            title: formatMessage(audienceCatalogMsgs.ageTooltip),
-          }}
-          value={this.getSelectedSegment(ageServiceItems.data)}
-          handleClickOnRemove={this.markAsDeleted()}
-          handleClickOnItem={this.toggleSelected}
-        />
-        <Row className="audience-selection-notice">
-          <Col span={10} offset={4}>
-            <FormattedMessage
-              {...audienceCatalogMsgs.detailedTargetingNotice}
-            />
-          </Col>
-        </Row>
-        <FormSearchAndTreeSelect
-          label={formatMessage(audienceCatalogMsgs.detailedTargetingLabel)}
-          placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
-          datasource={detailedTargetingDataSource}
-          loading={audienceCategoryTree.loading || audienceSegments.loading}
-          tooltipProps={{
-            title: formatMessage(audienceCatalogMsgs.detailedTargetingTooltip),
-          }}
-          value={this.getSelectedSegment(
-            getServices(audienceCategoryTree.data),
-            audienceSegments.data,
-          )}
-          handleClickOnRemove={this.markAsDeleted()}
-          handleOnChange={this.handleChange(
-            audienceCategoryTree.data,
-            audienceSegments.data,
-          )}
-        />
-        <div className={showExclude ? '' : 'hide-section'}>
-          <Row className="audience-selection-notice">
-            <Col span={10} offset={4}>
-              <FormattedMessage
-                {...audienceCatalogMsgs.detailedTargetingExclusionNotice}
-              />
-            </Col>
-          </Row>
-          <FormSearchAndTreeSelect
-            label={formatMessage(
-              audienceCatalogMsgs.detailedTargetingExclusionLabel,
-            )}
-            placeholder={formatMessage(audienceCatalogMsgs.selectPlaceholder)}
-            datasource={detailedTargetingDataSource}
-            loading={audienceCategoryTree.loading || audienceSegments.loading}
-            tooltipProps={{
-              title: formatMessage(
-                audienceCatalogMsgs.detailedTargetingExclusionTooltip,
-              ),
-            }}
-            value={this.getSelectedSegment(
-              getServices(audienceCategoryTree.data),
-              audienceSegments.data,
-              true,
-            )}
-            handleClickOnRemove={this.markAsDeleted(true)}
-            handleOnChange={this.handleChange(
-              audienceCategoryTree.data,
-              audienceSegments.data,
-              true,
-            )}
-          />
-        </div>
-        <Row className={showExclude ? 'hide-section' : ''}>
-          <Col span={3} offset={11}>
-            <ButtonStyleless
-              onClick={this.toogleShowExclude}
-              className="action-button"
-            >
-              <FormattedMessage {...audienceCatalogMsgs.excludeLinkMsg} />
-            </ButtonStyleless>
-          </Col>
-        </Row>
-      </Row>
-    );
-  };
-
-  render() {
-    return (
       <div className="audience-catalog">
         <FormSection
           subtitle={messages.sectionSubtitleAudience}
           title={messages.sectionTitleAudience}
         />
-        <AudienceCatalogProvider renderProp={this.renderAudienceCatalogForm} />
+
+        <Row>
+          <Row className="audience-selection-notice">
+            <Col span={10} offset={4}>
+              <FormattedMessage {...audienceCatalogMsgs.genderNotice} />
+            </Col>
+          </Row>
+          <FormSearchAndMultiSelect
+            label={intl.formatMessage(audienceCatalogMsgs.genderLabel)}
+            placeholder={intl.formatMessage(
+              audienceCatalogMsgs.selectPlaceholder,
+            )}
+            datasource={genderServiceItemDataSource}
+            loading={genderServiceItems.loading}
+            tooltipProps={{
+              title: intl.formatMessage(audienceCatalogMsgs.genderTooltip),
+            }}
+            value={this.getSelectedSegment(genderServiceItems.data)}
+            handleClickOnRemove={this.markAsDeleted()}
+            handleClickOnItem={this.toggleSelected}
+          />
+          <Row className="audience-selection-notice">
+            <Col span={10} offset={4}>
+              <FormattedMessage {...audienceCatalogMsgs.ageNotice} />
+            </Col>
+          </Row>
+          <FormSearchAndMultiSelect
+            label={intl.formatMessage(audienceCatalogMsgs.ageLabel)}
+            placeholder={intl.formatMessage(
+              audienceCatalogMsgs.selectPlaceholder,
+            )}
+            datasource={ageServiceItemDataSource}
+            loading={ageServiceItems.loading}
+            tooltipProps={{
+              title: intl.formatMessage(audienceCatalogMsgs.ageTooltip),
+            }}
+            value={this.getSelectedSegment(ageServiceItems.data)}
+            handleClickOnRemove={this.markAsDeleted()}
+            handleClickOnItem={this.toggleSelected}
+          />
+          <Row className="audience-selection-notice">
+            <Col span={10} offset={4}>
+              <FormattedMessage
+                {...audienceCatalogMsgs.detailedTargetingNotice}
+              />
+            </Col>
+          </Row>
+          <FormSearchAndTreeSelect
+            label={intl.formatMessage(
+              audienceCatalogMsgs.detailedTargetingLabel,
+            )}
+            placeholder={intl.formatMessage(
+              audienceCatalogMsgs.selectPlaceholder,
+            )}
+            datasource={detailedTargetingDataSource}
+            loading={audienceCategoryTree.loading || audienceSegments.loading}
+            tooltipProps={{
+              title: intl.formatMessage(
+                audienceCatalogMsgs.detailedTargetingTooltip,
+              ),
+            }}
+            value={this.getSelectedSegment(
+              getServices(audienceCategoryTree.data),
+              audienceSegments.data,
+            )}
+            handleClickOnRemove={this.markAsDeleted()}
+            handleOnChange={this.handleChange(
+              audienceCategoryTree.data,
+              audienceSegments.data,
+            )}
+          />
+          <div className={showExclude ? '' : 'hide-section'}>
+            <Row className="audience-selection-notice">
+              <Col span={10} offset={4}>
+                <FormattedMessage
+                  {...audienceCatalogMsgs.detailedTargetingExclusionNotice}
+                />
+              </Col>
+            </Row>
+            <FormSearchAndTreeSelect
+              label={intl.formatMessage(
+                audienceCatalogMsgs.detailedTargetingExclusionLabel,
+              )}
+              placeholder={intl.formatMessage(
+                audienceCatalogMsgs.selectPlaceholder,
+              )}
+              datasource={detailedTargetingDataSource}
+              loading={audienceCategoryTree.loading || audienceSegments.loading}
+              tooltipProps={{
+                title: intl.formatMessage(
+                  audienceCatalogMsgs.detailedTargetingExclusionTooltip,
+                ),
+              }}
+              value={this.getSelectedSegment(
+                getServices(audienceCategoryTree.data),
+                audienceSegments.data,
+                true,
+              )}
+              handleClickOnRemove={this.markAsDeleted(true)}
+              handleOnChange={this.handleChange(
+                audienceCategoryTree.data,
+                audienceSegments.data,
+                true,
+              )}
+            />
+          </div>
+          <Row className={showExclude ? 'hide-section' : ''}>
+            <Col span={3} offset={11}>
+              <ButtonStyleless
+                onClick={this.toogleShowExclude}
+                className="action-button"
+              >
+                <FormattedMessage {...audienceCatalogMsgs.excludeLinkMsg} />
+              </ButtonStyleless>
+            </Col>
+          </Row>
+        </Row>
       </div>
     );
   }
 }
 
 export default compose<Props, AudienceCatalogFormSectionProps>(
-  withRouter,
   injectIntl,
+  provideAudienceCatalog,
 )(AudienceCatalogFormSection);
 
 /////////////

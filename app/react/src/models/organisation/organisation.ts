@@ -9,3 +9,13 @@ export interface Cookie {
     mics_lts: string;
     mics_uaid: string;
 }
+
+export interface Datamart {
+    id: string;
+    name: string;
+    organisation_id: string;
+    token: string;
+    creation_date: string;
+    time_zone: string;
+    type: 'DATAMART';
+  }

@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, matchPath } from 'react-router-dom';
 import { Menu } from 'antd';
@@ -8,20 +7,45 @@ import { FormattedMessage } from 'react-intl';
 import {
   hasDatamarts,
   getDefaultDatamart } from '../../state/Session/selectors';
-import McsIcons from '../../components/McsIcons.tsx';
+import McsIcons, { McsIconType } from '../../components/McsIcons';
 import { getOrgFeatures } from '../../state/Features/selectors';
 import {
   itemDefinitions,
   itemDisplayedOnlyIfDatamart,
 } from './menuDefinitions';
+import { compose } from 'redux';
+import { RouteComponentProps } from 'react-router';
+import { MenuMode } from 'antd/lib/menu';
+import { Datamart } from '../../models/organisation/organisation';
 
 const { SubMenu } = Menu;
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 
-class NavigatorMenu extends Component {
 
-  constructor(props) {
+export interface NavigatorMenuProps {
+  mode: MenuMode;
+  collapsed: boolean;
+  organisationHasDatamarts: (organisationId: string) => boolean;
+  onMenuItemClick: () => void;
+  defaultDatamart: (organisationId: string) => Datamart;
+  orgFeatures: string[];
+}
+
+interface RouteProps {
+  organisationId: string;
+}
+
+type Props = NavigatorMenuProps & RouteComponentProps<RouteProps>
+
+interface NavigatorMenuState {
+  inlineOpenKeys: string[];
+  vecticalOpenKeys: string[];
+}
+
+class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       inlineOpenKeys: [],
@@ -36,12 +60,12 @@ class NavigatorMenu extends Component {
 
     const currentOpenSubMenu = itemDefinitions
       .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
-      .find(item => matchPath(pathname, { path: `${basePath}${item.path}` }));
+      .find(item => matchPath(pathname, { path: `${basePath}${item.path}` }) ? true : false );
 
     if (currentOpenSubMenu) this.setState({ inlineOpenKeys: [currentOpenSubMenu.key] }); // eslint-disable-line react/no-did-mount-set-state
   }
 
-  onOpenChange = (openKeys) => {
+  onOpenChange = (openKeys: string[]) => {
     const state = this.state;
     const {
       mode,
@@ -49,7 +73,7 @@ class NavigatorMenu extends Component {
 
     if (mode === 'inline') {
       const latestOpenKey = openKeys.find(key => !(state.inlineOpenKeys.indexOf(key) > -1));
-      let nextOpenKeys = [];
+      let nextOpenKeys: string[] = [];
       if (latestOpenKey) {
         nextOpenKeys = [latestOpenKey];
       }
@@ -60,7 +84,7 @@ class NavigatorMenu extends Component {
     }
   }
 
-  onClick = ({ key }) => {
+  onClick = ({ key }: { key: string }) => {
 
     const hasClickOnFirstLevelMenuItem = itemDefinitions.find(item => item.key === key);
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
@@ -76,7 +100,7 @@ class NavigatorMenu extends Component {
       orgFeatures,
     } = this.props;
 
-    const isAvailable = key => {
+    const isAvailable = (key: string) => {
       if (itemDisplayedOnlyIfDatamart.includes(key)) return organisationHasDatamarts(organisationId) && orgFeatures.filter(v => v.includes(key)).length > 0;
       return orgFeatures.filter(v => v.includes(key)).length > 0;
     };
@@ -115,8 +139,9 @@ class NavigatorMenu extends Component {
     return this.getAvailableItems().map(itemDef => {
       const buildSubMenu = itemDef.subMenuItems && itemDef.subMenuItems.length > 0;
       if (buildSubMenu) {
+        const onTitleClick = () => { this.setState({ inlineOpenKeys: [itemDef.key] }); this.props.onMenuItemClick(); }
         return (
-          <SubMenu key={itemDef.key} onTitleClick={() => { this.setState({ inlineOpenKeys: [itemDef.key] }); this.props.onMenuItemClick(); }} title={<span><McsIcons type={itemDef.iconType} /><span className="nav-text"><FormattedMessage id={itemDef.translationId} /></span></span>}>
+          <SubMenu key={itemDef.key} onTitleClick={onTitleClick} title={<span><McsIcons type={itemDef.iconType as McsIconType} /><span className="nav-text"><FormattedMessage {...itemDef.translation} /></span></span>}>
             {
               itemDef.subMenuItems.map(subMenuItem => {
                 let linkUrl = `${baseUrl}${subMenuItem.path}`;
@@ -127,14 +152,14 @@ class NavigatorMenu extends Component {
                     linkUrl = `/${organisationId}${subMenuItem.path}`;
                   }
                 }
-                return (<Menu.Item style={collapsed === true ? { display: 'none' } : { display: 'block' }} key={subMenuItem.key}><Link to={linkUrl}><FormattedMessage id={subMenuItem.translationId} /></Link></Menu.Item>);
+                return (<Menu.Item style={collapsed === true ? { display: 'none' } : { display: 'block' }} key={subMenuItem.key}><Link to={linkUrl}><FormattedMessage {...subMenuItem.translation} /></Link></Menu.Item>);
               })
             }
           </SubMenu>
         );
       }
 
-      return (<Menu.Item key={itemDef.key}><Link to={`${baseUrl}${itemDef.path}`}><McsIcons type={itemDef.iconType} /><span className="nav-text"><FormattedMessage id={itemDef.translationId} /></span></Link></Menu.Item>);
+      return (<Menu.Item key={itemDef.key}><Link to={`${baseUrl}${itemDef.path}`}><McsIcons type={itemDef.iconType as McsIconType} /><span className="nav-text"><FormattedMessage {...itemDef.translation} /></span></Link></Menu.Item>);
     });
   }
 
@@ -165,12 +190,12 @@ class NavigatorMenu extends Component {
       location: { pathname },
     } = this.props;
 
-    const getSelectedKeys = () => {
+    const getSelectedKeys = (): string[] => {
       const currentItem = this.getAllKeysWithPath().find(item => {
         const matched = matchPath(pathname, { path: `${basePath}${item.path}` });
-        return matched; // && matched.isExact;
+        return matched ? true : false; // && matched.isExact;
       });
-      return currentItem ? [currentItem.key] : null;
+      return currentItem ? [currentItem.key] : [];
     };
 
     const getOpenKeysInMode = () => {
@@ -192,18 +217,8 @@ class NavigatorMenu extends Component {
   }
 }
 
-NavigatorMenu.propTypes = {
-  mode: PropTypes.string.isRequired,
-  collapsed: PropTypes.bool.isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  organisationHasDatamarts: PropTypes.func.isRequired,
-  onMenuItemClick: PropTypes.func.isRequired,
-  defaultDatamart: PropTypes.func.isRequired,
-  orgFeatures: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   organisationHasDatamarts: hasDatamarts(state),
   defaultDatamart: getDefaultDatamart(state),
   orgFeatures: getOrgFeatures(state),
@@ -211,11 +226,10 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {};
 
-NavigatorMenu = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(NavigatorMenu);
-
-NavigatorMenu = withRouter(NavigatorMenu);
-
-export default NavigatorMenu;
