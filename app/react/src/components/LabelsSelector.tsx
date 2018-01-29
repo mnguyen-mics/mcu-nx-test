@@ -65,14 +65,15 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
       labels.push(selectedValue);
     }
     this.props.onChange(labels);
+    this.setState({
+      inputValue: '',
+      inputVisible: false,
+    });
+
   }
 
   handleBlur = () => {
-
-    setTimeout(() => {
-      this.setState({ inputValue: '', inputVisible: false });
-    }, 100);
-
+    this.setState({ inputValue: '', inputVisible: false });
   }
 
   render() {
@@ -136,7 +137,8 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
           <Dropdown
             overlay={overlayMenu()}
             visible={inputVisible}
-
+            onVisibleChange={this.handleBlur}
+            trigger={["click"]}
           >
             <Input
               id="labelInput"
@@ -146,7 +148,7 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
               style={{ width: 100 }}
               value={inputValue}
               onChange={this.handleInputChange}
-              onBlur={this.handleBlur}
+              // onBlur={this.handleBlur}
               onPressEnter={this.handleInputConfirm}
               prefix={<McsIcons type="magnifier" />}
             />
