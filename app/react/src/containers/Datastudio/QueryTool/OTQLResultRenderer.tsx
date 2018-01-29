@@ -8,6 +8,7 @@ import {
   isAggregateResult,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { Card } from '../../../components/Card/index';
+import AggregationRenderer from './AggregationRenderer';
 
 export interface Props {
   result: OTQLResult | null;
@@ -48,13 +49,14 @@ class OTQLResultRenderer extends React.Component<Props> {
           />
         </div>
       );
+    } else if (result && isAggregateResult(result.rows)) {
+      const aggregations = result.rows[0].aggregations;
+      content = (
+        <div>
+          <AggregationRenderer rootAggregations={aggregations} />
+        </div>
+      );
     } else if (result) {
-      // else if (result && isAggregateResult(result.rows)) {
-      //   const count = result.rows[0].aggregations;
-      //   content = (
-
-      //   );
-      // }
       content = (
         <div>
           <pre>{JSON.stringify(result.rows, null, 2)}</pre>

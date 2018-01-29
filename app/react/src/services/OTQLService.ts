@@ -31,13 +31,69 @@ const OTQLService = {
     };
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve(data)
+        resolve(data);
       }, 2000);
     });
   },
 };
 
 export default OTQLService;
+
+const data2: DataResponse<OTQLResult> = {
+  status: 'ok',
+  data: {
+    took: 8852,
+    timed_out: false,
+    offset: null,
+    limit: null,
+    rows: [
+      {
+        aggregations: {
+          buckets: [
+            {
+              name: 'map_name',
+              fieldName: 'name',
+              type: 'map',
+              buckets: [
+                {
+                  key: 'Sarah Connor',
+                  count: 1,
+                  aggregations: {
+                    buckets: [],
+                    metrics: [
+                      {
+                        name: 'ageAverage',
+                        fieldName: 'age',
+                        type: 'avg',
+                        value: 12.0,
+                      },
+                    ],
+                  },
+                },
+                {
+                  key: 'Kevin Spacey',
+                  count: 1,
+                  aggregations: {
+                    buckets: [],
+                    metrics: [
+                      {
+                        name: 'ageAverage',
+                        fieldName: 'age',
+                        type: 'avg',
+                        value: 24.0,
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+          metrics: [],
+        },
+      },
+    ],
+  },
+};
 
 const data: DataResponse<OTQLResult> = {
   status: 'ok',
@@ -64,10 +120,38 @@ const data: DataResponse<OTQLResult> = {
                         name: 'map_cat2',
                         fieldName: 'cat2',
                         type: 'map',
-                        buckets: [],
+                        buckets: [
+                          {
+                            key: 'sub_accueil',
+                            count: 1,
+                            aggregations: {
+                              buckets: [
+                                {
+                                  name: 'map_cat3',
+                                  fieldName: 'cat3',
+                                  type: 'map',
+                                  buckets: [
+                                    {
+                                      key: 'sub_sub_accueil',
+                                      count: 1,
+                                    },
+                                  ],
+                                },
+                              ],
+                              metrics: [],
+                            },
+                          },
+                        ],
                       },
                     ],
-                    metrics: [],
+                    metrics: [
+                      {
+                        name: 'ageAverage',
+                        fieldName: 'age',
+                        type: 'avg',
+                        value: 24.0,
+                      },
+                    ],
                   },
                 },
                 {
@@ -4201,10 +4285,18832 @@ const data: DataResponse<OTQLResult> = {
                 },
               ],
             },
+            {
+              name: 'map_cat2',
+              fieldName: 'cat2',
+              type: 'map',
+              buckets: [
+                {
+                  key: 'lave_linge',
+                  count: 195101,
+                  aggregations: {
+                    buckets: [
+                      {
+                        name: 'map_cat2',
+                        fieldName: 'cat2',
+                        type: 'map',
+                        buckets: [
+                          {
+                            key: 'sub_accueil',
+                            count: 1,
+                            aggregations: {
+                              buckets: [
+                                {
+                                  name: 'map_cat3',
+                                  fieldName: 'cat3',
+                                  type: 'map',
+                                  buckets: [
+                                    {
+                                      key: 'sub_sub_accueil',
+                                      count: 1,
+                                    },
+                                  ],
+                                },
+                              ],
+                              metrics: [],
+                            },
+                          },
+                        ],
+                      },
+                    ],
+                    metrics: [
+                      {
+                        name: 'ageAverage',
+                        fieldName: 'age',
+                        type: 'avg',
+                        value: 24.0,
+                      },
+                    ],
+                  },
+                },
+                {
+                  key: 'refrigerateur_congelateur',
+                  count: 168806,
+                },
+                {
+                  key: 'lave_vaisselle',
+                  count: 141736,
+                },
+                {
+                  key: 'plaque_de_cuisson',
+                  count: 132229,
+                },
+                {
+                  key: 'four',
+                  count: 98041,
+                },
+                {
+                  key: 'refrigerateur',
+                  count: 90003,
+                },
+                {
+                  key: 'hotte',
+                  count: 76038,
+                },
+                {
+                  key: 'micro_ondes',
+                  count: 70925,
+                },
+                {
+                  key: 'seche_linge',
+                  count: 68141,
+                },
+                {
+                  key: 'cuisinieres',
+                  count: 65748,
+                },
+                {
+                  key: 'congelateur',
+                  count: 56088,
+                },
+                {
+                  key: 'cave_a_vin',
+                  count: 23751,
+                },
+                {
+                  key: 'micro_ondes_encastrable',
+                  count: 17612,
+                },
+                {
+                  key: 'refrigerateur_americain',
+                  count: 12677,
+                },
+                {
+                  key: 'accessoires',
+                  count: 11070,
+                },
+                {
+                  key: 'gros_electromenager_encastrable',
+                  count: 5535,
+                },
+                {
+                  key: 'climatiseur',
+                  count: 4379,
+                },
+                {
+                  key: 'pieces_detachees_refrigerateur',
+                  count: 4125,
+                },
+                {
+                  key: 'pieces_detachees_lave_linge',
+                  count: 3559,
+                },
+                {
+                  key: 'pieces_detachees_lave_vaisselle',
+                  count: 3066,
+                },
+                {
+                  key: 'pieces_detachees_four',
+                  count: 2768,
+                },
+                {
+                  key: 'pieces_detachees_hotte',
+                  count: 2265,
+                },
+                {
+                  key: 'pieces_detachees_micro_ondes',
+                  count: 1970,
+                },
+                {
+                  key: 'pieces_detachees_table_de_cuisson',
+                  count: 1807,
+                },
+                {
+                  key: 'pieces_detachees_seche_linge',
+                  count: 1585,
+                },
+                {
+                  key: 'cuisson_chr',
+                  count: 1398,
+                },
+                {
+                  key: 'autour_du_vin',
+                  count: 959,
+                },
+                {
+                  key: 'lave_linge_seche_linge_encastrable',
+                  count: 701,
+                },
+                {
+                  key: 'bosch',
+                  count: 555,
+                },
+                {
+                  key: 'whirlpool',
+                  count: 485,
+                },
+                {
+                  key: 'lavage_chr',
+                  count: 468,
+                },
+                {
+                  key: 'samsung',
+                  count: 339,
+                },
+                {
+                  key: 'pieces_detachees_congelateur',
+                  count: 328,
+                },
+                {
+                  key: 'electrolux',
+                  count: 310,
+                },
+                {
+                  key: 'froid_chr',
+                  count: 278,
+                },
+                {
+                  key: 'pieces_detachees_cuisiniere',
+                  count: 222,
+                },
+                {
+                  key: 'indesit',
+                  count: 190,
+                },
+                {
+                  key: 'preparation_chr',
+                  count: 153,
+                },
+                {
+                  key: 'miele',
+                  count: 144,
+                },
+                {
+                  key: 'siemens',
+                  count: 88,
+                },
+                {
+                  key: 'liebherr',
+                  count: 85,
+                },
+                {
+                  key: 'accessoires_chr',
+                  count: 51,
+                },
+                {
+                  key: 'smeg',
+                  count: 50,
+                },
+                {
+                  key: 'mobilier_de_cuisine_chr',
+                  count: 40,
+                },
+                {
+                  key: 'hygiene_chr',
+                  count: 38,
+                },
+                {
+                  key: 'thomson',
+                  count: 38,
+                },
+                {
+                  key: 'beko',
+                  count: 31,
+                },
+                {
+                  key: 'pack_economique_accessoire',
+                  count: 21,
+                },
+                {
+                  key: 'autres_caves',
+                  count: 18,
+                },
+                {
+                  key: 'aeg',
+                  count: 16,
+                },
+              ],
+            },
           ],
-          metrics: [],
+          metrics: [
+            {
+              name: 'ageAverage',
+              fieldName: 'age',
+              type: 'avg',
+              value: 24.0,
+            },
+          ],
         },
       },
     ],
   },
+};
+
+const big: DataResponse<OTQLResult> = {
+  "status": "ok",
+  "data": {
+    "took": 54638,
+    "timed_out": false,
+    "offset": null,
+    "limit": null,
+    "rows": [
+      {
+        "aggregations": {
+          "buckets": [
+            {
+              "name": "map_c0",
+              "fieldName": "c0",
+              "type": "map",
+              "buckets": [
+                {
+                  "key": "interets",
+                  "count": 1241170238,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "sports",
+                            "count": 576477265,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "football",
+                                      "count": 198955320
+                                    },
+                                    {
+                                      "key": "tennis",
+                                      "count": 26943271
+                                    },
+                                    {
+                                      "key": "rugby",
+                                      "count": 17991067
+                                    },
+                                    {
+                                      "key": "hippisme",
+                                      "count": 12705895
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 12538816
+                                    },
+                                    {
+                                      "key": "parissportifs",
+                                      "count": 12538383
+                                    },
+                                    {
+                                      "key": "handball",
+                                      "count": 11435586
+                                    },
+                                    {
+                                      "key": "basket",
+                                      "count": 8527210
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 3036904
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2998796
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 2677363
+                                    },
+                                    {
+                                      "key": "sportsdhiver-skiglace",
+                                      "count": 1851642
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 1232353
+                                    },
+                                    {
+                                      "key": "golf",
+                                      "count": 806428
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 787576
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 776479
+                                    },
+                                    {
+                                      "key": "sportsextremes",
+                                      "count": 652050
+                                    },
+                                    {
+                                      "key": "formule1",
+                                      "count": 525148
+                                    },
+                                    {
+                                      "key": "athletisme",
+                                      "count": 502410
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 467789
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 346651
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 295748
+                                    },
+                                    {
+                                      "key": "autressports",
+                                      "count": 259809
+                                    },
+                                    {
+                                      "key": "sportsdecombat",
+                                      "count": 244845
+                                    },
+                                    {
+                                      "key": "e-sport",
+                                      "count": 171640
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 160775
+                                    },
+                                    {
+                                      "key": "voile",
+                                      "count": 107589
+                                    },
+                                    {
+                                      "key": "jeuxolympiques",
+                                      "count": 76915
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 76829
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 63309
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 47296
+                                    },
+                                    {
+                                      "key": "sportsdhiver",
+                                      "count": 45199
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 43846
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 41030
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 29022
+                                    },
+                                    {
+                                      "key": "natation",
+                                      "count": 28895
+                                    },
+                                    {
+                                      "key": "sorties-barsetrestos",
+                                      "count": 20697
+                                    },
+                                    {
+                                      "key": "equitation",
+                                      "count": 18893
+                                    },
+                                    {
+                                      "key": "serenite",
+                                      "count": 14739
+                                    },
+                                    {
+                                      "key": "sportsderaquetteshorstennis",
+                                      "count": 12131
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 8578
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 8487
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 8281
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 7863
+                                    },
+                                    {
+                                      "key": "jeuxenligne",
+                                      "count": 7747
+                                    },
+                                    {
+                                      "key": "lifestyle",
+                                      "count": 7674
+                                    },
+                                    {
+                                      "key": "sportsprestige",
+                                      "count": 4809
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 2979
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 2924
+                                    },
+                                    {
+                                      "key": "sportsnautiques",
+                                      "count": 2867
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 202917876,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "infolocale",
+                                      "count": 41933397
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 27452737
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 22372673
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 20432194
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 15234398
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 12011306
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 5925653
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 2628734
+                                    },
+                                    {
+                                      "key": "localnews",
+                                      "count": 2302478
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2089376
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 2048260
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 888314
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 794530
+                                    },
+                                    {
+                                      "key": "justice",
+                                      "count": 744559
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 673757
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 541750
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 458028
+                                    },
+                                    {
+                                      "key": "rugby",
+                                      "count": 420328
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 399409
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275540
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 261080
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 260087
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 245208
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 239985
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 232163
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 196996
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 193727
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 192589
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 186136
+                                    },
+                                    {
+                                      "key": "56",
+                                      "count": 178790
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 167495
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 164971
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 160896
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 151283
+                                    },
+                                    {
+                                      "key": "formule1",
+                                      "count": 142752
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 142459
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 128302
+                                    },
+                                    {
+                                      "key": "22",
+                                      "count": 126830
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 107920
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 103124
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 88259
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 72662
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 72251
+                                    },
+                                    {
+                                      "key": "aeronautique-defense",
+                                      "count": 69569
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 65443
+                                    },
+                                    {
+                                      "key": "ford",
+                                      "count": 60768
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 48183
+                                    },
+                                    {
+                                      "key": "audi",
+                                      "count": 46295
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 44382
+                                    },
+                                    {
+                                      "key": "artisannat",
+                                      "count": 42726
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "cultureetloisirs",
+                            "count": 187079610,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 146867242
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 111223507
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 26519121
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 6995044
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 4977599
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 3305778
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 3239781
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 3137854
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 2104111
+                                    },
+                                    {
+                                      "key": "casual",
+                                      "count": 1981107
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 1943961
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 1712684
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1306890
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 1143870
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 873021
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 837897
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 722776
+                                    },
+                                    {
+                                      "key": "concerts",
+                                      "count": 615653
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 482047
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 411877
+                                    },
+                                    {
+                                      "key": "artsetclassique",
+                                      "count": 365452
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 216555
+                                    },
+                                    {
+                                      "key": "agenda",
+                                      "count": 150565
+                                    },
+                                    {
+                                      "key": "artdevivre",
+                                      "count": 134139
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 85252
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 83321
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 79105
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 79105
+                                    },
+                                    {
+                                      "key": "billetterieconcertsetspectacles",
+                                      "count": 74374
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 60049
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 44140
+                                    },
+                                    {
+                                      "key": "high-tech-informatique",
+                                      "count": 42040
+                                    },
+                                    {
+                                      "key": "papeterie",
+                                      "count": 40617
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 39702
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 33476
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 29486
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 28001
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 23839
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 22845
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 19645
+                                    },
+                                    {
+                                      "key": "livres",
+                                      "count": 14473
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 11279
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 10514
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 9439
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 8962
+                                    },
+                                    {
+                                      "key": "justice",
+                                      "count": 8683
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 8184
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 8043
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 7995
+                                    },
+                                    {
+                                      "key": "rugby",
+                                      "count": 7507
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "usagestv",
+                            "count": 111223507,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "telephile",
+                                      "count": 111223507
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 111169639
+                                    },
+                                    {
+                                      "key": "casual",
+                                      "count": 1981107
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 53868
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 28041
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 13653
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 4925
+                                    },
+                                    {
+                                      "key": "tennis",
+                                      "count": 4829
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 917
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "people",
+                            "count": 108311240,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 11780636
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 3546171
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 2405555
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 1554406
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 1383979
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 1061810
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 719689
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 336948
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 336457
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 305660
+                                    },
+                                    {
+                                      "key": "concerts",
+                                      "count": 252951
+                                    },
+                                    {
+                                      "key": "artsetclassique",
+                                      "count": 252774
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 91780
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 82602
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 82276
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 74430
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 67493
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 45640
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 44613
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 43416
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 40884
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 21923
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 15911
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 13191
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 12842
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 9624
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 7785
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 6135
+                                    },
+                                    {
+                                      "key": "handball",
+                                      "count": 4076
+                                    },
+                                    {
+                                      "key": "evenementsmode",
+                                      "count": 3686
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 2157
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1245
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 987
+                                    },
+                                    {
+                                      "key": "technologyaddicts",
+                                      "count": 678
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 660
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 565
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 407
+                                    },
+                                    {
+                                      "key": "sportsextremes",
+                                      "count": 338
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 249
+                                    },
+                                    {
+                                      "key": "sportsdecombat",
+                                      "count": 227
+                                    },
+                                    {
+                                      "key": "jeuxolympiques",
+                                      "count": 147
+                                    },
+                                    {
+                                      "key": "justice",
+                                      "count": 99
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 71
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 69
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 25
+                                    },
+                                    {
+                                      "key": "rugby",
+                                      "count": 24
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 14
+                                    },
+                                    {
+                                      "key": "voile",
+                                      "count": 11
+                                    },
+                                    {
+                                      "key": "tennis",
+                                      "count": 10
+                                    },
+                                    {
+                                      "key": "golf",
+                                      "count": 3
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "beaute",
+                            "count": 41440070,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cheveux",
+                                      "count": 7040449
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 6996104
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 6520443
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 5963922
+                                    },
+                                    {
+                                      "key": "recettedecuisine",
+                                      "count": 3462063
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 3136570
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2361373
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 2354605
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 2104111
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 2101799
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 1091835
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 1044078
+                                    },
+                                    {
+                                      "key": "produitsdebeauteetsoins",
+                                      "count": 937391
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 863267
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 689807
+                                    },
+                                    {
+                                      "key": "questionspsychos",
+                                      "count": 467086
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 465937
+                                    },
+                                    {
+                                      "key": "confortdelapeau",
+                                      "count": 453265
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 410787
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 343828
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 269250
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 208601
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 205517
+                                    },
+                                    {
+                                      "key": "tendancemode",
+                                      "count": 153196
+                                    },
+                                    {
+                                      "key": "parfums",
+                                      "count": 105023
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 103931
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 91852
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 91852
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 77922
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 62685
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 48089
+                                    },
+                                    {
+                                      "key": "relaxation",
+                                      "count": 47496
+                                    },
+                                    {
+                                      "key": "coiffure",
+                                      "count": 34743
+                                    },
+                                    {
+                                      "key": "diy",
+                                      "count": 25592
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 25492
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 22210
+                                    },
+                                    {
+                                      "key": "serenite",
+                                      "count": 20445
+                                    },
+                                    {
+                                      "key": "parfum",
+                                      "count": 9148
+                                    },
+                                    {
+                                      "key": "cosmetiquesluxe",
+                                      "count": 5208
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 4643
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "alimentationbio",
+                                      "count": 3312
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 3312
+                                    },
+                                    {
+                                      "key": "developpementdurable",
+                                      "count": 3312
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 1577
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 1577
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 689
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 654
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 472
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 411
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mediasetpeople",
+                            "count": 35904578,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 4479722
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 2366547
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 2353726
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 1570255
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 605407
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 312699
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 286286
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 136538
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 81313
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 59454
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 58697
+                                    },
+                                    {
+                                      "key": "artsetclassique",
+                                      "count": 58469
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 43416
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 39524
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 25855
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 20929
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 13191
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 12821
+                                    },
+                                    {
+                                      "key": "evenementsmode",
+                                      "count": 3686
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 857
+                                    },
+                                    {
+                                      "key": "technologyaddicts",
+                                      "count": 678
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 567
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 199
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 196
+                                    },
+                                    {
+                                      "key": "jeuxolympiques",
+                                      "count": 147
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 138
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 120
+                                    },
+                                    {
+                                      "key": "justice",
+                                      "count": 99
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 71
+                                    },
+                                    {
+                                      "key": "rugby",
+                                      "count": 6
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 5
+                                    },
+                                    {
+                                      "key": "tennis",
+                                      "count": 4
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "forme-bien-etre",
+                            "count": 34319955,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 13409452
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 11707921
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 6405951
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 5193271
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 4920817
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 3889525
+                                    },
+                                    {
+                                      "key": "recettedecuisine",
+                                      "count": 3462063
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 2455347
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 2114396
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 1270637
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 984009
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 973179
+                                    },
+                                    {
+                                      "key": "confortdigestif",
+                                      "count": 787645
+                                    },
+                                    {
+                                      "key": "tonusetdynamisants",
+                                      "count": 758853
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 699605
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 679174
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 628261
+                                    },
+                                    {
+                                      "key": "serenite",
+                                      "count": 556269
+                                    },
+                                    {
+                                      "key": "confortdelapeau",
+                                      "count": 552438
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 529008
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 493496
+                                    },
+                                    {
+                                      "key": "confortarticulaireetmusculaire",
+                                      "count": 488977
+                                    },
+                                    {
+                                      "key": "questionspsychos",
+                                      "count": 478192
+                                    },
+                                    {
+                                      "key": "medecinesparalleles",
+                                      "count": 460101
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 455556
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 449814
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 441464
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 417773
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 390430
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 388865
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "boostimmunitehiver",
+                                      "count": 376869
+                                    },
+                                    {
+                                      "key": "conforthomme50ans",
+                                      "count": 330210
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 327581
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 320191
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 307638
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 254262
+                                    },
+                                    {
+                                      "key": "confortoptique",
+                                      "count": 252184
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 243860
+                                    },
+                                    {
+                                      "key": "confortauditif",
+                                      "count": 192173
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 175823
+                                    },
+                                    {
+                                      "key": "tendancemode",
+                                      "count": 153196
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 142360
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 135918
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 121161
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 106353
+                                    },
+                                    {
+                                      "key": "renforcementcapillaire",
+                                      "count": 104415
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 99234
+                                    },
+                                    {
+                                      "key": "automedication",
+                                      "count": 87423
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mode-shopping",
+                            "count": 30720956,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femmes",
+                                      "count": 9433616
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 5457215
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2926740
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 2575379
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2480947
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2409503
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2362091
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 2292326
+                                    },
+                                    {
+                                      "key": "hommes",
+                                      "count": 1999537
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 845679
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 657752
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 472890
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 370350
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "horlogerie&joaillerie",
+                                      "count": 315315
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 299036
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 232875
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 228511
+                                    },
+                                    {
+                                      "key": "robesdemariee",
+                                      "count": 228152
+                                    },
+                                    {
+                                      "key": "chaussures",
+                                      "count": 223688
+                                    },
+                                    {
+                                      "key": "maroquinerie",
+                                      "count": 158695
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 154869
+                                    },
+                                    {
+                                      "key": "tendancemode",
+                                      "count": 153196
+                                    },
+                                    {
+                                      "key": "accessoiresdemode",
+                                      "count": 99996
+                                    },
+                                    {
+                                      "key": "confortoptique",
+                                      "count": 94706
+                                    },
+                                    {
+                                      "key": "evenementsmode",
+                                      "count": 81669
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 27734
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 26404
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 25755
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 25755
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20011
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 16887
+                                    },
+                                    {
+                                      "key": "montresethorlogerie",
+                                      "count": 13513
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 5787
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 2269
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 2208
+                                    },
+                                    {
+                                      "key": "jouets-jeux",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 1539
+                                    },
+                                    {
+                                      "key": "orfevrerie",
+                                      "count": 1196
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 607
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 588
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lifestyle",
+                            "count": 27378233,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "insolite",
+                                      "count": 10537792
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 956144
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 334211
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 283475
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 142510
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 120446
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 93852
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 79370
+                                    },
+                                    {
+                                      "key": "artdevivre",
+                                      "count": 74560
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 67591
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 55279
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 52776
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 49186
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 35905
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 34670
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 33034
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 22239
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 20841
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 18008
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 16853
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 12712
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 11673
+                                    },
+                                    {
+                                      "key": "nouvellestechnologies",
+                                      "count": 8051
+                                    },
+                                    {
+                                      "key": "technologyaddicts",
+                                      "count": 8051
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 7976
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 7512
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 7219
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 7219
+                                    },
+                                    {
+                                      "key": "agenda",
+                                      "count": 5161
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 4798
+                                    },
+                                    {
+                                      "key": "tendances",
+                                      "count": 4337
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 4003
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 2787
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 960
+                                    },
+                                    {
+                                      "key": "hommes",
+                                      "count": 462
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 419
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 303
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 187
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 23
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation-cuisine",
+                            "count": 24306002,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "recettes",
+                                      "count": 12215328
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 8367264
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 1822145
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 1518587
+                                    },
+                                    {
+                                      "key": "tendances",
+                                      "count": 1457673
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 1377503
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 1349355
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 899961
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 704795
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 660686
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 462972
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 416364
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 381232
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 307957
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 279879
+                                    },
+                                    {
+                                      "key": "sorties-barsetrestos",
+                                      "count": 254219
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 190183
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 155454
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75354
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 48199
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 47429
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 36856
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 22555
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 14209
+                                    },
+                                    {
+                                      "key": "artsdelatable",
+                                      "count": 13297
+                                    },
+                                    {
+                                      "key": "alimentationvegetarienne",
+                                      "count": 13167
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 8230
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 8214
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 6566
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 6066
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 5979
+                                    },
+                                    {
+                                      "key": "alimentationbio",
+                                      "count": 5198
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 4703
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 4392
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 4373
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 4328
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 4040
+                                    },
+                                    {
+                                      "key": "streetfoodlover",
+                                      "count": 3671
+                                    },
+                                    {
+                                      "key": "developpementdurable",
+                                      "count": 3312
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 2876
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 2110
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 2086
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 2007
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1786
+                                    },
+                                    {
+                                      "key": "jeuxvideoconsoles",
+                                      "count": 1608
+                                    },
+                                    {
+                                      "key": "pemcuisine",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "petitelectromenager",
+                                      "count": 1480
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "business",
+                            "count": 20549041,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "business",
+                                      "count": 3682958
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 3381465
+                                    },
+                                    {
+                                      "key": "b2b",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "startup",
+                                      "count": 1357409
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 1074581
+                                    },
+                                    {
+                                      "key": "drh",
+                                      "count": 1045333
+                                    },
+                                    {
+                                      "key": "entrepreneurs",
+                                      "count": 1019983
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 620068
+                                    },
+                                    {
+                                      "key": "directionjuridique",
+                                      "count": 545649
+                                    },
+                                    {
+                                      "key": "directiongenerale",
+                                      "count": 397631
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 376673
+                                    },
+                                    {
+                                      "key": "daf",
+                                      "count": 313501
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "jobs-stages",
+                                      "count": 270709
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 195506
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 195024
+                                    },
+                                    {
+                                      "key": "energie-environnement",
+                                      "count": 170330
+                                    },
+                                    {
+                                      "key": "formationcontinue-mba",
+                                      "count": 157220
+                                    },
+                                    {
+                                      "key": "directionmarketing",
+                                      "count": 153424
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    },
+                                    {
+                                      "key": "industrielourde",
+                                      "count": 83300
+                                    },
+                                    {
+                                      "key": "conso-distribution",
+                                      "count": 82502
+                                    },
+                                    {
+                                      "key": "vie",
+                                      "count": 72032
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 59749
+                                    },
+                                    {
+                                      "key": "aeronautique-defense",
+                                      "count": 48704
+                                    },
+                                    {
+                                      "key": "hightech",
+                                      "count": 40008
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 35873
+                                    },
+                                    {
+                                      "key": "auto-entrepreneur",
+                                      "count": 24875
+                                    },
+                                    {
+                                      "key": "industrie-services",
+                                      "count": 15543
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 6858
+                                    },
+                                    {
+                                      "key": "entreprendre",
+                                      "count": 4485
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 3424
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 3424
+                                    },
+                                    {
+                                      "key": "employes-ouvriers",
+                                      "count": 2689
+                                    },
+                                    {
+                                      "key": "immobilier-btp",
+                                      "count": 1410
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1382
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 1297
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 930
+                                    },
+                                    {
+                                      "key": "fondstrackers",
+                                      "count": 670
+                                    },
+                                    {
+                                      "key": "energies",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "entreprises",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "industrie-services",
+                            "count": 15353106,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "automobile",
+                                      "count": 7120886
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 4416313
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 3094192
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 2532420
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 2437134
+                                    },
+                                    {
+                                      "key": "conso-distribution",
+                                      "count": 808631
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 796352
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 720899
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 662773
+                                    },
+                                    {
+                                      "key": "aeronautique-defense",
+                                      "count": 551311
+                                    },
+                                    {
+                                      "key": "energie-environnement",
+                                      "count": 454445
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 284533
+                                    },
+                                    {
+                                      "key": "formule1",
+                                      "count": 243246
+                                    },
+                                    {
+                                      "key": "audi",
+                                      "count": 147041
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 143813
+                                    },
+                                    {
+                                      "key": "immobilier-btp",
+                                      "count": 143167
+                                    },
+                                    {
+                                      "key": "services-conseil",
+                                      "count": 133593
+                                    },
+                                    {
+                                      "key": "ford",
+                                      "count": 126432
+                                    },
+                                    {
+                                      "key": "industrielourde",
+                                      "count": 115697
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 101252
+                                    },
+                                    {
+                                      "key": "hyundai",
+                                      "count": 72347
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 52510
+                                    },
+                                    {
+                                      "key": "seat",
+                                      "count": 46288
+                                    },
+                                    {
+                                      "key": "porsche",
+                                      "count": 39023
+                                    },
+                                    {
+                                      "key": "volvo",
+                                      "count": 37295
+                                    },
+                                    {
+                                      "key": "honda",
+                                      "count": 25014
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 23626
+                                    },
+                                    {
+                                      "key": "mode-luxe",
+                                      "count": 22163
+                                    },
+                                    {
+                                      "key": "jaguar",
+                                      "count": 18552
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 17494
+                                    },
+                                    {
+                                      "key": "energies",
+                                      "count": 7969
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 5256
+                                    },
+                                    {
+                                      "key": "assurance-courtage",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 3825
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 2491
+                                    },
+                                    {
+                                      "key": "tourisme-loisirsetrestauration",
+                                      "count": 2253
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 1677
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 1044
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 1007
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 417
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 335
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 314
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 146
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 132
+                                    },
+                                    {
+                                      "key": "industrie-services",
+                                      "count": 110
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 55
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 48
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 39
+                                    },
+                                    {
+                                      "key": "automedication",
+                                      "count": 36
+                                    },
+                                    {
+                                      "key": "medecinesparalleles",
+                                      "count": 36
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeux",
+                            "count": 13844025,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 12726305
+                                    },
+                                    {
+                                      "key": "hippisme",
+                                      "count": 12538816
+                                    },
+                                    {
+                                      "key": "parissportifs",
+                                      "count": 12537955
+                                    },
+                                    {
+                                      "key": "jeuxvideoconsoles",
+                                      "count": 261107
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 82365
+                                    },
+                                    {
+                                      "key": "jeux-jouets",
+                                      "count": 78410
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 78410
+                                    },
+                                    {
+                                      "key": "jeuxenligne",
+                                      "count": 59670
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 27258
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 22146
+                                    },
+                                    {
+                                      "key": "hightech",
+                                      "count": 21485
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 20297
+                                    },
+                                    {
+                                      "key": "gamers",
+                                      "count": 17683
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 8524
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 5198
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 4400
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 4303
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 4000
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 3166
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 852
+                                    },
+                                    {
+                                      "key": "jeuxvideoordinateur",
+                                      "count": 683
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 480
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 128
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 95
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 7
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sciences-technologies",
+                            "count": 11543493,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech",
+                                      "count": 4650740
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 4265986
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 928235
+                                    },
+                                    {
+                                      "key": "nouvellestechnologies",
+                                      "count": 589391
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 406998
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 322941
+                                    },
+                                    {
+                                      "key": "objetsconnectes",
+                                      "count": 211039
+                                    },
+                                    {
+                                      "key": "auto&high-tech",
+                                      "count": 158787
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 156909
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 140521
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 101252
+                                    },
+                                    {
+                                      "key": "technologyaddicts",
+                                      "count": 81994
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 58302
+                                    },
+                                    {
+                                      "key": "energies",
+                                      "count": 57984
+                                    },
+                                    {
+                                      "key": "startup",
+                                      "count": 40008
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 27357
+                                    },
+                                    {
+                                      "key": "jeuxvideoconsoles",
+                                      "count": 21485
+                                    },
+                                    {
+                                      "key": "innovateurs",
+                                      "count": 18857
+                                    },
+                                    {
+                                      "key": "chats",
+                                      "count": 16927
+                                    },
+                                    {
+                                      "key": "chiens",
+                                      "count": 15438
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 7743
+                                    },
+                                    {
+                                      "key": "artsetclassique",
+                                      "count": 7431
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 7105
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 3718
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 3557
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 1086
+                                    },
+                                    {
+                                      "key": "jeux",
+                                      "count": 311
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 218
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 212
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 173
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 95
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 51
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 15
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 12
+                                    },
+                                    {
+                                      "key": "high-tech-informatique",
+                                      "count": 8
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation",
+                            "count": 11152202,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 10925622
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 10751826
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 5681397
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 3894002
+                                    },
+                                    {
+                                      "key": "recettedecuisine",
+                                      "count": 3462063
+                                    },
+                                    {
+                                      "key": "questionspsychos",
+                                      "count": 477045
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 390371
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 269250
+                                    },
+                                    {
+                                      "key": "tendancemode",
+                                      "count": 153196
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 118345
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 60046
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 44844
+                                    },
+                                    {
+                                      "key": "coiffure",
+                                      "count": 34743
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 32083
+                                    },
+                                    {
+                                      "key": "diy",
+                                      "count": 25592
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "alimentation",
+                                      "count": 5627
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 4328
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 406
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 150
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 46
+                                    },
+                                    {
+                                      "key": "alimentationvegetarienne",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 8
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 3
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 10868790,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 3731313
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 3731313
+                                    },
+                                    {
+                                      "key": "recettedecuisine",
+                                      "count": 3462063
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 3213121
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 2966935
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 1764769
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 1090275
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 452052
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439904
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 338362
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 336179
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 292529
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 289427
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 287993
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275527
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 270272
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 252597
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 250229
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "formalitesadministratives",
+                                      "count": 245874
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 82233
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 76144
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 64830
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 64473
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 60698
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 53336
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 45655
+                                    },
+                                    {
+                                      "key": "83",
+                                      "count": 20713
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 20274
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 15724
+                                    },
+                                    {
+                                      "key": "74",
+                                      "count": 15054
+                                    },
+                                    {
+                                      "key": "34",
+                                      "count": 14596
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 14585
+                                    },
+                                    {
+                                      "key": "6",
+                                      "count": 14087
+                                    },
+                                    {
+                                      "key": "59",
+                                      "count": 12612
+                                    },
+                                    {
+                                      "key": "33",
+                                      "count": 11892
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 11468
+                                    },
+                                    {
+                                      "key": "13",
+                                      "count": 10653
+                                    },
+                                    {
+                                      "key": "42",
+                                      "count": 10491
+                                    },
+                                    {
+                                      "key": "38",
+                                      "count": 9927
+                                    },
+                                    {
+                                      "key": "44",
+                                      "count": 9458
+                                    },
+                                    {
+                                      "key": "17",
+                                      "count": 9455
+                                    },
+                                    {
+                                      "key": "73",
+                                      "count": 9232
+                                    },
+                                    {
+                                      "key": "66",
+                                      "count": 9126
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 8892
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "luxe",
+                            "count": 9810247,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 7965534
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 4276133
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 2111475
+                                    },
+                                    {
+                                      "key": "hommes",
+                                      "count": 1180873
+                                    },
+                                    {
+                                      "key": "artdevivre",
+                                      "count": 1096468
+                                    },
+                                    {
+                                      "key": "design",
+                                      "count": 391066
+                                    },
+                                    {
+                                      "key": "auto&high-tech",
+                                      "count": 363241
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 344063
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 323245
+                                    },
+                                    {
+                                      "key": "horlogerie&joaillerie",
+                                      "count": 317306
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 140862
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 124463
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 93218
+                                    },
+                                    {
+                                      "key": "evenementsmode",
+                                      "count": 60989
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 59897
+                                    },
+                                    {
+                                      "key": "voyageluxe",
+                                      "count": 58375
+                                    },
+                                    {
+                                      "key": "montresethorlogerie",
+                                      "count": 13513
+                                    },
+                                    {
+                                      "key": "cosmetiquesluxe",
+                                      "count": 9899
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 6544
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 5983
+                                    },
+                                    {
+                                      "key": "artsdelatable",
+                                      "count": 5979
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 4479
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 2312
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 2167
+                                    },
+                                    {
+                                      "key": "chaussures",
+                                      "count": 2029
+                                    },
+                                    {
+                                      "key": "accessoiresdemode",
+                                      "count": 1081
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 863
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 825
+                                    },
+                                    {
+                                      "key": "parfums",
+                                      "count": 458
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 458
+                                    },
+                                    {
+                                      "key": "sorties-barsetrestos",
+                                      "count": 78
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "maison-deco-design",
+                            "count": 9643709,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "decoration",
+                                      "count": 6051627
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 3856106
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 907740
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 846045
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 846045
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 845679
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "artdevivre",
+                                      "count": 729150
+                                    },
+                                    {
+                                      "key": "design",
+                                      "count": 685521
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 482047
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 353384
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 336179
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 118486
+                                    },
+                                    {
+                                      "key": "groselectromenager",
+                                      "count": 109892
+                                    },
+                                    {
+                                      "key": "petitelectromenager",
+                                      "count": 109892
+                                    },
+                                    {
+                                      "key": "diy",
+                                      "count": 105141
+                                    },
+                                    {
+                                      "key": "jeux-jouets",
+                                      "count": 78410
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 78410
+                                    },
+                                    {
+                                      "key": "voyageluxe",
+                                      "count": 58433
+                                    },
+                                    {
+                                      "key": "entretien-menage",
+                                      "count": 50408
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 46660
+                                    },
+                                    {
+                                      "key": "papeterie",
+                                      "count": 40583
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 37542
+                                    },
+                                    {
+                                      "key": "accessoiresdemode",
+                                      "count": 36390
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 36123
+                                    },
+                                    {
+                                      "key": "artsdelatable",
+                                      "count": 33496
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 29920
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 29920
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 25034
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 22389
+                                    },
+                                    {
+                                      "key": "jardin-piscine",
+                                      "count": 22046
+                                    },
+                                    {
+                                      "key": "jardinage",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 20095
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 18322
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 17756
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 14209
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 12711
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 12199
+                                    },
+                                    {
+                                      "key": "articlesdefete-fabrication-gros",
+                                      "count": 8709
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 8230
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 6321
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 3894
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 2206
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 1761
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 1152
+                                    },
+                                    {
+                                      "key": "gros?uvre",
+                                      "count": 1010
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 1008
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 1007
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 695
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 590
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "universenfant",
+                            "count": 9583655,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2967109
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 2484872
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2411021
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 1899240
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 1102426
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 863951
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 627722
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 569420
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 554418
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 496446
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 455661
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 422170
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 232642
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 221953
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 219397
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 181069
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 167495
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 144912
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 123341
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 116316
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 116138
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 101064
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 86222
+                                    },
+                                    {
+                                      "key": "jeux-jouets",
+                                      "count": 78410
+                                    },
+                                    {
+                                      "key": "confortdelapeau",
+                                      "count": 77783
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 60558
+                                    },
+                                    {
+                                      "key": "formalitesadministratives",
+                                      "count": 43015
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 42503
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 30407
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 30009
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 28442
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 27719
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 6117
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5387
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 5385
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 4989
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 4989
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 4971
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 2252
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 2252
+                                    },
+                                    {
+                                      "key": "jouets-jeux",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 2122
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "parents",
+                            "count": 8697283,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 2665963
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 1024643
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 785805
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 771345
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 664288
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 506810
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 503909
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 496073
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 470668
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 443873
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 427466
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 396105
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 376996
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 327482
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 306966
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 255371
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 142360
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 136027
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 106736
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 86853
+                                    },
+                                    {
+                                      "key": "formalitesadministratives",
+                                      "count": 81043
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 69597
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 64180
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 57021
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 51850
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 42503
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 29950
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 29801
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 28442
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 5604
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 4999
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 4971
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 4689
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 3706
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 1746
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto",
+                            "count": 8119180,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "automobile",
+                                      "count": 6170194
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 2522072
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 2438598
+                                    },
+                                    {
+                                      "key": "formule1",
+                                      "count": 243246
+                                    },
+                                    {
+                                      "key": "auto&high-tech",
+                                      "count": 115640
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 58195
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 29037
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 16700
+                                    },
+                                    {
+                                      "key": "justice",
+                                      "count": 6679
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 6429
+                                    },
+                                    {
+                                      "key": "assurance-courtage",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 4542
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 4001
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 2889
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 2766
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 2167
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 1905
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1881
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 1429
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 436
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 180
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 148
+                                    },
+                                    {
+                                      "key": "sportsextremes",
+                                      "count": 49
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 48
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 44
+                                    },
+                                    {
+                                      "key": "moto",
+                                      "count": 13
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 7
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 7
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 4
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "genre",
+                            "count": 6332608,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 6323276
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 3094192
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 965755
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 719761
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 437780
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 407056
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 206125
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 185646
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 150849
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 117283
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 88860
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 72867
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 43613
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 35905
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 33006
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 32801
+                                    },
+                                    {
+                                      "key": "relaxation",
+                                      "count": 29919
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 22239
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 18008
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 10834
+                                    },
+                                    {
+                                      "key": "jeux",
+                                      "count": 7164
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 5845
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 4303
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 4232
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 2787
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 1619
+                                    },
+                                    {
+                                      "key": "sortiesenfamille",
+                                      "count": 992
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 960
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 768
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 339
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 187
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 61
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 33
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "visionwebseries",
+                            "count": 5601417,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 5601417
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "naissance",
+                            "count": 5445966,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2325941
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 2112136
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 228160
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 181188
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 119790
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 54559
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 48711
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 33054
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 25031
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 23439
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20000
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 240
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 240
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 236
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 23
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 23
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "bourse",
+                            "count": 5052829,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "placements",
+                                      "count": 1536254
+                                    },
+                                    {
+                                      "key": "marches",
+                                      "count": 1369353
+                                    },
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "entreprises",
+                                      "count": 1099193
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "actions",
+                                      "count": 380843
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 293677
+                                    },
+                                    {
+                                      "key": "marchesfinanciers",
+                                      "count": 86613
+                                    },
+                                    {
+                                      "key": "formationcontinue-mba",
+                                      "count": 74905
+                                    },
+                                    {
+                                      "key": "fondstrackers",
+                                      "count": 66149
+                                    },
+                                    {
+                                      "key": "trader",
+                                      "count": 24780
+                                    },
+                                    {
+                                      "key": "actionnariat",
+                                      "count": 24217
+                                    },
+                                    {
+                                      "key": "pea-pme",
+                                      "count": 12025
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 11568
+                                    },
+                                    {
+                                      "key": "b2b",
+                                      "count": 4643
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "environnement",
+                            "count": 4991279,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "entreprises",
+                                      "count": 1324336
+                                    },
+                                    {
+                                      "key": "marches",
+                                      "count": 1099193
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 804880
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 468046
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 393180
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 247621
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 239476
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 218355
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 188205
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 164372
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 161116
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 160895
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 101437
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 98416
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 77128
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 76721
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "energies",
+                                      "count": 72789
+                                    },
+                                    {
+                                      "key": "energie-environnement",
+                                      "count": 25573
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 23180
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 17458
+                                    },
+                                    {
+                                      "key": "alimentation",
+                                      "count": 14720
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 8501
+                                    },
+                                    {
+                                      "key": "developpementdurable",
+                                      "count": 7323
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 5627
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 5204
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 5175
+                                    },
+                                    {
+                                      "key": "traveladdict",
+                                      "count": 4962
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 4354
+                                    },
+                                    {
+                                      "key": "sportsdhiver-skiglace",
+                                      "count": 3808
+                                    },
+                                    {
+                                      "key": "alimentationbio",
+                                      "count": 3312
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 3312
+                                    },
+                                    {
+                                      "key": "villedurable",
+                                      "count": 2752
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 2619
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 2575
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 2292
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 2206
+                                    },
+                                    {
+                                      "key": "auto&high-tech",
+                                      "count": 2167
+                                    },
+                                    {
+                                      "key": "voyageluxe",
+                                      "count": 2086
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 1850
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1395
+                                    },
+                                    {
+                                      "key": "sportsextremes",
+                                      "count": 1329
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 1044
+                                    },
+                                    {
+                                      "key": "voyageweekend",
+                                      "count": 997
+                                    },
+                                    {
+                                      "key": "week-ends",
+                                      "count": 997
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "secteursdactivite",
+                            "count": 4753725,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "b2b",
+                                      "count": 3355839
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1319291
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1306517
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 319969
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 48185
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 42730
+                                    },
+                                    {
+                                      "key": "artisannat",
+                                      "count": 42726
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 27541
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 27535
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 5803
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 2433
+                                    },
+                                    {
+                                      "key": "tourisme-loisirsetrestauration",
+                                      "count": 2253
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1407
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1300
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 903
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 766
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 584
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 383
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 285
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 272
+                                    },
+                                    {
+                                      "key": "btp",
+                                      "count": 272
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 209
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 173
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 93
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 52
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 18
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 11
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 6
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "equipements",
+                            "count": 4299849,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 3725213
+                                    },
+                                    {
+                                      "key": "high-tech-informatique",
+                                      "count": 284365
+                                    },
+                                    {
+                                      "key": "auto&high-tech",
+                                      "count": 246966
+                                    },
+                                    {
+                                      "key": "startup",
+                                      "count": 242125
+                                    },
+                                    {
+                                      "key": "petitelectromenager",
+                                      "count": 111372
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 109892
+                                    },
+                                    {
+                                      "key": "groselectromenager",
+                                      "count": 109892
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 30156
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 18008
+                                    },
+                                    {
+                                      "key": "hightech",
+                                      "count": 17984
+                                    },
+                                    {
+                                      "key": "appetencemulti-device",
+                                      "count": 7764
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 7307
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 6047
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 3251
+                                    },
+                                    {
+                                      "key": "fai-telecom",
+                                      "count": 2759
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 2183
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1739
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "pemcuisine",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1407
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 716
+                                    },
+                                    {
+                                      "key": "objetsconnectes",
+                                      "count": 349
+                                    },
+                                    {
+                                      "key": "nouvellestechnologies",
+                                      "count": 268
+                                    },
+                                    {
+                                      "key": "technologyaddicts",
+                                      "count": 268
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 91
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 81
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 43
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 24
+                                    },
+                                    {
+                                      "key": "jeuxvideoconsoles",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "voyages-tourisme",
+                            "count": 3930100,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hotels",
+                                      "count": 2130480
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 504126
+                                    },
+                                    {
+                                      "key": "voyageluxe",
+                                      "count": 306843
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 299368
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 204746
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 187232
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 174545
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 121060
+                                    },
+                                    {
+                                      "key": "design",
+                                      "count": 58433
+                                    },
+                                    {
+                                      "key": "artdevivre",
+                                      "count": 58375
+                                    },
+                                    {
+                                      "key": "week-ends",
+                                      "count": 54538
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 46550
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 46296
+                                    },
+                                    {
+                                      "key": "volaerien",
+                                      "count": 35236
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 32408
+                                    },
+                                    {
+                                      "key": "sorties-barsetrestos",
+                                      "count": 29577
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 25955
+                                    },
+                                    {
+                                      "key": "voyageweekend",
+                                      "count": 21877
+                                    },
+                                    {
+                                      "key": "traveladdict",
+                                      "count": 19355
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 15804
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 11467
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 9719
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 9205
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 8588
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 8230
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 6117
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 923
+                                    },
+                                    {
+                                      "key": "2A",
+                                      "count": 578
+                                    },
+                                    {
+                                      "key": "2B",
+                                      "count": 578
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 564
+                                    },
+                                    {
+                                      "key": "13",
+                                      "count": 394
+                                    },
+                                    {
+                                      "key": "34",
+                                      "count": 394
+                                    },
+                                    {
+                                      "key": "83",
+                                      "count": 394
+                                    },
+                                    {
+                                      "key": "17",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "33",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "64",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "14",
+                                      "count": 242
+                                    },
+                                    {
+                                      "key": "76",
+                                      "count": 242
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 216
+                                    },
+                                    {
+                                      "key": "56",
+                                      "count": 216
+                                    },
+                                    {
+                                      "key": "high-tech-informatique",
+                                      "count": 201
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 194
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 142
+                                    },
+                                    {
+                                      "key": "startup",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "abonnements",
+                            "count": 3928419,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 3863107
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 100354
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 27907
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 16887
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 15649
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 12212
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 6170
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 3718
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 3661
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 698
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 310
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 286
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 218
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 193
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 115
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 110
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 96
+                                    },
+                                    {
+                                      "key": "design",
+                                      "count": 89
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 44
+                                    },
+                                    {
+                                      "key": "jeuxenligne",
+                                      "count": 8
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "patrimoine-immobilier",
+                            "count": 3733488,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 2630211
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 1053246
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 813534
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 494756
+                                    },
+                                    {
+                                      "key": "placements",
+                                      "count": 293677
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 248649
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 100612
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 94451
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 42956
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 40877
+                                    },
+                                    {
+                                      "key": "immobilier-btp",
+                                      "count": 38732
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 5507
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 5175
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 5175
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1340
+                                    },
+                                    {
+                                      "key": "hautsrevenus",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 133
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "fonction",
+                            "count": 3384182,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 3381493
+                                    },
+                                    {
+                                      "key": "b2b",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    },
+                                    {
+                                      "key": "entrepreneurs",
+                                      "count": 18769
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 11500
+                                    },
+                                    {
+                                      "key": "employes-ouvriers",
+                                      "count": 2717
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 2715
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "banque-assurance",
+                            "count": 3093487,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "banque",
+                                      "count": 1559476
+                                    },
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "placements",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 912885
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 824126
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 261680
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 11588
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 6414
+                                    },
+                                    {
+                                      "key": "assurance-courtage",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 1277
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 890
+                                    },
+                                    {
+                                      "key": "banque-assurances",
+                                      "count": 118
+                                    },
+                                    {
+                                      "key": "mutuellessante",
+                                      "count": 94
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto-moto-bateau",
+                            "count": 2818793,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto",
+                                      "count": 2818793
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 2532420
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 1057255
+                                    },
+                                    {
+                                      "key": "audi",
+                                      "count": 100746
+                                    },
+                                    {
+                                      "key": "ford",
+                                      "count": 65664
+                                    },
+                                    {
+                                      "key": "hyundai",
+                                      "count": 34555
+                                    },
+                                    {
+                                      "key": "seat",
+                                      "count": 27741
+                                    },
+                                    {
+                                      "key": "volvo",
+                                      "count": 18773
+                                    },
+                                    {
+                                      "key": "porsche",
+                                      "count": 15615
+                                    },
+                                    {
+                                      "key": "honda",
+                                      "count": 14786
+                                    },
+                                    {
+                                      "key": "jaguar",
+                                      "count": 10750
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 8091
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 635
+                                    },
+                                    {
+                                      "key": "moto",
+                                      "count": 13
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "finance-marches",
+                            "count": 2579869,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "placements",
+                                      "count": 1151333
+                                    },
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "marchesfinanciers",
+                                      "count": 814369
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 277178
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "lexiquefinancier",
+                                      "count": 263346
+                                    },
+                                    {
+                                      "key": "banque-assurances",
+                                      "count": 35955
+                                    },
+                                    {
+                                      "key": "gestiondactifs",
+                                      "count": 21065
+                                    },
+                                    {
+                                      "key": "fusionsacqusitions",
+                                      "count": 17376
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 1010
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "service",
+                            "count": 2434787,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "b2b",
+                                      "count": 2434787
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 2434787
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 2434787
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "animauxdecompagnie",
+                            "count": 1917244,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "animalerie",
+                                      "count": 682854
+                                    },
+                                    {
+                                      "key": "soinsveterinaires",
+                                      "count": 571249
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 406104
+                                    },
+                                    {
+                                      "key": "chats",
+                                      "count": 331449
+                                    },
+                                    {
+                                      "key": "chiens",
+                                      "count": 258354
+                                    },
+                                    {
+                                      "key": "autres",
+                                      "count": 99958
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 12334
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 12333
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 11279
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 6694
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 5476
+                                    },
+                                    {
+                                      "key": "chevaux",
+                                      "count": 4828
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 2681
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2304
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 325
+                                    },
+                                    {
+                                      "key": "traveladdict",
+                                      "count": 325
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 149
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 105
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 12
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "rugby",
+                                      "count": 6
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "golf",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "comportementinternet",
+                            "count": 1915345,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "video-completion",
+                                      "count": 1905273
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1712684
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 7855
+                                    },
+                                    {
+                                      "key": "appetencemulti-device",
+                                      "count": 7764
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 6563
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 2308
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1656
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 766
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 141
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 102
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sortiesetnightlife",
+                            "count": 1896918,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "sorties-barsetrestos",
+                                      "count": 796900
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 254141
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 212994
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 212994
+                                    },
+                                    {
+                                      "key": "artdevivre",
+                                      "count": 151941
+                                    },
+                                    {
+                                      "key": "billetterieconcertsetspectacles",
+                                      "count": 74374
+                                    },
+                                    {
+                                      "key": "gastronomie",
+                                      "count": 40573
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 24042
+                                    },
+                                    {
+                                      "key": "week-ends",
+                                      "count": 20804
+                                    },
+                                    {
+                                      "key": "sportsdhiver-skiglace",
+                                      "count": 20697
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 17515
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 13686
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 6352
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 3798
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 3798
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 2554
+                                    },
+                                    {
+                                      "key": "sortiesenfamille",
+                                      "count": 2136
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 1144
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 63
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 8
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "finance",
+                            "count": 1493170,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "placements",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "actions",
+                                      "count": 347130
+                                    },
+                                    {
+                                      "key": "marchesfinanciers",
+                                      "count": 57103
+                                    },
+                                    {
+                                      "key": "actionnariat",
+                                      "count": 24217
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "compositiondufoyer",
+                            "count": 1470529,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 542980
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 476729
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 441464
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 425234
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 422765
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 325459
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 262663
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 199976
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 158310
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 142360
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 142360
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 135915
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 106736
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 64271
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 49214
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 16684
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 11790
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 10925
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 7250
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 6037
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 3455
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 3179
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 3179
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 324
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lecturevideoeditoriale",
+                            "count": 1279819,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech",
+                                      "count": 234782
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "insee",
+                            "count": 1270357,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "infolocale",
+                                      "count": 749555
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 520802
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 408550
+                                    },
+                                    {
+                                      "key": "56",
+                                      "count": 186548
+                                    },
+                                    {
+                                      "key": "22",
+                                      "count": 130915
+                                    },
+                                    {
+                                      "key": "35",
+                                      "count": 45743
+                                    },
+                                    {
+                                      "key": "83",
+                                      "count": 20713
+                                    },
+                                    {
+                                      "key": "74",
+                                      "count": 15054
+                                    },
+                                    {
+                                      "key": "34",
+                                      "count": 14596
+                                    },
+                                    {
+                                      "key": "6",
+                                      "count": 14087
+                                    },
+                                    {
+                                      "key": "44",
+                                      "count": 13897
+                                    },
+                                    {
+                                      "key": "59",
+                                      "count": 12612
+                                    },
+                                    {
+                                      "key": "33",
+                                      "count": 11892
+                                    },
+                                    {
+                                      "key": "13",
+                                      "count": 10710
+                                    },
+                                    {
+                                      "key": "42",
+                                      "count": 10531
+                                    },
+                                    {
+                                      "key": "38",
+                                      "count": 10017
+                                    },
+                                    {
+                                      "key": "17",
+                                      "count": 9691
+                                    },
+                                    {
+                                      "key": "66",
+                                      "count": 9479
+                                    },
+                                    {
+                                      "key": "73",
+                                      "count": 9381
+                                    },
+                                    {
+                                      "key": "67",
+                                      "count": 8989
+                                    },
+                                    {
+                                      "key": "30",
+                                      "count": 8726
+                                    },
+                                    {
+                                      "key": "84",
+                                      "count": 8486
+                                    },
+                                    {
+                                      "key": "85",
+                                      "count": 8246
+                                    },
+                                    {
+                                      "key": "64",
+                                      "count": 8186
+                                    },
+                                    {
+                                      "key": "31",
+                                      "count": 8078
+                                    },
+                                    {
+                                      "key": "62",
+                                      "count": 7663
+                                    },
+                                    {
+                                      "key": "26",
+                                      "count": 7587
+                                    },
+                                    {
+                                      "key": "63",
+                                      "count": 7489
+                                    },
+                                    {
+                                      "key": "5",
+                                      "count": 7121
+                                    },
+                                    {
+                                      "key": "88",
+                                      "count": 6987
+                                    },
+                                    {
+                                      "key": "54",
+                                      "count": 6885
+                                    },
+                                    {
+                                      "key": "76",
+                                      "count": 6603
+                                    },
+                                    {
+                                      "key": "57",
+                                      "count": 6566
+                                    },
+                                    {
+                                      "key": "68",
+                                      "count": 6473
+                                    },
+                                    {
+                                      "key": "69",
+                                      "count": 6421
+                                    },
+                                    {
+                                      "key": "43",
+                                      "count": 6147
+                                    },
+                                    {
+                                      "key": "81",
+                                      "count": 6144
+                                    },
+                                    {
+                                      "key": "71",
+                                      "count": 6072
+                                    },
+                                    {
+                                      "key": "1",
+                                      "count": 5711
+                                    },
+                                    {
+                                      "key": "65",
+                                      "count": 5565
+                                    },
+                                    {
+                                      "key": "25",
+                                      "count": 5534
+                                    },
+                                    {
+                                      "key": "11",
+                                      "count": 5391
+                                    },
+                                    {
+                                      "key": "49",
+                                      "count": 5299
+                                    },
+                                    {
+                                      "key": "45",
+                                      "count": 5225
+                                    },
+                                    {
+                                      "key": "21",
+                                      "count": 5210
+                                    },
+                                    {
+                                      "key": "78",
+                                      "count": 5033
+                                    },
+                                    {
+                                      "key": "37",
+                                      "count": 5011
+                                    },
+                                    {
+                                      "key": "12",
+                                      "count": 4990
+                                    },
+                                    {
+                                      "key": "79",
+                                      "count": 4977
+                                    },
+                                    {
+                                      "key": "91",
+                                      "count": 4966
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "serviceauxentreprises",
+                            "count": 1193102,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "entreprises",
+                                      "count": 1099193
+                                    },
+                                    {
+                                      "key": "marches",
+                                      "count": 1099193
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mondeprofessionnel",
+                            "count": 1044885,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "formation-orientation",
+                                      "count": 377876
+                                    },
+                                    {
+                                      "key": "orientation",
+                                      "count": 41507
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 34663
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 26450
+                                    },
+                                    {
+                                      "key": "formationcontinue-mba",
+                                      "count": 25849
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 3615
+                                    },
+                                    {
+                                      "key": "employes-ouvriers",
+                                      "count": 2717
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2672
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 515
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 409
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 182
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 109
+                                    },
+                                    {
+                                      "key": "jobs-stages",
+                                      "count": 95
+                                    },
+                                    {
+                                      "key": "conso-distribution",
+                                      "count": 43
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 28
+                                    },
+                                    {
+                                      "key": "industrielourde",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "tatouages",
+                            "count": 885496,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "sciences",
+                                      "count": 50433
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 1299
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 1081
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 58
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "immobilier",
+                            "count": 758575,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "banque",
+                                      "count": 483168
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "pme-regions",
+                            "count": 513195,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "innovateurs",
+                                      "count": 357156
+                                    },
+                                    {
+                                      "key": "actualitedespme",
+                                      "count": 140039
+                                    },
+                                    {
+                                      "key": "nouvellestechnologies",
+                                      "count": 18857
+                                    },
+                                    {
+                                      "key": "actualitedesmarchespublics",
+                                      "count": 13444
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 2556
+                                    },
+                                    {
+                                      "key": "industrie-services",
+                                      "count": 1535
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activiteprofessionnelle",
+                            "count": 494802,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "retraite",
+                                      "count": 376893
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 117909
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 64830
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 53201
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 29244
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 15497
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 9232
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2935
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 2366
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 595
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 409
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 190
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 172
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 133
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 70
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 49
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 48
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 24
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 23
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 19
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 13
+                                    },
+                                    {
+                                      "key": "mutuellessante",
+                                      "count": 11
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 5
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 3
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "usages-assiduite",
+                  "count": 129832321,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "cultureetloisirs",
+                            "count": 120131166,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 120070982
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 111223507
+                                    },
+                                    {
+                                      "key": "casual",
+                                      "count": 1981107
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 1712684
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 53983
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 39702
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 28085
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 13653
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 5199
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 4925
+                                    },
+                                    {
+                                      "key": "tennis",
+                                      "count": 4829
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 3663
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 1656
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1656
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 917
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 286
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 114
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 110
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 80
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "usagestv",
+                            "count": 111223509,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "telephile",
+                                      "count": 111223507
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 111169639
+                                    },
+                                    {
+                                      "key": "casual",
+                                      "count": 1981109
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 53868
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 28041
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 13653
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 4925
+                                    },
+                                    {
+                                      "key": "tennis",
+                                      "count": 4829
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 917
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "visionwebseries",
+                            "count": 5601417,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 5601417
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "abonnements",
+                            "count": 5339646,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 3863475
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 864701
+                                    },
+                                    {
+                                      "key": "fai",
+                                      "count": 646512
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 27907
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 16887
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 15649
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 12212
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 6170
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 3718
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 3661
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 698
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 368
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 310
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 286
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 218
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 193
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 115
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 110
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 96
+                                    },
+                                    {
+                                      "key": "design",
+                                      "count": 89
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 44
+                                    },
+                                    {
+                                      "key": "jeuxenligne",
+                                      "count": 8
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lecturevideoeditoriale",
+                            "count": 3899344,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech",
+                                      "count": 234782
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "comportementinternet",
+                            "count": 3796312,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "video-completion",
+                                      "count": 3763785
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1712684
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 24760
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 7855
+                                    },
+                                    {
+                                      "key": "appetencemulti-device",
+                                      "count": 7767
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 6626
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1968
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1656
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 141
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 102
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sports",
+                            "count": 2330833,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 2328955
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 63309
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 5623
+                                    },
+                                    {
+                                      "key": "tennis",
+                                      "count": 4829
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 1878
+                                    },
+                                    {
+                                      "key": "cyclisme",
+                                      "count": 1013
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 1794012,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 546920
+                                    },
+                                    {
+                                      "key": "telephile",
+                                      "count": 541750
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 192589
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 14390
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 13874
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 12314
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 6563
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 218
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 193
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 141
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "people",
+                            "count": 1560541,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "telephile",
+                                      "count": 1554406
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1554406
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 6135
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sciences-technologies",
+                            "count": 238500,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech",
+                                      "count": 234782
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 3718
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 3718
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 218
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mode-shopping",
+                            "count": 16916,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femmes",
+                                      "count": 16887
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 16887
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 5199
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "voyages-tourisme",
+                            "count": 15804,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 15804
+                                    },
+                                    {
+                                      "key": "voyage",
+                                      "count": 15649
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 5170
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 5170
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "equipements",
+                            "count": 7855,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 7855
+                                    },
+                                    {
+                                      "key": "appetencemulti-device",
+                                      "count": 7764
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 91
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 91
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 80
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "tranchedage",
+                            "count": 6994,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 6994
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 6626
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 368
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 6201,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 6170
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 6170
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "secteursdactivite",
+                            "count": 5468,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "media-culture",
+                                      "count": 5468
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 1968
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 141
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 114
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 102
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 91
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "forme-bien-etre",
+                            "count": 5382,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 291
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lifestyle",
+                            "count": 5222,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 4798
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 424
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation-cuisine",
+                            "count": 2190,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 2110
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 80
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 80
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 80
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 80
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "universenfant",
+                            "count": 1100,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 1100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "business",
+                            "count": 930,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 930
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeux",
+                            "count": 852,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 852
+                                    },
+                                    {
+                                      "key": "jeuxenligne",
+                                      "count": 8
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "maison-deco-design",
+                            "count": 590,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 590
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 310
+                                    },
+                                    {
+                                      "key": "design",
+                                      "count": 89
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jardinage",
+                            "count": 547,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 547
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto",
+                            "count": 180,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "presse",
+                                      "count": 180
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activiteprofessionnelle",
+                            "count": 5,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "retraite",
+                                      "count": 5
+                                    },
+                                    {
+                                      "key": "appetencemulti-device",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "casual",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mediasetpeople",
+                            "count": 2,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "intentions",
+                  "count": 21832615,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "mode-shopping",
+                            "count": 5546735,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2848670
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 2407786
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2407786
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2356589
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 845679
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 670063
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 227249
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 100629
+                                    },
+                                    {
+                                      "key": "evenementsmode",
+                                      "count": 57128
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "chaussures",
+                                      "count": 43877
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 37496
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 27734
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 25350
+                                    },
+                                    {
+                                      "key": "accessoiresdemode",
+                                      "count": 24440
+                                    },
+                                    {
+                                      "key": "maroquinerie",
+                                      "count": 21748
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20000
+                                    },
+                                    {
+                                      "key": "hommes",
+                                      "count": 5297
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 2560
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "jouets-jeux",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 1619
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 1619
+                                    },
+                                    {
+                                      "key": "orfevrerie",
+                                      "count": 1196
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 472
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "beaute",
+                            "count": 3564231,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 2356589
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 269235
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 253801
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 248749
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 207642
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "produitsdebeauteetsoins",
+                                      "count": 18614
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 13182
+                                    },
+                                    {
+                                      "key": "parfums",
+                                      "count": 12008
+                                    },
+                                    {
+                                      "key": "relaxation",
+                                      "count": 11157
+                                    },
+                                    {
+                                      "key": "serenite",
+                                      "count": 11157
+                                    },
+                                    {
+                                      "key": "parfum",
+                                      "count": 9148
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 7546
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 5716
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 2836
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 2560
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 2105
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 1421
+                                    },
+                                    {
+                                      "key": "confortdelapeau",
+                                      "count": 1259
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 472
+                                    },
+                                    {
+                                      "key": "cosmetiquesluxe",
+                                      "count": 458
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 315
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 158
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto-moto-bateau",
+                            "count": 2824670,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto",
+                                      "count": 2823025
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 2532420
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 1057255
+                                    },
+                                    {
+                                      "key": "audi",
+                                      "count": 100746
+                                    },
+                                    {
+                                      "key": "ford",
+                                      "count": 65664
+                                    },
+                                    {
+                                      "key": "hyundai",
+                                      "count": 34555
+                                    },
+                                    {
+                                      "key": "seat",
+                                      "count": 27741
+                                    },
+                                    {
+                                      "key": "volvo",
+                                      "count": 18773
+                                    },
+                                    {
+                                      "key": "porsche",
+                                      "count": 15615
+                                    },
+                                    {
+                                      "key": "honda",
+                                      "count": 14786
+                                    },
+                                    {
+                                      "key": "jaguar",
+                                      "count": 10750
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 8091
+                                    },
+                                    {
+                                      "key": "moto",
+                                      "count": 1658
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 635
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "universenfant",
+                            "count": 2693945,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "mode",
+                                      "count": 2474729
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 2407786
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "enseignementenfance",
+                                      "count": 217364
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 66943
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 66943
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20000
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "jouets-jeux",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 2154
+                                    },
+                                    {
+                                      "key": "parcsanimaliers-parcszoologiques",
+                                      "count": 1852
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 1852
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "industrie-services",
+                            "count": 2537257,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "automobile",
+                                      "count": 2537257
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 2532420
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 1057255
+                                    },
+                                    {
+                                      "key": "audi",
+                                      "count": 100746
+                                    },
+                                    {
+                                      "key": "ford",
+                                      "count": 65664
+                                    },
+                                    {
+                                      "key": "hyundai",
+                                      "count": 34555
+                                    },
+                                    {
+                                      "key": "seat",
+                                      "count": 27741
+                                    },
+                                    {
+                                      "key": "volvo",
+                                      "count": 18773
+                                    },
+                                    {
+                                      "key": "porsche",
+                                      "count": 15615
+                                    },
+                                    {
+                                      "key": "honda",
+                                      "count": 14786
+                                    },
+                                    {
+                                      "key": "jaguar",
+                                      "count": 10750
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 8091
+                                    },
+                                    {
+                                      "key": "assurance-courtage",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 635
+                                    },
+                                    {
+                                      "key": "moto",
+                                      "count": 13
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto",
+                            "count": 2526909,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto",
+                                      "count": 2522072
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 2240536
+                                    },
+                                    {
+                                      "key": "constructeurs",
+                                      "count": 1057255
+                                    },
+                                    {
+                                      "key": "assurance-courtage",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 635
+                                    },
+                                    {
+                                      "key": "moto",
+                                      "count": 13
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "cultureetloisirs",
+                            "count": 2432858,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 2356589
+                                    },
+                                    {
+                                      "key": "billetterieconcertsetspectacles",
+                                      "count": 74374
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 24071
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 5442
+                                    },
+                                    {
+                                      "key": "parcsanimaliers-parcszoologiques",
+                                      "count": 1852
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 63
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 14
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 14
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 14
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 8
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "people",
+                            "count": 2400005,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tv",
+                                      "count": 2356589
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 43416
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 43416
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sciences-technologies",
+                            "count": 2242002,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech",
+                                      "count": 2242002
+                                    },
+                                    {
+                                      "key": "startup",
+                                      "count": 40008
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 26290
+                                    },
+                                    {
+                                      "key": "jeuxvideoconsoles",
+                                      "count": 21485
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1205
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "voyages-tourisme",
+                            "count": 2198559,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hotels",
+                                      "count": 2131486
+                                    },
+                                    {
+                                      "key": "volaerien",
+                                      "count": 90842
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 35236
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 11467
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "traveladdict",
+                                      "count": 1550
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 564
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 44
+                                    },
+                                    {
+                                      "key": "voyageluxe",
+                                      "count": 44
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 14
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "naissance",
+                            "count": 2037057,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "enfants",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20000
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 236
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 236
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "offresdemploi",
+                            "count": 2035191,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 1487029
+                                    },
+                                    {
+                                      "key": "conseils-formationenmanagementdelaqualite",
+                                      "count": 838189
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 470057
+                                    },
+                                    {
+                                      "key": "conseilsenformation-gestiondepersonnel",
+                                      "count": 245717
+                                    },
+                                    {
+                                      "key": "premieremploi",
+                                      "count": 224340
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 11500
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "maison-deco-design",
+                            "count": 1898213,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "decoration",
+                                      "count": 1563355
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 845679
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 353384
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 343941
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 336179
+                                    },
+                                    {
+                                      "key": "design",
+                                      "count": 154987
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 118345
+                                    },
+                                    {
+                                      "key": "jardin-piscine",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "jardinage",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 2206
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 1152
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 1152
+                                    },
+                                    {
+                                      "key": "gros?uvre",
+                                      "count": 1010
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 566
+                                    },
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 342
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 315
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 236
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 138
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "banque-assurance",
+                            "count": 1811367,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "banque",
+                                      "count": 1560041
+                                    },
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "placements",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 256775
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 11588
+                                    },
+                                    {
+                                      "key": "assurance-courtage",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 4837
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 890
+                                    },
+                                    {
+                                      "key": "mutuelle",
+                                      "count": 871
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "finance-marches",
+                            "count": 1397230,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "placements",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "marchesfinanciers",
+                                      "count": 57103
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "animauxdecompagnie",
+                            "count": 1390163,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "soinsveterinaires",
+                                      "count": 711125
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 561441
+                                    },
+                                    {
+                                      "key": "chats",
+                                      "count": 314421
+                                    },
+                                    {
+                                      "key": "chiens",
+                                      "count": 242785
+                                    },
+                                    {
+                                      "key": "chevaux",
+                                      "count": 4828
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 2922
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "bourse",
+                            "count": 1233745,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "placements",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "marchesfinanciers",
+                                      "count": 57103
+                                    },
+                                    {
+                                      "key": "fondstrackers",
+                                      "count": 49379
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "finance",
+                            "count": 1121823,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bourse-produitsfinanciers",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "placements",
+                                      "count": 1121823
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 1064720
+                                    },
+                                    {
+                                      "key": "marchesfinanciers",
+                                      "count": 57103
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 1036233,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "enfants",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439904
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 336179
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 287366
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 257022
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 3946
+                                    },
+                                    {
+                                      "key": "gsa",
+                                      "count": 276
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 29
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "immobilier",
+                            "count": 760029,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "banque",
+                                      "count": 483168
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "immobilierdentreprise",
+                                      "count": 1454
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activiteprofessionnelle",
+                            "count": 745622,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 470057
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275565
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "conseilsenformation-gestiondepersonnel",
+                                      "count": 245717
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 245717
+                                    },
+                                    {
+                                      "key": "premieremploi",
+                                      "count": 224340
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 154
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 4
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "patrimoine-immobilier",
+                            "count": 743910,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "banque",
+                                      "count": 494756
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 256875
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 14459
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 890
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "business",
+                            "count": 696573,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 376673
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "startup",
+                                      "count": 44493
+                                    },
+                                    {
+                                      "key": "hightech",
+                                      "count": 40008
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 11500
+                                    },
+                                    {
+                                      "key": "entreprendre",
+                                      "count": 4485
+                                    },
+                                    {
+                                      "key": "entrepreneurs",
+                                      "count": 4485
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lifestyle",
+                            "count": 562773,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 287366
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "forme-bien-etre",
+                            "count": 505835,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 390430
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 100629
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 100629
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 37996
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 25580
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20000
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 11157
+                                    },
+                                    {
+                                      "key": "relaxation",
+                                      "count": 11157
+                                    },
+                                    {
+                                      "key": "serenite",
+                                      "count": 11157
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 7546
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 5400
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 3611
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 1619
+                                    },
+                                    {
+                                      "key": "confortdelapeau",
+                                      "count": 1259
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "parents",
+                            "count": 445158,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "mode",
+                                      "count": 435754
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 369047
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 67509
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 67081
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 8464
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 940
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "compositiondufoyer",
+                            "count": 377275,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 8464
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 356638,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "economie",
+                                      "count": 286257
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "hotels",
+                                      "count": 35236
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 35236
+                                    },
+                                    {
+                                      "key": "volaerien",
+                                      "count": 35236
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 20050
+                                    },
+                                    {
+                                      "key": "hightech",
+                                      "count": 15095
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 15095
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 8091
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 8091
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 3946
+                                    },
+                                    {
+                                      "key": "fai-telecom",
+                                      "count": 2759
+                                    },
+                                    {
+                                      "key": "traveladdict",
+                                      "count": 1550
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jardinage",
+                            "count": 281641,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "jardinage",
+                                      "count": 270068
+                                    },
+                                    {
+                                      "key": "jardin-piscine",
+                                      "count": 270038
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "fleursfleuristes",
+                                      "count": 219
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "possessions-equipements",
+                            "count": 270038,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "jardin-piscine",
+                                      "count": 270038
+                                    },
+                                    {
+                                      "key": "jardinage",
+                                      "count": 270038
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 21727
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activite",
+                            "count": 246283,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "tranchedage",
+                            "count": 246183,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246183
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeunesdiplomes-etudiant",
+                            "count": 228825,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "premieremploi",
+                                      "count": 224340
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 224340
+                                    },
+                                    {
+                                      "key": "entreprendre",
+                                      "count": 4485
+                                    },
+                                    {
+                                      "key": "entrepreneurs",
+                                      "count": 4485
+                                    },
+                                    {
+                                      "key": "startup",
+                                      "count": 4485
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "equipements",
+                            "count": 198017,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 176999
+                                    },
+                                    {
+                                      "key": "hightech",
+                                      "count": 17984
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 2759
+                                    },
+                                    {
+                                      "key": "fai-telecom",
+                                      "count": 2759
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "pemcuisine",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "petitelectromenager",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 1480
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation",
+                            "count": 118345,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cuisine",
+                                      "count": 118345
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 118345
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "bourse-produitsfinanciers",
+                            "count": 111922,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "fondstrackers",
+                                      "count": 49379
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sortiesetnightlife",
+                            "count": 74374,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "billetterieconcertsetspectacles",
+                                      "count": 74374
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 24042
+                                    },
+                                    {
+                                      "key": "spectacles",
+                                      "count": 3590
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 63
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 8
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mediasetpeople",
+                            "count": 43416,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femmes",
+                                      "count": 43416
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 43416
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "demenagement",
+                            "count": 35381,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": []
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mondeprofessionnel",
+                            "count": 26450,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 26450
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "luxe",
+                            "count": 26150,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "modeluxe",
+                                      "count": 25692
+                                    },
+                                    {
+                                      "key": "evenementsmode",
+                                      "count": 25350
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 25350
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 24258
+                                    },
+                                    {
+                                      "key": "cosmetiquesluxe",
+                                      "count": 458
+                                    },
+                                    {
+                                      "key": "parfums",
+                                      "count": 458
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 458
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeux",
+                            "count": 21485,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech",
+                                      "count": 21485
+                                    },
+                                    {
+                                      "key": "jeuxvideoconsoles",
+                                      "count": 21485
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "environnement",
+                            "count": 12278,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 8501
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 2206
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 2206
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 2206
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "fonction",
+                            "count": 11500,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 11500
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 11500
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "modedevie",
+                            "count": 8499,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 8499
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "accompagnementdesseniors",
+                            "count": 6893,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation-cuisine",
+                            "count": 4058,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "recettes",
+                                      "count": 3585
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 2105
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 2105
+                                    },
+                                    {
+                                      "key": "epicuriens",
+                                      "count": 1952
+                                    },
+                                    {
+                                      "key": "pemcuisine",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "petitelectromenager",
+                                      "count": 1480
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 472
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 472
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sports",
+                            "count": 3559,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 2924
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 2360
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 635
+                                    },
+                                    {
+                                      "key": "automobile",
+                                      "count": 635
+                                    },
+                                    {
+                                      "key": "sportsmecaniques",
+                                      "count": 635
+                                    },
+                                    {
+                                      "key": "activitesoutdooretequipementsportif",
+                                      "count": 564
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 14
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "diagnosticimmobilier",
+                            "count": 2871,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "immobilier",
+                                      "count": 2871
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "travaux",
+                            "count": 2866,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bricolage",
+                                      "count": 1177
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 1010
+                                    },
+                                    {
+                                      "key": "gros?uvre",
+                                      "count": 1010
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "momentsdevie",
+                  "count": 16271198,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "parents",
+                            "count": 10618822,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 3331077
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 1198457
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 1024643
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 771345
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 677131
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 664288
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 652959
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 628782
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 566984
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 496073
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 470668
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 435754
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 396105
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 376996
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 327482
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 306966
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 255371
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 154272
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 136027
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 125472
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 106736
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 86853
+                                    },
+                                    {
+                                      "key": "formalitesadministratives",
+                                      "count": 81043
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 72431
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 69597
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 64180
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 51850
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 42503
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 29950
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 29801
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 28442
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 5604
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 4999
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 4971
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 4689
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 3706
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 1746
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "universenfant",
+                            "count": 8930559,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2868072
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 2480947
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2472575
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 1899240
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 1024643
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 636363
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 496073
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 426120
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 412045
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 372907
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 306966
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 248012
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 231341
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 221867
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 219397
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 144912
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 116316
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 116138
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 51850
+                                    },
+                                    {
+                                      "key": "formalitesadministratives",
+                                      "count": 43015
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 42503
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 28442
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 25565
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 23306
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "jouets",
+                                      "count": 5604
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 4971
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 4689
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 3995
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "naissance",
+                            "count": 7165297,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2325941
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 2112136
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2036821
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 506032
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 255875
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 228160
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 119790
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 106619
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 48711
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 33054
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 25031
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 23439
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20000
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 16196
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 15109
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 236
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 124
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 23
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 23
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mode-shopping",
+                            "count": 2817664,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "enfants",
+                                      "count": 2508241
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 2480947
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 2405632
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 370350
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 246732
+                                    },
+                                    {
+                                      "key": "robesdemariee",
+                                      "count": 228152
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 51665
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 42508
+                                    },
+                                    {
+                                      "key": "assistantesmaternelles",
+                                      "count": 28002
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 25755
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 25755
+                                    },
+                                    {
+                                      "key": "accessoiresdemode",
+                                      "count": 20172
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 20000
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 1539
+                                    },
+                                    {
+                                      "key": "orfevrerie",
+                                      "count": 1196
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 16
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "forme-bien-etre",
+                            "count": 1912471,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 973179
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 845121
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 470668
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 405041
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 392250
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 388811
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 369775
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 175823
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 166077
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 142360
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 135915
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 52670
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 51853
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 51816
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 50399
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 48714
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 44475
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 44420
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 39912
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 30025
+                                    },
+                                    {
+                                      "key": "hygierecorporelle",
+                                      "count": 28442
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 23535
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 21515
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 21266
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "conforthomme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 343
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 19
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 10
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "compositiondufoyer",
+                            "count": 1410856,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 628782
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 626550
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 566984
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 392250
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 373551
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 199976
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 154272
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 154272
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 135915
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 121615
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 106736
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 101860
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 72431
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 16684
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 10936
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 4689
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 3455
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 324
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 1271245,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "enfants",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 491540
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 439875
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 336179
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 299322
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 268667
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 255371
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "formalitesadministratives",
+                                      "count": 81043
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 64830
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 64473
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 29344
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 29244
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 15724
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 3706
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 91
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 91
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 1031234,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "sante",
+                                      "count": 496206
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 279113
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275540
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 255371
+                                    },
+                                    {
+                                      "key": "soinsetsante",
+                                      "count": 128302
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 409
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 409
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 165
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 135
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 23
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mariage",
+                            "count": 1014956,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "robesdemariee",
+                                      "count": 376669
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 246732
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 103870
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 93205
+                                    },
+                                    {
+                                      "key": "locationdevetements-daccessoires",
+                                      "count": 39257
+                                    },
+                                    {
+                                      "key": "artsdelatable",
+                                      "count": 24162
+                                    },
+                                    {
+                                      "key": "accessoiresdemode",
+                                      "count": 20172
+                                    },
+                                    {
+                                      "key": "sallesdesfetes",
+                                      "count": 15453
+                                    },
+                                    {
+                                      "key": "creationcouture-hautecouture",
+                                      "count": 12979
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 11797
+                                    },
+                                    {
+                                      "key": "articlesdefete-fabrication-gros",
+                                      "count": 8709
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 1203
+                                    },
+                                    {
+                                      "key": "orfevrerie",
+                                      "count": 1196
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 570
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 311
+                                    },
+                                    {
+                                      "key": "photographesdeportraits",
+                                      "count": 204
+                                    },
+                                    {
+                                      "key": "photographesdereportage",
+                                      "count": 204
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "maison-deco-design",
+                            "count": 1013517,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "decoration",
+                                      "count": 1012577
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 844527
+                                    },
+                                    {
+                                      "key": "servicespublics",
+                                      "count": 336179
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 93205
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 46660
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 18322
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 17756
+                                    },
+                                    {
+                                      "key": "articlesdefete-fabrication-gros",
+                                      "count": 8709
+                                    },
+                                    {
+                                      "key": "artsdelatable",
+                                      "count": 8709
+                                    },
+                                    {
+                                      "key": "maison",
+                                      "count": 940
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 138
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activiteprofessionnelle",
+                            "count": 975194,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 587966
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 387228
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "conseilsenformation-gestiondepersonnel",
+                                      "count": 245717
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 245717
+                                    },
+                                    {
+                                      "key": "premieremploi",
+                                      "count": 224340
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 64830
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 53201
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 29244
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 15497
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 9232
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2935
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 2366
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 595
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 409
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 203
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 190
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 172
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 133
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 70
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 48
+                                    },
+                                    {
+                                      "key": "centresdeformationdemoniteursdauto-ecoles",
+                                      "count": 26
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 24
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 23
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 19
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 17
+                                    },
+                                    {
+                                      "key": "mutuellessante",
+                                      "count": 11
+                                    },
+                                    {
+                                      "key": "animauxdecompagnie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 5
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "appetencemulti-device",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "casual",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeunesdiplomes-etudiant",
+                            "count": 668924,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "startup",
+                                      "count": 342741
+                                    },
+                                    {
+                                      "key": "jobs-stages",
+                                      "count": 270804
+                                    },
+                                    {
+                                      "key": "premieremploi",
+                                      "count": 224813
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 224340
+                                    },
+                                    {
+                                      "key": "orientation",
+                                      "count": 101748
+                                    },
+                                    {
+                                      "key": "vie",
+                                      "count": 72032
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 59768
+                                    },
+                                    {
+                                      "key": "formation-orientation",
+                                      "count": 41507
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "business",
+                            "count": 618148,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "startup",
+                                      "count": 342741
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "jobs-stages",
+                                      "count": 270709
+                                    },
+                                    {
+                                      "key": "vie",
+                                      "count": 72032
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation-cuisine",
+                            "count": 602030,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 452644
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 381232
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 306656
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 190183
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 144912
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 238
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 190
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 48
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 22
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "offresdemploi",
+                            "count": 505438,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 470057
+                                    },
+                                    {
+                                      "key": "conseilsenformation-gestiondepersonnel",
+                                      "count": 245717
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 245717
+                                    },
+                                    {
+                                      "key": "premieremploi",
+                                      "count": 224340
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "people",
+                            "count": 353678,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 336948
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 7785
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lifestyle",
+                            "count": 334797,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "retraite",
+                                      "count": 283475
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 7219
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 7219
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 1203
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "finance-marches",
+                            "count": 275407,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "immobilier",
+                            "count": 275407,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "economie",
+                                      "count": 275407
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 275407
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "genre",
+                            "count": 233294,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 233294
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 50319
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 50319
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 13701
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "beaute",
+                            "count": 182843,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cheveux",
+                                      "count": 98853
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 91852
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 91852
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 23680
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 5586
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 4236
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 462
+                                    },
+                                    {
+                                      "key": "professionnels",
+                                      "count": 311
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 172
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 70
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "tranchedage",
+                            "count": 136091,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "15-24",
+                                      "count": 136027
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 136027
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 135915
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 121622
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 14319
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 135
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 42
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 22
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "patrimoine-immobilier",
+                            "count": 96917,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 94451
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 94451
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 53552
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 42956
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 2466
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 890
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 615
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "achatimmobilier",
+                            "count": 94451,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 94451
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 94451
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 51086
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 890
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "permis",
+                            "count": 83940,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "centresdeformationdemoniteursdauto-ecoles",
+                                      "count": 26
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 26
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "cultureetloisirs",
+                            "count": 82040,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 79105
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 79105
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 2935
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 2935
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 1746
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "demenagement",
+                            "count": 78484,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 43097
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42862
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42862
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 241
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "environnement",
+                            "count": 77011,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "ecologie",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "greenpeople",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 75315
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activite",
+                            "count": 62795,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "etudiant",
+                                      "count": 59880
+                                    },
+                                    {
+                                      "key": "orientation",
+                                      "count": 59768
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 2915
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 715
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 615
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "conforthomme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "divorceetseparation",
+                            "count": 47723,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "droits",
+                                      "count": 47443
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 2007
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 19
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 19
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 7
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation",
+                            "count": 44475,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 44475
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 44475
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 25031
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 19444
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mondeprofessionnel",
+                            "count": 42011,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "formation-orientation",
+                                      "count": 41507
+                                    },
+                                    {
+                                      "key": "orientation",
+                                      "count": 41507
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 409
+                                    },
+                                    {
+                                      "key": "recherchedemploi",
+                                      "count": 409
+                                    },
+                                    {
+                                      "key": "jobs-stages",
+                                      "count": 95
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "voyages-tourisme",
+                            "count": 40973,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 29950
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 25955
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 3995
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeux",
+                            "count": 21246,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "retraite",
+                                      "count": 20297
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "banque-assurance",
+                            "count": 16387,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "retraite",
+                                      "count": 15497
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 15497
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 1002
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 890
+                                    },
+                                    {
+                                      "key": "banque",
+                                      "count": 890
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 890
+                                    },
+                                    {
+                                      "key": "mutuellessante",
+                                      "count": 11
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "accompagnementdesseniors",
+                            "count": 9093,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 2300
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "conforthomme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto",
+                            "count": 1696,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto-moto-bateau",
+                            "count": 1571,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mediasetpeople",
+                            "count": 270,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": []
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "equipements",
+                            "count": 24,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 24
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 24
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "possessions-equipements",
+                            "count": 9,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "animauxdecompagnie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 9
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "secteursdactivite",
+                            "count": 6,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 6
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 6
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "comportementinternet",
+                            "count": 3,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "appetencemulti-device",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 3
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "industrie-services",
+                            "count": 3,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 3
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "usagestv",
+                            "count": 2,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "casual",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "sociodemo",
+                  "count": 9374748,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "genre",
+                            "count": 6570720,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 6561388
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 3094192
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 965755
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 719761
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 437780
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 407056
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 206125
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 185646
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 150849
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 117283
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 88860
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 72867
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 50319
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 50319
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 43613
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 35905
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 33006
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 32801
+                                    },
+                                    {
+                                      "key": "relaxation",
+                                      "count": 29919
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 22239
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 18008
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 13701
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 11080
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 10834
+                                    },
+                                    {
+                                      "key": "jeux",
+                                      "count": 7164
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 5845
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 4303
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 4232
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 2787
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 1619
+                                    },
+                                    {
+                                      "key": "sortiesenfamille",
+                                      "count": 992
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 960
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 768
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 339
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 187
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 61
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 33
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "industrie-services",
+                            "count": 3094553,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 3094549
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 3094192
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 720899
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 284533
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 335
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 26
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 26
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 5
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 4
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "compositiondufoyer",
+                            "count": 2313945,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 874354
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 678045
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 626550
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 441464
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 437554
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 422765
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 325459
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 264374
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 199976
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 158310
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 154272
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 135915
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 106736
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 79681
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 49214
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 16684
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 11790
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 10936
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 7250
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 6037
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 3455
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 3179
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 3179
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 324
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "forme-bien-etre",
+                            "count": 2220741,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 1270637
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 965755
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 720899
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 597974
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 441464
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 441464
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 418025
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 392250
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 370430
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 360076
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 254262
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 151420
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 142360
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 142360
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 135918
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 51816
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 50399
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 49214
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 39912
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 33006
+                                    },
+                                    {
+                                      "key": "relaxation",
+                                      "count": 29919
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 20003
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 16881
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 8838
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 6997
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5546
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 5091
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 4000
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 3455
+                                    },
+                                    {
+                                      "key": "questionspsychos",
+                                      "count": 559
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "conforthomme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 406
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 375
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 247
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 197
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 127
+                                    },
+                                    {
+                                      "key": "serenite",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "parents",
+                            "count": 1536440,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 676869
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 628782
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 566984
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 392250
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 373551
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 199976
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 168085
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 154272
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 136027
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 125472
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 121615
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 106736
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 101860
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 72431
+                                    },
+                                    {
+                                      "key": "parentsdejeunesenfants-1-3ans",
+                                      "count": 53774
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 16684
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 10936
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 4689
+                                    },
+                                    {
+                                      "key": "soinsdesenfants",
+                                      "count": 4092
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 324
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "beaute",
+                            "count": 1044401,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 1044078
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 407056
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 389853
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 206125
+                                    },
+                                    {
+                                      "key": "soinsdelapeau",
+                                      "count": 185646
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 72867
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 49363
+                                    },
+                                    {
+                                      "key": "relaxation",
+                                      "count": 29919
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 26825
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 323
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lifestyle",
+                            "count": 998510,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 956144
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 120446
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 88860
+                                    },
+                                    {
+                                      "key": "cheveux",
+                                      "count": 66784
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 43613
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 35905
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 33034
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 22239
+                                    },
+                                    {
+                                      "key": "maquillage",
+                                      "count": 20034
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 18008
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 10834
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 5845
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 4232
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 2787
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 960
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 303
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 187
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation-cuisine",
+                            "count": 736142,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 704795
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 700317
+                                    },
+                                    {
+                                      "key": "minceur&dietetique",
+                                      "count": 370409
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "cuisine",
+                                      "count": 768
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 225
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 205
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 197
+                                    },
+                                    {
+                                      "key": "recettes",
+                                      "count": 61
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 22
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mode-shopping",
+                            "count": 667863,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 370430
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 299036
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 1619
+                                    },
+                                    {
+                                      "key": "bijouterie",
+                                      "count": 187
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 16
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 16
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "universenfant",
+                            "count": 661903,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "puericulture-bebe",
+                                      "count": 422765
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 422170
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 418025
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 370675
+                                    },
+                                    {
+                                      "key": "enfants",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "mode",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "pretaporter",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "puericulture",
+                                      "count": 368811
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 219397
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 199976
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 64473
+                                    },
+                                    {
+                                      "key": "entretiendentaire",
+                                      "count": 49214
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 39912
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 30407
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 16684
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 11790
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 7101
+                                    },
+                                    {
+                                      "key": "grandsparents",
+                                      "count": 4893
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "parentsdenfants-3-10ans",
+                                      "count": 3928
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 3179
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 3179
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 548283,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 299322
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 253076
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 185693
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 106736
+                                    },
+                                    {
+                                      "key": "ecoleeteducation",
+                                      "count": 64473
+                                    },
+                                    {
+                                      "key": "celibataire",
+                                      "count": 8401
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 2761
+                                    },
+                                    {
+                                      "key": "horoscope",
+                                      "count": 960
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 17
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "tranchedage",
+                            "count": 470267,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "50etplus",
+                                      "count": 261873
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246205
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 162001
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 136027
+                                    },
+                                    {
+                                      "key": "parentsdadosoudetudiants",
+                                      "count": 135915
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 123499
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 46393
+                                    },
+                                    {
+                                      "key": "jeuxenligne",
+                                      "count": 22144
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 15560
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 14486
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 12892
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 11080
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 7791
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 6626
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 1585
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 648
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 571
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 559
+                                    },
+                                    {
+                                      "key": "questionspsychos",
+                                      "count": 559
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 495
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 434
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 335
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 255
+                                    },
+                                    {
+                                      "key": "homme",
+                                      "count": 252
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 225
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 219
+                                    },
+                                    {
+                                      "key": "nutrition",
+                                      "count": 197
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 136
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 132
+                                    },
+                                    {
+                                      "key": "objetsconnectes",
+                                      "count": 131
+                                    },
+                                    {
+                                      "key": "chats",
+                                      "count": 101
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 81
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 76
+                                    },
+                                    {
+                                      "key": "voyageweekend",
+                                      "count": 76
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 74
+                                    },
+                                    {
+                                      "key": "formation-orientation",
+                                      "count": 69
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 51
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 40
+                                    },
+                                    {
+                                      "key": "femmes",
+                                      "count": 16
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 8
+                                    },
+                                    {
+                                      "key": "nouvellestechnologies",
+                                      "count": 5
+                                    },
+                                    {
+                                      "key": "chiens",
+                                      "count": 4
+                                    },
+                                    {
+                                      "key": "serenite",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "naissance",
+                            "count": 393582,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 255875
+                                    },
+                                    {
+                                      "key": "parentsdenourissons-0-1an",
+                                      "count": 255875
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 106619
+                                    },
+                                    {
+                                      "key": "alimentationdebebe",
+                                      "count": 31120
+                                    },
+                                    {
+                                      "key": "soinsdebebe",
+                                      "count": 23439
+                                    },
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 16196
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 15109
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 23
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 23
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "people",
+                            "count": 349717,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 336457
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 13191
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 69
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 66
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activite",
+                            "count": 324170,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "retraite",
+                                      "count": 249098
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 246898
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246798
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 75072
+                                    },
+                                    {
+                                      "key": "orientation",
+                                      "count": 59768
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 15304
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 12892
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "conforthomme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 100
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 54
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 4
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "patrimoine-immobilier",
+                            "count": 290133,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 247277
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246898
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246798
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246283
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 43235
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 42956
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "hautsrevenus",
+                                      "count": 379
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "banque-assurance",
+                            "count": 246798,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 246798
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 246798
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 246798
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 246183
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 246183
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 197266,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 160896
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 125075
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 45198
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 16898
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 15304
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 14649
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 12892
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 6685
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 6563
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 6037
+                                    },
+                                    {
+                                      "key": "faitsdivers",
+                                      "count": 495
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 455
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 411
+                                    },
+                                    {
+                                      "key": "hautsrevenus",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 267
+                                    },
+                                    {
+                                      "key": "parentsdados",
+                                      "count": 112
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 74
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 54
+                                    },
+                                    {
+                                      "key": "bien-etre",
+                                      "count": 51
+                                    },
+                                    {
+                                      "key": "reportagesphoto",
+                                      "count": 40
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 12
+                                    },
+                                    {
+                                      "key": "international",
+                                      "count": 8
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 4
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "environnement",
+                            "count": 103477,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "nature",
+                                      "count": 101776
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 101437
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 339
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 5
+                                    },
+                                    {
+                                      "key": "sciences",
+                                      "count": 5
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "modedevie",
+                            "count": 101437,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "nature",
+                                      "count": 101437
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 101437
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 8499
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeunesdiplomes-etudiant",
+                            "count": 59768,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "etudiant",
+                                      "count": 59768
+                                    },
+                                    {
+                                      "key": "orientation",
+                                      "count": 59768
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "voyages-tourisme",
+                            "count": 58932,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 46296
+                                    },
+                                    {
+                                      "key": "hebergement-tourisme-sejours",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "nature",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "rural",
+                                      "count": 8499
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "voyagefamille",
+                                      "count": 3995
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 142
+                                    },
+                                    {
+                                      "key": "voyageweekend",
+                                      "count": 76
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sports",
+                            "count": 43876,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 43846
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 33006
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 33006
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "demenagement",
+                            "count": 43097,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 43097
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "droits",
+                                      "count": 241
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "achatimmobilier",
+                            "count": 42856,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 42856
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 42856
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "cultureetloisirs",
+                            "count": 41590,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 33476
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 10835
+                                    },
+                                    {
+                                      "key": "cinema",
+                                      "count": 9024
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 7349
+                                    },
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 7250
+                                    },
+                                    {
+                                      "key": "activitesetloisirs",
+                                      "count": 7101
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 4308
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 3398
+                                    },
+                                    {
+                                      "key": "musique",
+                                      "count": 3042
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 678
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 186
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 132
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 54
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 54
+                                    },
+                                    {
+                                      "key": "foyeravecbebe",
+                                      "count": 49
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 19
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jeux",
+                            "count": 26449,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 22146
+                                    },
+                                    {
+                                      "key": "jeuxenligne",
+                                      "count": 22144
+                                    },
+                                    {
+                                      "key": "appetantsjeux",
+                                      "count": 4303
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 4303
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 4000
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "maison-deco-design",
+                            "count": 22389,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 22389
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 22239
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation",
+                            "count": 20003,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "alimentationsaine",
+                                      "count": 20003
+                                    },
+                                    {
+                                      "key": "appetantsport-sante",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 19444
+                                    },
+                                    {
+                                      "key": "questionspsychos",
+                                      "count": 559
+                                    },
+                                    {
+                                      "key": "santeaunaturel",
+                                      "count": 559
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 406
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 150
+                                    },
+                                    {
+                                      "key": "15-24",
+                                      "count": 3
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "equipements",
+                            "count": 18091,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 18091
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 18008
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 81
+                                    },
+                                    {
+                                      "key": "objetsconnectes",
+                                      "count": 81
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mediasetpeople",
+                            "count": 13954,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "15-24",
+                                      "count": 13191
+                                    },
+                                    {
+                                      "key": "femme",
+                                      "count": 567
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 196
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sortiesetnightlife",
+                            "count": 13686,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 13686
+                                    },
+                                    {
+                                      "key": "sortiesenfamille",
+                                      "count": 992
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "accompagnementdesseniors",
+                            "count": 9093,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "servicealapersonne",
+                                      "count": 6893
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 2300
+                                    },
+                                    {
+                                      "key": "confortfemme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "conforthomme50ans",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 556
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 100
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "servicesbtoc",
+                            "count": 7190,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 7164
+                                    },
+                                    {
+                                      "key": "jeux",
+                                      "count": 7164
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 26
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "comportementinternet",
+                            "count": 6626,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 6626
+                                    },
+                                    {
+                                      "key": "video-completion",
+                                      "count": 6626
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 5091
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "divorceetseparation",
+                            "count": 2026,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "droits",
+                                      "count": 2007
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 2007
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 19
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 19
+                                    },
+                                    {
+                                      "key": "questionssexo",
+                                      "count": 7
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto",
+                            "count": 1696,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "famille",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1696
+                                    },
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "auto-moto-bateau",
+                            "count": 1571,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "electrique-hybride",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "famille",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "securiteroutiere",
+                                      "count": 1571
+                                    },
+                                    {
+                                      "key": "voiturepropre",
+                                      "count": 1571
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "tatouages",
+                            "count": 1299,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 1299
+                                    },
+                                    {
+                                      "key": "societe",
+                                      "count": 1081
+                                    },
+                                    {
+                                      "key": "questionspsycho",
+                                      "count": 58
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mariage",
+                            "count": 1203,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "femme",
+                                      "count": 1203
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sciences-technologies",
+                            "count": 1086,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 1086
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 136
+                                    },
+                                    {
+                                      "key": "objetsconnectes",
+                                      "count": 131
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 81
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 12
+                                    },
+                                    {
+                                      "key": "nouvellestechnologies",
+                                      "count": 5
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activiteprofessionnelle",
+                            "count": 637,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "retraite",
+                                      "count": 637
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 615
+                                    },
+                                    {
+                                      "key": "retraite-assurance-impots",
+                                      "count": 615
+                                    },
+                                    {
+                                      "key": "50etplus",
+                                      "count": 22
+                                    },
+                                    {
+                                      "key": "regimesspeciaux",
+                                      "count": 22
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "niveauderevenus",
+                            "count": 379,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "economie",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "hautsrevenus",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 379
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 379
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "abonnements",
+                            "count": 368,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 368
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 368
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "animauxdecompagnie",
+                            "count": 254,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "foyeravecenfants",
+                                      "count": 149
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 149
+                                    },
+                                    {
+                                      "key": "25-49",
+                                      "count": 105
+                                    },
+                                    {
+                                      "key": "chats",
+                                      "count": 101
+                                    },
+                                    {
+                                      "key": "chiens",
+                                      "count": 4
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mondeprofessionnel",
+                            "count": 182,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "25-49",
+                                      "count": 182
+                                    },
+                                    {
+                                      "key": "formation-orientation",
+                                      "count": 69
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "secteursdactivite",
+                            "count": 2,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "education",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "sociopro",
+                  "count": 4931603,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "secteursdactivite",
+                            "count": 4867487,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "b2b",
+                                      "count": 3355839
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1329495
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1306517
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 319969
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 48185
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 47482
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 42730
+                                    },
+                                    {
+                                      "key": "artisannat",
+                                      "count": 42726
+                                    },
+                                    {
+                                      "key": "btp",
+                                      "count": 29931
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 28045
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 27541
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 27535
+                                    },
+                                    {
+                                      "key": "transport-logistique",
+                                      "count": 4175
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "etudiants",
+                                      "count": 3348
+                                    },
+                                    {
+                                      "key": "sante-social",
+                                      "count": 3348
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 2433
+                                    },
+                                    {
+                                      "key": "tourisme-loisirsetrestauration",
+                                      "count": 2253
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 1968
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1407
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1300
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 903
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 584
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 383
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 285
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 272
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 209
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 173
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 93
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 52
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 18
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 11
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 6
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "business",
+                            "count": 3409029,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 3381465
+                                    },
+                                    {
+                                      "key": "b2b",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    },
+                                    {
+                                      "key": "entrepreneurs",
+                                      "count": 43644
+                                    },
+                                    {
+                                      "key": "auto-entrepreneur",
+                                      "count": 24875
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 11500
+                                    },
+                                    {
+                                      "key": "employes-ouvriers",
+                                      "count": 2689
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 2687
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "fonction",
+                            "count": 3387530,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 3381493
+                                    },
+                                    {
+                                      "key": "b2b",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 3351196
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    },
+                                    {
+                                      "key": "entrepreneurs",
+                                      "count": 18769
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 11500
+                                    },
+                                    {
+                                      "key": "etudiants",
+                                      "count": 3348
+                                    },
+                                    {
+                                      "key": "sante",
+                                      "count": 3348
+                                    },
+                                    {
+                                      "key": "sante-social",
+                                      "count": 3348
+                                    },
+                                    {
+                                      "key": "employes-ouvriers",
+                                      "count": 2717
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 2715
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "service",
+                            "count": 2434787,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "b2b",
+                                      "count": 2434787
+                                    },
+                                    {
+                                      "key": "business",
+                                      "count": 2434787
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 2434787
+                                    },
+                                    {
+                                      "key": "finance-comptabilite-gestion",
+                                      "count": 2339839
+                                    },
+                                    {
+                                      "key": "administration-juridique-rh",
+                                      "count": 94948
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "cultureetloisirs",
+                            "count": 1306904,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1306890
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 1306517
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 313123
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1300
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 840
+                                    },
+                                    {
+                                      "key": "artetculture",
+                                      "count": 383
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 173
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 114
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 50
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 18
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 14
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 8
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sciences-technologies",
+                            "count": 322941,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "media-culture",
+                                      "count": 322941
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 319969
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 313123
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "films",
+                                      "count": 173
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 143
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mediasetpeople",
+                            "count": 312701,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "media-culture",
+                                      "count": 312699
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 312676
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 312672
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 1
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 51698,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "economie",
+                                      "count": 50900
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 42730
+                                    },
+                                    {
+                                      "key": "artisannat",
+                                      "count": 42726
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 5094
+                                    },
+                                    {
+                                      "key": "employes-ouvriers",
+                                      "count": 2717
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1161
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 586
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 525
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 251
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 209
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 45
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 28
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 26
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "typedactivite",
+                            "count": 31130,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto-entrepreneur",
+                                      "count": 31130
+                                    },
+                                    {
+                                      "key": "entrepreneurs",
+                                      "count": 24875
+                                    },
+                                    {
+                                      "key": "salondesentrepreneurs",
+                                      "count": 1018
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "patrimoine-immobilier",
+                            "count": 27541,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "immobilier",
+                                      "count": 27541
+                                    },
+                                    {
+                                      "key": "patrimoine",
+                                      "count": 27535
+                                    },
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 6
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "offresdemploi",
+                            "count": 11500,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 11500
+                                    },
+                                    {
+                                      "key": "conseilsenorganisation-gestionmanagement",
+                                      "count": 11500
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mondeprofessionnel",
+                            "count": 5389,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "employes-ouvriers",
+                                      "count": 2717
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 2715
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2672
+                                    },
+                                    {
+                                      "key": "cadresdirigeants",
+                                      "count": 28
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "bourse",
+                            "count": 4643,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "b2b",
+                                      "count": 4643
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "abonnements",
+                            "count": 3500,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "media-culture",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "presse",
+                                      "count": 3500
+                                    },
+                                    {
+                                      "key": "tech-medias",
+                                      "count": 3500
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "industrie-services",
+                            "count": 2718,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 2433
+                                    },
+                                    {
+                                      "key": "tourisme-loisirsetrestauration",
+                                      "count": 2253
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 417
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 285
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 251
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 48
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 16
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "comportementinternet",
+                            "count": 1968,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 1968
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1968
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 141
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 114
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 102
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 91
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "environnement",
+                            "count": 1500,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "agriculture",
+                                      "count": 1044
+                                    },
+                                    {
+                                      "key": "consommation",
+                                      "count": 903
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 530
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 456
+                                    },
+                                    {
+                                      "key": "pharmacie-sante",
+                                      "count": 13
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 5
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "equipements",
+                            "count": 1407,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 1407
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 1407
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 760
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 91
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 80
+                                    },
+                                    {
+                                      "key": "education",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "visiteurssalonsprofessionnels",
+                            "count": 1018,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto-entrepreneur",
+                                      "count": 1018
+                                    },
+                                    {
+                                      "key": "salondesentrepreneurs",
+                                      "count": 1018
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "lifestyle",
+                            "count": 424,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "insolite",
+                                      "count": 424
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 424
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "maison-deco-design",
+                            "count": 272,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bricolage",
+                                      "count": 272
+                                    },
+                                    {
+                                      "key": "btp",
+                                      "count": 272
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 140,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "media-culture",
+                                      "count": 140
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 109
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 31
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "politique",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "alimentation-cuisine",
+                            "count": 135,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "loisirs",
+                                      "count": 83
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 83
+                                    },
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 80
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 80
+                                    },
+                                    {
+                                      "key": "agriculture",
+                                      "count": 52
+                                    },
+                                    {
+                                      "key": "boissons",
+                                      "count": 52
+                                    },
+                                    {
+                                      "key": "tourisme-transport",
+                                      "count": 16
+                                    },
+                                    {
+                                      "key": "livres-ebooks",
+                                      "count": 3
+                                    },
+                                    {
+                                      "key": "tv",
+                                      "count": 3
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sports",
+                            "count": 104,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "media-culture",
+                                      "count": 104
+                                    },
+                                    {
+                                      "key": "pratiquesportive",
+                                      "count": 93
+                                    },
+                                    {
+                                      "key": "football",
+                                      "count": 11
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "mode-shopping",
+                            "count": 29,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "actifreseauxsociaux-like-partage",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "economie",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 29
+                                    },
+                                    {
+                                      "key": "shopping",
+                                      "count": 29
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "animauxdecompagnie",
+                            "count": 9,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "agriculture",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "animalerie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "loisirs",
+                                      "count": 9
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "achatimmobilier",
+                            "count": 6,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 6
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 6
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "demenagement",
+                            "count": 6,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "achatimmobilier",
+                                      "count": 6
+                                    },
+                                    {
+                                      "key": "immobilier",
+                                      "count": 6
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activite",
+                            "count": 2,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "education",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "etudiant",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "hightech-informatique",
+                                      "count": 2
+                                    },
+                                    {
+                                      "key": "media-culture",
+                                      "count": 2
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "Interets",
+                  "count": 3523997,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "news",
+                            "count": 3523997,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "sciences",
+                                      "count": 23334
+                                    },
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 17032
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "people",
+                            "count": 2953773,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": []
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "cultureetloisirs",
+                            "count": 1108959,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": []
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "sciences-technologies",
+                            "count": 23334,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "sciences",
+                                      "count": 23334
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 17032,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "bonsplans-discount",
+                                      "count": 17032
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "geographie",
+                  "count": 1270357,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "insee",
+                            "count": 1270357,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "infolocale",
+                                      "count": 749555
+                                    },
+                                    {
+                                      "key": "meteo",
+                                      "count": 520802
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 408550
+                                    },
+                                    {
+                                      "key": "56",
+                                      "count": 186548
+                                    },
+                                    {
+                                      "key": "22",
+                                      "count": 130915
+                                    },
+                                    {
+                                      "key": "35",
+                                      "count": 45743
+                                    },
+                                    {
+                                      "key": "83",
+                                      "count": 20713
+                                    },
+                                    {
+                                      "key": "74",
+                                      "count": 15054
+                                    },
+                                    {
+                                      "key": "34",
+                                      "count": 14596
+                                    },
+                                    {
+                                      "key": "6",
+                                      "count": 14087
+                                    },
+                                    {
+                                      "key": "44",
+                                      "count": 13897
+                                    },
+                                    {
+                                      "key": "59",
+                                      "count": 12612
+                                    },
+                                    {
+                                      "key": "33",
+                                      "count": 11892
+                                    },
+                                    {
+                                      "key": "13",
+                                      "count": 10710
+                                    },
+                                    {
+                                      "key": "42",
+                                      "count": 10531
+                                    },
+                                    {
+                                      "key": "38",
+                                      "count": 10017
+                                    },
+                                    {
+                                      "key": "17",
+                                      "count": 9691
+                                    },
+                                    {
+                                      "key": "66",
+                                      "count": 9479
+                                    },
+                                    {
+                                      "key": "73",
+                                      "count": 9381
+                                    },
+                                    {
+                                      "key": "67",
+                                      "count": 8989
+                                    },
+                                    {
+                                      "key": "30",
+                                      "count": 8726
+                                    },
+                                    {
+                                      "key": "84",
+                                      "count": 8486
+                                    },
+                                    {
+                                      "key": "85",
+                                      "count": 8246
+                                    },
+                                    {
+                                      "key": "64",
+                                      "count": 8186
+                                    },
+                                    {
+                                      "key": "31",
+                                      "count": 8078
+                                    },
+                                    {
+                                      "key": "62",
+                                      "count": 7663
+                                    },
+                                    {
+                                      "key": "26",
+                                      "count": 7587
+                                    },
+                                    {
+                                      "key": "63",
+                                      "count": 7489
+                                    },
+                                    {
+                                      "key": "5",
+                                      "count": 7121
+                                    },
+                                    {
+                                      "key": "88",
+                                      "count": 6987
+                                    },
+                                    {
+                                      "key": "54",
+                                      "count": 6885
+                                    },
+                                    {
+                                      "key": "76",
+                                      "count": 6603
+                                    },
+                                    {
+                                      "key": "57",
+                                      "count": 6566
+                                    },
+                                    {
+                                      "key": "68",
+                                      "count": 6473
+                                    },
+                                    {
+                                      "key": "69",
+                                      "count": 6421
+                                    },
+                                    {
+                                      "key": "43",
+                                      "count": 6147
+                                    },
+                                    {
+                                      "key": "81",
+                                      "count": 6144
+                                    },
+                                    {
+                                      "key": "71",
+                                      "count": 6072
+                                    },
+                                    {
+                                      "key": "1",
+                                      "count": 5711
+                                    },
+                                    {
+                                      "key": "65",
+                                      "count": 5565
+                                    },
+                                    {
+                                      "key": "25",
+                                      "count": 5534
+                                    },
+                                    {
+                                      "key": "11",
+                                      "count": 5391
+                                    },
+                                    {
+                                      "key": "49",
+                                      "count": 5299
+                                    },
+                                    {
+                                      "key": "45",
+                                      "count": 5225
+                                    },
+                                    {
+                                      "key": "21",
+                                      "count": 5210
+                                    },
+                                    {
+                                      "key": "78",
+                                      "count": 5033
+                                    },
+                                    {
+                                      "key": "37",
+                                      "count": 5011
+                                    },
+                                    {
+                                      "key": "12",
+                                      "count": 4990
+                                    },
+                                    {
+                                      "key": "79",
+                                      "count": 4977
+                                    },
+                                    {
+                                      "key": "91",
+                                      "count": 4966
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 749555,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "infolocale",
+                                      "count": 749555
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 399409
+                                    },
+                                    {
+                                      "key": "56",
+                                      "count": 178790
+                                    },
+                                    {
+                                      "key": "22",
+                                      "count": 126830
+                                    },
+                                    {
+                                      "key": "35",
+                                      "count": 39653
+                                    },
+                                    {
+                                      "key": "44",
+                                      "count": 4128
+                                    },
+                                    {
+                                      "key": "18",
+                                      "count": 745
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 520802,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "meteo",
+                                      "count": 520802
+                                    },
+                                    {
+                                      "key": "83",
+                                      "count": 20713
+                                    },
+                                    {
+                                      "key": "74",
+                                      "count": 15054
+                                    },
+                                    {
+                                      "key": "34",
+                                      "count": 14596
+                                    },
+                                    {
+                                      "key": "6",
+                                      "count": 14087
+                                    },
+                                    {
+                                      "key": "59",
+                                      "count": 12612
+                                    },
+                                    {
+                                      "key": "33",
+                                      "count": 11892
+                                    },
+                                    {
+                                      "key": "13",
+                                      "count": 10710
+                                    },
+                                    {
+                                      "key": "42",
+                                      "count": 10531
+                                    },
+                                    {
+                                      "key": "38",
+                                      "count": 10017
+                                    },
+                                    {
+                                      "key": "44",
+                                      "count": 9769
+                                    },
+                                    {
+                                      "key": "17",
+                                      "count": 9691
+                                    },
+                                    {
+                                      "key": "66",
+                                      "count": 9479
+                                    },
+                                    {
+                                      "key": "73",
+                                      "count": 9381
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 9141
+                                    },
+                                    {
+                                      "key": "67",
+                                      "count": 8989
+                                    },
+                                    {
+                                      "key": "30",
+                                      "count": 8726
+                                    },
+                                    {
+                                      "key": "84",
+                                      "count": 8486
+                                    },
+                                    {
+                                      "key": "85",
+                                      "count": 8246
+                                    },
+                                    {
+                                      "key": "64",
+                                      "count": 8186
+                                    },
+                                    {
+                                      "key": "31",
+                                      "count": 8078
+                                    },
+                                    {
+                                      "key": "56",
+                                      "count": 7758
+                                    },
+                                    {
+                                      "key": "62",
+                                      "count": 7663
+                                    },
+                                    {
+                                      "key": "26",
+                                      "count": 7587
+                                    },
+                                    {
+                                      "key": "63",
+                                      "count": 7489
+                                    },
+                                    {
+                                      "key": "5",
+                                      "count": 7121
+                                    },
+                                    {
+                                      "key": "88",
+                                      "count": 6987
+                                    },
+                                    {
+                                      "key": "54",
+                                      "count": 6885
+                                    },
+                                    {
+                                      "key": "76",
+                                      "count": 6603
+                                    },
+                                    {
+                                      "key": "57",
+                                      "count": 6566
+                                    },
+                                    {
+                                      "key": "68",
+                                      "count": 6473
+                                    },
+                                    {
+                                      "key": "69",
+                                      "count": 6421
+                                    },
+                                    {
+                                      "key": "81",
+                                      "count": 6153
+                                    },
+                                    {
+                                      "key": "43",
+                                      "count": 6147
+                                    },
+                                    {
+                                      "key": "35",
+                                      "count": 6083
+                                    },
+                                    {
+                                      "key": "71",
+                                      "count": 6072
+                                    },
+                                    {
+                                      "key": "1",
+                                      "count": 5711
+                                    },
+                                    {
+                                      "key": "65",
+                                      "count": 5565
+                                    },
+                                    {
+                                      "key": "25",
+                                      "count": 5534
+                                    },
+                                    {
+                                      "key": "11",
+                                      "count": 5391
+                                    },
+                                    {
+                                      "key": "49",
+                                      "count": 5299
+                                    },
+                                    {
+                                      "key": "45",
+                                      "count": 5236
+                                    },
+                                    {
+                                      "key": "21",
+                                      "count": 5210
+                                    },
+                                    {
+                                      "key": "78",
+                                      "count": 5033
+                                    },
+                                    {
+                                      "key": "37",
+                                      "count": 5011
+                                    },
+                                    {
+                                      "key": "12",
+                                      "count": 4990
+                                    },
+                                    {
+                                      "key": "91",
+                                      "count": 4985
+                                    },
+                                    {
+                                      "key": "79",
+                                      "count": 4977
+                                    },
+                                    {
+                                      "key": "7",
+                                      "count": 4774
+                                    },
+                                    {
+                                      "key": "77",
+                                      "count": 4651
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "voyages-tourisme",
+                            "count": 1676,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "meteo",
+                                      "count": 1676
+                                    },
+                                    {
+                                      "key": "2A",
+                                      "count": 578
+                                    },
+                                    {
+                                      "key": "2B",
+                                      "count": 578
+                                    },
+                                    {
+                                      "key": "13",
+                                      "count": 394
+                                    },
+                                    {
+                                      "key": "34",
+                                      "count": 394
+                                    },
+                                    {
+                                      "key": "83",
+                                      "count": 394
+                                    },
+                                    {
+                                      "key": "17",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "33",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "64",
+                                      "count": 246
+                                    },
+                                    {
+                                      "key": "14",
+                                      "count": 242
+                                    },
+                                    {
+                                      "key": "76",
+                                      "count": 242
+                                    },
+                                    {
+                                      "key": "29",
+                                      "count": 216
+                                    },
+                                    {
+                                      "key": "56",
+                                      "count": 216
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": "typedhabitat-possessions-equipements",
+                  "count": 280737,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "possessions-equipements",
+                            "count": 280737,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "jardin-piscine",
+                                      "count": 278568
+                                    },
+                                    {
+                                      "key": "jardinage",
+                                      "count": 270038
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "auto-moto-bateau",
+                                      "count": 2160
+                                    },
+                                    {
+                                      "key": "etatdutraficentempsreel",
+                                      "count": 2160
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 582
+                                    },
+                                    {
+                                      "key": "animauxdecompagnie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 9
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "jardinage",
+                            "count": 278249,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "jardin-piscine",
+                                      "count": 278249
+                                    },
+                                    {
+                                      "key": "jardinage",
+                                      "count": 270038
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 21727
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "maison-deco-design",
+                            "count": 22046,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "jardin-piscine",
+                                      "count": 22046
+                                    },
+                                    {
+                                      "key": "bricolage",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "decoration",
+                                      "count": 21727
+                                    },
+                                    {
+                                      "key": "jardinage",
+                                      "count": 21727
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "servicesbtoc",
+                            "count": 2160,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto-moto-bateau",
+                                      "count": 2160
+                                    },
+                                    {
+                                      "key": "etatdutraficentempsreel",
+                                      "count": 2160
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 582
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "news",
+                            "count": 582,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto-moto-bateau",
+                                      "count": 582
+                                    },
+                                    {
+                                      "key": "etatdutraficentempsreel",
+                                      "count": 582
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 582
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "viepratique",
+                            "count": 582,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "auto-moto-bateau",
+                                      "count": 582
+                                    },
+                                    {
+                                      "key": "etatdutraficentempsreel",
+                                      "count": 582
+                                    },
+                                    {
+                                      "key": "infolocale",
+                                      "count": 582
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          },
+                          {
+                            "key": "activiteprofessionnelle",
+                            "count": 9,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": [
+                                    {
+                                      "key": "animauxdecompagnie",
+                                      "count": 9
+                                    },
+                                    {
+                                      "key": "retraite",
+                                      "count": 9
+                                    }
+                                  ]
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                },
+                {
+                  "key": " interets",
+                  "count": 1587,
+                  "aggregations": {
+                    "buckets": [
+                      {
+                        "name": "map_c1",
+                        "fieldName": "c1",
+                        "type": "map",
+                        "buckets": [
+                          {
+                            "key": "serviceauxentreprises ",
+                            "count": 1587,
+                            "aggregations": {
+                              "buckets": [
+                                {
+                                  "name": "map_c2",
+                                  "fieldName": "c2",
+                                  "type": "map",
+                                  "buckets": []
+                                }
+                              ],
+                              "metrics": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "metrics": []
+                  }
+                }
+              ]
+            }
+          ],
+          "metrics": []
+        }
+      }
+    ]
+  }
 };

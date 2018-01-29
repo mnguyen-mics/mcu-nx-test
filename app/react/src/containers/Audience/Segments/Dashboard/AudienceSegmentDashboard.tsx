@@ -18,13 +18,14 @@ interface MapStateToProps {
       desktop_cookie_ids: number;
     }>;
   };
+  isFetching: boolean;
 }
 
 type Props = MapStateToProps & InjectedIntlProps;
 
 class AudienceSegmentDashboard extends React.Component<Props> {
   render() {
-    const { segment, intl } = this.props;
+    const { segment, intl, isFetching } = this.props;
 
     const getLoadingValue = (
       key: 'user_points' | 'user_accounts' | 'emails' | 'desktop_cookie_ids',
@@ -36,7 +37,7 @@ class AudienceSegmentDashboard extends React.Component<Props> {
         segment.report_view[0][key];
       return {
         value,
-        loading: value === undefined,
+        loading: isFetching,
       };
     };
 
@@ -74,6 +75,7 @@ class AudienceSegmentDashboard extends React.Component<Props> {
 const mapStateToProps = (state: any) => ({
   segment:
     state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
+  isFetching: state.audienceSegmentsTable.audienceSegmentsSingleApi.isFeching,
 });
 
 export default compose(injectIntl, connect(mapStateToProps))(
