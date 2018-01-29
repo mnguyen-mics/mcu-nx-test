@@ -3,11 +3,14 @@ import McsIcon, { McsIconType } from '../McsIcon';
 import { Spin } from 'antd';
 import { FormattedNumber } from 'react-intl';
 
-export interface CounterProps {
-  iconType: McsIconType;
-  title: React.ReactNode;
+export interface LoadingCounterValue {
   value?: number;
   loading?: boolean;
+}
+
+export interface CounterProps extends LoadingCounterValue {
+  iconType: McsIconType;
+  title: React.ReactNode;
 }
 
 export default class Counter extends React.Component<CounterProps> {

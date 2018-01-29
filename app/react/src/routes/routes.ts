@@ -5,7 +5,7 @@ import creativeRoutes from './creativeRoutes';
 import libraryRoutes from './libraryRoutes';
 import settingsRoutes from './settingsRoutes';
 import accountRoutes from './accountRoutes';
-import dataStudioRoutes from './dataStudioRoutes';
+import datastudioRoutes from './datastudioRoutes';
 
 /**
  * Route object definition
@@ -27,7 +27,7 @@ const routes = [
   ...libraryRoutes,
   ...settingsRoutes,
   ...accountRoutes,
-  ...dataStudioRoutes,
+  ...datastudioRoutes,
 ];
 
 export default routes;

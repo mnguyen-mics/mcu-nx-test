@@ -1,18 +1,13 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { CounterDashboard } from '../../../../components/Counter/index';
-import { CounterProps } from '../../../../components/Counter/Counter';
-
-interface LoadingValue {
-  value?: number;
-  loading?: boolean;
-}
+import { CounterProps, LoadingCounterValue } from '../../../../components/Counter/Counter';
 
 export interface Props {
-  userPoints?: LoadingValue;
-  userAccounts?: LoadingValue;
-  userAgents?: LoadingValue;
-  userEmails?: LoadingValue;
+  userPoints?: LoadingCounterValue;
+  userAccounts?: LoadingCounterValue;
+  userAgents?: LoadingCounterValue;
+  userEmails?: LoadingCounterValue;
 }
 
 class AudienceCounters extends React.Component<Props> {

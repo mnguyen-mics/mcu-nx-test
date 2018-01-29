@@ -105,8 +105,10 @@ function request(
       // default headers: application/json
       requestHeaders.append('Accept', 'application/json');
       requestHeaders.append('Content-Type', 'application/json');
+      config.body = JSON.stringify(options.body);
+    } else {
+      config.body = options.body;
     }
-    config.body = JSON.stringify(options.body);
   }
 
   if (options.withCredentials) {
@@ -150,7 +152,7 @@ function request(
 function getRequest<T>(
   endpoint: string,
   params: { [key: string]: any } = {},
-  headers: HeadersInit = {},
+  headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
   return request('get', endpoint, {
@@ -166,7 +168,7 @@ function postRequest<T>(
   endpoint: string,
   body: any,
   params: { [key: string]: any } = {},
-  headers: HeadersInit = {},
+  headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
   return request('post', endpoint, {
@@ -183,7 +185,7 @@ function putRequest<T>(
   endpoint: string,
   body: any,
   params: { [key: string]: any } = {},
-  headers: HeadersInit = {},
+  headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
   return request('put', endpoint, {
@@ -199,7 +201,7 @@ function putRequest<T>(
 function deleteRequest<T>(
   endpoint: string,
   params: { [key: string]: any } = {},
-  headers: HeadersInit = {},
+  headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
   return request('delete', endpoint, {

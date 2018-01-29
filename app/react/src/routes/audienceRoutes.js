@@ -17,10 +17,6 @@ import {
   TimelinePage,
 } from '../containers/Audience/Timeline';
 
-import {
-  QueryToolPage,
-} from '../containers/Audience/Query/index.ts';
-
 const audienceRoutes = [
   {
     path: '/audience/segments',
@@ -44,11 +40,6 @@ const audienceRoutes = [
     path: '/audience/timeline/:identifierType?/:identifierId?',
     layout: 'main',
     contentComponent: TimelinePage,
-  },
-  {
-    path: '/audience/query',
-    layout: 'main',
-    contentComponent: QueryToolPage,
   },
 ];
 
