@@ -9,6 +9,7 @@ import { Layout, Button, Modal } from 'antd';
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import EmailCampaignHeader from './EmailCampaignHeader';
 import EmailCampaignDashboard from './EmailCampaignDashboard';
+import { Labels } from '../../../Labels/index.ts';
 import { Card } from '../../../../components/Card/index.ts';
 import BlastTable from './BlastTable';
 import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
@@ -206,6 +207,7 @@ class EmailCampaign extends Component {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <EmailCampaignHeader />
+            <Labels labellableId={campaignId} labellableType="EMAIL_CAMPAIGN" organisationId={organisationId} />
             <EmailCampaignDashboard />
             <Card title={formatMessage(messages.emailBlast)} buttons={buttons}>
               <BlastTable updateBlastStatus={this.updateBlastStatus} archiveBlast={this.archiveBlast} />

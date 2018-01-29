@@ -70,10 +70,6 @@ class SitesTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     const searchOptions = {
       placeholder: formatMessage(messages.searchPlaceholder),
@@ -86,7 +82,8 @@ class SitesTable extends Component {
     return (noSiteYet) ? (<EmptyTableView iconType="bolt" intlMessage={messages.emptySites} />) :
            (
              <TableViewFilters
-               columnsDefinitions={columnsDefinitions}
+               columns={dataColumns}
+               actionsColumnsDefinition={actionColumns}
                searchOptions={searchOptions}
                dataSource={dataSource}
                loading={isFetchingSites}

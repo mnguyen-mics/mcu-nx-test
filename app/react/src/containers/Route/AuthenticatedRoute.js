@@ -13,6 +13,7 @@ import Error from '../../components/Error.tsx';
 import AuthService from '../../services/AuthService';
 import log from '../../utils/Logger';
 import { getWorkspace } from '../../state/Session/actions';
+import { fetchAllLabels } from '../../state/Labels/actions';
 import {
   hasAccessToOrganisation,
   hasWorkspace,
@@ -27,12 +28,14 @@ class AuthenticatedRoute extends Component {
         params: { organisationId },
       },
       getWorkspaceRequest,
+      getLabels,
       hasWorkspaceLoaded,
     } = this.props;
 
     if (!hasWorkspaceLoaded(organisationId)) {
       getWorkspaceRequest(organisationId);
     }
+    getLabels(organisationId);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -49,6 +52,7 @@ class AuthenticatedRoute extends Component {
       },
     } = nextProps;
 
+    // TO BE REMOVED WHEN HOME PAGE IS AVAILABLE
     if (nextOrganisationId !== organisationId) {
       window.location.href = `/v2/o/${nextOrganisationId}/campaigns/display`; // eslint-disable-line
       window.location.reload(true); // eslint-disable-line
@@ -101,6 +105,7 @@ AuthenticatedRoute.propTypes = {
   hasWorkspaceLoaded: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   render: PropTypes.func.isRequired,
+  getLabels: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -111,6 +116,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getWorkspaceRequest: getWorkspace.request,
+  getLabels: fetchAllLabels.request,
 };
 
 export default compose(

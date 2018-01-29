@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 import {
   TableViewFilters,
@@ -27,6 +27,13 @@ import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { getTableDataSource } from '../../../../state/Campaigns/Goal/selectors';
 
 import GoalService from '../../../../services/GoalService.ts';
+
+const messages = defineMessages({
+  labelFilterBy: {
+    id: 'goal.filterby.label',
+    defaultMessage: 'Filter By Label'
+  }
+});
 
 class GoalsTable extends Component {
   componentDidMount() {
@@ -161,6 +168,7 @@ class GoalsTable extends Component {
       dataSource,
       totalGoals,
       hasGoals,
+      labels,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -282,6 +290,18 @@ class GoalsTable extends Component {
       },
     ];
 
+    const labelsOptions = {
+      labels: this.props.labels,
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.find(filteredLabelId => filteredLabelId === label.id) ? true : false;
+      }),
+      onChange: (newLabels) => {
+        const formattedLabels = newLabels.map(label => label.id);
+        this.updateLocationSearch({ label_id: formattedLabels });
+      },
+      buttonMessage: messages.labelFilterBy
+    };
+
     return hasGoals ? (
       <div className="mcs-table-container">
         <TableViewFilters
@@ -294,6 +314,7 @@ class GoalsTable extends Component {
           dataSource={dataSource}
           loading={isFetchingGoals}
           pagination={pagination}
+          labelsOptions={labelsOptions}
         />
       </div>
     ) : (
@@ -313,14 +334,14 @@ GoalsTable.propTypes = {
   isFetchingGoalsStat: PropTypes.bool.isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalGoals: PropTypes.number.isRequired,
-
+  labels: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   loadGoalsDataSource: PropTypes.func.isRequired,
   resetGoalsTable: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
+  labels: state.labels.labelsApi.data,
   hasGoals: state.goalsTable.goalsApi.hasItems,
   isFetchingGoals: state.goalsTable.goalsApi.isFetching,
   isFetchingGoalsStat: state.goalsTable.performanceReportApi.isFetching,
