@@ -180,6 +180,7 @@ class LabelsListPage extends Component<LabelsListProps, LabelsListState> {
           title={edition ? <FormattedMessage {...messages.editLabelTitle} /> : <FormattedMessage {...messages.addNewLabelTitle} />}
           visible={this.state.modalVisible}
           footer={this.buildModalFooter()}
+          onCancel={this.handleCancel}
         >
           {hasError ?
             <Alert message={<FormattedMessage {...messages.labelAlreadyExists} />} type="error" style={{ marginBottom: 16 }} />
