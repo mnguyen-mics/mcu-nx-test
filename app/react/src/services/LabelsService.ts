@@ -11,11 +11,12 @@ const getLabels = (organisationId: string, options = {}) => {
   return ApiService.getRequest(endpoint, params);
 };
 
-const updateLabel = (labelId: string, name: string) => {
+const updateLabel = (labelId: string, name: string, organisationId: string) => {
   const endpoint = `labels/${labelId}`;
   const body = {
     id: labelId,
     name,
+    organisation_id: organisationId
   };
   return ApiService.putRequest(endpoint, body);
 };

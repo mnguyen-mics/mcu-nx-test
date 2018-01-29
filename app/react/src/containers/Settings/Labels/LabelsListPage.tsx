@@ -100,7 +100,7 @@ class LabelsListPage extends Component<LabelsListProps, LabelsListState> {
     const { fetchLabels, notifyError, organisationId } = this.props;
     const { selectedLabelId, inputValue } = this.state;
     const promise = selectedLabelId !== '' ?
-      LabelsService.updateLabel(selectedLabelId, inputValue) :
+      LabelsService.updateLabel(selectedLabelId, inputValue, organisationId) :
       LabelsService.createLabel(inputValue, organisationId);
 
     this.setState({ isCreatingLabels: true },
