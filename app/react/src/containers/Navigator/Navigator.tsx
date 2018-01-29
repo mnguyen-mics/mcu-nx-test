@@ -61,7 +61,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
   }
 
   componentDidMount() {
-    this.props.getCookies();
+    getCookies.request();
     NavigatorService.isAdBlockOn()
       .then(() => {
         // Read theme colors in DOM and store them in redux for future usage
