@@ -61,6 +61,8 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps> {
             </Button>
           </div>
         );
+      } else {
+        content = <div />;
       }
     }
 
@@ -74,10 +76,9 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps> {
         rowSelection.selectedRowKeys.length === pagination.pageSize)
     );
 
-    return (
-      rowSelection &&
-      rowSelection.selectedRowKeys && <Slide toShow={toShow} content={alert} />
-    );
+    return rowSelection && rowSelection.selectedRowKeys ? (
+      <Slide toShow={toShow} content={alert} />
+    ) : null;
   }
 }
 
