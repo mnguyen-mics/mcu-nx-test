@@ -57,15 +57,12 @@ class DatamartsTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyDatamarts} />) :
            (
              <TableView
-               columnsDefinitions={columnsDefinitions}
+               columns={dataColumns}
+               actionsColumnsDefinition={actionColumns}
                dataSource={dataSource}
                loading={isFetchingDatamarts}
                pagination={pagination}
