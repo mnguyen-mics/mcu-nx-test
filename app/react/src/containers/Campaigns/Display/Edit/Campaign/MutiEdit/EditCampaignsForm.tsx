@@ -21,6 +21,7 @@ import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { CampaignsInfosFieldModel } from '../domain';
+import { Col } from 'antd/lib/grid';
 
 const FORM_ID = 'editCampaignsForm';
 
@@ -80,7 +81,7 @@ class EditCampaignsForm extends React.Component<
         return DisplayCampaignService.getCampaignDisplay(campaignId)
           .then(apiResp => apiResp.data)
           .then(campaignData => {
-            return !campaignData.archived ? campaignData.name : '';
+            return campaignData.name || '';
           });
       }),
     ).then(campaignNames => {
@@ -104,11 +105,6 @@ class EditCampaignsForm extends React.Component<
       onClose: close,
     };
 
-    const multiEditSubtitle = {
-      id: 'editCampaigns.subtitle',
-      defaultMessage: `In this section you will be able to edit campaigns you just selected : `,
-    };
-
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
@@ -122,7 +118,7 @@ class EditCampaignsForm extends React.Component<
               className="mcs-content-container mcs-form-container"
             >
               <FormSection
-                subtitle={multiEditSubtitle}
+                subtitle={messages.multiEditSubtitle}
                 title={messages.multiEditTitle}
               />
               <Row style={{ marginBottom: '3em' }}>
@@ -130,15 +126,16 @@ class EditCampaignsForm extends React.Component<
                   <Tag key={index}>{campaignName}</Tag>
                 ))}
               </Row>
-
-              <div className="ant-col-4 content" />
-              <div className="ant-col-16 content">
-                <CampaignsInfosFieldArray
-                  name="fields"
-                  component={CampaignsInfos}
-                  rerenderOnEveryChange={true}
-                />
-              </div>
+              <Row>
+                <Col span={4} />
+                <Col span={16}>
+                  <CampaignsInfosFieldArray
+                    name="fields"
+                    component={CampaignsInfos}
+                    rerenderOnEveryChange={true}
+                  />
+                </Col>
+              </Row>
             </Content>
           </Form>
         </Layout>

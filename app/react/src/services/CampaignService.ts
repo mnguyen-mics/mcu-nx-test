@@ -1,6 +1,6 @@
+import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse } from './ApiService';
 import { CampaignResource } from '../models/campaign/CampaignResource';
-import { PaginatedApiParam } from '../utils/ApiHelper';
 import { CampaignStatus } from '../models/campaign/constants/index';
 
 export interface GetCampaignsOptions extends PaginatedApiParam {

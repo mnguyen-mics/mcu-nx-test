@@ -1,5 +1,10 @@
+import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
-import { extractDataList, extractData } from '../../../../services/ApiService';
+import {
+  extractDataList,
+  extractData,
+  DataResponse,
+} from '../../../../services/ApiService';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import {
   createFieldArrayModelWithMeta,
@@ -17,8 +22,10 @@ import {
 } from './domain';
 import AdGroupFormService from './AdGroup/AdGroupFormService';
 import GoalFormService from '../../Goal/Edit/GoalFormService';
+import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
+import operation from '../Edit/Campaign/domain';
 
-type TDisplayCampaignId = string;
+type DisplayCampaignId = string;
 
 const DisplayCampaignFormService = {
   loadCampaign(
@@ -29,7 +36,10 @@ const DisplayCampaignFormService = {
       DisplayCampaignService.getCampaignDisplay(displayCampaignId).then(
         extractData,
       ),
-      DisplayCampaignFormService.loadCampaignDependencies(displayCampaignId, duplicate),
+      DisplayCampaignFormService.loadCampaignDependencies(
+        displayCampaignId,
+        duplicate,
+      ),
     ]).then(([campaign, dependencies]) => {
       return {
         campaign: duplicate ? omit(campaign, 'id') : campaign,
@@ -78,7 +88,7 @@ const DisplayCampaignFormService = {
     organisationId: string,
     formData: DisplayCampaignFormData,
     initialFormData: DisplayCampaignFormData = INITIAL_DISPLAY_CAMPAIGN_FORM_DATA,
-  ): Promise<TDisplayCampaignId> {
+  ): Promise<DisplayCampaignId> {
     let createOrUpdatePromise;
 
     if (formData.campaign.id) {
@@ -115,6 +125,35 @@ const DisplayCampaignFormService = {
 
       return executeTasksInSequence(tasks).then(() => campaignId);
     });
+  },
+
+  saveCampaigns(campaignIds: string[], formData: EditCampaignsFormData) {
+    const promises: Array<Promise<DataResponse<DisplayCampaignResource>>> = [];
+    campaignIds.forEach(campaignId => {
+      DisplayCampaignService.getCampaignDisplay(campaignId)
+        .then(apiRes => apiRes.data)
+        .then((campaignData: any) => {
+          const updatedData = formData.fields.reduce(
+            (acc, field) => {
+              const campaignProperty: keyof DisplayCampaignResource =
+                field.campaignProperty;
+              return {
+                ...acc,
+                [field.campaignProperty]: operation(
+                  field.action,
+                  campaignData[campaignProperty],
+                  parseInt(field.value, 10),
+                ),
+              };
+            },
+            { type: 'DISPLAY' },
+          );
+          promises.push(
+            DisplayCampaignService.updateCampaign(campaignId, updatedData),
+          );
+        });
+    });
+    return Promise.all(promises);
   },
 };
 

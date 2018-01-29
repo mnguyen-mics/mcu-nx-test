@@ -41,6 +41,10 @@ export default defineMessages({
     id: 'editCampaigns.title',
     defaultMessage: 'Multi Campaign Edit'
   },
+  multiEditSubtitle: {
+    id: 'editCampaigns.subtitle',
+    defaultMessage: 'In this section you will be able to edit campaigns you just selected : '
+  },
   /*
   ==============================================================================
   ============================== BREADCRUMB TITLES =============================

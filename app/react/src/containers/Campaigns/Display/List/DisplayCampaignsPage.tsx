@@ -21,10 +21,12 @@ import {
   PAGINATION_SEARCH_SETTINGS,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
+import * as NotificationActions from '../../../../state/Notifications/actions';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import operation from '../Edit/Campaign/domain';
+import messages from '../messages';
+import DisplayCampaignFormService from '../Edit/DisplayCampaignFormService';
 
 const { Content } = Layout;
 interface DisplayCampaignsPageProps {
@@ -36,11 +38,17 @@ interface DisplayCampaignsPageState {
   selectedRowKeys: string[];
   selected: boolean;
   visible: boolean;
+  loading: boolean;
+}
+
+interface MapStateProps {
+  notifyError: (err: any) => void;
 }
 
 type JoinedProps = DisplayCampaignsPageProps &
   InjectedIntlProps &
   InjectDrawerProps &
+  MapStateProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsPage extends React.Component<
@@ -53,6 +61,7 @@ class DisplayCampaignsPage extends React.Component<
       selectedRowKeys: [],
       selected: true,
       visible: false,
+      loading: false,
     };
   }
 
@@ -65,11 +74,7 @@ class DisplayCampaignsPage extends React.Component<
   handleOk = () => {
     const { selectedRowKeys } = this.state;
 
-    const {
-      location: { search, pathname, state },
-      history,
-      intl: { formatMessage },
-    } = this.props;
+    const { location: { search, pathname, state }, history, intl } = this.props;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
@@ -99,12 +104,7 @@ class DisplayCampaignsPage extends React.Component<
         visible: false,
         selectedRowKeys: [],
       });
-      message.success(
-        formatMessage({
-          id: 'archive.campaigns.success.msg',
-          defaultMessage: 'Campaigns successfully archived',
-        }),
-      );
+      message.success(intl.formatMessage(messages.campaignsArchived));
     });
   };
 
@@ -114,50 +114,34 @@ class DisplayCampaignsPage extends React.Component<
     });
   };
 
-  saveCampaigns = (formData: EditCampaignsFormData) => {
-    const { intl: { formatMessage } } = this.props;
-
+  editCampaigns = (formData: EditCampaignsFormData) => {
     const { selectedRowKeys } = this.state;
-    selectedRowKeys.map(campaignId => {
-      DisplayCampaignService.getCampaignDisplay(campaignId)
-        .then(apiRes => apiRes.data)
-        .then((campaignData: any) => {
-          const updatedData = formData.fields.reduce(
-            (acc, field) => {
-              const campaignProperty: keyof DisplayCampaignResource =
-                field.campaignProperty;
-              return {
-                ...acc,
-                [field.campaignProperty]: operation(
-                  field.action,
-                  campaignData[campaignProperty],
-                  parseInt(field.value, 10),
-                ),
-              };
-            },
-            { type: 'DISPLAY' },
-          );
-          DisplayCampaignService.updateCampaign(campaignId, updatedData);
-        });
+    const { notifyError, intl } = this.props;
+    this.setState({
+      loading: true,
     });
 
-    this.setState({
-      visible: false,
-      selectedRowKeys: [],
-    });
-    this.props.closeNextDrawer();
-    message.success(
-      formatMessage({
-        id: 'edit.campaigns.success.msg',
-        defaultMessage: 'Campaigns successfully saved',
-      }),
-    );
+    DisplayCampaignFormService.saveCampaigns(selectedRowKeys, formData)
+      .then(() => {
+        this.props.closeNextDrawer();
+        this.setState({
+          selectedRowKeys: [],
+        });
+        message.success(intl.formatMessage(messages.campaignsSaved));
+      })
+      .catch(err => {
+        this.props.closeNextDrawer();
+        this.setState({
+          selectedRowKeys: [],
+        });
+        notifyError(err);
+      });
   };
 
   openEditCampaignsDrawer = () => {
     const additionalProps = {
       close: this.props.closeNextDrawer,
-      onSubmit: this.saveCampaigns,
+      onSubmit: this.editCampaigns,
       selectedRowKeys: this.state.selectedRowKeys,
     };
     const options = {
@@ -188,7 +172,6 @@ class DisplayCampaignsPage extends React.Component<
     };
     const allCampaignsIds: string[] = [];
     if (selected) {
-      // todo: no call before action, use flag
       CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
         apiResp => {
           apiResp.data.map((campaignResource, index) => {
@@ -266,6 +249,7 @@ class DisplayCampaignsPage extends React.Component<
 const mapStateToProps = (state: any) => ({
   totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
   dataSource: getTableDataSource(state),
+  notifyError: NotificationActions.notifyError,
 });
 
 export default compose<DisplayCampaignsPageProps, JoinedProps>(

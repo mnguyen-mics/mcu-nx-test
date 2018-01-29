@@ -43,11 +43,7 @@ class DrawerManager extends React.Component<
     const prevContents = this.props.drawableContents;
     const nextContents = nextProps.drawableContents;
 
-    if (
-      prevContents &&
-      nextContents &&
-      prevContents.length !== nextContents.length
-    ) {
+    if (prevContents.length !== nextContents.length) {
       this.updateDimensions(nextContents);
     }
   }
@@ -77,7 +73,6 @@ class DrawerManager extends React.Component<
     drawableContents: DrawableContent[],
   ): DrawerSize => {
     const foregroundContent =
-      drawableContents &&
       drawableContents.length > 0 &&
       drawableContents[drawableContents.length - 1];
     return foregroundContent && foregroundContent.size

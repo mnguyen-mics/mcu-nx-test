@@ -2,8 +2,8 @@ import * as React from 'react';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Dropdown, Menu, Table, Button, Alert } from 'antd';
-import { TableProps, ColumnProps } from 'antd/lib/table';
+import { Dropdown, Menu, Table } from 'antd';
+import { TableProps, ColumnProps, TableRowSelection } from 'antd/lib/table';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { ClickParam } from 'antd/lib/menu';
 
@@ -11,7 +11,7 @@ import McsIcon from '../McsIcon';
 import withTranslations, {
   TranslationProps,
 } from '../../containers/Helpers/withTranslations';
-import Slider from './Slider';
+import SelectionNotifyer from './SelectionNotifyer';
 
 const DEFAULT_PAGINATION_OPTION = {
   size: 'small',
@@ -43,28 +43,22 @@ export interface TableViewProps<T> extends TableProps<T> {
   columns?: Array<DataColumnDefinition<T>>;
   visibilitySelectedColumns?: Array<DataColumnDefinition<T>>;
   actionsColumnsDefinition?: Array<ActionsColumnDefinition<T>>;
+  rowSelection?: TableRowSelection<T> & {
+    selectedRowKeys: string[];
+    selectAllItemIds: () => void;
+    unselectAllItemIds: () => void;
+  };
 }
 
-interface TableViewState {
-  hidden: boolean;
-}
-
-class TableView<T extends { id?: string }> extends React.Component<
-  TableViewProps<T> & TranslationProps & InjectedIntlProps,
-  TableViewState
+class TableView<
+  T extends { key?: string; id?: string; [key: string]: any }
+> extends React.Component<
+  TableViewProps<T> & TranslationProps & InjectedIntlProps
 > {
   static defaultProps: Partial<TableViewProps<any>> = {
-    pagination: false,
     visibilitySelectedColumns: [],
     actionsColumnsDefinition: [],
   };
-
-  constructor(props: TableViewProps<T> & TranslationProps & InjectedIntlProps) {
-    super(props);
-    this.state = {
-      hidden: true,
-    };
-  }
 
   buildActionsColumns = (
     actionsColumnsDefinition: Array<ActionsColumnDefinition<T>>,
@@ -163,7 +157,7 @@ class TableView<T extends { id?: string }> extends React.Component<
       visibilitySelectedColumns,
       translations,
       children,
-      intl: { formatMessage },
+      intl,
       ...rest
     } = this.props;
 
@@ -196,89 +190,13 @@ class TableView<T extends { id?: string }> extends React.Component<
       pagination: newPagination,
     };
 
-    const selectedRowsMsg = formatMessage({
-      id: 'display.items.selectedRows.msg',
-      defaultMessage: 'You have selected',
-    });
-    const itemWord = formatMessage({
-      id: 'display.items.word.item',
-      defaultMessage: ' item',
-    });
-    const allSelectedRowsMsg1 = formatMessage({
-      id: 'display.items.allSelectedRows.msg.1',
-      defaultMessage: 'All the ',
-    });
-    const allSelectedRowsMsg2 = formatMessage({
-      id: 'display.items.allSelectedRows.msg.2',
-      defaultMessage: ' items of this organisation have been selected.',
-    });
-
-    const buttonTextSelectAll = formatMessage({
-      id: 'display.items.selectall.buttonText',
-      defaultMessage: 'Click here to select all the items',
-    });
-
-    const buttonTextUnselectAll = formatMessage({
-      id: 'display.items.unselectall.buttonText',
-      defaultMessage: 'Click here to unselect all the items',
-    });
-
-    let content: JSX.Element = <span />;
-
-    if (
-      rest.rowSelection &&
-      pagination &&
-      rest.rowSelection.selectedRowKeys &&
-      rest.rowSelection.selectedRowKeys.length > 0
-    ) {
-      if (rest.rowSelection.selectedRowKeys.length === pagination.total) {
-        content = (
-          <div>
-            <span>
-              {allSelectedRowsMsg1} {pagination.total} {allSelectedRowsMsg2}
-            </span>
-            <Button onClick={(rest.rowSelection as any).unselectAllItemIds}>
-              {' '}
-              {buttonTextUnselectAll}{' '}
-            </Button>
-          </div>
-        );
-      } else if (
-        rest.rowSelection.selectedRowKeys.length === pagination.pageSize
-      ) {
-        content = (
-          <div>
-            <span>
-              {selectedRowsMsg} {pagination.pageSize}
-              {itemWord}
-              {'s'}
-            </span>{' '}
-            <Button onClick={(rest.rowSelection as any).selectAllItemIds}>
-              {' '}
-              {buttonTextSelectAll}{' '}
-            </Button>
-          </div>
-        );
-      }
-    }
-
-    const alert = <Alert message={content} type="warning" />;
-
-    const toShow = !!(
-      rest.rowSelection &&
-      rest.rowSelection.selectedRowKeys &&
-      rest.rowSelection.selectedRowKeys.length !== 0 &&
-      pagination &&
-      (rest.rowSelection.selectedRowKeys.length === pagination.total ||
-        rest.rowSelection.selectedRowKeys.length === pagination.pageSize)
-    );
-
     return (
       <div>
-        {rest.rowSelection &&
-          rest.rowSelection.selectedRowKeys && (
-            <Slider toShow={toShow} content={alert} />
-          )}
+        <SelectionNotifyer
+          rowSelection={rest.rowSelection}
+          pagination={pagination}
+        />
+
         <Table {...computedTableProps} />
       </div>
     );

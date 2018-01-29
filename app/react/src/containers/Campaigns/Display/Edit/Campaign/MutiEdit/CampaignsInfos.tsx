@@ -70,22 +70,25 @@ class CampaignsInfos extends React.Component<JoinedProps> {
     const {
       fields,
       fieldValidators: { isRequired, isValidInteger, isNotZero, isValidFloat },
+      intl,
     } = this.props;
-
+    const equals = 'equals';
+    const increase = 'increase';
+    const decrease = 'decrease';
     const actionOptions: Array<{
       title: string;
       value: string; // { [key: string]: FormattedMessage.MessageDescriptor }
     }> = [
       {
-        title: '=',
+        title: intl.formatMessage(campaignsActionsMessageMap[equals]),
         value: 'equals',
       },
       {
-        title: 'Increase %',
+        title: intl.formatMessage(campaignsActionsMessageMap[increase]),
         value: 'increase',
       },
       {
-        title: 'Decrease %',
+        title: intl.formatMessage(campaignsActionsMessageMap[decrease]),
         value: 'decrease',
       },
     ];
@@ -176,7 +179,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
           fields.getAll().length <= editableCampaignProperties.length - 1 && (
             <Row>
               <div onClick={adField}>
-                <Col span={22} offset={1} className="gutter-row AddFieldButton">
+                <Col span={22} offset={1} className="gutter-row add-field-button">
                   <p>
                     <McsIcons type="plus" />
                     Add Field
@@ -214,3 +217,20 @@ const campaignPropertiesMessageMap: {
     defaultMessage: 'Budget Split',
   },
 });
+
+const campaignsActionsMessageMap: {
+  [propertyName: string]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  equals: {
+    id: 'edit.adgroups.form.option.equals',
+    defaultMessage: '=',
+  },
+  increase: {
+    id: 'edit.adgroups.form.option.increase',
+    defaultMessage: 'Increase %',
+  },
+  decrease: {
+    id: 'edit.adgroups.form.option.decrease',
+    defaultMessage: 'Decrease %',
+  }
+})

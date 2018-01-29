@@ -15,11 +15,10 @@ import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
-// import withDrawer from '../../../../components/Drawer/index';
 import { RouteComponentProps } from 'react-router';
 import McsMoment from '../../../../utils/McsMoment';
 import messages from '../messages';
-import Slider from '../../../../components/TableView/Slider';
+import Slider from '../../../../components/Transition/Slide';
 import {
   DrawableContent,
   injectDrawer,
@@ -59,7 +58,6 @@ type JoinedProps = DisplayCampaignsActionbarProps &
 
 interface DisplayCampaignsActionbarState {
   exportIsRunning: boolean;
-  visible: boolean;
 }
 
 const fetchExportData = (organisationId: string, filter: FilterProps) => {
@@ -121,7 +119,7 @@ class DisplayCampaignsActionbar extends React.Component<
   JoinedProps,
   DisplayCampaignsActionbarState
 > {
-  state = { exportIsRunning: false, visible: false };
+  state = { exportIsRunning: false };
 
   handleRunExport = () => {
     const {
@@ -247,7 +245,5 @@ export default compose<JoinedProps, DisplayCampaignsActionbarProps>(
   withTranslations,
   injectDrawer,
   connect(mapStateToProps, undefined),
-  // mapStateToProps,
-  // mapDispatchToProps,
   injectIntl,
 )(DisplayCampaignsActionbar);

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Transition } from 'react-transition-group';
 
-interface SliderProps {
+interface SlideProps {
   toShow: boolean;
   content: JSX.Element;
   horizontal?: boolean;
 }
 
-class Slider extends React.Component<SliderProps> {
+class Slide extends React.Component<SlideProps> {
   render() {
     const duration = 120;
 
@@ -55,4 +55,4 @@ class Slider extends React.Component<SliderProps> {
   }
 }
 
-export default Slider;
+export default Slide;

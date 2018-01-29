@@ -64,5 +64,17 @@ export default defineMessages({
   archiveCampaignsModalMessage: {
     id: 'display.campaigns.archive',
     defaultMessage: 'Are you sure to archive all the selected campaigns ?'
-  }
+  },
+  savingInProgress: {
+    id: 'edit.campaigns.loading.message',
+    defaultMessage: 'Saving in progress',
+  },
+  campaignsArchived: {
+    id: 'archive.campaigns.success.msg',
+    defaultMessage: 'Campaigns successfully archived',
+  },
+  campaignsSaved: {
+    id: 'save.campaigns.success.msg',
+    defaultMessage: 'Campaigns successfully saved',
+  },
 });
