@@ -16,6 +16,7 @@ export type McsIconType =
   'close' |
   'code' |
   'creative' |
+  'data' |
   'delete' |
   'display' |
   'dots' |

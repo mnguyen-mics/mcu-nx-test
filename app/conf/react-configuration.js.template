@@ -4,7 +4,7 @@
  const defaultFeatures = [
     'audience.segments',
     'audience.partitions',
-    'audience.query_tool',
+    'audience.segment_builder',
     'audience.monitoring',
     'campaigns.display',
     'campaigns.email',
@@ -24,6 +24,7 @@
     'library.assets',
     'library.exports',
     'library.recommenders',
+    'datastudio.query_tool',
   ];
 
  const gravityFeatures = [
