@@ -20,6 +20,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
       app: path.join(paths.reactAppSrc, '/index.js'),
       'style-less': paths.appStyleLess,
       'plateforme.alliancegravity.com/style-less': paths.appGravityStyleLess,
+      'app.teamjoin.fr/style-less': paths.appTeamjoinStyleLess,
       'react-vendors': Object.keys(pkg.dependencies)
     },
 
@@ -63,7 +64,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
               'less-loader?sourceMap'
             ]
           }),
-          include: [paths.appStyleLess, paths.appGravityStyleLess],
+          include: [paths.appStyleLess, paths.appGravityStyleLess, paths.appTeamjoinStyleLess],
           // include: [
           //   path.appStyleLessDir,
           //   path.appStyleLess,
