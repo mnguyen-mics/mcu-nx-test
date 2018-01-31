@@ -159,10 +159,10 @@ class TableView<T> extends React.Component<
     if (dataSource === undefined)
       throw new Error('Undefined dataSource in TableView');
 
-    const dataSourceWithIds = dataSource;
-    // const dataSourceWithIds = dataSource.map((elem: T) => {
-    //   return { ...(elem as any), key: cuid() };
-    // });
+
+    const dataSourceWithIds = dataSource.map((elem: T) => {
+      return { ...(elem as any), key: cuid() };
+    });
 
     let newPagination = pagination;
     if (pagination) {

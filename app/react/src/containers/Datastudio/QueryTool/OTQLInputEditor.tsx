@@ -1,12 +1,8 @@
 import * as React from 'react';
-import { Input, Button } from 'antd';
-import {
-  FormattedMessage,
-  defineMessages,
-  injectIntl,
-  InjectedIntlProps,
-} from 'react-intl';
+import { Button } from 'antd';
+import { FormattedMessage } from 'react-intl';
 import { Card } from '../../../components/Card/index';
+import { OtqlConsole } from '../../../components/index';
 
 export interface Props {
   onRunQuery: (query: string) => void;
@@ -15,24 +11,22 @@ export interface Props {
 }
 
 interface State {
-  query: string | null;
+  query: string;
 }
 
-class OTQLInputEditor extends React.Component<
-  Props & InjectedIntlProps,
-  State
-> {
-  constructor(props: Props & InjectedIntlProps) {
+class OTQLInputEditor extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
-      query: null,
+      query: '',
     };
   }
 
-  updateQuery = (event: React.ChangeEvent<HTMLTextAreaElement>) =>
-    this.setState({ query: event.target.value });
+  updateQuery = (
+    value: string /*event: React.ChangeEvent<HTMLTextAreaElement>*/,
+  ) => this.setState({ query: value });
 
-  clearQuery = () => this.setState({ query: null });
+  clearQuery = () => this.setState({ query: '' });
 
   validateQuery = () => {
     const { query } = this.state;
@@ -44,7 +38,7 @@ class OTQLInputEditor extends React.Component<
   };
 
   buildEditorActions = () => {
-    const { onRunQuery, onAbortQuery, runningQuery, intl } = this.props;
+    const { onRunQuery, onAbortQuery, runningQuery } = this.props;
     const { query } = this.state;
     const clearButton = (
       <Button onClick={this.clearQuery}>
@@ -83,7 +77,6 @@ class OTQLInputEditor extends React.Component<
   };
 
   render() {
-    const { onRunQuery, onAbortQuery, runningQuery, intl } = this.props;
     const { query } = this.state;
 
     return (
@@ -96,23 +89,17 @@ class OTQLInputEditor extends React.Component<
         }
         buttons={this.buildEditorActions()}
       >
-        <Input.TextArea
-          rows={8}
-          style={{ fontSize: '1.4em' }}
+        <OtqlConsole
           onChange={this.updateQuery}
           value={query}
-          placeholder={intl.formatMessage(messages.otqlInputPlaceholder)}
+          showPrintMargin={false}
+          height="250px"
+          enableBasicAutocompletion={true}
+          enableLiveAutocompletion={true}
         />
       </Card>
     );
   }
 }
 
-export default injectIntl(OTQLInputEditor);
-
-const messages = defineMessages({
-  otqlInputPlaceholder: {
-    id: 'otql-input-placeholder',
-    defaultMessage: 'Enter your otql here',
-  },
-});
+export default OTQLInputEditor;

@@ -7,6 +7,7 @@ import {
   OTQLBuckets,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import ButtonStyleless from '../../../components/ButtonStyleless';
+import { FormattedMessage } from 'react-intl';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -205,6 +206,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
         <Row style={{ marginBottom: 14 }}>
           {showSelect && (
             <div>
+              <div className="m-r-10" style={{ display: 'inline-block' }}><FormattedMessage id='otql-result-renderer-aggrations-viewing' defaultMessage='Viewing :' /></div>
               <Select
                 value={selectedView}
                 onSelect={handleOnSelect}
@@ -213,9 +215,9 @@ export default class AggregationRenderer extends React.Component<Props, State> {
                 {aggregations.buckets.length > 0 && (
                   <Select.OptGroup label="Buckets">
                     {aggregations.buckets.map((bucket, index) => (
-                      <Select.Option key={index} value={index.toString()}>{`${bucket.fieldName} @${
-                        bucket.type
-                      }`}</Select.Option>
+                      <Select.Option key={index} value={index.toString()}>{`${
+                        bucket.fieldName
+                      } @${bucket.type}`}</Select.Option>
                     ))}
                   </Select.OptGroup>
                 )}

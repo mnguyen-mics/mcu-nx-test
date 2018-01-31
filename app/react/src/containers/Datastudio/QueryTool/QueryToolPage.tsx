@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Input, Alert, Button } from 'antd';
+import { Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 import {
   FormattedMessage,
@@ -19,6 +19,7 @@ import injectNotifications, {
 import OTQLResultRenderer from './OTQLResultRenderer';
 import OTQLInputEditor from './OTQLInputEditor';
 import { DataResponse } from '../../../services/ApiService';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 const { Content } = Layout;
 
@@ -31,6 +32,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedDatamartProps &
+  RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps;
 
 class QueryToolPage extends React.Component<Props, State> {
@@ -49,7 +51,12 @@ class QueryToolPage extends React.Component<Props, State> {
   runQuery = (otqlQuery: string) => {
     const { datamart } = this.props;
 
-    this.setState({ runningQuery: true, error: null, queryAborted: false });
+    this.setState({
+      runningQuery: true,
+      error: null,
+      queryAborted: false,
+      queryResult: null,
+    });
     this.asyncQuery = makeCancelable(
       OTQLService.runQuery(datamart.id, otqlQuery),
     );
@@ -73,17 +80,29 @@ class QueryToolPage extends React.Component<Props, State> {
   dismissError = () => this.setState({ error: null });
 
   render() {
-    const { intl } = this.props;
+    const { intl, datamart } = this.props;
     const { error, queryResult, runningQuery, queryAborted } = this.state;
+
+    const organisationId = this.props.match.params.organisationId
+    if (!['1164', '1185'].includes(organisationId)) {
+      this.props.history.push(`/o${organisationId}d${datamart.id}/datamart/queries`)
+      return null;
+    }
 
     const errorMsg = error && (
       <Alert
         message="Error"
         style={{ marginBottom: 40 }}
         description={
-          error.error_id
-            ? `${error.error} ${error.error_id}`
-            : intl.formatMessage(messages.queryErrorDefaultMsg)
+          error.error_id ? (
+            <span>
+              {error.error}
+              <br />
+              <code>{error.error_id}</code>
+            </span>
+          ) : (
+            intl.formatMessage(messages.queryErrorDefaultMsg)
+          )
         }
         type="error"
         showIcon={true}
@@ -108,14 +127,7 @@ class QueryToolPage extends React.Component<Props, State> {
           paths={[
             { name: intl.formatMessage(messages.queryToolBreadcrumbLabel) },
           ]}
-        >
-          <Button>
-            <FormattedMessage
-              id="query-tool-save-as"
-              defaultMessage="Save as"
-            />
-          </Button>
-        </ActionBar>
+        />
         <Content className="mcs-content-container">
           <ContentHeader
             title={
@@ -138,7 +150,7 @@ class QueryToolPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, injectDatamart, injectNotifications)(
+export default compose(injectIntl, withRouter, injectDatamart, injectNotifications)(
   QueryToolPage,
 );
 

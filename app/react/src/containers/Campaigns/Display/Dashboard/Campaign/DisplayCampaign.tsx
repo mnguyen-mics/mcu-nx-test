@@ -21,7 +21,6 @@ import {
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
-import { OtqlConsole } from '../../../../../components/index';
 
 const { Content } = Layout;
 
@@ -168,7 +167,6 @@ class DisplayCampaign extends React.Component<JoinedProps> {
               campaign={campaign.items}
             />
             <Labels labellableId={campaignId} organisationId={organisationId} labellableType="DISPLAY_CAMPAIGN" />
-            <OtqlConsole />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}
