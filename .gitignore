@@ -19,5 +19,7 @@ app/conf/react-configuration.js
 .tags*
 .DS_Store
 Icon?
+build/
+version.*
 
 
