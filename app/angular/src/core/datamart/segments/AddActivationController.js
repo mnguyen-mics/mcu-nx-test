@@ -25,11 +25,13 @@ define(['./module'], function (module) {
 
         $scope.step = 'STEP_1';
 
+
         Restangular.all("plugins").getList({plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED'}).then(function (results) {
+          console.log(results)
           $scope.plugins = results;
           $scope.pluginsById = {};
-          for(var i=0; i < results.length; i++) {
-            var r = results[i];
+          for(var i=0; i < $scope.plugins.length; i++) {
+            var r = $scope.plugins[i];
             $scope.pluginsById[r.id] = r;
           }
         });

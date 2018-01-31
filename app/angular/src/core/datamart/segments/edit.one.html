@@ -183,6 +183,41 @@
     </div>
     <br>
 
+    <div ng-if="!isCreationMode">
+      <div class="mics-block-heading">
+        <span>Audience Tag Feed</span>
+        <div class="btn-group">
+          <a class="mics-btn mics-btn-add" ng-click="addTagActivation()">Add an Tag Activation</a>
+        </div>
+      </div>
+      <table class="mics-table" ng-show="tagActivations.length">
+        <thead>
+        <tr>
+          <th>Audience segment Tag connector</th>
+          <th>Properties</th>
+          <th>Status</th>
+          <th class="actions">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="activation in tagActivations">
+          <td>{{activation.value.artifact_id}}</td>
+          <td>
+              <ul>
+                  <li ng-repeat="property in activation.properties">{{property.value.technical_name}}: {{property.value.value.value}}</li>
+              </ul>
+          </td>
+          <td ><span mics-segment-external-feed-status="activation.value"></span></td>
+          <td class="actions">
+            <a class="mics-btn mics-btn-action" ng-click="editTagActivation(activation)">Edit</a>
+            <a class="mics-btn mics-btn-delete" ng-click="removeTagActivation(activation)">Remove</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      </div>
+      <br>
+
     <div class="panel-group" id="accordion">
       <div class="panel panel-default">
         <div class="panel-heading">
