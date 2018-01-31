@@ -142,7 +142,7 @@ const DisplayCampaignFormService = {
                   [field.campaignProperty]: operation(
                     field.action,
                     campaignData[campaignProperty],
-                    parseInt(field.value, 10),
+                    field.value,
                   ),
                 };
               },

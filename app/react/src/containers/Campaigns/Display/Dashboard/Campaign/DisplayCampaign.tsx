@@ -176,16 +176,11 @@ class DisplayCampaign extends React.Component<
               [field.adGroupProperty]: operation(
                 field.action,
                 adGroupData[campaignProperty],
-                parseInt(field.value, 10),
+                field.value,
               ),
             };
           }, {});
           updateAdGroup(adGroupId, updatedData);
-          // DisplayCampaignService.updateAdGroup(
-          //   campaignId,
-          //   adGroupId,
-          //   updatedData,
-          // );
         });
     });
 
