@@ -3,12 +3,13 @@ import EmptyRecords from './RelatedRecord/EmptyRecords';
 import Form from './Form';
 import List from './List';
 import Loading from './Loading';
-import McsIcons from './McsIcons';
+import McsIcon from './McsIcon';
 import TableSelector from './ElementSelector/TableSelector';
 import MultiSelect from './MultiSelect';
 import SearchAndMultiSelect from './SearchAndMultiSelect';
 import SearchAndTreeSelect from './SearchAndTreeSelect';
 import LabelsSelector from './LabelsSelector';
+import OtqlConsole from './OtqlConsole'
 
 export {
   ButtonStyleless,
@@ -17,9 +18,10 @@ export {
   List,
   Loading,
   LabelsSelector,
-  McsIcons,
+  McsIcon,
   TableSelector,
   MultiSelect,
   SearchAndMultiSelect,
   SearchAndTreeSelect,
+  OtqlConsole,
 };

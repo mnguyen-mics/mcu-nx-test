@@ -6,7 +6,7 @@ import moment from 'moment';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Row, Col, Icon, Timeline, Layout, Spin } from 'antd';
 
-import McsIcons from '../../../components/McsIcons.tsx';
+import McsIcon from '../../../components/McsIcon.tsx';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
 import SegmentsCard from './SingleView/SegmentsCard';
@@ -87,7 +87,7 @@ class Monitoring extends Component {
                         <div className="mcs-timeline" key={day}>
                           <Timeline.Item dot={<Icon type="flag" className="mcs-timeline-dot" />}><div className="mcs-title">{dayToFormattedMessage}</div></Timeline.Item>
                           {activityOnDay.length !== 0 && activityOnDay.map(activity => {
-                            return (<Timeline.Item key={activity.$ts} dot={<McsIcons type="status" className={activity.$session_status === 'SESSION_SNAPSHOT' ? 'mcs-timeline-dot live' : 'mcs-timeline-dot'} />}>
+                            return (<Timeline.Item key={activity.$ts} dot={<McsIcon type="status" className={activity.$session_status === 'SESSION_SNAPSHOT' ? 'mcs-timeline-dot live' : 'mcs-timeline-dot'} />}>
                               <ActivityCard activity={activity} datamartId={datamartId} identifiers={identifiers} />
                             </Timeline.Item>);
                           })}

@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 
 import { EmptyTableView, TableViewFilters } from './TableView';
 import { FormattedMessage } from 'react-intl';
-import { McsIconType } from './McsIcons';
+import { McsIconType } from './McsIcon';
 import {
   buildDefaultSearch,
   compareSearches,

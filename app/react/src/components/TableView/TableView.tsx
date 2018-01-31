@@ -6,7 +6,7 @@ import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { ClickParam } from 'antd/lib/menu';
 import { TableProps, ColumnProps } from 'antd/lib/table';
 
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 import withTranslations, {
   TranslationProps,
 } from '../../containers/Helpers/withTranslations';
@@ -65,7 +65,7 @@ class TableView<T> extends React.Component<
             trigger={['click']}
           >
             <a className="ant-dropdown-link">
-              <McsIcons type="chevron" />
+              <McsIcon type="chevron" />
             </a>
           </Dropdown>
         );
@@ -158,6 +158,7 @@ class TableView<T> extends React.Component<
 
     if (dataSource === undefined)
       throw new Error('Undefined dataSource in TableView');
+
 
     const dataSourceWithIds = dataSource.map((elem: T) => {
       return { ...(elem as any), key: cuid() };

@@ -7,7 +7,7 @@ import ContentArea, { ContentType } from './ContentArea';
 import CodeArea from './CodeArea';
 import { DrawableContentProps } from '../../../../../components/Drawer'
 
-import McsIcons from '../../../../../components/McsIcons';
+import McsIcon from '../../../../../components/McsIcon';
 
 
 export interface HtmlEditorProps extends DrawableContentProps  {
@@ -130,11 +130,11 @@ export default class HtmlEditor extends React.Component<HtmlEditorProps> {
     return (
       <div>
         <Button style={{ float: 'right', marginBottom: 20 }} onClick={this.onCodeEditClick}>
-          <McsIcons type="code" />
+          <McsIcon type="code" />
           Code Edit
         </Button>
         {this.buildContent().length ? <Button style={{ float: 'right', marginBottom: 20, marginRight: 20 }} onClick={this.onQuickEditClick}>
-          <McsIcons type="pen" />
+          <McsIcon type="pen" />
           Quick Edit
         </Button> : null}
         {iframe}

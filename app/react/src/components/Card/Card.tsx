@@ -2,39 +2,49 @@ import * as React from 'react';
 import { Row, Col, Spin } from 'antd';
 
 interface CardProps {
-  buttons?: JSX.Element;
-  title?: string;
+  buttons?: React.ReactNode;
+  title?: React.ReactNode;
   isLoading?: boolean;
 }
 
-const Card: React.SFC<CardProps> = (props) => {
-  const { title, buttons, isLoading, children } = props;
-  return (
-    <Row className="mcs-card-container">
-      { (title || buttons)
-        && <Row className="mcs-card-header">
-          <Col span={24}>
-            <span className="mcs-card-title">{title}</span>
-            <span className="mcs-card-button">{buttons}</span>
-          </Col>
-          <Col span={24}><hr /></Col>
-        </Row>
-      }
-      <Row>
-        { isLoading ? (
-          <Col span={24} className="text-center">
-            <Spin />
-          </Col>
-        ) : children}
-      </Row>
-    </Row>
-  );
-};
+class Card extends React.Component<CardProps> {
+  render() {
+    const { title, buttons, isLoading, children } = this.props;
 
-Card.defaultProps = {
-  buttons: undefined,
-  title: undefined,
-  isLoading: false,
-};
+    const hasHeader = title || buttons;
+
+    const titleElement = title && (
+      <span className="mcs-card-title">{title}</span>
+    );
+    const buttonsElement = buttons && (
+      <span className="mcs-card-button">{buttons}</span>
+    );
+
+    return (
+      <Row className="mcs-card-container">
+        {hasHeader && (
+          <Row className="mcs-card-header">
+            <Col span={24}>
+              {titleElement}
+              {buttonsElement}
+            </Col>
+            <Col span={24}>
+              <hr />
+            </Col>
+          </Row>
+        )}
+        <Row>
+          {isLoading ? (
+            <Col span={24} className="text-center">
+              <Spin />
+            </Col>
+          ) : (
+            children
+          )}
+        </Row>
+      </Row>
+    );
+  }
+}
 
 export default Card;

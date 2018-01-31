@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import AudienceSegmentHeader from './AudienceSegmentHeader';
-import AudienceSegmentDashboard from './AudienceSegmentDashboard';
 import { Labels } from '../../../Labels/index.ts';
+import AudienceSegmentDashboard from './AudienceSegmentDashboard.tsx';
 
 import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
 

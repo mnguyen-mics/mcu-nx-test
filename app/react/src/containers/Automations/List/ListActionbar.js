@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 
 import { withTranslations } from '../../Helpers';
 import { Actionbar } from '../../Actionbar';
-import McsIcons from '../../../components/McsIcons.tsx';
+import McsIcon from '../../../components/McsIcon.tsx';
 import { getDefaultDatamart } from '../../../state/Session/selectors';
 
 function ListActionbar({
@@ -32,7 +32,7 @@ function ListActionbar({
     <Actionbar path={breadcrumbPaths}>
       <Link to={`/o${organisationId}d${datamartId}/library/scenarios/`}>
         <Button className="mcs-primary" type="primary">
-          <McsIcons type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
+          <McsIcon type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
         </Button>
       </Link>
     </Actionbar>

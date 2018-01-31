@@ -8,7 +8,7 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
@@ -98,16 +98,16 @@ class AudienceSegmentActionbar extends Component {
       <Actionbar path={breadcrumbPaths}>
         <Link key="1" to={`/${organisationId}/campaigns/display/expert/edit/T1`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="bolt" />
+            <McsIcon type="bolt" />
             <FormattedMessage id="ACTIVATE" />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          <McsIcons type="download" /><FormattedMessage id="EXPORT" />
+          <McsIcon type="download" /><FormattedMessage id="EXPORT" />
         </Button>
         <Link key="2" to={`/o${organisationId}d${datamartId}/datamart/segments//${segmentId}`}>
           <Button>
-            <McsIcons type="pen" />
+            <McsIcon type="pen" />
             <FormattedMessage id="EDIT" />
           </Button>
         </Link>

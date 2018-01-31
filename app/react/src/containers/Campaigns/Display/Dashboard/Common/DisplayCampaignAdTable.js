@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { TableView } from '../../../../../components/TableView/index.ts';
 import { formatMetric } from '../../../../../utils/MetricHelper.ts';
-import McsIcons from '../../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../../components/McsIcon.tsx';
 import ButtonStyleless from '../../../../../components/ButtonStyleless.tsx';
 import messages from '../messages.ts';
 
@@ -134,7 +134,7 @@ class DisplayCampaignAdTable extends Component {
               : formatMessage(messages.adAuditError)
             }
           >
-            <McsIcons
+            <McsIcon
               className={text === 'AUDIT_PASSED' ? 'font-success' : 'font-error'}
               type={text === 'AUDIT_PASSED' ? 'check' : 'close'}
             />
@@ -152,8 +152,8 @@ class DisplayCampaignAdTable extends Component {
               className="mcs-table-switch"
               checked={text === 'ACTIVE'}
               onChange={(checked) => changeAdStatus(record, checked)}
-              checkedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="play" />}
-              unCheckedChildren={<McsIcons style={{ verticalAlign: 'middle' }} type="pause" />}
+              checkedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type="play" />}
+              unCheckedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type="pause" />}
             />
           </span>
         ),

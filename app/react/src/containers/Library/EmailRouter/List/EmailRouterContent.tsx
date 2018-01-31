@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { McsIconType } from '../../../../components/McsIcons';
+import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import EmailRoutersService from '../../../../services/Library/EmailRoutersService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';

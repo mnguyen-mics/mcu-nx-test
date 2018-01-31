@@ -16,7 +16,7 @@ import {
   FormAddonSelectField,
   FormDateRangePickerField,
 } from '../../../../../../components/Form';
-import { ButtonStyleless, McsIcons } from '../../../../../../components';
+import { ButtonStyleless, McsIcon } from '../../../../../../components';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
 import { compose } from 'recompose';
 
@@ -188,11 +188,11 @@ class GeneralFormSection extends React.Component<Props, State> {
             className="optional-section-title clickable-on-hover"
             onClick={this.toggleAdvancedSection}
           >
-            <McsIcons type="settings" />
+            <McsIcon type="settings" />
             <span className="step-title">
               {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
-            <McsIcons type="chevron" />
+            <McsIcon type="chevron" />
           </ButtonStyleless>
 
           <div

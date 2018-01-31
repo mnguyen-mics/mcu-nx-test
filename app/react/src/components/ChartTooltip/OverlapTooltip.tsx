@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 
 interface OverlapTooltipProps {
   content: {
@@ -85,7 +85,7 @@ const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
       </table>
       <div className="text-center">
         <Button type="primary">
-          <McsIcons type="bolt" /><FormattedMessage id="ACTIVATE" defaultMessage="Activate" />
+          <McsIcon type="bolt" /><FormattedMessage id="ACTIVATE" defaultMessage="Activate" />
         </Button>
       </div>
     </div>

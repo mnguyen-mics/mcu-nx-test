@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import { AdInfoResource, DisplayCampaignInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
-import DisplayCampaignHeader from '../Common/DisplayCampaignHeader';
+import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
 import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
@@ -163,7 +163,9 @@ class DisplayCampaign extends React.Component<JoinedProps> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayCampaignHeader object={campaign.items} translationKey="CAMPAIGN" />
+            <CampaignDashboardHeader
+              campaign={campaign.items}
+            />
             <Labels labellableId={campaignId} organisationId={organisationId} labellableType="DISPLAY_CAMPAIGN" />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}

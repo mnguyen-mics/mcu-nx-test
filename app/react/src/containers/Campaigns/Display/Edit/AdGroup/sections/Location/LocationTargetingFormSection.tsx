@@ -3,7 +3,7 @@ import { Row, Col, Checkbox, Tooltip, Modal } from 'antd';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
-import { McsIcons } from '../../../../../../../components';
+import { McsIcon } from '../../../../../../../components';
 import { FormSection } from '../../../../../../../components/Form';
 import messages from '../../../messages';
 import LocationSelectionRenderer from './LocationSelectionRenderer';
@@ -240,7 +240,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
                   messages.contentSectionLocationTooltipMessage,
                 )}
               >
-                <McsIcons type="info" />
+                <McsIcon type="info" />
               </Tooltip>
             </Col>
           </Row>

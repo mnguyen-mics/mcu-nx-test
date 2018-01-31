@@ -10,7 +10,7 @@ import FormDataFileDrawer, { FormDataFileDrawerProps } from './FormDataFileDrawe
 import { DrawableContentProps } from '../../../../components/Drawer';
 import DataFileService from '../../../../services/DataFileService';
 
-import {McsIcons, ButtonStyleless} from '../../../../components';
+import {McsIcon, ButtonStyleless} from '../../../../components';
 import { FormFieldWrapper } from '../../../../components/Form';
 
 import messages from '../../messages';
@@ -246,12 +246,12 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
               <ButtonStyleless
                 {...editProps}
               >
-                <McsIcons type="pen" />
+                <McsIcon type="pen" />
               </ButtonStyleless>
               <ButtonStyleless
                 {...removeProps}
               >
-                <McsIcons type="close" />
+                <McsIcon type="close" />
               </ButtonStyleless>
             </span> : null}
 
@@ -259,7 +259,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           {displayHelpToolTip &&
             <Col span={2} className="field-tooltip">
               <Tooltip {...mergedTooltipProps}>
-                <McsIcons type="info" />
+                <McsIcon type="info" />
               </Tooltip>
             </Col>
           }

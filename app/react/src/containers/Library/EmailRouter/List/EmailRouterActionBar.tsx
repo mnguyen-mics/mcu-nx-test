@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
 interface RouterProps {
@@ -34,7 +34,7 @@ class EmailRouterActionbar extends React.Component<RouteComponentProps<RouterPro
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/library/email_routers/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /> <FormattedMessage {...messages.newEmailRouter} />
+            <McsIcon type="plus" /> <FormattedMessage {...messages.newEmailRouter} />
           </Button>
         </Link>
       </Actionbar>

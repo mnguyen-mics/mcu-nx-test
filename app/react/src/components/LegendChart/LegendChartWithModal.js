@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Row, Col, Radio } from 'antd';
-import McsIcons from '../McsIcons.tsx';
+import McsIcon from '../McsIcon.tsx';
 
 class LegendChartWithModal extends Component {
 
@@ -126,7 +126,7 @@ class LegendChartWithModal extends Component {
               renderModal(this);
             }}
           >
-            <McsIcons
+            <McsIcon
               style={{ marginLeft: '10px', color: '#d0d0d0' }}
               type="pen"
             />

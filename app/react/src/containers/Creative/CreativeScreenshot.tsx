@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Spin } from 'antd';
-import McsIcons from '../../components/McsIcons';
+import McsIcon from '../../components/McsIcon';
 import CreativeService from '../../services/CreativeService';
 import { DisplayAdResource } from '../../models/creative/CreativeResource';
 
@@ -105,7 +105,7 @@ class CreativeScreenshot extends React.Component<CreativeScreenshotProps, Creati
 
   renderErrorScreenshot = () => {
     return (
-      <McsIcons className="icon-3x" type="close-big" />
+      <McsIcon className="icon-3x" type="close-big" />
     );
   }
 

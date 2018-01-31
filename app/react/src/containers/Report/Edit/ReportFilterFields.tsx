@@ -4,7 +4,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Row, Col } from 'antd';
 
 import messages from './messages';
-import McsIcons from '../../../components/McsIcons';
+import McsIcon from '../../../components/McsIcon';
 import FormLinkedSelectInput, { FormLinkedSelectInputProps } from '../../../components/Form/FormLinkedSelectInput';
 
 interface FormLinkedSelectInputModel {
@@ -36,7 +36,7 @@ class ReportFilterFields extends React.Component<JoinedProps> {
         <div
           onClick={handleRemove}
         >
-          <McsIcons
+          <McsIcon
             type="close"
           />
         </div>
@@ -69,7 +69,7 @@ class ReportFilterFields extends React.Component<JoinedProps> {
             >
               <Col span={20} className="report-AddFilterButton">
                 <p>
-                  <McsIcons
+                  <McsIcon
                     type="plus"
                   />
                   {intl.formatMessage(messages.AddFilterButtonText)}
