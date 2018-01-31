@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import moment from 'moment';
 
 import { EmptyTableView, TableView } from '../../../components/TableView/index.ts';
 import messages from './messages';
@@ -40,16 +39,9 @@ class DatamartsTable extends Component {
       },
       {
         intlMessage: messages.datamartToken,
-        key: 'token',
+        key: 'name',
         isVisibleByDefault: true,
-        isHideable: true,
-      },
-      {
-        intlMessage: messages.datamartCreationDate,
-        key: 'creation_ts',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: ts => moment(ts).format('DD/MM/YYYY'),
+        isHideable: false,
       },
     ];
 
@@ -65,15 +57,12 @@ class DatamartsTable extends Component {
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
-    };
 
     return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyDatamarts} />) :
            (
              <TableView
-               columnsDefinitions={columnsDefinitions}
+               columns={dataColumns}
+               actionsColumnsDefinition={actionColumns}
                dataSource={dataSource}
                loading={isFetchingDatamarts}
                pagination={pagination}

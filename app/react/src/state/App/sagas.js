@@ -8,12 +8,14 @@ import {
   LOAD_TRANSLATIONS,
   LOG_IN,
   CONNECTED_USER,
+  FETCH_COOKIES,
 } from '../action-types';
 
 function* watchInitializationSuccess() {
   if (AuthService.isAuthenticated()) {
     yield all([
       take(LOAD_TRANSLATIONS.SUCCESS),
+      take([FETCH_COOKIES.SUCCESS, FETCH_COOKIES.FAILURE]),
       take([CONNECTED_USER.SUCCESS, LOG_IN.FAILURE, CONNECTED_USER.FAILURE]),
     ]);
 

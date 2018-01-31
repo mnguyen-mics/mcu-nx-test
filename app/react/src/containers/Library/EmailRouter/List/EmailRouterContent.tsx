@@ -8,7 +8,11 @@ import { McsIconType } from '../../../../components/McsIcons';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import EmailRoutersService from '../../../../services/Library/EmailRoutersService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../utils/LocationSearchHelper';
 import { EmailRouter } from '../../../../models/Plugins';
 import messages from './messages';
 
@@ -28,45 +32,42 @@ interface RouterProps {
   organisationId: string;
 }
 
-class EmailRouterContent extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps, EmailRouterContentState> {
-
+class EmailRouterContent extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  EmailRouterContentState
+> {
   state = initialState;
 
   archiveEmailRouter = (routerId: string) => {
     return EmailRoutersService.deleteEmailRouter(routerId);
-  }
+  };
 
   fetchEmailRouter = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      EmailRoutersService.getEmailRouters(organisationId, options)
-        .then((results) => {
+      EmailRoutersService.getEmailRouters(organisationId, options).then(
+        results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        });
+        },
+      );
     });
-  }
+  };
 
   onClickArchive = (keyword: EmailRouter) => {
     const {
-      location: {
-        search,
-        pathname,
-        state,
-      },
+      location: { search, pathname, state },
       history,
       match: { params: { organisationId } },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      data,
-    } = this.state;
+    const { data } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
@@ -77,8 +78,7 @@ class EmailRouterContent extends React.Component<RouteComponentProps<RouterProps
       okText: formatMessage(messages.emailRouterArchiveOk),
       cancelText: formatMessage(messages.emailRouterArchiveCancel),
       onOk: () => {
-        this.archiveEmailRouter(keyword.id)
-        .then(() => {
+        this.archiveEmailRouter(keyword.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -98,62 +98,51 @@ class EmailRouterContent extends React.Component<RouteComponentProps<RouterProps
         // cancel
       },
     });
-  }
+  };
 
   onClickEdit = (router: EmailRouter) => {
-    const {
-      history,
-      match: { params: { organisationId } },
-    } = this.props;
+    const { history, match: { params: { organisationId } } } = this.props;
 
-    history.push(`/v2/o/${organisationId}/library/email_routers/${router.id}/edit`);
-  }
-
-  resetEmailRouter = () => {
-    this.setState(initialState);
-  }
+    history.push(
+      `/v2/o/${organisationId}/library/email_routers/${router.id}/edit`,
+    );
+  };
 
   render() {
-    const {
-      match: { params: { organisationId } },
-    } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
 
-    const actions = {
-      fetchList: this.fetchEmailRouter,
-      resetList: this.resetEmailRouter,
-    };
+    const actionsColumnsDefinition = [
+      {
+        key: 'action',
+        actions: [
+          { translationKey: 'EDIT', callback: this.onClickEdit },
+          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+        ],
+      },
+    ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            { translationKey: 'EDIT', callback: this.onClickEdit },
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
-        },
-      ],
-
-      dataColumnsDefinition: [
-        {
-          translationKey: 'NAME',
-          intlMessage: messages.name,
-          key: 'name',
-          isHideable: false,
-          render: (text: string, record: EmailRouter) => (
-            <Link
-              className="mcs-campaigns-link"
-              to={`/v2/o/${organisationId}/library/email_routers/${record.id}/edit`}
-            >{text}
-            </Link>
-          ),
-        },
-      ],
-    };
+    const dataColumnsDefinition = [
+      {
+        translationKey: 'NAME',
+        intlMessage: messages.name,
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: EmailRouter) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/library/email_routers/${
+              record.id
+            }/edit`}
+          >
+            {text}
+          </Link>
+        ),
+      },
+    ];
 
     const emptyTable: {
-      iconType: McsIconType,
-      intlMessage: FormattedMessage.Props,
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
     } = {
       iconType: 'library',
       intlMessage: messages.empty,
@@ -161,11 +150,12 @@ class EmailRouterContent extends React.Component<RouteComponentProps<RouterProps
 
     return (
       <ItemList
-        actions={actions}
+        fetchList={this.fetchEmailRouter}
         dataSource={this.state.data}
-        isLoading={this.state.loading}
+        loading={this.state.loading}
         total={this.state.total}
-        columnsDefinitions={columnsDefinitions}
+        columns={dataColumnsDefinition}
+        actionsColumnsDefinition={actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />
@@ -173,7 +163,4 @@ class EmailRouterContent extends React.Component<RouteComponentProps<RouterProps
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(EmailRouterContent);
+export default compose(withRouter, injectIntl)(EmailRouterContent);

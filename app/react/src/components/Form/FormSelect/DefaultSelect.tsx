@@ -13,6 +13,7 @@ export interface DefaultSelectProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   selectProps?: SelectProps;
   options?: OptionProps[];
+  disabled?: boolean;
 }
 
 const Option = Select.Option;
@@ -23,6 +24,7 @@ class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldPro
     formItemProps: {},
     selectProps: {},
     options: [],
+    disabled: false,
   };
 
   componentDidMount() {
@@ -51,6 +53,7 @@ class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldPro
     const {
       formItemProps,
       helpToolTipProps,
+      disabled,
       input,
       meta,
       options,
@@ -74,7 +77,11 @@ class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldPro
         >
           <FormSelect
             {...selectProps}
-            input={input}
+            onBlur={input.onBlur as () => any}
+            onChange={input.onChange as () => any}
+            onFocus={input.onFocus as () => any}
+            value={input.value}
+            disabled={disabled}
           >{optionsToDisplay}
           </FormSelect>
         </FormFieldWrapper>

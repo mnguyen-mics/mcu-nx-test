@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { Link } from 'react-router-dom';
 import { Icon, Tooltip } from 'antd';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
@@ -24,23 +23,25 @@ function EmailCampaignsTable({
   onArchiveCampaign,
   onEditCampaign,
   intl: { formatMessage },
-  filter
+  filter,
+  labelsOptions,
 }) {
-
   const searchOptions = {
     placeholder: formatMessage(messages.searchPlaceholder),
-    onSearch: value => onFilterChange({
-      keywords: value,
-    }),
+    onSearch: value =>
+      onFilterChange({
+        keywords: value,
+      }),
     defaultValue: filter.keywords,
   };
 
   const dateRangePickerOptions = {
     isEnabled: true,
-    onChange: (values) => onFilterChange({
-      from: values.from,
-      to: values.to,
-    }),
+    onChange: values =>
+      onFilterChange({
+        from: values.from,
+        to: values.to,
+      }),
     values: {
       from: filter.from,
       to: filter.to,
@@ -55,18 +56,20 @@ function EmailCampaignsTable({
     current: filter.currentPage,
     pageSize: filter.pageSize,
     total: totalCampaigns,
-    onChange: (page) => onFilterChange({
-      currentPage: page,
-    }),
-    onShowSizeChange: (current, size) => onFilterChange({
-      pageSize: size,
-      currentPage: 1,
-    }),
+    onChange: page =>
+      onFilterChange({
+        currentPage: page,
+      }),
+    onShowSizeChange: (current, size) =>
+      onFilterChange({
+        pageSize: size,
+        currentPage: 1,
+      }),
   };
 
   const renderMetricData = (value, numeralFormat, currency = '') => {
     if (isFetchingStats) {
-      return (<i className="mcs-table-cell-loading" />); // (<span>loading...</span>);
+      return <i className="mcs-table-cell-loading" />; // (<span>loading...</span>);
     }
     const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
     return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -77,7 +80,13 @@ function EmailCampaignsTable({
       intlMessage: messages.emailHeaderStatus,
       key: 'status',
       isHideable: false,
-      render: text => <Tooltip placement="top" title={formatMessage(messages[text])}><span className={`mcs-campaigns-status-${text.toLowerCase()}`}><McsIcons type="status" /></span></Tooltip>
+      render: text => (
+        <Tooltip placement="top" title={formatMessage(messages[text])}>
+          <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
+            <McsIcons type="status" />
+          </span>
+        </Tooltip>
+      ),
     },
     {
       intlMessage: messages.emailHeaderName,
@@ -87,9 +96,10 @@ function EmailCampaignsTable({
         <Link
           className="mcs-campaigns-link"
           to={`/v2/o/${record.organisation_id}/campaigns/email/${record.id}`}
-        >{text}
+        >
+          {text}
         </Link>
-        ),
+      ),
     },
     {
       intlMessage: messages.emailHeaderSent,
@@ -135,7 +145,8 @@ function EmailCampaignsTable({
         {
           intlMessage: messages.editCampaign,
           callback: onEditCampaign,
-        }, {
+        },
+        {
           intlMessage: messages.archiveCampaign,
           callback: onArchiveCampaign,
         },
@@ -143,50 +154,52 @@ function EmailCampaignsTable({
     },
   ];
 
-  const statusItems = campaignStatuses.map(status => ({ key: status, value: status }));
+  const statusItems = campaignStatuses.map(status => ({
+    key: status,
+    value: status,
+  }));
 
   const filtersOptions = [
     {
-      name: 'status',
       displayElement: (
         <div>
           <FormattedMessage {...messages.emailHeaderStatus} />
           <Icon type="down" />
         </div>
-        ),
-      menuItems: {
-        handleMenuClick: value => {
-          onFilterChange({
-            statuses: value.status.map(item => item.value),
-          });
-        },
-        selectedItems: filter.statuses.map(status => ({ key: status, value: status })),
-        items: statusItems,
+      ),
+      selectedItems: filter.statuses.map(status => ({
+        key: status,
+        value: status,
+      })),
+      items: statusItems,
+      getKey: item => item.key,
+      display: item => item.value,
+      handleMenuClick: values => {
+        onFilterChange({
+          statuses: values.map(item => item.value),
+        });
       },
     },
   ];
 
-  const columnsDefinitions = {
-    dataColumnsDefinition: dataColumns,
-    actionsColumnsDefinition: actionColumns,
-  };
-
-  return (noCampaignYet)
-      ? <EmptyTableView iconType="email" text="EMPTY_EMAILS" />
-      : (
-        <div className="mcs-table-container">
-          <TableViewFilters
-            columnsDefinitions={columnsDefinitions}
-            searchOptions={searchOptions}
-            dateRangePickerOptions={dateRangePickerOptions}
-            filtersOptions={filtersOptions}
-            columnsVisibilityOptions={columnsVisibilityOptions}
-            dataSource={dataSource}
-            loading={isFetchingCampaigns}
-            pagination={pagination}
-          />
-        </div>
-     );
+  return noCampaignYet ? (
+    <EmptyTableView iconType="email" text="EMPTY_EMAILS" />
+  ) : (
+    <div className="mcs-table-container">
+      <TableViewFilters
+        columns={dataColumns}
+        actionsColumnsDefinition={actionColumns}
+        searchOptions={searchOptions}
+        dateRangePickerOptions={dateRangePickerOptions}
+        filtersOptions={filtersOptions}
+        columnsVisibilityOptions={columnsVisibilityOptions}
+        dataSource={dataSource}
+        loading={isFetchingCampaigns}
+        pagination={pagination}
+        labelsOptions={labelsOptions}
+      />
+    </div>
+  );
 }
 
 EmailCampaignsTable.propTypes = {
@@ -200,6 +213,7 @@ EmailCampaignsTable.propTypes = {
   onArchiveCampaign: PropTypes.func.isRequired,
   onEditCampaign: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  labelsOptions: PropTypes.shape().isRequired,
 };
 
 export default injectIntl(EmailCampaignsTable);

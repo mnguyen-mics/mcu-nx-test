@@ -312,9 +312,9 @@ class DisplayCampaignPage extends Component {
       });
     });
 
-    DisplayCampaignService.getGoal(campaignId).then(goals => goals.data).then(goals => {
+    DisplayCampaignService.getGoals(campaignId).then(goals => goals.data).then(goals => {
       const promises = goals.map(goal => {
-        return GoalService.getAttributionModel(goal.goal_id).then(attribution => {
+        return GoalService.getAttributionModels(goal.goal_id).then(attribution => {
           return { ...goal, attribution: attribution.data };
         });
       });

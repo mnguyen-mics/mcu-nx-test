@@ -8,7 +8,7 @@ import {
   fetchDisplayCampaignsPerformanceReport
 } from './actions';
 
-import CampaignService from '../../../services/CampaignService';
+import CampaignService from '../../../services/CampaignService.ts';
 import ReportService from '../../../services/ReportService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
@@ -61,6 +61,10 @@ function* loadDisplayCampaignsList({ payload }) {
       archived: filter.statuses.includes('ARCHIVED'),
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
+
+    if (filter.label_id.length) {
+      options.label_id = filter.label_id;
+    }
 
     const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
 

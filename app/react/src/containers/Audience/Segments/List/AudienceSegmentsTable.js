@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 import lodash from 'lodash';
 
 import {
@@ -24,6 +24,13 @@ import {
 import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
+
+const messages = defineMessages({
+  filterByLabel: {
+    id: 'audience.label.filterBy',
+    defaultMessage: 'Filter By Label'
+  }
+});
 
 class AudienceSegmentsTable extends Component {
 
@@ -209,6 +216,7 @@ class AudienceSegmentsTable extends Component {
       dataSource,
       totalAudienceSegments,
       hasAudienceSegments,
+      labels,
     } = this.props;
 
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
@@ -383,28 +391,37 @@ class AudienceSegmentsTable extends Component {
 
     const filtersOptions = [
       {
-        name: 'types',
         displayElement: <div><FormattedMessage id="TYPE" /> <Icon type="down" /></div>,
-        menuItems: {
-          handleMenuClick: (value => this.updateLocationSearch({
-            types: value.types.map(item => item.value),
-          })),
-          selectedItems: filter.types.map(type => ({ key: type, value: type })),
-          items: typeItems,
-        },
+        selectedItems: filter.types.map(type => ({ key: type, value: type })),
+        items: typeItems,
+        getKey: item => item.key,
+        display: item => item.value,
+        handleMenuClick: values =>
+          this.updateLocationSearch({
+            types: values.map(v => v.value),
+          }),
       },
     ];
 
-    const columnsDefinitions = {
-      dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
+
+    const labelsOptions = {
+      labels: this.props.labels,
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.find(filteredLabelId => filteredLabelId === label.id) ? true : false;
+      }),
+      onChange: (newLabels) => {
+        const formattedLabels = newLabels.map(label => label.id);
+        this.updateLocationSearch({ label_id: formattedLabels });
+      },
+      buttonMessage: messages.filterByLabel
     };
 
     return (hasAudienceSegments
       ? (
         <div className="mcs-table-container">
           <TableViewFilters
-            columnsDefinitions={columnsDefinitions}
+            columns={dataColumns}
+            actionsColumnsDefinition={actionColumns}
             searchOptions={searchOptions}
             dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}
@@ -412,6 +429,7 @@ class AudienceSegmentsTable extends Component {
             dataSource={dataSource}
             loading={isFetchingAudienceSegments}
             pagination={pagination}
+            labelsOptions={labelsOptions}
           />
         </div>
       )
@@ -429,7 +447,7 @@ AudienceSegmentsTable.propTypes = {
   location: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   translations: PropTypes.objectOf(PropTypes.string).isRequired,
-
+  labels: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   hasAudienceSegments: PropTypes.bool.isRequired,
   isFetchingAudienceSegments: PropTypes.bool.isRequired,
   isFetchingSegmentsStat: PropTypes.bool.isRequired,
@@ -445,7 +463,7 @@ AudienceSegmentsTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-
+  labels: state.labels.labelsApi.data,
   hasAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.hasItems,
   isFetchingAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.isFetching,
   isFetchingSegmentsStat: state.audienceSegmentsTable.performanceReportApi.isFetching,

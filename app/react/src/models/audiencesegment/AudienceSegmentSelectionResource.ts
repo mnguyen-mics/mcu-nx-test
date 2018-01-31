@@ -1,7 +1,10 @@
-export interface AudienceSegmentSelectionResource {
+export interface AudienceSegmentSelectionResource extends AudienceSegmentSelectionCreateRequest {
   id: string;
-  audience_segment_id: string;
-  exclude?: boolean;
   technical_name?: string;
-  name?: string;
+  name: string;
+}
+
+export interface AudienceSegmentSelectionCreateRequest {
+  audience_segment_id: string;
+  exclude: boolean;
 }

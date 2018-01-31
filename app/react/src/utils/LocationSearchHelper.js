@@ -2,6 +2,19 @@ import queryString from 'query-string';
 import lodash from 'lodash';
 import McsMoment from './McsMoment.ts';
 
+export const LABELS_SEARCH_SETTINGS = [{
+  paramName: 'label_id',
+  defaultValue: [],
+  deserialize: query => {
+    if (query.label_id) {
+      return query.label_id.split(',');
+    }
+    return [];
+  },
+  serialize: value => value.join(','),
+  isValid: query => !query.label_id || query.label_id.split(',').length > 0,
+}];
+
 export const PAGINATION_SEARCH_SETTINGS = [
   {
     paramName: 'currentPage',
@@ -60,6 +73,18 @@ export const DATE_SEARCH_SETTINGS = [
     serialize: value => value.raw(),
     isValid: query => query.to && query.to.length && new McsMoment(query.to).isValid(),
   }
+];
+
+export const ARCHIVED_SEARCH_SETTINGS = [
+  {
+    paramName: 'archived',
+    defaultValue: false,
+    deserialize: query => query.archived === 'true',
+    serialize: value => value.toString(),
+    isValid: query => {
+      return (query.archived === 'true' || query.archived === 'false');
+    },
+  },
 ];
 
 export const isSearchValid = (search, settings) => {

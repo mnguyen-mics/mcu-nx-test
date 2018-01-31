@@ -52,5 +52,9 @@ export default defineMessages({
   duplication: {
     id: 'display.duplication',
     defaultMessage: 'Duplicate'
+  },
+  filterByLabel: {
+    id: 'display.filterByLabel',
+    defaultMessage: 'Filter by Label'
   }
 });

@@ -9,12 +9,12 @@ import FormSelect from './FormSelect';
 
 const Option = Select.Option;
 
-interface FormTagSelectProps {
+export interface FormTagSelectProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  selectProps?: SelectProps & { options: [{ label: string, value: string }] };
+  selectProps?: SelectProps & { options: Array<{ label: string, value: string }> };
 }
 
-const TagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & WrappedFieldProps> = props => {
+const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
 
   const {
     formItemProps,
@@ -47,9 +47,10 @@ const TagSelect: React.SFC<FormTagSelectProps & FormFieldWrapperProps & WrappedF
     >
       <FormSelect
         {...selectProps}
-        input={input}
         mode={mode}
         onBlur={input.onBlur as () => any}
+        onChange={input.onChange as () => any}
+        onFocus={input.onFocus as () => any}
         value={input.value || []}
       >{optionsToDisplay}
       </FormSelect>

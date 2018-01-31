@@ -1,9 +1,12 @@
 export interface PaginatedApiParam {
-  first_result: number;
-  max_results: number;
+  first_result?: number;
+  max_results?: number;
 }
 
-export function getPaginatedApiParam(page: number = 1, pageSize: number = 500): PaginatedApiParam {
+export function getPaginatedApiParam(page: number = 1, pageSize: number = 500): {
+  first_result: number;
+  max_results: number;
+} {
   return {
     first_result: (page - 1) * pageSize,
     max_results: pageSize,

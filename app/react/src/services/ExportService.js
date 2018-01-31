@@ -133,25 +133,26 @@ const buildWorkbookSheet = data => {
  * @param extension Extension of the exported file.
  */
 const exportData = (sheets, fileName, extension) => {
-  const newExtension = extension.replace('.', '');
-  const workBook = new Workbook();
-
-  for (let i = 0; i < sheets.length; i += 1) {
-    let workbookSheet = {};
-    workbookSheet = buildWorkbookSheet(sheets[i].data);
-    // TODO rewrite export to csv
-    // if (newExtension === 'csv') {
-    //   workbookSheet = XLSX.utils.sheet_to_csv(workbookSheet); // eslint-disable-line
-    //   return new Blob([workbookSheet], { type: 'text/csv;charset=utf-8' }), `${fileName}-${i}.${newExtension}`; // eslint-disable-line
-    //   if (i + 1 === sheets.length) {
-    //     return;
-    //   }
-    // } else {
-    workBook.SheetNames.push(sheets[i].name);
-    workBook.Sheets[sheets[i].name] = workbookSheet;
-    // }
-  }
   try {
+    const newExtension = extension.replace('.', '');
+    const workBook = new Workbook();
+
+    for (let i = 0; i < sheets.length; i += 1) {
+      let workbookSheet = {};
+      workbookSheet = buildWorkbookSheet(sheets[i].data);
+      // TODO rewrite export to csv
+      // if (newExtension === 'csv') {
+      //   workbookSheet = XLSX.utils.sheet_to_csv(workbookSheet); // eslint-disable-line
+      //   return new Blob([workbookSheet], { type: 'text/csv;charset=utf-8' }), `${fileName}-${i}.${newExtension}`; // eslint-disable-line
+      //   if (i + 1 === sheets.length) {
+      //     return;
+      //   }
+      // } else {
+      workBook.SheetNames.push(sheets[i].name);
+      workBook.Sheets[sheets[i].name] = workbookSheet;
+      // }
+    }
+
     const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
     saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
   } catch (error) {
@@ -210,7 +211,6 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
     name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
     data: dataSheet,
   }];
-
   exportData(sheets, `${organisationId}_display-campaigns`, 'xlsx');
 };
 

@@ -14,6 +14,7 @@ import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
 import Card from '../../../../../components/Card/Card';
 import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
+import { Labels } from '../../../../../containers/Labels';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import {
@@ -162,10 +163,8 @@ class DisplayCampaign extends React.Component<JoinedProps> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayCampaignHeader
-              object={campaign.items}
-              translationKey="CAMPAIGN"
-            />
+            <DisplayCampaignHeader object={campaign.items} translationKey="CAMPAIGN" />
+            <Labels labellableId={campaignId} organisationId={organisationId} labellableType="DISPLAY_CAMPAIGN" />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}

@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
-import { Form, Icon, Input, Button } from 'antd';
-import Alert from 'mcs-react-alert';
+import { Form, Icon, Input, Button, Alert } from 'antd';
 import logoUrl from '../../assets/images/logo.png';
 import { sendPassword, passwordForgotReset } from '../../state/ForgotPassword/actions';
 import messages from './messages';
@@ -37,7 +36,7 @@ class ForgotPassword extends Component {
      } = this.props;
 
     const hasFieldError = this.props.form.getFieldError('email');
-    const errorMsg = !hasFieldError && hasError ? <Alert type="danger" text={<FormattedMessage {...messages.resetPasswordTitle} />} /> : null;
+    const errorMsg = !hasFieldError && hasError ? <Alert type="error" style={{ marginBottom: 24 }} message={<FormattedMessage {...messages.resetPasswordTitle} />} /> : null;
 
     return (
       <div className="mcs-reset-password-container">
