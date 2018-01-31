@@ -27,7 +27,6 @@ define(['./module'], function (module) {
 
 
         Restangular.all("plugins").getList({plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED'}).then(function (results) {
-          console.log(results)
           $scope.plugins = results;
           $scope.pluginsById = {};
           for(var i=0; i < $scope.plugins.length; i++) {
