@@ -128,11 +128,11 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   }
 
   fetchGoal = (goalId: string, options: object) => {
-    return GoalService.getGoal(goalId, options)
+    return GoalService.getGoal(goalId)
       .then(res => res.data)
       .then(res => {
         this.setState({ goalObject: { isLoading: false, item: res } });
-        return GoalService.getAttributionModel(res.id);
+        return GoalService.getAttributionModels(res.id);
       })
       .then(res => res.data)
       .then(res =>

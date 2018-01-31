@@ -35,7 +35,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
   buildNameColumn = () => {
     const { dataSource, match: { params: { organisationId } } } = this.props;
 
-    let columns: DataColumnDefinition[] = [];
+    let columns: DataColumnDefinition<Record>[] = [];
 
     if (dataSource.viewType === 'SOURCE') {
       columns = [
@@ -218,7 +218,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
     return (
       <TableView
         loading={this.props.isLoading}
-        columnsDefinitions={this.buildColumnDefinition()}
+        columns={this.buildColumnDefinition().dataColumnsDefinition}
         dataSource={uniq}
       />
     );
