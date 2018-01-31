@@ -525,13 +525,11 @@ class DisplayCampaignPage extends Component {
         return null;
       })
       .catch(error => {
-        const notifyErrorParams = errorMessage
-          ? {
-            message: errorMessage.title,
-            description: errorMessage.body,
-          }
-          : undefined;
-        notifyError(error, notifyErrorParams);
+        const errorMsg = errorMessage ? {
+          message: errorMessage.title,
+          description: errorMessage.body,
+        } : undefined;
+        notifyError(error, errorMsg);
 
         this.setState(prevState => {
           const nextState = {

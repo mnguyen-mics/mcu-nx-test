@@ -5,6 +5,18 @@ export default defineMessages({
     id: 'message.submit.saveCreative',
     defaultMessage: 'Save',
   },
+  editCreatives: {
+    id: 'message.edit.creatives',
+    defaultMessage: 'Edit Creatives',
+  },
+  multiEditCreativesSubtitle: {
+    id: 'message.edit.creatives.form.subtitle',
+    defaultMessage: 'In this section you will be able to edit the creatives you just selected : ',
+  },
+  multiEditCreativesTitle: {
+    id: 'message.edit.creatives.form.title',
+    defaultMessage: 'Multi Creative Edit',
+  },
   addCreative: {
     id: 'message.add.saveCreative',
     defaultMessage: 'Add',

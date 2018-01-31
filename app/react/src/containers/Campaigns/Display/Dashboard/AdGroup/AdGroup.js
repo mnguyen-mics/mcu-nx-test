@@ -6,7 +6,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { Button, Layout } from 'antd';
 
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader.tsx';
-import AdGroupAdTable from '../Common/DisplayCampaignAdTable';
+import AdGroupAdTable from '../Common/DisplayCampaignAdTable.tsx';
 import AdGroupsDashboard from './AdGroupsDashboard';
 import AdGroupActionbar from './AdGroupActionbar';
 import { Card } from '../../../../../components/Card/index.ts';

@@ -37,6 +37,8 @@ interface DisplayCampaignAdGroupTableProps {
     selectedRowKeys: string[];
     allRowsAreSelected: boolean;
     totalAdGroups: number;
+    selectAllItemIds: () => void;
+    unselectAllItemIds: () => void;
     onChange: (selectedRowKeys: string[]) => void;
   };
 }

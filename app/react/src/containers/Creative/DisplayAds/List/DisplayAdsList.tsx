@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {  InjectedIntlProps } from 'react-intl';
+import {  InjectedIntlProps, injectIntl } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import { RouteComponentProps } from 'react-router';
@@ -302,6 +302,7 @@ const mapDispatchToProps = {
 
 export default compose<JoinedProps, DisplayAdsListProps>(
   withRouter,
+  injectIntl,
   connect(
     mapStateToProps, mapDispatchToProps,
   ),

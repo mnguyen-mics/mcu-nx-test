@@ -105,6 +105,14 @@ export default defineMessages({
     id: 'display.adGroup.archiveAdGroupsMessage',
     defaultMessage: 'Are you sure to archive all the selected Ad Groups ?',
   },
+  archiveAdsModalTitle: {
+    id: 'display.adGroup.archiveAdsTitle',
+    defaultMessage: 'Archive Creatives',
+  },
+  archiveAdsModalMessage: {
+    id: 'display.adGroup.archiveAdsMessage',
+    defaultMessage: 'Are you sure to archive all the selected Creatives ?',
+  },
   display: {
     id: 'display.campaign.actionBar.display',
     defaultMessage: 'Display',
@@ -115,7 +123,8 @@ export default defineMessages({
   },
   notificationAdGroupActivationError: {
     id: 'display.notifications.adgroup.activation.error',
-    defaultMessage: 'There was an error activating your Ad Group {name}... Please try again...',
+    defaultMessage:
+      'There was an error activating your Ad Group {name}... Please try again...',
   },
   notificationAdGroupPauseSuccess: {
     id: 'display.notifications.adgroup.pause.success',
@@ -123,7 +132,8 @@ export default defineMessages({
   },
   notificationAdGroupPauseError: {
     id: 'display.notifications.adgroup.pause.error',
-    defaultMessage: 'There was an error pausing your Ad Group {name}... Please try again...',
+    defaultMessage:
+      'There was an error pausing your Ad Group {name}... Please try again...',
   },
   notificationAdActivationSuccess: {
     id: 'display.notifications.ad.activation.success',
@@ -131,7 +141,8 @@ export default defineMessages({
   },
   notificationAdActivationError: {
     id: 'display.notifications.ad.activation.error',
-    defaultMessage: 'There was an error activating your Ad {name}... Please try again...',
+    defaultMessage:
+      'There was an error activating your Ad {name}... Please try again...',
   },
   notificationAdPauseSuccess: {
     id: 'display.notifications.ad.pause.success',
@@ -139,7 +150,8 @@ export default defineMessages({
   },
   notificationAdPauseError: {
     id: 'display.notifications.ad.pause.error',
-    defaultMessage: 'There was an error pausing your Ad {name}... Please try again...',
+    defaultMessage:
+      'There was an error pausing your Ad {name}... Please try again...',
   },
   adAuditSuccess: {
     id: 'display.ad.audit.success',
@@ -159,7 +171,8 @@ export default defineMessages({
   },
   notificationErrorGeneric: {
     id: 'notification.success.error.generic',
-    defaultMessage: 'There was an error, please contact the administrator with the following error id: {errorId}',
+    defaultMessage:
+      'There was an error, please contact the administrator with the following error id: {errorId}',
   },
   undo: {
     id: 'notification.button.undo',
@@ -227,7 +240,8 @@ export default defineMessages({
   },
   noGoalStatAvailable: {
     id: 'campaign.goal.chart.noStats',
-    defaultMessage: 'There is no conversion associated to this attribution model and campaign on the given period.',
+    defaultMessage:
+      'There is no conversion associated to this attribution model and campaign on the given period.',
   },
   noStatAvailable: {
     id: 'campaign.stat.chart.noStats',
@@ -237,4 +251,21 @@ export default defineMessages({
     id: 'campaign.display.dashboard.duplicate',
     defaultMessage: 'Duplicate',
   },
-}) as { [key: string]: { id: string, defaultMessage: string } };
+  creativeModalConfirmArchivedTitle: {
+    id: 'creative.modal.confirm.archived.title',
+    defaultMessage: 'Are you sure to archive this creative ?',
+  },
+  creativeModalConfirmArchivedContent: {
+    id: 'creative.modal.confirm.archived.content',
+    defaultMessage:
+      "You will still be able to get back your creative in the 'Archive' category.",
+  },
+  creativeModalConfirmArchivedOk: {
+    id: 'creative.modal.confirm.ok',
+    defaultMessage: 'Archive Now',
+  },
+  cancelText: {
+    id: 'creative.modal.confirm.cancel',
+    defaultMessage: 'Cancel',
+  },
+}) as { [key: string]: { id: string; defaultMessage: string } };

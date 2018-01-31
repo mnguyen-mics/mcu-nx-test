@@ -12,7 +12,7 @@ export const DISPLAY_CREATIVE_FORM = 'displayCreativeForm';
 export interface DisplayCreativeFormData {
   creative: DisplayAdShape;
   rendererPlugin: PluginInterface;
-  properties:  { [technicalName: string]: PropertyResourceShape }
+  properties: { [technicalName: string]: PropertyResourceShape };
 }
 
 export interface EditDisplayCreativeRouteMatchParams {
@@ -25,3 +25,25 @@ export function isDisplayAdResource(
 ): creative is DisplayAdResource {
   return (creative as DisplayAdResource).id !== undefined;
 }
+
+export type operationType = 'equals';
+
+export interface CreativesInfosFieldModel {
+  creativeProperty: keyof DisplayAdResource;
+  action?: operationType;
+  value?: string;
+}
+
+const operationMap = {
+  equals: (targetValue: string, propertyValue?: string) => targetValue
+};
+
+const operation = (
+  chosenOperation: operationType,
+  propertyValue: string,
+  targetValue: string,
+) => {
+  return operationMap[chosenOperation](propertyValue, targetValue);
+};
+
+export default operation;
