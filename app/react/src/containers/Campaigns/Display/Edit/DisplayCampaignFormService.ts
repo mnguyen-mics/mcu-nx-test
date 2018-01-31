@@ -3,7 +3,6 @@ import { omit } from 'lodash';
 import {
   extractDataList,
   extractData,
-  DataResponse,
 } from '../../../../services/ApiService';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import {
@@ -128,32 +127,35 @@ const DisplayCampaignFormService = {
   },
 
   saveCampaigns(campaignIds: string[], formData: EditCampaignsFormData) {
-    const promises: Array<Promise<DataResponse<DisplayCampaignResource>>> = [];
+    const tasks: Task[] = [];
     campaignIds.forEach(campaignId => {
-      DisplayCampaignService.getCampaignDisplay(campaignId)
-        .then(apiRes => apiRes.data)
-        .then((campaignData: any) => {
-          const updatedData = formData.fields.reduce(
-            (acc, field) => {
-              const campaignProperty: keyof DisplayCampaignResource =
-                field.campaignProperty;
-              return {
-                ...acc,
-                [field.campaignProperty]: operation(
-                  field.action,
-                  campaignData[campaignProperty],
-                  parseInt(field.value, 10),
-                ),
-              };
-            },
-            { type: 'DISPLAY' },
-          );
-          promises.push(
-            DisplayCampaignService.updateCampaign(campaignId, updatedData),
-          );
-        });
+      tasks.push(() => {
+        return DisplayCampaignService.getCampaignDisplay(campaignId)
+          .then(apiRes => apiRes.data)
+          .then((campaignData: any) => {
+            const updatedData = formData.fields.reduce(
+              (acc, field) => {
+                const campaignProperty: keyof DisplayCampaignResource =
+                  field.campaignProperty;
+                return {
+                  ...acc,
+                  [field.campaignProperty]: operation(
+                    field.action,
+                    campaignData[campaignProperty],
+                    parseInt(field.value, 10),
+                  ),
+                };
+              },
+              { type: 'DISPLAY' },
+            );
+            return DisplayCampaignService.updateCampaign(
+              campaignId,
+              updatedData,
+            );
+          });
+      });
     });
-    return Promise.all(promises);
+    return executeTasksInSequence(tasks);
   },
 };
 

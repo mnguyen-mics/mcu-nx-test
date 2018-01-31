@@ -126,6 +126,7 @@ class DisplayCampaignsPage extends React.Component<
         this.props.closeNextDrawer();
         this.setState({
           selectedRowKeys: [],
+          loading: false,
         });
         message.success(intl.formatMessage(messages.campaignsSaved));
       })
@@ -133,6 +134,7 @@ class DisplayCampaignsPage extends React.Component<
         this.props.closeNextDrawer();
         this.setState({
           selectedRowKeys: [],
+          loading: false,
         });
         notifyError(err);
       });
