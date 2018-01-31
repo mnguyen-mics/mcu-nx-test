@@ -3,28 +3,28 @@ import Slide from '../Transition/Slide';
 import { FormattedMessage } from 'react-intl';
 import { Button, Alert } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
+import { TableRowSelection } from 'antd/lib/table';
 
-interface SelectionNotifyerProps {
-  rowSelection?: {
-    selectedRowKeys: string[];
-    unselectAllItemIds: () => void;
-    selectAllItemIds: (selected: boolean) => void;
+interface SelectionNotifyerProps<T> {
+  rowSelection?: TableRowSelection<T> & {
+    unselectAllItemIds?: () => void;
+    selectAllItemIds?: (selected: boolean) => void;
   };
   pagination?: PaginationProps | false;
 }
 
-class SelectionNotifyer extends React.Component<SelectionNotifyerProps> {
+class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
   render() {
     const { rowSelection, pagination } = this.props;
     let content: JSX.Element = <span />;
 
     const handleOnClick = () => {
-      if (rowSelection) {
+      if (rowSelection && rowSelection.selectAllItemIds) {
         rowSelection.selectAllItemIds(true);
       }
     };
 
-    if (rowSelection && pagination) {
+    if (rowSelection && rowSelection.selectedRowKeys && pagination) {
       if (rowSelection.selectedRowKeys.length === pagination.total) {
         content = (
           <div>
@@ -70,6 +70,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps> {
 
     const toShow = !!(
       rowSelection &&
+      rowSelection.selectedRowKeys &&
       pagination &&
       rowSelection.selectedRowKeys.length !== 0 &&
       (rowSelection.selectedRowKeys.length === pagination.total ||

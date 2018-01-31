@@ -34,7 +34,7 @@ import EditAdGroupsForm, {
   EditAdGroupsFormProps,
   EditAdGroupsFormData,
 } from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
-import Slider from '../../../../../components/TableView/Slider';
+import Slide from '../../../../../components/Transition/Slide';
 import { McsIcons } from '../../../../../components/index';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import operation from '../../Edit/AdGroup/domain';
@@ -336,7 +336,7 @@ class DisplayCampaign extends React.Component<
           <FormattedMessage {...messages.newAdGroups} />
         </Button>
         {this.renderDatePicker()}
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={
@@ -361,7 +361,7 @@ class DisplayCampaign extends React.Component<
             </p>
           </Modal>
         ) : null}
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={
@@ -375,7 +375,7 @@ class DisplayCampaign extends React.Component<
           }
         />
         {(allAdGroupsActivated || allAdGroupsPaused) && (
-          <Slider
+          <Slide
             toShow={hasSelected}
             horizontal={true}
             content={buildActionElement()}

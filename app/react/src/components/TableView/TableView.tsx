@@ -44,7 +44,7 @@ export interface TableViewProps<T> extends TableProps<T> {
   visibilitySelectedColumns?: Array<DataColumnDefinition<T>>;
   actionsColumnsDefinition?: Array<ActionsColumnDefinition<T>>;
   rowSelection?: TableRowSelection<T> & {
-    selectedRowKeys: string[];
+    selectedRowKeys?: string[];
     selectAllItemIds?: () => void;
     unselectAllItemIds?: () => void;
   };

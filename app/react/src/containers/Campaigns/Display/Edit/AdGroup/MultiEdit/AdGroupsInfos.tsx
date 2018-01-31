@@ -191,7 +191,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
           fields.getAll().length <= editableAdGroupProperties.length - 1 && (
             <Row>
               <div onClick={adField}>
-                <Col span={22} offset={1} className="gutter-row AddFieldButton">
+                <Col span={22} offset={1} className="gutter-row add-field-button">
                   <p>
                     <McsIcons type="plus" />
                     Add Field
