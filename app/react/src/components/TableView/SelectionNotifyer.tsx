@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Slide from '../Transition/Slide';
 import { FormattedMessage } from 'react-intl';
-import { Button, Alert } from 'antd';
+import { Alert } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { TableRowSelection } from 'antd/lib/table';
+import { ButtonStyleless } from '../index';
 
 interface SelectionNotifyerProps<T> {
   rowSelection?: TableRowSelection<T> & {
@@ -35,12 +36,15 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
                 paginationTotal: pagination.total,
               }}
             />
-            <Button onClick={rowSelection.unselectAllItemIds}>
+            <ButtonStyleless
+              onClick={rowSelection.unselectAllItemIds}
+              className="selected-rows-btn"
+            >
               <FormattedMessage
                 id="display.items.unselectall.buttonText"
                 defaultMessage={`Click here to unselect all the items.`}
               />
-            </Button>
+            </ButtonStyleless>
           </div>
         );
       } else if (rowSelection.selectedRowKeys.length === pagination.pageSize) {
@@ -53,12 +57,15 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
                 paginationPageSize: pagination.pageSize,
               }}
             />
-            <Button onClick={handleOnClick}>
+            <ButtonStyleless
+              onClick={handleOnClick}
+              className="selected-rows-btn"
+            >
               <FormattedMessage
                 id="display.items.selectall.buttonText"
                 defaultMessage={`Click here to select all the items.`}
               />
-            </Button>
+            </ButtonStyleless>
           </div>
         );
       } else {
@@ -66,7 +73,9 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
       }
     }
 
-    const alert = <Alert message={content} type="warning" />;
+    const alert = (
+      <Alert message={content} type="warning" className="selected-rows-alert" />
+    );
 
     const toShow = !!(
       rowSelection &&
