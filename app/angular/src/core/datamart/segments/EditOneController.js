@@ -132,10 +132,10 @@ define(['./module'], function (module) {
             }
 
             if($scope.tagActivations.length) {
-              for(var i=0; i < $scope.tagActivations.length; i++) {
-                var tagActivation = $scope.tagActivations[i];
+              for(var a=0; a < $scope.tagActivations.length; a++) {
+                var tagActivation = $scope.tagActivations[a];
                 var pt = tagActivation.save();
-                promises.push(updateActivationStatusIfNeeded(pt, activation));
+                promises.push(updateActivationStatusIfNeeded(pt, tagActivation));
               }
             }
 
