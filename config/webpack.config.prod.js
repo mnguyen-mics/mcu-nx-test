@@ -27,7 +27,7 @@ const prodConfig = {
       inject: true,
       template: paths.appDistHtml,
       filename: '../index.html',
-      excludeAssets: [/plateforme.*\/style.*.(css|js)/]
+      excludeAssets: [/(plateforme|app).*\/style.*.(css|js)/] // let's find a better way to handle style when we sign a new white label
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
