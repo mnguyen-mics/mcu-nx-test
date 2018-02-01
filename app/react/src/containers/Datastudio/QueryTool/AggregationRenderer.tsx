@@ -8,6 +8,7 @@ import {
 } from '../../../models/datamart/graphdb/OTQLResult';
 import ButtonStyleless from '../../../components/ButtonStyleless';
 import { FormattedMessage } from 'react-intl';
+import { McsIcon } from '../../../components/index';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -63,10 +64,16 @@ export default class AggregationRenderer extends React.Component<Props, State> {
   };
 
   getBuckets = (buckets: OTQLBuckets) => {
-    if (buckets.buckets.length === 0) return null;
+    if (buckets.buckets.length === 0)
+      return (
+        <FormattedMessage
+          id="otql-result-renderer-aggrations-no-result"
+          defaultMessage="No Result"
+        />
+      );
 
     const goToBucket = (bucket: OTQLBucket) => {
-      if (bucket.aggregations) {
+      if (bucket.aggregations && bucketHasData(bucket)) {
         const aggregations = bucket.aggregations;
         this.setState(prevState => ({
           aggregationsPath: [
@@ -77,9 +84,23 @@ export default class AggregationRenderer extends React.Component<Props, State> {
         }));
       }
     };
+
     const handleOnRow = (record: OTQLBucket) => ({
       onClick: () => goToBucket(record),
     });
+
+    const bucketHasData = (record: OTQLBucket) => {
+      return !!(
+        record.aggregations &&
+        (record.aggregations.buckets.find(b => b.buckets.length > 0) ||
+          record.aggregations.metrics.length > 0)
+      );
+    };
+
+    const getRowClassName = (record: OTQLBucket) => {
+      if ( bucketHasData(record) ) return 'mcs-table-cursor';
+      return '';
+    }
 
     return (
       <BucketTable
@@ -94,8 +115,21 @@ export default class AggregationRenderer extends React.Component<Props, State> {
             dataIndex: 'count',
             sorter: (a, b) => a.count - b.count,
           },
+          {
+            render: (text, record) => {
+              if (bucketHasData(record)) {
+                return (
+                  <div className="float-right">
+                    <McsIcon type="chevron-right" />
+                  </div>
+                );
+              }
+              return null;
+            },
+          },
         ]}
         onRow={handleOnRow}
+        rowClassName={getRowClassName}
         dataSource={buckets.buckets}
         pagination={{
           size: 'small',
@@ -206,7 +240,12 @@ export default class AggregationRenderer extends React.Component<Props, State> {
         <Row style={{ marginBottom: 14 }}>
           {showSelect && (
             <div>
-              <div className="m-r-10" style={{ display: 'inline-block' }}><FormattedMessage id='otql-result-renderer-aggrations-viewing' defaultMessage='Viewing :' /></div>
+              <div className="m-r-10" style={{ display: 'inline-block' }}>
+                <FormattedMessage
+                  id="otql-result-renderer-aggrations-viewing"
+                  defaultMessage="Viewing :"
+                />
+              </div>
               <Select
                 value={selectedView}
                 onSelect={handleOnSelect}
