@@ -1,3 +1,4 @@
+import { AdGroupResource } from './../../../../../models/campaign/display/AdGroupResource';
 import { omit } from 'lodash';
 import {
   extractDataList,
@@ -25,8 +26,10 @@ import {
   executeTasksInSequence,
 } from '../../../../../utils/FormHelper';
 import DisplayCreativeFormService from '../../../../Creative/DisplayAds/Edit/DisplayCreativeFormService';
+import { EditAdGroupsFormData } from './MultiEdit/EditAdGroupsForm';
+import operation from '../../Edit/AdGroup/domain';
 
-type TAdGroupId = string;
+type AdGroupId = string;
 
 const AdGroupFormService = {
   loadAdGroup(
@@ -38,7 +41,11 @@ const AdGroupFormService = {
       DisplayCampaignService.getAdGroup(displayCampaignId, adGroupId).then(
         extractData,
       ),
-      AdGroupFormService.loadAdGroupDependencies(displayCampaignId, adGroupId, duplicate),
+      AdGroupFormService.loadAdGroupDependencies(
+        displayCampaignId,
+        adGroupId,
+        duplicate,
+      ),
     ]).then(([adGroup, dependencies]) => {
       // bid optimizer is treated as a FieldArray
       const bidOptimizerFields: BidOptimizerFieldModel[] = [];
@@ -119,7 +126,7 @@ const AdGroupFormService = {
     displayCampaignId: string,
     formData: AdGroupFormData,
     initialFormData: AdGroupFormData = INITIAL_AD_GROUP_FORM_DATA,
-  ): Promise<TAdGroupId> {
+  ): Promise<AdGroupId> {
     updateBidOptimizer(formData);
 
     let createOrUpdatePromise;
@@ -171,6 +178,40 @@ const AdGroupFormService = {
 
       return executeTasksInSequence(tasks).then(() => adGroupId);
     });
+  },
+
+  saveAdGroups(
+    campaignId: string,
+    adGroupIds: string[],
+    formData: EditAdGroupsFormData,
+  ) {
+    const tasks: Task[] = [];
+    adGroupIds.forEach(adGroupId => {
+      tasks.push(() => {
+        return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
+          .then(apiRes => apiRes.data)
+          .then((adGroupData: any) => {
+            const updatedData = formData.fields.reduce((acc, field) => {
+              const adGroupProperty: keyof AdGroupResource =
+                field.adGroupProperty;
+              return {
+                ...acc,
+                [field.adGroupProperty]: operation(
+                  field.action,
+                  adGroupData[adGroupProperty],
+                  field.value,
+                ),
+              };
+            }, {});
+            return DisplayCampaignService.updateAdGroup(
+              campaignId,
+              adGroupId,
+              updatedData,
+            );
+          });
+      });
+    });
+    return executeTasksInSequence(tasks);
   },
 };
 

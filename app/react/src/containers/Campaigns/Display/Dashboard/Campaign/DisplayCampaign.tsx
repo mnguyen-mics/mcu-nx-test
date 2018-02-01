@@ -35,11 +35,11 @@ import EditAdGroupsForm, {
   EditAdGroupsFormData,
 } from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
 import Slide from '../../../../../components/Transition/Slide';
-import { McsIcons } from '../../../../../components/index';
+import { McsIcon } from '../../../../../components/index';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import operation from '../../Edit/AdGroup/domain';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import AdGroupFormService from '../../Edit/AdGroup/AdGroupFormService';
 
 const { Content } = Layout;
 const DisplayCampaignAdTableJS = DisplayCampaignAdTable as any;
@@ -69,7 +69,7 @@ interface DisplayCampaignProps {
     body: Partial<DisplayAdResource>,
     successMessage: UpdateMessage,
     errorMessage: UpdateMessage,
-    undoBody: Partial<DisplayAdResource>
+    undoBody: Partial<DisplayAdResource>,
   ) => void;
   updateAdGroup: (
     adGroupId: string,
@@ -160,40 +160,26 @@ class DisplayCampaign extends React.Component<
     const {
       intl: { formatMessage },
       match: { params: { campaignId } },
-      updateAdGroup,
     } = this.props;
 
     const { selectedRowKeys } = this.state;
-    selectedRowKeys.map(adGroupId => {
-      DisplayCampaignService.getAdGroup(campaignId, adGroupId)
-        .then(apiRes => apiRes.data)
-        .then((adGroupData: any) => {
-          const updatedData = formData.fields.reduce((acc, field) => {
-            const campaignProperty: keyof AdGroupResource =
-              field.adGroupProperty;
-            return {
-              ...acc,
-              [field.adGroupProperty]: operation(
-                field.action,
-                adGroupData[campaignProperty],
-                field.value,
-              ),
-            };
-          }, {});
-          updateAdGroup(adGroupId, updatedData);
-        });
-    });
 
-    this.setState({
-      selectedRowKeys: [],
+    return AdGroupFormService.saveAdGroups(
+      campaignId,
+      selectedRowKeys,
+      formData,
+    ).then(() => {
+      this.setState({
+        selectedRowKeys: [],
+      });
+      this.props.closeNextDrawer();
+      message.success(
+        formatMessage({
+          id: 'edit.campaigns.success.msg',
+          defaultMessage: 'Campaigns successfully saved',
+        }),
+      );
     });
-    this.props.closeNextDrawer();
-    message.success(
-      formatMessage({
-        id: 'edit.campaigns.success.msg',
-        defaultMessage: 'Campaigns successfully saved',
-      }),
-    );
   };
 
   handleOk = () => {
@@ -219,7 +205,7 @@ class DisplayCampaign extends React.Component<
   openEditAdGroupsDrawer = () => {
     const additionalProps = {
       close: this.props.closeNextDrawer,
-      onSubmit: this.saveAdGroups,
+      onSave: this.saveAdGroups,
       selectedRowKeys: this.state.selectedRowKeys,
     };
     const options = {
@@ -305,7 +291,7 @@ class DisplayCampaign extends React.Component<
             type="primary"
             onClick={onClickElement('PAUSED')}
           >
-            <McsIcons type="pause" />
+            <McsIcon type="pause" />
             <FormattedMessage {...messages.pauseAdGroups} />
           </Button>
         );
@@ -316,7 +302,7 @@ class DisplayCampaign extends React.Component<
             type="primary"
             onClick={onClickElement('ACTIVE')}
           >
-            <McsIcons type="play" />
+            <McsIcon type="play" />
             <FormattedMessage {...messages.activateAdGroups} />
           </Button>
         );
@@ -339,7 +325,7 @@ class DisplayCampaign extends React.Component<
               className="m-r-10 button-slider"
               onClick={this.archiveAdGroups}
             >
-              <McsIcons type="delete" />
+              <McsIcon type="delete" />
               <FormattedMessage {...messages.archiveAdGroup} />
             </Button>
           }
@@ -364,7 +350,7 @@ class DisplayCampaign extends React.Component<
               className="m-r-10 button-slider"
               onClick={this.openEditAdGroupsDrawer}
             >
-              <McsIcons type="pen" />
+              <McsIcon type="pen" />
               <FormattedMessage {...messages.editAdGroup} />
             </Button>
           }
@@ -400,10 +386,12 @@ class DisplayCampaign extends React.Component<
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <CampaignDashboardHeader
-              campaign={campaign.items}
+            <CampaignDashboardHeader campaign={campaign.items} />
+            <Labels
+              labellableId={campaignId}
+              organisationId={organisationId}
+              labellableType="DISPLAY_CAMPAIGN"
             />
-            <Labels labellableId={campaignId} organisationId={organisationId} labellableType="DISPLAY_CAMPAIGN" />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}

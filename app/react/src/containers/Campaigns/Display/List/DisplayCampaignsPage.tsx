@@ -36,9 +36,7 @@ interface DisplayCampaignsPageProps {
 
 interface DisplayCampaignsPageState {
   selectedRowKeys: string[];
-  // selected: boolean;
   visible: boolean;
-  loading: boolean;
 }
 
 interface MapStateProps {
@@ -60,7 +58,6 @@ class DisplayCampaignsPage extends React.Component<
     this.state = {
       selectedRowKeys: [],
       visible: false,
-      loading: false,
     };
   }
 
@@ -116,16 +113,11 @@ class DisplayCampaignsPage extends React.Component<
   editCampaigns = (formData: EditCampaignsFormData) => {
     const { selectedRowKeys } = this.state;
     const { notifyError, intl } = this.props;
-    this.setState({
-      loading: true,
-    });
-
-    DisplayCampaignFormService.saveCampaigns(selectedRowKeys, formData)
+    return DisplayCampaignFormService.saveCampaigns(selectedRowKeys, formData)
       .then(() => {
         this.props.closeNextDrawer();
         this.setState({
           selectedRowKeys: [],
-          loading: false,
         });
         message.success(intl.formatMessage(messages.campaignsSaved));
       })
@@ -133,7 +125,6 @@ class DisplayCampaignsPage extends React.Component<
         this.props.closeNextDrawer();
         this.setState({
           selectedRowKeys: [],
-          loading: false,
         });
         notifyError(err);
       });
@@ -142,7 +133,7 @@ class DisplayCampaignsPage extends React.Component<
   openEditCampaignsDrawer = () => {
     const additionalProps = {
       close: this.props.closeNextDrawer,
-      onSubmit: this.editCampaigns,
+      onSave: this.editCampaigns,
       selectedRowKeys: this.state.selectedRowKeys,
     };
     const options = {

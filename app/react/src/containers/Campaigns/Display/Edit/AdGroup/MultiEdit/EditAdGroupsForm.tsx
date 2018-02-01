@@ -21,6 +21,7 @@ import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { AdGroupsInfosFieldModel } from '../domain';
+import Loading from '../../../../../../components/Loading';
 
 const FORM_ID = 'editAdGroupsForm';
 
@@ -34,11 +35,13 @@ export interface EditAdGroupsFormData {
 
 interface EditAdGroupsFormState {
   AdGroupNames: string[];
+  loading: boolean;
 }
 
 export interface EditAdGroupsFormProps {
   close: () => void;
   selectedRowKeys: string[];
+  onSave: (formData: EditAdGroupsFormData) => Promise<any>;
 }
 
 type JoinedProps = EditAdGroupsFormProps &
@@ -58,6 +61,7 @@ class EditAdGroupsForm extends React.Component<
     super(props);
     this.state = {
       AdGroupNames: [],
+      loading: false,
     };
   }
 
@@ -91,6 +95,17 @@ class EditAdGroupsForm extends React.Component<
     });
   };
 
+  save = (formData: EditAdGroupsFormData) => {
+    this.setState({
+      loading: true,
+    });
+    this.props.onSave(formData).then(() => {
+      this.setState({
+        loading: false,
+      });
+    });
+  }
+
   render() {
     const { handleSubmit, close } = this.props;
 
@@ -110,13 +125,17 @@ class EditAdGroupsForm extends React.Component<
       defaultMessage: `In this section you will be able to edit ad groups you just selected : `,
     };
 
+    if (this.state.loading) {
+      return <Loading className="loading-full-screen" />;
+    }
+
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form
             className="edit-layout ant-layout edit-adgroups-form"
-            onSubmit={handleSubmit as any}
+            onSubmit={handleSubmit(this.save)}
           >
             <Content
               id={FORM_ID}

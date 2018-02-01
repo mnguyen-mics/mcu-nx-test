@@ -19,6 +19,7 @@ import FormLayoutActionbar, {
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
+import Loading from '../../../../../../components/Loading';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { CampaignsInfosFieldModel } from '../domain';
 import { Col } from 'antd/lib/grid';
@@ -35,17 +36,19 @@ export interface EditCampaignsFormData {
 
 interface EditCampaignsFormState {
   campaignNames: string[];
+  loading :boolean;
 }
 
 export interface EditCampaignsFormProps {
   close: () => void;
   selectedRowKeys: string[];
+  onSave: (formData: EditCampaignsFormData) => Promise<any>;
 }
 
 type JoinedProps = EditCampaignsFormProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }> &
-  InjectedFormProps<EditCampaignsFormData>;
+  RouteComponentProps<{ organisationId: string }>
+  & InjectedFormProps<EditCampaignsFormData>;
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -59,6 +62,7 @@ class EditCampaignsForm extends React.Component<
     super(props);
     this.state = {
       campaignNames: [],
+      loading: false,
     };
   }
 
@@ -91,6 +95,17 @@ class EditCampaignsForm extends React.Component<
     });
   };
 
+  save = (formData: EditCampaignsFormData) => {
+    this.setState({
+      loading: true,
+    });
+    this.props.onSave(formData).then(() => {
+      this.setState({
+        loading: false,
+      });
+    });
+  }
+
   render() {
     const { handleSubmit, close } = this.props;
 
@@ -105,13 +120,17 @@ class EditCampaignsForm extends React.Component<
       onClose: close,
     };
 
+    if (this.state.loading) {
+      return <Loading className="loading-full-screen" />;
+    }
+
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form
             className="edit-layout ant-layout edit-campaigns-form"
-            onSubmit={handleSubmit as any}
+            onSubmit={handleSubmit(this.save)}
           >
             <Content
               id={FORM_ID}
