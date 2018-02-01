@@ -153,7 +153,7 @@ define(['./module'], function (module) {
         }).then(function success(audienceSegment){
           $log.info("success");
           var organisationId = Session.getCurrentWorkspace().organisation_id;
-          $location.path("/v2/o/"+ organisationId +"/audience/segments/" + audienceSegment.id);
+          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/segments/" + audienceSegment.type + "/" + audienceSegment.id + "/report");
         }, function failure(){
           $scope.error = 'There was an error while saving segment';
           $log.info("failure");
