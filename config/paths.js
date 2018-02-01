@@ -11,6 +11,7 @@ module.exports = {
   appStyle: resolve('app/react/src/styles/index.scss'),
   appStyleLess: resolve('app/react/src/styles/index.less'),
   appGravityStyleLess: resolve('app/react/src/styles/plateforme.alliancegravity.com/index-gravity.less'),
+  appTeamjoinStyleLess: resolve('app/react/src/styles/app.teamjoin.fr/index-teamjoin.less'),
   appNodeModules: resolve('node_modules'),
   appPath: resolve('app'),
   appDistPath: resolve('dist/react'),
