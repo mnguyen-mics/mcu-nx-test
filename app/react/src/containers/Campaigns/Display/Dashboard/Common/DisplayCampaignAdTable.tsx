@@ -27,7 +27,7 @@ interface DisplayCampaignAdTableProps {
     errorMessage: UpdateMessage,
     undoBody: Partial<AdResource>,
   ) => void;
-  rowSelection: {
+  rowSelection?: {
     selectedRowKeys: string[];
     allRowsAreSelected: boolean;
     totalAds: number;

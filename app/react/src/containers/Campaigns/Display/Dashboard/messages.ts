@@ -97,6 +97,15 @@ export default defineMessages({
     id: 'display.adGroup.actionBar.archiveAdGroup',
     defaultMessage: 'Archive',
   },
+  archiveAdGroupModalTitle: {
+    id: 'display.adGroup.archiveAdGroupTitle',
+    defaultMessage: 'Are you sure you want to archive this Ad Group ?',
+  },
+  archiveAdGroupModalMessage: {
+    id: 'display.adGroup.archiveAdGroupMessage',
+    defaultMessage:
+      "By archiving this Ad Group all its activities will be suspended. You'll be able to recover it from the archived ad Group filter.",
+  },
   archiveAdGroupsModalTitle: {
     id: 'display.adGroup.archiveAdGroupsTitle',
     defaultMessage: 'Archive Ad Groups',
