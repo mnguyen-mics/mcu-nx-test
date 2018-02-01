@@ -61,6 +61,7 @@ interface AdCardProps extends CardProps {
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdResource>,
   ) => void;
+  additionalButtons?: React.ReactNode;
 }
 
 interface MapStateProps {
@@ -238,7 +239,14 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
   };
 
   render() {
-    const { title, isFetching, isFetchingStat, dataSet, updateAd } = this.props;
+    const {
+      title,
+      isFetching,
+      isFetchingStat,
+      dataSet,
+      updateAd,
+      additionalButtons,
+    } = this.props;
 
     const {
       selectedRowKeys,
@@ -260,7 +268,10 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
 
     const adButtons: JSX.Element = (
       <span>
+        {additionalButtons}
+
         {this.renderDatePicker()}
+
         {hasAdsSelected ? (
           <Modal
             title={<FormattedMessage {...messages.archiveAdsModalTitle} />}

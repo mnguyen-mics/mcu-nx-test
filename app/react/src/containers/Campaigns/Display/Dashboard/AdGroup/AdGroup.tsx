@@ -6,20 +6,10 @@ import { Button, Layout } from 'antd';
 import { compose } from 'recompose';
 
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
-import AdGroupAdTable from '../Common/DisplayCampaignAdTable';
+import AdCard from '../Campaign/AdCard';
 import AdGroupsDashboard from './AdGroupsDashboard';
 import AdGroupActionbar from './AdGroupActionbar';
-import { Card } from '../../../../../components/Card/index';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
-
-import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
 import {
   AdInfoResource,
   DisplayCampaignInfoResource,
@@ -74,43 +64,6 @@ type JoinedProps = AdGroupProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class AdGroup extends React.Component<JoinedProps> {
-  updateLocationSearch(params: McsDateRangeValue) {
-    const {
-      history,
-      location: { search: currentSearch, pathname },
-    } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      ),
-    };
-
-    history.push(nextLocation);
-  }
-
-  renderDatePicker() {
-    const { history: { location: { search } } } = this.props;
-
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-
-    const values = {
-      from: filter.from,
-      to: filter.to,
-    };
-
-    const onChange = (newValues: McsDateRangeValue) =>
-      this.updateLocationSearch({
-        from: newValues.from,
-        to: newValues.to,
-      });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
-  }
-
   archiveAdGroup = () => {
     //
   };
@@ -134,7 +87,6 @@ class AdGroup extends React.Component<JoinedProps> {
             <FormattedMessage {...messages.newCreatives} />
           </Button>
         </Link>
-        {this.renderDatePicker()}
       </span>
     );
 
@@ -163,17 +115,14 @@ class AdGroup extends React.Component<JoinedProps> {
             }
             overallStat={dashboardPerformance.overallPerformance.items}
           />
-          <Card
+          <AdCard
             title={intl.formatMessage(messages.creatives)}
-            buttons={adButtons}
-          >
-            <AdGroupAdTable
-              dataSet={ads.items}
-              isFetching={ads.isLoadingList}
-              isFetchingStat={ads.isLoadingPerf}
-              updateAd={updateAd}
-            />
-          </Card>
+            dataSet={ads.items}
+            isFetching={ads.isLoadingList}
+            isFetchingStat={ads.isLoadingPerf}
+            updateAd={updateAd}
+            additionalButtons={adButtons}
+          />
         </Content>
       </div>
     );
