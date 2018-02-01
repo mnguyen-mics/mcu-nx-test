@@ -94,7 +94,7 @@ class ActivityCard extends Component {
     const identif = {
       ...identifiers,
     };
-    return userAgentId ? identif.items.USER_AGENT.find(element => {
+    return userAgentId ? identif && identif.items && identif.items.USER_AGENT && identif.items.USER_AGENT.find(element => {
       return element.vector_id === userAgentId;
     }) : null;
   }
