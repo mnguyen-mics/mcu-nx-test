@@ -36,7 +36,7 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
             }
           },
           enforce: 'pre'
-        },        
+        },
         {
           test: /\.jsx?$/,
           include: paths.reactAppSrc,

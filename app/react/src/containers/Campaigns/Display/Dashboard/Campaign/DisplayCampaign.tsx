@@ -175,8 +175,8 @@ class DisplayCampaign extends React.Component<
       this.props.closeNextDrawer();
       message.success(
         formatMessage({
-          id: 'edit.campaigns.success.msg',
-          defaultMessage: 'Campaigns successfully saved',
+          id: 'edit.adgroups.success.msg',
+          defaultMessage: 'Ad Groups successfully saved',
         }),
       );
     });
