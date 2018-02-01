@@ -10,7 +10,7 @@ import {
 } from 'react-intl';
 
 import { CampaignsInfosFieldModel } from '../domain';
-import { McsIcons } from '../../../../../../components/index';
+import { McsIcon } from '../../../../../../components/index';
 import {
   FormInput,
   FormSelect,
@@ -164,11 +164,8 @@ class CampaignsInfos extends React.Component<JoinedProps> {
                   />
                 </Col>
                 <Col className="gutter-row" span={3}>
-                  <Button
-                    className="delete-fieldarray"
-                    onClick={removeField}
-                  >
-                    <McsIcons type="close" />
+                  <Button className="delete-fieldarray" onClick={removeField}>
+                    <McsIcon type="close" />
                   </Button>
                 </Col>
               </Row>
@@ -179,9 +176,13 @@ class CampaignsInfos extends React.Component<JoinedProps> {
           fields.getAll().length <= editableCampaignProperties.length - 1 && (
             <Row>
               <div onClick={adField}>
-                <Col span={22} offset={1} className="gutter-row add-field-button">
+                <Col
+                  span={22}
+                  offset={1}
+                  className="gutter-row add-field-button"
+                >
                   <p>
-                    <McsIcons type="plus" />
+                    <McsIcon type="plus" />
                     Add Field
                   </p>
                 </Col>
@@ -219,7 +220,7 @@ const campaignPropertiesMessageMap: {
 });
 
 const campaignsActionsMessageMap: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor
+  [propertyName: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   equals: {
     id: 'edit.adgroups.form.option.equals',
@@ -232,5 +233,5 @@ const campaignsActionsMessageMap: {
   decrease: {
     id: 'edit.adgroups.form.option.decrease',
     defaultMessage: 'Decrease %',
-  }
-})
+  },
+});

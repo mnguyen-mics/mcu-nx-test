@@ -9,7 +9,7 @@ import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
-import CampaignService from '../../../../services/CampaignService';
+import CampaignService, { GetCampaignsOptions } from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
@@ -23,6 +23,7 @@ import {
   DrawableContent,
   injectDrawer,
 } from '../../../../components/Drawer/index';
+import { CampaignStatus } from '../../../../models/campaign/constants/index';
 
 interface DisplayCampaignsActionbarProps {
   selectedRowKeys?: string[];
@@ -41,15 +42,7 @@ interface FilterProps {
   to: McsMoment;
   keywords: string[];
   pageSize: number;
-  statuses: string[];
-}
-
-interface OptionsProps {
-  archived?: boolean;
-  first_result?: number;
-  max_results?: number;
-  keywords?: string[];
-  status?: string[];
+  statuses: CampaignStatus[];
 }
 
 type JoinedProps = DisplayCampaignsActionbarProps &
@@ -63,7 +56,7 @@ interface DisplayCampaignsActionbarState {
 const fetchExportData = (organisationId: string, filter: FilterProps) => {
   const campaignType = 'DISPLAY';
   const buildOptionsForGetCampaigns = () => {
-    const options: OptionsProps = {
+    const options: GetCampaignsOptions = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
       max_results: 2000,
@@ -200,7 +193,7 @@ class DisplayCampaignsActionbar extends React.Component<
           horizontal={true}
           content={
             <Button onClick={archiveCampaigns} className="button-slider">
-              <McsIcons type="delete" />
+              <McsIcon type="delete" />
               <FormattedMessage id="ARCHIVE" />
             </Button>
           }
@@ -226,7 +219,7 @@ class DisplayCampaignsActionbar extends React.Component<
           horizontal={true}
           content={
             <Button onClick={openEditCampaignsDrawer} className="button-slider">
-              <McsIcons type="pen" />
+              <McsIcon type="pen" />
               <FormattedMessage id="EDIT" />
             </Button>
           }

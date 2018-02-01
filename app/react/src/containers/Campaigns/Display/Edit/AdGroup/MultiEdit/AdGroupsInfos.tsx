@@ -10,7 +10,7 @@ import {
 } from 'react-intl';
 
 import { AdGroupsInfosFieldModel } from '../domain';
-import { McsIcons } from '../../../../../../components/index';
+import { McsIcon } from '../../../../../../components/index';
 import {
   FormInput,
   FormSelect,
@@ -184,7 +184,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
                 </Col>
                 <Col className="gutter-row" span={3}>
                   <Button className="delete-fieldarray" onClick={removeField}>
-                    <McsIcons type="close" />
+                    <McsIcon type="close" />
                   </Button>
                 </Col>
               </Row>
@@ -201,7 +201,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
                   className="gutter-row add-field-button"
                 >
                   <p>
-                    <McsIcons type="plus" />
+                    <McsIcon type="plus" />
                     Add Field
                   </p>
                 </Col>
