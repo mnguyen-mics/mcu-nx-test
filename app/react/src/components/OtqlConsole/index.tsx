@@ -22,6 +22,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, any> 
 
   buildCustomCompleters = () => {
     return {
+      identifierRegexps: [/[\@a-zA-Z_0-9]/],
       getCompletions: (editor: any, session: any, pos: any, prefix:any, callback: any) => {
         if (prefix.length === 0) {
           callback(null, []);
