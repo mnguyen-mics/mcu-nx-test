@@ -29,7 +29,7 @@ class EventActivity extends Component {
       );
     }
 
-    if (typeof object === 'object' && Array.isArray(object)) {
+    if (Array.isArray(object)) {
       // array;
       if (object.length > 0) {
         returnValue = object.map(o => <div className="m-b-10">{this.renderProperties(o)}</div>);
@@ -91,8 +91,7 @@ class EventActivity extends Component {
         <Col span={19}>
           <div className="section-title">{event.$event_name}</div>
           <div className="section-cta">
-            {Object.keys(event.$properties).length !== 0 &&
-            event.$properties.constructor === Object ? (
+            {Object.keys(event.$properties).length !== 0 ? (
               <button
                 className="mcs-card-inner-action"
                 onClick={changeVisibility}
