@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 
 interface Submenu {
   title: string;
@@ -48,7 +48,7 @@ class MenuList extends Component<MenuListProps, MenuListState> {
             }) }</div> : null}
           </div>
           <div className="selector">
-            <McsIcons type={this.state.open ? 'minus' : 'plus'} />
+            <McsIcon type={this.state.open ? 'minus' : 'plus'} />
           </div>
         </button>
         <div className={`lines ${this.state.open ? 'opened' : 'closed'}`}>
@@ -58,7 +58,7 @@ class MenuList extends Component<MenuListProps, MenuListState> {
                 <div className="content alone small">
                   <div className="subtitles">{sub.title}</div>
                 </div>
-                <div className="selector"><McsIcons type={'chevron-right'} /></div>
+                <div className="selector"><McsIcon type={'chevron-right'} /></div>
               </button>
             );
           })}

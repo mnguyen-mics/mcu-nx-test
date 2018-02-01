@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Modal, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 
-import { McsIconType } from '../../../../components/McsIcons';
+import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import AssetsFilesService from '../../../../services/Library/AssetsFilesService';
 import { AssetFileResource } from '../../../../models/assets/assets';

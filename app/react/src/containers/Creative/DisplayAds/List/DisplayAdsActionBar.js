@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 import { withTranslations } from '../../../Helpers';
 
 class ListCreativesDisplay extends Component {
@@ -28,7 +28,7 @@ class ListCreativesDisplay extends Component {
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
+            <McsIcon type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
           </Button>
         </Link>
       </Actionbar>

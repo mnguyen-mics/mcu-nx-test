@@ -10,7 +10,7 @@ import { CampaignRouteParams } from '../../../../../models/campaign/CampaignReso
 import { AdInfoResource, DisplayCampaignInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../../Actionbar';
-import McsIcons from '../../../../../components/McsIcons';
+import McsIcon from '../../../../../components/McsIcon';
 import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
@@ -282,12 +282,12 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
       <Actionbar path={breadcrumbPaths}>
         {actionElement}
         <Button onClick={exportIsRunning ? this.exportIsRunningModal : this.handleRunExport}>
-          <McsIcons type="download" />
+          <McsIcon type="download" />
           <FormattedMessage id="EXPORT" />
         </Button>
 
           <Button onClick={this.editCampaign}>
-            <McsIcons type="pen" />
+            <McsIcon type="pen" />
             <FormattedMessage {...messages.editCampaign} />
           </Button>
 
@@ -317,7 +317,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
         type="primary"
         onClick={onClickElement('ACTIVE')}
       >
-        <McsIcons type="play" />
+        <McsIcon type="play" />
         <FormattedMessage {...messages.activateCampaign} />
       </Button>
     );
@@ -327,7 +327,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
         type="primary"
         onClick={onClickElement('PAUSED')}
       >
-        <McsIcons type="pause" />
+        <McsIcon type="pause" />
         <FormattedMessage {...messages.pauseCampaign} />
       </Button>
     );

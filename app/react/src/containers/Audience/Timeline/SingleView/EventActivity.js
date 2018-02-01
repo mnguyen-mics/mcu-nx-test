@@ -5,7 +5,7 @@ import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
 import lodash from 'lodash';
 
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 import messages from '../messages';
 
 class EventActivity extends Component {
@@ -82,7 +82,7 @@ class EventActivity extends Component {
             {event.$event_name}
           </div>
           <div className="section-cta">
-            {(Object.keys(event.$properties).length !== 0 && event.$properties.constructor === Object) ? (<button className="mcs-card-inner-action" onClick={changeVisibility}> {!this.state.showMore ? <span><McsIcons type="chevron" /> <FormattedMessage {...messages.detail} /></span> : <span><McsIcons className="icon-inverted" type="chevron" /> <FormattedMessage {...messages.less} /></span>}</button>) : null}
+            {(Object.keys(event.$properties).length !== 0 && event.$properties.constructor === Object) ? (<button className="mcs-card-inner-action" onClick={changeVisibility}> {!this.state.showMore ? <span><McsIcon type="chevron" /> <FormattedMessage {...messages.detail} /></span> : <span><McsIcon className="icon-inverted" type="chevron" /> <FormattedMessage {...messages.less} /></span>}</button>) : null}
           </div>
         </Col>
         {this.state.showMore === true ? (<div className="event-properties-list">

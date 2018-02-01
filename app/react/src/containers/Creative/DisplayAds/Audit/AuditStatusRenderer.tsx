@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { CreativeAuditStatus } from '../../../../models/creative/CreativeResource';
-import { McsIcons } from '../../../../components/index';
+import { McsIcon } from '../../../../components/index';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import { McsIconType } from '../../../../components/McsIcons';
+import { McsIconType } from '../../../../components/McsIcon';
 
 export interface AuditStatusRendererProps {
   auditStatus?: CreativeAuditStatus;
@@ -16,9 +16,9 @@ class AuditStatusRenderer extends React.Component<AuditStatusRendererProps> {
     const status = auditStatus || defaultAuditStatus;
     return (
       <div>
-        <McsIcons
+        <McsIcon
           type={auditIconConfig[status].type}
-          additionalClass="m-r-10"
+          className="m-r-10"
           style={{
             verticalAlign: 'middle',
             color: auditIconConfig[status].color,

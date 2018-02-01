@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Col } from 'antd';
 
-import McsIcons, { McsIconType } from '../McsIcons';
+import McsIcon, { McsIconType } from '../McsIcon';
 
 const messages = defineMessages({
   emptyMsg: {
@@ -36,7 +36,7 @@ const EmptyTableView: React.SFC<EmptyTableViewProps> = props => {
     <div className="mcs-aligner">
       <Col span={24} className={props.className}>
         <div className="logo">
-          <McsIcons type={props.iconType} />
+          <McsIcon type={props.iconType} />
         </div>
         <FormattedMessage {...formattedMessageProps} />
       </Col>

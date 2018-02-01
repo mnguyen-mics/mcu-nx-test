@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Col, Row } from 'antd';
 
-import McsIcons, { McsIconType } from '../McsIcons';
+import McsIcon, { McsIconType } from '../McsIcon';
 import ButtonStyleless from '../ButtonStyleless';
 
 type RenderItem<T> = (record: T) => React.ReactNode;
@@ -51,7 +51,7 @@ class RecordElement<T> extends React.Component<RecordElementProps<T>> {
       <Row className="related-record row-height">
         <Col style={{ width: 60 }}>
           <div className="icon-round-border">
-            <McsIcons type={recordIconType} />
+            <McsIcon type={recordIconType} />
           </div>
         </Col>
 
@@ -72,7 +72,7 @@ class RecordElement<T> extends React.Component<RecordElementProps<T>> {
             className="action-button"
             onClick={this.editTableField}
           >
-            <McsIcons type="pen" additionalClass="big" />
+            <McsIcon type="pen" className="big" />
           </ButtonStyleless>
         )}
         {onRemove && (
@@ -80,7 +80,7 @@ class RecordElement<T> extends React.Component<RecordElementProps<T>> {
             className="action-button"
             onClick={this.removeTableField}
           >
-            <McsIcons type="delete" additionalClass="big" />
+            <McsIcon type="delete" className="big" />
           </ButtonStyleless>
         )}
       </Row>

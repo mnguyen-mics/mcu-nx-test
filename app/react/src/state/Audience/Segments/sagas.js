@@ -177,9 +177,6 @@ function* loadAudienceSegmentList({ payload }) {
     if (filter.label_id.length) {
       options.label_id = filter.label_id;
     }
-    if (filter.types) {
-      options.types = filter.types;
-    }
 
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),

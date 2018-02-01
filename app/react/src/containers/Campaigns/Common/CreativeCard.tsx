@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Spin } from 'antd';
 import cuid from 'cuid';
-import McsIcons from '../../../components/McsIcons';
+import McsIcon from '../../../components/McsIcon';
 import CreativeService from '../../../services/CreativeService';
 import { DataResponse } from '../../../services/ApiService';
 import {
@@ -122,7 +122,7 @@ class CreativeCard<
           backgroundColor: '#bdbdbd',
         }}
       >
-        <McsIcons className="icon-3x" type="close-big" />
+        <McsIcon className="icon-3x" type="close-big" />
       </div>
     );
   };

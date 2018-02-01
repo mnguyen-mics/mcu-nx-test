@@ -3,7 +3,7 @@ import { FormattedMessage } from 'react-intl';
 import { Button, Dropdown, Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
 
-import McsIcons from './McsIcons';
+import McsIcon from './McsIcon';
 
 export interface DropdownButtonItemProps {
   id: string;
@@ -44,8 +44,8 @@ class DropdownButton extends React.Component<DropdownButtonProps> {
         trigger={['click']}
       >
         <Button>
-          <McsIcons type="pen" />
-          <McsIcons type="chevron" />
+          <McsIcon type="pen" />
+          <McsIcon type="chevron" />
         </Button>
       </Dropdown>
     );

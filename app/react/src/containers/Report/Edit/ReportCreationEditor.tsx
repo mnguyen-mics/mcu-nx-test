@@ -9,7 +9,7 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { Actionbar } from '../../Actionbar';
-import McsIcons from '../../../components/McsIcons';
+import McsIcon from '../../../components/McsIcon';
 import { FormTitle, withValidators } from '../../../components/Form';
 import FormDateRangePicker, { FormDateRangePickerProps } from '../../../components/Form/FormDateRangePicker';
 import FormLinkedSelectInput, { FormLinkedSelectInputProps } from '../../../components/Form/FormLinkedSelectInput';
@@ -163,7 +163,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
             <Button type="primary" className="mcs-primary" htmlType="submit" loading={this.state.loadingData}>
               <FormattedMessage {...messages.reportCreationSaveButton} />
             </Button>
-            <McsIcons
+            <McsIcon
               type="close"
               className="close-icon"
               onClick={handleClose}
@@ -178,13 +178,13 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
               >
                 <li>
                   <Link to={`${url}#general_information`}>
-                    <McsIcons type="check-rounded-inverted" />
+                    <McsIcon type="check-rounded-inverted" />
                     <span className="step-title"><FormattedMessage {...messages.reportSiderMenuGeneralInformation} /></span>
                   </Link>
                 </li>
                 <li>
                   <Link to={`${url}#detailed_information`}>
-                    <McsIcons type="check-rounded-inverted" />
+                    <McsIcon type="check-rounded-inverted" />
                     <span className="step-title"><FormattedMessage {...messages.reportSiderMenuDetailedInformation} /></span>
                   </Link>
                 </li>

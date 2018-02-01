@@ -15,10 +15,6 @@ interface McTabsProps {
 
 class McsTabs extends React.Component<McTabsProps> {
 
-  static defaultProps: Partial<McTabsProps> = {
-    isCard: true,
-  };
-
   buildMenuItems() {
     const { items } = this.props;
 
@@ -30,16 +26,11 @@ class McsTabs extends React.Component<McTabsProps> {
   }
 
   render() {
-    const { isCard, items } = this.props;
+    const { items } = this.props;
     const menuItems = this.buildMenuItems();
 
     return (
-      <div
-        className={isCard
-          ? 'mcs-campaign-dashboard-tabs card'
-          : 'mcs-campaign-dashboard-tabs standalone'
-        }
-      >
+      <div >
         <Tabs defaultActiveKey={items[0].title}>
           {menuItems}
         </Tabs>

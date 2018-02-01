@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 
 import Scrollspy from '../Scrollspy';
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 import ButtonStyleless from '../ButtonStyleless';
 
 const { Sider } = Layout;
@@ -33,7 +33,7 @@ class ScrollspySider extends React.Component<Props> {
     const options = items.map(item => {
       const iconAndText = (
         <div>
-          <McsIcons type="check-rounded-inverted" />
+          <McsIcon type="check-rounded-inverted" />
           <span className="step-title">{intl.formatMessage(item.title)}</span>
         </div>
       );

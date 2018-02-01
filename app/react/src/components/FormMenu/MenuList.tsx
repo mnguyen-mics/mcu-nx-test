@@ -1,6 +1,6 @@
 
 import React from 'react';
-import McsIcons from '../McsIcons';
+import McsIcon from '../McsIcon';
 
 export interface MenuListProps {
   title: string;
@@ -20,7 +20,7 @@ const MenuList: React.SFC<MenuListProps> = ({ title, subtitles, select }) => {
           }) }</div> : null}
         </div>
         <div className="selector">
-          <McsIcons type="chevron-right" />
+          <McsIcon type="chevron-right" />
         </div>
       </button>
     </div>

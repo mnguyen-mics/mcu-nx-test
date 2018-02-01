@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Breadcrumb } from 'antd';
 
 import { PathPropTypes } from '../../validators/proptypes';
-import McsIcons from '../../components/McsIcons.tsx';
+import McsIcon from '../../components/McsIcon.tsx';
 
 import generateGuid from '../../utils/generateGuid';
 
@@ -19,7 +19,7 @@ function BreadcrumbBar(props) {
     return <Breadcrumb.Item key={generateGuid()}>{item}</Breadcrumb.Item>;
   };
 
-  const sep = <McsIcons type="chevron-right" />;
+  const sep = <McsIcon type="chevron-right" />;
 
   return (
     <Breadcrumb key="breadcrumb" separator={sep} {...props} >

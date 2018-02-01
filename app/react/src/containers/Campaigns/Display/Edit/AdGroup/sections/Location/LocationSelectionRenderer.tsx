@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row } from 'antd';
 import { ButtonStyleless } from '../../../../../../../components';
-import McsIcons, { McsIconType } from '../../../../../../../components/McsIcons';
+import McsIcon, { McsIconType } from '../../../../../../../components/McsIcon';
 import { LocationFieldModel } from '../../domain';
 import { Geoname } from '../../../../../../../services/GeonameService';
 import GeonameRenderer from '../../../../../../../containers/Geoname/GeonameRenderer';
@@ -40,7 +40,7 @@ class LocationSelectionRenderer extends React.Component<Props> {
 
             return (
               <div className={'search-result-box-item'} key={locationField.key}>
-                <McsIcons type={iconType} />
+                <McsIcon type={iconType} />
                 <GeonameRenderer
                   key={locationField.key}
                   geonameId={locationField.model.geoname_id}
@@ -50,7 +50,7 @@ class LocationSelectionRenderer extends React.Component<Props> {
                   className="close-button"
                   onClick={handleOnClick}
                 >
-                  <McsIcons type="close" />
+                  <McsIcon type="close" />
                 </ButtonStyleless>
               </div>
             );

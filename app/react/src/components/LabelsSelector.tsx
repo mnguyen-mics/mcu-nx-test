@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dropdown, Tag, Tooltip, Input, Button, Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
-import McsIcons from './McsIcons';
+import McsIcon from './McsIcon';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 export interface Label {
@@ -149,11 +149,11 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
               value={inputValue}
               onChange={this.handleInputChange}
               onPressEnter={this.handleInputConfirm}
-              prefix={<McsIcons type="magnifier" />}
+              prefix={<McsIcon type="magnifier" />}
             />
           </Dropdown>
         )}
-        {!inputVisible && <Button size="small" className="label-button" onClick={this.showInput}><McsIcons type="plus" />
+        {!inputVisible && <Button size="small" className="label-button" onClick={this.showInput}><McsIcon type="plus" />
           <FormattedMessage {...buttonMessage || messages.labelButton} />
           </Button>}
       </div>

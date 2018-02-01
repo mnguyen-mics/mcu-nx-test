@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Switch, Table } from 'antd';
 import { Field } from 'redux-form';
 
-import { ButtonStyleless, Form, McsIcons } from '../components';
+import { ButtonStyleless, Form, McsIcon } from '../components';
 import generateGuid from '../utils/generateGuid';
-import { McsIconType } from '../components/McsIcons';
+import { McsIconType } from '../components/McsIcon';
 import { generateFakeId } from '../utils/FakeIdHelper';
 
 const { SwitchInput } = Form;
@@ -33,9 +33,9 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       render: (type: { image: McsIconType, name: string }) => (
         <div className="display-row center-vertically row-height">
           <div className="icon-round-border">
-            <McsIcons
+            <McsIcon
               type={type.image}
-              additionalClass="related-records"
+              className="related-records"
             />
           </div>
           {type.name}
@@ -51,7 +51,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
         const elemToDisplay = (elem: { image?: McsIconType, name: string }) => (elem && elem.image
             ? (
               <div className="display-row" key={generateGuid()}>
-                <McsIcons type={elem.image} additionalClass="big" />
+                <McsIcon type={elem.image} className="big" />
                 <p>{elem.name}</p>
               </div>
             )
@@ -101,7 +101,7 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
       render: (index: number) => {
         return (
           <ButtonStyleless onClick={updateTableFieldStatus({ index, tableName })}>
-            <McsIcons type="delete" additionalClass="big" />
+            <McsIcon type="delete" className="big" />
           </ButtonStyleless>
         );
       },

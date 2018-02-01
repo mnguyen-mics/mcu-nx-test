@@ -10,7 +10,7 @@ import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../../components/TableView/index.ts';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 import DisplayCampaignsService from '../../../../services/DisplayCampaignService.ts';
@@ -257,7 +257,7 @@ class DisplayCampaignsTable extends Component {
         render: text => (
           <Tooltip placement="top" title={translations[text]}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-              <McsIcons type="status" />
+              <McsIcon type="status" />
             </span>
           </Tooltip>
         ),

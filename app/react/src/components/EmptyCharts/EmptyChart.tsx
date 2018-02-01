@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 
-import McsIcons, { McsIconType } from '../McsIcons';
+import McsIcon, { McsIconType } from '../McsIcon';
 
 interface EmptyChartsProps {
   title: string;
@@ -12,7 +12,7 @@ const EmptyCharts: React.SFC<EmptyChartsProps> = ({ title, icon }) => {
   return (
     <Row className="mcs-card-no-data">
       <Col span={24} className="">
-        <McsIcons type={icon!} />
+        <McsIcon type={icon!} />
       </Col>
       <Col span={24} className="">
         {title}

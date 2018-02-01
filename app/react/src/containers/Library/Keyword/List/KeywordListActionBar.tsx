@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
 interface RouterProps {
@@ -34,7 +34,7 @@ class KeywordActionbar extends React.Component<RouteComponentProps<RouterProps> 
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/${organisationId}/library/keywordslists/new`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcons type="plus" /> <FormattedMessage {...messages.newKeyword} />
+            <McsIcon type="plus" /> <FormattedMessage {...messages.newKeyword} />
           </Button>
         </Link>
       </Actionbar>

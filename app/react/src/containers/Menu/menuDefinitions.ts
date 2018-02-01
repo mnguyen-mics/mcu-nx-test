@@ -184,9 +184,9 @@ const dataStudio = {
   subMenuItems: [
     {
       key: 'datastudio.query_tool',
-      path: '/datamart/queries',
+      path: '/datastudio/query-tool',
       translation: messages.dataStudioQuery,
-      legacyPath: true,
+      legacyPath: false,
     },
     {
       key: 'datastudio.report',

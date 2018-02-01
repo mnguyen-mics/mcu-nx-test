@@ -8,7 +8,7 @@ import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../components/TableView/index.ts';
-import McsIcons from '../../../components/McsIcons.tsx';
+import McsIcon from '../../../components/McsIcon.tsx';
 
 import * as AutomationsListActions from '../../../state/Automations/actions';
 
@@ -204,7 +204,7 @@ class AutomationsListTable extends Component {
         render: text => (
           <Tooltip placement="top" title={translations[text]}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-              <McsIcons type="status" />
+              <McsIcon type="status" />
             </span>
           </Tooltip>
         ),

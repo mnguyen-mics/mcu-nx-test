@@ -69,6 +69,19 @@ define(['./module'], function (module) {
 
           });
 
+          segment.all('tag_feeds').getList().then(function(feeds) {
+            var pluginContainers = [];
+
+            for(var i = 0; i<feeds.length; i++) {
+              var pic = new PluginInstanceContainer(feeds[i]);
+              pic.loadProperties($q);
+              pluginContainers.push(pic);
+            }
+
+            $scope.tagActivations = pluginContainers;
+
+          });
+
         });
       }
 
@@ -95,7 +108,7 @@ define(['./module'], function (module) {
           promise = Restangular.all('audience_segments').post($scope.segment, {organisation_id: Session.getCurrentWorkspace().organisation_id});
         }
         function updateActivationStatusIfNeeded(promise, activation) {
-          if(activation.value.id === undefined && activation.value.status === 'ACTIVE') {
+          if(activation && activation.value.id === undefined && activation.value.status === 'ACTIVE') {
             return promise.then(function() {
                 $log.info("start activation", activation);
                 activation.value.status = 'ACTIVE';
@@ -108,24 +121,39 @@ define(['./module'], function (module) {
         }
         promise.then(function(audienceSegment) {
           var promises = [];
-          if($scope.activations) {
-            for(var i=0; i < $scope.activations.length; i++) {
-              var activation = $scope.activations[i];
-              var p = activation.save();
-              promises.push(updateActivationStatusIfNeeded(p, activation));
+
+          if ($scope.activations || $scope.tagActivations){
+            if($scope.activations.length) {
+              for(var i=0; i < $scope.activations.length; i++) {
+                var activation = $scope.activations[i];
+                var p = activation.save();
+                promises.push(updateActivationStatusIfNeeded(p, activation));
+              }
             }
+
+            if($scope.tagActivations.length) {
+              for(var a=0; a < $scope.tagActivations.length; a++) {
+                var tagActivation = $scope.tagActivations[a];
+                var pt = tagActivation.save();
+                promises.push(updateActivationStatusIfNeeded(pt, tagActivation));
+              }
+            }
+
             return $q.all(promises).then(function(){
               return audienceSegment;
             });
+
           } else {
             return audienceSegment;
           }
-        }, function failure() {
+
+        }, function failure(e) {
           $scope.error = 'There was an error while saving segment';
-          $log.info("failure");
+          $log.info("failure " + e);
         }).then(function success(audienceSegment){
           $log.info("success");
-          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/segments/" +  audienceSegment.type + "/" + audienceSegment.id + "/report");
+          var organisationId = Session.getCurrentWorkspace().organisation_id;
+          $location.path("/v2/o/"+ organisationId +"/audience/segments/" + audienceSegment.id);
         }, function failure(){
           $scope.error = 'There was an error while saving segment';
           $log.info("failure");
@@ -136,8 +164,15 @@ define(['./module'], function (module) {
 
       $scope.$on("mics-audience-segment:external-feed-added", function (event, activation) {
         $log.info("new external feed added : ", activation);
-        if ($scope.activations.indexOf(activation) === -1){
+        if (($scope.activations).indexOf(activation) === -1){
           $scope.activations.push(activation);
+        }
+      });
+
+      $scope.$on("mics-audience-segment:tag-feed-added", function (event, activation) {
+        $log.info("new tag feed added : ", activation);
+        if (($scope.tagActivations).indexOf(activation) === -1){
+          $scope.tagActivations.push(activation);
         }
       });
 
@@ -162,6 +197,20 @@ define(['./module'], function (module) {
             scope : newScope,
             backdrop : 'static',
             controller: 'core/datamart/segments/AddActivationController'
+          });
+      };
+
+      $scope.addTagActivation = function () {
+        var endpoint = $scope.segment.all('tag_feeds');
+        var newScope = $scope.$new(true);
+
+        newScope.activation = new PluginInstanceContainer({}, endpoint);
+
+        $uibModal.open({
+            templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
+            scope : newScope,
+            backdrop : 'static',
+            controller: 'core/datamart/segments/AddTagActivationController'
           });
       };
 
@@ -206,6 +255,30 @@ define(['./module'], function (module) {
         });
       };
 
+      $scope.editTagActivation = function (activation) {
+        var newScope = $scope.$new(true);
+        newScope.activation = activation;
+
+        $uibModal.open({
+          templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
+          scope : newScope,
+          backdrop : 'static',
+          controller: 'core/datamart/segments/AddTagActivationController',
+          size: "lg"
+        });
+      };
+
+      $scope.addGoal = function () {
+        var newScope = $scope.$new(true);
+        $uibModal.open({
+          templateUrl: 'angular/src/core/datamart/segments/ChooseExistingGoal.html',
+          scope: newScope,
+          backdrop: 'static',
+          controller: 'core/datamart/segments/ChooseExistingGoalController',
+          size: 'lg'
+        });
+      };
+
       $scope.removeGoal = function (goal) {
         var i = $scope.goals.indexOf(goal);
         $scope.goals.splice(i,1);
@@ -214,6 +287,11 @@ define(['./module'], function (module) {
       $scope.removeActivation = function (activation) {
         var i = $scope.activations.indexOf(activation);
         $scope.activations.splice(i,1);
+      };
+
+      $scope.removeTagActivation = function (activation) {
+        var i = $scope.tagActivations.indexOf(activation);
+        $scope.tagActivations.splice(i,1);
       };
 
       $scope.cancel = function () {

@@ -37,6 +37,7 @@
     "curly": false,
     "no-submodule-imports": false,
     "no-var-requires": false,
-    "prefer-conditional-expression": false
+    "prefer-conditional-expression": false,
+    "max-classes-per-file": false
   }
 }

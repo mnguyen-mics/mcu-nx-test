@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import messages from '../messages';
 
-import McsIcons from '../../../components/McsIcons.tsx';
+import McsIcon from '../../../components/McsIcon.tsx';
 import PluginService from '../../../services/PluginService.ts';
 
 const Option = Select.Option;
@@ -207,7 +207,7 @@ class FormStyleSheet extends Component {
           {displayHelpToolTip &&
             <Col span={2} className="field-tooltip">
               <Tooltip {...mergedTooltipProps}>
-                <McsIcons type="info" />
+                <McsIcon type="info" />
               </Tooltip>
             </Col>}
         </Row>

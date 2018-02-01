@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons.tsx';
+import McsIcon from '../../../../components/McsIcon.tsx';
 
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService.ts';
@@ -138,11 +138,11 @@ class EmailCampaignsActionbar extends Component {
       <Actionbar path={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
           <Button type="primary" className="mcs-primary">
-            <McsIcons type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <McsIcon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcons type="download" />}
+          {!exportIsRunning && <McsIcon type="download" />}
           <FormattedMessage id="EXPORT" />
         </Button>
       </Actionbar>

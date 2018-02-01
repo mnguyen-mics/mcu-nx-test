@@ -1,6 +1,6 @@
 
 import React from 'react';
-import McsIcons, { McsIconType } from '../McsIcons';
+import McsIcon, { McsIconType } from '../McsIcon';
 
 export interface MenuPresentationalProps {
   title: string;
@@ -19,7 +19,7 @@ const MenuPresentational: React.SFC<MenuPresentationalProps> = ({
   return (
     <button className="presentation-item" onClick={select}>
       <div className="content">
-        <McsIcons type={type} />
+        <McsIcon type={type} />
         <div className="title">
           {title}
         </div>
