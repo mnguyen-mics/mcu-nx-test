@@ -35,7 +35,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
   buildNameColumn = () => {
     const { dataSource, match: { params: { organisationId } } } = this.props;
 
-    let columns: DataColumnDefinition<Record>[] = [];
+    let columns: Array<DataColumnDefinition<Record>> = [];
 
     if (dataSource.viewType === 'SOURCE') {
       columns = [

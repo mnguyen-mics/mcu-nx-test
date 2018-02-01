@@ -1,29 +1,22 @@
 import * as React from 'react';
 import { GoalResource } from '../../../../models/goal/index';
-import TitleAndStatusHeader from '../../../../components/TitleAndStatusHeader';
+import ContentHeader from '../../../../components/ContentHeader';
 
 interface GoalHeaderProps {
-  object?: GoalResource;
+  goal?: GoalResource;
 }
 
 const GoalHeader: React.SFC<GoalHeaderProps> = props => {
+  const { goal } = props;
 
-  const {
-    object,
-  } = props;
-
-  return object && object.name ? (
+  return (
     <div className="mcs-campaign-header">
-      <TitleAndStatusHeader
-        headerTitle={object.name}
-        headerAttributes={[]}
+      <ContentHeader
+        title={goal ? goal.name : ''}
+        loading={goal && goal.name ? false : true}
       />
     </div>
-    ) : (
-      <div className="mcs-campaign-header">
-        <i className="mcs-table-cell-loading-large" />
-      </div>);
-
+  );
 };
 
 export default GoalHeader;

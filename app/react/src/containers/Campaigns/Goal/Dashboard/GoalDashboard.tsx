@@ -205,7 +205,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <GoalHeader object={this.state.goalObject.item} />
+            <GoalHeader goal={this.state.goalObject.item} />
             <Card title={formatMessage(messages.conversions)} buttons={this.renderDatePicker()}>
               <GoalStackedAreaChart />
             </Card>

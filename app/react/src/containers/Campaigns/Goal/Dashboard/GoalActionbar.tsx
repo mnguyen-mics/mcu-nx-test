@@ -10,7 +10,7 @@ import withTranslations, {
 import { GoalResource } from '../../../../models/goal/index';
 import modalMessages from '../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../Actionbar';
-import McsIcons from '../../../../components/McsIcons';
+import McsIcon from '../../../../components/McsIcon';
 import log from '../../../../utils/Logger';
 import messages from './messages';
 
@@ -66,7 +66,7 @@ class ExportsActionbar extends React.Component<
     return (
       <Actionbar path={breadcrumbPaths}>
         <Button onClick={this.editCampaign}>
-          <McsIcons type="pen" />
+          <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />
         </Button>
 
