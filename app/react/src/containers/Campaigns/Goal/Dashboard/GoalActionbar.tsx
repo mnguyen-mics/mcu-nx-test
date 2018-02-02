@@ -54,12 +54,12 @@ class ExportsActionbar extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } }, object } = this.props;
+    const { match: { params: { organisationId } }, object, intl } = this.props;
 
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: 'Goals', url: `/v2/o/${organisationId}/campaigns/goal` },
+      { name: intl.formatMessage(messages.goal), url: `/v2/o/${organisationId}/campaigns/goal` },
       { name: object && object.name ? object.name : '' },
     ];
 

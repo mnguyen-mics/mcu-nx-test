@@ -80,6 +80,13 @@ type JoinedProps = InjectedIntlProps &
 
 type OuterProps = {};
 
+const dailyPerformanceFetch =  takeLatest(
+  ReportService.getSingleConversionPerformanceReport,
+);
+
+const overallPerformanceFetch = takeLatest(
+  ReportService.getSingleConversionPerformanceReport,
+)
 
 class GoalStackedAreaChart extends React.Component<
   JoinedProps,
@@ -123,8 +130,7 @@ class GoalStackedAreaChart extends React.Component<
       },
       location: { pathname: nextPathname, search: nextSearch },
     } = nextProps;
-
-    if (
+    if (  
       !compareSearches(search, nextSearch) ||
       organisationId !== nextOrganisationId ||
       goalId !== nextGoalId
@@ -149,9 +155,8 @@ class GoalStackedAreaChart extends React.Component<
     endDate: McsMoment,
   ) => {
     this.setState({ data: { items: [], overall: [], isLoading: true } });
-    const dailyPerformance = takeLatest(
-      ReportService.getSingleConversionPerformanceReport,
-    )(
+
+    const dailyPerformance = dailyPerformanceFetch(
       organisationId,
       goalId,
       startDate,
@@ -160,16 +165,14 @@ class GoalStackedAreaChart extends React.Component<
       ['value', 'price', 'conversions'],
     ).then(res => res.data.report_view);
 
-    const overallPerformance = takeLatest(
-      ReportService.getSingleConversionPerformanceReport,
-    )(
+    const overallPerformance = overallPerformanceFetch(
       organisationId,
       goalId,
       startDate,
       endDate,
       [],
       [this.state.key1, this.state.key2],
-    ).then(res => res.data.report_view);
+    ).then(res => res.data.report_view)
 
     return Promise.all([dailyPerformance, overallPerformance]).then(res =>
       this.setState({

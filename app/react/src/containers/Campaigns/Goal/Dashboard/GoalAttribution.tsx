@@ -84,6 +84,8 @@ interface Filters {
 
 const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = ['SOURCE', 'CAMPAIGN', 'CREATIVES'];
 
+const takeLatestAttributionPerformance = takeLatest(ReportService.getConversionAttributionPerformance);
+
 // export type SelectedView = 'SOURCE' | 'CAMPAIGN' | 'CREATIVES';
 export type SelectedView = CampaignStatData | CreativeStatData | SourceStatData;
 
@@ -212,7 +214,7 @@ class GoalAttribution extends React.Component<
     filters: Filters,
   ) => {
     this.setState({ overall: { isLoading: true, items: [] } });
-    return takeLatest(ReportService.getConversionAttributionPerformance)(
+    return takeLatestAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -277,7 +279,7 @@ class GoalAttribution extends React.Component<
     attributionModelId: string,
     filters: Filters,
   ) => {
-    return takeLatest(ReportService.getConversionAttributionPerformance)(
+    return takeLatestAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -307,7 +309,7 @@ class GoalAttribution extends React.Component<
     attributionModelId: string,
     filters: Filters,
   ) => {
-    return takeLatest(ReportService.getConversionAttributionPerformance)(
+    return takeLatestAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -337,7 +339,7 @@ class GoalAttribution extends React.Component<
     attributionModelId: string,
     filters: Filters,
   ) => {
-    return takeLatest(ReportService.getConversionAttributionPerformance)(
+    return takeLatestAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -361,7 +363,7 @@ class GoalAttribution extends React.Component<
       });
   };
 
-  renderDatePicker() {
+  renderDatePicker = () => {
     const { history: { location: { search } } } = this.props;
 
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
@@ -445,7 +447,7 @@ class GoalAttribution extends React.Component<
                 ),
                 '0,0',
               )
-            : undefined,
+            : '--',
       },
       {
         name: formatMessage(messages.postView),
@@ -464,7 +466,7 @@ class GoalAttribution extends React.Component<
               ),
               duration: moment.utc(postViewInteractionDuration * 1000).format("HH:mm:ss")
             }) 
-            : undefined,
+            : '--',
       },
       {
         name: formatMessage(messages.postClick),
@@ -483,14 +485,14 @@ class GoalAttribution extends React.Component<
               ),
               duration: moment.utc(postClickInteractionDuration * 1000).format("HH:mm:ss")
             })
-            : undefined,
+            : '--',
       },
       {
         name: formatMessage(messages.interactionToConversionDuration),
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
             ? moment.utc(InteractionDuration * 1000).format("HH:mm:ss")
-            : undefined,
+            : '--',
       },
     ];
 

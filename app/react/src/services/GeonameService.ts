@@ -27,9 +27,9 @@ const GeonameService = {
 
   getGeoname(
     geonameId: string,
-  ): Promise<Geoname> {
+  ): Promise<DataResponse<Geoname>> {
     const endpoint = `geonames/${geonameId}`;
-    return ApiService.getRequest(endpoint).then((res: DataResponse<Geoname>) => res.data as Geoname);
+    return ApiService.getRequest(endpoint);
   },
 };
 

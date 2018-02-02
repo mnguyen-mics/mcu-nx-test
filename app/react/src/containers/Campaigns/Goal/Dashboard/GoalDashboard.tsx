@@ -178,7 +178,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   }
 
   renderItems = () => {
-    return this.state.attributionModels.items.map(am => {
+    return this.state.attributionModels.items.sort((a, b) => a.id.localeCompare(b.id)).map(am => {
       const title =
         am.attribution_type === 'DIRECT' ? 'Direct' : am.attribution_model_name;
       return {

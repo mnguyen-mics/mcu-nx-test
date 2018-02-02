@@ -11,6 +11,11 @@ import { TableView } from '../../../../components/TableView/index';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import messages from './messages';
 import { Link } from 'react-router-dom';
+import ObjectRenderer from '../../../ObjectRenderer/ObjectRenderer'
+import DisplayCampaignService from '../../../../services/DisplayCampaignService'
+import CreativeService from '../../../../services/CreativeService'
+import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
+import { GenericCreativeResource } from '../../../../models/creative/CreativeResource';
 
 export interface GoalAttributionTableProps {
   dataSource: CampaignStatData | CreativeStatData | SourceStatData;
@@ -68,7 +73,8 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
             const link = `/v2/o/${organisationId}/campaigns/display/${
               record.id
             }`;
-            return <Link to={link}>{name ? name : 'No Name'}</Link>;
+            const renderName = (c: DisplayCampaignResource) => <span>{c.name}</span>
+            return <Link to={link}>{name ? name : <ObjectRenderer fetchingMethod={DisplayCampaignService.getCampaignDisplay} id={record.id} renderMethod={renderName} />}</Link>;
           },
         },
       ];
@@ -85,7 +91,8 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
             const link = `/v2/o/${organisationId}/creatives/display/edit/${
               record.id
             }`;
-            return <Link to={link}>{name ? name : 'No Name'}</Link>;
+            const renderName = (c: GenericCreativeResource) => <span>{c.name}</span>
+            return <Link to={link}>{name ? name : <ObjectRenderer fetchingMethod={CreativeService.getCreative} id={record.id} renderMethod={renderName} />}</Link>;
           },
         },
       ];

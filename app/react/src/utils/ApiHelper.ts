@@ -15,6 +15,11 @@ export function getPaginatedApiParam(page: number = 1, pageSize: number = 500): 
 
 type PromiseFactory<T> = (...args: any[]) => Promise<T>;
 
+/*
+  example usage: declare before your class const myService = takeLatest(ReportService.myService)
+  and use myService within your class to fetch the latest myService call
+*/
+
 export function takeLatest<T>(promiseFactory: PromiseFactory<T>): PromiseFactory<T> {
   let lastAdded: Promise<T>;
   let pending: Promise<T> | null;
