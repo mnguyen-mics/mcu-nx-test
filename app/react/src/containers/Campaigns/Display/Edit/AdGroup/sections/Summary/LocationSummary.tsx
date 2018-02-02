@@ -9,7 +9,8 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 
-import GeonameRenderer from '../../../../../../Geoname/GeonameRenderer';
+import ObjectRenderer from '../../../../../../ObjectRenderer/ObjectRenderer';
+import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
 
 interface MapStateProps {
   locationFields: LocationFieldModel[];
@@ -20,9 +21,10 @@ type Props = MapStateProps & InjectedIntlProps;
 function printGeonames(geonameIds: string[] = []) {
   return geonameIds.map((id, index) => {
     const isLast = index === geonameIds.length - 1;
+    const renderMethod = (g: Geoname) => <span>{g.name}</span>
     return (
       <span key={id}>
-        <GeonameRenderer geonameId={id} />
+        <ObjectRenderer id={id} fetchingMethod={GeonameService.getGeoname} renderMethod={renderMethod} />
         { isLast ? '' : ', ' }
       </span>
     );

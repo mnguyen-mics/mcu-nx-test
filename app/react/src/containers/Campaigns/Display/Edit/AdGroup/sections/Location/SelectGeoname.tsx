@@ -49,7 +49,7 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
   fetchCountries = (value: string = '') => {
     const { hiddenGeonameIds } = this.props;
     this.setState({ fetchingGeonames: true });
-    GeonameService.getGeonames(value).then(geonames => {
+    GeonameService.getGeonames(value).then(res => res.data).then(geonames => {
       const listOfCountriesToDisplay = geonames.filter(country => {
         return (
           country.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) >= 0 ||

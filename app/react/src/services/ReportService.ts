@@ -287,6 +287,32 @@ const ReportService = {
     return ApiService.getRequest(endpoint, params);
   },
 
+  getSingleConversionPerformanceReport(
+    organisationId: string,
+    goalId: string,
+    startDate: McsMoment,
+    endDate: McsMoment,
+    dimension: string[],
+    metrics?: string[],
+    options: object = {},
+  ): Promise<ReportViewResponse> {
+    const endpoint = 'reports/conversion_performance_report';
+    const DEFAULT_METRICS = ['conversions', 'value'];
+    const range = { from: startDate, to: endDate };
+    const formattedDates = formatMcsDate(range, true);
+    const params = {
+      ...options,
+      organisation_id: organisationId,
+      start_date: formattedDates.from,
+      end_date: formattedDates.to,
+      filters: `goal_id==${goalId}`,
+      dimension,
+      metrics: metrics || DEFAULT_METRICS,
+    };
+
+    return ApiService.getRequest(endpoint, params);
+  },
+
   getAudienceSegmentReport(
     organisationId: string,
     startDate: McsMoment,

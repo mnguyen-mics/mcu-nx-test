@@ -3,8 +3,8 @@ import { Row } from 'antd';
 import { ButtonStyleless } from '../../../../../../../components';
 import McsIcon, { McsIconType } from '../../../../../../../components/McsIcon';
 import { LocationFieldModel } from '../../domain';
-import { Geoname } from '../../../../../../../services/GeonameService';
-import GeonameRenderer from '../../../../../../../containers/Geoname/GeonameRenderer';
+import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
+import ObjectRenderer from '../../../../../../../containers/ObjectRenderer/ObjectRenderer';
 
 interface Props {
   locationFields: LocationFieldModel[];
@@ -41,10 +41,11 @@ class LocationSelectionRenderer extends React.Component<Props> {
             return (
               <div className={'search-result-box-item'} key={locationField.key}>
                 <McsIcon type={iconType} />
-                <GeonameRenderer
+                <ObjectRenderer
                   key={locationField.key}
-                  geonameId={locationField.model.geoname_id}
+                  id={locationField.model.geoname_id}
                   renderMethod={renderGeoname}
+                  fetchingMethod={GeonameService.getGeoname}
                 />
                 <ButtonStyleless
                   className="close-button"

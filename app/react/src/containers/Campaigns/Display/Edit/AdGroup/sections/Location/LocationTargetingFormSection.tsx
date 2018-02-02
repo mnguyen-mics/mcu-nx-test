@@ -10,9 +10,9 @@ import LocationSelectionRenderer from './LocationSelectionRenderer';
 import SelectGeoname from './SelectGeoname';
 import { LocationFieldModel } from '../../domain';
 import { DrawableContentProps } from '../../../../../../../components/Drawer/index';
-import GeonameRenderer from '../../../../../../Geoname/GeonameRenderer';
+import ObjectRenderer from '../../../../../../ObjectRenderer/ObjectRenderer';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
-import { Geoname } from '../../../../../../../services/GeonameService';
+import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
 
 const confirm = Modal.confirm;
 
@@ -149,10 +149,11 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
           <br />
           {geonameIds.map(id => {
             return (
-              <GeonameRenderer
+              <ObjectRenderer
                 key={id}
-                geonameId={id}
+                id={id}
                 renderMethod={renderGeoname}
+                fetchingMethod={GeonameService.getGeoname}
               />
             );
           })}

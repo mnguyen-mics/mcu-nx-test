@@ -1,4 +1,4 @@
-import ApiService, { DataResponse } from './ApiService';
+import ApiService, { DataResponse, DataListResponse } from './ApiService';
 
 export interface Geoname {
   id: string;
@@ -15,21 +15,21 @@ const GeonameService = {
     keywords: string,
     lang: Language = 'fr',
     country: string = 'FR',
-  ): Promise<Geoname[]> {
+  ): Promise<DataListResponse<Geoname>> {
     const endpoint = 'geonames';
     const params = {
       keywords,
       lang,
       country,
     };
-    return ApiService.getRequest(endpoint, params).then((res: DataResponse<Geoname[]>) => res.data as Geoname[]);
+    return ApiService.getRequest(endpoint, params);
   },
 
   getGeoname(
     geonameId: string,
-  ): Promise<Geoname> {
+  ): Promise<DataResponse<Geoname>> {
     const endpoint = `geonames/${geonameId}`;
-    return ApiService.getRequest(endpoint).then((res: DataResponse<Geoname>) => res.data as Geoname);
+    return ApiService.getRequest(endpoint);
   },
 };
 
