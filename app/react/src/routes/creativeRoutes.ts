@@ -1,15 +1,8 @@
-import {
-  DisplayAdsActionBar,
-  DisplayAdsList,
-} from '../containers/Creative/DisplayAds/List';
+import { EditDisplayCreativePage } from '../containers/Creative/DisplayAds/Edit';
 
-import {
-  EditDisplayCreativePage,
-} from '../containers/Creative/DisplayAds/Edit'
+import DisplayAdsPage from '../containers/Creative/DisplayAds/List/DisplayAdsPage';
 
-import {
-  CreateEmailTemplate
-} from '../containers/Creative/EmailTemplates/Edit';
+import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit';
 
 import {
   EmailActionBar,
@@ -20,8 +13,7 @@ const creativesRoutes = [
   {
     path: '/creatives/display',
     layout: 'main',
-    contentComponent: DisplayAdsList,
-    actionBarComponent: DisplayAdsActionBar,
+    contentComponent: DisplayAdsPage,
   },
   {
     path: '/creatives/display/create',
