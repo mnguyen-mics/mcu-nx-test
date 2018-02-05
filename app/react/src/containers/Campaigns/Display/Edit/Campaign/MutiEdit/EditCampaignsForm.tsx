@@ -8,6 +8,7 @@ import {
   reduxForm,
   InjectedFormProps,
 } from 'redux-form';
+import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -23,6 +24,7 @@ import Loading from '../../../../../../components/Loading';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { CampaignsInfosFieldModel } from '../domain';
 import { Col } from 'antd/lib/grid';
+import * as NotificationActions from '../../../../../../state/Notifications/actions';
 
 const FORM_ID = 'editCampaignsForm';
 
@@ -36,7 +38,11 @@ export interface EditCampaignsFormData {
 
 interface EditCampaignsFormState {
   campaignNames: string[];
-  loading :boolean;
+  loading: boolean;
+}
+
+interface MapStateProps {
+  notifyError: (err: any) => void;
 }
 
 export interface EditCampaignsFormProps {
@@ -47,8 +53,9 @@ export interface EditCampaignsFormProps {
 
 type JoinedProps = EditCampaignsFormProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>
-  & InjectedFormProps<EditCampaignsFormData>;
+  MapStateProps &
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedFormProps<EditCampaignsFormData>;
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -99,12 +106,17 @@ class EditCampaignsForm extends React.Component<
     this.setState({
       loading: true,
     });
-    this.props.onSave(formData).then(() => {
-      this.setState({
-        loading: false,
+    this.props
+      .onSave(formData)
+      .then(() => {
+        this.setState({
+          loading: false,
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
       });
-    });
-  }
+  };
 
   render() {
     const { handleSubmit, close } = this.props;
@@ -163,10 +175,15 @@ class EditCampaignsForm extends React.Component<
   }
 }
 
+const mapStateToProps = (state: MapStateProps) => ({
+  notifyError: NotificationActions.notifyError,
+});
+
 export default compose<JoinedProps, EditCampaignsFormProps>(
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
   }),
   injectIntl,
+  connect(mapStateToProps, undefined),
 )(EditCampaignsForm);

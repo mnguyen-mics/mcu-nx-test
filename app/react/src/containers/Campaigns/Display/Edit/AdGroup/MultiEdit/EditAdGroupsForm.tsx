@@ -8,6 +8,7 @@ import {
   reduxForm,
   InjectedFormProps,
 } from 'redux-form';
+import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -22,6 +23,7 @@ import { FormSection } from '../../../../../../components/Form/index';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { AdGroupsInfosFieldModel } from '../domain';
 import Loading from '../../../../../../components/Loading';
+import * as NotificationActions from '../../../../../../state/Notifications/actions';
 
 const FORM_ID = 'editAdGroupsForm';
 
@@ -31,6 +33,10 @@ const AdGroupsInfosFieldArray = FieldArray as new () => GenericFieldArray<
 
 export interface EditAdGroupsFormData {
   [key: string]: Array<{ [property in keyof AdGroupsInfosFieldModel]: any }>;
+}
+
+interface MapStateProps {
+  notifyError: (err: any) => void;
 }
 
 interface EditAdGroupsFormState {
@@ -46,6 +52,7 @@ export interface EditAdGroupsFormProps {
 
 type JoinedProps = EditAdGroupsFormProps &
   InjectedIntlProps &
+  MapStateProps &
   RouteComponentProps<{ campaignId: string }> &
   InjectedFormProps<EditAdGroupsFormData>;
 
@@ -99,12 +106,17 @@ class EditAdGroupsForm extends React.Component<
     this.setState({
       loading: true,
     });
-    this.props.onSave(formData).then(() => {
-      this.setState({
-        loading: false,
+    this.props
+      .onSave(formData)
+      .then(() => {
+        this.setState({
+          loading: false,
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
       });
-    });
-  }
+  };
 
   render() {
     const { handleSubmit, close } = this.props;
@@ -167,6 +179,10 @@ class EditAdGroupsForm extends React.Component<
   }
 }
 
+const mapStateToProps = (state: MapStateProps) => ({
+  notifyError: NotificationActions.notifyError,
+});
+
 export default compose<JoinedProps, EditAdGroupsFormProps>(
   reduxForm({
     form: FORM_ID,
@@ -174,4 +190,5 @@ export default compose<JoinedProps, EditAdGroupsFormProps>(
   }),
   injectIntl,
   withRouter,
+  connect(mapStateToProps, undefined),
 )(EditAdGroupsForm);

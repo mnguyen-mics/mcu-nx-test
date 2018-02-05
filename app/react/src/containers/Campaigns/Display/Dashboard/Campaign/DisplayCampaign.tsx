@@ -1,6 +1,6 @@
 // import locale from 'antd/lib/time-picker/locale/pt_PT';
 import * as React from 'react';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout, Button, message, Modal } from 'antd';
 import { compose } from 'recompose';
@@ -43,6 +43,13 @@ import AdGroupFormService from '../../Edit/AdGroup/AdGroupFormService';
 
 const { Content } = Layout;
 const DisplayCampaignAdTableJS = DisplayCampaignAdTable as any;
+
+const messagesMap = defineMessages({
+  archiveSuccess: {
+    id: 'archive.adGroups.success.msg',
+    defaultMessage: 'Ad Groups successfully archived',
+  }
+})
 
 export interface CampaignSubProps<T> {
   isLoadingList: boolean;
@@ -183,16 +190,13 @@ class DisplayCampaign extends React.Component<
   };
 
   handleOk = () => {
-    const { intl: { formatMessage } } = this.props;
+    const { intl } = this.props;
     this.setState({
       visible: false,
       selectedRowKeys: [],
     });
     message.success(
-      formatMessage({
-        id: 'archive.adGroups.success.msg',
-        defaultMessage: 'Ad Groups successfully archived',
-      }),
+      intl.formatMessage(messagesMap.archiveSuccess)
     );
   };
 
