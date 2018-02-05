@@ -7,6 +7,7 @@ import VisitAnalyzerList from '../containers/Library/VisitAnalyzer/List/index.ts
 import EmailRoutersList from '../containers/Library/EmailRouter/List/index.ts';
 import RecommendersList from '../containers/Library/Recommender/List/index.ts';
 import ExportsList from '../containers/Library/Exports/List/index.ts';
+import Catalog from '../containers/Library/Catalog/index.ts';
 
 import { CreateEditAttributionModel } from '../containers/Library/AttributionModel/Edit/index.ts';
 import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit/index.ts';
@@ -128,6 +129,14 @@ const campaignsRoutes = [
     path: '/library/recommenders/create',
     layout: 'edit',
     editComponent: CreateEditRecommender,
+  },
+  // ========================================
+  //           CATALOG
+  // ========================================
+  {
+    path: '/library/catalog',
+    layout: 'main',
+    ...Catalog,
   },
   // ========================================
   //           Exports
