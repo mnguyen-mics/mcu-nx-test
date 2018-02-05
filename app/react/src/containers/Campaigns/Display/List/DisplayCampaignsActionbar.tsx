@@ -19,26 +19,41 @@ import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { RouteComponentProps } from 'react-router';
 import McsMoment from '../../../../utils/McsMoment';
-import messages from '../messages';
+import messages from './messages';
 import Slider from '../../../../components/Transition/Slide';
 import {
   DrawableContent,
   injectDrawer,
 } from '../../../../components/Drawer/index';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
+import DisplayCampaignService from '../../../../services/DisplayCampaignService';
+import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
 
 interface DisplayCampaignsActionbarProps {
-  selectedRowKeys?: string[];
+  rowSelection: {
+    selectedRowKeys: string[];
+    unselectAllItemIds: () => void;
+    onChange: (selectedRowKeys: string[]) => void;
+    selectAllItemIds: () => void;
+    onSelectAll: () => void;
+  };
   multiEditProps: {
     archiveCampaigns: () => void;
     visible: boolean;
     handleOk: () => any;
     handleCancel: () => void;
     openEditCampaignsDrawer: () => void;
+    updateCampaignStatus: (
+      campaignId: string,
+      body: { status: CampaignStatus },
+      successMessage?: UpdateMessage,
+      errorMessage?: UpdateMessage,
+      undoBody?: { status: CampaignStatus },
+    ) => void;
   };
 }
 
-interface FilterProps {
+export interface FilterProps {
   currentPage: number;
   from: McsMoment;
   to: McsMoment;
@@ -54,6 +69,8 @@ type JoinedProps = DisplayCampaignsActionbarProps &
 interface DisplayCampaignsActionbarState {
   exportIsRunning: boolean;
   isArchiving: boolean;
+  allCampaignsActivated: boolean;
+  allCampaignsPaused: boolean;
 }
 
 const fetchExportData = (organisationId: string, filter: FilterProps) => {
@@ -115,7 +132,57 @@ class DisplayCampaignsActionbar extends React.Component<
   JoinedProps,
   DisplayCampaignsActionbarState
 > {
-  state = { exportIsRunning: false, isArchiving: false };
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      exportIsRunning: false,
+      isArchiving: false,
+      allCampaignsActivated: false,
+      allCampaignsPaused: false,
+    };
+  }
+
+  componentDidUpdate(
+    prevProps: JoinedProps,
+    prevState: DisplayCampaignsActionbarState,
+  ) {
+    const { rowSelection: { selectedRowKeys } } = this.props;
+    const {
+      rowSelection: { selectedRowKeys: prevSelectedRowKeys },
+    } = prevProps;
+    if (selectedRowKeys.length !== prevSelectedRowKeys.length) {
+      if (selectedRowKeys.length === 0) {
+        this.setState({
+          allCampaignsActivated: false,
+          allCampaignsPaused: false,
+        });
+      } else {
+        this.fetchStatuses();
+      }
+    }
+  }
+
+  fetchStatuses = () => {
+    const { rowSelection: { selectedRowKeys } } = this.props;
+    const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
+    const campaignsStatus: string[] = [];
+    if (hasSelected) {
+      Promise.all(
+        selectedRowKeys.map(campaignId => {
+          return DisplayCampaignService.getCampaignDisplay(campaignId);
+        }),
+      ).then(apiResp => {
+        apiResp.map(campaign => campaignsStatus.push(campaign.data.status));
+        this.setState({
+          allCampaignsActivated: !!!(
+            campaignsStatus.includes('PAUSED') ||
+            campaignsStatus.includes('PENDING')
+          ),
+          allCampaignsPaused: !campaignsStatus.includes('ACTIVE'),
+        });
+      });
+    }
+  };
 
   handleRunExport = () => {
     const {
@@ -163,16 +230,24 @@ class DisplayCampaignsActionbar extends React.Component<
   };
 
   render() {
-    const { exportIsRunning, isArchiving } = this.state;
+    const {
+      exportIsRunning,
+      isArchiving,
+      allCampaignsActivated,
+      allCampaignsPaused,
+    } = this.state;
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
-      selectedRowKeys,
+      rowSelection: {
+        selectedRowKeys
+      },
       multiEditProps: {
         archiveCampaigns,
         visible,
         handleCancel,
         openEditCampaignsDrawer,
+        updateCampaignStatus,
       },
     } = this.props;
 
@@ -187,6 +262,42 @@ class DisplayCampaignsActionbar extends React.Component<
         url: `/v2/o/${organisationId}/campaigns/display`,
       },
     ];
+
+    const buildActionElement = () => {
+      const onClickElement = (status: CampaignStatus) => () => {
+        selectedRowKeys.map(campaignId => {
+          updateCampaignStatus(campaignId, {
+            status,
+          });
+        });
+      };
+
+      if (allCampaignsActivated) {
+        return (
+          <Button
+            className="mcs-primary button-slider"
+            type="primary"
+            onClick={onClickElement('PAUSED')}
+          >
+            <McsIcon type="pause" />
+            <FormattedMessage {...messages.pauseCampaigns} />
+          </Button>
+        );
+      } else if (allCampaignsPaused) {
+        return (
+          <Button
+            className="mcs-primary button-slider"
+            type="primary"
+            onClick={onClickElement('ACTIVE')}
+          >
+            <McsIcon type="play" />
+            <FormattedMessage {...messages.activateCampaigns} />
+          </Button>
+        );
+      } else {
+        return null;
+      }
+    };
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -241,6 +352,13 @@ class DisplayCampaignsActionbar extends React.Component<
             </Button>
           }
         />
+        {(allCampaignsActivated || allCampaignsPaused) && (
+          <Slider
+            toShow={hasSelected}
+            horizontal={true}
+            content={buildActionElement()}
+          />
+        )}
       </Actionbar>
     );
   }

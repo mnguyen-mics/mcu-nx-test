@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Layout, message } from 'antd';
+import { Layout, message, Button } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
@@ -27,6 +27,8 @@ import { DisplayCampaignResource } from '../../../../models/campaign/display/Dis
 import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import messages from '../messages';
 import DisplayCampaignFormService from '../Edit/DisplayCampaignFormService';
+import { CampaignStatus } from '../../../../models/campaign/constants/index';
+import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
 
 const { Content } = Layout;
 interface DisplayCampaignsPageProps {
@@ -37,10 +39,26 @@ interface DisplayCampaignsPageProps {
 interface DisplayCampaignsPageState {
   selectedRowKeys: string[];
   visible: boolean;
+  isUploadingStatuses: boolean;
 }
 
 interface MapStateProps {
-  notifyError: (err: any) => void;
+  notifyError: (
+    err: any,
+    params?: {
+      message: string;
+      description: string;
+    },
+  ) => void;
+  notifySuccess: (
+    params: {
+      uid: string;
+      message: string;
+      description: string;
+      btn: React.ReactNode;
+    },
+  ) => void;
+  removeNotification: () => void;
 }
 
 type JoinedProps = DisplayCampaignsPageProps &
@@ -58,6 +76,7 @@ class DisplayCampaignsPage extends React.Component<
     this.state = {
       selectedRowKeys: [],
       visible: false,
+      isUploadingStatuses: false,
     };
   }
 
@@ -149,6 +168,72 @@ class DisplayCampaignsPage extends React.Component<
     this.showModal();
   };
 
+  updateCampaignStatus = (
+    campaignId: string,
+    body: { status: CampaignStatus },
+    successMessage: UpdateMessage,
+    errorMessage: UpdateMessage,
+    undoBody: { status: CampaignStatus },
+  ) => {
+    this.setState({
+      isUploadingStatuses: true,
+    });
+    const { notifySuccess, notifyError, removeNotification } = this.props;
+
+    const campaignBody = {
+      ...body,
+      type: 'DISPLAY',
+    };
+
+    const campaignUndoBody = {
+      ...undoBody,
+      type: 'DISPLAY',
+    };
+
+    return DisplayCampaignService.updateCampaign(campaignId, campaignBody)
+      .then(response => {
+        if (successMessage) {
+          const undo = () => {
+            DisplayCampaignService.updateCampaign(
+              campaignId,
+              campaignUndoBody,
+            ).then(() => {
+              removeNotification();
+            });
+          };
+
+          notifySuccess({
+            uid: campaignId,
+            message: successMessage.title,
+            description: successMessage.body,
+            btn: (
+              <Button type="primary" size="small" onClick={undo}>
+                <span>Undo</span>
+              </Button>
+            ),
+          });
+        }
+        this.setState({
+          isUploadingStatuses: false,
+          selectedRowKeys: [],
+        });
+        return null;
+      })
+      .catch(error => {
+        const notifyErrorParams = errorMessage
+          ? {
+              message: errorMessage.title,
+              description: errorMessage.body,
+            }
+          : undefined;
+        notifyError(error, notifyErrorParams);
+        this.setState({
+          isUploadingStatuses: false,
+          selectedRowKeys: [],
+        });
+      });
+  };
+
   onSelectChange = (selectedRowKeys: string[]) => {
     this.setState({ selectedRowKeys });
   };
@@ -202,7 +287,7 @@ class DisplayCampaignsPage extends React.Component<
   };
 
   render() {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, isUploadingStatuses } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -214,6 +299,7 @@ class DisplayCampaignsPage extends React.Component<
 
     const multiEditProps = {
       archiveCampaigns: this.archiveCampaigns,
+      updateCampaignStatus: this.updateCampaignStatus,
       visible: this.state.visible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
@@ -223,12 +309,17 @@ class DisplayCampaignsPage extends React.Component<
     return (
       <div className="ant-layout">
         <DisplayCampaignsActionbar
-          selectedRowKeys={rowSelection.selectedRowKeys}
+          rowSelection={rowSelection}
           multiEditProps={multiEditProps}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayCampaignsTable rowSelection={rowSelection} />
+            {!isUploadingStatuses ? (
+              <DisplayCampaignsTable
+                rowSelection={rowSelection}
+                updateCampaignStatus={multiEditProps.updateCampaignStatus}
+              />
+            ) : null}
           </Content>
         </div>
       </div>
@@ -240,6 +331,8 @@ const mapStateToProps = (state: any) => ({
   totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
   dataSource: getTableDataSource(state),
   notifyError: NotificationActions.notifyError,
+  notifySuccess: NotificationActions.notifySuccess,
+  removeNotification: NotificationActions.removeNotification,
 });
 
 export default compose<DisplayCampaignsPageProps, JoinedProps>(
