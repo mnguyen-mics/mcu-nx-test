@@ -13,17 +13,13 @@ import { CREATIVES_EMAIL_FETCH } from '../../action-types';
 
 function* loadCreativeEmails({ payload }) {
   try {
-
-    const {
-      organisationId,
-      filter,
-      isInitialRender,
-    } = payload;
+    const { organisationId, filter, isInitialRender } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
     const options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      archived: filter.archived,
     };
 
     const initialOptions = {
@@ -34,12 +30,24 @@ function* loadCreativeEmails({ payload }) {
 
     if (isInitialRender) {
       allCalls = {
-        initialFetch: call(CreativeService.getEmailTemplates, organisationId, initialOptions),
-        response: call(CreativeService.getEmailTemplates, organisationId, options),
+        initialFetch: call(
+          CreativeService.getEmailTemplates,
+          organisationId,
+          initialOptions,
+        ),
+        response: call(
+          CreativeService.getEmailTemplates,
+          organisationId,
+          options,
+        ),
       };
     } else {
       allCalls = {
-        response: call(CreativeService.getEmailTemplates, organisationId, options),
+        response: call(
+          CreativeService.getEmailTemplates,
+          organisationId,
+          options,
+        ),
       };
     }
 

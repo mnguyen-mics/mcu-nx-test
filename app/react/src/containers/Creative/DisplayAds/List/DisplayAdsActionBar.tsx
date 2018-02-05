@@ -55,11 +55,11 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
         handleCancel,
         handleOk,
       },
+      match: { params: { organisationId } },
+      intl,
     } = this.props;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
-
-    const { match: { params: { organisationId } }, intl } = this.props;
 
     const breadcrumbPaths = [
       {

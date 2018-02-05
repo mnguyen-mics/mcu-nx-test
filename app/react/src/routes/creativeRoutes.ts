@@ -5,8 +5,7 @@ import DisplayAdsPage from '../containers/Creative/DisplayAds/List/DisplayAdsPag
 import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit';
 
 import {
-  EmailActionBar,
-  EmailList,
+  EmailListPage,
 } from '../containers/Creative/EmailTemplates/List';
 
 const creativesRoutes = [
@@ -28,8 +27,7 @@ const creativesRoutes = [
   {
     path: '/creatives/email',
     layout: 'main',
-    contentComponent: EmailList,
-    actionBarComponent: EmailActionBar,
+    contentComponent: EmailListPage,
   },
   {
     path: '/creatives/email/create',
