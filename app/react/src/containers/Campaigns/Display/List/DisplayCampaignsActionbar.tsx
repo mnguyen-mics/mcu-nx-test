@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, message, Modal } from 'antd';
+import { Button, message, Modal, Spin } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -9,7 +9,9 @@ import { withTranslations } from '../../../Helpers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
-import CampaignService, { GetCampaignsOptions } from '../../../../services/CampaignService';
+import CampaignService, {
+  GetCampaignsOptions,
+} from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
@@ -30,7 +32,7 @@ interface DisplayCampaignsActionbarProps {
   multiEditProps: {
     archiveCampaigns: () => void;
     visible: boolean;
-    handleOk: () => void;
+    handleOk: () => any;
     handleCancel: () => void;
     openEditCampaignsDrawer: () => void;
   };
@@ -51,6 +53,7 @@ type JoinedProps = DisplayCampaignsActionbarProps &
 
 interface DisplayCampaignsActionbarState {
   exportIsRunning: boolean;
+  isArchiving: boolean;
 }
 
 const fetchExportData = (organisationId: string, filter: FilterProps) => {
@@ -112,7 +115,7 @@ class DisplayCampaignsActionbar extends React.Component<
   JoinedProps,
   DisplayCampaignsActionbarState
 > {
-  state = { exportIsRunning: false };
+  state = { exportIsRunning: false, isArchiving: false };
 
   handleRunExport = () => {
     const {
@@ -148,8 +151,19 @@ class DisplayCampaignsActionbar extends React.Component<
       });
   };
 
+  handleArchive = () => {
+    this.setState({
+      isArchiving: true,
+    });
+    this.props.multiEditProps.handleOk().then(() => {
+      this.setState({
+        isArchiving: false,
+      });
+    });
+  };
+
   render() {
-    const { exportIsRunning } = this.state;
+    const { exportIsRunning, isArchiving } = this.state;
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
@@ -157,7 +171,6 @@ class DisplayCampaignsActionbar extends React.Component<
       multiEditProps: {
         archiveCampaigns,
         visible,
-        handleOk,
         handleCancel,
         openEditCampaignsDrawer,
       },
@@ -205,11 +218,15 @@ class DisplayCampaignsActionbar extends React.Component<
               <FormattedMessage {...messages.archiveCampaignsModalTitle} />
             }
             visible={visible}
-            onOk={handleOk}
+            onOk={this.handleArchive}
             onCancel={handleCancel}
           >
             <p>
-              <FormattedMessage {...messages.archiveCampaignsModalMessage} />
+              {isArchiving ? (
+                <Spin />
+              ) : (
+                <FormattedMessage {...messages.archiveCampaignsModalMessage} />
+              )}
             </p>
           </Modal>
         ) : null}

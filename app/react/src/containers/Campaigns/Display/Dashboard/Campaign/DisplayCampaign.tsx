@@ -1,8 +1,13 @@
 // import locale from 'antd/lib/time-picker/locale/pt_PT';
 import * as React from 'react';
-import { injectIntl, FormattedMessage, InjectedIntlProps, defineMessages } from 'react-intl';
+import {
+  injectIntl,
+  FormattedMessage,
+  InjectedIntlProps,
+  defineMessages,
+} from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout, Button, message, Modal } from 'antd';
+import { Layout, Button, message, Modal, Spin } from 'antd';
 import { compose } from 'recompose';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import {
@@ -48,8 +53,8 @@ const messagesMap = defineMessages({
   archiveSuccess: {
     id: 'archive.adGroups.success.msg',
     defaultMessage: 'Ad Groups successfully archived',
-  }
-})
+  },
+});
 
 export interface CampaignSubProps<T> {
   isLoadingList: boolean;
@@ -105,6 +110,7 @@ interface DisplaycampaignState {
   visible: boolean;
   allAdGroupsActivated: boolean;
   allAdGroupsPaused: boolean;
+  isArchiving: boolean;
 }
 
 type JoinedProps = DisplayCampaignProps &
@@ -123,8 +129,50 @@ class DisplayCampaign extends React.Component<
       visible: false,
       allAdGroupsActivated: false,
       allAdGroupsPaused: false,
+      isArchiving: false,
     };
   }
+
+  componentDidUpdate(
+    prevProps: DisplayCampaignProps,
+    prevState: DisplaycampaignState,
+  ) {
+    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys: prevSelectedRowKeys } = prevState;
+    if (selectedRowKeys.length !== prevSelectedRowKeys.length) {
+      if (selectedRowKeys.length === 0) {
+        this.setState({
+          allAdGroupsActivated: false,
+          allAdGroupsPaused: false,
+        });
+      } else {
+        this.fetchStatuses();
+      }
+    }
+  }
+
+  fetchStatuses = () => {
+    const { selectedRowKeys } = this.state;
+    const { match: { params: { campaignId } } } = this.props;
+    const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
+    const adGroupsStatus: string[] = [];
+    if (hasSelected) {
+      Promise.all(
+        selectedRowKeys.map(adGroupId => {
+          return DisplayCampaignService.getAdGroup(campaignId, adGroupId);
+        }),
+      ).then(apiResp => {
+        apiResp.map(adGroup => adGroupsStatus.push(adGroup.data.status));
+        this.setState({
+          allAdGroupsActivated: !!!(
+            adGroupsStatus.includes('PAUSED') ||
+            adGroupsStatus.includes('PENDING')
+          ),
+          allAdGroupsPaused: !adGroupsStatus.includes('ACTIVE'),
+        });
+      });
+    }
+  };
 
   updateLocationSearch(params: McsDateRangeValue) {
     const {
@@ -191,13 +239,12 @@ class DisplayCampaign extends React.Component<
 
   handleOk = () => {
     const { intl } = this.props;
+    // when archive adgroup will be functionnal, use 'isArchiving' 
     this.setState({
       visible: false,
       selectedRowKeys: [],
     });
-    message.success(
-      intl.formatMessage(messagesMap.archiveSuccess)
-    );
+    message.success(intl.formatMessage(messagesMap.archiveSuccess));
   };
 
   handleCancel = () => {
@@ -248,6 +295,7 @@ class DisplayCampaign extends React.Component<
       selectedRowKeys,
       allAdGroupsActivated,
       allAdGroupsPaused,
+      isArchiving
     } = this.state;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
@@ -258,23 +306,6 @@ class DisplayCampaign extends React.Component<
         state: { from: `${location.pathname}${location.search}` },
       });
     };
-    const adGroupsStatus: string[] = [];
-    if (hasSelected) {
-      Promise.all(
-        selectedRowKeys.map(adGroupId => {
-          return DisplayCampaignService.getAdGroup(campaignId, adGroupId);
-        }),
-      ).then(apiResp => {
-        apiResp.map(adGroup => adGroupsStatus.push(adGroup.data.status));
-        this.setState({
-          allAdGroupsActivated: !!!(
-            adGroupsStatus.includes('PAUSED') ||
-            adGroupsStatus.includes('PENDING')
-          ),
-          allAdGroupsPaused: !adGroupsStatus.includes('ACTIVE'),
-        });
-      });
-    }
 
     const buildActionElement = () => {
       const onClickElement = (status: AdGroupStatus) => () => {
@@ -342,7 +373,11 @@ class DisplayCampaign extends React.Component<
             onCancel={this.handleCancel}
           >
             <p>
-              <FormattedMessage {...messages.archiveAdGroupsModalMessage} />
+              {isArchiving ? (
+                <Spin />
+              ) : (
+                <FormattedMessage {...messages.archiveAdGroupsModalMessage} />
+              )}
             </p>
           </Modal>
         ) : null}
@@ -375,7 +410,6 @@ class DisplayCampaign extends React.Component<
     };
 
     const adButtons: JSX.Element = <span>{this.renderDatePicker()}</span>;
-
     return (
       <div className="ant-layout">
         <DisplayCampaignActionbar
