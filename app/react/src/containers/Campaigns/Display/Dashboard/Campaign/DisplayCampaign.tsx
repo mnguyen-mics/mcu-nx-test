@@ -239,7 +239,7 @@ class DisplayCampaign extends React.Component<
 
   handleOk = () => {
     const { intl } = this.props;
-    // when archive adgroup will be functionnal, use 'isArchiving' 
+    // when archive adgroup will be functionnal, use 'isArchiving'
     this.setState({
       visible: false,
       selectedRowKeys: [],
@@ -295,7 +295,7 @@ class DisplayCampaign extends React.Component<
       selectedRowKeys,
       allAdGroupsActivated,
       allAdGroupsPaused,
-      isArchiving
+      isArchiving,
     } = this.state;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
@@ -322,7 +322,7 @@ class DisplayCampaign extends React.Component<
       if (allAdGroupsActivated) {
         return (
           <Button
-            className="mcs-primary button-slider"
+            className="mcs-primary button-slider button-glow"
             type="primary"
             onClick={onClickElement('PAUSED')}
           >
@@ -333,7 +333,7 @@ class DisplayCampaign extends React.Component<
       } else if (allAdGroupsPaused) {
         return (
           <Button
-            className="mcs-primary button-slider"
+            className="mcs-primary button-slider button-glow"
             type="primary"
             onClick={onClickElement('ACTIVE')}
           >
@@ -357,7 +357,7 @@ class DisplayCampaign extends React.Component<
           horizontal={true}
           content={
             <Button
-              className="m-r-10 button-slider"
+              className="m-r-10 button-slider button-glow"
               onClick={this.archiveAdGroups}
             >
               <McsIcon type="delete" />
@@ -386,7 +386,7 @@ class DisplayCampaign extends React.Component<
           horizontal={true}
           content={
             <Button
-              className="m-r-10 button-slider"
+              className="m-r-10 button-slider button-glow"
               onClick={this.openEditAdGroupsDrawer}
             >
               <McsIcon type="pen" />
@@ -394,13 +394,12 @@ class DisplayCampaign extends React.Component<
             </Button>
           }
         />
-        {(allAdGroupsActivated || allAdGroupsPaused) && (
-          <Slide
-            toShow={hasSelected}
-            horizontal={true}
-            content={buildActionElement()}
-          />
-        )}
+
+        <Slide
+          toShow={allAdGroupsActivated || allAdGroupsPaused}
+          horizontal={true}
+          content={buildActionElement()}
+        />
       </span>
     );
 

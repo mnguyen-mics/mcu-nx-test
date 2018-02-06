@@ -239,9 +239,7 @@ class DisplayCampaignsActionbar extends React.Component<
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
-      rowSelection: {
-        selectedRowKeys
-      },
+      rowSelection: { selectedRowKeys },
       multiEditProps: {
         archiveCampaigns,
         visible,
@@ -275,7 +273,7 @@ class DisplayCampaignsActionbar extends React.Component<
       if (allCampaignsActivated) {
         return (
           <Button
-            className="mcs-primary button-slider"
+            className="mcs-primary button-slider button-glow"
             type="primary"
             onClick={onClickElement('PAUSED')}
           >
@@ -286,7 +284,7 @@ class DisplayCampaignsActionbar extends React.Component<
       } else if (allCampaignsPaused) {
         return (
           <Button
-            className="mcs-primary button-slider"
+            className="mcs-primary button-slider button-glow"
             type="primary"
             onClick={onClickElement('ACTIVE')}
           >
@@ -316,7 +314,10 @@ class DisplayCampaignsActionbar extends React.Component<
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button onClick={archiveCampaigns} className="button-slider">
+            <Button
+              onClick={archiveCampaigns}
+              className="button-slider button-glow"
+            >
               <McsIcon type="delete" />
               <FormattedMessage id="ARCHIVE" />
             </Button>
@@ -346,19 +347,21 @@ class DisplayCampaignsActionbar extends React.Component<
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button onClick={openEditCampaignsDrawer} className="button-slider">
+            <Button
+              onClick={openEditCampaignsDrawer}
+              className="button-slider button-glow"
+            >
               <McsIcon type="pen" />
               <FormattedMessage id="EDIT" />
             </Button>
           }
         />
-        {(allCampaignsActivated || allCampaignsPaused) && (
-          <Slider
-            toShow={hasSelected}
-            horizontal={true}
-            content={buildActionElement()}
-          />
-        )}
+
+        <Slider
+          toShow={allCampaignsActivated || allCampaignsPaused}
+          horizontal={true}
+          content={buildActionElement()}
+        />
       </Actionbar>
     );
   }
