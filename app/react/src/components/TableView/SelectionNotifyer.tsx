@@ -8,8 +8,10 @@ import { ButtonStyleless } from '../index';
 
 interface SelectionNotifyerProps<T> {
   rowSelection?: TableRowSelection<T> & {
+    selectedRowKeys?: string[];
+    allRowsAreSelected?: boolean;
     unselectAllItemIds?: () => void;
-    selectAllItemIds?: (selected: boolean) => void;
+    selectAllItemIds?: () => void;
   };
   pagination?: PaginationProps | false;
 }
@@ -21,12 +23,15 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
 
     const handleOnClick = () => {
       if (rowSelection && rowSelection.selectAllItemIds) {
-        rowSelection.selectAllItemIds(true);
+        rowSelection.selectAllItemIds();
       }
     };
 
     if (rowSelection && rowSelection.selectedRowKeys && pagination) {
-      if (rowSelection.selectedRowKeys.length === pagination.total) {
+      if (
+        rowSelection.allRowsAreSelected ||
+        rowSelection.selectedRowKeys.length === pagination.total
+      ) {
         content = (
           <div>
             <FormattedMessage
@@ -69,7 +74,18 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
           </div>
         );
       } else {
-        content = <div />;
+        content = (
+          <div>
+            <FormattedMessage
+              id="display.items.selectedRows.msg"
+              defaultMessage={`You have selected {selectedRowKeysLength}
+              { selectedRowKeysLength, plural, zero {item} one {item} other {items} }.`}
+              values={{
+                selectedRowKeysLength: rowSelection.selectedRowKeys.length,
+              }}
+            />
+          </div>
+        );
       }
     }
 
@@ -81,9 +97,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
       rowSelection &&
       rowSelection.selectedRowKeys &&
       pagination &&
-      rowSelection.selectedRowKeys.length !== 0 &&
-      (rowSelection.selectedRowKeys.length === pagination.total ||
-        rowSelection.selectedRowKeys.length === pagination.pageSize)
+      rowSelection.selectedRowKeys.length !== 0
     );
 
     return rowSelection && rowSelection.selectedRowKeys ? (

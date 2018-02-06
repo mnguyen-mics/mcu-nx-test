@@ -32,10 +32,11 @@ import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable
 interface DisplayCampaignsActionbarProps {
   rowSelection: {
     selectedRowKeys: string[];
+    allRowsAreSelected: boolean;
+    totalDisplayCampaigns?: number;
     unselectAllItemIds: () => void;
     onChange: (selectedRowKeys: string[]) => void;
     selectAllItemIds: () => void;
-    onSelectAll: () => void;
   };
   multiEditProps: {
     archiveCampaigns: () => void;
@@ -239,7 +240,11 @@ class DisplayCampaignsActionbar extends React.Component<
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
-      rowSelection: { selectedRowKeys },
+      rowSelection: {
+        selectedRowKeys,
+        allRowsAreSelected,
+        totalDisplayCampaigns,
+      },
       multiEditProps: {
         archiveCampaigns,
         visible,
@@ -263,11 +268,31 @@ class DisplayCampaignsActionbar extends React.Component<
 
     const buildActionElement = () => {
       const onClickElement = (status: CampaignStatus) => () => {
-        selectedRowKeys.map(campaignId => {
-          updateCampaignStatus(campaignId, {
-            status,
+        if (allRowsAreSelected) {
+          const options: GetCampaignsOptions = {
+            max_results: totalDisplayCampaigns,
+            archived: false,
+          };
+          const allCampaignsIds: string[] = [];
+          CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
+            apiResp => {
+              apiResp.data.map((campaignResource, index) => {
+                allCampaignsIds.push(campaignResource.id);
+              });
+              allCampaignsIds.map(campaignId => {
+                updateCampaignStatus(campaignId, {
+                  status,
+                });
+              });
+            },
+          );
+        } else {
+          selectedRowKeys.map(campaignId => {
+            updateCampaignStatus(campaignId, {
+              status,
+            });
           });
-        });
+        }
       };
 
       if (allCampaignsActivated) {

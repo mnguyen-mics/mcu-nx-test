@@ -21,7 +21,7 @@ export interface UpdateMessage {
 interface DisplayCampaignAdGroupTableProps {
   isFetching: boolean;
   isFetchingStat: boolean;
-  dataSet?: object[]; // check type
+  dataSet?: AdGroupResource[];
   updateAdGroup: (
     id: string,
     adGroupInfo: {
@@ -35,15 +35,32 @@ interface DisplayCampaignAdGroupTableProps {
   ) => void;
   rowSelection: {
     selectedRowKeys: string[];
+    allRowsAreSelected: boolean;
+    totalAdGroups: number;
     onChange: (selectedRowKeys: string[]) => void;
   };
+}
+
+interface DisplayCampaignAdGroupTableState {
+  pageSize: number;
 }
 
 type JoinedProps = DisplayCampaignAdGroupTableProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; campaignId: string }>;
 
-class DisplayCampaignAdGroupTable extends React.Component<JoinedProps> {
+class DisplayCampaignAdGroupTable extends React.Component<
+  JoinedProps,
+  DisplayCampaignAdGroupTableState
+> {
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      pageSize: 10,
+    };
+  }
+
   editCampaign = (adgroup: AdGroupResource) => {
     const {
       match: { params: { campaignId, organisationId } },
@@ -259,6 +276,15 @@ class DisplayCampaignAdGroupTable extends React.Component<JoinedProps> {
       },
     ];
 
+    const pagination = {
+      pageSize: this.state.pageSize,
+      total: rowSelection.totalAdGroups,
+      onShowSizeChange: (current: number, size: number) =>
+      this.setState({
+        pageSize: size,
+      })
+    };
+
     return (
       <TableView
         columns={dataColumns}
@@ -266,6 +292,7 @@ class DisplayCampaignAdGroupTable extends React.Component<JoinedProps> {
         dataSource={dataSet}
         loading={isFetching}
         rowSelection={rowSelection}
+        pagination={pagination}
       />
     );
   }

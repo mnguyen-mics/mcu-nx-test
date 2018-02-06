@@ -10,7 +10,7 @@ import {
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 
@@ -26,6 +26,13 @@ import Loading from '../../../../../../components/Loading';
 import * as NotificationActions from '../../../../../../state/Notifications/actions';
 
 const FORM_ID = 'editAdGroupsForm';
+
+const messageMap = defineMessages({
+  allAdGroupsNames: {
+    id: 'edit.campaign.all.adgroups.names',
+    defaultMessage: 'You have selected all the ad groups.',
+  },
+});
 
 const AdGroupsInfosFieldArray = FieldArray as new () => GenericFieldArray<
   Field
@@ -46,7 +53,7 @@ interface EditAdGroupsFormState {
 
 export interface EditAdGroupsFormProps {
   close: () => void;
-  selectedRowKeys: string[];
+  selectedRowKeys?: string[];
   onSave: (formData: EditAdGroupsFormData) => Promise<any>;
 }
 
@@ -73,15 +80,29 @@ class EditAdGroupsForm extends React.Component<
   }
 
   componentDidMount() {
-    const { selectedRowKeys } = this.props;
-    this.fetchData(selectedRowKeys);
+    const { selectedRowKeys, intl } = this.props;
+    if (selectedRowKeys) {
+      this.fetchData(selectedRowKeys);
+    } else {
+      this.setState({
+        AdGroupNames: [intl.formatMessage(messageMap.allAdGroupsNames)],
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
-    const { selectedRowKeys } = this.props;
+    const { selectedRowKeys, intl } = this.props;
     const { selectedRowKeys: nextSelectedRowKeys } = nextProps;
-    if (selectedRowKeys !== nextSelectedRowKeys) {
+    if (
+      selectedRowKeys &&
+      nextSelectedRowKeys &&
+      selectedRowKeys !== nextSelectedRowKeys
+    ) {
       this.fetchData(nextSelectedRowKeys);
+    } else {
+      this.setState({
+        AdGroupNames: [intl.formatMessage(messageMap.allAdGroupsNames)],
+      });
     }
   }
 

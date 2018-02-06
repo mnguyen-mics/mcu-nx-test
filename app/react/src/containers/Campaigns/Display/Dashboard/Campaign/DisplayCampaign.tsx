@@ -7,6 +7,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { connect } from 'react-redux';
 import { Layout, Button, message, Modal, Spin } from 'antd';
 import { compose } from 'recompose';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
@@ -45,6 +46,7 @@ import DisplayCampaignService from '../../../../../services/DisplayCampaignServi
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import AdGroupFormService from '../../Edit/AdGroup/AdGroupFormService';
+import * as NotificationActions from '../../../../../state/Notifications/actions';
 
 const { Content } = Layout;
 const DisplayCampaignAdTableJS = DisplayCampaignAdTable as any;
@@ -105,8 +107,13 @@ interface DisplayCampaignProps {
   goals: object[];
 }
 
+interface MapStateProps {
+  notifyError: (err: any) => void;
+}
+
 interface DisplaycampaignState {
   selectedRowKeys: string[];
+  allRowsAreSelected: boolean;
   visible: boolean;
   allAdGroupsActivated: boolean;
   allAdGroupsPaused: boolean;
@@ -116,6 +123,7 @@ interface DisplaycampaignState {
 type JoinedProps = DisplayCampaignProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectDrawerProps &
+  MapStateProps &
   InjectedIntlProps;
 
 class DisplayCampaign extends React.Component<
@@ -126,6 +134,7 @@ class DisplayCampaign extends React.Component<
     super(props);
     this.state = {
       selectedRowKeys: [],
+      allRowsAreSelected: false,
       visible: false,
       allAdGroupsActivated: false,
       allAdGroupsPaused: false,
@@ -137,8 +146,11 @@ class DisplayCampaign extends React.Component<
     prevProps: DisplayCampaignProps,
     prevState: DisplaycampaignState,
   ) {
-    const { selectedRowKeys } = this.state;
-    const { selectedRowKeys: prevSelectedRowKeys } = prevState;
+    const { selectedRowKeys, allRowsAreSelected } = this.state;
+    const {
+      selectedRowKeys: prevSelectedRowKeys,
+      allRowsAreSelected: prevAllRowsAreSelected,
+    } = prevState;
     if (selectedRowKeys.length !== prevSelectedRowKeys.length) {
       if (selectedRowKeys.length === 0) {
         this.setState({
@@ -146,19 +158,31 @@ class DisplayCampaign extends React.Component<
           allAdGroupsPaused: false,
         });
       } else {
-        this.fetchStatuses();
+        this.fetchStatuses(selectedRowKeys);
       }
+    } else if (
+      allRowsAreSelected &&
+      allRowsAreSelected !== prevAllRowsAreSelected
+    ) {
+      // call mandatory in order to display pause/activate button
+      const { match: { params: { campaignId } } } = this.props;
+      const allAdGroupsIds: string[] = [];
+      DisplayCampaignService.getAdGroups(campaignId).then(apiResp => {
+        apiResp.data.map((adGroup, index) => {
+          allAdGroupsIds.push(adGroup.id);
+        });
+        this.fetchStatuses(allAdGroupsIds);
+      });
     }
   }
 
-  fetchStatuses = () => {
-    const { selectedRowKeys } = this.state;
+  fetchStatuses = (adGroupIds: string[]) => {
     const { match: { params: { campaignId } } } = this.props;
-    const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
+    const hasSelected = !!(adGroupIds && adGroupIds.length > 0);
     const adGroupsStatus: string[] = [];
     if (hasSelected) {
       Promise.all(
-        selectedRowKeys.map(adGroupId => {
+        adGroupIds.map(adGroupId => {
           return DisplayCampaignService.getAdGroup(campaignId, adGroupId);
         }),
       ).then(apiResp => {
@@ -217,24 +241,57 @@ class DisplayCampaign extends React.Component<
       match: { params: { campaignId } },
     } = this.props;
 
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    return AdGroupFormService.saveAdGroups(
-      campaignId,
-      selectedRowKeys,
-      formData,
-    ).then(() => {
-      this.setState({
-        selectedRowKeys: [],
+    if (allRowsAreSelected) {
+      const allAdGroupsIds: string[] = [];
+      return DisplayCampaignService.getAdGroups(campaignId).then(apiResp => {
+        apiResp.data.map((adGroup, index) => {
+          allAdGroupsIds.push(adGroup.id);
+        });
+        return AdGroupFormService.saveAdGroups(
+          campaignId,
+          allAdGroupsIds,
+          formData,
+        )
+          .then(() => {
+            this.setState({
+              selectedRowKeys: [],
+            });
+            this.props.closeNextDrawer();
+            message.success(
+              formatMessage({
+                id: 'edit.adgroups.success.msg',
+                defaultMessage: 'Ad Groups successfully saved',
+              }),
+            );
+          })
+          .catch(err => {
+            this.props.notifyError(err);
+          });
       });
-      this.props.closeNextDrawer();
-      message.success(
-        formatMessage({
-          id: 'edit.adgroups.success.msg',
-          defaultMessage: 'Ad Groups successfully saved',
-        }),
-      );
-    });
+    } else {
+      return AdGroupFormService.saveAdGroups(
+        campaignId,
+        selectedRowKeys,
+        formData,
+      )
+        .then(() => {
+          this.setState({
+            selectedRowKeys: [],
+          });
+          this.props.closeNextDrawer();
+          message.success(
+            formatMessage({
+              id: 'edit.adgroups.success.msg',
+              defaultMessage: 'Ad Groups successfully saved',
+            }),
+          );
+        })
+        .catch(err => {
+          this.props.notifyError(err);
+        });
+    }
   };
 
   handleOk = () => {
@@ -254,11 +311,20 @@ class DisplayCampaign extends React.Component<
   };
 
   openEditAdGroupsDrawer = () => {
-    const additionalProps = {
+    const { allRowsAreSelected } = this.state;
+    const additionalProps: {
+      close: () => void;
+      onSave: (formData: EditAdGroupsFormData) => Promise<any>;
+      selectedRowKeys?: string[];
+    } = {
       close: this.props.closeNextDrawer,
       onSave: this.saveAdGroups,
-      selectedRowKeys: this.state.selectedRowKeys,
     };
+    if (allRowsAreSelected) {
+      additionalProps.selectedRowKeys = undefined;
+    } else {
+      additionalProps.selectedRowKeys = this.state.selectedRowKeys;
+    }
     const options = {
       additionalProps: additionalProps,
     };
@@ -272,6 +338,25 @@ class DisplayCampaign extends React.Component<
   archiveAdGroups = () => {
     this.setState({
       visible: true,
+    });
+  };
+
+  selectAllItemIds = () => {
+    this.setState({
+      allRowsAreSelected: true,
+    });
+  };
+
+  unselectAllItemIds = () => {
+    this.setState({
+      selectedRowKeys: [],
+      allRowsAreSelected: false,
+    });
+  };
+
+  unsetAllItemsSelectedFlag = () => {
+    this.setState({
+      allRowsAreSelected: false,
     });
   };
 
@@ -296,6 +381,7 @@ class DisplayCampaign extends React.Component<
       allAdGroupsActivated,
       allAdGroupsPaused,
       isArchiving,
+      allRowsAreSelected,
     } = this.state;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
@@ -309,11 +395,25 @@ class DisplayCampaign extends React.Component<
 
     const buildActionElement = () => {
       const onClickElement = (status: AdGroupStatus) => () => {
-        selectedRowKeys.map(adGroupId => {
-          updateAdGroup(adGroupId, {
-            status,
+        if (allRowsAreSelected) {
+          const allAdGroupsIds: string[] = [];
+          DisplayCampaignService.getAdGroups(campaignId).then(apiResp => {
+            apiResp.data.map((adGroup, index) => {
+              allAdGroupsIds.push(adGroup.id);
+            });
+            allAdGroupsIds.map(adGroupId => {
+              updateAdGroup(adGroupId, {
+                status,
+              });
+            });
           });
-        });
+        } else {
+          selectedRowKeys.map(adGroupId => {
+            updateAdGroup(adGroupId, {
+              status,
+            });
+          });
+        }
         this.setState({
           selectedRowKeys: [],
         });
@@ -405,7 +505,15 @@ class DisplayCampaign extends React.Component<
 
     const rowSelection = {
       selectedRowKeys,
+      allRowsAreSelected: this.state.allRowsAreSelected,
+      totalAdGroups: this.props.adGroups.items
+        ? this.props.adGroups.items.length
+        : 0,
       onChange: this.onSelectChange,
+      selectAllItemIds: this.selectAllItemIds,
+      unselectAllItemIds: this.unselectAllItemIds,
+      onSelectAll: this.unsetAllItemsSelectedFlag,
+      onSelect: this.unsetAllItemsSelectedFlag,
     };
 
     const adButtons: JSX.Element = <span>{this.renderDatePicker()}</span>;
@@ -468,8 +576,13 @@ class DisplayCampaign extends React.Component<
   }
 }
 
+const mapStateToProps = (state: MapStateProps) => ({
+  notifyError: NotificationActions.notifyError,
+});
+
 export default compose<DisplayCampaignProps, JoinedProps>(
   injectIntl,
   withRouter,
   injectDrawer,
+  connect(mapStateToProps, undefined),
 )(DisplayCampaign);

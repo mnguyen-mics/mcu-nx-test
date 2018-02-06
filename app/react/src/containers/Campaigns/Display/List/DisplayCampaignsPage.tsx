@@ -38,6 +38,7 @@ interface DisplayCampaignsPageProps {
 
 interface DisplayCampaignsPageState {
   selectedRowKeys: string[];
+  allRowsAreSelected: boolean;
   visible: boolean;
   isUploadingStatuses: boolean;
 }
@@ -75,6 +76,7 @@ class DisplayCampaignsPage extends React.Component<
     super(props);
     this.state = {
       selectedRowKeys: [],
+      allRowsAreSelected: false,
       visible: false,
       isUploadingStatuses: false,
     };
@@ -87,40 +89,96 @@ class DisplayCampaignsPage extends React.Component<
   };
 
   handleOk = () => {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    const { location: { search, pathname, state }, history, intl } = this.props;
-
+    const {
+      location: { search, pathname, state },
+      history,
+      intl,
+      totalDisplayCampaigns,
+      match: { params: { organisationId } },
+      notifyError,
+    } = this.props;
+    const options: GetCampaignsOptions = {
+      max_results: totalDisplayCampaigns,
+      archived: false,
+    };
+    const allCampaignsIds: string[] = [];
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
-    return Promise.all(
-      selectedRowKeys.map(campaignId => {
-        DisplayCampaignService.updateCampaign(campaignId, {
-          archived: true,
-          type: 'DISPLAY',
+    if (allRowsAreSelected) {
+      return CampaignService.getCampaigns(organisationId, 'DISPLAY', options)
+        .then(apiResp => {
+          apiResp.data.map((campaignResource, index) => {
+            allCampaignsIds.push(campaignResource.id);
+          });
+          return Promise.all(
+            allCampaignsIds.map(campaignId => {
+              DisplayCampaignService.updateCampaign(campaignId, {
+                status: 'PAUSED',
+                archived: true,
+                type: 'DISPLAY',
+              });
+            }),
+          ).then(() => {
+            if (filter.currentPage !== 1) {
+              const newFilter = {
+                ...filter,
+                currentPage: 1,
+              };
+              history.push({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
+            } else {
+              window.location.reload();
+            }
+            this.setState({
+              visible: false,
+              selectedRowKeys: [],
+            });
+            message.success(intl.formatMessage(messages.campaignsArchived));
+          });
+        })
+        .catch(err => {
+          notifyError(err);
         });
-      }),
-    ).then(() => {
-      if (filter.currentPage !== 1) {
-        const newFilter = {
-          ...filter,
-          currentPage: 1,
-        };
-        history.push({
-          pathname: pathname,
-          search: updateSearch(search, newFilter),
-          state: state,
-        });
-      } else {
-        window.location.reload();
-      }
+    } else {
+      return Promise.all(
+        selectedRowKeys.map(campaignId => {
+          DisplayCampaignService.updateCampaign(campaignId, {
+            status: 'PAUSED',
+            archived: true,
+            type: 'DISPLAY',
+          });
+        }),
+      )
+        .then(() => {
+          if (filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: 1,
+            };
+            history.push({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
+          } else {
+            window.location.reload();
+          }
 
-      this.setState({
-        visible: false,
-        selectedRowKeys: [],
-      });
-      message.success(intl.formatMessage(messages.campaignsArchived));
-    });
+          this.setState({
+            visible: false,
+            selectedRowKeys: [],
+          });
+          message.success(intl.formatMessage(messages.campaignsArchived));
+        })
+        .catch(err => {
+          notifyError(err);
+        });
+    }
   };
 
   handleCancel = () => {
@@ -130,31 +188,79 @@ class DisplayCampaignsPage extends React.Component<
   };
 
   editCampaigns = (formData: EditCampaignsFormData) => {
-    const { selectedRowKeys } = this.state;
-    const { notifyError, intl } = this.props;
-    return DisplayCampaignFormService.saveCampaigns(selectedRowKeys, formData)
-      .then(() => {
-        this.props.closeNextDrawer();
-        this.setState({
-          selectedRowKeys: [],
+    const { selectedRowKeys, allRowsAreSelected } = this.state;
+    const {
+      notifyError,
+      intl,
+      match: { params: { organisationId } },
+      totalDisplayCampaigns,
+    } = this.props;
+
+    if (allRowsAreSelected) {
+      const campaignsIds: string[] = [];
+      const options: GetCampaignsOptions = {
+        max_results: totalDisplayCampaigns,
+        archived: false,
+      };
+      return CampaignService.getCampaigns(
+        organisationId,
+        'DISPLAY',
+        options,
+      ).then(apiResp => {
+        apiResp.data.map((campaignResource, index) => {
+          campaignsIds.push(campaignResource.id);
         });
-        message.success(intl.formatMessage(messages.campaignsSaved));
-      })
-      .catch(err => {
-        this.props.closeNextDrawer();
-        this.setState({
-          selectedRowKeys: [],
-        });
-        notifyError(err);
+        return DisplayCampaignFormService.saveCampaigns(campaignsIds, formData)
+          .then(() => {
+            this.props.closeNextDrawer();
+            this.setState({
+              selectedRowKeys: [],
+            });
+            message.success(intl.formatMessage(messages.campaignsSaved));
+          })
+          .catch(err => {
+            this.props.closeNextDrawer();
+            this.setState({
+              selectedRowKeys: [],
+            });
+            notifyError(err);
+          });
       });
+    } else {
+      return DisplayCampaignFormService.saveCampaigns(selectedRowKeys, formData)
+        .then(() => {
+          this.props.closeNextDrawer();
+          this.setState({
+            selectedRowKeys: [],
+          });
+          message.success(intl.formatMessage(messages.campaignsSaved));
+        })
+        .catch(err => {
+          this.props.closeNextDrawer();
+          this.setState({
+            selectedRowKeys: [],
+          });
+          notifyError(err);
+        });
+    }
   };
 
   openEditCampaignsDrawer = () => {
-    const additionalProps = {
+    const { allRowsAreSelected } = this.state;
+    const additionalProps: {
+      close: () => void;
+      onSave: (formData: EditCampaignsFormData) => Promise<any>;
+      selectedRowKeys?: string[];
+    } = {
       close: this.props.closeNextDrawer,
       onSave: this.editCampaigns,
-      selectedRowKeys: this.state.selectedRowKeys,
     };
+    if (allRowsAreSelected) {
+      additionalProps.selectedRowKeys = undefined;
+    } else {
+      additionalProps.selectedRowKeys = this.state.selectedRowKeys;
+    }
+
     const options = {
       additionalProps: additionalProps,
     };
@@ -238,63 +344,41 @@ class DisplayCampaignsPage extends React.Component<
     this.setState({ selectedRowKeys });
   };
 
-  selectAllItemIds = (selected: boolean = true) => {
-    const {
-      totalDisplayCampaigns,
-      match: { params: { organisationId } },
-    } = this.props;
-    const options: GetCampaignsOptions = {
-      max_results: totalDisplayCampaigns,
-      archived: false,
-    };
-    const allCampaignsIds: string[] = [];
-    if (selected) {
-      CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
-        apiResp => {
-          apiResp.data.map((campaignResource, index) => {
-            allCampaignsIds.push(campaignResource.id);
-          });
-          this.setState({
-            selectedRowKeys: allCampaignsIds,
-          });
-        },
-      );
-    } else {
-      this.setState({
-        selectedRowKeys: allCampaignsIds,
-      });
-    }
+  selectAllItemIds = () => {
+    this.setState({
+      allRowsAreSelected: true,
+    });
   };
 
-  unselectAllItemIds = (selected = false) => {
-    this.selectAllItemIds(false);
+  unselectAllItemIds = () => {
+    this.setState({
+      selectedRowKeys: [],
+      allRowsAreSelected: false,
+    });
   };
 
-  onSelectAll = () => {
-    const { selectedRowKeys } = this.state;
-    const { dataSource } = this.props;
-    if (selectedRowKeys.length > 0) {
-      this.selectAllItemIds(false);
-    } else {
-      const allPageItemsIds: string[] = [];
-      dataSource.map(dataCampaign => {
-        allPageItemsIds.push(dataCampaign.id);
-      });
-      this.setState({
-        selectedRowKeys: allPageItemsIds,
-      });
-    }
+  unsetAllItemsSelectedFlag = () => {
+    this.setState({
+      allRowsAreSelected: false,
+    });
   };
 
   render() {
-    const { selectedRowKeys, isUploadingStatuses } = this.state;
+    const {
+      selectedRowKeys,
+      isUploadingStatuses,
+      allRowsAreSelected,
+    } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
+      allRowsAreSelected: allRowsAreSelected,
+      totalDisplayCampaigns: this.props.totalDisplayCampaigns,
       onChange: this.onSelectChange,
       selectAllItemIds: this.selectAllItemIds,
       unselectAllItemIds: this.unselectAllItemIds,
-      onSelectAll: this.onSelectAll,
+      onSelectAll: this.unsetAllItemsSelectedFlag,
+      onSelect: this.unsetAllItemsSelectedFlag,
     };
 
     const multiEditProps = {

@@ -10,7 +10,7 @@ import {
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 
@@ -27,6 +27,13 @@ import { Col } from 'antd/lib/grid';
 import * as NotificationActions from '../../../../../../state/Notifications/actions';
 
 const FORM_ID = 'editCampaignsForm';
+
+const messageMap = defineMessages({
+  allCampaignsNames: {
+    id: 'edit.campaigns.all.campaigns.names',
+    defaultMessage: 'You have selected all the campaigns.',
+  },
+});
 
 const CampaignsInfosFieldArray = FieldArray as new () => GenericFieldArray<
   Field
@@ -47,7 +54,7 @@ interface MapStateProps {
 
 export interface EditCampaignsFormProps {
   close: () => void;
-  selectedRowKeys: string[];
+  selectedRowKeys?: string[];
   onSave: (formData: EditCampaignsFormData) => Promise<any>;
 }
 
@@ -74,15 +81,29 @@ class EditCampaignsForm extends React.Component<
   }
 
   componentDidMount() {
-    const { selectedRowKeys } = this.props;
-    this.fetchData(selectedRowKeys);
+    const { selectedRowKeys, intl } = this.props;
+    if (selectedRowKeys) {
+      this.fetchData(selectedRowKeys);
+    } else {
+      this.setState({
+        campaignNames: [intl.formatMessage(messageMap.allCampaignsNames)],
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
-    const { selectedRowKeys } = this.props;
+    const { selectedRowKeys, intl } = this.props;
     const { selectedRowKeys: nextSelectedRowKeys } = nextProps;
-    if (selectedRowKeys !== nextSelectedRowKeys) {
+    if (
+      selectedRowKeys &&
+      nextSelectedRowKeys &&
+      selectedRowKeys !== nextSelectedRowKeys
+    ) {
       this.fetchData(nextSelectedRowKeys);
+    } else {
+      this.setState({
+        campaignNames: [intl.formatMessage(messageMap.allCampaignsNames)],
+      });
     }
   }
 

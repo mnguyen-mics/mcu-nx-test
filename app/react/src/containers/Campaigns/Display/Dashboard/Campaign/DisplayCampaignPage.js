@@ -526,18 +526,20 @@ class DisplayCampaignPage extends Component {
       })
       .catch(error => {
         const notifyErrorParams = errorMessage
-        ? {
-          message: errorMessage.title,
-          description: errorMessage.body,
-        }
-        : undefined;
+          ? {
+            message: errorMessage.title,
+            description: errorMessage.body,
+          }
+          : undefined;
         notifyError(error, notifyErrorParams);
 
         this.setState(prevState => {
           const nextState = {
             ...prevState,
           };
-          nextState.ads.items.itemById[adId].status = undoBody.status;
+          if (undoBody) {
+            nextState.ads.items.itemById[adId].status = undoBody.status;
+          }
 
           return nextState;
         });

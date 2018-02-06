@@ -75,6 +75,7 @@ const messageMap = defineMessages({
 interface DisplayCampaignsTableProps {
   rowSelection: {
     selectedRowKeys: string[];
+    allRowsAreSelected: boolean;
     onChange: (selectedRowKeys: string[]) => void;
     selectAllItemIds: () => void;
     unselectAllItemIds: () => void;
