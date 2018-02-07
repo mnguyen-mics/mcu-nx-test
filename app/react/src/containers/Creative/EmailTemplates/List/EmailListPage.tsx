@@ -38,6 +38,7 @@ interface EmailListPageProps {}
 interface EmailListPageState {
   selectedRowKeys: string[];
   isArchiveModalVisible: boolean;
+  allRowsAreSelected: boolean;
 }
 
 interface MapStateToProps {
@@ -57,42 +58,23 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     this.state = {
       selectedRowKeys: [],
       isArchiveModalVisible: false,
+      allRowsAreSelected: false,
     };
   }
   onSelectChange = (selectedRowKeys: string[]) => {
     this.setState({ selectedRowKeys });
   };
   selectAllItemIds = (selected: boolean = true) => {
-    // USE FLAG
-    const {
-      totalEmailTemplate,
-      match: { params: { organisationId } },
-    } = this.props;
-    const options: GetCreativesOptions = {
-      archived: false,
-      max_results: totalEmailTemplate,
-    };
-    const emailIds: string[] = [];
-    if (selected) {
-      CreativeService.getEmailTemplates(organisationId, options).then(
-        apiResp => {
-          apiResp.data.map((emailResource, index) => {
-            emailIds.push(emailResource.id);
-          });
-          this.setState({
-            selectedRowKeys: emailIds,
-          });
-        },
-      );
-    } else {
-      this.setState({
-        selectedRowKeys: emailIds,
-      });
-    }
+    this.setState({
+      allRowsAreSelected: true,
+    });
   };
 
-  unselectAllItemIds = (selected = false) => {
-    this.selectAllItemIds(false);
+  unselectAllItemIds = () => {
+    this.setState({
+      selectedRowKeys: [],
+      allRowsAreSelected: false,
+    });
   };
 
   archiveEmails = () => {
@@ -112,44 +94,98 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
   };
 
   handleOk = () => {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    const { location: { search, pathname, state }, history, intl } = this.props;
+    const {
+      location: { search, pathname, state },
+      history,
+      intl,
+      totalEmailTemplate,
+      match: { params: { organisationId } },
+    } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
-    return Promise.all(
-      selectedRowKeys.map(creativeId => {
-        CreativeService.getEmailTemplate(creativeId)
-          .then(apiResp => apiResp.data)
-          .then(emailData => {
-            CreativeService.updateEmailTemplate(creativeId, {
-              ...emailData,
-              archived: true,
-            });
+    if (allRowsAreSelected) {
+      const options: GetCreativesOptions = {
+        creative_type: 'EMAIL_TEMPLATE',
+        archived: false,
+        max_results: totalEmailTemplate, // not mandatory
+      };
+      const emailtemplateIds: string[] = [];
+      return CreativeService.getEmailTemplates(organisationId, options).then(
+        apiResp => {
+          apiResp.data.forEach((emailTemplateResource, index) => {
+            emailtemplateIds.push(emailTemplateResource.id);
           });
-      }),
-    ).then(() => {
-      if (filter.currentPage !== 1) {
-        const newFilter = {
-          ...filter,
-          currentPage: 1,
-        };
-        history.push({
-          pathname: pathname,
-          search: updateSearch(search, newFilter),
-          state: state,
-        });
-      } else {
-        window.location.reload();
-      }
+          return Promise.all(
+            emailtemplateIds.map(creativeId => {
+              CreativeService.getEmailTemplate(creativeId)
+                .then(apiResponse => apiResponse.data)
+                .then(emailData => {
+                  CreativeService.updateEmailTemplate(creativeId, {
+                    ...emailData,
+                    archived: true,
+                  });
+                });
+            }),
+          ).then(() => {
+            if (filter.currentPage !== 1) {
+              const newFilter = {
+                ...filter,
+                currentPage: 1,
+              };
+              history.push({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
+            } else {
+              window.location.reload();
+            }
 
-      this.setState({
-        isArchiveModalVisible: false,
-        selectedRowKeys: [],
+            this.setState({
+              isArchiveModalVisible: false,
+              selectedRowKeys: [],
+            });
+            message.success(intl.formatMessage(messages.archiveSuccess));
+          });
+        },
+      );
+    } else {
+      return Promise.all(
+        selectedRowKeys.map(creativeId => {
+          CreativeService.getEmailTemplate(creativeId)
+            .then(apiResp => apiResp.data)
+            .then(emailData => {
+              CreativeService.updateEmailTemplate(creativeId, {
+                ...emailData,
+                archived: true,
+              });
+            });
+        }),
+      ).then(() => {
+        if (filter.currentPage !== 1) {
+          const newFilter = {
+            ...filter,
+            currentPage: 1,
+          };
+          history.push({
+            pathname: pathname,
+            search: updateSearch(search, newFilter),
+            state: state,
+          });
+        } else {
+          // window.location.reload();
+        }
+
+        this.setState({
+          isArchiveModalVisible: false,
+          selectedRowKeys: [],
+        });
+        message.success(intl.formatMessage(messages.archiveSuccess));
       });
-      message.success(intl.formatMessage(messages.archiveSuccess));
-    });
+    }
   };
 
   render() {
