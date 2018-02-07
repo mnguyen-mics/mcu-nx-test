@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { Actionbar } from '../../../../Actionbar';
 import messages from '../messages';
-import { McsIcons } from '../../../../../components/index';
+import { McsIcon } from '../../../../../components/index';
 import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display/index';
@@ -42,7 +42,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     };
     const activeCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={onActiveClick}>
-        <McsIcons type="play" />
+        <McsIcon type="play" />
         <FormattedMessage {...messages.activateAdGroup} />
       </Button>
     );
@@ -51,7 +51,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     };
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={onPauseClick}>
-        <McsIcons type="pause" />
+        <McsIcon type="pause" />
         <FormattedMessage {...messages.pauseAdGroup} />
       </Button>
     );
@@ -162,7 +162,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
           }}
         >
           <Button>
-            <McsIcons type="pen" />
+            <McsIcon type="pen" />
             <FormattedMessage {...messages.editAdGroup} />
           </Button>
         </Link>

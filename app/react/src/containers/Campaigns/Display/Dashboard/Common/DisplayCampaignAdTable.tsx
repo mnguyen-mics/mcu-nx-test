@@ -340,7 +340,7 @@ class DisplayCampaignAdTable extends React.Component<
 
     const pagination = {
       pageSize: this.state.pageSize,
-      total: rowSelection.totalAds,
+      total: (rowSelection && rowSelection.totalAds) ? rowSelection.totalAds : 0,
       onShowSizeChange: (current: number, size: number) =>
         this.setState({
           pageSize: size,

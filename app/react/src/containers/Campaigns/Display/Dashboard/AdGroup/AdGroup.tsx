@@ -5,7 +5,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { Button, Layout } from 'antd';
 import { compose } from 'recompose';
 
-import AdGroupHeader from '../Common/DisplayCampaignHeader';
+import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import AdGroupAdTable from '../Common/DisplayCampaignAdTable';
 import AdGroupsDashboard from './AdGroupsDashboard';
 import AdGroupActionbar from './AdGroupActionbar';
@@ -147,7 +147,7 @@ class AdGroup extends React.Component<JoinedProps> {
           archiveAdGroup={this.archiveAdGroup}
         />
         <Content className="mcs-content-container">
-          <AdGroupHeader object={adGroups.items} translationKey="AD_GROUP" />
+          <CampaignDashboardHeader campaign={adGroups.items} />
           <AdGroupsDashboard
             isFetchingMediaStat={dashboardPerformance.media.isLoading}
             mediaStat={dashboardPerformance.media.items}
