@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Modal, Button, message, Menu, Dropdown } from 'antd';
+import { Modal, Button, message, Menu, Dropdown, Row, Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
   InjectedIntlProps,
@@ -30,6 +30,7 @@ import Slide from '../../../../../components/Transition/Slide';
 import { McsIcon } from '../../../../../components/index';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
+import { executeTasksInSequence, Task } from '../../../../../utils/FormHelper';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -71,6 +72,7 @@ interface AdCardState {
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   isArchivingAds: boolean;
+  isUpdatingStatuses: boolean;
 }
 
 type JoinedProps = AdCardProps &
@@ -87,6 +89,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
       selectedRowKeys: [],
       allRowsAreSelected: false,
       isArchivingAds: false,
+      isUpdatingStatuses: false,
     };
   }
 
@@ -176,6 +179,9 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
   handleStatusAction = (status: string) => {
     const { allRowsAreSelected, selectedRowKeys } = this.state;
     const { dataSet, updateAd } = this.props;
+    this.setState({
+      isUpdatingStatuses: true,
+    });
     let adIdsToUpdate: string[] = [];
     if (allRowsAreSelected && dataSet) {
       adIdsToUpdate = dataSet.map(ad => {
@@ -184,19 +190,25 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     } else {
       adIdsToUpdate = selectedRowKeys;
     }
-    Promise.all(
-      adIdsToUpdate.map(adId => {
+    
+    const tasks: Task[] = [];
+    adIdsToUpdate.forEach(adId => {
+      tasks.push(() => {
         updateAd(adId, {
           status,
         });
-      }),
-    )
+        return Promise.resolve();
+      });
+    });
+    executeTasksInSequence(tasks)
       .then(() => {
         this.setState({
           selectedRowKeys: [],
+          allRowsAreSelected: false,
+          isUpdatingStatuses: false,
         });
       })
-      .catch(err => {
+      .catch((err: any) => {
         // todo : use injectNotifyerror
       });
   };
@@ -228,7 +240,11 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
   render() {
     const { title, isFetching, isFetchingStat, dataSet, updateAd } = this.props;
 
-    const { selectedRowKeys, allRowsAreSelected } = this.state;
+    const {
+      selectedRowKeys,
+      allRowsAreSelected,
+      isUpdatingStatuses,
+    } = this.state;
 
     const hasAdsSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
@@ -291,13 +307,19 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
 
     return (
       <Card title={title} buttons={adButtons}>
-        <DisplayCampaignAdTable
-          isFetching={isFetching}
-          isFetchingStat={isFetchingStat}
-          dataSet={dataSet}
-          updateAd={updateAd}
-          rowSelection={rowSelection}
-        />
+        {isUpdatingStatuses ? (
+          <Row style={{ textAlign: 'center' }}>
+            <Spin />
+          </Row>
+        ) : (
+          <DisplayCampaignAdTable
+            isFetching={isFetching}
+            isFetchingStat={isFetchingStat}
+            dataSet={dataSet}
+            updateAd={updateAd}
+            rowSelection={rowSelection}
+          />
+        )}
       </Card>
     );
   }
