@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Button, Modal, message } from 'antd';
+import { Button, Modal, message, Dropdown, Menu } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {
   InjectedIntlProps,
@@ -34,11 +34,21 @@ import EditAdGroupsForm, {
   EditAdGroupsFormData,
 } from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
 import AdGroupFormService from '../..//Edit/AdGroup/AdGroupFormService';
+import { Task, executeTasksInSequence } from '../../../../../utils/FormHelper';
+import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 
 const messagesMap = defineMessages({
   setStatus: {
     id: 'set.ads.statuses',
     defaultMessage: 'Set statuses at',
+  },
+  activateAll: {
+    id: 'activate.all.ads',
+    defaultMessage: 'Active all',
+  },
+  pauseAll: {
+    id: 'pause.all.ads',
+    defaultMessage: 'Pause all',
   },
   archiveSuccess: {
     id: 'archive.adGroups.success.msg',
@@ -64,6 +74,7 @@ interface AdGroupCardState {
   visible: boolean;
   allRowsAreSelected: boolean;
   isArchiving: boolean;
+  isUpdatingStatuses: boolean;
 }
 
 interface MapStateProps {
@@ -84,6 +95,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       visible: false,
       allRowsAreSelected: false,
       isArchiving: false,
+      isUpdatingStatuses: false,
     };
   }
   updateLocationSearch(params: McsDateRangeValue) {
@@ -251,6 +263,67 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     });
   };
 
+  handleStatusAction = (status: AdGroupStatus) => {
+    const { allRowsAreSelected, selectedRowKeys } = this.state;
+    const { dataSet, updateAdGroup } = this.props;
+    this.setState({
+      isUpdatingStatuses: true,
+    });
+    let adGroupIdsToUpdate: string[] = [];
+    if (allRowsAreSelected && dataSet) {
+      adGroupIdsToUpdate = dataSet.map(adGroup => {
+        return adGroup.id;
+      });
+    } else {
+      adGroupIdsToUpdate = selectedRowKeys;
+    }
+
+    const tasks: Task[] = [];
+    adGroupIdsToUpdate.forEach(adGroupId => {
+      tasks.push(() => {
+        updateAdGroup(adGroupId, {
+          status,
+        });
+        return Promise.resolve();
+      });
+    });
+    Promise.all([executeTasksInSequence(tasks)])
+      .then(() => {
+        this.setState({
+          selectedRowKeys: [],
+          allRowsAreSelected: false,
+          isUpdatingStatuses: false,
+        });
+      })
+      .catch((err: any) => {
+        // todo : use injectNotifyerror
+      });
+  };
+
+  buildMenu = () => {
+    const onClick = (event: any) => {
+      switch (event.key) {
+        case 'pause':
+          return this.handleStatusAction('PAUSED');
+        case 'activate':
+          return this.handleStatusAction('ACTIVE');
+        default:
+          break;
+      }
+    };
+
+    return (
+      <Menu onClick={onClick}>
+        <Menu.Item key="pause">
+          <FormattedMessage {...messagesMap.pauseAll} />
+        </Menu.Item>
+        <Menu.Item key="activate">
+          <FormattedMessage {...messagesMap.activateAll} />
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
   render() {
     const {
       history,
@@ -267,17 +340,12 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const buildActionElement = () => {
-      // const onClickElement = (status: AdGroupStatus) => () => {
-
-      // };
-
       return (
-        <Button
-          className="m-r-10 button-slider button-glow"
-          // onClick={() => {}}
-        >
-          <FormattedMessage {...messagesMap.setStatus} />
-        </Button>
+        <Dropdown overlay={this.buildMenu()} trigger={['click']}>
+          <Button className="button-glow">
+            <FormattedMessage {...messagesMap.setStatus} />
+          </Button>
+        </Dropdown>
       );
     };
 

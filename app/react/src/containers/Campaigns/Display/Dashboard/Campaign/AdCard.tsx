@@ -190,7 +190,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     } else {
       adIdsToUpdate = selectedRowKeys;
     }
-    
+
     const tasks: Task[] = [];
     adIdsToUpdate.forEach(adId => {
       tasks.push(() => {
@@ -200,7 +200,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         return Promise.resolve();
       });
     });
-    executeTasksInSequence(tasks)
+    Promise.all([executeTasksInSequence(tasks)])
       .then(() => {
         this.setState({
           selectedRowKeys: [],
