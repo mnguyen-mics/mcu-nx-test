@@ -47,7 +47,7 @@ interface MapStateProps {
 }
 
 interface EditAdGroupsFormState {
-  AdGroupNames: string[];
+  adGroupNames: string[];
   loading: boolean;
 }
 
@@ -74,7 +74,7 @@ class EditAdGroupsForm extends React.Component<
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
-      AdGroupNames: [],
+      adGroupNames: [],
       loading: false,
     };
   }
@@ -85,7 +85,7 @@ class EditAdGroupsForm extends React.Component<
       this.fetchData(selectedRowKeys);
     } else {
       this.setState({
-        AdGroupNames: [intl.formatMessage(messageMap.allAdGroupsNames)],
+        adGroupNames: [intl.formatMessage(messageMap.allAdGroupsNames)],
       });
     }
   }
@@ -101,7 +101,7 @@ class EditAdGroupsForm extends React.Component<
       this.fetchData(nextSelectedRowKeys);
     } else {
       this.setState({
-        AdGroupNames: [intl.formatMessage(messageMap.allAdGroupsNames)],
+        adGroupNames: [intl.formatMessage(messageMap.allAdGroupsNames)],
       });
     }
   }
@@ -116,9 +116,9 @@ class EditAdGroupsForm extends React.Component<
             return adGroupData.name || '';
           });
       }),
-    ).then(AdGroupNames => {
+    ).then(adGroupNames => {
       this.setState({
-        AdGroupNames: AdGroupNames,
+        adGroupNames: adGroupNames,
       });
     });
   };
@@ -182,7 +182,7 @@ class EditAdGroupsForm extends React.Component<
                 title={messages.multiEditAdGroupsTitle}
               />
               <Row style={{ marginBottom: '3em' }}>
-                {this.state.AdGroupNames.map((AdGroupName, index) => (
+                {this.state.adGroupNames.map((AdGroupName, index) => (
                   <Tag key={index}>{AdGroupName}</Tag>
                 ))}
               </Row>

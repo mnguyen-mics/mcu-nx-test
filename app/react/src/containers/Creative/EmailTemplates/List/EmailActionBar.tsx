@@ -84,7 +84,10 @@ class EmailActionBar extends React.Component<JoinedProps> {
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button onClick={archiveEmails} className="button-slider">
+            <Button
+              onClick={archiveEmails}
+              className="button-slider button-glow"
+            >
               <McsIcon type="delete" />
               <FormattedMessage id="ARCHIVE" />
             </Button>

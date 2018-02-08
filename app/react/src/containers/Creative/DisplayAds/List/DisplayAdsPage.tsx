@@ -101,18 +101,36 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     });
   };
 
+  redirectAndNotify = () => {
+    const { location: { search, pathname, state }, history, intl } = this.props;
+    const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
+    if (filter.currentPage !== 1) {
+      const newFilter = {
+        ...filter,
+        currentPage: 1,
+      };
+      history.push({
+        pathname: pathname,
+        search: updateSearch(search, newFilter),
+        state: state,
+      });
+    } else {
+      window.location.reload();
+    }
+    this.setState({
+      isArchiveModalVisible: false,
+      selectedRowKeys: [],
+    });
+    message.success(intl.formatMessage(messages.archiveSuccess));
+  };
+
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
     const {
-      location: { search, pathname, state },
-      history,
-      intl,
       totalCreativeDisplay,
       match: { params: { organisationId } },
     } = this.props;
-
-    const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     if (allRowsAreSelected) {
       const options: GetCreativesOptions = {
@@ -138,25 +156,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
                 });
             }),
           ).then(() => {
-            if (filter.currentPage !== 1) {
-              const newFilter = {
-                ...filter,
-                currentPage: 1,
-              };
-              history.push({
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-                state: state,
-              });
-            } else {
-              window.location.reload();
-            }
-
-            this.setState({
-              isArchiveModalVisible: false,
-              selectedRowKeys: [],
-            });
-            message.success(intl.formatMessage(messages.archiveSuccess));
+            this.redirectAndNotify();
           });
         },
       );
@@ -173,25 +173,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
             });
         }),
       ).then(() => {
-        if (filter.currentPage !== 1) {
-          const newFilter = {
-            ...filter,
-            currentPage: 1,
-          };
-          history.push({
-            pathname: pathname,
-            search: updateSearch(search, newFilter),
-            state: state,
-          });
-        } else {
-          window.location.reload();
-        }
-
-        this.setState({
-          isArchiveModalVisible: false,
-          selectedRowKeys: [],
-        });
-        message.success(intl.formatMessage(messages.archiveSuccess));
+        this.redirectAndNotify();
       });
     }
   };

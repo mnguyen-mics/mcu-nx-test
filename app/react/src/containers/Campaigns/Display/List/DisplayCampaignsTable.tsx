@@ -3,12 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  defineMessages,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 
 import {
   EmptyTableView,
@@ -34,7 +29,6 @@ import { campaignStatuses } from '../../constants';
 import messages from '../messages';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
-import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
 import { RouteComponentProps } from 'react-router';
 import { FilterProps } from './DisplayCampaignsActionbar';
 import { TranslationProps } from '../../../Helpers/withTranslations';
@@ -42,35 +36,6 @@ import { withTranslations } from '../../../Helpers/index';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
-
-const messageMap = defineMessages({
-  notificationSuccess: {
-    id: 'notification.success.title',
-    defaultMessage: 'Success',
-  },
-  notificationError: {
-    id: 'notification.success.error',
-    defaultMessage: 'Error',
-  },
-  notificationCampaignActivationSuccess: {
-    id: 'display.notifications.campaign.activation.success',
-    defaultMessage: 'Campaign {name} successfully activated',
-  },
-  notificationCampaignActivationError: {
-    id: 'display.notifications.campaign.activation.error',
-    defaultMessage:
-      'There was an error activating campaign {name}... Please try again...',
-  },
-  notificationCampaignPauseSuccess: {
-    id: 'display.notifications.campaign.pause.success',
-    defaultMessage: 'Campaign {name} successfully paused',
-  },
-  notificationCampaignPauseError: {
-    id: 'display.notifications.campaign.pause.error',
-    defaultMessage:
-      'There was an error pausing campaign {name}... Please try again...',
-  },
-});
 
 interface DisplayCampaignsTableProps {
   rowSelection: {
@@ -81,13 +46,6 @@ interface DisplayCampaignsTableProps {
     unselectAllItemIds: () => void;
     onSelectAll: () => void;
   };
-  updateCampaignStatus: (
-    campaignId: string,
-    body: { status: CampaignStatus },
-    successMessage?: UpdateMessage,
-    errorMessage?: UpdateMessage,
-    undoBody?: { status: CampaignStatus },
-  ) => void;
 }
 
 interface MapDispatchToProps {
@@ -255,56 +213,6 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       search: updateSearch(currentSearch, params, DISPLAY_SEARCH_SETTINGS),
     };
     history.push(nextLocation);
-  };
-
-  changeCampaignStatus = (
-    record: DisplayCampaignResource,
-    checked: boolean,
-  ) => {
-    const { updateCampaignStatus, intl: { formatMessage } } = this.props;
-    const status: CampaignStatus = checked ? 'ACTIVE' : 'PAUSED';
-    const initialStatus = checked ? 'PAUSED' : 'ACTIVE';
-    const successMessage = checked
-      ? {
-          title: formatMessage(messageMap.notificationSuccess),
-          body: formatMessage(
-            messageMap.notificationCampaignActivationSuccess,
-            {
-              name: record.name,
-            },
-          ),
-        }
-      : {
-          title: formatMessage(messageMap.notificationSuccess),
-          body: formatMessage(messageMap.notificationCampaignPauseSuccess, {
-            name: record.name,
-          }),
-        };
-    const errorMessage = checked
-      ? {
-          title: formatMessage(messageMap.notificationError),
-          body: formatMessage(messageMap.notificationCampaignActivationError, {
-            name: record.name,
-          }),
-        }
-      : {
-          title: formatMessage(messageMap.notificationError),
-          body: formatMessage(messageMap.notificationCampaignPauseError, {
-            name: record.name,
-          }),
-        };
-
-    updateCampaignStatus(
-      record.id,
-      {
-        status: status,
-      },
-      successMessage,
-      errorMessage,
-      {
-        status: initialStatus,
-      },
-    );
   };
 
   render() {

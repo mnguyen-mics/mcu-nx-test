@@ -77,13 +77,8 @@ class DisplayCampaignsPage extends React.Component<
     });
   };
 
-  handleOk = () => {
-    const { selectedRowKeys, allRowsAreSelected } = this.state;
-
+  getAllCampaignsIds = () => {
     const {
-      location: { search, pathname, state },
-      history,
-      intl,
       totalDisplayCampaigns,
       match: { params: { organisationId } },
       notifyError,
@@ -93,46 +88,64 @@ class DisplayCampaignsPage extends React.Component<
       archived: false,
     };
     const allCampaignsIds: string[] = [];
+    return CampaignService.getCampaigns(organisationId, 'DISPLAY', options)
+      .then(apiResp => {
+        apiResp.data.forEach((campaignResource, index) => {
+          allCampaignsIds.push(campaignResource.id);
+        });
+        return allCampaignsIds;
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
+  redirectAndNotify = () => {
+    const { location: { search, pathname, state }, history, intl } = this.props;
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
+    if (filter.currentPage !== 1) {
+      const newFilter = {
+        ...filter,
+        currentPage: 1,
+      };
+      history.push({
+        pathname: pathname,
+        search: updateSearch(search, newFilter),
+        state: state,
+      });
+    } else {
+      window.location.reload();
+    }
+    this.setState({
+      visible: false,
+      selectedRowKeys: [],
+    });
+    message.success(intl.formatMessage(messages.campaignsArchived));
+  };
+
+  handleOk = () => {
+    const { selectedRowKeys, allRowsAreSelected } = this.state;
+
+    const { notifyError } = this.props;
 
     if (allRowsAreSelected) {
-      return CampaignService.getCampaigns(organisationId, 'DISPLAY', options)
-        .then(apiResp => {
-          apiResp.data.map((campaignResource, index) => {
-            allCampaignsIds.push(campaignResource.id);
-          });
-          return Promise.all(
-            allCampaignsIds.map(campaignId => {
-              DisplayCampaignService.updateCampaign(campaignId, {
-                status: 'PAUSED',
-                archived: true,
-                type: 'DISPLAY',
-              });
-            }),
-          ).then(() => {
-            if (filter.currentPage !== 1) {
-              const newFilter = {
-                ...filter,
-                currentPage: 1,
-              };
-              history.push({
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-                state: state,
-              });
-            } else {
-              window.location.reload();
-            }
-            this.setState({
-              visible: false,
-              selectedRowKeys: [],
+      return this.getAllCampaignsIds().then((allCampaignsIds: string[]) => {
+        return Promise.all(
+          allCampaignsIds.map(campaignId => {
+            DisplayCampaignService.updateCampaign(campaignId, {
+              status: 'PAUSED',
+              archived: true,
+              type: 'DISPLAY',
             });
-            message.success(intl.formatMessage(messages.campaignsArchived));
+          }),
+        )
+          .then(() => {
+            this.redirectAndNotify();
+          })
+          .catch(err => {
+            notifyError(err);
           });
-        })
-        .catch(err => {
-          notifyError(err);
-        });
+      });
     } else {
       return Promise.all(
         selectedRowKeys.map(campaignId => {
@@ -144,25 +157,7 @@ class DisplayCampaignsPage extends React.Component<
         }),
       )
         .then(() => {
-          if (filter.currentPage !== 1) {
-            const newFilter = {
-              ...filter,
-              currentPage: 1,
-            };
-            history.push({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
-          } else {
-            window.location.reload();
-          }
-
-          this.setState({
-            visible: false,
-            selectedRowKeys: [],
-          });
-          message.success(intl.formatMessage(messages.campaignsArchived));
+          this.redirectAndNotify();
         })
         .catch(err => {
           notifyError(err);
@@ -178,28 +173,11 @@ class DisplayCampaignsPage extends React.Component<
 
   editCampaigns = (formData: EditCampaignsFormData) => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
-    const {
-      notifyError,
-      intl,
-      match: { params: { organisationId } },
-      totalDisplayCampaigns,
-    } = this.props;
+    const { notifyError, intl } = this.props;
 
     if (allRowsAreSelected) {
-      const campaignsIds: string[] = [];
-      const options: GetCampaignsOptions = {
-        max_results: totalDisplayCampaigns,
-        archived: false,
-      };
-      return CampaignService.getCampaigns(
-        organisationId,
-        'DISPLAY',
-        options,
-      ).then(apiResp => {
-        apiResp.data.map((campaignResource, index) => {
-          campaignsIds.push(campaignResource.id);
-        });
-        return DisplayCampaignFormService.saveCampaigns(campaignsIds, formData)
+      return this.getAllCampaignsIds().then((allCampaignsIds: string[]) => {
+        DisplayCampaignFormService.saveCampaigns(allCampaignsIds, formData)
           .then(() => {
             this.props.closeNextDrawer();
             this.setState({
@@ -382,10 +360,7 @@ class DisplayCampaignsPage extends React.Component<
         <div className="ant-layout">
           <Content className="mcs-content-container">
             {!isUploadingStatuses ? (
-              <DisplayCampaignsTable
-                rowSelection={rowSelection}
-                updateCampaignStatus={multiEditProps.updateCampaignStatus}
-              />
+              <DisplayCampaignsTable rowSelection={rowSelection} />
             ) : null}
           </Content>
         </div>

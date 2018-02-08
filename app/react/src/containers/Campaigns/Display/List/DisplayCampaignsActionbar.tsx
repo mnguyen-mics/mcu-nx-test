@@ -50,6 +50,10 @@ const messagesMap = defineMessages({
     id: 'pause.all.ads',
     defaultMessage: 'Paused',
   },
+  exportInProgress: {
+    id: 'display.campaigns.export.in.progress',
+    defaultMessage: 'Export in progress',
+  },
 });
 
 interface DisplayCampaignsActionbarProps {
@@ -170,10 +174,7 @@ class DisplayCampaignsActionbar extends React.Component<
   }
 
   handleRunExport = () => {
-    const {
-      match: { params: { organisationId } },
-      intl: { formatMessage },
-    } = this.props;
+    const { match: { params: { organisationId } }, intl } = this.props;
 
     const filter = parseSearch(
       this.props.location.search,
@@ -183,11 +184,7 @@ class DisplayCampaignsActionbar extends React.Component<
     this.setState({ exportIsRunning: true });
 
     const hideExportLoadingMsg = message.loading(
-      formatMessage({
-        id: 'display.campaigns.actionbar',
-        defaultMessage: 'Export in progress',
-      }),
-      0,
+      intl.formatMessage(messagesMap.exportInProgress),
     );
 
     fetchExportData(organisationId, filter)
@@ -241,7 +238,7 @@ class DisplayCampaignsActionbar extends React.Component<
       const allCampaignsIds: string[] = [];
       CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
         apiResp => {
-          apiResp.data.map((campaignResource, index) => {
+          apiResp.data.forEach((campaignResource, index) => {
             allCampaignsIds.push(campaignResource.id);
           });
           campaignIdsToUpdate = allCampaignsIds;
@@ -252,9 +249,12 @@ class DisplayCampaignsActionbar extends React.Component<
     }
 
     const tasks: Task[] = [];
-    campaignIdsToUpdate.map(campaignId => {
-      updateCampaignStatus(campaignId, {
-        status,
+    campaignIdsToUpdate.forEach(campaignId => {
+      tasks.push(() => {
+        updateCampaignStatus(campaignId, {
+          status,
+        });
+        return Promise.resolve();
       });
     });
     Promise.all([executeTasksInSequence(tasks)])
@@ -364,13 +364,13 @@ class DisplayCampaignsActionbar extends React.Component<
             onOk={this.handleArchive}
             onCancel={handleCancel}
           >
-            <p>
+            <div>
               {isArchiving ? (
                 <Spin />
               ) : (
                 <FormattedMessage {...messages.archiveCampaignsModalMessage} />
               )}
-            </p>
+            </div>
           </Modal>
         ) : null}
 

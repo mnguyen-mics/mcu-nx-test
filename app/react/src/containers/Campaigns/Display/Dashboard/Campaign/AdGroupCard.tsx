@@ -28,7 +28,6 @@ import McsDateRangePicker, {
 import { McsIcon } from '../../../../../components/index';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import EditAdGroupsForm, {
   EditAdGroupsFormProps,
   EditAdGroupsFormData,
@@ -56,6 +55,10 @@ const messagesMap = defineMessages({
   archiveSuccess: {
     id: 'archive.adGroups.success.msg',
     defaultMessage: 'Ad Groups successfully archived',
+  },
+  saveSuccess: {
+    id: 'edit.adGroups.success.msg',
+    defaultMessage: 'Ad Groups successfully saved',
   },
 });
 
@@ -140,17 +143,12 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
   };
 
   handleOk = () => {
-    const { intl: { formatMessage } } = this.props;
+    const { intl } = this.props;
     this.setState({
       visible: false,
       selectedRowKeys: [],
     });
-    message.success(
-      formatMessage({
-        id: 'archive.adGroups.success.msg',
-        defaultMessage: 'Ad Groups successfully archived',
-      }),
-    );
+    message.success(intl.formatMessage(messagesMap.archiveSuccess));
   };
 
   handleCancel = () => {
@@ -158,6 +156,26 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       visible: false,
     });
   };
+
+  closeDrawerAndNotify = () => {
+    const { intl } = this.props;
+    this.setState({
+      selectedRowKeys: [],
+    });
+    this.props.closeNextDrawer();
+    message.success(intl.formatMessage(messagesMap.saveSuccess));
+  };
+
+  // getAllAdGroupsIds = () => {
+  //   const { match: { params: { campaignId } } } = this.props;
+  //   const allAdGroupsIds: string[] = [];
+  //   return DisplayCampaignService.getAdGroups(campaignId).then(apiResp => {
+  //     apiResp.data.map((adGroup, index) => {
+  //       allAdGroupsIds.push(adGroup.id);
+  //     });
+  //     return allAdGroupsIds;
+  //   });
+  // };
 
   openEditAdGroupsDrawer = () => {
     const { allRowsAreSelected } = this.state;
@@ -181,40 +199,25 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
   };
 
   saveAdGroups = (formData: EditAdGroupsFormData) => {
-    const {
-      intl: { formatMessage },
-      match: { params: { campaignId } },
-    } = this.props;
+    const { match: { params: { campaignId } }, dataSet } = this.props;
 
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    if (allRowsAreSelected) {
-      const allAdGroupsIds: string[] = [];
-      return DisplayCampaignService.getAdGroups(campaignId).then(apiResp => {
-        apiResp.data.map((adGroup, index) => {
-          allAdGroupsIds.push(adGroup.id);
-        });
-        return AdGroupFormService.saveAdGroups(
-          campaignId,
-          allAdGroupsIds,
-          formData,
-        )
-          .then(() => {
-            this.setState({
-              selectedRowKeys: [],
-            });
-            this.props.closeNextDrawer();
-            message.success(
-              formatMessage({
-                id: 'edit.adgroups.success.msg',
-                defaultMessage: 'Ad Groups successfully saved',
-              }),
-            );
-          })
-          .catch(err => {
-            this.props.notifyError(err);
-          });
+    if (allRowsAreSelected && dataSet) {
+      const allAdGroupsIds = dataSet.map(adGroup => {
+        return adGroup.id;
       });
+      return AdGroupFormService.saveAdGroups(
+        campaignId,
+        allAdGroupsIds,
+        formData,
+      )
+        .then(() => {
+          this.closeDrawerAndNotify();
+        })
+        .catch(err => {
+          this.props.notifyError(err);
+        });
     } else {
       return AdGroupFormService.saveAdGroups(
         campaignId,
@@ -222,16 +225,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
         formData,
       )
         .then(() => {
-          this.setState({
-            selectedRowKeys: [],
-          });
-          this.props.closeNextDrawer();
-          message.success(
-            formatMessage({
-              id: 'edit.adgroups.success.msg',
-              defaultMessage: 'Ad Groups successfully saved',
-            }),
-          );
+          this.closeDrawerAndNotify();
         })
         .catch(err => {
           this.props.notifyError(err);
@@ -413,6 +407,8 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       unselectAllItemIds: this.unselectAllItemIds,
       totalAdGroups: this.props.dataSet ? this.props.dataSet.length : 0,
       onChange: this.onSelectChange,
+      onSelect: this.unsetAllItemsSelectedFlag,
+      onSelectAll: this.unsetAllItemsSelectedFlag,
     };
 
     return (

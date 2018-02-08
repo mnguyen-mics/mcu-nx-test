@@ -93,18 +93,39 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     });
   };
 
+  redirectAndNotify = () => {
+    const { location: { search, pathname, state }, history, intl } = this.props;
+    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+    if (filter.currentPage !== 1) {
+      const newFilter = {
+        ...filter,
+        currentPage: 1,
+      };
+      history.push({
+        pathname: pathname,
+        search: updateSearch(search, newFilter),
+        state: state,
+      });
+    } else {
+      // setTimeout is used in order to see message.success when archiving on page 1
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+    this.setState({
+      isArchiveModalVisible: false,
+      selectedRowKeys: [],
+    });
+    message.success(intl.formatMessage(messages.archiveSuccess));
+  };
+
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
     const {
-      location: { search, pathname, state },
-      history,
-      intl,
       totalEmailTemplate,
       match: { params: { organisationId } },
     } = this.props;
-
-    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
     if (allRowsAreSelected) {
       const options: GetCreativesOptions = {
@@ -130,25 +151,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
                 });
             }),
           ).then(() => {
-            if (filter.currentPage !== 1) {
-              const newFilter = {
-                ...filter,
-                currentPage: 1,
-              };
-              history.push({
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-                state: state,
-              });
-            } else {
-              window.location.reload();
-            }
-
-            this.setState({
-              isArchiveModalVisible: false,
-              selectedRowKeys: [],
-            });
-            message.success(intl.formatMessage(messages.archiveSuccess));
+            this.redirectAndNotify();
           });
         },
       );
@@ -165,28 +168,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
             });
         }),
       ).then(() => {
-        if (filter.currentPage !== 1) {
-          const newFilter = {
-            ...filter,
-            currentPage: 1,
-          };
-          history.push({
-            pathname: pathname,
-            search: updateSearch(search, newFilter),
-            state: state,
-          });
-        } else {
-          // setTimeout is used in order to see message.success when archiving on page 1
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }
-
-        this.setState({
-          isArchiveModalVisible: false,
-          selectedRowKeys: [],
-        });
-        message.success(intl.formatMessage(messages.archiveSuccess));
+        this.redirectAndNotify();
       });
     }
   };
