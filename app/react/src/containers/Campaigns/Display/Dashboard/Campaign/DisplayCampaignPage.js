@@ -525,10 +525,12 @@ class DisplayCampaignPage extends Component {
         return null;
       })
       .catch(error => {
-        const errorMsg = errorMessage ? {
-          message: errorMessage.title,
-          description: errorMessage.body,
-        } : undefined;
+        const errorMsg = errorMessage
+          ? {
+            message: errorMessage.title,
+            description: errorMessage.body,
+          }
+        : undefined;
         notifyError(error, errorMsg);
 
         this.setState(prevState => {
@@ -600,7 +602,10 @@ class DisplayCampaignPage extends Component {
           const nextState = {
             ...prevState,
           };
-          nextState.adGroups.items.itemById[adGroupId].status = undoBody.status;
+          if (undoBody) {
+            nextState.adGroups.items.itemById[adGroupId].status =
+              undoBody.status;
+          }
 
           return nextState;
         });

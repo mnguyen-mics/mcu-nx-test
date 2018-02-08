@@ -40,15 +40,15 @@ import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 const messagesMap = defineMessages({
   setStatus: {
     id: 'set.ads.statuses',
-    defaultMessage: 'Set statuses at',
+    defaultMessage: 'Set statuses to',
   },
   activateAll: {
     id: 'activate.all.ads',
-    defaultMessage: 'Active all',
+    defaultMessage: 'Activated',
   },
   pauseAll: {
     id: 'pause.all.ads',
-    defaultMessage: 'Pause all',
+    defaultMessage: 'Paused',
   },
   archiveSuccess: {
     id: 'archive.adGroups.success.msg',

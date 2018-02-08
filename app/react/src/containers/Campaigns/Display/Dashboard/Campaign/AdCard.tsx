@@ -35,15 +35,15 @@ import { executeTasksInSequence, Task } from '../../../../../utils/FormHelper';
 const messagesMap = defineMessages({
   setStatus: {
     id: 'set.ads.statuses',
-    defaultMessage: 'Set statuses at',
+    defaultMessage: 'Set statuses to',
   },
   activateAll: {
     id: 'activate.all.ads',
-    defaultMessage: 'Active all',
+    defaultMessage: 'Activated',
   },
   pauseAll: {
     id: 'pause.all.ads',
-    defaultMessage: 'Pause all',
+    defaultMessage: 'Paused',
   },
   archiveSuccess: {
     id: 'archive.ads.success.msg',

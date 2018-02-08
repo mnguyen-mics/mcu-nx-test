@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button, message, Modal, Spin } from 'antd';
+import { Button, message, Modal, Spin, Dropdown, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
@@ -26,8 +26,23 @@ import {
   injectDrawer,
 } from '../../../../components/Drawer/index';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
-import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
+import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
+
+const messagesMap = defineMessages({
+  setStatus: {
+    id: 'set.ads.statuses',
+    defaultMessage: 'Set statuses to',
+  },
+  activateAll: {
+    id: 'activate.all.ads',
+    defaultMessage: 'Activated',
+  },
+  pauseAll: {
+    id: 'pause.all.ads',
+    defaultMessage: 'Paused',
+  },
+});
 
 interface DisplayCampaignsActionbarProps {
   rowSelection: {
@@ -72,6 +87,7 @@ interface DisplayCampaignsActionbarState {
   isArchiving: boolean;
   allCampaignsActivated: boolean;
   allCampaignsPaused: boolean;
+  isUpdatingStatuses: boolean;
 }
 
 const fetchExportData = (organisationId: string, filter: FilterProps) => {
@@ -140,50 +156,9 @@ class DisplayCampaignsActionbar extends React.Component<
       isArchiving: false,
       allCampaignsActivated: false,
       allCampaignsPaused: false,
+      isUpdatingStatuses: false,
     };
   }
-
-  componentDidUpdate(
-    prevProps: JoinedProps,
-    prevState: DisplayCampaignsActionbarState,
-  ) {
-    const { rowSelection: { selectedRowKeys } } = this.props;
-    const {
-      rowSelection: { selectedRowKeys: prevSelectedRowKeys },
-    } = prevProps;
-    if (selectedRowKeys.length !== prevSelectedRowKeys.length) {
-      if (selectedRowKeys.length === 0) {
-        this.setState({
-          allCampaignsActivated: false,
-          allCampaignsPaused: false,
-        });
-      } else {
-        this.fetchStatuses();
-      }
-    }
-  }
-
-  fetchStatuses = () => {
-    const { rowSelection: { selectedRowKeys } } = this.props;
-    const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
-    const campaignsStatus: string[] = [];
-    if (hasSelected) {
-      Promise.all(
-        selectedRowKeys.map(campaignId => {
-          return DisplayCampaignService.getCampaignDisplay(campaignId);
-        }),
-      ).then(apiResp => {
-        apiResp.map(campaign => campaignsStatus.push(campaign.data.status));
-        this.setState({
-          allCampaignsActivated: !!!(
-            campaignsStatus.includes('PAUSED') ||
-            campaignsStatus.includes('PENDING')
-          ),
-          allCampaignsPaused: !campaignsStatus.includes('ACTIVE'),
-        });
-      });
-    }
-  };
 
   handleRunExport = () => {
     const {
@@ -230,27 +205,95 @@ class DisplayCampaignsActionbar extends React.Component<
     });
   };
 
+  handleStatusAction = (status: CampaignStatus) => {
+    const {
+      multiEditProps: { updateCampaignStatus },
+      rowSelection: {
+        selectedRowKeys,
+        allRowsAreSelected,
+        totalDisplayCampaigns,
+      },
+      match: { params: { organisationId } },
+    } = this.props;
+    this.setState({
+      isUpdatingStatuses: true,
+    });
+    let campaignIdsToUpdate: string[] = [];
+    if (allRowsAreSelected) {
+      const options: GetCampaignsOptions = {
+        max_results: totalDisplayCampaigns,
+        archived: false,
+      };
+      const allCampaignsIds: string[] = [];
+      CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
+        apiResp => {
+          apiResp.data.map((campaignResource, index) => {
+            allCampaignsIds.push(campaignResource.id);
+          });
+          campaignIdsToUpdate = allCampaignsIds;
+        },
+      );
+    } else {
+      campaignIdsToUpdate = selectedRowKeys;
+    }
+
+    const tasks: Task[] = [];
+    campaignIdsToUpdate.map(campaignId => {
+      updateCampaignStatus(campaignId, {
+        status,
+      });
+    });
+    Promise.all([executeTasksInSequence(tasks)])
+      .then(() => {
+        this.setState({
+          isUpdatingStatuses: false,
+        });
+      })
+      .catch((err: any) => {
+        // todo : use injectNotifyerror
+      });
+  };
+
+  buildMenu = () => {
+    const onClick = (event: any) => {
+      switch (event.key) {
+        case 'pause':
+          return this.handleStatusAction('PAUSED');
+        case 'activate':
+          return this.handleStatusAction('ACTIVE');
+        default:
+          break;
+      }
+    };
+
+    return (
+      <Menu onClick={onClick}>
+        <Menu.Item key="pause">
+          <FormattedMessage {...messagesMap.pauseAll} />
+        </Menu.Item>
+        <Menu.Item key="activate">
+          <FormattedMessage {...messagesMap.activateAll} />
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
   render() {
     const {
       exportIsRunning,
       isArchiving,
-      allCampaignsActivated,
-      allCampaignsPaused,
     } = this.state;
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
       rowSelection: {
         selectedRowKeys,
-        allRowsAreSelected,
-        totalDisplayCampaigns,
       },
       multiEditProps: {
         archiveCampaigns,
         visible,
         handleCancel,
         openEditCampaignsDrawer,
-        updateCampaignStatus,
       },
     } = this.props;
 
@@ -267,60 +310,70 @@ class DisplayCampaignsActionbar extends React.Component<
     ];
 
     const buildActionElement = () => {
-      const onClickElement = (status: CampaignStatus) => () => {
-        if (allRowsAreSelected) {
-          const options: GetCampaignsOptions = {
-            max_results: totalDisplayCampaigns,
-            archived: false,
-          };
-          const allCampaignsIds: string[] = [];
-          CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
-            apiResp => {
-              apiResp.data.map((campaignResource, index) => {
-                allCampaignsIds.push(campaignResource.id);
-              });
-              allCampaignsIds.map(campaignId => {
-                updateCampaignStatus(campaignId, {
-                  status,
-                });
-              });
-            },
-          );
-        } else {
-          selectedRowKeys.map(campaignId => {
-            updateCampaignStatus(campaignId, {
-              status,
-            });
-          });
-        }
-      };
-
-      if (allCampaignsActivated) {
-        return (
-          <Button
-            className="mcs-primary button-slider button-glow"
-            type="primary"
-            onClick={onClickElement('PAUSED')}
-          >
-            <McsIcon type="pause" />
-            <FormattedMessage {...messages.pauseCampaigns} />
+      return (
+        <Dropdown overlay={this.buildMenu()} trigger={['click']}>
+          <Button className="button-glow">
+            <FormattedMessage {...messagesMap.setStatus} />
           </Button>
-        );
-      } else if (allCampaignsPaused) {
-        return (
-          <Button
-            className="mcs-primary button-slider button-glow"
-            type="primary"
-            onClick={onClickElement('ACTIVE')}
-          >
-            <McsIcon type="play" />
-            <FormattedMessage {...messages.activateCampaigns} />
-          </Button>
-        );
-      } else {
-        return null;
-      }
+        </Dropdown>
+      );
     };
+
+    // const buildActionElement = () => {
+    //   const onClickElement = (status: CampaignStatus) => () => {
+    //     if (allRowsAreSelected) {
+    //       const options: GetCampaignsOptions = {
+    //         max_results: totalDisplayCampaigns,
+    //         archived: false,
+    //       };
+    //       const allCampaignsIds: string[] = [];
+    //       CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
+    //         apiResp => {
+    //           apiResp.data.map((campaignResource, index) => {
+    //             allCampaignsIds.push(campaignResource.id);
+    //           });
+    //           allCampaignsIds.map(campaignId => {
+    //             updateCampaignStatus(campaignId, {
+    //               status,
+    //             });
+    //           });
+    //         },
+    //       );
+    //     } else {
+    //       selectedRowKeys.map(campaignId => {
+    //         updateCampaignStatus(campaignId, {
+    //           status,
+    //         });
+    //       });
+    //     }
+    //   };
+
+    //   if (allCampaignsActivated) {
+    //     return (
+    //       <Button
+    //         className="mcs-primary button-slider button-glow"
+    //         type="primary"
+    //         onClick={onClickElement('PAUSED')}
+    //       >
+    //         <McsIcon type="pause" />
+    //         <FormattedMessage {...messages.pauseCampaigns} />
+    //       </Button>
+    //     );
+    //   } else if (allCampaignsPaused) {
+    //     return (
+    //       <Button
+    //         className="mcs-primary button-slider button-glow"
+    //         type="primary"
+    //         onClick={onClickElement('ACTIVE')}
+    //       >
+    //         <McsIcon type="play" />
+    //         <FormattedMessage {...messages.activateCampaigns} />
+    //       </Button>
+    //     );
+    //   } else {
+    //     return null;
+    //   }
+    // };
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -383,7 +436,7 @@ class DisplayCampaignsActionbar extends React.Component<
         />
 
         <Slider
-          toShow={allCampaignsActivated || allCampaignsPaused}
+          toShow={hasSelected}
           horizontal={true}
           content={buildActionElement()}
         />
