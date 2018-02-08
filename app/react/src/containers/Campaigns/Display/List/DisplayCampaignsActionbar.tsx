@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Button, message, Modal, Spin, Dropdown, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import {
+  FormattedMessage,
+  InjectedIntlProps,
+  injectIntl,
+  defineMessages,
+} from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
@@ -28,6 +33,9 @@ import {
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
 import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -80,6 +88,7 @@ export interface FilterProps {
 
 type JoinedProps = DisplayCampaignsActionbarProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface DisplayCampaignsActionbarState {
@@ -187,8 +196,8 @@ class DisplayCampaignsActionbar extends React.Component<
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
       })
-      .catch(() => {
-        // TODO notify error
+      .catch(err => {
+        this.props.notifyError(err);
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
       });
@@ -198,11 +207,16 @@ class DisplayCampaignsActionbar extends React.Component<
     this.setState({
       isArchiving: true,
     });
-    this.props.multiEditProps.handleOk().then(() => {
-      this.setState({
-        isArchiving: false,
+    this.props.multiEditProps
+      .handleOk()
+      .then(() => {
+        this.setState({
+          isArchiving: false,
+        });
+      })
+      .catch((err: any) => {
+        this.props.notifyError(err);
       });
-    });
   };
 
   handleStatusAction = (status: CampaignStatus) => {
@@ -250,7 +264,7 @@ class DisplayCampaignsActionbar extends React.Component<
         });
       })
       .catch((err: any) => {
-        // todo : use injectNotifyerror
+        this.props.notifyError(err);
       });
   };
 
@@ -279,16 +293,11 @@ class DisplayCampaignsActionbar extends React.Component<
   };
 
   render() {
-    const {
-      exportIsRunning,
-      isArchiving,
-    } = this.state;
+    const { exportIsRunning, isArchiving } = this.state;
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
-      rowSelection: {
-        selectedRowKeys,
-      },
+      rowSelection: { selectedRowKeys },
       multiEditProps: {
         archiveCampaigns,
         visible,
@@ -318,62 +327,6 @@ class DisplayCampaignsActionbar extends React.Component<
         </Dropdown>
       );
     };
-
-    // const buildActionElement = () => {
-    //   const onClickElement = (status: CampaignStatus) => () => {
-    //     if (allRowsAreSelected) {
-    //       const options: GetCampaignsOptions = {
-    //         max_results: totalDisplayCampaigns,
-    //         archived: false,
-    //       };
-    //       const allCampaignsIds: string[] = [];
-    //       CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
-    //         apiResp => {
-    //           apiResp.data.map((campaignResource, index) => {
-    //             allCampaignsIds.push(campaignResource.id);
-    //           });
-    //           allCampaignsIds.map(campaignId => {
-    //             updateCampaignStatus(campaignId, {
-    //               status,
-    //             });
-    //           });
-    //         },
-    //       );
-    //     } else {
-    //       selectedRowKeys.map(campaignId => {
-    //         updateCampaignStatus(campaignId, {
-    //           status,
-    //         });
-    //       });
-    //     }
-    //   };
-
-    //   if (allCampaignsActivated) {
-    //     return (
-    //       <Button
-    //         className="mcs-primary button-slider button-glow"
-    //         type="primary"
-    //         onClick={onClickElement('PAUSED')}
-    //       >
-    //         <McsIcon type="pause" />
-    //         <FormattedMessage {...messages.pauseCampaigns} />
-    //       </Button>
-    //     );
-    //   } else if (allCampaignsPaused) {
-    //     return (
-    //       <Button
-    //         className="mcs-primary button-slider button-glow"
-    //         type="primary"
-    //         onClick={onClickElement('ACTIVE')}
-    //       >
-    //         <McsIcon type="play" />
-    //         <FormattedMessage {...messages.activateCampaigns} />
-    //       </Button>
-    //     );
-    //   } else {
-    //     return null;
-    //   }
-    // };
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -453,6 +406,7 @@ export default compose<JoinedProps, DisplayCampaignsActionbarProps>(
   withRouter,
   withTranslations,
   injectDrawer,
+  injectNotifications,
   connect(mapStateToProps, undefined),
   injectIntl,
 )(DisplayCampaignsActionbar);

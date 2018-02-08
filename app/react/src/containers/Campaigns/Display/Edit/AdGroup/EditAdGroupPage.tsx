@@ -6,7 +6,6 @@ import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import * as NotificationActions from '../../../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import {
   AdGroupFormData,
@@ -20,6 +19,9 @@ import messages from '../messages';
 import AdGroupForm from './AdGroupForm';
 import Loading from '../../../../../components/Loading';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 interface State {
   campaign?: DisplayCampaignResource;
@@ -27,13 +29,9 @@ interface State {
   loading: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type Props = InjectedIntlProps &
   InjectDrawerProps &
-  MapStateProps &
+  InjectedNotificationProps &
   RouteComponentProps<EditAdGroupRouteMatchParam>;
 
 class EditAdGroupPage extends React.Component<Props, State> {
@@ -192,12 +190,12 @@ class EditAdGroupPage extends React.Component<Props, State> {
 
 const mapStateToProps = (state: any) => ({
   hasFeature: FeatureSelectors.hasFeature(state),
-  notifyError: NotificationActions.notifyError,
 });
 
 export default compose(
   withRouter,
   injectIntl,
   injectDrawer,
+  injectNotifications,
   connect(mapStateToProps, undefined),
 )(EditAdGroupPage);

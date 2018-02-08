@@ -8,7 +8,6 @@ import {
   reduxForm,
   InjectedFormProps,
 } from 'redux-form';
-import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
@@ -24,7 +23,9 @@ import Loading from '../../../../../../components/Loading';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { CampaignsInfosFieldModel } from '../domain';
 import { Col } from 'antd/lib/grid';
-import * as NotificationActions from '../../../../../../state/Notifications/actions';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../../Notifications/injectNotifications';
 
 const FORM_ID = 'editCampaignsForm';
 
@@ -48,10 +49,6 @@ interface EditCampaignsFormState {
   loading: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 export interface EditCampaignsFormProps {
   close: () => void;
   selectedRowKeys?: string[];
@@ -60,7 +57,7 @@ export interface EditCampaignsFormProps {
 
 type JoinedProps = EditCampaignsFormProps &
   InjectedIntlProps &
-  MapStateProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedFormProps<EditCampaignsFormData>;
 
@@ -136,6 +133,9 @@ class EditCampaignsForm extends React.Component<
       })
       .catch(err => {
         this.props.notifyError(err);
+        this.setState({
+          loading: false,
+        });
       });
   };
 
@@ -196,15 +196,11 @@ class EditCampaignsForm extends React.Component<
   }
 }
 
-const mapStateToProps = (state: MapStateProps) => ({
-  notifyError: NotificationActions.notifyError,
-});
-
 export default compose<JoinedProps, EditCampaignsFormProps>(
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
   }),
   injectIntl,
-  connect(mapStateToProps, undefined),
+  injectNotifications,
 )(EditCampaignsForm);

@@ -36,6 +36,9 @@ import EditAdGroupsForm, {
 import AdGroupFormService from '../..//Edit/AdGroup/AdGroupFormService';
 import { Task, executeTasksInSequence } from '../../../../../utils/FormHelper';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -77,14 +80,10 @@ interface AdGroupCardState {
   isUpdatingStatuses: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type JoinedProps = AdGroupCardProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectDrawerProps &
-  MapStateProps &
+  InjectedNotificationProps &
   InjectedIntlProps;
 
 class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
@@ -296,7 +295,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
         });
       })
       .catch((err: any) => {
-        // todo : use injectNotifyerror
+        this.props.notifyError(err);
       });
   };
 
@@ -434,4 +433,5 @@ export default compose<AdGroupCardProps, AdGroupCardProps>(
   injectIntl,
   withRouter,
   injectDrawer,
+  injectNotifications,
 )(AdGroupCard);

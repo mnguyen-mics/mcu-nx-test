@@ -31,6 +31,9 @@ import { McsIcon } from '../../../../../components/index';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { executeTasksInSequence, Task } from '../../../../../utils/FormHelper';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -64,10 +67,6 @@ interface AdCardProps extends CardProps {
   additionalButtons?: React.ReactNode;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 interface AdCardState {
   adModalvisible: boolean;
   selectedRowKeys: string[];
@@ -79,7 +78,7 @@ interface AdCardState {
 type JoinedProps = AdCardProps &
   InjectedIntlProps &
   InjectDrawerProps &
-  MapStateProps &
+  InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class AdCard extends React.Component<JoinedProps, AdCardState> {
@@ -210,7 +209,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         });
       })
       .catch((err: any) => {
-        // todo : use injectNotifyerror
+        this.props.notifyError(err);
       });
   };
 
@@ -340,4 +339,5 @@ export default compose<AdCardProps, AdCardProps>(
   injectIntl,
   withRouter,
   injectDrawer,
+  injectNotifications,
 )(AdCard);

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -12,20 +11,18 @@ import {
 } from '../domain';
 import messages from '../messages';
 import EmailCampaignFormService from '../EmailCampaignFormService';
-import * as NotificationActions from '../../../../../state/Notifications/actions';
 import { Loading } from '../../../../../components';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 interface State {
   campaignFormData: EmailCampaignFormData;
   loading: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type Props = InjectedIntlProps &
-  MapStateProps &
+  InjectedNotificationProps &
   RouteComponentProps<EditEmailCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
@@ -160,5 +157,5 @@ class EditCampaignPage extends React.Component<Props, State> {
 export default compose(
   injectIntl,
   withRouter,
-  connect(undefined, { notifyError: NotificationActions.notifyError }),
+  injectNotifications,
 )(EditCampaignPage);

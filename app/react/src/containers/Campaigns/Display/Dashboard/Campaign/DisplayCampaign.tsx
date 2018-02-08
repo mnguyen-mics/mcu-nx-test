@@ -73,14 +73,9 @@ interface DisplayCampaignProps {
   goals: object[];
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type JoinedProps = DisplayCampaignProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectDrawerProps &
-  MapStateProps &
   InjectedIntlProps;
 
 class DisplayCampaign extends React.Component<JoinedProps> {

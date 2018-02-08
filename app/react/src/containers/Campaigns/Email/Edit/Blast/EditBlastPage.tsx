@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -12,10 +11,12 @@ import {
 } from '../domain';
 import messages from '../messages';
 import EmailCampaignFormService from '../EmailCampaignFormService';
-import * as NotificationActions from '../../../../../state/Notifications/actions';
 import { EmailCampaignResource } from '../../../../../models/campaign/email';
 import EmailCampaignService from '../../../../../services/EmailCampaignService';
 import { Loading } from '../../../../../components';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 interface State {
   campaign?: EmailCampaignResource;
@@ -23,12 +24,8 @@ interface State {
   loading: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type Props = InjectedIntlProps &
-  MapStateProps &
+  InjectedNotificationProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class EditBlastPage extends React.Component<Props, State> {
@@ -170,5 +167,5 @@ class EditBlastPage extends React.Component<Props, State> {
 export default compose(
   injectIntl,
   withRouter,
-  connect(undefined, { notifyError: NotificationActions.notifyError }),
+  injectNotifications,
 )(EditBlastPage);

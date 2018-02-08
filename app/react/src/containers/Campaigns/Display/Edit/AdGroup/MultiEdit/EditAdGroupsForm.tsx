@@ -136,6 +136,9 @@ class EditAdGroupsForm extends React.Component<
       })
       .catch(err => {
         this.props.notifyError(err);
+        this.setState({
+          loading: false,
+        });
       });
   };
 

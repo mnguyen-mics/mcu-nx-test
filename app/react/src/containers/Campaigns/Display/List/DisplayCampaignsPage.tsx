@@ -29,6 +29,9 @@ import messages from '../messages';
 import DisplayCampaignFormService from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 interface DisplayCampaignsPageProps {
@@ -44,21 +47,6 @@ interface DisplayCampaignsPageState {
 }
 
 interface MapStateProps {
-  notifyError: (
-    err: any,
-    params?: {
-      message: string;
-      description: string;
-    },
-  ) => void;
-  notifySuccess: (
-    params: {
-      uid: string;
-      message: string;
-      description: string;
-      btn: React.ReactNode;
-    },
-  ) => void;
   removeNotification: () => void;
 }
 
@@ -66,6 +54,7 @@ type JoinedProps = DisplayCampaignsPageProps &
   InjectedIntlProps &
   InjectDrawerProps &
   MapStateProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsPage extends React.Component<
@@ -326,13 +315,7 @@ class DisplayCampaignsPage extends React.Component<
         return null;
       })
       .catch(error => {
-        const notifyErrorParams = errorMessage
-          ? {
-              message: errorMessage.title,
-              description: errorMessage.body,
-            }
-          : undefined;
-        notifyError(error, notifyErrorParams);
+        notifyError(error);
         this.setState({
           isUploadingStatuses: false,
           selectedRowKeys: [],
@@ -414,8 +397,6 @@ class DisplayCampaignsPage extends React.Component<
 const mapStateToProps = (state: any) => ({
   totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
   dataSource: getTableDataSource(state),
-  notifyError: NotificationActions.notifyError,
-  notifySuccess: NotificationActions.notifySuccess,
   removeNotification: NotificationActions.removeNotification,
 });
 
@@ -424,4 +405,5 @@ export default compose<DisplayCampaignsPageProps, JoinedProps>(
   injectIntl,
   injectDrawer,
   connect(mapStateToProps, undefined),
+  injectNotifications,
 )(DisplayCampaignsPage);
