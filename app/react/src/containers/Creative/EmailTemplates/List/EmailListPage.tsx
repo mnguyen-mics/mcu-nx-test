@@ -176,7 +176,10 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
             state: state,
           });
         } else {
-          // window.location.reload();
+          // setTimeout is used in order to see message.success when archiving on page 1
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         }
 
         this.setState({
