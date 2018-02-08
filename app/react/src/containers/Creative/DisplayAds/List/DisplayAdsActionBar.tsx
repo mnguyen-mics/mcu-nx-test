@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Dropdown, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import {
   FormattedMessage,
@@ -14,7 +14,8 @@ import McsIcon from '../../../../components/McsIcon';
 import { withTranslations } from '../../../Helpers';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import Slider from '../../../../components/Transition/Slide';
+import Slide from '../../../../components/Transition/Slide';
+import { CreativeAuditAction } from '../../../../models/creative/CreativeResource';
 
 interface ListCreativesDisplayProps {
   selectedRowKeys?: string[];
@@ -23,10 +24,11 @@ interface ListCreativesDisplayProps {
     isArchiveModalVisible: boolean;
     handleOk: () => void;
     handleCancel: () => void;
+    handleAuditAction: (action: CreativeAuditAction) => void;
   };
 }
 
-const messages = defineMessages({
+const messagesMap = defineMessages({
   displayAds: {
     id: 'display.ads.actionbar.breadcrumb',
     defaultMessage: 'Display Ads',
@@ -38,6 +40,18 @@ const messages = defineMessages({
   archiveCreativesModalMessage: {
     id: 'archive.creatives.modal.msg',
     defaultMessage: 'Are you sure to archive all the selected creatives ?',
+  },
+  auditAction: {
+    id: 'audit.action',
+    defaultMessage: 'Audit Action',
+  },
+  startAll: {
+    id: 'display.campaign.start.all.audits',
+    defaultMessage: 'Start all',
+  },
+  resetAll: {
+    id: 'display.campaign.reset.all.audits',
+    defaultMessage: 'Reset all',
   },
 });
 
@@ -54,6 +68,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
         isArchiveModalVisible,
         handleCancel,
         handleOk,
+        handleAuditAction,
       },
       match: { params: { organisationId } },
       intl,
@@ -63,10 +78,44 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
 
     const breadcrumbPaths = [
       {
-        name: intl.formatMessage(messages.displayAds),
+        name: intl.formatMessage(messagesMap.displayAds),
         url: `/v2/o/${organisationId}/creatives/display`,
       },
     ];
+
+    const buildAuditMenu = () => {
+      const onClick = (event: any) => {
+        switch (event.key) {
+          case 'start':
+            return handleAuditAction('START_AUDIT');
+          case 'reset':
+            return handleAuditAction('RESET_AUDIT');
+          default:
+            break;
+        }
+      };
+
+      return (
+        <Menu onClick={onClick}>
+          <Menu.Item key="start">
+            <FormattedMessage {...messagesMap.startAll} />
+          </Menu.Item>
+          <Menu.Item key="reset">
+            <FormattedMessage {...messagesMap.resetAll} />
+          </Menu.Item>
+        </Menu>
+      );
+    };
+
+    const buildAuditActionAdsElement = () => {
+      return (
+        <Dropdown overlay={buildAuditMenu()} trigger={['click']}>
+          <Button className="button-glow" style={{ marginRight: '20px' }}>
+            <FormattedMessage {...messagesMap.auditAction} />
+          </Button>
+        </Dropdown>
+      );
+    };
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -76,7 +125,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
           </Button>
         </Link>
 
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={
@@ -92,14 +141,21 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
 
         {hasSelected ? (
           <Modal
-            title={intl.formatMessage(messages.archiveCreativesModalTitle)}
+            title={intl.formatMessage(messagesMap.archiveCreativesModalTitle)}
             visible={isArchiveModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
           >
-            <p>{intl.formatMessage(messages.archiveCreativesModalMessage)}</p>
+            <p>
+              {intl.formatMessage(messagesMap.archiveCreativesModalMessage)}
+            </p>
           </Modal>
         ) : null}
+        <Slide
+          toShow={hasSelected}
+          horizontal={true}
+          content={buildAuditActionAdsElement()}
+        />
       </Actionbar>
     );
   }

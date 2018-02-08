@@ -34,11 +34,17 @@ import { executeTasksInSequence, Task } from '../../../../../utils/FormHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { CreativeAuditAction } from '../../../../../models/creative/CreativeResource';
+import CreativeService from '../../../../../services/CreativeService';
 
 const messagesMap = defineMessages({
   setStatus: {
     id: 'set.ads.statuses',
     defaultMessage: 'Set statuses to',
+  },
+  auditAction: {
+    id: 'audit.action',
+    defaultMessage: 'Audit Action',
   },
   activateAll: {
     id: 'activate.all.ads',
@@ -47,6 +53,14 @@ const messagesMap = defineMessages({
   pauseAll: {
     id: 'pause.all.ads',
     defaultMessage: 'Paused',
+  },
+  startAll: {
+    id: 'display.campaign.start.all.audits',
+    defaultMessage: 'Start all',
+  },
+  resetAll: {
+    id: 'display.campaign.reset.all.audits',
+    defaultMessage: 'Reset all',
   },
   archiveSuccess: {
     id: 'archive.ads.success.msg',
@@ -213,6 +227,48 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
       });
   };
 
+  handleAuditAction = (action: CreativeAuditAction) => {
+    const { allRowsAreSelected, selectedRowKeys } = this.state;
+    const { dataSet, notifyError } = this.props;
+    let creativesIds: any[] = [];
+    if (allRowsAreSelected && dataSet) {
+      creativesIds = dataSet.map(ad => ad.creative_id);
+    } else if (dataSet) {
+      creativesIds = dataSet
+        .filter(ad => selectedRowKeys.includes(ad.id))
+        .map(ad => ad.creative_id);
+    }
+    Promise.all(
+      creativesIds.map(creativeId => {
+        CreativeService.getDisplayAd(creativeId)
+          .then(apiResp => apiResp.data)
+          .then(creative => {
+            if (action === 'START_AUDIT') {
+              if (creative.audit_status === 'NOT_AUDITED') {
+                CreativeService.makeAuditAction(creative.id, action);
+              }
+            } else {
+              if (
+                creative.audit_status === 'AUDIT_FAILED' ||
+                creative.audit_status === 'AUDIT_PASSED'
+              ) {
+                CreativeService.makeAuditAction(creative.id, action);
+              }
+            }
+          });
+      }),
+    )
+      .then(() => {
+        this.setState({
+          selectedRowKeys: [],
+          allRowsAreSelected: false,
+        });
+      })
+      .catch((err: any) => {
+        notifyError(err);
+      });
+  };
+
   buildMenu = () => {
     const onClick = (event: any) => {
       switch (event.key) {
@@ -232,6 +288,30 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         </Menu.Item>
         <Menu.Item key="activate">
           <FormattedMessage {...messagesMap.activateAll} />
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
+  buildAuditMenu = () => {
+    const onClick = (event: any) => {
+      switch (event.key) {
+        case 'start':
+          return this.handleAuditAction('START_AUDIT');
+        case 'reset':
+          return this.handleAuditAction('RESET_AUDIT');
+        default:
+          break;
+      }
+    };
+
+    return (
+      <Menu onClick={onClick}>
+        <Menu.Item key="start">
+          <FormattedMessage {...messagesMap.startAll} />
+        </Menu.Item>
+        <Menu.Item key="reset">
+          <FormattedMessage {...messagesMap.resetAll} />
         </Menu.Item>
       </Menu>
     );
@@ -260,6 +340,16 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         <Dropdown overlay={this.buildMenu()} trigger={['click']}>
           <Button className="button-glow">
             <FormattedMessage {...messagesMap.setStatus} />
+          </Button>
+        </Dropdown>
+      );
+    };
+
+    const buildAuditActionAdsElement = () => {
+      return (
+        <Dropdown overlay={this.buildAuditMenu()} trigger={['click']}>
+          <Button className="button-glow" style={{ marginRight: '20px'}}>
+            <FormattedMessage {...messagesMap.auditAction} />
           </Button>
         </Dropdown>
       );
@@ -300,6 +390,11 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
           toShow={hasAdsSelected}
           horizontal={true}
           content={buildActionAdsElement()}
+        />
+        <Slide
+          toShow={hasAdsSelected}
+          horizontal={true}
+          content={buildAuditActionAdsElement()}
         />
       </span>
     );

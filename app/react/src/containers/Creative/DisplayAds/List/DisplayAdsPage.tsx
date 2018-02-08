@@ -14,7 +14,10 @@ import {
   getDisplayCreatives,
   getDisplayCreativesTotal,
 } from '../../../../state/Creatives/Display/selectors';
-import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
+import {
+  DisplayAdResource,
+  CreativeAuditAction,
+} from '../../../../models/creative/CreativeResource';
 import CreativeService, {
   GetCreativesOptions,
 } from '../../../../services/CreativeService';
@@ -23,6 +26,9 @@ import {
   PAGINATION_SEARCH_SETTINGS,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   archiveSuccess: {
@@ -50,6 +56,7 @@ type JoinedProps = DisplayAdsPage &
   InjectedIntlProps &
   InjectDrawerProps &
   MapStateToProps &
+  InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
@@ -61,6 +68,74 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       isArchiveModalVisible: false,
     };
   }
+
+  getAllCreativesIds = () => {
+    const {
+      totalCreativeDisplay,
+      match: { params: { organisationId } },
+      notifyError,
+    } = this.props;
+    const options: GetCreativesOptions = {
+      creative_type: 'DISPLAY_AD',
+      archived: false,
+      max_results: totalCreativeDisplay, // not mandatory
+    };
+    const allCreativesIds: string[] = [];
+    return CreativeService.getDisplayAds(organisationId, options)
+      .then(apiResp => {
+        apiResp.data.forEach((creativeResource, index) => {
+          allCreativesIds.push(creativeResource.id);
+        });
+        return allCreativesIds;
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
+  makeAuditAction = (creativesIds: string[], action: CreativeAuditAction) => {
+    Promise.all(
+      creativesIds.map(creativeId => {
+        CreativeService.getDisplayAd(creativeId)
+          .then(apiResp => apiResp.data)
+          .then(creative => {
+            if (action === 'START_AUDIT') {
+              if (creative.audit_status === 'NOT_AUDITED') {
+                CreativeService.makeAuditAction(creative.id, action);
+              }
+            } else {
+              if (
+                creative.audit_status === 'AUDIT_FAILED' ||
+                creative.audit_status === 'AUDIT_PASSED'
+              ) {
+                CreativeService.makeAuditAction(creative.id, action);
+              }
+            }
+          });
+      }),
+    )
+      .then(() => {
+        this.redirect();
+        this.setState({
+          selectedRowKeys: [],
+          allRowsAreSelected: false,
+        });
+      })
+      .catch((err: any) => {
+        this.props.notifyError(err);
+      });
+  };
+
+  handleAuditAction = (action: CreativeAuditAction) => {
+    const { allRowsAreSelected, selectedRowKeys } = this.state;
+    if (allRowsAreSelected) {
+      this.getAllCreativesIds().then((allCreativesIds: string[]) => {
+        this.makeAuditAction(allCreativesIds, action);
+      });
+    } else {
+      this.makeAuditAction(selectedRowKeys, action);
+    }
+  };
 
   onSelectChange = (selectedRowKeys: string[]) => {
     this.setState({ selectedRowKeys });
@@ -101,8 +176,8 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     });
   };
 
-  redirectAndNotify = () => {
-    const { location: { search, pathname, state }, history, intl } = this.props;
+  redirect = () => {
+    const { location: { search, pathname, state }, history } = this.props;
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
     if (filter.currentPage !== 1) {
       const newFilter = {
@@ -117,64 +192,39 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     } else {
       window.location.reload();
     }
-    this.setState({
-      isArchiveModalVisible: false,
-      selectedRowKeys: [],
+  };
+
+  makeArchiveAction = (creativesIds: string[]) => {
+    return Promise.all(
+      creativesIds.map(creativeId => {
+        CreativeService.getDisplayAd(creativeId)
+          .then(apiResp => apiResp.data)
+          .then(creativeData => {
+            CreativeService.updateDisplayCreative(creativeId, {
+              ...creativeData,
+              archived: true,
+            });
+          });
+      }),
+    ).then(() => {
+      this.redirect();
+      this.setState({
+        isArchiveModalVisible: false,
+        selectedRowKeys: [],
+      });
+      message.success(this.props.intl.formatMessage(messages.archiveSuccess));
     });
-    message.success(intl.formatMessage(messages.archiveSuccess));
   };
 
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    const {
-      totalCreativeDisplay,
-      match: { params: { organisationId } },
-    } = this.props;
-
     if (allRowsAreSelected) {
-      const options: GetCreativesOptions = {
-        creative_type: 'DISPLAY_AD',
-        archived: false,
-        max_results: totalCreativeDisplay, // not mandatory
-      };
-      const displayAdsIds: string[] = [];
-      return CreativeService.getDisplayAds(organisationId, options).then(
-        apiResp => {
-          apiResp.data.forEach((adResource, index) => {
-            displayAdsIds.push(adResource.id);
-          });
-          return Promise.all(
-            displayAdsIds.map(creativeId => {
-              CreativeService.getDisplayAd(creativeId)
-                .then(apiResponse => apiResponse.data)
-                .then(creativeData => {
-                  CreativeService.updateDisplayCreative(creativeId, {
-                    ...creativeData,
-                    archived: true,
-                  });
-                });
-            }),
-          ).then(() => {
-            this.redirectAndNotify();
-          });
-        },
-      );
-    } else {
-      return Promise.all(
-        selectedRowKeys.map(creativeId => {
-          CreativeService.getDisplayAd(creativeId)
-            .then(apiResp => apiResp.data)
-            .then(creativeData => {
-              CreativeService.updateDisplayCreative(creativeId, {
-                ...creativeData,
-                archived: true,
-              });
-            });
-        }),
-      ).then(() => {
-        this.redirectAndNotify();
+      return this.getAllCreativesIds().then((allCreativesIds: string[]) => {
+        this.makeArchiveAction(allCreativesIds);
       });
+    } else {
+      return this.makeArchiveAction(selectedRowKeys);
     }
   };
 
@@ -195,6 +245,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       isArchiveModalVisible: this.state.isArchiveModalVisible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
+      handleAuditAction: this.handleAuditAction,
     };
 
     return (
@@ -222,5 +273,6 @@ export default compose<JoinedProps, DisplayAdsPageProps>(
   withRouter,
   injectIntl,
   injectDrawer,
+  injectNotifications,
   connect(mapStateToProps, undefined),
 )(DisplayAdsPage);
