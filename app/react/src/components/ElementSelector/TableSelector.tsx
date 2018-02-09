@@ -258,7 +258,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
 
     return (
       <SelectorLayout
-        className="mcs-table- edit-container"
+        className="mcs-table-edit-container"
         actionBarTitle={actionBarTitle}
         handleAdd={this.handleAdd}
         handleClose={close}
