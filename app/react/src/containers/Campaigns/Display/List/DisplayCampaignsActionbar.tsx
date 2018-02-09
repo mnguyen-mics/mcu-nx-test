@@ -36,6 +36,7 @@ import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { TranslationProps } from '../../../Helpers/withTranslations';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -53,6 +54,10 @@ const messagesMap = defineMessages({
   exportInProgress: {
     id: 'display.campaigns.export.in.progress',
     defaultMessage: 'Export in progress',
+  },
+  breadCrumbPath: {
+    id: 'display.campaigns.breadCrumb',
+    defaultMessage: 'Display',
   },
 });
 
@@ -92,6 +97,7 @@ export interface FilterProps {
 
 type JoinedProps = DisplayCampaignsActionbarProps &
   InjectedIntlProps &
+  TranslationProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -174,7 +180,7 @@ class DisplayCampaignsActionbar extends React.Component<
   }
 
   handleRunExport = () => {
-    const { match: { params: { organisationId } }, intl } = this.props;
+    const { match: { params: { organisationId } }, translations } = this.props;
 
     const filter = parseSearch(
       this.props.location.search,
@@ -184,12 +190,18 @@ class DisplayCampaignsActionbar extends React.Component<
     this.setState({ exportIsRunning: true });
 
     const hideExportLoadingMsg = message.loading(
-      intl.formatMessage(messagesMap.exportInProgress),
+      translations.EXPORT_IN_PROGRESS,
+      0,
     );
 
     fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportDisplayCampaigns(organisationId, data, filter);
+        ExportService.exportDisplayCampaigns(
+          organisationId,
+          data,
+          filter,
+          translations,
+        );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
       })
@@ -296,7 +308,7 @@ class DisplayCampaignsActionbar extends React.Component<
     const { exportIsRunning, isArchiving } = this.state;
     const {
       match: { params: { organisationId } },
-      intl: { formatMessage },
+      intl,
       rowSelection: { selectedRowKeys },
       multiEditProps: {
         archiveCampaigns,
@@ -310,10 +322,7 @@ class DisplayCampaignsActionbar extends React.Component<
 
     const breadcrumbPaths = [
       {
-        name: formatMessage({
-          id: 'display.campaigns.breadCrumb',
-          defaultMessage: 'Display',
-        }),
+        name: intl.formatMessage(messagesMap.breadCrumbPath),
         url: `/v2/o/${organisationId}/campaigns/display`,
       },
     ];
