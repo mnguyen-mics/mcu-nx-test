@@ -39,6 +39,7 @@ interface MapStateToProps {
   defaultWorkspaceOrganisationId?: string;
   workspaces: UserWorkspaceResource;
   fetchCookies: () => void;
+  setColorsStore: (mcsColors: { [key: string]: string }) => void;
   logOut: (action?: any, meta?: any) => void;
 }
 
@@ -88,7 +89,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             (global as any).window.getComputedStyle(elemt)['background-color'],
           );
         }
-        setColorsStore(mcsColors);
+        this.props.setColorsStore(mcsColors);
       })
       .catch(() => this.setState({ adBlockOn: true }));
   }
