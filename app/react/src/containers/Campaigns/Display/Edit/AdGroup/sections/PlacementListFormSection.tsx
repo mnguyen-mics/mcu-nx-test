@@ -51,6 +51,7 @@ class PlacementListFormSection extends React.Component<Props> {
       }));
 
     formChange((fields as any).name, keptFields.concat(addedFields));
+    this.props.closeNextDrawer();
   };
 
   openPlacementListSelector = () => {
