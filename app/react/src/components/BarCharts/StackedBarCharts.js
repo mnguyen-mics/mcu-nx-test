@@ -6,7 +6,6 @@ import * as Plottable from 'plottable';
 import { BasicTooltip, ChartTooltip } from '../ChartTooltip/index.ts';
 
 class StackedBarCharts extends Component {
-
   constructor(props) {
     super(props);
 
@@ -25,9 +24,7 @@ class StackedBarCharts extends Component {
   }
 
   componentDidMount() {
-    const {
-      dataset,
-    } = this.props;
+    const { dataset } = this.props;
 
     this.renderBarChart(dataset);
     this.svgBoundingClientRect = this.svg.getBoundingClientRect();
@@ -38,9 +35,7 @@ class StackedBarCharts extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {
-      dataset,
-    } = nextProps;
+    const { dataset } = nextProps;
 
     this.pointers.forEach(point => {
       point.pointer.detachFrom(point.plot);
@@ -57,16 +52,18 @@ class StackedBarCharts extends Component {
   }
 
   createDotsCrosshair(plot) {
-
     const crosshair = {};
 
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+    const crosshairContainer = plot
+      .foreground()
+      .append('g')
+      .style('visibility', 'hidden');
 
-    crosshair.circle = crosshairContainer.append('circle')
+    crosshair.circle = crosshairContainer
+      .append('circle')
       .attr('fill', 'white')
       .attr('r', 8);
-    crosshair.drawAt = (p) => {
-
+    crosshair.drawAt = p => {
       crosshair.circle.attr('cx', p.x);
       crosshair.circle.attr('cy', p.y);
 
@@ -79,17 +76,16 @@ class StackedBarCharts extends Component {
   }
 
   createLineCrosshair(plot) {
-    const {
-      options: {
-        yKeys,
-        colors,
-      },
-    } = this.props;
+    const { options: { yKeys, colors } } = this.props;
 
     const crosshair = {};
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+    const crosshairContainer = plot
+      .foreground()
+      .append('g')
+      .style('visibility', 'hidden');
 
-    crosshair.vLine = crosshairContainer.append('line')
+    crosshair.vLine = crosshairContainer
+      .append('line')
       .attr('stroke', '#8ca0b3')
       .attr('opacity', 0.5)
       .attr('stroke-width', 1)
@@ -98,7 +94,6 @@ class StackedBarCharts extends Component {
       .attr('y2', plot.height());
 
     crosshair.drawAt = (p, mousePosition, navInfo) => {
-
       crosshair.vLine.attr('x1', p.x);
       crosshair.vLine.attr('x2', p.x);
       const entries = [];
@@ -106,7 +101,7 @@ class StackedBarCharts extends Component {
         const entry = {
           label: item.message,
           color: colors[i],
-          value: navInfo.datum[item.key],
+          value: navInfo.datum[item.key] ? navInfo.datum[item.key] : 0,
         };
         entries.push(entry);
       });
@@ -115,17 +110,19 @@ class StackedBarCharts extends Component {
         entries: entries,
       };
 
-      const width = this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
-      const height = this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
+      const width =
+        this.svgBoundingClientRect.right - this.svgBoundingClientRect.left;
+      const height =
+        this.svgBoundingClientRect.bottom - this.svgBoundingClientRect.top;
       this.setTooltip({
-        xTooltip: (mousePosition.x + 320 < width
-          ? this.svgBoundingClientRect.left + mousePosition.x + 80
-          : (this.svgBoundingClientRect.left + mousePosition.x) - 200
-        ),
-        yTooltip: (mousePosition.y + 120 < height
-          ? this.svgBoundingClientRect.top + mousePosition.y
-          : (this.svgBoundingClientRect.top + mousePosition.y) - 50
-        ),
+        xTooltip:
+          mousePosition.x + 320 < width
+            ? this.svgBoundingClientRect.left + mousePosition.x + 80
+            : this.svgBoundingClientRect.left + mousePosition.x - 200, // eslint-disable-line
+        yTooltip:
+          mousePosition.y + 120 < height
+            ? this.svgBoundingClientRect.top + mousePosition.y
+            : this.svgBoundingClientRect.top + mousePosition.y - 50, // eslint-disable-line
         content: tooltipContent,
         visibility: 'visible',
       });
@@ -138,9 +135,11 @@ class StackedBarCharts extends Component {
     return crosshair;
   }
 
-  defineSvg = svg => { this.svg = svg; };
+  defineSvg = svg => {
+    this.svg = svg;
+  };
 
-  setTooltip = (chartTooltipProps) => {
+  setTooltip = chartTooltipProps => {
     if (chartTooltipProps) {
       this.setState({
         xTooltip: chartTooltipProps.xTooltip,
@@ -149,13 +148,10 @@ class StackedBarCharts extends Component {
         visibility: chartTooltipProps.visibility,
       });
     }
-  }
+  };
 
-  renderBarChart = (dataset) => {
-    const {
-      identifier,
-      options,
-    } = this.props;
+  renderBarChart = dataset => {
+    const { identifier, options } = this.props;
 
     if (this.plot !== null) {
       this.plot.destroy();
@@ -167,8 +163,12 @@ class StackedBarCharts extends Component {
 
     const xScale = new Plottable.Scales.Time().padProportion(0);
     const yScale = new Plottable.Scales.Linear()
-      .addIncludedValuesProvider(() => { return [0]; })
-      .addPaddingExceptionsProvider(() => { return [0]; })
+      .addIncludedValuesProvider(() => {
+        return [0];
+      })
+      .addPaddingExceptionsProvider(() => {
+        return [0];
+      })
       .padProportion(0.2);
 
     const colorScale = new Plottable.Scales.Color();
@@ -176,12 +176,13 @@ class StackedBarCharts extends Component {
     colorScale.domain(yKeys);
 
     const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
-    const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(false);
+    const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(
+      false,
+    );
 
     xAxis.formatter(Plottable.Formatters.multiTime());
     const plts = [];
     const pnts = [];
-
 
     const guideline = new Plottable.Components.GuideLineLayer(
       Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL,
@@ -198,16 +199,27 @@ class StackedBarCharts extends Component {
           };
           formatedDataset.push(data);
         });
-        datasets[yKey] = (formatedDataset);
+        datasets[yKey] = formatedDataset;
       });
       const plot = new Plottable.Plots.StackedBar();
       yKeys.forEach(yKey => {
         plot.addDataset(new Plottable.Dataset(datasets[yKey]).metadata(yKey));
       });
-      plot.x((d) => { return new Date(d.x); }, xScale)
-        .y((d) => { return d.y; }, yScale)
+      plot
+        .x(d => {
+          return new Date(d.x);
+        }, xScale)
+        .y(d => {
+          return d.y;
+        }, yScale)
         .animated(true)
-        .attr('fill', (d, i, dset) => { return dset.metadata(); }, colorScale);
+        .attr(
+          'fill',
+          (d, i, dset) => {
+            return dset.metadata();
+          },
+          colorScale,
+        );
       plts.push(plot);
     }
 
@@ -228,14 +240,12 @@ class StackedBarCharts extends Component {
 
     table.renderTo(`#${identifier}`);
     this.plot = table;
-
-
-    plts.forEach((plot) => {
+    plts.forEach(plot => {
       // colorScale.range([plot.foreground().style('fill')]);
       const line = this.createLineCrosshair(plot);
       const pointer = new Plottable.Interactions.Pointer();
       this.pointersAttached.push(pointer);
-      pointer.onPointerMove((p) => {
+      pointer.onPointerMove(p => {
         const nearestEntity = plot.entityNearest(p);
         const entities = plot.entitiesAt(nearestEntity.position);
         entities.forEach((entity, i) => {
@@ -269,20 +279,12 @@ class StackedBarCharts extends Component {
         table.redraw();
       }, 500);
     });
-
-  }
+  };
 
   render() {
-    const {
-      identifier,
-    } = this.props;
+    const { identifier } = this.props;
 
-    const {
-      xTooltip,
-      yTooltip,
-      content,
-      visibility,
-    } = this.state;
+    const { xTooltip, yTooltip, content, visibility } = this.state;
 
     const tooltipStyle = {
       xTooltip,
@@ -293,7 +295,9 @@ class StackedBarCharts extends Component {
       <div className="mcs-plot-container">
         <div
           id={identifier}
-          ref={svg => { this.svg = svg; }}
+          ref={svg => {
+            this.svg = svg;
+          }}
           className="mcs-area-plot-svg"
         />
         <ChartTooltip tooltipStyle={tooltipStyle}>
@@ -306,9 +310,7 @@ class StackedBarCharts extends Component {
 
 StackedBarCharts.propTypes = {
   identifier: PropTypes.string.isRequired,
-  dataset: PropTypes.arrayOf(
-    PropTypes.shape(),
-  ).isRequired,
+  dataset: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   options: PropTypes.shape({
     innerRadius: PropTypes.bool,
     startAngle: PropTypes.number,
