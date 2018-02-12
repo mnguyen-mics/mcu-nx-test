@@ -77,7 +77,7 @@ interface AdCardProps extends CardProps {
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdResource>,
-  ) => void;
+  ) => Promise<any>;
   additionalButtons?: React.ReactNode;
 }
 
@@ -208,10 +208,9 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     const tasks: Task[] = [];
     adIdsToUpdate.forEach(adId => {
       tasks.push(() => {
-        updateAd(adId, {
+        return updateAd(adId, {
           status,
         });
-        return Promise.resolve();
       });
     });
     executeTasksInSequence(tasks)

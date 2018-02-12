@@ -72,7 +72,7 @@ interface AdGroupCardProps extends CardProps {
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdGroupResource>,
-  ) => void;
+  ) => Promise<any>;
 }
 
 interface AdGroupCardState {
@@ -274,13 +274,12 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     const tasks: Task[] = [];
     adGroupIdsToUpdate.forEach(adGroupId => {
       tasks.push(() => {
-        updateAdGroup(adGroupId, {
+        return updateAdGroup(adGroupId, {
           status,
         });
-        return Promise.resolve();
       });
     });
-    Promise.all([executeTasksInSequence(tasks)])
+    executeTasksInSequence(tasks)
       .then(() => {
         this.setState({
           selectedRowKeys: [],
