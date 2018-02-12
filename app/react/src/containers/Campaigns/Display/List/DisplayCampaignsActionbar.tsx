@@ -40,12 +40,12 @@ import { TranslationProps } from '../../../Helpers/withTranslations';
 
 const messagesMap = defineMessages({
   setStatus: {
-    id: 'set.ads.statuses',
-    defaultMessage: 'Set statuses to',
+    id: 'set.ads.status',
+    defaultMessage: 'Set status to',
   },
-  activateAll: {
-    id: 'activate.all.ads',
-    defaultMessage: 'Activated',
+  activeAll: {
+    id: 'active.all.ads',
+    defaultMessage: 'Active',
   },
   pauseAll: {
     id: 'pause.all.ads',
@@ -298,7 +298,7 @@ class DisplayCampaignsActionbar extends React.Component<
           <FormattedMessage {...messagesMap.pauseAll} />
         </Menu.Item>
         <Menu.Item key="activate">
-          <FormattedMessage {...messagesMap.activateAll} />
+          <FormattedMessage {...messagesMap.activeAll} />
         </Menu.Item>
       </Menu>
     );
@@ -331,6 +331,7 @@ class DisplayCampaignsActionbar extends React.Component<
       return (
         <Dropdown overlay={this.buildMenu()} trigger={['click']}>
           <Button className="button-glow">
+            <McsIcon type="chevron" />
             <FormattedMessage {...messagesMap.setStatus} />
           </Button>
         </Dropdown>

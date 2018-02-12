@@ -39,16 +39,16 @@ import CreativeService from '../../../../../services/CreativeService';
 
 const messagesMap = defineMessages({
   setStatus: {
-    id: 'set.ads.statuses',
-    defaultMessage: 'Set statuses to',
+    id: 'set.ads.status',
+    defaultMessage: 'Set status to',
   },
   auditAction: {
     id: 'audit.action',
     defaultMessage: 'Audit Action',
   },
-  activateAll: {
-    id: 'activate.all.ads',
-    defaultMessage: 'Activated',
+  activeAll: {
+    id: 'active.all.ads',
+    defaultMessage: 'Active',
   },
   pauseAll: {
     id: 'pause.all.ads',
@@ -56,11 +56,11 @@ const messagesMap = defineMessages({
   },
   startAll: {
     id: 'display.campaign.start.all.audits',
-    defaultMessage: 'Start all',
+    defaultMessage: 'Start',
   },
   resetAll: {
     id: 'display.campaign.reset.all.audits',
-    defaultMessage: 'Reset all',
+    defaultMessage: 'Reset',
   },
   archiveSuccess: {
     id: 'archive.ads.success.msg',
@@ -279,7 +279,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
           <FormattedMessage {...messagesMap.pauseAll} />
         </Menu.Item>
         <Menu.Item key="activate">
-          <FormattedMessage {...messagesMap.activateAll} />
+          <FormattedMessage {...messagesMap.activeAll} />
         </Menu.Item>
       </Menu>
     );
@@ -331,6 +331,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
       return (
         <Dropdown overlay={this.buildMenu()} trigger={['click']}>
           <Button className="button-glow">
+            <McsIcon type="chevron" />
             <FormattedMessage {...messagesMap.setStatus} />
           </Button>
         </Dropdown>
@@ -341,6 +342,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
       return (
         <Dropdown overlay={this.buildAuditMenu()} trigger={['click']}>
           <Button className="button-glow" style={{ marginRight: '20px' }}>
+            <McsIcon type="chevron" />
             <FormattedMessage {...messagesMap.auditAction} />
           </Button>
         </Dropdown>

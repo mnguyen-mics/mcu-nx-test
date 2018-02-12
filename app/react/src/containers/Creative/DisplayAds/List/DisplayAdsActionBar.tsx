@@ -47,11 +47,11 @@ const messagesMap = defineMessages({
   },
   startAll: {
     id: 'display.campaign.start.all.audits',
-    defaultMessage: 'Start all',
+    defaultMessage: 'Start',
   },
   resetAll: {
     id: 'display.campaign.reset.all.audits',
-    defaultMessage: 'Reset all',
+    defaultMessage: 'Reset',
   },
 });
 
@@ -111,6 +111,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
       return (
         <Dropdown overlay={buildAuditMenu()} trigger={['click']}>
           <Button className="button-glow" style={{ marginRight: '20px' }}>
+            <McsIcon type="chevron" />
             <FormattedMessage {...messagesMap.auditAction} />
           </Button>
         </Dropdown>
