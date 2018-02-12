@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import { compose } from 'recompose';
+import { injectIntl } from 'react-intl';
+import { RouteComponentProps } from 'react-router';
 
 import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView/index';
 import EmailTestModal from './EmailTestModal';
-
-import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
 
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import {
@@ -21,20 +20,14 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
-import {
-  getEmailTemplates,
-  isFetchingEmailTemplates,
-  hasEmailTemplates,
-  getEmailTemplatesTotal,
-} from '../../../../state/Creatives/Emails/selectors';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import { RouteComponentProps } from 'react-router';
 import { Filters } from '../../../../components/ItemList';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { withTranslations } from '../../../Helpers/index';
 import { TranslationProps } from '../../../Helpers/withTranslations';
-import { injectIntl } from 'react-intl';
+import { MapStateToProps, MapDispatchToProps } from './EmailListPage';
+import CreativeService from '../../../../services/CreativeService';
 
 interface CreativeEmailsTableProps {
   rowSelection: {
@@ -42,23 +35,6 @@ interface CreativeEmailsTableProps {
     onChange: (selectedRowKeys: string[]) => void;
     unselectAllItemIds: () => void;
   };
-}
-
-interface MapDispatchToProps {
-  fetchCreativeEmails: (
-    organisationId: string,
-    filter: Filters,
-    bool?: boolean,
-  ) => void;
-  archiveCreativeEmails: (campaignId: string) => any;
-  resetCreativeEmails: () => void;
-}
-
-interface MapStateToProps extends TranslationProps {
-  hasCreativeEmails: boolean;
-  isFetchingCreativeEmails: boolean;
-  dataSource: object[]; // type better
-  totalCreativeEmails: number;
 }
 
 interface CreativeEmailsTableState {
@@ -288,13 +264,14 @@ class CreativeEmailsTable extends React.Component<
     history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
   }
 
-  archiveCreativeEmails(campaign: EmailTemplateResource) {
+  archiveCreativeEmails(email: EmailTemplateResource) {
     const {
       match: { params: { organisationId } },
-      location: { search },
-      archiveCreativeEmails,
+      location: { search, pathname, state },
       fetchCreativeEmails,
       translations,
+      dataSource,
+      history,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -306,8 +283,23 @@ class CreativeEmailsTable extends React.Component<
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return archiveCreativeEmails(campaign.id).then(() => {
-          fetchCreativeEmails(organisationId, filter);
+        CreativeService.updateEmailTemplate(email.id, {
+          ...email,
+          archived: true,
+        }).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            fetchCreativeEmails(organisationId, filter, true);
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
+          }
+          fetchCreativeEmails(organisationId, filter, true);
         });
       },
       onCancel() {
@@ -317,23 +309,8 @@ class CreativeEmailsTable extends React.Component<
   }
 }
 
-const mapStateToProps = (state: MapStateToProps) => ({
-  translations: state.translations,
-  hasCreativeEmails: hasEmailTemplates(state),
-  isFetchingCreativeEmails: isFetchingEmailTemplates(state),
-  dataSource: getEmailTemplates(state),
-  totalCreativeEmails: getEmailTemplatesTotal(state),
-});
-
-const mapDispatchToProps = {
-  fetchCreativeEmails: CreativeEmailsActions.fetchCreativeEmails.request,
-  // archiveCreativeEmails: CreativeEmailsActions.archiveCreativeEmails,
-  resetCreativeEmails: CreativeEmailsActions.resetCreativeEmails,
-};
-
 export default compose<JoinedProps, CreativeEmailsTableProps>(
   withRouter,
   withTranslations,
   injectIntl,
-  connect(mapStateToProps, mapDispatchToProps),
 )(CreativeEmailsTable);

@@ -13,6 +13,8 @@ import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import {
   getDisplayCreatives,
   getDisplayCreativesTotal,
+  hasDisplayCreatives,
+  isFetchingDisplayCreatives,
 } from '../../../../state/Creatives/Display/selectors';
 import {
   DisplayAdResource,
@@ -23,12 +25,13 @@ import CreativeService, {
 } from '../../../../services/CreativeService';
 import {
   parseSearch,
-  PAGINATION_SEARCH_SETTINGS,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
+import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 
 const messages = defineMessages({
   archiveSuccess: {
@@ -39,11 +42,20 @@ const messages = defineMessages({
 
 const { Content } = Layout;
 
-interface DisplayAdsPageProps {}
+export interface MapDispatchToProps {
+  fetchCreativeDisplay: (
+    organisationId: string,
+    filter: object,
+    bool: boolean,
+  ) => void;
+  resetCreativeDisplay: () => void;
+}
 
-interface MapStateToProps {
-  totalCreativeDisplay: number;
+export interface MapStateToProps {
+  isFetchingCreativeDisplay?: boolean;
   dataSource: DisplayAdResource[];
+  totalCreativeDisplay?: number;
+  hasCreativeDisplay: boolean;
 }
 
 interface DisplayAdsPageState {
@@ -56,6 +68,7 @@ type JoinedProps = DisplayAdsPage &
   InjectedIntlProps &
   InjectDrawerProps &
   MapStateToProps &
+  MapDispatchToProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
@@ -99,27 +112,18 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creative => {
-            if (action === 'START_AUDIT') {
-              if (creative.audit_status === 'NOT_AUDITED') {
-                CreativeService.makeAuditAction(creative.id, action);
-              }
-            } else {
-              if (
-                creative.audit_status === 'AUDIT_FAILED' ||
-                creative.audit_status === 'AUDIT_PASSED'
-              ) {
-                CreativeService.makeAuditAction(creative.id, action);
-              }
+            if (creative.available_user_audit_actions.includes(action)) {
+              CreativeService.makeAuditAction(creative.id, action);
             }
           });
       }),
     )
       .then(() => {
-        this.redirect();
         this.setState({
           selectedRowKeys: [],
           allRowsAreSelected: false,
         });
+        this.redirect();
       })
       .catch((err: any) => {
         this.props.notifyError(err);
@@ -177,47 +181,60 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
   };
 
   redirect = () => {
-    const { location: { search, pathname, state }, history } = this.props;
-    const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-    if (filter.currentPage !== 1) {
+    const {
+      location: { search, pathname, state },
+      history,
+      fetchCreativeDisplay,
+      match: { params: { organisationId } },
+      dataSource,
+    } = this.props;
+    const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
+    if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
-        currentPage: 1,
+        currentPage: filter.currentPage - 1,
       };
+      fetchCreativeDisplay(organisationId, filter, true);
       history.push({
         pathname: pathname,
         search: updateSearch(search, newFilter),
         state: state,
       });
-    } else {
-      window.location.reload();
     }
+    fetchCreativeDisplay(organisationId, filter, true);
   };
 
   makeArchiveAction = (creativesIds: string[]) => {
     return Promise.all(
       creativesIds.map(creativeId => {
-        CreativeService.getDisplayAd(creativeId)
+        return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creativeData => {
             if (
               creativeData.audit_status !== 'AUDIT_PENDING' &&
               creativeData.audit_status !== 'AUDIT_FAILED'
             ) {
-              CreativeService.updateDisplayCreative(creativeId, {
+              return CreativeService.updateDisplayCreative(creativeId, {
                 ...creativeData,
                 archived: true,
               });
             }
+            return Promise.resolve() as any;
           });
       }),
     ).then(() => {
-      this.redirect();
-      this.setState({
-        isArchiveModalVisible: false,
-        selectedRowKeys: [],
-      });
-      message.success(this.props.intl.formatMessage(messages.archiveSuccess));
+      this.setState(
+        {
+          isArchiveModalVisible: false,
+          selectedRowKeys: [],
+        },
+        () => {
+          message.success(
+            this.props.intl.formatMessage(messages.archiveSuccess),
+          );
+          this.redirect();
+        },
+      );
     });
   };
 
@@ -235,6 +252,15 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
 
   render() {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
+    const {
+      hasCreativeDisplay,
+      isFetchingCreativeDisplay,
+      dataSource,
+      totalCreativeDisplay,
+      fetchCreativeDisplay,
+      resetCreativeDisplay,
+    } = this.props;
+
     const rowSelection = {
       selectedRowKeys,
       allRowsAreSelected: allRowsAreSelected,
@@ -243,6 +269,15 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       unselectAllItemIds: this.unselectAllItemIds,
       onSelectAll: this.unsetAllItemsSelectedFlag,
       onSelect: this.unsetAllItemsSelectedFlag,
+    };
+
+    const reduxProps = {
+      hasCreativeDisplay,
+      isFetchingCreativeDisplay,
+      dataSource,
+      totalCreativeDisplay,
+      fetchCreativeDisplay,
+      resetCreativeDisplay,
     };
 
     const multiEditProps = {
@@ -261,23 +296,29 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayAdsList rowSelection={rowSelection} />
+            <DisplayAdsList rowSelection={rowSelection} {...reduxProps} />
           </Content>
         </div>
       </div>
     );
   }
 }
-
 const mapStateToProps = (state: MapStateToProps) => ({
-  totalCreativeDisplay: getDisplayCreativesTotal(state),
+  hasCreativeDisplay: hasDisplayCreatives(state),
+  isFetchingCreativeDisplay: isFetchingDisplayCreatives(state),
   dataSource: getDisplayCreatives(state),
+  totalCreativeDisplay: getDisplayCreativesTotal(state),
 });
 
-export default compose<JoinedProps, DisplayAdsPageProps>(
+const mapDispatchToProps = {
+  fetchCreativeDisplay: CreativeDisplayActions.fetchCreativeDisplay.request,
+  resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay,
+};
+
+export default compose<JoinedProps, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
   injectNotifications,
-  connect(mapStateToProps, undefined),
+  connect(mapStateToProps, mapDispatchToProps),
 )(DisplayAdsPage);

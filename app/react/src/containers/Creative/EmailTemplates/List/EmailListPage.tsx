@@ -15,14 +15,21 @@ import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import {
   getEmailTemplates,
+  isFetchingEmailTemplates,
+  hasEmailTemplates,
   getEmailTemplatesTotal,
 } from '../../../../state/Creatives/Emails/selectors';
-import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import {
   parseSearch,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
+import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
+import { TranslationProps } from '../../../Helpers/withTranslations';
+import { Filters } from '../../../../components/ItemList';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   archiveSuccess: {
@@ -33,7 +40,21 @@ const messages = defineMessages({
 
 const { Content } = Layout;
 
-interface EmailListPageProps {}
+export interface MapDispatchToProps {
+  fetchCreativeEmails: (
+    organisationId: string,
+    filter: Filters,
+    bool?: boolean,
+  ) => void;
+  resetCreativeEmails: () => void;
+}
+
+export interface MapStateToProps extends TranslationProps {
+  hasCreativeEmails: boolean;
+  isFetchingCreativeEmails: boolean;
+  dataSource: object[]; // type better
+  totalCreativeEmails: number;
+}
 
 interface EmailListPageState {
   selectedRowKeys: string[];
@@ -41,15 +62,11 @@ interface EmailListPageState {
   allRowsAreSelected: boolean;
 }
 
-interface MapStateToProps {
-  totalEmailTemplate: number;
-  dataSource: EmailTemplateResource[];
-}
-
-type JoinedProps = EmailListPageProps &
-  InjectedIntlProps &
+type JoinedProps = InjectedIntlProps &
   MapStateToProps &
+  MapDispatchToProps &
   InjectDrawerProps &
+  InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
@@ -93,25 +110,54 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     });
   };
 
+  getAllEmailTemplatesIds = () => {
+    const {
+      totalCreativeEmails,
+      match: { params: { organisationId } },
+      notifyError,
+    } = this.props;
+    const options: GetCreativesOptions = {
+      creative_type: 'EMAIL_TEMPLATE',
+      archived: false,
+      max_results: totalCreativeEmails, // not mandatory
+    };
+    const allEmailTemplatesIds: string[] = [];
+    return CreativeService.getEmailTemplates(organisationId, options)
+      .then(apiResp => {
+        apiResp.data.forEach((emailTemplateResource, index) => {
+          allEmailTemplatesIds.push(emailTemplateResource.id);
+        });
+        return allEmailTemplatesIds;
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
   redirectAndNotify = () => {
-    const { location: { search, pathname, state }, history, intl } = this.props;
+    const {
+      location: { search, pathname, state },
+      history,
+      intl,
+      match: { params: { organisationId } },
+      dataSource,
+    } = this.props;
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-    if (filter.currentPage !== 1) {
+    if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
         currentPage: 1,
       };
+      this.props.fetchCreativeEmails(organisationId, filter, true);
       history.push({
         pathname: pathname,
         search: updateSearch(search, newFilter),
         state: state,
       });
     } else {
-      // setTimeout is used in order to see message.success when archiving on page 1
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      this.props.fetchCreativeEmails(organisationId, filter, true);
     }
+
     this.setState({
       isArchiveModalVisible: false,
       selectedRowKeys: [],
@@ -119,62 +165,47 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     message.success(intl.formatMessage(messages.archiveSuccess));
   };
 
+  makeArchiveAction = (emailTemplateIds: string[]) => {
+    return Promise.all(
+      emailTemplateIds.map(emailTemplateId => {
+        return CreativeService.getEmailTemplate(emailTemplateId)
+          .then(apiResp => apiResp.data)
+          .then(emailTemplateData => {
+            return CreativeService.updateEmailTemplate(emailTemplateId, {
+              ...emailTemplateData,
+              archived: true,
+            });
+          });
+      }),
+    ).then(() => {
+      this.redirectAndNotify();
+    });
+  };
+
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    const {
-      totalEmailTemplate,
-      match: { params: { organisationId } },
-    } = this.props;
-
     if (allRowsAreSelected) {
-      const options: GetCreativesOptions = {
-        creative_type: 'EMAIL_TEMPLATE',
-        archived: false,
-        max_results: totalEmailTemplate, // not mandatory
-      };
-      const emailtemplateIds: string[] = [];
-      return CreativeService.getEmailTemplates(organisationId, options).then(
-        apiResp => {
-          apiResp.data.forEach((emailTemplateResource, index) => {
-            emailtemplateIds.push(emailTemplateResource.id);
-          });
-          return Promise.all(
-            emailtemplateIds.map(creativeId => {
-              CreativeService.getEmailTemplate(creativeId)
-                .then(apiResponse => apiResponse.data)
-                .then(emailData => {
-                  CreativeService.updateEmailTemplate(creativeId, {
-                    ...emailData,
-                    archived: true,
-                  });
-                });
-            }),
-          ).then(() => {
-            this.redirectAndNotify();
-          });
+      return this.getAllEmailTemplatesIds().then(
+        (allTemplatesIds: string[]) => {
+          this.makeArchiveAction(allTemplatesIds);
         },
       );
     } else {
-      return Promise.all(
-        selectedRowKeys.map(creativeId => {
-          CreativeService.getEmailTemplate(creativeId)
-            .then(apiResp => apiResp.data)
-            .then(emailData => {
-              CreativeService.updateEmailTemplate(creativeId, {
-                ...emailData,
-                archived: true,
-              });
-            });
-        }),
-      ).then(() => {
-        this.redirectAndNotify();
-      });
+      return this.makeArchiveAction(selectedRowKeys);
     }
   };
 
   render() {
     const { selectedRowKeys } = this.state;
+    const {
+      hasCreativeEmails,
+      isFetchingCreativeEmails,
+      dataSource,
+      totalCreativeEmails,
+      fetchCreativeEmails,
+      resetCreativeEmails,
+    } = this.props;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -189,6 +220,15 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       handleCancel: this.handleCancel,
     };
 
+    const reduxProps = {
+      hasCreativeEmails,
+      isFetchingCreativeEmails,
+      dataSource,
+      totalCreativeEmails,
+      fetchCreativeEmails,
+      resetCreativeEmails,
+    };
+
     return (
       <div className="ant-layout">
         <EmailActionBar
@@ -197,7 +237,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <EmailList rowSelection={rowSelection} />
+            <EmailList rowSelection={rowSelection} {...reduxProps} />
           </Content>
         </div>
       </div>
@@ -206,13 +246,20 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
 }
 
 const mapStateToProps = (state: MapStateToProps) => ({
-  totalEmailTemplate: getEmailTemplatesTotal(state),
+  hasCreativeEmails: hasEmailTemplates(state),
+  isFetchingCreativeEmails: isFetchingEmailTemplates(state),
   dataSource: getEmailTemplates(state),
+  totalCreativeEmails: getEmailTemplatesTotal(state),
 });
 
-export default compose<JoinedProps, EmailListPageProps>(
+const mapDispatchToProps = {
+  fetchCreativeEmails: CreativeEmailsActions.fetchCreativeEmails.request,
+  resetCreativeEmails: CreativeEmailsActions.resetCreativeEmails,
+};
+export default compose<JoinedProps, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
-  connect(mapStateToProps, undefined),
+  injectNotifications,
+  connect(mapStateToProps, mapDispatchToProps),
 )(EmailListPage);

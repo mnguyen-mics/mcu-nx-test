@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
@@ -10,7 +9,6 @@ import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView';
-import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -19,40 +17,19 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import {
-  getDisplayCreatives,
-  getDisplayCreativesTotal,
-  hasDisplayCreatives,
-  isFetchingDisplayCreatives,
-} from '../../../../state/Creatives/Display/selectors';
+
 import CreativeScreenshot from '../../CreativeScreenshot';
 import messages from './message';
 import CreativeService from '../../../../services/CreativeService';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
+import { MapDispatchToProps, MapStateToProps } from './DisplayAdsPage';
 
 interface DisplayAdsListProps {
   rowSelection: {
     selectedRowKeys: string[];
     onChange: (selectedRowKeys: string[]) => void;
   };
-}
-
-interface MapDispatchToProps {
-  fetchCreativeDisplay: (
-    organisationId: string,
-    filter: object,
-    bool: boolean,
-  ) => void;
-  resetCreativeDisplay: () => void;
-}
-
-interface MapStateToProps {
-  isFetchingCreativeDisplay?: boolean;
-  dataSource: DisplayAdResource[];
-  totalCreativeDisplay?: number;
-  hasCreativeDisplay: boolean;
-  archiveCreativeDisplay: () => void;
 }
 
 type JoinedProps = DisplayAdsListProps &
@@ -62,9 +39,6 @@ type JoinedProps = DisplayAdsListProps &
   InjectedIntlProps;
 
 class CreativeDisplayTable extends React.Component<JoinedProps> {
-  static defaultProps: Partial<JoinedProps> = {
-    archiveCreativeDisplay: () => undefined,
-  };
 
   constructor(props: JoinedProps) {
     super(props);
@@ -291,10 +265,8 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
               search: updateSearch(search, newFilter),
               state: state,
             });
-            return Promise.resolve();
           }
           fetchCreativeDisplay(organisationId, filter, true);
-          return Promise.resolve();
         });
       },
       onCancel() {
@@ -304,20 +276,7 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
   }
 }
 
-const mapStateToProps = (state: MapStateToProps) => ({
-  hasCreativeDisplay: hasDisplayCreatives(state),
-  isFetchingCreativeDisplay: isFetchingDisplayCreatives(state),
-  dataSource: getDisplayCreatives(state),
-  totalCreativeDisplay: getDisplayCreativesTotal(state),
-});
-
-const mapDispatchToProps = {
-  fetchCreativeDisplay: CreativeDisplayActions.fetchCreativeDisplay.request,
-  resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay,
-};
-
 export default compose<JoinedProps, DisplayAdsListProps>(
   withRouter,
   injectIntl,
-  connect(mapStateToProps, mapDispatchToProps),
 )(CreativeDisplayTable);

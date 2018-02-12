@@ -50,14 +50,14 @@ interface DisplayCampaignProps {
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdResource>,
-  ) => void;
+  ) => Promise<any>;
   updateAdGroup: (
     adGroupId: string,
     body: Partial<AdGroupResource>,
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdGroupResource>,
-  ) => void;
+  ) => Promise<any>;
   updateCampaign: (
     campaignId: string,
     object: {

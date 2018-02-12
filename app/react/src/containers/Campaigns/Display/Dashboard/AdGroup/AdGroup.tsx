@@ -49,14 +49,17 @@ interface AdGroupProps {
     adGroups: DashboardPerformanceSubProps;
     overallPerformance: DashboardPerformanceSubProps;
   };
-  updateAdGroup: (adGroupId: string, body: Partial<AdGroupResource>) => void;
+  updateAdGroup: (
+    adGroupId: string,
+    body: Partial<AdGroupResource>,
+  ) => Promise<any>;
   updateAd: (
     adId: string,
     body: Partial<AdResource>,
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdResource>,
-  ) => void;
+  ) => Promise<any>;
 }
 
 type JoinedProps = AdGroupProps &
