@@ -214,7 +214,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         return Promise.resolve();
       });
     });
-    Promise.all([executeTasksInSequence(tasks)])
+    executeTasksInSequence(tasks)
       .then(() => {
         this.setState({
           selectedRowKeys: [],
@@ -238,26 +238,19 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         .filter(ad => selectedRowKeys.includes(ad.id))
         .map(ad => ad.creative_id);
     }
-    Promise.all(
-      creativesIds.map(creativeId => {
-        CreativeService.getDisplayAd(creativeId)
+    const tasks: Task[] = [];
+    creativesIds.forEach(creativeId => {
+      tasks.push(() => {
+        return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creative => {
-            if (action === 'START_AUDIT') {
-              if (creative.audit_status === 'NOT_AUDITED') {
-                CreativeService.makeAuditAction(creative.id, action);
-              }
-            } else {
-              if (
-                creative.audit_status === 'AUDIT_FAILED' ||
-                creative.audit_status === 'AUDIT_PASSED'
-              ) {
-                CreativeService.makeAuditAction(creative.id, action);
-              }
+            if (creative.available_user_audit_actions.includes(action)) {
+              CreativeService.makeAuditAction(creative.id, action);
             }
           });
-      }),
-    )
+      });
+    });
+    executeTasksInSequence(tasks)
       .then(() => {
         this.setState({
           selectedRowKeys: [],
@@ -348,7 +341,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     const buildAuditActionAdsElement = () => {
       return (
         <Dropdown overlay={this.buildAuditMenu()} trigger={['click']}>
-          <Button className="button-glow" style={{ marginRight: '20px'}}>
+          <Button className="button-glow" style={{ marginRight: '20px' }}>
             <FormattedMessage {...messagesMap.auditAction} />
           </Button>
         </Dropdown>
