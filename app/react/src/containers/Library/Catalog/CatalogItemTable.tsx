@@ -70,7 +70,6 @@ class CatalogItemTable extends React.Component<Props, any> {
         ]}
         dataSource={this.props.records}
         expandedRowRender={this.expandedItemRowRender}
-        expandRowByClick={true}
         rowClassName={getClassName}
         rowKey='item_id'
         pagination={{

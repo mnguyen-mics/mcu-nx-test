@@ -104,15 +104,19 @@ class CatalogContent extends React.Component<
   
   fetchCatalog = (datamatId: string) => {
     const getSelectedCatalogId = (catalogs: CatalogRessource[]) => {
-      return this.state.catalogs.selectedId ? this.state.catalogs.selectedId : catalogs && catalogs[0].token;
+      return this.state.catalogs.selectedId ? this.state.catalogs.selectedId : catalogs && catalogs.length ? catalogs[0].token : null;
     }
     CatalogService.getCatalogs(datamatId)
       .then(res => res.data)
       .then(catalogs => {
-        this.setState({ catalogs: { loading: false, items: catalogs, selectedId: getSelectedCatalogId(catalogs) } })
-        return getSelectedCatalogId(catalogs)
+        const a = getSelectedCatalogId(catalogs);
+        if (a !== null) {
+          this.setState({ catalogs: { loading: false, items: catalogs, selectedId: a } })
+          return this.fetchInitialCategories(datamatId, a)
+        } else {
+          this.setState({ catalogs: { loading: false, items: [] }, categories: { loading: false, items: [] } })
+        }
       })
-      .then(selectedCategory => this.fetchInitialCategories(datamatId, selectedCategory))
       .catch(err => this.handleError(err))
   }
 
@@ -123,11 +127,11 @@ class CatalogContent extends React.Component<
         const promises = res.map(category => {
           return CatalogService.getCatalogSubCategories(datamartId, catalogToken, category.category_id)
             .then(r => r.data)
-            .then(r => { return {...category, hasSubCategory: r.length > 0 ? true : false } })
+            .then(r => { return {...category, hasSubCategory: r.length > 0 } })
             .then(r => {
               return r.hasSubCategory ? CatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id, { first_result: 0, max_results: 500 })
                 .then(i => i.data)
-                .then(i => { return {...r, hasItems: i.length > 0 ? true : false, subItems: i } }) : {...r, hasItems: false, subItems: []}
+                .then(i => { return {...r, hasItems: i.length > 0, subItems: i } }) : {...r, hasItems: false, subItems: []}
             })
         })
         return Promise.all(promises)
@@ -164,11 +168,11 @@ class CatalogContent extends React.Component<
           const promises = res.map(category => {
             return CatalogService.getCatalogSubCategories(datamartId, catalogToken, category.category_id)
               .then(r => r.data)
-              .then(r => { return {...category, hasSubCategory: r.length > 0 ? true : false } })
+              .then(r => { return {...category, hasSubCategory: r.length > 0 } })
               .then(r => {
                 return r.hasSubCategory ? {...r, hasItems: false, subItems: []} : CatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id)
                   .then(i => i.data)
-                  .then(i => { return {...r, hasItems: i.length > 0 ? true : false, subItems: i } }) 
+                  .then(i => { return {...r, hasItems: i.length > 0, subItems: i } }) 
               })
           })
           return Promise.all(promises)
@@ -265,7 +269,7 @@ class CatalogContent extends React.Component<
     const {
       intl
     } = this.props;
-    return record.hasItems ? <CatalogItemTable records={record.subItems} /> : <div>{intl.formatMessage(messages.catalog)}</div>
+    return record.hasItems ? <CatalogItemTable records={record.subItems} /> : <div>{intl.formatMessage(messages.noProduct)}</div>
   }
 
 
@@ -301,7 +305,7 @@ class CatalogContent extends React.Component<
   
     return (
       <div style={{ marginTop: 40 }}>
-        <Card title={"test"} buttons={this.generateCatalogSelect()}>
+        <Card title={''} buttons={this.generateCatalogSelect()}>
           {this.generateBreadcrumb()}
 
           <CategoryTable
