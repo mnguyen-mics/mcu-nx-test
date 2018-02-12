@@ -327,7 +327,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       dataSet,
     } = this.props;
 
-    const { selectedRowKeys, allRowsAreSelected } = this.state;
+    const { selectedRowKeys, allRowsAreSelected, isUpdatingStatuses } = this.state;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
@@ -414,7 +414,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     return (
       <Card title={title} buttons={adGroupButtons}>
         <DisplayCampaignAdGroupTable
-          isFetching={isFetching}
+          isFetching={isFetching || isUpdatingStatuses}
           isFetchingStat={isFetchingStat}
           dataSet={dataSet}
           updateAdGroup={updateAdGroup}

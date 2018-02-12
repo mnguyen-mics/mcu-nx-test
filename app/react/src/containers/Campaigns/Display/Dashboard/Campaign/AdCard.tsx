@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Modal, Button, message, Menu, Dropdown, Row, Spin } from 'antd';
+import { Modal, Button, message, Menu, Dropdown } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
   InjectedIntlProps,
@@ -406,19 +406,13 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
 
     return (
       <Card title={title} buttons={adButtons}>
-        {isUpdatingStatuses ? (
-          <Row style={{ textAlign: 'center' }}>
-            <Spin />
-          </Row>
-        ) : (
-          <DisplayCampaignAdTable
-            isFetching={isFetching}
-            isFetchingStat={isFetchingStat}
-            dataSet={dataSet}
-            updateAd={updateAd}
-            rowSelection={rowSelection}
-          />
-        )}
+        <DisplayCampaignAdTable
+          isFetching={isFetching || isUpdatingStatuses}
+          isFetchingStat={isFetchingStat}
+          dataSet={dataSet}
+          updateAd={updateAd}
+          rowSelection={rowSelection}
+        />
       </Card>
     );
   }

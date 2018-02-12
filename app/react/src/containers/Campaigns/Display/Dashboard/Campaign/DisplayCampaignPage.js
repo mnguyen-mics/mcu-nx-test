@@ -483,12 +483,6 @@ class DisplayCampaignPage extends Component {
   updateAd = (adId, body, successMessage, errorMessage, undoBody) => {
     const { notifySuccess, notifyError, removeNotification } = this.props;
 
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState,
-      };
-      nextState.ads.items.itemById[adId].status = body.status;
-    });
     return DisplayCampaignService.updateAd(
       adId,
       this.state.ads.items.adAdGroup[adId].campaign_id,
@@ -533,29 +527,12 @@ class DisplayCampaignPage extends Component {
         : undefined;
         notifyError(error, errorMsg);
 
-        this.setState(prevState => {
-          const nextState = {
-            ...prevState,
-          };
-          if (undoBody) {
-            nextState.ads.items.itemById[adId].status = undoBody.status;
-          }
-
-          return nextState;
-        });
       });
   };
 
   updateAdGroup = (adGroupId, body, successMessage, errorMessage, undoBody) => {
     const { notifySuccess, notifyError, removeNotification } = this.props;
 
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState,
-      };
-      nextState.adGroups.items.itemById[adGroupId].status = body.status;
-      return nextState;
-    });
     return DisplayCampaignService.updateAdGroup(
       this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id,
       adGroupId,
@@ -598,17 +575,6 @@ class DisplayCampaignPage extends Component {
           }
           : undefined;
         notifyError(error, notifyErrorParams);
-        this.setState(prevState => {
-          const nextState = {
-            ...prevState,
-          };
-          if (undoBody) {
-            nextState.adGroups.items.itemById[adGroupId].status =
-              undoBody.status;
-          }
-
-          return nextState;
-        });
       });
   };
 

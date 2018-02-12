@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Tag, Row } from 'antd';
+import { Layout, Tag, Row, message } from 'antd';
 import {
   Form,
   FieldArray,
@@ -31,6 +31,10 @@ const messageMap = defineMessages({
   allAdGroupsNames: {
     id: 'edit.campaign.all.adgroups.names',
     defaultMessage: 'You have selected all the ad groups.',
+  },
+  dateError: {
+    id: 'edit.adgroups.startDate.after.endDate',
+    defaultMessage: 'Warning : Start date is after end date !',
   },
 });
 
@@ -123,23 +127,34 @@ class EditAdGroupsForm extends React.Component<
     });
   };
 
-  save = (formData: EditAdGroupsFormData) => {
-    this.setState({
-      loading: true,
-    });
-    this.props
-      .onSave(formData)
-      .then(() => {
-        this.setState({
-          loading: false,
-        });
-      })
-      .catch(err => {
-        this.props.notifyError(err);
-        this.setState({
-          loading: false,
-        });
+  save = (formData: EditAdGroupsFormData): any => {
+    const { intl } = this.props;
+    const startDate = formData.fields.filter(
+      field => field.adGroupProperty === 'start_date',
+    )[0].value;
+    const endDate = formData.fields.filter(
+      field => field.adGroupProperty === 'end_date',
+    )[0].value;
+    if (startDate > endDate) {
+      return message.warning(intl.formatMessage(messageMap.dateError));
+    } else {
+      this.setState({
+        loading: true,
       });
+      return this.props
+        .onSave(formData)
+        .then(() => {
+          this.setState({
+            loading: false,
+          });
+        })
+        .catch(err => {
+          this.props.notifyError(err);
+          this.setState({
+            loading: false,
+          });
+        });
+    }
   };
 
   render() {
