@@ -127,7 +127,6 @@ class EditAdGroupPage extends React.Component<Props, State> {
   onClose = () => {
     const {
       history,
-      location,
       match: { params: { adGroupId, campaignId, organisationId } },
     } = this.props;
 
@@ -135,9 +134,7 @@ class EditAdGroupPage extends React.Component<Props, State> {
       ? `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`
       : `/v2/o/${organisationId}/campaigns/display/${campaignId}`;
 
-    return location.state && location.state.from
-      ? history.push(location.state.from)
-      : history.push(defaultRedirectUrl);
+    return history.push(defaultRedirectUrl);
   };
 
   render() {
