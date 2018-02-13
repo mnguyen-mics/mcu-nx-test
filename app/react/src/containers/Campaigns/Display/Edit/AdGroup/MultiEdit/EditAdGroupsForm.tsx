@@ -129,13 +129,17 @@ class EditAdGroupsForm extends React.Component<
 
   save = (formData: EditAdGroupsFormData): any => {
     const { intl } = this.props;
-    const startDate = formData.fields.filter(
+    const startDateField = formData.fields.filter(
       field => field.adGroupProperty === 'start_date',
-    )[0].value;
-    const endDate = formData.fields.filter(
+    )[0];
+    const endDateField = formData.fields.filter(
       field => field.adGroupProperty === 'end_date',
-    )[0].value;
-    if (startDate > endDate) {
+    )[0];
+    if (
+      startDateField &&
+      endDateField &&
+      startDateField.value > endDateField.value
+    ) {
       return message.warning(intl.formatMessage(messageMap.dateError));
     } else {
       this.setState({
@@ -143,13 +147,7 @@ class EditAdGroupsForm extends React.Component<
       });
       return this.props
         .onSave(formData)
-        .then(() => {
-          this.setState({
-            loading: false,
-          });
-        })
-        .catch(err => {
-          this.props.notifyError(err);
+        .catch((err: any) => {
           this.setState({
             loading: false,
           });

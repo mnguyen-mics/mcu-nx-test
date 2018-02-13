@@ -35,18 +35,12 @@ import { DisplayCampaignResource } from '../../../../models/campaign/display/Dis
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
+import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 
 interface DisplayCampaignsTableProps
   extends MapDispatchToProps,
     MapStateToProps {
-  rowSelection: {
-    selectedRowKeys: string[];
-    allRowsAreSelected: boolean;
-    onChange: (selectedRowKeys: string[]) => void;
-    selectAllItemIds: () => void;
-    unselectAllItemIds: () => void;
-    onSelectAll: () => void;
-  };
+  rowSelection: ExtendedTableRowSelection;
 }
 
 type JoinedProps = DisplayCampaignsTableProps &

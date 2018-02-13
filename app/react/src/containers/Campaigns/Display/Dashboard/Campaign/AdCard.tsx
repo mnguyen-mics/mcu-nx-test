@@ -398,7 +398,6 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     const rowSelection = {
       selectedRowKeys,
       allRowsAreSelected,
-      totalAds: this.props.dataSet ? this.props.dataSet.length : 0,
       selectAllItemIds: this.selectAllItemIds,
       unselectAllItemIds: this.unselectAllItemIds,
       onChange: this.onSelectAdRowChange,

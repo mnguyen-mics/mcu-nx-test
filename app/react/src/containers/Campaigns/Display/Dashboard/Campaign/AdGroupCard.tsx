@@ -166,17 +166,6 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     message.success(intl.formatMessage(messagesMap.saveSuccess));
   };
 
-  // getAllAdGroupsIds = () => {
-  //   const { match: { params: { campaignId } } } = this.props;
-  //   const allAdGroupsIds: string[] = [];
-  //   return DisplayCampaignService.getAdGroups(campaignId).then(apiResp => {
-  //     apiResp.data.map((adGroup, index) => {
-  //       allAdGroupsIds.push(adGroup.id);
-  //     });
-  //     return allAdGroupsIds;
-  //   });
-  // };
-
   openEditAdGroupsDrawer = () => {
     const { allRowsAreSelected } = this.state;
     const additionalProps: {
@@ -198,8 +187,21 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     this.props.openNextDrawer<EditAdGroupsFormProps>(EditAdGroupsForm, options);
   };
 
+  makeEditAction = (adGroupIds: string[], formData: EditAdGroupsFormData) => {
+    const { match: { params: { campaignId } } } = this.props;
+    return AdGroupFormService.saveAdGroups(campaignId, adGroupIds, formData)
+      .then(result => {
+        this.closeDrawerAndNotify();
+        return result;
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        throw err;
+      });
+  };
+
   saveAdGroups = (formData: EditAdGroupsFormData) => {
-    const { match: { params: { campaignId } }, dataSet } = this.props;
+    const { dataSet } = this.props;
 
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
@@ -207,29 +209,9 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       const allAdGroupsIds = dataSet.map(adGroup => {
         return adGroup.id;
       });
-      return AdGroupFormService.saveAdGroups(
-        campaignId,
-        allAdGroupsIds,
-        formData,
-      )
-        .then(() => {
-          this.closeDrawerAndNotify();
-        })
-        .catch(err => {
-          this.props.notifyError(err);
-        });
+      return this.makeEditAction(allAdGroupsIds, formData);
     } else {
-      return AdGroupFormService.saveAdGroups(
-        campaignId,
-        selectedRowKeys,
-        formData,
-      )
-        .then(() => {
-          this.closeDrawerAndNotify();
-        })
-        .catch(err => {
-          this.props.notifyError(err);
-        });
+      return this.makeEditAction(selectedRowKeys, formData);
     }
   };
 
@@ -327,7 +309,11 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       dataSet,
     } = this.props;
 
-    const { selectedRowKeys, allRowsAreSelected, isUpdatingStatuses } = this.state;
+    const {
+      selectedRowKeys,
+      allRowsAreSelected,
+      isUpdatingStatuses,
+    } = this.state;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
@@ -405,7 +391,6 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       allRowsAreSelected,
       selectAllItemIds: this.selectAllItemIds,
       unselectAllItemIds: this.unselectAllItemIds,
-      totalAdGroups: this.props.dataSet ? this.props.dataSet.length : 0,
       onChange: this.onSelectChange,
       onSelect: this.unsetAllItemsSelectedFlag,
       onSelectAll: this.unsetAllItemsSelectedFlag,

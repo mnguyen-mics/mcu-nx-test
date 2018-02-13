@@ -22,7 +22,7 @@ import {
   parseSearch,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
-import { DISPLAY_SEARCH_SETTINGS } from './constants';
+import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import * as NotificationActions from '../../../../state/Notifications/actions';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
@@ -37,6 +37,7 @@ import injectNotifications, {
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 import { Label } from '../../../Labels/Labels';
 import { TranslationProps } from '../../../Helpers/withTranslations';
+import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
 
 export interface MapDispatchToProps {
   labels: Label[];
@@ -109,14 +110,11 @@ class DisplayCampaignsPage extends React.Component<
       max_results: totalDisplayCampaigns,
       archived: false,
     };
-    const allCampaignsIds: string[] = [];
     return CampaignService.getCampaigns(organisationId, 'DISPLAY', options)
-      .then(apiResp => {
-        apiResp.data.forEach((campaignResource, index) => {
-          allCampaignsIds.push(campaignResource.id);
-        });
-        return allCampaignsIds;
-      })
+      .then(apiResp =>
+        apiResp.data.map(campaignResource => campaignResource.id),
+      )
+
       .catch(err => {
         notifyError(err);
       });
@@ -153,45 +151,34 @@ class DisplayCampaignsPage extends React.Component<
     message.success(intl.formatMessage(messages.campaignsArchived));
   };
 
+  makeAuditAction = (campaignIds: string[]) => {
+    const tasks: Task[] = [];
+    campaignIds.forEach(campaignId => {
+      tasks.push(() => {
+        return DisplayCampaignService.updateCampaign(campaignId, {
+          status: 'PAUSED',
+          archived: true,
+          type: 'DISPLAY',
+        });
+      });
+    });
+    executeTasksInSequence(tasks)
+      .then(() => {
+        this.redirectAndNotify();
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+      });
+  };
+
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
-
-    const { notifyError } = this.props;
-
     if (allRowsAreSelected) {
       return this.getAllCampaignsIds().then((allCampaignsIds: string[]) => {
-        return Promise.all(
-          allCampaignsIds.map(campaignId => {
-            return DisplayCampaignService.updateCampaign(campaignId, {
-              status: 'PAUSED',
-              archived: true,
-              type: 'DISPLAY',
-            });
-          }),
-        )
-          .then(() => {
-            this.redirectAndNotify();
-          })
-          .catch(err => {
-            notifyError(err);
-          });
+        this.makeAuditAction(allCampaignsIds);
       });
     } else {
-      return Promise.all(
-        selectedRowKeys.map(campaignId => {
-          return DisplayCampaignService.updateCampaign(campaignId, {
-            status: 'PAUSED',
-            archived: true,
-            type: 'DISPLAY',
-          });
-        }),
-      )
-        .then(() => {
-          this.redirectAndNotify();
-        })
-        .catch(err => {
-          notifyError(err);
-        });
+      return this.makeAuditAction(selectedRowKeys);
     }
   };
 
@@ -201,44 +188,37 @@ class DisplayCampaignsPage extends React.Component<
     });
   };
 
+  makeEditAction = (
+    campaignsIds: string[],
+    formData: EditCampaignsFormData,
+  ) => {
+    const { notifyError, intl } = this.props;
+    return DisplayCampaignFormService.saveCampaigns(campaignsIds, formData)
+      .then(() => {
+        this.props.closeNextDrawer();
+        this.setState({
+          selectedRowKeys: [],
+        });
+        message.success(intl.formatMessage(messages.campaignsSaved));
+      })
+      .catch(err => {
+        this.props.closeNextDrawer();
+        this.setState({
+          selectedRowKeys: [],
+        });
+        notifyError(err);
+      });
+  };
+
   editCampaigns = (formData: EditCampaignsFormData) => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
-    const { notifyError, intl } = this.props;
 
     if (allRowsAreSelected) {
       return this.getAllCampaignsIds().then((allCampaignsIds: string[]) => {
-        DisplayCampaignFormService.saveCampaigns(allCampaignsIds, formData)
-          .then(() => {
-            this.props.closeNextDrawer();
-            this.setState({
-              selectedRowKeys: [],
-            });
-            message.success(intl.formatMessage(messages.campaignsSaved));
-          })
-          .catch(err => {
-            this.props.closeNextDrawer();
-            this.setState({
-              selectedRowKeys: [],
-            });
-            notifyError(err);
-          });
+        this.makeEditAction(allCampaignsIds, formData);
       });
     } else {
-      return DisplayCampaignFormService.saveCampaigns(selectedRowKeys, formData)
-        .then(() => {
-          this.props.closeNextDrawer();
-          this.setState({
-            selectedRowKeys: [],
-          });
-          message.success(intl.formatMessage(messages.campaignsSaved));
-        })
-        .catch(err => {
-          this.props.closeNextDrawer();
-          this.setState({
-            selectedRowKeys: [],
-          });
-          notifyError(err);
-        });
+      return this.makeEditAction(selectedRowKeys, formData);
     }
   };
 
@@ -265,10 +245,6 @@ class DisplayCampaignsPage extends React.Component<
       EditCampaignsForm,
       options,
     );
-  };
-
-  archiveCampaigns = () => {
-    this.showModal();
   };
 
   updateCampaignStatus = (
@@ -377,7 +353,6 @@ class DisplayCampaignsPage extends React.Component<
     const rowSelection = {
       selectedRowKeys,
       allRowsAreSelected: allRowsAreSelected,
-      totalDisplayCampaigns: this.props.totalDisplayCampaigns,
       onChange: this.onSelectChange,
       selectAllItemIds: this.selectAllItemIds,
       unselectAllItemIds: this.unselectAllItemIds,
@@ -386,12 +361,13 @@ class DisplayCampaignsPage extends React.Component<
     };
 
     const multiEditProps = {
-      archiveCampaigns: this.archiveCampaigns,
+      archiveCampaigns: this.showModal,
       updateCampaignStatus: this.updateCampaignStatus,
       visible: this.state.visible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
       openEditCampaignsDrawer: this.openEditCampaignsDrawer,
+      totalDisplayCampaigns: this.props.totalDisplayCampaigns,
     };
 
     const reduxProps = {

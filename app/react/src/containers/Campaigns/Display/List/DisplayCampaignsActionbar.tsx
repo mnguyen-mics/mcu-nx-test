@@ -37,6 +37,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { TranslationProps } from '../../../Helpers/withTranslations';
+import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -62,14 +63,7 @@ const messagesMap = defineMessages({
 });
 
 interface DisplayCampaignsActionbarProps {
-  rowSelection: {
-    selectedRowKeys: string[];
-    allRowsAreSelected: boolean;
-    totalDisplayCampaigns?: number;
-    unselectAllItemIds: () => void;
-    onChange: (selectedRowKeys: string[]) => void;
-    selectAllItemIds: () => void;
-  };
+  rowSelection: ExtendedTableRowSelection;
   multiEditProps: {
     archiveCampaigns: () => void;
     visible: boolean;
@@ -83,6 +77,7 @@ interface DisplayCampaignsActionbarProps {
       errorMessage?: UpdateMessage,
       undoBody?: { status: CampaignStatus },
     ) => void;
+    totalDisplayCampaigns: number;
   };
 }
 
@@ -230,12 +225,8 @@ class DisplayCampaignsActionbar extends React.Component<
 
   handleStatusAction = (status: CampaignStatus) => {
     const {
-      multiEditProps: { updateCampaignStatus },
-      rowSelection: {
-        selectedRowKeys,
-        allRowsAreSelected,
-        totalDisplayCampaigns,
-      },
+      multiEditProps: { updateCampaignStatus, totalDisplayCampaigns },
+      rowSelection: { selectedRowKeys, allRowsAreSelected },
       match: { params: { organisationId } },
     } = this.props;
     this.setState({
@@ -256,7 +247,7 @@ class DisplayCampaignsActionbar extends React.Component<
           campaignIdsToUpdate = allCampaignsIds;
         },
       );
-    } else {
+    } else if (selectedRowKeys) {
       campaignIdsToUpdate = selectedRowKeys;
     }
 

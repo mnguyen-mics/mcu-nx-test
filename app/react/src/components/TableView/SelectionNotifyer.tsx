@@ -3,16 +3,11 @@ import Slide from '../Transition/Slide';
 import { FormattedMessage } from 'react-intl';
 import { Alert } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
-import { TableRowSelection } from 'antd/lib/table';
 import { ButtonStyleless } from '../index';
+import { ExtendedTableRowSelection } from './TableView';
 
 interface SelectionNotifyerProps<T> {
-  rowSelection?: TableRowSelection<T> & {
-    selectedRowKeys?: string[];
-    allRowsAreSelected?: boolean;
-    unselectAllItemIds?: () => void;
-    selectAllItemIds?: () => void;
-  };
+  rowSelection?: ExtendedTableRowSelection<T>;
   pagination?: PaginationProps | false;
 }
 

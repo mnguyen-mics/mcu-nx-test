@@ -39,16 +39,18 @@ export interface ActionsColumnDefinition<T> extends ColumnProps<T> {
   actions: Array<ActionDefinition<T>>;
 }
 
+export interface ExtendedTableRowSelection<T = any> extends TableRowSelection<T> {
+  selectedRowKeys?: string[];
+  allRowsAreSelected?: boolean;
+  selectAllItemIds?: () => void;
+  unselectAllItemIds?: () => void;
+} 
+
 export interface TableViewProps<T> extends TableProps<T> {
   columns?: Array<DataColumnDefinition<T>>;
   visibilitySelectedColumns?: Array<DataColumnDefinition<T>>;
   actionsColumnsDefinition?: Array<ActionsColumnDefinition<T>>;
-  rowSelection?: TableRowSelection<T> & {
-    selectedRowKeys?: string[];
-    allRowsAreSelected?: boolean;
-    selectAllItemIds?: () => void;
-    unselectAllItemIds?: () => void;
-  };
+  rowSelection?: ExtendedTableRowSelection;
 }
 
 class TableView<

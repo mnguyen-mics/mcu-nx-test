@@ -32,6 +32,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
+import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
 
 const messages = defineMessages({
   archiveSuccess: {
@@ -91,33 +92,31 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     const options: GetCreativesOptions = {
       creative_type: 'DISPLAY_AD',
       archived: false,
-      max_results: totalCreativeDisplay, // not mandatory
+      max_results: totalCreativeDisplay, // mandatory
     };
-    const allCreativesIds: string[] = [];
     return CreativeService.getDisplayAds(organisationId, options)
-      .then(apiResp => {
-        apiResp.data.forEach((creativeResource, index) => {
-          allCreativesIds.push(creativeResource.id);
-        });
-        return allCreativesIds;
-      })
+      .then(apiResp =>
+        apiResp.data.map(creativeResource => creativeResource.id),
+      )
       .catch(err => {
         notifyError(err);
       });
   };
 
   makeAuditAction = (creativesIds: string[], action: CreativeAuditAction) => {
-    Promise.all(
-      creativesIds.map(creativeId => {
-        CreativeService.getDisplayAd(creativeId)
+    const tasks: Task[] = [];
+    creativesIds.forEach(creativeId => {
+      tasks.push(() => {
+        return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creative => {
             if (creative.available_user_audit_actions.includes(action)) {
               CreativeService.makeAuditAction(creative.id, action);
             }
           });
-      }),
-    )
+      });
+    });
+    executeTasksInSequence(tasks)
       .then(() => {
         this.setState({
           selectedRowKeys: [],
@@ -205,8 +204,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
   };
 
   makeArchiveAction = (creativesIds: string[]) => {
-    return Promise.all(
-      creativesIds.map(creativeId => {
+    const tasks: Task[] = [];
+    creativesIds.forEach(creativeId => {
+      tasks.push(() => {
         return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creativeData => {
@@ -221,8 +221,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
             }
             return Promise.resolve() as any;
           });
-      }),
-    ).then(() => {
+      });
+    });
+    executeTasksInSequence(tasks).then(() => {
       this.setState(
         {
           isArchiveModalVisible: false,

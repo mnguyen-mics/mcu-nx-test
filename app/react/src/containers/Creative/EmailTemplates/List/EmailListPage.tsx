@@ -30,6 +30,7 @@ import { Filters } from '../../../../components/ItemList';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
 
 const messages = defineMessages({
   archiveSuccess: {
@@ -119,16 +120,12 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     const options: GetCreativesOptions = {
       creative_type: 'EMAIL_TEMPLATE',
       archived: false,
-      max_results: totalCreativeEmails, // not mandatory
+      max_results: totalCreativeEmails, // mandatory
     };
-    const allEmailTemplatesIds: string[] = [];
     return CreativeService.getEmailTemplates(organisationId, options)
-      .then(apiResp => {
-        apiResp.data.forEach((emailTemplateResource, index) => {
-          allEmailTemplatesIds.push(emailTemplateResource.id);
-        });
-        return allEmailTemplatesIds;
-      })
+      .then(apiResp =>
+        apiResp.data.map(emailTemplateResource => emailTemplateResource.id),
+      )
       .catch(err => {
         notifyError(err);
       });
@@ -166,8 +163,9 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
   };
 
   makeArchiveAction = (emailTemplateIds: string[]) => {
-    return Promise.all(
-      emailTemplateIds.map(emailTemplateId => {
+    const tasks: Task[] = [];
+    emailTemplateIds.forEach(emailTemplateId => {
+      tasks.push(() => {
         return CreativeService.getEmailTemplate(emailTemplateId)
           .then(apiResp => apiResp.data)
           .then(emailTemplateData => {
@@ -176,8 +174,9 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
               archived: true,
             });
           });
-      }),
-    ).then(() => {
+      });
+    });
+    executeTasksInSequence(tasks).then(() => {
       this.redirectAndNotify();
     });
   };
@@ -196,6 +195,12 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     }
   };
 
+  unsetAllItemsSelectedFlag = () => {
+    this.setState({
+      allRowsAreSelected: false,
+    });
+  };
+
   render() {
     const { selectedRowKeys } = this.state;
     const {
@@ -212,6 +217,8 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       onChange: this.onSelectChange,
       selectAllItemIds: this.selectAllItemIds,
       unselectAllItemIds: this.unselectAllItemIds,
+      onSelectAll: this.unsetAllItemsSelectedFlag,
+      onSelect: this.unsetAllItemsSelectedFlag,
     };
 
     const multiEditProps = {

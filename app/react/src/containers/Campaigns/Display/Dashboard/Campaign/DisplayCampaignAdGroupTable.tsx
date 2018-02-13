@@ -12,6 +12,7 @@ import McsIcon from '../../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
+import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
 
 export interface UpdateMessage {
   title: string;
@@ -33,14 +34,7 @@ interface DisplayCampaignAdGroupTableProps {
       status: AdGroupStatus;
     },
   ) => void;
-  rowSelection: {
-    selectedRowKeys: string[];
-    allRowsAreSelected: boolean;
-    totalAdGroups: number;
-    selectAllItemIds: () => void;
-    unselectAllItemIds: () => void;
-    onChange: (selectedRowKeys: string[]) => void;
-  };
+  rowSelection: ExtendedTableRowSelection;
 }
 
 interface DisplayCampaignAdGroupTableState {
@@ -55,7 +49,6 @@ class DisplayCampaignAdGroupTable extends React.Component<
   JoinedProps,
   DisplayCampaignAdGroupTableState
 > {
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -280,11 +273,11 @@ class DisplayCampaignAdGroupTable extends React.Component<
 
     const pagination = {
       pageSize: this.state.pageSize,
-      total: rowSelection.totalAdGroups,
+      total: this.props.dataSet ? this.props.dataSet.length : 0,
       onShowSizeChange: (current: number, size: number) =>
-      this.setState({
-        pageSize: size,
-      })
+        this.setState({
+          pageSize: size,
+        }),
     };
 
     return (

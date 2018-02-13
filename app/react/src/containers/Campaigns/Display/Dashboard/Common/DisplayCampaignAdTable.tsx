@@ -15,6 +15,7 @@ import {
 } from '../../../../../models/campaign/display/index';
 import { RouteComponentProps } from 'react-router';
 import { UpdateMessage } from '../Campaign/DisplayCampaignAdGroupTable';
+import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
 
 interface DisplayCampaignAdTableProps {
   isFetching: boolean;
@@ -27,14 +28,7 @@ interface DisplayCampaignAdTableProps {
     errorMessage: UpdateMessage,
     undoBody: Partial<AdResource>,
   ) => void;
-  rowSelection?: {
-    selectedRowKeys: string[];
-    allRowsAreSelected: boolean;
-    totalAds: number;
-    selectAllItemIds: () => void;
-    unselectAllItemIds: () => void;
-    onChange: (selectedRowKeys: string[]) => void;
-  };
+  rowSelection?: ExtendedTableRowSelection;
 }
 
 interface DisplayCampaignAdTableState {
@@ -49,7 +43,6 @@ class DisplayCampaignAdTable extends React.Component<
   JoinedProps,
   DisplayCampaignAdTableState
 > {
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -340,7 +333,7 @@ class DisplayCampaignAdTable extends React.Component<
 
     const pagination = {
       pageSize: this.state.pageSize,
-      total: (rowSelection && rowSelection.totalAds) ? rowSelection.totalAds : 0,
+      total: this.props.dataSet ? this.props.dataSet.length : 0,
       onShowSizeChange: (current: number, size: number) =>
         this.setState({
           pageSize: size,
