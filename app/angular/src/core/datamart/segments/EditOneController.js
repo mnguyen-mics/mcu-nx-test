@@ -18,7 +18,7 @@ define(['./module'], function (module) {
       };      
 
       if (!segmentId) {
-        $scope.segmentLifetime = "never";
+        $scope.segment.segmentLifetime = "never";
         if (type === 'USER_QUERY'){
           $scope.segment = {
             type : type,
@@ -49,12 +49,12 @@ define(['./module'], function (module) {
 
           }
 
-          if (segment.default_lifetime){
-            $scope.segmentLifetime = "expire";
-            $scope.segmentLifetimeNumber = moment.duration(segment.default_lifetime, 'minutes').asDays();
-            $scope.segmentLifetimeUnit = 'days';
+          if (segment.default_ttl){
+            $scope.segment.segmentLifetime = "expire";
+            $scope.segment.segmentLifetimeNumber = moment.duration(segment.default_ttl, 'milliseconds').asDays();
+            $scope.segment.segmentLifetimeUnit = 'days';
           } else {
-            $scope.segmentLifetime = "never";
+            $scope.segment.segmentLifetime = "never";
           }
           segment.all('external_feeds').getList().then(function(feeds) {
             var pluginContainers = [];
@@ -87,12 +87,11 @@ define(['./module'], function (module) {
 
       var saveSegment = function(queryId){
         var promise = null;
-
         //compute default_lifetime
-        if ($scope.segmentLifetime === 'never'){
-          $scope.segment.default_lifetime = null;
+        if ($scope.segment.segmentLifetime === 'never'){
+          $scope.segment.default_ttl = null;
         } else {
-          $scope.segment.default_lifetime = moment.duration($scope.segmentLifetimeNumber,$scope.segmentLifetimeUnit).asMinutes();
+          $scope.segment.default_ttl = moment.duration($scope.segment.segmentLifetimeNumber,$scope.segment.segmentLifetimeUnit).asMilliseconds();
         }
 
         if ($scope.realTime.active){
