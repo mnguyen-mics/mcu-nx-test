@@ -42,7 +42,6 @@ export default class AngularWidget extends React.Component<AngularWidgetProps, A
           organisationId: this.props.organisationId,
           datamartId: this.props.datamartId,
         }}
-        angularLoaded={(window as any).angularLoaded}
       >
         <div>
         <mcs-query-tool query-container="container" statistics-enabled="true" selected-values-enabled="true" datamart-id="datamartId" organisation-id="organisationId" />
