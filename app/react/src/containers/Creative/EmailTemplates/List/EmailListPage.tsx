@@ -205,6 +205,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       totalCreativeEmails,
       fetchCreativeEmails,
       resetCreativeEmails,
+      translations,
     } = this.props;
     const rowSelection = {
       selectedRowKeys,
@@ -227,6 +228,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       totalCreativeEmails,
       fetchCreativeEmails,
       resetCreativeEmails,
+      translations,
     };
 
     return (
@@ -250,6 +252,7 @@ const mapStateToProps = (state: MapStateToProps) => ({
   isFetchingCreativeEmails: isFetchingEmailTemplates(state),
   dataSource: getEmailTemplates(state),
   totalCreativeEmails: getEmailTemplatesTotal(state),
+  translations: state.translations,
 });
 
 const mapDispatchToProps = {
