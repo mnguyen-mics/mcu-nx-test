@@ -222,7 +222,9 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         });
       })
       .catch((err: any) => {
-        this.props.notifyError(err);
+        this.setState({
+          isUpdatingStatuses: false,
+        });
       });
   };
 

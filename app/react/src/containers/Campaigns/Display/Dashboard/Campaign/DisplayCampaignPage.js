@@ -526,7 +526,7 @@ class DisplayCampaignPage extends Component {
           }
         : undefined;
         notifyError(error, errorMsg);
-
+        throw error;
       });
   };
 
