@@ -41,13 +41,8 @@ class AudienceSegmentActionbar extends Component {
       AudienceSegmentService
         .getSegment(segmentId)
         .then(response =>
-
-          this.setState(prevStat => {
-            const newStat = {
-              ...prevStat,
-            };
-            newStat.segment = response.data;
-            return newStat;
+          this.setState({
+            segment: response.data
           })
         ).catch(err => {
           this.props.notifyError(err);

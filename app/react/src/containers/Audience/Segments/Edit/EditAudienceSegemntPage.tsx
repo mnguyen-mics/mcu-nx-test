@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -224,7 +224,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
 }
 
-export default compose(
+export default compose<Props, {}>(
   withRouter,
   injectIntl,
   connect(state => ({

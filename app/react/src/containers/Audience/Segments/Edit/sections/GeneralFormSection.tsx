@@ -7,9 +7,13 @@ import {
   Validator,
 } from 'redux-form';
 import { connect } from 'react-redux';
-
 import { InjectedIntlProps } from 'react-intl';
 import { withRouter } from 'react-router';
+import { Layout } from 'antd';
+import { BasicProps } from 'antd/lib/layout/layout';
+import { compose } from 'recompose';
+import { Row } from 'antd/lib/grid';
+
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -32,7 +36,6 @@ import {
   FeedType
 } from "../../../../../models/audiencesegment/";
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
-
 import {
   FormInput,
   FormSection,
@@ -40,13 +43,9 @@ import {
   FormInputField,
   FormAddonSelectField,
 } from '../../../../../components/Form';
-import { Layout } from 'antd';
-import { BasicProps } from 'antd/lib/layout/layout';
 
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import { PixelSection } from './pixel'
-import { compose } from 'recompose';
-import { Row } from 'antd/lib/grid';
 
 const FORM_ID = 'audienceSegmentForm';
 

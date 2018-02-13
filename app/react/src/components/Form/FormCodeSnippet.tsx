@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipProps } from 'antd/lib/tooltip';

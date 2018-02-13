@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Field } from 'redux-form';
 import { FormCodeSnippetProps } from '../../../../../../components/Form/FormCodeSnippet';
