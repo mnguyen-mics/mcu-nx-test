@@ -36,7 +36,9 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
 
-interface DisplayCampaignsTableProps {
+interface DisplayCampaignsTableProps
+  extends MapDispatchToProps,
+    MapStateToProps {
   rowSelection: {
     selectedRowKeys: string[];
     allRowsAreSelected: boolean;
@@ -49,8 +51,6 @@ interface DisplayCampaignsTableProps {
 
 type JoinedProps = DisplayCampaignsTableProps &
   InjectedIntlProps &
-  MapDispatchToProps &
-  MapStateToProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string }>;
 

@@ -25,7 +25,7 @@ import { CampaignRouteParams } from '../../../../models/campaign/CampaignResourc
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { MapDispatchToProps, MapStateToProps } from './DisplayAdsPage';
 
-interface DisplayAdsListProps {
+interface DisplayAdsListProps extends MapStateToProps, MapDispatchToProps {
   rowSelection: {
     selectedRowKeys: string[];
     onChange: (selectedRowKeys: string[]) => void;
@@ -34,12 +34,9 @@ interface DisplayAdsListProps {
 
 type JoinedProps = DisplayAdsListProps &
   RouteComponentProps<CampaignRouteParams> &
-  MapStateToProps &
-  MapDispatchToProps &
   InjectedIntlProps;
 
 class CreativeDisplayTable extends React.Component<JoinedProps> {
-
   constructor(props: JoinedProps) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);

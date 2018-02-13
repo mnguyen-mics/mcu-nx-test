@@ -29,7 +29,7 @@ import { TranslationProps } from '../../../Helpers/withTranslations';
 import { MapStateToProps, MapDispatchToProps } from './EmailListPage';
 import CreativeService from '../../../../services/CreativeService';
 
-interface CreativeEmailsTableProps {
+interface CreativeEmailsTableProps extends MapStateToProps, MapDispatchToProps {
   rowSelection: {
     selectedRowKeys: string[];
     onChange: (selectedRowKeys: string[]) => void;
@@ -45,9 +45,7 @@ interface CreativeEmailsTableState {
 
 type JoinedProps = CreativeEmailsTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  TranslationProps &
-  MapStateToProps &
-  MapDispatchToProps;
+  TranslationProps;
 
 class CreativeEmailsTable extends React.Component<
   JoinedProps,
