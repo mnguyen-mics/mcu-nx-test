@@ -72,7 +72,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   extractSegmentType = (audienceSegment: AudienceSegment) => {
 
-    if (audienceSegment.type == 'USER_LIST' && audienceSegment.feed_type == 'TAG') {
+    if (audienceSegment.type === 'USER_LIST' && audienceSegment.feed_type === 'TAG') {
       return 'USER_PIXEL';
     }
     return audienceSegment.type;
@@ -149,13 +149,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       intl,
    } = this.props;
 
-    const countTTL = (audienceSegmentFormData: AudienceSegmentFormData) => {
-      if (audienceSegmentFormData.defaultLiftimeUnit && audienceSegmentFormData.defaultLiftime) {
-        audienceSegmentFormData.audienceSegment.default_ttl = moment.duration(Number(audienceSegmentFormData.defaultLiftime), audienceSegmentFormData.defaultLiftimeUnit).asMilliseconds();
-        audienceSegmentFormData.audienceSegment.default_lifetime = moment.duration(Number(audienceSegmentFormData.defaultLiftime), audienceSegmentFormData.defaultLiftimeUnit).asMinutes();
+    const countTTL = (formData: AudienceSegmentFormData) => {
+      if (formData.defaultLiftimeUnit && formData.defaultLiftime) {
+        formData.audienceSegment.default_ttl = moment.duration(Number(formData.defaultLiftime), formData.defaultLiftimeUnit).asMilliseconds();
+        formData.audienceSegment.default_lifetime = moment.duration(Number(formData.defaultLiftime), formData.defaultLiftimeUnit).asMinutes();
 
       }
-      return audienceSegmentFormData.audienceSegment;
+      return formData.audienceSegment;
 
     };
 

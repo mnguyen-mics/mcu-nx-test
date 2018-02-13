@@ -34,11 +34,11 @@ class PixelSegmentSection extends React.Component<Props,PixelFormState>  {
 
     const codeSnippetFieldProps: FormCodeSnippetProps = {
       language: 'html',
-      codeSnippet: '<img height="1" width="1" style="display:none"'+
-      'src="https://api.mediarithmics.com/v1/user_lists/pixel?'+
-      'dat_token='+datamartToken+'&'+
-      'user_list_tech_name='+userListTechName+
-      '">',
+      codeSnippet: `<img height="1" width="1" style="display:none"
+      src="https://api.mediarithmics.com/v1/user_lists/pixel?
+      dat_token=${datamartToken}&
+      user_list_tech_name=${userListTechName}>`
+      ,
       formItemProps: {
         label: formatMessage(messages.contentSectionPropertiesPartRow1Label),
       },

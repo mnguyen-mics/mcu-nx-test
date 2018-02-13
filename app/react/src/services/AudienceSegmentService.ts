@@ -68,9 +68,9 @@ const AudienceSegmentService = {
 
     let createOrUpdatePromise;
     if (audienceSegment.id) {
-      createOrUpdatePromise = this.updateAudienceSegment(audienceSegment.id, audienceSegment)
+      createOrUpdatePromise = AudienceSegmentService.updateAudienceSegment(audienceSegment.id, audienceSegment)
     } else {
-      createOrUpdatePromise = this.createAudienceSegment(organisationId, audienceSegment)
+      createOrUpdatePromise = AudienceSegmentService.createAudienceSegment(organisationId, audienceSegment)
     }
 
     return createOrUpdatePromise;

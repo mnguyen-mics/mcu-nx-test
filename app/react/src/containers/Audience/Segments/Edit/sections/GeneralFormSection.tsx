@@ -103,8 +103,8 @@ class GeneralFormSection extends React.Component<Props, State> {
       segmentType,
     } = this.props;
 
-    let validates: Validator[] = [];
-    if (segmentType == 'USER_PIXEL') {
+    const validates: Validator[] = [];
+    if (segmentType === 'USER_PIXEL') {
       validates.push(isRequired);
       return validates;
     }
@@ -130,7 +130,7 @@ class GeneralFormSection extends React.Component<Props, State> {
     return <FormInputField
       name="audienceSegment.technical_name"
       component={FormInput}
-      validate={this.getSegmentType() == 'USER_PIXEL' ? isRequired : undefined}
+      validate={this.getSegmentType() === 'USER_PIXEL' ? isRequired : undefined}
       onChange={this.handleOnchangeTechnicalName}
       formItemProps={{
         label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
@@ -237,7 +237,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                     />
                   </div>
                   {
-                    this.getSegmentType() == 'USER_PIXEL' ? this.getTechnicalNameField() : null
+                    this.getSegmentType() === 'USER_PIXEL' ? this.getTechnicalNameField() : null
                   }
                   <div>
                     <ButtonStyleless
@@ -256,7 +256,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                       'optional-section-content'}
                     >
                       {
-                        this.getSegmentType() != 'USER_PIXEL' ? this.getTechnicalNameField() : null
+                        this.getSegmentType() !== 'USER_PIXEL' ? this.getTechnicalNameField() : null
                       }
                       <div>
                         <div className="custom-lifetime">
