@@ -88,7 +88,7 @@ define(['./module'], function (module) {
       var saveSegment = function(queryId){
         var promise = null;
         //compute default_lifetime
-        if ($scope.segment.segmentLifetime == 'never'){
+        if ($scope.segment.segmentLifetime === 'never'){
           $scope.segment.default_ttl = null;
         } else {
           $scope.segment.default_ttl = moment.duration($scope.segment.segmentLifetimeNumber,$scope.segment.segmentLifetimeUnit).asMilliseconds();
