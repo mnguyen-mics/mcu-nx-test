@@ -18,4 +18,6 @@ export interface Datamart {
     creation_date: string;
     time_zone: string;
     type: 'DATAMART';
+    datafarm: string;
+    storage_model_version: string;
   }

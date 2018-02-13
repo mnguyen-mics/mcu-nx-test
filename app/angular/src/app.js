@@ -181,5 +181,6 @@ define(['app-setup', 'angularAMD', 'jquery'],
     ]);
 
     angularAMD.bootstrap(app, true, document.body);
+    window.angularLoaded = true;
     return app;
   });

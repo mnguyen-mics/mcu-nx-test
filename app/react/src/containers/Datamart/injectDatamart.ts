@@ -4,9 +4,10 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import log from '../../utils/Logger';
 import * as SessionHelper from '../../state/Session/selectors';
+import { Datamart } from '../../models/organisation/organisation';
 
 export interface InjectedDatamartProps {
-  datamart: { id: string; token: string };
+  datamart: Datamart;
 }
 
 const mapStateToProps = (state: any) => {

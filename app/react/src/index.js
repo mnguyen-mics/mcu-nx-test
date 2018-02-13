@@ -11,7 +11,12 @@ render(
   <AppContainer>
       <App />
   </AppContainer>,
-  document.getElementById('mcs-react-app')
+  document.getElementById('mcs-react-app'),
+  () => {
+    window.require(['main'], function() {
+      console.log('YEAH')
+    });
+  }
 );
 
 if (module.hot) {
@@ -21,7 +26,12 @@ if (module.hot) {
       <AppContainer>
           <NextApp />
       </AppContainer>,
-      document.getElementById('mcs-react-app')
+      document.getElementById('mcs-react-app'),
+      () => {
+        window.require(['main'], function() {
+          console.log('YEAH 2')
+        });
+      }
     );
   });
 }

@@ -152,7 +152,7 @@ are two of the factors making these dependencies injections impossible. -->
   </script>
   <script src="conf/plugins-configuration.js"></script>
   <script src="conf/react-configuration.js"></script>
-  <script data-main="main.js" src="angular/bower_components/requirejs/require.js"></script>
+  <script src="angular/bower_components/requirejs/require.js"></script>
   <script>document.title = window.MCS_CONSTANTS.SITE_NAME</script>
   <script>
     require.onResourceLoad = function (context, map, depArray) {
@@ -183,6 +183,8 @@ are two of the factors making these dependencies injections impossible. -->
     };
 
   </script>
+
+  <script>window.angularLoaded = false</script>
 
 </body>
 

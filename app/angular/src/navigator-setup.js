@@ -1,4 +1,3 @@
-
 define(['angular'], function () {
     'use strict';
 
@@ -36,7 +35,7 @@ define(['angular'], function () {
       'core/password',
       'core/common',
       'core/settings',
-      'core/stylesheets'
+      'core/stylesheets',
     ]);
 
     return navigator;
