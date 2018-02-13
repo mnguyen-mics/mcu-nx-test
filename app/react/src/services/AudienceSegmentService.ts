@@ -47,7 +47,6 @@ const AudienceSegmentService = {
   // TODO return type (JobExec...)
   createOverlap(datamartId: string, segmentId: string): Promise<any> {
     const endpoint = `datamarts/${datamartId}/overlap_analysis`;
-    const header = { 'Content-Type': 'application/json' };
     const body = {
       first_party_overlap: {
         source: {
@@ -59,7 +58,7 @@ const AudienceSegmentService = {
       },
     };
 
-    return ApiService.postRequest(endpoint, body, {}, header);
+    return ApiService.postRequest(endpoint, body);
   },
 
   retrieveOverlap(
