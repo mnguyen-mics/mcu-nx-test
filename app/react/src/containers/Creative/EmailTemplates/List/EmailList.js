@@ -217,7 +217,7 @@ class CreativeEmailsTable extends Component {
   editCreativeEmails(campaign) {
     const { match: { params: { organisationId } }, history } = this.props;
 
-    history.push(`/${organisationId}/creatives/email-template/default-editor/edit/${campaign.id}`);
+    history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
   }
 
   archiveCreativeEmails(campaign) {
