@@ -5,7 +5,9 @@ import { Layout, message, Button } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
-import DisplayCampaignsActionbar from './DisplayCampaignsActionbar';
+import DisplayCampaignsActionbar, {
+  FilterProps,
+} from './DisplayCampaignsActionbar';
 import DisplayCampaignsTable from './DisplayCampaignsTable';
 import { injectDrawer } from '../../../../components/Drawer';
 import CampaignService, {
@@ -18,9 +20,9 @@ import EditCampaignsForm, {
 } from '../Edit/Campaign/MutiEdit/EditCampaignsForm';
 import {
   parseSearch,
-  PAGINATION_SEARCH_SETTINGS,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
+import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import * as NotificationActions from '../../../../state/Notifications/actions';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
@@ -32,6 +34,29 @@ import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
+import { Label } from '../../../Labels/Labels';
+import { TranslationProps } from '../../../Helpers/withTranslations';
+
+export interface MapDispatchToProps {
+  labels: Label[];
+  translations: TranslationProps;
+  hasDisplayCampaigns: boolean;
+  isFetchingDisplayCampaigns: boolean;
+  isFetchingCampaignsStat: boolean;
+  dataSource: DisplayCampaignResource[];
+  totalDisplayCampaigns: number;
+  removeNotification: () => void;
+}
+
+export interface MapStateToProps {
+  loadDisplayCampaignsDataSource: (
+    organisationId: string,
+    filer: FilterProps,
+    bool?: boolean,
+  ) => void;
+  resetDisplayCampaignsTable: () => void;
+}
 
 const { Content } = Layout;
 interface DisplayCampaignsPageProps {
@@ -46,14 +71,11 @@ interface DisplayCampaignsPageState {
   isUploadingStatuses: boolean;
 }
 
-interface MapStateProps {
-  removeNotification: () => void;
-}
-
 type JoinedProps = DisplayCampaignsPageProps &
   InjectedIntlProps &
   InjectDrawerProps &
-  MapStateProps &
+  MapDispatchToProps &
+  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -101,20 +123,28 @@ class DisplayCampaignsPage extends React.Component<
   };
 
   redirectAndNotify = () => {
-    const { location: { search, pathname, state }, history, intl } = this.props;
-    const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-    if (filter.currentPage !== 1) {
+    const {
+      location: { search, pathname, state },
+      history,
+      intl,
+      dataSource,
+      loadDisplayCampaignsDataSource,
+      match: { params: { organisationId } },
+    } = this.props;
+    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+    if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
-        currentPage: 1,
+        currentPage: filter.currentPage - 1,
       };
-      history.push({
+      loadDisplayCampaignsDataSource(organisationId, filter);
+      history.replace({
         pathname: pathname,
         search: updateSearch(search, newFilter),
         state: state,
       });
     } else {
-      window.location.reload();
+      loadDisplayCampaignsDataSource(organisationId, filter);
     }
     this.setState({
       visible: false,
@@ -132,7 +162,7 @@ class DisplayCampaignsPage extends React.Component<
       return this.getAllCampaignsIds().then((allCampaignsIds: string[]) => {
         return Promise.all(
           allCampaignsIds.map(campaignId => {
-            DisplayCampaignService.updateCampaign(campaignId, {
+            return DisplayCampaignService.updateCampaign(campaignId, {
               status: 'PAUSED',
               archived: true,
               type: 'DISPLAY',
@@ -149,7 +179,7 @@ class DisplayCampaignsPage extends React.Component<
     } else {
       return Promise.all(
         selectedRowKeys.map(campaignId => {
-          DisplayCampaignService.updateCampaign(campaignId, {
+          return DisplayCampaignService.updateCampaign(campaignId, {
             status: 'PAUSED',
             archived: true,
             type: 'DISPLAY',
@@ -331,6 +361,19 @@ class DisplayCampaignsPage extends React.Component<
       allRowsAreSelected,
     } = this.state;
 
+    const {
+      labels,
+      translations,
+      dataSource,
+      hasDisplayCampaigns,
+      isFetchingDisplayCampaigns,
+      isFetchingCampaignsStat,
+      totalDisplayCampaigns,
+      removeNotification,
+      loadDisplayCampaignsDataSource,
+      resetDisplayCampaignsTable,
+    } = this.props;
+
     const rowSelection = {
       selectedRowKeys,
       allRowsAreSelected: allRowsAreSelected,
@@ -351,6 +394,19 @@ class DisplayCampaignsPage extends React.Component<
       openEditCampaignsDrawer: this.openEditCampaignsDrawer,
     };
 
+    const reduxProps = {
+      labels,
+      translations,
+      dataSource,
+      hasDisplayCampaigns,
+      isFetchingDisplayCampaigns,
+      isFetchingCampaignsStat,
+      totalDisplayCampaigns,
+      removeNotification,
+      loadDisplayCampaignsDataSource,
+      resetDisplayCampaignsTable,
+    };
+
     return (
       <div className="ant-layout">
         <DisplayCampaignsActionbar
@@ -360,7 +416,10 @@ class DisplayCampaignsPage extends React.Component<
         <div className="ant-layout">
           <Content className="mcs-content-container">
             {!isUploadingStatuses ? (
-              <DisplayCampaignsTable rowSelection={rowSelection} />
+              <DisplayCampaignsTable
+                rowSelection={rowSelection}
+                {...reduxProps}
+              />
             ) : null}
           </Content>
         </div>
@@ -370,15 +429,29 @@ class DisplayCampaignsPage extends React.Component<
 }
 
 const mapStateToProps = (state: any) => ({
-  totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
+  labels: state.labels.labelsApi.data,
+  translations: state.translations,
+  hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
+  isFetchingDisplayCampaigns:
+    state.displayCampaignsTable.displayCampaignsApi.isFetching,
+  isFetchingCampaignsStat:
+    state.displayCampaignsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
+  totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
   removeNotification: NotificationActions.removeNotification,
 });
+
+const mapDispatchToProps = {
+  loadDisplayCampaignsDataSource:
+    DisplayCampaignsActions.loadDisplayCampaignsDataSource,
+  resetDisplayCampaignsTable:
+    DisplayCampaignsActions.resetDisplayCampaignsTable,
+};
 
 export default compose<DisplayCampaignsPageProps, JoinedProps>(
   withRouter,
   injectIntl,
   injectDrawer,
-  connect(mapStateToProps, undefined),
+  connect(mapStateToProps, mapDispatchToProps),
   injectNotifications,
 )(DisplayCampaignsPage);

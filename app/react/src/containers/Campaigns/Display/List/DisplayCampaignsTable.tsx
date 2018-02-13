@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
@@ -11,7 +10,6 @@ import {
 } from '../../../../components/TableView/index';
 import McsIcon from '../../../../components/McsIcon';
 
-import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 import DisplayCampaignsService from '../../../../services/DisplayCampaignService';
 
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
@@ -27,15 +25,16 @@ import {
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 import messages from '../messages';
-import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
+
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { RouteComponentProps } from 'react-router';
-import { FilterProps } from './DisplayCampaignsActionbar';
+
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { withTranslations } from '../../../Helpers/index';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
+import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
 
 interface DisplayCampaignsTableProps {
   rowSelection: {
@@ -46,25 +45,6 @@ interface DisplayCampaignsTableProps {
     unselectAllItemIds: () => void;
     onSelectAll: () => void;
   };
-}
-
-interface MapDispatchToProps {
-  labels: Label[];
-  translations: TranslationProps;
-  hasDisplayCampaigns: boolean;
-  isFetchingDisplayCampaigns: boolean;
-  isFetchingCampaignsStat: boolean;
-  dataSource: DisplayCampaignResource[];
-  totalDisplayCampaigns: number;
-}
-
-interface MapStateToProps {
-  loadDisplayCampaignsDataSource: (
-    organisationId: string,
-    filer: FilterProps,
-    bool?: boolean,
-  ) => void;
-  resetDisplayCampaignsTable: () => void;
 }
 
 type JoinedProps = DisplayCampaignsTableProps &
@@ -463,28 +443,8 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  labels: state.labels.labelsApi.data,
-  translations: state.translations,
-  hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
-  isFetchingDisplayCampaigns:
-    state.displayCampaignsTable.displayCampaignsApi.isFetching,
-  isFetchingCampaignsStat:
-    state.displayCampaignsTable.performanceReportApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
-});
-
-const mapDispatchToProps = {
-  loadDisplayCampaignsDataSource:
-    DisplayCampaignsActions.loadDisplayCampaignsDataSource,
-  resetDisplayCampaignsTable:
-    DisplayCampaignsActions.resetDisplayCampaignsTable,
-};
-
 export default compose<JoinedProps, DisplayCampaignsTableProps>(
   withRouter,
   withTranslations,
   injectIntl,
-  connect(mapStateToProps, mapDispatchToProps),
 )(DisplayCampaignsTable);
