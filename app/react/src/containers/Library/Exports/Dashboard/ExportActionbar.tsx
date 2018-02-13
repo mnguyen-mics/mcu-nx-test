@@ -35,7 +35,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
 
   constructor(props: JoinedProps) {
     super(props);
-    this.state = { exportIsRunning: this.props.isExportExecutionRunning ? this.props.isExportExecutionRunning : false };
+    this.state = { exportIsRunning: this.props.isExportExecutionRunning };
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
