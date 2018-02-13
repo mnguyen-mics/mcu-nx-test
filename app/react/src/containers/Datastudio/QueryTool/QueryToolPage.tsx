@@ -84,7 +84,7 @@ class QueryToolPage extends React.Component<Props, State> {
     const { error, queryResult, runningQuery, queryAborted } = this.state;
 
     const organisationId = this.props.match.params.organisationId
-    if (!['1164', '1185'].includes(organisationId)) {
+    if (!['1164', '1185', '1147', '1208'].includes(organisationId)) {
       this.props.history.push(`/o${organisationId}d${datamart.id}/datamart/queries`)
       return null;
     }
