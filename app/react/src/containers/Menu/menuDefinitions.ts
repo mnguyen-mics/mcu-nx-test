@@ -144,9 +144,9 @@ const libraryMenu = {
     },
     {
       key: 'library.catalog',
-      path: '/datamart/items',
+      path: '/library/catalog',
       translation: messages.libraryCatalog,
-      legacyPath: true,
+      legacyPath: false,
     },
     // TO REMOVE WHEN AD RENDERER ARE CREATED
     {
