@@ -451,12 +451,12 @@ module.exports = function (grunt) {
         actions: [
           {
             name: 'requirejs-newpath',
-            search: '<script data-main=".*" src="angular/bower_components/requirejs/require.js"></script>',
+            search: "window.mainRev='.*'",
             replace: function (match) {
-              var regex = /data-main="(.*)" /;
+              var regex = /window.mainRev=\'(.*)\'/;
               var result = regex.exec(match);
               var revFileName = grunt.filerev.summary['dist/scripts/' + result[1]].replace('dist', '');
-              return '<script data-main="' + revFileName + '" src="angular/bower_components/requirejs/require.js"></script>';
+              return "window.mainRev='"+ revFileName +"'";
             }
 
           }
