@@ -202,7 +202,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
   };
 
   render() {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, allRowsAreSelected } = this.state;
     const {
       hasCreativeEmails,
       isFetchingCreativeEmails,
@@ -215,6 +215,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
+      allRowsAreSelected: allRowsAreSelected,
       selectAllItemIds: this.selectAllItemIds,
       unselectAllItemIds: this.unselectAllItemIds,
       onSelectAll: this.unsetAllItemsSelectedFlag,
