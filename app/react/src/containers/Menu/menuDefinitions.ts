@@ -25,9 +25,9 @@ const audienceMenu = {
     },
     {
       key: 'audience.segment_builder',
-      path: '/datamart/queries',
+      path: '/audience/segment-builder',
       translation: messages.audienceSegmentBuilder,
-      legacyPath: true,
+      legacyPath: false,
     },
     {
       key: 'audience.monitoring',

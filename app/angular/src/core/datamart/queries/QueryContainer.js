@@ -649,7 +649,7 @@ define(['./module'], function (module) {
       QueryContainer.prototype.saveOrUpdate = function () {
         var self = this;
         if (!self.id) {
-          return Restangular.one('datamarts', self.datamartId).all('queries').post().then(function (query) {
+          return Restangular.one('datamarts', self.datamartId).all('queries').post({}).then(function (query) {
             self.id = query.id;
             return self.update();
           });

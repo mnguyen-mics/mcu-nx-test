@@ -7,3 +7,11 @@ export interface Export {
     query_id: string;
     type: string;
 }
+
+
+export interface ExportCreateResource {
+    name: string;
+    output_format: 'CSV';
+    query_id: string;
+    type: 'QUERY';
+}

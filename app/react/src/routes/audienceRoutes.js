@@ -3,6 +3,8 @@ import {
   SegmentsActionbar,
 } from '../containers/Audience/Segments/List';
 
+import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage.tsx';
+
 import {
   AudienceSegment,
   AudienceSegmentActionbar,
@@ -16,6 +18,7 @@ import {
 import {
   TimelinePage,
 } from '../containers/Audience/Timeline';
+
 
 const audienceRoutes = [
   {
@@ -35,6 +38,11 @@ const audienceRoutes = [
     layout: 'main',
     contentComponent: AudiencePartitionsTable,
     actionBarComponent: PartitionsActionbar,
+  },
+  {
+    path: '/audience/segment-builder',
+    layout: 'main',
+    contentComponent: QueryToolPage,
   },
   {
     path: '/audience/timeline/:identifierType?/:identifierId?',
