@@ -39,7 +39,8 @@ const messagesMap = defineMessages({
   },
   archiveCreativesModalMessage: {
     id: 'archive.creatives.modal.msg',
-    defaultMessage: 'Are you sure to archive all the selected creatives ?',
+    defaultMessage:
+      "You can only archive creatives that haven't passed or failed the audit. If you have selected creatives wtih passed or failed audit status, please reset their audit status first before archiving.",
   },
   auditAction: {
     id: 'audit.action',
@@ -55,11 +56,36 @@ const messagesMap = defineMessages({
   },
 });
 
+interface ListCreativesDisplayState {
+  isArchiving: boolean;
+}
+
 type JoinedProps = ListCreativesDisplayProps &
   InjectedIntlProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class ListCreativesDisplay extends React.Component<JoinedProps> {
+class ListCreativesDisplay extends React.Component<
+  JoinedProps,
+  ListCreativesDisplayState
+> {
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      isArchiving: false,
+    };
+  }
+
+  archive = () => {
+    this.setState({
+      isArchiving: true,
+    });
+    Promise.resolve(this.props.multiEditProps.handleOk()).then(() => {
+      this.setState({
+        isArchiving: false,
+      });
+    });
+  };
+
   render() {
     const {
       selectedRowKeys,
@@ -67,7 +93,6 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
         archiveCreatives,
         isArchiveModalVisible,
         handleCancel,
-        handleOk,
         handleAuditAction,
       },
       match: { params: { organisationId } },
@@ -144,8 +169,9 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
           <Modal
             title={intl.formatMessage(messagesMap.archiveCreativesModalTitle)}
             visible={isArchiveModalVisible}
-            onOk={handleOk}
+            onOk={this.archive}
             onCancel={handleCancel}
+            confirmLoading={this.state.isArchiving}
           >
             <p>
               {intl.formatMessage(messagesMap.archiveCreativesModalMessage)}

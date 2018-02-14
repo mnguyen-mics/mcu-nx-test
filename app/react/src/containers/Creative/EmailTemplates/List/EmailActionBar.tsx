@@ -42,23 +42,40 @@ interface EmailActionBarProps {
   };
 }
 
+interface EmailActionBarState {
+  isArchiving: boolean;
+}
+
 type JoinedProps = EmailActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps &
   TranslationProps;
 
-class EmailActionBar extends React.Component<JoinedProps> {
+class EmailActionBar extends React.Component<JoinedProps, EmailActionBarState> {
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      isArchiving: false,
+    };
+  }
+
+  archive = () => {
+    this.setState({
+      isArchiving: true,
+    });
+    Promise.resolve(this.props.multiEditProps.handleOk()).then(() => {
+      this.setState({
+        isArchiving: false,
+      });
+    });
+  };
+
   render() {
     const {
       match: { params: { organisationId } },
       translations,
       rowSelection,
-      multiEditProps: {
-        archiveEmails,
-        isArchiveModalVisible,
-        handleCancel,
-        handleOk,
-      },
+      multiEditProps: { archiveEmails, isArchiveModalVisible, handleCancel },
       intl,
     } = this.props;
 
@@ -98,8 +115,9 @@ class EmailActionBar extends React.Component<JoinedProps> {
           <Modal
             title={intl.formatMessage(messages.archiveEmailsModalTitle)}
             visible={isArchiveModalVisible}
-            onOk={handleOk}
+            onOk={this.archive}
             onCancel={handleCancel}
+            confirmLoading={this.state.isArchiving}
           >
             <p>{intl.formatMessage(messages.archiveEmailsModalMessage)}</p>
           </Modal>
