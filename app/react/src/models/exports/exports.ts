@@ -8,10 +8,25 @@ export interface Export {
     type: string;
 }
 
-
 export interface ExportCreateResource {
     name: string;
     output_format: 'CSV';
     query_id: string;
     type: 'QUERY';
+}
+export interface ExportExecution {
+    completed_tasks: null | string;
+    creation_date: number;
+    debug: null | string;
+    duration: number
+    error: null | string;
+    id: string;
+    job_type: string;
+    num_tasks: null | string;
+    organisation_id: string;
+    parameters: object
+    result: {output_files: string[]}
+    start_date: number;
+    status: string;
+    user_id: string;
 }

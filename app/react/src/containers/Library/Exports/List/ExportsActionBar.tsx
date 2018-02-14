@@ -1,19 +1,17 @@
 import * as React from 'react';
-import { Button } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
+import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 
 interface RouterProps {
   organisationId: string;
 }
 
-class ExportsActionbar extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps> {
+class ExportsActionbar extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedDatamartProps> {
 
   render() {
 
@@ -32,11 +30,12 @@ class ExportsActionbar extends React.Component<RouteComponentProps<RouterProps> 
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/o${organisationId}d${1}/library/exports/new`}>
+        {/* to uncomment when the export creation page is created in v2 */}
+        {/* <Link to={`/o${organisationId}d${datamart.id}/library/exports/new`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newExport} />
           </Button>
-        </Link>
+        </Link> */}
       </Actionbar>
     );
 
@@ -47,4 +46,5 @@ class ExportsActionbar extends React.Component<RouteComponentProps<RouterProps> 
 export default compose(
   injectIntl,
   withRouter,
+  injectDatamart,
 )(ExportsActionbar);
