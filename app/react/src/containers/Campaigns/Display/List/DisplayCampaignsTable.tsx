@@ -235,10 +235,14 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalDisplayCampaigns,
-      onChange: (page: number) =>
+      onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
-        }),
+        });
+        if (rowSelection && rowSelection.onSelect) {
+          rowSelection.onSelect();
+        }
+      },
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
           currentPage: 1,

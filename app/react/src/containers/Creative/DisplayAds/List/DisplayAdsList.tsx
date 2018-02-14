@@ -24,12 +24,10 @@ import CreativeService from '../../../../services/CreativeService';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { MapDispatchToProps, MapStateToProps } from './DisplayAdsPage';
+import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 
 interface DisplayAdsListProps extends MapStateToProps, MapDispatchToProps {
-  rowSelection: {
-    selectedRowKeys: string[];
-    onChange: (selectedRowKeys: string[]) => void;
-  };
+  rowSelection: ExtendedTableRowSelection;
 }
 
 type JoinedProps = DisplayAdsListProps &
@@ -141,10 +139,14 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeDisplay,
-      onChange: (page: number) =>
+      onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
-        }),
+        });
+        if (rowSelection && rowSelection.onSelect) {
+          rowSelection.onSelect();
+        }
+      },
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
           pageSize: size,

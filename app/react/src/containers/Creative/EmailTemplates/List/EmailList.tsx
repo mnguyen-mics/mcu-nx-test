@@ -28,13 +28,10 @@ import { withTranslations } from '../../../Helpers/index';
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { MapStateToProps, MapDispatchToProps } from './EmailListPage';
 import CreativeService from '../../../../services/CreativeService';
+import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 
 interface CreativeEmailsTableProps extends MapStateToProps, MapDispatchToProps {
-  rowSelection: {
-    selectedRowKeys: string[];
-    onChange: (selectedRowKeys: string[]) => void;
-    unselectAllItemIds: () => void;
-  };
+  rowSelection: ExtendedTableRowSelection;
 }
 
 interface CreativeEmailsTableState {
@@ -165,10 +162,14 @@ class CreativeEmailsTable extends React.Component<
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCreativeEmails,
-      onChange: (page: number) =>
+      onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
-        }),
+        });
+        if (rowSelection && rowSelection.onSelect) {
+          rowSelection.onSelect();
+        }
+      },
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
           pageSize: size,

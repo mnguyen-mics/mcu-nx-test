@@ -44,6 +44,7 @@ export interface ExtendedTableRowSelection<T = any> extends TableRowSelection<T>
   allRowsAreSelected?: boolean;
   selectAllItemIds?: () => void;
   unselectAllItemIds?: () => void;
+  onSelect?: () => void;
 } 
 
 export interface TableViewProps<T> extends TableProps<T> {

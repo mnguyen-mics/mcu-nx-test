@@ -338,6 +338,11 @@ class DisplayCampaignAdTable extends React.Component<
         this.setState({
           pageSize: size,
         }),
+      onChange: (page: number) => {
+        if (rowSelection && rowSelection.onSelect) {
+          rowSelection.onSelect();
+        }
+      },
     };
 
     return (
