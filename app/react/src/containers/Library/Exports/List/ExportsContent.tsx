@@ -101,45 +101,51 @@ class ExportContent extends React.Component<
   onClickEdit = (keyword: Export) => {
     const { history, match: { params: { organisationId } } } = this.props;
 
-    history.push(`/${organisationId}/library/exports/${keyword.id}`);
+    history.push(`/${organisationId}/library/exports/${keyword.id}/edit`);
   };
 
   render() {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: { params: { organisationId } },
+    } = this.props;
 
-    const actionsColumnsDefinition = [
-      {
-        key: 'action',
-        actions: [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-        ],
-      },
-    ];
 
-    const dataColumnsDefinition = [
-      {
-        translationKey: 'NAME',
-        intlMessage: messages.name,
-        key: 'name',
-        isHideable: false,
-        render: (text: string, record: Export) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/${organisationId}/library/keywordslists/${record.id}`}
-          >
-            {text}
-          </Link>
-        ),
-      },
-      {
-        translationKey: 'type',
-        intlMessage: messages.type,
-        key: 'type',
-        isHideable: false,
-        render: (text: string, record: Export) => <span>{text}</span>,
-      },
-    ];
+    const columnsDefinitions = {
+      actionsColumnsDefinition: [
+        {
+          key: 'action',
+          actions: [
+            { translationKey: 'EDIT', callback: this.onClickEdit },
+            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          ],
+        },
+      ],
+
+      dataColumnsDefinition: [
+        {
+          translationKey: 'NAME',
+          intlMessage: messages.name,
+          key: 'name',
+          isHideable: false,
+          render: (text: string, record: Export) => (
+            <Link
+              className="mcs-campaigns-link"
+              to={`/v2/o/${organisationId}/library/exports/${record.id}`}
+            >{text}
+            </Link>
+          ),
+        },
+        {
+          translationKey: 'type',
+          intlMessage: messages.type,
+          key: 'type',
+          isHideable: false,
+          render: (text: string, record: Export) => (
+            <span>{text}</span>
+          ),
+        },
+      ],
+    };
 
     const emptyTable: {
       iconType: McsIconType;
@@ -155,8 +161,8 @@ class ExportContent extends React.Component<
         dataSource={this.state.data}
         loading={this.state.loading}
         total={this.state.total}
-        columns={dataColumnsDefinition}
-        actionsColumnsDefinition={actionsColumnsDefinition}
+        columns={columnsDefinitions.dataColumnsDefinition}
+        actionsColumnsDefinition={columnsDefinitions.actionsColumnsDefinition}
         pageSettings={PAGINATION_SEARCH_SETTINGS}
         emptyTable={emptyTable}
       />

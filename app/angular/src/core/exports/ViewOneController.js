@@ -8,6 +8,9 @@ define(['./module'], function (module) {
       var exportId = $stateParams.exportId;
       var organisationId = $stateParams.organisation_id;
 
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/exports/'+exportId);
+
       $scope.exportId = exportId;
       $scope.organisationId = organisationId;
 

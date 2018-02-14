@@ -9,6 +9,8 @@ import RecommendersList from '../containers/Library/Recommender/List/index.ts';
 import ExportsList from '../containers/Library/Exports/List/index.ts';
 import Catalog from '../containers/Library/Catalog/index.ts';
 
+import Exports from '../containers/Library/Exports/Dashboard/Exports.tsx';
+
 import { CreateEditAttributionModel } from '../containers/Library/AttributionModel/Edit/index.ts';
 import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit/index.ts';
 import { CreateEditEmailRouter } from '../containers/Library/EmailRouter/Edit/index.ts';
@@ -145,6 +147,11 @@ const campaignsRoutes = [
     path: '/library/exports',
     layout: 'main',
     ...ExportsList,
+  },
+  {
+    path: '/library/exports/:exportId(\\d+)',
+    layout: 'main',
+    contentComponent: Exports,
   },
 ];
 
