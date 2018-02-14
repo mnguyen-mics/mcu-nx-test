@@ -247,9 +247,8 @@ class StackedBarCharts extends Component {
       this.pointersAttached.push(pointer);
       pointer.onPointerMove(p => {
         const nearestEntity = plot.entityNearest(p);
-        const entities = plot.entitiesAt(nearestEntity.position);
-        entities.forEach((entity, i) => {
-          nearestEntity.datum[yKeys[i]] = entity.datum.y;
+        yKeys.forEach((key) => {
+          nearestEntity.datum[key] = dataset[nearestEntity.index][key];
         });
         line.hide();
         line.drawAt(nearestEntity.position, p, nearestEntity);
