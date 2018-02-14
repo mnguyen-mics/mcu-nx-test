@@ -33,6 +33,14 @@ export default defineMessages({
         id: 'exports.dashboard.actionbar.running',
         defaultMessage: 'An export execution is already running', 
     },
+    exportFailed: {
+        id: 'exports.dashboard.actionbar.failed',
+        defaultMessage: 'This export has failed. Please launch another execution.', 
+    },
+    exportRunningDownload: {
+        id: 'exports.dashboard.actionbar.running.download',
+        defaultMessage: 'This export is being created, please try again when the export is succeeded.', 
+    },
     wait: {
         id: 'exports.dashboard.actionbar.wait',
         defaultMessage: 'Please wait until the export is done.', 
@@ -40,5 +48,9 @@ export default defineMessages({
     notStarted: {
         id: 'exports.dashboard.actionbar.notStarted',
         defaultMessage: 'Not Started'
-    }
+    },
+    status: {
+        id: 'exports.table.column.status',
+        defaultMessage: 'Status',
+    },
 })

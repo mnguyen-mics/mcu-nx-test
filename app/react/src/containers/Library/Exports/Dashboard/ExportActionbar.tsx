@@ -94,7 +94,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: 'Exports', url: `/v2/o/${organisationId}/campaigns/display` },
+      { name: 'Exports', url: `/v2/o/${organisationId}/library/exports` },
       { name: exportObject && exportObject.name ? exportObject.name : '' },
     ];
 
