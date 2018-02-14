@@ -212,7 +212,8 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
           .then(creativeData => {
             if (
               creativeData.audit_status !== 'AUDIT_PENDING' &&
-              creativeData.audit_status !== 'AUDIT_FAILED'
+              creativeData.audit_status !== 'AUDIT_FAILED' &&
+              creativeData.audit_status !== 'AUDIT_PASSED'
             ) {
               return CreativeService.updateDisplayCreative(creativeId, {
                 ...creativeData,
