@@ -101,7 +101,7 @@ class ExportContent extends React.Component<
   onClickEdit = (keyword: Export) => {
     const { history, match: { params: { organisationId } } } = this.props;
 
-    history.push(`/${organisationId}/library/exports/${keyword.id}`);
+    history.push(`/${organisationId}/library/exports/${keyword.id}/edit`);
   };
 
   render() {
