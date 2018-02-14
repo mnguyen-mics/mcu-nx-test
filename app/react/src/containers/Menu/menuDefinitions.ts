@@ -1,6 +1,6 @@
 import messages from './messages';
 
-export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'automations', 'campaigns.email', 'datastudio.query_tool'];
+export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'library.exports', 'automations', 'campaigns.email', 'datastudio.query_tool'];
 
 
 // ATTENTION : ALL KEYS MUST BE UNIQUE !
