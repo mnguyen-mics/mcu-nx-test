@@ -13,7 +13,7 @@ render(
   </AppContainer>,
   document.getElementById('mcs-react-app'),
   () => {
-    window.require(['main'], function() {
+    window.require([window.mainRev], function() {
       console.log('YEAH')
     });
   }
@@ -28,7 +28,7 @@ if (module.hot) {
       </AppContainer>,
       document.getElementById('mcs-react-app'),
       () => {
-        window.require(['main'], function() {
+        window.require([window.mainRev], function() {
           console.log('YEAH 2')
         });
       }
