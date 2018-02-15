@@ -70,6 +70,7 @@ interface DisplayCampaignsPageState {
   allRowsAreSelected: boolean;
   visible: boolean;
   isUploadingStatuses: boolean;
+  isArchiving: boolean;
 }
 
 type JoinedProps = DisplayCampaignsPageProps &
@@ -91,6 +92,7 @@ class DisplayCampaignsPage extends React.Component<
       allRowsAreSelected: false,
       visible: false,
       isUploadingStatuses: false,
+      isArchiving: false,
     };
   }
 
@@ -152,6 +154,9 @@ class DisplayCampaignsPage extends React.Component<
   };
 
   makeAuditAction = (campaignIds: string[]) => {
+    this.setState({
+      isArchiving: true,
+    });
     const tasks: Task[] = [];
     campaignIds.forEach(campaignId => {
       tasks.push(() => {
@@ -165,9 +170,15 @@ class DisplayCampaignsPage extends React.Component<
     executeTasksInSequence(tasks)
       .then(() => {
         this.redirectAndNotify();
+        this.setState({
+          isArchiving: false,
+        });
       })
       .catch(err => {
         this.props.notifyError(err);
+        this.setState({
+          isArchiving: false,
+        });
       });
   };
 
@@ -368,6 +379,7 @@ class DisplayCampaignsPage extends React.Component<
       handleCancel: this.handleCancel,
       openEditCampaignsDrawer: this.openEditCampaignsDrawer,
       totalDisplayCampaigns: this.props.totalDisplayCampaigns,
+      isArchiving: this.state.isArchiving,
     };
 
     const reduxProps = {

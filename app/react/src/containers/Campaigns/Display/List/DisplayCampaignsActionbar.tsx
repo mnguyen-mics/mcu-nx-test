@@ -78,6 +78,7 @@ interface DisplayCampaignsActionbarProps {
       undoBody?: { status: CampaignStatus },
     ) => void;
     totalDisplayCampaigns: number;
+    isArchiving: boolean;
   };
 }
 
@@ -98,7 +99,6 @@ type JoinedProps = DisplayCampaignsActionbarProps &
 
 interface DisplayCampaignsActionbarState {
   exportIsRunning: boolean;
-  isArchiving: boolean;
   allCampaignsActivated: boolean;
   allCampaignsPaused: boolean;
   isUpdatingStatuses: boolean;
@@ -167,7 +167,6 @@ class DisplayCampaignsActionbar extends React.Component<
     super(props);
     this.state = {
       exportIsRunning: false,
-      isArchiving: false,
       allCampaignsActivated: false,
       allCampaignsPaused: false,
       isUpdatingStatuses: false,
@@ -204,22 +203,6 @@ class DisplayCampaignsActionbar extends React.Component<
         this.props.notifyError(err);
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
-      });
-  };
-
-  handleArchive = () => {
-    this.setState({
-      isArchiving: true,
-    });
-    this.props.multiEditProps
-      .handleOk()
-      .then(() => {
-        this.setState({
-          isArchiving: false,
-        });
-      })
-      .catch((err: any) => {
-        this.props.notifyError(err);
       });
   };
 
@@ -296,7 +279,7 @@ class DisplayCampaignsActionbar extends React.Component<
   };
 
   render() {
-    const { exportIsRunning, isArchiving } = this.state;
+    const { exportIsRunning } = this.state;
     const {
       match: { params: { organisationId } },
       intl,
@@ -305,7 +288,9 @@ class DisplayCampaignsActionbar extends React.Component<
         archiveCampaigns,
         visible,
         handleCancel,
+        handleOk,
         openEditCampaignsDrawer,
+        isArchiving,
       },
     } = this.props;
 
@@ -362,7 +347,7 @@ class DisplayCampaignsActionbar extends React.Component<
               <FormattedMessage {...messages.archiveCampaignsModalTitle} />
             }
             visible={visible}
-            onOk={this.handleArchive}
+            onOk={handleOk}
             onCancel={handleCancel}
             confirmLoading={isArchiving}
           >
