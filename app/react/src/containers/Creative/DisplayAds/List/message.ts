@@ -7,7 +7,7 @@ export default defineMessages({
     },
     creativeModalConfirmArchivedContent: {
         id: 'creative.modal.confirm.archived.content',
-        defaultMessage: 'You will still be able to get back your creative in the \'Archive\' category.',
+        defaultMessage: 'You can only archive creatives that haven\'t passed or failed the audit. If you have selected creatives wtih passed or failed audit status, please reset their audit status first before archiving.',
     },
     creativeModalConfirmArchivedOk: {
         id: 'creative.modal.confirm.ok',
@@ -17,4 +17,12 @@ export default defineMessages({
         id: 'creative.modal.confirm.cancel',
         defaultMessage: 'Cancel',
     },
+    creativeModalNoArchiveTitle: {
+        id: 'creative.modal.no.archive.title',
+        defaultMessage: 'Forbidden action',
+    },
+    creativeModalNoArchiveMessage: {
+        id: 'creative.modal.no.archive.msg',
+        defaultMessage: 'You can\'t archive a creative in the audit status AUDIT_FAILED, AUDIT_PENDING or AUDIT_PASSED',
+    }
 });

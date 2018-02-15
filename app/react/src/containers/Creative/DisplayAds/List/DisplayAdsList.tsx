@@ -241,37 +241,45 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-
-    Modal.confirm({
-      title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
-      content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
-      iconType: 'exclamation-circle',
-      okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
-      cancelText: intl.formatMessage(messages.cancelText),
-      onOk() {
-        CreativeService.updateDisplayCreative(creative.id, {
-          ...creative,
-          archived: true,
-        }).then(() => {
-          if (dataSource.length === 1 && filter.currentPage !== 1) {
-            const newFilter = {
-              ...filter,
-              currentPage: filter.currentPage - 1,
-            };
+    if (creative.audit_status === 'NOT_AUDITED') {
+      Modal.confirm({
+        title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
+        content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
+        iconType: 'exclamation-circle',
+        okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
+        cancelText: intl.formatMessage(messages.cancelText),
+        onOk() {
+          CreativeService.updateDisplayCreative(creative.id, {
+            ...creative,
+            archived: true,
+          }).then(() => {
+            if (dataSource.length === 1 && filter.currentPage !== 1) {
+              const newFilter = {
+                ...filter,
+                currentPage: filter.currentPage - 1,
+              };
+              fetchCreativeDisplay(organisationId, filter, true);
+              history.replace({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
+            }
             fetchCreativeDisplay(organisationId, filter, true);
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
-          }
-          fetchCreativeDisplay(organisationId, filter, true);
-        });
-      },
-      onCancel() {
-        //
-      },
-    });
+          });
+        },
+        onCancel() {
+          //
+        },
+      });
+    } else {
+      Modal.warning({
+        title: intl.formatMessage(messages.creativeModalNoArchiveTitle),
+        content : intl.formatMessage(messages.creativeModalNoArchiveMessage),
+        iconType: 'exclamation-circle',
+      })
+    }
+   
   }
 }
 
