@@ -61,6 +61,7 @@ interface EmailListPageState {
   selectedRowKeys: string[];
   isArchiveModalVisible: boolean;
   allRowsAreSelected: boolean;
+  isArchiving: boolean;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -77,6 +78,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       selectedRowKeys: [],
       isArchiveModalVisible: false,
       allRowsAreSelected: false,
+      isArchiving: false,
     };
   }
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -163,6 +165,9 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
   };
 
   makeArchiveAction = (emailTemplateIds: string[]) => {
+    this.setState({
+      isArchiving: true,
+    });
     const tasks: Task[] = [];
     emailTemplateIds.forEach(emailTemplateId => {
       tasks.push(() => {
@@ -178,6 +183,9 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     });
     executeTasksInSequence(tasks).then(() => {
       this.redirectAndNotify();
+      this.setState({
+        isArchiving: false,
+      });
     });
   };
 
@@ -227,6 +235,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       isArchiveModalVisible: this.state.isArchiveModalVisible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
+      isArchiving: this.state.isArchiving,
     };
 
     const reduxProps = {

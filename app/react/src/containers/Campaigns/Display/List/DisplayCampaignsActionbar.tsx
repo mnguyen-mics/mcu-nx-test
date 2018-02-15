@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, message, Modal, Spin, Dropdown, Menu } from 'antd';
+import { Button, message, Modal, Dropdown, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import {
   FormattedMessage,
@@ -364,14 +364,9 @@ class DisplayCampaignsActionbar extends React.Component<
             visible={visible}
             onOk={this.handleArchive}
             onCancel={handleCancel}
+            confirmLoading={isArchiving}
           >
-            <div>
-              {isArchiving ? (
-                <Spin />
-              ) : (
-                <FormattedMessage {...messages.archiveCampaignsModalMessage} />
-              )}
-            </div>
+            <FormattedMessage {...messages.archiveCampaignsModalMessage} />
           </Modal>
         ) : null}
 

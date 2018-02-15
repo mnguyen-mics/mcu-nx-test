@@ -63,6 +63,7 @@ interface DisplayAdsPageState {
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   isArchiveModalVisible: boolean;
+  isArchiving: boolean;
 }
 
 type JoinedProps = DisplayAdsPage &
@@ -80,6 +81,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       selectedRowKeys: [],
       allRowsAreSelected: false,
       isArchiveModalVisible: false,
+      isArchiving: false,
     };
   }
 
@@ -204,6 +206,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
   };
 
   makeArchiveAction = (creativesIds: string[]) => {
+    this.setState({
+      isArchiving: true,
+    });
     const tasks: Task[] = [];
     creativesIds.forEach(creativeId => {
       tasks.push(() => {
@@ -235,6 +240,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
             this.props.intl.formatMessage(messages.archiveSuccess),
           );
           this.redirect();
+          this.setState({
+            isArchiving: false,
+          });
         },
       );
     });
@@ -288,6 +296,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
       handleAuditAction: this.handleAuditAction,
+      isArchiving: this.state.isArchiving,
     };
 
     return (

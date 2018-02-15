@@ -166,8 +166,12 @@ class CreativeEmailsTable extends React.Component<
         this.updateLocationSearch({
           currentPage: page,
         });
-        if (rowSelection && rowSelection.onSelect) {
-          rowSelection.onSelect();
+        if (
+          rowSelection &&
+          rowSelection.unselectAllItemIds &&
+          rowSelection.allRowsAreSelected
+        ) {
+          rowSelection.unselectAllItemIds();
         }
       },
       onShowSizeChange: (current: number, size: number) =>

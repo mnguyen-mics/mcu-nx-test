@@ -339,8 +339,12 @@ class DisplayCampaignAdTable extends React.Component<
           pageSize: size,
         }),
       onChange: (page: number) => {
-        if (rowSelection && rowSelection.onSelect) {
-          rowSelection.onSelect();
+        if (
+          rowSelection &&
+          rowSelection.unselectAllItemIds &&
+          rowSelection.allRowsAreSelected
+        ) {
+          rowSelection.unselectAllItemIds();
         }
       },
     };

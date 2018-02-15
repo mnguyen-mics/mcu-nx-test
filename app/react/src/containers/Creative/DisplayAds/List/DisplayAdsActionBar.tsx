@@ -25,6 +25,7 @@ interface ListCreativesDisplayProps {
     handleOk: () => void;
     handleCancel: () => void;
     handleAuditAction: (action: CreativeAuditAction) => void;
+    isArchiving: boolean;
   };
 }
 
@@ -56,35 +57,13 @@ const messagesMap = defineMessages({
   },
 });
 
-interface ListCreativesDisplayState {
-  isArchiving: boolean;
-}
-
 type JoinedProps = ListCreativesDisplayProps &
   InjectedIntlProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class ListCreativesDisplay extends React.Component<
-  JoinedProps,
-  ListCreativesDisplayState
+  JoinedProps
 > {
-  constructor(props: JoinedProps) {
-    super(props);
-    this.state = {
-      isArchiving: false,
-    };
-  }
-
-  archive = () => {
-    this.setState({
-      isArchiving: true,
-    });
-    Promise.resolve(this.props.multiEditProps.handleOk()).then(() => {
-      this.setState({
-        isArchiving: false,
-      });
-    });
-  };
 
   render() {
     const {
@@ -94,6 +73,8 @@ class ListCreativesDisplay extends React.Component<
         isArchiveModalVisible,
         handleCancel,
         handleAuditAction,
+        handleOk,
+        isArchiving,
       },
       match: { params: { organisationId } },
       intl,
@@ -169,9 +150,9 @@ class ListCreativesDisplay extends React.Component<
           <Modal
             title={intl.formatMessage(messagesMap.archiveCreativesModalTitle)}
             visible={isArchiveModalVisible}
-            onOk={this.archive}
+            onOk={handleOk}
             onCancel={handleCancel}
-            confirmLoading={this.state.isArchiving}
+            confirmLoading={isArchiving}
           >
             <p>
               {intl.formatMessage(messagesMap.archiveCreativesModalMessage)}
