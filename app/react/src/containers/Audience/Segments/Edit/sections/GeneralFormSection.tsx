@@ -4,7 +4,6 @@ import {
   reduxForm,
   ConfigProps,
   InjectedFormProps,
-  Validator,
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps } from 'react-intl';
