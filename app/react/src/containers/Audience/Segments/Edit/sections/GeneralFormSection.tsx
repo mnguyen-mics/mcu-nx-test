@@ -61,6 +61,7 @@ export interface AudienceSegmentFormProps extends Omit<ConfigProps<AudienceSegme
   datamartToken: string,
   segmentType: SegmentTypeFormLoader;
   feedType?: FeedType;
+  segmentCreation: Boolean
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
@@ -96,20 +97,6 @@ class GeneralFormSection extends React.Component<Props, State> {
     this.setState({ technicalName: e.target.value });
   }
 
-  technicalNameFieldValidate = () => {
-    const {
-      fieldValidators: { isRequired },
-      segmentType,
-    } = this.props;
-
-    const validates: Validator[] = [];
-    if (segmentType === 'USER_PIXEL') {
-      validates.push(isRequired);
-      return validates;
-    }
-    return validates;
-  }
-
   getSegmentType = () => {
     const {
       segmentType,
@@ -122,14 +109,12 @@ class GeneralFormSection extends React.Component<Props, State> {
   getTechnicalNameField = () => {
 
     const {
-      fieldValidators: { isRequired },
       intl: { formatMessage },
     } = this.props;
 
     return <FormInputField
       name="audienceSegment.technical_name"
       component={FormInput}
-      validate={this.getSegmentType() === 'USER_PIXEL' ? isRequired : undefined}
       onChange={this.handleOnchangeTechnicalName}
       formItemProps={{
         label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
@@ -143,6 +128,65 @@ class GeneralFormSection extends React.Component<Props, State> {
         title: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Tooltip),
       }}
     />
+
+  }
+
+  buildSideBarItems = () => {
+    const {
+      segmentCreation
+    } = this.props
+
+    const items = [
+      {
+        sectionId: '',
+        title: messages.audienceSegmentSiderMenuSemgnetType
+      },
+      {
+        sectionId: 'general',
+        title: messages.audienceSegmentSectionGeneralTitle
+      },
+    ];
+
+    if (!segmentCreation) {
+      items.push({
+        sectionId: 'properties',
+        title: messages.audienceSegmentSiderMenuProperties
+      });
+    }
+    return items;
+  }
+
+
+  loadSpecificComponenet = () => {
+
+    const {
+            segmentType,
+      datamartToken,
+      segmentCreation
+          } = this.props;
+    if (!segmentCreation) {
+      switch (segmentType) {
+        case 'USER_PIXEL':
+          return <div id='properties'>
+            <PixelSection
+              datamartToken={datamartToken}
+              userListTechName={this.state.technicalName}
+            />
+          </div>;
+        default:
+          return null
+      }
+    }
+
+    return null;
+
+  };
+
+  componentWillReceiveProps(nextProps: Props) {
+    const newTechnicalName = nextProps.audienceSegmentFormData.audienceSegment.technical_name;
+    this.setState({
+      technicalName: newTechnicalName
+    })
 
   }
 
@@ -162,40 +206,13 @@ class GeneralFormSection extends React.Component<Props, State> {
     };
 
     const sideBarProps: SidebarWrapperProps = {
-      items: [
-        {
-          sectionId: '',
-          title: messages.audienceSegmentSiderMenuSemgnetType
-        },
-        {
-          sectionId: 'general',
-          title: messages.audienceSegmentSectionGeneralTitle
-        },
-        {
-          sectionId: 'properties',
-          title: messages.audienceSegmentSiderMenuProperties
-        },
-      ],
+      items: this.buildSideBarItems(),
       scrollId: FORM_ID
     };
 
-    const loadSpecificComponenet = () => {
-
-      const {
-        segmentType,
-        datamartToken
-      } = this.props;
-
-      switch (segmentType) {
-        case 'USER_PIXEL':
-          return <PixelSection
-            datamartToken={datamartToken}
-            userListTechName={this.state.technicalName}
-          />;
-        default:
-          return null
-      }
-    };
+    // const defaultSelect: SelectProps = {
+    //   defaultValue: 'days'
+    // }
 
     return (
       <Layout className="edit-layout">
@@ -235,9 +252,6 @@ class GeneralFormSection extends React.Component<Props, State> {
                       }}
                     />
                   </div>
-                  {
-                    this.getSegmentType() === 'USER_PIXEL' ? this.getTechnicalNameField() : null
-                  }
                   <div>
                     <ButtonStyleless
                       className="optional-section-title"
@@ -255,7 +269,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                       'optional-section-content'}
                     >
                       {
-                        this.getSegmentType() !== 'USER_PIXEL' ? this.getTechnicalNameField() : null
+                        this.getTechnicalNameField()
                       }
                       <div>
                         <div className="custom-lifetime">
@@ -298,9 +312,8 @@ class GeneralFormSection extends React.Component<Props, State> {
                   </div>
                 </div>
                 <hr />
-                <div id='properties'>
-                  {loadSpecificComponenet()}
-                </div>
+                {this.loadSpecificComponenet()}
+
               </div>
             </Content>
           </Form>

@@ -4,7 +4,6 @@ export interface AudienceSegmentResource {
   name: string;
   short_description?: string,
   technical_name?: string;
-  default_lifetime?: number;
   default_ttl?: number;
   datamart_id: string;
   provider_name?: string;

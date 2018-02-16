@@ -126,7 +126,7 @@ class AudienceSegmentActionbar extends Component {
     }];
 
     let editLink;
-    if (segment.type === 'USER_LIST' && segment.feed_type === 'TAG') {
+    if (segment.type === 'USER_LIST') {
       editLink = `/v2/o/${organisationId}/audience/segments/${segmentId}/edit`;
     } else {
       editLink = `/o${organisationId}d${datamartId}/datamart/segments//${segmentId}`;

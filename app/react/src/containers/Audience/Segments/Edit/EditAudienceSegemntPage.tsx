@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import moment from 'moment';
@@ -8,64 +7,66 @@ import {
   injectIntl,
   InjectedIntlProps
 } from 'react-intl';
-import * as NotificationActions from '../../../../state/Notifications/actions';
-import * as FeatureSelectors from '../../../../state/Features/selectors';
 import {
   EditAudienceSegmentParam,
   AudienceSegmentFormData,
+  DefaultLiftimeUnit,
 } from './domain'
 import AudienceSegmentService from '../../../../services/AudienceSegmentService'
-import * as DatamartService from '../../../../services/DatamartService'
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain'
 import { AudienceSegment } from '../../../../models/audiencesegment'
 import messages from './messages';
 import { GeneralFormSection } from './sections/';
-import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import injectDatamart, { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 interface State {
   audienceSegmentFormData: AudienceSegmentFormData;
-  loading: boolean;
-  damartToken: string;
-  segmentType?: string
-}
-
-interface MapStateProps {
-  notifyError: (err: any) => void;
-  defaultDatamart: (organisationId: string) => { id: string };
+  segmentType?: string;
+  segmentCreation: Boolean
 }
 
 type Props = InjectedIntlProps &
-  MapStateProps &
+  InjectedDatamartProps &
+  InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
+const INITIAL_STATE = {
+  audienceSegmentFormData: INITIAL_AUDIENCE_SEGMENT_FORM_DATA,
+  segmentCreation: true
+}
 class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      loading: true,
-      audienceSegmentFormData: INITIAL_AUDIENCE_SEGMENT_FORM_DATA,
-      damartToken: '',
-    };
+    this.state = INITIAL_STATE;
+
   }
 
-  countDefaultLifetime = (audienceSegmentFormData: AudienceSegmentFormData) => {
-    let lifetime = moment.duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds').asMonths();
+  countDefaultLifetime = (audienceSegment: AudienceSegment): {
+    defaultLiftime?: number,
+    defaultLiftimeUnit?: DefaultLiftimeUnit,
+  } => {
+    let lifetime = moment.duration(audienceSegment.default_ttl, 'milliseconds').asMonths();
     if (Number.isInteger(lifetime) && lifetime > 0) {
-      audienceSegmentFormData.defaultLiftime = lifetime;
-      audienceSegmentFormData.defaultLiftimeUnit = 'months';
-      return audienceSegmentFormData;
+
+      return {
+        defaultLiftime: lifetime,
+        defaultLiftimeUnit: 'months'
+      }
     } else {
-      lifetime = moment.duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds').asWeeks();
+      lifetime = moment.duration(audienceSegment.default_ttl, 'milliseconds').asWeeks();
       if (Number.isInteger(lifetime) && lifetime > 0) {
-        audienceSegmentFormData.defaultLiftime = lifetime;
-        audienceSegmentFormData.defaultLiftimeUnit = 'weeks';
-        return audienceSegmentFormData;
+        return {
+          defaultLiftime: lifetime,
+          defaultLiftimeUnit: 'weeks'
+        }
       } else {
-        lifetime = moment.duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds').asDays();
-        audienceSegmentFormData.defaultLiftime = lifetime;
-        audienceSegmentFormData.defaultLiftimeUnit = 'days';
-        return audienceSegmentFormData;
+        lifetime = moment.duration(audienceSegment.default_ttl, 'milliseconds').asDays();
+        return {
+          defaultLiftime: lifetime,
+          defaultLiftimeUnit: 'days'
+        }
       }
     }
   }
@@ -79,24 +80,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   }
 
-  componentDidMount() {
+  initialLoading = (props: Props) => {
     const {
-      match: { params: { segmentId: audienceSegmentIdFromURLParam, organisationId } },
-      defaultDatamart,
-    } = this.props;
-
-    const datamartId = defaultDatamart(organisationId).id;
-    DatamartService
-      .default
-      .getDatamart(datamartId)
-      .then((response: any) =>
-        this.setState(
-          { damartToken: response.data.token }
-        )
-
-      );
-
-    const segmentId = audienceSegmentIdFromURLParam;
+      match: { params: { segmentId } },
+    } = props;
 
     if (segmentId) {
       AudienceSegmentService
@@ -106,23 +93,36 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             const newStat = {
               ...prevStat,
               segmentType: this.extractSegmentType(response.data),
-              loading: false,
+              segmentCreation: false,
+              audienceSegmentFormData: {
+                ...prevStat.audienceSegmentFormData,
+                audienceSegment: response.data,
+                ...this.countDefaultLifetime(response.data),
+              }
             };
-            newStat.audienceSegmentFormData.audienceSegment = response.data;
-            newStat.audienceSegmentFormData = {
-              ...
-              this.countDefaultLifetime(newStat.audienceSegmentFormData)
-            }
             return newStat;
           })
         ).catch(err => {
-          this.setState({ loading: false });
-          this.props.notifyError(err);
+          props.notifyError(err);
         });
     }
+  }
 
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: { params: { segmentId } },
+    } = this.props;
+    const {
+      match: { params: { segmentId: nextSegmentId } },
+    } = nextProps;
+    if (segmentId === undefined && nextSegmentId) {
+      this.initialLoading(nextProps);
+    }
 
+  }
 
+  componentDidMount() {
+    this.initialLoading(this.props)
   }
 
   onSubmitFail = () => {
@@ -143,7 +143,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const {
       match: { params: { organisationId, type } },
-      defaultDatamart,
+      datamart,
       notifyError,
       history,
       intl,
@@ -151,55 +151,101 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const countTTL = (formData: AudienceSegmentFormData) => {
       if (formData.defaultLiftimeUnit && formData.defaultLiftime) {
-        formData.audienceSegment.default_ttl = moment.duration(Number(formData.defaultLiftime), formData.defaultLiftimeUnit).asMilliseconds();
-        formData.audienceSegment.default_lifetime = moment.duration(Number(formData.defaultLiftime), formData.defaultLiftimeUnit).asMinutes();
-
+        return moment.duration(Number(formData.defaultLiftime), formData.defaultLiftimeUnit).asMilliseconds();
       }
-      return formData.audienceSegment;
+      return undefined;
 
     };
 
-    const datamartId = defaultDatamart(organisationId).id;
-    audienceSegmentFormData.audienceSegment = {
-      ...countTTL(audienceSegmentFormData),
+    const fillTechnicalNameForUserPixel = (formData: AudienceSegmentFormData) => {
+      const technicalName = formData.audienceSegment.technical_name;
+      if(formData.audienceSegment.type === 'USER_LIST' && formData.audienceSegment.feed_type === 'TAG'){
+        if (technicalName === undefined || technicalName === null || technicalName === '') {
+          return `${formData.audienceSegment.name}-${moment().unix()}`;
+        }
+      }
+      
+      return technicalName
+    }
+
+    const datamartId = datamart.id;
+    const audienceSegment = {
+      ...audienceSegmentFormData.audienceSegment,
+      default_ttl: countTTL(audienceSegmentFormData),
+      technical_name: fillTechnicalNameForUserPixel(audienceSegmentFormData),
       datamart_id: datamartId,
       organisation_id: organisationId,
+    }
+    audienceSegmentFormData = {
+      ...audienceSegmentFormData,
+      audienceSegment: audienceSegment
     };
 
     switch (type) {
       case 'USER_PIXEL':
-        audienceSegmentFormData.audienceSegment = {
-          ...audienceSegmentFormData.audienceSegment,
-          type: 'USER_LIST',
-          feed_type: 'TAG',
+        audienceSegmentFormData = {
+          ...audienceSegmentFormData,
+          audienceSegment: {
+            ...audienceSegmentFormData.audienceSegment,
+            type: 'USER_LIST',
+            feed_type: 'TAG',
+          }
+        };
+        break;
+      case 'USER_LIST':
+        audienceSegmentFormData = {
+          ...audienceSegmentFormData,
+          audienceSegment: {
+            ...audienceSegmentFormData.audienceSegment,
+            type: 'USER_LIST',
+            feed_type: 'FILE_IMPORT',
+          }
         };
     };
-
-    this.setState({
-      loading: true,
-    });
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
       0,
     );
 
-    return AudienceSegmentService.saveSegment(
-      organisationId,
-      audienceSegmentFormData.audienceSegment,
-    )
-      .then(audienceSegment => {
-        hideSaveInProgress();
-        const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments`;
-        history.push(adGroupDashboardUrl);
-      })
-      .catch(err => {
-        hideSaveInProgress();
-        notifyError(err);
-        this.setState({
-          loading: false,
+    const {
+      segmentCreation
+    } = this.state
+
+    if (segmentCreation) {
+      return AudienceSegmentService.saveSegment(
+        organisationId,
+        audienceSegmentFormData.audienceSegment,
+      )
+        .then(response => {
+          hideSaveInProgress();
+          const adGroupDashboardUrl = audienceSegmentFormData.audienceSegment.feed_type === 'TAG' ? `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit` : `/v2/o/${organisationId}/audience/segments/${response.data.id}`;
+          history.push(adGroupDashboardUrl);
+        })
+        .catch(err => {
+          hideSaveInProgress();
+          notifyError(err);
         });
-      });
+    } else {
+
+      const {
+        match: { params: { segmentId } },
+      } = this.props
+      return AudienceSegmentService.updateAudienceSegment(
+        segmentId,
+        audienceSegmentFormData.audienceSegment,
+      )
+        .then(response => {
+          hideSaveInProgress();
+          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments`;
+          history.push(adGroupDashboardUrl);
+        })
+        .catch(err => {
+          hideSaveInProgress();
+          notifyError(err);
+        });
+
+    }
 
   }
 
@@ -207,8 +253,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const {
       match: { params: { type } },
+      datamart
     } = this.props;
 
+    const {
+      segmentCreation
+    } = this.state
     const segmentType = type || this.state.segmentType;
     return (
       <GeneralFormSection
@@ -216,8 +266,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         close={this.redirectToSegmentList}
         onSubmit={this.save}
         audienceSegmentFormData={this.state.audienceSegmentFormData}
-        datamartToken={this.state.damartToken}
+        datamartToken={datamart.token}
         segmentType={segmentType}
+        segmentCreation={segmentCreation}
       />
     );
   }
@@ -227,11 +278,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  connect(state => ({
-    hasFeature: FeatureSelectors.hasFeature(state),
-    defaultDatamart: getDefaultDatamart(state),
-  }), {
-      notifyError: NotificationActions.notifyError,
-    }),
+  injectDatamart,
+  injectNotifications,
 )(EditAudienceSegmentPage);
 

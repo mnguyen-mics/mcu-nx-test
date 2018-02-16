@@ -11,8 +11,8 @@ export type DefaultLiftimeUnit = 'days' | 'weeks' | 'months'
 
 export interface AudienceSegmentFormData {
   audienceSegment: Partial<UserListSegment>;
-  defaultLiftime?: Partial<number>;
-  defaultLiftimeUnit?: Partial<DefaultLiftimeUnit>
+  defaultLiftime?: number;
+  defaultLiftimeUnit: DefaultLiftimeUnit;
 }
 
 export type SegmentTypeFormLoader =
@@ -22,4 +22,5 @@ export type SegmentTypeFormLoader =
 export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceSegment: {
   },
+  defaultLiftimeUnit: 'days'
 };
