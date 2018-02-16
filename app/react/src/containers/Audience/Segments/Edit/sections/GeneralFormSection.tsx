@@ -61,7 +61,7 @@ export interface AudienceSegmentFormProps extends Omit<ConfigProps<AudienceSegme
   datamartToken: string,
   segmentType: SegmentTypeFormLoader;
   feedType?: FeedType;
-  segmentCreation: Boolean
+  segmentCreation: boolean
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &

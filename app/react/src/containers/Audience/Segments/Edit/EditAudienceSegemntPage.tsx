@@ -23,7 +23,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../../Notific
 interface State {
   audienceSegmentFormData: AudienceSegmentFormData;
   segmentType?: string;
-  segmentCreation: Boolean
+  segmentCreation: boolean
 }
 
 type Props = InjectedIntlProps &
