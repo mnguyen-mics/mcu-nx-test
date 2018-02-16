@@ -216,7 +216,7 @@ class AutomationsListTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`}
+            to={`/v2/o/${organisationId}/automations/${record.id}/edit`}
           >{text}
           </Link>
         ),

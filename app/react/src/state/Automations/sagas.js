@@ -6,7 +6,7 @@ import {
   fetchAutomations,
 } from './actions';
 
-import ScenarioService from '../../services/ScenarioService';
+import ScenarioService from '../../services/ScenarioService.ts';
 
 import { getPaginatedApiParam } from '../../utils/ApiHelper.ts';
 
