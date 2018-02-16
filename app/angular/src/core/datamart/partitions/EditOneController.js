@@ -19,7 +19,8 @@ define(['./module'], function (module) {
 
       if (!partitionId) {
         $scope.audiencePartition = {
-          type : type          
+          type: "AUDIENCE_PARTITION",
+          audience_partition_type : type
         };
 
       } else {
@@ -39,7 +40,7 @@ define(['./module'], function (module) {
           return updatedPartition.customPUT('{}', 'publish');
         }).then(function success() {
           WaitingService.hideWaitingModal();
-          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + $scope.audiencePartition.type + "/" + $scope.audiencePartition.id + "/report");
+          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + $scope.audiencePartition.audience_partition_type + "/" + $scope.audiencePartition.id + "/report");
         }, function failure(reason) {
           WaitingService.hideWaitingModal();
           ErrorService.showErrorModal({
@@ -53,7 +54,7 @@ define(['./module'], function (module) {
         if (isCreationMode){
           $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions");        
         } else {
-          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + $scope.audiencePartition.type + "/" + $scope.audiencePartition.id + "/report");
+          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + $scope.audiencePartition.audience_partition_type + "/" + $scope.audiencePartition.id + "/report");
         }
       };
 
@@ -61,7 +62,7 @@ define(['./module'], function (module) {
         WaitingService.showWaitingModal();
         saveOrUpdate($scope.audiencePartition).then(function success(updatedPartition) {
             WaitingService.hideWaitingModal();                        
-            $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + updatedPartition.type + "/" + updatedPartition.id + "/report");
+            $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + updatedPartition.audience_partition_type + "/" + updatedPartition.id + "/report");
         }, function failure(reason) {
             WaitingService.hideWaitingModal();
             ErrorService.showErrorModal({
