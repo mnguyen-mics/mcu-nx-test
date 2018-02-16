@@ -9,7 +9,6 @@ import messages from '../../../messages';
 import LocationSelectionRenderer from './LocationSelectionRenderer';
 import SelectGeoname from './SelectGeoname';
 import { LocationFieldModel } from '../../domain';
-import { DrawableContentProps } from '../../../../../../../components/Drawer/index';
 import ObjectRenderer from '../../../../../../ObjectRenderer/ObjectRenderer';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
@@ -17,8 +16,7 @@ import GeonameService, { Geoname } from '../../../../../../../services/GeonameSe
 const confirm = Modal.confirm;
 
 export interface LocationTargetingFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+  extends ReduxFormChangeProps {}
 
 interface State {
   locationTargetingDisplayed: boolean;
@@ -74,7 +72,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
 
   addLocationField = (locationField: LocationFieldModel) => {
     const { fields, formChange, intl: { formatMessage } } = this.props;
-    
+
     const allFields = fields.getAll();
 
     let isUnderneath = false;
@@ -166,10 +164,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
           const newFields = allFields.filter(
             field => !keysToRemove.includes(field.key),
           );
-          formChange(
-            (fields as any).name,
-            newFields.concat([locationField]),
-          );
+          formChange((fields as any).name, newFields.concat([locationField]));
         },
       });
     } else {

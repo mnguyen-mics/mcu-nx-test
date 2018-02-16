@@ -5,10 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../../components/Drawer/index';
-import * as NotificationActions from '../../../../../state/Notifications/actions';
+import { injectDrawer } from '../../../../../components/Drawer/index';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import {
   AdGroupFormData,
@@ -21,6 +18,10 @@ import AdGroupFormService from './AdGroupFormService';
 import messages from '../messages';
 import AdGroupForm from './AdGroupForm';
 import Loading from '../../../../../components/Loading';
+import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 interface State {
   campaign?: DisplayCampaignResource;
@@ -28,13 +29,9 @@ interface State {
   loading: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type Props = InjectedIntlProps &
-  MapStateProps &
-  DrawableContentProps &
+  InjectDrawerProps &
+  InjectedNotificationProps &
   RouteComponentProps<EditAdGroupRouteMatchParam>;
 
 class EditAdGroupPage extends React.Component<Props, State> {
@@ -130,7 +127,6 @@ class EditAdGroupPage extends React.Component<Props, State> {
   onClose = () => {
     const {
       history,
-      location,
       match: { params: { adGroupId, campaignId, organisationId } },
     } = this.props;
 
@@ -138,17 +134,13 @@ class EditAdGroupPage extends React.Component<Props, State> {
       ? `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`
       : `/v2/o/${organisationId}/campaigns/display/${campaignId}`;
 
-    return location.state && location.state.from
-      ? history.push(location.state.from)
-      : history.push(defaultRedirectUrl);
+    return history.push(defaultRedirectUrl);
   };
 
   render() {
     const {
       match: { params: { organisationId, campaignId, adGroupId } },
       intl: { formatMessage },
-      openNextDrawer,
-      closeNextDrawer,
     } = this.props;
 
     const { loading, campaign, adGroupFormData } = this.state;
@@ -187,19 +179,20 @@ class EditAdGroupPage extends React.Component<Props, State> {
         onSubmit={this.save}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
-        openNextDrawer={openNextDrawer}
-        closeNextDrawer={closeNextDrawer}
         onSubmitFail={this.onSubmitFail}
       />
     );
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  hasFeature: FeatureSelectors.hasFeature(state),
+});
+
 export default compose(
   withRouter,
   injectIntl,
-  withDrawer,
-  connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) }), {
-    notifyError: NotificationActions.notifyError,
-  }),
+  injectDrawer,
+  injectNotifications,
+  connect(mapStateToProps, undefined),
 )(EditAdGroupPage);

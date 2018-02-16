@@ -60,7 +60,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralRow1Label),
+              label: formatMessage(messages.labelAdGroupName),
               required: true,
             }}
             inputProps={{

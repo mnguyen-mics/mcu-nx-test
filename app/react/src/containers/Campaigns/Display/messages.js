@@ -56,5 +56,17 @@ export default defineMessages({
   filterByLabel: {
     id: 'display.filterByLabel',
     defaultMessage: 'Filter by Label'
-  }
+  },
+  savingInProgress: {
+    id: 'edit.campaigns.loading.message',
+    defaultMessage: 'Saving in progress',
+  },
+  campaignsArchived: {
+    id: 'archive.campaigns.success.msg',
+    defaultMessage: 'Campaigns successfully archived',
+  },
+  campaignsSaved: {
+    id: 'save.campaigns.success.msg',
+    defaultMessage: 'Campaigns successfully saved',
+  },
 });

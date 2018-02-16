@@ -6,14 +6,18 @@ import { UploadProps } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
 import { isEmpty } from 'lodash';
-import FormDataFileDrawer, { FormDataFileDrawerProps } from './FormDataFileDrawer';
-import { DrawableContentProps } from '../../../../components/Drawer';
+import { compose } from 'recompose';
+import FormDataFileDrawer, {
+  FormDataFileDrawerProps,
+} from './FormDataFileDrawer';
 import DataFileService from '../../../../services/DataFileService';
 
-import {McsIcon, ButtonStyleless} from '../../../../components';
+import { McsIcon, ButtonStyleless } from '../../../../components';
 import { FormFieldWrapper } from '../../../../components/Form';
 
 import messages from '../../messages';
+import { injectDrawer } from '../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 
 const defaultTooltipPlacement: TooltipPlacement = 'right';
 
@@ -37,10 +41,9 @@ export interface FormDataFileState {
   basePath?: string;
 }
 
-type JoinedProps = FormDataFileProps & WrappedFieldProps & DrawableContentProps;
+type JoinedProps = FormDataFileProps & WrappedFieldProps & InjectDrawerProps;
 
 class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
-
   static defaultprops = {
     formItemProps: {},
     inputProps: {},
@@ -61,9 +64,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   }
 
   componentDidMount() {
-    const {
-      input,
-    } = this.props;
+    const { input } = this.props;
     if (input.value.uri) {
       // fetch initial data
       this.fetchDataFileData(input.value.uri);
@@ -74,21 +75,26 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   }
 
   fetchDataFileData = (uri: string) => {
-    const {
-      input,
-    } = this.props;
+    const { input } = this.props;
 
     DataFileService.getDatafileData(uri).then((res: any) => {
-     this.onFileUpdate(res)
-        .then((fileContent: string) => {
-          const fileName = this.parseFileName(uri);
-          const basePath = this.parseFileName(uri, true);
-          this.setState({ canEdit: true, fileContent: fileContent, fileName: fileName, basePath: basePath });
-          input.onChange({ uri: uri, fileContent: fileContent, fileName: fileName });
+      this.onFileUpdate(res).then((fileContent: string) => {
+        const fileName = this.parseFileName(uri);
+        const basePath = this.parseFileName(uri, true);
+        this.setState({
+          canEdit: true,
+          fileContent: fileContent,
+          fileName: fileName,
+          basePath: basePath,
         });
-
+        input.onChange({
+          uri: uri,
+          fileContent: fileContent,
+          fileName: fileName,
+        });
+      });
     });
-  }
+  };
 
   parseFileName = (uri: string, basePath?: boolean) => {
     const parsedUri = uri.split('/');
@@ -97,24 +103,22 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
       return parsedUri.join('/');
     }
     return parsedUri[parsedUri.length - 1];
-  }
+  };
 
   changeCanRemoveFile = (canRemoveFile: boolean) => {
     this.setState({ canRemoveFile: canRemoveFile });
-  }
+  };
 
   changeFileName = (fileName: string) => {
     this.setState({ fileName: fileName });
-  }
+  };
 
   onRemoveFile = () => {
-    const {
-      input,
-    } = this.props;
+    const { input } = this.props;
     this.changeFileName('');
     input.onChange({});
     this.setState({ canEdit: false });
-  }
+  };
 
   onFileUpdate = (file: any) => {
     return new Promise((resolve, reject) => {
@@ -126,36 +130,39 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
 
       fileReader.readAsText(file, 'UTF-8');
     });
-  }
+  };
 
   onDrawerClose = (content: string, fileName: string) => {
-    const {
-      input,
-    } = this.props;
+    const { input } = this.props;
     if (fileName && content) {
-      this.setState({ fileContent: content, fileName: fileName, canEdit: true });
+      this.setState({
+        fileContent: content,
+        fileName: fileName,
+        canEdit: true,
+      });
       if (this.state.basePath) {
-        input.onChange({ fileContent: content, fileName: fileName, uri: `${this.state.basePath}/${fileName}` });
+        input.onChange({
+          fileContent: content,
+          fileName: fileName,
+          uri: `${this.state.basePath}/${fileName}`,
+        });
       } else {
         input.onChange({ fileContent: content, fileName: fileName });
       }
-
     }
     this.props.closeNextDrawer();
-  }
+  };
 
   render() {
-    const {
-      meta,
-      helpToolTipProps,
-      input,
-    } = this.props;
+    const { meta, helpToolTipProps, input } = this.props;
 
-    const {
-      canEdit,
-    } = this.state;
+    const { canEdit } = this.state;
 
-    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    let validateStatus = 'success' as
+      | 'success'
+      | 'warning'
+      | 'error'
+      | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -183,28 +190,31 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           isModal: true,
         };
 
-        this.props.openNextDrawer<FormDataFileDrawerProps>(FormDataFileDrawer, options);
+        this.props.openNextDrawer<FormDataFileDrawerProps>(
+          FormDataFileDrawer,
+          options,
+        );
       },
     };
-    
+
     const remove = () => {
       this.setState({ fileContent: '', fileName: '', canEdit: false });
       input.onChange({});
-    }
+    };
 
     const removeProps = {
       onClick: () => {
         // remove data from store
         Modal.confirm({
           title: 'Do you want to delete this datafile',
-          content: 'If you delete an unsaved file you will loose all your work, are you sure you want to proceed?',
+          content:
+            'If you delete an unsaved file you will loose all your work, are you sure you want to proceed?',
           okText: 'Yes',
           cancelText: 'No',
           onOk() {
-            remove()
+            remove();
           },
-        })
-        
+        });
       },
     };
 
@@ -228,44 +238,45 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
 
     return (
       <FormFieldWrapper
-        help={this.props.meta.touched && (this.props.meta.warning || this.props.meta.error)}
+        help={
+          this.props.meta.touched &&
+          (this.props.meta.warning || this.props.meta.error)
+        }
         helpToolTipProps={this.props.helpToolTipProps}
         validateStatus={validateStatus}
         {...this.props.formItemProps}
       >
-          <Col span={22} >
-           {!canEdit ? (<span>
+        <Col span={22}>
+          {!canEdit ? (
+            <span>
               <Button onClick={click}>
                 <FormattedMessage {...messages.datafileFileSelect} />
               </Button>
-            </span>) : null}
+            </span>
+          ) : null}
 
-            {canEdit ?
+          {canEdit ? (
             <span>
               <span className="m-r-20">{this.state.fileName}</span>
-              <ButtonStyleless
-                {...editProps}
-              >
+              <ButtonStyleless {...editProps}>
                 <McsIcon type="pen" />
               </ButtonStyleless>
-              <ButtonStyleless
-                {...removeProps}
-              >
+              <ButtonStyleless {...removeProps}>
                 <McsIcon type="close" />
               </ButtonStyleless>
-            </span> : null}
-
+            </span>
+          ) : null}
+        </Col>
+        {displayHelpToolTip && (
+          <Col span={2} className="field-tooltip">
+            <Tooltip {...mergedTooltipProps}>
+              <McsIcon type="info" />
+            </Tooltip>
           </Col>
-          {displayHelpToolTip &&
-            <Col span={2} className="field-tooltip">
-              <Tooltip {...mergedTooltipProps}>
-                <McsIcon type="info" />
-              </Tooltip>
-            </Col>
-          }
+        )}
       </FormFieldWrapper>
     );
   }
 }
 
-export default FormDataFile;
+export default compose(injectDrawer)(FormDataFile);

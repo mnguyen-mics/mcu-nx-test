@@ -41,8 +41,10 @@ type Props = PlacementListSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class PlacementListSelector extends React.Component<Props> {
-
-  savePlacementLists = (placementIds: string[], placements: PlacementListResource[]) => {
+  savePlacementLists = (
+    placementIds: string[],
+    placements: PlacementListResource[],
+  ) => {
     this.props.save(placements);
   };
 
@@ -61,7 +63,11 @@ class PlacementListSelector extends React.Component<Props> {
   };
 
   render() {
-    const { selectedPlacementListIds, close, intl: { formatMessage } } = this.props;
+    const {
+      selectedPlacementListIds,
+      close,
+      intl: { formatMessage },
+    } = this.props;
 
     const columns: Array<DataColumnDefinition<PlacementListResource>> = [
       {
@@ -71,7 +77,8 @@ class PlacementListSelector extends React.Component<Props> {
       },
     ];
 
-    const fetchPlacementList = (id: string) => PlacementListsService.getPlacementList(id);
+    const fetchPlacementList = (id: string) =>
+      PlacementListsService.getPlacementList(id);
 
     return (
       <PlacementListTableSelector
@@ -91,6 +98,7 @@ class PlacementListSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, PlacementListSelectorProps>(withRouter, injectIntl)(
-  PlacementListSelector,
-);
+export default compose<Props, PlacementListSelectorProps>(
+  withRouter,
+  injectIntl,
+)(PlacementListSelector);

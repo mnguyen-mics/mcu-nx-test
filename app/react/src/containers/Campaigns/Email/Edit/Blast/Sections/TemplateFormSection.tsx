@@ -5,7 +5,6 @@ import cuid from 'cuid';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { DrawableContentProps } from '../../../../../../components/Drawer';
 import { FormSection } from '../../../../../../components/Form';
 import CreativeCardSelector, {
   CreativeCardSelectorProps,
@@ -18,14 +17,15 @@ import { CreativeResourceShape } from '../../../../../../models/creative/Creativ
 import messages from '../../messages';
 import { TemplateFieldModel } from '../../domain';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import { injectDrawer } from '../../../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface TemplateFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface TemplateFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<TemplateFieldModel> &
   TemplateFormSectionProps &
+  InjectDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class TemplateFormSection extends React.Component<Props> {
@@ -124,6 +124,8 @@ class TemplateFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, TemplateFormSectionProps>(injectIntl, withRouter)(
-  TemplateFormSection,
-);
+export default compose<Props, TemplateFormSectionProps>(
+  injectIntl,
+  withRouter,
+  injectDrawer,
+)(TemplateFormSection);

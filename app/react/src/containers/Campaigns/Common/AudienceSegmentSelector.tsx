@@ -124,7 +124,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
 
   fetchSegment = (segmentId: string) => {
     return AudienceSegmentService.getSegment(segmentId);
-  }
+  };
 
   render() {
     const { selectedSegmentIds, close, intl: { formatMessage } } = this.props;

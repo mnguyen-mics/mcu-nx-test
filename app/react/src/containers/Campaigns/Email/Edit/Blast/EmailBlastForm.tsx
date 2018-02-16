@@ -21,7 +21,6 @@ import { SegmentFormSectionProps } from './Sections/SegmentFormSection';
 import { TemplateFormSectionProps } from './Sections/TemplateFormSection';
 import { EmailBlastFormData } from '../domain';
 import messages from '../messages';
-import { DrawableContentProps } from '../../../../../components/Drawer';
 import { Path } from '../../../../../components/ActionBar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -44,8 +43,7 @@ const BlastSegmentSectionFieldArray = FieldArray as new () => GenericFieldArray<
 >;
 
 export interface EmailBlastFormProps
-  extends DrawableContentProps,
-    Omit<ConfigProps<EmailBlastFormData>, 'form' > {
+  extends Omit<ConfigProps<EmailBlastFormData>, 'form'> {
   save: (formData: EmailBlastFormData) => void;
   close: () => void;
   breadCrumbPaths: Path[];
@@ -60,8 +58,6 @@ class EmailBlastForm extends React.Component<Props> {
   render() {
     const {
       breadCrumbPaths,
-      openNextDrawer,
-      closeNextDrawer,
       handleSubmit,
       save,
       close,
@@ -125,8 +121,6 @@ class EmailBlastForm extends React.Component<Props> {
                 <BlastTemplateSectionFieldArray
                   name="templateFields"
                   component={TemplateFormSection}
-                  openNextDrawer={openNextDrawer}
-                  closeNextDrawer={closeNextDrawer}
                   formChange={change}
                   rerenderOnEveryChange={true}
                 />
@@ -136,8 +130,6 @@ class EmailBlastForm extends React.Component<Props> {
                 <BlastSegmentSectionFieldArray
                   name="segmentFields"
                   component={SegmentFormSection}
-                  openNextDrawer={openNextDrawer}
-                  closeNextDrawer={closeNextDrawer}
                   formName={form}
                   formChange={change}
                   rerenderOnEveryChange={true}

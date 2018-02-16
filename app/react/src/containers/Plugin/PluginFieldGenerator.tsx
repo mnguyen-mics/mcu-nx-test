@@ -5,11 +5,10 @@ import { compose } from 'recompose';
 import { Form } from '../../components/index';
 import { FormAdLayout, FormStyleSheet, FormDataFile } from './ConnectedFields';
 import { ValidatorProps } from '../../components/Form/withValidators';
-import { DrawableContentProps } from '../../components/Drawer';
-import {
-  StringPropertyResource,
-} from '../../models/plugin';
+import { StringPropertyResource } from '../../models/plugin';
 import { PluginProperty } from '../../models/Plugins';
+import { injectDrawer } from '../../components/Drawer/index';
+import { InjectDrawerProps } from '../../components/Drawer/injectDrawer';
 
 const { FormInput, FormBoolean, FormUpload, withValidators } = Form;
 
@@ -17,7 +16,7 @@ interface AcceptedFilePropertyResource extends StringPropertyResource {
   acceptedFile: string;
 }
 
-interface PluginFieldGeneratorProps extends DrawableContentProps {
+interface PluginFieldGeneratorProps {
   definition: PluginProperty;
   disabled?: boolean;
   organisationId: string;
@@ -25,7 +24,9 @@ interface PluginFieldGeneratorProps extends DrawableContentProps {
   pluginVersionId: string;
 }
 
-type JoinedProps = PluginFieldGeneratorProps & ValidatorProps;
+type JoinedProps = PluginFieldGeneratorProps &
+  ValidatorProps &
+  InjectDrawerProps;
 
 interface AdditionalInputProps {
   buttonText?: string;
@@ -48,13 +49,6 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
 
   renderFieldBasedOnConfig = (
     component: React.ComponentType<any> | 'input' | 'select' | 'textarea',
-    // React.ComponentType<FormInputProps>
-    // | React.ComponentType<FormUploadProps>
-    // | React.ComponentType<FormTextArea>
-    // | React.ComponentType<FormStyleSheetProps>
-    // | React.ComponentType< FormAdLayoutProps>
-    // | React.ComponentType<FormBooleanProps>
-    // | React.ComponentType<FormDatafileProps>,
     name: string,
     fieldDefinition: PluginProperty,
     validation: Validator[] = [],
@@ -231,6 +225,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, PluginFieldGeneratorProps>(withValidators)(
-  PluginFieldGenerator,
-);
+export default compose<JoinedProps, PluginFieldGeneratorProps>(
+  withValidators,
+  injectDrawer,
+)(PluginFieldGenerator);

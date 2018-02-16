@@ -18,7 +18,8 @@ const messages = defineMessages({
   },
   modalBody2: {
     id: 'email.campaign.sendTest.modal.body.2',
-    defaultMessage: 'Your email will be sent from support@mediarithmics.com with the following subject Mediarithmics - Test',
+    defaultMessage:
+      'Your email will be sent from support@mediarithmics.com with the following subject Mediarithmics - Test',
   },
   inputPlaceholder: {
     id: 'email.campaign.sendTest.modal.input.placeholder',
@@ -43,9 +44,7 @@ export interface EmailTestModalProps {
   organisationId: string;
   selectedtemplateId: string;
   handleCancel: () => void;
-  notifyError: (e: any) => void;
-  notifySuccess: (e: ArgsProps) => void;
- }
+}
 
 interface EmailTestModalState {
   inputValue: string;
@@ -53,9 +52,15 @@ interface EmailTestModalState {
   error: boolean;
 }
 
-class EmailTestModal extends React.Component<EmailTestModalProps & InjectedIntlProps, EmailTestModalState> {
+interface MapDispatchToProps {
+  notifyError: (e: any) => void;
+  notifySuccess: (e: ArgsProps) => void;
+}
 
-  constructor(props: EmailTestModalProps & InjectedIntlProps) {
+type JoinedProps = EmailTestModalProps & MapDispatchToProps & InjectedIntlProps;
+
+class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
+  constructor(props: JoinedProps) {
     super(props);
     this.state = {
       inputValue: '',
@@ -65,37 +70,37 @@ class EmailTestModal extends React.Component<EmailTestModalProps & InjectedIntlP
   }
 
   handleOk = () => {
-    const {
-      intl: {
-        formatMessage,
-      },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
     if (this.state.inputValue && this.state.inputValue.length) {
       return this.setState({ isLoading: true }, () => {
-        CreativeService.sendTestBlast(this.props.selectedtemplateId, this.props.organisationId, this.state.inputValue).then(() => {
-          return this.setState({ isLoading: false }, () => {
-            this.props.notifySuccess({
-              message: formatMessage(messages.notifSuccessTitle),
-              description: formatMessage(messages.notifSuccessContent),
+        CreativeService.sendTestBlast(
+          this.props.selectedtemplateId,
+          this.props.organisationId,
+          this.state.inputValue,
+        )
+          .then(() => {
+            return this.setState({ isLoading: false }, () => {
+              this.props.notifySuccess({
+                message: formatMessage(messages.notifSuccessTitle),
+                description: formatMessage(messages.notifSuccessContent),
+              });
+              this.props.handleCancel();
             });
-            this.props.handleCancel();
+          })
+          .catch((e: any) => {
+            this.props.notifyError(e);
+            this.setState({ isLoading: false });
           });
-        }).catch((e: any) => {
-          this.props.notifyError(e);
-          this.setState({ isLoading: false });
-        });
       });
     }
     this.setState({ error: true });
-  }
+  };
 
   render() {
-    const {
-      intl: {
-        formatMessage,
-      },
-    } = this.props;
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => { this.setState({ inputValue: e.target.value }); };
+    const { intl: { formatMessage } } = this.props;
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      this.setState({ inputValue: e.target.value });
+    };
 
     return (
       <Modal
@@ -107,17 +112,25 @@ class EmailTestModal extends React.Component<EmailTestModalProps & InjectedIntlP
       >
         <p>{formatMessage(messages.modalBody1)}</p>
         <p>{formatMessage(messages.modalBody2)}</p>
-        <br/>
-        {this.state.error ? <Alert message={formatMessage(messages.inputError)} type="error" /> : null}
+        <br />
+        {this.state.error ? (
+          <Alert message={formatMessage(messages.inputError)} type="error" />
+        ) : null}
 
-        <Input onChange={onChange} defaultValue="" placeholder={formatMessage(messages.inputPlaceholder)} />
-
+        <Input
+          onChange={onChange}
+          defaultValue=""
+          placeholder={formatMessage(messages.inputPlaceholder)}
+        />
       </Modal>
     );
   }
 }
 
-export default compose(
+export default compose<JoinedProps, EmailTestModalProps>(
   injectIntl,
-  connect(undefined, { notifyError: actions.notifyError, notifySuccess: actions.notifySuccess }),
+  connect(undefined, {
+    notifyError: actions.notifyError,
+    notifySuccess: actions.notifySuccess,
+  }),
 )(EmailTestModal);

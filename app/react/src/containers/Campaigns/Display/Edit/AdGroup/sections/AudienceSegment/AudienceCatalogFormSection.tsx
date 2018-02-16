@@ -7,7 +7,6 @@ import { compose } from 'recompose';
 import provideAudienceCatalog, {
   InjectedAudienceCatalogProps,
 } from './provideAudienceCatalog';
-import { DrawableContentProps } from '../../../../../../../components/Drawer/index';
 import { SegmentFieldModel } from '../../domain';
 import FormSection from '../../../../../../../components/Form/FormSection';
 import messages from '../../../messages';
@@ -24,9 +23,7 @@ import { TreeData } from '../../../../../../../components/SearchAndTreeSelect';
 import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 
-export interface AudienceCatalogFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface AudienceCatalogFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = WrappedFieldArrayProps<SegmentFieldModel> &
   InjectedIntlProps &

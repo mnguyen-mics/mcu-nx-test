@@ -10,7 +10,6 @@ import {
   PluginProperty,
   PluginType,
 } from '../../../models/Plugins';
-import { DrawableContentProps } from '../../../components/Drawer';
 import PluginService from '../../../services/PluginService';
 import * as actions from '../../../state/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
@@ -29,7 +28,7 @@ interface PluginContentInnerProps {
   notifyError: (err: any) => void;
 }
 
-interface PluginContentOuterProps extends DrawableContentProps {
+interface PluginContentOuterProps {
   pluginType: PluginType;
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
@@ -239,15 +238,10 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}
-          openNextDrawer={this.props.openNextDrawer}
-          closeNextDrawer={this.props.closeNextDrawer}
         />
       </EditContentLayout>
     ) : (
-      <EditContentLayout
-        paths={breadcrumbPaths}
-        {...actionbarProps}
-      >
+      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
         <PluginEditSelector
           onSelect={this.onSelectPlugin}
           availablePlugins={this.state.availablePlugins}

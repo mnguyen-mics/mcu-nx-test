@@ -3,26 +3,17 @@ import { call, fork, put, all } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
-import {
-    fetchCreativeDisplay,
-} from './actions';
+import { fetchCreativeDisplay } from './actions';
 
 import CreativeService from '../../../services/CreativeService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
-import {
-    CREATIVES_DISPLAY_FETCH,
-} from '../../action-types';
+import { CREATIVES_DISPLAY_FETCH } from '../../action-types';
 
 function* loadCreativeDisplay({ payload }) {
   try {
-
-    const {
-      organisationId,
-      filter,
-      isInitialRender,
-    } = payload;
+    const { organisationId, filter, isInitialRender } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
@@ -39,7 +30,11 @@ function* loadCreativeDisplay({ payload }) {
 
     if (isInitialRender) {
       allCalls = {
-        initialFetch: call(CreativeService.getDisplayAds, organisationId, initialOptions),
+        initialFetch: call(
+          CreativeService.getDisplayAds,
+          organisationId,
+          initialOptions,
+        ),
         response: call(CreativeService.getDisplayAds, organisationId, options),
       };
     } else {
@@ -65,6 +60,4 @@ function* watchfetchCreativeDisplay() {
   yield* takeLatest(CREATIVES_DISPLAY_FETCH.REQUEST, loadCreativeDisplay);
 }
 
-export const creativeDisplaySagas = [
-  fork(watchfetchCreativeDisplay),
-];
+export const creativeDisplaySagas = [fork(watchfetchCreativeDisplay)];

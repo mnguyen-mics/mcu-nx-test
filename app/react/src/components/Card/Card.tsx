@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row, Col, Spin } from 'antd';
 
-interface CardProps {
+export interface CardProps {
   buttons?: React.ReactNode;
   title?: React.ReactNode;
   isLoading?: boolean;

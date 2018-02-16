@@ -4,8 +4,9 @@ import { Spin } from 'antd';
 import cuid from 'cuid';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { compose } from 'recompose';
+
 import { SegmentFieldModel, EditAdGroupRouteMatchParam } from '../../domain';
-import { DrawableContentProps } from '../../../../../../../components/Drawer';
 import {
   FormSection,
   FormSwitchField,
@@ -28,10 +29,11 @@ import {
 import messages from '../../../messages';
 import McsMoment from '../../../../../../../utils/McsMoment';
 import FormSwitch from '../../../../../../../components/Form/FormSwitch';
-import { compose } from 'recompose';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
+import { injectDrawer } from '../../../../../../../components/Drawer/';
+import { InjectDrawerProps } from '../../../../../../../components/Drawer/injectDrawer';
 
-export interface AudienceSegmentFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {}
+export interface AudienceSegmentFormSectionProps extends ReduxFormChangeProps {}
 
 interface State {
   reportBySegmentId: Index<any>;
@@ -41,7 +43,8 @@ interface State {
 type Props = WrappedFieldArrayProps<SegmentFieldModel> &
   InjectedIntlProps &
   AudienceSegmentFormSectionProps &
-  RouteComponentProps<EditAdGroupRouteMatchParam>;
+  RouteComponentProps<EditAdGroupRouteMatchParam> &
+  InjectDrawerProps;
 
 class AudienceSegmentFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -73,7 +76,7 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
   }
 
   updateSegments = (segments: AudienceSegmentResource[]) => {
-    const { fields, formChange, closeNextDrawer } = this.props;
+    const { fields, formChange } = this.props;
     const segmentIds = segments.map(s => s.id);
     const fieldSegmentIds = fields
       .getAll()
@@ -94,11 +97,11 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
       }));
 
     formChange((fields as any).name, keptSegments.concat(addedSegments));
-    closeNextDrawer();
+    this.props.closeNextDrawer();
   };
 
   openAudienceSegmentSelector = () => {
-    const { openNextDrawer, closeNextDrawer, fields } = this.props;
+    const { fields } = this.props;
 
     const selectedSegmentIds = fields
       .getAll()
@@ -106,7 +109,7 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
 
     const audienceSegmentSelectorProps = {
       selectedSegmentIds,
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
       save: this.updateSegments,
     };
 
@@ -114,7 +117,7 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
       additionalProps: audienceSegmentSelectorProps,
     };
 
-    openNextDrawer<AudienceSegmentSelectorProps>(
+    this.props.openNextDrawer<AudienceSegmentSelectorProps>(
       AudienceSegmentSelector,
       options,
     );
@@ -221,4 +224,5 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
 export default compose<Props, AudienceSegmentFormSectionProps>(
   withRouter,
   injectIntl,
+  injectDrawer,
 )(AudienceSegmentFormSection);

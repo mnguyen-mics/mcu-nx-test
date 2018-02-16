@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { DrawableContentProps } from '../../../../../components/Drawer';
+import { injectDrawer } from '../../../../../components/Drawer';
 import { FormSection } from '../../../../../components/Form';
 import {
   RelatedRecords,
@@ -16,19 +16,19 @@ import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import AdGroupForm, { AdGroupFormProps } from '../AdGroup/AdGroupForm';
 import { AdGroupFieldModel } from '../domain';
 import { AdGroupFormData, INITIAL_AD_GROUP_FORM_DATA } from '../AdGroup/domain';
+import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
-export interface AdGroupFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface AdGroupFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<AdGroupFieldModel> &
   AdGroupFormSectionProps &
+  InjectDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AdGroupFormSection extends React.Component<Props> {
   updateBlasts = (formData: AdGroupFormData, existingKey?: string) => {
-    const { fields, formChange, closeNextDrawer } = this.props;
+    const { fields, formChange } = this.props;
 
     const newFields: AdGroupFieldModel[] = [];
     if (existingKey) {
@@ -51,15 +51,11 @@ class AdGroupFormSection extends React.Component<Props> {
     }
 
     formChange((fields as any).name, newFields);
-    closeNextDrawer();
+    this.props.closeNextDrawer();
   };
 
   openAdGroupForm = (field?: AdGroupFieldModel) => {
-    const {
-      intl: { formatMessage },
-      openNextDrawer,
-      closeNextDrawer,
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
     const breadCrumbPaths = [
       {
@@ -77,9 +73,7 @@ class AdGroupFormSection extends React.Component<Props> {
 
     const props: AdGroupFormProps = {
       breadCrumbPaths,
-      openNextDrawer,
-      closeNextDrawer,
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
       onSubmit: handleSave,
     };
 
@@ -89,7 +83,7 @@ class AdGroupFormSection extends React.Component<Props> {
       additionalProps: props,
     };
 
-    openNextDrawer<AdGroupFormProps>(AdGroupForm, options);
+    this.props.openNextDrawer<AdGroupFormProps>(AdGroupForm, options);
   };
 
   getAdGroupRecords = () => {
@@ -142,6 +136,8 @@ class AdGroupFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AdGroupFormSectionProps>(injectIntl, withRouter)(
-  AdGroupFormSection,
-);
+export default compose<Props, AdGroupFormSectionProps>(
+  injectIntl,
+  withRouter,
+  injectDrawer,
+)(AdGroupFormSection);

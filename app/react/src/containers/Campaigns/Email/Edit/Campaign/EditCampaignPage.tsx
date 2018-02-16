@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -12,24 +11,18 @@ import {
 } from '../domain';
 import messages from '../messages';
 import EmailCampaignFormService from '../EmailCampaignFormService';
-import * as NotificationActions from '../../../../../state/Notifications/actions';
 import { Loading } from '../../../../../components';
-import withDrawer, {
-  DrawableContentProps,
-} from '../../../../../components/Drawer';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 interface State {
   campaignFormData: EmailCampaignFormData;
   loading: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type Props = InjectedIntlProps &
-  MapStateProps &
-  DrawableContentProps &
+  InjectedNotificationProps &
   RouteComponentProps<EditEmailCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
@@ -124,8 +117,6 @@ class EditCampaignPage extends React.Component<Props, State> {
     const {
       match: { params: { organisationId } },
       intl: { formatMessage },
-      openNextDrawer,
-      closeNextDrawer,
     } = this.props;
 
     const { campaignFormData, loading } = this.state;
@@ -157,8 +148,6 @@ class EditCampaignPage extends React.Component<Props, State> {
         save={this.save}
         close={this.redirect}
         breadCrumbPaths={breadcrumbPaths}
-        openNextDrawer={openNextDrawer}
-        closeNextDrawer={closeNextDrawer}
         onSubmitFail={this.onSubmitFail}
       />
     );
@@ -168,6 +157,5 @@ class EditCampaignPage extends React.Component<Props, State> {
 export default compose(
   injectIntl,
   withRouter,
-  connect(undefined, { notifyError: NotificationActions.notifyError }),
-  withDrawer,
+  injectNotifications,
 )(EditCampaignPage);

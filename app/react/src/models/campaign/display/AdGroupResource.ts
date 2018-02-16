@@ -27,6 +27,7 @@ import {
   total_budget: number;
   max_budget_per_period: number | null;
   max_budget_period: BudgetPeriod;
+  status: AdGroupStatus;
  }
 
 export interface AdGroupResource extends AdGroupCreateRequest {

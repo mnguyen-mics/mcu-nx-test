@@ -1,4 +1,4 @@
-export type AdGroupStatus = 'ACTIVE' | 'PAUSED';
+export type AdGroupStatus = 'ACTIVE' | 'PAUSED' | 'PENDING';
 
 export type AdSlotVisibilityFilter = 'ABOVE_THE_FOLD' | 'BELOW_THE_FOLD' | 'ANY_POSITION';
 
@@ -6,7 +6,7 @@ export type BidOptimizationObjectiveType = 'CPC' | 'CPA' | 'CTR' | 'CPV';
 
 export type BudgetPeriod = 'DAY' | 'WEEK' | 'MONTH';
 
-export type CampaignStatus = 'PENDING' | 'ACTIVE' | 'PAUSED';
+export type CampaignStatus = 'PENDING' | 'ACTIVE' | 'PAUSED' | 'ARCHIVED';
 
 export type DisplayCampaignSubType = 'PROGRAMMATIC' | 'AD_SERVING' | 'TRACKING';
 

@@ -8,7 +8,7 @@ import { Button } from 'antd';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages.ts';
-import AdGroup from './AdGroup';
+import AdGroup from './AdGroup.tsx';
 
 import ReportService from '../../../../../services/ReportService.ts';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';

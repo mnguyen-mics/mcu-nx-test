@@ -22,6 +22,7 @@ import LabelsReducers from '../state/Labels/reducer';
 import MenuReducers from '../state/Menu/reducer';
 
 import creativesReducer from '../state/Creatives/reducer';
+import { drawerReducer } from '../components/Drawer/DrawerStore.ts';
 
 const allReducers = Object.assign({},
   FormReducer,
@@ -43,6 +44,7 @@ const allReducers = Object.assign({},
   AudiencePartitionsReducers,
   MenuReducers,
   creativesReducer,
+  drawerReducer,
 );
 
 export default combineReducers(allReducers);

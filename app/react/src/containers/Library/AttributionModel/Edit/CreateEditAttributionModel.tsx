@@ -7,7 +7,6 @@ import PluginContent from '../../../Plugin/Edit/PluginContent';
 import AttributionModelService from '../../../../services/Library/AttributionModelService';
 import * as actions from '../../../../state/Notifications/actions';
 import { AttributionModel, PluginProperty } from '../../../../models/Plugins';
-import withDrawer, { DrawableContentProps } from '../../../../components/Drawer';
 
 import messages from './messages';
 
@@ -27,17 +26,18 @@ interface CreateAttributionModelState {
   initialValues?: AttributionModelForm;
 }
 
-interface CreateAttributionModelProps extends DrawableContentProps {
+interface CreateAttributionModelProps {
   notifyError: (err?: any) => void;
 }
 
-type JoinedProps = CreateAttributionModelProps & RouteComponentProps<AttributionModelRouteParam> & InjectedIntlProps;
+type JoinedProps = CreateAttributionModelProps &
+  RouteComponentProps<AttributionModelRouteParam> &
+  InjectedIntlProps;
 
 class CreateAttributionModel extends React.Component<
   JoinedProps,
   CreateAttributionModelState
 > {
-
   constructor(props: JoinedProps) {
     super(props);
 
@@ -45,16 +45,11 @@ class CreateAttributionModel extends React.Component<
       edition: props.match.params.attributionModelId ? true : false,
       isLoading: true,
     };
-
   }
 
   componentDidMount() {
-    const {
-      edition,
-    } = this.state;
-    const {
-      match: { params: { attributionModelId } },
-    } = this.props;
+    const { edition } = this.state;
+    const { match: { params: { attributionModelId } } } = this.props;
     if (edition && attributionModelId) {
       this.fetchInitialValues(attributionModelId);
     } else {
@@ -69,44 +64,62 @@ class CreateAttributionModel extends React.Component<
       match: { params: { organisationId, attributionModelId } },
     } = this.props;
     const {
-      match: { params: { organisationId: nextOrganisationId, attributionModelId: nextAttributionModelId } },
+      match: {
+        params: {
+          organisationId: nextOrganisationId,
+          attributionModelId: nextAttributionModelId,
+        },
+      },
     } = nextProps;
 
-    if ((organisationId !== nextOrganisationId || attributionModelId !== nextAttributionModelId) && nextAttributionModelId) {
+    if (
+      (organisationId !== nextOrganisationId ||
+        attributionModelId !== nextAttributionModelId) &&
+      nextAttributionModelId
+    ) {
       this.fetchInitialValues(nextAttributionModelId);
     }
   }
 
   fetchInitialValues = (attributionModelId: string) => {
-    const fetchAttributionModel = AttributionModelService.getAttributionModel(attributionModelId).then(res => res.data);
-    const fetchAttributionModelProperties = AttributionModelService.getAttributionModelProperties(attributionModelId)
-      .then(res => res.data);
-    this.setState({
-      isLoading: true,
-    }, () => {
-      Promise.all([fetchAttributionModel, fetchAttributionModelProperties]).then(res => {
-        this.setState({
-          isLoading: false,
-          initialValues: {
-            plugin: res[0],
-            properties: res[1],
-          },
+    const fetchAttributionModel = AttributionModelService.getAttributionModel(
+      attributionModelId,
+    ).then(res => res.data);
+    const fetchAttributionModelProperties = AttributionModelService.getAttributionModelProperties(
+      attributionModelId,
+    ).then(res => res.data);
+    this.setState(
+      {
+        isLoading: true,
+      },
+      () => {
+        Promise.all([
+          fetchAttributionModel,
+          fetchAttributionModelProperties,
+        ]).then(res => {
+          this.setState({
+            isLoading: false,
+            initialValues: {
+              plugin: res[0],
+              properties: res[1],
+            },
+          });
         });
-      });
-    });
-  }
+      },
+    );
+  };
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/library/attribution_models`;
     history.push(attributionModelUrl);
-  }
+  };
 
-  saveOrCreatePluginInstance = (plugin: AttributionModel, properties: PluginProperty[]) => {
-
-    const {
-      edition,
-    } = this.state;
+  saveOrCreatePluginInstance = (
+    plugin: AttributionModel,
+    properties: PluginProperty[],
+  ) => {
+    const { edition } = this.state;
 
     const {
       match: { params: { organisationId } },
@@ -118,14 +131,21 @@ class CreateAttributionModel extends React.Component<
     if (edition) {
       return this.setState({ isLoading: true }, () => {
         AttributionModelService.updateAttributionModel(plugin.id, plugin)
-        .then(res => {
-          return this.updatePropertiesValue(properties, organisationId, plugin.id);
-        }).then(res => {
-          this.setState({ isLoading: false }, () => {
-            history.push(`/v2/o/${organisationId}/library/attribution_models`);
-          });
-        })
-        .catch(err => notifyError(err));
+          .then(res => {
+            return this.updatePropertiesValue(
+              properties,
+              organisationId,
+              plugin.id,
+            );
+          })
+          .then(res => {
+            this.setState({ isLoading: false }, () => {
+              history.push(
+                `/v2/o/${organisationId}/library/attribution_models`,
+              );
+            });
+          })
+          .catch(err => notifyError(err));
       });
     }
     // if creation save and redirect
@@ -138,42 +158,52 @@ class CreateAttributionModel extends React.Component<
       formattedFormValues.mode = this.state.initialValues.plugin.mode;
     }
     return this.setState({ isLoading: true }, () => {
-      AttributionModelService.createAttributionModel(organisationId, formattedFormValues)
-      .then(res => res.data)
-      .then(res => {
-        return this.updatePropertiesValue(properties, organisationId, res.id);
-      })
-      .then(res => {
-        this.setState({ isLoading: false }, () => {
-          history.push(`/v2/o/${organisationId}/library/attribution_models`);
-        });
-      })
-      .catch(err => notifyError(err));
+      AttributionModelService.createAttributionModel(
+        organisationId,
+        formattedFormValues,
+      )
+        .then(res => res.data)
+        .then(res => {
+          return this.updatePropertiesValue(properties, organisationId, res.id);
+        })
+        .then(res => {
+          this.setState({ isLoading: false }, () => {
+            history.push(`/v2/o/${organisationId}/library/attribution_models`);
+          });
+        })
+        .catch(err => notifyError(err));
     });
-  }
+  };
 
-  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
+  updatePropertiesValue = (
+    properties: PluginProperty[],
+    organisationId: string,
+    id: string,
+  ) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
-      propertiesPromises.push(AttributionModelService.updateAttributionModelProperty(organisationId, id, item.technical_name, item));
+      propertiesPromises.push(
+        AttributionModelService.updateAttributionModelProperty(
+          organisationId,
+          id,
+          item.technical_name,
+          item,
+        ),
+      );
     });
     return Promise.all(propertiesPromises);
-  }
+  };
 
   onSelect = (model: AttributionModel) => {
     this.setState({
       initialValues: { plugin: model },
     });
-  }
+  };
 
   render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
-    const {
-      isLoading,
-    } = this.state;
+    const { isLoading } = this.state;
 
     const breadcrumbPaths = [
       { name: formatMessage(messages.attributionModelBreadcrumb) },
@@ -191,8 +221,6 @@ class CreateAttributionModel extends React.Component<
         editionMode={this.state.edition}
         initialValue={this.state.initialValues}
         loading={isLoading}
-        openNextDrawer={this.props.openNextDrawer}
-        closeNextDrawer={this.props.closeNextDrawer}
       />
     );
   }
@@ -200,10 +228,6 @@ class CreateAttributionModel extends React.Component<
 
 export default compose(
   injectIntl,
-  withDrawer,
   withRouter,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  connect(undefined, { notifyError: actions.notifyError }),
 )(CreateAttributionModel);

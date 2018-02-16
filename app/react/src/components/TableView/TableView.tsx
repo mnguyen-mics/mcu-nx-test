@@ -1,15 +1,17 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { FormattedMessage } from 'react-intl';
+import { compose } from 'recompose';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { Dropdown, Menu, Table } from 'antd';
+import { TableProps, ColumnProps, TableRowSelection } from 'antd/lib/table';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { ClickParam } from 'antd/lib/menu';
-import { TableProps, ColumnProps } from 'antd/lib/table';
 
 import McsIcon from '../McsIcon';
 import withTranslations, {
   TranslationProps,
 } from '../../containers/Helpers/withTranslations';
+import SelectionNotifyer from './SelectionNotifyer';
 
 const DEFAULT_PAGINATION_OPTION = {
   size: 'small',
@@ -37,17 +39,27 @@ export interface ActionsColumnDefinition<T> extends ColumnProps<T> {
   actions: Array<ActionDefinition<T>>;
 }
 
+export interface ExtendedTableRowSelection<T = any> extends TableRowSelection<T> {
+  selectedRowKeys?: string[];
+  allRowsAreSelected?: boolean;
+  selectAllItemIds?: () => void;
+  unselectAllItemIds?: () => void;
+  onSelect?: () => void;
+} 
+
 export interface TableViewProps<T> extends TableProps<T> {
   columns?: Array<DataColumnDefinition<T>>;
   visibilitySelectedColumns?: Array<DataColumnDefinition<T>>;
   actionsColumnsDefinition?: Array<ActionsColumnDefinition<T>>;
+  rowSelection?: ExtendedTableRowSelection;
 }
 
-class TableView<T> extends React.Component<
-  TableViewProps<T> & TranslationProps
+class TableView<
+  T extends { key?: string; id?: string; [key: string]: any }
+> extends React.Component<
+  TableViewProps<T> & TranslationProps & InjectedIntlProps
 > {
   static defaultProps: Partial<TableViewProps<any>> = {
-    pagination: false,
     visibilitySelectedColumns: [],
     actionsColumnsDefinition: [],
   };
@@ -149,6 +161,7 @@ class TableView<T> extends React.Component<
       visibilitySelectedColumns,
       translations,
       children,
+      intl,
       ...rest
     } = this.props;
 
@@ -159,10 +172,10 @@ class TableView<T> extends React.Component<
     if (dataSource === undefined)
       throw new Error('Undefined dataSource in TableView');
 
-
-    const dataSourceWithIds = dataSource.map((elem: T) => {
-      return { ...(elem as any), key: cuid() };
-    });
+    const dataSourceWithIds = dataSource.map(elem => ({
+      key: elem.id ? elem.id : cuid(),
+      ...(elem as any),
+    }));
 
     let newPagination = pagination;
     if (pagination) {
@@ -179,13 +192,21 @@ class TableView<T> extends React.Component<
       loading,
       onChange,
       pagination: newPagination,
-      rowClassName: () => 'mcs-table-cursor',
     };
 
-    return <Table {...computedTableProps} />;
+    return (
+      <div>
+        <SelectionNotifyer
+          rowSelection={rest.rowSelection}
+          pagination={pagination}
+        />
+
+        <Table {...computedTableProps} />
+      </div>
+    );
   }
 }
 
-export default withTranslations(TableView) as React.ComponentClass<
-  TableViewProps<any>
->;
+export default compose(withTranslations, injectIntl)(
+  TableView,
+) as React.ComponentClass<TableViewProps<any>>;

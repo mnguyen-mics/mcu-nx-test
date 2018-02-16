@@ -16,7 +16,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 
 import FeatureSwitch from '../../../../../components/FeatureSwitch';
 import messages from '../messages';
-import { DrawableContentProps } from '../../../../../components/Drawer/index';
 import { AdGroupFormData, EditAdGroupRouteMatchParam } from './domain';
 import { Omit } from '../../../../../utils/Types';
 import { Path } from '../../../../../components/ActionBar';
@@ -82,8 +81,7 @@ const BidOptimizerFieldArray = FieldArray as new () => GenericFieldArray<
 >;
 
 export interface AdGroupFormProps
-  extends DrawableContentProps,
-    Omit<ConfigProps<AdGroupFormData>, 'form'> {
+  extends Omit<ConfigProps<AdGroupFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
 }
@@ -103,8 +101,6 @@ class AdGroupForm extends React.Component<Props> {
   buildFormSections = () => {
     const {
       match: { params: { organisationId } },
-      openNextDrawer,
-      closeNextDrawer,
       change,
       initialValues,
       hasDatamarts,
@@ -112,8 +108,6 @@ class AdGroupForm extends React.Component<Props> {
 
     const genericFieldArrayProps = {
       formChange: change,
-      openNextDrawer,
-      closeNextDrawer,
       rerenderOnEveryChange: true,
     };
 
@@ -185,6 +179,7 @@ class AdGroupForm extends React.Component<Props> {
       component: (
         <AdFieldArray
           name="adFields"
+          
           component={AdFormSection}
           {...genericFieldArrayProps}
         />

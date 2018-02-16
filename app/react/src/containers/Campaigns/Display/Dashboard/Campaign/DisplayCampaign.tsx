@@ -1,35 +1,32 @@
 // import locale from 'antd/lib/time-picker/locale/pt_PT';
 import * as React from 'react';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout, Button } from 'antd';
+import { Layout } from 'antd';
 import { compose } from 'recompose';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
-import { AdInfoResource, DisplayCampaignInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
+import {
+  AdInfoResource,
+  DisplayCampaignInfoResource,
+} from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import DisplayCampaignDashboard from './DisplayCampaignDashboard';
-import DisplayCampaignAdGroupTable from './DisplayCampaignAdGroupTable';
-import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
-import Card from '../../../../../components/Card/Card';
-import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
+import { UpdateMessage } from './DisplayCampaignAdGroupTable';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
-import { Labels } from '../../../../../containers/Labels';
-import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { injectDrawer } from '../../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { AdResource } from '../../../../../models/campaign/display/AdResource';
+import AdCard from './AdCard';
+import AdGroupCard from './AdGroupCard';
+import { Labels } from '../../../../Labels/index';
 
 const { Content } = Layout;
 
-const DisplayCampaignAdGroupTableJS = DisplayCampaignAdGroupTable as any;
-const DisplayCampaignAdTableJS = DisplayCampaignAdTable as any;
-
 export interface CampaignSubProps<T> {
-  isLoadingList?: boolean;
-  isLoadingPerf?: boolean;
+  isLoadingList: boolean;
+  isLoadingPerf: boolean;
   items?: T[];
 }
 
@@ -47,12 +44,27 @@ interface DisplayCampaignProps {
   };
   ads: CampaignSubProps<AdInfoResource>;
   adGroups: CampaignSubProps<AdGroupResource>;
-  updateAd: (arg: any) => void;
-  updateAdGroup: (arg: any) => void;
-  updateCampaign: (campaignId: string, object: {
-    status: string,
-    type: string,
-  }) => void;
+  updateAd: (
+    adId: string,
+    body: Partial<AdResource>,
+    successMessage?: UpdateMessage,
+    errorMessage?: UpdateMessage,
+    undoBody?: Partial<AdResource>,
+  ) => Promise<any>;
+  updateAdGroup: (
+    adGroupId: string,
+    body: Partial<AdGroupResource>,
+    successMessage?: UpdateMessage,
+    errorMessage?: UpdateMessage,
+    undoBody?: Partial<AdGroupResource>,
+  ) => Promise<any>;
+  updateCampaign: (
+    campaignId: string,
+    object: {
+      status: string;
+      type: string;
+    },
+  ) => void;
   dashboardPerformance: {
     media: DashboardPerformanceSubProps;
     overall: DashboardPerformanceSubProps;
@@ -61,93 +73,25 @@ interface DisplayCampaignProps {
   goals: object[];
 }
 
-type JoinedProps =
-  DisplayCampaignProps &
+type JoinedProps = DisplayCampaignProps &
   RouteComponentProps<CampaignRouteParams> &
+  InjectDrawerProps &
   InjectedIntlProps;
 
 class DisplayCampaign extends React.Component<JoinedProps> {
-
-  updateLocationSearch(params: McsDateRangeValue) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
-    };
-
-    history.push(nextLocation);
-  }
-
-  renderDatePicker() {
-    const {
-        location: {
-          search,
-        },
-    } = this.props;
-
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-
-    const values = {
-      from: filter.from,
-      to: filter.to,
-    };
-
-    const onChange = (newValues: McsDateRangeValue): void => this.updateLocationSearch({
-      from: newValues.from,
-      to: newValues.to,
-    });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
-  }
-
   render() {
-
     const {
-      match: {
-        params: {
-          campaignId,
-          organisationId,
-        },
-      },
       campaign,
       ads,
       adGroups,
-      location,
       updateAd,
       updateAdGroup,
       updateCampaign,
       dashboardPerformance,
       goals,
-      history,
-      intl: {
-        formatMessage,
-      },
+      intl: { formatMessage },
+      match: { params: { organisationId, campaignId } },
     } = this.props;
-
-    const onClick = () => {
-      history.push({
-        pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
-        state: { from: `${location.pathname}${location.search}` },
-      });
-    };
-
-    const adGroupButtons: JSX.Element = (
-      <span>
-
-        <Button className="m-r-10" type="primary" onClick={onClick}>
-          <FormattedMessage {...messages.newAdGroups} />
-        </Button>
-
-        {this.renderDatePicker()}
-      </span>
-    );
-
-    const adButtons: JSX.Element = (
-      <span>
-        {this.renderDatePicker()}
-      </span>
-    );
 
     return (
       <div className="ant-layout">
@@ -163,10 +107,12 @@ class DisplayCampaign extends React.Component<JoinedProps> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <CampaignDashboardHeader
-              campaign={campaign.items}
+            <CampaignDashboardHeader campaign={campaign.items} />
+            <Labels
+              labellableId={campaignId}
+              organisationId={organisationId}
+              labellableType="DISPLAY_CAMPAIGN"
             />
-            <Labels labellableId={campaignId} organisationId={organisationId} labellableType="DISPLAY_CAMPAIGN" />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}
@@ -179,22 +125,22 @@ class DisplayCampaign extends React.Component<JoinedProps> {
               overallStat={dashboardPerformance.overall.items}
               goals={goals}
             />
-            <Card title={formatMessage(messages.adGroups)} buttons={adGroupButtons}>
-              <DisplayCampaignAdGroupTableJS
-                isFetching={adGroups.isLoadingList}
-                isFetchingStat={adGroups.isLoadingPerf}
-                dataSet={adGroups.items}
-                updateAdGroup={updateAdGroup}
-              />
-            </Card>
-            <Card title={formatMessage(messages.creatives)} buttons={adButtons}>
-              <DisplayCampaignAdTableJS
-                isFetching={ads.isLoadingList}
-                isFetchingStat={ads.isLoadingPerf}
-                dataSet={ads.items}
-                updateAd={updateAd}
-              />
-            </Card>
+
+            <AdGroupCard
+              title={formatMessage(messages.adGroups)}
+              isFetching={adGroups.isLoadingList}
+              isFetchingStat={adGroups.isLoadingPerf}
+              dataSet={adGroups.items}
+              updateAdGroup={updateAdGroup}
+            />
+
+            <AdCard
+              title={formatMessage(messages.creatives)}
+              isFetching={ads.isLoadingList}
+              isFetchingStat={ads.isLoadingPerf}
+              dataSet={ads.items}
+              updateAd={updateAd}
+            />
           </Content>
         </div>
       </div>
@@ -202,7 +148,8 @@ class DisplayCampaign extends React.Component<JoinedProps> {
   }
 }
 
-export default compose(
+export default compose<DisplayCampaignProps, JoinedProps>(
   injectIntl,
   withRouter,
+  injectDrawer,
 )(DisplayCampaign);

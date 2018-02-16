@@ -4,13 +4,13 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Spin } from 'antd';
 import cuid from 'cuid';
-import {
-  WrappedFieldArrayProps,
-  getFormValues,
-} from 'redux-form';
+import { WrappedFieldArrayProps, getFormValues } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { EmailBlastFormData, SegmentFieldModel, ConsentFieldModel } from '../../domain';
-import { DrawableContentProps } from '../../../../../../components/Drawer';
+import {
+  EmailBlastFormData,
+  SegmentFieldModel,
+  ConsentFieldModel,
+} from '../../domain';
 import { FormSection } from '../../../../../../components/Form';
 import SegmentReach from '../../SegmentReach';
 import AudienceSegmentSelector, {
@@ -20,9 +20,7 @@ import {
   RelatedRecords,
   RecordElement,
 } from '../../../../../../components/RelatedRecord';
-import {
-  AudienceSegmentResource,
-} from '../../../../../../models/audiencesegment';
+import { AudienceSegmentResource } from '../../../../../../models/audiencesegment';
 import ReportService from '../../../../../../services/ReportService';
 import { Index } from '../../../../../../utils';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
@@ -33,8 +31,10 @@ import {
 import messages from '../../messages';
 import McsMoment from '../../../../../../utils/McsMoment';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import { injectDrawer } from '../../../../../../components/Drawer/index';
+import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface SegmentFormSectionProps extends DrawableContentProps, ReduxFormChangeProps {
+export interface SegmentFormSectionProps extends ReduxFormChangeProps {
   formName: string;
 }
 
@@ -42,6 +42,7 @@ type Props = MapStateProps &
   WrappedFieldArrayProps<SegmentFieldModel> &
   InjectedIntlProps &
   SegmentFormSectionProps &
+  InjectDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {
@@ -83,7 +84,7 @@ class SegmentFormSection extends React.Component<Props, State> {
   }
 
   updateSegments = (segments: AudienceSegmentResource[]) => {
-    const { fields, formChange, closeNextDrawer } = this.props;
+    const { fields, formChange } = this.props;
     const segmentIds = segments.map(s => s.id);
     const fieldSegmentIds = fields
       .getAll()
@@ -100,11 +101,11 @@ class SegmentFormSection extends React.Component<Props, State> {
           audience_segment_id: segment.id,
           exclude: false,
         },
-        meta: { name: segment.name }
+        meta: { name: segment.name },
       }));
 
     formChange((fields as any).name, keptSegments.concat(addedSegments));
-    closeNextDrawer();
+    this.props.closeNextDrawer();
   };
 
   openAudienceSegmentSelector = () => {
@@ -133,14 +134,10 @@ class SegmentFormSection extends React.Component<Props, State> {
   getSegmentRecords = () => {
     const { fields } = this.props;
     const { fetchingReport, reportBySegmentId } = this.state;
-    
-    const getName = (
-      segmentField: SegmentFieldModel,
-    ) => segmentField.meta.name;
-    
-    const getStats = (
-      segmentField: SegmentFieldModel,
-    ) => {
+
+    const getName = (segmentField: SegmentFieldModel) => segmentField.meta.name;
+
+    const getStats = (segmentField: SegmentFieldModel) => {
       const segmentId = segmentField.model.audience_segment_id;
 
       if (fetchingReport) {
@@ -153,14 +150,24 @@ class SegmentFormSection extends React.Component<Props, State> {
 
       return (
         <span>
-          <span className="m-r-20">Cookies: {hasStats.desktop_cookie_ids ? formatMetric(hasStats.desktop_cookie_ids, '0,00') : '-'}</span>
-          <span>User Points: {hasStats.user_points ? formatMetric(hasStats.user_points, '0,00') : '-'}</span>
+          <span className="m-r-20">
+            Cookies:{' '}
+            {hasStats.desktop_cookie_ids
+              ? formatMetric(hasStats.desktop_cookie_ids, '0,00')
+              : '-'}
+          </span>
+          <span>
+            User Points:{' '}
+            {hasStats.user_points
+              ? formatMetric(hasStats.user_points, '0,00')
+              : '-'}
+          </span>
         </span>
       );
-    }
+    };
 
     return fields.getAll().map((segmentField, index) => {
-      const removeRecord = () => fields.remove(index)
+      const removeRecord = () => fields.remove(index);
       return (
         <RecordElement
           key={segmentField.key}
@@ -227,6 +234,7 @@ const getEmailBlastFormData = (
 export default compose<Props, SegmentFormSectionProps>(
   withRouter,
   injectIntl,
+  injectDrawer,
   connect((state: any, ownProps: Props) => ({
     consents: getEmailBlastFormData(ownProps.formName, state).consentFields,
   })),

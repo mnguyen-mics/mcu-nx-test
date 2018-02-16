@@ -5,11 +5,10 @@ import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 import { FormTitle } from '../../../../components/Form';
-import { DrawableContentProps } from '../../../../components/Drawer';
 import DataFileService from '../../../../services/DataFileService';
 import messages from '../../messages';
-import {  Content } from './HtmlEditor/ContentArea';
-import { HtmlEditor } from './HtmlEditor'
+import { Content } from './HtmlEditor/ContentArea';
+import { HtmlEditor } from './HtmlEditor';
 
 import { AcceptedFile } from './FormDataFile';
 
@@ -56,7 +55,7 @@ const env = [
   'css',
 ];
 
-export interface FormDataFileDrawerProps extends DrawableContentProps {
+export interface FormDataFileDrawerProps {
   content: string;
   close: (e: any, name?: string) => void;
   type?: string;
@@ -139,7 +138,6 @@ class FormDataFileDrawer extends React.Component<
   changeFileName = (fileName: string) => {
     this.setState({ fileName: fileName });
   };
-
 
   render() {
     const { editMode } = this.state;
@@ -270,11 +268,16 @@ class FormDataFileDrawer extends React.Component<
         {EditorRendered}
       </div>
     );
-    
 
-    const EditModeHtmlFile = <HtmlEditor onChange={this.onChange} content={this.state.updatedContent} openNextDrawer={this.props.openNextDrawer} closeNextDrawer={this.props.closeNextDrawer} />
+    const EditModeHtmlFile = (
+      <HtmlEditor
+        onChange={this.onChange}
+        content={this.state.updatedContent}
+      />
+    );
 
-    const RenderedEditMode = this.props.accept === 'text/html' ? EditModeHtmlFile : EditModeAnyFile;
+    const RenderedEditMode =
+      this.props.accept === 'text/html' ? EditModeHtmlFile : EditModeAnyFile;
 
     return (
       <Layout>

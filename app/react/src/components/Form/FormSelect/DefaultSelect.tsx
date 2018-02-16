@@ -18,9 +18,10 @@ export interface DefaultSelectProps extends FormFieldWrapperProps {
 
 const Option = Select.Option;
 
-class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldProps> {
-
-  static defaultprops: Partial<DefaultSelectProps> = {
+class DefaultSelect extends React.Component<
+  DefaultSelectProps & WrappedFieldProps
+> {
+  static defaultProps: Partial<DefaultSelectProps> = {
     formItemProps: {},
     selectProps: {},
     options: [],
@@ -36,18 +37,12 @@ class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldPro
   }
 
   setDefaultValue = () => {
-    const {
-      options,
-      input: {
-        value,
-        onChange,
-      },
-    } = this.props;
+    const { options, input: { value, onChange } } = this.props;
 
     if (options && options.length === 1 && (!value || value === '')) {
       onChange(options[0].value);
     }
-  }
+  };
 
   render() {
     const {
@@ -60,12 +55,21 @@ class DefaultSelect extends React.Component<DefaultSelectProps & WrappedFieldPro
       selectProps,
     } = this.props;
 
-    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    let validateStatus = 'success' as
+      | 'success'
+      | 'warning'
+      | 'error'
+      | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
     const optionsToDisplay = options!.map(option => (
-      <Option key={option.value} value={option.value}>{option.title}</Option>
+      <Option
+        key={option.value}
+        {...option}
+      >
+        {option.title}
+      </Option>
     ));
 
     return (

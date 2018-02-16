@@ -2,9 +2,10 @@ import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import cuid from 'cuid';
+import { compose } from 'recompose';
 
 import messages from '../../messages';
-import { DrawableContentProps } from '../../../../../../components/Drawer/index';
+import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { BidOptimizerFieldModel } from '../domain';
 import FormSection from '../../../../../../components/Form/FormSection';
 import RelatedRecords from '../../../../../../components/RelatedRecord/RelatedRecords';
@@ -27,15 +28,14 @@ import {
   makeCancelable,
   CancelablePromise,
 } from '../../../../../../utils/ApiHelper';
+import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface BidOptimizerFormSectionProps
-  extends DrawableContentProps,
-    ReduxFormChangeProps {}
+export interface BidOptimizerFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = BidOptimizerFormSectionProps &
   WrappedFieldArrayProps<BidOptimizerFieldModel> &
   InjectedIntlProps &
-  DrawableContentProps;
+  InjectDrawerProps;
 
 interface State {
   bidOptimizerData: {
@@ -93,7 +93,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
   };
 
   updateBidOptimizer = (bidOptmizers: BidOptimizer[]) => {
-    const { fields, formChange, closeNextDrawer } = this.props;
+    const { fields, formChange } = this.props;
 
     const newField: BidOptimizerFieldModel[] = [
       {
@@ -103,11 +103,11 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
     ];
 
     formChange((fields as any).name, newField);
-    closeNextDrawer();
+    this.props.closeNextDrawer();
   };
 
   openBidOptimizerSelector = () => {
-    const { openNextDrawer, closeNextDrawer, fields } = this.props;
+    const { fields } = this.props;
 
     const selectedBidOptimizerIds = fields
       .getAll()
@@ -115,11 +115,11 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
 
     const props: BidOptimizerSelectorProps = {
       selectedBidOptimizerIds,
-      close: closeNextDrawer,
+      close: this.props.closeNextDrawer,
       save: this.updateBidOptimizer,
     };
 
-    openNextDrawer<BidOptimizerSelectorProps>(BidOptimizerSelector, {
+    this.props.openNextDrawer<BidOptimizerSelectorProps>(BidOptimizerSelector, {
       additionalProps: props,
     });
   };
@@ -194,4 +194,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
   }
 }
 
-export default injectIntl(BidOptimizerFormSection);
+export default compose<BidOptimizerFormSectionProps, Props>(
+  injectIntl,
+  injectDrawer,
+)(BidOptimizerFormSection);

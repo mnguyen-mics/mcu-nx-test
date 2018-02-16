@@ -15,15 +15,12 @@ import FormLayoutActionbar, {
 import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
-import { DrawableContentProps } from '../../../../components/Drawer/index';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
-export interface GoalFormProps
-  extends DrawableContentProps,
-    Omit<ConfigProps<GoalFormData>, 'form'> {
+export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
 }
