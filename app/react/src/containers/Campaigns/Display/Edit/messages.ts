@@ -223,7 +223,11 @@ export default defineMessages({
 
   /* Row 1 */
   contentSectionGeneralRow1Label: {
-    id: 'adGroupEditor.section.general.row1.label',
+    id: 'campaign.section.general.row1.label',
+    defaultMessage: 'Campaign Name',
+  },
+  labelAdGroupName: {
+    id: 'adGroupEditor.label.adgroup.name',
     defaultMessage: 'Ad Group Name',
   },
   contentSectionGeneralRow1Placeholder: {
