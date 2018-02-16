@@ -5,53 +5,47 @@ import { Row, Col } from 'antd';
 
 import messages from './messages';
 import McsIcon from '../../../components/McsIcon';
-import FormLinkedSelectInput, { FormLinkedSelectInputProps } from '../../../components/Form/FormLinkedSelectInput';
+import FormLinkedSelectInput, {
+  FormLinkedSelectInputProps,
+} from '../../../components/Form/FormLinkedSelectInput';
 
 interface FormLinkedSelectInputModel {
   leftValue: string;
   rightValue: string;
 }
 
-type JoinedProps =
-  InjectedIntlProps &
+type JoinedProps = InjectedIntlProps &
   FormLinkedSelectInputProps &
   WrappedFieldArrayProps<FormLinkedSelectInputModel>;
 
-const FormLinkedSelectInputField = Field as new () => GenericField<FormLinkedSelectInputProps>;
+const FormLinkedSelectInputField = Field as new () => GenericField<
+  FormLinkedSelectInputProps
+>;
 
 class ReportFilterFields extends React.Component<JoinedProps> {
-
   render() {
-    const {
-      fields,
-      intl,
-      leftOptionsProps,
-    } = this.props;
+    const { fields, intl, leftOptionsProps } = this.props;
 
     const handleOnClick = () => fields.push({ leftValue: '', rightValue: '' });
 
     const renderedFields = fields.map((name, index, _fields) => {
       const handleRemove = () => fields.remove(index);
       const removeButton = () => (
-        <div
-          onClick={handleRemove}
-        >
-          <McsIcon
-            type="close"
-          />
+        <div onClick={handleRemove}>
+          <McsIcon type="close" />
         </div>
       );
       return (
-        <div
-          key={index}
-        >
+        <div key={index}>
           <FormLinkedSelectInputField
             name={`${name}`}
             component={FormLinkedSelectInput}
             renderFieldAction={removeButton}
             formItemProps={{ colon: false }}
             leftFormSelectProps={{
-              placeholder: intl.formatMessage(messages.reportSectionDetailedFilterLeftSelectPlaceholder),
+              placeholder: intl.formatMessage(
+                messages.reportSectionDetailedFilterLeftSelectPlaceholder,
+              ),
             }}
             leftOptionsProps={leftOptionsProps}
           />
@@ -61,17 +55,17 @@ class ReportFilterFields extends React.Component<JoinedProps> {
 
     return (
       <div>
-        {renderedFields}
+        <Row>
+          <Col span={24} offset={3}>
+            {renderedFields}
+          </Col>
+        </Row>
         <Row>
           <Col span={10} offset={4}>
-            <div
-              onClick={handleOnClick}
-            >
+            <div onClick={handleOnClick}>
               <Col span={20} className="report-AddFilterButton">
                 <p>
-                  <McsIcon
-                    type="plus"
-                  />
+                  <McsIcon type="plus" />
                   {intl.formatMessage(messages.AddFilterButtonText)}
                 </p>
               </Col>
