@@ -39,9 +39,9 @@
             Part Count
             <span ng-show="sortType == 'part_count'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
           </th>
-          <th ng-click="sortType = 'type'; reverseSort = !reverseSort">
+          <th ng-click="sortType = 'audience_partition_type'; reverseSort = !reverseSort">
             Type
-            <span ng-show="sortType == 'type'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
+            <span ng-show="sortType == 'audience_partition_type'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
           </th>
           <th ng-click="sortType = 'status'; reverseSort = !reverseSort">
             Status
@@ -54,7 +54,7 @@
       <tr ng-click="detailsAudiencePartition(audiencePartition, $event)" ng-repeat="audiencePartition in audiencePartitions | orderBy:sortType:reverseSort | filter:searchInput">
         <td>{{audiencePartition.name}}</td>
         <td>{{audiencePartition.part_count}}</td>
-        <td>{{audiencePartition.type}}</td>
+        <td>{{audiencePartition.audience_partition_type}}</td>
         <td>{{audiencePartition.status}}</td>        
         <td class="actions">
           <a class="mics-btn mics-btn-action" ng-click="detailsAudiencePartition(audiencePartition, $event)">Details</a>
