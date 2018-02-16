@@ -5,13 +5,13 @@ import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { withMcsRouter } from '../../Helpers';
-import { ReactRouterPropTypes } from '../../../validators/proptypes';
-import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
-import SiteService from '../../../services/SiteService';
-import * as notifyActions from '../../../state/Notifications/actions';
+import { withMcsRouter } from '../../../Helpers';
+import { ReactRouterPropTypes } from '../../../../validators/proptypes';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper.ts';
+import SiteService from '../../../../services/SiteService';
+import * as notifyActions from '../../../../state/Notifications/actions';
 
-import settingsMessages from '../messages';
+import settingsMessages from '../../messages';
 import messages from './messages';
 
 import SitesTable from './SitesTable';

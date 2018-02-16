@@ -5,10 +5,10 @@ import { Row, Tabs } from 'antd';
 import { injectIntl, intlShape } from 'react-intl';
 
 import { withMcsRouter } from '../Helpers';
-import { SitesListPage } from './Sites';
-import { DatamartsListPage } from './Datamarts';
+import { SitesListPage } from './Sites/List';
+import { DatamartsListPage } from './Datamarts/List';
 import { LabelsListPage } from './Labels';
-import { MobileApplicationsListPage } from './MobileApplications';
+import { MobileApplicationsListPage } from './MobileApplications/List';
 import { getDefaultDatamart } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
 import { parseSearch } from '../../utils/LocationSearchHelper';

@@ -1,24 +1,46 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import * as React from 'react';
 import { compose } from 'recompose';
-import { Link } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { withMcsRouter } from '../../Helpers';
-import { ReactRouterPropTypes } from '../../../validators/proptypes';
-import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
-import MobileApplicationService from '../../../services/MobileApplicationService';
-import * as notifyActions from '../../../state/Notifications/actions';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import MobileApplicationService from '../../../../services/MobileApplicationService';
 
 import messages from './messages';
-import settingsMessages from '../messages';
+import settingsMessages from '../../messages';
 
 import MobileApplicationsTable from './MobileApplicationsTable';
+import { injectDrawer } from '../../../../components/Drawer';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
+import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { MobileApplicationResource } from '../../../../models/settings/settings';
 
-class MobileApplicationsListPage extends Component {
+export interface MobileApplicationsListPageProps {
+  organisationId: string;
+  datamartId: string;
+}
 
-  constructor(props) {
+export interface Filter {
+  currentPage: number;
+  pageSize: number;
+  name: string;
+}
+
+interface MobileApplicationsListPageState {
+  mobileApplications: MobileApplicationResource[]
+  totalMobileApplications: number;
+  isFetchingMobileApplications: boolean;
+  noMobileApplicationYet: boolean;
+  filter: Filter;
+}
+
+type Props = MobileApplicationsListPageProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps & InjectDrawerProps;
+
+class MobileApplicationsListPage extends React.Component<Props, MobileApplicationsListPageState> {
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       mobileApplications: [],
@@ -31,9 +53,38 @@ class MobileApplicationsListPage extends Component {
         name: '',
       },
     };
-    this.handleArchiveMobileApplication = this.handleArchiveMobileApplication.bind(this);
-    this.handleEditMobileApplication = this.handleEditMobileApplication.bind(this);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
+  }
+
+  buildNewActionElement = (organisationId: string, datamartId: string) => {
+    return (
+      <Button key={messages.newMobileApplication.id} type="primary" onClick={this.onClick}>
+        <FormattedMessage {...messages.newMobileApplication} />
+      </Button>
+    );
+  }
+  
+  onClick = () => {
+
+    const {
+      isFetchingMobileApplications,
+      totalMobileApplications,
+      mobileApplications,
+      noMobileApplicationYet,
+      filter,
+    } = this.state;
+
+    this.props.openNextDrawer(MobileApplicationsTable, {
+      additionalProps: {
+        dataSource: mobileApplications,
+        totalMobileApplications: totalMobileApplications,
+        isFetchingMobileApplications: isFetchingMobileApplications,
+        noMobileApplicationYet: noMobileApplicationYet,
+        filter: filter,
+        onFilterChange: this.handleFilterChange,
+        onArchiveMobileApplication: this.handleArchiveMobileApplication,
+        onEditMobileApplication: this.handleEditMobileApplication,
+      },
+    })
   }
 
   componentDidMount() {
@@ -45,14 +96,12 @@ class MobileApplicationsListPage extends Component {
     this.fetchMobileApplications(organisationId, datamartId, this.state.filter);
   }
 
-  /**
-   * Interaction
-   */
 
   handleArchiveMobileApplication() {
+    return Promise.resolve()
   }
 
-  handleEditMobileApplication(mobileApplication) {
+  handleEditMobileApplication(mobileApplication: MobileApplicationResource) {
     const {
       organisationId,
       history,
@@ -62,7 +111,7 @@ class MobileApplicationsListPage extends Component {
     history.push(`/o${organisationId}d${datamartId}/settings/mobile_applications/edit/${mobileApplication.id}`);
   }
 
-  handleFilterChange(newFilter) {
+  handleFilterChange(newFilter: Filter) {
     const {
       organisationId,
       datamartId,
@@ -76,13 +125,18 @@ class MobileApplicationsListPage extends Component {
    * Data
    */
 
-  fetchMobileApplications(organisationId, datamartId, filter) {
+  fetchMobileApplications(organisationId: string, datamartId: string, filter: Filter) {
     const buildGetMobileApplicationsOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
 
-      if (filter.name) { options.name = filter.name; }
+      if (filter.name) {
+        return {
+          ...options,
+          name: filter.name,
+        }
+      }
       return options;
     };
 
@@ -99,15 +153,7 @@ class MobileApplicationsListPage extends Component {
     });
   }
 
-  static buildNewActionElement(organisationId, datamartId) {
-    return (
-      <Link key={messages.newMobileApplication.id} to={`/o${organisationId}d${datamartId}/settings/mobileapplications/new`}>
-        <Button key={messages.newMobileApplication.id} type="primary" htmlType="submit">
-          <FormattedMessage {...messages.newMobileApplication} />
-        </Button>
-      </Link>
-    );
-  }
+  
 
   render() {
     const {
@@ -123,7 +169,7 @@ class MobileApplicationsListPage extends Component {
       filter,
     } = this.state;
 
-    const newButton = MobileApplicationsListPage.buildNewActionElement(organisationId, datamartId);
+    const newButton = this.buildNewActionElement(organisationId, datamartId);
     const buttons = [newButton];
 
     return (
@@ -148,22 +194,9 @@ class MobileApplicationsListPage extends Component {
   }
 }
 
-MobileApplicationsListPage.defaultProps = {
-  notifyError: () => {},
-};
-
-MobileApplicationsListPage.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  datamartId: PropTypes.number.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired,
-};
-
 export default compose(
   injectIntl,
-  withMcsRouter,
-  connect(
-    undefined,
-    { notifyError: notifyActions.notifyError },
-  ),
+  withRouter,
+  injectDrawer,
+  injectNotifications,
 )(MobileApplicationsListPage);
