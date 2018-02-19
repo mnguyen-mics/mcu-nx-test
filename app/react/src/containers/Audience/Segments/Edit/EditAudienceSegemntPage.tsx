@@ -164,22 +164,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           return `${formData.audienceSegment.name}-${moment().unix()}`;
         }
       }
-      
+
       return technicalName
     }
 
     const datamartId = datamart.id;
-    const audienceSegment = {
-      ...audienceSegmentFormData.audienceSegment,
-      default_ttl: countTTL(audienceSegmentFormData),
-      technical_name: fillTechnicalNameForUserPixel(audienceSegmentFormData),
-      datamart_id: datamartId,
-      organisation_id: organisationId,
-    }
-    audienceSegmentFormData = {
-      ...audienceSegmentFormData,
-      audienceSegment: audienceSegment
-    };
 
     switch (type) {
       case 'USER_PIXEL':
@@ -201,6 +190,18 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             feed_type: 'FILE_IMPORT',
           }
         };
+    };
+
+    const audienceSegment = {
+      ...audienceSegmentFormData.audienceSegment,
+      default_ttl: countTTL(audienceSegmentFormData),
+      technical_name: fillTechnicalNameForUserPixel(audienceSegmentFormData),
+      datamart_id: datamartId,
+      organisation_id: organisationId,
+    }
+    audienceSegmentFormData = {
+      ...audienceSegmentFormData,
+      audienceSegment: audienceSegment
     };
 
     const hideSaveInProgress = message.loading(
@@ -237,7 +238,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       )
         .then(response => {
           hideSaveInProgress();
-          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments`;
+          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}`;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {

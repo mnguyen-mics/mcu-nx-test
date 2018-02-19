@@ -152,7 +152,7 @@ class AudienceSegmentsTable extends Component {
       history,
     } = this.props;
 
-    const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
+    const editUrl = segment.type === 'USER_LIST' ? `/v2/o/${organisationId}/audience/segments/${segment.id}/edit` : `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
 
     history.push(editUrl);
   }
