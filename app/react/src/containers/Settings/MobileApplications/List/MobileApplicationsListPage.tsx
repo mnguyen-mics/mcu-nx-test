@@ -16,6 +16,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { MobileApplicationResource } from '../../../../models/settings/settings';
+import { Filter } from '../../Common/domain';
 
 
 export interface MobileApplicationsListPageProps {
@@ -23,11 +24,7 @@ export interface MobileApplicationsListPageProps {
   datamartId: string;
 }
 
-export interface Filter {
-  currentPage: number;
-  pageSize: number;
-  name: string;
-}
+
 
 interface MobileApplicationsListPageState {
   mobileApplications: MobileApplicationResource[]

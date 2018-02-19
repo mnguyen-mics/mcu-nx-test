@@ -1,24 +1,40 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import * as React from 'react';
 import { compose } from 'recompose';
-import { Link } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { withMcsRouter } from '../../../Helpers';
-import { ReactRouterPropTypes } from '../../../../validators/proptypes';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper.ts';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import SiteService from '../../../../services/SiteService';
-import * as notifyActions from '../../../../state/Notifications/actions';
 
 import settingsMessages from '../../messages';
 import messages from './messages';
 
 import SitesTable from './SitesTable';
+import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { Filter } from '../../Common/domain';
+import { SiteResource } from '../../../../models/settings/settings';
 
-class SitesListPage extends Component {
+export interface SitesListPageProps {
+  datamartId: string;
+}
 
-  constructor(props) {
+interface SiteListState {
+  sites: SiteResource[],
+  totalSites: number,
+  isFetchingSites: boolean;
+  noSiteYet: boolean;
+  filter: Filter;
+}
+
+type Props = RouteComponentProps<{ organisationId: string }>
+  & InjectedDatamartProps
+  & InjectedNotificationProps
+  & SitesListPageProps
+
+class SitesListPage extends React.Component<Props, SiteListState> {
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       sites: [],
@@ -31,40 +47,46 @@ class SitesListPage extends Component {
         name: '',
       },
     };
-    this.handleArchiveSite = this.handleArchiveSite.bind(this);
-    this.handleEditSite = this.handleEditSite.bind(this);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
   }
 
   componentDidMount() {
     const {
-      organisationId,
-      datamartId,
+     match: {
+       params: {
+         organisationId
+       }
+     }, 
+     datamartId,
     } = this.props;
 
     this.fetchSites(organisationId, datamartId, this.state.filter);
   }
 
-  /**
-   * Interaction
-   */
 
-  handleArchiveSite() {
+  handleArchiveSite = () => {
+    // to do
   }
 
-  handleEditSite(site) {
+  handleEditSite = (site: SiteResource) => {
     const {
-      organisationId,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       history,
-      datamartId,
     } = this.props;
 
-    history.push(`/o${organisationId}d${datamartId}/settings/sites/edit/${site.id}`);
+    history.push(`/v2/o/${organisationId}/settings/sites/${site.id}/edit`);
   }
 
-  handleFilterChange(newFilter) {
+  handleFilterChange = (newFilter: Filter) => {
     const {
-      organisationId,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       datamartId,
     } = this.props;
 
@@ -72,17 +94,18 @@ class SitesListPage extends Component {
     this.fetchSites(organisationId, datamartId, newFilter);
   }
 
-  /**
-   * Data
-   */
-
-  fetchSites(organisationId, datamartId, filter) {
+  fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
     const buildGetSitesOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
 
-      if (filter.name) { options.name = filter.name; }
+      if (filter.name) {
+        return {
+          ...options,
+          name: filter.name,
+        }
+      }
       return options;
     };
 
@@ -99,7 +122,7 @@ class SitesListPage extends Component {
     });
   }
 
-  static buildNewActionElement(organisationId, datamartId) {
+  buildNewActionElement = (organisationId: string, datamartId: string) => {
     return (
       <Link key={messages.newSite.id} to={`/o${organisationId}d${datamartId}/settings/sites/new`}>
         <Button key={messages.newSite.id} type="primary" htmlType="submit">
@@ -111,7 +134,11 @@ class SitesListPage extends Component {
 
   render() {
     const {
-      organisationId,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       datamartId,
     } = this.props;
 
@@ -123,7 +150,7 @@ class SitesListPage extends Component {
       filter,
     } = this.state;
 
-    const newButton = SitesListPage.buildNewActionElement(organisationId, datamartId);
+    const newButton = this.buildNewActionElement(organisationId, datamartId);
     const buttons = [newButton];
 
     return (
@@ -148,17 +175,9 @@ class SitesListPage extends Component {
   }
 }
 
-SitesListPage.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  datamartId: PropTypes.number.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired,
-};
 
 export default compose(
-  withMcsRouter,
-  connect(
-    undefined,
-    { notifyError: notifyActions.notifyError },
-  ),
+  withRouter,
+  injectDatamart,
+  injectNotifications,
 )(SitesListPage);

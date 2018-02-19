@@ -7,40 +7,40 @@ import {
   TableViewFilters,
 } from '../../../../components/TableView';
 import messages from './messages';
-import { MobileApplicationResource } from '../../../../models/settings/settings';
+import { SiteResource } from '../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 
-export interface MobileApplicationsTableProps {
-  isFetchingMobileApplications: boolean;
-  dataSource: MobileApplicationResource[];
-  totalMobileApplications: number;
-  noMobileApplicationYet: boolean;
+export interface SitesTableProps {
+  isFetchingSites: boolean;
+  dataSource: SiteResource[];
+  totalSites: number;
+  noSiteYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onArchiveMobileApplication: (a: MobileApplicationResource) => void;
-  onEditMobileApplication: (a: MobileApplicationResource) => void;
+  onArchiveSite: (a: SiteResource) => void;
+  onEditSite: (a: SiteResource) => void;
   filter: Filter;
 }
 
-type Props = MobileApplicationsTableProps & InjectedIntlProps;
+type Props = SitesTableProps & InjectedIntlProps;
 
-class MobileApplicationsTable extends React.Component<Props> {
+class SitesTable extends React.Component<Props> {
   render() {
     const {
-      intl: { formatMessage },
-      filter,
-      totalMobileApplications,
-      onFilterChange,
-      onEditMobileApplication,
-      onArchiveMobileApplication,
-      noMobileApplicationYet,
-      isFetchingMobileApplications,
+      isFetchingSites,
       dataSource,
+      totalSites,
+      noSiteYet,
+      onFilterChange,
+      onArchiveSite,
+      onEditSite,
+      filter,
+      intl: { formatMessage },
     } = this.props;
 
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalMobileApplications,
+      total: totalSites,
       onChange: (page: number) =>
         onFilterChange({
           currentPage: page,
@@ -54,18 +54,18 @@ class MobileApplicationsTable extends React.Component<Props> {
 
     const dataColumns = [
       {
-        intlMessage: messages.mobileApplicationName,
+        intlMessage: messages.siteName,
         key: 'name',
         isHideable: false,
       },
       {
-        intlMessage: messages.mobileApplicationToken,
+        intlMessage: messages.siteToken,
         key: 'token',
         isVisibleByDefault: true,
         isHideable: true,
       },
       {
-        intlMessage: messages.mobileApplicationCreationDate,
+        intlMessage: messages.siteCreationDate,
         key: 'creation_ts',
         isVisibleByDefault: true,
         isHideable: true,
@@ -78,12 +78,12 @@ class MobileApplicationsTable extends React.Component<Props> {
         key: 'action',
         actions: [
           {
-            intlMessage: messages.editMobileApplication,
-            callback: onEditMobileApplication,
+            intlMessage: messages.editSite,
+            callback: onEditSite,
           },
           {
-            intlMessage: messages.archiveMobileApplication,
-            callback: onArchiveMobileApplication,
+            intlMessage: messages.archiveSite,
+            callback: onArchiveSite,
           },
         ],
       },
@@ -98,22 +98,19 @@ class MobileApplicationsTable extends React.Component<Props> {
       defaultValue: filter.name,
     };
 
-    return noMobileApplicationYet ? (
-      <EmptyTableView
-        iconType="display"
-        intlMessage={messages.emptyMobileApplications}
-      />
+    return noSiteYet ? (
+      <EmptyTableView iconType="bolt" intlMessage={messages.emptySites} />
     ) : (
       <TableViewFilters
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         searchOptions={searchOptions}
         dataSource={dataSource}
-        loading={isFetchingMobileApplications}
+        loading={isFetchingSites}
         pagination={pagination}
       />
     );
   }
 }
 
-export default injectIntl(MobileApplicationsTable);
+export default injectIntl(SitesTable);
