@@ -1,21 +1,34 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { withMcsRouter } from '../../../Helpers';
-import { ReactRouterPropTypes } from '../../../../validators/proptypes';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper.ts';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import DatamartService from '../../../../services/DatamartService';
-import * as notifyActions from '../../../../state/Notifications/actions';
 
 import settingsMessages from '../../messages';
 
 import DatamartsTable from './DatamartsTable';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+import { Filter } from '../../Common/domain';
 
-class DatamartsListPage extends Component {
+export interface DatamartsListPageProps {
 
-  constructor(props) {
+}
+
+interface DatamartsListPageState {
+  datamarts: DatamartResource[];
+  totalDatamarts: number;
+  isFetchingDatamarts: boolean;
+  noDatamartYet: boolean;
+  filter: Filter,
+}
+
+type Props = DatamartsListPageProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps
+
+class DatamartsListPage extends React.Component<Props, DatamartsListPageState> {
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       datamarts: [],
@@ -25,30 +38,51 @@ class DatamartsListPage extends Component {
       filter: {
         currentPage: 1,
         pageSize: 10,
+        name: ''
       },
     };
-    this.handleEditDatamart = this.handleEditDatamart.bind(this);
   }
 
   componentDidMount() {
     const {
-      organisationId,
+      match: {
+        params: {
+          organisationId
+        }
+      },
     } = this.props;
 
     this.fetchDatamarts(organisationId, this.state.filter);
   }
 
 
-  handleEditDatamart(datamart) {
+  handleEditDatamart = (datamart: DatamartResource) => {
     const {
-      organisationId,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       history,
     } = this.props;
 
     history.push(`/o${organisationId}/settings/datamarts/edit/${datamart.id}`);
   }
 
-  fetchDatamarts(organisationId, filter) {
+  handleFilterChange = (newFilter: Filter) => {
+    const {
+      match: {
+        params: {
+          organisationId
+        }
+      },
+    } = this.props;
+
+    this.setState({ filter: newFilter });
+    this.fetchDatamarts(organisationId, newFilter);
+  }
+
+  fetchDatamarts = (organisationId: string, filter: Filter) => {
     const buildGetDatamartsOptions = () => {
       return {
         allow_administrator: true,
@@ -98,17 +132,8 @@ class DatamartsListPage extends Component {
   }
 }
 
-DatamartsListPage.propTypes = {
-  organisationId: PropTypes.string.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
-  notifyError: PropTypes.func.isRequired,
-};
-
 export default compose(
   injectIntl,
-  withMcsRouter,
-  connect(
-    undefined,
-    { notifyError: notifyActions.notifyError },
-  ),
+  withRouter,
+  injectNotifications,
 )(DatamartsListPage);
