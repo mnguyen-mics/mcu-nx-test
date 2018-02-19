@@ -90,63 +90,6 @@
       
     </div>
 
-    <div ng-if="segment.type == 'USER_LOOK_ALIKE'">
-      <div class="mics-block-heading">
-        <span>Look alike</span>
-      </div>
-          <!-- <a class="mics-btn mics-btn-action" ng-click="refreshQuery()">Refresh</a> -->
-      <br> 
-      <div class="row">
-        <div class="col-md-12">
-          <span>Goals</span>
-          <a class="mics-btn mics-btn-add" uib-dropdown-toggle type="button" ng-click="addGoal()">Add a goal</a>
-        </div>
-      </div>
-      <br>
-
-      <div class="row" ng-show="goals.length">
-        <div class="col-md-12">
-          <table class="mics-table" >
-            <thead>
-            <tr>
-              <th>Goal</th>
-              <th class="actions">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="goal in goals">
-              <td>{{goal.name}}</td>
-              <td class="actions">
-                <a class="mics-btn mics-btn-delete" ng-click="removeGoal(goal)">Remove</a>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <br>
-      <div class="row">
-        <div class="col-md-12">
-        <div mcs-form-group="" label-for="look-alike-algorithm" label-text="Look alike algorithm">
-          <select class="form-control input-lg">
-            <option value="mics_algo">mediarithmics - profile distance</option>
-          </select>
-        </div></div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">
-        <div mcs-form-group="" label-for="look-alike-distance" label-text="Look alike distance">
-          <input type="text" class="form-control input-lg" id="look-alike-distance">
-        </div>
-      </div></div>
-      <br>
-    </div>
-
-
-
-
 
     <div ng-if="!isCreationMode">
     <div class="mics-block-heading">
