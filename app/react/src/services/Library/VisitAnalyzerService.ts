@@ -1,6 +1,7 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginService from '../PluginService';
 import { VisitAnalyzer, PluginProperty } from '../../models/Plugins';
+import { PropertyResourceShape } from '../../models/plugin';
 
 const visitAnalyzerService = {
   getVisitAnalyzers(organisationId: string, options: object = {}): Promise<DataListResponse<VisitAnalyzer>> {
@@ -18,7 +19,7 @@ const visitAnalyzerService = {
 
     return ApiService.deleteRequest(endpoint, options);
   },
-  getVisitAnalyzerProperty(id: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
+  getVisitAnalyzerProperty(id: string, options: object = {}): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `visit_analyzer_models/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);

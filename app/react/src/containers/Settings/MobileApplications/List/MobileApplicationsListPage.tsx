@@ -17,6 +17,7 @@ import injectNotifications, {
 import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { MobileApplicationResource } from '../../../../models/settings/settings';
 
+
 export interface MobileApplicationsListPageProps {
   organisationId: string;
   datamartId: string;
@@ -64,27 +65,15 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
   }
   
   onClick = () => {
-
     const {
-      isFetchingMobileApplications,
-      totalMobileApplications,
-      mobileApplications,
-      noMobileApplicationYet,
-      filter,
-    } = this.state;
-
-    this.props.openNextDrawer(MobileApplicationsTable, {
-      additionalProps: {
-        dataSource: mobileApplications,
-        totalMobileApplications: totalMobileApplications,
-        isFetchingMobileApplications: isFetchingMobileApplications,
-        noMobileApplicationYet: noMobileApplicationYet,
-        filter: filter,
-        onFilterChange: this.handleFilterChange,
-        onArchiveMobileApplication: this.handleArchiveMobileApplication,
-        onEditMobileApplication: this.handleEditMobileApplication,
-      },
-    })
+      history,
+      match: {
+        params: {
+          organisationId
+        }
+      }
+    } = this.props;
+    history.push(`/v2/o/${organisationId}/settings/mobile_application/create`)
   }
 
   componentDidMount() {
@@ -101,17 +90,20 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     return Promise.resolve()
   }
 
-  handleEditMobileApplication(mobileApplication: MobileApplicationResource) {
+  handleEditMobileApplication = (mobileApplication: MobileApplicationResource) => {
     const {
-      organisationId,
+      match: {
+        params: {
+          organisationId
+        }
+      },
       history,
-      datamartId,
     } = this.props;
 
-    history.push(`/o${organisationId}d${datamartId}/settings/mobile_applications/edit/${mobileApplication.id}`);
+    history.push(`/v2/o/${organisationId}/settings/mobile_application/${mobileApplication.id}/edit`);
   }
 
-  handleFilterChange(newFilter: Filter) {
+  handleFilterChange = (newFilter: Filter) => {
     const {
       organisationId,
       datamartId,
@@ -125,7 +117,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
    * Data
    */
 
-  fetchMobileApplications(organisationId: string, datamartId: string, filter: Filter) {
+  fetchMobileApplications = (organisationId: string, datamartId: string, filter: Filter) => {
     const buildGetMobileApplicationsOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
