@@ -35,9 +35,9 @@ class PixelSegmentSection extends React.Component<Props,PixelFormState>  {
     const encodeSnippet = () => {
       const uri = `https://api.mediarithmics.com/v1/user_lists/pixel?
       dat_token=${datamartToken}&
-      user_list_tech_name=${userListTechName}`
+      user_list_tech_name=${encodeURIComponent(userListTechName || '')}`
 
-      return encodeURIComponent(uri);
+      return uri;
 
     }
     const codeSnippetFieldProps: FormCodeSnippetProps = {

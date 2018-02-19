@@ -209,10 +209,6 @@ class GeneralFormSection extends React.Component<Props, State> {
       scrollId: FORM_ID
     };
 
-    // const defaultSelect: SelectProps = {
-    //   defaultValue: 'days'
-    // }
-
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
