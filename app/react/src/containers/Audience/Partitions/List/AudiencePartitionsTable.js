@@ -245,14 +245,14 @@ class AudiencePartitionsTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/o${organisationId}d${record.datamart_id}/datamart/partitions/${record.type}/${record.id}/report`}
+            to={`/o${organisationId}d${record.datamart_id}/datamart/partitions/${record.audience_partition_type}/${record.id}/report`}
           >{text}
           </Link>
         ),
       },
       {
         translationKey: 'TYPE',
-        key: 'type',
+        key: 'audience_partition_type',
         isHideable: false,
         render: (text) => <span>{text}</span>,
       },

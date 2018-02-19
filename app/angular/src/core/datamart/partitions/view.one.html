@@ -5,7 +5,7 @@
             <h2>
                 <div class="pull-right">
                     <a class="mics-btn mics-btn-action"
-                       href="#/{{currentWorkspaceId}}/datamart/partitions/{{partition.type}}/{{partition.id}}">Edit Partition</a>
+                       href="#/{{currentWorkspaceId}}/datamart/partitions/{{partition.audience_partition_type}}/{{partition.id}}">Edit Partition</a>
                 </div>
                 <span class="ng-binding">{{partition.name}}</span>
             </h2>
@@ -32,9 +32,9 @@
                                 Users
                                 <span ng-show="sortType == 'part_count'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
                             </th>
-                            <th ng-click="sortType = 'type'; reverseSort = !reverseSort">
+                            <th ng-click="sortType = 'audience_partition_type'; reverseSort = !reverseSort">
                                 Percentage
-                                <span ng-show="sortType == 'type'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
+                                <span ng-show="sortType == 'audience_partition_type'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
                             </th>                            
                             <!--<th class="metrics" ng-repeat="metric in audienceSegmentStats.getMetrics()">
                             {{audienceSegmentStats.getMetricName(metric) }}
