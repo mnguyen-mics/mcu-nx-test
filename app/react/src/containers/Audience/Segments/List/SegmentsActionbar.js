@@ -158,11 +158,6 @@ class SegmentsActionbar extends Component {
             <FormattedMessage id="USER_QUERY" />
           </Link>
         </Menu.Item>
-        <Menu.Item key="USER_LOOK_ALIKE">
-          <Link to={`/o${organisationId}d${datamartId}/datamart/segments/USER_LOOK_ALIKE`}>
-            <FormattedMessage id="USER_LOOK_ALIKE" />
-          </Link>
-        </Menu.Item>
       </Menu>
     );
 

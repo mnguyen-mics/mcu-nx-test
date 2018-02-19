@@ -5,7 +5,6 @@ export interface AudienceSegmentResource {
 
 export type AudienceSegmentType =
   'USER_LIST' |
-  'USER_LOOK_ALIKE' |
   'USER_QUERY' |
   'USER_ACTIVATION' |
   'USER_PARTITION';
