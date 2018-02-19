@@ -16,8 +16,8 @@ define(['./module'], function (module) {
         $scope.sortType = 'name';
       });
 
-      $scope.createAudiencePartition = function (type) {
-        $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + type);
+      $scope.createAudiencePartition = function (audience_partition_type) {
+        $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + audience_partition_type);
       };
 
       $scope.detailsAudiencePartition = function (audiencePartition, $event) {
@@ -26,7 +26,7 @@ define(['./module'], function (module) {
           $event.stopPropagation();
         }
 
-        $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + audiencePartition.type + "/" + audiencePartition.id + "/report");
+        $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + audiencePartition.audience_partition_type + "/" + audiencePartition.id + "/report");
       };
 
       $scope.editAudiencePartition = function (audiencePartition, $event) {
@@ -35,7 +35,7 @@ define(['./module'], function (module) {
           $event.stopPropagation();
         }
 
-        $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + audiencePartition.type + "/" + audiencePartition.id);
+        $location.path(Session.getWorkspacePrefixUrl() + "/datamart/partitions/" + audiencePartition.audience_partition_type + "/" + audiencePartition.id);
       };
 
     }

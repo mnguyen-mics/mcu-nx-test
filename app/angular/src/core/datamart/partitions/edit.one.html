@@ -28,7 +28,7 @@
         <div class="col-md-2">
           <div class="form-group">
             <label for="audience_partition_type">Type</label>
-            <input class="form-control input-lg" ng-model="audiencePartition.type" type="text" id="audience_partition_type" disabled>
+            <input class="form-control input-lg" ng-model="audiencePartition.audience_partition_type" type="text" id="audience_partition_type" disabled>
           </div>
         </div>            
     </div>
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="row" ng-if="audiencePartition.type == 'CLUSTERING'">
+    <div class="row" ng-if="audiencePartition.audience_partition_type == 'CLUSTERING'">
       <div class="col-md-4">
         <div class="form-group">
           <label for="audience_partition_clustering_model">Clustering Model</label>
