@@ -31,7 +31,7 @@ export default defineMessages({
   },
   audienceSegmentCreationGeneralNameFieldTitle: {
     id: 'audience.segment.create.section.general.field.name.title',
-    defaultMessage: 'Audience Segment Name',
+    defaultMessage: 'Name',
   },
   audienceSegmentCreationGeneralNameFieldPlaceHolder: {
     id: 'audience.segment.create.section.general.field.name.placeholder',
