@@ -18,7 +18,6 @@ define(['./module'], function (module) {
       };      
 
       if (!segmentId) {
-        $scope.segment.segmentLifetime = "never";
         if (type === 'USER_QUERY'){
           $scope.segment = {
             type : type,
@@ -33,6 +32,7 @@ define(['./module'], function (module) {
           $scope.segment = {
             datamart_id: Session.getCurrentDatamartId(),
             type : type,
+            segmentLifetime : "never",
           };
         }
 
