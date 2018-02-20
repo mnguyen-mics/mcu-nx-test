@@ -20,6 +20,7 @@ class EventActivity extends Component {
 
     let returnValue = <div />;
 
+
     if (typeof object === 'string' || typeof object === 'number') {
       // string;
       returnValue = (
@@ -47,8 +48,8 @@ class EventActivity extends Component {
             <Tooltip title={key}>
               <Tag className="card-tag">{key}</Tag>
             </Tooltip>
-            :
-            {value === 'empty' ? (
+            &nbsp;:&nbsp;
+            {!value ? (
               <i className="empty">
                 <FormattedMessage {...messages.empty} />
               </i>
