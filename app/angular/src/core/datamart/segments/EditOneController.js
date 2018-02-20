@@ -18,14 +18,14 @@ define(['./module'], function (module) {
       };      
 
       if (!segmentId) {
-        $scope.segment.segmentLifetime = "never";
         if (type === 'USER_QUERY'){
           $scope.segment = {
             type : type,
             datamart_id: Session.getCurrentDatamartId(),
             evaluation_mode: 'PERIODIC',
             evaluation_period: 1,
-            evaluation_period_unit: 'DAY'
+            evaluation_period_unit: 'DAY',
+            segmentLifetime : "never",
           };
           var queryContainer = new QueryContainer(Session.getCurrentDatamartId());
           $scope.queryContainer = queryContainer;
@@ -33,6 +33,7 @@ define(['./module'], function (module) {
           $scope.segment = {
             datamart_id: Session.getCurrentDatamartId(),
             type : type,
+            segmentLifetime : "never",
           };
         }
 
