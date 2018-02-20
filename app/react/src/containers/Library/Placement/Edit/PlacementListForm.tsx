@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
+import { Form, reduxForm, InjectedFormProps, ConfigProps, FieldArray, GenericFieldArray, Field } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
@@ -13,7 +13,7 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
 import { PlacementListFormData } from './domain';
-import { McsFormSection } from '../../../../utils/FormHelper';
+import { McsFormSection, ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { Path } from '../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import PlacementsFormSection from './Sections/PlacementsFormSection';
@@ -24,6 +24,11 @@ const FORM_ID = 'placementListForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const PlacementDescriptorFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ReduxFormChangeProps
 >;
 
 const messages = defineMessages({
@@ -78,7 +83,11 @@ class PlacementListForm extends React.Component<Props, PlacementListFormState> {
     const placements = {
       id: 'placements',
       title: messages.sectionTitlePlacements,
-      component: <PlacementsFormSection formChange={this.props.change} />,
+      component: <PlacementDescriptorFieldArray
+      name="placementDescriptorList"
+      component={PlacementsFormSection}
+      formChange={this.props.change}
+      rerenderOnEveryChange={true} />,
     };
     sections.push(general);
     sections.push(placements);

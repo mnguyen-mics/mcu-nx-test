@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Modal, message, Upload } from 'antd';
+import cuid from 'cuid';
 import Papa from 'papaparse';
 import { compose } from 'recompose';
 import { UploadFile } from 'antd/lib/upload/interface';
-import {
-  FieldArray,
-  GenericFieldArray,
-  Field,
-} from 'redux-form';
+import { WrappedFieldArrayProps } from 'redux-form';
 
 import withValidators, {
   ValidatorProps,
@@ -17,21 +14,28 @@ import withNormalizer, {
   NormalizerProps,
 } from '../../../../../components/Form/withNormalizer';
 import { FormSection } from '../../../../../components/Form';
-import PlacementDescriptor from './PlacementDescriptor';
 import { RouteComponentProps } from 'react-router';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import PlacementDescriptorForm, {
-  PlacementDescriptorFormProps,
-} from '../PlacementDescriptorForm';
+import PlacementDescriptorForm from '../PlacementDescriptorForm';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
+import {
+  ReduxFormChangeProps,
+  FieldArrayModel,
+} from '../../../../../utils/FormHelper';
+import { PlacementDescriptorResource } from '../../../../../models/placement/PlacementDescriptorResource';
+import { PlacementDescriptorListFieldModel } from '../domain';
+import {
+  RecordElement,
+  EmptyRecords,
+  RelatedRecords,
+} from '../../../../../components/RelatedRecord/index';
 
 const Dragger = Upload.Dragger;
 
-const PlacementDescriptorFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  ReduxFormChangeProps
->;
+// const PlacementDescriptorFieldArray = FieldArray as new () => GenericFieldArray<
+//   Field,
+//   ReduxFormChangeProps
+// >;
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
@@ -58,16 +62,21 @@ const messages = defineMessages({
     id: 'edit.placement.list.form.add.new.text.button',
     defaultMessage: 'Add',
   },
+  emptyRecordTitle: {
+    id: 'edit.placement.list.no.placementDescriptor.title',
+    defaultMessage:
+      'Click on the pen to add a placement to your placement list',
+  },
 });
 
-interface PlacementsFormSectionProps
-  extends ReduxFormChangeProps {}
+interface PlacementsFormSectionProps extends ReduxFormChangeProps {}
 
-type Props = PlacementsFormSection & PlacementsFormSectionProps &
+type Props = PlacementsFormSectionProps &
   InjectDrawerProps &
   InjectedIntlProps &
   ValidatorProps &
   NormalizerProps &
+  WrappedFieldArrayProps<FieldArrayModel<PlacementDescriptorResource>> &
   RouteComponentProps<{ organisationId: string; placementListId: string }>;
 
 interface State {
@@ -140,7 +149,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
           });
       },
     };
-    const fileToParse = (fileList[0] as any);
+    const fileToParse = fileList[0] as any;
     Papa.parse(fileToParse, config);
   };
 
@@ -148,14 +157,65 @@ class PlacementsFormSection extends React.Component<Props, State> {
     this.setState({ isModalOpen: !this.state.isModalOpen, fileList: [] });
   };
 
-  saveNewPlacement = () => {
-    //
+  // saveNewPlacement = () => {
+  //   //
+  // };
+
+  updatePlacementDescriptors = (
+    formData: Partial<PlacementDescriptorResource>,
+    existingKey?: string,
+  ) => {
+    const { fields, formChange, closeNextDrawer } = this.props;
+    const newFields: PlacementDescriptorListFieldModel[] = [];
+    if (existingKey) {
+      fields.getAll().forEach(field => {
+        if (field.key === existingKey) {
+          newFields.push({
+            key: existingKey,
+            model: formData,
+          });
+        } else {
+          newFields.push(field);
+        }
+      });
+    } else {
+      newFields.push(...fields.getAll());
+      newFields.push({
+        key: cuid(),
+        model: formData,
+      });
+    }
+    formChange((fields as any).name, newFields);
+    closeNextDrawer();
   };
 
-  addNewPlacement = () => {
+  // addNewPlacement = () => {
+  //   const { openNextDrawer, closeNextDrawer, intl } = this.props;
+  //   const additionalProps = {
+  //     onSave: this.saveNewPlacement,
+  //     actionBarButtonText: intl.formatMessage(messages.addNewPlacement),
+  //     close: closeNextDrawer,
+  //   };
+
+  //   const options = {
+  //     additionalProps,
+  //   };
+
+  //   openNextDrawer<PlacementDescriptorFormProps>(
+  //     PlacementDescriptorForm,
+  //     options,
+  //   );
+  // };
+
+  openPlacementDescriptorForm = (
+    field?: FieldArrayModel<Partial<PlacementDescriptorResource>>,
+  ) => {
     const { openNextDrawer, closeNextDrawer, intl } = this.props;
+    const handleSave = (formData: Partial<PlacementDescriptorResource>) =>
+      this.updatePlacementDescriptors(formData, field && field.key);
     const additionalProps = {
-      onSave: this.saveNewPlacement,
+      initialValues: field ? field.model : {},
+      onSave: handleSave,
       actionBarButtonText: intl.formatMessage(messages.addNewPlacement),
       close: closeNextDrawer,
     };
@@ -164,10 +224,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
       additionalProps,
     };
 
-    openNextDrawer<PlacementDescriptorFormProps>(
-      PlacementDescriptorForm,
-      options,
-    );
+    openNextDrawer(PlacementDescriptorForm, options);
   };
 
   renderModal = () => {
@@ -201,10 +258,48 @@ class PlacementsFormSection extends React.Component<Props, State> {
     );
   };
 
+  getSegmentRecords = () => {
+    const { fields } = this.props;
+
+    return fields.getAll().map((placementDescriptorField, index) => {
+      const removeField = () => fields.remove(index);
+      const getName = (
+        placementDescriptor: FieldArrayModel<PlacementDescriptorResource>,
+      ) => placementDescriptor.model.value;
+      const edit = () =>
+        this.openPlacementDescriptorForm(placementDescriptorField);
+
+      return (
+        <RecordElement
+          key={cuid()}
+          recordIconType="display"
+          record={placementDescriptorField}
+          title={getName}
+          onEdit={edit}
+          onRemove={removeField}
+        />
+      );
+    });
+  };
+
+  renderFieldArray() {
+    const { intl, fields } = this.props;
+    return fields.length === 0 ? (
+      <EmptyRecords message={intl.formatMessage(messages.emptyRecordTitle)} />
+    ) : (
+      <RelatedRecords
+        emptyOption={{
+          iconType: 'users',
+          message: intl.formatMessage(messages.emptyRecordTitle),
+        }}
+      >
+        {this.getSegmentRecords()}
+      </RelatedRecords>
+    );
+  }
+
   render() {
-    const {
-      formChange,
-    } = this.props;
+    const {} = this.props;
 
     return (
       <div>
@@ -216,7 +311,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
             {
               id: messages.addPlacement.id,
               message: messages.addPlacement,
-              onClick: this.addNewPlacement,
+              onClick: this.openPlacementDescriptorForm,
             },
             {
               id: messages.replaceWithCsv.id,
@@ -231,14 +326,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
           ]}
         />
 
-        <div>
-          <PlacementDescriptorFieldArray
-            name="placementDescriptorList"
-            component={PlacementDescriptor}
-            formChange={formChange}
-            rerenderOnEveryChange={true}
-          />
-        </div>
+        <div>{this.renderFieldArray()}</div>
       </div>
     );
   }

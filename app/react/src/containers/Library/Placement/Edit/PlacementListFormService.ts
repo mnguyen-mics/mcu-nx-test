@@ -5,7 +5,6 @@ import {
 import {
   PlacementListFormData,
   INITIAL_PLACECMENT_LIST_FORM_DATA,
-  INITIAL_PLACEMENT_DESCRIPTOR,
   PlacementDescriptorFormData,
   PlacementDescriptorListFieldModel,
 } from './domain';
@@ -52,10 +51,10 @@ const PlacementListFormService = {
       return executeTasksInSequence(tasks).then(() => newPlacementListId);
     });
   },
+  
   savePlacementDescriptor(
     placementDescriptorId: string,
     formData: PlacementDescriptorFormData,
-    initialFormData: PlacementDescriptorFormData = INITIAL_PLACEMENT_DESCRIPTOR,
   ) {
     let createOrUpdatePlacementDescriptorPromise;
     if (
@@ -91,7 +90,7 @@ function hasId<T extends { id: string }, Y>(resource: T | Y): resource is T {
 function getPlacementDescriptorTasks(
   placementListId: string,
   placementDescriptorFields: PlacementDescriptorListFieldModel[],
-  initialPlacementDescriptorFields: PlacementDescriptorListFieldModel[],
+  initialPlacementDescriptorFields: PlacementDescriptorListFieldModel[] = [],
 ): Task[] {
   const initialPlacementDescriptorIds: string[] = [];
   initialPlacementDescriptorFields.forEach(field => {
