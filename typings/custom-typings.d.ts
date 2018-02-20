@@ -23,3 +23,5 @@ declare module "react-countup" {
 
   export default class Form extends React.Component<ComponentProps> { }
 }
+declare module 'react-syntax-highlighter';
+declare module 'react-syntax-highlighter/styles/hljs';

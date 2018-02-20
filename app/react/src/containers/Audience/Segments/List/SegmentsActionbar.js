@@ -144,17 +144,28 @@ class SegmentsActionbar extends Component {
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
-    const datamartId = defaultDatamart(organisationId).id;
+    const datamart = defaultDatamart(organisationId);
+
+    const userPixelMenu = () => {
+
+      return (<Menu.Item key="USER_PIXEL">
+        <Link to={{ pathname: `/v2/o/${organisationId}/audience/segments/create/USER_PIXEL` }}>
+          <FormattedMessage id="USER_PIXEL" />
+        </Link>
+      </Menu.Item>);
+    };
 
     const addMenu = (
       <Menu>
         <Menu.Item key="USER_LIST">
-          <Link to={`/o${organisationId}d${datamartId}/datamart/segments/USER_LIST`}>
+          <Link to={{ pathname: `/v2/o/${organisationId}/audience/segments/create/USER_LIST` }}>
             <FormattedMessage id="USER_LIST" />
           </Link>
         </Menu.Item>
+        {datamart.storage_model_version === 'v201709' ? userPixelMenu() : null}
+
         <Menu.Item key="USER_QUERY">
-          <Link to={`/o${organisationId}d${datamartId}/datamart/segments/USER_QUERY`}>
+          <Link to={`/o${organisationId}d${datamart.id}/datamart/segments/USER_QUERY`}>
             <FormattedMessage id="USER_QUERY" />
           </Link>
         </Menu.Item>

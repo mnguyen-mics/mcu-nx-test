@@ -3,11 +3,9 @@ import { Checkbox } from 'antd';
 import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
 import { WrappedFieldProps } from 'redux-form';
 
-interface FormCheckboxProps {
-  CheckboxProps?: CheckboxProps;
-}
+export type FormCheckboxProps = CheckboxProps & WrappedFieldProps
 
-const FormCheckbox: React.SFC<FormCheckboxProps & WrappedFieldProps> = props => {
+const FormCheckbox: React.SFC<FormCheckboxProps> = props => {
 
   const { input, ...otherProps } = props;
 

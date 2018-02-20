@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Select } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
-import { OptionProps } from 'antd/lib/select';
+import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import FormSelect from './FormSelect';
 
 const { Option } = Select;
 
 export interface FormSelectAddonProps {
+  selectProps?: SelectProps;
   options: OptionProps[];
   style?: React.CSSProperties;
   disabled?: boolean;
@@ -16,6 +17,7 @@ export interface FormSelectAddonProps {
 const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props => {
 
   const {
+    selectProps,
     input,
     style,
     options,
@@ -35,6 +37,7 @@ const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props =
       onChange={input.onChange as () => any}
       onFocus={input.onFocus as () => any}
       value={input.value}
+      {...selectProps}
       style={{ display: 'flex', justifyContent: 'center', ...style }}
       disabled={disabled}
     >{optionsToDisplay}

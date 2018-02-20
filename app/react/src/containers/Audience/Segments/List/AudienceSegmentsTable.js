@@ -152,7 +152,7 @@ class AudienceSegmentsTable extends Component {
       history,
     } = this.props;
 
-    const editUrl = `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
+    const editUrl = segment.type === 'USER_LIST' ? `/v2/o/${organisationId}/audience/segments/${segment.id}/edit` : `/o${organisationId}d${segment.datamart_id}/datamart/segments/${segment.type}/${segment.id}`;
 
     history.push(editUrl);
   }
@@ -293,6 +293,12 @@ class AudienceSegmentsTable extends Component {
                   <Icon type="solution" />
                 </Tooltip>
               );
+            case 'USER_PIXEL':
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="global" />
+                </Tooltip>
+              );
             default:
               return (
                 <Tooltip placement="top" title={translations[text]}>
@@ -386,7 +392,7 @@ class AudienceSegmentsTable extends Component {
       },
     ];
 
-    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_QUERY']
+    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_PIXEL', 'USER_QUERY']
       .map(type => ({ key: type, value: type }));
 
     const filtersOptions = [

@@ -58,5 +58,5 @@ export default defineMessages({
   createOverlap: {
     id: 'segment.overlap.button.create',
     defaultMessage: 'Create Overlap Analysis'
-  }
+  },
 });

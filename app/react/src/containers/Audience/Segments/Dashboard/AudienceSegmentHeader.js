@@ -16,6 +16,8 @@ function AudienceSegmentHeader({ segment, translations }) {
     iconType = 'database';
   } else if (segment.type === 'USER_LIST') {
     iconType = 'solution';
+  } else if (segment.type === 'USER_PIXEL') {
+    iconType = 'global';
   }
 
   const segmentType = <span><Icon type={iconType} /> {translations[segment.type]}</span>;
