@@ -5,7 +5,7 @@ import cuid from 'cuid';
 import Papa from 'papaparse';
 import { compose } from 'recompose';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { WrappedFieldArrayProps, FieldsProps } from 'redux-form';
+import { WrappedFieldArrayProps } from 'redux-form';
 
 import withValidators, {
   ValidatorProps,
@@ -105,9 +105,17 @@ class PlacementsFormSection extends React.Component<Props, State> {
   }
 
   downloadCsvTemplate = () => {
-    const rows = [['Value', 'Type', 'Holder']];
+    const { fields } = this.props;
+    const rowsToUpload: string[][] = [];
+    fields.getAll().forEach(fieldModel => {
+      const line = [];
+      line.push(fieldModel.model.value);
+      line.push(fieldModel.model.descriptor_type);
+      line.push(fieldModel.model.placement_holder);
+      rowsToUpload.push(line);
+    })
     let csvContent = 'data:text/csv;charset=utf-8,';
-    rows.forEach(rowArray => {
+    rowsToUpload.forEach(rowArray => {
       const row = rowArray.join(',');
       csvContent += row + '\r\n';
     });
@@ -121,13 +129,6 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
   validateFormat = (fileData: string[][]) => {
     return new Promise((resolve, reject) => {
-      // if (
-      //   fileData[0][0] !== 'Value' ||
-      //   fileData[0][1] !== 'Type' ||
-      //   fileData[0][2] !== 'Holder'
-      // ) {
-      //   return reject('failed');
-      // }
 
       fileData.filter(row => row.length !== 1).forEach((row, i) => {
         if (row.length === 3) {
