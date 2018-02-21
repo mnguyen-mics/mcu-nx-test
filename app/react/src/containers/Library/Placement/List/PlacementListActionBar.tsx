@@ -32,7 +32,7 @@ class PlacementListsActionbar extends React.Component<RouteComponentProps<Router
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/${organisationId}/library/placementlists/new`}>
+        <Link to={`v2/o/${organisationId}/library/placementlists`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newPlacement} />
           </Button>

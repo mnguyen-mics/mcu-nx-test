@@ -128,7 +128,7 @@ class PlacementListContent extends React.Component<
         render: (text: string, record: PlacementListResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/${organisationId}/library/placementlists/${record.id}`}
+            to={`v2/o/${organisationId}/library/placementlists/${record.id}`}
           >
             {text}
           </Link>
