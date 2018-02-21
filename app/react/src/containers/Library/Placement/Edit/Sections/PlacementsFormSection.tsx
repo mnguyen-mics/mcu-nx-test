@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { Modal, message, Upload } from 'antd';
+import { Modal, message, Upload, Pagination } from 'antd';
 import cuid from 'cuid';
 import Papa from 'papaparse';
 import { compose } from 'recompose';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { WrappedFieldArrayProps } from 'redux-form';
+import { WrappedFieldArrayProps, FieldsProps } from 'redux-form';
 
 import withValidators, {
   ValidatorProps,
@@ -68,7 +68,7 @@ const messages = defineMessages({
   },
   csvRules: {
     id: 'drag.and.drop.file.or.click.line.2',
-    defaultMessage: "Your CSV file must have 3 columns and no empty cells",
+    defaultMessage: 'Your CSV file must have 3 columns and no empty cells',
   },
   modalTitle: {
     id: 'drag.and.drop.modal.title',
@@ -89,6 +89,8 @@ type Props = PlacementsFormSectionProps &
 interface State {
   isModalOpen: boolean;
   fileList: UploadFile[];
+  page: number;
+  pageSize: number;
 }
 
 class PlacementsFormSection extends React.Component<Props, State> {
@@ -97,6 +99,8 @@ class PlacementsFormSection extends React.Component<Props, State> {
     this.state = {
       isModalOpen: false,
       fileList: [],
+      page: 1,
+      pageSize: 10,
     };
   }
 
@@ -149,14 +153,13 @@ class PlacementsFormSection extends React.Component<Props, State> {
         model: {
           value: row[0],
           descriptor_type: row[1],
-          placement_holder: row[2]
+          placement_holder: row[2],
         },
       });
-    })
-    
+    });
+
     formChange((fields as any).name, newFields);
-  } 
-  
+  };
 
   closeModalAndNotify = (validationSuccess: boolean = false) => {
     this.setState({
@@ -173,11 +176,10 @@ class PlacementsFormSection extends React.Component<Props, State> {
     const { fileList } = this.state;
     const config = {
       complete: (results: any, file: any) => {
-        console.log(results);
         this.validateFormat(results.data)
           .then(res => {
             this.closeModalAndNotify(true);
-            this.handleCSVreplacement(results.data); 
+            this.handleCSVreplacement(results.data);
           })
           .catch(() => {
             this.closeModalAndNotify();
@@ -186,7 +188,6 @@ class PlacementsFormSection extends React.Component<Props, State> {
     };
     const fileToParse = fileList[0] as any;
     Papa.parse(fileToParse, config);
-
   };
 
   handleOpenClose = () => {
@@ -268,18 +269,26 @@ class PlacementsFormSection extends React.Component<Props, State> {
         onCancel={this.handleOpenClose}
       >
         <Dragger {...props}>
-          {this.props.intl.formatMessage(messages.dragAndDrop)}<br/>
+          {this.props.intl.formatMessage(messages.dragAndDrop)}
+          <br />
           {this.props.intl.formatMessage(messages.csvRules)}
         </Dragger>
       </Modal>
     );
   };
 
-  getSegmentRecords = () => {
+  getPlacementRecords = (fieldsToDisplay?: Array<FieldArrayModel<PlacementDescriptorResource>>) => {
     const { fields } = this.props;
-
-    return fields.getAll().map((placementDescriptorField, index) => {
-      const removeField = () => fields.remove(index);
+    const { page, pageSize } = this.state;
+    const start = page !== 1 ? (page -1) * pageSize : 0;
+    const end = page * pageSize; 
+    const placementDescriptorFields = fieldsToDisplay ? fieldsToDisplay : fields.getAll();
+    
+    return placementDescriptorFields.slice(start, end).map((placementDescriptorField, index) => {
+      const removeField = () => {
+        const newIndex = fields.getAll().indexOf(placementDescriptorField);
+        fields.remove(newIndex)
+      };
       const getName = (
         placementDescriptor: FieldArrayModel<PlacementDescriptorResource>,
       ) => placementDescriptor.model.value;
@@ -310,13 +319,25 @@ class PlacementsFormSection extends React.Component<Props, State> {
           message: intl.formatMessage(messages.emptyRecordTitle),
         }}
       >
-        {this.getSegmentRecords()}
+        {this.getPlacementRecords()}
       </RelatedRecords>
     );
   }
 
+  onPaginationChange = (page: number, pageSize: number) => {
+    const { fields } = this.props;
+    const start = page !== 1 ? (page -1) * pageSize : 0;
+    const end = page * pageSize; 
+    this.setState({
+      page: page,
+      pageSize: pageSize
+    });
+    const fieldsToDisplay = fields ? fields.getAll().slice(start, end) : undefined;
+    this.getPlacementRecords(fieldsToDisplay);
+  };
+
   render() {
-    const {} = this.props;
+    const { fields } = this.props;
 
     return (
       <div>
@@ -344,6 +365,15 @@ class PlacementsFormSection extends React.Component<Props, State> {
         />
 
         <div>{this.renderFieldArray()}</div>
+        <br />
+        <Pagination
+          style={{ float: 'right' }}
+          onChange={this.onPaginationChange}
+          defaultCurrent={1}
+          pageSize={this.state.pageSize}
+          total={fields.length}
+          current={this.state.page}
+        />
       </div>
     );
   }

@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import {
   PlacementDescriptorResource,
   PlacementDescriptorCreateRequest,
@@ -5,7 +6,6 @@ import {
 import {
   PlacementListFormData,
   INITIAL_PLACECMENT_LIST_FORM_DATA,
-  PlacementDescriptorFormData,
   PlacementDescriptorListFieldModel,
 } from './domain';
 import PlacementListService from '../../../../services/Library/PlacementListsService';
@@ -48,33 +48,6 @@ const PlacementListFormService = {
       return executeTasksInSequence(tasks).then(() => newPlacementListId);
     });
   },
-
-  savePlacementDescriptor(
-    placementDescriptorId: string,
-    formData: PlacementDescriptorFormData,
-  ) {
-    let createOrUpdatePlacementDescriptorPromise;
-    if (
-      formData &&
-      hasId<
-        PlacementDescriptorResource,
-        Partial<PlacementDescriptorCreateRequest>
-      >(formData)
-    ) {
-      createOrUpdatePlacementDescriptorPromise = PlacementListService.updatePlacementDescriptor(
-        placementDescriptorId,
-        formData.id,
-        formData,
-      );
-    } else {
-      createOrUpdatePlacementDescriptorPromise = PlacementListService.createPlacementDescriptor(
-        placementDescriptorId,
-        formData,
-      );
-    }
-
-    return createOrUpdatePlacementDescriptorPromise;
-  },
 };
 
 function hasId<T extends { id: string }, Y>(resource: T | Y): resource is T {
@@ -113,12 +86,38 @@ function getPlacementDescriptorTasks(
   const tasks: Task[] = [];
   // create or update PlacementDescriptor tasks
   placementDescriptorFields.forEach(field => {
-    tasks.push(() =>
-      PlacementListFormService.savePlacementDescriptor(
-        placementListId,
-        field.model,
-      ),
-    );
+    if (
+      hasId<
+        PlacementDescriptorResource,
+        Partial<PlacementDescriptorCreateRequest>
+      >(field.model)
+    ) {
+      // update descriptor if needed
+      const exisitingDescriptorField = initialPlacementDescriptorFields.find(
+        v => v.key === field.key,
+      );
+      const currentDescriptor = field.model;
+      if (
+        exisitingDescriptorField &&
+        !isEqual(currentDescriptor, exisitingDescriptorField.model)
+      ) {
+        tasks.push(() =>
+          PlacementListService.updatePlacementDescriptor(
+            placementListId,
+            currentDescriptor.id,
+            currentDescriptor,
+          ),
+        );
+      }
+    } else {
+      // new descriptor
+      tasks.push(() =>
+        PlacementListService.createPlacementDescriptor(
+          placementListId,
+          field.model,
+        ),
+      );
+    }
   });
 
   // removed placement descriptor tasks
