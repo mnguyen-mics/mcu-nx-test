@@ -66,7 +66,7 @@ class DatamartsListPage extends React.Component<Props, DatamartsListPageState> {
       history,
     } = this.props;
 
-    history.push(`/o${organisationId}/settings/datamarts/edit/${datamart.id}`);
+    history.push(`/v2/o/${organisationId}/settings/datamarts/${datamart.id}/edit`);
   }
 
   handleFilterChange = (newFilter: Filter) => {
