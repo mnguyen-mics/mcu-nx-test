@@ -1,4 +1,4 @@
-import EditAudienceSegmentPage from './EditAudienceSegemntPage'
+import EditAudienceSegmentPage from './EditAudienceSegmentPage'
 
 export {
   EditAudienceSegmentPage,

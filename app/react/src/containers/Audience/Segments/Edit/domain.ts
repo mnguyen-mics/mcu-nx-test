@@ -17,7 +17,8 @@ export interface AudienceSegmentFormData {
 
 export type SegmentTypeFormLoader =
   'USER_LIST' |
-  'USER_PIXEL'
+  'USER_PIXEL' |
+  'USER_QUERY'
 
 export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceSegment: {

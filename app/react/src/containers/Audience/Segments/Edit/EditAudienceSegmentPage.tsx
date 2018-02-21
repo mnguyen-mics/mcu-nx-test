@@ -16,7 +16,8 @@ import AudienceSegmentService from '../../../../services/AudienceSegmentService'
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain'
 import { AudienceSegment } from '../../../../models/audiencesegment'
 import messages from './messages';
-import { GeneralFormSection } from './sections/';
+
+import EditAudienceSegmentForm from './EditAudienceSegmentForm'
 import injectDatamart, { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
@@ -262,7 +263,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     } = this.state
     const segmentType = type || this.state.segmentType;
     return (
-      <GeneralFormSection
+      <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
         close={this.redirectToSegmentList}
         onSubmit={this.save}
