@@ -10,7 +10,6 @@ import {
   MobileApplicationFormData,
   EditMobileAppRouteMatchParam,
   INITIAL_MOBILE_APP_FORM_DATA,
-  ActivityAnalyzerFieldModel,
 } from './domain';
 import MobileApplicationService from '../../../../services/MobileApplicationService';
 import messages from './messages';
@@ -23,6 +22,7 @@ import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import { MobileApplicationResource } from '../../../../models/settings/settings';
 import { DataResponse } from '../../../../services/ApiService';
+import { VisitAnalyzerFieldModel } from '../../Common/domain';
 
 interface State {
   mobileApplicationFormData: MobileApplicationFormData;
@@ -34,7 +34,7 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditMobileAppRouteMatchParam> &
   InjectedDatamartProps;
 
-class EditCampaignPage extends React.Component<Props, State> {
+class EditMobileAppPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -106,7 +106,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    const getVisitAnalyzerId = (visitAnalyzerFields: ActivityAnalyzerFieldModel[]) => {
+    const getVisitAnalyzerId = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
       if (visitAnalyzerFields.length && visitAnalyzerFields[0].model && visitAnalyzerFields[0].model.visit_analyzer_model_id) {
         return visitAnalyzerFields[0].model.visit_analyzer_model_id
       }
@@ -217,4 +217,4 @@ export default compose(
   injectDatamart,
   connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
   injectNotifications,
-)(EditCampaignPage);
+)(EditMobileAppPage);

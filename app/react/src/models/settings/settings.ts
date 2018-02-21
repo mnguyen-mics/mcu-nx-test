@@ -20,3 +20,68 @@ export interface MobileApplicationCreationResource extends Partial<PropertyResou
 export interface SiteResource extends PropertyResource {
     type: 'SITE';
 }
+
+
+/*
+ *
+ * Event Rules
+ *
+*/
+
+export interface EventRuleResource {
+    id: string;
+    site_id?: string;
+    datamart_id: string;
+}
+
+export interface EventRuleCatalogAutoMatch extends EventRuleResource {
+    type: 'CATALOG_AUTO_MATCH';
+    add_category_to_item: boolean;
+    auto_match_type: 'CATEGORY' | 'PRODUCT' | 'PRODUCT_AND_CATEGORY';
+    category_max_depth?: number | null;
+    excluded_categories: string[];
+}
+
+export interface EventRuleUrlMatch extends EventRuleResource {
+    type: 'URL_MATCH';
+    pattern: string;
+    event_template: {
+        $event_name: string;
+        $properties: any;
+    }
+}
+
+export interface EventRuleUserIdentifierInsertion extends EventRuleResource {
+    type: 'USER_IDENTIFIER_INSERTION';
+    hash_function: 'MD2' | 'NO_HASH' | 'SHA_256' | 'MD5' | 'SHA_1' | 'SHA_384' | 'SHA_512';
+    identifier_creation: 'USER_ACCOUNT' | 'EMAIL_HASH';
+    property_source: string;
+    remove_source: boolean;
+    salt?: string | null;
+    to_lower_case: boolean;
+    validation_regexp?: string | null;
+}
+
+export interface EventRulePropertyToOriginCopy extends EventRuleResource {
+    type: 'PROPERTY_TO_ORIGIN_COPY';
+    destination: string;
+    property_name: string;
+    property_source: 'URL' | 'EVENT_PROPERTY' | 'REFERRER';
+}
+
+export type EventRules =
+  | EventRuleUrlMatch
+  | EventRuleUserIdentifierInsertion
+  | EventRuleCatalogAutoMatch
+  | EventRulePropertyToOriginCopy;
+
+  /*
+   * aliases 
+   */
+
+export interface Aliases {
+    id: string;
+    organisation_id: string;
+    site_id: string;
+    name: string
+}

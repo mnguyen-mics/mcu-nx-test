@@ -22,7 +22,7 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
 import messages from './messages';
-import { MobileApplicationFormData } from './domain';
+import { SiteFormData } from './domain';
 import { Omit } from '../../../../utils/Types';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../utils/FormHelper';
@@ -30,7 +30,19 @@ import { McsFormSection } from '../../../../utils/FormHelper';
 import VisitAnalyzerSection, {
     VisitAnalyzerSectionProps,
 } from '../../Common/VisitAnalyzerFormSection';
+
+import EventRulesSection, {
+  EventRulesSectionProps,
+} from '../../Common/EventRulesSection';
+
 import * as SessionSelectors from '../../../../state/Session/selectors';
+
+import DomainsField, { DomainFieldProps } from './Sections/DomainsField';
+
+
+const FormDomainFields = FieldArray as new () => GenericFieldArray<
+DomainFieldProps
+>;
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -41,8 +53,13 @@ const VisitAnalyzerFieldArray = FieldArray as new () => GenericFieldArray<
   VisitAnalyzerSectionProps
 >;
 
-export interface MobileApplicationEditFormProps
-  extends Omit<ConfigProps<MobileApplicationFormData>, 'form'> {
+const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  EventRulesSectionProps
+>;
+
+export interface SiteEditFormProps
+  extends Omit<ConfigProps<SiteFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
 }
@@ -52,17 +69,17 @@ interface MapStateToProps {
 }
 
 type Props = InjectedFormProps<
-  MobileApplicationFormData,
-  MobileApplicationEditFormProps
+  SiteFormData,
+  SiteEditFormProps
 > &
-  MobileApplicationEditFormProps &
+  SiteEditFormProps &
   MapStateToProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-const FORM_ID = 'mobileApplicationForm';
+const FORM_ID = 'siteForm';
 
-class MobileApplicationEditForm extends React.Component<Props> {
+class SiteEditForm extends React.Component<Props> {
   render() {
     const {
       handleSubmit,
@@ -79,7 +96,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
-      message: messages.saveMobileApp,
+      message: messages.saveSite,
       onClose: close,
     };
 
@@ -91,8 +108,30 @@ class MobileApplicationEditForm extends React.Component<Props> {
     });
 
     sections.push({
+      id: 'aliases',
+      title: messages.sectionAliasesTitle,
+      component: <FormDomainFields
+        name={"aliases"}
+        component={DomainsField}
+        {...genericFieldArrayProps}
+      />
+    })
+
+    sections.push({
+      id: 'eventRules',
+      title: messages.sectionEventRulesTitle,
+      component: (
+        <EventRulesFieldArray
+          name="eventRulesFields"
+          component={EventRulesSection}
+          {...genericFieldArrayProps}
+        />
+      ),
+    });
+
+    sections.push({
       id: 'visitAnalyzer',
-      title: messages.sectionGeneralTitle,
+      title: messages.sectionVisitAnalyzer,
       component: (
         <VisitAnalyzerFieldArray
           name="visitAnalyzerFields"
@@ -140,7 +179,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
   }
 }
 
-export default compose<Props, MobileApplicationEditFormProps>(
+export default compose<Props, SiteEditFormProps>(
   injectIntl,
   withRouter,
   reduxForm({
@@ -148,4 +187,4 @@ export default compose<Props, MobileApplicationEditFormProps>(
     enableReinitialize: true,
   }),
   connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
-)(MobileApplicationEditForm);
+)(SiteEditForm);

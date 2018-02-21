@@ -1,39 +1,38 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 
-import messages from '../messages';
-import { injectDrawer } from '../../../../../components/Drawer/index';
-import { ActivityAnalyzerFieldModel } from '../domain';
-import FormSection from '../../../../../components/Form/FormSection';
-import RelatedRecords from '../../../../../components/RelatedRecord/RelatedRecords';
-import RecordElement from '../../../../../components/RelatedRecord/RecordElement';
+import { injectDrawer } from '../../../components/Drawer/index';
+import { VisitAnalyzerFieldModel } from './domain';
+import FormSection from '../../../components/Form/FormSection';
+import RelatedRecords from '../../../components/RelatedRecord/RelatedRecords';
+import RecordElement from '../../../components/RelatedRecord/RecordElement';
 import VisitAnalyzerSelector, {
     VisitAnalyzerSelectorProps,
-} from '../../../Common/VisitAnalyzerSelector';
-import { VisitAnalyzer } from '../../../../../models/Plugins';
+} from '../Common/VisitAnalyzerSelector';
+import { VisitAnalyzer } from '../../../models/Plugins';
 import {
   PropertyResourceShape,
   StringPropertyResource,
-} from '../../../../../models/plugin/index';
-import VisitAnalyzerService from '../../../../../services/Library/VisitAnalyzerService';
-import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
+} from '../../../models/plugin/index';
+import VisitAnalyzerService from '../../../services/Library/VisitAnalyzerService';
+import { ReduxFormChangeProps } from '../../../utils/FormHelper';
 import {
   DataResponse,
   DataListResponse,
-} from '../../../../../services/ApiService';
+} from '../../../services/ApiService';
 import {
   makeCancelable,
   CancelablePromise,
-} from '../../../../../utils/ApiHelper';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+} from '../../../utils/ApiHelper';
+import { InjectDrawerProps } from '../../../components/Drawer/injectDrawer';
 
 export interface VisitAnalyzerSectionProps extends ReduxFormChangeProps {}
 
 type Props = VisitAnalyzerSectionProps &
-  WrappedFieldArrayProps<ActivityAnalyzerFieldModel> &
+  WrappedFieldArrayProps<VisitAnalyzerFieldModel> &
   InjectedIntlProps &
   InjectDrawerProps;
 
@@ -43,6 +42,25 @@ interface State {
     properties: PropertyResourceShape[];
   };
 }
+
+const messages = defineMessages({
+    dropdownAddExisting: {
+        id: 'settings.form.activityAnalyzer.addExisting',
+        defaultMessage: 'Add Existing',
+    },
+    sectionSubtitleVisitAnalyzer: {
+        id: 'settings.form.activityAnalyzer.subtitle',
+        defaultMessage: 'Add a Visit Analyzer to your property. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your DMP.',
+    },
+    sectionTitleVisitAnalyzer: {
+        id: 'settings.form.activityAnalyzer.title',
+        defaultMessage: 'Visit Analyzer',
+    },
+    sectionEmptyVisitAnalyzer: {
+        id: 'settings.form.activityAnalyzer.empty',
+        defaultMessage: 'There is no Visit Analyzer selected yet!',
+    },
+})
 
 class VisitAnalyzerSection extends React.Component<Props, State> {
   cancelablePromise: CancelablePromise<
@@ -95,7 +113,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   updateActivityAnalyzer = (visitAnalyzer: VisitAnalyzer[]) => {
     const { fields, formChange } = this.props;
 
-    const newField: ActivityAnalyzerFieldModel[] = [
+    const newField: VisitAnalyzerFieldModel[] = [
       {
         key: cuid(),
         model: { visit_analyzer_model_id: visitAnalyzer[0].id },
@@ -128,7 +146,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
     const { fields } = this.props;
     const { visitAnalyzerData } = this.state;
 
-    const getName = (field: ActivityAnalyzerFieldModel) => {
+    const getName = (field: VisitAnalyzerFieldModel) => {
       const name =
         visitAnalyzerData.visitAnalyzer && visitAnalyzerData.visitAnalyzer.name;
       const typeP = visitAnalyzerData.properties.find(

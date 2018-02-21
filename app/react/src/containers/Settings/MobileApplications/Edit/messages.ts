@@ -37,22 +37,7 @@ export default defineMessages({
         id: 'settings.mobileapp.form.general.token.tooltip',
         defaultMessage: 'Give your Mobile Application a unique token to identify your app. This token can be comprised with charaters as well as numbers',
     },
-    dropdownAddExisting: {
-        id: 'settings.mobileapp.form.activityAnalyzer.addExisting',
-        defaultMessage: 'Add Existing',
-    },
-    sectionSubtitleVisitAnalyzer: {
-        id: 'settings.mobileapp.form.activityAnalyzer.subtitle',
-        defaultMessage: 'Add a Visit Analyzer to your Mobile App',
-    },
-    sectionTitleVisitAnalyzer: {
-        id: 'settings.mobileapp.form.activityAnalyzer.title',
-        defaultMessage: 'Visit Analyzer',
-    },
-    sectionEmptyVisitAnalyzer: {
-        id: 'settings.mobileapp.form.activityAnalyzer.empty',
-        defaultMessage: 'There is no Visit Analyzer selected yet!',
-    },
+    
     errorFormMessage: {
         id: 'settings.mobileapp.form.errorMessage',
         defaultMessage: 'There is an error with the data you have inputed, please check'

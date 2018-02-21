@@ -4,6 +4,7 @@ import {
 } from '../containers/Settings/index';
 
 import MobileApplicationEditPage from '../containers/Settings/MobileApplications/Edit/MobileApplicationEditPage.tsx';
+import SiteEditPage from '../containers/Settings/Sites/Edit/SiteEditPage.tsx';
 
 const settingsRoutes = [
   {
@@ -21,6 +22,16 @@ const settingsRoutes = [
     path: '/settings/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
+  },
+  {
+    path: '/settings/sites/create',
+    layout: 'edit',
+    editComponent: SiteEditPage,
+  },
+  {
+    path: '/settings/sites/:siteId/edit',
+    layout: 'edit',
+    editComponent: SiteEditPage,
   },
 ];
 

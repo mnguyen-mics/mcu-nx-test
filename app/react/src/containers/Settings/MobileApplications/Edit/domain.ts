@@ -1,14 +1,11 @@
 import { MobileApplicationResource } from '../../../../models/settings/settings';
-import { FieldArrayModel } from '../../../../utils/FormHelper';
+import { VisitAnalyzerFieldModel } from '../../Common/domain';
 
 export interface MobileApplicationFormData {
   mobileapplication: Partial<MobileApplicationResource>;
-  visitAnalyzerFields: ActivityAnalyzerFieldModel[];
+  visitAnalyzerFields: VisitAnalyzerFieldModel[];
 }
 
-export type ActivityAnalyzerFieldModel = FieldArrayModel<{
-  visit_analyzer_model_id: string;
-}>;
 
 export const INITIAL_MOBILE_APP_FORM_DATA: MobileApplicationFormData = {
   mobileapplication: {

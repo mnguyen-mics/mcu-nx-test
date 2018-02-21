@@ -124,7 +124,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
 
   buildNewActionElement = (organisationId: string, datamartId: string) => {
     return (
-      <Link key={messages.newSite.id} to={`/o${organisationId}d${datamartId}/settings/sites/new`}>
+      <Link key={messages.newSite.id} to={`/v2/o/${organisationId}/settings/sites/create`}>
         <Button key={messages.newSite.id} type="primary" htmlType="submit">
           <FormattedMessage {...messages.newSite} />
         </Button>
