@@ -62,6 +62,18 @@ const messages = defineMessages({
     defaultMessage:
       'Click on the pen to add a placement to your placement list',
   },
+  dragAndDrop: {
+    id: 'drag.and.drop.file.or.click.line.1',
+    defaultMessage: 'Drag & Drop your file or click to upload your CSV file.',
+  },
+  csvRules: {
+    id: 'drag.and.drop.file.or.click.line.2',
+    defaultMessage: "Your CSV file must have 3 columns and no empty cells",
+  },
+  modalTitle: {
+    id: 'drag.and.drop.modal.title',
+    defaultMessage: 'Replace the current placements by CSV ',
+  },
 });
 
 interface PlacementsFormSectionProps extends ReduxFormChangeProps {}
@@ -105,8 +117,16 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
   validateFormat = (fileData: string[][]) => {
     return new Promise((resolve, reject) => {
+      // if (
+      //   fileData[0][0] !== 'Value' ||
+      //   fileData[0][1] !== 'Type' ||
+      //   fileData[0][2] !== 'Holder'
+      // ) {
+      //   return reject('failed');
+      // }
+
       fileData.filter(row => row.length !== 1).forEach((row, i) => {
-        if (row.length === 10) {
+        if (row.length === 3) {
           row.forEach((cell, j) => {
             if (!cell || cell === '') {
               return reject('failed');
@@ -120,14 +140,32 @@ class PlacementsFormSection extends React.Component<Props, State> {
     });
   };
 
+  handleCSVreplacement = (data: string[][]) => {
+    const { fields, formChange } = this.props;
+    const newFields: PlacementDescriptorListFieldModel[] = [];
+    data.forEach(row => {
+      newFields.push({
+        key: cuid(),
+        model: {
+          value: row[0],
+          descriptor_type: row[1],
+          placement_holder: row[2]
+        },
+      });
+    })
+    
+    formChange((fields as any).name, newFields);
+  } 
+  
+
   closeModalAndNotify = (validationSuccess: boolean = false) => {
     this.setState({
       isModalOpen: false,
     });
     if (validationSuccess) {
-      message.success('success');
+      message.success('Success');
     } else {
-      message.error('error');
+      message.error(this.props.intl.formatMessage(messages.csvRules), 5);
     }
   };
 
@@ -135,9 +173,11 @@ class PlacementsFormSection extends React.Component<Props, State> {
     const { fileList } = this.state;
     const config = {
       complete: (results: any, file: any) => {
+        console.log(results);
         this.validateFormat(results.data)
           .then(res => {
             this.closeModalAndNotify(true);
+            this.handleCSVreplacement(results.data); 
           })
           .catch(() => {
             this.closeModalAndNotify();
@@ -146,6 +186,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
     };
     const fileToParse = fileList[0] as any;
     Papa.parse(fileToParse, config);
+
   };
 
   handleOpenClose = () => {
@@ -220,13 +261,16 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
     return (
       <Modal
-        title="test"
+        title={this.props.intl.formatMessage(messages.modalTitle)}
         visible={this.state.isModalOpen}
         onOk={this.handleOk}
         okText={'ok'}
         onCancel={this.handleOpenClose}
       >
-        <Dragger {...props}>Drag & Drop or Click</Dragger>
+        <Dragger {...props}>
+          {this.props.intl.formatMessage(messages.dragAndDrop)}<br/>
+          {this.props.intl.formatMessage(messages.csvRules)}
+        </Dragger>
       </Modal>
     );
   };
