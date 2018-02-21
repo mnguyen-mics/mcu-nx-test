@@ -105,7 +105,10 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   };
 
   save = (formData: PlacementListFormData) => {
-    const { match: { params: { placementListId, organisationId } }, intl } = this.props;
+    const {
+      match: { params: { placementListId, organisationId } },
+      intl,
+    } = this.props;
     const { placementList: initialPlacementListData } = this.state;
     this.setState({
       loading: true,

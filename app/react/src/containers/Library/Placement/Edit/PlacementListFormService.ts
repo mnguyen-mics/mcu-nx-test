@@ -9,10 +9,7 @@ import {
   PlacementDescriptorListFieldModel,
 } from './domain';
 import PlacementListService from '../../../../services/Library/PlacementListsService';
-import {
-  Task,
-  executeTasksInSequence,
-} from '../../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
 
 const PlacementListFormService = {
   savePlacementList(
@@ -51,7 +48,7 @@ const PlacementListFormService = {
       return executeTasksInSequence(tasks).then(() => newPlacementListId);
     });
   },
-  
+
   savePlacementDescriptor(
     placementDescriptorId: string,
     formData: PlacementDescriptorFormData,
@@ -64,22 +61,19 @@ const PlacementListFormService = {
         Partial<PlacementDescriptorCreateRequest>
       >(formData)
     ) {
-			createOrUpdatePlacementDescriptorPromise =
-			PlacementListService.updatePlacementDescriptor(
-				placementDescriptorId,
-				formData.id,
-				formData
-			);
+      createOrUpdatePlacementDescriptorPromise = PlacementListService.updatePlacementDescriptor(
+        placementDescriptorId,
+        formData.id,
+        formData,
+      );
     } else {
-			createOrUpdatePlacementDescriptorPromise =
-			PlacementListService.createPlacementDescriptor(
-				placementDescriptorId,
-				formData
-			);
-		}
+      createOrUpdatePlacementDescriptorPromise = PlacementListService.createPlacementDescriptor(
+        placementDescriptorId,
+        formData,
+      );
+    }
 
-		return createOrUpdatePlacementDescriptorPromise;
-   
+    return createOrUpdatePlacementDescriptorPromise;
   },
 };
 

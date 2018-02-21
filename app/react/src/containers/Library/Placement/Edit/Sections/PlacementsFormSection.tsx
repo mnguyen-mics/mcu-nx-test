@@ -32,11 +32,6 @@ import {
 
 const Dragger = Upload.Dragger;
 
-// const PlacementDescriptorFieldArray = FieldArray as new () => GenericFieldArray<
-//   Field,
-//   ReduxFormChangeProps
-// >;
-
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.placement.list.form.placement.subtitle',
@@ -157,10 +152,6 @@ class PlacementsFormSection extends React.Component<Props, State> {
     this.setState({ isModalOpen: !this.state.isModalOpen, fileList: [] });
   };
 
-  // saveNewPlacement = () => {
-  //   //
-  // };
-
   updatePlacementDescriptors = (
     formData: Partial<PlacementDescriptorResource>,
     existingKey?: string,
@@ -188,24 +179,6 @@ class PlacementsFormSection extends React.Component<Props, State> {
     formChange((fields as any).name, newFields);
     closeNextDrawer();
   };
-
-  // addNewPlacement = () => {
-  //   const { openNextDrawer, closeNextDrawer, intl } = this.props;
-  //   const additionalProps = {
-  //     onSave: this.saveNewPlacement,
-  //     actionBarButtonText: intl.formatMessage(messages.addNewPlacement),
-  //     close: closeNextDrawer,
-  //   };
-
-  //   const options = {
-  //     additionalProps,
-  //   };
-
-  //   openNextDrawer<PlacementDescriptorFormProps>(
-  //     PlacementDescriptorForm,
-  //     options,
-  //   );
-  // };
 
   openPlacementDescriptorForm = (
     field?: FieldArrayModel<Partial<PlacementDescriptorResource>>,
