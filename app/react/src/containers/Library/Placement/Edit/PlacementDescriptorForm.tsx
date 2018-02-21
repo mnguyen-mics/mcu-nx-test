@@ -2,8 +2,13 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Form, InjectedFormProps, reduxForm } from 'redux-form';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { Form, InjectedFormProps, reduxForm, Fields } from 'redux-form';
+import {
+  InjectedIntlProps,
+  injectIntl,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
 
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -17,7 +22,6 @@ import { injectDrawer } from '../../../../components/Drawer/index';
 import {
   FormInput,
   FormSection,
-  FormSelectField,
   withValidators,
   FormInputField,
 } from '../../../../components/Form';
@@ -27,6 +31,7 @@ import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { SelectValue } from 'antd/lib/select';
 
 const FORM_ID = 'placementDescriptorForm';
 
@@ -75,29 +80,45 @@ const messages = defineMessages({
     id: 'edit.placement.descriptor.tooltip',
     defaultMessage: 'Lorem Ipsum',
   },
-  exactUrl: {
-    id: 'edit.placement.descriptor.select.type.option.exactUrl',
-    defaultMessage: 'Exact URL',
-  },
-  exactApplicationId: {
-    id: 'edit.placement.descriptor.select.type.option.exactApplicatinoId',
-    defaultMessage: 'Exact Application Id',
-  },
-  exactPattern: {
-    id: 'edit.placement.descriptor.select.type.option.pattern',
-    defaultMessage: 'Pattern',
-  },
-  application: {
-    id: 'edit.placement.descriptor.select.holder.option.application',
-    defaultMessage: 'Application',
-  },
-  webBrowser: {
-    id: 'edit.placement.descriptor.select.type.holder.webBrowser',
-    defaultMessage: 'Web Browser',
-  },
   savingInProgress: {
     id: 'form.saving.in.progress',
     defaultMessage: 'Saving in progress',
+  },
+});
+
+const placementDescriptorTypeMessagesMap: {
+  [propertyName: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  EXACT_URL: {
+    id: 'edit.placement.descriptor.form.option.exactUrl',
+    defaultMessage: 'Exact URL',
+  },
+  EXACT_APPLICATION_ID: {
+    id: 'edit.placement.descriptor.form.option.exactAppId',
+    defaultMessage: 'Exact Application Id',
+  },
+  PATTERN: {
+    id: 'edit.placement.descriptor.form.option.pattern',
+    defaultMessage: 'Pattern',
+  },
+});
+
+const placementDescriptorTypes: string[] = [
+  'EXACT_URL',
+  'EXACT_APPLICATION_ID',
+  'PATTERN',
+];
+const placementDescriptorHolders: string[] = ['APPLICATION', 'WEB_BROWSER'];
+const placementDescriptorHolderMessagesMap: {
+  [propertyName: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  APPLICATION: {
+    id: 'edit.placement.descriptor.form.option.application',
+    defaultMessage: 'Application',
+  },
+  WEB_BROWSER: {
+    id: 'edit.placement.descriptor.form.option.webBrowser',
+    defaultMessage: 'Web Browser',
   },
 });
 
@@ -108,6 +129,11 @@ export interface PlacementDescriptorFormProps {
   close: () => void;
 }
 
+interface PlacementDescriptorFormState {
+  selectedTypeOption: SelectValue;
+  selectedHolderOption: SelectValue;
+}
+
 type JoinedProps = PlacementDescriptorFormProps &
   InjectDrawerProps &
   InjectedFormProps<PlacementDescriptorResource, PlacementDescriptorFormProps> &
@@ -116,7 +142,104 @@ type JoinedProps = PlacementDescriptorFormProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; placementListId: string }>;
 
-class PlacementDescriptorForm extends React.Component<JoinedProps> {
+class PlacementDescriptorForm extends React.Component<
+  JoinedProps,
+  PlacementDescriptorFormState
+> {
+  typeAvailableOptionsArray = [];
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      selectedTypeOption: '',
+      selectedHolderOption: '',
+    };
+  }
+
+  getAvailableTypeOptions = () => {
+    const { intl } = this.props;
+    return placementDescriptorTypes.map(placementDescriptorType => {
+      return {
+        title: intl.formatMessage(
+          placementDescriptorTypeMessagesMap[placementDescriptorType],
+        ),
+        value: placementDescriptorType,
+        disabled: false,
+      };
+    });
+  };
+
+  getAvailableHolderOptions = () => {
+    const { intl } = this.props;
+    return placementDescriptorHolders.map(placementDescriptorHolder => {
+      return {
+        title: intl.formatMessage(
+          placementDescriptorHolderMessagesMap[placementDescriptorHolder],
+        ),
+        value: placementDescriptorHolder,
+        disabled:
+          (placementDescriptorHolder === 'WEB_BROWSER' &&
+            this.state.selectedTypeOption === 'EXACT_APPLICATION_ID') ||
+          (placementDescriptorHolder === 'APPLICATION' &&
+            (this.state.selectedTypeOption === 'EXACT_URL' ||
+              this.state.selectedTypeOption === 'PATTERN')),
+      };
+    });
+  };
+
+  onSelectType = (value: SelectValue) => {
+    this.setState({
+      selectedTypeOption: value,
+      selectedHolderOption:
+        value === 'EXACT_APPLICATION_ID' ? 'APPLICATION' : 'WEB_BROWSER',
+    });
+  };
+
+  onSelectHolder = (value: SelectValue) => {
+    this.setState({
+      selectedHolderOption: value,
+    });
+  };
+
+  renderFields = (fields: any) => {
+    const { intl } = this.props;
+    // TODO : override change in descriptor_type input
+    // change((fields as any).placement_holder, [])
+    return (
+      <div>
+        <DefaultSelect
+          selectProps={{
+            onSelect: this.onSelectType,
+          }}
+          formItemProps={{
+            label: intl.formatMessage(messages.labelTypePlacementDescriptor),
+            required: true,
+          }}
+          options={this.getAvailableTypeOptions()}
+          helpToolTipProps={{
+            title: intl.formatMessage(messages.tootltipPlacementDescriptor),
+          }}
+          {...fields.descriptor_type}
+        />
+        <DefaultSelect
+          selectProps={{
+            onSelect: this.onSelectHolder,
+            value: this.state.selectedHolderOption,
+          }}
+          formItemProps={{
+            label: intl.formatMessage(messages.labelHolderPlacementDescriptor),
+            required: true,
+          }}
+          options={this.getAvailableHolderOptions()}
+          helpToolTipProps={{
+            title: intl.formatMessage(messages.tootltipPlacementDescriptor),
+          }}
+          {...fields.placement_holder}
+        />
+      </div>
+    );
+  };
+
   render() {
     const {
       intl,
@@ -196,61 +319,9 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
                       ),
                     }}
                   />
-                  <FormSelectField
-                    name="descriptor_type"
-                    component={DefaultSelect}
-                    validate={[isRequired]}
-                    formItemProps={{
-                      label: intl.formatMessage(
-                        messages.labelTypePlacementDescriptor,
-                      ),
-                      required: true,
-                    }}
-                    options={[
-                      {
-                        title: intl.formatMessage(messages.exactUrl),
-                        value: 'EXACT_URL',
-                      },
-                      {
-                        title: intl.formatMessage(messages.exactApplicationId),
-                        value: 'EXACT_APPLICATION_ID',
-                      },
-                      {
-                        title: intl.formatMessage(messages.exactPattern),
-                        value: 'PATTERN',
-                      },
-                    ]}
-                    helpToolTipProps={{
-                      title: intl.formatMessage(
-                        messages.tootltipPlacementDescriptor,
-                      ),
-                    }}
-                  />
-                  <FormSelectField
-                    name="placement_holder"
-                    component={DefaultSelect}
-                    validate={[isRequired]}
-                    formItemProps={{
-                      label: intl.formatMessage(
-                        messages.labelHolderPlacementDescriptor,
-                      ),
-                      required: true,
-                    }}
-                    options={[
-                      {
-                        title: intl.formatMessage(messages.application),
-                        value: 'APPLICATION',
-                      },
-                      {
-                        title: intl.formatMessage(messages.webBrowser),
-                        value: 'WEB_BROWSER',
-                      },
-                    ]}
-                    helpToolTipProps={{
-                      title: intl.formatMessage(
-                        messages.tootltipPlacementDescriptor,
-                      ),
-                    }}
+                  <Fields
+                    names={['descriptor_type', 'placement_holder']}
+                    component={this.renderFields}
                   />
                 </div>
               </div>
