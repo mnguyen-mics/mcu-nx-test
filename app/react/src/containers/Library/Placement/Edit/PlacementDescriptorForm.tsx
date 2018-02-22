@@ -31,7 +31,6 @@ import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { SelectValue } from 'antd/lib/select';
 
 const FORM_ID = 'placementDescriptorForm';
 
@@ -129,11 +128,6 @@ export interface PlacementDescriptorFormProps {
   close: () => void;
 }
 
-interface PlacementDescriptorFormState {
-  selectedTypeOption: SelectValue;
-  selectedHolderOption: SelectValue;
-}
-
 type JoinedProps = PlacementDescriptorFormProps &
   InjectDrawerProps &
   InjectedFormProps<PlacementDescriptorResource, PlacementDescriptorFormProps> &
@@ -142,21 +136,14 @@ type JoinedProps = PlacementDescriptorFormProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; placementListId: string }>;
 
-class PlacementDescriptorForm extends React.Component<
-  JoinedProps,
-  PlacementDescriptorFormState
-> {
+class PlacementDescriptorForm extends React.Component<JoinedProps> {
   typeAvailableOptionsArray = [];
 
   constructor(props: JoinedProps) {
     super(props);
-    this.state = {
-      selectedTypeOption: '',
-      selectedHolderOption: '',
-    };
   }
 
-  getAvailableTypeOptions = () => {
+  getAvailableTypeOptions = (value: string) => {
     const { intl } = this.props;
     return placementDescriptorTypes.map(placementDescriptorType => {
       return {
@@ -169,7 +156,7 @@ class PlacementDescriptorForm extends React.Component<
     });
   };
 
-  getAvailableHolderOptions = () => {
+  getAvailableHolderOptions = (value: string) => {
     const { intl } = this.props;
     return placementDescriptorHolders.map(placementDescriptorHolder => {
       return {
@@ -179,58 +166,46 @@ class PlacementDescriptorForm extends React.Component<
         value: placementDescriptorHolder,
         disabled:
           (placementDescriptorHolder === 'WEB_BROWSER' &&
-            this.state.selectedTypeOption === 'EXACT_APPLICATION_ID') ||
+            value === 'EXACT_APPLICATION_ID') ||
           (placementDescriptorHolder === 'APPLICATION' &&
-            (this.state.selectedTypeOption === 'EXACT_URL' ||
-              this.state.selectedTypeOption === 'PATTERN')),
+            value !== 'EXACT_APPLICATION_ID'),
       };
     });
   };
 
-  onSelectType = (value: SelectValue) => {
-    this.setState({
-      selectedTypeOption: value,
-      selectedHolderOption:
-        value === 'EXACT_APPLICATION_ID' ? 'APPLICATION' : 'WEB_BROWSER',
-    });
-  };
-
-  onSelectHolder = (value: SelectValue) => {
-    this.setState({
-      selectedHolderOption: value,
-    });
-  };
-
   renderFields = (fields: any) => {
-    const { intl } = this.props;
-    // TODO : override change in descriptor_type input
-    // change((fields as any).placement_holder, [])
+    const { intl, change } = this.props;
+    const newChange = (value: string) => {
+      change('placement_holder', '');
+      change('descriptor_type', value);
+    };
     return (
       <div>
         <DefaultSelect
-          selectProps={{
-            onSelect: this.onSelectType,
-          }}
           formItemProps={{
             label: intl.formatMessage(messages.labelTypePlacementDescriptor),
             required: true,
           }}
-          options={this.getAvailableTypeOptions()}
+          options={this.getAvailableTypeOptions(
+            fields.placement_holder.input.value,
+          )}
           helpToolTipProps={{
             title: intl.formatMessage(messages.tootltipPlacementDescriptor),
           }}
           {...fields.descriptor_type}
+          input={{
+            ...fields.descriptor_type.input,
+            onChange: newChange,
+          }}
         />
         <DefaultSelect
-          selectProps={{
-            onSelect: this.onSelectHolder,
-            value: this.state.selectedHolderOption,
-          }}
           formItemProps={{
             label: intl.formatMessage(messages.labelHolderPlacementDescriptor),
             required: true,
           }}
-          options={this.getAvailableHolderOptions()}
+          options={this.getAvailableHolderOptions(
+            fields.descriptor_type.input.value,
+          )}
           helpToolTipProps={{
             title: intl.formatMessage(messages.tootltipPlacementDescriptor),
           }}

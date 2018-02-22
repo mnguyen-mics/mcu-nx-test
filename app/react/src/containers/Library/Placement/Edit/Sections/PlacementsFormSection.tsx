@@ -74,6 +74,10 @@ const messages = defineMessages({
     id: 'drag.and.drop.modal.title',
     defaultMessage: 'Replace the current placements by CSV ',
   },
+  formError: {
+    id: 'form.placement.descriptor.empty.select.message.error',
+    defaultMessage: 'Error: Empty fields are forbidden. Please select values.',
+  },
 });
 
 interface PlacementsFormSectionProps extends ReduxFormChangeProps {}
@@ -113,7 +117,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
       line.push(fieldModel.model.descriptor_type);
       line.push(fieldModel.model.placement_holder);
       rowsToUpload.push(line);
-    })
+    });
     let csvContent = 'data:text/csv;charset=utf-8,';
     rowsToUpload.forEach(rowArray => {
       const row = rowArray.join(',');
@@ -129,7 +133,6 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
   validateFormat = (fileData: string[][]) => {
     return new Promise((resolve, reject) => {
-
       fileData.filter(row => row.length !== 1).forEach((row, i) => {
         if (row.length === 3) {
           row.forEach((cell, j) => {
@@ -199,28 +202,37 @@ class PlacementsFormSection extends React.Component<Props, State> {
     formData: Partial<PlacementDescriptorResource>,
     existingKey?: string,
   ) => {
-    const { fields, formChange, closeNextDrawer } = this.props;
+    const { fields, formChange, closeNextDrawer, intl } = this.props;
     const newFields: PlacementDescriptorListFieldModel[] = [];
-    if (existingKey) {
-      fields.getAll().forEach(field => {
-        if (field.key === existingKey) {
-          newFields.push({
-            key: existingKey,
-            model: formData,
-          });
-        } else {
-          newFields.push(field);
-        }
-      });
+    if (
+      formData.descriptor_type &&
+      formData.placement_holder &&
+      formData.descriptor_type !== '' &&
+      formData.placement_holder !== ''
+    ) {
+      if (existingKey) {
+        fields.getAll().forEach(field => {
+          if (field.key === existingKey) {
+            newFields.push({
+              key: existingKey,
+              model: formData,
+            });
+          } else {
+            newFields.push(field);
+          }
+        });
+      } else {
+        newFields.push(...fields.getAll());
+        newFields.push({
+          key: cuid(),
+          model: formData,
+        });
+      }
+      formChange((fields as any).name, newFields);
+      closeNextDrawer();
     } else {
-      newFields.push(...fields.getAll());
-      newFields.push({
-        key: cuid(),
-        model: formData,
-      });
+      message.error(intl.formatMessage(messages.formError), 5);
     }
-    formChange((fields as any).name, newFields);
-    closeNextDrawer();
   };
 
   openPlacementDescriptorForm = (
@@ -278,35 +290,41 @@ class PlacementsFormSection extends React.Component<Props, State> {
     );
   };
 
-  getPlacementRecords = (fieldsToDisplay?: Array<FieldArrayModel<PlacementDescriptorResource>>) => {
+  getPlacementRecords = (
+    fieldsToDisplay?: Array<FieldArrayModel<PlacementDescriptorResource>>,
+  ) => {
     const { fields } = this.props;
     const { page, pageSize } = this.state;
-    const start = page !== 1 ? (page -1) * pageSize : 0;
-    const end = page * pageSize; 
-    const placementDescriptorFields = fieldsToDisplay ? fieldsToDisplay : fields.getAll();
-    
-    return placementDescriptorFields.slice(start, end).map((placementDescriptorField, index) => {
-      const removeField = () => {
-        const newIndex = fields.getAll().indexOf(placementDescriptorField);
-        fields.remove(newIndex)
-      };
-      const getName = (
-        placementDescriptor: FieldArrayModel<PlacementDescriptorResource>,
-      ) => placementDescriptor.model.value;
-      const edit = () =>
-        this.openPlacementDescriptorForm(placementDescriptorField);
+    const start = page !== 1 ? (page - 1) * pageSize : 0;
+    const end = page * pageSize;
+    const placementDescriptorFields = fieldsToDisplay
+      ? fieldsToDisplay
+      : fields.getAll();
 
-      return (
-        <RecordElement
-          key={cuid()}
-          recordIconType="display"
-          record={placementDescriptorField}
-          title={getName}
-          onEdit={edit}
-          onRemove={removeField}
-        />
-      );
-    });
+    return placementDescriptorFields
+      .slice(start, end)
+      .map((placementDescriptorField, index) => {
+        const removeField = () => {
+          const newIndex = fields.getAll().indexOf(placementDescriptorField);
+          fields.remove(newIndex);
+        };
+        const getName = (
+          placementDescriptor: FieldArrayModel<PlacementDescriptorResource>,
+        ) => placementDescriptor.model.value;
+        const edit = () =>
+          this.openPlacementDescriptorForm(placementDescriptorField);
+
+        return (
+          <RecordElement
+            key={cuid()}
+            recordIconType="display"
+            record={placementDescriptorField}
+            title={getName}
+            onEdit={edit}
+            onRemove={removeField}
+          />
+        );
+      });
   };
 
   renderFieldArray() {
@@ -327,13 +345,15 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
   onPaginationChange = (page: number, pageSize: number) => {
     const { fields } = this.props;
-    const start = page !== 1 ? (page -1) * pageSize : 0;
-    const end = page * pageSize; 
+    const start = page !== 1 ? (page - 1) * pageSize : 0;
+    const end = page * pageSize;
     this.setState({
       page: page,
-      pageSize: pageSize
+      pageSize: pageSize,
     });
-    const fieldsToDisplay = fields ? fields.getAll().slice(start, end) : undefined;
+    const fieldsToDisplay = fields
+      ? fields.getAll().slice(start, end)
+      : undefined;
     this.getPlacementRecords(fieldsToDisplay);
   };
 
