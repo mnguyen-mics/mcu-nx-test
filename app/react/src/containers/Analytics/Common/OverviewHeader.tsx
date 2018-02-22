@@ -1,5 +1,5 @@
 import React from 'react';
-import TitleAndStatusHeader from '../../../components/TitleAndStatusHeader';
+import ContentHeader from '../../../components/ContentHeader';
 
 interface OverviewHeaderProps {
   object: {
@@ -16,9 +16,8 @@ class OverviewHeader extends React.Component<OverviewHeaderProps> {
     } = this.props;
     return displayCampaignName ? (
       <div className="mcs-campaign-header">
-        <TitleAndStatusHeader
-          headerTitle={displayCampaignName}
-          headerAttributes={[]}
+        <ContentHeader
+          title={displayCampaignName}
         />
       </div>
       ) : (
