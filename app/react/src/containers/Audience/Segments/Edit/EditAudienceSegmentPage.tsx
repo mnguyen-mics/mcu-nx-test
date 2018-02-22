@@ -28,6 +28,7 @@ import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { DataResponse } from '../../../../services/ApiService';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { PluginProperty } from '../../../../models/Plugins';
+import { Loading } from '../../../../components';
 
 
 
@@ -37,6 +38,7 @@ interface State {
   segmentCreation: boolean;
   queryLanguage: QueryLanguage;
   queryContainer?: any;
+  loading: boolean;
 }
 
 type Props = InjectedIntlProps &
@@ -57,6 +59,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       segmentCreation: true,
       queryLanguage: props.datamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL' as QueryLanguage,
       queryContainer: defQuery,
+      loading: true,
     };
 
   }
@@ -175,14 +178,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                 ...this.countDefaultLifetime(res[0].data),
                 audienceTagFeeds: res[2].map(atf => createFieldArrayModel(atf)),
                 audienceExternalFeeds: res[1].map(aef => createFieldArrayModel(aef)),
-              }
-
+              },
+              loading: false,
             };
             return newStat;
           })
         ).catch(err => {
           props.notifyError(err);
+          this.setState({ loading: false })
         });
+    } else {
+      this.setState({ loading: false })
     }
   }
 
@@ -464,15 +470,18 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       segmentCreation
     } = this.state
 
+    this.setState({ loading: true })
     if (segmentCreation) {
       return this.generateCreatePromise(audienceSegmentFormData)
         .then(response => {
           hideSaveInProgress();
+          this.setState({ loading: false })
           const adGroupDashboardUrl =( audienceSegmentFormData.audienceSegment as UserListSegment).feed_type === 'TAG' ? `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit` : `/v2/o/${organisationId}/audience/segments/${response.data.id}`;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {
           hideSaveInProgress();
+          this.setState({ loading: false })
           notifyError(err);
         });
     } else {
@@ -483,11 +492,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return this.generateUpdateRequest(segmentId, audienceSegmentFormData)
         .then(response => {
           hideSaveInProgress();
+          this.setState({ loading: false })
           const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}`;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {
           hideSaveInProgress();
+          this.setState({ loading: false })
           notifyError(err);
         });
 
@@ -504,8 +515,19 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const {
       segmentCreation
-    } = this.state
+    } = this.state;
+
+    const {
+      loading
+    } = this.state;
+  
     const segmentType = type || this.state.segmentType;
+
+
+    if (loading) {
+      return <Loading className="loading-full-screen" />;
+    }
+
     return (
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
