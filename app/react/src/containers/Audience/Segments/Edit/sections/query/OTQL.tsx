@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { OtqlConsole } from '../../../../../../components';
-import FormFieldWrapper, { FormFieldWrapperProps  } from '../../../../../../components/Form/FormFieldWrapper';
 import { FormItemProps } from 'antd/lib/form';
 import { AceEditorProps } from 'react-ace';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 
 
-export interface OTQLInputEditorProps extends FormFieldWrapperProps {
+export interface OTQLInputEditorProps {
   formItemProps?: FormItemProps;
   inputProps?: AceEditorProps;
   helpToolTipProps?: TooltipProps;
@@ -17,19 +16,9 @@ class OTQLInputEditor extends React.Component<OTQLInputEditorProps & WrappedFiel
 
   render() {
 
-    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
-
-    if (this.props.meta.touched && this.props.meta.invalid) validateStatus = 'error';
-    if (this.props.meta.touched && this.props.meta.warning) validateStatus = 'warning';
-
 
     return (
-      <FormFieldWrapper
-        help={this.props.meta.touched && (this.props.meta.warning || this.props.meta.error)}
-        helpToolTipProps={this.props.helpToolTipProps}
-        validateStatus={validateStatus}
-        {...this.props.formItemProps}
-      >
+      
         <OtqlConsole
           value={this.props.input.value}
           {...this.props.inputProps}
@@ -40,7 +29,7 @@ class OTQLInputEditor extends React.Component<OTQLInputEditorProps & WrappedFiel
           enableBasicAutocompletion={true}
           enableLiveAutocompletion={true}
         />
-      </FormFieldWrapper>
+
     );
   }
 }
