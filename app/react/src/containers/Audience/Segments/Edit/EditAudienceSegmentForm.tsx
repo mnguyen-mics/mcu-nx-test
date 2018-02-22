@@ -49,6 +49,7 @@ import { PixelSection } from './sections/pixel'
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Datamart } from '../../../../models/organisation/organisation';
+import { FormSection } from '../../../../components/Form';
 
 const FORM_ID = 'audienceSegmentForm';
 
@@ -89,6 +90,18 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     return segmentType;
   }
 
+  generateUserQueryTemplate = (renderedSection: JSX.Element) => {
+    return (
+      <div>
+        <FormSection
+          title={messages.audienceSegmentSectionQueryTitle}
+          subtitle={messages.audienceSegmentSectionQuerySubTitle}
+        />
+        {renderedSection}
+      </div>
+    )
+  }
+
   renderPropertiesField = () => {
     const {
       segmentType,
@@ -107,7 +120,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       case 'USER_PIXEL':
         return <PixelSection datamartToken={datamart.token} />;
       case 'USER_QUERY':
-        return queryLanguage === 'OTQL' ? <div>otql</div> : <SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.queryContainer} />;
+    return queryLanguage === 'OTQL' ? this.generateUserQueryTemplate(<div>otql</div>) : this.generateUserQueryTemplate(<SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.queryContainer} />);
       default:
         return <div>Not Supported</div>;
     }

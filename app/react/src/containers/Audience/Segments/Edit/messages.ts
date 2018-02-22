@@ -29,6 +29,14 @@ export default defineMessages({
     id: 'audience.segment.create.section.general.subtitle',
     defaultMessage: 'Give your Audience Segment a name.',
   },
+  audienceSegmentSectionQueryTitle: {
+    id: 'audience.segment.create.section.query.title',
+    defaultMessage: 'User Query',
+  },
+  audienceSegmentSectionQuerySubTitle: {
+    id: 'audience.segment.create.section.query.subtitle',
+    defaultMessage: 'Select the user you want to add to your segment.',
+  },
   audienceSegmentCreationGeneralNameFieldTitle: {
     id: 'audience.segment.create.section.general.field.name.title',
     defaultMessage: 'Name',
