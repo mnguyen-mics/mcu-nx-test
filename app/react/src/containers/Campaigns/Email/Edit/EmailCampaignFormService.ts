@@ -97,10 +97,7 @@ const EmailCampaignFormService = {
     });
   },
 
-  loadBlastDependencies(
-    campaignId: string,
-    blastId: string,
-  ): Promise<any> {
+  loadBlastDependencies(campaignId: string, blastId: string): Promise<any> {
     return Promise.all([
       EmailCampaignService.getEmailTemplates(campaignId, blastId).then(resp =>
         resp.data.map(template => ({
@@ -444,8 +441,13 @@ function getBlastTasks(
   const tasks: Task[] = [];
   // create or update blast tasks
   blastFields.forEach(field => {
+    const initialField = initialBlastFields.find(f => f.key === field.key);
     tasks.push(() =>
-      EmailCampaignFormService.saveBlast(campaignId, field.model),
+      EmailCampaignFormService.saveBlast(
+        campaignId,
+        field.model,
+        initialField ? initialField.model : undefined,
+      ),
     );
   });
 

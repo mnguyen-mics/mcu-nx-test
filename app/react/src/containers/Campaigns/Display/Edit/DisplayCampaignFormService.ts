@@ -1,9 +1,6 @@
 import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
-import {
-  extractDataList,
-  extractData,
-} from '../../../../services/ApiService';
+import { extractDataList, extractData } from '../../../../services/ApiService';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import {
   createFieldArrayModelWithMeta,
@@ -236,8 +233,14 @@ function getAdGroupTasks(
 
   const tasks: Task[] = [];
   adGroupFields.forEach(field => {
+    const initialField = initialAdGroupFields.find(f => f.key === field.key);
     tasks.push(() =>
-      AdGroupFormService.saveAdGroup(organisationId, campaignId, field.model),
+      AdGroupFormService.saveAdGroup(
+        organisationId,
+        campaignId,
+        field.model,
+        initialField ? initialField.model : undefined,
+      ),
     );
   });
 

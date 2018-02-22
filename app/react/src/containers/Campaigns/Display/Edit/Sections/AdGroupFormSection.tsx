@@ -27,7 +27,7 @@ type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AdGroupFormSection extends React.Component<Props> {
-  updateBlasts = (formData: AdGroupFormData, existingKey?: string) => {
+  updateAdGroups = (formData: AdGroupFormData, existingKey?: string) => {
     const { fields, formChange } = this.props;
 
     const newFields: AdGroupFieldModel[] = [];
@@ -69,7 +69,7 @@ class AdGroupFormSection extends React.Component<Props> {
     ];
 
     const handleSave = (formData: AdGroupFormData) =>
-      this.updateBlasts(formData, field && field.key);
+      this.updateAdGroups(formData, field && field.key);
 
     const props: AdGroupFormProps = {
       breadCrumbPaths,
