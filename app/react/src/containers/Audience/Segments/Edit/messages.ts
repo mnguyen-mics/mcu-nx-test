@@ -49,6 +49,10 @@ export default defineMessages({
     id: 'audience.segment.create.section.general.field.name.helper',
     defaultMessage: 'Give your Audience Segment a name!',
   },
+  audienceSegmentCreationUserQueryFieldHelper: {
+    id: 'audience.segment.create.section.general.field.query.helper',
+    defaultMessage: 'Start your query with "SELECT \\{ id \\} FROM UserPoint WHERE" and add your conditions after the WHERE clause.',
+  },
   // Technical name
   contentSectionGeneralAdvancedPartRow1Label: {
     id: 'audience.segment.section1.advancedPart.row1.label',
@@ -171,5 +175,5 @@ export default defineMessages({
   listExternalSubTitle: {
     id: 'audience.segment.audienceexternalfeed.list.subtitle',
     defaultMessage: 'Add an Audience External Feed. An Audience External feed will push cookies (Server to Server) to third parties receivers.',
-  }
+  },
 });

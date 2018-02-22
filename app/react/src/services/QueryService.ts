@@ -6,13 +6,13 @@ const queryService = {
     const endpoint = `datamarts/${datamartId}/queries/${queryId}`;
     return ApiService.getRequest(endpoint);
   },
-  createQuery(datamartId: string, queryId: string, query: Partial<QueryResource>): Promise<DataResponse<QueryResource>> {
-    const endpoint = `datamarts/${datamartId}/queries/${queryId}`;
+  createQuery(datamartId: string, query: Partial<QueryResource>): Promise<DataResponse<QueryResource>> {
+    const endpoint = `datamarts/${datamartId}/queries`;
     return ApiService.postRequest(endpoint, query);
   },
   updateQuery(datamartId: string, queryId: string, query: Partial<QueryResource>): Promise<DataResponse<QueryResource>> {
     const endpoint = `datamarts/${datamartId}/queries/${queryId}`;
-    return ApiService.postRequest(endpoint, query);
+    return ApiService.putRequest(endpoint, query);
   },
 };
 

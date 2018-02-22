@@ -1,6 +1,7 @@
 import { AudienceSegmentShape } from "../../../../models/audiencesegment/";
 import { FieldArrayModel } from "../../../../utils/FormHelper";
 import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from "../../../../models/Plugins";
+import { QueryResource } from "../../../../models/datamart/DatamartResource";
 
 
 export interface EditAudienceSegmentParam {
@@ -29,6 +30,7 @@ export interface AudienceSegmentFormData {
   defaultLiftimeUnit: DefaultLiftimeUnit;
   audienceExternalFeeds: AudienceExternalFeedsFieldModel[];
   audienceTagFeeds: AudienceTagFeedsFieldModel[];
+  query?: QueryResource;
 }
 
 

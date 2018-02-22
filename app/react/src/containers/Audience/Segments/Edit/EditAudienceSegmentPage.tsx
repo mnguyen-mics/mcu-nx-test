@@ -24,7 +24,7 @@ import EditAudienceSegmentForm from './EditAudienceSegmentForm'
 import injectDatamart, { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import { createFieldArrayModel, executeTasksInSequence } from '../../../../utils/FormHelper';
-import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
+import { QueryLanguage, QueryResource } from '../../../../models/datamart/DatamartResource';
 import { DataResponse } from '../../../../services/ApiService';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { PluginProperty } from '../../../../models/Plugins';
@@ -121,7 +121,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               defQuery.load()
               this.setState({
                 queryLanguage: r.query_language as QueryLanguage,
-                queryContainer: defQuery
+                queryContainer: defQuery,
+                audienceSegmentFormData: {
+                  ...this.state.audienceSegmentFormData,
+                  query: r
+                } 
               })
             })
         }
@@ -228,10 +232,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       match: { params: { organisationId } },
     } = this.props;
 
-    const {
-      queryContainer
-    } = this.state
-
     switch (audienceSegmentFormData.audienceSegment.type) {
       case 'USER_LIST':
         return AudienceSegmentService.saveSegment(
@@ -239,12 +239,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           audienceSegmentFormData.audienceSegment,
         )
       case 'USER_QUERY':
-        return queryContainer.saveOrUpdate()
-          .then(() => 
+        return this.createQuery(audienceSegmentFormData)
+          .then((queryId) => 
             AudienceSegmentService
               .saveSegment(
                 organisationId,
-                { ...(audienceSegmentFormData.audienceSegment as UserQuerySegment), type: 'USER_QUERY', query_id: queryContainer.id }
+                { ...(audienceSegmentFormData.audienceSegment as UserQuerySegment), type: 'USER_QUERY', query_id: queryId }
               )
             )
       default:
@@ -360,11 +360,45 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     return executeTasksInSequence(allPromises);
   }
 
-  generateUpdateRequest = (segmentId: string, audienceSegmentFormData: AudienceSegmentFormData): Promise<DataResponse<AudienceSegmentShape> | any> => {
+  updateQuery = (queryId: string, audienceSegmentFormData: AudienceSegmentFormData):Promise<string> => {
 
     const {
-      queryContainer
+      datamart,
+    } = this.props;
+
+    const {
+      queryLanguage,
+      queryContainer,
     } = this.state
+
+    return queryLanguage === 'OTQL' ? 
+      QueryService.updateQuery(datamart.id, queryId, { query_language: queryLanguage, query_text: (audienceSegmentFormData.query as QueryResource).query_text, datamart_id: datamart.id })
+      .then(res => res.data)
+      .then(res => res.id) :
+      queryContainer.saveOrUpdate().then(() => queryContainer.id)
+
+  }
+
+  createQuery = (audienceSegmentFormData: AudienceSegmentFormData):Promise<string> => {
+
+    const {
+      datamart,
+    } = this.props;
+
+    const {
+      queryLanguage,
+      queryContainer,
+    } = this.state
+
+    return queryLanguage === 'OTQL' ? 
+      QueryService.createQuery(datamart.id, { query_language: 'OTQL', query_text: (audienceSegmentFormData.query as QueryResource).query_text, datamart_id: datamart.id })
+      .then(res => res.data)
+      .then(res => res.id) :
+      queryContainer.saveOrUpdate().then(() => queryContainer.id)
+
+  }
+
+  generateUpdateRequest = (segmentId: string, audienceSegmentFormData: AudienceSegmentFormData): Promise<DataResponse<AudienceSegmentShape> | any> => {
 
     switch (audienceSegmentFormData.audienceSegment.type) {
       case 'USER_LIST':
@@ -374,14 +408,14 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         )
         .then(res => this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData))
       case 'USER_QUERY':
-        return queryContainer.saveOrUpdate()
-          .then(() => {
+        return this.updateQuery((audienceSegmentFormData.audienceSegment as UserQuerySegment).query_id, audienceSegmentFormData)
+          .then((queryId) => {
               return AudienceSegmentService.updateAudienceSegment(
                 segmentId,
-                { ...(audienceSegmentFormData.audienceSegment as UserQuerySegment), type: 'USER_QUERY', query_id: queryContainer.id }
+                { ...(audienceSegmentFormData.audienceSegment as UserQuerySegment), type: 'USER_QUERY', query_id: queryId }
               )
             })
-            .then((res: { data: UserQuerySegment}) => this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData))
+            .then(res => this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData))
       default:
         return Promise.resolve()
     }
@@ -528,6 +562,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
+    const getQueryLanguageToDisplay = (this.state.audienceSegmentFormData.query && this.state.audienceSegmentFormData.query.query_language) ? this.state.audienceSegmentFormData.query.query_language : this.state.queryLanguage;
     return (
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
@@ -538,7 +573,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         segmentType={segmentType}
         segmentCreation={segmentCreation}
         queryContainer={this.state.queryContainer}
-        queryLanguage={this.state.queryLanguage}
+        queryLanguage={getQueryLanguageToDisplay}
       />
     );
   }

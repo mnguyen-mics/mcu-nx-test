@@ -49,7 +49,9 @@ import { PixelSection } from './sections/pixel'
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Datamart } from '../../../../models/organisation/organisation';
-import { FormSection } from '../../../../components/Form';
+import { FormSection, FieldCtor } from '../../../../components/Form';
+
+import OTQLInputEditor, { OTQLInputEditorProps } from './sections/query/OTQL'
 
 const FORM_ID = 'audienceSegmentForm';
 
@@ -59,6 +61,9 @@ const Content = Layout.Content as React.ComponentClass<
 
 const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceExternalFeedSectionProps>;
 const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceTagFeedSectionProps>;
+
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
+
 export interface AudienceSegmentFormProps extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
   close: () => void;
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
@@ -111,16 +116,27 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         params: {
           organisationId
         }
-      }
+      },
+      intl,
     } = this.props;
-
     switch(segmentType) {
       case 'USER_LIST':
         return null;
       case 'USER_PIXEL':
         return <PixelSection datamartToken={datamart.token} />;
       case 'USER_QUERY':
-    return queryLanguage === 'OTQL' ? this.generateUserQueryTemplate(<div>otql</div>) : this.generateUserQueryTemplate(<SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.queryContainer} />);
+    return queryLanguage === 'OTQL' ? 
+      this.generateUserQueryTemplate(<FormOTQL
+        name={'query.query_text'}
+        component={OTQLInputEditor}
+        formItemProps={{
+          label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
+        }}
+        helpToolTipProps={{
+          title: intl.formatMessage(messages.audienceSegmentCreationUserQueryFieldHelper),
+        }}
+      />) :
+      this.generateUserQueryTemplate(<SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.queryContainer} />);
       default:
         return <div>Not Supported</div>;
     }
