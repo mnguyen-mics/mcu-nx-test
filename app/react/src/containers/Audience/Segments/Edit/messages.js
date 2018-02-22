@@ -67,6 +67,14 @@ export default defineMessages({
     id: 'audience.segment.section2advancedPart.row1.tooltip',
     defaultMessage: 'The code snippet to copy on your web page for custom intergration',
   },
+  contentSectionPropertiesPartRow1TooltipHover: {
+    id: 'audience.segment.section2advancedPart.row1.tooltiphover',
+    defaultMessage: 'Click to copy',
+  },
+  contentSectionPropertiesPartRow1TooltipSnippetCopied: {
+    id: 'audience.segment.section2advancedPart.row1.codesnippetcopied',
+    defaultMessage: 'Code snippet copied',
+  },
   // Default lifetime
   contentSectionGeneralAdvancedPartRow2Label: {
     id: 'audience.segment.section1.advancedPart.row2.label',

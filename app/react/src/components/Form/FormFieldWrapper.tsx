@@ -10,6 +10,7 @@ import McsIcon from '../McsIcon';
 export interface FormFieldWrapperProps {
   hasMarginBottom?: boolean;
   helpToolTipProps?: TooltipProps;
+  hoverToolTipProps?: TooltipProps;
   renderFieldAction?: () => React.ReactNode;
   rowProps?: RowProps;
 }
@@ -30,6 +31,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
     children,
     hasMarginBottom,
     helpToolTipProps,
+    hoverToolTipProps,
     rowProps,
     label,
     renderFieldAction,
@@ -39,12 +41,20 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
   return (
     <div className={hasMarginBottom ? '' : 'form-field-wrapper'}>
       <Form.Item
-        label={ label && <span className="field-label">{label}</span>}
+        label={label && <span className="field-label">{label}</span>}
         {...defaultFieldGridConfig}
         {...formInputProps}
       >
         <Row {...defaultRowProps} {...rowProps}>
-          <Col span={20}>{children}</Col>
+          {!isEmpty(hoverToolTipProps)
+            ? (
+              <Tooltip placement="top" {...hoverToolTipProps}>
+                <Col span={20}>{children}</Col>
+              </Tooltip>
+            ) : (
+              <Col span={20}>{children}</Col>
+            )
+          }
 
           {!isEmpty(helpToolTipProps)
             ? (
@@ -54,7 +64,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
                 </Tooltip>
               </Col>
             ) : (
-              <Col span={2} className="no-field-tooltip"/>
+              <Col span={2} className="no-field-tooltip" />
             )
           }
           {(typeof renderFieldAction !== 'undefined')
@@ -63,7 +73,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
                 {renderFieldAction()}
               </Col>
             ) : (
-              <Col span={2} className="no-renderFieldAction"/>
+              <Col span={2} className="no-renderFieldAction" />
             )
           }
         </Row>
