@@ -34,6 +34,7 @@ interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   pluginVersionId: string;
   formId: string;
   initialValues: any;
+  showGeneralInformation: boolean;
 }
 
 type JoinedProps = PluginEditFormProps &
@@ -119,6 +120,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       isLoading,
+      showGeneralInformation
     } = this.props;
 
     const InputField: FieldCtor<FormInputProps> = Field;
@@ -148,7 +150,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             className="mcs-content-container mcs-form-container ad-group-form"
             // add ID?
           >
-            <div id={'general'}>
+            {showGeneralInformation ? <div><div id={'general'}>
               <Row
                 type="flex"
                 align="middle"
@@ -166,7 +168,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                 />
               </Row>
             </div>
-            <hr />
+            <hr /></div> : null}
             <div id={'properties'}>
               <Row
                 type="flex"

@@ -10,3 +10,13 @@ export interface DatamartResource {
 }
 
 type DatamartType = 'DATAMART' | 'CROSS_DATAMART';
+
+export type QueryLanguage = 'SELECTORQL' | 'OTQL';
+export interface QueryResource {
+  id: string;
+  datamart_id: string;
+  major_version?: string;
+  minor_version?: string;
+  query_language: QueryLanguage;
+  query_text?: string;
+}

@@ -4,10 +4,13 @@ import {
   reduxForm,
   ConfigProps,
   InjectedFormProps,
+  GenericFieldArray,
+  FieldArray,
+  Field,
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps } from 'react-intl';
-import { withRouter } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { compose } from 'recompose';
@@ -28,7 +31,8 @@ import withNormalizer, {
 } from '../../../../components/Form/withNormalizer';
 import {
   AudienceSegmentFormData,
-  SegmentTypeFormLoader
+  SegmentTypeFormLoader,
+  EditAudienceSegmentParam
 } from './domain'
 import {
   FeedType
@@ -37,9 +41,14 @@ import * as FeatureSelectors from '../../../../state/Features/selectors';
 
 
 import GeneralFormSection from './sections/GeneralFormSection'
+import SelectorQL from './sections/query/SelectorQL';
+import AudienceExternalFeedSection, { AudienceExternalFeedSectionProps } from './sections/AudienceExternalFeedSection'
+import AudienceTagFeedSection, { AudienceTagFeedSectionProps } from './sections/AudienceTagFeedSection'
 import { PixelSection } from './sections/pixel'
 
 import { McsFormSection } from '../../../../utils/FormHelper';
+import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
+import { Datamart } from '../../../../models/organisation/organisation';
 
 const FORM_ID = 'audienceSegmentForm';
 
@@ -47,21 +56,26 @@ const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
   >;
 
+const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceExternalFeedSectionProps>;
+const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceTagFeedSectionProps>;
 export interface AudienceSegmentFormProps extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
   close: () => void;
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
   audienceSegmentFormData: AudienceSegmentFormData;
-  datamartToken: string,
+  datamart: Datamart,
   segmentType: SegmentTypeFormLoader;
   feedType?: FeedType;
-  segmentCreation: boolean
+  segmentCreation: boolean;
+  queryContainer: any;
+  queryLanguage: QueryLanguage;
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
   AudienceSegmentFormProps &
   InjectedIntlProps &
   ValidatorProps &
-  NormalizerProps;
+  NormalizerProps &
+  RouteComponentProps<EditAudienceSegmentParam>;
 
 
 class EditAudienceSegmentForm extends React.Component<Props> {
@@ -78,16 +92,22 @@ class EditAudienceSegmentForm extends React.Component<Props> {
   renderPropertiesField = () => {
     const {
       segmentType,
-      datamartToken
+      datamart,
+      queryLanguage,
+      match: {
+        params: {
+          organisationId
+        }
+      }
     } = this.props;
 
     switch(segmentType) {
       case 'USER_LIST':
-        return <div>USER LIST</div>;
+        return null;
       case 'USER_PIXEL':
-        return <PixelSection datamartToken={datamartToken} />;
+        return <PixelSection datamartToken={datamart.token} />;
       case 'USER_QUERY':
-        return <div>USER_QUERY</div>;
+        return queryLanguage === 'OTQL' ? <div>otql</div> : <SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.queryContainer} />;
       default:
         return <div>Not Supported</div>;
     }
@@ -100,7 +120,13 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       handleSubmit, close,
       segmentType,
       segmentCreation,
+      change,
     } = this.props;
+
+    const genericFieldArrayProps = {
+      formChange: change,
+      rerenderOnEveryChange: true,
+    };
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -110,11 +136,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     };
 
     const sections: McsFormSection[] = [];
-    sections.push({
-      id: '',
-      title: messages.audienceSegmentSiderMenuSemgnetType,
-      component: null
-    })
     sections.push({
       id: 'general',
       title: messages.audienceSegmentSectionGeneralTitle,
@@ -128,6 +149,29 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         component: this.renderPropertiesField()
       });
     }
+    
+    if (!segmentCreation) {
+      sections.push({
+        id: 'audienceExternalFeed',
+        title: messages.sectionAudienceExternalFeedTitle,
+        component: <AudienceExternalFeedField
+          name={"audienceExternalFeeds"}
+          component={AudienceExternalFeedSection}
+          {...genericFieldArrayProps}
+        />,
+      });
+
+      sections.push({
+        id: 'audienceTagFeed',
+        title: messages.sectionAudienceExternalFeedTitle,
+        component: <AudienceTagFeedField
+          name={"audienceTagFeeds"}
+          component={AudienceTagFeedSection}
+          {...genericFieldArrayProps}
+        />,
+      });
+    }
+
     
 
     const sideBarProps: SidebarWrapperProps = {

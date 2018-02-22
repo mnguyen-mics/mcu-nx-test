@@ -11,20 +11,32 @@ import {
   EditAudienceSegmentParam,
   AudienceSegmentFormData,
   DefaultLiftimeUnit,
+  AudienceExternalFeedResource,
+  AudienceTagFeedResource,
 } from './domain'
 import AudienceSegmentService from '../../../../services/AudienceSegmentService'
+import QueryService from '../../../../services/QueryService'
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain'
-import { AudienceSegment } from '../../../../models/audiencesegment'
+import { AudienceSegmentShape, UserListSegment } from '../../../../models/audiencesegment'
 import messages from './messages';
 
 import EditAudienceSegmentForm from './EditAudienceSegmentForm'
 import injectDatamart, { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { createFieldArrayModel, executeTasksInSequence } from '../../../../utils/FormHelper';
+import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
+import { DataResponse } from '../../../../services/ApiService';
+import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { PluginProperty } from '../../../../models/Plugins';
+
+
 
 interface State {
   audienceSegmentFormData: AudienceSegmentFormData;
   segmentType?: string;
-  segmentCreation: boolean
+  segmentCreation: boolean;
+  queryLanguage: QueryLanguage;
+  queryContainer?: any;
 }
 
 type Props = InjectedIntlProps &
@@ -32,19 +44,24 @@ type Props = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
-const INITIAL_STATE = {
-  audienceSegmentFormData: INITIAL_AUDIENCE_SEGMENT_FORM_DATA,
-  segmentCreation: true
-}
+
 class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = INITIAL_STATE;
+    const QueryContainer = (window as any).angular.element(document.body).injector().get('core/datamart/queries/QueryContainer')
+    const defQuery = new QueryContainer(props.datamart.id)
+
+    this.state = {
+      audienceSegmentFormData: INITIAL_AUDIENCE_SEGMENT_FORM_DATA,
+      segmentCreation: true,
+      queryLanguage: props.datamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL' as QueryLanguage,
+      queryContainer: defQuery,
+    };
 
   }
 
-  countDefaultLifetime = (audienceSegment: AudienceSegment): {
+  countDefaultLifetime = (audienceSegment: AudienceSegmentShape): {
     defaultLiftime?: number,
     defaultLiftimeUnit?: DefaultLiftimeUnit,
   } => {
@@ -72,7 +89,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     }
   }
 
-  extractSegmentType = (audienceSegment: AudienceSegment) => {
+  extractSegmentType = (audienceSegment: AudienceSegmentShape) => {
 
     if (audienceSegment.type === 'USER_LIST' && audienceSegment.feed_type === 'TAG') {
       return 'USER_PIXEL';
@@ -84,22 +101,82 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   initialLoading = (props: Props) => {
     const {
       match: { params: { segmentId } },
+      datamart,
     } = props;
 
     if (segmentId) {
-      AudienceSegmentService
-        .getSegment(segmentId)
-        .then(response =>
-          this.setState(prevStat => {
+
+      const getSegment: Promise<DataResponse<AudienceSegmentShape>> = AudienceSegmentService
+      .getSegment(segmentId)
+      .then(res => {
+        if (res.data.type === 'USER_QUERY' && res.data.query_id) {
+          QueryService.getQuery(datamart.id, res.data.query_id)
+            .then(r => r.data)
+            .then(r => {
+              const QueryContainer = (window as any).angular.element(document.body).injector().get('core/datamart/queries/QueryContainer')
+              const defQuery = new QueryContainer(props.datamart.id, r.id)
+              defQuery.load()
+              this.setState({
+                queryLanguage: r.query_language as QueryLanguage,
+                queryContainer: defQuery
+              })
+            })
+        }
+        return res;
+      });
+
+
+      const getExternalFeed: Promise<AudienceExternalFeedResource[]> = AudienceSegmentService
+      .getAudienceExternalFeeds(segmentId)
+      .then(res => res.data)
+      .then(res => {
+        return Promise.all(
+          res.map(plugin => 
+            AudienceSegmentService.getAudienceExternalFeedProperty(segmentId, plugin.id)
+              .then(r => r.data)
+              .then(r => {
+                return {
+                  ...plugin,
+                  status: (plugin.status as any) === 'INITIAL' ? 'PAUSED' : plugin.status,
+                  properties: r
+                }
+              })
+            )
+          )
+      });
+      const getTagFeed: Promise<AudienceTagFeedResource[]> = AudienceSegmentService
+      .getAudienceTagFeeds(segmentId)
+      .then(res => res.data)
+      .then(res => {
+        return Promise.all(
+          res.map(plugin => 
+            AudienceSegmentService.getAudienceTagFeedProperty(segmentId, plugin.id)
+              .then(r => r.data)
+              .then(r => {
+                return {
+                  ...plugin,
+                  properties: r
+                }
+              })
+            )
+          )
+      });
+
+      Promise.all([getSegment, getExternalFeed, getTagFeed])
+        .then(res =>
+          this.setState((prevStat) => {
             const newStat = {
               ...prevStat,
-              segmentType: this.extractSegmentType(response.data),
+              segmentType: this.extractSegmentType(res[0].data),
               segmentCreation: false,
               audienceSegmentFormData: {
                 ...prevStat.audienceSegmentFormData,
-                audienceSegment: response.data,
-                ...this.countDefaultLifetime(response.data),
+                audienceSegment: res[0].data,
+                ...this.countDefaultLifetime(res[0].data),
+                audienceTagFeeds: res[2].map(atf => createFieldArrayModel(atf)),
+                audienceExternalFeeds: res[1].map(aef => createFieldArrayModel(aef)),
               }
+
             };
             return newStat;
           })
@@ -140,6 +217,170 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     return history.push(`/v2/o/${organisationId}/audience/segments`);
   };
 
+  generateCreatePromise = (audienceSegmentFormData: AudienceSegmentFormData): Promise<DataResponse<AudienceSegmentShape> | any> => {
+    const {
+      match: { params: { organisationId } },
+    } = this.props;
+
+    const {
+      queryContainer
+    } = this.state
+
+    switch (audienceSegmentFormData.audienceSegment.type) {
+      case 'USER_LIST':
+        return AudienceSegmentService.saveSegment(
+          organisationId,
+          audienceSegmentFormData.audienceSegment,
+        )
+      case 'USER_QUERY':
+        return queryContainer.saveOrUpdate()
+          .then(() => 
+            AudienceSegmentService
+              .saveSegment(
+                organisationId,
+                { ...(audienceSegmentFormData.audienceSegment as UserQuerySegment), type: 'USER_QUERY', query_id: queryContainer.id }
+              )
+            )
+      default:
+        return Promise.resolve()
+    }
+  }
+
+  updateFeedPropertiesValue = (segmentId: string,properties: PluginProperty[], organisationId: string, id: string) => {
+    const propertiesPromises: Array<Promise<any>> = [];
+    properties.forEach(item => {
+      if (item.writable) {
+        propertiesPromises.push(
+          AudienceSegmentService.updateAudienceSegmentExternalFeedProperty(
+            organisationId,
+            segmentId,
+            id,
+            item.technical_name,
+            item,
+          ),
+        );
+      }
+    });
+    return Promise.all(propertiesPromises);
+  };
+
+  updateTagPropertiesValue = (segmentId: string,properties: PluginProperty[], organisationId: string, id: string) => {
+    const propertiesPromises: Array<() => Promise<any>> = [];
+    properties.forEach(item => {
+      if (item.writable) {
+        propertiesPromises.push(
+          () => AudienceSegmentService.updateAudienceSegmentTagFeedProperty(
+            organisationId,
+            segmentId,
+            id,
+            item.technical_name,
+            item,
+          ),
+        );
+      }
+    });
+    return executeTasksInSequence(propertiesPromises);
+  };
+
+  generateSaveOrUpdateFeed = (segmentId: string, audienceSegmentFormData: AudienceSegmentFormData) => {
+
+    const {
+      match: {
+        params: {
+          organisationId
+        }
+      }
+    } = this.props;
+
+    const startId = this.state.audienceSegmentFormData.audienceExternalFeeds.map(erf => erf.model.id)
+    const savedIds: string[] = [];
+
+    const saveCreatePromise = audienceSegmentFormData.audienceExternalFeeds.map(erf => {
+      if (!erf.model.id) {
+        const newAudienceFeed = { ...erf.model }
+        delete newAudienceFeed.properties;
+        return () => AudienceSegmentService.createAudienceExternalFeeds(segmentId, newAudienceFeed)
+          .then(res => this.updateFeedPropertiesValue(segmentId, erf.model.properties as any, organisationId, res.data.id))
+      } else if (startId.includes(erf.model.id)) {
+        const newAudienceFeed = { ...erf.model }
+        delete newAudienceFeed.properties;
+        savedIds.push(erf.model.id);
+        return () => AudienceSegmentService.updateAudienceExternalFeeds(segmentId, erf.key, newAudienceFeed)
+          .then(res => this.updateFeedPropertiesValue(segmentId, erf.model.properties as any, organisationId, res.data.id))
+      }
+      return () => Promise.resolve();
+    });
+    const deletePromise = startId.map(sid => sid && !savedIds.includes(sid) ? () => AudienceSegmentService.deleteAudienceExternalFeeds(segmentId, sid) : () => Promise.resolve())
+    return [...saveCreatePromise, ...deletePromise];
+  }
+
+  generateSaveOrUpdateTag = (segmentId: string, audienceSegmentFormData: AudienceSegmentFormData) => {
+
+    const {
+      match: {
+        params: {
+          organisationId
+        }
+      }
+    } = this.props;
+
+    const startId = this.state.audienceSegmentFormData.audienceTagFeeds.map(erf => erf.model.id)
+    const savedIds: string[] = [];
+
+    const saveCreatePromise = audienceSegmentFormData.audienceTagFeeds.map(erf => {
+      if (!erf.model.id) {
+        const newAudienceFeed = { ...erf.model }
+        delete newAudienceFeed.properties;
+        return () => AudienceSegmentService.createAudienceTagFeeds(segmentId, newAudienceFeed)
+          .then(res => this.updateTagPropertiesValue(segmentId, erf.model.properties as any, organisationId, res.data.id))
+      } else if (startId.includes(erf.model.id)) {
+        const newAudienceFeed = { ...erf.model }
+        delete newAudienceFeed.properties;
+        savedIds.push(erf.model.id);
+        return () => AudienceSegmentService.updateAudienceTagFeeds(segmentId, erf.key, newAudienceFeed)
+          .then(res => this.updateTagPropertiesValue(segmentId, erf.model.properties as any, organisationId, res.data.id))
+      }
+      return () => Promise.resolve();
+    });
+    const deletePromise = startId.map(sid => sid && !savedIds.includes(sid) ? () => AudienceSegmentService.deleteAudienceTagFeeds(segmentId, sid) : () => Promise.resolve())
+    return [...saveCreatePromise, ...deletePromise];
+  }
+  
+
+  saveOrUpdatePlugin = (segmentId: string, audienceSegmentFormData: AudienceSegmentFormData) => {
+    const allPromises: Array<() => Promise<any>> = [...this.generateSaveOrUpdateFeed(segmentId, audienceSegmentFormData),
+    ...this.generateSaveOrUpdateTag(segmentId, audienceSegmentFormData)];
+
+    return executeTasksInSequence(allPromises);
+  }
+
+  generateUpdateRequest = (segmentId: string, audienceSegmentFormData: AudienceSegmentFormData): Promise<DataResponse<AudienceSegmentShape> | any> => {
+
+    const {
+      queryContainer
+    } = this.state
+
+    switch (audienceSegmentFormData.audienceSegment.type) {
+      case 'USER_LIST':
+        return AudienceSegmentService.updateAudienceSegment(
+          segmentId,
+          audienceSegmentFormData.audienceSegment,
+        )
+        .then(res => this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData))
+      case 'USER_QUERY':
+        return queryContainer.saveOrUpdate()
+          .then(() => {
+              return AudienceSegmentService.updateAudienceSegment(
+                segmentId,
+                { ...(audienceSegmentFormData.audienceSegment as UserQuerySegment), type: 'USER_QUERY', query_id: queryContainer.id }
+              )
+            })
+            .then((res: { data: UserQuerySegment}) => this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData))
+      default:
+        return Promise.resolve()
+    }
+  }
+
   save = (audienceSegmentFormData: AudienceSegmentFormData) => {
 
     const {
@@ -176,7 +417,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         audienceSegmentFormData = {
           ...audienceSegmentFormData,
           audienceSegment: {
-            ...audienceSegmentFormData.audienceSegment,
+            ...(audienceSegmentFormData.audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'TAG',
           }
@@ -186,9 +427,18 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         audienceSegmentFormData = {
           ...audienceSegmentFormData,
           audienceSegment: {
-            ...audienceSegmentFormData.audienceSegment,
+            ...(audienceSegmentFormData.audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'FILE_IMPORT',
+          }
+        };
+        break;
+      case 'USER_QUERY':
+        audienceSegmentFormData = {
+          ...audienceSegmentFormData,
+          audienceSegment: {
+            ...(audienceSegmentFormData.audienceSegment as UserQuerySegment),
+            type: 'USER_QUERY',
           }
         };
     };
@@ -215,13 +465,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     } = this.state
 
     if (segmentCreation) {
-      return AudienceSegmentService.saveSegment(
-        organisationId,
-        audienceSegmentFormData.audienceSegment,
-      )
+      return this.generateCreatePromise(audienceSegmentFormData)
         .then(response => {
           hideSaveInProgress();
-          const adGroupDashboardUrl = audienceSegmentFormData.audienceSegment.feed_type === 'TAG' ? `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit` : `/v2/o/${organisationId}/audience/segments/${response.data.id}`;
+          const adGroupDashboardUrl =( audienceSegmentFormData.audienceSegment as UserListSegment).feed_type === 'TAG' ? `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit` : `/v2/o/${organisationId}/audience/segments/${response.data.id}`;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {
@@ -233,10 +480,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       const {
         match: { params: { segmentId } },
       } = this.props
-      return AudienceSegmentService.updateAudienceSegment(
-        segmentId,
-        audienceSegmentFormData.audienceSegment,
-      )
+      return this.generateUpdateRequest(segmentId, audienceSegmentFormData)
         .then(response => {
           hideSaveInProgress();
           const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}`;
@@ -268,9 +512,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         close={this.redirectToSegmentList}
         onSubmit={this.save}
         audienceSegmentFormData={this.state.audienceSegmentFormData}
-        datamartToken={datamart.token}
+        datamart={datamart}
         segmentType={segmentType}
         segmentCreation={segmentCreation}
+        queryContainer={this.state.queryContainer}
+        queryLanguage={this.state.queryLanguage}
       />
     );
   }
@@ -283,4 +529,3 @@ export default compose<Props, {}>(
   injectDatamart,
   injectNotifications,
 )(EditAudienceSegmentPage);
-
