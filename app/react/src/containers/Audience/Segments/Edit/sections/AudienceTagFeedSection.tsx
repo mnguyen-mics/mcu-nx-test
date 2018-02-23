@@ -2,7 +2,7 @@ import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { Switch } from 'antd';
+import { Switch, Tooltip } from 'antd';
 
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { AudienceTagFeedsFieldModel } from '../domain';
@@ -77,18 +77,25 @@ class AudienceTagFeedSection extends React.Component<Props> {
   }
 
   renderSwitch = (record: AudienceTagFeedsFieldModel) => {
-
+    const {
+      intl,
+    } = this.props;
 
     const onChange = (c: boolean) => {
       const newRecord: AudienceTagFeedsFieldModel = { ...record, model: { ...record.model, status: c ? 'ACTIVE' : 'PAUSED' }  }
       this.updateAudienceExternalFeed(newRecord, true)
     }
 
-    return (<span>
+    const embedInInfoTooltip = (e: JSX.Element) => {
+      return <Tooltip title={intl.formatMessage(messages.audienceFeedDisableExplanation)}>{e}</Tooltip>
+    }
+
+    const element = (<span>
       <Switch
         className="mcs-table-switch"
         checked={record.model.status === 'ACTIVE'}
         onChange={onChange}
+        disabled={!record.model.id}
         checkedChildren={
           <McsIcon style={{ verticalAlign: 'middle' }} type="play" />
         }
@@ -97,6 +104,8 @@ class AudienceTagFeedSection extends React.Component<Props> {
         }
       />
     </span>)
+
+    return record.model.id ? element : embedInInfoTooltip(element)
   }
 
   getAudienceTagFeed = () => {

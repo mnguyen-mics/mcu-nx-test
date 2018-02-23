@@ -184,4 +184,9 @@ export default defineMessages({
     id: 'audience.segment.audienceexternalfeed.list.subtitle',
     defaultMessage: 'Add an Audience External Feed. An Audience External feed will push cookies (Server to Server) to third parties receivers.',
   },
+
+  audienceFeedDisableExplanation: {
+    id: 'audience.segment.audiencefeed.disable.explanation',
+    defaultMessage: 'You need to save your Feed before setting it to \'Started.\'',
+  }
 });
