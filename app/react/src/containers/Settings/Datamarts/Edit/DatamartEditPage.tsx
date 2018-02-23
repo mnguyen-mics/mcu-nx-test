@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -107,19 +107,19 @@ class DatamartEditPage extends React.Component<Props, State> {
 
 
     const generateEventRulesTasks = (dmrt: DatamartResource): Array<Promise<any>> => {
-      const startId = this.state.datamartFormData.eventRulesFields.map(erf => erf.model.id)
+      const startIds = this.state.datamartFormData.eventRulesFields.map(erf => erf.model.id)
       const savedIds: string[] = [];
-      const saveCreatePromise = datamartFormData.eventRulesFields.map(erf => {
+      const saveCreatePromises = datamartFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
           return DatamartService.createEventRules(dmrt.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id} })
-        } else if (startId.includes(erf.model.id)) {
+        } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
           return DatamartService.updateEventRules(dmrt.id, organisationId, erf.model.id, {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id})
         }
         return Promise.resolve();
       });
-      const deletePromise = startId.map(sid => sid && !savedIds.includes(sid) ? DatamartService.deleteEventRules(dmrt.id, organisationId, sid) : Promise.resolve())
-      return [...saveCreatePromise, ...deletePromise]
+      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? DatamartService.deleteEventRules(dmrt.id, organisationId, sid) : Promise.resolve())
+      return [...saveCreatePromises, ...deletePromises]
     }
 
     const generateSavingPromise = (): Promise<

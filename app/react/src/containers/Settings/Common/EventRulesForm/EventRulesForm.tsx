@@ -29,9 +29,9 @@ const messages = defineMessages({
     id: 'settings.form.eventRules.save',
     defaultMessage: 'Save',
   },
-  sectionGeneralTitle: {
-    id:  'settings.form.eventRules.general.title',
-    defaultMessage: 'Save',
+  error: {
+    id: 'settings.form.eventRules.errorType',
+    defaultMessage: 'Please specify a known type'
   }
 })
 
@@ -68,6 +68,7 @@ class EventRulesForm extends React.Component<Props> {
       breadCrumbPaths,
       close,
       initialValues,
+      intl,
     } = this.props;
 
 
@@ -92,7 +93,7 @@ class EventRulesForm extends React.Component<Props> {
             return <UserIdentifierinsertion />
         }
       }
-      return <div>Please specify a known type at least</div>
+      return <div>{intl.formatMessage(messages.error)}</div>
       
     }
 

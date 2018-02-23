@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -127,25 +127,25 @@ class SiteEditPage extends React.Component<Props, State> {
     }
 
     const generateEventRulesTasks = (site: SiteResource): Array<Promise<any>> => {
-      const startId = this.state.siteFormData.eventRulesFields.map(erf => erf.model.id)
+      const startIds = this.state.siteFormData.eventRulesFields.map(erf => erf.model.id)
       const savedIds: string[] = [];
-      const saveCreatePromise = siteFormData.eventRulesFields.map(erf => {
+      const saveCreatePromises = siteFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
           return SiteService.createEventRules(datamart.id, site.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: datamart.id, site_id: site.id} })
-        } else if (startId.includes(erf.model.id)) {
+        } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
           return SiteService.updateEventRules(datamart.id, site.id, organisationId, erf.model.id, {...erf.model, datamart_id: datamart.id, site_id: site.id})
         }
         return Promise.resolve();
       });
-      const deletePromise = startId.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteEventRules(datamart.id, site.id, organisationId, sid) : Promise.resolve())
-      return [...saveCreatePromise, ...deletePromise]
+      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteEventRules(datamart.id, site.id, organisationId, sid) : Promise.resolve())
+      return [...saveCreatePromises, ...deletePromises]
     }
 
     const generateAliasesTasks = (site: SiteResource): Array<Promise<any>> => {
       const startId = this.state.siteFormData.aliases.map(alias => alias.model.id)
       const savedIds: string[] = [];
-      const saveCreatePromise = siteFormData.aliases.map(alias => {
+      const saveCreatePromises = siteFormData.aliases.map(alias => {
         if (!alias.model.id) {
           return SiteService.createAliases(datamart.id, site.id, { organisation_id: organisationId, site_id: site.id, name: alias.model.name })
         } else if (startId.includes(alias.model.id)) {
@@ -154,8 +154,8 @@ class SiteEditPage extends React.Component<Props, State> {
         }
         return Promise.resolve();
       });
-      const deletePromise = startId.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteAliases(datamart.id, site.id, organisationId, sid) : Promise.resolve())
-      return [...saveCreatePromise, ...deletePromise]
+      const deletePromises = startId.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteAliases(datamart.id, site.id, organisationId, sid) : Promise.resolve())
+      return [...saveCreatePromises, ...deletePromises]
     }
 
     const generateAllPromises = (site: SiteResource): Array<Promise<any>> => {

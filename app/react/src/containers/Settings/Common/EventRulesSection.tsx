@@ -56,6 +56,10 @@ const messages = defineMessages({
     id: 'settings.form.eventRules.empty',
     defaultMessage: 'There is no Event Rules created yet!',
   },
+  sectionTitleCreateEventRule: {
+    id: 'settings.form.eventRules.create',
+    defaultMessage: 'Create Event Rules',
+  },
 });
 
 class EventRulesSection extends React.Component<Props> {
@@ -169,7 +173,7 @@ class EventRulesSection extends React.Component<Props> {
     const props: EventRulesFormProps = {
       close: this.props.closeNextDrawer,
       onSubmit: this.updateEventRules,
-      breadCrumbPaths: [{ name: 'Create Event Rule' }],
+      breadCrumbPaths: [{ name: this.props.intl.formatMessage(messages.sectionTitleCreateEventRule) }],
       initialValues: initialValues,
     };
 
