@@ -150,7 +150,7 @@ class AudiencePartitionsTable extends Component {
       history,
     } = this.props;
 
-    const editUrl = `/o${organisationId}d${partition.datamart_id}/datamart/partitions//${partition.id}`;
+    const editUrl = `/v2/o/${organisationId}/audience/partition/${partition.id}/edit?datamart=${partition.datamart_id}&type=${partition.type}`;
 
     history.push(editUrl);
   }

@@ -54,6 +54,31 @@ const audienceRoutes = [
     actionBarComponent: PartitionsActionbar,
   },
   {
+<<<<<<< HEAD
+=======
+    path: '/audience/partitions',
+    layout: 'main',
+    contentComponent: AudiencePartitionsTable,
+    actionBarComponent: PartitionsActionbar,
+  },
+  {
+    path: '/audience/partition/:partitionId/edit',
+    layout: 'edit',
+    editComponent: AudiencePartitionPage,
+  },
+  {
+    path: '/audience/partition/new',
+    layout: 'edit',
+    editComponent: AudiencePartitionPage,
+  },
+  {
+    path: '/audience/partition/:partitionId/dashboard',
+    layout: 'main',
+    contentComponent: Partition,
+    actionBarComponent: PartitionActionbar,
+  },
+  {
+>>>>>>> 3713b1a7... partitions feature
     path: '/audience/segment-builder',
     layout: 'main',
     contentComponent: QueryToolPage,
