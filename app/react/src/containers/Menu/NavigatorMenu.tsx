@@ -107,15 +107,9 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
     return itemDefinitions.reduce((acc, item) => {
       if (isAvailable(item.key)) {
-        const subMenuItems = (item.subMenuItems || []).reduce((subAcc: any, subMenuItem: any) => {
-          if (isAvailable(subMenuItem.key)) {
-            return [
-              ...subAcc,
-              subMenuItem,
-            ];
-          }
-          return subAcc;
-        }, []);
+        const subMenuItems =
+          item.subMenuItems.filter((subMenuItem) =>
+            isAvailable(subMenuItem.key));
         return [
           ...acc,
           { ...item, subMenuItems },
