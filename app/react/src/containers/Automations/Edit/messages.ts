@@ -3,50 +3,50 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   sectionTitle1: {
     id: 'automation.edit.section1.title',
-    defaultMessage: 'test',
+    defaultMessage: 'Automation',
   },
   saveAutomation: {
     id: 'automation.edit.save',
-    defaultMessage: 'test',
+    defaultMessage: 'Save',
   },
   errorFormMessage: {
     id: 'automation.edit.error',
-    defaultMessage: 'test',
+    defaultMessage: 'There was an error saving your scenario, please check the data you have inputed',
   },
   sectionGeneralTitle: {
     id: 'automation.edit.section.general.title',
-    defaultMessage: 'test',
+    defaultMessage: 'General Information',
   },
   sectionGeneralSubTitle: {
     id: 'automation.edit.section.general.subtitle',
-    defaultMessage: 'test',
+    defaultMessage: 'Give your Automation a name and make it memorable',
   },
   contentSectionGeneralLabel: {
     id: 'automation.edit.section.general.label',
-    defaultMessage: 'test',
+    defaultMessage: 'Name',
   },
   contentSectionGeneralPlaceholder: {
-    id: 'automation.edit.section.general.label',
-    defaultMessage: 'test',
+    id: 'automation.edit.section.general.placeholder',
+    defaultMessage: 'Automation Name',
   },
   contentSectionGeneralTooltip: {
-    id: 'automation.edit.section.general.label',
-    defaultMessage: 'test',
+    id: 'automation.edit.section.general.tooltip',
+    defaultMessage: 'Give your Automation a Name and make it memorable!',
   },
   contentSectionGeneralAdvancedPartTitle: {
     id: 'automation.edit.section.general.advanced.title',
     defaultMessage: 'Advanced',
   },
   contentSectionGeneralAdvancedPartLabel: {
-    id: 'automation.edit.section.general.advanced.title',
-    defaultMessage: 'Advanced',
+    id: 'automation.edit.section.general.advanced.label',
+    defaultMessage: 'Technical Name',
   },
   contentSectionGeneralAdvancedPartPlaceholder: {
     id: 'automation.edit.section.general.advanced.placeholder',
-    defaultMessage: 'Advanced',
+    defaultMessage: 'Technical Name',
   },
   contentSectionGeneralAdvancedPartTooltip: {
     id: 'automation.edit.section.general.advanced.tooltip',
-    defaultMessage: 'Advanced',
+    defaultMessage: 'Use the technical name for third party integrations.',
   },
 });

@@ -42,8 +42,8 @@ class GeneralFormSection extends React.Component<Props, State> {
     return (
       <div>
         <FormSection
-          subtitle={messages.sectionGeneralTitle}
-          title={messages.sectionGeneralSubTitle}
+          subtitle={messages.sectionGeneralSubTitle}
+          title={messages.sectionGeneralTitle}
         />
 
         <div>

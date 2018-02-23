@@ -123,7 +123,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.saveAutomation,
-        path: `/v2/o/${organisationId}/automation`,
+        path: `/v2/o/${organisationId}/automations`,
       },
       {
         name: '',
