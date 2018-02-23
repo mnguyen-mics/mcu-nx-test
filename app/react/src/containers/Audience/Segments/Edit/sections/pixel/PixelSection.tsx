@@ -12,12 +12,9 @@ export interface PixelFormProps {
   userListTechName?: string;
 }
 
-export interface PixelFormState {
-}
-
 type Props = PixelFormProps & InjectedIntlProps;
 
-class PixelSegmentSection extends React.Component<Props, PixelFormState> {
+class PixelSegmentSection extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state =  {technicalName:''};
