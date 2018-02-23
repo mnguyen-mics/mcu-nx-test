@@ -9,7 +9,7 @@ import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
 
 import FormFieldWrapper from './FormFieldWrapper';
 
-interface FormBooleanProps {
+export interface FormBooleanProps {
   formItemProps?: FormItemProps;
   inputProps?: CheckboxProps;
   helpToolTipProps: TooltipProps;

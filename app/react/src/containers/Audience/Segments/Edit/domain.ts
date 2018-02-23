@@ -42,6 +42,7 @@ export type SegmentTypeFormLoader =
 
 export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceSegment: {
+    persisted: true
   },
   defaultLiftimeUnit: 'days',
   audienceExternalFeeds: [],

@@ -1,5 +1,5 @@
 import { BaseFieldProps, Field, GenericField } from 'redux-form';
-import FormBoolean from './FormBoolean';
+import FormBoolean, { FormBooleanProps } from './FormBoolean';
 import FormCheckbox, { FormCheckboxProps } from './FormCheckbox';
 import FormDatePicker, { FormDatePickerProps } from './FormDatePicker';
 import FormFieldWrapper from './FormFieldWrapper';
@@ -77,4 +77,4 @@ export const FormAddonSelectField = Field as new() => GenericField<FormSelectAdd
 export const FormSwitchField = Field as new() => GenericField<FormSwitchProps>;
 export const FormDateRangePickerField = Field as new() => GenericField<FormDateRangePickerProps>;
 export const FormCheckboxField = Field as new() => GenericField<FormCheckboxProps>;
-
+export const FormBooleanField = Field as new() => GenericField<FormBooleanProps>;

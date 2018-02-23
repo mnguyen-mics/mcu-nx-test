@@ -17,6 +17,8 @@ import {
   FormSelect,
   FormInputField,
   FormAddonSelectField,
+  FormBoolean,
+  FormBooleanField,
 } from '../../../../../components/Form';
 
 import { ButtonStyleless, McsIcon } from '../../../../../components';const { AddonSelect } = FormSelect;
@@ -187,6 +189,24 @@ class GeneralFormSection extends React.Component<Props, State> {
                   />
                 </div>
               </div>
+              
+              <div>
+                <FormBooleanField
+                  name="audienceSegment.persisted"
+                  component={FormBoolean}
+                  formItemProps={{
+                  label: formatMessage(
+                      messages.audienceSegmentCreationGeneralPersistedFieldTitle,
+                    ),
+                  }}
+                  helpToolTipProps={{
+                    title: formatMessage(
+                      messages.audienceSegmentCreationGeneralPersistedFieldHelper,
+                    ),
+                  }}
+                />
+              </div>
+
             </div>
           </div>
         </div>

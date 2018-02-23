@@ -41,6 +41,14 @@ export default defineMessages({
     id: 'audience.segment.create.section.general.field.name.title',
     defaultMessage: 'Name',
   },
+  audienceSegmentCreationGeneralPersistedFieldTitle: {
+    id: 'audience.segment.create.section.general.field.persisted.title',
+    defaultMessage: 'Persisted',
+  },
+  audienceSegmentCreationGeneralPersistedFieldHelper: {
+    id: 'audience.segment.create.section.general.field.persisted.helper',
+    defaultMessage: 'A persisted segment can be used in a campaign whereas a non persisted serves as analytics',
+  },
   audienceSegmentCreationGeneralNameFieldPlaceHolder: {
     id: 'audience.segment.create.section.general.field.name.placeholder',
     defaultMessage: 'Audience Segment Name',
