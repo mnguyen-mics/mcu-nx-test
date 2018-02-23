@@ -107,7 +107,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
     return itemDefinitions.reduce((acc, item) => {
       if (isAvailable(item.key)) {
-        const subMenuItems = (item.subMenuItems || []).reduce((subAcc, subMenuItem) => {
+        const subMenuItems = (item.subMenuItems || []).reduce((subAcc: any, subMenuItem: any) => {
           if (isAvailable(subMenuItem.key)) {
             return [
               ...subAcc,
@@ -143,7 +143,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
         return (
           <SubMenu key={itemDef.key} onTitleClick={onTitleClick} title={<span><McsIcon type={itemDef.iconType as McsIconType} /><span className="nav-text"><FormattedMessage {...itemDef.translation} /></span></span>}>
             {
-              itemDef.subMenuItems.map(subMenuItem => {
+              itemDef.subMenuItems.map((subMenuItem: any) => {
                 let linkUrl = `${baseUrl}${subMenuItem.path}`;
                 if (subMenuItem.legacyPath) {
                   if (itemDisplayedOnlyIfDatamart.includes(subMenuItem.key)) {
@@ -165,7 +165,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
   getAllKeysWithPath() {
     return this.getAvailableItems().reduce((acc, item) => {
-      const subMenuKeys = item.subMenuItems.reduce((subAcc, subItem) => {
+      const subMenuKeys = item.subMenuItems.reduce((subAcc: any, subItem: any) => {
         return [
           ...subAcc,
           { key: subItem.key,
