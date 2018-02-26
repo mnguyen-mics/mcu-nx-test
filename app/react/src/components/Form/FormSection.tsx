@@ -8,7 +8,7 @@ import DropdownButton, { DropdownButtonItemProps } from '../DropdownButton';
 interface FormSectionProps extends FormTitleProps {
   button?: {
     message: string;
-    onClick: React.FormEventHandler<any>;
+    onClick: () => void;
   };
   dropdownItems?: DropdownButtonItemProps[];
 }

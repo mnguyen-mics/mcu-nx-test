@@ -147,13 +147,12 @@ class AudienceTagFeedSection extends React.Component<Props> {
     return (
       <div>
         <FormSection
-          dropdownItems={[
+          button={
             {
-              id: messages.addAFeed.id,
-              message: messages.addAFeed,
+              message: formatMessage(messages.addAFeed),
               onClick: this.createAudienceFeedSelector,
-            },
-          ]}
+            }
+          }
           subtitle={messages.sectionAudienceTagFeedSubtitle}
           title={messages.sectionAudienceTagFeedTitle}
         />
