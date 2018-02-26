@@ -10,7 +10,7 @@ import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts
 import * as EmailCampaignActions from '../../../../../state/Campaign/Email/actions';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
-import { LegendChart } from '../../../../../components/LegendChart';
+import { LegendChart } from '../../../../../components/LegendChart/index.ts';
 
 import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';

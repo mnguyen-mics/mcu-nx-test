@@ -201,6 +201,7 @@ class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, Display
             dataset={dataSource}
             options={optionsForChart}
             style={{ flex: '1' }}
+            intlMessages={messages}
           />
         </div>
       )

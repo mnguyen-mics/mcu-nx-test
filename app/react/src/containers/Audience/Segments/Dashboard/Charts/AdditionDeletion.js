@@ -7,7 +7,7 @@ import { Row, Col } from 'antd';
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import McsDateRangePicker from '../../../../../components/McsDateRangePicker.tsx';
 import { StackedBarCharts } from '../../../../../components/BarCharts/index.ts';
-import { LegendChart } from '../../../../../components/LegendChart';
+import { LegendChart } from '../../../../../components/LegendChart/index.ts';
 import messages from '../messages';
 
 import { SEGMENT_QUERY_SETTINGS } from '../constants';
