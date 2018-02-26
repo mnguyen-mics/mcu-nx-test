@@ -21,9 +21,16 @@ import {
   FormBooleanField,
 } from '../../../../../components/Form';
 
-import { ButtonStyleless, McsIcon } from '../../../../../components';const { AddonSelect } = FormSelect;
+import { ButtonStyleless, McsIcon } from '../../../../../components';
+import { SegmentTypeFormLoader } from '../domain';
+const { AddonSelect } = FormSelect;
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+export interface GeneralFormSectionProps {
+  segmentCreation: boolean;
+  segmentType: SegmentTypeFormLoader;
+}
+
+type Props = InjectedIntlProps & ValidatorProps & NormalizerProps & GeneralFormSectionProps;
 
 interface State {
   technicalName?: string
@@ -80,6 +87,8 @@ class GeneralFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired, isNotZero, isValidInteger },
       intl: { formatMessage },
+      segmentCreation,
+      segmentType
     } = this.props;
 
     return (
@@ -190,7 +199,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 </div>
               </div>
               
-              <div>
+             {segmentType === 'USER_QUERY' ? <div>
                 <FormBooleanField
                   name="audienceSegment.persisted"
                   component={FormBoolean}
@@ -199,13 +208,16 @@ class GeneralFormSection extends React.Component<Props, State> {
                       messages.audienceSegmentCreationGeneralPersistedFieldTitle,
                     ),
                   }}
+                  inputProps={{
+                    disabled: !segmentCreation
+                  }}
                   helpToolTipProps={{
                     title: formatMessage(
                       messages.audienceSegmentCreationGeneralPersistedFieldHelper,
                     ),
                   }}
                 />
-              </div>
+              </div> : null}
 
             </div>
           </div>
@@ -215,6 +227,6 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
+export default compose<Props, GeneralFormSectionProps>(injectIntl, withValidators, withNormalizer)(
   GeneralFormSection,
 );

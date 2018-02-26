@@ -10,13 +10,8 @@ import { PluginProperty, PluginType } from '../../../../../models/Plugins';
 
 import messages from '../messages';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import { AudienceExternalFeedResource, AudienceTagFeedResource } from '../domain';
+import { AudienceExternalFeedResource, AudienceTagFeedResource, EditAudienceSegmentParam } from '../domain';
 
-
-interface AudienceFeedRouteParam {
-  organisationId: string;
-  audienceSegmentid?: string;
-}
 
 type PluginAudienceFeedInterface = AudienceExternalFeedResource | AudienceTagFeedResource;
 
@@ -37,10 +32,11 @@ export interface CreateAudienceFeedProps<T = any> {
   onSave: (a: T) => void;
   edition: boolean;
   type: PluginType;
+  identifier: string | null;
 }
 
 type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
-  RouteComponentProps<AudienceFeedRouteParam> &
+  RouteComponentProps<EditAudienceSegmentParam> &
   InjectedIntlProps & InjectedNotificationProps;
 
 class CreateAudienceFeed<T> extends React.Component<
@@ -83,7 +79,7 @@ class CreateAudienceFeed<T> extends React.Component<
         properties: properties
       }
       returnValue = {
-        key: audienceFeed.id,
+        key: this.props.identifier,
         model: generatedAf
       }
     } else {

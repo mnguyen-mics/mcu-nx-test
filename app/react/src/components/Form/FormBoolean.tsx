@@ -66,7 +66,6 @@ class FormBoolean extends React.Component<
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
-        rowProps={{ className: 'm-b-20' }}
         {...formItemProps}
       >
         <Checkbox

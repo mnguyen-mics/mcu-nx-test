@@ -2,10 +2,10 @@ import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { Switch, Tooltip } from 'antd';
+import { Switch, Tooltip } from 'antd'
 
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { AudienceTagFeedsFieldModel } from '../domain';
+import { AudienceExternalFeedsFieldModel } from '../domain';
 import FormSection from '../../../../../components/Form/FormSection';
 import RelatedRecords from '../../../../../components/RelatedRecord/RelatedRecords';
 import RecordElement from '../../../../../components/RelatedRecord/RecordElement';
@@ -13,33 +13,38 @@ import RecordElement from '../../../../../components/RelatedRecord/RecordElement
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import AudienceFeedForm, { CreateAudienceFeedProps } from '../AudienceFeedForm/AudienceFeedForm';
 
 import messages from '../messages';
 import { PluginType } from '../../../../../models/Plugins';
-import AudienceFeedForm, { CreateAudienceFeedProps } from '../AudienceFeedForm/AudienceFeedForm';
 import { McsIcon } from '../../../../../components';
 
 
-export interface AudienceTagFeedSectionProps extends ReduxFormChangeProps {}
+export interface AudienceExternalFeedSectionProps extends ReduxFormChangeProps {}
 
-type Props = AudienceTagFeedSectionProps &
-  WrappedFieldArrayProps<AudienceTagFeedsFieldModel> &
+type Props = AudienceExternalFeedSectionProps &
+  WrappedFieldArrayProps<AudienceExternalFeedsFieldModel> &
   InjectedIntlProps &
   InjectDrawerProps;
 
-class AudienceTagFeedSection extends React.Component<Props> {
+class AudienceExternalFeedSection extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
 
-  updateAudienceExternalFeed = (audienceFeed: AudienceTagFeedsFieldModel, avoidCloseDrawer: boolean = false) => {
+  updateAudienceExternalFeed = (audienceFeed: AudienceExternalFeedsFieldModel, avoidCloseDrawer: boolean = false) => {
     const allfields = this.props.fields.getAll();
-    const newFields: AudienceTagFeedsFieldModel[] = [];
+    const newFields: AudienceExternalFeedsFieldModel[] = [];
     if (audienceFeed.model.id) {
       allfields.forEach(f => f.key === audienceFeed.key ? newFields.push(audienceFeed) : newFields.push(f))
     } else {
-      allfields.forEach(f => newFields.push(f))
-      newFields.push(audienceFeed)
+      const existsAlready = allfields.find(f => f.key === audienceFeed.key)
+      if (existsAlready) {
+        allfields.forEach(f => f.key === audienceFeed.key ? newFields.push(audienceFeed) : newFields.push(f))
+      } else {
+        allfields.forEach(f => newFields.push(f))
+        newFields.push(audienceFeed)
+      }
     }
     if (!avoidCloseDrawer) {
       this.props.closeNextDrawer();
@@ -49,40 +54,43 @@ class AudienceTagFeedSection extends React.Component<Props> {
 
   
 
-  openAudienceTagFeedSelector = (record: AudienceTagFeedsFieldModel) => {
+  openAudienceExternalFeedSelector = (record: AudienceExternalFeedsFieldModel) => {
     
     const props = {
       onClose: this.props.closeNextDrawer,
       onSave: this.updateAudienceExternalFeed,
       edition: true,
-      type: 'AUDIENCE_SEGMENT_TAG_FEED' as PluginType,
+      type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED' as PluginType,
       initialValues: {
         plugin: record.model,
         properties: record.model.properties
       },
+      identifier: record.key
     };
 
-    this.props.openNextDrawer<CreateAudienceFeedProps<AudienceTagFeedsFieldModel>>(AudienceFeedForm, { additionalProps: props })
+    this.props.openNextDrawer<CreateAudienceFeedProps<AudienceExternalFeedsFieldModel>>(AudienceFeedForm, { additionalProps: props })
   };
 
   createAudienceFeedSelector = () => {
     const props = {
       onClose: this.props.closeNextDrawer,
       onSave: this.updateAudienceExternalFeed,
-      type: 'AUDIENCE_SEGMENT_TAG_FEED' as PluginType,
+      type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED' as PluginType,
       edition: false,
+      identifier: null,
     };
 
-    this.props.openNextDrawer<CreateAudienceFeedProps<AudienceTagFeedsFieldModel>>(AudienceFeedForm, { additionalProps: props })
+    this.props.openNextDrawer<CreateAudienceFeedProps<AudienceExternalFeedsFieldModel>>(AudienceFeedForm, { additionalProps: props })
   }
 
-  renderSwitch = (record: AudienceTagFeedsFieldModel) => {
+
+  renderSwitch = (record: AudienceExternalFeedsFieldModel) => {
     const {
-      intl,
+      intl
     } = this.props;
 
     const onChange = (c: boolean) => {
-      const newRecord: AudienceTagFeedsFieldModel = { ...record, model: { ...record.model, status: c ? 'ACTIVE' : 'PAUSED' }  }
+      const newRecord: AudienceExternalFeedsFieldModel = { ...record, model: { ...record.model, status: c ? 'ACTIVE' : 'PAUSED' }  }
       this.updateAudienceExternalFeed(newRecord, true)
     }
 
@@ -108,10 +116,10 @@ class AudienceTagFeedSection extends React.Component<Props> {
     return record.model.id ? element : embedInInfoTooltip(element)
   }
 
-  getAudienceTagFeed = () => {
+  getAudienceExternalFeed = () => {
     const { fields } = this.props;
 
-    const getName = (field: AudienceTagFeedsFieldModel) => {
+    const getName = (field: AudienceExternalFeedsFieldModel) => {
       return field.model.artifact_id
     };
 
@@ -126,9 +134,9 @@ class AudienceTagFeedSection extends React.Component<Props> {
           recordIconType="optimization"
           record={field}
           title={getName}
-          onRemove={removeField}
-          onEdit={this.openAudienceTagFeedSelector}
           additionalActionButtons={this.renderSwitch}
+          onRemove={removeField}
+          onEdit={this.openAudienceExternalFeedSelector}
         />
       );
     });
@@ -142,28 +150,28 @@ class AudienceTagFeedSection extends React.Component<Props> {
         <FormSection
           dropdownItems={[
             {
-              id: messages.addExisting.id,
-              message: messages.addExisting,
+              id: messages.addAFeed.id,
+              message: messages.addAFeed,
               onClick: this.createAudienceFeedSelector,
             },
           ]}
-          subtitle={messages.sectionAudienceTagFeedSubtitle}
-          title={messages.sectionAudienceTagFeedTitle}
+          subtitle={messages.sectionAudienceExternalFeedSubtitle}
+          title={messages.sectionAudienceExternalFeedTitle}
         />
 
         <RelatedRecords
           emptyOption={{
             iconType: 'optimization',
-            message: formatMessage(messages.sectionEmptyAudienceTagFeedRules),
+            message: formatMessage(messages.sectionEmptyAudienceExternalFeedRules),
           }}
         >
-          {this.getAudienceTagFeed()}
+          {this.getAudienceExternalFeed()}
         </RelatedRecords>
       </div>
     );
   }
 }
 
-export default compose<AudienceTagFeedSectionProps, Props>(injectIntl, injectDrawer)(
-  AudienceTagFeedSection,
+export default compose<AudienceExternalFeedSectionProps, Props>(injectIntl, injectDrawer)(
+  AudienceExternalFeedSection,
 );

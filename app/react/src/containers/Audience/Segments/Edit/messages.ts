@@ -144,6 +144,10 @@ export default defineMessages({
     id: 'audience.segment.addExisting',
     defaultMessage: 'Add Existing',
   },
+  addAFeed: {
+    id: 'audience.segment.addAFeed',
+    defaultMessage: 'Add a Feed',
+  },
   sectionAudienceExternalFeedTitle: {
     id: 'audience.segment.audienceexternalfeed.title',
     defaultMessage: 'Audience External Feeds',

@@ -40,18 +40,18 @@ import {
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 
 
-import GeneralFormSection from './sections/GeneralFormSection'
-import SelectorQL from './sections/query/SelectorQL';
-import AudienceExternalFeedSection, { AudienceExternalFeedSectionProps } from './sections/AudienceExternalFeedSection'
-import AudienceTagFeedSection, { AudienceTagFeedSectionProps } from './sections/AudienceTagFeedSection'
-import { PixelSection } from './sections/pixel'
+import GeneralFormSection from './Sections/GeneralFormSection'
+import SelectorQL from './Sections/query/SelectorQL';
+import AudienceExternalFeedSection, { AudienceExternalFeedSectionProps } from './Sections/AudienceExternalFeedSection'
+import AudienceTagFeedSection, { AudienceTagFeedSectionProps } from './Sections/AudienceTagFeedSection'
+import { PixelSection } from './Sections/pixel'
 
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Datamart } from '../../../../models/organisation/organisation';
 import { FormSection, FieldCtor } from '../../../../components/Form';
 
-import OTQLInputEditor, { OTQLInputEditorProps } from './sections/query/OTQL'
+import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL'
 
 const FORM_ID = 'audienceSegmentForm';
 
@@ -85,15 +85,6 @@ type Props = InjectedFormProps<AudienceSegmentFormProps> &
 
 
 class EditAudienceSegmentForm extends React.Component<Props> {
-
-  
-  getSegmentType = () => {
-    const {
-      segmentType,
-    } = this.props;
-
-    return segmentType;
-  }
 
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
@@ -168,7 +159,10 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     sections.push({
       id: 'general',
       title: messages.audienceSegmentSectionGeneralTitle,
-      component: <GeneralFormSection />,
+      component: <GeneralFormSection
+        segmentCreation={segmentCreation}
+        segmentType={segmentType as any}
+      />,
     });
 
     if (!(segmentCreation && segmentType === 'USER_PIXEL')) {
