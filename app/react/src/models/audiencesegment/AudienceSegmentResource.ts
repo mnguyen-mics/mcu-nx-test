@@ -28,10 +28,15 @@ export type FeedType =
 
 
   export interface UserListSegment extends AudienceSegmentResource {
-    feed_type: FeedType
+    feed_type: FeedType;
+    type: 'USER_LIST';
+  }
+
+  export interface UserQuerySegment extends AudienceSegmentResource {
+    query_id: string;
+    type: 'USER_QUERY';
   }
   
   
-  
-  export type AudienceSegment = UserListSegment
+  export type AudienceSegmentShape = UserListSegment | UserQuerySegment
   

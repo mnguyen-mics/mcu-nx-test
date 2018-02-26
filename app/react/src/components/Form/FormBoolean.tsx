@@ -9,7 +9,7 @@ import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
 
 import FormFieldWrapper from './FormFieldWrapper';
 
-interface FormBooleanProps {
+export interface FormBooleanProps {
   formItemProps?: FormItemProps;
   inputProps?: CheckboxProps;
   helpToolTipProps: TooltipProps;
@@ -66,7 +66,6 @@ class FormBoolean extends React.Component<
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
-        rowProps={{ className: 'm-b-20' }}
         {...formItemProps}
       >
         <Checkbox

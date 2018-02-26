@@ -165,7 +165,7 @@ class SegmentsActionbar extends Component {
         {datamart.storage_model_version === 'v201709' ? userPixelMenu() : null}
 
         <Menu.Item key="USER_QUERY">
-          <Link to={`/o${organisationId}d${datamart.id}/datamart/segments/USER_QUERY`}>
+          <Link to={`/v2/o/${organisationId}/audience/segments/create/USER_QUERY`}>
             <FormattedMessage id="USER_QUERY" />
           </Link>
         </Menu.Item>

@@ -42,6 +42,7 @@ interface PluginContentOuterProps {
   onSelect: (t: any) => void;
   initialValue: any;
   loading: boolean;
+  showGeneralInformation?: boolean
 }
 
 interface PluginContentState {
@@ -67,6 +68,8 @@ type JoinedProps = PluginContentOuterProps &
   RouteComponentProps<RouterProps>;
 
 class PluginContent extends React.Component<JoinedProps, PluginContentState> {
+
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -191,11 +194,12 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
       editionMode,
       initialValue,
       loading,
+      showGeneralInformation,
     } = this.props;
 
     const { pluginProperties, isLoading, plugin } = this.state;
 
-    const sidebarItems = [
+    const sidebarItems = showGeneralInformation ? [
       {
         sectionId: 'general',
         title: messages.menuGeneralInformation,
@@ -204,6 +208,11 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         sectionId: 'properties',
         title: messages.menuProperties,
       },
+    ] : [
+      {
+        sectionId: 'properties',
+        title: messages.menuProperties,
+      }
     ];
 
     const actionbarProps =
@@ -238,6 +247,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}
+          showGeneralInformation={showGeneralInformation !== undefined ? showGeneralInformation : true}
         />
       </EditContentLayout>
     ) : (

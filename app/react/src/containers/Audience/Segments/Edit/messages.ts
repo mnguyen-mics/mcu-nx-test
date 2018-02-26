@@ -29,9 +29,25 @@ export default defineMessages({
     id: 'audience.segment.create.section.general.subtitle',
     defaultMessage: 'Give your Audience Segment a name.',
   },
+  audienceSegmentSectionQueryTitle: {
+    id: 'audience.segment.create.section.query.title',
+    defaultMessage: 'User Query',
+  },
+  audienceSegmentSectionQuerySubTitle: {
+    id: 'audience.segment.create.section.query.subtitle',
+    defaultMessage: 'Select the user you want to add to your segment.',
+  },
   audienceSegmentCreationGeneralNameFieldTitle: {
     id: 'audience.segment.create.section.general.field.name.title',
     defaultMessage: 'Name',
+  },
+  audienceSegmentCreationGeneralPersistedFieldTitle: {
+    id: 'audience.segment.create.section.general.field.persisted.title',
+    defaultMessage: 'Persisted',
+  },
+  audienceSegmentCreationGeneralPersistedFieldHelper: {
+    id: 'audience.segment.create.section.general.field.persisted.helper',
+    defaultMessage: 'A persisted segment can be used in a campaign whereas a non persisted serves as analytics',
   },
   audienceSegmentCreationGeneralNameFieldPlaceHolder: {
     id: 'audience.segment.create.section.general.field.name.placeholder',
@@ -40,6 +56,10 @@ export default defineMessages({
   audienceSegmentCreationGeneralNameFieldHelper: {
     id: 'audience.segment.create.section.general.field.name.helper',
     defaultMessage: 'Give your Audience Segment a name!',
+  },
+  audienceSegmentCreationUserQueryFieldHelper: {
+    id: 'audience.segment.create.section.general.field.query.helper',
+    defaultMessage: 'Start your query with "SELECT \\{ id \\} FROM UserPoint WHERE" and add your conditions after the WHERE clause.',
   },
   // Technical name
   contentSectionGeneralAdvancedPartRow1Label: {
@@ -120,4 +140,57 @@ export default defineMessages({
     defaultMessage: 'Saving in progress',
   },
 
+  addExisting: {
+    id: 'audience.segment.addExisting',
+    defaultMessage: 'Add Existing',
+  },
+  addAFeed: {
+    id: 'audience.segment.addAFeed',
+    defaultMessage: 'Add a Feed',
+  },
+  sectionAudienceExternalFeedTitle: {
+    id: 'audience.segment.audienceexternalfeed.title',
+    defaultMessage: 'Audience External Feeds',
+  },
+  sectionAudienceExternalFeedSubtitle: {
+    id: 'audience.segment.audienceexternalfeed.subtitle',
+    defaultMessage: 'Add an Audience External Feed to push your segment to third party. An Audience External Feed is a Server to Server mean to push a segment to a third party receiver.',
+  },
+  sectionEmptyAudienceExternalFeedRules: {
+    id: 'audience.segment.audienceexternalfeed.empty',
+    defaultMessage: 'No Audience External Feed selected yet!',
+  },
+  sectionAudienceTagFeedTitle: {
+    id: 'audience.segment.audiencetagfeed.title',
+    defaultMessage: 'Audience Tag Feeds',
+  },
+  sectionAudienceTagFeedSubtitle: {
+    id: 'audience.segment.audiencetagfeed.subtitle',
+    defaultMessage: 'Add an Audience Tag Feed to push your segment to third party. An Audience Tag Feed will trigger a pixel on your properties to push a segment to a third party receiver.',
+  },
+  sectionEmptyAudienceTagFeedRules: {
+    id: 'audience.segment.audiencetagfeed.empty',
+    defaultMessage: 'No Audience Tag Feed selected yet!',
+  },
+  listTagTitle: {
+    id: 'audience.segment.audiencetagfeed.list.title',
+    defaultMessage: 'Choose your Audience Tag Feed Type',
+  },
+  listTagSubTitle: {
+    id: 'audience.segment.audiencetagfeed.list.subtitle',
+    defaultMessage: 'Add an Audience Tag Feed. An Audience Tag feed will trigger a pixel on your properties to push cookies to third parties receivers.',
+  },
+  listExternalTitle: {
+    id: 'audience.segment.audienceexternalfeed.list.title',
+    defaultMessage: 'Choose your Audience External Feed Type',
+  },
+  listExternalSubTitle: {
+    id: 'audience.segment.audienceexternalfeed.list.subtitle',
+    defaultMessage: 'Add an Audience External Feed. An Audience External feed will push cookies (Server to Server) to third parties receivers.',
+  },
+
+  audienceFeedDisableExplanation: {
+    id: 'audience.segment.audiencefeed.disable.explanation',
+    defaultMessage: 'You need to save your Feed before setting it to \'Started.\'',
+  }
 });

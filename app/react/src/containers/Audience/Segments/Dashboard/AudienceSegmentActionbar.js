@@ -105,7 +105,6 @@ class AudienceSegmentActionbar extends Component {
         }
       },
       intl: { formatMessage },
-      defaultDatamart
     } = this.props;
 
     const {
@@ -113,7 +112,6 @@ class AudienceSegmentActionbar extends Component {
     } = this.state;
 
     const exportIsRunning = this.state.exportIsRunning;
-    const datamartId = defaultDatamart(organisationId).id;
 
     const breadcrumbPaths = [{
       key: formatMessage(segmentMessages.audienceSegment),
@@ -125,12 +123,8 @@ class AudienceSegmentActionbar extends Component {
       url: `/v2/o/${organisationId}/audience/segments`,
     }];
 
-    let editLink;
-    if (segment.type === 'USER_LIST') {
-      editLink = `/v2/o/${organisationId}/audience/segments/${segmentId}/edit`;
-    } else {
-      editLink = `/o${organisationId}d${datamartId}/datamart/segments//${segmentId}`;
-    }
+    const editLink = `/v2/o/${organisationId}/audience/segments/${segmentId}/edit`;
+
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link key="1" to={`/${organisationId}/campaigns/display/expert/edit/T1`}>

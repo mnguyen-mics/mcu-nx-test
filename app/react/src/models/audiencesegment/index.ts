@@ -1,6 +1,6 @@
 import {
   AudienceSegmentResource,
-  AudienceSegment,
+  AudienceSegmentShape,
   AudienceSegmentType,
   FeedType,
   UserListSegment
@@ -17,7 +17,7 @@ export {
   AudienceSegmentType,
   AudienceSegmentSelectionResource,
   AudienceSegmentSelectionCreateRequest,
-  AudienceSegment
+  AudienceSegmentShape
 
 
 };
