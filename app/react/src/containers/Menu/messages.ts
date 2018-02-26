@@ -130,5 +130,15 @@ export default defineMessages({
     dataStudioReport: {
         id: 'menu.dataStudio.report',
         defaultMessage: 'Report',
+    },
+
+    // ANALYTICS
+    analyticsTitle: {
+        id: 'menu.analytics.title',
+        defaultMessage: 'Analytics',
+    },
+    analyticsOverview: {
+        id: 'menu.analytics.overview',
+        defaultMessage: 'Overview',
     }
 })

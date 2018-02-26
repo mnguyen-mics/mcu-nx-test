@@ -2,10 +2,18 @@ import messages from './messages';
 
 export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'library.exports', 'automations', 'campaigns.email', 'datastudio.query_tool'];
 
-
+export interface Menu {
+  key: string;
+  iconType?: string;
+  path: string;
+  translation: {id: string, defaultMessage: string};
+  translationId?: string;
+  legacyPath?: boolean;
+  subMenuItems?: Menu[];
+}
 // ATTENTION : ALL KEYS MUST BE UNIQUE !
 // AND MATCHED FEATURE FLAGS
-const audienceMenu = {
+const audienceMenu: Menu = {
   key: 'audience',
   iconType: 'users',
   path: '/audience',
@@ -38,7 +46,7 @@ const audienceMenu = {
   ],
 };
 
-const campaignsMenu = {
+const campaignsMenu: Menu = {
   key: 'campaigns',
   iconType: 'display',
   path: '/campaigns',
@@ -65,21 +73,21 @@ const campaignsMenu = {
   ],
 };
 
-const analyticsMenu = {
+const analyticsMenu: Menu = {
   key: 'analytics',
   iconType: 'display',
   path: '/analytics',
-  translationId: 'ANALYTICS',
+  translation: messages.analyticsTitle,
   subMenuItems: [
     {
       key: 'analytics.overview',
       path: '/analytics/overview',
-      translationId: 'OVERVIEW',
+      translation: messages.analyticsOverview,
     },
   ]
 };
 
-const automationsMenu = {
+const automationsMenu: Menu = {
   key: 'automations',
   iconType: 'automation',
   path: '/automations',
@@ -87,7 +95,7 @@ const automationsMenu = {
   subMenuItems: [],
 };
 
-const creativesMenu = {
+const creativesMenu: Menu = {
   key: 'creatives',
   iconType: 'creative',
   path: '/creatives',
@@ -108,7 +116,7 @@ const creativesMenu = {
   ],
 };
 
-const libraryMenu = {
+const libraryMenu: Menu = {
   key: 'library',
   iconType: 'library',
   path: '/library',
@@ -190,7 +198,7 @@ const libraryMenu = {
   ],
 };
 
-const dataStudio = {
+const dataStudio: Menu = {
   key: 'datastudio',
   iconType: 'data',
   path: '/datastudio',
@@ -211,7 +219,7 @@ const dataStudio = {
   ],
 };
 
-export const itemDefinitions = [
+export const itemDefinitions: Menu[] = [
   audienceMenu,
   analyticsMenu,
   campaignsMenu,
@@ -220,5 +228,4 @@ export const itemDefinitions = [
   libraryMenu,
   dataStudio,
   analyticsMenu,
-  libraryMenu
 ];
