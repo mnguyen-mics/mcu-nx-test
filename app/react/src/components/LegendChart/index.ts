@@ -1,4 +1,4 @@
-import LegendChart from './LegendChart.tsx';
+import LegendChart from './LegendChart';
 import LegendChartWithModal from './LegendChartWithModal';
 
 export {

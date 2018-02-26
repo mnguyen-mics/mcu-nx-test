@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 interface Metric {
-  name?: string;
+  name: string;
   value?: string;
 }
 

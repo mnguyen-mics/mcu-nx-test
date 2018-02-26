@@ -1,10 +1,9 @@
 import * as React from 'react';
-import Plottable, {AxisOrientation, Plot, SimpleSelection, XYPlot} from 'plottable';
-import moment, {Moment} from 'moment';
+import Plottable, {AxisOrientation, Plot, XYPlot} from 'plottable';
+import moment from 'moment';
 import ChartUtils from '../ChartUtils';
 
 import { areDatesSameDay, truncateUpToHour } from '../../utils/DateHelper';
-
 import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index';
 import {QuantitativeScale} from 'plottable/build/src/scales/quantitativeScale';
 import * as Plots from 'plottable/build/src/plots/commons';
@@ -12,34 +11,28 @@ import {Component} from 'plottable/build/src/components/component';
 import {Pointer} from 'plottable/build/src/interactions';
 import {XDragBoxLayer} from 'plottable/build/src/components';
 import {ITickGenerator} from 'plottable/build/src/scales/tickGenerators';
-import {FormattedMessage} from 'react-intl';
+import MessageDescriptor = ReactIntl.FormattedMessage.MessageDescriptor;
+import {injectIntl} from 'react-intl';
+import {compose} from 'recompose';
+import InjectedIntlProps = ReactIntl.InjectedIntlProps;
 
 const HOUR_MILLIS = 3600 * 1000;
 const DAY_MILLIS = 24 * HOUR_MILLIS;
 
-interface YKey {
-  key: string;
-  message: FormattedMessage.Props;
-}
-
-interface TooltipContent {
-  xLabel: string | number | Date;
-  entries: Entry[];
-}
-
 interface ChartOptions {
   colors: string[];
-  yKeys: YKey[];
+  yKeys: any[];
   xKey: string;
   isDraggable: boolean;
-  onDragEnd: (dateRange: [Moment, Moment]) => void;
+  onDragEnd: any;
 }
 
 interface StackedAreaPlotDoubleAxisProps {
   identifier: string;
   dataset: any[];
   options: ChartOptions;
-  style: React.CSSProperties;
+  style: any;
+  intlMessages: { [s: string]: MessageDescriptor };
 }
 
 interface StackedAreaPlotDoubleAxisState {
@@ -49,26 +42,26 @@ interface StackedAreaPlotDoubleAxisState {
 interface ChartTooltipProps {
   xTooltip: number;
   yTooltip: number;
-  content: TooltipContent;
+  content: any;
   visibility: string;
 }
 
 interface Entry {
-  label?: FormattedMessage.Props;
-  color: string;
+  label: MessageDescriptor;
   value: number;
+  color: string;
 }
 
 interface LineCrossHair {
-  drawAt: (pos: Position, navInfo: Plots.IPlotEntity) => void;
-  hide: () => void;
-  vLine: SimpleSelection<void>;
+  drawAt: any;
+  hide: any;
+  vLine: any;
 }
 
 interface DotsCrossHair {
-  drawAt: (pos: Position) => void;
-  hide: () => void;
-  circle: SimpleSelection<void>;
+  drawAt: any;
+  hide: any;
+  circle: any;
 }
 
 interface Position {
@@ -87,7 +80,8 @@ interface PlotComponents {
   other: Component[];
 }
 
-class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxisProps, StackedAreaPlotDoubleAxisState> {
+class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxisProps & InjectedIntlProps,
+                                                        StackedAreaPlotDoubleAxisState> {
 
   svgBoundingClientRect = {
     top: 0,
@@ -102,7 +96,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   svg: any = null;
   mountLock: boolean = false;
 
-  constructor(props: StackedAreaPlotDoubleAxisProps) {
+  constructor(props: StackedAreaPlotDoubleAxisProps & InjectedIntlProps) {
     super(props);
     this.renderStackedAreaPlotDoubleAxis = this.renderStackedAreaPlotDoubleAxis.bind(this);
     this.defineSvg = this.defineSvg.bind(this);
@@ -362,10 +356,8 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     const pointComponents: Component[] = Object.keys(dataset[0])
                                    .filter(item => item !== options.xKey && yKeys.indexOf(item) > -1)
                                    .map(item => {
-                                     const scatter: Plottable.Plots.Scatter<Date, number> = new Plottable.Plots.Scatter();
-                                     scatter.size(10);
                                      const plot = this.buildPlot(
-                                       scatter,
+                                       new Plottable.Plots.Scatter(),
                                        item,
                                        plottableDataSet,
                                        options,
@@ -438,10 +430,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
         this.setTooltip({
           xTooltip: -100,
           yTooltip: -100,
-          content: {
-            xLabel: '',
-            entries: [],
-          },
+          content: {},
           visibility: 'hidden',
         });
       });
@@ -541,6 +530,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   }
 
   createLineCrosshair(plot: Plot, options: ChartOptions): LineCrossHair {
+    const { intlMessages } = this.props;
     const { xKey, yKeys } = options;
 
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
@@ -556,20 +546,19 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       .attr('y1', 0)
       .attr('y2', plot.height());
 
-    const drawAt = (mousePosition: Position, navInfo: Plots.IPlotEntity) => {
+    const drawAt = (mousePosition: Position, navInfo: Plots.ILightweightPlotEntity) => {
       const navPosition = navInfo.position;
       vLine.attr('x1', navPosition.x);
       vLine.attr('x2', navPosition.x);
 
-      const entries: Entry[] = [];
-      yKeys.forEach(item => {
-        const entry = {
-          label: item.message,
+      const entries: Entry[] = yKeys.map(item => {
+        return {
+          label: intlMessages[item.key],
           color: navInfo.dataset.metadata()[item.key],
           value: navInfo.datum[item.key],
         };
-        entries.push(entry);
       });
+
       let xLabel = navInfo.datum[xKey];
       if (navInfo.datum[xKey] && navInfo.datum.hour_of_day) {
         xLabel = `${navInfo.datum[xKey]} - ${navInfo.datum.hour_of_day}:00`;
@@ -607,4 +596,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     };
   }
 }
-export default StackedAreaPlotDoubleAxis;
+
+export default compose<StackedAreaPlotDoubleAxisProps & InjectedIntlProps, any>(
+  injectIntl,
+)(StackedAreaPlotDoubleAxis);
