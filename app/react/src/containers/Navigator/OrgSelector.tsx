@@ -109,7 +109,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
               >
                 <ButtonStyleless
                   onClick={this.onCardClick(item.organisation_id)}
-                  style={{ height: 134, marginBottom: 20 }}
+                  style={{ height: 134, marginBottom: 20, width: '100%' }}
                 >
                   <Card
                     hoverable={true}
