@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const paths = require('./paths');
 const pkg = require('../package.json');
 
@@ -121,6 +121,12 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
         names: ['react-vendors', 'manifest']
       }),
       new HtmlWebpackExcludeAssetsPlugin(),
+      new HardSourceWebpackPlugin(),
+      // new BundleAnalyzerPlugin(),
+      // new WebpackMonitor({
+      //   capture: true,
+      //   launch: true,
+      // }),
     ]
   };
 

@@ -22,7 +22,8 @@ const devConfig = {
   },
 
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+    // not working till we remove grunt-webpack
+    // new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
