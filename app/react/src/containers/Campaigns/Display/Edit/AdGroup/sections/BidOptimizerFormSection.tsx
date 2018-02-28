@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { Input, Select } from 'antd';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 
@@ -29,6 +30,10 @@ import {
   CancelablePromise,
 } from '../../../../../../utils/ApiHelper';
 import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { BidOptimizationObjectiveType } from '../../../../../../models/campaign/constants';
+
+
+const InputGroup = Input.Group;
 
 export interface BidOptimizerFormSectionProps extends ReduxFormChangeProps {}
 
@@ -98,7 +103,11 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
     const newField: BidOptimizerFieldModel[] = [
       {
         key: cuid(),
-        model: { bid_optimizer_id: bidOptmizers[0].id },
+        model: { 
+          bid_optimizer_id: bidOptmizers[0].id,
+          bid_optimization_objective_type: 'CPC',
+          bid_optimization_objective_value: '0',
+        },
       },
     ];
 
@@ -123,6 +132,53 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
       additionalProps: props,
     });
   };
+
+  renderActionsButtons = (record: BidOptimizerFieldModel) => {
+    const { fields, formChange } = this.props;
+    const onInputChange = (e: any) => {
+      const newField: BidOptimizerFieldModel[] = [
+        {
+          key: record.key,
+          model: { 
+            ...record.model,
+            bid_optimization_objective_value: e.target.value,
+          },
+        },
+      ];
+  
+      formChange((fields as any).name, newField);
+      
+    }
+
+    const onSelectChange = (e: BidOptimizationObjectiveType) => {
+      const newField: BidOptimizerFieldModel[] = [
+        {
+          key: record.key,
+          model: { 
+            ...record.model,
+            bid_optimization_objective_type: e,
+          },
+        },
+      ];
+  
+      formChange((fields as any).name, newField);
+      
+    }
+
+    return (
+      <span>
+        <InputGroup compact={true}>
+          <Select defaultValue={record.model.bid_optimization_objective_type || 'CPC'} onChange={onSelectChange}>
+            <Select.Option value="CPC">CPC</Select.Option>
+            <Select.Option value="CPA">CPA</Select.Option>
+            <Select.Option value="CTR">CTR</Select.Option>
+            <Select.Option value="CPV">CPV</Select.Option>
+          </Select>
+          <Input style={{ width: 100 }} type="number" placeholder="value" defaultValue={record.model.bid_optimization_objective_value} onChange={onInputChange} />
+        </InputGroup>
+      </span>
+    )
+  }
 
   getBidOptimizerRecords = () => {
     const { fields } = this.props;
@@ -158,6 +214,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
           recordIconType="optimization"
           record={field}
           title={getName}
+          additionalActionButtons={this.renderActionsButtons}
           onRemove={removeField}
         />
       );

@@ -20,6 +20,7 @@ import {
   LocationSelectionCreateRequest,
 } from '../AdGroup/sections/Location/domain';
 import { DisplayCreativeFormData } from '../../../../Creative/DisplayAds/Edit/domain';
+import { BidOptimizationObjectiveType } from '../../../../../models/campaign/constants';
 
 export const AD_GROUP_FORM_NAME = 'adGroupForm';
 
@@ -62,6 +63,8 @@ export type LocationFieldModel = FieldArrayModel<LocationSelectionShape>;
 
 export type BidOptimizerFieldModel = FieldArrayModel<{
   bid_optimizer_id: string;
+  bid_optimization_objective_type: BidOptimizationObjectiveType;
+  bid_optimization_objective_value: string;
 }>;
 
 export interface AdGroupFormData {

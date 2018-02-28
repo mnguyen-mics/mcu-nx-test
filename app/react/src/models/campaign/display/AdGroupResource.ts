@@ -9,10 +9,10 @@ import {
   name: string;
   technical_name: string;
   visibility: AdSlotVisibilityFilter;
-  bid_optimizer_id?: string;
-  bid_optimization_objective_type: BidOptimizationObjectiveType;
-  bid_optimization_use_user_data: boolean;
-  bid_optimization_objective_value: string;
+  bid_optimizer_id?: string | null;
+  bid_optimization_objective_type: BidOptimizationObjectiveType | null;
+  bid_optimization_use_user_data: boolean | null;
+  bid_optimization_objective_value: string | null;
   viewability_min_score: number | null;
   viewability_use_third_party_data: boolean;
   ab_selection: boolean;

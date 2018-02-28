@@ -51,7 +51,7 @@ const AdGroupFormService = {
       const bidOptimizerFields: BidOptimizerFieldModel[] = [];
       if (adGroup.bid_optimizer_id) {
         bidOptimizerFields.push(
-          createFieldArrayModel({ bid_optimizer_id: adGroup.bid_optimizer_id }),
+          createFieldArrayModel({ bid_optimizer_id: adGroup.bid_optimizer_id, bid_optimization_objective_type: adGroup.bid_optimization_objective_type, bid_optimization_objective_value: adGroup.bid_optimization_objective_value }),
         );
       }
 
@@ -127,6 +127,7 @@ const AdGroupFormService = {
     formData: AdGroupFormData,
     initialFormData: AdGroupFormData = INITIAL_AD_GROUP_FORM_DATA,
   ): Promise<AdGroupId> {
+
     updateBidOptimizer(formData);
 
     let createOrUpdatePromise;
@@ -218,10 +219,19 @@ const AdGroupFormService = {
 export default AdGroupFormService;
 
 function updateBidOptimizer(adGroupFormData: AdGroupFormData) {
-  const bidOptimizerId =
+  const bidOptimizer =
     adGroupFormData.bidOptimizerFields[0] &&
-    adGroupFormData.bidOptimizerFields[0].model.bid_optimizer_id;
-  adGroupFormData.adGroup.bid_optimizer_id = bidOptimizerId;
+    adGroupFormData.bidOptimizerFields[0].model;
+  if (bidOptimizer) {
+    adGroupFormData.adGroup.bid_optimizer_id = bidOptimizer.bid_optimizer_id;
+    adGroupFormData.adGroup.bid_optimization_objective_type = bidOptimizer.bid_optimization_objective_type;
+    adGroupFormData.adGroup.bid_optimization_objective_value = bidOptimizer.bid_optimization_objective_value;
+  } else {
+    adGroupFormData.adGroup.bid_optimizer_id = null;
+    adGroupFormData.adGroup.bid_optimization_objective_type = null;
+    adGroupFormData.adGroup.bid_optimization_objective_value = null;
+  }
+  
 }
 
 function getSegmentTasks(
