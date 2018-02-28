@@ -46,8 +46,8 @@ class AudienceCounters extends React.Component<Props> {
         iconType: 'display',
         title: (
           <FormattedMessage
-            id="audience-segment-dashboard-counters-user-points"
-            defaultMessage="User Points"
+            id="audience-segment-dashboard-counters-display-cookies"
+            defaultMessage="Display Cookies"
           />
         ),
         ...userAgents,
