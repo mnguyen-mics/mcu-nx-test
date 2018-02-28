@@ -10,10 +10,9 @@ import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
 import { UploadFile } from 'antd/lib/upload/interface';
-import * as actions from '../../../../state/Notifications/actions';
-import { connect } from 'react-redux';
 import { Filters } from '../../../../components/ItemList';
 import { updateSearch, PAGINATION_SEARCH_SETTINGS, parseSearch } from '../../../../utils/LocationSearchHelper';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 const maxFileSize = 200 * 1024;
 
@@ -21,10 +20,6 @@ const Dragger = Upload.Dragger;
 
 interface RouterProps {
   organisationId: string;
-}
-
-interface ReduxProps {
-  notifyError: (err: any) => void;
 }
 
 interface AssetsActionbarProps {
@@ -39,7 +34,7 @@ interface AssetsActionbarState {
 
 type Props = RouteComponentProps<RouterProps> &
   InjectedIntlProps &
-  ReduxProps &
+  InjectedNotificationProps &
   AssetsActionbarProps;
 
 class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
@@ -187,5 +182,5 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
 export default compose<Props, AssetsActionbarProps>(
   injectIntl,
   withRouter,
-  connect(undefined, { notifyError: actions.notifyError }),
+  injectNotifications,
 )(AssetsActionbar);

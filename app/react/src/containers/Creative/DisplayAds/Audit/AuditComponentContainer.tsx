@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Spin } from 'antd';
-import { connect } from 'react-redux';
 import CreativeService from '../../../../services/CreativeService';
-import * as NotificationActions from '../../../../state/Notifications/actions';
 import {
   DisplayAdResource,
   AuditStatusResource,
   CreativeAuditAction,
 } from '../../../../models/creative/CreativeResource';
 import AuditComponent from './AuditComponent';
+import { compose } from 'recompose';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 export interface AuditComponentContainerProps {
   creativeId: string;
@@ -20,11 +20,7 @@ interface State {
   auditStatuses: AuditStatusResource[];
 }
 
-interface MapDispacthToProps {
-  notifyError: (err: any) => void;
-}
-
-type Props = AuditComponentContainerProps & MapDispacthToProps;
+type Props = AuditComponentContainerProps & InjectedNotificationProps;
 
 class AuditComponentContainer extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -78,6 +74,6 @@ class AuditComponentContainer extends React.Component<Props, State> {
   }
 }
 
-export default connect(undefined, {
-  notifyError: NotificationActions.notifyError,
-})(AuditComponentContainer);
+export default compose<Props, AuditComponentContainerProps>(
+  injectNotifications,
+)(AuditComponentContainer);

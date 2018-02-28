@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import CreativeService from '../../../../services/CreativeService';
 import PluginService from '../../../../services/PluginService';
 import PluginEditForm from '../../../Plugin/Edit/PluginEditForm';
 import { EditContentLayout } from '../../../../components/Layout';
-import * as actions from '../../../../state/Notifications/actions';
 import { PluginProperty, PluginInterface } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { DataResponse } from '../../../../services/ApiService';
 
 import messages from './messages';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 const CreativeRendererId = '1034';
 
@@ -34,11 +33,7 @@ interface CreateEmailTemplateState {
   emailTemplateRenderer?: PluginInterface;
 }
 
-interface CreateEmailTemplateProps {
-  notifyError: (err?: any) => void;
-}
-
-type JoinedProps = CreateEmailTemplateProps &
+type JoinedProps = InjectedNotificationProps &
   RouteComponentProps<EmailTemplateRouteParam> &
   InjectedIntlProps;
 
@@ -341,5 +336,5 @@ class CreateEmailTemplate extends React.Component<
 export default compose(
   injectIntl,
   withRouter,
-  connect(undefined, { notifyError: actions.notifyError }),
+  injectNotifications,
 )(CreateEmailTemplate);

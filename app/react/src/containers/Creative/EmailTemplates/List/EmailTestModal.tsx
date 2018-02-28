@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { Modal, Input, Alert } from 'antd';
-import { ArgsProps } from 'antd/lib/notification';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import CreativeService from '../../../../services/CreativeService';
-import * as actions from '../../../../state/Notifications/actions';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   modalTitle: {
@@ -52,12 +50,7 @@ interface EmailTestModalState {
   error: boolean;
 }
 
-interface MapDispatchToProps {
-  notifyError: (e: any) => void;
-  notifySuccess: (e: ArgsProps) => void;
-}
-
-type JoinedProps = EmailTestModalProps & MapDispatchToProps & InjectedIntlProps;
+type JoinedProps = EmailTestModalProps & InjectedNotificationProps & InjectedIntlProps;
 
 class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
   constructor(props: JoinedProps) {
@@ -129,8 +122,5 @@ class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
 
 export default compose<JoinedProps, EmailTestModalProps>(
   injectIntl,
-  connect(undefined, {
-    notifyError: actions.notifyError,
-    notifySuccess: actions.notifySuccess,
-  }),
+  injectNotifications,
 )(EmailTestModal);

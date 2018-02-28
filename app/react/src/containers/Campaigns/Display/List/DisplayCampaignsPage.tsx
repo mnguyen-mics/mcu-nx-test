@@ -23,7 +23,6 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
-import * as NotificationActions from '../../../../state/Notifications/actions';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -47,7 +46,6 @@ export interface MapDispatchToProps {
   isFetchingCampaignsStat: boolean;
   dataSource: DisplayCampaignResource[];
   totalDisplayCampaigns: number;
-  removeNotification: () => void;
 }
 
 export interface MapStateToProps {
@@ -288,7 +286,7 @@ class DisplayCampaignsPage extends React.Component<
               campaignId,
               campaignUndoBody,
             ).then(() => {
-              removeNotification();
+              removeNotification(campaignId);
             });
           };
 
@@ -426,7 +424,6 @@ const mapStateToProps = (state: any) => ({
     state.displayCampaignsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
   totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
-  removeNotification: NotificationActions.removeNotification,
 });
 
 const mapDispatchToProps = {

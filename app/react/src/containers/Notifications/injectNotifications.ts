@@ -4,7 +4,9 @@ import {
   notifySuccess,
   notifyWarning,
   notifyInfo,
-} from '../../state/Notifications/actions';
+  removeNotification,
+  resetNotifications,
+} from '../../state/Notifications/actions.js';
 
 // TODO type any ( goes with notif action creators)
 export interface InjectedNotificationProps {
@@ -12,6 +14,8 @@ export interface InjectedNotificationProps {
   notifySuccess: (notifConfig: any) => void;
   notifyWarning: (notifConfig: any) => void;
   notifyInfo: (notifConfig: any) => void;
+  removeNotification: (key: string) => void;
+  resetNotifications: () => void;
 }
 
 const mapDispatchToProps = {
@@ -19,6 +23,8 @@ const mapDispatchToProps = {
   notifySuccess,
   notifyWarning,
   notifyInfo,
+  removeNotification,
+  resetNotifications,
 };
 
 export default connect(undefined, mapDispatchToProps);

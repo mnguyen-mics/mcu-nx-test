@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { InjectedIntlProps } from 'react-intl';
 
-import * as actions from '../../../../state/Notifications/actions';
 import DisplayCreativeRendererSelector from './DisplayCreativeRendererSelector';
 import log from '../../../../utils/Logger';
 import { DisplayCreativeForm } from './index';
@@ -11,6 +9,7 @@ import { DisplayCreativeFormData } from './domain';
 import Loading from '../../../../components/Loading';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
 import { DisplayCreativeFormProps } from './DisplayCreativeForm';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {}
 
@@ -19,11 +18,7 @@ interface State {
   creativeFormData: Partial<DisplayCreativeFormData>;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
-type Props = DisplayCreativeCreatorProps & InjectedIntlProps & MapStateProps;
+type Props = DisplayCreativeCreatorProps & InjectedIntlProps & InjectedNotificationProps;
 
 class DisplayCreativeCreator extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -81,5 +76,5 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
 }
 
 export default compose<Props, DisplayCreativeCreatorProps>(
-  connect(undefined, { notifyError: actions.notifyError }),
+  injectNotifications,
 )(DisplayCreativeCreator);

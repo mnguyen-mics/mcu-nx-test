@@ -1,18 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import * as NotificationActions from '../../../../state/Notifications/actions';
 import GoalForm, { GoalFormProps } from './GoalForm';
 import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
 import GoalFormService from './GoalFormService';
 import Loading from '../../../../components/Loading';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 export interface GoalFormLoaderProps extends GoalFormProps {
   goalId: string;
-}
-
-interface MapStateProps {
-  notifyError: (err: any) => void;
 }
 
 interface State {
@@ -20,7 +15,7 @@ interface State {
   loading: boolean;
 }
 
-type Props = GoalFormLoaderProps & MapStateProps;
+type Props = GoalFormLoaderProps & InjectedNotificationProps;
 
 class GoalFormLoader extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -46,5 +41,5 @@ class GoalFormLoader extends React.Component<Props, State> {
 }
 
 export default compose<Props, GoalFormProps>(
-  connect(undefined, { notifyError: NotificationActions.notifyError }),
+  injectNotifications,
 )(GoalFormLoader);

@@ -7,12 +7,12 @@ import { withMcsRouter } from '../../Helpers';
 import * as labelsActions from '../../../state/Labels/actions';
 import { Label } from '../../Labels/Labels';
 import LabelsService from '../../../services/LabelsService';
-import * as notifyActions from '../../../state/Notifications/actions';
 
 import settingsMessages from '../messages';
 import messages from './messages';
 
 import LabelsTable, { Filters } from './LabelsTable';
+import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 
 interface Options {
   limit: number;
@@ -20,7 +20,6 @@ interface Options {
 
 interface LabelsListProps {
   organisationId: string;
-  notifyError: (err: any) => void;
   labels: Label[];
   isFetching: boolean;
   fetchLabels: (organisationId: string, options: Options) => void;
@@ -39,9 +38,9 @@ interface LabelsListState {
   edition: boolean;
 }
 
-class LabelsListPage extends Component<LabelsListProps, LabelsListState> {
+class LabelsListPage extends Component<LabelsListProps & InjectedNotificationProps, LabelsListState> {
 
-  constructor(props: LabelsListProps) {
+  constructor(props: LabelsListProps & InjectedNotificationProps) {
     super(props);
     this.state = {
       totalLabels: 0,
@@ -195,13 +194,13 @@ class LabelsListPage extends Component<LabelsListProps, LabelsListState> {
 export default compose(
   injectIntl,
   withMcsRouter,
+  injectNotifications,
   connect(
     (state: any) => ({
       labels: state.labels.labelsApi.data,
       isFetching: state.labels.labelsApi.isFetching,
     }),
-    { notifyError: notifyActions.notifyError,
-      fetchLabels: labelsActions.fetchAllLabels.request,
+    { fetchLabels: labelsActions.fetchAllLabels.request,
     },
   ),
 )(LabelsListPage);

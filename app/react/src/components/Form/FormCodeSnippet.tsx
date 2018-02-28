@@ -32,9 +32,7 @@ const FormCodeSnippet: React.SFC<FormCodeSnippetProps & WrappedFieldProps> = pro
         helpToolTipProps={props.helpToolTipProps}
         hoverToolTipProps={props.hoverToolTipProps}
         validateStatus={validateStatus}
-        {...props.formItemProps}
-        {...props.inputProps}
-        
+        {...props.formItemProps}        
       >
         <SyntaxHighlighter language={props.language} style={docco}
           id={props.input.name}

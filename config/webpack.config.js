@@ -1,16 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const paths = require('./paths');
 const pkg = require('../package.json');
-
-const extractStyle = new ExtractTextPlugin({
-  filename: '[name].css',
-  disable: process.env.NODE_ENV === 'development'
-});
-
-const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 
 const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
 
@@ -26,50 +18,32 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
 
     module: {
       rules: [
-        {
-          test: /\.js$/,
-          include: paths.reactAppSrc,
-          use: {
-            loader: 'eslint-loader',
-            query: {
-              failOnError: eslintFailOnError
-            }
-          },
-          enforce: 'pre'
-        },
+        // {
+        //   test: /\.js$/,
+        //   include: paths.reactAppSrc,
+        //   use: {
+        //     loader: 'eslint-loader',
+        //     query: {
+        //       failOnError: eslintFailOnError
+        //     }
+        //   },
+        //   enforce: 'pre'
+        // },
         {
           test: /\.jsx?$/,
           include: paths.reactAppSrc,
           loader: 'babel-loader'
-          // use: {
-          //   loader: 'babel-loader',
-          //   options: babelOptions
-          // }
         },
         {
           test: /\.tsx?$/,
           include: paths.reactAppSrc,
-          use: ['babel-loader', 'awesome-typescript-loader']
+          use: ['babel-loader', 'ts-loader']
         },
-        // {
-        //   enforce: 'pre',
-        //   test: /\.js$/,
-        //   loader: 'source-map-loader'
-        // },
         {
-          test: /\.less$/,
-          loader: extractStyle.extract({
-            use: [
-              'css-loader?sourceMap',
-              'less-loader?sourceMap'
-            ]
+          test: /\.less$/i,
+          loader: ExtractTextPlugin.extract({
+            use: ['css-loader', 'less-loader']
           }),
-          include: [paths.appStyleLess, paths.appGravityStyleLess, paths.appTeamjoinStyleLess],
-          // include: [
-          //   path.appStyleLessDir,
-          //   path.appStyleLess,
-          // ],
-          // exclude: path.appGravityStyleLess,
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
@@ -105,28 +79,17 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
       alias: {
         Containers: path.resolve(__dirname, 'app/react/src/containers/')
       },
-      modules: [paths.appNodeModules],
       extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
 
     plugins: [
-      extractStyle,
+      new ExtractTextPlugin('[name].css'),
       new webpack.DefinePlugin({
         PUBLIC_PATH: JSON.stringify('react')
       }),
       new webpack.DefinePlugin({
         PUBLIC_URL: JSON.stringify('/v2')
-      }),
-      new webpack.optimize.CommonsChunkPlugin({
-        names: ['react-vendors', 'manifest']
-      }),
-      new HtmlWebpackExcludeAssetsPlugin(),
-      new HardSourceWebpackPlugin(),
-      // new BundleAnalyzerPlugin(),
-      // new WebpackMonitor({
-      //   capture: true,
-      //   launch: true,
-      // }),
+      })
     ]
   };
 

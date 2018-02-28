@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
 import BidOptimizerService from '../../../../services/Library/BidOptimizerService';
-import * as actions from '../../../../state/Notifications/actions';
 import {
   PluginProperty,
   BidOptimizer,
@@ -13,6 +11,7 @@ import {
 } from '../../../../models/Plugins';
 
 import messages from './messages';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 interface BidOptimizerRouteParam {
   organisationId: string;
@@ -31,11 +30,7 @@ interface CreateBidOptimizerState {
   selectedBidOptimizer?: PluginInterface;
 }
 
-interface CreateBidOptimizerProps {
-  notifyError: (err?: any) => void;
-}
-
-type JoinedProps = CreateBidOptimizerProps &
+type JoinedProps = InjectedNotificationProps &
   RouteComponentProps<BidOptimizerRouteParam> &
   InjectedIntlProps;
 
@@ -231,7 +226,6 @@ class CreateEditBidOptimizer extends React.Component<
 
 export default compose(
   injectIntl,
-  // withDrawer,
   withRouter,
-  connect(undefined, { notifyError: actions.notifyError }),
+  injectNotifications,
 )(CreateEditBidOptimizer);
