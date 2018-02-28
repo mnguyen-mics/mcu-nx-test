@@ -1,7 +1,12 @@
-import Settings from './Settings';
-import SettingsActionBar from './SettingsActionBar';
+import DatamartSettings from './DatamartSettings/DatamartSettings.tsx';
+import DatamartSettingsActionBar from './DatamartSettings/DatamartSettingsActionBar.tsx';
+
+import OrganisationSettings from './OrganisationSettings/OrganisationSettings.tsx';
+import OrganisationSettingsActionBar from './OrganisationSettings/OrganisationSettingsActionBar.tsx';
 
 export {
-  Settings,
-  SettingsActionBar,
+  DatamartSettings,
+  DatamartSettingsActionBar,
+  OrganisationSettings,
+  OrganisationSettingsActionBar,
 };

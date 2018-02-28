@@ -1,4 +1,4 @@
-import NavigatorHeader from './NavigatorHeader';
+import NavigatorHeader from './NavigatorHeader.tsx';
 
 export {
   NavigatorHeader,

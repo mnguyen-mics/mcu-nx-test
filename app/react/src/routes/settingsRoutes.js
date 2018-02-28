@@ -1,18 +1,26 @@
 import {
-  Settings,
-  SettingsActionBar,
+  DatamartSettings,
+  DatamartSettingsActionBar,
+  OrganisationSettings,
+  OrganisationSettingsActionBar,
 } from '../containers/Settings/index';
 
-import MobileApplicationEditPage from '../containers/Settings/MobileApplications/Edit/MobileApplicationEditPage.tsx';
-import SiteEditPage from '../containers/Settings/Sites/Edit/SiteEditPage.tsx';
-import DatamartEditPage from '../containers/Settings/Datamarts/Edit/DatamartEditPage.tsx';
+import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/MobileApplications/Edit/MobileApplicationEditPage.tsx';
+import SiteEditPage from '../containers/Settings/DatamartSettings/Sites/Edit/SiteEditPage.tsx';
+import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/Edit/DatamartEditPage.tsx';
 
 const settingsRoutes = [
   {
-    path: '/settings',
+    path: '/settings/datamart',
     layout: 'main',
-    contentComponent: Settings,
-    actionBarComponent: SettingsActionBar,
+    contentComponent: DatamartSettings,
+    actionBarComponent: DatamartSettingsActionBar,
+  },
+  {
+    path: '/settings/organisation',
+    layout: 'main',
+    contentComponent: OrganisationSettings,
+    actionBarComponent: OrganisationSettingsActionBar,
   },
   {
     path: '/settings/mobile_application/create',

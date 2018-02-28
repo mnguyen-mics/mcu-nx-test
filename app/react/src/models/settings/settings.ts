@@ -85,3 +85,12 @@ export interface Aliases {
     site_id: string;
     name: string
 }
+
+export interface User {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    locale: string;
+    organisation_id: string;
+} 
