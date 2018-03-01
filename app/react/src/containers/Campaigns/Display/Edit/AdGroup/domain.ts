@@ -21,6 +21,10 @@ import {
 } from '../AdGroup/sections/Location/domain';
 import { DisplayCreativeFormData } from '../../../../Creative/DisplayAds/Edit/domain';
 import { BidOptimizationObjectiveType } from '../../../../../models/campaign/constants';
+import { KeywordListSelectionResource, KeywordListSelectionCreateRequest } from '../../../../../models/keywordList/keywordList';
+import { DealsListSelectionCreateRequest, DealsListSelectionResource } from '../../../../../models/dealList/dealList';
+import { AdExchangeSelectionResource, AdExchangeSelectionCreateRequest } from '../../../../../models/adexchange/adexchange';
+import { DisplayNetworkSelectionResource, DisplayNetworkSelectionCreateRequest } from '../../../../../models/displayNetworks/displayNetworks';
 
 export const AD_GROUP_FORM_NAME = 'adGroupForm';
 
@@ -50,10 +54,59 @@ export type PlacementListSelectionShape =
   | PlacementListSelectionResource
   | PlacementListSelectionCreateRequest;
 
+export type KeywordListSelectionShape =
+  | KeywordListSelectionResource
+  | KeywordListSelectionCreateRequest;
+
+export type DealListSelectionShape =
+  | DealsListSelectionResource
+  | DealsListSelectionCreateRequest;
+
+export type AdExchangeSelectionShape =
+  | AdExchangeSelectionResource
+  | AdExchangeSelectionCreateRequest;
+
+export type DisplayNetworkSelectionShape =
+  | DisplayNetworkSelectionResource
+  | DisplayNetworkSelectionCreateRequest;
+
 export type PlacementListFieldModel = FieldArrayModelWithMeta<
   PlacementListSelectionShape,
   { name: string }
 >;
+
+export type KeywordListFieldModel = FieldArrayModel<
+  KeywordListSelectionShape
+>;
+
+export type DealListFieldModel = FieldArrayModel<
+  DealListSelectionShape
+>;
+
+export type AdExchangeFieldModel = FieldArrayModel<
+  AdExchangeSelectionShape
+>;
+
+export type DisplayNetworkFieldModel = FieldArrayModel<
+  DisplayNetworkSelectionShape
+>;
+
+export type InventoryCatalFieldsModel = FieldArrayModel<{
+  type: 'AD_EXCHANGE'
+  data: AdExchangeSelectionCreateRequest | AdExchangeSelectionResource
+} | {
+  type: 'DISPLAY_NETWORK'
+  data: DisplayNetworkSelectionCreateRequest | DisplayNetworkSelectionResource
+} | {
+  type: 'PLACEMENT_LIST'
+  data: PlacementListSelectionCreateRequest | PlacementListSelectionResource
+} | {
+  type: 'KEYWORD_LIST'
+  data: KeywordListSelectionCreateRequest | KeywordListSelectionResource
+} | {
+  type: 'DEAL_LIST'
+  data: DealsListSelectionCreateRequest | DealsListSelectionResource
+}>
 
 export type LocationSelectionShape =
   | LocationSelectionResource
@@ -67,13 +120,23 @@ export type BidOptimizerFieldModel = FieldArrayModel<{
   bid_optimization_objective_value: string;
 }>;
 
+/* FIELD Array must match AdGroupFormData keys (eg: segmentFields key is the fieldArray name in a section) */
+
 export interface AdGroupFormData {
   adGroup: Partial<AdGroupResource>;
   segmentFields: SegmentFieldModel[];
   adFields: AdFieldModel[];
   locationFields: LocationFieldModel[];
-  placementListFields: PlacementListFieldModel[];
+  
   bidOptimizerFields: BidOptimizerFieldModel[];
+
+  inventoryCatalFields: InventoryCatalFieldsModel[];
+
+  // adExchangeFields: AdExchangeFieldModel[];
+  // displayNetworkFields: DisplayNetworkFieldModel[];
+  // placementListFields: PlacementListFieldModel[];
+  // keywordListFields: KeywordListFieldModel[];
+   // dealListFields: DealListFieldModel[];
 }
 
 export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
@@ -83,8 +146,13 @@ export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
   segmentFields: [],
   adFields: [],
   locationFields: [],
-  placementListFields: [],
+  // placementListFields: [],
   bidOptimizerFields: [],
+  // keywordListFields: [],
+  // dealListFields: [],
+  // adExchangeFields: [],
+  // displayNetworkFields: [],
+  inventoryCatalFields: [],
 };
 
 export type operationType = 'equals' | 'increase' | 'decrease';
@@ -149,3 +217,29 @@ export function isPlacementListSelectionResource(
 ): model is PlacementListSelectionResource {
   return (model as PlacementListSelectionResource).id !== undefined;
 }
+
+export function isKeywordListSelectionResource(
+  model: KeywordListSelectionShape,
+): model is KeywordListSelectionResource {
+  return (model as KeywordListSelectionResource).id !== undefined;
+}
+
+export function isDealListSelectionResource(
+  model: DealListSelectionShape,
+): model is DealsListSelectionResource {
+  return (model as DealsListSelectionResource).id !== undefined;
+}
+
+export function isAdExchangeSelectionResource(
+  model: AdExchangeSelectionShape,
+): model is AdExchangeSelectionResource {
+  return (model as AdExchangeSelectionResource).id !== undefined;
+}
+
+export function isDisplayNetworkSelectionResource(
+  model: DisplayNetworkSelectionShape,
+): model is DisplayNetworkSelectionResource {
+  return (model as DisplayNetworkSelectionResource).id !== undefined;
+}
+
+

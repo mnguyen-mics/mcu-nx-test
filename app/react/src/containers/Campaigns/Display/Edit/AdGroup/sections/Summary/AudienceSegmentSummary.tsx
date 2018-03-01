@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   AdGroupFormData,
   AD_GROUP_FORM_NAME,
-  SegmentFieldModel,
 } from '../../domain';
 import { getFormValues } from 'redux-form';
 import { compose } from 'recompose';
@@ -10,6 +9,7 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import WhenDatamart from '../../../../../../Datamart/WhenDatamart';
 import { printStringArray } from './utils';
+import { SegmentFieldModel } from '../../../../../Email/Edit/domain';
 
 interface MapStateProps {
   segmentFields: SegmentFieldModel[];

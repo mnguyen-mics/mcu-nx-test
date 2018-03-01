@@ -6,7 +6,8 @@ export type ServiceType =
   'AUDIENCE_DATA.USER_DATA_TYPE' |
   'DISPLAY_CAMPAIGN.ADEX_INVENTORY' |
   'DISPLAY_CAMPAIGN.REAL_TIME_BIDDING' |
-  'DISPLAY_CAMPAIGN.VISIBILITY';
+  'DISPLAY_CAMPAIGN.VISIBILITY' |
+  'DISPLAY_CAMPAIGN.INVENTORY_ACCESS';
 export type ServiceCategoryType =
   'AUDIENCE';
 export type ServiceCategorySubType =
@@ -21,20 +22,41 @@ export interface ServiceItemPublicResource {
   provider_id?: string;
   category_id?: string;
   list_weight?: number;
-  service_type?: ServiceType;
-  [key: string]: any;
+  reseller_agreement_id?: string;
+  // [key: string]: any;
 }
 
 export interface AudienceSegmentServiceItemPublicResource extends ServiceItemPublicResource {
+  type: 'audience_segment';
   segment_id: string;
   datamart_id: string;
 }
 
-export interface AdexInventoryServiceItemPublicResource extends ServiceItemPublicResource {
-  ad_exchange_hub_key: string;
+export interface DisplayNetworkServiceItemPublicResource extends ServiceItemPublicResource {
+  type: 'inventory_access_display_network';
+  display_network_id: string;
 }
 
-export type ServiceItemShape = AudienceSegmentServiceItemPublicResource | AdexInventoryServiceItemPublicResource;
+// export interface KeywordListServiceItemPublicResource extends ServiceItemPublicResource {
+//   keyword_list_id: string;
+// }
+
+export interface PlacementListServiceItemPublicResource extends ServiceItemPublicResource {
+  type: 'inventory_access_placement_list';
+  placement_list_id: string;
+}
+
+export interface DealListServiceItemPublicResource extends ServiceItemPublicResource {
+  type: 'inventory_access_deal_list';
+  deal_list_id: string;
+}
+
+export interface AdexInventoryServiceItemPublicResource extends ServiceItemPublicResource {
+  type: 'inventory_access_ad_exchange';
+  ad_exchange_id: string;
+}
+
+export type ServiceItemShape = AudienceSegmentServiceItemPublicResource;
 
 export interface ServiceCategoryPublicResource {
   id: string;

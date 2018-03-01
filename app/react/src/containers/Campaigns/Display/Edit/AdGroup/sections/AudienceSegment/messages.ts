@@ -30,7 +30,7 @@ export default defineMessages({
     defaultMessage: 'Lorem ipsum',
   },
   detailedTargetingLabel: {
-    id: 'audience.catalog.detailed-targeting.label',
+    id: 'inventory',
     defaultMessage: 'Detailed Targeting',
   },
   detailedTargetingNotice: {

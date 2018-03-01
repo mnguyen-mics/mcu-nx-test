@@ -1,8 +1,8 @@
 import ApiService, { DataResponse, DataListResponse } from '../ApiService';
-import { Keyword } from '../../models/keywordList/keywordList';
+import { KeywordListResource } from '../../models/keywordList/keywordList';
 
 const KeywordService = {
-  getKeywordLists(organisationId: string, options: object = {}): Promise<DataListResponse<Keyword>> {
+  getKeywordLists(organisationId: string, options: object = {}): Promise<DataListResponse<KeywordListResource>> {
     const endpoint = 'keyword_lists';
 
     const params = {
