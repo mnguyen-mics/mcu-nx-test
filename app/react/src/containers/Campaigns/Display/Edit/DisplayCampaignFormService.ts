@@ -20,6 +20,7 @@ import AdGroupFormService from './AdGroup/AdGroupFormService';
 import GoalFormService from '../../Goal/Edit/GoalFormService';
 import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
 import operation from '../Edit/Campaign/domain';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 
 type DisplayCampaignId = string;
 
@@ -84,6 +85,7 @@ const DisplayCampaignFormService = {
     organisationId: string,
     formData: DisplayCampaignFormData,
     initialFormData: DisplayCampaignFormData = INITIAL_DISPLAY_CAMPAIGN_FORM_DATA,
+    datamartId?: string,
   ): Promise<DisplayCampaignId> {
     let createOrUpdatePromise;
 
@@ -96,7 +98,13 @@ const DisplayCampaignFormService = {
       createOrUpdatePromise = DisplayCampaignService.createCampaign(
         organisationId,
         formData.campaign,
-      );
+      ).then(res => {
+        return datamartId ? executeTasksInSequence(
+          getExposedClickersTasks(organisationId, res.data.id, datamartId)
+        ).then(() => {
+          return res
+        }) : res;
+      });
     }
 
     return createOrUpdatePromise.then(res => {
@@ -157,6 +165,29 @@ const DisplayCampaignFormService = {
 };
 
 export default DisplayCampaignFormService;
+
+function getExposedClickersTasks(
+  organisationId: string,
+  campaignId: string,
+  datamartId: string,
+): Task[] {
+  return [
+    () => AudienceSegmentService.createAudienceSegment(organisationId, {
+      campaign_id: campaignId,
+      clickers: false,
+      datamart_id: datamartId,
+      exposed: true,
+      type: "USER_ACTIVATION"
+    }),
+    () => AudienceSegmentService.createAudienceSegment(organisationId, {
+      campaign_id: campaignId,
+      clickers: true,
+      datamart_id: datamartId,
+      exposed: false,
+      type: "USER_ACTIVATION"
+    })
+  ]
+}
 
 function getGoalTasks(
   organisationId: string,

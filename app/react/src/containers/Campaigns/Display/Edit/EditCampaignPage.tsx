@@ -18,6 +18,7 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -25,7 +26,8 @@ interface State {
 }
 
 type Props = InjectedIntlProps &
-InjectedNotificationProps &
+  InjectedNotificationProps &
+  InjectedDatamartProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
@@ -78,6 +80,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       notifyError,
       history,
       intl,
+      datamart,
     } = this.props;
 
     const {
@@ -97,6 +100,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       organisationId,
       displayCampaignFormData,
       initialDisplayCampaignFormData,
+      datamart.id,
     )
       .then(campaignId => {
         hideSaveInProgress();
@@ -172,6 +176,7 @@ class EditCampaignPage extends React.Component<Props, State> {
 export default compose(
   withRouter,
   injectIntl,
+  injectDatamart,
   connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
   injectNotifications,
 )(EditCampaignPage);
