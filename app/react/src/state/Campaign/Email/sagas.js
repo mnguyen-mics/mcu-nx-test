@@ -15,13 +15,13 @@ import EmailCampaignService from '../../../services/EmailCampaignService.ts';
 import ReportService from '../../../services/ReportService.ts';
 
 import {
-    EMAIL_CAMPAIGN_FETCH,
-    EMAIL_CAMPAIGN_DELIVERY_REPORT_FETCH,
-    EMAIL_CAMPAIGN_ARCHIVE,
-    EMAIL_CAMPAIGN_UPDATE,
-    EMAIL_CAMPAIGN_LOAD_ALL,
-    EMAIL_BLAST_FETCH_ALL,
-    EMAIL_BLAST_FETCH_PERFORMANCE,
+  EMAIL_CAMPAIGN_FETCH,
+  EMAIL_CAMPAIGN_DELIVERY_REPORT_FETCH,
+  EMAIL_CAMPAIGN_ARCHIVE,
+  EMAIL_CAMPAIGN_UPDATE,
+  EMAIL_CAMPAIGN_LOAD_ALL,
+  EMAIL_BLAST_FETCH_ALL,
+  EMAIL_BLAST_FETCH_PERFORMANCE,
 } from '../../action-types';
 
 function* loadEmailCampaign({ payload }) {

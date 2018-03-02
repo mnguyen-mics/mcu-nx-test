@@ -524,7 +524,7 @@ class DisplayCampaignPage extends Component {
             message: errorMessage.title,
             description: errorMessage.body,
           }
-        : undefined;
+          : undefined;
         notifyError(error, errorMsg);
         throw error;
       });

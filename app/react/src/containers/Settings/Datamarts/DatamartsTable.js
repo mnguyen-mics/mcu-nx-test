@@ -59,15 +59,15 @@ class DatamartsTable extends Component {
 
 
     return (noDatamartYet) ? (<EmptyTableView iconType="full-users" intlMessage={messages.emptyDatamarts} />) :
-           (
-             <TableView
-               columns={dataColumns}
-               actionsColumnsDefinition={actionColumns}
-               dataSource={dataSource}
-               loading={isFetchingDatamarts}
-               pagination={pagination}
-             />
-           );
+      (
+        <TableView
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
+          dataSource={dataSource}
+          loading={isFetchingDatamarts}
+          pagination={pagination}
+        />
+      );
   }
 }
 

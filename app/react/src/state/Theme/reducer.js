@@ -1,6 +1,6 @@
 import {
   STORE_THEME_COLOR,
-  } from '../action-types';
+} from '../action-types';
 
 const theme = (state = {
   colors: {},

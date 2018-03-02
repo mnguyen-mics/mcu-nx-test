@@ -1,6 +1,6 @@
 import {
-    STORE_ORG_FEATURES,
-    } from '../action-types';
+  STORE_ORG_FEATURES,
+} from '../action-types';
 
 const features = (state = {
   organisation: [],

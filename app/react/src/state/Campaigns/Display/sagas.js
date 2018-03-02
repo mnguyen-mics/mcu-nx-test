@@ -15,9 +15,9 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 
 import {
-    DISPLAY_CAMPAIGNS_LIST_FETCH,
-    DISPLAY_CAMPAIGNS_LOAD_ALL,
-    DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH
+  DISPLAY_CAMPAIGNS_LIST_FETCH,
+  DISPLAY_CAMPAIGNS_LOAD_ALL,
+  DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH
 } from '../../action-types';
 
 function* loadPerformanceReport({ payload }) {

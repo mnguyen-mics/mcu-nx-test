@@ -4,7 +4,7 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../../utils/Logger';
 
 import {
-    fetchAudiencePartitionsList,
+  fetchAudiencePartitionsList,
 } from './actions';
 
 import AudiencePartitionsService from '../../../services/AudiencePartitionsService';
@@ -12,7 +12,7 @@ import AudiencePartitionsService from '../../../services/AudiencePartitionsServi
 import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
 import {
-    AUDIENCE_PARTITIONS_LIST_FETCH,
+  AUDIENCE_PARTITIONS_LIST_FETCH,
 } from '../../action-types';
 
 function* loadAudiencePartitionsList({ payload }) {

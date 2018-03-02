@@ -84,14 +84,14 @@ class AdditionDeletion extends Component {
       colors: [colors['mcs-success'], colors['mcs-error']],
     };
     return hasFetchedAudienceStat
-    ? (
-      <StackedBarCharts
-        identifier="StackedBarCharAdditionDeletion"
-        dataset={formattedDataSource}
-        options={optionsForChart}
-      />
+      ? (
+        <StackedBarCharts
+          identifier="StackedBarCharAdditionDeletion"
+          dataset={formattedDataSource}
+          options={optionsForChart}
+        />
       )
-    : <LoadingChart />;
+      : <LoadingChart />;
   }
 
   render() {

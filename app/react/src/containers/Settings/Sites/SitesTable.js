@@ -80,16 +80,16 @@ class SitesTable extends Component {
     };
 
     return (noSiteYet) ? (<EmptyTableView iconType="bolt" intlMessage={messages.emptySites} />) :
-           (
-             <TableViewFilters
-               columns={dataColumns}
-               actionsColumnsDefinition={actionColumns}
-               searchOptions={searchOptions}
-               dataSource={dataSource}
-               loading={isFetchingSites}
-               pagination={pagination}
-             />
-           );
+      (
+        <TableViewFilters
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
+          searchOptions={searchOptions}
+          dataSource={dataSource}
+          loading={isFetchingSites}
+          pagination={pagination}
+        />
+      );
   }
 }
 

@@ -89,7 +89,7 @@ export const ARCHIVED_SEARCH_SETTINGS = [
 
 export const isSearchValid = (search, settings) => {
   const query = queryString.parse(search);
-    // notEmpty and must forall settings query isValid
+  // notEmpty and must forall settings query isValid
   return Object.keys(query).length > 0 &&
         settings.reduce((acc, setting) => {
           return acc && setting.isValid(query);
@@ -165,7 +165,7 @@ export const parseSearch = (search, settings) => {
  */
 export const compareSearches = (currentSearch, nextSearch) => {
   return lodash.isEqual(
-        queryString.parse(currentSearch),
-        queryString.parse(nextSearch),
-    );
+    queryString.parse(currentSearch),
+    queryString.parse(nextSearch),
+  );
 };

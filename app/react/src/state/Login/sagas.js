@@ -22,7 +22,7 @@ function* authorize(credentialsOrRefreshToken) {
   yield call(AuthService.setAccessToken, accessToken);
   window.angular.element(global.document.body).injector().get('Restangular').setDefaultHeaders({ Authorization: accessToken });
   yield call(AuthService.setAccessTokenExpirationDate, expiresIn);
-    // Update refresh token if API sent a new one
+  // Update refresh token if API sent a new one
   if (refreshToken) {
     log.debug(`Store refresh token ${refreshToken}`);
     yield call(AuthService.setRefreshToken, refreshToken);

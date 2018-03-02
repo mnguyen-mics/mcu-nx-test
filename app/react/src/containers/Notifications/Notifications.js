@@ -91,13 +91,13 @@ class Notifications extends Component {
       if (notification.error.error_id) {
         if (!antNotifcationConfig.description) {
           antNotifcationConfig.description = notification.error.error ?
-          (
-            <span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code>&nbsp;{formatMessage(messages.errorDescriptionReason)}&nbsp;<code>{notification.error.error}</code></span>
-          ) : (
-            <div>
-              <p><span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span></p>
-            </div>
-          );
+            (
+              <span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code>&nbsp;{formatMessage(messages.errorDescriptionReason)}&nbsp;<code>{notification.error.error}</code></span>
+            ) : (
+              <div>
+                <p><span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code></span></p>
+              </div>
+            );
         } else {
           // append errorId message
           antNotifcationConfig.description = notification.error.error ?
@@ -107,7 +107,7 @@ class Notifications extends Component {
                 <p><span>{ formatMessage(messages.errorDescriptionWithErrorId) }&nbsp;<code>{notification.error.error_id}</code>&nbsp;{formatMessage(messages.errorDescriptionReason)}&nbsp;<code>{notification.error.error}</code></span></p>
               </div>
             )
-          :
+            :
             (
               <div>
                 { antNotifcationConfig.description }

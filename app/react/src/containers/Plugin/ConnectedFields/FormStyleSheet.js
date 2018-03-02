@@ -191,7 +191,7 @@ class FormStyleSheet extends Component {
                 <Select style={{ width: '100%' }} defaultValue={this.state.styleSheets[0].value} onChange={(value) => { this.onChange('id', value); }} onSelect={this.getNewStyleSheetsVersion}>
                   {this.state.styleSheets.map(({ disabled, value, key, title, text }) => (
                     <Option {...{ disabled, value, key, title }}>{text}</Option>
-                ))}
+                  ))}
                 </Select>)}
 
               {(this.state.versions && this.state.versions.length && !this.state.versionLoading) ? (<span><FormattedMessage {...messages.styleSheetModalVersions} /></span>) : null}
@@ -199,7 +199,7 @@ class FormStyleSheet extends Component {
                 <Select style={{ width: '100%' }} defaultValue={this.state.versions[0].value} onChange={(value) => { this.onChange('version', value); }}>
                   {this.state.versions.map(({ disabled, value, key, title, text }) => (
                     <Option {...{ disabled, value, key, title }}>{text}</Option>
-                ))}
+                  ))}
                 </Select>) : null}
             </Modal>
           </Col>

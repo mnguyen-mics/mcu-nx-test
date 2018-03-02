@@ -55,8 +55,8 @@ class EventActivity extends Component {
               </i>
             ) : (
 
-                this.renderProperties(value)
-              )}
+              this.renderProperties(value)
+            )}
           </div>
         );
         return generatedValue;

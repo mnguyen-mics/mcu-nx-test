@@ -1,6 +1,6 @@
 import {
-    OverviewContent,
-    OverviewActionBar,
+  OverviewContent,
+  OverviewActionBar,
 } from '../containers/Analytics/Overview/index.ts';
 
 const analyticsRoutes = [

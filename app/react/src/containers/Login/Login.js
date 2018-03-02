@@ -29,7 +29,7 @@ class Login extends Component {
       },
       isRequesting,
       hasError,
-     } = this.props;
+    } = this.props;
 
     const errorMsg = hasError ? <Alert type="error" style={{ marginBottom: 24 }} message={<FormattedMessage id="LOG_IN_ERROR" />} /> : null;
 

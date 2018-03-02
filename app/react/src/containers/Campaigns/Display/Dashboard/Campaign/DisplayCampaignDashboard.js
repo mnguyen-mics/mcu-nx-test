@@ -12,20 +12,20 @@ import messages from '../messages.ts';
 
 
 function DisplayCampaignDashboard({
-      isFetchingCampaignStat,
-      hasFetchedCampaignStat,
-      campaignStat,
-      isFetchingMediaStat,
-      hasFetchedMediaStat,
-      mediaStat,
-      overallStat,
-      hasFetchedOverallStat,
-      isFetchingOverallStat,
-      goals,
-      intl: {
-        formatMessage
-      }
-    }) {
+  isFetchingCampaignStat,
+  hasFetchedCampaignStat,
+  campaignStat,
+  isFetchingMediaStat,
+  hasFetchedMediaStat,
+  mediaStat,
+  overallStat,
+  hasFetchedOverallStat,
+  isFetchingOverallStat,
+  goals,
+  intl: {
+    formatMessage
+  }
+}) {
 
   const goalsItems = goals.map(goal => {
     return {
@@ -48,7 +48,7 @@ function DisplayCampaignDashboard({
           isFetchingOverallStat={isFetchingOverallStat}
           renderCampaignProgress
         />
-        ),
+      ),
     },
     {
       title: formatMessage(messages.dashboardTopSites),
@@ -58,7 +58,7 @@ function DisplayCampaignDashboard({
           hasFetchedMediaStat={hasFetchedMediaStat}
           dataSet={mediaStat}
         />
-        ),
+      ),
     },
     ...goalsItems,
   ];

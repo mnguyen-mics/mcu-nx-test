@@ -1,5 +1,5 @@
 import TimelinePage from './TimelinePage';
 
 export {
-    TimelinePage,
+  TimelinePage,
 };

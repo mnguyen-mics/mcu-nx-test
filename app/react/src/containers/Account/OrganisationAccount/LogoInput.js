@@ -8,7 +8,7 @@ import { EditableLogo } from '../../Logo';
 class LogoInput extends Component {
   render() {
     const {
-        fieldGridConfig,
+      fieldGridConfig,
     } = this.props;
 
     return (<Row>
@@ -25,7 +25,7 @@ class LogoInput extends Component {
 }
 
 LogoInput.propTypes = {
-  fieldGridConfig: PropTypes.object.isRequired,  // eslint-disable-line react/forbid-prop-types
+  fieldGridConfig: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default LogoInput;

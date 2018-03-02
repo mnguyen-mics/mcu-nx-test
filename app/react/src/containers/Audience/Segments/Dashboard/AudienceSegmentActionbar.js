@@ -82,7 +82,7 @@ class AudienceSegmentActionbar extends Component {
       match: {
         params: {
           organisationId,
-      segmentId
+          segmentId
         }
       },
       intl: { formatMessage },
@@ -101,7 +101,7 @@ class AudienceSegmentActionbar extends Component {
       match: {
         params: {
           organisationId,
-      segmentId
+          segmentId
         }
       },
       intl: { formatMessage },
