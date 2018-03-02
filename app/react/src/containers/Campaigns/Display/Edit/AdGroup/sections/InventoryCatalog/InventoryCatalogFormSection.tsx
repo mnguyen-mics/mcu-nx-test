@@ -237,11 +237,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
       }
     });
 
-    // const serviceInventoryIds = [];
-    // const otherDataIds = otherData.map(o => o.id);
-    // const allSegmentIds = serviceInventoryIds.concat(otherDataIds);
-    // return selectedInventoryIds.filter(id => allSegmentIds.includes(id));
-
     return selectedInventoryIds;
   };
 
@@ -253,7 +248,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     fields.getAll().some((field, index) => {
       if (
         this.getId(field) === inventoryId
-        // && field.model.exclude === forExcludedSegment
       ) {
         fields.remove(index);
         return true;
@@ -340,7 +334,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
     // Don't add those that are not checked anymore
     allFields
-      // .filter(field => field.model.exclude === forExcludedSegment)
       .forEach(field => {
         const found = inventoryIds.includes(this.getId(field));
         if (found) {
@@ -437,7 +430,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
             model: {
               data: {
                 deal_list_id: foundService.deal_list_id,
-                ad_group_id: "1",
               },
               type: 'DEAL_LIST',
             },

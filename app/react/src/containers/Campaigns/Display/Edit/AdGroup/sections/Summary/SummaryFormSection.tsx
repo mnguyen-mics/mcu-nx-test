@@ -52,9 +52,6 @@ class SummaryFormSection extends React.Component<Props> {
               <LocationSummary />
             </Section>
 
-            <Section>
-              {/* <PlacementListSummary /> */}
-            </Section>
 
             <Section>
               <FormattedMessage

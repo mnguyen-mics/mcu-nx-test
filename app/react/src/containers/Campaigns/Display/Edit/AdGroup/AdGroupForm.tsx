@@ -30,9 +30,6 @@ import { SummaryFormSection } from './sections/Summary';
 import LocationTargetingFormSection, {
   LocationTargetingFormSectionProps,
 } from './sections/Location/LocationTargetingFormSection';
-// import PlacementListFormSection, {
-//   PlacementListFormSectionProps,
-// } from './sections/PlacementListFormSection';
 import AudienceSegmentFormSection, {
   AudienceSegmentFormSectionProps,
 } from './sections/AudienceSegment/AudienceSegmentFormSection';
@@ -65,11 +62,6 @@ const LocationTargetingFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   LocationTargetingFormSectionProps
 >;
-
-// const PlacementListFieldArray = FieldArray as new () => GenericFieldArray<
-//   Field,
-//   PlacementListFormSectionProps
-// >;
 
 const AdFieldArray = FieldArray as new () => GenericFieldArray<
   Field,

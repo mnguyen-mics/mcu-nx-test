@@ -174,8 +174,8 @@ const provideInventoryCatalog = (Component: React.ComponentClass<InjectedInvento
       const { match: { params: { organisationId } } } = this.props;
   
       this.setState(prevState => ({
-        placementList: {
-          ...prevState.placementList,
+        dealList: {
+          ...prevState.dealList,
           loading: true,
         },
       }));

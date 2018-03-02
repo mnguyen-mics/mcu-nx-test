@@ -23,7 +23,6 @@ export interface ServiceItemPublicResource {
   category_id?: string;
   list_weight?: number;
   reseller_agreement_id?: string;
-  // [key: string]: any;
 }
 
 export interface AudienceSegmentServiceItemPublicResource extends ServiceItemPublicResource {
@@ -36,10 +35,6 @@ export interface DisplayNetworkServiceItemPublicResource extends ServiceItemPubl
   type: 'inventory_access_display_network';
   display_network_id: string;
 }
-
-// export interface KeywordListServiceItemPublicResource extends ServiceItemPublicResource {
-//   keyword_list_id: string;
-// }
 
 export interface PlacementListServiceItemPublicResource extends ServiceItemPublicResource {
   type: 'inventory_access_placement_list';

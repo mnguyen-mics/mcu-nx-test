@@ -7,7 +7,7 @@ export interface DealsListResource {
 
   export interface DealsListSelectionCreateRequest {
     deal_list_id: string;
-    ad_group_id: string;
+    ad_group_id?: string;
   }
   
   export interface DealsListSelectionResource extends DealsListSelectionCreateRequest {

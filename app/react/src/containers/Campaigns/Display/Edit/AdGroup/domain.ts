@@ -132,11 +132,6 @@ export interface AdGroupFormData {
 
   inventoryCatalFields: InventoryCatalFieldsModel[];
 
-  // adExchangeFields: AdExchangeFieldModel[];
-  // displayNetworkFields: DisplayNetworkFieldModel[];
-  // placementListFields: PlacementListFieldModel[];
-  // keywordListFields: KeywordListFieldModel[];
-   // dealListFields: DealListFieldModel[];
 }
 
 export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
@@ -146,12 +141,7 @@ export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
   segmentFields: [],
   adFields: [],
   locationFields: [],
-  // placementListFields: [],
   bidOptimizerFields: [],
-  // keywordListFields: [],
-  // dealListFields: [],
-  // adExchangeFields: [],
-  // displayNetworkFields: [],
   inventoryCatalFields: [],
 };
 
