@@ -6,17 +6,21 @@ import {
 } from '../../../../../services/ApiService';
 import {
   AdGroupFormData,
-  SegmentFieldModel,
   AdFieldModel,
   LocationFieldModel,
-  PlacementListFieldModel,
   BidOptimizerFieldModel,
   isAudienceSegmentSelectionResource,
   isLocationSelectionResource,
-  isPlacementListSelectionResource,
   INITIAL_AD_GROUP_FORM_DATA,
   isAdResource,
   isDisplayCreativeFormData,
+  InventoryCatalFieldsModel,
+  SegmentFieldModel,
+  isDealListSelectionResource,
+  isPlacementListSelectionResource,
+  isKeywordListSelectionResource,
+  isAdExchangeSelectionResource,
+  isDisplayNetworkSelectionResource,
 } from './domain';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import {
@@ -71,7 +75,7 @@ const AdGroupFormService = {
     segmentFields: SegmentFieldModel[];
     adFields: AdFieldModel[];
     locationFields: LocationFieldModel[];
-    placementListFields: PlacementListFieldModel[];
+    inventoryCatalFields: InventoryCatalFieldsModel[];
   }> {
     return Promise.all([
       DisplayCampaignService.getAudienceSegments(
@@ -88,12 +92,29 @@ const AdGroupFormService = {
         displayCampaignId,
         adGroupId,
       ).then(extractDataList),
+      DisplayCampaignService.getKeywordList(displayCampaignId, adGroupId).then(
+        extractDataList,
+      ),
+      DisplayCampaignService.getDealsList(displayCampaignId, adGroupId).then(
+        extractDataList,
+      ),
+      DisplayCampaignService.getAdex(displayCampaignId, adGroupId).then(
+        extractDataList,
+      ),
+      DisplayCampaignService.getDisplayNetwork(
+        displayCampaignId,
+        adGroupId,
+      ).then(extractDataList),
     ]).then(
       ([
         audienceSegmentSelections,
         adSelections,
         locarionSelections,
         placementListSelections,
+        keywordListSelections,
+        dealListSelections,
+        adExchangeSelections,
+        displayNetworkSelections,
       ]) => {
         const segmentFields = audienceSegmentSelections.map(el => ({
           ...createFieldArrayModelWithMeta(duplicate ? omit(el, 'id') : el, {
@@ -106,16 +127,73 @@ const AdGroupFormService = {
         const locationFields = locarionSelections.map(el =>
           createFieldArrayModel(duplicate ? omit(el, 'id') : el),
         );
-        const placementListFields = placementListSelections.map(el => ({
-          ...createFieldArrayModelWithMeta(duplicate ? omit(el, 'id') : el, {
+       
+        const placementListFields = placementListSelections.map(el => {
+          const model = {
+            data: duplicate ? omit(el, 'id') : el,
+            type: 'PLACEMENT_LIST',
+          };
+          return createFieldArrayModelWithMeta(model, {
             name: el.name,
-          }),
-        }));
+          });
+        });
+
+        const keywordListFields = keywordListSelections.map(el => {
+          const model = {
+            data: duplicate ? omit(el, 'id') : el,
+            type: 'KEYWORD_LIST',
+          };
+          return createFieldArrayModelWithMeta(model, {
+            name: el.name,
+          });
+        });
+
+        const dealListFields = dealListSelections.map(el => {
+          const model = {
+            data: duplicate ? omit(el, 'id') : el,
+            type: 'DEAL_LIST',
+          };
+          return createFieldArrayModelWithMeta(model, {
+            name: el.name,
+          });
+        });
+
+        const adExchangeFields = adExchangeSelections.map(el => {
+          const model = {
+            data: duplicate ? omit(el, 'id') : el,
+            type: 'AD_EXCHANGE',
+          };
+          return createFieldArrayModelWithMeta(model, {
+            name: el.name,
+          });
+        });
+
+        const displayNetworkFields = displayNetworkSelections.map(el => {
+          const model = {
+            data: duplicate ? omit(el, 'id') : el,
+            type: 'DISPLAY_NETWORK',
+          };
+          return createFieldArrayModelWithMeta(model, {
+            name: el.name,
+          });
+        });
+
+
+        
+
+        const inventoryCatalFields = [
+          ...displayNetworkFields,
+          ...adExchangeFields,
+          ...placementListFields,
+          ...keywordListFields,
+          ...dealListFields
+        ];
+
         return {
           segmentFields,
           adFields,
           locationFields,
-          placementListFields,
+          inventoryCatalFields,
         };
       },
     );
@@ -169,12 +247,12 @@ const AdGroupFormService = {
           formData.locationFields,
           initialFormData.locationFields,
         ),
-        ...getPlacementListTasks(
+        ...getInventoryCatalogTask(
           displayCampaignId,
           adGroupId,
-          formData.placementListFields,
-          initialFormData.placementListFields,
-        ),
+          formData.inventoryCatalFields,
+          initialFormData.inventoryCatalFields,
+        )
       );
 
       return executeTasksInSequence(tasks).then(() => adGroupId);
@@ -332,54 +410,206 @@ function getLocationTasks(
   return tasks;
 }
 
-function getPlacementListTasks(
+
+function getInventoryCatalogTask(
   campaignId: string,
   adGroupId: string,
-  placementListFields: PlacementListFieldModel[],
-  initialPlacementListFields: PlacementListFieldModel[],
+  inventoryCatalFields: InventoryCatalFieldsModel[],
+  initialInventoryCatalFields: InventoryCatalFieldsModel[],
 ): Task[] {
-  const initialIds: string[] = [];
-  initialPlacementListFields.forEach(field => {
-    if (isPlacementListSelectionResource(field.model)) {
-      initialIds.push(field.model.id);
+
+  // get initial values
+  const initialDealListIds: string[] = [];
+  const initialPlacementListIds: string[] = [];
+  const initialKeywordListIds: string[] = [];
+  const initialAdExchangeIds: string[] = [];
+  const initialDisplayNetworkIds: string[] = [];
+
+
+  initialInventoryCatalFields.forEach(field => {
+    if (field.model.type === 'DEAL_LIST' && isDealListSelectionResource(field.model.data)) {
+      initialDealListIds.push(field.model.data.id);
     }
-  });
-  const currentIds: string[] = [];
-  placementListFields.forEach(field => {
-    if (isPlacementListSelectionResource(field.model)) {
-      currentIds.push(field.model.id);
+    if (field.model.type === 'KEYWORD_LIST' && isKeywordListSelectionResource(field.model.data)) {
+      initialKeywordListIds.push(field.model.data.id);
+    }
+    if (field.model.type === 'PLACEMENT_LIST' && isPlacementListSelectionResource(field.model.data)) {
+      initialPlacementListIds.push(field.model.data.id);
+    }
+    if (field.model.type === 'AD_EXCHANGE' && isAdExchangeSelectionResource(field.model.data)) {
+      initialAdExchangeIds.push(field.model.data.id)
+    }
+    if (field.model.type === 'DISPLAY_NETWORK' && isDisplayNetworkSelectionResource(field.model.data)) {
+      initialDisplayNetworkIds.push(field.model.data.id)
     }
   });
 
-  const tasks: Task[] = [];
-  placementListFields.forEach(field => {
-    if (isPlacementListSelectionResource(field.model)) {
-      const id = field.model.id;
-      tasks.push(() =>
-        DisplayCampaignService.updatePlacementList(
-          campaignId,
-          adGroupId,
-          id,
-          field.model,
-        ),
-      );
-    } else {
-      tasks.push(() =>
-        DisplayCampaignService.createPlacementList(
-          campaignId,
-          adGroupId,
-          field.model,
-        ),
-      );
+  // get current values
+  const currentDealListIds: string[] = [];
+  const currentPlacementListIds: string[] = [];
+  const currentKeywordListIds: string[] = [];
+  const currentAdExchangeIds: string[] = [];
+  const currentDisplayNetworkIds: string[] = [];
+
+  inventoryCatalFields.forEach(field => {
+    if (field.model.type === 'DEAL_LIST' && isDealListSelectionResource(field.model.data)) {
+      currentDealListIds.push(field.model.data.id);
+    }
+    if (field.model.type === 'KEYWORD_LIST' && isKeywordListSelectionResource(field.model.data)) {
+      currentKeywordListIds.push(field.model.data.id);
+    }
+    if (field.model.type === 'PLACEMENT_LIST' && isPlacementListSelectionResource(field.model.data)) {
+      currentPlacementListIds.push(field.model.data.id);
+    }
+    if (field.model.type === 'AD_EXCHANGE' && isAdExchangeSelectionResource(field.model.data)) {
+      currentAdExchangeIds.push(field.model.data.id)
+    }
+    if (field.model.type === 'DISPLAY_NETWORK' && isDisplayNetworkSelectionResource(field.model.data)) {
+      currentDisplayNetworkIds.push(field.model.data.id)
     }
   });
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
+
+
+  const tasks: Task[] = [];
+  inventoryCatalFields.forEach(field => {
+    if (field.model.type === 'DEAL_LIST') {
+      const data = field.model.data;
+      if (isDealListSelectionResource(field.model.data)) {
+        const id = field.model.data.id;
+        tasks.push(() => DisplayCampaignService.updateDealsList(
+            campaignId,
+            adGroupId,
+            id,
+            data,
+          ),
+        );
+      } else {
+        tasks.push(() => DisplayCampaignService.createDealsList(
+            campaignId,
+            adGroupId,
+            data,
+          ),
+        );
+      }
+    }
+
+    if (field.model.type === 'KEYWORD_LIST') {
+      const data = field.model.data;
+      if (isKeywordListSelectionResource(field.model.data)) {
+        const id = field.model.data.id;
+        tasks.push(() => DisplayCampaignService.updateKeywordList(
+            campaignId,
+            adGroupId,
+            id,
+            data,
+          ),
+        );
+      } else {
+        tasks.push(() => DisplayCampaignService.createKeywordList(
+            campaignId,
+            adGroupId,
+            data,
+          ),
+        );
+      }
+    }
+
+    if (field.model.type === 'PLACEMENT_LIST') {
+      const data = field.model.data;
+      if (isPlacementListSelectionResource(field.model.data)) {
+        const id = field.model.data.id;
+        tasks.push(() => DisplayCampaignService.updatePlacementList(
+            campaignId,
+            adGroupId,
+            id,
+            data,
+          ),
+        );
+      } else {
+        tasks.push(() => DisplayCampaignService.createPlacementList(
+            campaignId,
+            adGroupId,
+            data,
+          ),
+        );
+      }
+    }
+
+    if (field.model.type === 'AD_EXCHANGE') {
+      const data = field.model.data;
+      if (isAdExchangeSelectionResource(field.model.data)) {
+        const id = field.model.data.id;
+        tasks.push(() => DisplayCampaignService.updateAdex(
+            campaignId,
+            adGroupId,
+            id,
+            data,
+          ),
+        );
+      } else {
+        tasks.push(() => DisplayCampaignService.createAdex(
+            campaignId,
+            adGroupId,
+            data,
+          ),
+        );
+      }
+    }
+
+    if (field.model.type === 'DISPLAY_NETWORK') {
+      const data = field.model.data;
+      if (isDisplayNetworkSelectionResource(field.model.data)) {
+        const id = field.model.data.id;
+        tasks.push(() => DisplayCampaignService.updateDisplayNetwork(
+            campaignId,
+            adGroupId,
+            id,
+            data,
+          ),
+        );
+      } else {
+        tasks.push(() => DisplayCampaignService.createDisplayNetwork(
+            campaignId,
+            adGroupId,
+            data,
+          ),
+        );
+      }
+    }
+
+    
+  })
+
+  // delete requests
+  initialDealListIds.filter(id => !currentDealListIds.includes(id)).forEach(id => {
+    tasks.push(() =>
+      DisplayCampaignService.deleteDealsList(campaignId, adGroupId, id),
+    );
+  });
+  initialKeywordListIds.filter(id => !currentKeywordListIds.includes(id)).forEach(id => {
+    tasks.push(() =>
+      DisplayCampaignService.deleteKeywordList(campaignId, adGroupId, id),
+    );
+  });
+  initialPlacementListIds.filter(id => !currentKeywordListIds.includes(id)).forEach(id => {
     tasks.push(() =>
       DisplayCampaignService.deletePlacementList(campaignId, adGroupId, id),
     );
   });
+  initialAdExchangeIds.filter(id => !currentAdExchangeIds.includes(id)).forEach(id => {
+    tasks.push(() =>
+      DisplayCampaignService.deleteAdex(campaignId, adGroupId, id),
+    );
+  });
+  initialDisplayNetworkIds.filter(id => !currentDisplayNetworkIds.includes(id)).forEach(id => {
+    tasks.push(() =>
+      DisplayCampaignService.deleteDisplayNetwork(campaignId, adGroupId, id),
+    );
+  });
   return tasks;
 }
+
+
 
 function getAdTasks(
   organisationId: string,

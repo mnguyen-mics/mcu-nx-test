@@ -30,9 +30,6 @@ import { SummaryFormSection } from './sections/Summary';
 import LocationTargetingFormSection, {
   LocationTargetingFormSectionProps,
 } from './sections/Location/LocationTargetingFormSection';
-import PlacementListFormSection, {
-  PlacementListFormSectionProps,
-} from './sections/PlacementListFormSection';
 import AudienceSegmentFormSection, {
   AudienceSegmentFormSectionProps,
 } from './sections/AudienceSegment/AudienceSegmentFormSection';
@@ -42,6 +39,7 @@ import AudienceCatalogFormSection, {
 import BidOptimizerFormSection, {
   BidOptimizerFormSectionProps,
 } from './sections/BidOptimizerFormSection';
+import InventoryCatalogFormSection, { InventoryCatalogFormSectionProps } from './sections/InventoryCatalog/InventoryCatalogFormSection'
 import * as SessionSelectors from '../../../../../state/Session/selectors';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
@@ -65,11 +63,6 @@ const LocationTargetingFieldArray = FieldArray as new () => GenericFieldArray<
   LocationTargetingFormSectionProps
 >;
 
-const PlacementListFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  PlacementListFormSectionProps
->;
-
 const AdFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   AdFormSectionProps
@@ -79,6 +72,11 @@ const BidOptimizerFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   BidOptimizerFormSectionProps
 >;
+
+const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  InventoryCatalogFormSectionProps
+>
 
 export interface AdGroupFormProps
   extends Omit<ConfigProps<AdGroupFormData>, 'form'> {
@@ -165,9 +163,9 @@ class AdGroupForm extends React.Component<Props> {
       id: 'placementList',
       title: messages.sectionTitlePlacement,
       component: (
-        <PlacementListFieldArray
-          name="placementListFields"
-          component={PlacementListFormSection}
+        <InventoryCatalogFieldArray
+          name="inventoryCatalFields"
+          component={InventoryCatalogFormSection}
           {...genericFieldArrayProps}
         />
       ),

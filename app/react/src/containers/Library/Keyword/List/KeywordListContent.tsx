@@ -8,7 +8,7 @@ import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import KeywordListsService from '../../../../services/Library/KeywordListsService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { Keyword } from '../../../../models/keywordList/keywordList';
+import { KeywordListResource } from '../../../../models/keywordList/keywordList';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -24,7 +24,7 @@ const initialState = {
 
 interface KeywordListContentState {
   loading: boolean;
-  data: Keyword[];
+  data: KeywordListResource[];
   total: number;
 }
 
@@ -59,7 +59,7 @@ class KeywordListContent extends React.Component<
     });
   };
 
-  onClickArchive = (keyword: Keyword) => {
+  onClickArchive = (keyword: KeywordListResource) => {
     const {
       location: { search, pathname, state },
       history,
@@ -100,7 +100,7 @@ class KeywordListContent extends React.Component<
     });
   };
 
-  onClickEdit = (keyword: Keyword) => {
+  onClickEdit = (keyword: KeywordListResource) => {
     const { history, match: { params: { organisationId } } } = this.props;
 
     history.push(`/${organisationId}/library/keywordslists/${keyword.id}`);
@@ -125,7 +125,7 @@ class KeywordListContent extends React.Component<
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: Keyword) => (
+        render: (text: string, record: KeywordListResource) => (
           <Link
             className="mcs-campaigns-link"
             to={`/${organisationId}/library/keywordslists/${record.id}`}

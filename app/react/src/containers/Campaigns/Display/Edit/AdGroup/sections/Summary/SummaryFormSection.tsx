@@ -9,7 +9,6 @@ import { FormSection } from '../../../../../../../components/Form';
 import { AdGroupFormData, AD_GROUP_FORM_NAME } from '../../domain';
 import messages from '../../../messages';
 import AudienceSegmentSummary from './AudienceSegmentSummary';
-import PlacementListSummary from './PlacementListSummary';
 import LocationSummary from './LocationSummary';
 import GeneralSettingSummary from './GeneralSettingSummary';
 
@@ -53,9 +52,6 @@ class SummaryFormSection extends React.Component<Props> {
               <LocationSummary />
             </Section>
 
-            <Section>
-              <PlacementListSummary />
-            </Section>
 
             <Section>
               <FormattedMessage

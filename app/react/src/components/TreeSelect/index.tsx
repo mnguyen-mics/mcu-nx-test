@@ -20,6 +20,7 @@ export interface TreeData {
   isLeaf: boolean;
   children?: TreeData[];
   ancestors?: TreeData[];
+  type?: string;
 }
 
 export interface TreeSelectProps extends AbstractSelectProps {

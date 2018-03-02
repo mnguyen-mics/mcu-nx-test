@@ -118,6 +118,6 @@ const getAdGroupFormData = (state: any): AdGroupFormData => {
 export default compose(
   injectIntl,
   connect(state => ({
-    placementListFields: getAdGroupFormData(state).placementListFields,
+    placementListFields: getAdGroupFormData(state).inventoryCatalFields,
   })),
 )(PlacementListSummary);

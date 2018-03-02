@@ -892,4 +892,17 @@ export default defineMessages({
     id: 'form.saving.in.progress',
     defaultMessage: 'Saving in progress',
   },
+
+  /*-------------------------------INVENTORY SECTION -------------------------------------*/
+
+  sectionInventoryTitle: {
+    id: 'campaignEditor.sectionInventory.title',
+    defaultMessage: 'Inventory Selection',
+  },
+
+  sectionInventorySubTitle: {
+    id: 'campaignEditor.sectionInventory.subtitle',
+    defaultMessage: 'Add Display Networks, Ad Exchanges, Placement Lists, Keyword Lists and Deal Lists to your Adgroup.',
+  },
+
 });

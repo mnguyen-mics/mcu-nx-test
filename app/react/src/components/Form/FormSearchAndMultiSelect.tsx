@@ -59,7 +59,7 @@ const FormSearchAndMultiSelect: React.SFC<
       rowProps={{ align: flexAlign }}
       helpToolTipProps={tooltipProps}
     >
-      <Col span={22}>
+      <Col span={24}>
         <div
           className={
             value.length || loading
