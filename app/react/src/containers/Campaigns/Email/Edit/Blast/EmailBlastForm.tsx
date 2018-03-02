@@ -10,6 +10,7 @@ import {
 } from 'redux-form';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
+import { compose } from 'recompose';
 
 import {
   BlastFormSection,
@@ -44,7 +45,6 @@ const BlastSegmentSectionFieldArray = FieldArray as new () => GenericFieldArray<
 
 export interface EmailBlastFormProps
   extends Omit<ConfigProps<EmailBlastFormData>, 'form'> {
-  save: (formData: EmailBlastFormData) => void;
   close: () => void;
   breadCrumbPaths: Path[];
 }
@@ -59,7 +59,6 @@ class EmailBlastForm extends React.Component<Props> {
     const {
       breadCrumbPaths,
       handleSubmit,
-      save,
       close,
       form,
       change,
@@ -103,7 +102,7 @@ class EmailBlastForm extends React.Component<Props> {
           <ScrollspySider {...sideBarProps} />
           <Form
             className="edit-layout ant-layout"
-            onSubmit={handleSubmit(save)}
+            onSubmit={handleSubmit as any}
           >
             <Content
               id={FORM_ID}
@@ -143,7 +142,9 @@ class EmailBlastForm extends React.Component<Props> {
   }
 }
 
-export default reduxForm<EmailBlastFormData, EmailBlastFormProps>({
-  form: FORM_ID,
-  enableReinitialize: true,
-})(EmailBlastForm);
+export default compose<Props, EmailBlastFormProps>(
+  reduxForm<EmailBlastFormData, EmailBlastFormProps>({
+    form: FORM_ID,
+    enableReinitialize: true,
+  })
+)(EmailBlastForm);

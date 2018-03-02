@@ -84,7 +84,7 @@ class BlastFormSection extends React.Component<Props> {
     const props: EmailBlastFormProps = {
       breadCrumbPaths,
       close: closeNextDrawer,
-      save: handleSave,
+      onSubmit: handleSave,
     };
 
     props.initialValues = field ? field.model : INITIAL_EMAIL_BLAST_FORM_DATA;

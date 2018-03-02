@@ -155,7 +155,7 @@ class EditBlastPage extends React.Component<Props, State> {
     return (
       <EmailBlastForm
         initialValues={blastFormData}
-        save={this.save}
+        onSubmit={this.save}
         close={this.redirect}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
