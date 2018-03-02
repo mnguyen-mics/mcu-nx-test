@@ -13,6 +13,11 @@ const customFontPath = `${paths.public}/src/assets/fonts/`;
 const prodConfig = {
   mode: 'production',
 
+  entry: {
+    'plateforme.alliancegravity.com/style-less': paths.appGravityStyleLess,
+    'app.teamjoin.fr/style-less': paths.appTeamjoinStyleLess,
+  },
+
   output: {
     filename: '[name].[chunkhash].js',
     path: paths.appDistPath,
@@ -29,9 +34,9 @@ const prodConfig = {
       inject: true,
       template: paths.appDistHtml,
       filename: '../index.html',
-      excludeAssets: [/(plateforme|app).*\/style.*.(css|js)/] // let's find a better way to handle style when we sign a new white label
+      excludeAssets: [/(plateforme|app).*\/style.*.(css|js)/], // let's find a better way to handle style when we sign a new white label
     }),
-    new HtmlWebpackExcludeAssetsPlugin(),    
+    new HtmlWebpackExcludeAssetsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
@@ -42,7 +47,6 @@ const prodConfig = {
       },
     ]),
   ],
-
 };
 
 module.exports = merge(configFactory(true, customFontPath, true), prodConfig);
