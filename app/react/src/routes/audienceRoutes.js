@@ -22,7 +22,6 @@ import { TimelinePage } from '../containers/Audience/Timeline';
 import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage.tsx';
 
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition.tsx';
-import PartitionActionBar from '../containers/Audience/Partitions/Dashboard/PartitionActionBar.tsx';
 
 const audienceRoutes = [
   {
@@ -73,7 +72,6 @@ const audienceRoutes = [
     path: '/audience/partition/:partitionId/dashboard',
     layout: 'main',
     contentComponent: Partition,
-    actionBarComponent: PartitionActionBar,
   },
   {
     path: '/audience/segment-builder',
