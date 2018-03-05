@@ -275,7 +275,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                       />
                     </Row>
                     <Row>
-                      <Col span={10} offset={4}>
+                      <Col span={15} offset={4}>
                         <Col span={20} className="report-previewButton">
                           <Button
                             onClick={this.preview}

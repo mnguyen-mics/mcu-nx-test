@@ -61,7 +61,7 @@ class ReportFilterFields extends React.Component<JoinedProps> {
           </Col>
         </Row>
         <Row>
-          <Col span={10} offset={4}>
+          <Col span={15} offset={4}>
             <div onClick={handleOnClick}>
               <Col span={20} className="report-AddFilterButton">
                 <p>

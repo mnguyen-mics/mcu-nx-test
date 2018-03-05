@@ -519,7 +519,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
         <Row>
           <Row className="audience-selection-notice">
-            <Col span={10} offset={4}>
+            <Col span={15} offset={4}>
               <FormattedMessage
                 {...inventoryCatalogMsgs.detailedTargetingNotice}
               />
@@ -558,7 +558,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           />
           <div className={showExclude ? '' : 'hide-section'}>
             <Row className="audience-selection-notice">
-              <Col span={10} offset={4}>
+              <Col span={15} offset={4}>
                 <FormattedMessage
                   {...inventoryCatalogMsgs.detailedTargetingExclusionNotice}
                 />
@@ -599,7 +599,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
             />
           </div>
           <Row className={showExclude ? 'hide-section' : ''}>
-            <Col span={3} offset={11}>
+            <Col span={3} offset={14}>
               <ButtonStyleless
                 onClick={this.toogleShowExclude}
                 className="action-button"

@@ -17,7 +17,7 @@ export interface FormFieldWrapperProps {
 
 const defaultFieldGridConfig: Partial<FormItemProps> = {
   labelCol: { span: 3 },
-  wrapperCol: { span: 10, offset: 1 },
+  wrapperCol: { span: 15, offset: 1 },
 };
 
 const defaultRowProps: Partial<RowProps> = {
