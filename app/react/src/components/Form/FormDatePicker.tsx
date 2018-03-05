@@ -4,7 +4,7 @@ import moment from 'moment';
 
 // TS Interfaces
 import { WrappedFieldProps } from 'redux-form';
-import { DatePickerProps } from 'antd/lib/date-picker';
+import { DatePickerProps } from 'antd/lib/date-picker/interface';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';

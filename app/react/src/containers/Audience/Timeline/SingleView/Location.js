@@ -8,9 +8,9 @@ class LocationHelper extends Component {
 
   render() {
     const {
-    longitude,
-    latitude,
-  } = this.props;
+      longitude,
+      latitude,
+    } = this.props;
 
     const settings = {
       dragPan: false,
@@ -47,7 +47,7 @@ class LocationHelper extends Component {
           </ReactMapGL>
         </Col>
       </Row>
-  ) : (<span />);
+    ) : (<span />);
   }
 }
 

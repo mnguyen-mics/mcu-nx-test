@@ -199,7 +199,7 @@ const mapStateToProps = (state: any) => ({
   translations: state.translations,
 });
 
-export default compose(
+export default compose<JoinedProps, MediaPerformanceTableProps>(
   connect(
     mapStateToProps,
   ),

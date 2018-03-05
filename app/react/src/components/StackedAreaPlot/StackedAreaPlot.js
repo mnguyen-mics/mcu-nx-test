@@ -77,9 +77,9 @@ class StackedAreaPlot extends Component {
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
     crosshair.circle = crosshairContainer.append('circle')
-                      .attr('fill', 'white')
-                      .attr('filter', 'url(#shadow)')
-                      .attr('r', 8);
+      .attr('fill', 'white')
+      .attr('filter', 'url(#shadow)')
+      .attr('r', 8);
 
     crosshair.drawAt = (p) => {
       crosshair.circle.attr('cx', p.x);
@@ -100,12 +100,12 @@ class StackedAreaPlot extends Component {
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
     crosshair.vLine = crosshairContainer.append('line')
-                      .attr('stroke', '#8ca0b3')
-                      .attr('opacity', 0.5)
-                      .attr('stroke-width', 1)
-                      .attr('stroke-dasharray', '5, 5')
-                      .attr('y1', 0)
-                      .attr('y2', plot.height());
+      .attr('stroke', '#8ca0b3')
+      .attr('opacity', 0.5)
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '5, 5')
+      .attr('y1', 0)
+      .attr('y2', plot.height());
 
     crosshair.drawAt = (p, mousePosition, navInfo) => {
       crosshair.vLine.attr('x1', p.x);
@@ -318,10 +318,10 @@ class StackedAreaPlot extends Component {
     table.renderTo(`#${identifier}`);
     this.plot = table;
     gridlines.content()
-    .selectAll('line')
-    .attr('stroke', '#8CA0B3')
-    .attr('opacity', '0.6')
-    .attr('stroke-dasharray', '2, 2');
+      .selectAll('line')
+      .attr('stroke', '#8CA0B3')
+      .attr('opacity', '0.6')
+      .attr('stroke-dasharray', '2, 2');
 
     plts.forEach((plot) => {
       // colorScale.range([plot.foreground().style('fill')]);

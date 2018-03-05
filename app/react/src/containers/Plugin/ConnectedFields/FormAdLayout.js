@@ -210,7 +210,7 @@ class FormAdLayout extends Component {
                 <Select style={{ width: '100%' }} defaultValue={this.state.adLayouts[0].value} onChange={(value) => { this.onChange('id', value); }} onSelect={this.getNewAdlayoutVersion}>
                   {this.state.adLayouts.map(({ disabled, value, key, title, text }) => (
                     <Option {...{ disabled, value, key, title }}>{text}</Option>
-                ))}
+                  ))}
                 </Select>)}
 
               {(this.state.versions && this.state.versions.length && !this.state.versionLoading) ? (<span><FormattedMessage {...messages.adLayoutModalLabel} /></span>) : null}
@@ -218,7 +218,7 @@ class FormAdLayout extends Component {
                 <Select style={{ width: '100%' }} defaultValue={this.state.versions[0].value} onChange={(value) => { this.onChange('version', value); }}>
                   {this.state.versions.map(({ disabled, value, key, title, text }) => (
                     <Option {...{ disabled, value, key, title }}>{text}</Option>
-                ))}
+                  ))}
                 </Select>) : null}
             </Modal>
           </Col>

@@ -41,16 +41,16 @@ class DeviceCard extends Component {
         })}
         { (accountsFormatted.length === 0 || identifiers.hasItems === false) && (<span><FormattedMessage {...messages.emptyDevice} /></span>) }
         { (canViewMore) ? (
-           (!this.state.showMore) ? (
-             <div className="mcs-card-footer">
-               <button className="mcs-card-footer-link" onClick={(e) => { e.preventDefault(); this.setState({ showMore: true }); }}><FormattedMessage {...messages.viewMore} /></button>
-             </div>
-           ) : (
-             <div className="mcs-card-footer">
-               <button className="mcs-card-footer-link" onClick={(e) => { e.preventDefault(); this.setState({ showMore: false }); }}><FormattedMessage {...messages.viewLess} /></button>
-             </div>
+          (!this.state.showMore) ? (
+            <div className="mcs-card-footer">
+              <button className="mcs-card-footer-link" onClick={(e) => { e.preventDefault(); this.setState({ showMore: true }); }}><FormattedMessage {...messages.viewMore} /></button>
+            </div>
+          ) : (
+            <div className="mcs-card-footer">
+              <button className="mcs-card-footer-link" onClick={(e) => { e.preventDefault(); this.setState({ showMore: false }); }}><FormattedMessage {...messages.viewLess} /></button>
+            </div>
           )
-          ) : null }
+        ) : null }
       </Card>
     );
   }

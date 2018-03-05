@@ -12,12 +12,12 @@ import messages from './messages';
 const { Header } = Layout;
 
 function NavigatorHeader({
-    match: {
-      params,
-    },
-    workspace,
-    userEmail,
-  }) {
+  match: {
+    params,
+  },
+  workspace,
+  userEmail,
+}) {
 
   const organisationId = params.organisationId;
   const organisationName = workspace(organisationId).organisation_name;
@@ -42,7 +42,7 @@ function NavigatorHeader({
         </Link>
       </Menu.Item>
     </Menu>
-    );
+  );
 
   return (
     <Header className="mcs-header">

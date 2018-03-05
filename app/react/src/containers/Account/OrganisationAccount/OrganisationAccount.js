@@ -9,7 +9,7 @@ class OrganisationAccount extends Component {
 
   render() {
     const {
-        organisationName,
+      organisationName,
     } = this.props;
 
     const fieldGridConfig = {

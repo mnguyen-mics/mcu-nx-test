@@ -318,7 +318,7 @@ export default compose(
       translations: state.translations,
       labels: state.labels.labelsApi.data,
     })
-      ,
+    ,
     { notifyError: notifyActions.notifyError },
   ),
 )(EmailCampaignListPage);

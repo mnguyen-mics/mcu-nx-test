@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 
-import actions from '../../../../state/Notifications/actions';
 import log from '../../../../utils/Logger';
 import { DisplayCreativeForm } from './index';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -9,6 +8,7 @@ import { DisplayCreativeFormProps } from './DisplayCreativeForm';
 import { DisplayCreativeFormData } from './domain';
 import { Loading } from '../../../../components/index';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 export interface DisplayCreativeFormLoaderProps
   extends DisplayCreativeFormProps {
@@ -16,6 +16,7 @@ export interface DisplayCreativeFormLoaderProps
 }
 
 type JoinedProps = DisplayCreativeFormLoaderProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface DisplayCreativeFormLoaderState {
@@ -53,7 +54,7 @@ class DisplayCreativeFormLoader extends React.Component<
       )
       .catch(err => {
         log.debug(err);
-        actions.notifyError(err);
+        this.props.notifyError(err);
         this.setState(() => {
           return { isLoading: false };
         });
@@ -80,6 +81,7 @@ class DisplayCreativeFormLoader extends React.Component<
   }
 }
 
-export default compose<JoinedProps, DisplayCreativeFormLoaderProps>(withRouter)(
-  DisplayCreativeFormLoader,
-);
+export default compose<JoinedProps, DisplayCreativeFormLoaderProps>(
+  withRouter,
+  injectNotifications,
+)(DisplayCreativeFormLoader);

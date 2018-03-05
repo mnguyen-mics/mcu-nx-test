@@ -123,8 +123,8 @@ const createAccessToken = (credentialsOrRefreshToken) => {
 
 const createRefreshToken = (credentials) => {
   const {
-      email,
-      password,
+    email,
+    password,
   } = credentials;
 
   const body = {

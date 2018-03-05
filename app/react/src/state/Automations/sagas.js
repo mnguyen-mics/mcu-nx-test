@@ -4,7 +4,7 @@ import { call, fork, put, all } from 'redux-saga/effects';
 import log from '../../utils/Logger';
 
 import {
-    fetchAutomations,
+  fetchAutomations,
 } from './actions';
 
 import ScenarioService from '../../services/ScenarioService';
@@ -12,7 +12,7 @@ import ScenarioService from '../../services/ScenarioService';
 import { getPaginatedApiParam } from '../../utils/ApiHelper.ts';
 
 import {
-    AUTOMATIONS_LIST_FETCH,
+  AUTOMATIONS_LIST_FETCH,
 } from '../action-types';
 
 function* loadAutomations({ payload }) {

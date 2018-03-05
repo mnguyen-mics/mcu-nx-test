@@ -79,16 +79,16 @@ class MobileApplicationsTable extends Component {
     };
 
     return (noMobileApplicationYet) ? (<EmptyTableView iconType="display" intlMessage={messages.emptyMobileApplications} />) :
-           (
-             <TableViewFilters
-               columns={dataColumns}
-               actionsColumnsDefinition={actionColumns}
-               searchOptions={searchOptions}
-               dataSource={dataSource}
-               loading={isFetchingMobileApplications}
-               pagination={pagination}
-             />
-           );
+      (
+        <TableViewFilters
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
+          searchOptions={searchOptions}
+          dataSource={dataSource}
+          loading={isFetchingMobileApplications}
+          pagination={pagination}
+        />
+      );
   }
 }
 

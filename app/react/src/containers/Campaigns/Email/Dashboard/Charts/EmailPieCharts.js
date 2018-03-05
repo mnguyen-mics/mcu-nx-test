@@ -18,7 +18,7 @@ import {
 import {
   getTableDataSource,
   normalizedEmailPerformance,
- } from '../../../../../state/Campaign/Email/selectors';
+} from '../../../../../state/Campaign/Email/selectors';
 
 class EmailPieCharts extends Component {
 

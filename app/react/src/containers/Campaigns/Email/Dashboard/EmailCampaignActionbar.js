@@ -65,8 +65,8 @@ class EmailCampaignActionbar extends Component {
     }
 
     return (campaign.status === 'PAUSED' || campaign.status === 'PENDING'
-        ? activeCampaignElement
-        : pauseCampaignElement
+      ? activeCampaignElement
+      : pauseCampaignElement
     );
   };
 

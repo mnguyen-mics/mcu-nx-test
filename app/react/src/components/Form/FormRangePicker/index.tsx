@@ -10,7 +10,7 @@ import {
 } from 'redux-form';
 import moment from 'moment';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { DatePickerProps } from 'antd/lib/date-picker';
+import { DatePickerProps } from 'antd/lib/date-picker/interface';
 
 import FormFieldWrapper, {
   FormFieldWrapperProps,

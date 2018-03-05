@@ -33,7 +33,7 @@ class ForgotPassword extends Component {
       hasError,
       passwordSentSuccess,
       intl: { formatMessage },
-     } = this.props;
+    } = this.props;
 
     const hasFieldError = this.props.form.getFieldError('email');
     const errorMsg = !hasFieldError && hasError ? <Alert type="error" style={{ marginBottom: 24 }} message={<FormattedMessage {...messages.resetPasswordTitle} />} /> : null;
@@ -55,14 +55,14 @@ class ForgotPassword extends Component {
                 rules: [{ type: 'email', required: true, message: formatMessage(messages.resetPasswordEmailRequired) }],
               })(
                 <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={formatMessage(messages.resetPasswordEmail)} />,
-            )}
+              )}
             </FormItem>
             <Button type="primary" htmlType="submit" className="reset-password-button" loading={isRequesting}>
               <FormattedMessage {...messages.resetPasswordSubmit} />
             </Button>
             <Link className="back-to-login" to="/login"><FormattedMessage {...messages.resetPasswordBack} /></Link>
           </Form>
-        }
+          }
           { passwordSentSuccess &&
           <div>
             <div>
@@ -73,10 +73,10 @@ class ForgotPassword extends Component {
             <br />
             <Button type="primary" htmlType="button" className="reset-password-button">;
 
-              <Link to="/login"><FormattedMessage {...messages.resetPasswordReturnToLogin} /></Link>
+            <Link to="/login"><FormattedMessage {...messages.resetPasswordReturnToLogin} /></Link>
             </Button>
           </div>
-        }
+          }
 
         </div>
       </div>

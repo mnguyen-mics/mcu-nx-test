@@ -29,7 +29,7 @@ class MonitoringActionbar extends Component {
   submitModal = () => {
     const {
       history,
-       match: {
+      match: {
         params: {
           organisationId,
         },

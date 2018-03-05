@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DatePicker } from 'antd';
-import { DatePickerProps } from 'antd/lib/date-picker';
+import { DatePickerProps } from 'antd/lib/date-picker/interface';
 import { WrappedFieldProps } from 'redux-form';
 
 import { generateFakeId } from '../../../utils/FakeIdHelper';

@@ -80,7 +80,6 @@ const RelatedRecordTable: React.SFC<RelatedRecordTableProps> = props => {
                   <Field
                     name={`${tableName}[${include.index}].include`}
                     component={SwitchInput}
-                    type="checkbox"
                   />
                 )
                 : <Switch />

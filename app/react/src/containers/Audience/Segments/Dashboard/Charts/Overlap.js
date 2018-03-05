@@ -52,15 +52,15 @@ class Overlap extends Component {
     };
 
     return !isFetchingOverlap
-    ? (
-      <VerticalBarChart
-        identifier="StackedAreaChartEmailOverlap"
-        dataset={data}
-        options={optionsForChart}
-        colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
-      />
-    )
-    : <LoadingChart />;
+      ? (
+        <VerticalBarChart
+          identifier="StackedAreaChartEmailOverlap"
+          dataset={data}
+          options={optionsForChart}
+          colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
+        />
+      )
+      : <LoadingChart />;
   }
 
   renderModalExtend = () => {
@@ -133,7 +133,7 @@ class Overlap extends Component {
                     }
                   </Button>
                 )
-              }
+            }
           </Col>
         </Row>
         {!hasOverlap && hasFetchedAudienceStat && !isFetchingOverlap

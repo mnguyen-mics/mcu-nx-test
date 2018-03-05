@@ -7,8 +7,8 @@ const getGoals = state => state.goalsTable.goalsApi.data;
 const getPerformanceReportView = state => state.goalsTable.performanceReportApi.report_view;
 
 const getGoalsById = createSelector(
-    getGoals,
-    goals => normalizeArrayOfObject(goals, 'id'),
+  getGoals,
+  goals => normalizeArrayOfObject(goals, 'id'),
 );
 
 const convertPerformanceReportToObjectArray = createSelector(
@@ -35,5 +35,5 @@ const getTableDataSource = createSelector(
 );
 
 export {
-    getTableDataSource,
+  getTableDataSource,
 };

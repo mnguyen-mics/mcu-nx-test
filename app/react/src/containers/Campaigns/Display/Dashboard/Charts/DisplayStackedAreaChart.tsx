@@ -42,16 +42,14 @@ interface OverallStat {
   clicks: string;
 }
 
-interface DisplayStackedAreaChartProps<T> {
-  tanslation: any;
+interface DisplayStackedAreaChartProps<T = any> {
   hasFetchedCampaignStat: boolean;
   isFetchingCampaignStat: boolean;
   dataSource: T[];
   isFetchingOverallStat: boolean;
   hasFetchedOverallStat: boolean;
   overallStat: OverallStat[];
-  renderCampaignProgress: boolean;
-  colors: Color;
+  renderCampaignProgress?: boolean;
 }
 
 interface DisplayStackedAreaChartState {
@@ -63,13 +61,13 @@ interface RouterProps {
   organisationId: string;
 }
 
-type JoinedProps<T> = DisplayStackedAreaChartProps<T> & InjectedIntlProps & RouteComponentProps<RouterProps>;
+type JoinedProps<T = any> = 
+  DisplayStackedAreaChartProps<T> & 
+  InjectedIntlProps & 
+  RouteComponentProps<RouterProps> & 
+  { colors: Color };
 
 class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, DisplayStackedAreaChartState> {
-
-  static defaultProps = {
-    renderCampaignProgress: false,
-  };
 
   constructor(props: JoinedProps<T>) {
     super(props);
@@ -258,9 +256,12 @@ class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, Display
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
+const mapStateToProps = (state: any) => ({  
   colors: state.theme.colors,
 });
 
-export default compose(withRouter, injectIntl, connect(mapStateToProps))(DisplayStackedAreaChart);
+export default compose<JoinedProps, DisplayStackedAreaChartProps>(
+  withRouter, 
+  injectIntl, 
+  connect(mapStateToProps),
+)(DisplayStackedAreaChart);

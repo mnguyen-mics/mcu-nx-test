@@ -12,7 +12,7 @@ import { RouteComponentProps } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 
-import { LayoutManager } from '../../components/Layout/index';
+import LayoutManager from '../../components/Layout/LayoutManager.js';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { AuthenticatedRoute } from '../../containers/Route';
@@ -32,6 +32,8 @@ import errorMessages from './messages';
 import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { getCookies } from '../../state/Session/actions';
+
+const LayoutManagerJS = LayoutManager as any;
 
 interface MapStateToProps {
   initialized: boolean;
@@ -152,26 +154,31 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       return <Error message={formatMessage(errorMessages.notFound)} />;
     };
 
-    const routeMapping = routes.map(route => {
-      const authenticateRouteRender = (props: any) => (
-        <div>
-          <Notifications />
-          <div className="drawer-wrapper">
-            <DrawerManager />
-          </div>
+    const routeMapping = routes.map((route: any) => {
+      const authenticateRouteRender = (props: any) => {
+        const comps = {
+          contentComponent: route.contentComponent,
+          actionBarComponent: route.actionBarComponent,
+          editComponent: route.editComponent,
+        }
+        return (
+          <div>
+            <Notifications />
+            <div className="drawer-wrapper">
+              <DrawerManager />
+            </div>
 
-          <LayoutManager
-            layout={route.layout}
-            contentComponent={route.contentComponent}
-            actionBarComponent={route.actionBarComponent}
-            editComponent={route.editComponent}
-            organisationSelector={OrgSelector}
-            showOrgSelector={nbWorkspaces > 0}
-            orgSelectorSize={selectorSize}
-            {...props}
-          />
-        </div>
-      );
+            <LayoutManagerJS
+              layout={route.layout}              
+              organisationSelector={OrgSelector}
+              showOrgSelector={nbWorkspaces > 0}
+              orgSelectorSize={selectorSize}
+              {...comps}
+              {...props}
+            />
+          </div>
+        );
+      };
       log.trace(`Available route : ${basePath}${route.path}`);
       return (
         <AuthenticatedRoute

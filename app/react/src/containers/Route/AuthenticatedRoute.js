@@ -17,7 +17,7 @@ import { fetchAllLabels } from '../../state/Labels/actions';
 import {
   hasAccessToOrganisation,
   hasWorkspace,
- } from '../../state/Session/selectors';
+} from '../../state/Session/selectors';
 import errorMessages from '../Navigator/messages';
 
 class AuthenticatedRoute extends Component {

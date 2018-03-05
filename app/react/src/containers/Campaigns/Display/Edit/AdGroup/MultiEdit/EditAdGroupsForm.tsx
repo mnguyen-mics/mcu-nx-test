@@ -8,7 +8,6 @@ import {
   reduxForm,
   InjectedFormProps,
 } from 'redux-form';
-import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
@@ -23,7 +22,7 @@ import { FormSection } from '../../../../../../components/Form/index';
 import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { AdGroupsInfosFieldModel } from '../domain';
 import Loading from '../../../../../../components/Loading';
-import * as NotificationActions from '../../../../../../state/Notifications/actions';
+import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
 
 const FORM_ID = 'editAdGroupsForm';
 
@@ -46,10 +45,6 @@ export interface EditAdGroupsFormData {
   [key: string]: Array<{ [property in keyof AdGroupsInfosFieldModel]: any }>;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 interface EditAdGroupsFormState {
   adGroupNames: string[];
   loading: boolean;
@@ -63,7 +58,7 @@ export interface EditAdGroupsFormProps {
 
 type JoinedProps = EditAdGroupsFormProps &
   InjectedIntlProps &
-  MapStateProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ campaignId: string }> &
   InjectedFormProps<EditAdGroupsFormData>;
 
@@ -216,10 +211,6 @@ class EditAdGroupsForm extends React.Component<
   }
 }
 
-const mapStateToProps = (state: MapStateProps) => ({
-  notifyError: NotificationActions.notifyError,
-});
-
 export default compose<JoinedProps, EditAdGroupsFormProps>(
   reduxForm({
     form: FORM_ID,
@@ -227,5 +218,5 @@ export default compose<JoinedProps, EditAdGroupsFormProps>(
   }),
   injectIntl,
   withRouter,
-  connect(mapStateToProps, undefined),
+  injectNotifications,
 )(EditAdGroupsForm);

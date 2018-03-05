@@ -31,7 +31,6 @@ class AdGroupDashboard extends React.Component<JoinedProps> {
       hasFetchedAdGroupStat,
       adGroupStat,
       isFetchingMediaStat,
-      hasFetchedMediaStat,
       mediaStat,
       isFetchingOverallStat,
       hasFetchedOverallStat,
@@ -56,7 +55,6 @@ class AdGroupDashboard extends React.Component<JoinedProps> {
         display: (
           <MediaPerformanceTable
             isFetchingMediaStat={isFetchingMediaStat}
-            hasFetchedMediaStat={hasFetchedMediaStat}
             dataSet={mediaStat}
           />
         ),

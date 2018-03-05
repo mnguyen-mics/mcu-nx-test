@@ -21,9 +21,9 @@ class UserAccount extends Component {
 
   render() {
     const {
-        handleSubmit,
-        updateUserProfile,
-        intl: { formatMessage },
+      handleSubmit,
+      updateUserProfile,
+      intl: { formatMessage },
     } = this.props;
 
     const saveButton = this.buildSaveActionElement();
@@ -47,7 +47,7 @@ class UserAccount extends Component {
 
     const emailValidation = value => {
       return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ?
-      formatMessage(invalidMessages.invalidEmail) : undefined;
+        formatMessage(invalidMessages.invalidEmail) : undefined;
     };
 
     const fieldGridConfig = {
@@ -102,7 +102,7 @@ class UserAccount extends Component {
           }}
         />);
       })
-    }
+      }
     </Form>);
   }
 }

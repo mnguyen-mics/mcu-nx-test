@@ -3,25 +3,18 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'redux';
 import CatalogService from '../../../services/Library/CatalogService'
-import { getDefaultDatamart } from '../../../state/Session/selectors';
-import { connect } from 'react-redux';
-import { Datamart } from '../../../models/organisation/organisation';
 import { CatalogRessource, CategoryRessource, ItemRessource } from '../../../models/catalog/catalog';
 import Card from '../../../components/Card/Card'
 import CatalogItemTable from './CatalogItemTable'
 import McsIcon from '../../../components/McsIcon'
 import { ButtonStyleless } from '../../../components'
 import { Select, Table, Breadcrumb, Icon } from 'antd';
-import * as actions from '../../../state/Notifications/actions';
 import messages from './messages'
+import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 
 
 const Option = Select.Option;
-
-export interface CatalogContentProps {
-  defaultDatamart: (organisationId: string) => Datamart;
-  notifyError: (err: any) => void;
-}
 
 export interface Category extends CategoryRessource {
   hasSubCategory: boolean;
@@ -42,7 +35,11 @@ interface CatalogContentState {
   path: Category[];
 }
 
-type Props = CatalogContentProps & RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
+type Props = 
+  InjectedNotificationProps & 
+  InjectedDatamartProps &
+  RouteComponentProps<{ organisationId: string }> & 
+  InjectedIntlProps;
 
 class CategoryTable extends Table<Category> {}
 
@@ -69,14 +66,9 @@ class CatalogContent extends React.Component<
 
   componentDidMount() {
     const {
-      match: {
-        params: {
-          organisationId
-        }
-      },
-      defaultDatamart,
+      datamart,
     } = this.props;
-    this.fetchCatalog(defaultDatamart(organisationId).id);
+    this.fetchCatalog(datamart.id);
   }
   
   componentWillReceiveProps(nextProps: Props) {
@@ -94,11 +86,11 @@ class CatalogContent extends React.Component<
           organisationId: nextOrganisationId,
         }
       },
-      defaultDatamart,
+      datamart,
     } = nextProps;
 
     if (organisationId !== nextOrganisationId) {
-      this.fetchCatalog(defaultDatamart(nextOrganisationId).id);
+      this.fetchCatalog(datamart.id);
     }
   }
   
@@ -184,12 +176,7 @@ class CatalogContent extends React.Component<
 
   handleCatalogChange = (value: string) => {
     const {
-      defaultDatamart,
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      datamart,
     } = this.props;
 
    this.setState({
@@ -203,7 +190,7 @@ class CatalogContent extends React.Component<
        ...this.state.categories,
        loading: true,
      },
-   }, () => this.fetchInitialCategories(defaultDatamart(organisationId).id, value));
+   }, () => this.fetchInitialCategories(datamart.id, value));
   
   }
 
@@ -219,18 +206,13 @@ class CatalogContent extends React.Component<
 
   generateBreadcrumb = () => {
     const {
-      defaultDatamart,
-      match: {
-        params: {
-          organisationId
-        }
-      }
+      datamart,
     } = this.props;
 
     const onHomeClick = () => {
       this.setState({ path: [], categories: { items: [], loading: true } }, () => {
         if (this.state.catalogs.selectedId) {
-          this.fetchInitialCategories(defaultDatamart(organisationId).id, this.state.catalogs.selectedId)
+          this.fetchInitialCategories(datamart.id, this.state.catalogs.selectedId)
         }
       })
     }
@@ -239,7 +221,7 @@ class CatalogContent extends React.Component<
       const index = newPath.findIndex(i => i.category_id === item.category_id);
       this.setState({ path: newPath.slice(0, index + 1) }, () => {
         if (this.state.catalogs.selectedId) {
-          this.fetchSubCategories(defaultDatamart(organisationId).id, this.state.catalogs.selectedId, item.category_id)
+          this.fetchSubCategories(datamart.id, this.state.catalogs.selectedId, item.category_id)
         }
       })
       
@@ -275,12 +257,7 @@ class CatalogContent extends React.Component<
 
   render() {
     const {
-      defaultDatamart,
-      match: {
-        params: {
-          organisationId
-        }
-      },
+      datamart,
       intl,
     } = this.props;
 
@@ -289,7 +266,7 @@ class CatalogContent extends React.Component<
         if (record.hasSubCategory) {
           this.setState({ path: [...this.state.path, record], categories: { loading: true, items: this.state.categories.items } }, () => {
             if (this.state.catalogs.selectedId) {
-              this.fetchSubCategories(defaultDatamart(organisationId).id, this.state.catalogs.selectedId, record.category_id);
+              this.fetchSubCategories(datamart.id, this.state.catalogs.selectedId, record.category_id);
             }
             
           })
@@ -345,17 +322,9 @@ class CatalogContent extends React.Component<
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  defaultDatamart: getDefaultDatamart(state),
-});
-
-const mapDispatchToProps = { notifyError: actions.notifyError };
-
 export default compose(
   injectIntl,
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  injectNotifications,
+  injectDatamart,
 )(CatalogContent);

@@ -171,7 +171,7 @@ class AudiencePartitionsTable extends Component {
         },
         serialize: value => value.join(','),
         isValid: query =>
-        query.datamarts &&
+          query.datamarts &&
         query.datamarts.split(',').length > 0 &&
         lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
       },

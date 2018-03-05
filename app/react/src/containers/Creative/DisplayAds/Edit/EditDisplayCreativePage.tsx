@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import * as actions from '../../../../state/Notifications/actions';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
 import { DisplayCreativeCreator } from './index';
 import messages from './messages';
@@ -15,17 +13,14 @@ import {
 } from './domain';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
 import Loading from '../../../../components/Loading';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 interface State {
   loading: boolean;
 }
 
-interface MapStateProps {
-  notifyError: (err: any) => void;
-}
-
 type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> &
-  MapStateProps &
+  InjectedNotificationProps &
   InjectedIntlProps;
 
 class EditDisplayCreativePage extends React.Component<Props, State> {
@@ -118,5 +113,5 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 export default compose<Props, {}>(
   injectIntl,
   withRouter,
-  connect(undefined, { notifyError: actions.notifyError }),
+  injectNotifications,
 )(EditDisplayCreativePage);

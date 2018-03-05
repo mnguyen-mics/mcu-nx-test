@@ -1,12 +1,13 @@
-import campaignRoutes from './campaignRoutes';
-import automationRoutes from './automationRoutes';
-import audienceRoutes from './audienceRoutes';
+import React from 'react';
+import campaignRoutes from './campaignRoutes.js';
+import automationRoutes from './automationRoutes.js';
+import audienceRoutes from './audienceRoutes.js';
 import creativeRoutes from './creativeRoutes';
-import libraryRoutes from './libraryRoutes';
-import settingsRoutes from './settingsRoutes';
-import accountRoutes from './accountRoutes';
+import libraryRoutes from './libraryRoutes.js';
+import settingsRoutes from './settingsRoutes.js';
+import accountRoutes from './accountRoutes.js';
 import datastudioRoutes from './datastudioRoutes';
-import analyticsRoutes from './analyticsRoutes';
+import analyticsRoutes from './analyticsRoutes.js';
 /**
  * Route object definition
  * {
@@ -19,7 +20,16 @@ import analyticsRoutes from './analyticsRoutes';
  *
  * Usage: Navigator -> AuthenticatedRoute(path) -> LayoutManager(layout, components) -> Main/EditLayout(components)
  */
-const routes = [
+
+export interface RouteDef {
+  path: string;
+  layout: string;
+  contentComponent: React.ComponentClass;
+  editComponent: React.ComponentClass;
+  actionBarComponent: React.ComponentClass; 
+}
+
+const routes: any[] = [
   ...campaignRoutes,
   ...automationRoutes,
   ...audienceRoutes,
