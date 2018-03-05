@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import queryString from 'query-string';
 
 import withValidators, {
   ValidatorProps,
@@ -67,6 +68,8 @@ class GeneralFormSection extends React.Component<Props, State> {
       location: { search },
     } = this.props;
 
+    const query = queryString.parse(search);
+
     return (
       <div>
         <FormSection
@@ -90,7 +93,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
         />
         <FormSelectField
-          name="type"
+          name="audience_partition_type"
           component={DefaultSelect}
           validate={[isRequired]}
           formItemProps={{
@@ -102,8 +105,8 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           options={[
             {
-              title: search.split('type=')[1],
-              value: search.split('type=')[1],
+              title: query.type,
+              value: query.type,
             },
           ]}
           disabled={true}
@@ -123,21 +126,23 @@ class GeneralFormSection extends React.Component<Props, State> {
             title: formatMessage(messages.tootltipPartitionName),
           }}
         />
-        <FormInputField
-          name="clustering_model_data_file_uri"
-          component={FormInput}
-          validate={[isRequired]}
-          formItemProps={{
-            label: formatMessage(messages.labelClusteringModel),
-            required: true,
-          }}
-          inputProps={{
-            placeholder: formatMessage(messages.labelClusteringModel),
-          }}
-          helpToolTipProps={{
-            title: formatMessage(messages.tootltipPartitionName),
-          }}
-        />
+        {query.type === 'CLUSTERING' && (
+          <FormInputField
+            name="clustering_model_data_file_uri"
+            component={FormInput}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.labelClusteringModel),
+              required: true,
+            }}
+            inputProps={{
+              placeholder: formatMessage(messages.labelClusteringModel),
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.tootltipPartitionName),
+            }}
+          />
+        )}
       </div>
     );
   }

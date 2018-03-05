@@ -89,6 +89,7 @@ class AudiencePartitionPage extends React.Component<
       location: { search },
       intl,
     } = this.props;
+    formData.type = 'AUDIENCE_PARTITION';
     if (partitionId) {
       AudiencePartitionsService.savePartition(partitionId, formData).then(
         () => {

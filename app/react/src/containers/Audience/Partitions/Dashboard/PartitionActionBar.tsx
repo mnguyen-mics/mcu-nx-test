@@ -66,7 +66,7 @@ class PartitionActionBar extends React.Component<
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link
-          to={`/v2/o/${organisationId}/audience/partition/${partition.id}/edit`}
+          to={`/v2/o/${organisationId}/audience/partition/${partition.id}/edit?type=${partition.audience_partition_type}`}
         >
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.edit} />

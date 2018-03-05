@@ -38,6 +38,13 @@ const AudiencePartitionsService = {
     const endpoint = `audience_partitions?datamart_id=${datamartId}&organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, body);
   },
+  archiveAudiencePartition(
+    partitionId: string,
+    body: Partial<AudiencePartitionResource> = {},
+  ): Promise<DataResponse<AudiencePartitionResource>> {
+    const endpoint = `audience_partitions/${partitionId}`;
+    return ApiService.putRequest(endpoint, body);
+  },
 };
 
 export default AudiencePartitionsService;
