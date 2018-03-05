@@ -107,19 +107,6 @@ const placementDescriptorTypes: string[] = [
   'EXACT_APPLICATION_ID',
   'PATTERN',
 ];
-const placementDescriptorHolders: string[] = ['APPLICATION', 'WEB_BROWSER'];
-const placementDescriptorHolderMessagesMap: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor;
-} = defineMessages({
-  APPLICATION: {
-    id: 'edit.placement.descriptor.form.option.application',
-    defaultMessage: 'Application',
-  },
-  WEB_BROWSER: {
-    id: 'edit.placement.descriptor.form.option.webBrowser',
-    defaultMessage: 'Web Browser',
-  },
-});
 
 export interface PlacementDescriptorFormProps {
   initialValues?: Partial<PlacementDescriptorResource>;
@@ -151,34 +138,17 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
           placementDescriptorTypeMessagesMap[placementDescriptorType],
         ),
         value: placementDescriptorType,
-        disabled: false,
-      };
-    });
-  };
-
-  getAvailableHolderOptions = (value: string) => {
-    const { intl } = this.props;
-    return placementDescriptorHolders.map(placementDescriptorHolder => {
-      return {
-        title: intl.formatMessage(
-          placementDescriptorHolderMessagesMap[placementDescriptorHolder],
-        ),
-        value: placementDescriptorHolder,
         disabled:
-          (placementDescriptorHolder === 'WEB_BROWSER' &&
-            value === 'EXACT_APPLICATION_ID') ||
-          (placementDescriptorHolder === 'APPLICATION' &&
-            value !== 'EXACT_APPLICATION_ID'),
+          (placementDescriptorType === 'EXACT_APPLICATION_ID' &&
+            value === 'WEB_BROWSER') ||
+          (placementDescriptorType !== 'EXACT_APPLICATION_ID' &&
+            value === 'APPLICATION'),
       };
     });
   };
 
   renderFields = (fields: any) => {
-    const { intl, change } = this.props;
-    const newChange = (value: string) => {
-      change('placement_holder', '');
-      change('descriptor_type', value);
-    };
+    const { intl } = this.props;
     return (
       <div>
         <DefaultSelect
@@ -195,7 +165,6 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
           {...fields.descriptor_type}
           input={{
             ...fields.descriptor_type.input,
-            onChange: newChange,
           }}
         />
         <DefaultSelect
@@ -203,13 +172,11 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
             label: intl.formatMessage(messages.labelHolderPlacementDescriptor),
             required: true,
           }}
-          options={this.getAvailableHolderOptions(
-            fields.descriptor_type.input.value,
-          )}
           helpToolTipProps={{
             title: intl.formatMessage(messages.tootltipPlacementDescriptor),
           }}
           {...fields.placement_holder}
+          disabled={true}
         />
       </div>
     );
@@ -284,9 +251,10 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
                       required: true,
                     }}
                     inputProps={{
-                      placeholder: intl.formatMessage(
-                        messages.labelValuePlacementDescriptor,
-                      ),
+                      placeholder:
+                        initialValues.placement_holder === 'WEB_BROWSER'
+                          ? 'www.website-example.com'
+                          : 'Application ID',
                     }}
                     helpToolTipProps={{
                       title: intl.formatMessage(

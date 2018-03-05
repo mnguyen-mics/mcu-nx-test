@@ -111,13 +111,23 @@ class PlacementsFormSection extends React.Component<Props, State> {
   downloadCsvTemplate = () => {
     const { fields } = this.props;
     const rowsToUpload: string[][] = [];
-    fields.getAll().forEach(fieldModel => {
-      const line = [];
-      line.push(fieldModel.model.value);
-      line.push(fieldModel.model.descriptor_type);
-      line.push(fieldModel.model.placement_holder);
-      rowsToUpload.push(line);
-    });
+    if (fields.getAll().length > 1) {
+      fields.getAll().forEach(fieldModel => {
+        const line = [];
+        line.push(fieldModel.model.value);
+        line.push(fieldModel.model.descriptor_type);
+        line.push(fieldModel.model.placement_holder);
+        rowsToUpload.push(line);
+      });
+    } else {
+      // Examples
+      rowsToUpload.push([
+        'www.website-example.com',
+        'EXACT_URL',
+        'WEB_BROWSER',
+      ]);
+      rowsToUpload.push(['123456789', 'EXACT_APPLICATION_ID', 'APPLICATION']);
+    }
     let csvContent = 'data:text/csv;charset=utf-8,';
     rowsToUpload.forEach(rowArray => {
       const row = rowArray.join(',');
@@ -236,13 +246,21 @@ class PlacementsFormSection extends React.Component<Props, State> {
   };
 
   openPlacementDescriptorForm = (
+    isWebSiteForm: boolean,
     field?: FieldArrayModel<Partial<PlacementDescriptorResource>>,
-  ) => {
+  ) => () => {
     const { openNextDrawer, closeNextDrawer, intl } = this.props;
     const handleSave = (formData: Partial<PlacementDescriptorResource>) =>
       this.updatePlacementDescriptors(formData, field && field.key);
     const additionalProps = {
-      initialValues: field ? field.model : {},
+      initialValues: field
+        ? field.model
+        : isWebSiteForm
+          ? { descriptor_type: 'EXACT_URL', placement_holder: 'WEB_BROWSER' }
+          : {
+              descriptor_type: 'EXACT_APPLICATION_ID',
+              placement_holder: 'APPLICATION',
+            },
       onSave: handleSave,
       actionBarButtonText: intl.formatMessage(messages.addNewPlacement),
       close: closeNextDrawer,
@@ -311,8 +329,10 @@ class PlacementsFormSection extends React.Component<Props, State> {
         const getName = (
           placementDescriptor: FieldArrayModel<PlacementDescriptorResource>,
         ) => placementDescriptor.model.value;
+        const isWebSite =
+          placementDescriptorField.model.placement_holder === 'WEB_BROWSER';
         const edit = () =>
-          this.openPlacementDescriptorForm(placementDescriptorField);
+          this.openPlacementDescriptorForm(isWebSite, placementDescriptorField);
 
         return (
           <RecordElement
@@ -368,13 +388,21 @@ class PlacementsFormSection extends React.Component<Props, State> {
           title={messages.sectionTitleGeneral}
           dropdownItems={[
             {
-              id: messages.addPlacement.id,
-              message: messages.addPlacement,
-              onClick: this.openPlacementDescriptorForm,
+              id: messages.addWebSite.id,
+              message: messages.addWebSite,
+              onClick: this.openPlacementDescriptorForm(true),
+            },
+            {
+              id: messages.addMobileApp.id,
+              message: messages.addMobileApp,
+              onClick: this.openPlacementDescriptorForm(false),
             },
             {
               id: messages.replaceWithCsv.id,
-              message: messages.replaceWithCsv,
+              message:
+                fields.getAll().length >= 1
+                  ? messages.replaceWithCsv
+                  : messages.addDataWithCsv,
               onClick: this.handleOpenClose,
             },
             {
