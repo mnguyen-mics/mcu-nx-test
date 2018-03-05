@@ -128,7 +128,7 @@ class KeywordListContent extends React.Component<
         render: (text: string, record: KeywordListResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/${organisationId}/library/keywordslists/${record.id}`}
+            to={`v2/o/${organisationId}/library/keywordslist/${record.id}`}
           >
             {text}
           </Link>
