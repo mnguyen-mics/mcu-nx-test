@@ -343,8 +343,10 @@ class PlacementsFormSection extends React.Component<Props, State> {
         ) => placementDescriptor.model.value;
         const isWebSite =
           placementDescriptorField.model.placement_holder === 'WEB_BROWSER';
-        const edit = () =>
-          this.openPlacementDescriptorForm(isWebSite, placementDescriptorField);
+        const edit = this.openPlacementDescriptorForm(
+          isWebSite,
+          placementDescriptorField,
+        );
 
         return (
           <RecordElement
