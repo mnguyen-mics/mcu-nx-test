@@ -47,6 +47,7 @@ class NewUsers extends React.Component<JoinedProps> {
         text: formatMessage(messages.new_users),
       },
       colors: [colorFormated, gray],
+      showTooltip: true,
     };
     return options;
   }
