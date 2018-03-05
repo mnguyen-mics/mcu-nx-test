@@ -9,7 +9,7 @@ import { compose } from 'recompose';
 
 import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts/index.ts';
 import { VerticalBarChart } from '../../../../../components/BarCharts/index.ts';
-import { LegendChart } from '../../../../../components/LegendChart/LegendChart.tsx';
+import LegendChart from '../../../../../components/LegendChart/LegendChart.tsx';
 import McsIcon from '../../../../../components/McsIcon.tsx';
 import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/actions';
 import { getDefaultDatamart } from '../../../../../state/Session/selectors';
