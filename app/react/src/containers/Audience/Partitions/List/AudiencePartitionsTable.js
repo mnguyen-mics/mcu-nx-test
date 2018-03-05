@@ -245,7 +245,7 @@ class AudiencePartitionsTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/o${organisationId}d${record.datamart_id}/datamart/partitions/${record.audience_partition_type}/${record.id}/report`}
+            to={`/v2/o/${organisationId}/audience/partition/${record.id}/edit?datamart=${record.datamart_id}&type=${record.type}`}
           >{text}
           </Link>
         ),

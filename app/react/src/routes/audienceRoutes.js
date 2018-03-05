@@ -5,9 +5,7 @@ import {
 
 import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage.tsx';
 
-import {
-  EditAudienceSegmentPage
-} from '../containers/Audience/Segments/Edit/index.ts';
+import { EditAudienceSegmentPage } from '../containers/Audience/Segments/Edit/index.ts';
 
 import {
   AudienceSegment,
@@ -19,10 +17,12 @@ import {
   PartitionsActionbar,
 } from '../containers/Audience/Partitions/List';
 
-import {
-  TimelinePage,
-} from '../containers/Audience/Timeline';
+import { TimelinePage } from '../containers/Audience/Timeline';
 
+import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage.tsx';
+
+import Partition from '../containers/Audience/Partitions/Dashboard/Partition.tsx';
+import PartitionActionBar from '../containers/Audience/Partitions/Dashboard/PartitionActionBar.tsx';
 
 const audienceRoutes = [
   {
@@ -54,8 +54,6 @@ const audienceRoutes = [
     actionBarComponent: PartitionsActionbar,
   },
   {
-<<<<<<< HEAD
-=======
     path: '/audience/partitions',
     layout: 'main',
     contentComponent: AudiencePartitionsTable,
@@ -75,10 +73,9 @@ const audienceRoutes = [
     path: '/audience/partition/:partitionId/dashboard',
     layout: 'main',
     contentComponent: Partition,
-    actionBarComponent: PartitionActionbar,
+    actionBarComponent: PartitionActionBar,
   },
   {
->>>>>>> 3713b1a7... partitions feature
     path: '/audience/segment-builder',
     layout: 'main',
     contentComponent: QueryToolPage,
