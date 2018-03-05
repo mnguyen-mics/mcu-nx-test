@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { makeCancelable, CancelablePromise } from '../../utils/ApiHelper';
 import { DataResponse } from '../../services/ApiService';
 

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import McsIcon from '../McsIcon';
 
 export interface MenuListProps {

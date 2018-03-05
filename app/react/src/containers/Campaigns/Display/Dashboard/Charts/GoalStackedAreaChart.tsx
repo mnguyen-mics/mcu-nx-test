@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Col, Menu, Dropdown, Button, Icon } from 'antd';

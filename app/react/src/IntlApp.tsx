@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { addLocaleData, IntlProvider } from 'react-intl';
 
@@ -50,11 +49,6 @@ const IntlApp: React.SFC<IntlAppProps> = ({ locale, translations }) => {
 IntlApp.defaultProps = {
   locale: 'en',
   translations: {},
-};
-
-IntlApp.propTypes = {
-  locale: PropTypes.string,
-  translations: PropTypes.objectOf(PropTypes.string),
 };
 
 const mapStateToProps = (state: { translations: object }) => ({
