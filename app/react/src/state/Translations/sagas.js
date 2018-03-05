@@ -1,5 +1,4 @@
-import { takeEvery } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 
@@ -31,7 +30,7 @@ function* fetchTranslations(userLocale) {
 }
 
 function* watchLoadTranslations() {
-  yield* takeEvery(LOAD_TRANSLATIONS.REQUEST, fetchTranslations);
+  yield takeEvery(LOAD_TRANSLATIONS.REQUEST, fetchTranslations);
 }
 
 export const translationsSagas = [

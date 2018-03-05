@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -65,7 +64,7 @@ function* loadCreativeEmails({ payload }) {
 }
 
 function* watchfetchCreativeEmails() {
-  yield* takeLatest(CREATIVES_EMAIL_FETCH.REQUEST, loadCreativeEmails);
+  yield takeLatest(CREATIVES_EMAIL_FETCH.REQUEST, loadCreativeEmails);
 }
 
 export const creativeEmailsSagas = [fork(watchfetchCreativeEmails)];

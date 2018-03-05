@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -65,7 +64,7 @@ function* loadAudiencePartitionsList({ payload }) {
 }
 
 function* watchFetchAudiencePartitionsList() {
-  yield* takeLatest(AUDIENCE_PARTITIONS_LIST_FETCH.REQUEST, loadAudiencePartitionsList);
+  yield takeLatest(AUDIENCE_PARTITIONS_LIST_FETCH.REQUEST, loadAudiencePartitionsList);
 }
 
 export const partitionsSagas = [

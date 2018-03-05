@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -129,31 +128,31 @@ function* loadCampaignAndPerformance(action) {
 }
 
 function* watchFetchEmailCampaign() {
-  yield* takeLatest(EMAIL_CAMPAIGN_FETCH.REQUEST, loadEmailCampaign);
+  yield takeLatest(EMAIL_CAMPAIGN_FETCH.REQUEST, loadEmailCampaign);
 }
 
 function* watchFetchDeliveryReport() {
-  yield* takeLatest(EMAIL_CAMPAIGN_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
+  yield takeLatest(EMAIL_CAMPAIGN_DELIVERY_REPORT_FETCH.REQUEST, loadDeliveryReport);
 }
 
 function* watchUpdateEmailCampaign() {
-  yield* takeLatest(EMAIL_CAMPAIGN_UPDATE.REQUEST, modifyEmailCampaign);
+  yield takeLatest(EMAIL_CAMPAIGN_UPDATE.REQUEST, modifyEmailCampaign);
 }
 
 function* watchArchiveEmailCampaign() {
-  yield* takeLatest(EMAIL_CAMPAIGN_ARCHIVE.REQUEST, modifyEmailCampaign);
+  yield takeLatest(EMAIL_CAMPAIGN_ARCHIVE.REQUEST, modifyEmailCampaign);
 }
 
 function* watchLoadCampaignAndPerformance() {
-  yield* takeLatest(EMAIL_CAMPAIGN_LOAD_ALL, loadCampaignAndPerformance);
+  yield takeLatest(EMAIL_CAMPAIGN_LOAD_ALL, loadCampaignAndPerformance);
 }
 
 function* watchLoadBlast() {
-  yield* takeLatest([EMAIL_CAMPAIGN_LOAD_ALL, EMAIL_BLAST_FETCH_ALL.REQUEST], loadAllEmailBlast);
+  yield takeLatest([EMAIL_CAMPAIGN_LOAD_ALL, EMAIL_BLAST_FETCH_ALL.REQUEST], loadAllEmailBlast);
 }
 
 function* watchLoadBlastPerformance() {
-  yield* takeLatest([EMAIL_CAMPAIGN_LOAD_ALL, EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST], loadAllEmailBlastPerformance);
+  yield takeLatest([EMAIL_CAMPAIGN_LOAD_ALL, EMAIL_BLAST_FETCH_PERFORMANCE.REQUEST], loadAllEmailBlastPerformance);
 }
 
 export const emailCampaignSagas = [

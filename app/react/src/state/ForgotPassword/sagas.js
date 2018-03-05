@@ -1,5 +1,4 @@
-import { takeEvery } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 
@@ -32,7 +31,7 @@ function* sendPasswordLoop({ payload }) {
 }
 
 function* watchSendPasswordLoop() {
-  yield* takeEvery(PASSWORD_FORGOT.REQUEST, sendPasswordLoop);
+  yield takeEvery(PASSWORD_FORGOT.REQUEST, sendPasswordLoop);
 }
 
 export const forgotPasswordSagas = [

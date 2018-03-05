@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -96,15 +95,15 @@ function* loadGoalsAndPerformance(action) {
 }
 
 function* watchFetchGoals() {
-  yield* takeLatest(GOALS_FETCH.REQUEST, loadGoals);
+  yield takeLatest(GOALS_FETCH.REQUEST, loadGoals);
 }
 
 function* watchFetchPerformanceReport() {
-  yield* takeLatest(GOALS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
+  yield takeLatest(GOALS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
 }
 
 function* watchLoadGoalsAndPerformance() {
-  yield* takeLatest(GOALS_LOAD_ALL, loadGoalsAndPerformance);
+  yield takeLatest(GOALS_LOAD_ALL, loadGoalsAndPerformance);
 }
 
 export const goalsSagas = [

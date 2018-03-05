@@ -1,5 +1,4 @@
-import { takeEvery } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 
@@ -26,7 +25,7 @@ function* loadEmailRouters({ payload }) {
 }
 
 function* watchFetchEmailRouters() {
-  yield* takeEvery(EMAIL_ROUTER_LIST_FETCH.REQUEST, loadEmailRouters);
+  yield takeEvery(EMAIL_ROUTER_LIST_FETCH.REQUEST, loadEmailRouters);
 }
 
 export const emailRoutersSagas = [fork(watchFetchEmailRouters)];

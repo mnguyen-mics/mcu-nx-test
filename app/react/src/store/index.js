@@ -1,6 +1,7 @@
+import 'regenerator-runtime/runtime';  //eslint-disable-line
+// https://github.com/redux-saga/redux-saga#using-umd-build-in-the-browser
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import 'babel-polyfill';
 import createSagaMiddleware from 'redux-saga';
 
 import { apiRequest, logoutListener } from '../middleware';

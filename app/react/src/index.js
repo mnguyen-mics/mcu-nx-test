@@ -1,6 +1,4 @@
 /* eslint-disable */
-require('babel-polyfill');
-require('react-hot-loader/patch');
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
@@ -14,7 +12,7 @@ render(
   document.getElementById('mcs-react-app'),
   () => {
     window.require([window.mainRev], function() {
-      console.log('YEAH')
+      
     });
   }
 );
@@ -29,7 +27,7 @@ if (module.hot) {
       document.getElementById('mcs-react-app'),
       () => {
         window.require([window.mainRev], function() {
-          console.log('YEAH 2')
+          
         });
       }
     );

@@ -1,5 +1,4 @@
-import { takeEvery } from 'redux-saga';
-import { call, put, fork } from 'redux-saga/effects';
+import { call, put, fork, takeEvery } from 'redux-saga/effects';
 
 import { addNotification } from '../Notifications/actions';
 import log from '../../utils/Logger';
@@ -86,19 +85,19 @@ function* uploadLogo({ payload }) {
 }
 
 function* watchWorkspaceRequest() {
-  yield* takeEvery(WORKSPACE.REQUEST, fetchOrganisationWorkspace);
+  yield takeEvery(WORKSPACE.REQUEST, fetchOrganisationWorkspace);
 }
 
 function* watchCookiesRequest() {
-  yield* takeEvery(FETCH_COOKIES.REQUEST, fetchUserCookies);
+  yield takeEvery(FETCH_COOKIES.REQUEST, fetchUserCookies);
 }
 
 function* watchLogoDownloadRequest() {
-  yield* takeEvery(GET_LOGO.REQUEST, downloadLogo);
+  yield takeEvery(GET_LOGO.REQUEST, downloadLogo);
 }
 
 function* watchLogoUploadRequest() {
-  yield* takeEvery(PUT_LOGO.REQUEST, uploadLogo);
+  yield takeEvery(PUT_LOGO.REQUEST, uploadLogo);
 }
 
 export const sessionSagas = [
