@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Plottable, { Point } from 'plottable';
+import * as Plottable from 'plottable';
 import ChartUtils from './ChartUtils';
 import { IPiePlotEntity, Pie } from 'plottable/build/src/plots';
 import BasicTooltip from './ChartTooltip/BasicTooltip';
@@ -38,7 +38,7 @@ interface Bounds {
 }
 
 interface PieChartState {
-  mousePos: Point;
+  mousePos: Plottable.Point;
   svgBounds: Bounds;
   tooltipVisible: boolean;
   selectedDatum: DatasetProps | undefined;
@@ -106,7 +106,7 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
       );
 
       const interaction = new Plottable.Interactions.Pointer();
-      interaction.onPointerMove((p: Point) => {
+      interaction.onPointerMove((p: Plottable.Point) => {
         plot.entities().forEach((entity: IPiePlotEntity) => {
           entity.selection.attr('fill', entity.datum.color);
         });

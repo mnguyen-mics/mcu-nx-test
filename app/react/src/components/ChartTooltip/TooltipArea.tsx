@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Point} from 'plottable';
+import * as Plottable from 'plottable';
 import ChartTooltip from './ChartTooltip';
 
 interface Bounds {
@@ -11,11 +11,11 @@ interface Bounds {
 
 interface TooltipAreaProps {
   bounds: Bounds;
-  mousePos: Point;
+  mousePos: Plottable.Point;
   visible: boolean;
 }
 
-function computePosition(bounds: Bounds, mousePosition: Point) {
+function computePosition(bounds: Bounds, mousePosition: Plottable.Point) {
   const width = bounds.right - bounds.left;
   const height = bounds.bottom - bounds.top;
   const xTooltip = mousePosition.x + 320 < width

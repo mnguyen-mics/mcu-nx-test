@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Plottable from 'plottable';
+import * as Plottable from 'plottable';
 import moment from 'moment';
 
 import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index.ts';
