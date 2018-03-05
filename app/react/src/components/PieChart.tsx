@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Plottable, {Point} from 'plottable';
+import Plottable, { Point } from 'plottable';
 import ChartUtils from './ChartUtils';
-import {IPiePlotEntity, Pie} from 'plottable/build/src/plots';
+import { IPiePlotEntity, Pie } from 'plottable/build/src/plots';
 import BasicTooltip from './ChartTooltip/BasicTooltip';
 import TooltipArea from './ChartTooltip/TooltipArea';
 
@@ -21,6 +21,7 @@ interface OptionsProps {
   isHalf: boolean;
   text: TextProps;
   colors: string[];
+  showTooltip?: boolean;
 }
 
 interface PieChartProps {
@@ -44,7 +45,6 @@ interface PieChartState {
 }
 
 class PieChart extends React.Component<PieChartProps, PieChartState> {
-
   svg: any;
   plot: any;
   interactionsAttached: Plottable.Interaction[];
@@ -91,50 +91,55 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
   }
 
   computeOuterRadius(svg: any, options: OptionsProps) {
-    return options.isHalf ?
-      (svg.clientHeight) - 20 :
-      ((Math.min(svg.clientWidth, svg.clientHeight) / 2) - 20);
+    return options.isHalf
+      ? svg.clientHeight - 20
+      : Math.min(svg.clientWidth, svg.clientHeight) / 2 - 20;
   }
 
-  attachInteractions(plot: Pie, dataset: DatasetProps[], svg: any) {
-    this.interactionsAttached.forEach((interactionAttached: Plottable.Interaction) => {
-      interactionAttached.detach();
-    });
+  attachInteractions = (plot: Pie, dataset: DatasetProps[], svg: any) => {
+    const { options: { showTooltip } } = this.props;
+    if (showTooltip) {
+      this.interactionsAttached.forEach(
+        (interactionAttached: Plottable.Interaction) => {
+          interactionAttached.detach();
+        },
+      );
 
-    const interaction = new Plottable.Interactions.Pointer();
-    interaction.onPointerMove((p: Point) => {
-      plot.entities().forEach((entity: IPiePlotEntity) => {
-        entity.selection.attr('fill', entity.datum.color);
+      const interaction = new Plottable.Interactions.Pointer();
+      interaction.onPointerMove((p: Point) => {
+        plot.entities().forEach((entity: IPiePlotEntity) => {
+          entity.selection.attr('fill', entity.datum.color);
+        });
+
+        const entityNearest: IPiePlotEntity[] = plot.entitiesAt(p);
+        if (entityNearest.length && entityNearest[0]) {
+          entityNearest[0].selection.attr('fill', 'red');
+          this.setState((previousState: PieChartState) => {
+            return {
+              ...previousState,
+              svgBounds: svg.getBoundingClientRect(),
+              mousePos: p,
+              tooltipVisible: true,
+              selectedDatum: entityNearest[0].datum,
+            };
+          });
+        }
       });
 
-      const entityNearest: IPiePlotEntity[] = plot.entitiesAt(p);
-      if (entityNearest.length && entityNearest[0]) {
-        entityNearest[0].selection.attr('fill', 'red');
+      interaction.onPointerExit(() => {
         this.setState((previousState: PieChartState) => {
           return {
             ...previousState,
-            svgBounds: svg.getBoundingClientRect(),
-            mousePos: p,
-            tooltipVisible: true,
-            selectedDatum: entityNearest[0].datum,
+            tooltipVisible: false,
+            selectedDatum: undefined,
           };
         });
-      }
-    });
-
-    interaction.onPointerExit(() => {
-      this.setState((previousState: PieChartState) => {
-        return {
-          ...previousState,
-          tooltipVisible: false,
-          selectedDatum: undefined,
-        };
       });
-    });
 
-    interaction.attachTo(plot);
-    this.interactionsAttached.push(interaction);
-  }
+      interaction.attachTo(plot);
+      this.interactionsAttached.push(interaction);
+    }
+  };
 
   renderPieChart = (svg: any) => {
     const { dataset, options, identifier } = this.props;
@@ -147,8 +152,12 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
 
     const plot = new Plottable.Plots.Pie()
       .addDataset(plotData)
-      .sectorValue((d) => { return d.value; }, scale)
-      .attr('fill', (d) => { return d.color; });
+      .sectorValue(d => {
+        return d.value;
+      }, scale)
+      .attr('fill', d => {
+        return d.color;
+      });
 
     if (options.isHalf) {
       plot.outerRadius(outerRadius);
@@ -169,7 +178,7 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
     this.plot = plot;
     plot.renderTo(`#${identifier}`);
     ChartUtils.addResizeListener(plot, svg, options, this.computeOuterRadius);
-  }
+  };
 
   render() {
     const { identifier, options } = this.props;
@@ -198,55 +207,58 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
       entries: entries,
     };
 
-    return (options.isHalf
-      ? (
-        <div className={`${classNameOuter} donut`}>
-          <div
-            ref={svg => { this.svg = svg; }}
-            id={identifier}
-            className={classNameInner}
-          />
-          <div className="mcs-donut-chart-title" />
+    return options.isHalf ? (
+      <div className={`${classNameOuter} donut`}>
+        <div
+          ref={svg => {
+            this.svg = svg;
+          }}
+          id={identifier}
+          className={classNameInner}
+        />
+        <div className="mcs-donut-chart-title" />
+        <div className="mcs-chart-title">
+          {options.text ? (
+            <div className="mcs-half-title">
+              <div className="value">{options.text.value}</div>
+              <div className="helper">{options.text.text}</div>
+            </div>
+          ) : (
+            <div />
+          )}
+        </div>
+      </div>
+    ) : (
+      <div className={classNameOuter}>
+        <div
+          ref={svg => {
+            this.svg = svg;
+          }}
+          id={identifier}
+          className={classNameInner}
+        />
+        <div className="mcs-donut-chart-title">
           <div className="mcs-chart-title">
-            { options.text ? (
-              <div className="mcs-half-title">
+            {options.text ? (
+              <div>
                 <div className="value">{options.text.value}</div>
                 <div className="helper">{options.text.text}</div>
-              </div>) : (<div />) }
+              </div>
+            ) : (
+              <div />
+            )}
           </div>
         </div>
-      )
-      : (
-        <div className={classNameOuter}>
-          <div
-            ref={svg => { this.svg = svg; }}
-            id={identifier}
-            className={classNameInner}
-          />
-          <div className="mcs-donut-chart-title">
-            <div className="mcs-chart-title">
-              { options.text
-                ? (
-                  <div>
-                    <div className="value">{options.text.value}</div>
-                    <div className="helper">{options.text.text}</div>
-                  </div>
-                )
-                : <div />
-              }
-            </div>
-          </div>
+        {options.showTooltip && (
           <TooltipArea
             bounds={svgBounds}
             mousePos={mousePos}
             visible={tooltipVisible}
           >
-            <BasicTooltip
-              content={content}
-            />
+            <BasicTooltip content={content} />
           </TooltipArea>
-        </div>
-      )
+        )}
+      </div>
     );
   }
 }

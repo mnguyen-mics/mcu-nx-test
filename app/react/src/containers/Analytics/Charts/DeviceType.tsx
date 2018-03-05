@@ -75,6 +75,7 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
         text: formatMessage(messages.device_type),
       },
       colors: [colorFormated, gray],
+      showTooltip: true,
     };
     return options;
   }
