@@ -45,9 +45,21 @@ const messages = defineMessages({
     id: 'edit.placement.list.form.add.new',
     defaultMessage: 'Add New Placement',
   },
+  addWebSite: {
+    id: 'edit.placement.list.form.add.new.website',
+    defaultMessage: 'Add Web Site',
+  },
+  addMobileApp: {
+    id: 'edit.placement.list.form.add.new.mobileApp',
+    defaultMessage: 'Add Mobile App',
+  },
   replaceWithCsv: {
     id: 'edit.placement.list.form.replace.with.csv',
     defaultMessage: 'Replace with CSV',
+  },
+  addDataWithCsv: {
+    id: 'edit.placement.list.form.add.data.with.csv',
+    defaultMessage: 'Add data with CSV',
   },
   downloadCsvTemplate: {
     id: 'edit.placement.list.form.download.csv.template',
@@ -415,14 +427,17 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
         <div>{this.renderFieldArray()}</div>
         <br />
-        <Pagination
-          style={{ float: 'right' }}
-          onChange={this.onPaginationChange}
-          defaultCurrent={1}
-          pageSize={this.state.pageSize}
-          total={fields.length}
-          current={this.state.page}
-        />
+        {fields.getAll().length >= this.state.pageSize + 1 && (
+          <Pagination
+            style={{ float: 'right' }}
+            onChange={this.onPaginationChange}
+            defaultCurrent={1}
+            pageSize={this.state.pageSize}
+            total={fields.length}
+            current={this.state.page}
+            size="small"
+          />
+        )}
       </div>
     );
   }
