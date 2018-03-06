@@ -100,7 +100,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       organisationId,
       displayCampaignFormData,
       initialDisplayCampaignFormData,
-      datamart.id,
+      datamart && datamart.id,
     )
       .then(campaignId => {
         hideSaveInProgress();
