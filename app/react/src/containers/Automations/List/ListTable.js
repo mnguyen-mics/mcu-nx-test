@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal, Tooltip } from 'antd';
+import { compose } from 'recompose';
 
 import {
   EmptyTableView,
@@ -25,6 +26,7 @@ import {
 import {
   getTableDataSource,
 } from '../../../state/Automations/selectors';
+
 
 class AutomationsListTable extends Component {
 
@@ -134,7 +136,7 @@ class AutomationsListTable extends Component {
     });
   }
 
-  editAutomation(record) {
+  editAutomation = (record) => {
     const {
       match: {
         params: {
@@ -144,7 +146,7 @@ class AutomationsListTable extends Component {
       history,
     } = this.props;
 
-    history.push(`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`);
+    history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`);
   }
 
   updateLocationSearch = (params) => {
@@ -216,7 +218,7 @@ class AutomationsListTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/o${organisationId}d${record.datamart_id}/library/scenarios/${record.id}`}
+            to={`/v2/o/${organisationId}/automations/${record.id}/edit`}
           >{text}
           </Link>
         ),
@@ -289,11 +291,10 @@ const mapDispatchToProps = {
   resetAutomationsTable: AutomationsListActions.resetAutomationsTable,
 };
 
-AutomationsListTable = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )
 )(AutomationsListTable);
-
-AutomationsListTable = withRouter(AutomationsListTable);
-
-export default AutomationsListTable;

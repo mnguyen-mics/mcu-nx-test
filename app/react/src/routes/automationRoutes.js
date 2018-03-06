@@ -3,12 +3,24 @@ import {
   ListTable,
 } from '../containers/Automations/List';
 
+import AutomationEditPage from '../containers/Automations/Edit/AutomationEditPage.tsx';
+
 const automationRoutes = [
   {
     path: '/automations',
     layout: 'main',
     contentComponent: ListTable,
     actionBarComponent: ListActionbar,
+  },
+  {
+    path: '/automations/:automationId/edit',
+    layout: 'edit',
+    editComponent: AutomationEditPage,
+  },
+  {
+    path: '/automations/create',
+    layout: 'edit',
+    editComponent: AutomationEditPage,
   },
 ];
 

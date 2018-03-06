@@ -58,102 +58,24 @@ define(['./module', 'lodash'], function (module, _) {
 
 
 
+      // var scenarioId = $stateParams.scenario_id;
+      // $scope.campaigns = {};
+      // $scope.isCreationMode = !scenarioId;
 
+      // if (!scenarioId) {
+      //   $scope.scenario = {datamart_id: Session.getCurrentDatamartId()};
+      //   $scope.graph = new StorylineContainer(null);
+      // } else {
+      //   Restangular.one('scenarios', scenarioId).get().then(function (scenario) {
+      //   $scope.graph = new StorylineContainer(scenario);
+      //   $scope.scenario = scenario;
+      //   });
+      //   Restangular.one('scenarios', scenarioId).all("inputs").getList().then(function (campaigns) {
+      //     $scope.inputs = campaigns;
+      //   });
+      // }
 
-
-      var scenarioId = $stateParams.scenario_id;
-      $scope.campaigns = {};
-      $scope.isCreationMode = !scenarioId;
-
-      if (!scenarioId) {
-        $scope.scenario = {datamart_id: Session.getCurrentDatamartId()};
-        $scope.graph = new StorylineContainer(null);
-      } else {
-        Restangular.one('scenarios', scenarioId).get().then(function (scenario) {
-        $scope.graph = new StorylineContainer(scenario);
-        $scope.scenario = scenario;
-        });
-        Restangular.one('scenarios', scenarioId).all("inputs").getList().then(function (campaigns) {
-          $scope.inputs = campaigns;
-        });
-      }
-
-
-      $scope.goToCampaign = function (campaign) {
-        switch (campaign.type) {
-          case "DISPLAY":
-            $location.path(Session.getWorkspacePrefixUrl() + "/campaigns/display/report/" + campaign.id + "/basic");
-            break;
-          default:
-            $location.path(Session.getWorkspacePrefixUrl() + "/campaigns/display");
-            break;
-        }
-      };
-
-       $scope.deleteNode = function (node) {
-        $scope.graph.deleteNode(node);
-      };
-
-      $scope.addInput = function (type) {
-        $scope.inputs.post({"type": type}, {"scenario_id": scenarioId}).then(function (r) {
-          $scope.editInput(r);
-        });
-      };
-
-      $scope.onConnection = function (link, handler, from, to) {
-        $log.log("connection of ", handler, "from", from, "to", to);
-        $scope.graph.addEdge(from, handler, to);
-
-      };
-      $scope.onDeconnect = function (link, edge) {
-        $log.log("deconnection of ", link, "edge", edge);
-        $scope.graph.removeEdge(edge);
-
-      };
-
-      $scope.deleteInput = function (input) {
-        input.remove({"scenario_id": scenarioId}).then(function (r) {
-        });
-      };
-
-      $scope.editInput = function (input) {
-        $location.path(Session.getWorkspacePrefixUrl() + "/library/scenarios/" + scenarioId + "/inputs/" + input.id);
-      };
-
-      $scope.cancel = function () {
-        $location.path(Session.getWorkspacePrefixUrl() + "/library/scenarios");
-      };
-
-      $scope.saveBeginNode = function (beginNode) {
-        Restangular.one('scenarios', scenarioId).one("storyline").post("begin", beginNode).then(function (r, error) {
-
-        });
-      };
-
-      // TODO if we want to create a campaign here we need something more complex handling also ad groups
-      $scope.addCampaign = function (type) {
-        if(type === 'TRIGGER') {
-          $scope.graph.addNode({"type":"QUERY_INPUT","x":0,"y":0,"query_id":null});
-        } else if (type === 'LIBRARY') {
-          $uibModal.open({
-            templateUrl: 'angular/src/core/campaigns/ChooseExistingCampaign.html',
-            scope: $scope,
-            backdrop: 'static',
-            controller: 'core/campaigns/ChooseExistingCampaignController',
-            size: "lg"
-          });
-        }
-      };
-      $scope.$on("mics-campaign:selected", function (event, campaign, subCampaign) {
-          $log.log("adding a campaign node", arguments);
-          if(subCampaign) {
-            $scope.graph.addNode({campaign_id: campaign.id, type:campaign.type + "_CAMPAIGN", ad_group_id: subCampaign.id});
-          } else {
-            $scope.graph.addNode({campaign_id: campaign.id, type:campaign.type + "_CAMPAIGN"});
-          }
-          $log.log("new graph : ", $scope.graph);
-      });
-      $scope.next = function () {
+      $scope.next = function (scenarioId) {
         waitingService.showWaitingModal();
         var promise = null;
         if (scenarioId) {
@@ -185,6 +107,9 @@ define(['./module', 'lodash'], function (module, _) {
           });
         });
       };
+
+
+
       $scope.cancel = function () {
         $location.path(Session.getWorkspacePrefixUrl() + "/library/scenarios");
       };
