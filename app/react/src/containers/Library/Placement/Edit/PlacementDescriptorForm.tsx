@@ -82,7 +82,7 @@ const messages = defineMessages({
   },
   mobileValueTooltip: {
     id: 'edit.placement.descriptor.tooltip.mobile.value',
-    defaultMessage: 'Please input the mobile of the app your are targeting.',
+    defaultMessage: 'Please input the ID of the mobile app your are targeting.',
   },
   websiteTypeTooltip: {
     id: 'edit.placement.descriptor.tooltip.website.type',
