@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -109,15 +108,15 @@ function* loadCampaignsAndPerformance(action) {
 }
 
 function* watchFetchDisplayCampaigns() {
-  yield* takeLatest(DISPLAY_CAMPAIGNS_LIST_FETCH.REQUEST, loadDisplayCampaignsList);
+  yield takeLatest(DISPLAY_CAMPAIGNS_LIST_FETCH.REQUEST, loadDisplayCampaignsList);
 }
 
 function* watchFetchPerformanceReport() {
-  yield* takeLatest(DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
+  yield takeLatest(DISPLAY_CAMPAIGNS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
 }
 
 function* watchLoadCampaignsAndPerformance() {
-  yield* takeLatest(DISPLAY_CAMPAIGNS_LOAD_ALL, loadCampaignsAndPerformance);
+  yield takeLatest(DISPLAY_CAMPAIGNS_LOAD_ALL, loadCampaignsAndPerformance);
 }
 
 export const displayCampaignsSagas = [

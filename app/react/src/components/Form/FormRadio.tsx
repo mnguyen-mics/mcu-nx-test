@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Radio } from 'antd';
 import { RadioProps } from 'antd/lib/radio';
 

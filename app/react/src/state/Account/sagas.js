@@ -1,5 +1,4 @@
-import { takeEvery } from 'redux-saga';
-import { call, put, fork } from 'redux-saga/effects';
+import { call, put, fork, takeEvery } from 'redux-saga/effects';
 import SettingsService from '../../services/SettingsService';
 import { addNotification } from '../Notifications/actions';
 import { getConnectedUser } from '../Session/actions';
@@ -36,7 +35,7 @@ function* updateRemoteProfile({ payload }) {
 }
 
 function* watchSaveProfileRequest() {
-  yield* takeEvery(SAVE_PROFILE.REQUEST, updateRemoteProfile);
+  yield takeEvery(SAVE_PROFILE.REQUEST, updateRemoteProfile);
 }
 
 export const accountSagas = [

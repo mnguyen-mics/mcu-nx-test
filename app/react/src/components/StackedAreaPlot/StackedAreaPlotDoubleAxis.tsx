@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Plottable, {AxisOrientation, Plot, XYPlot} from 'plottable';
+import * as Plottable from 'plottable';
 import moment from 'moment';
 import ChartUtils from '../ChartUtils';
 
@@ -71,11 +71,11 @@ interface Position {
 
 interface Point {
   pointer: Pointer;
-  plot: Plot;
+  plot: Plottable.Plot;
 }
 
 interface PlotComponents {
-  areaComponents: Array<XYPlot<Date, number>>;
+  areaComponents: Array<Plottable.XYPlot<Date, number>>;
   pointComponents: Component[];
   other: Component[];
 }
@@ -253,7 +253,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     return scales;
   }
 
-  formatYAxis(yScale: QuantitativeScale<number>, side: AxisOrientation) {
+  formatYAxis(yScale: QuantitativeScale<number>, side: Plottable.AxisOrientation) {
     return new Plottable.Axes.Numeric(yScale, side).showEndTickLabels(false);
   }
 
@@ -293,7 +293,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   }
 
   buildPlot(
-    plotComponent: XYPlot<Date, number>,
+    plotComponent: Plottable.XYPlot<Date, number>,
     item: string,
     plottableDataSet: Plottable.Dataset,
     options: ChartOptions,
@@ -393,7 +393,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     options: ChartOptions,
     gridlines: Component,
     plots: Plottable.Components.Group,
-    areaComponents: Array<XYPlot<Date, number>>,
+    areaComponents: Array<Plottable.XYPlot<Date, number>>,
     identifier: string,
     dragBox: XDragBoxLayer | null,
     yAxis: Plottable.Axes.Numeric,
@@ -508,7 +508,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     ChartUtils.attachEventListeners(this.plot);
   }
 
-  createDotsCrosshair(plot: Plot): DotsCrossHair {
+  createDotsCrosshair(plot: Plottable.Plot): DotsCrossHair {
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
     const circle = crosshairContainer.append('circle').attr('fill', 'white').attr('filter', 'url(#shadow)').attr('r', 8);
@@ -529,7 +529,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     };
   }
 
-  createLineCrosshair(plot: Plot, options: ChartOptions): LineCrossHair {
+  createLineCrosshair(plot: Plottable.Plot, options: ChartOptions): LineCrossHair {
     const { intlMessages } = this.props;
     const { xKey, yKeys } = options;
 

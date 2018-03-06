@@ -1,5 +1,5 @@
-import { takeLatest, delay } from 'redux-saga';
-import { call, fork, put, all, take, race } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import { call, fork, put, all, take, race, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 import { normalizeReportView } from '../../../utils/MetricHelper.ts';
@@ -431,43 +431,43 @@ function* loadSingleSegmentAndPerformance(action) {
 }
 
 function* watchFetchAudienceSegmentsList() {
-  yield* takeLatest(
+  yield takeLatest(
     AUDIENCE_SEGMENTS_LIST_FETCH.REQUEST,
     loadAudienceSegmentList,
   );
 }
 
 function* watchFetchPerformanceReport() {
-  yield* takeLatest(
+  yield takeLatest(
     AUDIENCE_SEGMENTS_PERFORMANCE_REPORT_FETCH.REQUEST,
     loadPerformanceReport,
   );
 }
 
 function* watchLoadSegmentsAndPerformance() {
-  yield* takeLatest(AUDIENCE_SEGMENTS_LOAD_ALL, loadSegmentsAndPerformance);
+  yield takeLatest(AUDIENCE_SEGMENTS_LOAD_ALL, loadSegmentsAndPerformance);
 }
 
 function* watchLoadSingleSegmentAndPerformance() {
-  yield* takeLatest(
+  yield takeLatest(
     AUDIENCE_SEGMENT_SINGLE_LOAD_ALL,
     loadSingleSegmentAndPerformance,
   );
 }
 
 function* watchCreateAudienceSegmentOverlap() {
-  yield* takeLatest(
+  yield takeLatest(
     AUDIENCE_SEGMENT_CREATE_OVERLAP.REQUEST,
     postAudienceSegmentOverlap,
   );
 }
 
 function* watchRetrieveAudienceSegmentOverlap() {
-  yield* takeLatest(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.REQUEST, raceOverlap);
+  yield takeLatest(AUDIENCE_SEGMENT_RETRIEVE_OVERLAP.REQUEST, raceOverlap);
 }
 
 function* watchExportAudienceSegmentDashboard() {
-  yield* takeLatest(
+  yield takeLatest(
     AUDIENCE_SEGMENT_DASHBOARD_EXPORT.REQUEST,
     doExportAudienceSegmentDashboard,
   );

@@ -1,7 +1,7 @@
 import TreeNode from './TreeNode';
 import { SHOW_ALL, SHOW_PARENT, SHOW_CHILD } from './strategies';
 
-import React from 'react';
+import * as React from 'react';
 import Select from './Select';
 import classNames from 'classnames';
 import {AbstractSelectProps, SelectLocale} from 'antd/lib/select';

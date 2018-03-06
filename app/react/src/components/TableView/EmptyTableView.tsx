@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Col } from 'antd';
 

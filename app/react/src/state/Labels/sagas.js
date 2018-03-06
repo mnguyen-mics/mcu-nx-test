@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 
@@ -39,7 +38,7 @@ function* loadLabels({ payload }) {
 
 
 function* watchFetchLabels() {
-  yield* takeLatest(LABELS_FETCH.REQUEST, loadLabels);
+  yield takeLatest(LABELS_FETCH.REQUEST, loadLabels);
 }
 
 export const labelsSagas = [

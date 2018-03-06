@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../utils/Logger';
 
@@ -61,7 +60,7 @@ function* loadAutomations({ payload }) {
 }
 
 function* watchFetchAutomations() {
-  yield* takeLatest(AUTOMATIONS_LIST_FETCH.REQUEST, loadAutomations);
+  yield takeLatest(AUTOMATIONS_LIST_FETCH.REQUEST, loadAutomations);
 }
 
 export const automationsSagas = [

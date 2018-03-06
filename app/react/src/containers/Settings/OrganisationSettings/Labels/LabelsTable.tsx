@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { injectIntl } from 'react-intl';
 import moment from 'moment';
 

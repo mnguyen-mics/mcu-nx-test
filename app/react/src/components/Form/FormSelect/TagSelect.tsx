@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 import { FormItemProps } from 'antd/lib/form/FormItem';

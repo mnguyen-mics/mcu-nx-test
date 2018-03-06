@@ -1,5 +1,4 @@
-import { takeLatest } from 'redux-saga';
-import { call, fork, put, all } from 'redux-saga/effects';
+import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
@@ -57,7 +56,7 @@ function* loadCreativeDisplay({ payload }) {
 }
 
 function* watchfetchCreativeDisplay() {
-  yield* takeLatest(CREATIVES_DISPLAY_FETCH.REQUEST, loadCreativeDisplay);
+  yield takeLatest(CREATIVES_DISPLAY_FETCH.REQUEST, loadCreativeDisplay);
 }
 
 export const creativeDisplaySagas = [fork(watchfetchCreativeDisplay)];
