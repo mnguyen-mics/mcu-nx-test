@@ -1,10 +1,18 @@
 import * as React from 'react';
-import { Col, Row } from 'antd';
+import { Col, Row, Popconfirm } from 'antd';
 
 import McsIcon, { McsIconType } from '../McsIcon';
 import ButtonStyleless from '../ButtonStyleless';
+import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 
 type RenderItem<T> = (record: T) => React.ReactNode;
+
+const messages = defineMessages({
+  removeRecordElement: {
+    id: 'popconfirm.remove.record.element',
+    defaultMessage: 'Are you sure delete this item?',
+  },
+});
 
 interface RecordElementProps<T> {
   recordIconType: McsIconType;
@@ -16,7 +24,9 @@ interface RecordElementProps<T> {
   additionalActionButtons?: RenderItem<T>;
 }
 
-class RecordElement<T> extends React.Component<RecordElementProps<T>> {
+class RecordElement<T> extends React.Component<
+  RecordElementProps<T> & InjectedIntlProps
+> {
   editTableField = () =>
     this.props.onEdit && this.props.onEdit(this.props.record);
 
@@ -45,6 +55,7 @@ class RecordElement<T> extends React.Component<RecordElementProps<T>> {
       onEdit,
       onRemove,
       record,
+      intl,
     } = this.props;
 
     return (
@@ -76,16 +87,20 @@ class RecordElement<T> extends React.Component<RecordElementProps<T>> {
           </ButtonStyleless>
         )}
         {onRemove && (
-          <ButtonStyleless
-            className="action-button"
-            onClick={this.removeTableField}
+          <Popconfirm
+            title={intl.formatMessage(messages.removeRecordElement)}
+            onConfirm={this.removeTableField}
+            okText="Yes"
+            cancelText="No"
           >
-            <McsIcon type="delete" className="big" />
-          </ButtonStyleless>
+            <div className="action-button" style={{ cursor: 'pointer' }}>
+              <McsIcon type="delete" className="big" />
+            </div>
+          </Popconfirm>
         )}
       </Row>
     );
   }
 }
 
-export default RecordElement;
+export default injectIntl(RecordElement);

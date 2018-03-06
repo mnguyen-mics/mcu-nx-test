@@ -75,9 +75,24 @@ const messages = defineMessages({
     id: 'edit.placement.descriptor.label.holder',
     defaultMessage: 'Holder',
   },
-  tootltipPlacementDescriptor: {
-    id: 'edit.placement.descriptor.tooltip',
-    defaultMessage: 'Lorem Ipsum',
+  websiteValueTooltip: {
+    id: 'edit.placement.descriptor.tooltip.website.value',
+    defaultMessage:
+      'Please add the webdomain you want to target such as example.com.',
+  },
+  mobileValueTooltip: {
+    id: 'edit.placement.descriptor.tooltip.mobile.value',
+    defaultMessage: 'Please input the mobile of the app your are targeting.',
+  },
+  websiteTypeTooltip: {
+    id: 'edit.placement.descriptor.tooltip.website.type',
+    defaultMessage:
+      'Pattern will allow you to target or exclude domains or subdomains (for instance example.com will target all pages on this domain) Exact URL allows your to target or exclude a single URL (for instance example.com will target only the root page of this domain)',
+  },
+  mobileTypeTooltip: {
+    id: 'edit.placement.descriptor.tooltip.mobile.type',
+    defaultMessage:
+      'Exact application ID will target or exclude the application id entered above.',
   },
   savingInProgress: {
     id: 'form.saving.in.progress',
@@ -160,7 +175,10 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
             fields.placement_holder.input.value,
           )}
           helpToolTipProps={{
-            title: intl.formatMessage(messages.tootltipPlacementDescriptor),
+            title:
+              this.props.initialValues.placement_holder === 'WEB_BROWSER'
+                ? intl.formatMessage(messages.websiteTypeTooltip)
+                : intl.formatMessage(messages.mobileTypeTooltip),
           }}
           {...fields.descriptor_type}
           input={{
@@ -171,9 +189,6 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
           formItemProps={{
             label: intl.formatMessage(messages.labelHolderPlacementDescriptor),
             required: true,
-          }}
-          helpToolTipProps={{
-            title: intl.formatMessage(messages.tootltipPlacementDescriptor),
           }}
           {...fields.placement_holder}
           disabled={true}
@@ -257,9 +272,11 @@ class PlacementDescriptorForm extends React.Component<JoinedProps> {
                           : 'Application ID',
                     }}
                     helpToolTipProps={{
-                      title: intl.formatMessage(
-                        messages.tootltipPlacementDescriptor,
-                      ),
+                      title:
+                        this.props.initialValues.placement_holder ===
+                        'WEB_BROWSER'
+                          ? intl.formatMessage(messages.websiteValueTooltip)
+                          : intl.formatMessage(messages.mobileValueTooltip),
                     }}
                   />
                   <Fields

@@ -173,7 +173,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
   handleCSVreplacement = (data: string[][]) => {
     const { fields, formChange } = this.props;
     const newFields: PlacementDescriptorListFieldModel[] = [];
-    data.forEach(row => {
+    data.filter(row => row.length === 3).forEach(row => {
       newFields.push({
         key: cuid(),
         model: {
@@ -268,7 +268,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
       initialValues: field
         ? field.model
         : isWebSiteForm
-          ? { descriptor_type: 'EXACT_URL', placement_holder: 'WEB_BROWSER' }
+          ? { descriptor_type: 'PATTERN', placement_holder: 'WEB_BROWSER' }
           : {
               descriptor_type: 'EXACT_APPLICATION_ID',
               placement_holder: 'APPLICATION',

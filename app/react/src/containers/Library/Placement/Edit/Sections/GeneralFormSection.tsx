@@ -30,11 +30,11 @@ const messages = defineMessages({
   },
   tootltipPlacementListName: {
     id: 'edit.placement.list.general.infos.tooltip.name',
-    defaultMessage: 'Lorem Ipsum',
+    defaultMessage: 'Give your Placement List a Name so you can find it back in the different screens.',
   },
   tootltipTechnicalName: {
     id: 'edit.placement.list.general.infos.tooltip.technical.name',
-    defaultMessage: 'Lorem Ipsum',
+    defaultMessage: 'The technical Name is used for custom integrations.',
   },
   advancedFormSectionButtontext: {
     id: 'edit.placement.list.general.infos.advanced.button',
