@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Row, Col, Checkbox, Tooltip, Modal } from 'antd';
+import { Checkbox, Modal } from 'antd';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
-import { McsIcon } from '../../../../../../../components';
-import { FormSection } from '../../../../../../../components/Form';
+
+import { FormSection, FormFieldWrapper } from '../../../../../../../components/Form';
 import messages from '../../../messages';
 import LocationSelectionRenderer from './LocationSelectionRenderer';
 import SelectGeoname from './SelectGeoname';
@@ -189,6 +189,8 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
     const removeField = (field: LocationFieldModel, index: number) =>
       fields.remove(index);
 
+    const flexAlign = allFields.length > 0 ? 'top' : 'middle';
+
     return (
       <div className="locationTargeting">
         <FormSection
@@ -207,39 +209,28 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
           />
         </Checkbox>
         <div className={showLocationTargeting ? '' : 'hide-section'}>
-          <Row align="middle" type="flex">
-            <Col span={4} />
-            <Col span={10}>
-              <LocationSelectionRenderer
-                locationFields={allFields}
-                onClickOnRemove={removeField}
-              />
-            </Col>
-          </Row>
-          <Row align="middle" type="flex">
-            <Col span={4} className="label-col field-label">
-              <FormattedMessage
-                id="label-location-targeting"
-                defaultMessage="Location : "
-              />
-            </Col>
-            <Col span={10}>
-              <SelectGeoname
+          <FormFieldWrapper
+            label={<FormattedMessage
+              id="label-location-targeting"
+              defaultMessage="Location"
+            />}
+            rowProps={{ align: flexAlign }}
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionLocationTooltipMessage,
+              )
+            }}
+          >
+            <LocationSelectionRenderer
+              locationFields={allFields}
+              onClickOnRemove={removeField}
+            />
+            <SelectGeoname
                 onGeonameSelect={this.addLocationField}
                 hiddenGeonameIds={alreadySelectedGeonameIds}
               />
-            </Col>
-            <Col span={2} className="field-tooltip">
-              <Tooltip
-                placement="right"
-                title={formatMessage(
-                  messages.contentSectionLocationTooltipMessage,
-                )}
-              >
-                <McsIcon type="info" />
-              </Tooltip>
-            </Col>
-          </Row>
+          </FormFieldWrapper>
+          
         </div>
       </div>
     );
