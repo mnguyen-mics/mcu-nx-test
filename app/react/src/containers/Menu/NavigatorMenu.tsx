@@ -13,7 +13,7 @@ import {
   itemDefinitions,
   itemDisplayedOnlyIfDatamart,
 } from './menuDefinitions';
-import { compose } from 'redux';
+import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { Datamart } from '../../models/organisation/organisation';
@@ -26,8 +26,11 @@ const basePath = '/v2/o/:organisationId(\\d+)';
 export interface NavigatorMenuProps {
   mode: MenuMode;
   collapsed: boolean;
-  organisationHasDatamarts: (organisationId: string) => boolean;
   onMenuItemClick: () => void;
+}
+
+interface NavigatorMenuStoreProps {
+  organisationHasDatamarts: (organisationId: string) => boolean;
   defaultDatamart: (organisationId: string) => Datamart;
   orgFeatures: string[];
 }
@@ -36,7 +39,7 @@ interface RouteProps {
   organisationId: string;
 }
 
-type Props = NavigatorMenuProps & RouteComponentProps<RouteProps>
+type Props = NavigatorMenuProps & RouteComponentProps<RouteProps> & NavigatorMenuStoreProps;
 
 interface NavigatorMenuState {
   inlineOpenKeys: string[];
@@ -220,10 +223,10 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {};
 
-export default compose(
-  withRouter,
+export default compose<Props, NavigatorMenuProps>(
   connect(
     mapStateToProps,
     mapDispatchToProps,
   ),
+  withRouter,
 )(NavigatorMenu);

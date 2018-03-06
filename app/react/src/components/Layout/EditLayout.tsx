@@ -5,7 +5,7 @@ import { NavigatorHeader } from '../../containers/Header';
 const NavigatorHeaderJS = NavigatorHeader as any;
 
 interface EditLayoutProps {
-  editComponent: new() => React.Component;
+  editComponent: React.ComponentType;
 }
 
 const EditLayout: React.SFC<EditLayoutProps> = props => {

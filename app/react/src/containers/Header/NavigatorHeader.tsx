@@ -134,7 +134,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 
-export default compose<Props, NavigatorHeaderProps>(
+export default compose<Props, {}>(
   withRouter,
   injectDatamart,
   connect(mapStateToProps)

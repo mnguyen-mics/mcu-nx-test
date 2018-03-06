@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout, Icon } from 'antd';
 import { connect } from 'react-redux';
-import { push as PushMenu } from 'react-burger-menu';
+import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
 
 import { NavigatorHeader } from '../../containers/Header';
 import { NavigatorMenu } from '../../containers/Menu';
 import { Logo } from '../../containers/Logo';
 import * as MenuActions from '../../state/Menu/actions';
-import { ButtonStyleless } from '../index.ts';
+import { ButtonStyleless } from '../';
+import { compose } from 'recompose';
+import { MenuMode } from 'antd/lib/menu';
 
 const { Content, Sider } = Layout;
 
@@ -26,9 +27,42 @@ const messages = defineMessages({
   }
 });
 
-class MainLayout extends Component {
+export interface MainLayoutProps {
+  contentComponent: React.ComponentType;
+  actionBarComponent: React.ComponentType | null;
+  showOrgSelector: boolean;
+  organisationSelector: any;
+  orgSelectorSize: number;
+}
 
-  constructor(props) {
+interface MainLayoutStoreProps {
+  collapsed: boolean;
+  mode: MenuMode;
+  openCloseMenu: (a: { collapsed: boolean, mode: MenuMode }) => void;
+}
+
+interface MainLayoutState {
+  isOpen: boolean;
+  left: number;
+  right: number;
+}
+
+type Props = MainLayoutProps & RouteComponentProps<{}> & MainLayoutStoreProps;
+
+const LayoutId = Layout as any;
+const ColAny = Col as any;
+
+// waiting for https://github.com/ant-design/ant-design/commit/518c424ca4a023f3faebce0adf64219989be0018 to be released to remove any
+
+class MainLayout extends React.Component<Props, MainLayoutState> {
+
+  public static defaultProps: Partial<MainLayoutProps & MainLayoutStoreProps> = {
+    actionBarComponent: null,
+    collapsed: false,
+    mode: 'inline',
+  }
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       isOpen: false,
@@ -37,7 +71,7 @@ class MainLayout extends Component {
     };
   }
 
-  onCollapse = (collapsed) => {
+  onCollapse = (collapsed: boolean) => {
     const { openCloseMenu } = this.props;
 
     openCloseMenu({
@@ -47,7 +81,7 @@ class MainLayout extends Component {
 
     const event = new Event('redraw');
 
-    global.window.dispatchEvent(event);
+    window.dispatchEvent(event);
   }
 
   onMenuItemClick = () => {
@@ -72,7 +106,7 @@ class MainLayout extends Component {
       this.onCollapse(!this.props.collapsed);
     };
 
-    const resizeBox = (type) => {
+    const resizeBox = (type?: 'left' | 'right') => () => {
       switch (type) {
         case 'left':
           return this.setState({ left: 20, right: 4 });
@@ -85,21 +119,21 @@ class MainLayout extends Component {
 
     return showOrgSelector ? (
       <Row>
-        <Col span={this.state.left} className="left" onMouseEnter={() => resizeBox('left')} onMouseLeave={() => resizeBox()} >
+        <ColAny span={this.state.left} className="left" onMouseEnter={resizeBox('left')} onMouseLeave={resizeBox()} >
           <ButtonStyleless onClick={orgSelector} style={{ width: '100%' }}>
             <span><Icon type="bars" /> <span className={this.state.left > 12 && !this.props.collapsed ? 'visible' : 'hidden'}><FormattedMessage {...messages.switchOrg} /></span></span>
           </ButtonStyleless>
-        </Col>
-        <Col span={this.state.right} className="right" onMouseEnter={() => resizeBox('right')} onMouseLeave={() => resizeBox()}>
+        </ColAny>
+        <ColAny span={this.state.right} className="right" onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
           <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }}>
             {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </ButtonStyleless>
-        </Col>
+        </ColAny>
       </Row>
     ) : (
       <Row>
         <Col span={24} className="all">
-          <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }} onMouseEnter={() => resizeBox('right')} onMouseLeave={() => resizeBox()}>
+          <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }} onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
             {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </ButtonStyleless>
         </Col>
@@ -117,24 +151,25 @@ class MainLayout extends Component {
       orgSelectorSize,
     } = this.props;
 
+    const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen })
+
     return (
       <div id="mcs-full-page" className="mcs-fullscreen">
         <PushMenu
-          className=""
           pageWrapId={'mcs-main-layout'}
           outerContainerId={'mcs-full-page'}
           isOpen={this.state.isOpen}
-          onStateChange={(state) => this.setState({ isOpen: state.isOpen })}
+          onStateChange={onStateChange}
           width={orgSelectorSize}
         >
           <OrganisationSelector size={orgSelectorSize} />
         </PushMenu>
 
-        <Layout id="mcs-main-layout" className="mcs-fullscreen">
+        <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
 
           <Sider
             style={collapsed ? {} : { overflow: 'auto' }}
-            collapsible
+            collapsible={true}
             collapsed={collapsed}
             trigger={this.renderTrigger()}
           >
@@ -160,31 +195,13 @@ class MainLayout extends Component {
             }
           </Layout>
 
-        </Layout>
+        </LayoutId>
       </div>
     );
   }
 }
 
-MainLayout.defaultProps = {
-  actionBarComponent: null,
-  collapsed: false,
-  mode: 'inline',
-  openCloseMenu: () => {},
-};
-
-MainLayout.propTypes = {
-  contentComponent: PropTypes.func.isRequired,
-  actionBarComponent: PropTypes.func,
-  collapsed: PropTypes.bool,
-  mode: PropTypes.string,
-  openCloseMenu: PropTypes.func,
-  showOrgSelector: PropTypes.bool.isRequired,
-  organisationSelector: PropTypes.func.isRequired,
-  orgSelectorSize: PropTypes.number.isRequired,
-};
-
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: any) => ({
   collapsed: state.menu.collapsed,
   mode: state.menu.mode,
 });
@@ -193,11 +210,11 @@ const mapDispatchToProps = {
   openCloseMenu: MenuActions.openCloseMenu,
 };
 
-MainLayout = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+
+export default compose<Props, MainLayoutProps>(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )
 )(MainLayout);
-
-MainLayout = withRouter(MainLayout);
-
-export default MainLayout;
