@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ReactAngular from '../../../../../Datastudio/QueryTool/ReactAngular';
+import ReactAngular from '../../../../../ReactAngular/ReactAngular';
 
 
 export interface AngularWidgetProps {

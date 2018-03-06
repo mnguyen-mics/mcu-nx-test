@@ -5,6 +5,18 @@ export default defineMessages({
     id: 'automation.edit.section1.title',
     defaultMessage: 'Automation',
   },
+  breadcrumbTitle: {
+    id: 'automation.edit.breadcrumb.title',
+    defaultMessage: 'Automations',
+  },
+  breadcrumbNew: {
+    id: 'automation.edit.breadcrumb.new',
+    defaultMessage: 'New Automation',
+  },
+  breadcrumbEdit: {
+    id: 'automation.edit.breadcrumb.edit',
+    defaultMessage: 'Edit { name }',
+  },
   saveAutomation: {
     id: 'automation.edit.save',
     defaultMessage: 'Save',

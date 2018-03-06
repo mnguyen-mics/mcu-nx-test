@@ -118,15 +118,15 @@ class EditAutomationPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { match: { params: { organisationId } } } = this.props;
+    const { match: { params: { organisationId, automationId } }, intl } = this.props;
 
     const breadcrumbPaths = [
       {
-        name: messages.saveAutomation,
+        name: messages.breadcrumbTitle,
         path: `/v2/o/${organisationId}/automations`,
       },
       {
-        name: '',
+        name: automationId ? intl.formatMessage(messages.breadcrumbEdit, { name: this.state.automationFormData.automation.name }) : messages.breadcrumbNew,
       },
     ];
 

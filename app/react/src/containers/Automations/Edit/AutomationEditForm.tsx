@@ -63,7 +63,7 @@ class AutomationEditForm extends React.Component<Props> {
     const sections: McsFormSection[] = [];
     sections.push({
       id: 'general',
-      title: messages.sectionTitle1,
+      title: messages.sectionGeneralTitle,
       component: <GeneralFormSection />,
     });
 
