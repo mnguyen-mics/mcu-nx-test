@@ -39,7 +39,7 @@ function* watchAngularInitializationSuccess() {
 }
 
 function* watchInitializationFailure() {
-  const error = yield take([LOAD_TRANSLATIONS.FAILURE]);
+  const error = yield take(LOAD_TRANSLATIONS.FAILURE);
   return error;
 }
 
