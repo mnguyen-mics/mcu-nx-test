@@ -176,7 +176,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
 }
 
 
-export default compose(
+export default compose<Props, SitesListPageProps>(
   withRouter,
   injectDatamart,
   injectNotifications,

@@ -164,7 +164,7 @@
   "scripts": {
     "test": "grunt test",
     "i18n": "node scripts/i18n.js",
-    "test:tslint": "tslint -c tslint.json 'app/rePact/src/**/*.{ts,tsx}'",
+    "test:tslint": "tslint -c tslint.json 'app/react/src/**/*.{ts,tsx}'",
     "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "start": "cross-env NODE_OPTIONS=--max_old_space_size=2000 grunt serve",

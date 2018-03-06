@@ -65,11 +65,9 @@ class OrganisationSettings extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
-      datamart,
     } = this.props;
 
     const urlParams = this.getUrlParameters();
-    const datamartId = datamart && datamart.id;
 
     const onTabClick = (key: string) => this.switchTab(key)
 
@@ -77,7 +75,7 @@ class OrganisationSettings extends React.Component<Props> {
       <div>
         <Row className="mcs-table-container">
           <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={onTabClick}>
-            <TabPane tab={formatMessage(messages.labels)} key="labels"><LabelsListPage datamartId={datamartId} /></TabPane>
+            <TabPane tab={formatMessage(messages.labels)} key="labels"><LabelsListPage /></TabPane>
             <TabPane tab={formatMessage(messages.users)} key="users"><UserListPage /></TabPane>
           </Tabs>
         </Row>

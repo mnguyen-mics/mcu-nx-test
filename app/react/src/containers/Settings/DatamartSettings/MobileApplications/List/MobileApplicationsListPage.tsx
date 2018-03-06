@@ -20,7 +20,6 @@ import { Filter } from '../../Common/domain';
 
 
 export interface MobileApplicationsListPageProps {
-  organisationId: string;
   datamartId: string;
 }
 
@@ -75,7 +74,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
 
   componentDidMount() {
     const {
-      organisationId,
+      match: { params: { organisationId } },
       datamartId,
     } = this.props;
 
@@ -102,7 +101,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
 
   handleFilterChange = (newFilter: Filter) => {
     const {
-      organisationId,
+      match: { params: { organisationId } },
       datamartId,
     } = this.props;
 
@@ -146,7 +145,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
 
   render() {
     const {
-      organisationId,
+      match: { params: { organisationId } },
       datamartId,
     } = this.props;
 
@@ -183,7 +182,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
   }
 }
 
-export default compose(
+export default compose<Props, MobileApplicationsListPageProps>(
   injectIntl,
   withRouter,
   injectDrawer,

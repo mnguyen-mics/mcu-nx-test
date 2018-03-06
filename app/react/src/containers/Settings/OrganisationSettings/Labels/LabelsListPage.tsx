@@ -3,24 +3,16 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Button, Modal, Input, Alert } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
-<<<<<<< a40f423eaefe246407c4791c1ed4ca21d55e25fc:app/react/src/containers/Settings/Labels/LabelsListPage.tsx
-import { withMcsRouter } from '../../Helpers';
-import * as labelsActions from '../../../state/Labels/actions';
-import { Label } from '../../Labels/Labels';
-import LabelsService from '../../../services/LabelsService';
-=======
 import { withMcsRouter } from '../../../Helpers';
 import * as labelsActions from '../../../../state/Labels/actions';
 import { Label } from '../../../Labels/Labels';
 import LabelsService from '../../../../services/LabelsService';
-import * as notifyActions from '../../../../state/Notifications/actions';
->>>>>>> Refactor Settings:app/react/src/containers/Settings/OrganisationSettings/Labels/LabelsListPage.tsx
 
 import settingsMessages from '../../messages';
 import messages from './messages';
 
 import LabelsTable, { Filters } from './LabelsTable';
-import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 interface Options {
   limit: number;

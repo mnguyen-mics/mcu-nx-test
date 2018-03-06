@@ -80,7 +80,7 @@ class Settings extends React.Component<Props> {
           <Tabs defaultActiveKey={urlParams.currentTab} tabPosition="left" onTabClick={onTabClick}>
             {datamartId && <TabPane tab={formatMessage(messages.sites)} key="sites"><SitesListPage datamartId={datamartId} /></TabPane>}
             {datamartId && <TabPane tab={formatMessage(messages.mobileApplications)} key="mobile_applications"><MobileApplicationsListPage datamartId={datamartId} /></TabPane>}
-            {datamartId && <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage datamartId={datamartId} /></TabPane>}
+            {datamartId && <TabPane tab={formatMessage(messages.datamarts)} key="datamarts"><DatamartsListPage /></TabPane>}
           </Tabs>
         </Row>
       </div>
