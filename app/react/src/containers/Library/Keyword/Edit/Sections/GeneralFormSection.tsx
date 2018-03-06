@@ -26,7 +26,7 @@ const messages = defineMessages({
   },
   labelKeywordListName: {
     id: 'edit.keywordList.general.infos.label.name',
-    defaultMessage: 'Keyword List Name',
+    defaultMessage: 'Keywords List Name',
   },
   tootltipKeywordListName: {
     id: 'edit.keywordList.general.infos.tooltip.name',

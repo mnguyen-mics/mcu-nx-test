@@ -2,7 +2,15 @@ import * as React from 'react';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { Omit, compose } from 'recompose';
-import { ConfigProps, InjectedFormProps, Form, reduxForm } from 'redux-form';
+import {
+  ConfigProps,
+  InjectedFormProps,
+  Form,
+  reduxForm,
+  GenericFieldArray,
+  FieldArray,
+  Field,
+} from 'redux-form';
 import { defineMessages } from 'react-intl';
 
 import FormLayoutActionbar, {
@@ -10,7 +18,10 @@ import FormLayoutActionbar, {
 } from '../../../../components/Layout/FormLayoutActionbar';
 import { Path } from '../../../../components/ActionBar';
 import { KeywordListFormData } from './domain';
-import { McsFormSection } from '../../../../utils/FormHelper';
+import {
+  McsFormSection,
+  ReduxFormChangeProps,
+} from '../../../../utils/FormHelper';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import KeywordsFormSection from './Sections/KeywordsFormSection';
 import ScrollspySider, {
@@ -19,6 +30,11 @@ import ScrollspySider, {
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const KeywordsFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ReduxFormChangeProps
 >;
 
 const FORM_ID = 'keywordListForm';
@@ -70,8 +86,15 @@ class KeywordListForm extends React.Component<
     const keywords = {
       id: 'keywords',
       title: messages.sectionTitleKeywords,
-      component: <KeywordsFormSection />
-    }
+      component: (
+        <KeywordsFieldArray
+          name="keywords"
+          component={KeywordsFormSection}
+          formChange={this.props.change}
+          rerenderOnEveryChange={true}
+        />
+      ),
+    };
 
     sections.push(general);
     sections.push(keywords);
@@ -130,5 +153,5 @@ export default compose<JoinedProps, KeywordListFormProps>(
   reduxForm<KeywordListFormData, KeywordListFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
-  })
+  }),
 )(KeywordListForm);

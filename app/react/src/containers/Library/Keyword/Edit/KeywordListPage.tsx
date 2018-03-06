@@ -7,11 +7,12 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { KeywordListFormData } from './domain';
 import { Loading } from '../../../../components/index';
 import KeywordService from '../../../../services/Library/KeywordListsService';
+import { createFieldArrayModel } from '../../../../utils/FormHelper';
 
 const messages = defineMessages({
   editKeywordList: {
     id: 'edit.keywordList.form.button.save',
-    defaultMessage: 'Edit Keyword List',
+    defaultMessage: 'Edit {name}',
   },
   keywordList: {
     id: 'edit.keywordList.form.default.name.keywordList',
@@ -19,15 +20,15 @@ const messages = defineMessages({
   },
   newKeywordList: {
     id: 'edit.keywordList.form.button.new.keywordList.',
-    defaultMessage: 'New Keyword List',
+    defaultMessage: 'New Keywords List',
   },
   keywordLists: {
     id: 'edit.keywordList.form.breadcrumb.keywordLists',
-    defaultMessage: 'Keyword Lists',
+    defaultMessage: 'Keywords Lists',
   },
   keywordListSaved: {
     id: 'edit.keywordList.form.save.success',
-    defaultMessage: 'Keyword List successfully saved.',
+    defaultMessage: 'Keywords List successfully saved.',
   },
 });
 
@@ -40,7 +41,7 @@ interface KeywordListPageState {
 
 type JoinedProps = KeywordListPageProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string; keywordListId: string }>;
+  RouteComponentProps<{ organisationId: string; keywordsListId: string }>;
 
 class KeywordListPage extends React.Component<
   JoinedProps,
@@ -51,13 +52,13 @@ class KeywordListPage extends React.Component<
     this.state = {
       keywordListFormData: {},
       isLoading: false,
-    }
+    };
   }
 
   componentDidMount() {
-    const { match: { params: { keywordListId } } } = this.props;
-    if (keywordListId) {
-      KeywordService.getKeywordList(keywordListId)
+    const { match: { params: { keywordsListId } } } = this.props;
+    if (keywordsListId) {
+      KeywordService.getKeywordList(keywordsListId)
         .then(resp => resp.data)
         .then(keywordListFormdata => {
           KeywordService.getKeywordListExpressions(keywordListFormdata.id)
@@ -67,7 +68,9 @@ class KeywordListPage extends React.Component<
                 keywordListFormData: {
                   name: keywordListFormdata.name,
                   list_type: keywordListFormdata.list_type,
-                  keywords: keywords
+                  keywords: keywords.map(keywordResource =>
+                    createFieldArrayModel(keywordResource),
+                  ),
                 },
               });
             });
@@ -77,31 +80,27 @@ class KeywordListPage extends React.Component<
 
   save = (formData: KeywordListFormData) => {
     const {
-      match: { params: { keywordListId, organisationId } },
+      match: { params: { keywordsListId, organisationId } },
       intl,
     } = this.props;
     formData.list_type = 'UNION';
-    if (keywordListId) {
-      KeywordService.saveKeywordList(keywordListId, formData).then(
-        () => {
-          this.close();
-          message.success(intl.formatMessage(messages.keywordListSaved));
-        },
-      );
+    if (keywordsListId) {
+      KeywordService.saveKeywordList(keywordsListId, formData).then(() => {
+        this.close();
+        message.success(intl.formatMessage(messages.keywordListSaved));
+      });
     } else {
-      KeywordService.createKeywordList(organisationId, formData).then(
-        () => {
-          this.close();
-          message.success(intl.formatMessage(messages.keywordListSaved));
-        },
-      );
+      KeywordService.createKeywordList(organisationId, formData).then(() => {
+        this.close();
+        message.success(intl.formatMessage(messages.keywordListSaved));
+      });
     }
   };
 
   close = () => {
     const { history, match: { params: { organisationId } } } = this.props;
 
-    const url = `/v2/o/${organisationId}/library/keywords`;
+    const url = `/v2/o/${organisationId}/library/keywordslists`;
 
     return history.push(url);
   };
@@ -109,14 +108,14 @@ class KeywordListPage extends React.Component<
   render() {
     const {
       intl,
-      match: { params: { organisationId, keywordListId } },
+      match: { params: { organisationId, keywordsListId } },
     } = this.props;
     const { keywordListFormData, isLoading } = this.state;
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     } else {
       const keywordListName =
-        keywordListId && keywordListFormData
+        keywordsListId && keywordListFormData
           ? intl.formatMessage(messages.editKeywordList, {
               name: keywordListFormData.name
                 ? keywordListFormData.name

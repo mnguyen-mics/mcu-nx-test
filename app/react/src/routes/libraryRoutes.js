@@ -31,12 +31,17 @@ const campaignsRoutes = [
   //            Keywords
   // ========================================
   {
-    path: '/library/keywords',
+    path: '/library/keywordslists',
     layout: 'main',
     ...KeywordList,
   },
   {
     path: '/library/keywordslist/:keywordsListId',
+    layout: 'edit',
+    editComponent: KeywordListPage,
+  },
+  {
+    path: '/library/keywordslist',
     layout: 'edit',
     editComponent: KeywordListPage,
   },

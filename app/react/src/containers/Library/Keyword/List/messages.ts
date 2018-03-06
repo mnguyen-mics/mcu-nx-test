@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   keywords: {
     id: 'keywords.breadcrumb.title',
-    defaultMessage: 'Keywords',
+    defaultMessage: 'Keywords Lists',
   },
   newKeyword: {
     id: 'keywords.actionbar.button.new',

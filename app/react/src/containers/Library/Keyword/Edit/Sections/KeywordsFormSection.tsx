@@ -2,18 +2,20 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Tag, Input, Tooltip, Icon } from 'antd';
-
+import cuid from 'cuid';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../components/Form/withNormalizer';
-import {
-  FormSection,
-} from '../../../../../components/Form';
+import { FormSection } from '../../../../../components/Form';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { TagProps } from 'antd/lib/tag';
+import { WrappedFieldArrayProps } from 'redux-form';
+import {
+  ReduxFormChangeProps,
+  FieldArrayModel,
+} from '../../../../../utils/FormHelper';
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
@@ -30,36 +32,40 @@ const messages = defineMessages({
   },
 });
 
+interface KeywordResource {
+  exclude?: boolean;
+  expression: string;
+  id?: string;
+}
+
 const CustomTag = Tag as any;
 
-type Props = InjectedIntlProps &
+interface KeywordsFormSectionProps extends ReduxFormChangeProps {
+  keywords: KeywordResource[];
+}
+
+type Props = KeywordsFormSectionProps &
+  InjectedIntlProps &
   ValidatorProps &
   NormalizerProps &
+  WrappedFieldArrayProps<FieldArrayModel<KeywordResource>> &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 
 interface State {
-  tags: string[];
   inputVisible: boolean;
   inputValue: string;
 }
 
 class KeywordsFormSection extends React.Component<Props, State> {
-
   input: any;
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
       inputVisible: false,
       inputValue: '',
     };
   }
-
-  handleClose = (removedTag: any) => () => {
-    const tags = this.state.tags.filter(tag => tag !== removedTag);
-    this.setState({ tags });
-  };
 
   showInput = () => {
     this.setState({ inputVisible: true }, () => this.input.focus());
@@ -70,14 +76,16 @@ class KeywordsFormSection extends React.Component<Props, State> {
   };
 
   handleInputConfirm = () => {
-    const state = this.state;
-    const inputValue = state.inputValue;
-    let tags = state.tags;
-    if (inputValue && tags.indexOf(inputValue) === -1) {
-      tags = [...tags, inputValue];
-    }
+    const { fields } = this.props;
+    const inputValue = this.state.inputValue;
+    fields.push({
+      key: cuid(),
+      model: {
+        expression: inputValue,
+        exclude: false,
+      },
+    });
     this.setState({
-      tags,
       inputVisible: false,
       inputValue: '',
     });
@@ -86,8 +94,8 @@ class KeywordsFormSection extends React.Component<Props, State> {
   saveInputRef = (input: any) => (this.input = input);
 
   render() {
-
-    const { tags, inputVisible, inputValue } = this.state;
+    const { inputVisible, inputValue } = this.state;
+    const { fields } = this.props;
 
     return (
       <div>
@@ -97,25 +105,31 @@ class KeywordsFormSection extends React.Component<Props, State> {
         />
 
         <div>
-          {tags.map((tag, index) => {
-            const isLongTag = tag.length > 20;
-            const tagElem = (
-              <Tag
-                key={tag}
-                closable={index !== 0}
-                afterClose={this.handleClose(tag)}
-              >
-                {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-              </Tag>
-            );
-            return isLongTag ? (
-              <Tooltip title={tag} key={tag}>
-                {tagElem}
-              </Tooltip>
-            ) : (
-              tagElem
-            );
-          })}
+          {fields.getAll() &&
+            fields.getAll().length > 1 &&
+            fields.getAll().map((field, index) => {
+              const removeField = () => fields.remove(index);
+              const isLongExpression =
+                field.model.expression && field.model.expression.length > 20;
+              const tagElem = (
+                <Tag
+                  key={field.model.id}
+                  closable={index !== 0}
+                  afterClose={removeField}
+                >
+                  {isLongExpression
+                    ? `${field.model.expression.slice(0, 20)}...`
+                    : field.model.expression}
+                </Tag>
+              );
+              return isLongExpression ? (
+                <Tooltip title={field.model.expression} key={field.model.id}>
+                  {tagElem}
+                </Tooltip>
+              ) : (
+                tagElem
+              );
+            })}
           {inputVisible && (
             <Input
               ref={this.saveInputRef}
@@ -133,7 +147,7 @@ class KeywordsFormSection extends React.Component<Props, State> {
               onClick={this.showInput}
               style={{ background: '#fff', borderStyle: 'dashed' }}
             >
-              <Icon type="plus" /> New Tag
+              <Icon type="plus" /> New Keyword
             </CustomTag>
           )}
         </div>
@@ -142,6 +156,9 @@ class KeywordsFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer, withRouter)(
-  KeywordsFormSection,
-);
+export default compose<Props, KeywordsFormSectionProps>(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+  withRouter,
+)(KeywordsFormSection);
