@@ -24,9 +24,9 @@ import {
 
 import { getAudienceSegmentPerformance } from '../../../../../state/Audience/Segments/selectors';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
-import injectColors, {
-  InjectedColorsProps,
-} from '../../../../Helpers/injectColors';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 import { RouteComponentProps } from 'react-router';
 
 const StackedBarChartsJS = StackedBarCharts as any;
@@ -37,7 +37,7 @@ interface MapStateToProps {
 }
 
 type AdditionDeletionProps = MapStateToProps &
-  InjectedColorsProps &
+  InjectedThemeColorsProps &
   TranslationProps &
   RouteComponentProps<{}>;
 
@@ -160,5 +160,5 @@ const mapStateToProps = (state: any) => ({
 export default compose<{}, {}>(
   withRouter,
   connect(mapStateToProps),
-  injectColors,
+  injectThemeColors,
 )(AdditionDeletion);

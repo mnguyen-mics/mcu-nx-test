@@ -22,6 +22,8 @@ import {
 
 import { getTableDataSource } from '../../../../../state/Campaign/Email/selectors';
 
+import injectThemeColors from '../../../../../containers/Helpers/injectThemeColors.ts';
+
 class EmailStackedAreaChart extends Component {
 
   generateColors = () => {
@@ -161,7 +163,6 @@ const mapStateToProps = state => ({
   isFetchingCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.isFetching,
   hasFetchedCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.hasFetched,
   dataSource: getTableDataSource(state),
-  colors: state.theme.colors
 });
 
 
@@ -179,6 +180,7 @@ EmailStackedAreaChart = connect(
 
 EmailStackedAreaChart = compose(
   injectIntl,
+  injectThemeColors,
   withRouter,
 )(EmailStackedAreaChart);
 

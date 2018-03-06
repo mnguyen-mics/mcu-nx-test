@@ -26,7 +26,9 @@ import { getAudienceSegmentPerformance } from '../../../../../state/Audience/Seg
 
 import messages from '../messages';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
-import injectColors, { InjectedColorsProps } from '../../../../Helpers/injectColors';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 
 const StackedAreaPlotJS = StackedAreaPlot as any;
 
@@ -36,7 +38,8 @@ interface MapStateToProps {
 }
 
 type OverviewProps = MapStateToProps &
-  TranslationProps & InjectedColorsProps & 
+  TranslationProps &
+  InjectedThemeColorsProps &
   RouteComponentProps<{
     organisationId: string;
     segmentId: string;
@@ -166,5 +169,5 @@ const mapStateToProps = (state: any) => ({
 export default compose<{}, {}>(
   withRouter,
   connect(mapStateToProps),
-  injectColors,
+  injectThemeColors,
 )(Overview);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { compose } from 'recompose';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -15,10 +16,13 @@ import {
   parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
+import injectThemeColors from '../../../../../containers/Helpers/injectThemeColors.ts';
+
 import {
   getTableDataSource,
   normalizedEmailPerformance,
 } from '../../../../../state/Campaign/Email/selectors';
+
 
 class EmailPieCharts extends Component {
 
@@ -246,14 +250,10 @@ const mapStateToProps = state => ({
   hasFetchedCampaignStat: state.emailCampaignSingle.emailCampaignPerformance.hasFetched,
   dataSource: getTableDataSource(state),
   flatData: normalizedEmailPerformance(state),
-  colors: state.theme.colors
 });
 
-
-EmailPieCharts = connect(
-  mapStateToProps,
+export default compose(
+  withRouter,
+  injectThemeColors,
+  connect(mapStateToProps, undefined)
 )(EmailPieCharts);
-
-EmailPieCharts = withRouter(EmailPieCharts);
-
-export default EmailPieCharts;

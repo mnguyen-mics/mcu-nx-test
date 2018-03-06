@@ -19,9 +19,9 @@ import messages from '../messages';
 
 import { getOverlapView } from '../../../../../state/Audience/Segments/selectors';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
-import injectColors, {
-  InjectedColorsProps,
-} from '../../../../Helpers/injectColors';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 import {
   injectDatamart,
   InjectedDatamartProps,
@@ -52,7 +52,7 @@ interface MapDispatchToProps {
 
 type OverlapProps = MapStateToProps &
   MapDispatchToProps &
-  InjectedColorsProps &
+  InjectedThemeColorsProps &
   InjectedDatamartProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
@@ -198,6 +198,6 @@ export default compose<{}, {}>(
   withRouter,
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps),
-  injectColors,
+  injectThemeColors,
   injectDatamart,
 )(Overlap);
