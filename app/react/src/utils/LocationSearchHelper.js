@@ -15,6 +15,14 @@ export const LABELS_SEARCH_SETTINGS = [{
   isValid: query => !query.label_id || query.label_id.split(',').length > 0,
 }];
 
+export const SETTINGS_PAGINATION_SEARCH_SETTINGS = [{
+  paramName: 'tab',
+  defaultValue: 'site',
+  deserialize: query => query.tab,
+  serialize: value => value,
+  isValid: query => query,
+}];
+
 export const PAGINATION_SEARCH_SETTINGS = [
   {
     paramName: 'currentPage',
