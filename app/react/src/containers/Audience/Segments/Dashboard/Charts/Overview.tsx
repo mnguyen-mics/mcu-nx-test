@@ -164,7 +164,7 @@ const mapStateToProps = (state: any) => ({
   colors: state.theme.colors,
 });
 
-export default compose<OverviewProps, OverviewProps>(
+export default compose<{}, {}>(
   withRouter,
   connect(mapStateToProps),
 )(Overview);

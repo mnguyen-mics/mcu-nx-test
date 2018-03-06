@@ -29,9 +29,9 @@ interface MapStateToProps {
   isFetchingOverlap: boolean;
   hasOverlap: boolean;
   dataSource: any;
-  defaultDatamart: any; // ??
-  segmentsInformation: any; // type
-  colors: any; // type
+  defaultDatamart: any;
+  segmentsInformation: any; 
+  colors: any;
 }
 
 interface MapDispatchToProps {
@@ -193,7 +193,7 @@ const mapDispatchToProps = {
     AudienceSegmentActions.createAudienceSegmentOverlap.request,
 };
 
-export default compose<OverlapProps, OverlapProps>(
+export default compose<{}, {}>(
   withRouter,
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps),

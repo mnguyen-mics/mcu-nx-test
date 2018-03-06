@@ -155,7 +155,7 @@ const mapStateToProps = (state: any) => ({
   colors: state.theme.colors,
 });
 
-export default compose<AdditionDeletionProps, AdditionDeletionProps>(
+export default compose<{}, {}>(
   withRouter,
   connect(mapStateToProps),
 )(AdditionDeletion);
