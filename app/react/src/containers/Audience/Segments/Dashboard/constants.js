@@ -2,7 +2,7 @@ import {
   PAGINATION_SEARCH_SETTINGS,
   DATE_SEARCH_SETTINGS,
   KEYWORD_SEARCH_SETTINGS,
-} from '../../../../utils/LocationSearchHelper';
+} from '../../../../utils/LocationSearchHelper.ts';
 
 const typeSearchSetting = {
   paramName: 'types',

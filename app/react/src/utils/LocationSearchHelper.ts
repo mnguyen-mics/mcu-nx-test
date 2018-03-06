@@ -1,101 +1,110 @@
 import queryString from 'query-string';
 import lodash from 'lodash';
-import McsMoment from './McsMoment.ts';
+import McsMoment from './McsMoment';
+import { Index } from '.';
 
-export const LABELS_SEARCH_SETTINGS = [{
+export interface SearchSetting {
+  paramName: string;
+  defaultValue: any;
+  deserialize: (query: Index<any>) => any;
+  serialize: (value: any) => string;
+  isValid: (query: Index<any>) => boolean;
+}
+
+export const LABELS_SEARCH_SETTINGS: SearchSetting[] = [{
   paramName: 'label_id',
   defaultValue: [],
-  deserialize: query => {
+  deserialize: (query: Index<string>) => {
     if (query.label_id) {
       return query.label_id.split(',');
     }
     return [];
   },
-  serialize: value => value.join(','),
-  isValid: query => !query.label_id || query.label_id.split(',').length > 0,
+  serialize: (value: string[]) => value.join(','),
+  isValid: (query: Index<string>) => !query.label_id || query.label_id.split(',').length > 0,
 }];
 
-export const SETTINGS_PAGINATION_SEARCH_SETTINGS = [{
+export const SETTINGS_PAGINATION_SEARCH_SETTINGS: SearchSetting[] = [{
   paramName: 'tab',
   defaultValue: 'site',
-  deserialize: query => query.tab,
-  serialize: value => value,
-  isValid: query => query,
+  deserialize: (query: Index<string>) => query.tab,
+  serialize: (value: string) => value,
+  isValid: (query: Index<string>) => !!query,
 }];
 
-export const PAGINATION_SEARCH_SETTINGS = [
+export const PAGINATION_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'currentPage',
     defaultValue: 1,
-    deserialize: query => parseInt(query.currentPage, 0),
-    serialize: value => value.toString(),
-    isValid: query => query.currentPage && !isNaN(parseInt(query.currentPage, 0)),
+    deserialize: (query: Index<string>) => parseInt(query.currentPage, 0),
+    serialize: (value: number) => value.toString(),
+    isValid: (query: Index<string>) => !!(query.currentPage && !isNaN(parseInt(query.currentPage, 0))),
   },
   {
     paramName: 'pageSize',
     defaultValue: 10,
-    deserialize: query => parseInt(query.pageSize, 0),
-    serialize: value => value.toString(),
-    isValid: query => query.pageSize && !isNaN(parseInt(query.pageSize, 0)),
+    deserialize: (query: Index<string>) => parseInt(query.pageSize, 0),
+    serialize: (value: number) => value.toString(),
+    isValid: (query: Index<string>) => !!(query.pageSize && !isNaN(parseInt(query.pageSize, 0))),
   },
 ];
 
-export const KEYWORD_SEARCH_SETTINGS = [
+export const KEYWORD_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'keywords',
     defaultValue: '',
-    deserialize: query => query.keywords,
-    serialize: value => value,
+    deserialize: (query: Index<string>) => query.keywords,
+    serialize: (value: string) => value,
     isValid: () => true,
   },
 ];
 
-export const FILTERS_SEARCH_SETTINGS = [
+export const FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'statuses',
     defaultValue: [],
-    deserialize: query => {
+    deserialize: (query: Index<string>) => {
       if (query.statuses) {
         return query.statuses.split(',');
       }
       return [];
     },
-    serialize: value => value.join(','),
-    isValid: query => !query.statuses || query.statuses.split(',').length > 0,
+    serialize: (value: string[]) => value.join(','),
+    isValid: (query: Index<string>) => !query.statuses || query.statuses.split(',').length > 0,
   },
   ...KEYWORD_SEARCH_SETTINGS,
 ];
 
-export const DATE_SEARCH_SETTINGS = [
+export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'from',
     defaultValue: new McsMoment('now-7d'),
-    deserialize: query => new McsMoment(query.from),
-    serialize: value => value.raw(),
-    isValid: query => query.from && query.from.length && new McsMoment(query.from).isValid(),
+    deserialize: (query: Index<string>) => new McsMoment(query.from),
+    serialize: (value: McsMoment) => value.raw() as string,
+    isValid: (query: Index<string>) => !!(query.from && query.from.length && new McsMoment(query.from).isValid()),
   },
   {
     paramName: 'to',
     defaultValue: new McsMoment('now'),
-    deserialize: query => new McsMoment(query.to),
-    serialize: value => value.raw(),
-    isValid: query => query.to && query.to.length && new McsMoment(query.to).isValid(),
+    deserialize: (query: Index<string>) => new McsMoment(query.to),
+    serialize: (value: McsMoment) => value.raw() as string,
+    isValid: (query: Index<string>) => !!(query.to && query.to.length && new McsMoment(query.to).isValid()),
   }
 ];
 
-export const ARCHIVED_SEARCH_SETTINGS = [
+export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'archived',
     defaultValue: false,
-    deserialize: query => query.archived === 'true',
-    serialize: value => value.toString(),
-    isValid: query => {
+    deserialize: (query: Index<string>) => query.archived === 'true',
+    serialize: (value: boolean) => value.toString(),
+    isValid: (query: Index<string>) => {
       return (query.archived === 'true' || query.archived === 'false');
     },
   },
 ];
 
-export const isSearchValid = (search, settings) => {
+export const isSearchValid = (search: string, settings: SearchSetting[]) => {
   const query = queryString.parse(search);
   // notEmpty and must forall settings query isValid
   return Object.keys(query).length > 0 &&
@@ -105,10 +114,10 @@ export const isSearchValid = (search, settings) => {
 };
 
 // add missing and/or replace invalid params with default value
-export const buildDefaultSearch = (existingSearch, settings) => {
+export const buildDefaultSearch = (existingSearch: string, settings: SearchSetting[]) => {
   const existingQuery = queryString.parse(existingSearch);
   const defaultQuery = settings.reduce((acc, setting) => {
-    const newAcc = acc;
+    const newAcc: any = acc;
     if (setting.isValid(existingQuery)) {
       newAcc[setting.paramName] = existingQuery[setting.paramName];
     } else if (typeof setting.defaultValue === 'function') {
@@ -122,7 +131,7 @@ export const buildDefaultSearch = (existingSearch, settings) => {
 };
 
 // merge query with serialized params object
-export const updateSearch = (search, params, settings) => {
+export const updateSearch = (search: string, params: Index<any>, settings?: SearchSetting[]) => {
   const query = queryString.parse(search);
 
   if (!settings) {
@@ -134,7 +143,7 @@ export const updateSearch = (search, params, settings) => {
   }
 
   const serializedParams = Object.keys(params).reduce((acc, paramName) => {
-    const newAcc = acc;
+    const newAcc: any = acc;
     const setting = settings.find(s => s.paramName === paramName);
     if (setting) {
       newAcc[paramName] = setting.serialize(params[paramName]);
@@ -153,7 +162,7 @@ export const updateSearch = (search, params, settings) => {
  * @param {Array} settings (optional) type settings
  * @returns the parsed search string into object
  */
-export const parseSearch = (search, settings) => {
+export const parseSearch = (search: string, settings: SearchSetting[]) => {
   const query = queryString.parse(search);
   if (!settings) return query;
   return settings.reduce((acc, setting) => ({
@@ -171,7 +180,7 @@ export const parseSearch = (search, settings) => {
  * @param {String} nextSearch
  * @returns true if two objects are equals
  */
-export const compareSearches = (currentSearch, nextSearch) => {
+export const compareSearches = (currentSearch: string, nextSearch: string) => {
   return lodash.isEqual(
     queryString.parse(currentSearch),
     queryString.parse(nextSearch),

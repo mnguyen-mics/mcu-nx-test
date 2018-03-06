@@ -12,7 +12,7 @@ import modalMessages from '../../../../common/messages/modalMessages';
 import ExportService from '../../../../services/ExportService';
 import { Actionbar } from '../../../Actionbar';
 import * as EmailCampaignActions from '../../../../state/Campaign/Email/actions';
-import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import { parseSearch } from '../../../../utils/LocationSearchHelper.ts';
 import McsIcon from '../../../../components/McsIcon.tsx';
 
 class EmailCampaignActionbar extends Component {

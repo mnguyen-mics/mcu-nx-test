@@ -27,7 +27,7 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../../utils/LocationSearchHelper';
+} from '../../../../utils/LocationSearchHelper.ts';
 
 import EmailCampaignService from '../../../../services/EmailCampaignService.ts';
 

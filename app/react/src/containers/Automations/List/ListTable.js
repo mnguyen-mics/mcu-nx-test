@@ -21,7 +21,7 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../utils/LocationSearchHelper';
+} from '../../../utils/LocationSearchHelper.ts';
 
 import {
   getTableDataSource,

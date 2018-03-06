@@ -14,7 +14,7 @@ import { EMAIL_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import {
   updateSearch,
   parseSearch,
-} from '../../../../../utils/LocationSearchHelper';
+} from '../../../../../utils/LocationSearchHelper.ts';
 
 import injectThemeColors from '../../../../../containers/Helpers/injectThemeColors.ts';
 

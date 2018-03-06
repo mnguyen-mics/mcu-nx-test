@@ -18,7 +18,7 @@ import messages from '../messages';
 import {
   updateSearch,
   parseSearch,
-} from '../../../../../utils/LocationSearchHelper';
+} from '../../../../../utils/LocationSearchHelper.ts';
 
 import { getTableDataSource } from '../../../../../state/Campaign/Email/selectors';
 
