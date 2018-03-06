@@ -15,12 +15,17 @@ import { VerticalBarChart } from '../../../../../components/BarCharts/index';
 import { LegendChart } from '../../../../../components/LegendChart';
 import McsIcon from '../../../../../components/McsIcon';
 import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/actions';
-import { getDefaultDatamart } from '../../../../../state/Session/selectors';
 import messages from '../messages';
 
 import { getOverlapView } from '../../../../../state/Audience/Segments/selectors';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
-
+import injectColors, {
+  InjectedColorsProps,
+} from '../../../../Helpers/injectColors';
+import {
+  injectDatamart,
+  InjectedDatamartProps,
+} from '../../../../Datamart/index';
 
 const VerticalBarChartJS = VerticalBarChart as any;
 
@@ -29,9 +34,7 @@ interface MapStateToProps {
   isFetchingOverlap: boolean;
   hasOverlap: boolean;
   dataSource: any;
-  defaultDatamart: any;
-  segmentsInformation: any; 
-  colors: any;
+  segmentsInformation: any;
 }
 
 interface MapDispatchToProps {
@@ -49,6 +52,8 @@ interface MapDispatchToProps {
 
 type OverlapProps = MapStateToProps &
   MapDispatchToProps &
+  InjectedColorsProps &
+  InjectedDatamartProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedIntlProps;
@@ -56,13 +61,12 @@ type OverlapProps = MapStateToProps &
 class Overlap extends React.Component<OverlapProps> {
   componentDidMount() {
     const {
-      defaultDatamart,
+      datamart,
       fetchOverlapAnalysis,
       match: { params: { segmentId, organisationId } },
     } = this.props;
-    const datamartId = defaultDatamart(organisationId).id;
 
-    fetchOverlapAnalysis(segmentId, organisationId, datamartId);
+    fetchOverlapAnalysis(segmentId, organisationId, datamart.id);
   }
 
   renderStackedAreaCharts() {
@@ -90,12 +94,11 @@ class Overlap extends React.Component<OverlapProps> {
 
   renderModalExtend = () => {
     const {
+      datamart,
       createOverlapAnalysis,
-      defaultDatamart,
       match: { params: { organisationId, segmentId } },
       intl: { formatMessage },
     } = this.props;
-    const datamartId = defaultDatamart(organisationId).id;
 
     Modal.confirm({
       title: formatMessage(messages.modalOverlapContentTitle),
@@ -105,10 +108,10 @@ class Overlap extends React.Component<OverlapProps> {
         </div>
       ),
       onOk() {
-        createOverlapAnalysis(datamartId, segmentId, organisationId);
+        createOverlapAnalysis(datamart.id, segmentId, organisationId);
       },
       onCancel() {
-        // 
+        //
       },
     });
   };
@@ -181,9 +184,7 @@ const mapStateToProps = (state: any) => ({
   isFetchingOverlap: state.audienceSegmentsTable.overlapAnalysisApi.isFetching,
   hasOverlap: state.audienceSegmentsTable.overlapAnalysisApi.hasOverlap,
   dataSource: getOverlapView(state),
-  defaultDatamart: getDefaultDatamart(state),
   segmentsInformation: state.audienceSegmentsTable.audienceSegmentsApi.data,
-  colors: state.theme.colors,
 });
 
 const mapDispatchToProps = {
@@ -197,4 +198,6 @@ export default compose<{}, {}>(
   withRouter,
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps),
+  injectColors,
+  injectDatamart,
 )(Overlap);

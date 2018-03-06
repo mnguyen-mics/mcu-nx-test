@@ -26,17 +26,17 @@ import { getAudienceSegmentPerformance } from '../../../../../state/Audience/Seg
 
 import messages from '../messages';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
+import injectColors, { InjectedColorsProps } from '../../../../Helpers/injectColors';
 
 const StackedAreaPlotJS = StackedAreaPlot as any;
 
 interface MapStateToProps {
   hasFetchedAudienceStat: boolean;
   dataSource: any;
-  colors: any;
 }
 
 type OverviewProps = MapStateToProps &
-  TranslationProps &
+  TranslationProps & InjectedColorsProps & 
   RouteComponentProps<{
     organisationId: string;
     segmentId: string;
@@ -161,10 +161,10 @@ const mapStateToProps = (state: any) => ({
   hasFetchedAudienceStat:
     state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
   dataSource: getAudienceSegmentPerformance(state),
-  colors: state.theme.colors,
 });
 
 export default compose<{}, {}>(
   withRouter,
   connect(mapStateToProps),
+  injectColors,
 )(Overview);
