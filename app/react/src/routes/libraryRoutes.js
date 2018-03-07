@@ -8,6 +8,7 @@ import EmailRoutersList from '../containers/Library/EmailRouter/List/index.ts';
 import RecommendersList from '../containers/Library/Recommender/List/index.ts';
 import ExportsList from '../containers/Library/Exports/List/index.ts';
 import Catalog from '../containers/Library/Catalog/index.ts';
+import PlacementListPage from '../containers/Library/Placement/Edit/PlacementListPage.tsx';
 
 import Exports from '../containers/Library/Exports/Dashboard/Exports.tsx';
 
@@ -25,6 +26,16 @@ const campaignsRoutes = [
     path: '/library/placements',
     layout: 'main',
     ...PlacementList,
+  },
+  {
+    path: '/library/placementlists/:placementListId(\\d+)',
+    layout: 'edit',
+    editComponent: PlacementListPage,
+  },
+  {
+    path: '/library/placementlists',
+    layout: 'edit',
+    editComponent: PlacementListPage,
   },
   // ========================================
   //            Keywords
