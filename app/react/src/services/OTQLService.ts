@@ -13,7 +13,7 @@ const OTQLService = {
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/otql`;
-    const headers = { 'Content-Type': 'text/plain' };
+    const headers = { 'Content-Type': 'text/plain; charset=utf-8' };
     return ApiService.postRequest(endpoint, query, options, headers);
   },
 };
