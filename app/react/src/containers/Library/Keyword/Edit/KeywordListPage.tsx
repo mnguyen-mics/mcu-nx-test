@@ -4,10 +4,11 @@ import { compose } from 'recompose';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import KeywordListForm from './KeywordListForm';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { KeywordListFormData } from './domain';
+import { KeywordListFormData, INITIAL_KEYWORD_LIST_FORM_DATA } from './domain';
 import { Loading } from '../../../../components/index';
 import KeywordService from '../../../../services/Library/KeywordListsService';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
+import KeywordListFormService from './KeywordListFormService';
 
 const messages = defineMessages({
   editKeywordList: {
@@ -30,6 +31,10 @@ const messages = defineMessages({
     id: 'edit.keywordList.form.save.success',
     defaultMessage: 'Keywords List successfully saved.',
   },
+  savingInProgress: {
+    id: 'form.saving.in.progress',
+    defaultMessage: 'Saving in progress',
+  },
 });
 
 interface KeywordListPageProps {}
@@ -50,7 +55,7 @@ class KeywordListPage extends React.Component<
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
-      keywordListFormData: {},
+      keywordListFormData: INITIAL_KEYWORD_LIST_FORM_DATA,
       isLoading: false,
     };
   }
@@ -83,18 +88,28 @@ class KeywordListPage extends React.Component<
       match: { params: { keywordsListId, organisationId } },
       intl,
     } = this.props;
-    formData.list_type = 'UNION';
-    if (keywordsListId) {
-      KeywordService.saveKeywordList(keywordsListId, formData).then(() => {
-        this.close();
-        message.success(intl.formatMessage(messages.keywordListSaved));
-      });
-    } else {
-      KeywordService.createKeywordList(organisationId, formData).then(() => {
-        this.close();
-        message.success(intl.formatMessage(messages.keywordListSaved));
-      });
-    }
+
+    const { keywordListFormData: initialFormdata } = this.state;
+
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
+
+    this.setState({
+      isLoading: true,
+    });
+
+    KeywordListFormService.saveKeywordList(
+      organisationId,
+      formData,
+      initialFormdata,
+      keywordsListId,
+    ).then(() => {
+      hideSaveInProgress();
+      this.close();
+      message.success(intl.formatMessage(messages.keywordListSaved));
+    });
   };
 
   close = () => {

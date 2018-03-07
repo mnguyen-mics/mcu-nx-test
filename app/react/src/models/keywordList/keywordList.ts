@@ -16,3 +16,12 @@ export interface KeywordListSelectionResource
   name: string;
   technical_name?: string;
 }
+
+export interface KeywordResource extends KeywordCreateRequest{
+  id: string;
+}
+
+export interface KeywordCreateRequest {
+  exclude: boolean;
+  expression: string;
+}

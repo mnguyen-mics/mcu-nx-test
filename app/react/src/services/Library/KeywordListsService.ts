@@ -1,4 +1,4 @@
-import { KeywordListSelectionResource } from './../../models/keywordList/keywordList';
+import { KeywordResource } from './../../models/keywordList/keywordList';
 import ApiService, { DataResponse, DataListResponse } from '../ApiService';
 import { KeywordListResource } from '../../models/keywordList/keywordList';
 
@@ -21,29 +21,37 @@ const KeywordService = {
     const endpoint = `keyword_lists/${keywordListId}`;
     return ApiService.getRequest(endpoint);
   },
-  saveKeywordList(
+  updateKeywordList(
     keywordListId: string,
-    body: Partial<KeywordListResource>
+    body: Partial<KeywordListResource>,
   ): Promise<DataResponse<KeywordListResource>> {
     const endpoint = `keyword_lists/${keywordListId}`;
     return ApiService.putRequest(endpoint, body);
   },
   getKeywordListExpressions(
     keywordListId: string,
-  ): Promise<DataListResponse<KeywordListSelectionResource>> {
+  ): Promise<DataListResponse<KeywordResource>> {
     const endpoint = `keyword_lists/${keywordListId}/keyword_expressions`;
     return ApiService.getRequest(endpoint);
   },
-  saveKeywordListExpression(
+  createKeywordListExpression(
     keywordListId: string,
-    body: Partial<KeywordListSelectionResource>
-  ): Promise<DataResponse<KeywordListSelectionResource>> {
+    body: Partial<KeywordResource>,
+  ): Promise<DataResponse<KeywordResource>> {
     const endpoint = `keyword_lists/${keywordListId}/keyword_expressions`;
     return ApiService.postRequest(endpoint, body);
   },
+  deleteKeywordListExpression(
+    keywordListId: string,
+    keywordExpressionId: string,
+    body?: Partial<KeywordResource>,
+  ): Promise<DataResponse<KeywordResource>> {
+    const endpoint = `keyword_lists/${keywordListId}/keyword_expressions/${keywordExpressionId}`;
+    return ApiService.deleteRequest(endpoint, body);
+  },
   createKeywordList(
     organisationId: string,
-    body: Partial<KeywordListResource>
+    body: Partial<KeywordListResource>,
   ): Promise<DataResponse<KeywordListResource>> {
     const endpoint = `keyword_lists?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, body);

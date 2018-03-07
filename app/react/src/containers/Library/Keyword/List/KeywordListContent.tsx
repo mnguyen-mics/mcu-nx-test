@@ -101,9 +101,9 @@ class KeywordListContent extends React.Component<
   };
 
   onClickEdit = (keyword: KeywordListResource) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const { history } = this.props;
 
-    history.push(`/${organisationId}/library/keywordslist/${keyword.id}`);
+    history.push(`keywordslist/${keyword.id}`);
   };
 
   render() {
