@@ -4,7 +4,7 @@ import automationRoutes from './automationRoutes.js';
 import audienceRoutes from './audienceRoutes.js';
 import creativeRoutes from './creativeRoutes';
 import libraryRoutes from './libraryRoutes.js';
-import settingsRoutes from './settingsRoutes.js';
+import settingsRoutes from './settingsRoutes';
 import accountRoutes from './accountRoutes.js';
 import datastudioRoutes from './datastudioRoutes';
 import analyticsRoutes from './analyticsRoutes.js';

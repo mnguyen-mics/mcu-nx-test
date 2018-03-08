@@ -24,6 +24,10 @@ const messages = defineMessages({
   collapse: {
     id: 'navigator.sideMenu.collapse',
     defaultMessage: 'Collapse'
+  },
+  backToApp: {
+    id: 'navigator.sideMenu.backToApp',
+    defaultMessage: 'Back To Your App'
   }
 });
 
@@ -33,6 +37,7 @@ export interface MainLayoutProps {
   showOrgSelector: boolean;
   organisationSelector: any;
   orgSelectorSize: number;
+  isSettings: boolean;
 }
 
 interface MainLayoutStoreProps {
@@ -47,7 +52,7 @@ interface MainLayoutState {
   right: number;
 }
 
-type Props = MainLayoutProps & RouteComponentProps<{}> & MainLayoutStoreProps;
+type Props = MainLayoutProps & RouteComponentProps<{ organisationId: string }> & MainLayoutStoreProps;
 
 const LayoutId = Layout as any;
 const ColAny = Col as any;
@@ -141,6 +146,25 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     );
   }
 
+  renderSettingsTrigger = () => {
+    const {
+      history,
+      match: { params: { organisationId } }
+    } = this.props;
+
+    const onButtonClick = () => {
+      history.push(`/v2/o/${organisationId}/campaigns/display`)
+    }
+
+    return <Row>
+    <Col span={24} className="all primary">
+      <ButtonStyleless onClick={onButtonClick} style={{ width: '100%' }}>
+        <span><Icon type="left" /> <span><FormattedMessage {...messages.backToApp} /></span></span>
+      </ButtonStyleless>
+    </Col>
+  </Row>
+  }
+
   render() {
     const {
       contentComponent: ContentComponent,
@@ -149,6 +173,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       collapsed,
       mode,
       orgSelectorSize,
+      isSettings,
     } = this.props;
 
     const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen })
@@ -171,13 +196,14 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             style={collapsed ? {} : { overflow: 'auto' }}
             collapsible={true}
             collapsed={collapsed}
-            trigger={this.renderTrigger()}
+            trigger={isSettings ? this.renderSettingsTrigger() : this.renderTrigger()}
           >
             <Logo mode={mode} />
             <NavigatorMenu
               mode={mode}
               collapsed={collapsed}
               onMenuItemClick={this.onMenuItemClick}
+              type={isSettings ? 'settings' : 'main'}
             />
           </Sider>
           <Layout>

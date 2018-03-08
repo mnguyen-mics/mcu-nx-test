@@ -27,7 +27,6 @@ class NavigatorHeader extends React.Component<Props> {
       match: { params: { organisationId } },
       workspace,
       userEmail,
-      datamart,
     } = this.props;
 
     const organisationName = workspace(organisationId).organisation_name;
@@ -56,46 +55,12 @@ class NavigatorHeader extends React.Component<Props> {
       </Menu>
     );
 
-    const settingsMenu = (
-      <Menu>
-        <Menu.Item key="organisation">
-          <Link
-            to={{
-              pathname: `/v2/o/${organisationId}/settings/organisation`,
-              search: '&tab=labels',
-            }}
-          >
-            <FormattedMessage {...messages.settingOrganisation} />
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="datamart">
-          <Link
-            to={{
-              pathname: `/v2/o/${organisationId}/settings/datamart`,
-              search: '&tab=sites',
-            }}
-          >
-            <FormattedMessage {...messages.settingDatamart} />
-          </Link>
-        </Menu.Item>
-      </Menu>
-    );
 
-    const renderSettings = datamart ? (
-      <Dropdown
-        overlay={settingsMenu}
-        trigger={['click']}
-        placement="bottomRight"
-      >
-        <a>
-          <McsIcon type="options" className="menu-icon" />
-        </a>
-      </Dropdown>
-    ) : (
-      <Link to={`/v2/o/${organisationId}/settings/organisation`}>
+    const renderSettings = (
+      <Link to={`/v2/o/${organisationId}/settings/organisation/labels`}>
         <McsIcon type="options" className="menu-icon" />
       </Link>
-    );
+    )
 
     return (
       <Header className="mcs-header">

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Button } from 'antd';
+import { Row, Button } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import SiteService from '../../../../../services/SiteService';
@@ -15,10 +15,6 @@ import injectNotifications, { InjectedNotificationProps } from '../../../../Noti
 import { Filter } from '../../Common/domain';
 import { SiteResource } from '../../../../../models/settings/settings';
 
-export interface SitesListPageProps {
-  datamartId: string;
-}
-
 interface SiteListState {
   sites: SiteResource[],
   totalSites: number,
@@ -30,7 +26,6 @@ interface SiteListState {
 type Props = RouteComponentProps<{ organisationId: string }>
   & InjectedDatamartProps
   & InjectedNotificationProps
-  & SitesListPageProps
 
 class SitesListPage extends React.Component<Props, SiteListState> {
 
@@ -56,10 +51,10 @@ class SitesListPage extends React.Component<Props, SiteListState> {
          organisationId
        }
      }, 
-     datamartId,
+     datamart,
     } = this.props;
 
-    this.fetchSites(organisationId, datamartId, this.state.filter);
+    this.fetchSites(organisationId, datamart.id, this.state.filter);
   }
 
 
@@ -87,11 +82,11 @@ class SitesListPage extends React.Component<Props, SiteListState> {
           organisationId
         }
       },
-      datamartId,
+      datamart,
     } = this.props;
 
     this.setState({ filter: newFilter });
-    this.fetchSites(organisationId, datamartId, newFilter);
+    this.fetchSites(organisationId, datamart.id, newFilter);
   }
 
   fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
@@ -139,7 +134,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
           organisationId
         }
       },
-      datamartId,
+      datamart,
     } = this.props;
 
     const {
@@ -150,33 +145,35 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       filter,
     } = this.state;
 
-    const newButton = this.buildNewActionElement(organisationId, datamartId);
+    const newButton = this.buildNewActionElement(organisationId, datamart.id);
     const buttons = [newButton];
 
     return (
-      <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage {...settingsMessages.sites} /></span>
-          <span className="mcs-card-button">{buttons}</span>
+      <Row className="mcs-table-container">
+        <div>
+          <div className="mcs-card-header mcs-card-title">
+            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.sites} /></span>
+            <span className="mcs-card-button">{buttons}</span>
+          </div>
+          <hr className="mcs-separator" />
+          <SitesTable
+            dataSource={sites}
+            totalSites={totalSites}
+            isFetchingSites={isFetchingSites}
+            noSiteYet={noSiteYet}
+            filter={filter}
+            onFilterChange={this.handleFilterChange}
+            onArchiveSite={this.handleArchiveSite}
+            onEditSite={this.handleEditSite}
+          />
         </div>
-        <hr className="mcs-separator" />
-        <SitesTable
-          dataSource={sites}
-          totalSites={totalSites}
-          isFetchingSites={isFetchingSites}
-          noSiteYet={noSiteYet}
-          filter={filter}
-          onFilterChange={this.handleFilterChange}
-          onArchiveSite={this.handleArchiveSite}
-          onEditSite={this.handleEditSite}
-        />
-      </div>
+      </Row>
     );
   }
 }
 
 
-export default compose<Props, SitesListPageProps>(
+export default compose<Props, {}>(
   withRouter,
   injectDatamart,
   injectNotifications,

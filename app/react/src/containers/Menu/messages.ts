@@ -140,5 +140,41 @@ export default defineMessages({
     analyticsOverview: {
         id: 'menu.analytics.overview',
         defaultMessage: 'Overview',
-    }
+    },
+
+    // SETTINGS
+    datamartSettingsTitle: {
+        id: 'menu.datamart.title',
+        defaultMessage: 'Datamart',
+    },
+    siteSettingsTitle: {
+        id: 'menu.datamart.site',
+        defaultMessage: 'Sites',
+    },
+    mobileAppsSettingsTitle: {
+        id: 'menu.datamart.mobile_application',
+        defaultMessage: 'Mobile Applications',
+    },
+    myDatamartSettingsTitle: {
+        id: 'menu.datamart.myDatamart',
+        defaultMessage: 'My Datamart',
+    },
+    organisationSettingsTitle: {
+        id: 'menu.organisation.title',
+        defaultMessage: 'Organisation',
+    },
+    usersSettingsTitle: {
+        id: 'menu.organisation.users',
+        defaultMessage: 'Users',
+    },
+    labelsSettingsTitle: {
+        id: 'menu.organisation.labels',
+        defaultMessage: 'Labels',
+    },
+
+    // BACK TO APP
+    backToAppSettings: {
+        id: 'menu.organisation.backToApp',
+        defaultMessage: 'Back to App',
+    },
 })
