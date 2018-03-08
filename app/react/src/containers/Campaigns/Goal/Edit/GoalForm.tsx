@@ -3,8 +3,13 @@ import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
+import { InjectedIntlProps } from 'react-intl';
 
-import { GeneralFormSection, AttributionFormSection } from './Sections';
+import {
+  GeneralFormSection,
+  ConversionValueFormSection,
+  TriggerFormSection,
+} from './Sections';
 import { GoalFormData } from './domain';
 import messages from './messages';
 import { Path } from '../../../../components/ActionBar';
@@ -15,6 +20,7 @@ import FormLayoutActionbar, {
 import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
+import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -23,9 +29,13 @@ const Content = Layout.Content as React.ComponentClass<
 export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
+  queryContainer?: any;
+  queryLanguage?: QueryLanguage;
 }
 
-type Props = InjectedFormProps<GoalFormData, GoalFormProps> & GoalFormProps;
+type Props = InjectedFormProps<GoalFormData, GoalFormProps> &
+  GoalFormProps &
+  InjectedIntlProps;
 
 const FORM_ID = 'goalForm';
 
@@ -38,9 +48,13 @@ class GoalForm extends React.Component<Props> {
         sectionId: 'general',
         title: messages.sectionTitle1,
       },
-      goals: {
-        sectionId: 'goals',
+      conversion_value: {
+        sectionId: 'conversion_value',
         title: messages.sectionTitle2,
+      },
+      trigger: {
+        sectionId: 'trigger',
+        title: messages.sectionTitle3,
       },
     };
 
@@ -73,8 +87,19 @@ class GoalForm extends React.Component<Props> {
                 <GeneralFormSection />
               </div>
               <hr />
-              <div id={sections.general.sectionId}>
+              {/* <div id={sections.goals.sectionId}>
                 <AttributionFormSection />
+              </div>
+              <hr /> */}
+              <div id={sections.conversion_value.sectionId}>
+                <ConversionValueFormSection />
+              </div>
+              <hr />
+              <div id={sections.trigger.sectionId}>
+                <TriggerFormSection
+                  queryContainer={this.props.queryContainer}
+                  queryLanguage={this.props.queryLanguage}
+                />
               </div>
             </Content>
           </Form>

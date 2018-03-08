@@ -14,6 +14,8 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import GoalService from '../../../../services/GoalService';
 import GoalFormService from './GoalFormService';
+import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
+import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -42,18 +44,31 @@ const messages = defineMessages({
 interface State {
   goalFormData: GoalFormData;
   loading: boolean;
+  queryContainer?: any;
+  queryLanguage: QueryLanguage;
 }
 
 type Props = InjectedIntlProps &
+  InjectedDatamartProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; goalId: string }>;
 
 class EditGoalPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const QueryContainer = (window as any).angular
+      .element(document.body)
+      .injector()
+      .get('core/datamart/queries/QueryContainer');
+    const defQuery = new QueryContainer(props.datamart.id);
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
       goalFormData: INITIAL_GOAL_FORM_DATA,
+      queryContainer: defQuery,
+      queryLanguage:
+        props.datamart.storage_model_version === 'v201506'
+          ? 'SELECTORQL'
+          : ('OTQL' as QueryLanguage),
     };
   }
 
@@ -102,10 +117,7 @@ class EditGoalPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    return GoalFormService.saveGoal(
-      organisationId,
-      goalFormData,
-    )
+    return GoalFormService.saveGoal(organisationId, goalFormData)
       .then(goalId => {
         hideSaveInProgress();
         const goalsUrl = `/v2/o/${organisationId}/campaigns/goals`;
@@ -172,6 +184,8 @@ class EditGoalPage extends React.Component<Props, State> {
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
+        queryContainer={this.state.queryContainer}
+        queryLanguage={this.state.queryLanguage}
       />
     );
   }
@@ -180,6 +194,7 @@ class EditGoalPage extends React.Component<Props, State> {
 export default compose(
   withRouter,
   injectIntl,
+  injectDatamart,
   connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
   injectNotifications,
 )(EditGoalPage);
