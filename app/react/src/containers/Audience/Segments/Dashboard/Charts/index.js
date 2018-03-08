@@ -1,6 +1,6 @@
-import Overview from './Overview';
-import AdditionDeletion from './AdditionDeletion';
-import Overlap from './Overlap';
+import Overview from './Overview.tsx';
+import AdditionDeletion from './AdditionDeletion.tsx';
+import Overlap from './Overlap.tsx';
 
 export {
   Overview,

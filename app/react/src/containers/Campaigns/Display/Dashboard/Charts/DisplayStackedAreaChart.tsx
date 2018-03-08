@@ -1,12 +1,16 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
-import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
+import {
+  EmptyCharts,
+  LoadingChart,
+} from '../../../../../components/EmptyCharts';
+import McsDateRangePicker, {
+  McsDateRangeValue,
+} from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
 import MetricsColumn from '../../../../../components/MetricsColumn';
@@ -15,22 +19,18 @@ import CampaignDisplayProgress from './CampaignDisplayProgress';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
-import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
+import {
+  updateSearch,
+  parseSearch,
+} from '../../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsMoment from '../../../../../utils/McsMoment';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
-
-interface Color {
-  'mcs-error': string;
-  'mcs-highlight': string;
-  'mcs-info': string;
-  'mcs-normal': string;
-  'mcs-primary': string;
-  'mcs-success': string;
-  'mcs-warning': string;
-}
 
 interface OverallStat {
   cpa: string;
@@ -61,14 +61,15 @@ interface RouterProps {
   organisationId: string;
 }
 
-type JoinedProps<T = any> = 
-  DisplayStackedAreaChartProps<T> & 
-  InjectedIntlProps & 
-  RouteComponentProps<RouterProps> & 
-  { colors: Color };
+type JoinedProps<T = any> = DisplayStackedAreaChartProps<T> &
+  InjectedIntlProps &
+  RouteComponentProps<RouterProps> &
+  InjectedThemeColorsProps;
 
-class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, DisplayStackedAreaChartState> {
-
+class DisplayStackedAreaChart<T> extends React.Component<
+  JoinedProps<T>,
+  DisplayStackedAreaChartState
+> {
   constructor(props: JoinedProps<T>) {
     super(props);
 
@@ -111,11 +112,18 @@ class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, Display
   }
 
   updateLocationSearch(params: McsDateRangeValue) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+      search: updateSearch(
+        currentSearch,
+        params,
+        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
+      ),
     };
 
     history.push(nextLocation);
@@ -168,46 +176,73 @@ class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, Display
       },
     };
 
-    const metrics = [{
-      name: 'CPA',
-      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].cpa, '0,0[.]00', '', '€') : undefined,
-    }, {
-      name: 'CPC',
-      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€') : undefined,
-    }, {
-      name: 'CTR',
-      value: hasFetchedOverallStat && overallStat.length ? formatMetric(parseFloat(overallStat[0].ctr) / 100, '0.000 %') : undefined,
-    }, {
-      name: 'CPM',
-      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].cpm, '0,0[.]00', '', '€') : undefined,
-    }, {
-      name: 'Spent',
-      value: hasFetchedOverallStat && overallStat.length ? formatMetric(overallStat[0].impressions_cost, '0,0[.]00', '', '€') : undefined,
-    }];
+    const metrics = [
+      {
+        name: 'CPA',
+        value:
+          hasFetchedOverallStat && overallStat.length
+            ? formatMetric(overallStat[0].cpa, '0,0[.]00', '', '€')
+            : undefined,
+      },
+      {
+        name: 'CPC',
+        value:
+          hasFetchedOverallStat && overallStat.length
+            ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€')
+            : undefined,
+      },
+      {
+        name: 'CTR',
+        value:
+          hasFetchedOverallStat && overallStat.length
+            ? formatMetric(parseFloat(overallStat[0].ctr) / 100, '0.000 %')
+            : undefined,
+      },
+      {
+        name: 'CPM',
+        value:
+          hasFetchedOverallStat && overallStat.length
+            ? formatMetric(overallStat[0].cpm, '0,0[.]00', '', '€')
+            : undefined,
+      },
+      {
+        name: 'Spent',
+        value:
+          hasFetchedOverallStat && overallStat.length
+            ? formatMetric(overallStat[0].impressions_cost, '0,0[.]00', '', '€')
+            : undefined,
+      },
+    ];
 
-    return (!isFetchingCampaignStat && hasFetchedCampaignStat)
-      ? (
-        <div style={{ display: 'flex' }}>
-          <div style={{ float: 'left' }}>
-            <MetricsColumn
-              metrics={metrics}
-              isLoading={isFetchingOverallStat || !hasFetchedOverallStat}
-            />
-          </div>
-          <StackedAreaPlotDoubleAxisJS
-            identifier="StackedAreaChartDisplayOverview"
-            dataset={dataSource}
-            options={optionsForChart}
-            style={{ flex: '1' }}
-            intlMessages={messages}
+    return !isFetchingCampaignStat && hasFetchedCampaignStat ? (
+      <div style={{ display: 'flex' }}>
+        <div style={{ float: 'left' }}>
+          <MetricsColumn
+            metrics={metrics}
+            isLoading={isFetchingOverallStat || !hasFetchedOverallStat}
           />
         </div>
-      )
-      : <LoadingChart />;
+        <StackedAreaPlotDoubleAxisJS
+          identifier="StackedAreaChartDisplayOverview"
+          dataset={dataSource}
+          options={optionsForChart}
+          style={{ flex: '1' }}
+          intlMessages={messages}
+        />
+      </div>
+    ) : (
+      <LoadingChart />
+    );
   }
 
   render() {
-    const { dataSource, hasFetchedCampaignStat, renderCampaignProgress, colors, intl: { formatMessage } } = this.props;
+    const {
+      dataSource,
+      hasFetchedCampaignStat,
+      renderCampaignProgress,
+      colors,
+      intl: { formatMessage },
+    } = this.props;
     const { key1, key2 } = this.state;
 
     const legendOptions = [
@@ -223,7 +258,8 @@ class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, Display
       },
     ];
     const legends = this.createLegend();
-    const onLegendChange = (a: string, b: string) => this.setState({ key1: a, key2: b });
+    const onLegendChange = (a: string, b: string) =>
+      this.setState({ key1: a, key2: b });
 
     const chartArea = (
       <div>
@@ -231,24 +267,28 @@ class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, Display
         {renderCampaignProgress ? <hr /> : null}
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {dataSource.length === 0 && (hasFetchedCampaignStat)
-              ? <div />
-              : <LegendChartWithModalJS
+            {dataSource.length === 0 && hasFetchedCampaignStat ? (
+              <div />
+            ) : (
+              <LegendChartWithModalJS
                 identifier="chartLegend"
                 options={legendOptions}
                 legends={legends}
                 onLegendChange={onLegendChange}
-              />}
+              />
+            )}
           </Col>
           <Col span={12}>
-            <span className="mcs-card-button">
-              {this.renderDatePicker()}
-            </span>
+            <span className="mcs-card-button">{this.renderDatePicker()}</span>
           </Col>
         </Row>
-        {dataSource.length === 0 && (hasFetchedCampaignStat)
-          ? <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
-          : <Row gutter={20}><Col span={24}>{this.renderStackedAreaCharts()}</Col></Row>}
+        {dataSource.length === 0 && hasFetchedCampaignStat ? (
+          <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
+        ) : (
+          <Row gutter={20}>
+            <Col span={24}>{this.renderStackedAreaCharts()}</Col>
+          </Row>
+        )}
       </div>
     );
 
@@ -256,12 +296,8 @@ class DisplayStackedAreaChart<T> extends React.Component<JoinedProps<T>, Display
   }
 }
 
-const mapStateToProps = (state: any) => ({  
-  colors: state.theme.colors,
-});
-
 export default compose<JoinedProps, DisplayStackedAreaChartProps>(
-  withRouter, 
-  injectIntl, 
-  connect(mapStateToProps),
+  withRouter,
+  injectIntl,
+  injectThemeColors,
 )(DisplayStackedAreaChart);

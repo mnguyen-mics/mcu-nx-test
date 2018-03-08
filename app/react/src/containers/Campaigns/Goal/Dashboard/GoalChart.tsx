@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
@@ -30,24 +29,12 @@ import McsDateRangePicker, {
 } from '../../../../components/McsDateRangePicker';
 import ReportService from '../../../../services/ReportService';
 import { takeLatest } from '../../../../utils/ApiHelper';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../Helpers/injectThemeColors';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
-
-interface Color {
-  'mcs-error': string;
-  'mcs-highlight': string;
-  'mcs-info': string;
-  'mcs-normal': string;
-  'mcs-primary': string;
-  'mcs-success': string;
-  'mcs-warning': string;
-}
-
-interface GoalStackedAreaChartReduxProps {
-  colors: Color;
-  translations: any;
-}
 
 interface OverallStats {
   value: string;
@@ -75,18 +62,18 @@ interface RouterProps {
 }
 
 type JoinedProps = InjectedIntlProps &
-  RouteComponentProps<RouterProps> &
-  GoalStackedAreaChartReduxProps;
+  InjectedThemeColorsProps &
+  RouteComponentProps<RouterProps>;
 
 type OuterProps = {};
 
-const dailyPerformanceFetch =  takeLatest(
+const dailyPerformanceFetch = takeLatest(
   ReportService.getSingleConversionPerformanceReport,
 );
 
 const overallPerformanceFetch = takeLatest(
   ReportService.getSingleConversionPerformanceReport,
-)
+);
 
 class GoalStackedAreaChart extends React.Component<
   JoinedProps,
@@ -130,7 +117,7 @@ class GoalStackedAreaChart extends React.Component<
       },
       location: { pathname: nextPathname, search: nextSearch },
     } = nextProps;
-    if (  
+    if (
       !compareSearches(search, nextSearch) ||
       organisationId !== nextOrganisationId ||
       goalId !== nextGoalId
@@ -172,7 +159,7 @@ class GoalStackedAreaChart extends React.Component<
       endDate,
       [],
       [this.state.key1, this.state.key2],
-    ).then(res => res.data.report_view)
+    ).then(res => res.data.report_view);
 
     return Promise.all([dailyPerformance, overallPerformance]).then(res =>
       this.setState({
@@ -350,13 +337,8 @@ class GoalStackedAreaChart extends React.Component<
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-  colors: state.theme.colors,
-});
-
 export default compose<JoinedProps, OuterProps>(
   withRouter,
   injectIntl,
-  connect(mapStateToProps),
+  injectThemeColors,
 )(GoalStackedAreaChart);
