@@ -197,7 +197,7 @@ const ReportService = {
 
   getSingleEmailDeliveryReport(
     organisationId: string,
-    campaignId: number,
+    campaignId: string,
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],
@@ -353,7 +353,7 @@ const ReportService = {
 
   getAllEmailBlastPerformance(
     organisationId: string,
-    campaignId: number,
+    campaignId: string,
     startDate: McsMoment,
     endDate: McsMoment,
     dimension: string[],

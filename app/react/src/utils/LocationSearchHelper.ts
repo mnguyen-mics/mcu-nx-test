@@ -24,13 +24,21 @@ export const LABELS_SEARCH_SETTINGS: SearchSetting[] = [{
   isValid: (query: Index<string>) => !query.label_id || query.label_id.split(',').length > 0,
 }];
 
-export const SETTINGS_PAGINATION_SEARCH_SETTINGS: SearchSetting[] = [{
+export interface LabelsSearchSettings {
+  label_id: string[];
+}
+
+export const TAB_SEARCH_SETTINGS: SearchSetting[] = [{
   paramName: 'tab',
   defaultValue: 'site',
   deserialize: (query: Index<string>) => query.tab,
   serialize: (value: string) => value,
   isValid: (query: Index<string>) => !!query,
 }];
+
+export interface TabSearchSettings {
+  tab: string;
+}
 
 export const PAGINATION_SEARCH_SETTINGS: SearchSetting[] = [
   {
@@ -49,6 +57,11 @@ export const PAGINATION_SEARCH_SETTINGS: SearchSetting[] = [
   },
 ];
 
+export interface PaginationSearchSettings {
+  currentPage: number;
+  pageSize: number;
+}
+
 export const KEYWORD_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'keywords',
@@ -58,6 +71,10 @@ export const KEYWORD_SEARCH_SETTINGS: SearchSetting[] = [
     isValid: () => true,
   },
 ];
+
+export interface KeywordSearchSettings {
+  keywords: string;
+}
 
 export const FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
   {
@@ -74,6 +91,10 @@ export const FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
   },
   ...KEYWORD_SEARCH_SETTINGS,
 ];
+
+export interface FiltersSearchSettings extends KeywordSearchSettings {
+  statuses: string[];
+}
 
 export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
   {
@@ -92,6 +113,11 @@ export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
   }
 ];
 
+export interface DateSearchSettings {
+  from: McsMoment;
+  to: McsMoment;
+}
+
 export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'archived',
@@ -103,6 +129,10 @@ export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
     },
   },
 ];
+
+export interface ArchivedSearchSettings {
+  archived: boolean;
+}
 
 export const isSearchValid = (search: string, settings: SearchSetting[]) => {
   const query = queryString.parse(search);
@@ -162,7 +192,7 @@ export const updateSearch = (search: string, params: Index<any>, settings?: Sear
  * @param {Array} settings (optional) type settings
  * @returns the parsed search string into object
  */
-export const parseSearch = (search: string, settings: SearchSetting[]) => {
+export const parseSearch = (search: string, settings?: SearchSetting[]) => {
   const query = queryString.parse(search);
   if (!settings) return query;
   return settings.reduce((acc, setting) => ({

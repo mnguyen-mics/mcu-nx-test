@@ -29,7 +29,7 @@ import {
   EmailCampaignListPage,
 } from '../containers/Campaigns/Email/List';
 
-import { EmailCampaign } from '../containers/Campaigns/Email/Dashboard';
+import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard';
 
 import { GoalsActionbar, GoalsTable } from '../containers/Campaigns/Goal/List';
 
@@ -85,7 +85,7 @@ const campaignsRoutes = [
   {
     path: '/campaigns/email/:campaignId(\\d+)',
     layout: 'main',
-    contentComponent: EmailCampaign,
+    contentComponent: EmailCampaignPage,
   },
   {
     path: '/campaigns/email/:campaignId(\\d+)/edit',
