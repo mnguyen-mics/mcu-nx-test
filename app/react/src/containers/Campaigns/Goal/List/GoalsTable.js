@@ -141,7 +141,7 @@ class GoalsTable extends Component {
   handleEditGoal = goal => {
     const { match: { params: { organisationId } }, history } = this.props;
 
-    history.push(`/${organisationId}/goals/${goal.id}`);
+    history.push(`/v2/o/${organisationId}/campaigns/goal/${goal.id}/edit`);
   };
 
   updateLocationSearch = params => {

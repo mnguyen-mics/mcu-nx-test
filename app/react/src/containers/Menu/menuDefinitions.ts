@@ -66,7 +66,7 @@ const campaignsMenu: Menu = {
     },
     {
       key: 'campaigns.goals',
-      path: '/campaigns/goal',
+      path: '/campaigns/goals',
       translation: messages.campaignGoals,
       legacyPath: false,
     },

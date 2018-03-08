@@ -116,11 +116,11 @@ class GoalsActionbar extends Component {
 
     const exportIsRunning = this.state.exportIsRunning;
 
-    const breadcrumbPaths = [{ name: translations.GOALS, url: `/v2/o/${organisationId}/campaigns/goal` }];
+    const breadcrumbPaths = [{ name: translations.GOALS, url: `/v2/o/${organisationId}/campaigns/goals` }];
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/${organisationId}/goals/`}>
+        <Link to={`/v2/o/${organisationId}/campaigns/goal`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /><FormattedMessage id="NEW_GOAL" />
           </Button>

@@ -21,6 +21,8 @@ import {
 //   CreateBlastPage,
 // } from '../containers/Campaigns/Email/Edit';
 
+import EditGoalPage from '../containers/Campaigns/Goal/Edit/EditGoalPage.tsx';
+
 import EditBlastPage from '../containers/Campaigns/Email/Edit/Blast/EditBlastPage.tsx';
 import EditEmailCampaignPage from '../containers/Campaigns/Email/Edit/Campaign/EditCampaignPage.tsx';
 
@@ -103,7 +105,7 @@ const campaignsRoutes = [
     editComponent: EditBlastPage,
   },
   {
-    path: '/campaigns/goal',
+    path: '/campaigns/goals',
     layout: 'main',
     contentComponent: GoalsTable,
     actionBarComponent: GoalsActionbar,
@@ -112,6 +114,16 @@ const campaignsRoutes = [
     path: '/campaigns/goal/:goalId(\\d+)',
     layout: 'main',
     contentComponent: GoalDashboard,
+  },
+  {
+    path: '/campaigns/goal/:goalId/edit',
+    layout: 'edit',
+    editComponent: EditGoalPage,
+  },
+  {
+    path: '/campaigns/goal',
+    layout: 'edit',
+    editComponent: EditGoalPage,
   },
 ];
 
