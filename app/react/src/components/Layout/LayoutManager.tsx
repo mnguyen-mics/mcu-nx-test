@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   MainLayout,
   EditLayout,
+  SettingLayout
 } from './';
 
 import log from '../../utils/Logger';
@@ -69,7 +70,7 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
         );
       case 'settings':
         return  (
-          <MainLayout
+          <SettingLayout
             contentComponent={contentComponent}
             actionBarComponent={actionBarComponent ? actionBarComponent : null}
             organisationSelector={organisationSelector ? organisationSelector : () => <div>no org selector</div>}

@@ -19,21 +19,20 @@ import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { Datamart } from '../../models/organisation/organisation';
 
-const { SubMenu } = Menu;
+// const { SubMenu } = Menu;
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 
-export type NavigatorMenuType = 'settings' | 'main';
+export type NavigatorSettingsSideMenuType = 'settings' | 'main';
 
-export interface NavigatorMenuProps {
+export interface NavigatorSettingsSideMenuProps {
   mode: MenuMode;
   collapsed: boolean;
   onMenuItemClick: () => void;
-  type: NavigatorMenuType;
-  className?: string;
+  type: NavigatorSettingsSideMenuType;
 }
 
-interface NavigatorMenuStoreProps {
+interface NavigatorSettingsSideMenuStoreProps {
   organisationHasDatamarts: (organisationId: string) => boolean;
   defaultDatamart: (organisationId: string) => Datamart;
   orgFeatures: string[];
@@ -43,16 +42,16 @@ interface RouteProps {
   organisationId: string;
 }
 
-type Props = NavigatorMenuProps &
+type Props = NavigatorSettingsSideMenuProps &
   RouteComponentProps<RouteProps> &
-  NavigatorMenuStoreProps;
+  NavigatorSettingsSideMenuStoreProps;
 
-interface NavigatorMenuState {
+interface NavigatorSettingsSideMenuState {
   inlineOpenKeys: string[];
   vecticalOpenKeys: string[];
 }
 
-class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
+class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettingsSideMenuState> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -75,7 +74,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     }
   }
 
-  checkInitialState = (pathname: string, type: NavigatorMenuType) => {
+  checkInitialState = (pathname: string, type: NavigatorSettingsSideMenuType) => {
     const itemDefinitions =
       type === 'settings'
         ? settingsDefinitions.itemDefinitions
@@ -130,17 +129,11 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       match: { params: { organisationId } },
       organisationHasDatamarts,
       orgFeatures,
-      type,
     } = this.props;
 
-    const itemDefinitions =
-      type === 'settings'
-        ? settingsDefinitions.itemDefinitions
-        : menuDefinitions.itemDefinitions;
-    const itemDisplayedOnlyIfDatamart =
-      type === 'settings'
-        ? settingsDefinitions.itemDisplayedOnlyIfDatamart
-        : menuDefinitions.itemDisplayedOnlyIfDatamart;
+    const itemDefinitions = settingsDefinitions.itemDefinitions
+
+    const itemDisplayedOnlyIfDatamart = settingsDefinitions.itemDisplayedOnlyIfDatamart;
 
     const isAvailable = (key: string) => {
       if (itemDisplayedOnlyIfDatamart.includes(key))
@@ -165,66 +158,73 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   buildItems() {
     const {
       match: { params: { organisationId } },
-      defaultDatamart,
-      collapsed,
-      type,
+      location: { pathname },
+      // defaultDatamart,
+      // collapsed,
     } = this.props;
 
     const baseUrl = `/v2/o/${organisationId}`;
-    const itemDisplayedOnlyIfDatamart =
-      type === 'settings'
-        ? settingsDefinitions.itemDisplayedOnlyIfDatamart
-        : menuDefinitions.itemDisplayedOnlyIfDatamart;
-    return this.getAvailableItems().map(itemDef => {
-      const buildSubMenu =
-        itemDef.subMenuItems && itemDef.subMenuItems.length > 0;
-      if (buildSubMenu) {
-        const onTitleClick = () => {
-          this.setState({ inlineOpenKeys: [itemDef.key] });
-          this.props.onMenuItemClick();
-        };
-        return (
-          <SubMenu
-            key={itemDef.key}
-            onTitleClick={onTitleClick}
-            title={
-              <span>
-                <McsIcon type={itemDef.iconType as McsIconType} />
-                <span className="nav-text">
-                  <FormattedMessage {...itemDef.translation} />
-                </span>
-              </span>
-            }
-          >
-            {itemDef.subMenuItems.map((subMenuItem: any) => {
-              let linkUrl = `${baseUrl}${subMenuItem.path}`;
-              if (subMenuItem.legacyPath) {
-                if (itemDisplayedOnlyIfDatamart.includes(subMenuItem.key)) {
-                  linkUrl = `/o${organisationId}d${
-                    defaultDatamart(organisationId).id
-                  }${subMenuItem.path}`;
-                } else {
-                  linkUrl = `/${organisationId}${subMenuItem.path}`;
-                }
-              }
-              return (
-                <Menu.Item
-                  style={
-                    collapsed === true
-                      ? { display: 'none' }
-                      : { display: 'block' }
-                  }
-                  key={subMenuItem.key}
-                >
-                  <Link to={linkUrl}>
-                    <FormattedMessage {...subMenuItem.translation} />
-                  </Link>
-                </Menu.Item>
-              );
-            })}
-          </SubMenu>
-        );
-      }
+    // const itemDisplayedOnlyIfDatamart = settingsDefinitions.itemDisplayedOnlyIfDatamart
+
+    const currentOpenMenu = settingsDefinitions.itemDefinitions
+      .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
+      .find(
+        item =>
+          matchPath(pathname, { path: `${basePath}${item.path}`, exact: false, strict: false })
+            ? true
+            : false,
+      );
+
+    return currentOpenMenu && currentOpenMenu.subMenuItems && currentOpenMenu.subMenuItems.map(itemDef => {
+      // const buildSubMenu =
+      //   itemDef.subMenuItems && itemDef.subMenuItems.length > 0;
+      // if (buildSubMenu) {
+      //   const onTitleClick = () => {
+      //     this.setState({ inlineOpenKeys: [itemDef.key] });
+      //     this.props.onMenuItemClick();
+      //   };
+      //   return (
+      //     <SubMenu
+      //       key={itemDef.key}
+      //       onTitleClick={onTitleClick}
+      //       title={
+      //         <span>
+      //           <McsIcon type={itemDef.iconType as McsIconType} />
+      //           <span className="nav-text">
+      //             <FormattedMessage {...itemDef.translation} />
+      //           </span>
+      //         </span>
+      //       }
+      //     >
+      //       {itemDef.subMenuItems.map((subMenuItem: any) => {
+      //         let linkUrl = `${baseUrl}${subMenuItem.path}`;
+      //         if (subMenuItem.legacyPath) {
+      //           if (itemDisplayedOnlyIfDatamart.includes(subMenuItem.key)) {
+      //             linkUrl = `/o${organisationId}d${
+      //               defaultDatamart(organisationId).id
+      //             }${subMenuItem.path}`;
+      //           } else {
+      //             linkUrl = `/${organisationId}${subMenuItem.path}`;
+      //           }
+      //         }
+      //         return (
+      //           <Menu.Item
+      //             style={
+      //               collapsed === true
+      //                 ? { display: 'none' }
+      //                 : { display: 'block' }
+      //             }
+      //             key={subMenuItem.key}
+      //           >
+      //             <Link to={linkUrl}>
+      //               <FormattedMessage {...subMenuItem.translation} />
+      //             </Link>
+      //           </Menu.Item>
+      //         );
+      //       })}
+      //     </SubMenu>
+      //   );
+      // }
 
       return (
         <Menu.Item key={itemDef.key}>
@@ -291,7 +291,6 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
         openKeys={getOpenKeysInMode()}
         onOpenChange={this.onOpenChange}
         onClick={this.onClick}
-        className={this.props.className}
       >
         {this.buildItems()}
       </Menu>
@@ -307,7 +306,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {};
 
-export default compose<Props, NavigatorMenuProps>(
+export default compose<Props, NavigatorSettingsSideMenuProps>(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
-)(NavigatorMenu);
+)(NavigatorSettingsSideMenu);

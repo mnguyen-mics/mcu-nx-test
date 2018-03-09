@@ -41,9 +41,10 @@ class MobileApplicationsTable extends React.Component<Props> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalMobileApplications,
-      onChange: (page: number) =>
+      onChange: (page: number, size: number) =>
         onFilterChange({
           currentPage: page,
+          pageSize: size,
         }),
       onShowSizeChange: (current: number, size: number) =>
         onFilterChange({

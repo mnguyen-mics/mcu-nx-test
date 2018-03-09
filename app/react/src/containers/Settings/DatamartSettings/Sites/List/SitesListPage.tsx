@@ -109,7 +109,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         isFetchingSites: false,
         noSiteYet: response && response.count === 0 && !filter.name,
         sites: response.data,
-        totalSites: response.count,
+        totalSites: response.total ? response.total : response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingSites: false });

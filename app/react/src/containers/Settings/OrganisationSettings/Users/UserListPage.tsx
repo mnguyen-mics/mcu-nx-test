@@ -79,7 +79,7 @@ class UsersListPage extends Component<Props, UsersListState> {
                     isFetchingUsers: false,
                     hasUsers: res && res.total === 0,
                     users: res.data,
-                    totalUsers: res.total || 0,
+                    totalUsers: res.total ? res.total : res.count,
                 })
             })
             .catch(error => {

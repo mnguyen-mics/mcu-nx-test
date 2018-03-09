@@ -96,7 +96,7 @@ class DatamartsListPage extends React.Component<Props, DatamartsListPageState> {
         isFetchingDatamarts: false,
         noDatamartYet: response && response.count === 0,
         datamarts: response.data,
-        totalDatamarts: response.count,
+        totalDatamarts: response.total ? response.total : response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingDatamarts: false });

@@ -131,7 +131,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
         isFetchingMobileApplications: false,
         noMobileApplicationYet: response && response.count === 0 && !filter.name,
         mobileApplications: response.data,
-        totalMobileApplications: response.count,
+        totalMobileApplications: response.total ? response.total : response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingMobileApplications: false });
