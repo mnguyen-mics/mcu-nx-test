@@ -49,8 +49,7 @@ class NavigatorHeader extends React.Component<Props> {
         <Menu.Item key="account">
           <Link
             to={{
-              pathname: `/v2/o/${organisationId}/account`,
-              search: '&tab=user_account',
+              pathname: `/v2/o/${organisationId}/settings/account/my_profile`
             }}
           >
             <FormattedMessage {...messages.account} />

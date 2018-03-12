@@ -9,11 +9,11 @@ import {
 
 import {
   EditAdGroupPage,
-} from '../containers/Campaigns/Display/Edit/AdGroup/index.ts';
+} from '../containers/Campaigns/Display/Edit/AdGroup';
 
 import {
   EditCampaignPage,
-} from '../containers/Campaigns/Display/Edit/index.ts';
+} from '../containers/Campaigns/Display/Edit';
 
 // import {
 //   CreateEmailPage,
@@ -21,8 +21,8 @@ import {
 //   CreateBlastPage,
 // } from '../containers/Campaigns/Email/Edit';
 
-import EditBlastPage from '../containers/Campaigns/Email/Edit/Blast/EditBlastPage.tsx';
-import EditEmailCampaignPage from '../containers/Campaigns/Email/Edit/Campaign/EditCampaignPage.tsx';
+import EditBlastPage from '../containers/Campaigns/Email/Edit/Blast/EditBlastPage';
+import EditEmailCampaignPage from '../containers/Campaigns/Email/Edit/Campaign/EditCampaignPage';
 
 import {
   EmailCampaignsActionbar,
@@ -33,7 +33,7 @@ import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard/index
 
 import { GoalsActionbar, GoalsTable } from '../containers/Campaigns/Goal/List';
 
-import GoalDashboard from '../containers/Campaigns/Goal/Dashboard/GoalDashboard.tsx';
+import GoalDashboard from '../containers/Campaigns/Goal/Dashboard/GoalDashboard';
 
 const campaignsRoutes = [
   {

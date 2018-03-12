@@ -171,10 +171,23 @@ export default defineMessages({
         id: 'menu.organisation.labels',
         defaultMessage: 'Labels',
     },
+    orgSettingsTitle: {
+        id: 'menu.organisation.settings',
+        defaultMessage: 'Profile',
+    },
 
     // BACK TO APP
     backToAppSettings: {
         id: 'menu.organisation.backToApp',
         defaultMessage: 'Back to App',
     },
+    accountSettingsTitle: {
+        id: 'menu.account.title',
+        defaultMessage: 'My Account',
+    },
+    accountSettingsProfile: {
+        id: 'menu.account.profile',
+        defaultMessage: 'Profile',
+    },
+
 })

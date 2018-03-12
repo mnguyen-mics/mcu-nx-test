@@ -3,7 +3,7 @@ import {
   ListTable,
 } from '../containers/Automations/List';
 
-import AutomationEditPage from '../containers/Automations/Edit/AutomationEditPage.tsx';
+import AutomationEditPage from '../containers/Automations/Edit/AutomationEditPage';
 
 const automationRoutes = [
   {

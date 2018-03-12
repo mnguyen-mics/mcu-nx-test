@@ -174,7 +174,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
 
     const menu = (
       <NavigatorMenu
-        mode={mode}
+        mode={'vertical'}
         collapsed={collapsed}
         onMenuItemClick={this.onMenuItemClick}
         type={'main'}

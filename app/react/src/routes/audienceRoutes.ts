@@ -3,11 +3,11 @@ import {
   SegmentsActionbar,
 } from '../containers/Audience/Segments/List';
 
-import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage.tsx';
+import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage';
 
 import {
   EditAudienceSegmentPage
-} from '../containers/Audience/Segments/Edit/index.ts';
+} from '../containers/Audience/Segments/Edit';
 
 import {
   AudienceSegment,

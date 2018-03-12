@@ -53,6 +53,12 @@ const organisationSettings: Menu = {
       legacyPath: false,
     },
     {
+      key: 'organisation.settings',
+      path: '/settings/organisation/settings',
+      translation: messages.orgSettingsTitle,
+      legacyPath: false,
+    },
+    {
       key: 'organisation.users',
       path: '/settings/organisation/users',
       translation: messages.usersSettingsTitle,
@@ -61,4 +67,18 @@ const organisationSettings: Menu = {
   ],
 };
 
-export const itemDefinitions: Menu[] = [organisationSettings, datamartSettings];
+const profileSettings: Menu = {
+  key: 'account',
+  path: '/settings/account/',
+  translation: messages.accountSettingsTitle,
+  subMenuItems: [
+    {
+      key: 'account.profile',
+      path: '/settings/account/my_profile',
+      translation: messages.accountSettingsProfile,
+      legacyPath: false,
+    },
+  ],
+};
+
+export const itemDefinitions: Menu[] = [profileSettings, organisationSettings, datamartSettings];

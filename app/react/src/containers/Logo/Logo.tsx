@@ -1,13 +1,28 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import { withMcsRouter } from '../Helpers';
 import { getLogo } from '../../state/Session/actions';
+import { MenuMode } from 'antd/lib/menu';
 
-class Logo extends Component {
+export interface LogoProps {
+  mode: MenuMode;
+  
+}
+
+interface LogoStoreProps {
+  logoUrl: string;
+  getLogoRequest: (a: { organisationId: string }) => void;
+}
+
+type Props = LogoProps & RouteComponentProps<{organisationId: string}> & LogoStoreProps
+
+class Logo extends React.Component<Props> {
+
+  static defaultProps = {
+    logoUrl: ''
+  }
 
   componentDidMount() {
     const {
@@ -19,7 +34,7 @@ class Logo extends Component {
     this.props.getLogoRequest({ organisationId });
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
         params: { organisationId },
@@ -42,7 +57,9 @@ class Logo extends Component {
     const {
       mode,
       logoUrl,
-      organisationId,
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     return (
@@ -59,19 +76,7 @@ class Logo extends Component {
   }
 }
 
-Logo.defaultProps = {
-  logoUrl: '',
-};
-
-Logo.propTypes = {
-  mode: PropTypes.string.isRequired,
-  match: PropTypes.shape().isRequired,
-  logoUrl: PropTypes.string,
-  getLogoRequest: PropTypes.func.isRequired,
-  organisationId: PropTypes.string.isRequired,
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   logoUrl: state.session.logoUrl,
 });
 
@@ -79,9 +84,7 @@ const mapDispatchToProps = {
   getLogoRequest: getLogo.request,
 };
 
-Logo = compose(
+export default compose<Props, LogoProps>(
   connect(mapStateToProps, mapDispatchToProps),
-  withMcsRouter,
+  withRouter,
 )(Logo);
-
-export default Logo;

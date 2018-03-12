@@ -1,16 +1,40 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { Upload, Icon } from 'antd';
 
 import { getLogo, putLogo } from '../../state/Session/actions';
+import { MenuMode } from 'antd/lib/menu';
+import injectNotifications, { InjectedNotificationProps } from '../Notifications/injectNotifications';
 
 const Dragger = Upload.Dragger;
 
-class EditableLogo extends Component {
+export interface EditableLogoProps {
+  mode: MenuMode;
+  
+}
+
+export interface EditableLogoStoreProps {
+  getLogoRequest: (a: {organisationId: string}) => void,
+  putLogoRequest: (a: {organisationId: string, file: any}) => void,
+  isUploadingLogo: boolean;
+  logoUrl: string;
+}
+
+type Props = EditableLogoProps & EditableLogoStoreProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps & InjectedIntlProps
+
+const messages = defineMessages({
+  error: { id: 'logo.error.upload', defaultMessage: 'The logo file should be a PNG with a maximum size of 200kb. Please make sure the file you have selected meets those criterias.' }
+})
+
+class EditableLogo extends React.Component<Props> {
+
+  static defaultProps = {
+    logoUrl: '',
+  }
+
   componentDidMount() {
     const {
       match: {
@@ -33,7 +57,7 @@ class EditableLogo extends Component {
     </div>);
   }
 
-  buildLogoImageWithUpload(logoUrl) {
+  buildLogoImageWithUpload(logoUrl: string) {
     return (<div className="mcs-logo-dragger">
       <img alt="logo" src={logoUrl} />
       <span id="logoDropzone" className="mcs-dropzone-overlay">
@@ -44,26 +68,33 @@ class EditableLogo extends Component {
     </div>);
   }
 
-  handleUpload(organisationId, uploadData) {
+  handleUpload(organisationId: string, uploadData: any) {
     const {
       putLogoRequest,
+      notifyError,
+      intl,
     } = this.props;
 
     const file = uploadData.file;
-    putLogoRequest({ organisationId, file });
+    if (file.type !== 'image/png' || file.size / 1024 > 200) {
+      notifyError({ status: 'error', error: intl.formatMessage(messages.error), error_id: '' })
+    } else {
+      putLogoRequest({ organisationId, file });
+    }
+    
   }
 
-  wrapInDraggerComponent(component) {
+  wrapInDraggerComponent(component: React.ReactNode) {
     const {
       match: {
         params: { organisationId },
       },
     } = this.props;
-
+    const customRequest = (uploadData: any) => this.handleUpload(organisationId, uploadData)
     return (<Dragger
       {...this.props}
       showUploadList={false}
-      customRequest={(uploadData) => this.handleUpload(organisationId, uploadData)}
+      customRequest={customRequest}
     >
       { component }
     </Dragger>);
@@ -92,20 +123,7 @@ class EditableLogo extends Component {
   }
 }
 
-EditableLogo.defaultProps = {
-  logoUrl: null,
-};
-
-EditableLogo.propTypes = {
-  mode: PropTypes.string.isRequired,
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  getLogoRequest: PropTypes.func.isRequired,
-  putLogoRequest: PropTypes.func.isRequired,
-  isUploadingLogo: PropTypes.bool.isRequired,
-  logoUrl: PropTypes.string,
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   isUploadingLogo: state.session.isUploadingLogo,
   logoUrl: state.session.logoUrl,
 });
@@ -115,10 +133,10 @@ const mapDispatchToProps = {
   putLogoRequest: putLogo.request,
 };
 
-EditableLogo = compose(
+
+export default compose<Props, EditableLogo>(
   connect(mapStateToProps, mapDispatchToProps),
   withRouter,
+  injectNotifications,
+  injectIntl,
 )(EditableLogo);
-
-
-export default EditableLogo;

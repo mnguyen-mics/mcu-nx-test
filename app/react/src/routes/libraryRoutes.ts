@@ -1,23 +1,21 @@
-import AssetList from '../containers/Library/Asset/List/index.ts';
-import KeywordList from '../containers/Library/Keyword/List/index.ts';
-import PlacementList from '../containers/Library/Placement/List/index.ts';
-import BidOptimizerList from '../containers/Library/BidOptimizer/List/index.ts';
-import AttributionModelList from '../containers/Library/AttributionModel/List/index.ts';
-import VisitAnalyzerList from '../containers/Library/VisitAnalyzer/List/index.ts';
-import EmailRoutersList from '../containers/Library/EmailRouter/List/index.ts';
-import RecommendersList from '../containers/Library/Recommender/List/index.ts';
-import ExportsList from '../containers/Library/Exports/List/index.ts';
-import Catalog from '../containers/Library/Catalog/index.ts';
-import PlacementListPage from '../containers/Library/Placement/Edit/PlacementListPage.tsx';
+import AssetList from '../containers/Library/Asset/List';
+import KeywordList from '../containers/Library/Keyword/List';
+import PlacementList from '../containers/Library/Placement/List';
+import BidOptimizerList from '../containers/Library/BidOptimizer/List';
+import AttributionModelList from '../containers/Library/AttributionModel/List';
+import VisitAnalyzerList from '../containers/Library/VisitAnalyzer/List';
+import EmailRoutersList from '../containers/Library/EmailRouter/List';
+import RecommendersList from '../containers/Library/Recommender/List';
+import ExportsList from '../containers/Library/Exports/List';
+import Catalog from '../containers/Library/Catalog';
 
-import Exports from '../containers/Library/Exports/Dashboard/Exports.tsx';
+import Exports from '../containers/Library/Exports/Dashboard/Exports';
 
-import { CreateEditAttributionModel } from '../containers/Library/AttributionModel/Edit/index.ts';
-import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit/index.ts';
-import { CreateEditEmailRouter } from '../containers/Library/EmailRouter/Edit/index.ts';
-import { CreateEditVisitAnalyzer } from '../containers/Library/VisitAnalyzer/Edit/index.ts';
-import { CreateEditRecommender } from '../containers/Library/Recommender/Edit/index.ts';
-import KeywordListPage from '../containers/Library/Keyword/Edit/KeywordListPage.tsx';
+import { CreateEditAttributionModel } from '../containers/Library/AttributionModel/Edit';
+import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit';
+import { CreateEditEmailRouter } from '../containers/Library/EmailRouter/Edit';
+import { CreateEditVisitAnalyzer } from '../containers/Library/VisitAnalyzer/Edit';
+import { CreateEditRecommender } from '../containers/Library/Recommender/Edit';
 
 const campaignsRoutes = [
   // ========================================

@@ -1,13 +1,12 @@
 import React from 'react';
-import campaignRoutes from './campaignRoutes.js';
-import automationRoutes from './automationRoutes.js';
-import audienceRoutes from './audienceRoutes.js';
+import campaignRoutes from './campaignRoutes';
+import automationRoutes from './automationRoutes';
+import audienceRoutes from './audienceRoutes';
 import creativeRoutes from './creativeRoutes';
-import libraryRoutes from './libraryRoutes.js';
+import libraryRoutes from './libraryRoutes';
 import settingsRoutes from './settingsRoutes';
-import accountRoutes from './accountRoutes.js';
 import datastudioRoutes from './datastudioRoutes';
-import analyticsRoutes from './analyticsRoutes.js';
+import analyticsRoutes from './analyticsRoutes';
 /**
  * Route object definition
  * {
@@ -36,7 +35,6 @@ const routes: any[] = [
   ...creativeRoutes,
   ...libraryRoutes,
   ...settingsRoutes,
-  ...accountRoutes,
   ...datastudioRoutes,
   ...analyticsRoutes,
 ];
