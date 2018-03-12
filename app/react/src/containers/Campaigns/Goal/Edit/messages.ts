@@ -43,6 +43,10 @@ export default defineMessages({
     id: 'goalSimpleEditor.section.title3',
     defaultMessage: 'Trigger',
   },
+  sectionTitle4: {
+    id: 'goalSimpleEditor.section.title4',
+    defaultMessage: 'Attribution Models',
+  },
 
   /*
   ==============================================================================

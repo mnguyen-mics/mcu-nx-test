@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
+import {
+  Form,
+  reduxForm,
+  InjectedFormProps,
+  ConfigProps,
+  GenericFieldArray,
+  Field,
+  FieldArray,
+} from 'redux-form';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
@@ -9,6 +17,7 @@ import {
   GeneralFormSection,
   ConversionValueFormSection,
   TriggerFormSection,
+  AttributionModelFormSection,
 } from './Sections';
 import { GoalFormData } from './domain';
 import messages from './messages';
@@ -21,9 +30,15 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
+import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ReduxFormChangeProps
 >;
 
 export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
@@ -55,6 +70,10 @@ class GoalForm extends React.Component<Props> {
       trigger: {
         sectionId: 'trigger',
         title: messages.sectionTitle3,
+      },
+      attribution_models: {
+        sectionId: 'attribution_models',
+        title: messages.sectionTitle4,
       },
     };
 
@@ -92,13 +111,25 @@ class GoalForm extends React.Component<Props> {
               </div>
               <hr /> */}
               <div id={sections.conversion_value.sectionId}>
-                <ConversionValueFormSection />
+                <ConversionValueFormSection
+                  initialValues={this.props.initialValues}
+                  formChange={this.props.change}
+                />
               </div>
               <hr />
               <div id={sections.trigger.sectionId}>
                 <TriggerFormSection
                   queryContainer={this.props.queryContainer}
                   queryLanguage={this.props.queryLanguage}
+                />
+              </div>
+              <hr />
+              <div id={sections.attribution_models.sectionId}>
+                <AttributionModelFieldArray
+                  name="attributionModels"
+                  component={AttributionModelFormSection}
+                  formChange={this.props.change}
+                  rerenderOnEveryChange={true}
                 />
               </div>
             </Content>

@@ -6,7 +6,7 @@ import { message } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../state/Features/selectors';
-import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
+import { NewGoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
 import GoalForm from './GoalForm';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
@@ -16,6 +16,7 @@ import GoalService from '../../../../services/GoalService';
 import GoalFormService from './GoalFormService';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
+import { createFieldArrayModelWithMeta } from '../../../../utils/FormHelper';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -42,7 +43,7 @@ const messages = defineMessages({
 });
 
 interface State {
-  goalFormData: GoalFormData;
+  goalFormData: NewGoalFormData;
   loading: boolean;
   queryContainer?: any;
   queryLanguage: QueryLanguage;
@@ -62,7 +63,7 @@ class EditGoalPage extends React.Component<Props, State> {
       .get('core/datamart/queries/QueryContainer');
     const defQuery = new QueryContainer(props.datamart.id);
     this.state = {
-      loading: true, // default true to avoid render x2 on mounting
+      loading: true,
       goalFormData: INITIAL_GOAL_FORM_DATA,
       queryContainer: defQuery,
       queryLanguage:
@@ -79,12 +80,28 @@ class EditGoalPage extends React.Component<Props, State> {
       GoalService.getGoal(goalId)
         .then(resp => resp.data)
         .then(formData => {
-          this.setState({
-            loading: false,
-            goalFormData: {
-              goal: formData,
-            },
-          });
+          GoalService.getAttributionModels(goalId)
+            .then(res => res.data)
+            .then(attributionModelList => {
+              this.setState({
+                loading: false,
+                goalFormData: {
+                  goal: formData,
+                  attributionModels: attributionModelList.map(
+                    attributionModel =>
+                      createFieldArrayModelWithMeta(attributionModel, {
+                        name: attributionModel.attribution_model_name,
+                        group_id: attributionModel.group_id,
+                        artefact_id: attributionModel.artifact_id,
+                        attribution_model_type:
+                          attributionModel.attribution_type,
+                        attribution_model_id:
+                          attributionModel.attribution_model_id,
+                      }),
+                  ),
+                },
+              });
+            });
         })
         .catch(err => {
           this.setState({ loading: false });
@@ -100,13 +117,15 @@ class EditGoalPage extends React.Component<Props, State> {
     message.error(intl.formatMessage(messages.errorFormMessage));
   };
 
-  save = (goalFormData: GoalFormData) => {
+  save = (goalFormData: NewGoalFormData) => {
     const {
       match: { params: { organisationId } },
       notifyError,
       history,
       intl,
     } = this.props;
+
+    const { goalFormData: initialGoalFormData } = this.state;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -117,7 +136,11 @@ class EditGoalPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    return GoalFormService.saveGoal(organisationId, goalFormData)
+    return GoalFormService.saveGoal(
+      organisationId,
+      goalFormData,
+      initialGoalFormData,
+    )
       .then(goalId => {
         hideSaveInProgress();
         const goalsUrl = `/v2/o/${organisationId}/campaigns/goals`;

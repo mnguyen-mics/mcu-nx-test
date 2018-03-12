@@ -18,6 +18,9 @@ import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
 import FormInput from '../../../../../components/Form/FormInput';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
+import { GoalFormData } from '../domain';
 
 const { DefaultSelect } = FormSelect;
 
@@ -60,18 +63,39 @@ interface State {
   displayConversionValueSection: boolean;
 }
 
-type Props = InjectedIntlProps & ValidatorProps;
+interface ConversionValueFormSectionProps extends ReduxFormChangeProps {
+  initialValues: Partial<GoalFormData>;
+}
+
+type Props = ConversionValueFormSectionProps &
+  InjectedIntlProps &
+  ValidatorProps &
+  RouteComponentProps<{ goalId: string }>;
 
 class ConversionValueFormSection extends React.Component<Props, State> {
+  isDefaultGoalValue = this.props.initialValues &&
+    this.props.initialValues.goal &&
+    this.props.initialValues.goal.default_goal_value;
+
   constructor(props: Props) {
     super(props);
     this.state = { displayConversionValueSection: false };
+  }
+
+  componentDidMount() {
+    const { match: { params: { goalId } } } = this.props;
+    if (goalId && this.isDefaultGoalValue) {
+      this.setState({
+        displayConversionValueSection: true,
+      });
+    }
   }
 
   toggleConversionValueSection = () => {
     this.setState({
       displayConversionValueSection: !this.state.displayConversionValueSection,
     });
+    this.props.formChange('goal.default_goal_value', 0);
   };
 
   render() {
@@ -104,7 +128,7 @@ class ConversionValueFormSection extends React.Component<Props, State> {
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
               <FormInputField
-                name="goal.goal_default_value"
+                name="goal.default_goal_value"
                 component={FormInput}
                 formItemProps={{
                   label: formatMessage(messages.defaultGoalValueLabel),
@@ -144,4 +168,8 @@ class ConversionValueFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators)(ConversionValueFormSection);
+export default compose<Props, ConversionValueFormSectionProps>(
+  injectIntl,
+  withRouter,
+  withValidators,
+)(ConversionValueFormSection);

@@ -3,8 +3,8 @@ import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
   GoalResource,
   GoalCreateRequest,
-  AttributionSelectionCreateRequest,
   AttributionSelectionResource,
+  AttributionModelResource,
 } from '../models/goal';
 
 export interface GetGoalsOption extends PaginatedApiParam {
@@ -52,9 +52,9 @@ const GoalService = {
     return ApiService.postRequest(endpoint, resource);
   },
 
-  createAttributionModel(
+  linkAttributionModelToGoal(
     goalId: string,
-    resource: AttributionSelectionCreateRequest,
+    resource: AttributionModelResource,
   ): Promise<DataResponse<AttributionSelectionResource>> {
     const endpoint = `goals/${goalId}/attribution_models`;
 
@@ -66,6 +66,15 @@ const GoalService = {
   ): Promise<DataListResponse<AttributionSelectionResource>> {
     const endpoint = `goals/${goalId}/attribution_models`;
     return ApiService.getRequest(endpoint);
+  },
+
+  deleteAttributionModel(
+    goalId: string,
+    attributionModelId: string,
+    // body: Partial<AttributionSelectionResource>
+  ): Promise<DataResponse<AttributionModelResource>> {
+    const endpoint = `goals/${goalId}/attribution_models/${attributionModelId}`;
+    return ApiService.deleteRequest(endpoint);
   },
 };
 

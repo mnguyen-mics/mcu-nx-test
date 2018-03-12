@@ -4,11 +4,11 @@ import {
   AttributionModelCreateRequest,
   AttributionModelResource,
 } from '../models/goal';
-import { PropertyResourceShape } from '../models/plugin'
-
+import { PropertyResourceShape } from '../models/plugin';
+import { PluginProperty } from '../models/Plugins';
+import PluginService from './PluginService';
 
 const AttributionModelService = {
-
   getAttributionModels(
     organisationId: string,
     options: PaginatedApiParam = {},
@@ -22,9 +22,26 @@ const AttributionModelService = {
     return ApiService.getRequest(endpoint, params);
   },
 
+  getAttributionModel(
+    attributionModelId: string,
+  ): Promise<DataResponse<any>> {
+    const endpoint = `attribution_models/${attributionModelId}`;
+
+    return ApiService.getRequest(endpoint);
+  },
+
+  updateAttributionModel(
+    attributionModelId: string,
+    body: object= {},
+  ): Promise<DataResponse<PluginProperty>> {
+    const endpoint = `attribution_models/${attributionModelId}`;
+
+    return ApiService.putRequest(endpoint, body);
+  },
+
   getAttributionModelProperties(
     attributionModelId: string,
-  ): Promise<DataListResponse<PropertyResourceShape>> {
+  ): Promise<DataListResponse<PluginProperty>> {
     const endpoint = `attribution_models/${attributionModelId}/properties`;
     return ApiService.getRequest(endpoint);
   },
@@ -39,8 +56,8 @@ const AttributionModelService = {
   },
 
   updateAttributionProperty(
-    attributionModelId: string, 
-    technicalName: string, 
+    attributionModelId: string,
+    technicalName: string,
     value: any,
   ): Promise<DataResponse<PropertyResourceShape>> {
     const endpoint = `attribution_models/${attributionModelId}/properties/technical_name=${technicalName}`;
@@ -50,6 +67,28 @@ const AttributionModelService = {
     };
     return ApiService.putRequest(endpoint, body);
   },
-}
+  deleteAttributionModel(
+    attributionModelId: string,
+  ): Promise<DataResponse<AttributionModelResource>> {
+    const endpoint = `attribution_models/${attributionModelId}`;
+
+    return ApiService.deleteRequest(endpoint);
+  },
+  updateAttributionModelProperty(
+    organisationId: string,
+    id: string,
+    technicalName: string,
+    params: object = {},
+  ): Promise<DataResponse<PluginProperty> | void> {
+    const endpoint = `attribution_models/${id}/properties/technical_name=${technicalName}`;
+    return PluginService.handleSaveOfProperties(
+      params,
+      organisationId,
+      'attribution_models',
+      id,
+      endpoint,
+    );
+  },
+};
 
 export default AttributionModelService;

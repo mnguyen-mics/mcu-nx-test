@@ -6,7 +6,7 @@ import {
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
-import { Checkbox, Button, Modal } from 'antd';
+import { Checkbox, Button, Row, Col } from 'antd';
 import { FormSection } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -21,6 +21,7 @@ import OTQLInputEditor, {
 } from '../../../../Audience/Segments/Edit/Sections/query/OTQL';
 import { FieldCtor } from '../../../../../components/Form/index';
 import SelectorQL from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQL';
+import SelectorQLReadOnly from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQLReadOnly';
 import { Field } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
 
@@ -42,10 +43,6 @@ const messages = defineMessages({
   formCheckBoxText2: {
     id: 'goalEditor.section.trigger.formcheckbox.pixel',
     defaultMessage: 'Trigger via pixel',
-  },
-  triggerQueryModalTitle: {
-    id: 'goalEditor.section.trigger.query.modal.title',
-    defaultMessage: 'Add user activity trigger',
   },
   triggerPixelModalTitle: {
     id: 'goalEditor.section.trigger.pixel.modal.title',
@@ -69,8 +66,9 @@ const messages = defineMessages({
 
 interface State {
   displaySection: boolean;
-  isTriggerQueryModalVisible: boolean;
-  isTriggerPixelModalVisible: boolean;
+  editQueryMode: boolean;
+  queryContainer: any;
+  queryContainerCopy: any;
 }
 
 interface TriggerFormSectionProps {
@@ -89,8 +87,9 @@ class TriggerFormSection extends React.Component<Props, State> {
     super(props);
     this.state = {
       displaySection: false,
-      isTriggerQueryModalVisible: false,
-      isTriggerPixelModalVisible: false,
+      editQueryMode: false,
+      queryContainer: this.props.queryContainer,
+      queryContainerCopy: this.props.queryContainer.copy(),
     };
   }
 
@@ -119,8 +118,29 @@ class TriggerFormSection extends React.Component<Props, State> {
       <SelectorQL
         datamartId={datamart.id}
         organisationId={organisationId}
-        queryContainer={this.props.queryContainer}
+        queryContainer={this.state.queryContainerCopy}
       />
+    );
+  };
+
+  renderPropertiesFieldReadOnly = () => {
+    const { queryLanguage, intl } = this.props;
+
+    return queryLanguage === 'OTQL' ? (
+      <FormOTQL
+        name={'query.query_text'}
+        component={OTQLInputEditor}
+        formItemProps={{
+          label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
+        }}
+        helpToolTipProps={{
+          title: intl.formatMessage(
+            messages.audienceSegmentCreationUserQueryFieldHelper,
+          ),
+        }}
+      />
+    ) : (
+      <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
     );
   };
 
@@ -129,23 +149,35 @@ class TriggerFormSection extends React.Component<Props, State> {
       displaySection: !this.state.displaySection,
     });
   };
-  closeModals = () => {
+
+  switchEditMode = () => {
     this.setState({
-      isTriggerQueryModalVisible: false,
-      isTriggerPixelModalVisible: false,
+      editQueryMode: !this.state.editQueryMode,
+      queryContainer: this.props.queryContainer.copy(),
     });
   };
 
-  openTriggerModal = () => {
+  closeEditMode = () => {
     this.setState({
-      isTriggerQueryModalVisible: true,
+      editQueryMode: false,
     });
-  };
+  }
 
-  openPixelModal = () => {
-    this.setState({
-      isTriggerPixelModalVisible: true,
-    });
+  displayPixelSection = () => {
+    const {
+      intl: { formatMessage },
+      match: { params: { goalId } },
+    } = this.props;
+    return (
+      <div>
+        <p>{formatMessage(messages.triggerPixelModalTitle)}</p>
+        <p>{formatMessage(messages.triggerPixelModalMessage)} : </p>
+        <p>
+          {' '}
+          {`<img src='//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=meddf17&$goal_id=${goalId}' />`}
+        </p>
+      </div>
+    );
   };
 
   render() {
@@ -154,79 +186,81 @@ class TriggerFormSection extends React.Component<Props, State> {
       match: { params: { goalId } },
     } = this.props;
 
+    const updateQueryContainer = () => {
+      this.setState(
+        prevState => ({
+          queryContainer: prevState.queryContainerCopy.copy(),
+        }),
+        () => {
+          this.closeEditMode();
+        },
+      );
+    };
+
     return (
       <div>
-        <Modal
-          title={formatMessage(messages.triggerQueryModalTitle)}
-          visible={this.state.isTriggerQueryModalVisible}
-          onOk={this.closeModals}
-          onCancel={this.closeModals}
-          width={'60%'}
-        >
-          {this.renderPropertiesField()}
-        </Modal>
         <FormSection
           subtitle={messages.sectionSubtitle1}
           title={messages.sectionTitle1}
         />
-        <Checkbox
-          checked={!this.state.displaySection}
-          onChange={this.toggleSections}
-        >
-          {formatMessage(messages.formCheckBoxText1)}
-        </Checkbox>
-
-        {goalId && (
-          <div>
-            <br />
+        <Row gutter={8}>
+          <Col span={4}>
             <Checkbox
-              checked={this.state.displaySection}
-              onChange={this.toggleSections}
+              checked={!this.state.displaySection}
+              onChange={goalId ? this.toggleSections : undefined}
             >
-              {formatMessage(messages.formCheckBoxText2)}
+              {formatMessage(messages.formCheckBoxText1)}
             </Checkbox>
-            <Modal
-              title={formatMessage(messages.triggerPixelModalTitle)}
-              visible={this.state.isTriggerPixelModalVisible}
-              onCancel={this.closeModals}
-            >
-              {formatMessage(messages.triggerPixelModalMessage)}
-              <br />
-              <br />
-              <b>
-                {`<img src='//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=meddf17&$goal_id=${goalId}' />`}
-              </b>
-            </Modal>
-          </div>
-        )}
-        <div
-          className={
-            this.state.displaySection
-              ? 'hide-section'
-              : 'optional-section-content'
-          }
-        >
-          <Button onClick={this.openTriggerModal}>
-            <FormattedMessage
-              id="edit.goal.form.section.trigger.button.trigger"
-              defaultMessage="Add a trigger"
-            />
-          </Button>
-        </div>
-        <div
-          className={
-            !this.state.displaySection
-              ? 'hide-section'
-              : 'optional-section-content'
-          }
-        >
-          <Button onClick={this.openPixelModal}>
-            <FormattedMessage
-              id="edit.goal.form.section.trigger.button.pixel"
-              defaultMessage="Get pixel tracking url"
-            />
-          </Button>
-        </div>
+            {goalId && (
+              <div>
+                <br />
+                <Checkbox
+                  checked={this.state.displaySection}
+                  onChange={this.toggleSections}
+                >
+                  {formatMessage(messages.formCheckBoxText2)}
+                </Checkbox>
+              </div>
+            )}
+          </Col>
+          <Col span={20}>
+            {!this.state.displaySection
+              ? this.state.editQueryMode
+                ? this.renderPropertiesField()
+                : this.renderPropertiesFieldReadOnly()
+              : this.displayPixelSection()}
+            <br />
+            <div style={{ float: 'right' }}>
+              {!this.state.displaySection ? (
+                this.state.editQueryMode ? (
+                  <div>
+                    <Button onClick={updateQueryContainer} type="primary">
+                      <FormattedMessage
+                        id="edit.goal.form.section.trigger.updateQueryContainer.ok"
+                        defaultMessage="Ok"
+                      />
+                    </Button>
+                    <Button onClick={this.switchEditMode} type="danger">
+                      <FormattedMessage
+                        id="edit.goal.form.section.trigger.updateQueryContainer.cancel"
+                        defaultMessage="Cancel"
+                      />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button onClick={this.switchEditMode}>
+                    <FormattedMessage
+                      id="edit.goal.form.section.trigger.button.trigger"
+                      defaultMessage="Edit trigger"
+                    />
+                  </Button>
+                )
+              ) : (
+                undefined
+              )}
+            </div>
+          </Col>
+        </Row>
       </div>
     );
   }

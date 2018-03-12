@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../Plugin/Edit/PluginContent';
-import AttributionModelService from '../../../../services/Library/AttributionModelService';
+import AttributionModelService from '../../../../services/AttributionModelService';
 import * as actions from '../../../../state/Notifications/actions';
 import { AttributionModel, PluginProperty } from '../../../../models/Plugins';
 

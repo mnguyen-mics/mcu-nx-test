@@ -8,7 +8,7 @@ import {
   FieldArrayModelWithMeta,
 } from '../../../../utils/FormHelper';
 import { AdGroupFormData } from './AdGroup/domain';
-import { GoalFormData } from '../../Goal/Edit/domain';
+import { GoalFormData, NewGoalFormData } from '../../Goal/Edit/domain';
 
 export interface EditDisplayCampaignRouteMatchParam {
   organisationId: string;
@@ -16,7 +16,7 @@ export interface EditDisplayCampaignRouteMatchParam {
 }
 
 export type GoalModelShape =
-  | GoalFormData
+  | NewGoalFormData
   | GoalSelectionCreateRequest
   | GoalSelectionResource;
 
@@ -47,7 +47,7 @@ export const INITIAL_DISPLAY_CAMPAIGN_FORM_DATA: DisplayCampaignFormData = {
 ///////////////////////////
 // PREDEFINED TYPE GUARD //
 ///////////////////////////
-export function isGoalFormData(model: GoalModelShape): model is GoalFormData {
+export function isGoalFormData(model: GoalModelShape): model is NewGoalFormData {
   return (model as GoalFormData).goal !== undefined;
 }
 

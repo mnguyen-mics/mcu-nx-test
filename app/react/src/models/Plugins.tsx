@@ -40,7 +40,7 @@ export interface AttributionModel {
   attribution_processor_id: string;
   group_id: string;
   id: string;
-  mode: string;
+  mode: 'STRICT' | 'DISCOVERY';
   name: string;
   organisation_id: string;
 }

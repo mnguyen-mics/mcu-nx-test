@@ -28,8 +28,8 @@ import { FormSection } from '../../../../../components/Form';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import {
   isGoalResource,
-  GoalFormData,
   INITIAL_GOAL_FORM_DATA,
+  NewGoalFormData,
 } from '../../../Goal/Edit/domain';
 import GoalForm, { GoalFormProps } from '../../../Goal/Edit/GoalForm';
 import GoalFormLoader, {
@@ -108,7 +108,7 @@ class GoalFormSection extends React.Component<Props> {
     formChange((fields as any).name, keptFields.concat(newFields));
   };
 
-  updateGoals = (goalFormData: GoalFormData, fieldKey?: string) => {
+  updateGoals = (goalFormData: NewGoalFormData, fieldKey?: string) => {
     const { fields, formChange } = this.props;
 
     const newFields: GoalFieldModel[] = [];
@@ -150,7 +150,7 @@ class GoalFormSection extends React.Component<Props> {
       },
     ];
 
-    const handleOnSubmit = (formData: GoalFormData) => {
+    const handleOnSubmit = (formData: NewGoalFormData) => {
       this.updateGoals(formData, field && field.key);
       this.props.closeNextDrawer();
     };
