@@ -1,9 +1,10 @@
 import ApiService, { DataResponse } from './ApiService';
 
 const getDatafileData = (dataFilePath: string): Promise<DataResponse<any>> => {
-  const endpoint = 'data_file/data';
+  const endpoint = `data_file/data`;
   const params = {
     uri: dataFilePath,
+    cd: Math.random()
   };
 
   return ApiService.getRequest(endpoint, params);
