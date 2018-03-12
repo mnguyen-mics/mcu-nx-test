@@ -29,7 +29,7 @@ import {
   EmailCampaignListPage,
 } from '../containers/Campaigns/Email/List';
 
-import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard';
+import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard/index.ts';
 
 import { GoalsActionbar, GoalsTable } from '../containers/Campaigns/Goal/List';
 
