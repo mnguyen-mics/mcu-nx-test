@@ -43,6 +43,7 @@ export interface ItemListProps<T = any> extends ViewComponentWithFiltersProps<T>
   total: number;
   pageSettings: PageSetting[];
   emptyTable: EmptyTableProps;
+  additionnalComponent?: React.ReactNode;
 }
 
 type Props<T = any> = ItemListProps<T> & RouteComponentProps<RouterParams>
@@ -136,6 +137,7 @@ class ItemList<T> extends React.Component<Props<T>> {
         iconType,
         intlMessage,
       },
+      additionnalComponent,
       ...rest,
     } = this.props;
 
@@ -161,6 +163,7 @@ class ItemList<T> extends React.Component<Props<T>> {
 
     return (
       <div className="mcs-table-container">
+        {additionnalComponent}
         <TableViewFilters
           pagination={pagination}
           {...rest}

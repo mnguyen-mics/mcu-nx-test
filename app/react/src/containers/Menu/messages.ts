@@ -155,6 +155,10 @@ export default defineMessages({
         id: 'menu.datamart.mobile_application',
         defaultMessage: 'Mobile Applications',
     },
+   visitAnalyzerSettingsTitle: {
+        id: 'menu.datamart.visit_analyzer',
+        defaultMessage: 'Visit Analyzer',
+    },
     myDatamartSettingsTitle: {
         id: 'menu.datamart.myDatamart',
         defaultMessage: 'My Datamart',
@@ -176,11 +180,6 @@ export default defineMessages({
         defaultMessage: 'Profile',
     },
 
-    // BACK TO APP
-    backToAppSettings: {
-        id: 'menu.organisation.backToApp',
-        defaultMessage: 'Back to App',
-    },
     accountSettingsTitle: {
         id: 'menu.account.title',
         defaultMessage: 'My Account',
@@ -189,5 +188,37 @@ export default defineMessages({
         id: 'menu.account.profile',
         defaultMessage: 'Profile',
     },
+
+    campaignSettingsTitle: {
+        id: 'menu.campaigns.title',
+        defaultMessage: 'Campaigns', 
+    },
+
+    campaignSettingsbidOptimizer: {
+        id: 'menu.campaigns.bid_optimizer',
+        defaultMessage: 'Bid Optimizer', 
+    },
+
+    campaignSettingsAttributionModels: {
+        id: 'menu.campaigns.attribution_models',
+        defaultMessage: 'Attribution Models', 
+    },
+
+    campaignSettingsEmailRouters: {
+        id: 'menu.campaigns.email_routers',
+        defaultMessage: 'Email Routers', 
+    },
+
+    campaignSettingsRecommenders: {
+        id: 'menu.campaigns.recommenders',
+        defaultMessage: 'Recommenders', 
+    },
+
+    // BACK TO APP
+    backToAppSettings: {
+        id: 'menu.organisation.backToApp',
+        defaultMessage: 'Back to App',
+    },
+    
 
 })

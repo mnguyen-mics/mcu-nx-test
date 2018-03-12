@@ -33,6 +33,12 @@ const datamartSettings: Menu = {
       legacyPath: false,
     },
     {
+      key: 'datamart.visit_analyzers',
+      path: '/settings/datamart/visit_analyzers',
+      translation: messages.visitAnalyzerSettingsTitle,
+      legacyPath: false,
+    },
+    {
       key: 'datamart.datamarts',
       path: '/settings/datamart/my_datamart',
       translation: messages.myDatamartSettingsTitle,
@@ -54,7 +60,7 @@ const organisationSettings: Menu = {
     },
     {
       key: 'organisation.settings',
-      path: '/settings/organisation/settings',
+      path: '/settings/organisation/profile',
       translation: messages.orgSettingsTitle,
       legacyPath: false,
     },
@@ -81,4 +87,36 @@ const profileSettings: Menu = {
   ],
 };
 
-export const itemDefinitions: Menu[] = [profileSettings, organisationSettings, datamartSettings];
+const campaignSettings: Menu = {
+  key: 'campaigns',
+  path: '/settings/campaigns/',
+  translation: messages.campaignSettingsTitle,
+  subMenuItems: [
+    {
+      key: 'campaigns.bid_optimizer',
+      path: '/settings/campaigns/bid_optimizer',
+      translation: messages.campaignSettingsbidOptimizer,
+      legacyPath: false,
+    },
+    {
+      key: 'campaigns.attribution_models',
+      path: '/settings/campaigns/attribution_models',
+      translation: messages.campaignSettingsAttributionModels,
+      legacyPath: false,
+    },
+    {
+      key: 'campaigns.email_routers',
+      path: '/settings/campaigns/email_routers',
+      translation: messages.campaignSettingsEmailRouters,
+      legacyPath: false,
+    },
+    {
+      key: 'campaigns.recommenders',
+      path: '/settings/campaigns/recommenders',
+      translation: messages.campaignSettingsRecommenders,
+      legacyPath: false,
+    },
+  ],
+};
+
+export const itemDefinitions: Menu[] = [profileSettings, organisationSettings, datamartSettings, campaignSettings];

@@ -134,36 +134,7 @@ const libraryMenu: Menu = {
       translation: messages.libraryKeyword,
       legacyPath: false,
     },
-    {
-      key: 'library.bid_optimizers',
-      path: '/library/bid_optimizers',
-      translation: messages.libraryBidOptimizer,
-      legacyPath: false,
-    },
-    {
-      key: 'library.attribution_models',
-      path: '/library/attribution_models',
-      translation: messages.libraryAttributionModel,
-      legacyPath: false,
-    },
-    {
-      key: 'library.visit_analyzers',
-      path: '/library/visit_analyzers',
-      translation: messages.libraryVisitAnalyzer,
-      legacyPath: false,
-    },
-    {
-      key: 'library.email_routers',
-      path: '/library/email_routers',
-      translation: messages.libraryEmailRouter,
-      legacyPath: false,
-    },
-    {
-      key: 'library.recommenders',
-      path: '/library/recommenders',
-      translation: messages.libraryRecommenders,
-      legacyPath: false,
-    },
+   
     {
       key: 'library.catalog',
       path: '/library/catalog',

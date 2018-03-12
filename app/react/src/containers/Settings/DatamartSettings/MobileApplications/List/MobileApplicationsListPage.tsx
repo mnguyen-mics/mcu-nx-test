@@ -67,7 +67,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
         }
       }
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/mobile_application/create`)
+    history.push(`/v2/o/${organisationId}/settings/datamart/mobile_application/create`)
   }
 
   componentDidMount() {
@@ -94,7 +94,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
       history,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/settings/mobile_application/${mobileApplication.id}/edit`);
+    history.push(`/v2/o/${organisationId}/settings/datamart/mobile_application/${mobileApplication.id}/edit`);
   }
 
   handleFilterChange = (newFilter: Filter) => {

@@ -72,7 +72,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       history,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/settings/sites/${site.id}/edit`);
+    history.push(`/v2/o/${organisationId}/settings/datamart/sites/${site.id}/edit`);
   }
 
   handleFilterChange = (newFilter: Filter) => {
@@ -119,7 +119,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
 
   buildNewActionElement = (organisationId: string, datamartId: string) => {
     return (
-      <Link key={messages.newSite.id} to={`/v2/o/${organisationId}/settings/sites/create`}>
+      <Link key={messages.newSite.id} to={`/v2/o/${organisationId}/settings/datamart/sites/create`}>
         <Button key={messages.newSite.id} type="primary" htmlType="submit">
           <FormattedMessage {...messages.newSite} />
         </Button>
