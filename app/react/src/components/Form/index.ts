@@ -12,15 +12,15 @@ import SwitchInput from './SwitchInput';
 import FormSwitch, { FormSwitchProps } from './FormSwitch';
 import withNormalizer from './withNormalizer';
 import withValidators from './withValidators';
-import FormUpload from './FormUpload';
-import FormTextArea from './FormTextArea';
+import FormUpload, { FormUploadProps } from './FormUpload';
+import FormTextArea, { FormTextAreaProps } from './FormTextArea';
 import FormInput, { FormInputProps } from './FormInput';
 import FormSlider, { FormSliderProps } from './FormSlider';
 import DefaultSelect, { DefaultSelectProps } from './FormSelect/DefaultSelect';
 import AddonSelect, { FormSelectAddonProps } from './FormSelect/AddonSelect';
 import { FormMultiTagProps } from './FormSelect/FormMultiTag';
 import FormDateRangePicker, { FormDateRangePickerProps } from './FormDateRangePicker';
-import FormCodeEdit from './FormCodeEdit';
+import FormCodeEdit, { FormCodeEditProps } from './FormCodeEdit';
 import FormCodeSnippet from './FormCodeSnippet';
 import TagSelect from './FormSelect/TagSelect';
 import FormDragAndDrop from './FormDragAndDrop';
@@ -97,3 +97,6 @@ export const FormBooleanField = Field as new() => GenericField<FormBooleanProps>
 export const FormSliderField = Field as new() => GenericField<FormSliderProps>;
 export const FormRateField = Field as new() => GenericField<FormRateProps>;
 
+export const FormUploadField = Field as new() => GenericField<FormUploadProps>;
+export const FormCodeEditField = Field as new() => GenericField<FormCodeEditProps>;
+export const FormTextAreaField = Field as new() => GenericField<FormTextAreaProps>;

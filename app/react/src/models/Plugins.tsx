@@ -55,15 +55,6 @@ export interface BidOptimizer {
   name: string;
   organisation_id: string;
 }
-
-export interface BidOptimizer {
-  engine_artifact_id: string;
-  engine_group_id: string;
-  engine_version_id: string;
-  id: string;
-  name: string;
-  organisation_id: string;
-}
 export interface EmailRouter {
   id: string;
   name: string;

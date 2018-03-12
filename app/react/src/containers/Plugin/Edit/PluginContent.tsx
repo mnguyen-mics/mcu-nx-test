@@ -18,6 +18,7 @@ import Loading from '../../../components/Loading';
 import messages from './messages';
 import { Path } from '../../../components/ActionBar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
+import { PluginLayout } from '../../../models/plugin/PluginLayout';
 
 const formId = 'pluginForm';
 
@@ -51,6 +52,7 @@ interface PluginContentState {
   plugin: PluginResource;
   isLoading: boolean;
   pluginProperties: PluginProperty[];
+  pluginLayout?: PluginLayout;
   availablePlugins: PluginResource[];
 }
 
@@ -143,19 +145,34 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         PluginService.getPluginVersions(plugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            return PluginService.getPluginVersionProperty(
+            const promise1 = PluginService.getPluginVersionProperty(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
                 : lastVersion.id,
             );
+            const promise2 = PluginService.getLocalizedPluginLayout(
+              plugin.id,
+              lastVersion.id
+            );
+            return Promise.all([promise1, promise2]);
           })
-          .then(res => {
-            this.setState({
-              pluginProperties: res,
-              isLoading: false,
-            });
-          });
+          .then(([res1, res2]) => {
+            if (res2 !== null && res2.status !== "error") {
+              this.setState({
+                pluginProperties: res1,
+                pluginLayout: res2.data,
+                isLoading: false,
+              });
+            }
+            else {
+              this.setState({
+                pluginProperties: res1,
+                isLoading: false,
+              });
+            }
+          })
+          .catch(err => actions.notifyError(err));
       },
     );
   };
@@ -223,12 +240,23 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         }
       )
     }
-    sidebarItems.push(
-      {
-        sectionId: 'properties',
-        title: messages.menuProperties,
-      }
-    )
+    if (this.state.pluginLayout === undefined) {
+      sidebarItems.push(
+        {
+          sectionId: 'properties',
+          title: messages.menuProperties,
+        }
+      )
+    } else {
+      this.state.pluginLayout.sections.forEach(section => {
+        sidebarItems.push(
+          {
+            sectionId: section.title,
+            title: { id: section.title, defaultMessage: section.title },
+          }
+        )
+      });
+    }
 
     const actionbarProps =
       pluginProperties.length || editionMode
@@ -259,6 +287,8 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           save={this.createPlugin}
           pluginProperties={pluginProperties}
           disableFields={(isLoading || disableFields) ? true : false}
+          pluginLayout={this.state.pluginLayout !== undefined ? this.state.pluginLayout : undefined}
+          isLoading={isLoading}
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}

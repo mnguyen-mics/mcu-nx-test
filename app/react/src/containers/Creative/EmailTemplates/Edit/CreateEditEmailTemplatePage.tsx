@@ -15,9 +15,8 @@ import { EmailTemplateResource } from '../../../../models/creative/CreativeResou
 import { DataResponse } from '../../../../services/ApiService';
 
 import messages from './messages';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 
 const CreativeRendererId = '1034';
 
@@ -34,6 +33,7 @@ interface EmailTemplateForm {
 interface CreateEmailTemplateState {
   edition: boolean;
   isLoading: boolean;
+  pluginLayout?: PluginLayout;
   initialValues?: EmailTemplateForm;
   emailTemplateRenderer?: PluginVersionResource;
 }
@@ -104,8 +104,13 @@ class CreateEmailTemplate extends React.Component<
         lastVersion.id,
       );
 
-      pluginPropertiesPromise
-        .then(values => {
+      const pluginLayoutPromise = PluginService.getLocalizedPluginLayout(
+        CreativeRendererId,
+        lastVersion.id
+      );
+
+      Promise.all([pluginPropertiesPromise, pluginLayoutPromise])
+        .then(([values, pluginLayoutRes]) => {
           this.setState(prevState => {
             const nextState = {
               ...prevState,
@@ -126,6 +131,10 @@ class CreateEmailTemplate extends React.Component<
                     : prop;
                 }),
             };
+
+            if (pluginLayoutRes !== null && pluginLayoutRes.status !== "error") {
+              nextState.pluginLayout = pluginLayoutRes.data;
+            }
 
             nextState.emailTemplateRenderer = {
               id: CreativeRendererId,
@@ -152,32 +161,41 @@ class CreateEmailTemplate extends React.Component<
     const fetchEmailTemplateProperties = CreativeService.getEmailTemplateProperties(
       emailTemplateId,
     ).then(res => res.data);
-    this.setState(
-      {
-        isLoading: true,
-      },
-      () => {
-        Promise.all([fetchEmailTemplate, fetchEmailTemplateProperties]).then(
-          res => {
-            this.setState({
-              isLoading: false,
-              initialValues: {
-                plugin: res[0],
-                properties: res[1].map(prop => {
-                  return prop.technical_name === 'template_file' &&
-                    prop.property_type === 'DATA_FILE'
-                    ? {
-                        ...prop,
-                        value: { ...prop.value, acceptedFile: 'text/html' },
-                      }
-                    : prop;
-                }),
-              },
-            });
-          },
-        );
-      },
+    const pluginLayoutPromise = PluginService.getLocalizedPluginLayout(
+      CreativeRendererId,
+      emailTemplateId
     );
+
+    this.setState({ isLoading: true })
+
+    Promise.all([fetchEmailTemplate, fetchEmailTemplateProperties, pluginLayoutPromise])
+      .then(([plugin, properties, pluginLayoutRes]) =>  {
+        this.setState(prevState => {
+          const nextState: CreateEmailTemplateState = {
+            ...prevState,
+            isLoading: false,
+            initialValues: {
+              plugin,
+              properties: properties.map(prop => {
+                return prop.technical_name === 'template_file' &&
+                  prop.property_type === 'DATA_FILE'
+                  ? {
+                    ...prop,
+                    value: { ...prop.value, acceptedFile: 'text/html' },
+                  }
+                  : prop;
+              }),
+            },
+          };
+
+          if (pluginLayoutRes !== null && pluginLayoutRes.status !== "error") {
+            nextState.pluginLayout = pluginLayoutRes.data;
+          };
+
+          return nextState;
+
+        });
+      });
   };
 
   redirect = () => {
@@ -299,10 +317,26 @@ class CreateEmailTemplate extends React.Component<
       { name: formatMessage(messages.emailTemplateBreadCrumb) },
     ];
 
+    const sections: Array<{ sectionId: string, title: { id: string; defaultMessage: string; } }> =
+      this.state.pluginLayout === undefined ?
+        [{
+          sectionId: 'properties',
+          title: messages.menuProperties,
+        },
+        ] :
+        this.state.pluginLayout.sections.map(section => {
+          return {
+            sectionId: section.title,
+            title: { id: section.title, defaultMessage: section.title },
+          }
+        });
+
     const sidebarItems = [
-      { sectionId: 'general', title: messages.menuGeneralInformation },
-      { sectionId: 'properties', title: messages.menuProperties },
-    ];
+      {
+        sectionId: 'general',
+        title: messages.menuGeneralInformation,
+      }
+    ].concat(sections);
 
     const formId = 'pluginForm';
 
@@ -326,33 +360,35 @@ class CreateEmailTemplate extends React.Component<
         <Loading className="loading-full-screen" />
       </div>
     ) : (
-      <EditContentLayout
-        paths={breadcrumbPaths}
-        items={sidebarItems}
-        scrollId={formId}
-        {...actionbarProps}
-      >
-        <PluginEditForm
-          editionMode={this.state.edition}
-          organisationId={organisationId}
-          save={this.saveOrCreatePluginInstance}
-          pluginProperties={
-            (this.state.initialValues && this.state.initialValues.properties) ||
-            []
-          }
-          disableFields={isLoading}
-          pluginVersionId={
-            (this.state.emailTemplateRenderer &&
-              this.state.emailTemplateRenderer.id) ||
-            ''
-          }
-          formId={formId}
-          initialValues={this.formatInitialValues(this.state.initialValues)}
-          showGeneralInformation={true}
-          showTechnicalName={true}
-        />
-      </EditContentLayout>
-    );
+        <EditContentLayout
+          paths={breadcrumbPaths}
+          items={sidebarItems}
+          scrollId={formId}
+          {...actionbarProps}
+        >
+          <PluginEditForm
+            editionMode={this.state.edition}
+            organisationId={organisationId}
+            save={this.saveOrCreatePluginInstance}
+            pluginProperties={
+              (this.state.initialValues && this.state.initialValues.properties) ||
+              []
+            }
+            disableFields={isLoading}
+            pluginLayout={this.state.pluginLayout}
+            isLoading={isLoading}
+            pluginVersionId={
+              (this.state.emailTemplateRenderer &&
+                this.state.emailTemplateRenderer.id) ||
+              ''
+            }
+            formId={formId}
+            initialValues={this.formatInitialValues(this.state.initialValues)}
+            showGeneralInformation={true}
+            showTechnicalName={true}
+          />
+        </EditContentLayout>
+      );
   }
 }
 
