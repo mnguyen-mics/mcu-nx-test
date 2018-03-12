@@ -1,10 +1,10 @@
 import ApiService, { DataResponse } from './ApiService';
 
-const getDatafileData = (dataFilePath: string): Promise<DataResponse<any>> => {
+const getDatafileData = (dataFilePath: string): Promise<Blob> => {
   const endpoint = `data_file/data`;
   const params = {
     uri: dataFilePath,
-    cd: Math.random()
+    'cache-bust': Date.now()
   };
 
   return ApiService.getRequest(endpoint, params);
