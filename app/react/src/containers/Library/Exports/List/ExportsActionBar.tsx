@@ -26,12 +26,12 @@ class ExportsActionbar extends React.Component<RouteComponentProps<RouterProps> 
     },
   } = this.props;
 
-    const breadcrumbPaths = [{ name: formatMessage(messages.exports), url: `/v2/o/${organisationId}/library/exports` }];
+    const breadcrumbPaths = [{ name: formatMessage(messages.exports), url: `/v2/o/${organisationId}/datastudio/exports` }];
 
     return (
       <Actionbar path={breadcrumbPaths}>
         {/* to uncomment when the export creation page is created in v2 */}
-        {/* <Link to={`/o${organisationId}d${datamart.id}/library/exports/new`}>
+        {/* <Link to={`/o${organisationId}d${datamart.id}/datastudio/exports/new`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newExport} />
           </Button>

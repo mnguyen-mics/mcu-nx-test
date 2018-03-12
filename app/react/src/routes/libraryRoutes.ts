@@ -1,10 +1,10 @@
 import AssetList from '../containers/Library/Asset/List';
 import KeywordList from '../containers/Library/Keyword/List';
 import PlacementList from '../containers/Library/Placement/List';
-import ExportsList from '../containers/Library/Exports/List';
+
 import Catalog from '../containers/Library/Catalog';
 
-import Exports from '../containers/Library/Exports/Dashboard/Exports';
+
 import PlacementListPage from '../containers/Library/Placement/Edit/PlacementListPage';
 
 
@@ -63,19 +63,7 @@ const campaignsRoutes = [
     layout: 'main',
     ...Catalog,
   },
-  // ========================================
-  //           Exports
-  // ========================================
-  {
-    path: '/library/exports',
-    layout: 'main',
-    ...ExportsList,
-  },
-  {
-    path: '/library/exports/:exportId(\\d+)',
-    layout: 'main',
-    contentComponent: Exports,
-  },
+  
 ];
 
 export default campaignsRoutes;

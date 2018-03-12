@@ -160,12 +160,7 @@ const libraryMenu: Menu = {
       translation: messages.libraryAssets,
       legacyPath: false,
     },
-    {
-      key: 'library.exports',
-      path: '/library/exports',
-      translation: messages.libraryExports,
-      legacyPath: false,
-    },
+   
   ],
 };
 
@@ -186,7 +181,13 @@ const dataStudio: Menu = {
       path: '/datastudio/report',
       translation: messages.dataStudioReport,
       legacyPath: false,
-    }
+    },
+    {
+      key: 'datastudio.exports',
+      path: '/datastudio/exports',
+      translation: messages.libraryExports,
+      legacyPath: false,
+    },
   ],
 };
 

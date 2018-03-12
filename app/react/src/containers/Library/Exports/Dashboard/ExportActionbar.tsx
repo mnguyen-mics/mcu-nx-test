@@ -59,7 +59,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
       },
     } = this.props;
 
-    const editUrl = `/${organisationId}/library/exports/${exportId}/edit`;
+    const editUrl = `/${organisationId}/datastudio/exports/${exportId}/edit`;
     history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}` } });
   }
 
@@ -94,7 +94,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: 'Exports', url: `/v2/o/${organisationId}/library/exports` },
+      { name: 'Exports', url: `/v2/o/${organisationId}/datastudio/exports` },
       { name: exportObject && exportObject.name ? exportObject.name : '' },
     ];
 
@@ -133,7 +133,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
       },
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/library/exports`;
+    const editUrl = `/v2/o/${organisationId}/datastudio/exports`;
     history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}`, exportId: exportId } });
   }
 

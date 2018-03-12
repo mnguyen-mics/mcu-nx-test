@@ -128,7 +128,7 @@ class QueryToolPage extends React.Component<Props, State> {
                 this.props.history.push(
                   `/o${this.props.match.params.organisationId}d${
                     this.props.datamart.id
-                  }/library/exports/${res.id}`,
+                  }/datastudio/exports/${res.id}`,
                 );
               },
             );
