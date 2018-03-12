@@ -5,6 +5,7 @@ import ExportsList from '../containers/Library/Exports/List';
 import Catalog from '../containers/Library/Catalog';
 
 import Exports from '../containers/Library/Exports/Dashboard/Exports';
+import PlacementListPage from '../containers/Library/Placement/Edit/PlacementListPage';
 
 
 const campaignsRoutes = [

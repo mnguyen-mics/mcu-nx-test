@@ -151,7 +151,7 @@ class EmailRouterContent extends React.Component<
     const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/email_routers/create`)
 
     const buttons = [
-      (<Button type="primary" onClick={onClick}>
+      (<Button key="create" type="primary" onClick={onClick}>
       <FormattedMessage {...messages.newEmailRouter} />
     </Button>)
     ]

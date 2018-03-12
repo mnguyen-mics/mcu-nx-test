@@ -225,7 +225,7 @@ class VisitAnalyzerContent extends Component<
     const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/visit_analyzers/create`)
 
     const buttons = [
-      (<Button type="primary" onClick={onClick}>
+      (<Button key="create" type="primary" onClick={onClick}>
       <FormattedMessage {...messages.newVisitAnalyzer} />
     </Button>)
     ]

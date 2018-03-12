@@ -199,7 +199,7 @@ class AttributionModelContent extends React.Component<RouteComponentProps<Router
     const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/attribution_models/create`)
 
     const buttons = [
-      (<Button type="primary" onClick={onClick}>
+      (<Button key="create" type="primary" onClick={onClick}>
       <FormattedMessage {...messages.newAttributionModel} />
     </Button>)
     ]

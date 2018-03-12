@@ -208,7 +208,7 @@ class BidOptimizerContent extends React.Component<
     const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/bid_optimizer/create`)
 
     const buttons = [
-      (<Button type="primary" onClick={onClick}>
+      (<Button key="create" type="primary" onClick={onClick}>
       <FormattedMessage {...messages.newBidOptimizer} />
     </Button>)
     ]
