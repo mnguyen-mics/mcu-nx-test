@@ -37,6 +37,7 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import ReportService from '../../../../services/ReportService';
 import log from '../../../../utils/Logger';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { CampaignStatus } from '../../../../models/campaign';
 
 const { Content } = Layout;
 
@@ -48,6 +49,23 @@ const messageMap = defineMessages({
   devileryAnalysis: {
     id: 'email-campaign-delivery-analysis',
     defaultMessage: 'Delivery Analysis',
+  },
+  statusUpdateSuccess: {
+    id: 'email-campaign-status-update-successfull',
+    defaultMessage: 'Campaign status successfully updated',
+  },
+  statusUpdateFailure: {
+    id: 'email-campaign-status-update-failure',
+    defaultMessage:
+      'There was an error updating your campaign... Please try again...',
+  },
+  notifSuccess: {
+    id: 'email-campaign-notification-success',
+    defaultMessage: 'Success',
+  },
+  notifError: {
+    id: 'email-campaign-notification-error',
+    defaultMessage: 'Error',
   },
 });
 
@@ -191,6 +209,37 @@ class EmailCampaign extends React.Component<Props, State> {
     history.push(nextLocation);
   }
 
+  updateCampaignStatus = (status: CampaignStatus) => {
+    const {
+      match: { params: { campaignId } },
+      intl,
+      notifySuccess,
+      notifyError,
+    } = this.props;
+    this.setState({
+      isLoadingCampaign: true,
+    });
+    EmailCampaignService.updateEmailCampaign(campaignId, {
+      status,
+    })
+      .then(res => {
+        this.setState({
+          isLoadingCampaign: false,
+          campaign: res.data,
+        });
+        notifySuccess({
+          message: intl.formatMessage(messageMap.notifSuccess),
+          description: intl.formatMessage(messageMap.statusUpdateSuccess),
+        });
+      })
+      .catch(err =>
+        notifyError(err, {
+          message: intl.formatMessage(messageMap.notifError),
+          description: intl.formatMessage(messageMap.statusUpdateFailure),
+        }),
+      );
+  };
+
   render() {
     const {
       match: { params: { organisationId, campaignId } },
@@ -231,14 +280,8 @@ class EmailCampaign extends React.Component<Props, State> {
       },
     ];
 
-    const handlePause = () =>
-      EmailCampaignService.updateEmailCampaign(campaignId, {
-        status: 'PAUSED',
-      });
-    const handleActivate = () =>
-      EmailCampaignService.updateEmailCampaign(campaignId, {
-        status: 'ACTIVE',
-      });
+    const handlePause = () => this.updateCampaignStatus('PAUSED');
+    const handleActivate = () => this.updateCampaignStatus('ACTIVE');
     const handleArchive = () => {
       // TODO
     };

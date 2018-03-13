@@ -11,6 +11,7 @@ export interface EmailCampaignCreateRequest {
   editor_artifact_id: string;
   currency_code: string;
   technical_name: string;
+  type: string;
 }
 
 export interface EmailCampaignResource extends EmailCampaignCreateRequest {

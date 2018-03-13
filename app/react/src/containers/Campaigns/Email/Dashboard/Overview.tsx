@@ -44,7 +44,10 @@ class Overview extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.campaign) {
+    if (
+      nextProps.campaign &&
+      (!this.props.campaign || nextProps.campaign.id !== this.props.campaign.id)
+    ) {
       this.fetchData(nextProps.campaign);
     }
   }
@@ -78,7 +81,7 @@ class Overview extends React.Component<Props, State> {
     if (emailReportView) {
       const normlizedRV = normalizeReportView(emailReportView.report_view);
       const {
-        uniq_email_sent,
+        email_sent,
         uniq_email_hard_bounced,
         uniq_email_soft_bounced,
         uniq_impressions,
@@ -88,11 +91,11 @@ class Overview extends React.Component<Props, State> {
 
       deliveryReport = {
         emailDelivered:
-          uniq_email_sent - uniq_email_hard_bounced - uniq_email_soft_bounced,
+          email_sent - uniq_email_hard_bounced - uniq_email_soft_bounced,
         emailOpened: uniq_impressions,
         emailUnsubscribed: uniq_email_unsubscribed,
         emailClicks: uniq_clicks,
-        emailSent: uniq_email_sent,
+        emailSent: email_sent,
       };
     }
 

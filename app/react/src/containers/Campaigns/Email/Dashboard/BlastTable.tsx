@@ -112,11 +112,13 @@ class BlastTable extends React.Component<Props> {
   getStatusMenu = (blast: BlastData) => {
     const { updateBlastStatus } = this.props;
 
-    const menuItems = availableStatusTransition[blast.status].map(status => (
-      <Menu.Item key={status}>
-        <FormattedMessage {...blastStatusMessageMap[blast.status]} />
-      </Menu.Item>
-    ));
+    const menuItems = availableStatusTransition[blast.status].map(
+      (status: EmailBlastStatus) => (
+        <Menu.Item key={status}>
+          <FormattedMessage {...blastStatusMessageMap[status]} />
+        </Menu.Item>
+      ),
+    );
 
     const handleOnClick = (param: ClickParam) =>
       updateBlastStatus(blast.id, param.key as EmailBlastStatus);
@@ -232,7 +234,6 @@ class BlastTable extends React.Component<Props> {
   }
 }
 
-export default compose<Props, BlastTableProps>(
-  withRouter,
-  injectIntl,
-)(BlastTable);
+export default compose<Props, BlastTableProps>(withRouter, injectIntl)(
+  BlastTable,
+);

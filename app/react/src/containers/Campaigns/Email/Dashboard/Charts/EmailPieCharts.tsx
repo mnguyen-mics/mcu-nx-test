@@ -71,7 +71,7 @@ class EmailPieCharts extends React.Component<Props> {
         case 'opens':
           return [
             {
-              key: 'delivered',
+              key: 'opened',
               value: emailOpened ? emailOpened : 0,
               color: colors['mcs-info'],
             },

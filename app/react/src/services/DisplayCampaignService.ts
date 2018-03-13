@@ -44,7 +44,7 @@ const DisplayCampaignService = {
     body: Partial<DisplayCampaignResource>,
   ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/?organisation_id=${organisationId}`;
-    return ApiService.postRequest(endpoint, body);
+    return ApiService.postRequest(endpoint, { ...body, type: 'DISPLAY' });
   },
 
   updateCampaign(
