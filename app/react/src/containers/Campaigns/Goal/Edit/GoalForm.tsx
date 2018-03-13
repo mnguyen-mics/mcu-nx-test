@@ -44,8 +44,12 @@ const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
 export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  queryContainer?: any;
-  queryLanguage?: QueryLanguage;
+  queryObject?: {
+    queryContainer?: any;
+    queryContainerCopy?: any;
+    queryLanguage?: QueryLanguage;
+    updateQueryContainer: () => void;
+  };
 }
 
 type Props = InjectedFormProps<GoalFormData, GoalFormProps> &
@@ -116,13 +120,14 @@ class GoalForm extends React.Component<Props> {
                   formChange={this.props.change}
                 />
               </div>
-              <hr />
-              <div id={sections.trigger.sectionId}>
-                <TriggerFormSection
-                  queryContainer={this.props.queryContainer}
-                  queryLanguage={this.props.queryLanguage}
-                />
-              </div>
+              {this.props.queryObject && (
+                <div>
+                  <hr />
+                  <div id={sections.trigger.sectionId}>
+                    <TriggerFormSection queryObject={this.props.queryObject} />
+                  </div>
+                </div>
+              )}
               <hr />
               <div id={sections.attribution_models.sectionId}>
                 <AttributionModelFieldArray

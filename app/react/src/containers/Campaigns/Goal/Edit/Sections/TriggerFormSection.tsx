@@ -68,12 +68,15 @@ interface State {
   displaySection: boolean;
   editQueryMode: boolean;
   queryContainer: any;
-  queryContainerCopy: any;
 }
 
 interface TriggerFormSectionProps {
-  queryContainer?: any;
-  queryLanguage?: QueryLanguage;
+  queryObject: {
+    queryContainer?: any;
+    queryContainerCopy?: any;
+    queryLanguage?: QueryLanguage;
+    updateQueryContainer: () => void;
+  };
 }
 
 type Props = TriggerFormSectionProps &
@@ -88,15 +91,14 @@ class TriggerFormSection extends React.Component<Props, State> {
     this.state = {
       displaySection: false,
       editQueryMode: false,
-      queryContainer: this.props.queryContainer,
-      queryContainerCopy: this.props.queryContainer.copy(),
+      queryContainer: this.props.queryObject.queryContainer,
     };
   }
 
   renderPropertiesField = () => {
     const {
       datamart,
-      queryLanguage,
+      queryObject: { queryContainerCopy, queryLanguage },
       match: { params: { organisationId } },
       intl,
     } = this.props;
@@ -118,13 +120,13 @@ class TriggerFormSection extends React.Component<Props, State> {
       <SelectorQL
         datamartId={datamart.id}
         organisationId={organisationId}
-        queryContainer={this.state.queryContainerCopy}
+        queryContainer={queryContainerCopy}
       />
     );
   };
 
   renderPropertiesFieldReadOnly = () => {
-    const { queryLanguage, intl } = this.props;
+    const { queryObject: { queryContainer, queryLanguage }, intl } = this.props;
 
     return queryLanguage === 'OTQL' ? (
       <FormOTQL
@@ -140,7 +142,7 @@ class TriggerFormSection extends React.Component<Props, State> {
         }}
       />
     ) : (
-      <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
+      <SelectorQLReadOnly queryContainer={queryContainer} />
     );
   };
 
@@ -153,7 +155,7 @@ class TriggerFormSection extends React.Component<Props, State> {
   switchEditMode = () => {
     this.setState({
       editQueryMode: !this.state.editQueryMode,
-      queryContainer: this.props.queryContainer.copy(),
+      queryContainer: this.props.queryObject.queryContainerCopy,
     });
   };
 
@@ -161,7 +163,7 @@ class TriggerFormSection extends React.Component<Props, State> {
     this.setState({
       editQueryMode: false,
     });
-  }
+  };
 
   displayPixelSection = () => {
     const {
@@ -184,17 +186,11 @@ class TriggerFormSection extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       match: { params: { goalId } },
+      queryObject: { updateQueryContainer },
     } = this.props;
-
-    const updateQueryContainer = () => {
-      this.setState(
-        prevState => ({
-          queryContainer: prevState.queryContainerCopy.copy(),
-        }),
-        () => {
-          this.closeEditMode();
-        },
-      );
+    const updateQueryContainerAndCloseEditMode = () => {
+      updateQueryContainer();
+      this.closeEditMode();
     };
 
     return (
@@ -203,7 +199,7 @@ class TriggerFormSection extends React.Component<Props, State> {
           subtitle={messages.sectionSubtitle1}
           title={messages.sectionTitle1}
         />
-        <Row gutter={8}>
+        <Row>
           <Col span={4}>
             <Checkbox
               checked={!this.state.displaySection}
@@ -234,7 +230,10 @@ class TriggerFormSection extends React.Component<Props, State> {
               {!this.state.displaySection ? (
                 this.state.editQueryMode ? (
                   <div>
-                    <Button onClick={updateQueryContainer} type="primary">
+                    <Button
+                      onClick={updateQueryContainerAndCloseEditMode}
+                      type="primary"
+                    >
                       <FormattedMessage
                         id="edit.goal.form.section.trigger.updateQueryContainer.ok"
                         defaultMessage="Ok"

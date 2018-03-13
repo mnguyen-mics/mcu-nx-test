@@ -17,6 +17,7 @@ import GoalFormService from './GoalFormService';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { createFieldArrayModelWithMeta } from '../../../../utils/FormHelper';
+import QueryService from '../../../../services/QueryService';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -46,6 +47,7 @@ interface State {
   goalFormData: NewGoalFormData;
   loading: boolean;
   queryContainer?: any;
+  queryContainerCopy?: any;
   queryLanguage: QueryLanguage;
 }
 
@@ -66,6 +68,7 @@ class EditGoalPage extends React.Component<Props, State> {
       loading: true,
       goalFormData: INITIAL_GOAL_FORM_DATA,
       queryContainer: defQuery,
+      queryContainerCopy: defQuery.copy(),
       queryLanguage:
         props.datamart.storage_model_version === 'v201506'
           ? 'SELECTORQL'
@@ -74,7 +77,7 @@ class EditGoalPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { goalId } } } = this.props;
+    const { match: { params: { goalId } }, datamart } = this.props;
 
     if (goalId) {
       GoalService.getGoal(goalId)
@@ -83,24 +86,32 @@ class EditGoalPage extends React.Component<Props, State> {
           GoalService.getAttributionModels(goalId)
             .then(res => res.data)
             .then(attributionModelList => {
-              this.setState({
-                loading: false,
-                goalFormData: {
-                  goal: formData,
-                  attributionModels: attributionModelList.map(
-                    attributionModel =>
-                      createFieldArrayModelWithMeta(attributionModel, {
-                        name: attributionModel.attribution_model_name,
-                        group_id: attributionModel.group_id,
-                        artefact_id: attributionModel.artifact_id,
-                        attribution_model_type:
-                          attributionModel.attribution_type,
-                        attribution_model_id:
-                          attributionModel.attribution_model_id,
-                      }),
-                  ),
-                },
+              QueryService.getQuery(datamart.id, formData.new_query_id).then(r => r.data).then(res => {
+                const QueryContainer = (window as any).angular.element(document.body).injector().get('core/datamart/queries/QueryContainer')
+                const defQuery = new QueryContainer(datamart.id, res.id)
+                defQuery.load()
+                this.setState({
+                  loading: false,
+                  goalFormData: {
+                    goal: formData,
+                    attributionModels: attributionModelList.map(
+                      attributionModel =>
+                        createFieldArrayModelWithMeta(attributionModel, {
+                          name: attributionModel.attribution_model_name,
+                          group_id: attributionModel.group_id,
+                          artefact_id: attributionModel.artifact_id,
+                          attribution_model_type:
+                            attributionModel.attribution_type,
+                          attribution_model_id:
+                            attributionModel.attribution_model_id,
+                        }),
+                    ),
+                  },
+                  queryContainer: defQuery,
+                  queryLanguage: res.query_language as QueryLanguage,
+                });
               });
+              
             });
         })
         .catch(err => {
@@ -111,6 +122,12 @@ class EditGoalPage extends React.Component<Props, State> {
       this.setState({ loading: false });
     }
   }
+
+  updateQueryContainer = () => {
+    this.setState(prevState => ({
+      queryContainer: prevState.queryContainerCopy.copy(),
+    }));
+  };
 
   onSubmitFail = () => {
     const { intl } = this.props;
@@ -125,7 +142,7 @@ class EditGoalPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { goalFormData: initialGoalFormData } = this.state;
+    const { goalFormData: initialGoalFormData, queryContainer } = this.state;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -140,8 +157,9 @@ class EditGoalPage extends React.Component<Props, State> {
       organisationId,
       goalFormData,
       initialGoalFormData,
+      queryContainer,
     )
-      .then(goalId => {
+      .then(() => {
         hideSaveInProgress();
         const goalsUrl = `/v2/o/${organisationId}/campaigns/goals`;
         history.push(goalsUrl);
@@ -177,7 +195,13 @@ class EditGoalPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, goalFormData } = this.state;
+    const {
+      loading,
+      goalFormData,
+      queryContainer,
+      queryContainerCopy,
+      queryLanguage,
+    } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -200,6 +224,13 @@ class EditGoalPage extends React.Component<Props, State> {
       },
     ];
 
+    const queryObject = {
+      queryContainer: queryContainer,
+      queryContainerCopy: queryContainerCopy,
+      queryLanguage: queryLanguage,
+      updateQueryContainer: this.updateQueryContainer,
+    };
+
     return (
       <GoalForm
         initialValues={goalFormData}
@@ -207,8 +238,7 @@ class EditGoalPage extends React.Component<Props, State> {
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
-        queryContainer={this.state.queryContainer}
-        queryLanguage={this.state.queryLanguage}
+        queryObject={queryObject}
       />
     );
   }

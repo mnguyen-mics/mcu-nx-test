@@ -36,41 +36,47 @@ const GoalFormService = {
     organisationId: string,
     goalFormData: NewGoalFormData,
     initialGoalFormData: NewGoalFormData = INITIAL_GOAL_FORM_DATA,
+    queryContainer?: any,
   ): Promise<GoalResource> {
     let createOrUpdateGoalPromise;
-    if (goalFormData.goal && isGoalResource(goalFormData.goal)) {
-      createOrUpdateGoalPromise = GoalService.updateGoal(
-        goalFormData.goal.id,
-        goalFormData.goal,
-      );
-    } else {
-      createOrUpdateGoalPromise = GoalService.createGoal(
-        organisationId,
-        goalFormData.goal,
-      );
-    }
-
-    return createOrUpdateGoalPromise.then(resp => {
-      const goalResourceId = resp.data.id;
-      // if (goalFormData.lookbackWindow) {
-      //   return persistLookbackWindow(
-      //     organisationId,
-      //     goalResource.id,
-      //     goalFormData.lookbackWindow,
-      //   ).then(() => goalResource);
-      const tasks: Task[] = [];
-      tasks.push(
-        ...getAttributionModelTasks(
+    return queryContainer.saveOrUpdate().then(() => {
+      const goalDataToUpload = {
+        ...goalFormData.goal,
+       new_query_id: queryContainer.id,
+      };
+      if (goalFormData.goal && isGoalResource(goalFormData.goal)) {
+        createOrUpdateGoalPromise = GoalService.updateGoal(
+          goalFormData.goal.id,
+          goalDataToUpload,
+        );
+      } else {
+        createOrUpdateGoalPromise = GoalService.createGoal(
           organisationId,
-          goalResourceId,
-          goalFormData.attributionModels,
-          initialGoalFormData.attributionModels,
-        ),
-      );
+          goalDataToUpload,
+        );
+      }
 
-      return executeTasksInSequence(tasks).then(() => resp.data);
+      return createOrUpdateGoalPromise.then(resp => {
+        const goalResourceId = resp.data.id;
+        // if (goalFormData.lookbackWindow) {
+        //   return persistLookbackWindow(
+        //     organisationId,
+        //     goalResource.id,
+        //     goalFormData.lookbackWindow,
+        //   ).then(() => goalResource);
+        const tasks: Task[] = [];
+        tasks.push(
+          ...getAttributionModelTasks(
+            organisationId,
+            goalResourceId,
+            goalFormData.attributionModels,
+            initialGoalFormData.attributionModels,
+          ),
+        );
+
+        return executeTasksInSequence(tasks).then(() => resp.data);
+      });
     });
-
   },
 };
 
@@ -177,7 +183,7 @@ function getAttributionModelTasks(
             currentAttrributionModel,
           ),
         );
-      } else if(!(field.model as any).attribution_model_id) {
+      } else if (!(field.model as any).attribution_model_id) {
         GoalService.linkAttributionModelToGoal(
           goalId,
           currentAttrributionModel,
@@ -196,12 +202,10 @@ function getAttributionModelTasks(
     }
   });
 
-
   // removed attribution model tasks
   initialAttributionModelIds
     .filter(id => !currentAttributionModelIds.includes(id))
     .forEach(id => {
-      console.log('id to delete : ' + id);
       tasks.push(() => GoalService.deleteAttributionModel(goalId, id));
     });
 
