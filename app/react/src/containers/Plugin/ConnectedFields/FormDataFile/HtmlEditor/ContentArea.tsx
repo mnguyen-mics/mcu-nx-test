@@ -7,15 +7,23 @@ import { FieldCtor, FormSection } from '../../../../../components/Form';
 import FormInput, {
   FormInputProps,
 } from '../../../../../components/Form/FormInput';
-import { reduxForm, InjectedFormProps, Field, Form } from 'redux-form';
+import {
+  reduxForm,
+  InjectedFormProps,
+  Field,
+  Form,
+  ConfigProps,
+} from 'redux-form';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
+
+
 import FormTextArea, {
   FormTextAreaProps,
 } from '../../../../../components/Form/FormTextArea';
-import { EditContentLayout } from '../../../../../components/Layout';
 import QuickAssetUpload, { QuickAssetUploadProps } from './QuickAssetUpload';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+
 
 const { Content } = Layout;
 
@@ -27,7 +35,7 @@ export interface Content {
   content: string;
 }
 
-export interface ContentAreaProps {
+export interface ContentAreaProps extends ConfigProps<{}> {
   content: Content[];
 }
 
@@ -112,8 +120,9 @@ class ContentArea extends React.Component<Props> {
                   ...fieldGridConfig,
                 },
                 inputProps: {
+                  placeholder: content.name,
                   defaultValue: content.content,
-                  rows: 5,
+                  rows: 5
                 },
               }}
             />
@@ -139,34 +148,21 @@ class ContentArea extends React.Component<Props> {
   render() {
     const { content, handleSubmit } = this.props;
 
-    const breadcrumbPaths = [{ name: 'Quick Edit' }];
-
-    const actionbarProps = {
-      formId: 'contentAreaForm',
-      message: messages.save,
-      onClose: this.props.closeNextDrawer,
-    };
 
     return (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        <Layout>
-          <Form
-            onSubmit={handleSubmit as any}
-            className={'edit-layout ant-layout'}
-          >
-            <Content className="mcs-content-container mcs-form-container ad-group-form">
-              <FormSection title={messages.formTitle} />
-              {content.map(item => {
-                return this.buildItems(item);
-              })}
-            </Content>
-          </Form>
-        </Layout>
-      </EditContentLayout>
+      <Form onSubmit={handleSubmit as any} className={'edit-layout ant-layout'}>
+        <Content className="mcs-content-container mcs-form-container ad-group-form" style={{ overflowY: 'initial' }}>
+          <FormSection title={messages.formTitle} />
+          {content.map(item => {
+            return this.buildItems(item);
+          })}
+        </Content>
+      </Form>
     );
   }
 }
 
-export default compose(reduxForm<{}, ContentAreaProps>({}), injectDrawer)(
-  ContentArea,
-);
+export default compose<Props, ContentAreaProps>(
+  reduxForm<{}, ContentAreaProps>({}),
+  injectDrawer,
+)(ContentArea);
