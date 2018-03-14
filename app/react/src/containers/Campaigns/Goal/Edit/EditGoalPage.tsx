@@ -25,6 +25,10 @@ const messages = defineMessages({
     defaultMessage:
       'There is an error with some fields in your form. Please review the data you entered.',
   },
+  noAttributionModelErrorFormMessage: {
+    id: 'campaign.form.no.attribution.model.error.message',
+    defaultMessage: 'You must give your goal an attribution model.',
+  },
   savingInProgress: {
     id: 'form.saving.in.progress',
     defaultMessage: 'Saving in progress',
@@ -86,32 +90,37 @@ class EditGoalPage extends React.Component<Props, State> {
           GoalService.getAttributionModels(goalId)
             .then(res => res.data)
             .then(attributionModelList => {
-              QueryService.getQuery(datamart.id, formData.new_query_id).then(r => r.data).then(res => {
-                const QueryContainer = (window as any).angular.element(document.body).injector().get('core/datamart/queries/QueryContainer')
-                const defQuery = new QueryContainer(datamart.id, res.id)
-                defQuery.load()
-                this.setState({
-                  loading: false,
-                  goalFormData: {
-                    goal: formData,
-                    attributionModels: attributionModelList.map(
-                      attributionModel =>
-                        createFieldArrayModelWithMeta(attributionModel, {
-                          name: attributionModel.attribution_model_name,
-                          group_id: attributionModel.group_id,
-                          artefact_id: attributionModel.artifact_id,
-                          attribution_model_type:
-                            attributionModel.attribution_type,
-                          attribution_model_id:
-                            attributionModel.attribution_model_id,
-                        }),
-                    ),
-                  },
-                  queryContainer: defQuery,
-                  queryLanguage: res.query_language as QueryLanguage,
+              QueryService.getQuery(datamart.id, formData.new_query_id)
+                .then(r => r.data)
+                .then(res => {
+                  const QueryContainer = (window as any).angular
+                    .element(document.body)
+                    .injector()
+                    .get('core/datamart/queries/QueryContainer');
+                  const defQuery = new QueryContainer(datamart.id, res.id);
+                  defQuery.load();
+                  this.setState({
+                    loading: false,
+                    goalFormData: {
+                      goal: formData,
+                      attributionModels: attributionModelList.map(
+                        attributionModel =>
+                          createFieldArrayModelWithMeta(attributionModel, {
+                            name: attributionModel.attribution_model_name,
+                            group_id: attributionModel.group_id,
+                            artefact_id: attributionModel.artifact_id,
+                            attribution_model_type:
+                              attributionModel.attribution_type,
+                            attribution_model_id:
+                              attributionModel.attribution_model_id,
+                            default: attributionModel.default,
+                          }),
+                      ),
+                    },
+                    queryContainer: defQuery,
+                    queryLanguage: res.query_language as QueryLanguage,
+                  });
                 });
-              });
-              
             });
         })
         .catch(err => {
@@ -143,7 +152,12 @@ class EditGoalPage extends React.Component<Props, State> {
     } = this.props;
 
     const { goalFormData: initialGoalFormData, queryContainer } = this.state;
-
+    //
+    // if (goalFormData.attributionModels.length === 0) {
+    //   message.error(
+    //     intl.formatMessage(messages.noAttributionModelErrorFormMessage),
+    //   );
+    // } else {}
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
       0,
@@ -152,8 +166,7 @@ class EditGoalPage extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-
-    return GoalFormService.saveGoal(
+    GoalFormService.saveGoal(
       organisationId,
       goalFormData,
       initialGoalFormData,

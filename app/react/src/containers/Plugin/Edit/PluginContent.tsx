@@ -42,7 +42,7 @@ interface PluginContentOuterProps {
   onSelect: (t: any) => void;
   initialValue: any;
   loading: boolean;
-  showGeneralInformation?: boolean
+  showGeneralInformation?: boolean;
 }
 
 interface PluginContentState {
@@ -68,8 +68,6 @@ type JoinedProps = PluginContentOuterProps &
   RouteComponentProps<RouterProps>;
 
 class PluginContent extends React.Component<JoinedProps, PluginContentState> {
-
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -199,21 +197,23 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
 
     const { pluginProperties, isLoading, plugin } = this.state;
 
-    const sidebarItems = showGeneralInformation ? [
-      {
-        sectionId: 'general',
-        title: messages.menuGeneralInformation,
-      },
-      {
-        sectionId: 'properties',
-        title: messages.menuProperties,
-      },
-    ] : [
-      {
-        sectionId: 'properties',
-        title: messages.menuProperties,
-      }
-    ];
+    const sidebarItems = showGeneralInformation
+      ? [
+          {
+            sectionId: 'general',
+            title: messages.menuGeneralInformation,
+          },
+          {
+            sectionId: 'properties',
+            title: messages.menuProperties,
+          },
+        ]
+      : [
+          {
+            sectionId: 'properties',
+            title: messages.menuProperties,
+          },
+        ];
 
     const actionbarProps =
       pluginProperties.length || editionMode
@@ -247,7 +247,9 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}
-          showGeneralInformation={showGeneralInformation !== undefined ? showGeneralInformation : true}
+          showGeneralInformation={
+            showGeneralInformation !== undefined ? showGeneralInformation : true
+          }
         />
       </EditContentLayout>
     ) : (

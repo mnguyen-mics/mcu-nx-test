@@ -42,6 +42,7 @@ export interface AttributionModelMetaData {
   artefact_id: string;
   attribution_model_id?: string;
   attribution_model_type?: AttributionSelectionType; 
+  default?: boolean;
 }
 
 export type AttributionModelFormData =

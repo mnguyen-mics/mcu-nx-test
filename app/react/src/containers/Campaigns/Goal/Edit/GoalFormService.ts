@@ -1,5 +1,4 @@
 import { isEqual } from 'lodash';
-import { AttributionModelCreateRequest } from './../../../../models/goal/AttributionSelectionResource';
 import { Task, executeTasksInSequence } from './../../../../utils/FormHelper';
 import {
   GoalFormData,
@@ -9,10 +8,7 @@ import {
   AttributionModelListFieldModel,
   INITIAL_GOAL_FORM_DATA,
 } from './domain';
-import {
-  AttributionModelResource,
-  GoalResource,
-} from '../../../../models/goal';
+import { GoalResource } from '../../../../models/goal';
 import { IntPropertyResource } from '../../../../models/plugin';
 import GoalService from '../../../../services/GoalService';
 import AttributionModelService from '../../../../services/AttributionModelService';
@@ -42,7 +38,7 @@ const GoalFormService = {
     return queryContainer.saveOrUpdate().then(() => {
       const goalDataToUpload = {
         ...goalFormData.goal,
-       new_query_id: queryContainer.id,
+        new_query_id: queryContainer.id,
       };
       if (goalFormData.goal && isGoalResource(goalFormData.goal)) {
         createOrUpdateGoalPromise = GoalService.updateGoal(
@@ -128,9 +124,9 @@ function getLookbackWindow(
 //   });
 // }
 
-function hasId<T extends { id: string }, Y>(resource: T | Y): resource is T {
-  return (resource as T).id !== undefined;
-}
+// function hasId<T extends { id: string }, Y>(resource: T | Y): resource is T {
+//   return (resource as T).id !== undefined;
+// }
 
 function getAttributionModelTasks(
   organisationId: string,
@@ -140,57 +136,58 @@ function getAttributionModelTasks(
 ): Task[] {
   const initialAttributionModelIds: string[] = [];
   initialAttributionModelFields.forEach(field => {
-    if (
-      hasId<AttributionModelResource, Partial<AttributionModelCreateRequest>>(
-        field.model,
-      )
-    ) {
-      initialAttributionModelIds.push(field.model.id);
+    if ((field.model as any).attribution_model_id) {
+      initialAttributionModelIds.push(
+        (field.model as any).attribution_model_id,
+      );
     }
   });
 
   const currentAttributionModelIds: string[] = [];
   attributionModelFields.forEach(field => {
-    if (
-      hasId<AttributionModelResource, Partial<AttributionModelCreateRequest>>(
-        field.model,
-      )
-    ) {
-      currentAttributionModelIds.push(field.model.id);
+    if ((field.model as any).attribution_model_id || (field.model as any).id) {
+      currentAttributionModelIds.push(
+        (field.model as any).attribution_model_id || (field.model as any).id,
+      );
     }
   });
 
   const tasks: Task[] = [];
-  // create or update attribution model tasks
   attributionModelFields.forEach(field => {
-    if (
-      hasId<AttributionModelResource, Partial<AttributionModelCreateRequest>>(
-        field.model,
-      )
-    ) {
-      // update attr model if needed
+    // Existing AM (linked to goal OR not linked)
+    if ((field.model as any).attribution_model_id || (field.model as any).id) {
       const exisitingAttributionModelField = initialAttributionModelFields.find(
         v => v.key === field.key,
       );
       const currentAttrributionModel = field.model;
+      // If linked AMs have been modified
       if (
         exisitingAttributionModelField &&
         !isEqual(currentAttrributionModel, exisitingAttributionModelField.model)
       ) {
-        tasks.push(() =>
-          AttributionModelService.updateAttributionModel(
-            currentAttrributionModel.id,
+        tasks.push(() => {
+          return AttributionModelService.updateAttributionModel(
+            (currentAttrributionModel as any).attribution_model_id,
             currentAttrributionModel,
-          ),
-        );
-      } else if (!(field.model as any).attribution_model_id) {
-        GoalService.linkAttributionModelToGoal(
-          goalId,
-          currentAttrributionModel,
-        );
+          );
+        });
+        // AM not linked
+      } else if ((field.model as any).id) {
+        // we update in case user has updated it
+        tasks.push(() => {
+          return AttributionModelService.updateAttributionModel(
+            (currentAttrributionModel as any).id,
+            currentAttrributionModel,
+          ).then(() => {
+            GoalService.linkAttributionModelToGoal(
+              goalId,
+              currentAttrributionModel as any,
+            );
+          });
+        });
       }
     } else {
-      // new attr model
+      // new AM
       tasks.push(() =>
         AttributionModelService.createAttributionModel(
           organisationId,

@@ -9,6 +9,7 @@ import * as actions from '../../../../state/Notifications/actions';
 import { AttributionModel, PluginProperty } from '../../../../models/Plugins';
 
 import messages from './messages';
+import { AttributionModelListFieldModel } from '../../../Campaigns/Goal/Edit/domain';
 
 interface AttributionModelRouteParam {
   organisationId: string;
@@ -28,6 +29,8 @@ interface CreateAttributionModelState {
 
 interface CreateAttributionModelProps {
   notifyError: (err?: any) => void;
+  close?: () => void;
+  fieldModelData?: AttributionModelListFieldModel;
 }
 
 type JoinedProps = CreateAttributionModelProps &
@@ -110,9 +113,17 @@ class CreateAttributionModel extends React.Component<
   };
 
   redirect = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
-    const attributionModelUrl = `/v2/o/${organisationId}/library/attribution_models`;
-    history.push(attributionModelUrl);
+    const {
+      history,
+      match: { params: { organisationId } },
+      close,
+    } = this.props;
+    if (close) {
+      close();
+    } else {
+      const attributionModelUrl = `/v2/o/${organisationId}/library/attribution_models`;
+      history.push(attributionModelUrl);
+    }
   };
 
   saveOrCreatePluginInstance = (
