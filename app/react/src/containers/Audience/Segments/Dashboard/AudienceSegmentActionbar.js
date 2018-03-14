@@ -11,7 +11,7 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon.tsx';
 import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
-import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import { parseSearch } from '../../../../utils/LocationSearchHelper.ts';
 import ExportService from '../../../../services/ExportService';
 import { getAudienceSegmentPerformance, getOverlapView } from '../../../../state/Audience/Segments/selectors';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';

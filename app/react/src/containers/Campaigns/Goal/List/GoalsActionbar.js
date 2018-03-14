@@ -18,7 +18,7 @@ import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
 
 import { GOAL_SEARCH_SETTINGS } from './constants';
-import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import { parseSearch } from '../../../../utils/LocationSearchHelper.ts';
 
 const fetchExportData = (organisationId, filter) => {
 

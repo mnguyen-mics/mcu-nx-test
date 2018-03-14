@@ -59,17 +59,20 @@ class EditCampaignPage extends React.Component<Props, State> {
   //   this.props.notifyError(error);
   // }
 
-  redirect = () => {
+  onClose = () => {
     const {
-      match: { params: { organisationId, campaignId } },
       history,
+      location,
+      match: { params: { campaignId, organisationId } },
     } = this.props;
 
-    if (campaignId) {
-      history.push(`/v2/o/${organisationId}/campaigns/email/${campaignId}`);
-    } else {
-      history.push(`/v2/o/${organisationId}/campaigns/email`);
-    }
+    const defaultRedirectUrl = campaignId
+      ? `/v2/o/${organisationId}/campaigns/email/${campaignId}`
+      : `/v2/o/${organisationId}/campaigns/email`;
+
+    return location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(defaultRedirectUrl);
   };
 
   save = (campaignFormData: EmailCampaignFormData) => {
@@ -77,6 +80,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       match: { params: { organisationId } },
       intl: { formatMessage },
       notifyError,
+      history,
     } = this.props;
 
     const { campaignFormData: initialCampaignFormData } = this.state;
@@ -95,9 +99,10 @@ class EditCampaignPage extends React.Component<Props, State> {
       campaignFormData,
       initialCampaignFormData,
     )
-      .then(() => {
+      .then(campaignId => {
         hideSaveInProgress();
-        this.redirect();
+        const emailCampaignDashboardUrl = `/v2/o/${organisationId}/campaigns/email/${campaignId}`;
+        history.push(emailCampaignDashboardUrl);
       })
       .catch(err => {
         hideSaveInProgress();
@@ -146,7 +151,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       <EmailCampaignForm
         initialValues={campaignFormData}
         save={this.save}
-        close={this.redirect}
+        close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
       />
@@ -154,8 +159,6 @@ class EditCampaignPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  injectNotifications,
-)(EditCampaignPage);
+export default compose(injectIntl, withRouter, injectNotifications)(
+  EditCampaignPage,
+);

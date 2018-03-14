@@ -60,4 +60,8 @@ export default class McsMoment {
   isValid() {
     return isValidMcsDate(this.value);
   }
+
+  toString() {
+    return this.value;
+  }
 }

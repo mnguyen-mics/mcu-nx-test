@@ -57,6 +57,7 @@
     "@types/numeral": "0.0.22",
     "@types/papaparse": "^4.1.33",
     "@types/prop-types": "^15.5.2",
+    "@types/query-string": "^5.1.0",
     "@types/react": "^16.0.34",
     "@types/react-dom": "^16.0.3",
     "@types/react-intl": "^2.3.3",

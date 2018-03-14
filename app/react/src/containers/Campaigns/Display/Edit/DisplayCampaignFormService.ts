@@ -151,7 +151,7 @@ const DisplayCampaignFormService = {
                   ),
                 };
               },
-              { type: 'DISPLAY' },
+              {},
             );
             return DisplayCampaignService.updateCampaign(
               campaignId,

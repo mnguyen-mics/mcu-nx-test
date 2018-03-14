@@ -10,7 +10,7 @@ import { UserAccount } from './UserAccount';
 import { OrganisationAccount } from './OrganisationAccount';
 import { getDefaultWorkspaceOrganisationId } from '../../state/Session/selectors';
 import { ReactRouterPropTypes } from '../../validators/proptypes';
-import { parseSearch } from '../../utils/LocationSearchHelper';
+import { parseSearch } from '../../utils/LocationSearchHelper.ts';
 import * as menuActions from '../../state/Menu/actions';
 
 const messages = defineMessages({

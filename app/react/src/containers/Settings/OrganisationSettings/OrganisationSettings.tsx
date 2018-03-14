@@ -7,7 +7,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import { LabelsListPage } from './Labels';
 import UserListPage from './Users/UserListPage';
-import { parseSearch, SETTINGS_PAGINATION_SEARCH_SETTINGS } from '../../../utils/LocationSearchHelper';
+import { parseSearch, TAB_SEARCH_SETTINGS } from '../../../utils/LocationSearchHelper';
 import * as menuActions from '../../../state/Menu/actions';
 
 import messages from './messages';
@@ -38,7 +38,7 @@ class OrganisationSettings extends React.Component<Props> {
       location: { search },
     } = this.props;
 
-    const parsed = parseSearch(search, SETTINGS_PAGINATION_SEARCH_SETTINGS);
+    const parsed = parseSearch(search, TAB_SEARCH_SETTINGS);
     const tab = parsed.tab ? parsed.tab : 'labels';
 
     return {

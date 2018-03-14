@@ -25,7 +25,7 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../../../utils/LocationSearchHelper';
+} from '../../../../../utils/LocationSearchHelper.ts';
 
 import * as NotificationActions from '../../../../../state/Notifications/actions';
 

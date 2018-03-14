@@ -183,6 +183,10 @@ class TableView<
         ...DEFAULT_PAGINATION_OPTION,
         ...(pagination as PaginationProps),
       };
+    } else {
+      newPagination = {
+        ...DEFAULT_PAGINATION_OPTION,
+      };
     }
 
     const computedTableProps: TableProps<T> = {

@@ -2,7 +2,7 @@ import { CampaignStatus } from '../CampaignStatus';
 import { EmailBlastStatus } from './EmailBlastStatus';
 
 export interface EmailCampaignCreateRequest {
-  organisationId: string;
+  organisation_id: string;
   name: string;
   creation_ts: string;
   editor_versionid: string;
@@ -11,6 +11,7 @@ export interface EmailCampaignCreateRequest {
   editor_artifact_id: string;
   currency_code: string;
   technical_name: string;
+  type: string;
 }
 
 export interface EmailCampaignResource extends EmailCampaignCreateRequest {
