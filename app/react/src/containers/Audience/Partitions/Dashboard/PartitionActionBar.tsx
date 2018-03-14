@@ -19,6 +19,10 @@ const messages = defineMessages({
     id: 'partition.dashboard.actionbar.edit',
     defaultMessage: 'Edit Partition',
   },
+  publish: {
+    id: 'partition.dashboard.actionbar.publish',
+    defaultMessage: 'Publish',
+  },
   partitions: {
     id: 'partition.dashboard.actionbar.breadcrumb',
     defaultMessage: 'Partitions',
@@ -31,6 +35,7 @@ const messages = defineMessages({
 
 interface PartitionActionBarProps {
   partition: AudiencePartitionResource;
+  publishPartition: () => void;
 }
 
 interface PartitionActionBarState {}
@@ -48,11 +53,13 @@ class PartitionActionBar extends React.Component<
       match: { params: { organisationId } },
       intl,
       partition,
+      publishPartition
     } = this.props;
 
-    const partitionName = partition && partition.name
-      ? partition.name
-      : intl.formatMessage(messages.partitionOverview);
+    const partitionName =
+      partition && partition.name
+        ? partition.name
+        : intl.formatMessage(messages.partitionOverview);
 
     const breadcrumbPaths = [
       {
@@ -66,12 +73,25 @@ class PartitionActionBar extends React.Component<
     return (
       <Actionbar path={breadcrumbPaths}>
         <Link
-          to={partition ? `/v2/o/${organisationId}/audience/partition/${partition.id}/edit?type=${partition.audience_partition_type}` : ''}
+          to={
+            partition
+              ? `/v2/o/${organisationId}/audience/partition/${
+                  partition.id
+                }/edit?type=${partition.audience_partition_type}`
+              : ''
+          }
         >
-          <Button className="mcs-primary" type="primary">
+          <Button className="mcs-primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.edit} />
           </Button>
         </Link>
+        <Button
+          className="mcs-primary"
+          type="primary"
+          onClick={publishPartition}
+        >
+          <McsIcon type="plus" /> <FormattedMessage {...messages.publish} />
+        </Button>
       </Actionbar>
     );
   }

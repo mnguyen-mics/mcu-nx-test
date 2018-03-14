@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout } from 'antd';
+import { Layout, message } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import queryString from 'query-string';
 
@@ -9,7 +9,10 @@ import ContentHeader from '../../../../components/ContentHeader';
 import Card from '../../../../components/Card/Card';
 import TableView from '../../../../components/TableView/TableView';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
+import {
+  AudiencePartitionResource,
+  AudiencePartitionStatus,
+} from '../../../../models/audiencePartition/AudiencePartitionResource';
 import AudiencePartitionService from '../../../../services/AudiencePartitionsService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
@@ -34,6 +37,10 @@ const messages = defineMessages({
   overview: {
     id: 'overview',
     defaultMessage: 'Overview',
+  },
+  partitionPublished: {
+    id: 'partitionPublished',
+    defaultMessage: 'Partition published',
   },
 });
 
@@ -61,31 +68,67 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   }
 
   componentDidMount() {
+    const { match: { params: { partitionId } } } = this.props;
+    AudiencePartitionService.getPartition(partitionId)
+      .then(resp => resp.data)
+      .then(partitionData => {
+        this.fetchSegments().then(partitions => {
+          this.setState({
+            partitionData: partitionData,
+            partitions: partitions,
+            isLoading: false,
+          });
+        });
+      });
+  }
+
+  fetchSegments = () => {
     const {
       match: { params: { organisationId, partitionId } },
       location: { search },
     } = this.props;
-    AudiencePartitionService.getPartition(partitionId)
-      .then(resp => resp.data)
-      .then(partitionData => {
-        const query = queryString.parse(search);
-        const datamartId = query.datamart
-          ? query.datamart
-          : this.props.datamart.id;
-        const options = {
-          audience_partition_id: partitionId,
-        };
-        AudienceSegmentService.getSegments(organisationId, datamartId, options)
-          .then(res => res.data)
-          .then(partitions => {
-            this.setState({
-              partitionData: partitionData,
-              partitions: partitions,
-              isLoading: false,
-            });
-          });
+    const query = queryString.parse(search);
+    const datamartId = query.datamart ? query.datamart : this.props.datamart.id;
+    const options = {
+      audience_partition_id: partitionId,
+    };
+    return AudienceSegmentService.getSegments(
+      organisationId,
+      datamartId,
+      options,
+    )
+      .then(res => res.data)
+      .then(partitions => {
+        return partitions;
       });
-  }
+  };
+
+  publishPartition = () => {
+    const { match: { params: { partitionId } }, intl } = this.props;
+    const { partitionData } = this.state;
+    this.setState({
+      isLoading: true,
+    });
+    const publishedStatus: AudiencePartitionStatus = 'PUBLISHED';
+    const publishedPartitionData = {
+      ...partitionData,
+      status: publishedStatus,
+    };
+    AudiencePartitionService.publishPartition(
+      partitionId,
+      publishedPartitionData,
+    ).then(resp => {
+      this.fetchSegments().then(partitions => {
+        this.setState({
+          partitionData: resp.data,
+          partitions: partitions,
+          isLoading: false,
+        });
+      });
+
+      message.success(intl.formatMessage(messages.partitionPublished));
+    });
+  };
 
   buildColumnDefinition = () => {
     return [
@@ -112,11 +155,15 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
 
   render() {
     const { intl } = this.props;
-    return this.state.isLoading ? (
+    const { isLoading } = this.state;
+    return isLoading ? (
       <Loading className="loading-full-screen" />
     ) : (
       <div className="ant-layout">
-        <PartitionActionBar partition={this.state.partitionData} />
+        <PartitionActionBar
+          partition={this.state.partitionData}
+          publishPartition={this.publishPartition}
+        />
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <ContentHeader title={this.state.partitionData.name} />
@@ -124,7 +171,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
               <TableView
                 dataSource={this.state.partitions}
                 columns={this.buildColumnDefinition()}
-                loading={this.state.isLoading}
+                loading={isLoading}
               />
             </Card>
           </Content>

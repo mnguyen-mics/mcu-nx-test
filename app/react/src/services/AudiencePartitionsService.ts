@@ -30,6 +30,13 @@ const AudiencePartitionsService = {
     const endpoint = `audience_partitions/${partitionId}`;
     return ApiService.putRequest(endpoint, body);
   },
+  publishPartition(
+    partitionId: string,
+    body: Partial<AudiencePartitionResource> = {},
+  ): Promise<DataResponse<AudiencePartitionResource>> {
+    const endpoint = `audience_partitions/${partitionId}/publish`;
+    return ApiService.putRequest(endpoint, body);
+  },
   createPartition(
     organisationId: string,
     datamartId: string,
