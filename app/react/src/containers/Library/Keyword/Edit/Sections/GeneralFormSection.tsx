@@ -30,7 +30,7 @@ const messages = defineMessages({
   },
   tootltipKeywordListName: {
     id: 'edit.keywordList.general.infos.tooltip.name',
-    defaultMessage: 'Lorem Ipsum',
+    defaultMessage: 'Give your keyword list a name so that you can find it back across the different screens!',
   },
 });
 
