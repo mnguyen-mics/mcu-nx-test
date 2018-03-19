@@ -11,6 +11,7 @@ import ContentArea, { ContentType } from './ContentArea';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { McsIcon } from '../../../../../components';
+import { RadioChangeEvent } from 'antd/lib/radio';
 
 export interface HtmlEditorProps {
   onChange: (html: string) => void;
@@ -152,8 +153,8 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
     />
 
 
-    const onSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => this.setState({ size: e.target.value as Size })
-    const onTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => this.setState({ type: e.target.value as Type })
+    const onSizeChange = (e: RadioChangeEvent) => this.setState({ size: e.target.value as Size })
+    const onTypeChange = (e: RadioChangeEvent) => this.setState({ type: e.target.value as Type })
 
 
     const changedSize = this.state.size === 'LARGE' ? -4 : this.state.size === 'SMALL' ? 4 : 0
