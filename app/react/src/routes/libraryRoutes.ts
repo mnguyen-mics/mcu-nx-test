@@ -6,7 +6,7 @@ import Catalog from '../containers/Library/Catalog';
 
 
 import PlacementListPage from '../containers/Library/Placement/Edit/PlacementListPage';
-
+import KeywordListPage from '../containers/Library/Keyword/Edit/KeywordListPage';
 
 const campaignsRoutes = [
   // ========================================

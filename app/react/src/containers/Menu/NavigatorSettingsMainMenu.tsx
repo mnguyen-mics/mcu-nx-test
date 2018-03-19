@@ -13,9 +13,6 @@ import {
 import { getOrgFeatures } from '../../state/Features/selectors';
 import { Datamart } from '../../models/organisation/organisation';
 
-// const SubMenu = Menu.SubMenu;
-// const MenuItemGroup = Menu.ItemGroup;
-
 export interface NavigatorSettingsMainMenuProps {
 }
 

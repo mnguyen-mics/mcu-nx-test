@@ -19,7 +19,6 @@ import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { Datamart } from '../../models/organisation/organisation';
 
-// const { SubMenu } = Menu;
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 
@@ -159,12 +158,9 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
     const {
       match: { params: { organisationId } },
       location: { pathname },
-      // defaultDatamart,
-      // collapsed,
     } = this.props;
 
     const baseUrl = `/v2/o/${organisationId}`;
-    // const itemDisplayedOnlyIfDatamart = settingsDefinitions.itemDisplayedOnlyIfDatamart
 
     const currentOpenMenu = settingsDefinitions.itemDefinitions
       .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
@@ -176,56 +172,6 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
       );
 
     return currentOpenMenu && currentOpenMenu.subMenuItems && currentOpenMenu.subMenuItems.map(itemDef => {
-      // const buildSubMenu =
-      //   itemDef.subMenuItems && itemDef.subMenuItems.length > 0;
-      // if (buildSubMenu) {
-      //   const onTitleClick = () => {
-      //     this.setState({ inlineOpenKeys: [itemDef.key] });
-      //     this.props.onMenuItemClick();
-      //   };
-      //   return (
-      //     <SubMenu
-      //       key={itemDef.key}
-      //       onTitleClick={onTitleClick}
-      //       title={
-      //         <span>
-      //           <McsIcon type={itemDef.iconType as McsIconType} />
-      //           <span className="nav-text">
-      //             <FormattedMessage {...itemDef.translation} />
-      //           </span>
-      //         </span>
-      //       }
-      //     >
-      //       {itemDef.subMenuItems.map((subMenuItem: any) => {
-      //         let linkUrl = `${baseUrl}${subMenuItem.path}`;
-      //         if (subMenuItem.legacyPath) {
-      //           if (itemDisplayedOnlyIfDatamart.includes(subMenuItem.key)) {
-      //             linkUrl = `/o${organisationId}d${
-      //               defaultDatamart(organisationId).id
-      //             }${subMenuItem.path}`;
-      //           } else {
-      //             linkUrl = `/${organisationId}${subMenuItem.path}`;
-      //           }
-      //         }
-      //         return (
-      //           <Menu.Item
-      //             style={
-      //               collapsed === true
-      //                 ? { display: 'none' }
-      //                 : { display: 'block' }
-      //             }
-      //             key={subMenuItem.key}
-      //           >
-      //             <Link to={linkUrl}>
-      //               <FormattedMessage {...subMenuItem.translation} />
-      //             </Link>
-      //           </Menu.Item>
-      //         );
-      //       })}
-      //     </SubMenu>
-      //   );
-      // }
-
       return (
         <Menu.Item key={itemDef.key}>
           <Link to={`${baseUrl}${itemDef.path}`}>
