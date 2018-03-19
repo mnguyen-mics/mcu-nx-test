@@ -17,6 +17,7 @@ import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit/
 import { CreateEditEmailRouter } from '../containers/Library/EmailRouter/Edit/index.ts';
 import { CreateEditVisitAnalyzer } from '../containers/Library/VisitAnalyzer/Edit/index.ts';
 import { CreateEditRecommender } from '../containers/Library/Recommender/Edit/index.ts';
+import KeywordListPage from '../containers/Library/Keyword/Edit/KeywordListPage.tsx';
 
 const campaignsRoutes = [
   // ========================================
@@ -41,9 +42,19 @@ const campaignsRoutes = [
   //            Keywords
   // ========================================
   {
-    path: '/library/keywords',
+    path: '/library/keywordslists',
     layout: 'main',
     ...KeywordList,
+  },
+  {
+    path: '/library/keywordslist/:keywordsListId',
+    layout: 'edit',
+    editComponent: KeywordListPage,
+  },
+  {
+    path: '/library/keywordslist',
+    layout: 'edit',
+    editComponent: KeywordListPage,
   },
   // ========================================
   //            Assets

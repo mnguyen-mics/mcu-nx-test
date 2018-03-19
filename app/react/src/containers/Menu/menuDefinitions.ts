@@ -130,7 +130,7 @@ const libraryMenu: Menu = {
     },
     {
       key: 'library.keywords',
-      path: '/library/keywords',
+      path: '/library/keywordslists',
       translation: messages.libraryKeyword,
       legacyPath: false,
     },
