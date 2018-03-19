@@ -16,6 +16,7 @@ const Option = Select.Option;
 
 import AceEditor from 'react-ace';
 
+import 'brace/ext/searchbox'
 import 'brace/mode/java';
 import 'brace/mode/javascript';
 import 'brace/mode/python';
