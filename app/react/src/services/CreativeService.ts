@@ -171,7 +171,7 @@ const CreativeService = {
 
   getEmailTemplateProperties(
     creativeId: string,
-  ): Promise<DataListResponse<any>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `email_templates/${creativeId}/renderer_properties`;
     return ApiService.getRequest(endpoint);
   },

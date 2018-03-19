@@ -110,6 +110,39 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     save(pluginData, formattedProperties);
   };
 
+  generatePluginFields = () => {
+    const {
+      pluginLayout
+    } = this.props;
+
+    if (pluginLayout === undefined) {
+      return (
+        <div>
+          <div>
+            <hr />
+          </div>
+          <div id={'properties'}>
+            <Row
+              type="flex"
+              align="middle"
+              justify="space-between"
+              className="section-header"
+            >
+              <FormTitle title={messages.sectionPropertiesTitle} />
+            </Row>
+            <Row>{this.pluginFieldGenerated()}</Row>
+          </div>
+        </div>)
+    }
+    else {
+      return (
+        <div>
+          {this.generateFormFromPluginLayout()}
+        </div>
+      );
+    }
+  }
+
   pluginFieldGenerated = () => {
     const {
       disableFields,
@@ -321,9 +354,12 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
               this.state.loading ? 'hide-section' : 'edit-layout ant-layout'
             }
             onSubmit={handleSubmit(this.onSubmit)}
+            id={formId}
           >
-            <Content className="mcs-content-container mcs-form-container ad-group-form" id={formId}>
-              {showGeneralInformation ? <div><div id={'general'}>
+            <Content
+              className="mcs-content-container mcs-form-container ad-group-form" id={formId}
+            >
+              {showGeneralInformation ? <div id={'general'}>
                 <Row
                   type="flex"
                   align="middle"
@@ -340,14 +376,14 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                     {...fieldProps}
                   />
                 </Row>
-              </div></div> : null}
-              {this.generateFormFromPluginLayout()}
+              </div> : null}
+
+              {this.generatePluginFields()}
+
             </Content>
           </Form>
         </Layout>
-
-      )
-
+      );
     }
   }
 }

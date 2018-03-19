@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import { InjectedIntlProps, defineMessages } from 'react-intl';
 
 import { Form } from '../../components/index';
 import { FormDataFileField, FormDataFile } from './ConnectedFields/FormDataFile';
@@ -40,7 +41,8 @@ interface PluginFieldGeneratorProps {
 
 type JoinedProps = PluginFieldGeneratorProps &
   ValidatorProps &
-  InjectedDrawerProps;
+  InjectedDrawerProps &
+  InjectedIntlProps;
 
 interface AdditionalInputProps {
   buttonText?: string;
@@ -123,13 +125,182 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
     );
   };
     
+  handleFieldDefinition = (fieldDefinition: PluginProperty) => {
+    const { fieldValidators: { isValidInteger, isValidDouble },
+      disabled,
+      intl } = this.props;
+
+    switch (fieldDefinition.property_type) {
+      case 'STRING':
+        const stringProps: FormInputProps = {
+          inputProps: {
+            placeholder: this.technicalNameToName(fieldDefinition.technical_name),
+            disabled: !fieldDefinition.writable || disabled,
+          },
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormInputField
+            {...stringProps}
+            component={FormInput}
+            name={`properties.${fieldDefinition.technical_name}.value.value`}
+            key={`properties.${fieldDefinition.technical_name}`}
+          />
+        );
+      case 'URL':
+        const urlProps: FormInputProps = {
+          inputProps: {
+            placeholder: this.technicalNameToName(fieldDefinition.technical_name),
+            disabled: !fieldDefinition.writable || disabled,
+          },
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormInputField
+            {...urlProps}
+            component={FormInput}
+            name={`properties.${fieldDefinition.technical_name}.value.url`}
+            key={`properties.${fieldDefinition.technical_name}`}
+          />
+        );
+      case 'ASSET':
+        const assetProps: any = {
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormUploadField
+            key={`properties.${fieldDefinition.technical_name}`}
+            name={`properties.${fieldDefinition.technical_name}.value`}
+            component={FormUpload}
+            buttonText={intl.formatMessage(messages.uploadFileAsset)}
+            noUploadModal={this.props.noUploadModal}
+            {...assetProps}
+          />
+        )
+      case 'PIXEL_TAG':
+        const pixelTagProps: any = {
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormInputField
+            key={`properties.${fieldDefinition.technical_name}`}
+            name={`properties.${fieldDefinition.technical_name}.value.url`}
+            component={FormInput}
+            textArea={true}
+            {...pixelTagProps}
+          />
+        );
+      case 'BOOLEAN':
+        const booleanProps: any = {
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormBooleanField
+            key={`properties.${fieldDefinition.technical_name}`}
+            name={`properties.${fieldDefinition.technical_name}.value.value`}
+            component={FormBoolean}
+            {...booleanProps}
+          />
+        );
+      // CHANGE TO IS VALID SCALA LONG
+      case 'LONG':
+        const longProps: FormInputProps = {
+          inputProps: {
+            placeholder: this.technicalNameToName(fieldDefinition.technical_name),
+            disabled: !fieldDefinition.writable || disabled,
+          },
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormInputField
+            key={`properties.${fieldDefinition.technical_name}`}
+            name={`properties.${fieldDefinition.technical_name}.value.value`}
+            component={FormInput}
+            {...longProps}
+            validate={isValidDouble}
+          />
+        );
+      // CHANGE TO IS VALID SCALA INT
+      case 'INT':
+        const intProps: FormInputProps = {
+          inputProps: {
+            placeholder: this.technicalNameToName(fieldDefinition.technical_name),
+            disabled: !fieldDefinition.writable || disabled,
+          },
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormInputField
+            key={`properties.${fieldDefinition.technical_name}`}
+            name={`properties.${fieldDefinition.technical_name}.value.value`}
+            component={FormInput}
+            {...intProps}
+            validate={isValidInteger}
+          />
+        );
+      // CHANGE TO IS VALID SCALA DOUBLE
+      case 'DOUBLE':
+        const doubleProps: FormInputProps = {
+          inputProps: {
+            placeholder: this.technicalNameToName(fieldDefinition.technical_name),
+            disabled: !fieldDefinition.writable || disabled,
+          },
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormInputField
+            key={`properties.${fieldDefinition.technical_name}`}
+            name={`properties.${fieldDefinition.technical_name}.value.value`}
+            component={FormInput}
+            {...doubleProps}
+            validate={isValidDouble}
+          />
+        );
+      case 'DATA_FILE':
+        const dataFileProps: any = {
+          buttonText: intl.formatMessage(messages.uploadFileDataFile2),
+          accept: fieldDefinition.value.acceptedFile,
+          formItemProps: {
+            label: this.technicalNameToName(fieldDefinition.technical_name)
+          }
+        };
+        return (
+          <FormDataFileField
+            key={`properties.${fieldDefinition.technical_name}`}
+            name={`properties.${fieldDefinition.technical_name}.value`}
+            component={FormDataFile}
+            {...dataFileProps}
+          />
+        );
+      default:
+        return <div>{fieldDefinition.property_type}</div>;
+    }
+  }
+
   generateFieldBasedOnDefinition = (
     fieldDefinition: PluginProperty,
     organisationId: string,
   ) => {
-    const { fieldValidators: { isValidInteger, isValidDouble },
+    const {
       pluginLayoutFieldDefinition,
-      disabled } = this.props;
+      disabled,
+      intl } = this.props;
 
     if (pluginLayoutFieldDefinition !== undefined) {
 
@@ -177,7 +348,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
         case 'DATA_FILE':
 
           const dataFileProps: any = {
-            buttonText: "UploadFile",
+            buttonText: intl.formatMessage(messages.uploadFileDataFile),
             accept: fieldDefinition.value.acceptedFile,
           }
 
@@ -253,7 +424,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value`}
               component={FormUpload}
-              buttonText={'Upload File'}
+              buttonText={intl.formatMessage(messages.uploadFileImage)}
               noUploadModal={this.props.noUploadModal}
               formItemProps={pluginFieldProps.formItemProps}
               helpToolTipProps={{ title: pluginLayoutFieldDefinition.tooltip }}
@@ -261,8 +432,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           )
 
         default:
-          return <div>Please contact your support</div>;
-
+          return this.handleFieldDefinition(fieldDefinition);
       }
     }
     else {
@@ -475,3 +645,23 @@ export default compose<JoinedProps, PluginFieldGeneratorProps>(
   withValidators,
   injectDrawer,
 )(PluginFieldGenerator);
+
+const messages = defineMessages({
+  uploadFileDataFile: {
+    id: 'pluginField-DataFile-uploadFile',
+    defaultMessage: 'Upload File',
+  },
+  uploadFileImage: {
+    id: 'pluginField-DataFile-image',
+    defaultMessage: 'Upload File',
+  },
+  uploadFileAsset: {
+    id: 'fieldDefinition-DataFile-asset',
+    defaultMessage: 'Upload File',
+  },
+  uploadFileDataFile2: {
+    id: 'fieldDefinition-DataFile-uploadFile',
+    defaultMessage: 'Upload File',
+  },
+  
+});

@@ -25,7 +25,8 @@ const DisplayCreativeFormService = {
       return PluginService.getPluginVersionProperty(
         adRendererId,
         lastVersion.id,
-      ).then(properties => {
+      ).then(res => {
+        const properties = res.data;
         return {
           creative: {
             subtype: subtype

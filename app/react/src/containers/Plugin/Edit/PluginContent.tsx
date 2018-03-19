@@ -160,19 +160,24 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           .then(([res1, res2]) => {
             if (res2 !== null && res2.status !== "error") {
               this.setState({
-                pluginProperties: res1,
+                pluginProperties: res1.data,
                 pluginLayout: res2.data,
                 isLoading: false,
               });
             }
             else {
               this.setState({
-                pluginProperties: res1,
+                pluginProperties: res1.data,
                 isLoading: false,
               });
             }
           })
-          .catch(err => actions.notifyError(err));
+          .catch(err => {
+            actions.notifyError(err);
+            this.setState(() => {
+              return { isLoading: false };
+            });
+          });
       },
     );
   };
