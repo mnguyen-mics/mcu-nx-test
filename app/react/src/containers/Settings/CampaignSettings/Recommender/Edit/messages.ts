@@ -9,9 +9,13 @@ export default defineMessages({
     id: 'recommenders.edit.list.subtitle',
     defaultMessage: 'New Recommender',
   },
-  attributionModelBreadcrumb: {
-    id: 'recommenders.create.breadcrumb.title',
+  recommenderNewBreadcrumb: {
+    id: 'recommenders.create.breadcrumb.newtitle',
     defaultMessage: 'New Recommender',
+  },
+  recommenderEditBreadcrumb: {
+    id: 'recommenders.create.breadcrumb.edititle',
+    defaultMessage: 'Edit {name}',
   },
 })
 ;

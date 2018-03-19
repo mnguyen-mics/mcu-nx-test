@@ -1,19 +1,11 @@
 import messages from './messages';
+import { NavigatorMenuElement } from './domain';
 
 export const itemDisplayedOnlyIfDatamart = ['audience', 'library.catalog', 'library.exports', 'automations', 'campaigns.email', 'datastudio.query_tool'];
 
-export interface Menu {
-  key: string;
-  iconType?: string;
-  path: string;
-  translation: {id: string, defaultMessage: string};
-  translationId?: string;
-  legacyPath?: boolean;
-  subMenuItems?: Menu[];
-}
 // ATTENTION : ALL KEYS MUST BE UNIQUE !
 // AND MATCHED FEATURE FLAGS
-const audienceMenu: Menu = {
+const audienceMenu: NavigatorMenuElement = {
   key: 'audience',
   iconType: 'users',
   path: '/audience',
@@ -46,7 +38,7 @@ const audienceMenu: Menu = {
   ],
 };
 
-const campaignsMenu: Menu = {
+const campaignsMenu: NavigatorMenuElement = {
   key: 'campaigns',
   iconType: 'display',
   path: '/campaigns',
@@ -73,7 +65,7 @@ const campaignsMenu: Menu = {
   ],
 };
 
-const analyticsMenu: Menu = {
+const analyticsMenu: NavigatorMenuElement = {
   key: 'analytics',
   iconType: 'display',
   path: '/analytics',
@@ -87,7 +79,7 @@ const analyticsMenu: Menu = {
   ]
 };
 
-const automationsMenu: Menu = {
+const automationsMenu: NavigatorMenuElement = {
   key: 'automations',
   iconType: 'automation',
   path: '/automations',
@@ -95,7 +87,7 @@ const automationsMenu: Menu = {
   subMenuItems: [],
 };
 
-const creativesMenu: Menu = {
+const creativesMenu: NavigatorMenuElement = {
   key: 'creatives',
   iconType: 'creative',
   path: '/creatives',
@@ -116,7 +108,7 @@ const creativesMenu: Menu = {
   ],
 };
 
-const libraryMenu: Menu = {
+const libraryMenu: NavigatorMenuElement = {
   key: 'library',
   iconType: 'library',
   path: '/library',
@@ -164,7 +156,7 @@ const libraryMenu: Menu = {
   ],
 };
 
-const dataStudio: Menu = {
+const dataStudio: NavigatorMenuElement = {
   key: 'datastudio',
   iconType: 'data',
   path: '/datastudio',
@@ -191,7 +183,7 @@ const dataStudio: Menu = {
   ],
 };
 
-export const itemDefinitions: Menu[] = [
+export const menuDefinitions: NavigatorMenuElement[] = [
   audienceMenu,
   analyticsMenu,
   campaignsMenu,

@@ -65,7 +65,6 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
             organisationSelector={organisationSelector ? organisationSelector : () => <div>no org selector</div>}
             showOrgSelector={showOrgSelector ? showOrgSelector : false}
             orgSelectorSize={orgSelectorSize ? orgSelectorSize : 200}
-            isSettings={false}
           />
         );
       case 'settings':
@@ -76,7 +75,6 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
             organisationSelector={organisationSelector ? organisationSelector : () => <div>no org selector</div>}
             showOrgSelector={showOrgSelector ? showOrgSelector : false}
             orgSelectorSize={orgSelectorSize ? orgSelectorSize : 200}
-            isSettings={true}
           />
         );
       case 'edit':

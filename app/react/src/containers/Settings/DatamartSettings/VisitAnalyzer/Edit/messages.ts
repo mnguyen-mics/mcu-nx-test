@@ -9,9 +9,13 @@ export default defineMessages({
     id: 'visitanalyzer.edit.list.subtitle',
     defaultMessage: 'New Visit Analyzer',
   },
-  attributionModelBreadcrumb: {
-    id: 'visitanalyzer.create.breadcrumb.title',
+  visitAnalyzerBreadcrumb: {
+    id: 'visitanalyzer.create.breadcrumb.newtitle',
     defaultMessage: 'New Visit Analyzer',
   },
+  visitAnalyzerEditBreadcrumb: {
+    id: 'visitanalyzer.create.breadcrumb.editTitle',
+    defaultMessage: 'Edit {name}',
+  }
 })
 ;

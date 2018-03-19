@@ -1,45 +1,37 @@
 import messages from './messages';
+import { NavigatorMenuElement } from './domain';
 
 export const itemDisplayedOnlyIfDatamart = [
-  'datamart',
+  'datamartSettings',
 ];
 
-export interface Menu {
-  key: string;
-  iconType?: string;
-  path: string;
-  translation: { id: string; defaultMessage: string };
-  translationId?: string;
-  legacyPath?: boolean;
-  subMenuItems?: Menu[];
-}
 // ATTENTION : ALL KEYS MUST BE UNIQUE !
 // AND MATCHED FEATURE FLAGS
-const datamartSettings: Menu = {
-  key: 'datamart',
+const datamartSettings: NavigatorMenuElement = {
+  key: 'datamartSettings',
   path: '/settings/datamart/',
   translation: messages.datamartSettingsTitle,
   subMenuItems: [
     {
-      key: 'datamart.sites',
+      key: 'datamartSettings.sites',
       path: '/settings/datamart/sites',
       translation: messages.siteSettingsTitle,
       legacyPath: false,
     },
     {
-      key: 'datamart.mobile_applications',
+      key: 'datamartSettings.mobile_applications',
       path: '/settings/datamart/mobile_applications',
       translation: messages.mobileAppsSettingsTitle,
       legacyPath: false,
     },
     {
-      key: 'datamart.visit_analyzers',
+      key: 'datamartSettings.visit_analyzers',
       path: '/settings/datamart/visit_analyzers',
       translation: messages.visitAnalyzerSettingsTitle,
       legacyPath: false,
     },
     {
-      key: 'datamart.datamarts',
+      key: 'datamartSettings.datamarts',
       path: '/settings/datamart/my_datamart',
       translation: messages.myDatamartSettingsTitle,
       legacyPath: false,
@@ -47,25 +39,25 @@ const datamartSettings: Menu = {
   ],
 };
 
-const organisationSettings: Menu = {
-  key: 'organisation',
+const organisationSettings: NavigatorMenuElement = {
+  key: 'organisationSettings',
   path: '/settings/organisation/',
   translation: messages.organisationSettingsTitle,
   subMenuItems: [
     {
-      key: 'organisation.labels',
+      key: 'organisationSettings.labels',
       path: '/settings/organisation/labels',
       translation: messages.labelsSettingsTitle,
       legacyPath: false,
     },
     {
-      key: 'organisation.settings',
+      key: 'organisationSettings.settings',
       path: '/settings/organisation/profile',
       translation: messages.orgSettingsTitle,
       legacyPath: false,
     },
     {
-      key: 'organisation.users',
+      key: 'organisationSettings.users',
       path: '/settings/organisation/users',
       translation: messages.usersSettingsTitle,
       legacyPath: false,
@@ -73,13 +65,13 @@ const organisationSettings: Menu = {
   ],
 };
 
-const profileSettings: Menu = {
-  key: 'account',
+const profileSettings: NavigatorMenuElement = {
+  key: 'accountSettings',
   path: '/settings/account/',
   translation: messages.accountSettingsTitle,
   subMenuItems: [
     {
-      key: 'account.profile',
+      key: 'accountSettings.profile',
       path: '/settings/account/my_profile',
       translation: messages.accountSettingsProfile,
       legacyPath: false,
@@ -87,31 +79,31 @@ const profileSettings: Menu = {
   ],
 };
 
-const campaignSettings: Menu = {
-  key: 'campaigns',
+const campaignSettings: NavigatorMenuElement = {
+  key: 'campaignsSettings',
   path: '/settings/campaigns/',
   translation: messages.campaignSettingsTitle,
   subMenuItems: [
     {
-      key: 'campaigns.bid_optimizer',
+      key: 'campaignsSettings.bid_optimizer',
       path: '/settings/campaigns/bid_optimizer',
       translation: messages.campaignSettingsbidOptimizer,
       legacyPath: false,
     },
     {
-      key: 'campaigns.attribution_models',
+      key: 'campaignsSettings.attribution_models',
       path: '/settings/campaigns/attribution_models',
       translation: messages.campaignSettingsAttributionModels,
       legacyPath: false,
     },
     {
-      key: 'campaigns.email_routers',
+      key: 'campaignsSettings.email_routers',
       path: '/settings/campaigns/email_routers',
       translation: messages.campaignSettingsEmailRouters,
       legacyPath: false,
     },
     {
-      key: 'campaigns.recommenders',
+      key: 'campaignsSettings.recommenders',
       path: '/settings/campaigns/recommenders',
       translation: messages.campaignSettingsRecommenders,
       legacyPath: false,
@@ -119,4 +111,4 @@ const campaignSettings: Menu = {
   ],
 };
 
-export const itemDefinitions: Menu[] = [profileSettings, organisationSettings, datamartSettings, campaignSettings];
+export const settingsDefinitions: NavigatorMenuElement[] = [profileSettings, organisationSettings, datamartSettings, campaignSettings];

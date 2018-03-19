@@ -11,8 +11,7 @@ import {
 import McsIcon, { McsIconType } from '../../components/McsIcon';
 import { getOrgFeatures } from '../../state/Features/selectors';
 
-import * as menuDefinitions from './menuDefinitions';
-import * as settingsDefinitions from './settingsDefinitions';
+import {settingsDefinitions, itemDisplayedOnlyIfDatamart} from './settingsDefinitions';
 
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
@@ -22,13 +21,10 @@ import { Datamart } from '../../models/organisation/organisation';
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 
-export type NavigatorSettingsSideMenuType = 'settings' | 'main';
-
 export interface NavigatorSettingsSideMenuProps {
   mode: MenuMode;
   collapsed: boolean;
   onMenuItemClick: () => void;
-  type: NavigatorSettingsSideMenuType;
 }
 
 interface NavigatorSettingsSideMenuStoreProps {
@@ -60,25 +56,13 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
   }
 
   componentDidMount() {
-    const { location: { pathname }, type } = this.props;
-    this.checkInitialState(pathname, type)
+    const { location: { pathname } } = this.props;
+    this.checkInitialState(pathname)
     
   }
 
-  componentWillReceiveProps (nextProps: Props) {
-    const { location: { pathname }, type } = nextProps;
-
-    if (this.props.type !== nextProps.type) {
-      this.checkInitialState(pathname, type) 
-    }
-  }
-
-  checkInitialState = (pathname: string, type: NavigatorSettingsSideMenuType) => {
-    const itemDefinitions =
-      type === 'settings'
-        ? settingsDefinitions.itemDefinitions
-        : menuDefinitions.itemDefinitions;
-    const currentOpenSubMenu = itemDefinitions
+  checkInitialState = (pathname: string) => {
+    const currentOpenSubMenu = settingsDefinitions
       .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
       .find(
         item =>
@@ -112,12 +96,7 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
   };
 
   onClick = ({ key }: { key: string }) => {
-    const { type } = this.props;
-    const itemDefinitions =
-      type === 'settings'
-        ? settingsDefinitions.itemDefinitions
-        : menuDefinitions.itemDefinitions;
-    const hasClickOnFirstLevelMenuItem = itemDefinitions.find(
+    const hasClickOnFirstLevelMenuItem = settingsDefinitions.find(
       item => item.key === key,
     );
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
@@ -130,10 +109,6 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
       orgFeatures,
     } = this.props;
 
-    const itemDefinitions = settingsDefinitions.itemDefinitions
-
-    const itemDisplayedOnlyIfDatamart = settingsDefinitions.itemDisplayedOnlyIfDatamart;
-
     const isAvailable = (key: string) => {
       if (itemDisplayedOnlyIfDatamart.includes(key))
         return (
@@ -143,7 +118,7 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
       return orgFeatures.filter(v => v.includes(key)).length > 0;
     };
 
-    return itemDefinitions.reduce((acc, item) => {
+    return settingsDefinitions.reduce((acc, item) => {
       if (isAvailable(item.key)) {
         const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
           isAvailable(subMenuItem.key),
@@ -162,7 +137,7 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
 
     const baseUrl = `/v2/o/${organisationId}`;
 
-    const currentOpenMenu = settingsDefinitions.itemDefinitions
+    const currentOpenMenu = settingsDefinitions
       .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
       .find(
         item =>

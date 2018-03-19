@@ -7,7 +7,7 @@ import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
 
 import { NavigatorHeader } from '../../containers/Header';
-import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu } from '../../containers/Menu';
+import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu,  } from '../../containers/Menu';
 import * as MenuActions from '../../state/Menu/actions';
 import { ButtonStyleless } from '../';
 import { compose } from 'recompose';
@@ -36,7 +36,6 @@ export interface SettingLayoutProps {
   showOrgSelector: boolean;
   organisationSelector: any;
   orgSelectorSize: number;
-  isSettings: boolean;
 }
 
 interface SettingLayoutStoreProps {
@@ -103,7 +102,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
     } = this.props;
 
     const orgSelector = () => {
-      this.setState({ isOpen: !this.state.isOpen });
+      this.setState(prevState => { return { ...prevState, isOpen: !prevState.isOpen }});
     };
 
     const onCollapse = () => {
@@ -148,7 +147,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
   renderSettingsTrigger = () => {
 
     const orgSelector = () => {
-      this.setState({ isOpen: !this.state.isOpen });
+      this.setState(prevState => { return { ...prevState, isOpen: !prevState.isOpen }});
     };
 
     return <Row>
@@ -167,7 +166,6 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
       collapsed,
       mode,
       orgSelectorSize,
-      isSettings,
     } = this.props;
 
     const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen })
@@ -177,7 +175,6 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
         mode={'vertical'}
         collapsed={collapsed}
         onMenuItemClick={this.onMenuItemClick}
-        type={'main'}
         className={'mcs-settings-main-menu'}
       />
     )
@@ -208,7 +205,6 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
                 mode={mode}
                 collapsed={collapsed}
                 onMenuItemClick={this.onMenuItemClick}
-                type={isSettings ? 'settings' : 'main'}
               />
             </Sider>
           

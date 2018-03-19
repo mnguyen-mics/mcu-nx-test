@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Menu } from 'antd';
-import * as settingsDefinitions from './settingsDefinitions';
+import { settingsDefinitions, itemDisplayedOnlyIfDatamart } from './settingsDefinitions';
 import { FormattedMessage } from 'react-intl';
 import { matchPath, RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -51,7 +51,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, any> {
 
   initMenu = (pathname: string, organisationId: string) => {
     const baseUrl = `/v2/o/${organisationId}`;
-    const currentOpenMenu = settingsDefinitions.itemDefinitions
+    const currentOpenMenu = settingsDefinitions
       .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
       .find(
         item =>
@@ -82,8 +82,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, any> {
       orgFeatures,
     } = this.props;
 
-    const itemDefinitions = settingsDefinitions.itemDefinitions;
-    const itemDisplayedOnlyIfDatamart = settingsDefinitions.itemDisplayedOnlyIfDatamart;
+    const itemDefinitions = settingsDefinitions;
 
     const isAvailable = (key: string) => {
       if (itemDisplayedOnlyIfDatamart.includes(key))

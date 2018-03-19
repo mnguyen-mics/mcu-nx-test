@@ -198,12 +198,18 @@ class CreateEditRecommender extends React.Component<
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const { intl: { formatMessage }, match: { params: { recommenderId } } } = this.props;
 
     const { isLoading } = this.state;
 
     const breadcrumbPaths = [
-      { name: formatMessage(messages.attributionModelBreadcrumb) },
+      { name: recommenderId
+        ? formatMessage(messages.recommenderEditBreadcrumb, {
+            name:
+              this.state.initialValues &&
+              this.state.initialValues.plugin.name,
+          })
+        : formatMessage(messages.recommenderNewBreadcrumb), },
     ];
 
     return (

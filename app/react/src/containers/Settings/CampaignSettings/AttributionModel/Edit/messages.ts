@@ -9,9 +9,13 @@ export default defineMessages({
     id: 'attributionmodel.edit.list.subtitle',
     defaultMessage: 'New Attribution Model',
   },
-  attributionModelBreadcrumb: {
-    id: 'attributionmodel.create.breadcrumb.title',
+  attributionModelNewBreadcrumb: {
+    id: 'attributionmodel.create.breadcrumb.newtitle',
     defaultMessage: 'New Attribution Model',
+  },
+  attributionModelEditBreadcrumb: {
+    id: 'attributionmodel.create.breadcrumb.edittitle',
+    defaultMessage: 'Edit {name}',
   },
 })
 ;

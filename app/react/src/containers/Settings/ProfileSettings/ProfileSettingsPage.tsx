@@ -54,9 +54,10 @@ class ProfileSettingsPage extends React.Component<Props, ProfileSettingsPageStat
 
   buildSaveActionElement() {
     const {
-      anyTouched,
+      dirty,
+      valid,
     } = this.props;
-    return (<Button key="SAVE" type="primary" htmlType="submit" disabled={!anyTouched}>
+    return (<Button key="SAVE" type="primary" htmlType="submit" disabled={!(dirty && valid)}>
       <FormattedMessage id="SAVE" defaultMessage="Save" /> {this.state.loading ? <Icon type="loading" /> : null}
     </Button>);
   }

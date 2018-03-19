@@ -222,7 +222,7 @@ class VisitAnalyzerContent extends Component<
       intlMessage: messages.empty,
     };
 
-    const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/visit_analyzers/create`)
+    const onClick = () => history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`)
 
     const buttons = [
       (<Button key="create" type="primary" onClick={onClick}>

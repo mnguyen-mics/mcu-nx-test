@@ -9,9 +9,13 @@ export default defineMessages({
     id: 'bidoptimizer.edit.list.subtitle',
     defaultMessage: 'New Bid Optimizer',
   },
-  attributionModelBreadcrumb: {
-    id: 'bidoptimizer.create.breadcrumb.title',
+  bidOptimizerNewBreadcrumb: {
+    id: 'bidoptimizer.create.breadcrumb.newtitle',
     defaultMessage: 'New Bid Optimizer',
+  },
+  bidOptimizerEditBreadcrumb: {
+    id: 'bidoptimizer.create.breadcrumb.edittitle',
+    defaultMessage: 'Edit {name}',
   },
 })
 ;

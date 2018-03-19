@@ -9,9 +9,13 @@ export default defineMessages({
     id: 'emailrouter.edit.list.subtitle',
     defaultMessage: 'New Email Router',
   },
-  attributionModelBreadcrumb: {
-    id: 'emailrouter.create.breadcrumb.title',
+  emailRouterNewBreadcrumb: {
+    id: 'emailrouter.create.breadcrumb.newtitle',
     defaultMessage: 'New Email Router',
+  },
+  emailRouterEditBreadcrumb: {
+    id: 'emailrouter.create.breadcrumb.edititle',
+    defaultMessage: 'Edit {name}',
   },
 })
 ;

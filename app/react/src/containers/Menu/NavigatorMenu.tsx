@@ -11,14 +11,13 @@ import {
 import McsIcon, { McsIconType } from '../../components/McsIcon';
 import { getOrgFeatures } from '../../state/Features/selectors';
 
-import * as menuDefinitions from './menuDefinitions';
-import * as settingsDefinitions from './settingsDefinitions';
+import { menuDefinitions, itemDisplayedOnlyIfDatamart } from './menuDefinitions';
 
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { Datamart } from '../../models/organisation/organisation';
-
+ 
 const { SubMenu } = Menu;
 
 const basePath = '/v2/o/:organisationId(\\d+)';
@@ -29,7 +28,6 @@ export interface NavigatorMenuProps {
   mode: MenuMode;
   collapsed: boolean;
   onMenuItemClick: () => void;
-  type: NavigatorMenuType;
   className?: string;
 }
 
@@ -62,25 +60,14 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   }
 
   componentDidMount() {
-    const { location: { pathname }, type } = this.props;
-    this.checkInitialState(pathname, type)
+    const { location: { pathname } } = this.props;
+    this.checkInitialState(pathname)
     
   }
 
-  componentWillReceiveProps (nextProps: Props) {
-    const { location: { pathname }, type } = nextProps;
+  checkInitialState = (pathname: string) => {
 
-    if (this.props.type !== nextProps.type) {
-      this.checkInitialState(pathname, type) 
-    }
-  }
-
-  checkInitialState = (pathname: string, type: NavigatorMenuType) => {
-    const itemDefinitions =
-      type === 'settings'
-        ? settingsDefinitions.itemDefinitions
-        : menuDefinitions.itemDefinitions;
-    const currentOpenSubMenu = itemDefinitions
+    const currentOpenSubMenu = menuDefinitions
       .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
       .find(
         item =>
@@ -114,12 +101,8 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   };
 
   onClick = ({ key }: { key: string }) => {
-    const { type } = this.props;
-    const itemDefinitions =
-      type === 'settings'
-        ? settingsDefinitions.itemDefinitions
-        : menuDefinitions.itemDefinitions;
-    const hasClickOnFirstLevelMenuItem = itemDefinitions.find(
+    
+    const hasClickOnFirstLevelMenuItem = menuDefinitions.find(
       item => item.key === key,
     );
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
@@ -130,17 +113,8 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       match: { params: { organisationId } },
       organisationHasDatamarts,
       orgFeatures,
-      type,
     } = this.props;
 
-    const itemDefinitions =
-      type === 'settings'
-        ? settingsDefinitions.itemDefinitions
-        : menuDefinitions.itemDefinitions;
-    const itemDisplayedOnlyIfDatamart =
-      type === 'settings'
-        ? settingsDefinitions.itemDisplayedOnlyIfDatamart
-        : menuDefinitions.itemDisplayedOnlyIfDatamart;
 
     const isAvailable = (key: string) => {
       if (itemDisplayedOnlyIfDatamart.includes(key))
@@ -151,7 +125,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       return orgFeatures.filter(v => v.includes(key)).length > 0;
     };
 
-    return itemDefinitions.reduce((acc, item) => {
+    return menuDefinitions.reduce((acc, item) => {
       if (isAvailable(item.key)) {
         const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
           isAvailable(subMenuItem.key),
@@ -167,14 +141,10 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       match: { params: { organisationId } },
       defaultDatamart,
       collapsed,
-      type,
     } = this.props;
 
     const baseUrl = `/v2/o/${organisationId}`;
-    const itemDisplayedOnlyIfDatamart =
-      type === 'settings'
-        ? settingsDefinitions.itemDisplayedOnlyIfDatamart
-        : menuDefinitions.itemDisplayedOnlyIfDatamart;
+    
     return this.getAvailableItems().map(itemDef => {
       const buildSubMenu =
         itemDef.subMenuItems && itemDef.subMenuItems.length > 0;

@@ -6,7 +6,11 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginContent from '../../../../Plugin/Edit/PluginContent';
 import VisitAnalyzerService from '../../../../../services/Library/VisitAnalyzerService';
 import * as actions from '../../../../../state/Notifications/actions';
-import { PluginProperty, VisitAnalyzer, PluginInterface} from '../../../../../models/Plugins';
+import {
+  PluginProperty,
+  VisitAnalyzer,
+  PluginInterface,
+} from '../../../../../models/Plugins';
 
 import messages from './messages';
 
@@ -31,13 +35,14 @@ interface CreateVisitAnalyzerProps {
   notifyError: (err?: any) => void;
 }
 
-type JoinedProps = CreateVisitAnalyzerProps & RouteComponentProps<VisitAnalyzerRouteParam> & InjectedIntlProps;
+type JoinedProps = CreateVisitAnalyzerProps &
+  RouteComponentProps<VisitAnalyzerRouteParam> &
+  InjectedIntlProps;
 
 class CreateEditVisitAnalyzer extends React.Component<
   JoinedProps,
   CreateVisitAnalyzerState
 > {
-
   constructor(props: JoinedProps) {
     super(props);
 
@@ -45,16 +50,11 @@ class CreateEditVisitAnalyzer extends React.Component<
       edition: props.match.params.visitAnalyzerId ? true : false,
       isLoading: true,
     };
-
   }
 
   componentDidMount() {
-    const {
-      edition,
-    } = this.state;
-    const {
-      match: { params: { visitAnalyzerId } },
-    } = this.props;
+    const { edition } = this.state;
+    const { match: { params: { visitAnalyzerId } } } = this.props;
     if (edition && visitAnalyzerId) {
       this.fetchInitialValues(visitAnalyzerId);
     } else {
@@ -69,44 +69,61 @@ class CreateEditVisitAnalyzer extends React.Component<
       match: { params: { organisationId, visitAnalyzerId } },
     } = this.props;
     const {
-      match: { params: { organisationId: nextOrganisationId, visitAnalyzerId: nextVisitAnalyzerId } },
+      match: {
+        params: {
+          organisationId: nextOrganisationId,
+          visitAnalyzerId: nextVisitAnalyzerId,
+        },
+      },
     } = nextProps;
 
-    if ((organisationId !== nextOrganisationId || visitAnalyzerId !== nextVisitAnalyzerId) && nextVisitAnalyzerId) {
+    if (
+      (organisationId !== nextOrganisationId ||
+        visitAnalyzerId !== nextVisitAnalyzerId) &&
+      nextVisitAnalyzerId
+    ) {
       this.fetchInitialValues(nextVisitAnalyzerId);
     }
   }
 
   fetchInitialValues = (visitAnalyzerId: string) => {
-    const fetchVisitAnalyzer = VisitAnalyzerService.getVisitAnalyzer(visitAnalyzerId).then(res => res.data);
-    const fetchVisitAnalyzerProperties = VisitAnalyzerService.getVisitAnalyzerProperty(visitAnalyzerId)
-      .then(res => res.data);
-    this.setState({
-      isLoading: true,
-    }, () => {
-      Promise.all([fetchVisitAnalyzer, fetchVisitAnalyzerProperties]).then(res => {
-        this.setState({
-          isLoading: false,
-          initialValues: {
-            plugin: res[0],
-            properties: res[1],
+    const fetchVisitAnalyzer = VisitAnalyzerService.getVisitAnalyzer(
+      visitAnalyzerId,
+    ).then(res => res.data);
+    const fetchVisitAnalyzerProperties = VisitAnalyzerService.getVisitAnalyzerProperty(
+      visitAnalyzerId,
+    ).then(res => res.data);
+    this.setState(
+      {
+        isLoading: true,
+      },
+      () => {
+        Promise.all([fetchVisitAnalyzer, fetchVisitAnalyzerProperties]).then(
+          res => {
+            this.setState({
+              isLoading: false,
+              initialValues: {
+                plugin: res[0],
+                properties: res[1],
+              },
+            });
           },
-        });
-      });
-    });
-  }
+        );
+      },
+    );
+  };
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/visit_analyzers`;
     history.push(attributionModelUrl);
-  }
+  };
 
-  saveOrCreatePluginInstance = (plugin: VisitAnalyzer, properties: PluginProperty[]) => {
-
-    const {
-      edition,
-    } = this.state;
+  saveOrCreatePluginInstance = (
+    plugin: VisitAnalyzer,
+    properties: PluginProperty[],
+  ) => {
+    const { edition } = this.state;
 
     const {
       match: { params: { organisationId } },
@@ -118,14 +135,21 @@ class CreateEditVisitAnalyzer extends React.Component<
     if (edition) {
       return this.setState({ isLoading: true }, () => {
         VisitAnalyzerService.updateVisitAnalyzer(plugin.id, plugin)
-        .then(res => {
-          return this.updatePropertiesValue(properties, organisationId, plugin.id);
-        }).then(res => {
-          this.setState({ isLoading: false }, () => {
-            history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers`);
-          });
-        })
-        .catch(err => notifyError(err));
+          .then(res => {
+            return this.updatePropertiesValue(
+              properties,
+              organisationId,
+              plugin.id,
+            );
+          })
+          .then(res => {
+            this.setState({ isLoading: false }, () => {
+              history.push(
+                `/v2/o/${organisationId}/settings/datamart/visit_analyzers`,
+              );
+            });
+          })
+          .catch(err => notifyError(err));
       });
     }
     // if creation save and redirect
@@ -138,45 +162,68 @@ class CreateEditVisitAnalyzer extends React.Component<
       formattedFormValues.group_id = this.state.initialValues.plugin.group_id;
     }
     return this.setState({ isLoading: true }, () => {
-      VisitAnalyzerService.createVisitAnalyzer(organisationId, formattedFormValues)
-      .then(res => res.data)
-      .then(res => {
-        return this.updatePropertiesValue(properties, organisationId, res.id);
-      })
-      .then(res => {
-        this.setState({ isLoading: false }, () => {
-          history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers`);
-        });
-      })
-      .catch(err => notifyError(err));
+      VisitAnalyzerService.createVisitAnalyzer(
+        organisationId,
+        formattedFormValues,
+      )
+        .then(res => res.data)
+        .then(res => {
+          return this.updatePropertiesValue(properties, organisationId, res.id);
+        })
+        .then(res => {
+          this.setState({ isLoading: false }, () => {
+            history.push(
+              `/v2/o/${organisationId}/settings/datamart/visit_analyzers`,
+            );
+          });
+        })
+        .catch(err => notifyError(err));
     });
-  }
+  };
 
-  updatePropertiesValue = (properties: PluginProperty[], organisationId: string, id: string) => {
+  updatePropertiesValue = (
+    properties: PluginProperty[],
+    organisationId: string,
+    id: string,
+  ) => {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
-      propertiesPromises.push(VisitAnalyzerService.updateVisitAnalyzerProperty(organisationId, id, item.technical_name, item));
+      propertiesPromises.push(
+        VisitAnalyzerService.updateVisitAnalyzerProperty(
+          organisationId,
+          id,
+          item.technical_name,
+          item,
+        ),
+      );
     });
     return Promise.all(propertiesPromises);
-  }
+  };
 
   onSelect = (bo: PluginInterface) => {
     this.setState({
       initialValues: { plugin: bo },
     });
-  }
+  };
 
   render() {
     const {
       intl: { formatMessage },
+      match: { params: { visitAnalyzerId } },
     } = this.props;
 
-    const {
-      isLoading,
-    } = this.state;
+    const { isLoading } = this.state;
 
     const breadcrumbPaths = [
-      { name: formatMessage(messages.attributionModelBreadcrumb) },
+      {
+        name: visitAnalyzerId
+          ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
+              name:
+                this.state.initialValues &&
+                this.state.initialValues.plugin.name,
+            })
+          : formatMessage(messages.visitAnalyzerBreadcrumb),
+      },
     ];
 
     return (
@@ -200,8 +247,5 @@ export default compose(
   injectIntl,
   withRouter,
   // withDrawer,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  connect(undefined, { notifyError: actions.notifyError }),
 )(CreateEditVisitAnalyzer);

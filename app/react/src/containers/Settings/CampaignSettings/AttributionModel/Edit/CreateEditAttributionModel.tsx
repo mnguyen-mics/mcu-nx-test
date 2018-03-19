@@ -201,12 +201,18 @@ class CreateAttributionModel extends React.Component<
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const { intl: { formatMessage }, match: { params: { attributionModelId } } } = this.props;
 
     const { isLoading } = this.state;
 
     const breadcrumbPaths = [
-      { name: formatMessage(messages.attributionModelBreadcrumb) },
+      { name: attributionModelId
+        ? formatMessage(messages.attributionModelEditBreadcrumb, {
+            name:
+              this.state.initialValues &&
+              this.state.initialValues.plugin.name,
+          })
+        : formatMessage(messages.attributionModelNewBreadcrumb), },
     ];
 
     return (

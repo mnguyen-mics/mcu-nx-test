@@ -199,12 +199,18 @@ class CreateEditBidOptimizer extends React.Component<
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const { intl: { formatMessage }, match: { params: { bidOptimizerId } } } = this.props;
 
     const { isLoading } = this.state;
 
     const breadcrumbPaths = [
-      { name: formatMessage(messages.attributionModelBreadcrumb) },
+      { name: bidOptimizerId
+        ? formatMessage(messages.bidOptimizerEditBreadcrumb, {
+            name:
+              this.state.initialValues &&
+              this.state.initialValues.plugin.name,
+          })
+        : formatMessage(messages.bidOptimizerNewBreadcrumb), },
     ];
 
     return (

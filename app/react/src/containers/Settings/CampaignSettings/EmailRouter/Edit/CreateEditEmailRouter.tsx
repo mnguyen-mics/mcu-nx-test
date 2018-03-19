@@ -198,12 +198,18 @@ class CreateEditEmailRouter extends React.Component<
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const { intl: { formatMessage }, match: { params: { emailRouterId } } } = this.props;
 
     const { isLoading } = this.state;
 
     const breadcrumbPaths = [
-      { name: formatMessage(messages.attributionModelBreadcrumb) },
+      { name: emailRouterId
+        ? formatMessage(messages.emailRouterEditBreadcrumb, {
+            name:
+              this.state.initialValues &&
+              this.state.initialValues.plugin.name,
+          })
+        : formatMessage(messages.emailRouterNewBreadcrumb), },
     ];
 
     return (
