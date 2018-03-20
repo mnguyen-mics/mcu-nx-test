@@ -1,5 +1,3 @@
-import CreateEditAttributionModel from './CreateEditAttributionModel';
+import EditAttributionModelPage from './EditAttributionModelPage';
 
-export {
-    CreateEditAttributionModel,
-};
+export { EditAttributionModelPage };

@@ -9,11 +9,18 @@ import * as actions from '../../../../../state/Notifications/actions';
 import { PluginProperty, PluginType } from '../../../../../models/Plugins';
 
 import messages from '../messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import { AudienceExternalFeedResource, AudienceTagFeedResource, EditAudienceSegmentParam } from '../domain';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
+import {
+  AudienceExternalFeedResource,
+  AudienceTagFeedResource,
+  EditAudienceSegmentParam,
+} from '../domain';
 
-
-type PluginAudienceFeedInterface = AudienceExternalFeedResource | AudienceTagFeedResource;
+type PluginAudienceFeedInterface =
+  | AudienceExternalFeedResource
+  | AudienceTagFeedResource;
 
 export interface AudienceFeedFormModel {
   plugin: PluginAudienceFeedInterface;
@@ -37,7 +44,8 @@ export interface CreateAudienceFeedProps<T = any> {
 
 type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
   RouteComponentProps<EditAudienceSegmentParam> &
-  InjectedIntlProps & InjectedNotificationProps;
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class CreateAudienceFeed<T> extends React.Component<
   JoinedProps<T>,
@@ -49,11 +57,9 @@ class CreateAudienceFeed<T> extends React.Component<
     this.state = {
       edition: props.edition,
       isLoading: false,
-      initialValues: props.initialValues
+      initialValues: props.initialValues,
     };
   }
-
- 
 
   onSelect = (model: PluginAudienceFeedInterface) => {
     this.setState({
@@ -62,13 +68,9 @@ class CreateAudienceFeed<T> extends React.Component<
   };
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
-    const {
-      onSave,
-    } = this.props;
+    const { onSave } = this.props;
 
-    const {
-      edition
-    } = this.state;
+    const { edition } = this.state;
 
     let returnValue;
 
@@ -76,41 +78,53 @@ class CreateAudienceFeed<T> extends React.Component<
       const generatedAf = {
         ...audienceFeed,
         status: audienceFeed.status ? audienceFeed.status : 'PAUSED',
-        properties: properties
-      }
+        properties: properties,
+      };
       returnValue = {
         key: this.props.identifier,
-        model: generatedAf
-      }
+        model: generatedAf,
+      };
     } else {
       const generatedAf = {
         artifact_id: audienceFeed.artifact_id,
         group_id: audienceFeed.group_id,
-        status: "PAUSED",
-        properties: properties
-      }
+        status: 'PAUSED',
+        properties: properties,
+      };
       returnValue = {
         key: cuid(),
-        model: generatedAf
-      }
+        model: generatedAf,
+      };
     }
-    return onSave(returnValue as any)
-  }
+    return onSave(returnValue as any);
+  };
 
   render() {
-
     const { isLoading } = this.state;
 
     const breadcrumbPaths = [
-      { name: this.state.initialValues && this.state.initialValues.plugin.artifact_id ? this.state.initialValues.plugin.artifact_id : 'Add a new Audience Feed' },
+      {
+        name:
+          this.state.initialValues &&
+          this.state.initialValues.plugin.artifact_id
+            ? this.state.initialValues.plugin.artifact_id
+            : 'Add a new Audience Feed',
+      },
     ];
-    
 
     return (
       <PluginContent
         pluginType={this.props.type}
-        listTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ?  messages.listTagTitle : messages.listExternalTitle}
-        listSubTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ?  messages.listTagSubTitle : messages.listExternalSubTitle}
+        listTitle={
+          this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED'
+            ? messages.listTagTitle
+            : messages.listExternalTitle
+        }
+        listSubTitle={
+          this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED'
+            ? messages.listTagSubTitle
+            : messages.listExternalSubTitle
+        }
         breadcrumbPaths={breadcrumbPaths}
         saveOrCreatePluginInstance={this.onSave}
         onClose={this.props.onClose}

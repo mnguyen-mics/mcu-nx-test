@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { SearchFilter } from '../../../../components/ElementSelector';
 import {
   getPaginatedApiParam,
@@ -15,10 +11,10 @@ import AttributionModelService from '../../../../services/AttributionModelServic
 import { TableSelectorProps } from '../../../../components/ElementSelector/TableSelector';
 import { TableSelector } from '../../../../components/index';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
-import { AttributionModelResource } from '../../../../models/goal/index';
+import { AttributionModel } from '../../../../models/Plugins';
 
 const AttributionModelTableSelector: React.ComponentClass<
-  TableSelectorProps<AttributionModelResource>
+  TableSelectorProps<AttributionModel>
 > = TableSelector;
 const messages = defineMessages({
   attributionModelSelectorColumnType: {
@@ -41,7 +37,7 @@ const messages = defineMessages({
 
 export interface AttributionModelSelectorProps {
   selectedAttributionModelIds: string[];
-  save: (selectedAttributionModels: AttributionModelResource[]) => void;
+  save: (selectedAttributionModels: AttributionModel[]) => void;
   close: () => void;
 }
 
@@ -50,17 +46,6 @@ type Props = AttributionModelSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AttributionModelSelector extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-//   componentDidMount() {
-//     const { match: { params: { organisationId } } } = this.props;
-//     AttributionModelService.getAttributionModels(
-//       organisationId
-//     ).then(resp => resp.data).then(dataList => console.log(dataList));
-//   }
-
   fetchAttributionModels = (filter: SearchFilter) => {
     const { match: { params: { organisationId } } } = this.props;
     const options: PaginatedApiParam = {
@@ -78,7 +63,7 @@ class AttributionModelSelector extends React.Component<Props> {
 
   saveAttributionModels = (
     selectedAttributionModelIds: string[],
-    selectedAttributionModels: AttributionModelResource[],
+    selectedAttributionModels: AttributionModel[],
   ) => {
     this.props.save(selectedAttributionModels);
   };
@@ -90,7 +75,7 @@ class AttributionModelSelector extends React.Component<Props> {
       close,
     } = this.props;
 
-    const columns: Array<DataColumnDefinition<AttributionModelResource>> = [
+    const columns: Array<DataColumnDefinition<AttributionModel>> = [
       {
         intlMessage: messages.attributionModelSelectorColumnType,
         key: 'type',

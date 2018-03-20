@@ -19,9 +19,21 @@ import {
 import AttributionModelSelector, {
   AttributionModelSelectorProps,
 } from '../../Common/AttributionModelSelector';
-import { AttributionModelResource } from '../../../../../models/goal/index';
-import { AttributionModelListFieldModel } from '../domain';
-import { CreateEditAttributionModel } from '../../../../Library/AttributionModel/Edit/index';
+import {
+  AttributionModelListFieldModel,
+  isAttributionSelectionResource,
+  isAttributionModelFormData,
+  AttributionModelMetaData,
+} from '../domain';
+import {
+  AttributionModel,
+  AttributionModelCreateRequest,
+} from '../../../../../models/Plugins';
+import { AttributionSelectionCreateRequest } from '../../../../../models/goal';
+import AttributionModelForm, {
+  AttributionModelFormProps,
+} from '../../../../Library/AttributionModel/Edit/AttributionModelForm';
+import { AttributionModelFormData } from '../../../../Library/AttributionModel/Edit/domain';
 
 const messages = defineMessages({
   sectionSubtitle: {
@@ -77,107 +89,141 @@ class AttributionModelFormSection extends React.Component<
     };
   }
 
-  openAttributionModelForm = (
-    attributionModelData?: AttributionModelListFieldModel,
-  ) => {
-    const { openNextDrawer, closeNextDrawer, intl } = this.props;
-    const handleSave = (formData: Partial<AttributionModelResource>) => {
-      // this.updateAttributionModels(formData, field && field.key);
+  openAttributionModelForm = (field?: AttributionModelListFieldModel) => {
+    const { openNextDrawer } = this.props;
+    const handleOnSave = (formData: AttributionModelFormData) => {
+      this.updateAttributionModels(formData, field && field.key);
     };
 
-    const additionalProps = {
-      initialValues: attributionModelData
-        ? attributionModelData.model
-        : undefined,
-      onSave: handleSave,
-      actionBarButtonText: attributionModelData
-        ? intl.formatMessage(messages.editAttributionModel)
-        : intl.formatMessage(messages.addExistingAttributionModel),
-      close: closeNextDrawer,
+    const additionalProps: AttributionModelFormProps = {
+      save: handleOnSave,
+      breadcrumbPaths: [],
+      close: this.props.closeNextDrawer,
     };
+
+    if (field){
+      if (isAttributionModelFormData(field.model)) {
+        additionalProps.initialValues = field.model;
+      } else {
+        additionalProps.attributionId = field.model.attribution_model_id;
+      }
+    }
 
     const options = {
       additionalProps,
     };
 
-    openNextDrawer(CreateEditAttributionModel, options);
+    openNextDrawer<AttributionModelFormProps>(AttributionModelForm, options);
   };
 
-  addExistingAttributionModel = (
-    attributionModels: AttributionModelResource[],
-    existingKey?: string,
+  updateAttributionModels = (
+    formData: AttributionModelFormData,
+    fieldKey?: string,
   ) => {
     const { fields, formChange } = this.props;
-    const attributionModelIds: string[] = [];
-    attributionModels.forEach(am => {
-      if (am && am.id) {
-        attributionModelIds.push(am.id);
-      }
-    });
+
+    const newFields: AttributionModelListFieldModel[] = [];
+    if (fieldKey) {
+      fields.getAll().forEach(field => {
+        if (fieldKey === field.key) {
+          newFields.push({
+            key: fieldKey,
+            model: formData,
+            meta: this.buildFieldModelMeta(formData.plugin),
+          });
+        } else {
+          newFields.push(field);
+        }
+      });
+    } else {
+      newFields.push(...fields.getAll());
+      newFields.push({
+        key: cuid(),
+        model: formData,
+        meta: this.buildFieldModelMeta(formData.plugin),
+      });
+    }
+
+    formChange((fields as any).name, newFields);
+    this.props.closeNextDrawer();
+  };
+
+  updateExistingAttributionModels = (attributionModels: AttributionModel[]) => {
+    const { fields, formChange } = this.props;
+    const attributionModelIds = attributionModels.map(am => am.id);
     const keptFields: AttributionModelListFieldModel[] = [];
     fields.getAll().forEach(field => {
-      if ((field.model as any).id) {
-        if (attributionModelIds.includes((field.model as any).id)) {
+      if (!isAttributionModelFormData(field.model)) {
+        if (attributionModelIds.includes(field.model.attribution_model_id)) {
+          keptFields.push(field);
+        } else if (field.model.attribution_type === 'DIRECT') {
           keptFields.push(field);
         }
-      } else if ((field.model as any).attribution_model_id) {
-        if (
-          attributionModelIds.includes(
-            (field.model as any).attribution_model_id,
-          )
-        ) {
+      } else if (isAttributionSelectionResource(field.model)) {
+        if (attributionModelIds.includes(field.model.id)) {
           keptFields.push(field);
         }
+      } else {
+        keptFields.push(field);
       }
     });
 
     const existingAttributionModelIds: string[] = [];
     fields.getAll().forEach(field => {
-      if ((field.model as any).id) {
-        existingAttributionModelIds.push((field.model as any).id);
-      } else if ((field.model as any).attribution_model_id) {
-        existingAttributionModelIds.push(
-          (field.model as any).attribution_model_id,
-        );
+      if (!isAttributionModelFormData(field.model)) {
+        existingAttributionModelIds.push(field.model.attribution_model_id);
       }
     });
     const newFields = attributionModels
       .filter(
         attributionModel =>
-          attributionModel &&
-          attributionModel.id &&
           !existingAttributionModelIds.includes(attributionModel.id),
       )
-      .map(attributionModel => ({
-        key: cuid(),
-        model: {
-          ...attributionModel,
-        },
-        meta: {
-          name: attributionModel.name,
-          group_id: attributionModel.group_id,
-          artefact_id: attributionModel.artifact_id,
-        },
-      }));
+      .map(attributionModel => {
+        const newSelection: AttributionSelectionCreateRequest = {
+          attribution_model_id: attributionModel.id,
+          attribution_type: 'WITH_PROCESSOR',
+          default: false,
+        };
+        return {
+          key: cuid(),
+          model: newSelection,
+          meta: this.buildFieldModelMeta(attributionModel),
+        };
+      });
 
     formChange((fields as any).name, keptFields.concat(newFields));
     this.props.closeNextDrawer();
   };
 
   addDirectAttributionModel = () => {
-    //
+    const { fields } = this.props;
+    fields.push({
+      key: cuid(),
+      model: { attribution_model_id: '-1', attribution_type: 'DIRECT' },
+      meta: {
+        name: 'DIRECT',
+        default: fields.length === 0,
+      },
+    });
   };
 
   openAttributionModelSelector = () => {
     const { openNextDrawer, closeNextDrawer, fields } = this.props;
-    const selectedAttributionModelIds = fields
-      .getAll()
-      .map(
-        field =>
-          (field.model as any).attribution_model_id || (field.model as any).id,
-      );
+
+    const selectedAttributionModelIds: string[] = [];
+    fields.getAll().forEach(field => {
+      if (
+        !isAttributionModelFormData(field.model) &&
+        field.model.attribution_model_id &&
+        field.model.attribution_type === 'WITH_PROCESSOR'
+      ) {
+        selectedAttributionModelIds.push(field.model.attribution_model_id);
+      }
+    });
+
     const additionalProps = {
-      save: this.addExistingAttributionModel,
+      save: this.updateExistingAttributionModels,
       close: closeNextDrawer,
       selectedAttributionModelIds,
     };
@@ -207,56 +253,81 @@ class AttributionModelFormSection extends React.Component<
     );
   }
 
+  buildFieldModelMeta = (
+    data: Partial<AttributionModelCreateRequest>,
+  ): AttributionModelMetaData => {
+    return {
+      name: data.name,
+      artifact_id: data.artifact_id,
+      group_id: data.group_id,
+      default: this.props.fields.length === 0,
+    };
+  };
+
   getAttributionModelRecords = () => {
-    const { fields } = this.props;
+    const { fields, formChange } = this.props;
 
     return fields.getAll().map((attributionModelField, index) => {
       const removeField = () => {
-        const newIndex = fields.getAll().indexOf(attributionModelField);
-        fields.remove(newIndex);
+        const keptFields: AttributionModelListFieldModel[] = [];
+        // const nextDefault: number | undefined = attributionModelField.meta.default && 
+        fields.getAll().forEach((field, _index) => {
+          if (_index !== index) {            
+            keptFields.push(field);
+          }
+        })
+        formChange((fields as any).name, keptFields);
       };
       const getName = (attributionModel: AttributionModelListFieldModel) => {
         return attributionModel.meta.name
           ? `${attributionModel.meta.name} /
          ${attributionModel.meta.group_id} /
-         ${attributionModel.meta.artefact_id}`
-          : `${attributionModel.meta.attribution_model_type}`;
+         ${attributionModel.meta.artifact_id}`
+          : 'DIRECT';
       };
       const edit = () => this.openAttributionModelForm(attributionModelField);
 
-      const setDefaultAttributionModel = (
-        attributionModel: AttributionModelListFieldModel,
-      ) => {
-        const handleCheckboxAction = () => {
-          // const newIndex = fields.getAll().indexOf(attributionModelField);
-          // const fieldDefaultValue = fields.get(newIndex).meta.default;
-          // const newField = {
-          //   ...fields.get(newIndex),
-          //   default: !fieldDefaultValue,
-          // };
-          // formChange((fields.get(newIndex) as any).name, newField);
+      const setDefaultAttributionModel = () => {
+        const handleDefaultClick = () => {
+          const newFields = fields.getAll().map(field => {
+            if (field.key === attributionModelField.key) {
+              return {
+                ...field,
+                meta: {
+                  ...field.meta,
+                  default: true,
+                },
+              };
+            } else {
+              return {
+                ...field,
+                meta: {
+                  ...field.meta,
+                  default: false,
+                },
+              };
+            }
+          });
+          formChange((fields as any).name, newFields);
         };
         return (
           <Radio
-            // checked={
-            //   fields.getAll().length === 1
-            //     ? true
-            //     : attributionModel.meta.default
-            //       ? attributionModel.meta.default
-            //       : false
-            // }
-            onChange={handleCheckboxAction}
+            checked={attributionModelField.meta.default}
+            onChange={handleDefaultClick}
           />
         );
       };
 
+      const cannotEdit = !isAttributionModelFormData(attributionModelField.model) &&
+        attributionModelField.model.attribution_type === 'DIRECT';       
+
       return (
         <RecordElement
-          key={cuid()}
+          key={attributionModelField.key}
           recordIconType="display"
           record={attributionModelField}
           title={getName}
-          onEdit={edit}
+          onEdit={cannotEdit ? undefined : edit}
           onRemove={removeField}
           additionalActionButtons={setDefaultAttributionModel}
         />
@@ -265,6 +336,16 @@ class AttributionModelFormSection extends React.Component<
   };
 
   render() {
+    const { fields } = this.props;
+
+    const existingDirectAttribModel = fields
+      .getAll()
+      .find(
+        f =>
+          !isAttributionModelFormData(f.model) &&
+          f.model.attribution_type === 'DIRECT',
+      );
+
     return (
       <div>
         <FormSection
@@ -285,6 +366,7 @@ class AttributionModelFormSection extends React.Component<
               id: messages.addDirectAttributionModel.id,
               message: messages.addDirectAttributionModel,
               onClick: this.addDirectAttributionModel,
+              disabled: !!existingDirectAttribModel,
             },
           ]}
         />

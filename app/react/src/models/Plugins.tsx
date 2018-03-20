@@ -35,13 +35,16 @@ export interface PluginVersion {
   version_id: string;
 }
 
-export interface AttributionModel {
+export interface AttributionModelCreateRequest {
   artifact_id: string;
-  attribution_processor_id: string;
   group_id: string;
-  id: string;
-  mode: 'STRICT' | 'DISCOVERY';
+  mode?: 'STRICT' | 'DISCOVERY';
   name: string;
+}
+
+export interface AttributionModel extends AttributionModelCreateRequest {
+  attribution_processor_id: string;
+  id: string;
   organisation_id: string;
 }
 

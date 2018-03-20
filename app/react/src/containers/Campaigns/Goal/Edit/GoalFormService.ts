@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash';
 import { Task, executeTasksInSequence } from './../../../../utils/FormHelper';
 import {
   GoalFormData,
@@ -7,11 +6,14 @@ import {
   NewGoalFormData,
   AttributionModelListFieldModel,
   INITIAL_GOAL_FORM_DATA,
+  isAttributionSelectionResource,
+  isAttributionModelFormData,
 } from './domain';
 import { GoalResource } from '../../../../models/goal';
 import { IntPropertyResource } from '../../../../models/plugin';
 import GoalService from '../../../../services/GoalService';
 import AttributionModelService from '../../../../services/AttributionModelService';
+import AttributionModelFormService from '../../../Library/AttributionModel/Edit/AttributionModelFormService';
 
 const LookbackWindowArtifactId = 'lookback_window';
 
@@ -84,7 +86,7 @@ function getLookbackWindow(
   const noLookbackWindow = undefined;
   return GoalService.getAttributionModels(goalId).then(res => {
     const lookbackWindowFound = res.data.find(
-      ats => ats.artifact_id === LookbackWindowArtifactId && ats.default,
+      ats => ats.artifact_id === LookbackWindowArtifactId && !!ats.default,
     );
     if (!lookbackWindowFound) {
       return noLookbackWindow;
@@ -134,80 +136,74 @@ function getAttributionModelTasks(
   attributionModelFields: AttributionModelListFieldModel[],
   initialAttributionModelFields: AttributionModelListFieldModel[] = [],
 ): Task[] {
-  const initialAttributionModelIds: string[] = [];
+  const initialIds: string[] = [];
   initialAttributionModelFields.forEach(field => {
-    if ((field.model as any).attribution_model_id) {
-      initialAttributionModelIds.push(
-        (field.model as any).attribution_model_id,
-      );
+    if (isAttributionSelectionResource(field.model)) {
+      initialIds.push(field.model.id);
     }
   });
-
-  const currentAttributionModelIds: string[] = [];
+  const currentIds: string[] = [];
   attributionModelFields.forEach(field => {
-    if ((field.model as any).attribution_model_id || (field.model as any).id) {
-      currentAttributionModelIds.push(
-        (field.model as any).attribution_model_id || (field.model as any).id,
-      );
+    if (isAttributionSelectionResource(field.model)) {
+      currentIds.push(field.model.id);
     }
   });
 
   const tasks: Task[] = [];
   attributionModelFields.forEach(field => {
-    // Existing AM (linked to goal OR not linked)
-    if ((field.model as any).attribution_model_id || (field.model as any).id) {
-      const exisitingAttributionModelField = initialAttributionModelFields.find(
-        v => v.key === field.key,
-      );
-      const currentAttrributionModel = field.model;
-      // If linked AMs have been modified
-      if (
-        exisitingAttributionModelField &&
-        !isEqual(currentAttrributionModel, exisitingAttributionModelField.model)
-      ) {
-        tasks.push(() => {
-          return AttributionModelService.updateAttributionModel(
-            (currentAttrributionModel as any).attribution_model_id,
-            currentAttrributionModel,
-          );
-        });
-        // AM not linked
-      } else if ((field.model as any).id) {
-        // we update in case user has updated it
-        tasks.push(() => {
-          return AttributionModelService.updateAttributionModel(
-            (currentAttrributionModel as any).id,
-            currentAttrributionModel,
-          ).then(() => {
-            GoalService.linkAttributionModelToGoal(
-              goalId,
-              currentAttrributionModel as any,
-            );
+    if (isAttributionModelFormData(field.model)) {
+      const attributionFormData = field.model;
+      tasks.push(() =>
+        AttributionModelFormService.saveOrCreatePluginInstance(
+          organisationId,
+          attributionFormData,
+        ).then(attribModelRes => {
+          return GoalService.linkAttributionModelToGoal(goalId, {
+            attribution_model_id: attribModelRes.data.id,
+            attribution_type: 'WITH_PROCESSOR',
+            default: field.meta.default,
           });
-        });
+        }),
+      );
+    } else if (!isAttributionSelectionResource(field.model)) {
+      const attribSelCreateRequest = field.model;
+      if (attribSelCreateRequest.attribution_type === 'DIRECT') {
+        tasks.push(() =>
+          GoalService.linkAttributionModelToGoal(goalId, {
+            attribution_type: 'DIRECT',
+            default: field.meta.default,
+          }),
+        );
+      } else {
+        tasks.push(() =>
+          GoalService.linkAttributionModelToGoal(goalId, {
+            attribution_model_id: attribSelCreateRequest.attribution_model_id,
+            attribution_type: 'WITH_PROCESSOR',
+            default: field.meta.default,
+          }),
+        );
       }
     } else {
-      // new AM
+      const attributionSelectionRes = field.model;
       tasks.push(() =>
-        AttributionModelService.createAttributionModel(
-          organisationId,
-          field.model as any,
-        ).then(resp => {
-          GoalService.linkAttributionModelToGoal(goalId, resp.data);
-        }),
+        GoalService.updateLinkAttributionModel(
+          goalId,
+          attributionSelectionRes.id,
+          {
+            ...attributionSelectionRes,
+            default: field.meta.default,
+          },
+        ),
       );
     }
   });
 
-  // removed attribution model tasks
-  initialAttributionModelIds
-    .filter(id => !currentAttributionModelIds.includes(id))
-    .forEach(id => {
-      tasks.push(() => GoalService.deleteAttributionModel(goalId, id));
-    });
-
+  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
+    tasks.push(() => GoalService.deleteAttributionModel(goalId, id));
+  });
   return tasks;
 }
+
 // function getOrCreateLookbackWindowAttributionModel(
 //   organisationId: string,
 //   lookbackWindow: LookbackWindow,

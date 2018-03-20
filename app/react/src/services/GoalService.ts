@@ -1,10 +1,10 @@
+import { AttributionSelectionCreateRequest } from './../models/goal/AttributionSelectionResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
   GoalResource,
   GoalCreateRequest,
   AttributionSelectionResource,
-  AttributionModelResource,
 } from '../models/goal';
 import { UserQueryGoalResource } from '../models/goal/GoalResource';
 
@@ -55,11 +55,21 @@ const GoalService = {
 
   linkAttributionModelToGoal(
     goalId: string,
-    resource: AttributionModelResource,
+    resource: Partial<AttributionSelectionCreateRequest>,
   ): Promise<DataResponse<AttributionSelectionResource>> {
     const endpoint = `goals/${goalId}/attribution_models`;
 
     return ApiService.postRequest(endpoint, resource);
+  },
+
+  updateLinkAttributionModel(
+    goalId: string,
+    selectionId: string,
+    resource: Partial<AttributionSelectionResource>,
+  ): Promise<DataResponse<AttributionSelectionResource>> {
+    const endpoint = `goals/${goalId}/attribution_models/${selectionId}`;
+
+    return ApiService.putRequest(endpoint, resource);
   },
 
   getAttributionModels(
@@ -72,8 +82,7 @@ const GoalService = {
   deleteAttributionModel(
     goalId: string,
     attributionModelId: string,
-    // body: Partial<AttributionSelectionResource>
-  ): Promise<DataResponse<AttributionModelResource>> {
+  ): Promise<any> {
     const endpoint = `goals/${goalId}/attribution_models/${attributionModelId}`;
     return ApiService.deleteRequest(endpoint);
   },

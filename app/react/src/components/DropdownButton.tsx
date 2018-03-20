@@ -9,6 +9,7 @@ export interface DropdownButtonItemProps {
   id: string;
   message: FormattedMessage.MessageDescriptor;
   onClick: () => void ;
+  disabled? : boolean;
 }
 
 export interface DropdownButtonProps {
@@ -21,7 +22,7 @@ class DropdownButton extends React.Component<DropdownButtonProps> {
     const { items } = this.props;
 
     const displayOptions = items.map((item) => (
-      <Menu.Item key={item.id}>
+      <Menu.Item key={item.id} disabled={!!item.disabled}>
         <FormattedMessage {...item.message} />
       </Menu.Item>
     ));

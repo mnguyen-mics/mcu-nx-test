@@ -108,11 +108,7 @@ class EditGoalPage extends React.Component<Props, State> {
                           createFieldArrayModelWithMeta(attributionModel, {
                             name: attributionModel.attribution_model_name,
                             group_id: attributionModel.group_id,
-                            artefact_id: attributionModel.artifact_id,
-                            attribution_model_type:
-                              attributionModel.attribution_type,
-                            attribution_model_id:
-                              attributionModel.attribution_model_id,
+                            artifact_id: attributionModel.artifact_id,                          
                             default: attributionModel.default,
                           }),
                       ),
@@ -152,12 +148,6 @@ class EditGoalPage extends React.Component<Props, State> {
     } = this.props;
 
     const { goalFormData: initialGoalFormData, queryContainer } = this.state;
-    //
-    // if (goalFormData.attributionModels.length === 0) {
-    //   message.error(
-    //     intl.formatMessage(messages.noAttributionModelErrorFormMessage),
-    //   );
-    // } else {}
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
       0,

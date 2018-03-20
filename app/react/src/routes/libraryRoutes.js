@@ -12,7 +12,7 @@ import PlacementListPage from '../containers/Library/Placement/Edit/PlacementLis
 
 import Exports from '../containers/Library/Exports/Dashboard/Exports.tsx';
 
-import { CreateEditAttributionModel } from '../containers/Library/AttributionModel/Edit/index.ts';
+import { EditAttributionModelPage } from '../containers/Library/AttributionModel/Edit/index.ts';
 import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit/index.ts';
 import { CreateEditEmailRouter } from '../containers/Library/EmailRouter/Edit/index.ts';
 import { CreateEditVisitAnalyzer } from '../containers/Library/VisitAnalyzer/Edit/index.ts';
@@ -82,12 +82,12 @@ const campaignsRoutes = [
   {
     path: '/library/attribution_models/:attributionModelId(\\d+)/edit',
     layout: 'edit',
-    editComponent: CreateEditAttributionModel,
+    editComponent: EditAttributionModelPage,
   },
   {
     path: '/library/attribution_models/create',
     layout: 'edit',
-    editComponent: CreateEditAttributionModel,
+    editComponent: EditAttributionModelPage,
   },
   // ========================================
   //           Visit Analyzers

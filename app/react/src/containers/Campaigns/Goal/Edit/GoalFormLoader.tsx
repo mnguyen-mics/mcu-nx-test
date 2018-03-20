@@ -4,7 +4,9 @@ import GoalForm, { GoalFormProps } from './GoalForm';
 import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
 import GoalFormService from './GoalFormService';
 import Loading from '../../../../components/Loading';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 export interface GoalFormLoaderProps extends GoalFormProps {
   goalId: string;
@@ -40,6 +42,6 @@ class GoalFormLoader extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, GoalFormProps>(
-  injectNotifications,
-)(GoalFormLoader);
+export default compose<Props, GoalFormProps>(injectNotifications)(
+  GoalFormLoader,
+);

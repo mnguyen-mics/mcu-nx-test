@@ -1,8 +1,6 @@
 import { 
   AttributionSelectionResource,
   AttributionSelectionCreateRequest,
-  AttributionModelCreateRequest,
-  AttributionModelResource,
 } from './AttributionSelectionResource';
 import {
   GoalSelectionResource,
@@ -17,8 +15,6 @@ import {
 export {
   AttributionSelectionResource,
   AttributionSelectionCreateRequest,
-  AttributionModelCreateRequest,
-  AttributionModelResource,
   GoalSelectionResource,
   GoalSelectionCreateRequest,
   GoalSelectionType,

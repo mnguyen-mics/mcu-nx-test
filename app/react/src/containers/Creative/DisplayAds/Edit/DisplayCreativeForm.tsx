@@ -33,8 +33,8 @@ const Content = Layout.Content as React.ComponentClass<
 
 export interface DisplayCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
-  actionBarButtonText: FormattedMessage.MessageDescriptor;
   close: () => void;
+  actionBarButtonText: FormattedMessage.MessageDescriptor;
   breadCrumbPaths: Path[];
   goToCreativeTypeSelection?: () => void;
 }
@@ -118,7 +118,7 @@ class DisplayCreativeForm extends React.Component<Props> {
     if (goToCreativeTypeSelection) {
       sideBarProps.items.unshift({
         sectionId: 'type',
-        title:messages.creativeSiderMenuCreativeType,
+        title: messages.creativeSiderMenuCreativeType,
         onClick: goToCreativeTypeSelection,
         type: 'validated',
       });

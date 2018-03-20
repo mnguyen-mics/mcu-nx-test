@@ -1,9 +1,9 @@
+import {
+  AttributionModel,
+  AttributionModelCreateRequest,
+} from './../models/Plugins';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
-import {
-  AttributionModelCreateRequest,
-  AttributionModelResource,
-} from '../models/goal';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginProperty } from '../models/Plugins';
 import PluginService from './PluginService';
@@ -12,7 +12,7 @@ const AttributionModelService = {
   getAttributionModels(
     organisationId: string,
     options: PaginatedApiParam = {},
-  ): Promise<DataListResponse<AttributionModelResource>> {
+  ): Promise<DataListResponse<AttributionModel>> {
     const endpoint = 'attribution_models';
     const params = {
       organisation_id: organisationId,
@@ -22,9 +22,7 @@ const AttributionModelService = {
     return ApiService.getRequest(endpoint, params);
   },
 
-  getAttributionModel(
-    attributionModelId: string,
-  ): Promise<DataResponse<any>> {
+  getAttributionModel(attributionModelId: string): Promise<DataResponse<AttributionModel>> {
     const endpoint = `attribution_models/${attributionModelId}`;
 
     return ApiService.getRequest(endpoint);
@@ -32,8 +30,8 @@ const AttributionModelService = {
 
   updateAttributionModel(
     attributionModelId: string,
-    body: object= {},
-  ): Promise<DataResponse<PluginProperty>> {
+    body: object = {},
+  ): Promise<DataResponse<AttributionModel>> {
     const endpoint = `attribution_models/${attributionModelId}`;
 
     return ApiService.putRequest(endpoint, body);
@@ -48,8 +46,8 @@ const AttributionModelService = {
 
   createAttributionModel(
     organisationId: string,
-    resource: AttributionModelCreateRequest,
-  ): Promise<DataResponse<AttributionModelResource>> {
+    resource: Partial<AttributionModelCreateRequest>,
+  ): Promise<DataResponse<AttributionModel>> {
     const endpoint = `attribution_models?organisation_id=${organisationId}`;
 
     return ApiService.postRequest(endpoint, resource);
@@ -67,11 +65,8 @@ const AttributionModelService = {
     };
     return ApiService.putRequest(endpoint, body);
   },
-  deleteAttributionModel(
-    attributionModelId: string,
-  ): Promise<DataResponse<AttributionModelResource>> {
+  deleteAttributionModel(attributionModelId: string): Promise<any> {
     const endpoint = `attribution_models/${attributionModelId}`;
-
     return ApiService.deleteRequest(endpoint);
   },
   updateAttributionModelProperty(

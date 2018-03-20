@@ -14,9 +14,8 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { PluginProperty } from '../../../../models/Plugins';
+import { PluginProperty, AttributionModel } from '../../../../models/Plugins';
 import messages from './messages';
-import { AttributionModelResource } from '../../../../models/goal/AttributionSelectionResource';
 
 const initialState = {
   loading: false,
@@ -24,13 +23,13 @@ const initialState = {
   total: 0,
 };
 
-interface AttributionModelInterface extends AttributionModelResource {
+interface AttributionModelInterface extends AttributionModel {
   properties?: PluginProperty[];
 }
 
 interface AttributionModelContentState {
   loading: boolean;
-  data: AttributionModelResource[];
+  data: AttributionModel[];
   total: number;
 }
 

@@ -19,7 +19,7 @@ import {
   TriggerFormSection,
   AttributionModelFormSection,
 } from './Sections';
-import { GoalFormData } from './domain';
+import { NewGoalFormData } from './domain';
 import messages from './messages';
 import { Path } from '../../../../components/ActionBar';
 import { Omit } from '../../../../utils/Types';
@@ -41,7 +41,7 @@ const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
   ReduxFormChangeProps
 >;
 
-export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
+export interface GoalFormProps extends Omit<ConfigProps<NewGoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
   queryObject?: {
@@ -52,7 +52,7 @@ export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   };
 }
 
-type Props = InjectedFormProps<GoalFormData, GoalFormProps> &
+type Props = InjectedFormProps<NewGoalFormData, GoalFormProps> &
   GoalFormProps &
   InjectedIntlProps;
 
@@ -110,10 +110,6 @@ class GoalForm extends React.Component<Props> {
                 <GeneralFormSection />
               </div>
               <hr />
-              {/* <div id={sections.goals.sectionId}>
-                <AttributionFormSection />
-              </div>
-              <hr /> */}
               <div id={sections.conversion_value.sectionId}>
                 <ConversionValueFormSection
                   initialValues={this.props.initialValues}
