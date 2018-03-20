@@ -7,8 +7,9 @@ import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit'
 import {
   EmailListPage,
 } from '../containers/Creative/EmailTemplates/List';
+import { RouteStandard, RouteEdit } from './routes';
 
-const creativesRoutes = [
+const creativesRoutes: Array<RouteEdit | RouteStandard> = [
   {
     path: '/creatives/display',
     layout: 'main',

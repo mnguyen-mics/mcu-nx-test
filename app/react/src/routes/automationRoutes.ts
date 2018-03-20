@@ -4,8 +4,9 @@ import {
 } from '../containers/Automations/List';
 
 import AutomationEditPage from '../containers/Automations/Edit/AutomationEditPage';
+import { RouteEdit, RouteStandard } from './routes';
 
-const automationRoutes = [
+const automationRoutes: Array<RouteEdit | RouteStandard> = [
   {
     path: '/automations',
     layout: 'main',

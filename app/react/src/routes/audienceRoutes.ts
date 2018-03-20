@@ -17,13 +17,14 @@ import {
   PartitionsActionbar,
 } from '../containers/Audience/Partitions/List';
 
-import { TimelinePage } from '../containers/Audience/Timeline';
-
-import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage';
+import {
+  TimelinePage,
+} from '../containers/Audience/Timeline';
+import { RouteEdit, RouteStandard } from './routes';
 
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
 
-const audienceRoutes = [
+const audienceRoutes: Array<RouteEdit | RouteStandard> = [
   {
     path: '/audience/segments',
     layout: 'main',

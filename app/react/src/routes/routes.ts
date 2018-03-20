@@ -20,15 +20,25 @@ import analyticsRoutes from './analyticsRoutes';
  * Usage: Navigator -> AuthenticatedRoute(path) -> LayoutManager(layout, components) -> Main/EditLayout(components)
  */
 
+export type LayoutTypes = 'main' | 'edit';
+
 export interface RouteDef {
   path: string;
-  layout: string;
-  contentComponent: React.ComponentClass;
-  editComponent: React.ComponentClass;
-  actionBarComponent: React.ComponentClass; 
+  layout: LayoutTypes;
 }
 
-const routes: any[] = [
+export interface RouteEdit extends RouteDef {
+  layout: 'edit';
+  editComponent: React.ComponentClass;
+}
+
+export interface RouteStandard extends RouteDef {
+  layout: 'main';
+  contentComponent: React.ComponentClass;
+  actionBarComponent?: React.ComponentClass; 
+}
+
+const routes: Array<RouteEdit | RouteStandard> = [
   ...campaignRoutes,
   ...automationRoutes,
   ...audienceRoutes,

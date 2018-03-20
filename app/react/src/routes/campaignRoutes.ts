@@ -29,13 +29,14 @@ import {
   EmailCampaignListPage,
 } from '../containers/Campaigns/Email/List';
 
-import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard/index';
+import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard';
 
 import { GoalsActionbar, GoalsTable } from '../containers/Campaigns/Goal/List';
 
 import GoalDashboard from '../containers/Campaigns/Goal/Dashboard/GoalDashboard';
+import { RouteEdit, RouteStandard } from './routes';
 
-const campaignsRoutes = [
+const campaignsRoutes: Array<RouteEdit | RouteStandard> = [
   {
     path: '/campaigns/display',
     layout: 'main',
