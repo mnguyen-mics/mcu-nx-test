@@ -327,6 +327,7 @@ class CreateEmailTemplate extends React.Component<
           formId={formId}
           initialValues={this.formatInitialValues(this.state.initialValues)}
           showGeneralInformation={true}
+          showTechnicalName={true}
         />
       </EditContentLayout>
     );

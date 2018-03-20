@@ -20,6 +20,7 @@ import { Omit } from '../../../utils/Types';
 import messages from './messages';
 import { InjectDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../components/Drawer/index';
+import { ButtonStyleless, McsIcon } from '../../../components'
 
 const { Content } = Layout;
 const FORM_NAME = 'pluginForm';
@@ -35,6 +36,7 @@ interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   formId: string;
   initialValues: any;
   showGeneralInformation: boolean;
+  showTechnicalName?: boolean; 
 }
 
 type JoinedProps = PluginEditFormProps &
@@ -45,6 +47,7 @@ type JoinedProps = PluginEditFormProps &
 
 interface PluginEditFormState {
   loading: boolean;
+  displayAdvancedSection: boolean;
 }
 
 export interface FormModel {
@@ -64,8 +67,15 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     super(props);
     this.state = {
       loading: false,
+      displayAdvancedSection: false
     };
   }
+
+  toggleAdvancedSection = () => {
+    this.setState({
+      displayAdvancedSection: !this.state.displayAdvancedSection,
+    });
+  };
 
   onSubmit = (formValues: FormModel) => {
     const { editionMode, save } = this.props;
@@ -113,6 +123,53 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     });
   };
 
+  renderTechnicalName = () => {
+    const {
+      intl
+    } = this.props;
+    const InputField: FieldCtor<FormInputProps> = Field;
+    return (
+      <div>
+      <ButtonStyleless
+        className="optional-section-title"
+        onClick={this.toggleAdvancedSection}
+      >
+        <McsIcon type="settings" />
+        <span className="step-title">
+          {intl.formatMessage(messages.advanced)}
+        </span>
+        <McsIcon type="chevron" />
+      </ButtonStyleless>
+      <div
+        className={
+          !this.state.displayAdvancedSection
+            ? 'hide-section'
+            : 'optional-section-content'
+        }
+      >
+        <InputField
+          name="plugin.technical_name"
+          component={FormInput}
+          formItemProps={{
+            label: intl.formatMessage(
+              messages.sectionTechnicalName,
+            ),
+          }}
+          inputProps={{
+            placeholder: intl.formatMessage(
+              messages.sectionTechnicalPlaceholder,
+            ),
+          }}
+          helpToolTipProps={{
+            title: intl.formatMessage(
+              messages.sectionTechnicalHelper,
+            ),
+          }}
+        />
+      </div>
+    </div>)
+  }
+
   render() {
     const {
       handleSubmit,
@@ -120,7 +177,8 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       isLoading,
-      showGeneralInformation
+      showGeneralInformation,
+      showTechnicalName
     } = this.props;
 
     const InputField: FieldCtor<FormInputProps> = Field;
@@ -137,6 +195,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
         title: formatMessage(messages.sectionGeneralHelper),
       },
     };
+
     return (
       <Layout>
         <Form
@@ -166,6 +225,9 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                   validate={[isRequired]}
                   {...fieldProps}
                 />
+                {
+                  showTechnicalName ? this.renderTechnicalName() : null
+                }
               </Row>
             </div>
             <hr /></div> : null}
