@@ -45,7 +45,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
 
     this.setState({ exportIsRunning: isExportExecutionRunning })
   }
-  
+
 
   editCampaign = () => {
     const {
@@ -60,7 +60,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     } = this.props;
 
     const editUrl = `/${organisationId}/datastudio/exports/${exportId}/edit`;
-    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}` } });
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
   }
 
   runExecution = () => {
@@ -77,7 +77,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
         .then(res => this.setState({ exportIsRunning: true }))
         .then(res => this.props.onNewExecution())
     }
-    
+
   }
 
   render() {
@@ -119,7 +119,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     );
   }
 
- 
+
 
   duplicateCampaign = () => {
     const {
@@ -134,7 +134,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/datastudio/exports`;
-    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}`, exportId: exportId } });
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}`, exportId: exportId } });
   }
 
   buildMenu = () => {
