@@ -11,6 +11,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../../../Noti
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { Filter } from '../../Common/domain';
+import {Row} from 'antd';
 
 export interface DatamartsListPageProps {
 
@@ -95,7 +96,7 @@ class DatamartsListPage extends React.Component<Props, DatamartsListPageState> {
         isFetchingDatamarts: false,
         noDatamartYet: response && response.count === 0,
         datamarts: response.data,
-        totalDatamarts: response.count,
+        totalDatamarts: response.total ? response.total : response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingDatamarts: false });
@@ -113,21 +114,23 @@ class DatamartsListPage extends React.Component<Props, DatamartsListPageState> {
     } = this.state;
 
     return (
-      <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage {...settingsMessages.datamarts} /></span>
+      <Row className="mcs-table-container">
+        <div>
+          <div className="mcs-card-header mcs-card-title">
+            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.datamarts} /></span>
+          </div>
+          <hr className="mcs-separator" />
+          <DatamartsTable
+            dataSource={datamarts}
+            totalDatamarts={totalDatamarts}
+            isFetchingDatamarts={isFetchingDatamarts}
+            noDatamartYet={noDatamartYet}
+            filter={filter}
+            onFilterChange={this.handleFilterChange}
+            onEditDatamart={this.handleEditDatamart}
+          />
         </div>
-        <hr className="mcs-separator" />
-        <DatamartsTable
-          dataSource={datamarts}
-          totalDatamarts={totalDatamarts}
-          isFetchingDatamarts={isFetchingDatamarts}
-          noDatamartYet={noDatamartYet}
-          filter={filter}
-          onFilterChange={this.handleFilterChange}
-          onEditDatamart={this.handleEditDatamart}
-        />
-      </div>
+      </Row>
     );
   }
 }

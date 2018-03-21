@@ -12,7 +12,7 @@ import { RouteComponentProps } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 
-import LayoutManager from '../../components/Layout/LayoutManager.js';
+import LayoutManager from '../../components/Layout/LayoutManager';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { AuthenticatedRoute } from '../../containers/Route';
@@ -33,7 +33,6 @@ import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { getCookies } from '../../state/Session/actions';
 
-const LayoutManagerJS = LayoutManager as any;
 
 interface MapStateToProps {
   initialized: boolean;
@@ -168,7 +167,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               <DrawerManager />
             </div>
 
-            <LayoutManagerJS
+            <LayoutManager
               layout={route.layout}              
               organisationSelector={OrgSelector}
               showOrgSelector={nbWorkspaces > 0}

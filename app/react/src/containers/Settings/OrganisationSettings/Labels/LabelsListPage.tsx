@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Button, Modal, Input, Alert } from 'antd';
+import { Row, Button, Modal, Input, Alert } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { withMcsRouter } from '../../../Helpers';
 import * as labelsActions from '../../../../state/Labels/actions';
@@ -159,34 +159,36 @@ class LabelsListPage extends Component<LabelsListProps & InjectedNotificationPro
     const onLabelArchive = (label: Label) => { this.handleArchiveLabels(label, this); };
 
     return (
-      <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage {...settingsMessages.labels} /></span>
-          <span className="mcs-card-button">{buttons}</span>
+      <Row className="mcs-table-container">
+        <div>
+          <div className="mcs-card-header mcs-card-title">
+            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.labels} /></span>
+            <span className="mcs-card-button">{buttons}</span>
+          </div>
+          <hr className="mcs-separator" />
+          <LabelsTable
+            dataSource={labels}
+            totalLabels={totalLabels}
+            isFetchingLabels={isFetching}
+            noLabelYet={hasLabels}
+            filter={filter}
+            onFilterChange={this.handleFilterChange}
+            onLabelArchive={onLabelArchive}
+            onLabelEdit={this.handleEditLabels}
+          />
+          {this.state.modalVisible ? <Modal
+            title={edition ? <FormattedMessage {...messages.editLabelTitle} /> : <FormattedMessage {...messages.addNewLabelTitle} />}
+            visible={this.state.modalVisible}
+            footer={this.buildModalFooter()}
+            onCancel={this.handleCancel}
+          >
+            {hasError ?
+              <Alert message={<FormattedMessage {...messages.labelAlreadyExists} />} type="error" style={{ marginBottom: 16 }} />
+              : null}
+            <Input defaultValue={this.state.inputValue} onChange={onChange} placeholder="Name" />
+          </Modal> : null}
         </div>
-        <hr className="mcs-separator" />
-        <LabelsTable
-          dataSource={labels}
-          totalLabels={totalLabels}
-          isFetchingLabels={isFetching}
-          noLabelYet={hasLabels}
-          filter={filter}
-          onFilterChange={this.handleFilterChange}
-          onLabelArchive={onLabelArchive}
-          onLabelEdit={this.handleEditLabels}
-        />
-        {this.state.modalVisible ? <Modal
-          title={edition ? <FormattedMessage {...messages.editLabelTitle} /> : <FormattedMessage {...messages.addNewLabelTitle} />}
-          visible={this.state.modalVisible}
-          footer={this.buildModalFooter()}
-          onCancel={this.handleCancel}
-        >
-          {hasError ?
-            <Alert message={<FormattedMessage {...messages.labelAlreadyExists} />} type="error" style={{ marginBottom: 16 }} />
-            : null}
-          <Input defaultValue={this.state.inputValue} onChange={onChange} placeholder="Name" />
-        </Modal> : null}
-      </div>
+      </Row>
     );
   }
 }

@@ -140,5 +140,85 @@ export default defineMessages({
     analyticsOverview: {
         id: 'menu.analytics.overview',
         defaultMessage: 'Overview',
-    }
+    },
+
+    // SETTINGS
+    datamartSettingsTitle: {
+        id: 'menu.datamart.title',
+        defaultMessage: 'Datamart',
+    },
+    siteSettingsTitle: {
+        id: 'menu.datamart.site',
+        defaultMessage: 'Sites',
+    },
+    mobileAppsSettingsTitle: {
+        id: 'menu.datamart.mobile_application',
+        defaultMessage: 'Mobile Applications',
+    },
+   visitAnalyzerSettingsTitle: {
+        id: 'menu.datamart.visit_analyzer',
+        defaultMessage: 'Visit Analyzer',
+    },
+    myDatamartSettingsTitle: {
+        id: 'menu.datamart.myDatamart',
+        defaultMessage: 'My Datamart',
+    },
+    organisationSettingsTitle: {
+        id: 'menu.organisation.title',
+        defaultMessage: 'Organisation',
+    },
+    usersSettingsTitle: {
+        id: 'menu.organisation.users',
+        defaultMessage: 'Users',
+    },
+    labelsSettingsTitle: {
+        id: 'menu.organisation.labels',
+        defaultMessage: 'Labels',
+    },
+    orgSettingsTitle: {
+        id: 'menu.organisation.settings',
+        defaultMessage: 'Profile',
+    },
+
+    accountSettingsTitle: {
+        id: 'menu.account.title',
+        defaultMessage: 'My Account',
+    },
+    accountSettingsProfile: {
+        id: 'menu.account.profile',
+        defaultMessage: 'Profile',
+    },
+
+    campaignSettingsTitle: {
+        id: 'menu.campaigns.title',
+        defaultMessage: 'Campaigns', 
+    },
+
+    campaignSettingsbidOptimizer: {
+        id: 'menu.campaigns.bid_optimizer',
+        defaultMessage: 'Bid Optimizer', 
+    },
+
+    campaignSettingsAttributionModels: {
+        id: 'menu.campaigns.attribution_models',
+        defaultMessage: 'Attribution Models', 
+    },
+
+    campaignSettingsEmailRouters: {
+        id: 'menu.campaigns.email_routers',
+        defaultMessage: 'Email Routers', 
+    },
+
+    campaignSettingsRecommenders: {
+        id: 'menu.campaigns.recommenders',
+        defaultMessage: 'Recommenders', 
+    },
+
+    // BACK TO APP
+    backToAppSettings: {
+        id: 'menu.organisation.backToApp',
+        defaultMessage: 'Back to App',
+    },
+    
+
 })

@@ -145,7 +145,7 @@ class DatamartEditPage extends React.Component<Props, State> {
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart?tab=sites`;
+        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/my_datamart`;
         history.push(mobileApplicationUrl);
       })
       .catch(err => {
@@ -164,7 +164,7 @@ class DatamartEditPage extends React.Component<Props, State> {
       match: { params: { organisationId } },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart?tab=sites`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/my_datamart`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
@@ -194,7 +194,7 @@ class DatamartEditPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle1,
-        path: `/v2/o/${organisationId}/settings/datamart?tab=sites`,
+        path: `/v2/o/${organisationId}/settings/datamart/my_datamart`,
       },
       {
         name: datamartName,
