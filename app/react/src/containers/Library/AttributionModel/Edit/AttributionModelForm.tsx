@@ -95,7 +95,13 @@ class AttributionModelForm extends React.Component<
 
   onSelect = (plugin: PluginInterface) => {
     this.setState({
-      initialValues: { plugin, properties: [] },
+      initialValues: {
+        plugin: {
+          artifact_id: plugin.artifact_id,
+          group_id: plugin.group_id,
+        },
+        properties: [],
+      },
     });
   };
 

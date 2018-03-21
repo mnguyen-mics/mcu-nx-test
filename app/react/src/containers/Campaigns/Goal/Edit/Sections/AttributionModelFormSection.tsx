@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import cuid from 'cuid';
-import { Radio } from 'antd';
+import { Radio, message } from 'antd';
 import { FormSection } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -64,6 +64,10 @@ const messages = defineMessages({
     id: 'edit.goal.add.direct.attribution.model',
     defaultMessage: 'Add direct attribution model',
   },
+  errorDeleteDefaultAttributionModel: {
+    id: 'edit.goal.delete.default.attribution.model',
+    defaultMessage: 'Please select another default attribution model before delete the default one.',
+  },
 });
 
 interface AttributionModelFormSectionState {
@@ -101,7 +105,7 @@ class AttributionModelFormSection extends React.Component<
       close: this.props.closeNextDrawer,
     };
 
-    if (field){
+    if (field) {
       if (isAttributionModelFormData(field.model)) {
         additionalProps.initialValues = field.model;
       } else {
@@ -265,18 +269,23 @@ class AttributionModelFormSection extends React.Component<
   };
 
   getAttributionModelRecords = () => {
-    const { fields, formChange } = this.props;
+    const { fields, formChange, intl } = this.props;
 
     return fields.getAll().map((attributionModelField, index) => {
       const removeField = () => {
         const keptFields: AttributionModelListFieldModel[] = [];
-        // const nextDefault: number | undefined = attributionModelField.meta.default && 
-        fields.getAll().forEach((field, _index) => {
-          if (_index !== index) {            
-            keptFields.push(field);
-          }
-        })
-        formChange((fields as any).name, keptFields);
+        if (!attributionModelField.meta.default) {
+          fields.getAll().forEach((field, _index) => {
+            if (_index !== index) {
+              keptFields.push(field);
+            }
+          });
+          formChange((fields as any).name, keptFields);
+        } else {
+          message.error(
+            intl.formatMessage(messages.errorDeleteDefaultAttributionModel),
+          );
+        }
       };
       const getName = (attributionModel: AttributionModelListFieldModel) => {
         return attributionModel.meta.name
@@ -318,8 +327,9 @@ class AttributionModelFormSection extends React.Component<
         );
       };
 
-      const cannotEdit = !isAttributionModelFormData(attributionModelField.model) &&
-        attributionModelField.model.attribution_type === 'DIRECT';       
+      const cannotEdit =
+        !isAttributionModelFormData(attributionModelField.model) &&
+        attributionModelField.model.attribution_type === 'DIRECT';
 
       return (
         <RecordElement

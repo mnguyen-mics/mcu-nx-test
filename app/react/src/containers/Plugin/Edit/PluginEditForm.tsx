@@ -120,7 +120,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       isLoading,
-      showGeneralInformation
+      showGeneralInformation,
     } = this.props;
 
     const InputField: FieldCtor<FormInputProps> = Field;
@@ -150,25 +150,29 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             className="mcs-content-container mcs-form-container ad-group-form"
             // add ID?
           >
-            {showGeneralInformation ? <div><div id={'general'}>
-              <Row
-                type="flex"
-                align="middle"
-                justify="space-between"
-                className="section-header"
-              >
-                <FormTitle title={messages.sectionGeneralTitle} />
-              </Row>
-              <Row>
-                <InputField
-                  name="plugin.name"
-                  component={FormInput}
-                  validate={[isRequired]}
-                  {...fieldProps}
-                />
-              </Row>
-            </div>
-            <hr /></div> : null}
+            {showGeneralInformation ? (
+              <div>
+                <div id={'general'}>
+                  <Row
+                    type="flex"
+                    align="middle"
+                    justify="space-between"
+                    className="section-header"
+                  >
+                    <FormTitle title={messages.sectionGeneralTitle} />
+                  </Row>
+                  <Row>
+                    <InputField
+                      name="plugin.name"
+                      component={FormInput}
+                      validate={[isRequired]}
+                      {...fieldProps}
+                    />
+                  </Row>
+                </div>
+                <hr />
+              </div>
+            ) : null}
             <div id={'properties'}>
               <Row
                 type="flex"

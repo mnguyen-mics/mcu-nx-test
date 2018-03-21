@@ -16,14 +16,15 @@ export interface PluginProperty {
   writable: boolean;
 }
 
-export type PluginType = 'ACTIVITY_ANALYZER' |
-'RECOMMENDER' |
-'ACTIVITY_ANALYZER' |
-'BID_OPTIMIZATION_ENGINE' |
-'ATTRIBUTION_PROCESSOR' |
-'EMAIL_ROUTER' |
-'AUDIENCE_SEGMENT_EXTERNAL_FEED' |
-'AUDIENCE_SEGMENT_TAG_FEED';
+export type PluginType =
+  | 'ACTIVITY_ANALYZER'
+  | 'RECOMMENDER'
+  | 'ACTIVITY_ANALYZER'
+  | 'BID_OPTIMIZATION_ENGINE'
+  | 'ATTRIBUTION_PROCESSOR'
+  | 'EMAIL_ROUTER'
+  | 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+  | 'AUDIENCE_SEGMENT_TAG_FEED';
 
 export interface PluginVersion {
   id: string;
@@ -97,7 +98,7 @@ export interface Recommender {
   organisation_id: string;
 }
 
-export type Status = "INITAL" | "PAUSED" | "ACTIVE";
+export type Status = 'INITAL' | 'PAUSED' | 'ACTIVE';
 export interface AudienceExternalFeed {
   artifact_id: string;
   audience_segment_id: string;
