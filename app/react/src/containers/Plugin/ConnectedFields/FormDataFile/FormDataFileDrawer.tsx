@@ -16,6 +16,7 @@ const Option = Select.Option;
 
 import AceEditor from 'react-ace';
 
+import 'brace/ext/searchbox'
 import 'brace/mode/java';
 import 'brace/mode/javascript';
 import 'brace/mode/python';
@@ -177,7 +178,7 @@ class FormDataFileDrawer extends React.Component<
 
       if (fileSelectorValue) {
         DataFileService.getDatafileData(fileSelectorValue)
-          .then((res: any) => {
+          .then(res => {
             this.onFileUpdate(res);
             const fileName = this.parseFileName(fileSelectorValue);
             this.changeFileName(fileName);

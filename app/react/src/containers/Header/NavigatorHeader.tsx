@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { Layout, Menu, Dropdown, Row, Col } from 'antd';
+import { Layout, Menu, Dropdown, Row, Col, Icon } from 'antd';
 
 import * as SessionHelper from '../../state/Session/selectors';
 import McsIcon from '../../components/McsIcon';
@@ -13,21 +13,29 @@ import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 
 const { Header } = Layout;
 
-export interface NavigatorHeaderProps {
+interface NavigatorHeaderStoreProps {
   workspace: (organisationId: string) => Workspace;
   userEmail: string;
 }
 
-type Props = NavigatorHeaderProps & RouteComponentProps<{ organisationId: string }> & InjectedDatamartProps
+export interface NavigatorHeaderProps {
+  isSetting?: boolean;
+  menu?: React.ReactNode;
+}
+
+type Props = NavigatorHeaderProps &
+  NavigatorHeaderStoreProps &
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedDatamartProps;
 
 class NavigatorHeader extends React.Component<Props> {
-
   render() {
     const {
       match: { params: { organisationId } },
       workspace,
       userEmail,
-      datamart,
+      isSetting,
+      menu,
     } = this.props;
 
     const organisationName = workspace(organisationId).organisation_name;
@@ -41,8 +49,7 @@ class NavigatorHeader extends React.Component<Props> {
         <Menu.Item key="account">
           <Link
             to={{
-              pathname: `/v2/o/${organisationId}/account`,
-              search: '&tab=user_account',
+              pathname: `/v2/o/${organisationId}/settings/account/my_profile`
             }}
           >
             <FormattedMessage {...messages.account} />
@@ -56,43 +63,8 @@ class NavigatorHeader extends React.Component<Props> {
       </Menu>
     );
 
-    const settingsMenu = (
-      <Menu>
-        <Menu.Item key="organisation">
-          <Link
-            to={{
-              pathname: `/v2/o/${organisationId}/settings/organisation`,
-              search: '&tab=labels',
-            }}
-          >
-            <FormattedMessage {...messages.settingOrganisation} />
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="datamart">
-          <Link
-            to={{
-              pathname: `/v2/o/${organisationId}/settings/datamart`,
-              search: '&tab=sites',
-            }}
-          >
-            <FormattedMessage {...messages.settingDatamart} />
-          </Link>
-        </Menu.Item>
-      </Menu>
-    );
-
-    const renderSettings = datamart ? (
-      <Dropdown
-        overlay={settingsMenu}
-        trigger={['click']}
-        placement="bottomRight"
-      >
-        <a>
-          <McsIcon type="options" className="menu-icon" />
-        </a>
-      </Dropdown>
-    ) : (
-      <Link to={`/v2/o/${organisationId}/settings/organisation`}>
+    const renderSettings = (
+      <Link to={`/v2/o/${organisationId}/settings/organisation/labels`}>
         <McsIcon type="options" className="menu-icon" />
       </Link>
     );
@@ -101,7 +73,18 @@ class NavigatorHeader extends React.Component<Props> {
       <Header className="mcs-header">
         <Row>
           <Col span={22}>
-            {<span className="organisation-name">{organisationName}</span>}
+            <span className="left-component">
+              {isSetting ? (
+                <span className="launcher">
+                  <Dropdown overlay={menu} trigger={['click']}>
+                    <a>
+                      <Icon type="appstore" className="menu-icon" />
+                    </a>
+                  </Dropdown>
+                </span>
+              ) : null}
+              {<span className="organisation-name">{organisationName}</span>}
+            </span>
           </Col>
           <Col span={2}>
             <Row>
@@ -125,7 +108,6 @@ class NavigatorHeader extends React.Component<Props> {
       </Header>
     );
   }
-
 }
 
 const mapStateToProps = (state: any) => ({
@@ -133,9 +115,8 @@ const mapStateToProps = (state: any) => ({
   userEmail: state.session.connectedUser.email,
 });
 
-
 export default compose<Props, NavigatorHeaderProps>(
   withRouter,
   injectDatamart,
-  connect(mapStateToProps)
+  connect(mapStateToProps),
 )(NavigatorHeader);

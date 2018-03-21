@@ -114,7 +114,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       case 'USER_LIST':
         return null;
       case 'USER_PIXEL':
-        return <PixelSection datamartToken={datamart.token} />;
+        return <PixelSection datamartToken={datamart.token} userListTechName={this.props.audienceSegmentFormData.audienceSegment.technical_name}/>;
       case 'USER_QUERY':
     return queryLanguage === 'OTQL' ? 
       this.generateUserQueryTemplate(<FormOTQL

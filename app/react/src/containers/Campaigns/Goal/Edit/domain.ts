@@ -4,7 +4,7 @@ import {
   AttributionSelectionCreateRequest,
 } from './../../../../models/goal/AttributionSelectionResource';
 import { GoalResource, GoalCreateRequest } from '../../../../models/goal';
-import { AttributionModelFormData } from '../../../Library/AttributionModel/Edit/domain';
+import { AttributionModelFormData } from '../../../Settings/CampaignSettings/AttributionModel/Edit/domain';
 
 export type GoalResourceShape = GoalResource | Partial<GoalCreateRequest>;
 

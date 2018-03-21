@@ -19,7 +19,7 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../../utils/LocationSearchHelper';
+} from '../../../../utils/LocationSearchHelper.ts';
 
 import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';

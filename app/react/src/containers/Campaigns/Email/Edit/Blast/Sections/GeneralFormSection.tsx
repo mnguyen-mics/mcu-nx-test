@@ -79,10 +79,8 @@ class GeneralFormSection extends React.Component<Props, State> {
         <FormDatePickerField
           name="blast.send_date"
           component={FormDatePicker}
-          validate={[isRequired]}
           formItemProps={{
             label: formatMessage(messages.emailBlastEditorDatePickerLabelSentDate),
-            required: true,
           }}
           datePickerProps={{
             format: 'DD/MM/YYYY HH:mm',

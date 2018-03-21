@@ -32,8 +32,8 @@ import {
 import { AttributionSelectionCreateRequest } from '../../../../../models/goal';
 import AttributionModelForm, {
   AttributionModelFormProps,
-} from '../../../../Library/AttributionModel/Edit/AttributionModelForm';
-import { AttributionModelFormData } from '../../../../Library/AttributionModel/Edit/domain';
+} from '../../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelForm';
+import { AttributionModelFormData } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/domain';
 
 const messages = defineMessages({
   sectionSubtitle: {
@@ -66,7 +66,8 @@ const messages = defineMessages({
   },
   errorDeleteDefaultAttributionModel: {
     id: 'edit.goal.delete.default.attribution.model',
-    defaultMessage: 'Please select another default attribution model before delete the default one.',
+    defaultMessage:
+      'Please select another default attribution model before delete the default one.',
   },
 });
 

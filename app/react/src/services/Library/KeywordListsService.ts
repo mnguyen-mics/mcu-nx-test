@@ -1,8 +1,12 @@
+import { KeywordResource } from './../../models/keywordList/keywordList';
 import ApiService, { DataResponse, DataListResponse } from '../ApiService';
 import { KeywordListResource } from '../../models/keywordList/keywordList';
 
 const KeywordService = {
-  getKeywordLists(organisationId: string, options: object = {}): Promise<DataListResponse<KeywordListResource>> {
+  getKeywordLists(
+    organisationId: string,
+    options: object = {},
+  ): Promise<DataListResponse<KeywordListResource>> {
     const endpoint = 'keyword_lists';
 
     const params = {
@@ -11,7 +15,51 @@ const KeywordService = {
     };
     return ApiService.getRequest(endpoint, params);
   },
-  deleteKeywordLists(id: string, options: object = {}): Promise<DataResponse<any>> {
+  getKeywordList(
+    keywordListId: string,
+  ): Promise<DataResponse<KeywordListResource>> {
+    const endpoint = `keyword_lists/${keywordListId}`;
+    return ApiService.getRequest(endpoint);
+  },
+  updateKeywordList(
+    keywordListId: string,
+    body: Partial<KeywordListResource>,
+  ): Promise<DataResponse<KeywordListResource>> {
+    const endpoint = `keyword_lists/${keywordListId}`;
+    return ApiService.putRequest(endpoint, body);
+  },
+  getKeywordListExpressions(
+    keywordListId: string,
+  ): Promise<DataListResponse<KeywordResource>> {
+    const endpoint = `keyword_lists/${keywordListId}/keyword_expressions`;
+    return ApiService.getRequest(endpoint);
+  },
+  createKeywordListExpression(
+    keywordListId: string,
+    body: Partial<KeywordResource>,
+  ): Promise<DataResponse<KeywordResource>> {
+    const endpoint = `keyword_lists/${keywordListId}/keyword_expressions`;
+    return ApiService.postRequest(endpoint, body);
+  },
+  deleteKeywordListExpression(
+    keywordListId: string,
+    keywordExpressionId: string,
+    body?: Partial<KeywordResource>,
+  ): Promise<DataResponse<KeywordResource>> {
+    const endpoint = `keyword_lists/${keywordListId}/keyword_expressions/${keywordExpressionId}`;
+    return ApiService.deleteRequest(endpoint, body);
+  },
+  createKeywordList(
+    organisationId: string,
+    body: Partial<KeywordListResource>,
+  ): Promise<DataResponse<KeywordListResource>> {
+    const endpoint = `keyword_lists?organisation_id=${organisationId}`;
+    return ApiService.postRequest(endpoint, body);
+  },
+  deleteKeywordLists(
+    id: string,
+    options: object = {},
+  ): Promise<DataResponse<any>> {
     const endpoint = `keyword_lists/${id}`;
     return ApiService.deleteRequest(endpoint, options);
   },

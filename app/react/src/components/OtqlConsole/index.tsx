@@ -1,5 +1,6 @@
 import * as React from 'react';
 import AceEditor, { AceEditorProps } from "react-ace";
+import 'brace/ext/searchbox'
 import CustomOtqlMode from './theme/CustomOtqlMode'
 
 import "./theme/style/otql.theme.js";

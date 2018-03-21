@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { Upload, Icon, message, Button } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import FormFieldWrapper, {
   FormFieldWrapperProps,
 } from '../../../../../components/Form/FormFieldWrapper';
 import AssetsFilesService from '../../../../../services/Library/AssetsFilesService';
-import * as actions from '../../../../../state/Notifications/actions';
 
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipProps } from 'antd/lib/tooltip';
@@ -15,6 +13,7 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 export interface QuickAssetUploadProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
@@ -33,11 +32,8 @@ type OuterProps = QuickAssetUploadProps &
   WrappedFieldProps &
   RouteComponentProps<{ organisationId: string }>;
 
-interface InnerProps {
-  notifyError: (err: any) => void;
-}
 
-type JoinedProps = OuterProps & InnerProps & InjectDrawerProps;
+type JoinedProps = OuterProps & InjectDrawerProps & InjectedNotificationProps;
 
 class QuickAssetUpload extends React.Component<
   JoinedProps,
@@ -52,9 +48,9 @@ class QuickAssetUpload extends React.Component<
   }
 
   beforeUpload = (file: UploadFile) => {
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    const isLt2M = file.size / 1024 < 200;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('Image must smaller than 200kb!');
       return false;
     }
     const formData = new FormData(); /* global FormData */
@@ -73,6 +69,7 @@ class QuickAssetUpload extends React.Component<
         })
         .catch(e => {
           this.props.notifyError(e);
+          this.setState({ loading: false })
           return false;
         });
       return false;
@@ -150,8 +147,8 @@ class QuickAssetUpload extends React.Component<
   }
 }
 
-export default compose<InnerProps, QuickAssetUploadProps & WrappedFieldProps>(
+export default compose<JoinedProps, QuickAssetUploadProps & WrappedFieldProps>(
   withRouter,
   injectDrawer,
-  connect(undefined, { notifyError: actions.notifyError }),
+  injectNotifications,
 )(QuickAssetUpload);

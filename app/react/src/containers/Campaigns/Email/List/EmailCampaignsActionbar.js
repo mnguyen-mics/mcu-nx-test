@@ -18,7 +18,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
 
 import { EMAIL_SEARCH_SETTINGS } from './constants';
 
-import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import { parseSearch } from '../../../../utils/LocationSearchHelper.ts';
 
 const fetchExportData = (organisationId, filter) => {
   const campaignType = 'EMAIL';

@@ -58,7 +58,7 @@ export function normalizeReportView<T = Index<any>>(
 }
 
 /**
- * Format a reportView to an object like the following :
+ * Format a reportView to an object like the following by summing same key values:
  *
  *  [{
  *    "clicks": 1,

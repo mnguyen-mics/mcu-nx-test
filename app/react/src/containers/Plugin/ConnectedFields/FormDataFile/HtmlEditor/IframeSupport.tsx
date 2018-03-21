@@ -23,6 +23,7 @@ export default class IframeSupport extends React.Component<IframeSupportProps, I
       <div>
         <iframe
           sandbox="allow-same-origin"
+          scrolling="no"
           style={{ width: '100%', height: this.state.iframeHeight, margin: 0, padding: 0, border: 'none' }}
           ref={(e) => {
             if (e) {

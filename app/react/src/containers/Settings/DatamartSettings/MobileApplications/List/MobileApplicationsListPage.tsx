@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Button } from 'antd';
+import { Button, Row } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import MobileApplicationService from '../../../../../services/MobileApplicationService';
@@ -17,13 +17,11 @@ import injectNotifications, {
 import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { MobileApplicationResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
+import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 
 
 export interface MobileApplicationsListPageProps {
-  datamartId: string;
 }
-
-
 
 interface MobileApplicationsListPageState {
   mobileApplications: MobileApplicationResource[]
@@ -33,7 +31,7 @@ interface MobileApplicationsListPageState {
   filter: Filter;
 }
 
-type Props = MobileApplicationsListPageProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps & InjectDrawerProps;
+type Props = MobileApplicationsListPageProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps & InjectDrawerProps & InjectedDatamartProps;
 
 class MobileApplicationsListPage extends React.Component<Props, MobileApplicationsListPageState> {
 
@@ -69,16 +67,16 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
         }
       }
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/mobile_application/create`)
+    history.push(`/v2/o/${organisationId}/settings/datamart/mobile_application/create`)
   }
 
   componentDidMount() {
     const {
       match: { params: { organisationId } },
-      datamartId,
+      datamart,
     } = this.props;
 
-    this.fetchMobileApplications(organisationId, datamartId, this.state.filter);
+    this.fetchMobileApplications(organisationId, datamart.id, this.state.filter);
   }
 
 
@@ -96,17 +94,17 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
       history,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/settings/mobile_application/${mobileApplication.id}/edit`);
+    history.push(`/v2/o/${organisationId}/settings/datamart/mobile_application/${mobileApplication.id}/edit`);
   }
 
   handleFilterChange = (newFilter: Filter) => {
     const {
       match: { params: { organisationId } },
-      datamartId,
+      datamart,
     } = this.props;
 
     this.setState({ filter: newFilter });
-    this.fetchMobileApplications(organisationId, datamartId, newFilter);
+    this.fetchMobileApplications(organisationId, datamart.id, newFilter);
   }
 
   /**
@@ -133,7 +131,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
         isFetchingMobileApplications: false,
         noMobileApplicationYet: response && response.count === 0 && !filter.name,
         mobileApplications: response.data,
-        totalMobileApplications: response.count,
+        totalMobileApplications: response.total ? response.total : response.count,
       });
     }).catch(error => {
       this.setState({ isFetchingMobileApplications: false });
@@ -146,7 +144,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
   render() {
     const {
       match: { params: { organisationId } },
-      datamartId,
+      datamart,
     } = this.props;
 
     const {
@@ -157,27 +155,29 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
       filter,
     } = this.state;
 
-    const newButton = this.buildNewActionElement(organisationId, datamartId);
+    const newButton = this.buildNewActionElement(organisationId, datamart.id);
     const buttons = [newButton];
 
     return (
-      <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage {...settingsMessages.mobileApplications} /></span>
-          <span className="mcs-card-button">{buttons}</span>
+      <Row className="mcs-table-container">
+        <div>
+          <div className="mcs-card-header mcs-card-title">
+            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.mobileApplications} /></span>
+            <span className="mcs-card-button">{buttons}</span>
+          </div>
+          <hr className="mcs-separator" />
+          <MobileApplicationsTable
+            dataSource={mobileApplications}
+            totalMobileApplications={totalMobileApplications}
+            isFetchingMobileApplications={isFetchingMobileApplications}
+            noMobileApplicationYet={noMobileApplicationYet}
+            filter={filter}
+            onFilterChange={this.handleFilterChange}
+            onArchiveMobileApplication={this.handleArchiveMobileApplication}
+            onEditMobileApplication={this.handleEditMobileApplication}
+          />
         </div>
-        <hr className="mcs-separator" />
-        <MobileApplicationsTable
-          dataSource={mobileApplications}
-          totalMobileApplications={totalMobileApplications}
-          isFetchingMobileApplications={isFetchingMobileApplications}
-          noMobileApplicationYet={noMobileApplicationYet}
-          filter={filter}
-          onFilterChange={this.handleFilterChange}
-          onArchiveMobileApplication={this.handleArchiveMobileApplication}
-          onEditMobileApplication={this.handleEditMobileApplication}
-        />
-      </div>
+      </Row>
     );
   }
 }
@@ -186,5 +186,6 @@ export default compose<Props, MobileApplicationsListPageProps>(
   injectIntl,
   withRouter,
   injectDrawer,
+  injectDatamart,
   injectNotifications,
 )(MobileApplicationsListPage);

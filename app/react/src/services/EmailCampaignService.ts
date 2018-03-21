@@ -46,7 +46,7 @@ const EmailCampaignService = {
     resource: Partial<EmailCampaignResource>,
   ): Promise<DataResponse<EmailCampaignResource>> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}`;
-    return ApiService.putRequest(endpoint, resource);
+    return ApiService.putRequest(endpoint, { ...resource, type: 'EMAIL' });
   },
 
   archiveEmailCampaign(

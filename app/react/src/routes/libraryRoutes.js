@@ -12,10 +12,10 @@ import PlacementListPage from '../containers/Library/Placement/Edit/PlacementLis
 
 import Exports from '../containers/Library/Exports/Dashboard/Exports.tsx';
 
-import { EditAttributionModelPage } from '../containers/Library/AttributionModel/Edit/index.ts';
-import { CreateEditBidOptimizer } from '../containers/Library/BidOptimizer/Edit/index.ts';
-import { CreateEditEmailRouter } from '../containers/Library/EmailRouter/Edit/index.ts';
-import { CreateEditVisitAnalyzer } from '../containers/Library/VisitAnalyzer/Edit/index.ts';
+import { EditAttributionModelPage } from '../containers/Lhrhrthrthibrary/AttributionModel/Edit/index.ts';
+import { CreateEditBidOptimizer } from '../containers/Lirththrhrthbrary/BidOptimizer/Edit/index.ts';
+import { CreateEditEmailRouter } from '../containers/Librththrthrary/EmailRouter/Edit/index.ts';
+import { CreateEditVisitAnalyzer } from '../containers/Lihrthhrtbrary/VisitAnalyzer/Edit/index.ts';
 import { CreateEditRecommender } from '../containers/Library/Recommender/Edit/index.ts';
 
 const campaignsRoutes = [
@@ -53,24 +53,7 @@ const campaignsRoutes = [
     layout: 'main',
     ...AssetList,
   },
-  // ========================================
-  //            BID OPTIMIZER
-  // ========================================
-  {
-    path: '/library/bid_optimizers',
-    layout: 'main',
-    ...BidOptimizerList,
-  },
-  {
-    path: '/library/bid_optimizers/:bidOptimizerId(\\d+)/edit',
-    layout: 'edit',
-    editComponent: CreateEditBidOptimizer,
-  },
-  {
-    path: '/library/bid_optimizers/create',
-    layout: 'edit',
-    editComponent: CreateEditBidOptimizer,
-  },
+
   // ========================================
   //            Attribution Models
   // ========================================

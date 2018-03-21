@@ -13,7 +13,7 @@ import { GoalResource } from '../../../../models/goal';
 import { IntPropertyResource } from '../../../../models/plugin';
 import GoalService from '../../../../services/GoalService';
 import AttributionModelService from '../../../../services/AttributionModelService';
-import AttributionModelFormService from '../../../Library/AttributionModel/Edit/AttributionModelFormService';
+import AttributionModelFormService from '../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelFormService';
 
 const LookbackWindowArtifactId = 'lookback_window';
 
