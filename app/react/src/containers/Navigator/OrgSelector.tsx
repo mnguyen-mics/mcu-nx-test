@@ -21,6 +21,7 @@ export interface OrgSelectorProps {
   workspace: Workspace;
   hasDatamarts: boolean;
   size: number;
+  onItemClick: () => void
 }
 
 interface OrgSelectorState {
@@ -40,7 +41,14 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
   }
 
   changeWorkspace = ({ key }: { key: string }) => {
-    const { history, match: { path, params } } = this.props;
+    const {
+      history,
+      match: {
+        path,
+        params,
+      },
+      onItemClick
+    } = this.props;
 
     const toPath = pathToRegexp.compile(path);
     const fullUrl = toPath({
@@ -49,7 +57,8 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
     });
     log.debug(`Change workspace, redirect to ${fullUrl}`);
     history.push(fullUrl);
-  };
+    onItemClick()
+  }
 
   onSearch = (value: string) => {
     this.setState({ search: value });

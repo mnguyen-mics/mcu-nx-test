@@ -20,11 +20,13 @@ import analyticsRoutes from './analyticsRoutes';
  * Usage: Navigator -> AuthenticatedRoute(path) -> LayoutManager(layout, components) -> Main/EditLayout(components)
  */
 
-export type LayoutTypes = 'main' | 'edit';
+export type LayoutTypes = 'main' | 'edit' | 'settings';
 
 export interface RouteDef {
   path: string;
   layout: LayoutTypes;
+  requiredFeature?: string | string[];
+  requireDatamart?: boolean;
 }
 
 export interface RouteEdit extends RouteDef {
@@ -38,7 +40,14 @@ export interface RouteStandard extends RouteDef {
   actionBarComponent?: React.ComponentClass; 
 }
 
-const routes: Array<RouteEdit | RouteStandard> = [
+export interface RouteSettings extends RouteDef {
+  layout: 'settings';
+  contentComponent: React.ComponentClass;
+}
+
+export type NavigatorRoute = RouteEdit | RouteStandard | RouteSettings
+
+const routes: NavigatorRoute[] = [
   ...campaignRoutes,
   ...automationRoutes,
   ...audienceRoutes,

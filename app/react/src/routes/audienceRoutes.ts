@@ -20,38 +20,48 @@ import {
 import {
   TimelinePage,
 } from '../containers/Audience/Timeline';
-import { RouteEdit, RouteStandard } from './routes';
+import { NavigatorRoute } from './routes';
 
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
 
-const audienceRoutes: Array<RouteEdit | RouteStandard> = [
+const audienceRoutes: NavigatorRoute[] = [
   {
     path: '/audience/segments',
     layout: 'main',
     contentComponent: AudienceSegmentsTable,
     actionBarComponent: SegmentsActionbar,
+    requiredFeature: 'audience.segments',
+    requireDatamart: true
   },
   {
     path: '/audience/segments/create/:type?',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
+    requiredFeature: 'audience.segments',
+    requireDatamart: true
   },
   {
     path: '/audience/segments/:segmentId/edit',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
+    requiredFeature: 'audience.segments',
+    requireDatamart: true
   },
   {
     path: '/audience/segments/:segmentId',
     layout: 'main',
     contentComponent: AudienceSegment,
     actionBarComponent: AudienceSegmentActionbar,
+    requiredFeature: 'audience.segments',
+    requireDatamart: true
   },
   {
     path: '/audience/partitions',
     layout: 'main',
     contentComponent: AudiencePartitionsTable,
     actionBarComponent: PartitionsActionbar,
+    requiredFeature: 'audience.partitions',
+    requireDatamart: true
   },
   {
     path: '/audience/partitions/:partitionId/edit',
@@ -72,11 +82,15 @@ const audienceRoutes: Array<RouteEdit | RouteStandard> = [
     path: '/audience/segment-builder',
     layout: 'main',
     contentComponent: QueryToolPage,
+    requiredFeature: 'audience.segment_builder',
+    requireDatamart: true
   },
   {
     path: '/audience/timeline/:identifierType?/:identifierId?',
     layout: 'main',
     contentComponent: TimelinePage,
+    requiredFeature: 'audience.monitoring',
+    requireDatamart: true
   },
 ];
 

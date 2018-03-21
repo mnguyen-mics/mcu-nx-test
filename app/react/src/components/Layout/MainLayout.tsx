@@ -59,7 +59,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
   public static defaultProps: Partial<MainLayoutProps & MainLayoutStoreProps> = {
     actionBarComponent: null,
     collapsed: false,
-    mode: 'inline',
+    mode: 'inline'
   }
 
   constructor(props: Props) {
@@ -152,7 +152,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     } = this.props;
 
     const onStateChange = (state: State) => this.setState({ isSelectorOpen: state.isOpen })
-
+    const onClick = () => this.setState({ isSelectorOpen: false })
     return (
       <div id="mcs-full-page" className="mcs-fullscreen">
         <PushMenu
@@ -162,7 +162,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           onStateChange={onStateChange}
           width={orgSelectorSize}
         >
-          <OrganisationSelector size={orgSelectorSize} />
+          <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
         </PushMenu>
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">

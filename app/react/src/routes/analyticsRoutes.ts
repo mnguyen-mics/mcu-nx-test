@@ -2,14 +2,16 @@ import {
   OverviewContent,
   OverviewActionBar,
 } from '../containers/Analytics/Overview';
-import { RouteEdit, RouteStandard } from './routes';
+import { NavigatorRoute } from './routes';
 
-const analyticsRoutes: Array<RouteEdit | RouteStandard> = [
+const analyticsRoutes: NavigatorRoute[] = [
   {
     path: '/analytics/overview',
     layout: 'main',
     contentComponent: OverviewContent,
     actionBarComponent: OverviewActionBar,
+    requiredFeature: 'analytics.overview',
+    requireDatamart: true
   },
 ];
 

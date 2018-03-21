@@ -2,18 +2,21 @@ import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage';
 import { CreateReportPage } from '../containers/Report/Edit';
 import Exports from '../containers/Library/Exports/Dashboard/Exports';
 import ExportsList from '../containers/Library/Exports/List';
-import { RouteEdit, RouteStandard } from './routes';
+import { NavigatorRoute } from './routes';
 
-const datastudioRoutes: Array<RouteEdit | RouteStandard> = [
+const datastudioRoutes: NavigatorRoute[] = [
   {
     path: '/datastudio/query-tool',
     layout: 'main',
     contentComponent: QueryToolPage,
+    requiredFeature: 'datastudio.query_tool',
+    requireDatamart: true
   },
   {
     path: '/datastudio/report',
     layout: 'edit',
     editComponent: CreateReportPage,
+    requiredFeature: 'datastudio.report'
   },
   // ========================================
   //           Exports
@@ -21,7 +24,8 @@ const datastudioRoutes: Array<RouteEdit | RouteStandard> = [
   {
     path: '/datastudio/exports',
     layout: 'main',
-    ...ExportsList,
+    contentComponent: ExportsList.contentComponent,
+    actionBarComponent: ExportsList.actionBarComponent
   },
   {
     path: '/datastudio/exports/:exportId(\\d+)',

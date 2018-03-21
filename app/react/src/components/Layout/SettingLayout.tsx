@@ -169,7 +169,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
     } = this.props;
 
     const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen })
-
+    const onClick = () => this.setState({ isOpen: false })
     const menu = (
       <NavigatorMenu
         mode={'vertical'}
@@ -188,7 +188,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
           onStateChange={onStateChange}
           width={orgSelectorSize}
         >
-          <OrganisationSelector size={orgSelectorSize} />
+          <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
         </PushMenu>
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
