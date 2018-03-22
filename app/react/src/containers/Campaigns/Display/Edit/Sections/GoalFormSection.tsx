@@ -136,14 +136,8 @@ class GoalFormSection extends React.Component<Props> {
     formChange((fields as any).name, newFields);
   };
 
-  updateQueryContainer = () => {
-    console.log('UUUUPDATE');
-  }
-
   openGoalForm = (field?: GoalFieldModel) => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
     const breadCrumbPaths = [
       {
