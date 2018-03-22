@@ -68,14 +68,13 @@ interface State {
   displaySection: boolean;
   editQueryMode: boolean;
   queryContainer: any;
+  queryContainerCopy: any;
 }
 
 interface TriggerFormSectionProps {
   queryObject: {
     queryContainer?: any;
-    queryContainerCopy?: any;
     queryLanguage?: QueryLanguage;
-    updateQueryContainer: () => void;
   };
   goalId?: string;
 }
@@ -93,13 +92,14 @@ class TriggerFormSection extends React.Component<Props, State> {
       displaySection: false,
       editQueryMode: false,
       queryContainer: this.props.queryObject.queryContainer,
+      queryContainerCopy: this.props.queryObject.queryContainer.copy(),
     };
   }
 
   renderPropertiesField = () => {
     const {
       datamart,
-      queryObject: { queryContainerCopy, queryLanguage },
+      queryObject: { queryLanguage },
       match: { params: { organisationId } },
       intl,
     } = this.props;
@@ -121,7 +121,7 @@ class TriggerFormSection extends React.Component<Props, State> {
       <SelectorQL
         datamartId={datamart.id}
         organisationId={organisationId}
-        queryContainer={queryContainerCopy}
+        queryContainer={this.state.queryContainerCopy}
       />
     );
   };
@@ -156,7 +156,8 @@ class TriggerFormSection extends React.Component<Props, State> {
   switchEditMode = () => {
     this.setState({
       editQueryMode: !this.state.editQueryMode,
-      queryContainer: this.props.queryObject.queryContainerCopy,
+      queryContainer: this.state.queryContainerCopy,
+      queryContainerCopy: this.state.queryContainer,
     });
   };
 
@@ -177,7 +178,8 @@ class TriggerFormSection extends React.Component<Props, State> {
         <p>{formatMessage(messages.triggerPixelModalMessage)} : </p>
         <p>
           {' '}
-          {`<img src='//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=meddf17&$goal_id=${goalId || this.props.goalId}' />`}
+          {`<img src='//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=meddf17&$goal_id=${goalId ||
+            this.props.goalId}' />`}
         </p>
       </div>
     );
@@ -187,10 +189,14 @@ class TriggerFormSection extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       match: { params: { goalId } },
-      queryObject: { updateQueryContainer },
     } = this.props;
     const updateQueryContainerAndCloseEditMode = () => {
-      updateQueryContainer();
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          queryContainer: prevState.queryContainerCopy.copy(),
+        };
+      });
       this.closeEditMode();
     };
 

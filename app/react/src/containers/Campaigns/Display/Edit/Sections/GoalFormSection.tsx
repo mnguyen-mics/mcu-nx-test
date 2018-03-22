@@ -136,6 +136,10 @@ class GoalFormSection extends React.Component<Props> {
     formChange((fields as any).name, newFields);
   };
 
+  updateQueryContainer = () => {
+    //
+  };
+
   openGoalForm = (field?: GoalFieldModel) => {
     const { intl: { formatMessage } } = this.props;
 
@@ -159,7 +163,6 @@ class GoalFormSection extends React.Component<Props> {
       breadCrumbPaths,
       close: this.props.closeNextDrawer,
       onSubmit: handleOnSubmit,
-      updateQueryContainer: this.updateQueryContainer,
     };
 
     const options = {
@@ -169,7 +172,15 @@ class GoalFormSection extends React.Component<Props> {
     let FormComponent = GoalForm;
 
     if (!field) {
-      props.initialValues = INITIAL_GOAL_FORM_DATA;
+      const QueryContainer = (window as any).angular
+        .element(document.body)
+        .injector()
+        .get('core/datamart/queries/QueryContainer');
+      const defQuery = new QueryContainer(this.props.datamart.id);
+      props.initialValues = {
+        ...INITIAL_GOAL_FORM_DATA,
+        queryContainer: defQuery,
+      };
     } else if (isGoalFormData(field.model)) {
       props.initialValues = field.model;
     } else {

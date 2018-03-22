@@ -17,7 +17,6 @@ export interface GoalFormLoaderProps extends GoalFormProps {
 interface State {
   goalFormData: NewGoalFormData;
   loading: boolean;
-  queryContainerCopy?: any;
 }
 
 type Props = GoalFormLoaderProps &
@@ -45,7 +44,6 @@ class GoalFormLoader extends React.Component<Props, State> {
         queryContainer: defQuery,
         triggerMode: 'QUERY',
       },
-      queryContainerCopy: defQuery.copy(),
     };
   }
 
@@ -58,7 +56,6 @@ class GoalFormLoader extends React.Component<Props, State> {
             ...goalData,
           },
           loading: false,
-          queryContainerCopy: goalData.queryContainer,
         });
       })
       .catch(err => {
@@ -67,20 +64,9 @@ class GoalFormLoader extends React.Component<Props, State> {
       });
   }
 
-  updateQueryContainer = () => {
-    this.setState(prevState => ({
-      goalFormData: {
-        goal: prevState.goalFormData.goal,
-        attributionModels: prevState.goalFormData.attributionModels,
-        queryContainer: prevState.queryContainerCopy.copy(),
-        triggerMode: prevState.goalFormData.triggerMode,
-      },
-    }));
-  };
-
   render() {
     const { goalId, ...rest } = this.props;
-    const { loading, queryContainerCopy } = this.state;
+    const { loading } = this.state;
 
     if (loading) return <Loading className="loading-full-screen" />;
 
@@ -89,8 +75,6 @@ class GoalFormLoader extends React.Component<Props, State> {
         {...rest}
         initialValues={this.state.goalFormData}
         goalId={goalId}
-        queryContainerCopy={queryContainerCopy}
-        updateQueryContainer={this.updateQueryContainer}
       />
     );
   }

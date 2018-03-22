@@ -44,8 +44,6 @@ export interface GoalFormProps
   extends Omit<ConfigProps<NewGoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  updateQueryContainer: () => void;
-  queryContainerCopy?: any;
   goalId?: string;
 }
 
@@ -67,9 +65,7 @@ class GoalForm extends React.Component<Props> {
 
     const queryObject = {
       queryContainer: queryContainer,
-      queryContainerCopy: this.props.queryContainerCopy,
       queryLanguage: queryLanguage,
-      updateQueryContainer: this.props.updateQueryContainer,
     };
 
     const sections = {

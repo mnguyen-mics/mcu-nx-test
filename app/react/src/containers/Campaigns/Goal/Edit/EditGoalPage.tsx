@@ -46,7 +46,6 @@ const messages = defineMessages({
 interface State {
   goalFormData: NewGoalFormData;
   loading: boolean;
-  queryContainerCopy?: any;
 }
 
 type Props = InjectedIntlProps &
@@ -74,7 +73,6 @@ class EditGoalPage extends React.Component<Props, State> {
         queryContainer: defQuery,
         triggerMode: 'QUERY',
       },
-      queryContainerCopy: defQuery.copy(),
     };
   }
 
@@ -89,7 +87,6 @@ class EditGoalPage extends React.Component<Props, State> {
               ...goalData,
             },
             loading: false,
-            queryContainerCopy: goalData.queryContainer,
           });
         })
         .catch(err => {
@@ -100,17 +97,6 @@ class EditGoalPage extends React.Component<Props, State> {
       this.setState({ loading: false });
     }
   }
-
-  updateQueryContainer = () => {
-    this.setState(prevState => ({
-      goalFormData: {
-        goal: prevState.goalFormData.goal,
-        attributionModels: prevState.goalFormData.attributionModels,
-        queryContainer: prevState.queryContainerCopy.copy(),
-        triggerMode: prevState.goalFormData.triggerMode,
-      },
-    }));
-  };
 
   onSubmitFail = () => {
     const { intl } = this.props;
@@ -171,7 +157,7 @@ class EditGoalPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, goalFormData, queryContainerCopy } = this.state;
+    const { loading, goalFormData } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -201,8 +187,6 @@ class EditGoalPage extends React.Component<Props, State> {
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
-        updateQueryContainer={this.updateQueryContainer}
-        queryContainerCopy={queryContainerCopy}
       />
     );
   }
