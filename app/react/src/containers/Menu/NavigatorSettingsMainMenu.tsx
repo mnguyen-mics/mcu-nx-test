@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Menu } from 'antd';
-import { settingsDefinitions, itemDisplayedOnlyIfDatamart } from './settingsDefinitions';
+import { settingsDefinitions } from '../../routes/settingsDefinition';
 import { FormattedMessage } from 'react-intl';
 import { matchPath, RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -12,6 +12,8 @@ import {
 } from '../../state/Session/selectors';
 import { getOrgFeatures } from '../../state/Features/selectors';
 import { Datamart } from '../../models/organisation/organisation';
+import { injectFeatures, InjectedFeaturesProps } from '../Features';
+import { NavigatorMenuDefinition } from '../../routes/domain';
 
 export interface NavigatorSettingsMainMenuProps {
 }
@@ -24,11 +26,15 @@ interface NavigatorSettingsMainMenuStoreProps {
 
 type Props = NavigatorSettingsMainMenuProps &
   RouteComponentProps<{ organisationId: string }> & 
-  NavigatorSettingsMainMenuStoreProps;
+  NavigatorSettingsMainMenuStoreProps &
+  InjectedFeaturesProps;
+
+
+const basePath = '/v2/o/:organisationId(\\d+)';
 
 class NavigatorSettingsMainMenu extends React.Component<Props, any> {
   state = {
-    current: 'organisation',
+    current: 'settings',
   };
 
   componentDidMount() {
@@ -50,21 +56,15 @@ class NavigatorSettingsMainMenu extends React.Component<Props, any> {
   }
 
   initMenu = (pathname: string, organisationId: string) => {
-    const baseUrl = `/v2/o/${organisationId}`;
     const currentOpenMenu = settingsDefinitions
-      .filter(item => item.subMenuItems && item.subMenuItems.length > 0)
+      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
       .find(
-        item =>
-          matchPath(pathname, {
-            path: `${baseUrl}${item.path}`,
-            exact: false,
-            strict: false,
-          })
-            ? true
-            : false,
+        item => item.type === 'multi' && item.subMenuItems.reduce((acc: boolean, val) => {
+          return matchPath(pathname, { path: `${basePath}${val.path}`, exact: false, strict: false }) ? true : acc;
+        }, false)
       );
     if (currentOpenMenu) {
-      this.setState({ current: currentOpenMenu.key });
+      this.setState({ current: currentOpenMenu.iconType });
     }
   }
 
@@ -75,30 +75,29 @@ class NavigatorSettingsMainMenu extends React.Component<Props, any> {
     });
   };
 
-  getAvailableItems() {
+  getAvailableItems = (): NavigatorMenuDefinition[] => {
     const {
-      match: { params: { organisationId } },
-      organisationHasDatamarts,
-      orgFeatures,
+      hasFeature,
     } = this.props;
 
-    const itemDefinitions = settingsDefinitions;
+    const checkIfHasAtLeastOneFeature = (item: NavigatorMenuDefinition): boolean => {
+      if (item.type === 'simple') {
+        return hasFeature(item.requiredFeature, item.requireDatamart)
+      }
+      return item.subMenuItems.reduce((acc, val) => {
+        return hasFeature(val.requiredFeature, val.requireDatamart) ? hasFeature(val.requiredFeature, val.requireDatamart) : acc;
+      }, false)
+    }
 
-    const isAvailable = (key: string) => {
-      if (itemDisplayedOnlyIfDatamart.includes(key))
-        return (
-          organisationHasDatamarts(organisationId) &&
-          orgFeatures.filter(v => v.includes(key)).length > 0
-        );
-      return orgFeatures.filter(v => v.includes(key)).length > 0;
-    };
-
-    return itemDefinitions.reduce((acc, item) => {
-      if (isAvailable(item.key)) {
-        const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
-          isAvailable(subMenuItem.key),
-        );
-        return [...acc, { ...item, subMenuItems }];
+    return settingsDefinitions.reduce((acc, item) => {
+      if (checkIfHasAtLeastOneFeature(item)) {
+        if (item.type === 'multi') {
+          const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
+            hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart),
+          );
+          return [...acc, { ...item, subMenuItems }];
+        }
+        return [...acc, { ...item }];
       }
       return acc;
     }, []);
@@ -107,14 +106,14 @@ class NavigatorSettingsMainMenu extends React.Component<Props, any> {
   generateMenuItems = () => {
     const { match: { params: { organisationId } } } = this.props;
     const baseUrl = `/v2/o/${organisationId}`;
-    return this.getAvailableItems().map(item => {
+    return this.getAvailableItems().map((item) => {
       return (
-        <Menu.Item key={item.key}>
+        <Menu.Item key={item.iconType}>
           <Link
             to={`${baseUrl}${
-              item.subMenuItems && item.subMenuItems.length
+              item.type === 'multi' && item.subMenuItems && item.subMenuItems.length
                 ? item.subMenuItems[0].path
-                : item.path
+                : item.type === 'simple' && item.path
             }`}
           >
             <FormattedMessage {...item.translation} />
@@ -148,6 +147,7 @@ const mapDispatchToProps = {};
 
 export default compose<Props, NavigatorSettingsMainMenuProps>(
   withRouter,
+  injectFeatures,
   connect(mapStateToProps, mapDispatchToProps),
 )(
   NavigatorSettingsMainMenu,

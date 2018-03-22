@@ -26,9 +26,9 @@ import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/R
 
 import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List'
 import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit'
-import { NavigatorRoute } from './routes';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
-const settingsRoutes: NavigatorRoute[] = [
+export const settingsDefinition: NavigatorDefinition = {
   /*
   *
   * DATAMART SETTINGS 
@@ -36,7 +36,7 @@ const settingsRoutes: NavigatorRoute[] = [
 
   // sites
 
-  {
+  settingsDatamartSitesList: {
     path: '/settings/datamart/sites',
     layout: 'settings',
     contentComponent: SitesListPage,
@@ -44,14 +44,15 @@ const settingsRoutes: NavigatorRoute[] = [
     requireDatamart: true
   },
 
-  {
+  settingsDatamartSitesCreation: {
     path: '/settings/datamart/sites/create',
     layout: 'edit',
     editComponent: SiteEditPage,
     requiredFeature: 'datamartSettings.sites',
     requireDatamart: true
   },
-  {
+  
+  settingsDatamartSitesEdition: {
     path: '/settings/datamart/sites/:siteId/edit',
     layout: 'edit',
     editComponent: SiteEditPage,
@@ -60,21 +61,21 @@ const settingsRoutes: NavigatorRoute[] = [
   },
 
   // mobile apps
-  {
+  settingsDatamartMobileAppList: {
     path: '/settings/datamart/mobile_applications',
     layout: 'settings',
     contentComponent: MobileApplicationsListPage,
     requiredFeature: 'datamartSettings.mobile_applications',
     requireDatamart: true
   },
-  {
+  settingsDatamartMobileAppCreation: {
     path: '/settings/datamart/mobile_application/create',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings.mobile_applications',
     requireDatamart: true
   },
-  {
+  settingsDatamartMobileAppEdition: {
     path: '/settings/datamart/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
@@ -83,14 +84,14 @@ const settingsRoutes: NavigatorRoute[] = [
   },
 
   // datamart
-  {
+  settingsDatamartDatamartList: {
     path: '/settings/datamart/my_datamart',
     layout: 'settings',
     contentComponent: DatamartsListPage,
     requiredFeature: 'datamartSettings.datamarts',
     requireDatamart: true
   },
-  {
+  settingsDatamartDatamartEdition: {
     path: '/settings/datamart/datamarts/:datamartId/edit',
     layout: 'edit',
     editComponent: DatamartEditPage,
@@ -99,21 +100,21 @@ const settingsRoutes: NavigatorRoute[] = [
   },
 
   // visit analyzer
-  {
+  settingsDatamartVisitAnalyzerList: {
     path: '/settings/datamart/visit_analyzers',
     layout: 'settings',
     contentComponent: VisitAnalyzerContent,
     requiredFeature: 'datamartSettings.visit_analyzers',
     requireDatamart: true
   },
-  {
+  settingsDatamartVisitAnalyzerEdition: {
     path: '/settings/datamart/visit_analyzers/:visitAnalyzerId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
     requiredFeature: 'datamartSettings.visit_analyzers',
     requireDatamart: true
   },
-  {
+  settingsDatamartVisitAnalyzerCreation: {
     path: '/settings/datamart/visit_analyzers/create',
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
@@ -128,7 +129,7 @@ const settingsRoutes: NavigatorRoute[] = [
   */
 
   // labels
-  {
+  settingsOrganisationLabelsList: {
     path: '/settings/organisation/labels',
     layout: 'settings',
     contentComponent: LabelsListPage,
@@ -136,7 +137,7 @@ const settingsRoutes: NavigatorRoute[] = [
   },
 
   // profile
-  {
+  settingsOrganisationProfileList: {
     path: '/settings/organisation/profile',
     layout: 'settings',
     contentComponent: OrganisationAccount,
@@ -144,7 +145,7 @@ const settingsRoutes: NavigatorRoute[] = [
   },
 
   // users
-  {
+  settingsOrganisationUserList: {
     path: '/settings/organisation/users',
     layout: 'settings',
     contentComponent: UserListPage,
@@ -159,7 +160,7 @@ const settingsRoutes: NavigatorRoute[] = [
   
   */
   
-  {
+  settingsAccountProfileList: {
     path: '/settings/account/my_profile',
     layout: 'settings',
     contentComponent: ProfileSettingsPage,
@@ -173,20 +174,20 @@ const settingsRoutes: NavigatorRoute[] = [
   */
 
   // bid optimizer
-  {
+  settingsCampaignBidOptimizerList: {
     path: '/settings/campaigns/bid_optimizer',
     layout: 'settings',
     contentComponent: BidOptimizerContent,
     requiredFeature: 'campaignsSettings.bid_optimizers',
   },
 
-  {
+  settingsCampaignBidOptimizerEdition: {
     path: '/settings/campaigns/bid_optimizer/:bidOptimizerId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditBidOptimizer,
     requiredFeature: 'campaignsSettings.bid_optimizers',
   },
-  {
+  settingsCampaignBidOptimizerCreation: {
     path: '/settings/campaigns/bid_optimizer/create',
     layout: 'edit',
     editComponent: CreateEditBidOptimizer,
@@ -194,20 +195,20 @@ const settingsRoutes: NavigatorRoute[] = [
   },
 
   // attribution model
-  {
+  settingsCampaignAttributionModelList: {
     path: '/settings/campaigns/attribution_models',
     layout: 'settings',
     contentComponent: AttributionModelContent,
     requiredFeature: 'campaignsSettings.attribution_models',
   },
 
-  {
+  settingsCampaignAttributionModelEdition: {
     path: '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditAttributionModel,
     requiredFeature: 'campaignsSettings.attribution_models',
   },
-  {
+  settingsCampaignAttributionModelCreation: {
     path: '/settings/campaigns/attribution_models/create',
     layout: 'edit',
     editComponent: CreateEditAttributionModel,
@@ -216,19 +217,19 @@ const settingsRoutes: NavigatorRoute[] = [
 
   // email routers
 
-  {
+  settingsCampaignEmailRouterList: {
     path: '/settings/campaigns/email_routers',
     layout: 'settings',
     contentComponent: EmailRouterContent,
     requiredFeature: 'campaignsSettings.email_routers',
   },
-  {
+  settingsCampaignEmailRouterEdition: {
     path: '/settings/campaigns/email_routers/:emailRouterId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditEmailRouter,
     requiredFeature: 'campaignsSettings.email_routers',
   },
-  {
+  settingsCampaignEmailRouterCreation: {
     path: '/settings/campaigns/email_routers/create',
     layout: 'edit',
     editComponent: CreateEditEmailRouter,
@@ -237,25 +238,24 @@ const settingsRoutes: NavigatorRoute[] = [
 
   // recommenders
 
-  {
+  settingsCampaignRecommenderList: {
     path: '/settings/campaigns/recommenders',
     layout: 'settings',
     contentComponent: RecommenderContent,
     requiredFeature: 'campaignsSettings.recommenders',
   },
-  {
+  settingsCampaignRecommenderEdition: {
     path: '/settings/campaigns/recommenders/:recommenderId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditRecommender,
     requiredFeature: 'campaignsSettings.recommenders',
   },
-  {
+  settingsCampaignRecommenderCreation: {
     path: '/settings/campaigns/recommenders/create',
     layout: 'edit',
     editComponent: CreateEditRecommender,
     requiredFeature: 'campaignsSettings.recommenders',
   },
+}
 
-];
-
-export default settingsRoutes;
+export const settingsRoutes: NavigatorRoute[] = generateRoutesFromDefinition(settingsDefinition);

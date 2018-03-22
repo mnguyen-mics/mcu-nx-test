@@ -6,10 +6,11 @@ import { connect } from 'react-redux';
 import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
 
-import { NavigatorHeader } from '../../containers/Header';
-import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu,  } from '../../containers/Menu';
-import * as MenuActions from '../../state/Menu/actions';
-import { ButtonStyleless } from '../';
+import { NavigatorHeader } from '../../../containers/Header';
+import { NavigatorMenu } from '../../../containers/Menu';
+import { Logo } from '../../../containers/Logo';
+import * as MenuActions from '../../../state/Menu/actions';
+import { ButtonStyleless } from '../../../components';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
 
@@ -24,13 +25,9 @@ const messages = defineMessages({
     id: 'navigator.sideMenu.collapse',
     defaultMessage: 'Collapse'
   },
-  backToApp: {
-    id: 'navigator.sideMenu.backToApp',
-    defaultMessage: 'Back To Your App'
-  }
 });
 
-export interface SettingLayoutProps {
+export interface MainLayoutProps {
   contentComponent: React.ComponentType;
   actionBarComponent: React.ComponentType | null;
   showOrgSelector: boolean;
@@ -38,39 +35,39 @@ export interface SettingLayoutProps {
   orgSelectorSize: number;
 }
 
-interface SettingLayoutStoreProps {
+interface MainLayoutStoreProps {
   collapsed: boolean;
   mode: MenuMode;
   openCloseMenu: (a: { collapsed: boolean, mode: MenuMode }) => void;
 }
 
-interface SettingLayoutState {
-  isOpen: boolean;
-  left: number;
-  right: number;
+interface MainLayoutState {
+  isSelectorOpen: boolean;
+  leftColumnSize: number;
+  rightColumnSize: number;
 }
 
-type Props = SettingLayoutProps & RouteComponentProps<{ organisationId: string }> & SettingLayoutStoreProps;
+type Props = MainLayoutProps & RouteComponentProps<{ organisationId: string }> & MainLayoutStoreProps;
 
 const LayoutId = Layout as any;
 const ColAny = Col as any;
 
 // waiting for https://github.com/ant-design/ant-design/commit/518c424ca4a023f3faebce0adf64219989be0018 to be released to remove any
 
-class SettingLayout extends React.Component<Props, SettingLayoutState> {
+class MainLayout extends React.Component<Props, MainLayoutState> {
 
-  public static defaultProps: Partial<SettingLayoutProps & SettingLayoutStoreProps> = {
+  public static defaultProps: Partial<MainLayoutProps & MainLayoutStoreProps> = {
     actionBarComponent: null,
     collapsed: false,
-    mode: 'inline',
+    mode: 'inline'
   }
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      isOpen: false,
-      left: 12,
-      right: 12,
+      isSelectorOpen: false,
+      leftColumnSize: 12,
+      rightColumnSize: 12,
     };
   }
 
@@ -102,7 +99,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
     } = this.props;
 
     const orgSelector = () => {
-      this.setState(prevState => { return { ...prevState, isOpen: !prevState.isOpen }});
+      this.setState({ isSelectorOpen: !this.state.isSelectorOpen });
     };
 
     const onCollapse = () => {
@@ -112,24 +109,24 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
     const resizeBox = (type?: 'left' | 'right') => () => {
       switch (type) {
         case 'left':
-          return this.setState({ left: 20, right: 4 });
+          return this.setState({ leftColumnSize: 20, rightColumnSize: 4 });
         case 'right':
-          return this.setState({ left: 4, right: 20 });
+          return this.setState({ leftColumnSize: 4, rightColumnSize: 20 });
         default:
-          return this.setState({ left: 12, right: 12 });
+          return this.setState({ leftColumnSize: 12, rightColumnSize: 12 });
       }
     };
 
     return showOrgSelector ? (
       <Row>
-        <ColAny span={this.state.left} className="left" onMouseEnter={resizeBox('left')} onMouseLeave={resizeBox()} >
+        <ColAny span={this.state.leftColumnSize} className="left" onMouseEnter={resizeBox('left')} onMouseLeave={resizeBox()} >
           <ButtonStyleless onClick={orgSelector} style={{ width: '100%' }}>
-            <span><Icon type="bars" /> <span className={this.state.left > 12 && !this.props.collapsed ? 'visible' : 'hidden'}><FormattedMessage {...messages.switchOrg} /></span></span>
+            <span><Icon type="bars" /> <span className={this.state.leftColumnSize > 12 && !this.props.collapsed ? 'visible' : 'hidden'}><FormattedMessage {...messages.switchOrg} /></span></span>
           </ButtonStyleless>
         </ColAny>
-        <ColAny span={this.state.right} className="right" onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
+        <ColAny span={this.state.rightColumnSize} className="right" onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
           <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
+            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.rightColumnSize > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </ButtonStyleless>
         </ColAny>
       </Row>
@@ -137,54 +134,31 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
       <Row>
         <Col span={24} className="all">
           <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }} onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
+            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.rightColumnSize > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </ButtonStyleless>
         </Col>
       </Row>
     );
   }
 
-  renderSettingsTrigger = () => {
-
-    const orgSelector = () => {
-      this.setState(prevState => { return { ...prevState, isOpen: !prevState.isOpen }});
-    };
-
-    return <Row>
-    <Col span={24} className="all">
-      <ButtonStyleless onClick={orgSelector} style={{ width: '100%' }}>
-        <span><Icon type="bars" /> <span><FormattedMessage {...messages.switchOrg} /></span></span>
-      </ButtonStyleless>
-    </Col>
-  </Row>
-  }
-
   render() {
     const {
       contentComponent: ContentComponent,
+      actionBarComponent: ActionBarComponent,
       organisationSelector: OrganisationSelector,
       collapsed,
       mode,
       orgSelectorSize,
     } = this.props;
 
-    const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen })
-    const onClick = () => this.setState({ isOpen: false })
-    const menu = (
-      <NavigatorMenu
-        mode={'vertical'}
-        collapsed={collapsed}
-        onMenuItemClick={this.onMenuItemClick}
-        className={'mcs-settings-main-menu'}
-      />
-    )
-
+    const onStateChange = (state: State) => this.setState({ isSelectorOpen: state.isOpen })
+    const onClick = () => this.setState({ isSelectorOpen: false })
     return (
       <div id="mcs-full-page" className="mcs-fullscreen">
         <PushMenu
           pageWrapId={'mcs-main-layout'}
           outerContainerId={'mcs-full-page'}
-          isOpen={this.state.isOpen}
+          isOpen={this.state.isSelectorOpen}
           onStateChange={onStateChange}
           width={orgSelectorSize}
         >
@@ -192,31 +166,33 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
         </PushMenu>
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
-          <NavigatorHeader isSetting={true} menu={menu} />
-          <NavigatorSettingsMainMenu />
-          <Layout>
-            <Sider
-              style={collapsed ? {} : { overflow: 'auto' }}
-              collapsible={true}
+
+          <Sider
+            style={collapsed ? {} : { overflow: 'auto' }}
+            collapsible={true}
+            collapsed={collapsed}
+            trigger={this.renderTrigger()}
+          >
+            <Logo mode={mode} />
+            <NavigatorMenu
+              mode={mode}
               collapsed={collapsed}
-              trigger={this.renderSettingsTrigger()}
-            >
-              <NavigatorSettingsSideMenu
-                mode={mode}
-                collapsed={collapsed}
-                onMenuItemClick={this.onMenuItemClick}
-              />
-            </Sider>
-          
-            <Layout>
-
-              <div className="ant-layout">
-                <Content className="mcs-content-container">
-                  <ContentComponent />
-                </Content>
-              </div>
-
-            </Layout>
+              onMenuItemClick={this.onMenuItemClick}
+            />
+          </Sider>
+          <Layout>
+            <NavigatorHeader />
+            { ActionBarComponent ? <ActionBarComponent /> : null }
+            { ActionBarComponent
+              ? (
+                <div className="ant-layout">
+                  <Content className="mcs-content-container">
+                    <ContentComponent />
+                  </Content>
+                </div>
+              )
+              : <ContentComponent />
+            }
           </Layout>
 
         </LayoutId>
@@ -235,10 +211,10 @@ const mapDispatchToProps = {
 };
 
 
-export default compose<Props, SettingLayoutProps>(
+export default compose<Props, MainLayoutProps>(
   withRouter,
   connect(
     mapStateToProps,
     mapDispatchToProps,
   )
-)(SettingLayout);
+)(MainLayout);

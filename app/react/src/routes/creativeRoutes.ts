@@ -7,45 +7,45 @@ import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit'
 import {
   EmailListPage,
 } from '../containers/Creative/EmailTemplates/List';
-import { NavigatorRoute } from './routes';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
-const creativesRoutes: NavigatorRoute[] = [
-  {
+export const creativesDefinition: NavigatorDefinition = {
+  creativeDisplayList: {
     path: '/creatives/display',
     layout: 'main',
     contentComponent: DisplayAdsPage,
     requiredFeature: 'creatives.display'
   },
-  {
+  creativeDisplayCreation: {
     path: '/creatives/display/create',
     layout: 'edit',
     editComponent: EditDisplayCreativePage,
     requiredFeature: 'creatives.display'
   },
-  {
+  creativeDisplayEdit: {
     path: '/creatives/display/edit/:creativeId(\\d+)',
     layout: 'edit',
     editComponent: EditDisplayCreativePage,
     requiredFeature: 'creatives.display'
   },
-  {
+  creativeEmailList: {
     path: '/creatives/email',
     layout: 'main',
     contentComponent: EmailListPage,
     requiredFeature: 'creatives.email'
   },
-  {
+  creativeEmailCreation: {
     path: '/creatives/email/create',
     layout: 'edit',
     editComponent: CreateEmailTemplate,
     requiredFeature: 'creatives.email'
   },
-  {
+  creativeEmailEdition: {
     path: '/creatives/email/:creativeId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEmailTemplate,
     requiredFeature: 'creatives.email'
   },
-];
+};
 
-export default creativesRoutes;
+export const creativeRoutes: NavigatorRoute[] = generateRoutesFromDefinition(creativesDefinition);

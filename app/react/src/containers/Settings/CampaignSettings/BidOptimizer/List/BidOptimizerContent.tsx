@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import BidOptimizerService from '../../../../../services/Library/BidOptimizerService';
@@ -15,6 +15,8 @@ import {
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { BidOptimizer, PluginProperty } from '../../../../../models/Plugins';
 import messages from './messages';
+
+const { Content } = Layout;
 
 const initialState = {
   loading: false,
@@ -222,17 +224,21 @@ class BidOptimizerContent extends React.Component<
     </div>)
 
     return (
-      <ItemList
-        fetchList={this.fetchBidOptimizer}
-        dataSource={this.state.data}
-        loading={this.state.loading}
-        total={this.state.total}
-        columns={dataColumnsDefinition}
-        actionsColumnsDefinition={actionsColumnsDefinition}
-        pageSettings={PAGINATION_SEARCH_SETTINGS}
-        emptyTable={emptyTable}
-        additionnalComponent={additionnalComponent}
-      />
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <ItemList
+            fetchList={this.fetchBidOptimizer}
+            dataSource={this.state.data}
+            loading={this.state.loading}
+            total={this.state.total}
+            columns={dataColumnsDefinition}
+            actionsColumnsDefinition={actionsColumnsDefinition}
+            pageSettings={PAGINATION_SEARCH_SETTINGS}
+            emptyTable={emptyTable}
+            additionnalComponent={additionnalComponent}
+          />
+        </Content>
+      </div>
     );
   }
 }

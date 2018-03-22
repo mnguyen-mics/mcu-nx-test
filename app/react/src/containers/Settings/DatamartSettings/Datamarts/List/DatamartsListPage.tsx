@@ -11,7 +11,9 @@ import injectNotifications, { InjectedNotificationProps } from '../../../../Noti
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { Filter } from '../../Common/domain';
-import {Row} from 'antd';
+import { Row, Layout } from 'antd';
+
+const { Content } = Layout;
 
 export interface DatamartsListPageProps {
 
@@ -114,23 +116,27 @@ class DatamartsListPage extends React.Component<Props, DatamartsListPageState> {
     } = this.state;
 
     return (
-      <Row className="mcs-table-container">
-        <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.datamarts} /></span>
-          </div>
-          <hr className="mcs-separator" />
-          <DatamartsTable
-            dataSource={datamarts}
-            totalDatamarts={totalDatamarts}
-            isFetchingDatamarts={isFetchingDatamarts}
-            noDatamartYet={noDatamartYet}
-            filter={filter}
-            onFilterChange={this.handleFilterChange}
-            onEditDatamart={this.handleEditDatamart}
-          />
-        </div>
-      </Row>
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Row className="mcs-table-container">
+            <div>
+              <div className="mcs-card-header mcs-card-title">
+                <span className="mcs-card-title"><FormattedMessage {...settingsMessages.datamarts} /></span>
+              </div>
+              <hr className="mcs-separator" />
+              <DatamartsTable
+                dataSource={datamarts}
+                totalDatamarts={totalDatamarts}
+                isFetchingDatamarts={isFetchingDatamarts}
+                noDatamartYet={noDatamartYet}
+                filter={filter}
+                onFilterChange={this.handleFilterChange}
+                onEditDatamart={this.handleEditDatamart}
+              />
+            </div>
+          </Row>
+        </Content>
+      </div>
     );
   }
 }

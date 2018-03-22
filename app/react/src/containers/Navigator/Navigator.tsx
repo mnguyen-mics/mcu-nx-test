@@ -11,14 +11,14 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 
-import LayoutManager from '../../components/Layout/LayoutManager';
+import LayoutManager from './Layout/LayoutManager';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { AuthenticatedRoute } from './Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../ForgotPassword';
 import { Login } from '../Login';
-import routes, { NavigatorRoute } from '../../routes/routes';
+import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
 import NavigatorService from '../../services/NavigatorService';
@@ -32,6 +32,7 @@ import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { getCookies } from '../../state/Session/actions';
 import NoAccess from './NoAccess';
+import { NavigatorRoute } from '../../routes/domain';
 
 
 interface MapStateToProps {

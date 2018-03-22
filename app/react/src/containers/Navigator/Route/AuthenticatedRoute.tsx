@@ -83,7 +83,6 @@ class AuthenticatedRoute extends React.Component<Props> {
       computedMatch: {
         params: { organisationId: nextOrganisationId },
       },
-      hasWorkspaceLoaded,
       getWorkspaceRequest
     } = nextProps;
 
@@ -92,8 +91,7 @@ class AuthenticatedRoute extends React.Component<Props> {
     //   window.location.href = `/v2/o/${nextOrganisationId}/campaigns/display`; // eslint-disable-line
     //   window.location.reload(true); // eslint-disable-line
     // }
-
-    if (nextOrganisationId !== organisationId && !hasWorkspaceLoaded(nextOrganisationId)) {
+    if (nextOrganisationId !== organisationId) {
       getWorkspaceRequest(nextOrganisationId);
     }
   }

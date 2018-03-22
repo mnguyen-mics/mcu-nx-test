@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import { Button, Row } from 'antd';
+import { Button, Row, Layout } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 import UsersService from '../../../../services/UsersService';
@@ -13,6 +13,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { User } from '../../../../models/settings/settings';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 
+const { Content } = Layout;
 
 interface UsersListProps {
 }
@@ -152,26 +153,30 @@ class UsersListPage extends Component<Props, UsersListState> {
     // const onUserArchive = (label: User) => { this.handleArchiveUsers(label, this); };
 
     return (
-      <Row className="mcs-table-container">
-        <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title"><FormattedMessage {...messages.users} /></span>
-            {/* <span className="mcs-card-button">{buttons}</span> */}
-          </div>
-          <hr className="mcs-separator" />
-          <UsersTable
-            dataSource={users}
-            totalUsers={totalUsers}
-            isFetchingUsers={isFetchingUsers}
-            noUserYet={hasUsers}
-            filter={filter}
-            onFilterChange={this.handleFilterChange}
-            // onUserArchive={onUserArchive}
-            // onUserEdit={this.handleEditUsers}
-          />
-        
-        </div>
-      </Row>
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Row className="mcs-table-container">
+            <div>
+              <div className="mcs-card-header mcs-card-title">
+                <span className="mcs-card-title"><FormattedMessage {...messages.users} /></span>
+                {/* <span className="mcs-card-button">{buttons}</span> */}
+              </div>
+              <hr className="mcs-separator" />
+              <UsersTable
+                dataSource={users}
+                totalUsers={totalUsers}
+                isFetchingUsers={isFetchingUsers}
+                noUserYet={hasUsers}
+                filter={filter}
+                onFilterChange={this.handleFilterChange}
+                // onUserArchive={onUserArchive}
+                // onUserEdit={this.handleEditUsers}
+              />
+            
+            </div>
+          </Row>
+        </Content>
+      </div>
     );
   }
 }

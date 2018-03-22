@@ -20,12 +20,13 @@ import {
 import {
   TimelinePage,
 } from '../containers/Audience/Timeline';
-import { NavigatorRoute } from './routes';
 
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
-const audienceRoutes: NavigatorRoute[] = [
-  {
+
+export const audienceDefinition: NavigatorDefinition = {
+  audienceSegmentList: {
     path: '/audience/segments',
     layout: 'main',
     contentComponent: AudienceSegmentsTable,
@@ -33,21 +34,21 @@ const audienceRoutes: NavigatorRoute[] = [
     requiredFeature: 'audience.segments',
     requireDatamart: true
   },
-  {
+  audienceSegmentCreation: {
     path: '/audience/segments/create/:type?',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
     requiredFeature: 'audience.segments',
     requireDatamart: true
   },
-  {
+  audienceSegmentEdit: {
     path: '/audience/segments/:segmentId/edit',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
     requiredFeature: 'audience.segments',
     requireDatamart: true
   },
-  {
+  audienceSegmentDashboard: {
     path: '/audience/segments/:segmentId',
     layout: 'main',
     contentComponent: AudienceSegment,
@@ -55,7 +56,7 @@ const audienceRoutes: NavigatorRoute[] = [
     requiredFeature: 'audience.segments',
     requireDatamart: true
   },
-  {
+  audiencePartitionsList: {
     path: '/audience/partitions',
     layout: 'main',
     contentComponent: AudiencePartitionsTable,
@@ -79,19 +80,20 @@ const audienceRoutes: NavigatorRoute[] = [
     contentComponent: Partition,
   },
   {
+  audienceSegmentBuilder: {
     path: '/audience/segment-builder',
     layout: 'main',
     contentComponent: QueryToolPage,
     requiredFeature: 'audience.segment_builder',
     requireDatamart: true
   },
-  {
+  audienceTimeline: {
     path: '/audience/timeline/:identifierType?/:identifierId?',
     layout: 'main',
     contentComponent: TimelinePage,
     requiredFeature: 'audience.monitoring',
     requireDatamart: true
   },
-];
+}
 
-export default audienceRoutes;
+export const audienceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(audienceDefinition);

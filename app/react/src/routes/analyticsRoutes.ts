@@ -2,10 +2,10 @@ import {
   OverviewContent,
   OverviewActionBar,
 } from '../containers/Analytics/Overview';
-import { NavigatorRoute } from './routes';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
-const analyticsRoutes: NavigatorRoute[] = [
-  {
+export const analyticsDefinition: NavigatorDefinition = {
+  analyticsOverview: {
     path: '/analytics/overview',
     layout: 'main',
     contentComponent: OverviewContent,
@@ -13,6 +13,6 @@ const analyticsRoutes: NavigatorRoute[] = [
     requiredFeature: 'analytics.overview',
     requireDatamart: true
   },
-];
+}
 
-export default analyticsRoutes;
+export const analyticsRoutes: NavigatorRoute[] = generateRoutesFromDefinition(analyticsDefinition)
