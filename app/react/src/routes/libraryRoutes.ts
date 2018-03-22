@@ -70,7 +70,8 @@ export const libraryDefinition: NavigatorDefinition = {
     layout: 'main',
     actionBarComponent: Catalog.actionBarComponent,
     contentComponent: Catalog.contentComponent,
-    requiredFeature: 'library.catalog'
+    requiredFeature: 'library.catalog',
+    requireDatamart: true,
   },
 }
 

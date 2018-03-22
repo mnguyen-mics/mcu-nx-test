@@ -1,11 +1,11 @@
 import moment from 'moment';
 
-import McsMoment from '../../../utils/McsMoment';
-import { DataResponse } from '../../../services/ApiService';
-import { ReportViewResource } from '../../../models/ReportView';
-import ReportService, { Filter } from '../../../services/ReportService';
-import ExportService from '../../../services/ExportService';
-import { normalizeReportView } from '../../../utils/MetricHelper';
+import McsMoment from '../../../../utils/McsMoment';
+import { DataResponse } from '../../../../services/ApiService';
+import { ReportViewResource } from '../../../../models/ReportView';
+import ReportService, { Filter } from '../../../../services/ReportService';
+import ExportService from '../../../../services/ExportService';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
 
 export interface DurationInterface {
   startDate: moment.Moment;

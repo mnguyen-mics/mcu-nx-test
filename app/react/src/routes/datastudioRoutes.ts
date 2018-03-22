@@ -1,7 +1,7 @@
 import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage';
-import { CreateReportPage } from '../containers/Report/Edit';
-import Exports from '../containers/Library/Exports/Dashboard/Exports';
-import ExportsList from '../containers/Library/Exports/List';
+import { CreateReportPage } from '../containers/Datastudio/Report/Edit';
+import Exports from '../containers/Datastudio/Exports/Dashboard/Exports';
+import ExportsList from '../containers/Datastudio/Exports/List';
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
 export const datastudioDefinition: NavigatorDefinition = {

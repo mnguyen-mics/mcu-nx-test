@@ -8,17 +8,17 @@ import { Layout, Row, Button, Col } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { Actionbar } from '../../Actionbar';
-import McsIcon from '../../../components/McsIcon';
-import { FormTitle, withValidators } from '../../../components/Form';
-import FormDateRangePicker, { FormDateRangePickerProps } from '../../../components/Form/FormDateRangePicker';
-import FormLinkedSelectInput, { FormLinkedSelectInputProps } from '../../../components/Form/FormLinkedSelectInput';
-import DefaultSelect, { DefaultSelectProps } from '../../../components/Form/FormSelect/DefaultSelect';
-import TagSelect, { FormTagSelectProps } from '../../../components/Form/FormSelect/TagSelect';
+import { Actionbar } from '../../../Actionbar';
+import McsIcon from '../../../../components/McsIcon';
+import { FormTitle, withValidators } from '../../../../components/Form';
+import FormDateRangePicker, { FormDateRangePickerProps } from '../../../../components/Form/FormDateRangePicker';
+import FormLinkedSelectInput, { FormLinkedSelectInputProps } from '../../../../components/Form/FormLinkedSelectInput';
+import DefaultSelect, { DefaultSelectProps } from '../../../../components/Form/FormSelect/DefaultSelect';
+import TagSelect, { FormTagSelectProps } from '../../../../components/Form/FormSelect/TagSelect';
 import messages from './messages';
 import ReportFilterFields from './ReportFilterFields';
-import TableView, { DataColumnDefinition } from '../../../components/TableView/TableView';
-import { ValidatorProps } from '../../../components/Form/withValidators';
+import TableView, { DataColumnDefinition } from '../../../../components/TableView/TableView';
+import { ValidatorProps } from '../../../../components/Form/withValidators';
 import ReportCreationService, { FormValueInterface } from './ReportCreationService';
 import {
   typeOptions,
@@ -26,7 +26,7 @@ import {
   selectPropsMetrics,
   linkedSelectOptions,
 } from './constants';
-import * as NotificationActions from '../../../state/Notifications/actions';
+import * as NotificationActions from '../../../../state/Notifications/actions';
 
 const { Content, Sider } = Layout;
 
