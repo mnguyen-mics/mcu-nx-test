@@ -126,7 +126,7 @@ class AttributionModelContent extends React.Component<
   onClickEdit = (attribution: AttributionModelInterface) => {
     const { history, match: { params: { organisationId } } } = this.props;
     history.push(
-      `/v2/o/${organisationId}/library/attribution_models/${
+      `/v2/o/${organisationId}/settings/campaigns/attribution_models/${
         attribution.id
       }/edit`,
     );

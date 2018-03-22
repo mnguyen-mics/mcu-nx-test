@@ -65,6 +65,7 @@ interface State {
 
 interface ConversionValueFormSectionProps extends ReduxFormChangeProps {
   initialValues: Partial<GoalFormData>;
+  goalId?: string;
 }
 
 type Props = ConversionValueFormSectionProps &
@@ -73,9 +74,9 @@ type Props = ConversionValueFormSectionProps &
   RouteComponentProps<{ goalId: string }>;
 
 class ConversionValueFormSection extends React.Component<Props, State> {
-  isDefaultGoalValue = this.props.initialValues &&
-    this.props.initialValues.goal &&
-    this.props.initialValues.goal.default_goal_value;
+  // isDefaultGoalValue = (this.props.initialValues &&
+  //   this.props.initialValues.goal &&
+  //   this.props.initialValues.goal.default_goal_value);
 
   constructor(props: Props) {
     super(props);
@@ -84,7 +85,7 @@ class ConversionValueFormSection extends React.Component<Props, State> {
 
   componentDidMount() {
     const { match: { params: { goalId } } } = this.props;
-    if (goalId && this.isDefaultGoalValue) {
+    if (goalId || this.props.goalId) {
       this.setState({
         displayConversionValueSection: true,
       });

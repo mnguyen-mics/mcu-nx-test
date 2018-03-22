@@ -1,3 +1,4 @@
+import { QueryLanguage } from './../../../../models/datamart/DatamartResource';
 import { FieldArrayModelWithMeta } from './../../../../utils/FormHelper';
 import {
   AttributionSelectionResource,
@@ -21,6 +22,7 @@ export interface GoalFormData {
 export const INITIAL_GOAL_FORM_DATA: NewGoalFormData = {
   goal: {},
   attributionModels: [],
+  triggerMode: 'QUERY'
 };
 
 ///////////////////////////
@@ -30,9 +32,14 @@ export function isGoalResource(goal: GoalResourceShape): goal is GoalResource {
   return (goal as GoalResource).id !== undefined;
 }
 
+export type TriggerMode = 'QUERY' | 'PIXEL';
+
 export interface NewGoalFormData {
   goal: GoalResourceShape;
   attributionModels: AttributionModelListFieldModel[];
+  queryContainer?: any;
+  queryLanguage?: QueryLanguage;
+  triggerMode: TriggerMode;
 }
 
 export interface AttributionModelMetaData {
@@ -71,4 +78,10 @@ export function isAttributionModelCreateRequest(
     (model as AttributionSelectionCreateRequest).attribution_model_id !==
       undefined && (model as AttributionSelectionResource).id === undefined
   );
+}
+
+export function isExistingGoal(
+  model: GoalResourceShape
+): model is GoalResource {
+  return (model as GoalResource).id !== undefined;
 }

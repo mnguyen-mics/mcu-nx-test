@@ -12,12 +12,8 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import GoalService from '../../../../services/GoalService';
 import GoalFormService from './GoalFormService';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
-import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
-import { createFieldArrayModelWithMeta } from '../../../../utils/FormHelper';
-import QueryService from '../../../../services/QueryService';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -50,9 +46,7 @@ const messages = defineMessages({
 interface State {
   goalFormData: NewGoalFormData;
   loading: boolean;
-  queryContainer?: any;
   queryContainerCopy?: any;
-  queryLanguage: QueryLanguage;
 }
 
 type Props = InjectedIntlProps &
@@ -70,13 +64,17 @@ class EditGoalPage extends React.Component<Props, State> {
     const defQuery = new QueryContainer(props.datamart.id);
     this.state = {
       loading: true,
-      goalFormData: INITIAL_GOAL_FORM_DATA,
-      queryContainer: defQuery,
+      goalFormData: {
+        goal: INITIAL_GOAL_FORM_DATA.goal,
+        attributionModels: INITIAL_GOAL_FORM_DATA.attributionModels,
+        queryLanguage:
+          props.datamart.storage_model_version === 'v201506'
+            ? 'SELECTORQL'
+            : 'OTQL',
+        queryContainer: defQuery,
+        triggerMode: 'QUERY',
+      },
       queryContainerCopy: defQuery.copy(),
-      queryLanguage:
-        props.datamart.storage_model_version === 'v201506'
-          ? 'SELECTORQL'
-          : ('OTQL' as QueryLanguage),
     };
   }
 
@@ -84,40 +82,15 @@ class EditGoalPage extends React.Component<Props, State> {
     const { match: { params: { goalId } }, datamart } = this.props;
 
     if (goalId) {
-      GoalService.getGoal(goalId)
-        .then(resp => resp.data)
-        .then(formData => {
-          GoalService.getAttributionModels(goalId)
-            .then(res => res.data)
-            .then(attributionModelList => {
-              QueryService.getQuery(datamart.id, formData.new_query_id)
-                .then(r => r.data)
-                .then(res => {
-                  const QueryContainer = (window as any).angular
-                    .element(document.body)
-                    .injector()
-                    .get('core/datamart/queries/QueryContainer');
-                  const defQuery = new QueryContainer(datamart.id, res.id);
-                  defQuery.load();
-                  this.setState({
-                    loading: false,
-                    goalFormData: {
-                      goal: formData,
-                      attributionModels: attributionModelList.map(
-                        attributionModel =>
-                          createFieldArrayModelWithMeta(attributionModel, {
-                            name: attributionModel.attribution_model_name,
-                            group_id: attributionModel.group_id,
-                            artifact_id: attributionModel.artifact_id,                          
-                            default: attributionModel.default,
-                          }),
-                      ),
-                    },
-                    queryContainer: defQuery,
-                    queryLanguage: res.query_language as QueryLanguage,
-                  });
-                });
-            });
+      GoalFormService.loadGoalData(goalId, datamart.id)
+        .then(goalData => {
+          this.setState({
+            goalFormData: {
+              ...goalData,
+            },
+            loading: false,
+            queryContainerCopy: goalData.queryContainer,
+          });
         })
         .catch(err => {
           this.setState({ loading: false });
@@ -130,7 +103,12 @@ class EditGoalPage extends React.Component<Props, State> {
 
   updateQueryContainer = () => {
     this.setState(prevState => ({
-      queryContainer: prevState.queryContainerCopy.copy(),
+      goalFormData: {
+        goal: prevState.goalFormData.goal,
+        attributionModels: prevState.goalFormData.attributionModels,
+        queryContainer: prevState.queryContainerCopy.copy(),
+        triggerMode: prevState.goalFormData.triggerMode,
+      },
     }));
   };
 
@@ -147,7 +125,7 @@ class EditGoalPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { goalFormData: initialGoalFormData, queryContainer } = this.state;
+    const { goalFormData: initialGoalFormData } = this.state;
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
       0,
@@ -156,12 +134,7 @@ class EditGoalPage extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-    GoalFormService.saveGoal(
-      organisationId,
-      goalFormData,
-      initialGoalFormData,
-      queryContainer,
-    )
+    GoalFormService.saveGoal(organisationId, goalFormData, initialGoalFormData)
       .then(() => {
         hideSaveInProgress();
         const goalsUrl = `/v2/o/${organisationId}/campaigns/goals`;
@@ -198,13 +171,7 @@ class EditGoalPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      loading,
-      goalFormData,
-      queryContainer,
-      queryContainerCopy,
-      queryLanguage,
-    } = this.state;
+    const { loading, goalFormData, queryContainerCopy } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -227,13 +194,6 @@ class EditGoalPage extends React.Component<Props, State> {
       },
     ];
 
-    const queryObject = {
-      queryContainer: queryContainer,
-      queryContainerCopy: queryContainerCopy,
-      queryLanguage: queryLanguage,
-      updateQueryContainer: this.updateQueryContainer,
-    };
-
     return (
       <GoalForm
         initialValues={goalFormData}
@@ -241,7 +201,8 @@ class EditGoalPage extends React.Component<Props, State> {
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
-        queryObject={queryObject}
+        updateQueryContainer={this.updateQueryContainer}
+        queryContainerCopy={queryContainerCopy}
       />
     );
   }

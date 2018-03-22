@@ -1,56 +1,119 @@
-import { Task, executeTasksInSequence } from './../../../../utils/FormHelper';
 import {
-  GoalFormData,
+  Task,
+  executeTasksInSequence,
+  createFieldArrayModelWithMeta,
+} from './../../../../utils/FormHelper';
+import {
   isGoalResource,
-  LookbackWindow,
   NewGoalFormData,
   AttributionModelListFieldModel,
   INITIAL_GOAL_FORM_DATA,
   isAttributionSelectionResource,
   isAttributionModelFormData,
+  TriggerMode,
 } from './domain';
 import { GoalResource } from '../../../../models/goal';
-import { IntPropertyResource } from '../../../../models/plugin';
 import GoalService from '../../../../services/GoalService';
-import AttributionModelService from '../../../../services/AttributionModelService';
 import AttributionModelFormService from '../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelFormService';
-
-const LookbackWindowArtifactId = 'lookback_window';
+import queryService from '../../../../services/QueryService';
 
 const GoalFormService = {
-  loadGoal(goalId: string): Promise<GoalFormData> {
-    return Promise.all([
-      GoalService.getGoal(goalId).then(res => res.data),
-      getLookbackWindow(goalId),
-    ]).then(([goal, lookbackWindow]) => {
-      return {
-        goal,
-        lookbackWindow,
-      };
-    });
+  // loadGoal(goalId: string): Promise<GoalFormData> {
+  //   return Promise.all([
+  //     GoalService.getGoal(goalId).then(res => res.data),
+  //     getLookbackWindow(goalId),
+  //   ]).then(([goal, lookbackWindow]) => {
+  //     return {
+  //       goal,
+  //       lookbackWindow,
+  //     };
+  //   });
+  // },
+
+  loadGoalData(goalId: string, datamartId: string): Promise<NewGoalFormData> {
+    return GoalService.getGoal(goalId)
+      .then(resp => resp.data)
+      .then(formData => {
+        return GoalService.getAttributionModels(goalId)
+          .then(res => res.data)
+          .then(attributionModelList => {
+            const goalFormData: NewGoalFormData = {
+              goal: {},
+              attributionModels: [],
+              triggerMode: 'QUERY',
+            };
+            goalFormData.goal = formData;
+            goalFormData.attributionModels = attributionModelList.map(
+              attributionModel =>
+                createFieldArrayModelWithMeta(attributionModel, {
+                  name: attributionModel.attribution_model_name,
+                  group_id: attributionModel.group_id,
+                  artifact_id: attributionModel.artifact_id,
+                  default: attributionModel.default,
+                }),
+            );
+            const QueryContainer = (window as any).angular
+              .element(document.body)
+              .injector()
+              .get('core/datamart/queries/QueryContainer');
+            if (formData.new_query_id) {
+              return queryService
+                .getQuery(datamartId, formData.new_query_id)
+                .then(r => r.data)
+                .then(res => {
+                  const defQuery = new QueryContainer(datamartId, res.id);
+                  defQuery.load();
+                  const triggerMode: TriggerMode = 'QUERY';
+                  goalFormData.queryContainer = defQuery;
+                  goalFormData.triggerMode = triggerMode;
+                  return goalFormData;
+                });
+            } else {
+              const triggerMode: TriggerMode = 'PIXEL';
+              return Promise.resolve({
+                ...goalFormData,
+                queryContainer: new QueryContainer(datamartId),
+                triggerMode: triggerMode,
+              });
+            }
+          })
+          .then((resp: NewGoalFormData) => {
+            return resp;
+          });
+      });
   },
 
   saveGoal(
     organisationId: string,
     goalFormData: NewGoalFormData,
     initialGoalFormData: NewGoalFormData = INITIAL_GOAL_FORM_DATA,
-    queryContainer?: any,
   ): Promise<GoalResource> {
     let createOrUpdateGoalPromise;
-    return queryContainer.saveOrUpdate().then(() => {
-      const goalDataToUpload = {
-        ...goalFormData.goal,
-        new_query_id: queryContainer.id,
-      };
+
+    // save query if needed
+    let goalDataToUpload = Promise.resolve(goalFormData.goal);
+    if (goalFormData.triggerMode === 'QUERY' && goalFormData.queryContainer) {
+      goalDataToUpload = goalFormData.queryContainer
+        .saveOrUpdate()
+        .then((queryContainerUpdate: any) => {
+          const queryId = queryContainerUpdate.id as string;
+          return {
+            ...goalFormData.goal,
+            new_query_id: queryId,
+          };
+        });
+    }
+
+    return goalDataToUpload.then(goalData => {
       if (goalFormData.goal && isGoalResource(goalFormData.goal)) {
         createOrUpdateGoalPromise = GoalService.updateGoal(
           goalFormData.goal.id,
-          goalDataToUpload,
+          goalData,
         );
       } else {
         createOrUpdateGoalPromise = GoalService.createGoal(
           organisationId,
-          goalDataToUpload,
+          goalData,
         );
       }
 
@@ -80,34 +143,34 @@ const GoalFormService = {
 
 export default GoalFormService;
 
-function getLookbackWindow(
-  goalId: string,
-): Promise<LookbackWindow | undefined> {
-  const noLookbackWindow = undefined;
-  return GoalService.getAttributionModels(goalId).then(res => {
-    const lookbackWindowFound = res.data.find(
-      ats => ats.artifact_id === LookbackWindowArtifactId && !!ats.default,
-    );
-    if (!lookbackWindowFound) {
-      return noLookbackWindow;
-    }
-    return AttributionModelService.getAttributionModelProperties(
-      lookbackWindowFound.attribution_model_id,
-    ).then(propsRes => {
-      const postViewProp = propsRes.data.find(
-        prop => prop.technical_name === 'post_view',
-      );
-      const postClickProp = propsRes.data.find(
-        prop => prop.technical_name === 'post_click',
-      );
-      if (!postViewProp && !postClickProp) return noLookbackWindow;
-      return {
-        postView: (postViewProp as IntPropertyResource).value.value,
-        postClick: (postClickProp as IntPropertyResource).value.value,
-      };
-    });
-  });
-}
+// function getLookbackWindow(
+//   goalId: string,
+// ): Promise<LookbackWindow | undefined> {
+//   const noLookbackWindow = undefined;
+//   return GoalService.getAttributionModels(goalId).then(res => {
+//     const lookbackWindowFound = res.data.find(
+//       ats => ats.artifact_id === LookbackWindowArtifactId && !!ats.default,
+//     );
+//     if (!lookbackWindowFound) {
+//       return noLookbackWindow;
+//     }
+//     return AttributionModelService.getAttributionModelProperties(
+//       lookbackWindowFound.attribution_model_id,
+//     ).then(propsRes => {
+//       const postViewProp = propsRes.data.find(
+//         prop => prop.technical_name === 'post_view',
+//       );
+//       const postClickProp = propsRes.data.find(
+//         prop => prop.technical_name === 'post_click',
+//       );
+//       if (!postViewProp && !postClickProp) return noLookbackWindow;
+//       return {
+//         postView: (postViewProp as IntPropertyResource).value.value,
+//         postClick: (postClickProp as IntPropertyResource).value.value,
+//       };
+//     });
+//   });
+// }
 
 // function persistLookbackWindow(
 //   organisationId: string,

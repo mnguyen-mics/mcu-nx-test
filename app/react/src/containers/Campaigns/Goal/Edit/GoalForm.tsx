@@ -29,7 +29,6 @@ import FormLayoutActionbar, {
 import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
-import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 
 const Content = Layout.Content as React.ComponentClass<
@@ -41,15 +40,13 @@ const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
   ReduxFormChangeProps
 >;
 
-export interface GoalFormProps extends Omit<ConfigProps<NewGoalFormData>, 'form'> {
+export interface GoalFormProps
+  extends Omit<ConfigProps<NewGoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  queryObject?: {
-    queryContainer?: any;
-    queryContainerCopy?: any;
-    queryLanguage?: QueryLanguage;
-    updateQueryContainer: () => void;
-  };
+  updateQueryContainer: () => void;
+  queryContainerCopy?: any;
+  goalId?: string;
 }
 
 type Props = InjectedFormProps<NewGoalFormData, GoalFormProps> &
@@ -60,7 +57,20 @@ const FORM_ID = 'goalForm';
 
 class GoalForm extends React.Component<Props> {
   render() {
-    const { breadCrumbPaths, handleSubmit, close } = this.props;
+    const {
+      breadCrumbPaths,
+      handleSubmit,
+      close,
+      goalId,
+      initialValues: { queryContainer, queryLanguage },
+    } = this.props;
+
+    const queryObject = {
+      queryContainer: queryContainer,
+      queryContainerCopy: this.props.queryContainerCopy,
+      queryLanguage: queryLanguage,
+      updateQueryContainer: this.props.updateQueryContainer,
+    };
 
     const sections = {
       general: {
@@ -112,15 +122,19 @@ class GoalForm extends React.Component<Props> {
               <hr />
               <div id={sections.conversion_value.sectionId}>
                 <ConversionValueFormSection
+                  goalId={goalId}
                   initialValues={this.props.initialValues}
                   formChange={this.props.change}
                 />
               </div>
-              {this.props.queryObject && (
+              {queryObject && (
                 <div>
                   <hr />
                   <div id={sections.trigger.sectionId}>
-                    <TriggerFormSection queryObject={this.props.queryObject} />
+                    <TriggerFormSection
+                      goalId={goalId}
+                      queryObject={queryObject}
+                    />
                   </div>
                 </div>
               )}

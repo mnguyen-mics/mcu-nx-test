@@ -157,28 +157,33 @@ class AttributionModelFormSection extends React.Component<
     const { fields, formChange } = this.props;
     const attributionModelIds = attributionModels.map(am => am.id);
     const keptFields: AttributionModelListFieldModel[] = [];
-    fields.getAll().forEach(field => {
-      if (!isAttributionModelFormData(field.model)) {
-        if (attributionModelIds.includes(field.model.attribution_model_id)) {
-          keptFields.push(field);
-        } else if (field.model.attribution_type === 'DIRECT') {
+    if (fields && fields.getAll()) {
+      fields.getAll().forEach(field => {
+        if (!isAttributionModelFormData(field.model)) {
+          if (attributionModelIds.includes(field.model.attribution_model_id)) {
+            keptFields.push(field);
+          } else if (field.model.attribution_type === 'DIRECT') {
+            keptFields.push(field);
+          }
+        } else if (isAttributionSelectionResource(field.model)) {
+          if (attributionModelIds.includes(field.model.id)) {
+            keptFields.push(field);
+          }
+        } else {
           keptFields.push(field);
         }
-      } else if (isAttributionSelectionResource(field.model)) {
-        if (attributionModelIds.includes(field.model.id)) {
-          keptFields.push(field);
-        }
-      } else {
-        keptFields.push(field);
-      }
-    });
+      });
+    }
 
     const existingAttributionModelIds: string[] = [];
-    fields.getAll().forEach(field => {
-      if (!isAttributionModelFormData(field.model)) {
-        existingAttributionModelIds.push(field.model.attribution_model_id);
-      }
-    });
+    if (fields && fields.getAll()) {
+      fields.getAll().forEach(field => {
+        if (!isAttributionModelFormData(field.model)) {
+          existingAttributionModelIds.push(field.model.attribution_model_id);
+        }
+      });
+    }
+
     const newFields = attributionModels
       .filter(
         attributionModel =>
@@ -217,15 +222,17 @@ class AttributionModelFormSection extends React.Component<
     const { openNextDrawer, closeNextDrawer, fields } = this.props;
 
     const selectedAttributionModelIds: string[] = [];
-    fields.getAll().forEach(field => {
-      if (
-        !isAttributionModelFormData(field.model) &&
-        field.model.attribution_model_id &&
-        field.model.attribution_type === 'WITH_PROCESSOR'
-      ) {
-        selectedAttributionModelIds.push(field.model.attribution_model_id);
-      }
-    });
+    if (fields && fields.getAll()) {
+      fields.getAll().forEach(field => {
+        if (
+          !isAttributionModelFormData(field.model) &&
+          field.model.attribution_model_id &&
+          field.model.attribution_type === 'WITH_PROCESSOR'
+        ) {
+          selectedAttributionModelIds.push(field.model.attribution_model_id);
+        }
+      });
+    }
 
     const additionalProps = {
       save: this.updateExistingAttributionModels,
@@ -349,13 +356,16 @@ class AttributionModelFormSection extends React.Component<
   render() {
     const { fields } = this.props;
 
-    const existingDirectAttribModel = fields
-      .getAll()
-      .find(
-        f =>
-          !isAttributionModelFormData(f.model) &&
-          f.model.attribution_type === 'DIRECT',
-      );
+    const existingDirectAttribModel =
+      fields &&
+      fields.getAll() &&
+      fields
+        .getAll()
+        .find(
+          f =>
+            !isAttributionModelFormData(f.model) &&
+            f.model.attribution_type === 'DIRECT',
+        );
 
     return (
       <div>

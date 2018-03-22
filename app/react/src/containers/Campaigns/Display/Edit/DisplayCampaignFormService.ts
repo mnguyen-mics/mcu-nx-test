@@ -1,3 +1,5 @@
+import { INITIAL_GOAL_FORM_DATA, isExistingGoal } from './../../Goal/Edit/domain';
+// import { NewGoalFormData } from './../../Goal/Edit/domain';
 import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
 import { extractDataList, extractData } from '../../../../services/ApiService';
@@ -99,11 +101,13 @@ const DisplayCampaignFormService = {
         organisationId,
         formData.campaign,
       ).then(res => {
-        return datamartId ? executeTasksInSequence(
-          getExposedClickersTasks(organisationId, res.data.id, datamartId)
-        ).then(() => {
-          return res
-        }) : res;
+        return datamartId
+          ? executeTasksInSequence(
+              getExposedClickersTasks(organisationId, res.data.id, datamartId),
+            ).then(() => {
+              return res;
+            })
+          : res;
       });
     }
 
@@ -118,6 +122,7 @@ const DisplayCampaignFormService = {
           campaignId,
           formData.goalFields,
           initialFormData.goalFields,
+          datamartId,
         ),
         ...getAdGroupTasks(
           organisationId,
@@ -138,21 +143,18 @@ const DisplayCampaignFormService = {
         return DisplayCampaignService.getCampaignDisplay(campaignId)
           .then(apiRes => apiRes.data)
           .then((campaignData: any) => {
-            const updatedData = formData.fields.reduce(
-              (acc, field) => {
-                const campaignProperty: keyof DisplayCampaignResource =
-                  field.campaignProperty;
-                return {
-                  ...acc,
-                  [field.campaignProperty]: operation(
-                    field.action,
-                    campaignData[campaignProperty],
-                    field.value,
-                  ),
-                };
-              },
-              {},
-            );
+            const updatedData = formData.fields.reduce((acc, field) => {
+              const campaignProperty: keyof DisplayCampaignResource =
+                field.campaignProperty;
+              return {
+                ...acc,
+                [field.campaignProperty]: operation(
+                  field.action,
+                  campaignData[campaignProperty],
+                  field.value,
+                ),
+              };
+            }, {});
             return DisplayCampaignService.updateCampaign(
               campaignId,
               updatedData,
@@ -172,21 +174,23 @@ function getExposedClickersTasks(
   datamartId: string,
 ): Task[] {
   return [
-    () => AudienceSegmentService.createAudienceSegment(organisationId, {
-      campaign_id: campaignId,
-      clickers: false,
-      datamart_id: datamartId,
-      exposed: true,
-      type: "USER_ACTIVATION"
-    }),
-    () => AudienceSegmentService.createAudienceSegment(organisationId, {
-      campaign_id: campaignId,
-      clickers: true,
-      datamart_id: datamartId,
-      exposed: false,
-      type: "USER_ACTIVATION"
-    })
-  ]
+    () =>
+      AudienceSegmentService.createAudienceSegment(organisationId, {
+        campaign_id: campaignId,
+        clickers: false,
+        datamart_id: datamartId,
+        exposed: true,
+        type: 'USER_ACTIVATION',
+      }),
+    () =>
+      AudienceSegmentService.createAudienceSegment(organisationId, {
+        campaign_id: campaignId,
+        clickers: true,
+        datamart_id: datamartId,
+        exposed: false,
+        type: 'USER_ACTIVATION',
+      }),
+  ];
 }
 
 function getGoalTasks(
@@ -194,6 +198,7 @@ function getGoalTasks(
   campaignId: string,
   goalFields: GoalFieldModel[],
   initialGoalFields: GoalFieldModel[],
+  datamartId?: string,
 ): Task[] {
   const initialIds: string[] = [];
   initialGoalFields.forEach(field => {
@@ -213,17 +218,29 @@ function getGoalTasks(
   goalFields.forEach(field => {
     if (isGoalFormData(field.model)) {
       const goalFormData = field.model;
-      tasks.push(() => {
-        return GoalFormService.saveGoal(organisationId, goalFormData).then(
-          goalResource => {
+
+      const fetchGoalInitialFormData = () => {
+        if (isExistingGoal(goalFormData.goal) && datamartId) {
+          return GoalFormService.loadGoalData(goalFormData.goal.id, datamartId);
+        }
+        return Promise.resolve(INITIAL_GOAL_FORM_DATA);
+      };
+
+      tasks.push(() =>
+        fetchGoalInitialFormData().then(initialGoalFormData => {
+          return GoalFormService.saveGoal(
+            organisationId,
+            goalFormData,
+            initialGoalFormData,
+          ).then(goalResource => {
             return DisplayCampaignService.createGoal(campaignId, {
               goal_id: goalResource.id,
               goal_selection_type: 'CONVERSION',
               default: true,
             });
-          },
-        );
-      });
+          });
+        }),
+      );
     } else if (!isGoalSelectionResource(field.model)) {
       const goalSelectionCreateRequest = field.model;
       tasks.push(() =>

@@ -6,7 +6,6 @@ import {
   GoalCreateRequest,
   AttributionSelectionResource,
 } from '../models/goal';
-import { UserQueryGoalResource } from '../models/goal/GoalResource';
 
 export interface GetGoalsOption extends PaginatedApiParam {
   keywords?: string[];
@@ -37,7 +36,7 @@ const GoalService = {
 
   updateGoal(
     goaldId: string,
-    resource: Partial<UserQueryGoalResource>,
+    resource: Partial<GoalResource>,
   ): Promise<DataResponse<GoalResource>> {
     const endpoint = `goals/${goaldId}`;
 

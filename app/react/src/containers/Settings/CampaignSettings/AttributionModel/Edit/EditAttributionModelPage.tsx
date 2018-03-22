@@ -30,9 +30,16 @@ type Props = RouteComponentProps<AttributionModelRouteParam> &
   InjectedIntlProps;
 
 class EditAttributionModelPage extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+    };
+  }
+
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
-    const attributionModelUrl = `/v2/o/${organisationId}/library/attribution_models`;
+    const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/attribution_models`;
     history.push(attributionModelUrl);
   };
 
@@ -50,7 +57,7 @@ class EditAttributionModelPage extends React.Component<Props, State> {
     )
       .then(res => {
         this.setState({ isLoading: false });
-        history.push(`/v2/o/${organisationId}/library/attribution_models`);
+        history.push(`/v2/o/${organisationId}/settings/campaigns/attribution_models`);
       })
       .catch(err => {
         notifyError(err);

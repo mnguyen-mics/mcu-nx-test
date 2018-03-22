@@ -77,6 +77,7 @@ interface TriggerFormSectionProps {
     queryLanguage?: QueryLanguage;
     updateQueryContainer: () => void;
   };
+  goalId?: string;
 }
 
 type Props = TriggerFormSectionProps &
@@ -176,7 +177,7 @@ class TriggerFormSection extends React.Component<Props, State> {
         <p>{formatMessage(messages.triggerPixelModalMessage)} : </p>
         <p>
           {' '}
-          {`<img src='//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=meddf17&$goal_id=${goalId}' />`}
+          {`<img src='//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=meddf17&$goal_id=${goalId || this.props.goalId}' />`}
         </p>
       </div>
     );
@@ -193,6 +194,8 @@ class TriggerFormSection extends React.Component<Props, State> {
       this.closeEditMode();
     };
 
+    const isGoalId = goalId || this.props.goalId;
+
     return (
       <div>
         <FormSection
@@ -203,11 +206,11 @@ class TriggerFormSection extends React.Component<Props, State> {
           <Col span={4}>
             <Checkbox
               checked={!this.state.displaySection}
-              onChange={goalId ? this.toggleSections : undefined}
+              onChange={isGoalId ? this.toggleSections : undefined}
             >
               {formatMessage(messages.formCheckBoxText1)}
             </Checkbox>
-            {goalId && (
+            {isGoalId && (
               <div>
                 <br />
                 <Checkbox
