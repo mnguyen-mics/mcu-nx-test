@@ -194,7 +194,7 @@ class AttributionModelContent extends React.Component<RouteComponentProps<Router
       iconType: McsIconType,
       intlMessage: FormattedMessage.Props,
     } = {
-      iconType: 'library',
+      iconType: 'settings',
       intlMessage: messages.empty,
     };
 

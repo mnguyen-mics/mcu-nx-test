@@ -79,6 +79,29 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     this.fetchMobileApplications(organisationId, datamart.id, this.state.filter);
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+     match: {
+       params: {
+         organisationId
+       }
+     }, 
+     datamart,
+    } = this.props;
+
+    const {
+      match: {
+        params: {
+          organisationId: nextOrganiastionId
+        }
+      }, 
+      datamart: nextDatamart,
+     } = this.props;
+
+    if (nextOrganiastionId !== organisationId || nextDatamart.id !== datamart.id)
+      this.fetchMobileApplications(organisationId, datamart.id, this.state.filter);
+  }
+
 
   handleArchiveMobileApplication() {
     return Promise.resolve()

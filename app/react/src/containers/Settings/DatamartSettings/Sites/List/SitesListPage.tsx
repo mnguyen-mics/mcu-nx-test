@@ -59,6 +59,29 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     this.fetchSites(organisationId, datamart.id, this.state.filter);
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+     match: {
+       params: {
+         organisationId
+       }
+     }, 
+     datamart,
+    } = this.props;
+
+    const {
+      match: {
+        params: {
+          organisationId: nextOrganiastionId
+        }
+      }, 
+      datamart: nextDatamart,
+     } = this.props;
+
+    if (nextOrganiastionId !== organisationId || nextDatamart.id !== datamart.id)
+      this.fetchSites(organisationId, datamart.id, this.state.filter);
+  }
+
 
   handleArchiveSite = () => {
     // to do

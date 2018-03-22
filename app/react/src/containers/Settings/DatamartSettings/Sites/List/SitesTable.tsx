@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
-
+import { Link } from 'react-router-dom'
 import {
   EmptyTableView,
   TableViewFilters,
@@ -9,6 +9,8 @@ import {
 import messages from './messages';
 import { SiteResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
+import { compose } from 'recompose';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 export interface SitesTableProps {
   isFetchingSites: boolean;
@@ -21,7 +23,7 @@ export interface SitesTableProps {
   filter: Filter;
 }
 
-type Props = SitesTableProps & InjectedIntlProps;
+type Props = SitesTableProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
 class SitesTable extends React.Component<Props> {
   render() {
@@ -35,6 +37,7 @@ class SitesTable extends React.Component<Props> {
       onEditSite,
       filter,
       intl: { formatMessage },
+      match: { params: { organisationId } }
     } = this.props;
 
     const pagination = {
@@ -58,6 +61,11 @@ class SitesTable extends React.Component<Props> {
         intlMessage: messages.siteName,
         key: 'name',
         isHideable: false,
+        render: (text: string, record: SiteResource) => <Link to={
+          `/v2/o/${organisationId}/settings/datamart/sites/${record.id}/edit`
+        }>
+          {text}
+        </Link> 
       },
       {
         intlMessage: messages.siteToken,
@@ -100,7 +108,7 @@ class SitesTable extends React.Component<Props> {
     };
 
     return noSiteYet ? (
-      <EmptyTableView iconType="bolt" intlMessage={messages.emptySites} />
+      <EmptyTableView iconType="settings" intlMessage={messages.emptySites} className="mcs-table-view-empty mcs-empty-card" />
     ) : (
       <TableViewFilters
         columns={dataColumns}
@@ -114,4 +122,4 @@ class SitesTable extends React.Component<Props> {
   }
 }
 
-export default injectIntl(SitesTable);
+export default compose<Props, SitesTableProps>(injectIntl, withRouter)(SitesTable);

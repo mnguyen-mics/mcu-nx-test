@@ -220,7 +220,7 @@ class VisitAnalyzerContent extends Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'library',
+      iconType: 'settings',
       intlMessage: messages.empty,
     };
 

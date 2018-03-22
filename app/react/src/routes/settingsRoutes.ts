@@ -3,7 +3,7 @@ import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datam
 import { MobileApplicationsListPage } from '../containers/Settings/DatamartSettings/MobileApplications/List'
 
 import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels'
-import UserListPage from '../containers/Settings/OrganisationSettings/Users/UserListPage'
+import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UserPage'
 import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount'
 
 import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/'
@@ -92,7 +92,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true
   },
   settingsDatamartDatamartEdition: {
-    path: '/settings/datamart/datamarts/:datamartId/edit',
+    path: '/settings/datamart/my_datamart/:datamartId/edit',
     layout: 'edit',
     editComponent: DatamartEditPage,
     requiredFeature: 'datamartSettings.datamarts',
