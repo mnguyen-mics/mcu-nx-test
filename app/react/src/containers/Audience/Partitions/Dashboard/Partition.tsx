@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout, message } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import queryString from 'query-string';
 
@@ -41,6 +41,23 @@ const messages = defineMessages({
   partitionPublished: {
     id: 'partition.dashboard.partitionPublished',
     defaultMessage: 'Partition Published',
+  },
+  publishModalTitle: {
+    id: 'partition.dashboard.publish.modal.title',
+    defaultMessage: 'Are you sure you want to publish this partition ?',
+  },
+  publishModalMessage: {
+    id: 'partition.dashboard.publish.modal.message',
+    defaultMessage:
+      'Once published it will assign every new UserPoint to a partition. This action cannot be undone.',
+  },
+  publishModalCancel: {
+    id: 'partition.dashboard.publish.modal.cancel.button',
+    defaultMessage: 'Cancel',
+  },
+  publishModalOk: {
+    id: 'partition.dashboard.publish.modal.ok.button',
+    defaultMessage: 'Ok',
   },
 });
 
@@ -106,6 +123,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   publishPartition = () => {
     const { match: { params: { partitionId } }, intl } = this.props;
     const { partitionData } = this.state;
+
     this.setState({
       isLoading: true,
     });
@@ -125,7 +143,6 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
           isLoading: false,
         });
       });
-
       message.success(intl.formatMessage(messages.partitionPublished));
     });
   };
@@ -153,6 +170,16 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     ];
   };
 
+  displayHidePublishModal = () => {
+    const { intl } = this.props;
+    Modal.confirm({
+      title: intl.formatMessage(messages.publishModalTitle),
+      content: intl.formatMessage(messages.publishModalMessage),
+      onOk: this.publishPartition,
+      cancelText: intl.formatMessage(messages.publishModalCancel),
+    });
+  };
+
   render() {
     const { intl } = this.props;
     const { isLoading } = this.state;
@@ -162,7 +189,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       <div className="ant-layout">
         <PartitionActionBar
           partition={this.state.partitionData}
-          publishPartition={this.publishPartition}
+          publishPartition={this.displayHidePublishModal}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">

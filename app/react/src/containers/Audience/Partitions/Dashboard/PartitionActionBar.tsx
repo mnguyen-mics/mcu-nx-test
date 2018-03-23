@@ -72,6 +72,15 @@ class PartitionActionBar extends React.Component<
     ];
     return (
       <Actionbar path={breadcrumbPaths}>
+        {partition.status !== 'PUBLISHED' && (
+          <Button
+            className="mcs-primary"
+            type="primary"
+            onClick={publishPartition}
+          >
+            <McsIcon type="bolt" /> <FormattedMessage {...messages.publish} />
+          </Button>
+        )}
         <Link
           to={
             partition
@@ -82,18 +91,9 @@ class PartitionActionBar extends React.Component<
           }
         >
           <Button className="mcs-primary">
-            <McsIcon type="plus" /> <FormattedMessage {...messages.edit} />
+            <McsIcon type="pen" /> <FormattedMessage {...messages.edit} />
           </Button>
         </Link>
-        {partition.status !== 'PUBLISHED' && (
-          <Button
-            className="mcs-primary"
-            type="primary"
-            onClick={publishPartition}
-          >
-            <McsIcon type="plus" /> <FormattedMessage {...messages.publish} />
-          </Button>
-        )}
       </Actionbar>
     );
   }
