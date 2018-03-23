@@ -18,7 +18,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.keywordList.form.general.subtitle',
-    defaultMessage: 'This is the subtitle part.',
+    defaultMessage: 'Give your Keyword List a name.',
   },
   sectionTitleGeneral: {
     id: 'edit.keywordList.form.general.title',
@@ -28,7 +28,7 @@ const messages = defineMessages({
     id: 'edit.keywordList.general.infos.label.name',
     defaultMessage: 'Keywords List Name',
   },
-  tootltipKeywordListName: {
+  tooltipKeywordListName: {
     id: 'edit.keywordList.general.infos.tooltip.name',
     defaultMessage: 'Give your keyword list a name so that you can find it back across the different screens!',
   },
@@ -71,7 +71,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             placeholder: formatMessage(messages.labelKeywordListName),
           }}
           helpToolTipProps={{
-            title: formatMessage(messages.labelKeywordListName),
+            title: formatMessage(messages.tooltipKeywordListName),
           }}
         />
       </div>

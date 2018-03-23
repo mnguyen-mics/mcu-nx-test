@@ -35,7 +35,7 @@ const Dragger = Upload.Dragger;
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.placement.list.form.placement.subtitle',
-    defaultMessage: 'This is the subtitle part.',
+    defaultMessage: 'This is the list of all placement added to your placement list. You can target or exclude it directly within an Ad Group.',
   },
   sectionTitleGeneral: {
     id: 'edit.placement.list.form.placement.title',

@@ -14,9 +14,7 @@ import { FormSection } from '../../../../../components/Form';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
-import {
-  KeywordResource,
-} from '../../../../../models/keywordList/keywordList';
+import { KeywordResource } from '../../../../../models/keywordList/keywordList';
 import { KeywordFieldModel } from '../domain';
 import { UploadFile } from 'antd/lib/upload/interface';
 
@@ -24,15 +22,11 @@ const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.keywordList.form.keywords.part.subtitle',
     defaultMessage:
-      'Click on New Keyword button in order to add keyword to your list. Once the list is saved, you will be able to exclude or include all these keywords in your campaign settings.',
+      'This is the list of all keywords added to your keyword list. You can target or exclude it directly within an Ad Group. Click on New Keyword button to add keyword to your list.',
   },
   sectionTitleKeywords: {
     id: 'edit.keywordList.form.keywords.part.title',
     defaultMessage: 'Keywords',
-  },
-  tootltipKeywordListName: {
-    id: 'edit.keywordList.general.infos.tooltip.name',
-    defaultMessage: 'Lorem Ipsum',
   },
   replaceWithCsv: {
     id: 'edit.keywordList.replace.data.with.csv',
@@ -285,21 +279,14 @@ class KeywordsFormSection extends React.Component<Props, State> {
               const isLongExpression =
                 field.model.expression && field.model.expression.length > 20;
               const tagElem = (
-                <Tag
-                  key={cuid()}
-                  closable={true}
-                  afterClose={removeField}
-                >
+                <Tag key={cuid()} closable={true} afterClose={removeField}>
                   {isLongExpression
                     ? `${field.model.expression.slice(0, 20)}...`
                     : field.model.expression}
                 </Tag>
               );
               return isLongExpression ? (
-                <Tooltip
-                  title={cuid()}
-                  key={field.model.expression}
-                >
+                <Tooltip title={cuid()} key={field.model.expression}>
                   {tagElem}
                 </Tooltip>
               ) : (
