@@ -18,7 +18,7 @@ import { ButtonStyleless, McsIcon } from '../../../../../components';
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.placement.list.form.general.subtitle',
-    defaultMessage: 'This is the subtitle part.',
+    defaultMessage: 'Give your Placement List a name.',
   },
   sectionTitleGeneral: {
     id: 'edit.placement.list.form.general.title',
