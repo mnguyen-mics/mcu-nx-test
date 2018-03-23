@@ -17,6 +17,7 @@ import {
 } from '../../../../../components/Form';
 import DefaultSelect from '../../../../../components/Form/FormSelect/DefaultSelect';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { AudiencePartitionFormData } from '../domain';
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
@@ -49,7 +50,12 @@ const messages = defineMessages({
   },
 });
 
-type Props = InjectedIntlProps &
+interface GeneralFormSectionProps {
+  initialValues: AudiencePartitionFormData;
+}
+
+type Props = GeneralFormSectionProps &
+  InjectedIntlProps &
   ValidatorProps &
   NormalizerProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
@@ -63,12 +69,16 @@ class GeneralFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-      fieldValidators: { isRequired },
+      fieldValidators: { isRequired, isValidInteger },
       intl: { formatMessage },
       location: { search },
     } = this.props;
 
     const query = queryString.parse(search);
+
+    const isPublished =
+      this.props.initialValues &&
+      this.props.initialValues.status === 'PUBLISHED';
 
     return (
       <div>
@@ -87,6 +97,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelPartitionName),
+            disabled: isPublished,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipPartitionName),
@@ -114,13 +125,14 @@ class GeneralFormSection extends React.Component<Props, State> {
         <FormInputField
           name="part_count"
           component={FormInput}
-          validate={[isRequired]}
+          validate={[isRequired, isValidInteger]}
           formItemProps={{
             label: formatMessage(messages.labelPartCount),
             required: true,
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelPartCount),
+            disabled: isPublished,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipPartitionName),
@@ -137,6 +149,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             inputProps={{
               placeholder: formatMessage(messages.labelClusteringModel),
+              disabled: isPublished,
             }}
             helpToolTipProps={{
               title: formatMessage(messages.tootltipPartitionName),
@@ -148,6 +161,9 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer, withRouter)(
-  GeneralFormSection,
-);
+export default compose<Props, GeneralFormSectionProps>(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+  withRouter,
+)(GeneralFormSection);

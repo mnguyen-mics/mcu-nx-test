@@ -14,6 +14,9 @@ import {
 } from './domain';
 import { injectDatamart } from '../../../Datamart/index';
 import { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   editPartition: {
@@ -45,8 +48,10 @@ interface AudiencePartitionPageState {
   isLoading: boolean;
 }
 
-type JoinedProps = AudiencePartitionPageProps & InjectedDatamartProps &
+type JoinedProps = AudiencePartitionPageProps &
+  InjectedDatamartProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 
 class AudiencePartitionPage extends React.Component<
@@ -73,6 +78,7 @@ class AudiencePartitionPage extends React.Component<
               part_count: partitionFormdata.part_count,
               clustering_model_data_file_uri:
                 partitionFormdata.clustering_model_data_file_uri,
+              status: partitionFormdata.status,
             },
           });
         });
@@ -91,21 +97,31 @@ class AudiencePartitionPage extends React.Component<
     } = this.props;
     formData.type = 'AUDIENCE_PARTITION';
     if (partitionId) {
-      AudiencePartitionsService.savePartition(partitionId, formData).then(
-        () => {
+      AudiencePartitionsService.savePartition(partitionId, formData)
+        .then(() => {
           this.close();
           message.success(intl.formatMessage(messages.partitionSaved));
-        },
-      );
+        })
+        .catch(error => {
+          this.props.notifyError(error);
+        });
     } else {
       const query = queryString.parse(search);
-      const datamartId = query.datamart ? query.datamart : this.props.datamart.id;
-      AudiencePartitionsService.createPartition(organisationId, datamartId, formData).then(
-        () => {
+      const datamartId = query.datamart
+        ? query.datamart
+        : this.props.datamart.id;
+      AudiencePartitionsService.createPartition(
+        organisationId,
+        datamartId,
+        formData,
+      )
+        .then(() => {
           this.close();
           message.success(intl.formatMessage(messages.partitionSaved));
-        },
-      );
+        })
+        .catch(error => {
+          this.props.notifyError(error);
+        });
     }
   };
 
@@ -159,4 +175,5 @@ export default compose<JoinedProps, AudiencePartitionPageProps>(
   injectIntl,
   withRouter,
   injectDatamart,
+  injectNotifications,
 )(AudiencePartitionPage);

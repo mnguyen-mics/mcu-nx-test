@@ -1,14 +1,18 @@
-import { AudiencePartitionType } from '../../../../models/audiencePartition/AudiencePartitionResource';
+import {
+  AudiencePartitionType,
+  AudiencePartitionStatus,
+} from '../../../../models/audiencePartition/AudiencePartitionResource';
 
 export interface AudiencePartitionFormData {
-    name?: string;
-    audience_partition_type?: AudiencePartitionType;
-    part_count?: number;
-    clustering_model_data_file_uri?: string;
-    type?: string;
-} 
+  name?: string;
+  audience_partition_type?: AudiencePartitionType;
+  part_count?: number;
+  clustering_model_data_file_uri?: string;
+  type?: string;
+  status?: AudiencePartitionStatus;
+}
 
 export const INITIAL_AUDIENCE_PARTITION_FORM_DATA: AudiencePartitionFormData = {
-    name: '',
-    clustering_model_data_file_uri: '',
-}
+  name: '',
+  clustering_model_data_file_uri: '',
+};

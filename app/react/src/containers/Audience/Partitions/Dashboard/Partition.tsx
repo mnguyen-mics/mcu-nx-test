@@ -23,24 +23,24 @@ const { Content } = Layout;
 
 const messages = defineMessages({
   partNumber: {
-    id: 'partNumber',
+    id: 'partition.dashboard.partNumber',
     defaultMessage: 'Partition number',
   },
   users: {
-    id: 'users',
+    id: 'partition.dashboard.users',
     defaultMessage: 'Users',
   },
   percentage: {
-    id: 'percentage',
+    id: 'partition.dashboard.percentage',
     defaultMessage: 'Percentage',
   },
   overview: {
-    id: 'overview',
+    id: 'partition.dashboard.overview',
     defaultMessage: 'Overview',
   },
   partitionPublished: {
-    id: 'partitionPublished',
-    defaultMessage: 'Partition published',
+    id: 'partition.dashboard.partitionPublished',
+    defaultMessage: 'Partition Published',
   },
 });
 

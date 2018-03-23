@@ -53,7 +53,7 @@ class PartitionActionBar extends React.Component<
       match: { params: { organisationId } },
       intl,
       partition,
-      publishPartition
+      publishPartition,
     } = this.props;
 
     const partitionName =
@@ -85,13 +85,15 @@ class PartitionActionBar extends React.Component<
             <McsIcon type="plus" /> <FormattedMessage {...messages.edit} />
           </Button>
         </Link>
-        <Button
-          className="mcs-primary"
-          type="primary"
-          onClick={publishPartition}
-        >
-          <McsIcon type="plus" /> <FormattedMessage {...messages.publish} />
-        </Button>
+        {partition.status !== 'PUBLISHED' && (
+          <Button
+            className="mcs-primary"
+            type="primary"
+            onClick={publishPartition}
+          >
+            <McsIcon type="plus" /> <FormattedMessage {...messages.publish} />
+          </Button>
+        )}
       </Actionbar>
     );
   }

@@ -57,7 +57,9 @@ class AudiencePartitionForm extends React.Component<
     const general = {
       id: 'general',
       title: messages.sectionTitleGeneral,
-      component: <GeneralFormSection />,
+      component: (
+        <GeneralFormSection initialValues={this.props.initialValues} />
+      ),
     };
 
     sections.push(general);
