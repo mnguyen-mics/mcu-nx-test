@@ -11,7 +11,6 @@ import { FormSection } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
-import { QueryLanguage } from '../../../../../models/datamart/DatamartResource';
 import {
   injectDatamart,
   InjectedDatamartProps,
@@ -24,6 +23,8 @@ import SelectorQL from '../../../../../containers/Audience/Segments/Edit/Section
 import SelectorQLReadOnly from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQLReadOnly';
 import { Field } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
+import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
+import { GoalFormData } from '../domain';
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 
@@ -65,17 +66,14 @@ const messages = defineMessages({
 });
 
 interface State {
-  displaySection: boolean;
+  pixelSectionVisible: boolean;
   editQueryMode: boolean;
   queryContainer: any;
   queryContainerCopy: any;
 }
 
-interface TriggerFormSectionProps {
-  queryObject: {
-    queryContainer?: any;
-    queryLanguage?: QueryLanguage;
-  };
+interface TriggerFormSectionProps extends ReduxFormChangeProps {
+  initialValues: Partial<GoalFormData>;
   goalId?: string;
 }
 
@@ -89,22 +87,21 @@ class TriggerFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      displaySection: false,
+      pixelSectionVisible: this.props.initialValues.triggerMode !== 'QUERY',
       editQueryMode: false,
-      queryContainer: this.props.queryObject.queryContainer,
-      queryContainerCopy: this.props.queryObject.queryContainer.copy(),
+      queryContainer: this.props.initialValues.queryContainer,
+      queryContainerCopy: this.props.initialValues.queryContainer.copy(),
     };
   }
 
   renderPropertiesField = () => {
     const {
       datamart,
-      queryObject: { queryLanguage },
       match: { params: { organisationId } },
       intl,
     } = this.props;
 
-    return queryLanguage === 'OTQL' ? (
+    return this.props.initialValues.queryLanguage === 'OTQL' ? (
       <FormOTQL
         name={'query.query_text'}
         component={OTQLInputEditor}
@@ -127,9 +124,9 @@ class TriggerFormSection extends React.Component<Props, State> {
   };
 
   renderPropertiesFieldReadOnly = () => {
-    const { queryObject: { queryContainer, queryLanguage }, intl } = this.props;
+    const { intl } = this.props;
 
-    return queryLanguage === 'OTQL' ? (
+    return this.props.initialValues.queryLanguage === 'OTQL' ? (
       <FormOTQL
         name={'query.query_text'}
         component={OTQLInputEditor}
@@ -143,14 +140,18 @@ class TriggerFormSection extends React.Component<Props, State> {
         }}
       />
     ) : (
-      <SelectorQLReadOnly queryContainer={queryContainer} />
+      <SelectorQLReadOnly
+        queryContainer={this.props.initialValues.queryContainer}
+      />
     );
   };
 
   toggleSections = () => {
     this.setState({
-      displaySection: !this.state.displaySection,
+      pixelSectionVisible: !this.state.pixelSectionVisible,
     });
+    const newTriggerMode = this.state.pixelSectionVisible ? 'QUERY' : 'PIXEL';
+    this.props.formChange('triggerMode', newTriggerMode);
   };
 
   switchEditMode = () => {
@@ -211,7 +212,7 @@ class TriggerFormSection extends React.Component<Props, State> {
         <Row>
           <Col span={4}>
             <Checkbox
-              checked={!this.state.displaySection}
+              checked={!this.state.pixelSectionVisible}
               onChange={isGoalId ? this.toggleSections : undefined}
             >
               {formatMessage(messages.formCheckBoxText1)}
@@ -220,7 +221,7 @@ class TriggerFormSection extends React.Component<Props, State> {
               <div>
                 <br />
                 <Checkbox
-                  checked={this.state.displaySection}
+                  checked={this.state.pixelSectionVisible}
                   onChange={this.toggleSections}
                 >
                   {formatMessage(messages.formCheckBoxText2)}
@@ -229,14 +230,14 @@ class TriggerFormSection extends React.Component<Props, State> {
             )}
           </Col>
           <Col span={20}>
-            {!this.state.displaySection
+            {!this.state.pixelSectionVisible
               ? this.state.editQueryMode
                 ? this.renderPropertiesField()
                 : this.renderPropertiesFieldReadOnly()
               : this.displayPixelSection()}
             <br />
             <div style={{ float: 'right' }}>
-              {!this.state.displaySection ? (
+              {!this.state.pixelSectionVisible ? (
                 this.state.editQueryMode ? (
                   <div>
                     <Button

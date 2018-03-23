@@ -1,4 +1,4 @@
-import { NewGoalFormData } from './../../Goal/Edit/domain';
+import { GoalFormData } from './../../Goal/Edit/domain';
 import { DisplayCampaignResource } from '../../../../models/campaign/display';
 import {
   GoalSelectionCreateRequest,
@@ -16,7 +16,7 @@ export interface EditDisplayCampaignRouteMatchParam {
 }
 
 export type GoalModelShape =
-  | NewGoalFormData
+  | GoalFormData
   | GoalSelectionCreateRequest
   | GoalSelectionResource;
 
@@ -46,8 +46,8 @@ export const INITIAL_DISPLAY_CAMPAIGN_FORM_DATA: DisplayCampaignFormData = {
 ///////////////////////////
 // PREDEFINED TYPE GUARD //
 ///////////////////////////
-export function isGoalFormData(model: GoalModelShape): model is NewGoalFormData {
-  return (model as NewGoalFormData).goal !== undefined;
+export function isGoalFormData(model: GoalModelShape): model is GoalFormData {
+  return (model as GoalFormData).goal !== undefined;
 }
 
 export function isGoalSelectionResource(

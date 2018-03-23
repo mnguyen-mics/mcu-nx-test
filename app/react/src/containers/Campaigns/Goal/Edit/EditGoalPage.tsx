@@ -6,7 +6,7 @@ import { message } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../state/Features/selectors';
-import { NewGoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
+import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
 import GoalForm from './GoalForm';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
@@ -44,7 +44,7 @@ const messages = defineMessages({
 });
 
 interface State {
-  goalFormData: NewGoalFormData;
+  goalFormData: GoalFormData;
   loading: boolean;
 }
 
@@ -103,7 +103,7 @@ class EditGoalPage extends React.Component<Props, State> {
     message.error(intl.formatMessage(messages.errorFormMessage));
   };
 
-  save = (goalFormData: NewGoalFormData) => {
+  save = (goalFormData: GoalFormData) => {
     const {
       match: { params: { organisationId } },
       notifyError,

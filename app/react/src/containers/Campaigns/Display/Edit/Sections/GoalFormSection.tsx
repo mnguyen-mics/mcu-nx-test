@@ -29,7 +29,7 @@ import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import {
   isGoalResource,
   INITIAL_GOAL_FORM_DATA,
-  NewGoalFormData,
+  GoalFormData,
 } from '../../../Goal/Edit/domain';
 import GoalForm, { GoalFormProps } from '../../../Goal/Edit/GoalForm';
 import GoalFormLoader, {
@@ -108,7 +108,7 @@ class GoalFormSection extends React.Component<Props> {
     formChange((fields as any).name, keptFields.concat(newFields));
   };
 
-  updateGoals = (goalFormData: NewGoalFormData, fieldKey?: string) => {
+  updateGoals = (goalFormData: GoalFormData, fieldKey?: string) => {
     const { fields, formChange } = this.props;
 
     const newFields: GoalFieldModel[] = [];
@@ -154,7 +154,7 @@ class GoalFormSection extends React.Component<Props> {
       },
     ];
 
-    const handleOnSubmit = (formData: NewGoalFormData) => {
+    const handleOnSubmit = (formData: GoalFormData) => {
       this.updateGoals(formData, field && field.key);
       this.props.closeNextDrawer();
     };
@@ -183,6 +183,9 @@ class GoalFormSection extends React.Component<Props> {
       };
     } else if (isGoalFormData(field.model)) {
       props.initialValues = field.model;
+      if (isGoalResource(field.model.goal)) {
+        props.goalId = field.model.goal.id;
+      }
     } else {
       // TODO fix this ugly cast
       FormComponent = GoalFormLoader;

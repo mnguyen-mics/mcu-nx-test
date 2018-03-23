@@ -1,5 +1,4 @@
 import { INITIAL_GOAL_FORM_DATA, isExistingGoal } from './../../Goal/Edit/domain';
-// import { NewGoalFormData } from './../../Goal/Edit/domain';
 import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
 import { extractDataList, extractData } from '../../../../services/ApiService';

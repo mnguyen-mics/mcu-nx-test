@@ -14,12 +14,7 @@ export interface LookbackWindow {
   postClick: number;
 }
 
-export interface GoalFormData {
-  goal: GoalResourceShape;
-  lookbackWindow?: LookbackWindow;
-}
-
-export const INITIAL_GOAL_FORM_DATA: NewGoalFormData = {
+export const INITIAL_GOAL_FORM_DATA: GoalFormData = {
   goal: {},
   attributionModels: [],
   triggerMode: 'QUERY'
@@ -34,7 +29,7 @@ export function isGoalResource(goal: GoalResourceShape): goal is GoalResource {
 
 export type TriggerMode = 'QUERY' | 'PIXEL';
 
-export interface NewGoalFormData {
+export interface GoalFormData {
   goal: GoalResourceShape;
   attributionModels: AttributionModelListFieldModel[];
   queryContainer?: any;

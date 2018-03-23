@@ -19,7 +19,7 @@ import {
   TriggerFormSection,
   AttributionModelFormSection,
 } from './Sections';
-import { NewGoalFormData } from './domain';
+import { GoalFormData } from './domain';
 import messages from './messages';
 import { Path } from '../../../../components/ActionBar';
 import { Omit } from '../../../../utils/Types';
@@ -40,14 +40,13 @@ const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
   ReduxFormChangeProps
 >;
 
-export interface GoalFormProps
-  extends Omit<ConfigProps<NewGoalFormData>, 'form'> {
+export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
   goalId?: string;
 }
 
-type Props = InjectedFormProps<NewGoalFormData, GoalFormProps> &
+type Props = InjectedFormProps<GoalFormData, GoalFormProps> &
   GoalFormProps &
   InjectedIntlProps;
 
@@ -58,15 +57,9 @@ class GoalForm extends React.Component<Props> {
     const {
       breadCrumbPaths,
       handleSubmit,
-      close,
+      close, 
       goalId,
-      initialValues: { queryContainer, queryLanguage },
     } = this.props;
-
-    const queryObject = {
-      queryContainer: queryContainer,
-      queryLanguage: queryLanguage,
-    };
 
     const sections = {
       general: {
@@ -123,17 +116,14 @@ class GoalForm extends React.Component<Props> {
                   formChange={this.props.change}
                 />
               </div>
-              {queryObject && (
-                <div>
-                  <hr />
-                  <div id={sections.trigger.sectionId}>
-                    <TriggerFormSection
-                      goalId={goalId}
-                      queryObject={queryObject}
-                    />
-                  </div>
-                </div>
-              )}
+              <hr />
+              <div id={sections.trigger.sectionId}>
+                <TriggerFormSection
+                  goalId={goalId}
+                  initialValues={this.props.initialValues}
+                  formChange={this.props.change}
+                />
+              </div>
               <hr />
               <div id={sections.attribution_models.sectionId}>
                 <AttributionModelFieldArray

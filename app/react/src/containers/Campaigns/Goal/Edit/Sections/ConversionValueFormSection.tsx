@@ -74,22 +74,14 @@ type Props = ConversionValueFormSectionProps &
   RouteComponentProps<{ goalId: string }>;
 
 class ConversionValueFormSection extends React.Component<Props, State> {
-  // isDefaultGoalValue = (this.props.initialValues &&
-  //   this.props.initialValues.goal &&
-  //   this.props.initialValues.goal.default_goal_value);
+  isDefaultGoalValue = this.props.initialValues &&
+    this.props.initialValues.goal &&
+    this.props.initialValues.goal.default_goal_value &&
+    this.props.initialValues.goal.default_goal_value !== 0;
 
   constructor(props: Props) {
     super(props);
-    this.state = { displayConversionValueSection: false };
-  }
-
-  componentDidMount() {
-    const { match: { params: { goalId } } } = this.props;
-    if (goalId || this.props.goalId) {
-      this.setState({
-        displayConversionValueSection: true,
-      });
-    }
+    this.state = { displayConversionValueSection: !!this.isDefaultGoalValue };
   }
 
   toggleConversionValueSection = () => {

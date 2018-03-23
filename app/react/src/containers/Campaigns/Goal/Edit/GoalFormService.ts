@@ -5,7 +5,7 @@ import {
 } from './../../../../utils/FormHelper';
 import {
   isGoalResource,
-  NewGoalFormData,
+  GoalFormData,
   AttributionModelListFieldModel,
   INITIAL_GOAL_FORM_DATA,
   isAttributionSelectionResource,
@@ -17,12 +17,12 @@ import AttributionModelFormService from '../../../Settings/CampaignSettings/Attr
 import queryService from '../../../../services/QueryService';
 
 const GoalFormService = {
-  loadGoalData(goalId: string, datamartId: string): Promise<NewGoalFormData> {
+  loadGoalData(goalId: string, datamartId: string): Promise<GoalFormData> {
     return Promise.all([
       GoalService.getGoal(goalId),
       GoalService.getAttributionModels(goalId),
     ]).then(([goalRes, attribModelRes]) => {
-      const goalFormData: NewGoalFormData = {
+      const goalFormData: GoalFormData = {
         goal: goalRes.data,
         triggerMode: 'QUERY',
         attributionModels: attribModelRes.data.map(attributionModel =>
@@ -62,8 +62,8 @@ const GoalFormService = {
 
   saveGoal(
     organisationId: string,
-    goalFormData: NewGoalFormData,
-    initialGoalFormData: NewGoalFormData = INITIAL_GOAL_FORM_DATA,
+    goalFormData: GoalFormData,
+    initialGoalFormData: GoalFormData = INITIAL_GOAL_FORM_DATA,
   ): Promise<GoalResource> {
     let createOrUpdateGoalPromise;
 

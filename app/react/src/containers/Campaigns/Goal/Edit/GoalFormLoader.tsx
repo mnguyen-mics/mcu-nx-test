@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import GoalForm, { GoalFormProps } from './GoalForm';
-import { INITIAL_GOAL_FORM_DATA, NewGoalFormData } from './domain';
+import { INITIAL_GOAL_FORM_DATA, GoalFormData } from './domain';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -15,7 +15,7 @@ export interface GoalFormLoaderProps extends GoalFormProps {
 }
 
 interface State {
-  goalFormData: NewGoalFormData;
+  goalFormData: GoalFormData;
   loading: boolean;
 }
 
