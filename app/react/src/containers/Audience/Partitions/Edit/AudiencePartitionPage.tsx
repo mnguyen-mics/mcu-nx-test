@@ -93,13 +93,14 @@ class AudiencePartitionPage extends React.Component<
     const {
       match: { params: { partitionId, organisationId } },
       location: { search },
+      history,
       intl,
     } = this.props;
     formData.type = 'AUDIENCE_PARTITION';
     if (partitionId) {
       AudiencePartitionsService.savePartition(partitionId, formData)
         .then(() => {
-          this.close();
+          this.redirect();
           message.success(intl.formatMessage(messages.partitionSaved));
         })
         .catch(error => {
@@ -115,8 +116,11 @@ class AudiencePartitionPage extends React.Component<
         datamartId,
         formData,
       )
-        .then(() => {
-          this.close();
+        .then(newAudiencePartition => {
+          const url = `/v2/o/${organisationId}/audience/partition/${
+            newAudiencePartition.data.id
+          }/dashboard`;
+          history.push(url);
           message.success(intl.formatMessage(messages.partitionSaved));
         })
         .catch(error => {
@@ -125,12 +129,19 @@ class AudiencePartitionPage extends React.Component<
     }
   };
 
-  close = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+  redirect = () => {
+    const {
+      history,
+      location,
+      match: { params: { organisationId, partitionId } },
+    } = this.props;
+    const url = partitionId
+      ? `/v2/o/${organisationId}/audience/partition/${partitionId}/dashboard`
+      : `/v2/o/${organisationId}/audience/partitions`;
 
-    const url = `/v2/o/${organisationId}/audience/partitions`;
-
-    return history.push(url);
+    return location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(url);
   };
 
   render() {
@@ -163,7 +174,7 @@ class AudiencePartitionPage extends React.Component<
         <AudiencePartitionForm
           initialValues={this.state.partitionFormData}
           onSubmit={this.save}
-          close={this.close}
+          close={this.redirect}
           breadCrumbPaths={breadcrumbPaths}
         />
       );
