@@ -276,10 +276,11 @@ class AudiencePartitionsTable extends Component {
             translationKey: 'EDIT',
             callback: this.editPartition,
           },
-          {
-            translationKey: 'ARCHIVE',
-            callback: this.archivePartition,
-          },
+          // Waiting backend part
+          // {
+          //   translationKey: 'ARCHIVE',
+          //   callback: this.archivePartition,
+          // },
         ],
       },
     ];
