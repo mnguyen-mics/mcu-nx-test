@@ -77,7 +77,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   fetchDataFileData = (uri: string) => {
     const { input } = this.props;
 
-    DataFileService.getDatafileData(uri).then((res: any) => {
+    DataFileService.getDatafileData(uri).then(res => {
       this.onFileUpdate(res).then((fileContent: string) => {
         const fileName = this.parseFileName(uri);
         const basePath = this.parseFileName(uri, true);

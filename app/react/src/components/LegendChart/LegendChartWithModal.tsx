@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Modal, Row, Col, Radio } from 'antd';
 import McsIcon from '../McsIcon';
+import { RadioChangeEvent } from 'antd/lib/radio';
 
 interface Legend {
   key: string;
@@ -51,21 +52,21 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
         key2: options[1].key,
       });
 
-      const onChangeValueLeft = (e: React.FormEvent<HTMLInputElement>) => {
+      const onChangeValueLeft = (e: RadioChangeEvent) => {
         this.setState(
           (oldState: LegendChartWithModalState) => {
             return {
               ...oldState,
-              key1: e.currentTarget.value,
+              key1: e.target.value,
             };
           });
       };
-      const onChangeValueRight = (e: React.FormEvent<HTMLInputElement>) => {
+      const onChangeValueRight = (e: RadioChangeEvent) => {
         this.setState(
       (oldState: LegendChartWithModalState) => {
           return {
             ...oldState,
-            key2: e.currentTarget.value,
+            key2: e.target.value,
           };
         });
       };

@@ -101,7 +101,7 @@ class ExportContent extends React.Component<
   onClickEdit = (keyword: Export) => {
     const { history, match: { params: { organisationId } } } = this.props;
 
-    history.push(`/${organisationId}/library/exports/${keyword.id}/edit`);
+    history.push(`/${organisationId}/datastudio/exports/${keyword.id}/edit`);
   };
 
   render() {
@@ -130,7 +130,7 @@ class ExportContent extends React.Component<
           render: (text: string, record: Export) => (
             <Link
               className="mcs-campaigns-link"
-              to={`/v2/o/${organisationId}/library/exports/${record.id}`}
+              to={`/v2/o/${organisationId}/datastudio/exports/${record.id}`}
             >{text}
             </Link>
           ),

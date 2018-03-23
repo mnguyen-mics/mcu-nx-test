@@ -13,38 +13,33 @@ interface RouterProps {
   organisationId: string;
 }
 
-class KeywordActionbar extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps> {
-
+class KeywordActionbar extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps
+> {
   render() {
-
     const {
-    match: {
-      params: {
-        organisationId,
-      },
-    },
-    intl: {
-      formatMessage,
-    },
-  } = this.props;
+      match: { params: { organisationId } },
+      intl: { formatMessage },
+    } = this.props;
 
-    const breadcrumbPaths = [{ name: formatMessage(messages.keywords), url: `/v2/o/${organisationId}/library/keywordslists` }];
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.keywords),
+        url: `/v2/o/${organisationId}/library/keywordslists`,
+      },
+    ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/${organisationId}/library/keywordslists/new`}>
+        <Link to={`/v2/o/${organisationId}/library/keywordslist`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage {...messages.newKeyword} />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage {...messages.newKeyword} />
           </Button>
         </Link>
       </Actionbar>
     );
-
   }
-
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-)(KeywordActionbar);
+export default compose(injectIntl, withRouter)(KeywordActionbar);

@@ -38,7 +38,6 @@ export const INITIAL_DISPLAY_CAMPAIGN_FORM_DATA: DisplayCampaignFormData = {
     max_budget_period: 'DAY',
     editor_version_id: '11',
     time_zone: 'Europe/Paris',
-    type: 'DISPLAY',
   },
   goalFields: [],
   adGroupFields: [],

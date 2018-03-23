@@ -1,5 +1,5 @@
 import { call, put, fork, takeEvery } from 'redux-saga/effects';
-import SettingsService from '../../services/SettingsService';
+import SettingsService from '../../services/SettingsService.ts';
 import { addNotification } from '../Notifications/actions';
 import { getConnectedUser } from '../Session/actions';
 

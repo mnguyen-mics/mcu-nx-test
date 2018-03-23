@@ -3,7 +3,7 @@ import {
   FILTERS_SEARCH_SETTINGS,
   DATE_SEARCH_SETTINGS,
   LABELS_SEARCH_SETTINGS
-} from '../../../../utils/LocationSearchHelper';
+} from '../../../../utils/LocationSearchHelper.ts';
 
 export const DISPLAY_SEARCH_SETTINGS = [
   ...PAGINATION_SEARCH_SETTINGS,

@@ -270,12 +270,10 @@ class DisplayCampaignsPage extends React.Component<
 
     const campaignBody = {
       ...body,
-      type: 'DISPLAY',
     };
 
     const campaignUndoBody = {
       ...undoBody,
-      type: 'DISPLAY',
     };
 
     return DisplayCampaignService.updateCampaign(campaignId, campaignBody)

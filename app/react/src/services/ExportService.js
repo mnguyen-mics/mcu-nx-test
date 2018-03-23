@@ -1,6 +1,6 @@
 import XLSX from 'xlsx';
 import displayCampaignMessages from '../containers/Campaigns/Display/messages';
-import emailCampaignMessages from '../containers/Campaigns/Email/messages';
+import emailCampaignMessages from '../containers/Campaigns/Email/messages.ts';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages';
 import dateMessages from '../common/messages/dateMessages';
 import exportMessages from '../common/messages/exportMessages';

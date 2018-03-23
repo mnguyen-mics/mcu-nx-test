@@ -14,7 +14,7 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../../utils/LocationSearchHelper';
+} from '../../../../utils/LocationSearchHelper.ts';
 import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper.ts';
 import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';

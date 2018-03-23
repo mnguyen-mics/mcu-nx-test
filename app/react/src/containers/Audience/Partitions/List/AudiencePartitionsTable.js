@@ -15,7 +15,7 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../../utils/LocationSearchHelper';
+} from '../../../../utils/LocationSearchHelper.ts';
 
 import { getTableDataSource } from '../../../../state/Audience/Partitions/selectors';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';

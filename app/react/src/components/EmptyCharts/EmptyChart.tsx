@@ -4,7 +4,7 @@ import { Row, Col } from 'antd';
 import McsIcon, { McsIconType } from '../McsIcon';
 
 interface EmptyChartsProps {
-  title: string;
+  title: React.ReactNode;
   icon?: McsIconType;
 }
 

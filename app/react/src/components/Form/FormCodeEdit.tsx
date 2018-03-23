@@ -5,6 +5,7 @@ import AceEditor from 'react-ace';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { AceEditorProps } from 'react-ace/types'
+import 'brace/ext/searchbox'
 import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';

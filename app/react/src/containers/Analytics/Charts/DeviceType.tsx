@@ -1,17 +1,26 @@
 import * as React from 'react';
 import PieChart from '../../../components/PieChart';
-import {compose} from 'recompose';
+import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../Overview/messages';
-import {connect} from 'react-redux';
 import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../Helpers/injectThemeColors';
 
 interface DeviceTypeProps {
   hasFetchedVisitReport: boolean;
   isFetchingVisitReport: boolean;
   report: any[];
-  colors: { [s: string]: string };
 }
+
+type Color =
+  | 'mcs-error'
+  | 'mcs-warning'
+  | 'mcs-success'
+  | 'mcs-info'
+  | 'mcs-primary'
+  | 'mcs-highlight';
 
 interface PieChartDatum {
   key: string;
@@ -19,17 +28,18 @@ interface PieChartDatum {
   color: string;
 }
 
-type DatasetObject = {[s: string]: PieChartDatum};
+type DatasetObject = { [s: string]: PieChartDatum };
 
-class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
-
+class DeviceType extends React.Component<
+  DeviceTypeProps & InjectedIntlProps & InjectedThemeColorsProps
+> {
   colorNames = [
-   'mcs-error',
-   'mcs-warning',
-   'mcs-success',
-   'mcs-info',
-   'mcs-primary',
-   'mcs-highlight',
+    'mcs-error',
+    'mcs-warning',
+    'mcs-success',
+    'mcs-info',
+    'mcs-primary',
+    'mcs-highlight',
   ];
 
   buildDataset(datasetObject: DatasetObject): PieChartDatum[] {
@@ -43,7 +53,7 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
   buildDatasetObject(rows: any[], key: string): DatasetObject {
     const { colors } = this.props;
     let colorIndex = 0;
-    const colorsArray = this.colorNames.map((name: string) => colors[name]);
+    const colorsArray = this.colorNames.map((name: Color) => colors[name]);
     return rows.reduce((datasetObject: DatasetObject, row: any) => {
       if (!datasetObject[row[key]]) {
         datasetObject[row[key]] = {
@@ -59,13 +69,13 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
   }
 
   generateRatio(a: number, b: number) {
-    const ratio = (a / b) * 100;
+    const ratio = a / b * 100;
     return `${ratio.toFixed(2)}%`;
   }
 
   generateOptions(isHalf: boolean) {
     const { intl: { formatMessage }, colors } = this.props;
-    const colorFormated = colors['mcs-warn'];
+    const colorFormated = colors['mcs-warning'];
     const gray = colors['mcs-normal'];
 
     const options = {
@@ -89,11 +99,15 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
       return accu + elem.count;
     }, 0);
 
-    return {a: unique, b: count};
+    return { a: unique, b: count };
   }
 
   render() {
-    const {report, hasFetchedVisitReport, intl: {formatMessage}} = this.props;
+    const {
+      report,
+      hasFetchedVisitReport,
+      intl: { formatMessage },
+    } = this.props;
     let chartComponent;
 
     if (hasFetchedVisitReport) {
@@ -101,9 +115,9 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
       const dataset = this.buildDataset(datasetObject);
       const pieChartsOptions = this.generateOptions(false);
       chartComponent =
-        (dataset && dataset.length === 0 || !hasFetchedVisitReport) ?
-          <EmptyCharts title={formatMessage(messages.no_visit_stat)} /> :
-          (
+        (dataset && dataset.length === 0) || !hasFetchedVisitReport ? (
+          <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
+        ) : (
           <PieChart
             identifier="DeviceType"
             dataset={dataset}
@@ -116,11 +130,6 @@ class DeviceType extends React.Component<DeviceTypeProps & InjectedIntlProps> {
     return chartComponent;
   }
 }
-export default compose<DeviceTypeProps, any>(
-  injectIntl,
-  connect(
-    (state: any) => ({
-      colors: state.theme.colors,
-    }),
-  ),
-)(DeviceType);
+export default compose<DeviceTypeProps, any>(injectIntl, injectThemeColors)(
+  DeviceType,
+);

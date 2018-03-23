@@ -8,18 +8,20 @@ import messages from '../Overview/messages';
 import StackedAreaPlotDoubleAxis from '../../../components/StackedAreaPlot/StackedAreaPlotDoubleAxis';
 import Col from 'antd/lib/grid/col';
 import Row from 'antd/lib/grid/row';
-import {compose} from 'recompose';
-import {injectIntl, InjectedIntlProps} from 'react-intl';
+import { compose } from 'recompose';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import MessageDescriptor = ReactIntl.FormattedMessage.MessageDescriptor;
 import McsMoment from '../../../utils/McsMoment';
-import {updateSearch} from '../../../utils/LocationSearchHelper';
-import {withRouter} from 'react-router-dom';
-import {ANALYTICS_DASHBOARD_SEARCH_SETTINGS} from '../constants';
-import {McsDateRangeValue} from '../../../components/McsDateRangePicker';
-import {RouteComponentProps} from 'react-router';
-import {connect} from 'react-redux';
+import { updateSearch } from '../../../utils/LocationSearchHelper';
+import { withRouter } from 'react-router-dom';
+import { ANALYTICS_DASHBOARD_SEARCH_SETTINGS } from '../constants';
+import { McsDateRangeValue } from '../../../components/McsDateRangePicker';
+import { RouteComponentProps } from 'react-router';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../Helpers/injectThemeColors';
 
-const _messages: {[s: string]: MessageDescriptor} = messages;
+const _messages: { [s: string]: MessageDescriptor } = messages;
 
 interface VisitAnalysisProps {
   hasFetchedVisitReport: boolean;
@@ -28,7 +30,10 @@ interface VisitAnalysisProps {
   reportSignificantDuration: any[];
   colors: { [s: string]: string };
 }
-type JoinedProps = VisitAnalysisProps & InjectedIntlProps & RouteComponentProps<any>;
+type JoinedProps = VisitAnalysisProps &
+  InjectedIntlProps &
+  RouteComponentProps<any> &
+  InjectedThemeColorsProps;
 
 interface VisitAnalysisState {
   key1: string;
@@ -36,7 +41,6 @@ interface VisitAnalysisState {
 }
 
 class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
-
   constructor(props: any) {
     super(props);
 
@@ -60,7 +64,13 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
 
   createLegend() {
     const { intl: { formatMessage } } = this.props;
-    const keys = ['max_duration', 'min_duration', 'unique_user', 'count', 'unique_visitor'];
+    const keys = [
+      'max_duration',
+      'min_duration',
+      'unique_user',
+      'count',
+      'unique_visitor',
+    ];
     return keys.map(key => {
       return {
         key: key,
@@ -71,32 +81,52 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
 
   extractUsers(report: any[]) {
     // total number of users
-    return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
+    return report.reduce((accu: number, row: any) => {
+      return accu + row.count;
+    }, 0);
   }
 
   extractBounceRate(report: any[], reportSignificantDuration: any[]) {
     // Sessions of duration > 30secs / total number of sessions
-    const usersCount = report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
-    const sessionCount = reportSignificantDuration.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
-    return usersCount ? (1 - sessionCount / usersCount) : 0;
+    const usersCount = report.reduce((accu: number, row: any) => {
+      return accu + row.count;
+    }, 0);
+    const sessionCount = reportSignificantDuration.reduce(
+      (accu: number, row: any) => {
+        return accu + row.count;
+      },
+      0,
+    );
+    return usersCount ? 1 - sessionCount / usersCount : 0;
   }
 
   extractSessionDuration(report: any[]) {
-    const sumDurations = report.reduce((accu: number, row: any) => { return accu + row.avg_duration; }, 0);
+    const sumDurations = report.reduce((accu: number, row: any) => {
+      return accu + row.avg_duration;
+    }, 0);
     return report.length ? sumDurations / report.length : 0;
   }
 
   extractSessions(report: any[]) {
     // total number of sessions > 30 secs
-    return report.reduce((accu: number, row: any) => { return accu + row.count; }, 0);
+    return report.reduce((accu: number, row: any) => {
+      return accu + row.count;
+    }, 0);
   }
 
   updateLocationSearch(params: McsDateRangeValue) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, ANALYTICS_DASHBOARD_SEARCH_SETTINGS),
+      search: updateSearch(
+        currentSearch,
+        params,
+        ANALYTICS_DASHBOARD_SEARCH_SETTINGS,
+      ),
     };
 
     history.push(nextLocation);
@@ -104,9 +134,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
 
   render() {
     const {
-      intl: {
-        formatMessage,
-      },
+      intl: { formatMessage },
       report,
       hasFetchedVisitReport,
       reportSignificantDuration,
@@ -114,21 +142,37 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     } = this.props;
     const { key1, key2 } = this.state;
 
-    const metrics = [{
-      name: formatMessage(messages.users),
-      value: hasFetchedVisitReport ? formatMetric(this.extractUsers(report), '0') : undefined,
-    }, {
-      name: formatMessage(messages.sessions),
-      value: hasFetchedVisitReport ? formatMetric(this.extractSessions(reportSignificantDuration), '0') : undefined,
-    }, {
-      name: formatMessage(messages.bounce_rate),
-      value: hasFetchedVisitReport ?
-             formatMetric(this.extractBounceRate(report, reportSignificantDuration), '0.0', '', '%') :
-             undefined,
-    }, {
-      name: formatMessage(messages.session_duration),
-      value: hasFetchedVisitReport ? formatMetric(this.extractSessionDuration(report), '0.0', '', 's') : undefined,
-    }];
+    const metrics = [
+      {
+        name: formatMessage(messages.users),
+        value: hasFetchedVisitReport
+          ? formatMetric(this.extractUsers(report), '0')
+          : undefined,
+      },
+      {
+        name: formatMessage(messages.sessions),
+        value: hasFetchedVisitReport
+          ? formatMetric(this.extractSessions(reportSignificantDuration), '0')
+          : undefined,
+      },
+      {
+        name: formatMessage(messages.bounce_rate),
+        value: hasFetchedVisitReport
+          ? formatMetric(
+              this.extractBounceRate(report, reportSignificantDuration),
+              '0.0',
+              '',
+              '%',
+            )
+          : undefined,
+      },
+      {
+        name: formatMessage(messages.session_duration),
+        value: hasFetchedVisitReport
+          ? formatMetric(this.extractSessionDuration(report), '0.0', '', 's')
+          : undefined,
+      },
+    ];
 
     const optionsForChart = {
       xKey: 'day',
@@ -160,41 +204,47 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
     ];
     const legends = this.createLegend();
 
-    const onLegendChange = (a: string, b: string) => this.setState((previousState: VisitAnalysisState) => {
-      return {
-        ...previousState,
-        key1: a,
-        key2: b,
-      };
-    });
+    const onLegendChange = (a: string, b: string) =>
+      this.setState((previousState: VisitAnalysisState) => {
+        return {
+          ...previousState,
+          key1: a,
+          key2: b,
+        };
+      });
     return (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {report && report.length === 0 && (hasFetchedVisitReport)
-              ? <div />
-              : <LegendChartWithModal
+            {report && report.length === 0 && hasFetchedVisitReport ? (
+              <div />
+            ) : (
+              <LegendChartWithModal
                 identifier="chartLegend"
                 options={legendOptions}
                 legends={legends}
                 onLegendChange={onLegendChange}
-              />}
+              />
+            )}
           </Col>
         </Row>
         <Row>
           <Col span={5}>
-          <MetricsColumn
-            metrics={metrics}
-            isLoading={(report && report.length === 0) ||
-                         reportSignificantDuration === undefined ||
-                         !hasFetchedVisitReport }
-          />
+            <MetricsColumn
+              metrics={metrics}
+              isLoading={
+                (report && report.length === 0) ||
+                reportSignificantDuration === undefined ||
+                !hasFetchedVisitReport
+              }
+            />
           </Col>
           <Col span={19}>
-            {report && report.length === 0 ||
-              !hasFetchedVisitReport
-              ? <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
-              : this.renderStackedAreaChart(report, optionsForChart)}
+            {(report && report.length === 0) || !hasFetchedVisitReport ? (
+              <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
+            ) : (
+              this.renderStackedAreaChart(report, optionsForChart)
+            )}
           </Col>
         </Row>
       </div>
@@ -204,9 +254,5 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
 export default compose<JoinedProps, any>(
   withRouter,
   injectIntl,
-  connect(
-    (state: any) => ({
-      colors: state.theme.colors,
-    }),
-  ),
+  injectThemeColors,
 )(VisitAnalysis);
