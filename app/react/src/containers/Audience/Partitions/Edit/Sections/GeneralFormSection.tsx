@@ -22,7 +22,7 @@ import { AudiencePartitionFormData } from '../domain';
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.partition.form.general.subtitle',
-    defaultMessage: 'This is the subtitle part.',
+    defaultMessage: 'Configure your partition, give it a name and select your model.',
   },
   sectionTitleGeneral: {
     id: 'edit.partition.form.general.title',
@@ -46,7 +46,19 @@ const messages = defineMessages({
   },
   tootltipPartitionName: {
     id: 'edit.partition.general.infos.tooltip.name',
-    defaultMessage: 'Lorem Ipsum',
+    defaultMessage: 'The partition\'s name will help you identify it on the different screens.',
+  },
+  tootltipPartitionType: {
+    id: 'edit.partition.general.infos.tooltip.type',
+    defaultMessage: 'The random type will assign randomly at the userpoint creation a userpoint to a partition. The clustering mode let\'s you define the clustering model.',
+  },
+  tootltipPartitionPartCount: {
+    id: 'edit.partition.general.infos.tooltip.partCount',
+    defaultMessage: 'The number of partition part you wish to create.',
+  },
+  tootltipPartitionClusteringModel: {
+    id: 'edit.partition.general.infos.tooltip.clustering.model',
+    defaultMessage: 'A link to your model.',
   },
 });
 
@@ -112,7 +124,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           helpToolTipProps={{
-            title: formatMessage(messages.tootltipPartitionName),
+            title: formatMessage(messages.tootltipPartitionType),
           }}
           options={[
             {
@@ -135,7 +147,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             disabled: isPublished,
           }}
           helpToolTipProps={{
-            title: formatMessage(messages.tootltipPartitionName),
+            title: formatMessage(messages.tootltipPartitionPartCount),
           }}
         />
         {query.type === 'CLUSTERING' && (
@@ -152,7 +164,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               disabled: isPublished,
             }}
             helpToolTipProps={{
-              title: formatMessage(messages.tootltipPartitionName),
+              title: formatMessage(messages.tootltipPartitionClusteringModel),
             }}
           />
         )}

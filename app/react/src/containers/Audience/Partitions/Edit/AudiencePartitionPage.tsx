@@ -61,7 +61,7 @@ class AudiencePartitionPage extends React.Component<
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
-      isLoading: false,
+      isLoading: true,
     };
   }
 
@@ -80,11 +80,13 @@ class AudiencePartitionPage extends React.Component<
                 partitionFormdata.clustering_model_data_file_uri,
               status: partitionFormdata.status,
             },
+            isLoading: false,
           });
         });
     } else {
       this.setState({
         partitionFormData: INITIAL_AUDIENCE_PARTITION_FORM_DATA,
+        isLoading: false,
       });
     }
   }
@@ -94,6 +96,7 @@ class AudiencePartitionPage extends React.Component<
       match: { params: { partitionId, organisationId } },
       location: { search },
       history,
+      location,
       intl,
     } = this.props;
     formData.type = 'AUDIENCE_PARTITION';
@@ -120,7 +123,12 @@ class AudiencePartitionPage extends React.Component<
           const url = `/v2/o/${organisationId}/audience/partition/${
             newAudiencePartition.data.id
           }/dashboard`;
-          history.push(url);
+          location.pathname
+            ? history.push({
+                pathname: url,
+                state: { from: `${location.pathname}` },
+              })
+            : history.push(url);
           message.success(intl.formatMessage(messages.partitionSaved));
         })
         .catch(error => {
@@ -139,8 +147,11 @@ class AudiencePartitionPage extends React.Component<
       ? `/v2/o/${organisationId}/audience/partition/${partitionId}/dashboard`
       : `/v2/o/${organisationId}/audience/partitions`;
 
-    return location.state && location.state.from
-      ? history.push(location.state.from)
+    return location.pathname
+      ? history.push({
+          pathname: url,
+          state: { from: `${location.pathname}` },
+        })
       : history.push(url);
   };
 

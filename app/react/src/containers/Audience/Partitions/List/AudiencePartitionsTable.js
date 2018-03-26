@@ -5,7 +5,10 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import lodash from 'lodash';
 
-import { TableViewFilters, EmptyTableView } from '../../../../components/TableView/index.ts';
+import {
+  TableViewFilters,
+  EmptyTableView,
+} from '../../../../components/TableView/index.ts';
 import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
 
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
@@ -21,7 +24,6 @@ import { getTableDataSource } from '../../../../state/Audience/Partitions/select
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 
 class AudiencePartitionsTable extends Component {
-
   constructor(props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -32,73 +34,76 @@ class AudiencePartitionsTable extends Component {
   componentDidMount() {
     const {
       history,
-      location: {
-        search,
-        pathname,
-      },
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      location: { search, pathname },
+      match: { params: { organisationId } },
       loadAudiencePartitionsDataSource,
     } = this.props;
 
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, this.getSearchSetting(organisationId)),
+        search: buildDefaultSearch(
+          search,
+          this.getSearchSetting(organisationId),
+        ),
         state: { reloadDataSource: true },
       });
     } else {
       const filter = parseSearch(search, this.getSearchSetting(organisationId));
       const datamartId = filter.datamarts[0];
 
-      loadAudiencePartitionsDataSource(organisationId, datamartId, filter, true);
+      loadAudiencePartitionsDataSource(
+        organisationId,
+        datamartId,
+        filter,
+        true,
+      );
     }
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      location: {
-        search,
-      },
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      location: { search },
+      match: { params: { organisationId } },
       history,
       loadAudiencePartitionsDataSource,
     } = this.props;
 
     const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-        state,
-      },
-      match: {
-        params: {
-          organisationId: nextOrganisationId,
-        },
-      },
+      location: { pathname: nextPathname, search: nextSearch, state },
+      match: { params: { organisationId: nextOrganisationId } },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
-      if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
+      if (
+        !isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))
+      ) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, this.getSearchSetting(nextOrganisationId)),
+          search: buildDefaultSearch(
+            nextSearch,
+            this.getSearchSetting(nextOrganisationId),
+          ),
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, this.getSearchSetting(nextOrganisationId));
+        const filter = parseSearch(
+          nextSearch,
+          this.getSearchSetting(nextOrganisationId),
+        );
         const datamartId = filter.datamarts[0];
 
-        loadAudiencePartitionsDataSource(nextOrganisationId, datamartId, filter, checkEmptyDataSource);
+        loadAudiencePartitionsDataSource(
+          nextOrganisationId,
+          datamartId,
+          filter,
+          checkEmptyDataSource,
+        );
       }
     }
   }
@@ -107,16 +112,10 @@ class AudiencePartitionsTable extends Component {
     this.props.resetAudiencePartitionsTable();
   }
 
-  archivePartition = (partition) => {
+  archivePartition = partition => {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
+      match: { params: { organisationId } },
+      location: { search },
       archiveAudiencePartition,
       loadAudiencePartitionsDataSource,
       translations,
@@ -136,24 +135,27 @@ class AudiencePartitionsTable extends Component {
           loadAudiencePartitionsDataSource(organisationId, datamartId, filter);
         });
       },
-      onCancel() { },
+      onCancel() {},
     });
-  }
+  };
 
-  editPartition = (partition) => {
+  editPartition = partition => {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
+      match: { params: { organisationId } },
       history,
+      location,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/audience/partition/${partition.id}/edit?datamart=${partition.datamart_id}&type=${partition.type}`;
+    const editUrl = `/v2/o/${organisationId}/audience/partition/${
+      partition.id
+    }/edit`;
 
-    history.push(editUrl);
-  }
+    history.push({
+      pathname: editUrl,
+      search: `?datamart=${partition.datamart_id}&type=${partition.type}`,
+      state: { from: `${location.pathname}${location.search}` },
+    });
+  };
 
   getSearchSetting(organisationId) {
     const { defaultDatamart } = this.props;
@@ -165,49 +167,42 @@ class AudiencePartitionsTable extends Component {
         defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
         deserialize: query => {
           if (query.datamarts) {
-            return query.datamarts.split(',').map((d) => parseInt(d, 0));
+            return query.datamarts.split(',').map(d => parseInt(d, 0));
           }
           return [];
         },
         serialize: value => value.join(','),
         isValid: query =>
           query.datamarts &&
-        query.datamarts.split(',').length > 0 &&
-        lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
+          query.datamarts.split(',').length > 0 &&
+          lodash.every(query.datamarts, d => !isNaN(parseInt(d, 0))),
       },
     ];
   }
 
-  updateLocationSearch = (params) => {
+  updateLocationSearch = params => {
     const {
       history,
-      match: {
-        params: { organisationId },
-      },
-      location: {
-        search: currentSearch,
-        pathname,
-      },
+      match: { params: { organisationId } },
+      location: { search: currentSearch, pathname },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, this.getSearchSetting(organisationId)),
+      search: updateSearch(
+        currentSearch,
+        params,
+        this.getSearchSetting(organisationId),
+      ),
     };
 
     history.push(nextLocation);
-  }
+  };
 
   render() {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
+      match: { params: { organisationId } },
+      location: { search },
       translations,
       isFetchingAudiencePartitions,
       dataSource,
@@ -219,9 +214,10 @@ class AudiencePartitionsTable extends Component {
 
     const searchOptions = {
       placeholder: translations.SEARCH_AUDIENCE_PARTITIONS,
-      onSearch: value => this.updateLocationSearch({
-        keywords: value,
-      }),
+      onSearch: value =>
+        this.updateLocationSearch({
+          keywords: value,
+        }),
       defaultValue: filter.keywords,
     };
 
@@ -229,13 +225,15 @@ class AudiencePartitionsTable extends Component {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAudiencePartitions,
-      onChange: (page) => this.updateLocationSearch({
-        currentPage: page,
-      }),
-      onShowSizeChange: (current, size) => this.updateLocationSearch({
-        currentPage: 1,
-        pageSize: size,
-      }),
+      onChange: page =>
+        this.updateLocationSearch({
+          currentPage: page,
+        }),
+      onShowSizeChange: (current, size) =>
+        this.updateLocationSearch({
+          currentPage: 1,
+          pageSize: size,
+        }),
     };
 
     const dataColumns = [
@@ -245,8 +243,11 @@ class AudiencePartitionsTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/audience/partition/${record.id}/dashboard`}
-          >{text}
+            to={`/v2/o/${organisationId}/audience/partition/${
+              record.id
+            }/dashboard`}
+          >
+            {text}
           </Link>
         ),
       },
@@ -254,12 +255,12 @@ class AudiencePartitionsTable extends Component {
         translationKey: 'TYPE',
         key: 'audience_partition_type',
         isHideable: false,
-        render: (text) => <span>{text}</span>,
+        render: text => <span>{text}</span>,
       },
       {
         translationKey: 'PART_COUNT',
         key: 'part_count',
-        render: (text) => <span>{text}</span>,
+        render: text => <span>{text}</span>,
       },
       {
         translationKey: 'STATUS',
@@ -285,26 +286,25 @@ class AudiencePartitionsTable extends Component {
       },
     ];
 
-    return (hasAudiencePartitions
-      ? (
-        <div className="mcs-table-container">
-          <TableViewFilters
-            columns={dataColumns}
-            actionsColumnsDefinition={actionColumns}
-            searchOptions={searchOptions}
-            dataSource={dataSource}
-            loading={isFetchingAudiencePartitions}
-            pagination={pagination}
-          />
-        </div>
-      )
-      : <EmptyTableView iconType="partitions" text="EMPTY_PARTITIONS" />
+    return hasAudiencePartitions ? (
+      <div className="mcs-table-container">
+        <TableViewFilters
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
+          searchOptions={searchOptions}
+          dataSource={dataSource}
+          loading={isFetchingAudiencePartitions}
+          pagination={pagination}
+        />
+      </div>
+    ) : (
+      <EmptyTableView iconType="partitions" text="EMPTY_PARTITIONS" />
     );
   }
 }
 
 AudiencePartitionsTable.defaultProps = {
-  archiveAudiencePartition: () => { },
+  archiveAudiencePartition: () => {},
 };
 
 AudiencePartitionsTable.propTypes = {
@@ -326,23 +326,27 @@ AudiencePartitionsTable.propTypes = {
 
 const mapStateToProps = state => ({
   translations: state.translations,
-  hasAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.hasItems,
-  isFetchingAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.isFetching,
+  hasAudiencePartitions:
+    state.audiencePartitionsTable.audiencePartitionsApi.hasItems,
+  isFetchingAudiencePartitions:
+    state.audiencePartitionsTable.audiencePartitionsApi.isFetching,
   dataSource: getTableDataSource(state),
-  totalAudiencePartitions: state.audiencePartitionsTable.audiencePartitionsApi.total,
+  totalAudiencePartitions:
+    state.audiencePartitionsTable.audiencePartitionsApi.total,
   defaultDatamart: getDefaultDatamart(state),
 });
 
 const mapDispatchToProps = {
-  loadAudiencePartitionsDataSource: AudiencePartitionsActions.fetchAudiencePartitionsList.request,
+  loadAudiencePartitionsDataSource:
+    AudiencePartitionsActions.fetchAudiencePartitionsList.request,
   archiveAudiencePartition: AudiencePartitionsActions.archiveAudiencePartition,
-  resetAudiencePartitionsTable: AudiencePartitionsActions.resetAudiencePartitionsTable,
+  resetAudiencePartitionsTable:
+    AudiencePartitionsActions.resetAudiencePartitionsTable,
 };
 
-AudiencePartitionsTable = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AudiencePartitionsTable);
+AudiencePartitionsTable = connect(mapStateToProps, mapDispatchToProps)(
+  AudiencePartitionsTable,
+);
 
 AudiencePartitionsTable = withRouter(AudiencePartitionsTable);
 
