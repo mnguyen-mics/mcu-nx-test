@@ -10,8 +10,23 @@ import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
 import McsMoment from '../utils/McsMoment';
 import { PaginatedApiParam } from '../utils/ApiHelper';
-import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from '../models/Plugins';
+import {
+  PluginProperty,
+  AudienceExternalFeed,
+  AudienceTagFeed,
+} from '../models/Plugins';
+
 import PluginService from './PluginService';
+import { BaseExecutionResource } from '../models/Job/JobResource';
+
+export interface SegmentImportResult{
+  total_user_segment_imported:number,
+  total_user_segment_treated:number
+}
+
+export interface UserSegmentImportJobExecutionResource extends BaseExecutionResource<{}, SegmentImportResult>{
+  job_type: 'USER_SEGMENT_IMPORT'
+}
 
 export interface GetSegmentsOption extends PaginatedApiParam {
   name?: string;
@@ -40,9 +55,7 @@ const AudienceSegmentService = {
     return ApiService.getRequest(endpoint, params);
   },
 
-  getSegment(
-    segmentId: string,
-  ): Promise<DataResponse<AudienceSegmentShape>> {
+  getSegment(segmentId: string): Promise<DataResponse<AudienceSegmentShape>> {
     const endpoint = `audience_segments/${segmentId}`;
     return ApiService.getRequest(endpoint);
   },
@@ -51,31 +64,33 @@ const AudienceSegmentService = {
     segmentId: string,
     body: object,
   ): Promise<DataResponse<AudienceSegmentShape>> {
-    const endpoint = `audience_segments/${segmentId}`
+    const endpoint = `audience_segments/${segmentId}`;
     return ApiService.putRequest(endpoint, body);
   },
 
-  deleteAudienceSegment(
-    segmentId: string,
-  ): Promise<any> {
-    const endpoint = `audience_segments/${segmentId}`
+  deleteAudienceSegment(segmentId: string): Promise<any> {
+    const endpoint = `audience_segments/${segmentId}`;
     return ApiService.deleteRequest(endpoint);
   },
 
   saveSegment(
     organisationId: string,
-    audienceSegment: Partial<AudienceSegmentShape>
+    audienceSegment: Partial<AudienceSegmentShape>,
   ): Promise<DataResponse<AudienceSegmentShape>> {
-
     let createOrUpdatePromise;
     if (audienceSegment.id) {
-      createOrUpdatePromise = AudienceSegmentService.updateAudienceSegment(audienceSegment.id, audienceSegment)
+      createOrUpdatePromise = AudienceSegmentService.updateAudienceSegment(
+        audienceSegment.id,
+        audienceSegment,
+      );
     } else {
-      createOrUpdatePromise = AudienceSegmentService.createAudienceSegment(organisationId, audienceSegment)
+      createOrUpdatePromise = AudienceSegmentService.createAudienceSegment(
+        organisationId,
+        audienceSegment,
+      );
     }
 
     return createOrUpdatePromise;
-
   },
 
   // TODO return type (JobExec...)
@@ -93,6 +108,37 @@ const AudienceSegmentService = {
     };
 
     return ApiService.postRequest(endpoint, body);
+  },
+
+  importUserList(datamartId: string, file: FormData): Promise<any> {
+    const endpoint = `datamarts/${datamartId}/user_list_imports`;
+    return ApiService.postRequest(endpoint, file);
+  },
+
+  importUserListForOneSegment(
+    datamartId: string,
+    segmentId: string,
+    file: FormData,
+  ): Promise<any> {
+    const endpoint = `datamarts/${datamartId}/audience_segments/${segmentId}/user_list_imports`;
+    return ApiService.postRequest(endpoint, file);
+  },
+
+  findUserListImportExecutionsBySegment(
+    datamartId: string,
+    segmentId: string,
+    options: {
+      first_result?: number;
+      max_results?: number;
+      status?: string;
+    } = {},
+  ): Promise<DataListResponse<UserSegmentImportJobExecutionResource>> {
+    const endpoint = `datamarts/${datamartId}/audience_segments/${segmentId}/user_list_imports`;
+    const params = {
+      ...options,
+    };
+
+    return ApiService.getRequest(endpoint, params);
   },
 
   retrieveOverlap(
@@ -156,7 +202,10 @@ const AudienceSegmentService = {
     });
   },
 
-  createAudienceSegment(organisationId: string, options: object = {}): Promise<DataResponse<AudienceSegmentShape>> {
+  createAudienceSegment(
+    organisationId: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceSegmentShape>> {
     const endpoint = `audience_segments?organisation_id=${organisationId}`;
     const params = {
       ...options,
@@ -164,45 +213,85 @@ const AudienceSegmentService = {
     return ApiService.postRequest(endpoint, params);
   },
 
-  getAudienceExternalFeeds(audienceSegmentId: string, options: object = {}): Promise<DataListResponse<AudienceExternalFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`
-    return ApiService.getRequest(endpoint)
+  getAudienceExternalFeeds(
+    audienceSegmentId: string,
+    options: object = {},
+  ): Promise<DataListResponse<AudienceExternalFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`;
+    return ApiService.getRequest(endpoint);
   },
-  createAudienceExternalFeeds(audienceSegmentId: string, audienceExternalFeed: Partial<AudienceExternalFeed>, options: object = {}): Promise<DataResponse<AudienceExternalFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`
-    return ApiService.postRequest(endpoint, audienceExternalFeed)
+  createAudienceExternalFeeds(
+    audienceSegmentId: string,
+    audienceExternalFeed: Partial<AudienceExternalFeed>,
+    options: object = {},
+  ): Promise<DataResponse<AudienceExternalFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`;
+    return ApiService.postRequest(endpoint, audienceExternalFeed);
   },
-  updateAudienceExternalFeeds(audienceSegmentId: string, audienceExternalFeedId: string, audienceExternalFeed: Partial<AudienceExternalFeed>, options: object = {}): Promise<DataResponse<AudienceExternalFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${audienceExternalFeedId}`
-    return ApiService.putRequest(endpoint, audienceExternalFeed)
+  updateAudienceExternalFeeds(
+    audienceSegmentId: string,
+    audienceExternalFeedId: string,
+    audienceExternalFeed: Partial<AudienceExternalFeed>,
+    options: object = {},
+  ): Promise<DataResponse<AudienceExternalFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${audienceExternalFeedId}`;
+    return ApiService.putRequest(endpoint, audienceExternalFeed);
   },
-  deleteAudienceExternalFeeds(audienceSegmentId: string, audienceExternalFeedId: string, options: object = {}): Promise<DataListResponse<AudienceExternalFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${audienceExternalFeedId}`
-    return ApiService.deleteRequest(endpoint)
+  deleteAudienceExternalFeeds(
+    audienceSegmentId: string,
+    audienceExternalFeedId: string,
+    options: object = {},
+  ): Promise<DataListResponse<AudienceExternalFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${audienceExternalFeedId}`;
+    return ApiService.deleteRequest(endpoint);
   },
-  getAudienceExternalFeedProperty(audienceSegmentId: string, feedId: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}/properties`
-    return ApiService.getRequest(endpoint)
+  getAudienceExternalFeedProperty(
+    audienceSegmentId: string,
+    feedId: string,
+    options: object = {},
+  ): Promise<DataListResponse<PluginProperty>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}/properties`;
+    return ApiService.getRequest(endpoint);
   },
-  getAudienceTagFeeds(audienceSegmentId: string, options: object = {}): Promise<DataListResponse<AudienceTagFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds`
-    return ApiService.getRequest(endpoint)
+  getAudienceTagFeeds(
+    audienceSegmentId: string,
+    options: object = {},
+  ): Promise<DataListResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds`;
+    return ApiService.getRequest(endpoint);
   },
-  createAudienceTagFeeds(audienceSegmentId: string, audienceTagFeed: Partial<AudienceTagFeed>, options: object = {}): Promise<DataResponse<AudienceTagFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds`
-    return ApiService.postRequest(endpoint, audienceTagFeed)
+  createAudienceTagFeeds(
+    audienceSegmentId: string,
+    audienceTagFeed: Partial<AudienceTagFeed>,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds`;
+    return ApiService.postRequest(endpoint, audienceTagFeed);
   },
-  updateAudienceTagFeeds(audienceSegmentId: string, audienceTagFeedId: string, audienceTagFeed: Partial<AudienceTagFeed>, options: object = {}): Promise<DataResponse<AudienceTagFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${audienceTagFeedId}`
-    return ApiService.putRequest(endpoint, audienceTagFeed)
+  updateAudienceTagFeeds(
+    audienceSegmentId: string,
+    audienceTagFeedId: string,
+    audienceTagFeed: Partial<AudienceTagFeed>,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${audienceTagFeedId}`;
+    return ApiService.putRequest(endpoint, audienceTagFeed);
   },
-  deleteAudienceTagFeeds(audienceSegmentId: string, audienceTagFeedId: string, options: object = {}): Promise<DataListResponse<AudienceTagFeed>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${audienceTagFeedId}`
-    return ApiService.deleteRequest(endpoint)
+  deleteAudienceTagFeeds(
+    audienceSegmentId: string,
+    audienceTagFeedId: string,
+    options: object = {},
+  ): Promise<DataListResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${audienceTagFeedId}`;
+    return ApiService.deleteRequest(endpoint);
   },
-  getAudienceTagFeedProperty(audienceSegmentId: string, feedId: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
-    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${feedId}/properties`
-    return ApiService.getRequest(endpoint)
+  getAudienceTagFeedProperty(
+    audienceSegmentId: string,
+    feedId: string,
+    options: object = {},
+  ): Promise<DataListResponse<PluginProperty>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${feedId}/properties`;
+    return ApiService.getRequest(endpoint);
   },
 
   updateAudienceSegmentExternalFeedProperty(
@@ -213,7 +302,13 @@ const AudienceSegmentService = {
     params: object = {},
   ): Promise<DataResponse<PluginProperty> | void> {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${id}/properties/technical_name=${technicalName}`;
-    return PluginService.handleSaveOfProperties(params, organisationId, 'attribution_models', id, endpoint);
+    return PluginService.handleSaveOfProperties(
+      params,
+      organisationId,
+      'attribution_models',
+      id,
+      endpoint,
+    );
   },
 
   updateAudienceSegmentTagFeedProperty(
@@ -224,8 +319,14 @@ const AudienceSegmentService = {
     params: object = {},
   ): Promise<DataResponse<PluginProperty> | void> {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
-    return PluginService.handleSaveOfProperties(params, organisationId, 'attribution_models', id, endpoint);
-  }
+    return PluginService.handleSaveOfProperties(
+      params,
+      organisationId,
+      'attribution_models',
+      id,
+      endpoint,
+    );
+  },
 };
 
 export default AudienceSegmentService;

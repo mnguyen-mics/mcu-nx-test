@@ -3,7 +3,10 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import moment from 'moment';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import {
+  injectIntl,
+  InjectedIntlProps
+, defineMessages} from 'react-intl';
 import {
   EditAudienceSegmentParam,
   AudienceSegmentFormData,
@@ -508,9 +511,31 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         return AudienceSegmentService.updateAudienceSegment(
           segmentId,
           audienceSegmentFormData.audienceSegment,
-        ).then(res =>
-          this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData),
-        );
+        )
+          .then(res =>
+            this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData),
+          )
+          .then(rest => {
+            if (audienceSegmentFormData.userListFiles !== undefined) {
+              Promise.all(
+                audienceSegmentFormData.userListFiles.map(item => {
+                  const formData = new FormData();
+                  formData.append('file', item as any, item.name);
+                  return AudienceSegmentService.importUserListForOneSegment(
+                    audienceSegmentFormData.audienceSegment
+                      .datamart_id as string,
+                      audienceSegmentFormData.audienceSegment
+                      .id as string,
+                    formData,
+                  );
+                }),
+              );
+            } else {
+              {
+                Promise.resolve();
+              }
+            }
+          });
       case 'USER_QUERY':
         return this.updateQuery(
           (audienceSegmentFormData.audienceSegment as UserQuerySegment)
@@ -631,13 +656,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         .then(response => {
           hideSaveInProgress();
           this.setState({ loading: false });
-          const adGroupDashboardUrl =
-            (audienceSegmentFormData.audienceSegment as UserListSegment)
-              .feed_type === 'TAG'
-              ? `/v2/o/${organisationId}/audience/segments/${
-                  response.data.id
-                }/edit`
-              : `/v2/o/${organisationId}/audience/segments/${response.data.id}`;
+          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit` ;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {
@@ -663,16 +682,15 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   };
 
   render() {
+
     const {
       match: { params: { type } },
-      datamart,
+      datamart
+   ,
       intl: { formatMessage },
-      match: { params: { organisationId } },
-    } = this.props;
+      match: { params: { organisationId } }, } = this.props;const { segmentCreation } = this.state;
 
-    const { segmentCreation, audienceSegmentFormData } = this.state;
-
-    const { loading } = this.state;
+    const { segmentCreation, audienceSegmentFormData. loading } = this.state;
 
     const segmentType = type || this.state.segmentType;
 

@@ -75,6 +75,10 @@
   "USD": "$",
   "EUR": "€",
 
+  "TOTAL_USER_SEGMENT_TREATED" : "User Segments traités",
+  "TOTAL_USER_SEGMENT_IMPORTED" : "User Segments importés",
+  "SUBMISSION_DATE" : " Date de Soumission",
+  
   "NEW_SEGMENT": "Nouveau Segment",
   "USER_LIST": "Liste",
   "USER_PIXEL": "Pixel",

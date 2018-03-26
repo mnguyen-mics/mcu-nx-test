@@ -11,15 +11,15 @@ export default defineMessages({
   },
   audienceSegmentSiderMenuSemgnetType: {
     id: 'segment.sider.menu.SegmentType',
-    defaultMessage: 'Segment Type'
+    defaultMessage: 'Segment Type',
   },
   audienceSegmentSiderMenuGeneralInformation: {
     id: 'segment.sider.menu.generalInformation',
-    defaultMessage: 'General Information'
+    defaultMessage: 'General Information',
   },
   audienceSegmentSiderMenuProperties: {
     id: 'segment.sider.menu.properties',
-    defaultMessage: 'Properties'
+    defaultMessage: 'Properties',
   },
   audienceSegmentSectionGeneralTitle: {
     id: 'audience.segment.create.section.general.title',
@@ -28,6 +28,14 @@ export default defineMessages({
   audienceSegmentSectionGeneralSubTitle: {
     id: 'audience.segment.create.section.general.subtitle',
     defaultMessage: 'Give your Audience Segment a name.',
+  },
+  audienceSegmentSectionImportTitle: {
+    id: 'segment.sider.menu.section.import.title',
+    defaultMessage: 'Import',
+  },
+  audienceSegmentSectionImportSubTitle: {
+    id: 'segment.sider.menu.section.import.subtitle',
+    defaultMessage: 'Upload new user points to your segment, if your segment has already some data, it will add the new data on the top of it.',
   },
   audienceSegmentSectionQueryTitle: {
     id: 'audience.segment.create.section.query.title',
@@ -47,7 +55,8 @@ export default defineMessages({
   },
   audienceSegmentCreationGeneralPersistedFieldHelper: {
     id: 'audience.segment.create.section.general.field.persisted.helper',
-    defaultMessage: 'A persisted segment can be used in a campaign whereas a non persisted serves as analytics',
+    defaultMessage:
+      'A persisted segment can be used in a campaign whereas a non persisted serves as analytics',
   },
   audienceSegmentCreationGeneralNameFieldPlaceHolder: {
     id: 'audience.segment.create.section.general.field.name.placeholder',
@@ -59,7 +68,8 @@ export default defineMessages({
   },
   audienceSegmentCreationUserQueryFieldHelper: {
     id: 'audience.segment.create.section.general.field.query.helper',
-    defaultMessage: 'Start your query with "SELECT \\{ id \\} FROM UserPoint WHERE" and add your conditions after the WHERE clause.',
+    defaultMessage:
+      'Start your query with "SELECT \\{ id \\} FROM UserPoint WHERE" and add your conditions after the WHERE clause.',
   },
   // Technical name
   contentSectionGeneralAdvancedPartRow1Label: {
@@ -85,7 +95,8 @@ export default defineMessages({
   },
   contentSectionPropertiesPartRow1Tooltip: {
     id: 'audience.segment.section2advancedPart.row1.tooltip',
-    defaultMessage: 'The code snippet to copy on your web page for custom intergration',
+    defaultMessage:
+      'The code snippet to copy on your web page for custom intergration',
   },
   contentSectionPropertiesPartRow1TooltipHover: {
     id: 'audience.segment.section2advancedPart.row1.tooltiphover',
@@ -132,7 +143,8 @@ export default defineMessages({
 
   errorFormMessage: {
     id: 'audience.segment.error',
-    defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
+    defaultMessage:
+      'There is an error with some fields in your form. Please review the data you entered.',
   },
 
   savingInProgress: {
@@ -140,13 +152,13 @@ export default defineMessages({
     defaultMessage: 'Saving in progress',
   },
 
-  addExisting: {
-    id: 'audience.segment.addExisting',
-    defaultMessage: 'Add Existing',
-  },
   addAFeed: {
     id: 'audience.segment.addAFeed',
     defaultMessage: 'Add a Feed',
+  },
+  downloadTemplate: {
+    id: 'audience.segment.downloadTemplate',
+    defaultMessage: 'Download template ',
   },
   sectionAudienceExternalFeedTitle: {
     id: 'audience.segment.audienceexternalfeed.title',
@@ -154,7 +166,8 @@ export default defineMessages({
   },
   sectionAudienceExternalFeedSubtitle: {
     id: 'audience.segment.audienceexternalfeed.subtitle',
-    defaultMessage: 'Add an Audience External Feed to push your segment to third party. An Audience External Feed is a Server to Server mean to push a segment to a third party receiver.',
+    defaultMessage:
+      'Add an Audience External Feed to push your segment to third party. An Audience External Feed is a Server to Server mean to push a segment to a third party receiver.',
   },
   sectionEmptyAudienceExternalFeedRules: {
     id: 'audience.segment.audienceexternalfeed.empty',
@@ -166,7 +179,8 @@ export default defineMessages({
   },
   sectionAudienceTagFeedSubtitle: {
     id: 'audience.segment.audiencetagfeed.subtitle',
-    defaultMessage: 'Add an Audience Tag Feed to push your segment to third party. An Audience Tag Feed will trigger a pixel on your properties to push a segment to a third party receiver.',
+    defaultMessage:
+      'Add an Audience Tag Feed to push your segment to third party. An Audience Tag Feed will trigger a pixel on your properties to push a segment to a third party receiver.',
   },
   sectionEmptyAudienceTagFeedRules: {
     id: 'audience.segment.audiencetagfeed.empty',
@@ -178,7 +192,8 @@ export default defineMessages({
   },
   listTagSubTitle: {
     id: 'audience.segment.audiencetagfeed.list.subtitle',
-    defaultMessage: 'Add an Audience Tag Feed. An Audience Tag feed will trigger a pixel on your properties to push cookies to third parties receivers.',
+    defaultMessage:
+      'Add an Audience Tag Feed. An Audience Tag feed will trigger a pixel on your properties to push cookies to third parties receivers.',
   },
   listExternalTitle: {
     id: 'audience.segment.audienceexternalfeed.list.title',
@@ -186,11 +201,36 @@ export default defineMessages({
   },
   listExternalSubTitle: {
     id: 'audience.segment.audienceexternalfeed.list.subtitle',
-    defaultMessage: 'Add an Audience External Feed. An Audience External feed will push cookies (Server to Server) to third parties receivers.',
+    defaultMessage:
+      'Add an Audience External Feed. An Audience External feed will push cookies (Server to Server) to third parties receivers.',
   },
 
   audienceFeedDisableExplanation: {
     id: 'audience.segment.audiencefeed.disable.explanation',
     defaultMessage: 'You need to save your Feed before setting it to \'Started.\'',
-  }
+  },
+  addExisting: {
+    id: 'audience.segment.addExisting',
+    defaultMessage: 'Add Existing',
+  },
+  
+  
+//User List
+
+  uploadMessage: {
+    id: 'audience.segment.upload.message',
+    defaultMessage: `Click here or drag and drop your files to upload`,
+  },
+  uploadTitle: {
+    id: 'audience.segment.upload.title',
+    defaultMessage: 'Click or drag file to this area to upload',
+  },
+  uploadError: {
+    id: 'audience.segment.upload.error',
+    defaultMessage: 'is above 100MB!',
+  },
+  uploadButton: {
+    id: 'audience.segment.upload.button',
+    defaultMessage: 'Upload',
+  },
 });

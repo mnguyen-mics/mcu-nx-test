@@ -45,6 +45,7 @@ import SelectorQL from './Sections/query/SelectorQL';
 import AudienceExternalFeedSection, { AudienceExternalFeedSectionProps } from './Sections/AudienceExternalFeedSection'
 import AudienceTagFeedSection, { AudienceTagFeedSectionProps } from './Sections/AudienceTagFeedSection'
 import { PixelSection } from './Sections/pixel'
+import { UserListSection } from './Sections/list'
 
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
@@ -113,11 +114,12 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     } = this.props;
     switch(segmentType) {
       case 'USER_LIST':
-        return null;
+        const {audienceSegmentFormData} = this.props;
+        return <UserListSection segmentId= {audienceSegmentFormData.audienceSegment.id as string}/>;
       case 'USER_PIXEL':
         return <PixelSection datamartToken={datamart.token} userListTechName={this.props.audienceSegmentFormData.audienceSegment.technical_name}/>;
       case 'USER_QUERY':
-    return queryLanguage === 'OTQL' ? 
+    return queryLanguage === 'OTQL' ?
       this.generateUserQueryTemplate(<FormOTQL
         name={'query.query_text'}
         component={OTQLInputEditor}
@@ -166,11 +168,10 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         segmentType={segmentType as any}
       />,
     });
-
-    if (!(segmentCreation && segmentType === 'USER_PIXEL')) {
+    if (!(segmentCreation && (segmentType === 'USER_PIXEL' || segmentType === 'USER_LIST'))) {
       sections.push({
         id: 'properties',
-        title: messages.audienceSegmentSiderMenuProperties,
+        title: messages.audienceSegmentSiderMenuProperties ,
         component: this.renderPropertiesField()
       });
     }
@@ -197,7 +198,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       });
     }
 
-    
+
 
     const sideBarProps: SidebarWrapperProps = {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),
