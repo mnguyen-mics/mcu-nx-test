@@ -14,21 +14,40 @@ import {
 } from '../../../../../components/Form';
 import messages from '../messages';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import { EditDisplayCreativeRouteMatchParams, DisplayCreativeFormData, DISPLAY_CREATIVE_FORM, isDisplayAdResource } from '../domain';
+import {
+  EditDisplayCreativeRouteMatchParams,
+  DisplayCreativeFormData,
+  DISPLAY_CREATIVE_FORM,
+  isDisplayAdResource,
+} from '../domain';
 // import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
+import {ButtonStyleless, McsIcon} from '../../../../../components';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
 }
 
-type Props = 
-  ValidatorProps &
+type Props = ValidatorProps &
   InjectedIntlProps &
   MapStateProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
-class GeneralFormSection extends React.Component<Props> {
+interface State {
+  displayAdvancedSection: boolean;
+}
+class GeneralFormSection extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { displayAdvancedSection: false };
+  }
+
+  toggleAdvancedSection = () => {
+    this.setState({
+      displayAdvancedSection: !this.state.displayAdvancedSection,
+    });
+  };
+
   render() {
     const {
       intl: { formatMessage },
@@ -65,7 +84,7 @@ class GeneralFormSection extends React.Component<Props> {
           inputProps={{
             placeholder: formatMessage(
               messages.creativeCreationGeneralNameFieldPlaceHolder,
-            ),            
+            ),
             disabled: isDisabled,
           }}
           helpToolTipProps={{
@@ -102,6 +121,46 @@ class GeneralFormSection extends React.Component<Props> {
             ),
           }}
         />
+        <div>
+          <ButtonStyleless
+            className="optional-section-title"
+            onClick={this.toggleAdvancedSection}
+          >
+            <McsIcon type="settings" />
+            <span className="step-title">
+              {formatMessage(messages.advanced)}
+            </span>
+            <McsIcon type="chevron" />
+          </ButtonStyleless>
+
+          <div
+            className={
+              !this.state.displayAdvancedSection
+                ? 'hide-section'
+                : 'optional-section-content'
+            }
+          >
+            <FormInputField
+              name="creative.technical_name"
+              component={FormInput}
+              formItemProps={{
+                label: formatMessage(
+                  messages.creativeCreationAdvancedTechnicalFieldTitle,
+                ),
+              }}
+              inputProps={{
+                placeholder: formatMessage(
+                  messages.creativeCreationAdvancedTechnicalFieldPlaceholder,
+                ),
+              }}
+              helpToolTipProps={{
+                title: formatMessage(
+                  messages.creativeCreationAdvancedTechnicalFieldTooltip,
+                ),
+              }}
+            />
+          </div>
+        </div>
       </div>
     );
   }

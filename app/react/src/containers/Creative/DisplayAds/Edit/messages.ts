@@ -184,5 +184,21 @@ export default defineMessages({
   savingInProgress: {
     id: 'form.saving.in.progress',
     defaultMessage: 'Saving in progress',
-  }
+  },
+  advanced: {
+    id: 'creatives.form.advanced',
+    defaultMessage: 'Advanced',
+  },
+  creativeCreationAdvancedTechnicalFieldTitle: {
+    id: 'creatives.create.section.advanced.field.technical.title',
+    defaultMessage: 'Technical Name',
+  },
+  creativeCreationAdvancedTechnicalFieldPlaceholder: {
+    id: 'creatives.create.section.advanced.field.technical.placeholder',
+    defaultMessage: 'Technical Name',
+  },
+  creativeCreationAdvancedTechnicalFieldTooltip: {
+    id: 'creatives.create.section.advanced.field.technical.tooltip',
+    defaultMessage: 'Give your creative a technical name to leverage integrations such as external click tracking.',
+  },
 });
