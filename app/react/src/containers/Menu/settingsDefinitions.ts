@@ -36,6 +36,12 @@ const datamartSettings: NavigatorMenuElement = {
       translation: messages.myDatamartSettingsTitle,
       legacyPath: false,
     },
+    {
+      key: 'datamartSettings.service_usage_report',
+      path: '/settings/datamart/service_usage_report',
+      translation: messages.serviceUsageReportSettingsTitle,
+      legacyPath: false,
+    },
   ],
 };
 
