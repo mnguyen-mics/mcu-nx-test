@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Row, Col } from 'antd/lib/grid';
 import { compose } from 'recompose';
 import {
   injectIntl,
@@ -11,8 +10,7 @@ import { Checkbox } from 'antd';
 import {
   FormSection,
   FormInputField,
-  FormSelectField,
-  FormSelect,
+  FormAddonSelectField,
 } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -21,8 +19,7 @@ import FormInput from '../../../../../components/Form/FormInput';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { GoalFormData } from '../domain';
-
-const { DefaultSelect } = FormSelect;
+import AddonSelect from '../../../../../components/Form/FormSelect/AddonSelect';
 
 const messages = defineMessages({
   sectionSubtitle1: {
@@ -43,19 +40,12 @@ const messages = defineMessages({
   },
   defaultGoalValueTooltip: {
     id: 'goalEditor.default.value.tooltip',
-    defaultMessage: 'Lorem Ipsum',
-  },
-  goalValueCurrencyLabel: {
-    id: 'goalEditor.value.currency.label',
-    defaultMessage: 'Default Value',
+    defaultMessage:
+      'Give a conversion a value so that you can track your value creation directly in the goal dashboard.',
   },
   goalValueCurrencyPlaceholder: {
     id: 'goalEditor.value.currency.placeholder',
     defaultMessage: 'Ex: 500',
-  },
-  goalValueCurrencyTooltip: {
-    id: 'goalEditor.value.currency.tooltip',
-    defaultMessage: 'Lorem Ipsum',
   },
 });
 
@@ -118,43 +108,34 @@ class ConversionValueFormSection extends React.Component<Props, State> {
               : 'optional-section-content'
           }
         >
-          <Row gutter={16}>
-            <Col className="gutter-row" span={12}>
-              <FormInputField
-                name="goal.default_goal_value"
-                component={FormInput}
-                formItemProps={{
-                  label: formatMessage(messages.defaultGoalValueLabel),
-                }}
-                inputProps={{
-                  placeholder: formatMessage(
-                    messages.defaultGoalValuePlaceholder,
-                  ),
-                }}
-                helpToolTipProps={{
-                  title: formatMessage(messages.defaultGoalValueTooltip),
-                }}
-              />
-            </Col>
-            <Col className="gutter-row" span={12}>
-              <FormSelectField
-                name="goal.goal_value_currency"
-                component={DefaultSelect}
-                formItemProps={{
-                  label: formatMessage(messages.goalValueCurrencyLabel),
-                }}
-                options={[
-                  {
-                    title: 'EUR',
-                    value: 'EUR',
-                  },
-                ]}
-                helpToolTipProps={{
-                  title: formatMessage(messages.goalValueCurrencyTooltip),
-                }}
-              />
-            </Col>
-          </Row>
+          <FormInputField
+            name="goal.default_goal_value"
+            component={FormInput}
+            formItemProps={{
+              label: formatMessage(messages.defaultGoalValueLabel),
+            }}
+            inputProps={{
+              placeholder: formatMessage(messages.defaultGoalValuePlaceholder),
+              addonAfter: (
+                <FormAddonSelectField
+                  name="goal.goal_value_currency"
+                  component={AddonSelect}
+                  options={[
+                    {
+                      title: 'EUR',
+                      value: 'EUR',
+                    },
+                  ]}
+                 selectProps={{
+                  value: 'EUR'
+                 }}
+                />
+              ),
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.defaultGoalValueTooltip),
+            }}
+          />
         </div>
       </div>
     );

@@ -77,26 +77,30 @@ class EditGoalPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { goalId } }, datamart } = this.props;
+    const { match: { params: { goalId } } } = this.props;
 
     if (goalId) {
-      GoalFormService.loadGoalData(goalId, datamart.id)
-        .then(goalData => {
-          this.setState({
-            goalFormData: {
-              ...goalData,
-            },
-            loading: false,
-          });
-        })
-        .catch(err => {
-          this.setState({ loading: false });
-          this.props.notifyError(err);
-        });
+      this.fetchData(goalId);
     } else {
       this.setState({ loading: false });
     }
   }
+
+  fetchData = (goalId: string) => {
+    GoalFormService.loadGoalData(goalId, this.props.datamart.id)
+      .then(goalData => {
+        this.setState({
+          goalFormData: {
+            ...goalData,
+          },
+          loading: false,
+        });
+      })
+      .catch(err => {
+        this.setState({ loading: false });
+        this.props.notifyError(err);
+      });
+  };
 
   onSubmitFail = () => {
     const { intl } = this.props;
@@ -105,10 +109,11 @@ class EditGoalPage extends React.Component<Props, State> {
 
   save = (goalFormData: GoalFormData) => {
     const {
-      match: { params: { organisationId } },
+      match: { params: { organisationId, goalId } },
       notifyError,
       history,
       intl,
+      location,
     } = this.props;
 
     const { goalFormData: initialGoalFormData } = this.state;
@@ -121,10 +126,16 @@ class EditGoalPage extends React.Component<Props, State> {
       loading: true,
     });
     GoalFormService.saveGoal(organisationId, goalFormData, initialGoalFormData)
-      .then(() => {
+      .then(goalResource => {
         hideSaveInProgress();
-        const goalsUrl = `/v2/o/${organisationId}/campaigns/goals`;
-        history.push(goalsUrl);
+        const goalUrl = goalId
+          ? `/v2/o/${organisationId}/campaigns/goal/${goalResource.id}`
+          : `/v2/o/${organisationId}/campaigns/goal/${goalResource.id}/edit`;
+        history.push({
+          pathname: goalUrl,
+          state: { from: `${location.pathname}` },
+        });
+        this.fetchData(goalResource.id);
       })
       .catch(err => {
         hideSaveInProgress();

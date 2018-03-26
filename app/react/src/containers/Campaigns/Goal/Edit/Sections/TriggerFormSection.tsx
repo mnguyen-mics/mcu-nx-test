@@ -6,7 +6,7 @@ import {
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
-import { Checkbox, Button, Row, Col } from 'antd';
+import { Radio, Button, Row, Col, message } from 'antd';
 import { FormSection } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -25,6 +25,7 @@ import { Field } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { GoalFormData } from '../domain';
+import PixelSection from '../../../../../components/PixelSection';
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 
@@ -63,6 +64,15 @@ const messages = defineMessages({
     defaultMessage:
       'Start your query with "SELECT \\{ id \\} FROM UserPoint WHERE" and add your conditions after the WHERE clause.',
   },
+  newGoalPixelSection: {
+    id: 'edit.goal.form.section.pixel.newGoal',
+    defaultMessage: 'Please save your goal to generate your pixel code.',
+  },
+  goalAlreadyHasQueryTrigger: {
+    id: 'edit.goal.form.section.pixel.goal.has.query.trigger',
+    defaultMessage:
+      "You can't trigger via pixel because your goal already has a trigger via query.",
+  },
 });
 
 interface State {
@@ -87,7 +97,10 @@ class TriggerFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      pixelSectionVisible: this.props.initialValues.triggerMode !== 'QUERY',
+      pixelSectionVisible:
+        this.props.initialValues.triggerMode !== 'QUERY' ||
+        (!!this.props.initialValues.goal &&
+          !this.props.initialValues.goal.new_query_id),
       editQueryMode: false,
       queryContainer: this.props.initialValues.queryContainer,
       queryContainerCopy: this.props.initialValues.queryContainer.copy(),
@@ -147,11 +160,20 @@ class TriggerFormSection extends React.Component<Props, State> {
   };
 
   toggleSections = () => {
-    this.setState({
-      pixelSectionVisible: !this.state.pixelSectionVisible,
-    });
-    const newTriggerMode = this.state.pixelSectionVisible ? 'QUERY' : 'PIXEL';
-    this.props.formChange('triggerMode', newTriggerMode);
+    if (
+      this.props.initialValues.goal &&
+      this.props.initialValues.goal.new_query_id
+    ) {
+      message.error(
+        this.props.intl.formatMessage(messages.goalAlreadyHasQueryTrigger),
+      );
+    } else {
+      this.setState({
+        pixelSectionVisible: !this.state.pixelSectionVisible,
+      });
+      const newTriggerMode = this.state.pixelSectionVisible ? 'QUERY' : 'PIXEL';
+      this.props.formChange('triggerMode', newTriggerMode);
+    }
   };
 
   switchEditMode = () => {
@@ -172,25 +194,31 @@ class TriggerFormSection extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       match: { params: { goalId } },
+      datamart,
     } = this.props;
     return (
       <div>
-        <p>{formatMessage(messages.triggerPixelModalTitle)}</p>
-        <p>{formatMessage(messages.triggerPixelModalMessage)} : </p>
-        <p>
-          {' '}
-          {`<img src='//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=meddf17&$goal_id=${goalId ||
-            this.props.goalId}' />`}
-        </p>
+        {goalId || this.props.goalId ? (
+          <div>
+            {formatMessage(messages.triggerPixelModalTitle)}
+            <br />
+            {formatMessage(messages.triggerPixelModalMessage)}
+            <br />
+            <br />
+            <PixelSection
+              datamartToken={datamart.token}
+              goalId={goalId || this.props.goalId}
+            />
+          </div>
+        ) : (
+          formatMessage(messages.newGoalPixelSection)
+        )}
       </div>
     );
   };
 
   render() {
-    const {
-      intl: { formatMessage },
-      match: { params: { goalId } },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
     const updateQueryContainerAndCloseEditMode = () => {
       this.setState(prevState => {
         return {
@@ -201,8 +229,6 @@ class TriggerFormSection extends React.Component<Props, State> {
       this.closeEditMode();
     };
 
-    const isGoalId = goalId || this.props.goalId;
-
     return (
       <div>
         <FormSection
@@ -211,25 +237,22 @@ class TriggerFormSection extends React.Component<Props, State> {
         />
         <Row>
           <Col span={4}>
-            <Checkbox
+            <Radio
               checked={!this.state.pixelSectionVisible}
-              onChange={isGoalId ? this.toggleSections : undefined}
+              onChange={this.toggleSections}
             >
               {formatMessage(messages.formCheckBoxText1)}
-            </Checkbox>
-            {isGoalId && (
-              <div>
-                <br />
-                <Checkbox
-                  checked={this.state.pixelSectionVisible}
-                  onChange={this.toggleSections}
-                >
-                  {formatMessage(messages.formCheckBoxText2)}
-                </Checkbox>
-              </div>
-            )}
+            </Radio>
+            <Radio
+              checked={this.state.pixelSectionVisible}
+              onChange={this.toggleSections}
+            >
+              {formatMessage(messages.formCheckBoxText2)}
+            </Radio>
           </Col>
-          <Col span={20}>
+        </Row>
+        <Row>
+          <Col span={20} offset={4}>
             {!this.state.pixelSectionVisible
               ? this.state.editQueryMode
                 ? this.renderPropertiesField()

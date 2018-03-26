@@ -32,43 +32,51 @@ import withNormalizer, {
 import {
   AudienceSegmentFormData,
   SegmentTypeFormLoader,
-  EditAudienceSegmentParam
-} from './domain'
-import {
-  FeedType
-} from "../../../../models/audiencesegment/";
+  EditAudienceSegmentParam,
+} from './domain';
+import { FeedType } from '../../../../models/audiencesegment/';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 
-
-import GeneralFormSection from './Sections/GeneralFormSection'
+import GeneralFormSection from './Sections/GeneralFormSection';
 import SelectorQL from './Sections/query/SelectorQL';
-import AudienceExternalFeedSection, { AudienceExternalFeedSectionProps } from './Sections/AudienceExternalFeedSection'
-import AudienceTagFeedSection, { AudienceTagFeedSectionProps } from './Sections/AudienceTagFeedSection'
-import { PixelSection } from './Sections/pixel'
+import AudienceExternalFeedSection, {
+  AudienceExternalFeedSectionProps,
+} from './Sections/AudienceExternalFeedSection';
+import AudienceTagFeedSection, {
+  AudienceTagFeedSectionProps,
+} from './Sections/AudienceTagFeedSection';
+import PixelSection from '../../../../components/PixelSection';
 
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Datamart } from '../../../../models/organisation/organisation';
 import { FormSection, FieldCtor } from '../../../../components/Form';
 
-import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL'
+import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 
 const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
-  >;
+>;
 
-const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceExternalFeedSectionProps>;
-const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceTagFeedSectionProps>;
+const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<
+  Field,
+  AudienceExternalFeedSectionProps
+>;
+const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<
+  Field,
+  AudienceTagFeedSectionProps
+>;
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 
-export interface AudienceSegmentFormProps extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
+export interface AudienceSegmentFormProps
+  extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
   close: () => void;
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
   audienceSegmentFormData: AudienceSegmentFormData;
-  datamart: Datamart,
+  datamart: Datamart;
   segmentType: SegmentTypeFormLoader;
   feedType?: FeedType;
   segmentCreation: boolean;
@@ -83,9 +91,7 @@ type Props = InjectedFormProps<AudienceSegmentFormProps> &
   NormalizerProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
-
 class EditAudienceSegmentForm extends React.Component<Props> {
-
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
       <div>
@@ -95,49 +101,63 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         />
         {renderedSection}
       </div>
-    )
-  }
+    );
+  };
 
   renderPropertiesField = () => {
     const {
       segmentType,
       datamart,
       queryLanguage,
-      match: {
-        params: {
-          organisationId
-        }
-      },
+      match: { params: { organisationId } },
       intl,
     } = this.props;
-    switch(segmentType) {
+    switch (segmentType) {
       case 'USER_LIST':
         return null;
       case 'USER_PIXEL':
-        return <PixelSection datamartToken={datamart.token} userListTechName={this.props.audienceSegmentFormData.audienceSegment.technical_name}/>;
+        return (
+          <PixelSection
+            datamartToken={datamart.token}
+            userListTechName={
+              this.props.audienceSegmentFormData.audienceSegment.technical_name
+            }
+          />
+        );
       case 'USER_QUERY':
-    return queryLanguage === 'OTQL' ? 
-      this.generateUserQueryTemplate(<FormOTQL
-        name={'query.query_text'}
-        component={OTQLInputEditor}
-        formItemProps={{
-          label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
-        }}
-        helpToolTipProps={{
-          title: intl.formatMessage(messages.audienceSegmentCreationUserQueryFieldHelper),
-        }}
-      />) :
-      this.generateUserQueryTemplate(<SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.queryContainer} />);
+        return queryLanguage === 'OTQL'
+          ? this.generateUserQueryTemplate(
+              <FormOTQL
+                name={'query.query_text'}
+                component={OTQLInputEditor}
+                formItemProps={{
+                  label: intl.formatMessage(
+                    messages.audienceSegmentSectionQueryTitle,
+                  ),
+                }}
+                helpToolTipProps={{
+                  title: intl.formatMessage(
+                    messages.audienceSegmentCreationUserQueryFieldHelper,
+                  ),
+                }}
+              />,
+            )
+          : this.generateUserQueryTemplate(
+              <SelectorQL
+                datamartId={datamart.id}
+                organisationId={organisationId}
+                queryContainer={this.props.queryContainer}
+              />,
+            );
       default:
         return <div>Not Supported</div>;
     }
-
-  }
+  };
 
   render() {
-
     const {
-      handleSubmit, close,
+      handleSubmit,
+      close,
       segmentType,
       segmentCreation,
       change,
@@ -159,43 +179,47 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     sections.push({
       id: 'general',
       title: messages.audienceSegmentSectionGeneralTitle,
-      component: <GeneralFormSection
-        segmentCreation={segmentCreation}
-        segmentType={segmentType as any}
-      />,
+      component: (
+        <GeneralFormSection
+          segmentCreation={segmentCreation}
+          segmentType={segmentType as any}
+        />
+      ),
     });
 
     if (!(segmentCreation && segmentType === 'USER_PIXEL')) {
       sections.push({
         id: 'properties',
         title: messages.audienceSegmentSiderMenuProperties,
-        component: this.renderPropertiesField()
+        component: this.renderPropertiesField(),
       });
     }
-    
+
     if (!segmentCreation) {
       sections.push({
         id: 'audienceExternalFeed',
         title: messages.sectionAudienceExternalFeedTitle,
-        component: <AudienceExternalFeedField
-          name={"audienceExternalFeeds"}
-          component={AudienceExternalFeedSection}
-          {...genericFieldArrayProps}
-        />,
+        component: (
+          <AudienceExternalFeedField
+            name={'audienceExternalFeeds'}
+            component={AudienceExternalFeedSection}
+            {...genericFieldArrayProps}
+          />
+        ),
       });
 
       sections.push({
         id: 'audienceTagFeed',
         title: messages.sectionAudienceExternalFeedTitle,
-        component: <AudienceTagFeedField
-          name={"audienceTagFeeds"}
-          component={AudienceTagFeedSection}
-          {...genericFieldArrayProps}
-        />,
+        component: (
+          <AudienceTagFeedField
+            name={'audienceTagFeeds'}
+            component={AudienceTagFeedSection}
+            {...genericFieldArrayProps}
+          />
+        ),
       });
     }
-
-    
 
     const sideBarProps: SidebarWrapperProps = {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),
@@ -226,14 +250,12 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"
             >
-              { renderedSections }
-              
+              {renderedSections}
             </Content>
           </Form>
         </Layout>
       </Layout>
-
-    )
+    );
   }
 }
 
@@ -247,5 +269,5 @@ export default compose<Props, AudienceSegmentFormProps>(
   }),
   connect(state => ({
     hasFeature: FeatureSelectors.hasFeature(state),
-  }))
+  })),
 )(EditAudienceSegmentForm);

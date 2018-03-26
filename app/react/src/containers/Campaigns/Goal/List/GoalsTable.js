@@ -31,8 +31,8 @@ import GoalService from '../../../../services/GoalService.ts';
 const messages = defineMessages({
   labelFilterBy: {
     id: 'goal.filterby.label',
-    defaultMessage: 'Filter By Label'
-  }
+    defaultMessage: 'Filter By Label',
+  },
 });
 
 class GoalsTable extends Component {
@@ -103,7 +103,7 @@ class GoalsTable extends Component {
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
-    const newGoal = {
+    const goalResource = {
       ...goal,
       archived: true,
     };
@@ -115,33 +115,40 @@ class GoalsTable extends Component {
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        return GoalService.updateGoal({ id: goal.id, body: newGoal }).then(
-          () => {
-            if (dataSource.length === 1 && filter.currentPage !== 1) {
-              const newFilter = {
-                ...filter,
-                currentPage: filter.currentPage - 1,
-              };
-              loadGoalsDataSource(organisationId, filter);
-              history.replace({
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-                state: state,
-              });
-            } else {
-              loadGoalsDataSource(organisationId, filter);
-            }
-          },
-        );
+        return GoalService.updateGoal(goal.id, goalResource).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            loadGoalsDataSource(organisationId, filter);
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
+          } else {
+            loadGoalsDataSource(organisationId, filter);
+          }
+        });
       },
       onCancel() {},
     });
   };
 
   handleEditGoal = goal => {
-    const { match: { params: { organisationId } }, history } = this.props;
-
-    history.push(`/v2/o/${organisationId}/campaigns/goal/${goal.id}/edit`);
+    const {
+      match: { params: { organisationId } },
+      history,
+      location,
+    } = this.props;
+    const url = `/v2/o/${organisationId}/campaigns/goal/${goal.id}/edit`;
+    history.push({
+      pathname: url,
+      state: {
+        from: `${location.pathname}${location.search}`,
+      },
+    });
   };
 
   updateLocationSearch = params => {
@@ -231,7 +238,8 @@ class GoalsTable extends Component {
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/campaigns/goal/${record.id}`}
-          >{text}
+          >
+            {text}
           </Link>
         ),
       },
@@ -292,13 +300,17 @@ class GoalsTable extends Component {
     const labelsOptions = {
       labels: this.props.labels,
       selectedLabels: labels.filter(label => {
-        return filter.label_id.find(filteredLabelId => filteredLabelId === label.id) ? true : false;
+        return filter.label_id.find(
+          filteredLabelId => filteredLabelId === label.id,
+        )
+          ? true
+          : false;
       }),
-      onChange: (newLabels) => {
+      onChange: newLabels => {
         const formattedLabels = newLabels.map(label => label.id);
         this.updateLocationSearch({ label_id: formattedLabels });
       },
-      buttonMessage: messages.labelFilterBy
+      buttonMessage: messages.labelFilterBy,
     };
 
     return hasGoals ? (

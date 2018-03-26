@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import cuid from 'cuid';
-import { Radio, message } from 'antd';
+import { Switch, message } from 'antd';
 import { FormSection } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -30,9 +30,9 @@ import {
   AttributionModelCreateRequest,
 } from '../../../../../models/Plugins';
 import { AttributionSelectionCreateRequest } from '../../../../../models/goal';
-import AttributionModelForm, {
-  AttributionModelFormProps,
-} from '../../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelForm';
+// import AttributionModelForm, {
+//   AttributionModelFormProps,
+// } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelForm';
 import { AttributionModelFormData } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/domain';
 
 const messages = defineMessages({
@@ -69,6 +69,10 @@ const messages = defineMessages({
     defaultMessage:
       'Please select another default attribution model before delete the default one.',
   },
+  checkedSwitchAttributionModelText: {
+    id: 'edit.goal.default.switch.attribution.model.text',
+    defaultMessage: 'DEFAULT',
+  },
 });
 
 interface AttributionModelFormSectionState {
@@ -94,32 +98,32 @@ class AttributionModelFormSection extends React.Component<
     };
   }
 
-  openAttributionModelForm = (field?: AttributionModelListFieldModel) => {
-    const { openNextDrawer } = this.props;
-    const handleOnSave = (formData: AttributionModelFormData) => {
-      this.updateAttributionModels(formData, field && field.key);
-    };
+  // openAttributionModelForm = (field?: AttributionModelListFieldModel) => {
+  //   const { openNextDrawer } = this.props;
+  //   const handleOnSave = (formData: AttributionModelFormData) => {
+  //     this.updateAttributionModels(formData, field && field.key);
+  //   };
 
-    const additionalProps: AttributionModelFormProps = {
-      save: handleOnSave,
-      breadcrumbPaths: [],
-      close: this.props.closeNextDrawer,
-    };
+  //   const additionalProps: AttributionModelFormProps = {
+  //     save: handleOnSave,
+  //     breadcrumbPaths: [],
+  //     close: this.props.closeNextDrawer,
+  //   };
 
-    if (field) {
-      if (isAttributionModelFormData(field.model)) {
-        additionalProps.initialValues = field.model;
-      } else {
-        additionalProps.attributionId = field.model.attribution_model_id;
-      }
-    }
+  //   if (field) {
+  //     if (isAttributionModelFormData(field.model)) {
+  //       additionalProps.initialValues = field.model;
+  //     } else {
+  //       additionalProps.attributionId = field.model.attribution_model_id;
+  //     }
+  //   }
 
-    const options = {
-      additionalProps,
-    };
+  //   const options = {
+  //     additionalProps,
+  //   };
 
-    openNextDrawer<AttributionModelFormProps>(AttributionModelForm, options);
-  };
+  //   openNextDrawer<AttributionModelFormProps>(AttributionModelForm, options);
+  // };
 
   updateAttributionModels = (
     formData: AttributionModelFormData,
@@ -302,7 +306,7 @@ class AttributionModelFormSection extends React.Component<
          ${attributionModel.meta.artifact_id}`
           : 'DIRECT';
       };
-      const edit = () => this.openAttributionModelForm(attributionModelField);
+      // const edit = () => this.openAttributionModelForm(attributionModelField);
 
       const setDefaultAttributionModel = () => {
         const handleDefaultClick = () => {
@@ -328,16 +332,20 @@ class AttributionModelFormSection extends React.Component<
           formChange((fields as any).name, newFields);
         };
         return (
-          <Radio
+          <Switch
+            className="mcs-table-switch"
             checked={attributionModelField.meta.default}
             onChange={handleDefaultClick}
+            checkedChildren={intl.formatMessage(
+              messages.checkedSwitchAttributionModelText,
+            )}
           />
         );
       };
 
-      const cannotEdit =
-        !isAttributionModelFormData(attributionModelField.model) &&
-        attributionModelField.model.attribution_type === 'DIRECT';
+      // const cannotEdit =
+      //   !isAttributionModelFormData(attributionModelField.model) &&
+      //   attributionModelField.model.attribution_type === 'DIRECT';
 
       return (
         <RecordElement
@@ -345,7 +353,7 @@ class AttributionModelFormSection extends React.Component<
           recordIconType="display"
           record={attributionModelField}
           title={getName}
-          onEdit={cannotEdit ? undefined : edit}
+          // onEdit={cannotEdit ? undefined : edit}
           onRemove={removeField}
           additionalActionButtons={setDefaultAttributionModel}
         />
@@ -373,11 +381,11 @@ class AttributionModelFormSection extends React.Component<
           subtitle={messages.sectionSubtitle}
           title={messages.sectionTitle}
           dropdownItems={[
-            {
-              id: messages.addNewAttributionModel.id,
-              message: messages.addNewAttributionModel,
-              onClick: this.openAttributionModelForm,
-            },
+            // {
+            //   id: messages.addNewAttributionModel.id,
+            //   message: messages.addNewAttributionModel,
+            //   onClick: this.openAttributionModelForm,
+            // },
             {
               id: messages.addExistingAttributionModel.id,
               message: messages.addExistingAttributionModel,

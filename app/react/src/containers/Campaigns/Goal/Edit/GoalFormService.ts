@@ -79,6 +79,14 @@ const GoalFormService = {
             new_query_id: queryId,
           };
         });
+    } else if (goalFormData.triggerMode === 'PIXEL') {
+      // backend does not change new_query_id to null
+      goalDataToUpload.then(() => {
+        return {
+          ...goalFormData.goal,
+          new_query_id: null,
+        }
+      })
     }
 
     return goalDataToUpload.then(goalData => {
