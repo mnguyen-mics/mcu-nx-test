@@ -33,4 +33,20 @@ export default defineMessages({
     id: 'plugin.edit.section.properties.title',
     defaultMessage: 'Properties',
   },
+  sectionTechnicalName: {
+    id: 'plugin.edit.section.technic.button.name',
+    defaultMessage: 'Technical Name',
+  },
+  sectionTechnicalPlaceholder: {
+    id: 'plugin.edit.section.technic.button.placeholder',
+    defaultMessage: 'Technical Name',
+  },
+  sectionTechnicalHelper: {
+    id: 'plugin.edit.section.technic.button.helper',
+    defaultMessage: 'Give your Email Template a technical name to leverage integrations such as external click tracking.',
+  },
+  advanced: {
+    id: 'plugin.edit.advanced.button',
+    defaultMessage: 'Advanced',
+  },
 });
