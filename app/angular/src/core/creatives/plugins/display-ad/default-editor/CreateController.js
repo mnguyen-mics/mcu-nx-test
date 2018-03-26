@@ -19,6 +19,9 @@ define(['./module'], function (module) {
       if ($scope.organisationId === "1147") {
         $scope.groupArtifacts.push({name: "AntVoice Ad-Renderer", groupId: "ant.mics.plugin.renderer", artifactId: "antvoice_handlebar_renderer"});
       }
+      if ($scope.organisationId === "1203") {
+        $scope.groupArtifacts.push({name: "Bonial Geolocated Ad-Renderer", groupId: "com.bonial.creative.display", artifactId: "geolocated-store-display-ad-renderer"});
+      }
       $scope.wrapper = {
         groupArtifact: undefined,
         name: undefined
