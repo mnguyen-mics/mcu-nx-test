@@ -17,29 +17,29 @@ import ItemList from '../../../../../components/ItemList';
 import { McsIconType } from '../../../../../components/McsIcon';
 import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 
-const messages = defineMessages({
+export const messages = defineMessages({
   providerName: {
-    id: 'setrtings.datamart.seriveUsageReport.table.column.providerName',
+    id: 'settings.datamart.seriveUsageReport.table.column.providerName',
     defaultMessage: 'Provider Name',
   },
   campaignName: {
-    id: 'setrtings.datamart.seriveUsageReport.table.column.campaignName',
+    id: 'settings.datamart.seriveUsageReport.table.column.campaignName',
     defaultMessage: 'Campaign Name',
   },
   serviceName: {
-    id: 'setrtings.datamart.seriveUsageReport.table.column.serviceName',
+    id: 'settings.datamart.seriveUsageReport.table.column.serviceName',
     defaultMessage: 'Service Name',
   },
   serviceElementName: {
-    id: 'setrtings.datamart.seriveUsageReport.table.column.serviceElementName',
+    id: 'settings.datamart.seriveUsageReport.table.column.serviceElementName',
     defaultMessage: 'Serivce Element Name',
   },
   usage: {
-    id: 'setrtings.datamart.seriveUsageReport.table.column.usage',
+    id: 'settings.datamart.seriveUsageReport.table.column.usage',
     defaultMessage: 'Usage',
   },
   noData: {
-    id: 'setrtings.datamart.seriveUsageReport.empty.table',
+    id: 'settings.datamart.seriveUsageReport.empty.table',
     defaultMessage: 'No data',
   },
 });

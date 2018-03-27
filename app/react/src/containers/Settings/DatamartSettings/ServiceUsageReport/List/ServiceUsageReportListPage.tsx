@@ -19,6 +19,7 @@ import {
 import ServiceUsageReportTable from './ServiceUsageReportTable';
 import ServiceUsageReportService from '../../../../../services/ServiceUsageReportService';
 import { McsIcon } from '../../../../../components';
+import ExportService from '../../../../../services/ExportService';
 
 const messages = defineMessages({
   serviceUsageReportTitle: {
@@ -59,30 +60,11 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchAndStoreData();
   }
 
-  fetchData = () => {
-    const {
-      match: { params: { organisationId } },
-      location: { search },
-    } = this.props;
-    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
-    const dimensions = [
-      'campaign_id',
-      'campaign_name',
-      'provider_name',
-      'service_id',
-      'service_name',
-      'service_element_id',
-      'service_element_name',
-    ];
-    return ServiceUsageReportService.getServiceUsageProviders(
-      organisationId,
-      filter.from,
-      filter.to,
-      dimensions,
-    ).then(resp => {
+  fetchAndStoreData = () => {
+    this.fetchData().then(resp => {
       this.setState(
         {
           dataSource: resp.data.report_view.rows.map(row => {
@@ -105,15 +87,68 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
     });
   };
 
+  fetchData = () => {
+    const {
+      match: { params: { organisationId } },
+      location: { search },
+    } = this.props;
+    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+    const dimensions = [
+      'provider_organisation_id',
+      'provider_name',
+      'campaign_id',
+      'campaign_name',
+      'service_id',
+      'service_name',
+      'service_element_id',
+      'service_element_name',
+      'segment_name',
+    ];
+    return ServiceUsageReportService.getServiceUsageProviders(
+      organisationId,
+      filter.from,
+      filter.to,
+      dimensions,
+    );
+  };
+
   handleRunExport = () => {
+    const {
+      match: { params: { organisationId } },
+      location: { search },
+      intl: { formatMessage },
+    } = this.props;
+    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
     this.setState({
       exportIsRunning: true,
     });
-    setTimeout(() => {
-      this.setState({
-        exportIsRunning: false,
+    this.fetchData().then(resp => {
+      Promise.resolve(
+        resp.data.report_view.rows.map(row => {
+          return {
+            provider_organisation_id: row[0],
+            provider_name: row[1],
+            campaign_id: row[2],
+            campaign_name: row[3],
+            service_id: row[4],
+            service_name: row[5],
+            service_element_id: row[6],
+            segment_name: row[7],
+            unit_count: row[8],
+          };
+        }),
+      ).then(data => {
+        ExportService.exportServiceUsageReportList(
+          organisationId,
+          data,
+          filter,
+          formatMessage,
+        );
+        this.setState({
+          exportIsRunning: false,
+        });
       });
-    }, 2000);
+    });
   };
 
   additionnalComponentRenderer = () => {
@@ -126,7 +161,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
         <Button
           onClick={this.handleRunExport}
           loading={exportIsRunning}
-          style={{ float: 'right' }}
+          style={{ float: 'right', bottom: '10px' }}
         >
           {!exportIsRunning && <McsIcon type="download" />}
           <FormattedMessage id="EXPORT" />
@@ -142,7 +177,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
 
     return (
       <ServiceUsageReportTable
-        fetchList={this.fetchData}
+        fetchList={this.fetchAndStoreData}
         dataSource={dataSource}
         loading={loading}
         total={total}
