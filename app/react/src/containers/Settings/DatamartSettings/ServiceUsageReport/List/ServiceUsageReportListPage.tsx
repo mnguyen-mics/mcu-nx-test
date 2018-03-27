@@ -42,7 +42,9 @@ interface State {
   exportIsRunning: boolean;
 }
 
-type Props = ServiceUsageReportListPageProps;
+type Props = ServiceUsageReportListPageProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class ServiceUsageReportListPage extends React.Component<Props, State> {
   constructor(props: Props) {
