@@ -15,6 +15,7 @@ export interface FormDragAndDropProps {
   uploadTitle: FormattedMessage.MessageDescriptor;
   uploadMessage: FormattedMessage.MessageDescriptor;
   uploadError: FormattedMessage.MessageDescriptor;
+  fileMasks:string
 }
 
 const Dragger = Upload.Dragger;
@@ -46,12 +47,12 @@ class FormDragAndDrop extends React.Component<JoinedProps> {
     };
 
     const builProps = () => {
-      const { input } = this.props;
+      const { input, fileMasks } = this.props;
       return {
         name: 'file',
         multiple: true,
         action: '/',
-        accept: '.csv,.tsv',
+        accept: fileMasks,
         beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
           checkIfSizeOK(file);
           const newFileList = [

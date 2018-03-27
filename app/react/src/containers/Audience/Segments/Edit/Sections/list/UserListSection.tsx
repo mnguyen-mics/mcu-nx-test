@@ -117,6 +117,7 @@ class UserListSection extends React.Component<Props> {
       uploadTitle: messages.uploadTitle,
       uploadMessage: messages.uploadMessage,
       uploadError: messages.uploadError,
+      fileMasks: '.csv,.tsv'
     };
 
     return (
