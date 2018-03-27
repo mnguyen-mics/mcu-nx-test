@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import {
-  TableViewFilters,
-  EmptyTableView,
-} from '../../../../../components/TableView';
-// import { Filter } from '../../Common/domain';
-import {
-  parseSearch,
   updateSearch,
+  parseSearch,
+  PAGINATION_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
-
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import {
+  InjectedIntlProps,
+  injectIntl,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
+import ItemList from '../../../../../components/ItemList';
+import { McsIconType } from '../../../../../components/McsIcon';
+import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 
 const messages = defineMessages({
   providerName: {
@@ -44,7 +46,10 @@ const messages = defineMessages({
 
 interface ServiceUsageReportTableProps {
   dataSource: any[];
-  isLoading: boolean;
+  loading: boolean;
+  fetchList: () => void;
+  total: number;
+  additionnalComponent?: React.ReactNode;
 }
 
 interface State {}
@@ -68,23 +73,11 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { dataSource, location: { search } } = this.props;
-    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
-    const pagination = {
-      current: filter.currentPage,
-      pageSize: filter.pageSize,
-      total: dataSource.length,
-      onChange: (page: number, size: number) =>
-        this.updateLocationSearch({
-          currentPage: page,
-          pageSize: size,
-        }),
-      onShowSizeChange: (current: number, size: number) =>
-        this.updateLocationSearch({
-          pageSize: size,
-          currentPage: 1,
-        }),
-    };
+    const {
+      dataSource,
+      additionnalComponent,
+      location: { search },
+    } = this.props;
 
     const dataColumns = [
       {
@@ -114,6 +107,15 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
       },
     ];
 
+    const emptyTable: {
+      iconType: McsIconType;
+      intlMessage: FormattedMessage.Props;
+    } = {
+      iconType: 'library',
+      intlMessage: messages.noData,
+    };
+
+    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
     const dateRangePickerOptions = {
       isEnabled: true,
       onChange: (values: McsDateRangeValue) =>
@@ -127,16 +129,18 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
       },
     };
 
-    return dataSource.length ? (
-      <TableViewFilters
-        columns={dataColumns}
+    return (
+      <ItemList
+        fetchList={this.props.fetchList}
         dataSource={dataSource}
+        loading={this.props.loading}
+        total={this.props.total}
+        columns={dataColumns}
+        pageSettings={PAGINATION_SEARCH_SETTINGS}
+        emptyTable={emptyTable}
+        additionnalComponent={additionnalComponent}
         dateRangePickerOptions={dateRangePickerOptions}
-        loading={this.props.isLoading}
-        pagination={pagination}
       />
-    ) : (
-      <EmptyTableView iconType="full-users" intlMessage={messages.noData} />
     );
   }
 }

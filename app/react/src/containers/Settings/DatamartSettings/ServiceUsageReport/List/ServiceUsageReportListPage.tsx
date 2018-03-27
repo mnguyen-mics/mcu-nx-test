@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Button } from 'antd';
+import { Button } from 'antd';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {
@@ -18,8 +18,8 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import ServiceUsageReportTable from './ServiceUsageReportTable';
 import ServiceUsageReportService from '../../../../../services/ServiceUsageReportService';
-
 import { McsIcon } from '../../../../../components';
+
 const messages = defineMessages({
   serviceUsageReportTitle: {
     id: 'seetings.service.usage.report.title',
@@ -37,9 +37,10 @@ export const DISPLAY_SEARCH_SETTINGS = [
 interface ServiceUsageReportListPageProps {}
 
 interface State {
-  isLoading: boolean;
+  loading: boolean;
   dataSource: any[]; // type better
   exportIsRunning: boolean;
+  total: number;
 }
 
 type Props = ServiceUsageReportListPageProps &
@@ -50,13 +51,18 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoading: true,
+      loading: true,
       dataSource: [],
       exportIsRunning: false,
+      total: 0,
     };
   }
 
   componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = () => {
     const {
       match: { params: { organisationId } },
       location: { search },
@@ -71,15 +77,15 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
       'service_element_id',
       'service_element_name',
     ];
-    ServiceUsageReportService.getServiceUsageProviders(
+    return ServiceUsageReportService.getServiceUsageProviders(
       organisationId,
       filter.from,
       filter.to,
       dimensions,
-    ).then(results => {
+    ).then(resp => {
       this.setState(
         {
-          dataSource: results.data.report_view.rows.map(row => {
+          dataSource: resp.data.report_view.rows.map(row => {
             return {
               provider_name: row[1],
               campaign_name: row[3],
@@ -91,12 +97,13 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
         },
         () => {
           this.setState({
-            isLoading: false,
+            loading: false,
+            total: resp.data.report_view.total_items,
           });
         },
       );
     });
-  }
+  };
 
   handleRunExport = () => {
     this.setState({
@@ -109,31 +116,38 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
     }, 2000);
   };
 
-  render() {
-    const { dataSource, isLoading, exportIsRunning } = this.state;
+  additionnalComponentRenderer = () => {
+    const { exportIsRunning } = this.state;
     return (
-      <Row className="mcs-table-container">
-        <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title">
-              <FormattedMessage {...messages.serviceUsageReportTitle} />
-            </span>
-            <Button
-              onClick={this.handleRunExport}
-              loading={exportIsRunning}
-              style={{ float: 'right' }}
-            >
-              {!exportIsRunning && <McsIcon type="download" />}
-              <FormattedMessage id="EXPORT" />
-            </Button>
-          </div>
-          <hr className="mcs-separator" />
-          <ServiceUsageReportTable
-            dataSource={dataSource}
-            isLoading={isLoading}
-          />
-        </div>
-      </Row>
+      <div>
+        <span className="mcs-card-title">
+          <FormattedMessage {...messages.serviceUsageReportTitle} />
+        </span>
+        <Button
+          onClick={this.handleRunExport}
+          loading={exportIsRunning}
+          style={{ float: 'right' }}
+        >
+          {!exportIsRunning && <McsIcon type="download" />}
+          <FormattedMessage id="EXPORT" />
+        </Button>
+
+        <hr className="mcs-separator" />
+      </div>
+    );
+  };
+
+  render() {
+    const { dataSource, loading, total } = this.state;
+
+    return (
+      <ServiceUsageReportTable
+        fetchList={this.fetchData}
+        dataSource={dataSource}
+        loading={loading}
+        total={total}
+        additionnalComponent={this.additionnalComponentRenderer()}
+      />
     );
   }
 }

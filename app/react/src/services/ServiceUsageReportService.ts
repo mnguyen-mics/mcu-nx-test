@@ -13,13 +13,7 @@ const ServiceUsageReportService = {
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/service_usage_provider_report';
     const DEFAULT_METRICS = [
-      'campaign_id',
-      'campaign_name',
-      'provider_name',
-      'service_id',
-      'service_name',
-      'service_element_id',
-      'service_element_name',
+      'unit_count',
     ];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
