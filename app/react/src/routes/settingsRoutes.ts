@@ -1,31 +1,33 @@
-import { SitesListPage } from '../containers/Settings/DatamartSettings/Sites/List'
-import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datamarts/List'
-import { MobileApplicationsListPage } from '../containers/Settings/DatamartSettings/MobileApplications/List'
+import { SitesListPage } from '../containers/Settings/DatamartSettings/Sites/List';
+import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datamarts/List';
+import { MobileApplicationsListPage } from '../containers/Settings/DatamartSettings/MobileApplications/List';
 
-import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels'
-import UserListPage from '../containers/Settings/OrganisationSettings/Users/UserListPage'
-import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount'
+import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels';
+import UserListPage from '../containers/Settings/OrganisationSettings/Users/UserListPage';
+import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount';
 
-import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/'
+import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/';
 
 import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/MobileApplications/Edit/MobileApplicationEditPage';
 import SiteEditPage from '../containers/Settings/DatamartSettings/Sites/Edit/SiteEditPage';
 import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/Edit/DatamartEditPage';
 
-import { BidOptimizerContent } from '../containers/Settings/CampaignSettings/BidOptimizer/List'
-import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit'
+import { BidOptimizerContent } from '../containers/Settings/CampaignSettings/BidOptimizer/List';
+import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit';
 
-import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List'
-import { CreateEditAttributionModel } from '../containers/Settings/CampaignSettings/AttributionModel/Edit'
+import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List';
+import { CreateEditAttributionModel } from '../containers/Settings/CampaignSettings/AttributionModel/Edit';
 
-import { EmailRouterContent } from '../containers/Settings/CampaignSettings/EmailRouter/List'
-import { CreateEditEmailRouter } from '../containers/Settings/CampaignSettings/EmailRouter/Edit'
+import { EmailRouterContent } from '../containers/Settings/CampaignSettings/EmailRouter/List';
+import { CreateEditEmailRouter } from '../containers/Settings/CampaignSettings/EmailRouter/Edit';
 
-import { RecommenderContent } from '../containers/Settings/CampaignSettings/Recommender/List'
-import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/Recommender/Edit'
+import { RecommenderContent } from '../containers/Settings/CampaignSettings/Recommender/List';
+import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/Recommender/Edit';
 
-import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List'
-import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit'
+import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List';
+import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit';
+
+import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
 
 const settingsRoutes = [
   /*
@@ -98,6 +100,13 @@ const settingsRoutes = [
     editComponent: CreateEditVisitAnalyzer,
   },
 
+  // service usage report
+  {
+    path: '/settings/datamart/service_usage_report',
+    layout: 'settings',
+    contentComponent: ServiceUsageReportListPage,
+  },
+
   /*
 
   ORGANISATION SETTINGS
@@ -124,15 +133,13 @@ const settingsRoutes = [
     layout: 'settings',
     contentComponent: UserListPage,
   },
- 
-  
- 
+
   /*
 
   ACCOUNT SETTINGS
   
   */
-  
+
   {
     path: '/settings/account/my_profile',
     layout: 'settings',
@@ -171,7 +178,8 @@ const settingsRoutes = [
   },
 
   {
-    path: '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
+    path:
+      '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditAttributionModel,
   },
@@ -216,7 +224,6 @@ const settingsRoutes = [
     layout: 'edit',
     editComponent: CreateEditRecommender,
   },
-
 ];
 
 export default settingsRoutes;
