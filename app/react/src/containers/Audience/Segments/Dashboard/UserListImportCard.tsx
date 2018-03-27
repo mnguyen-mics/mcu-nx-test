@@ -2,14 +2,14 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import AudienceSegmentService, {UserSegmentImportJobExecutionResource } from '../../../../services/AudienceSegmentService';
+import AudienceSegmentService, {
+  UserSegmentImportJobExecutionResource,
+} from '../../../../services/AudienceSegmentService';
 import { EditAudienceSegmentParam } from '../Edit/domain';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { formatUnixTimestamp } from '../../../../utils/DateHelper';
 
-import {
-  JobExecutionStatus,
-} from '../../../../models/Job/JobResource';
+import { JobExecutionStatus } from '../../../../models/Job/JobResource';
 import { TableView } from '../../../../components/TableView';
 import {
   TableViewProps,
@@ -36,12 +36,11 @@ interface State {
   executions: UserSegmentImportJobExecutionResource[];
 }
 
-export interface ImportExecutionsData { 
+export interface ImportExecutionsData {
   submissionDate: number;
   status: JobExecutionStatus;
-  totalUserSegmentTreated: number | undefined;
-  totalUserSegmentImported: number | undefined;
-  
+  totalUserSegmentTreated?: number;
+  totalUserSegmentImported?: number;
 }
 
 const ImportJobTableView = TableView as React.ComponentClass<
@@ -83,7 +82,6 @@ class UserListImportCard extends React.Component<Props, State> {
 
   render() {
     const { isLoading } = this.state;
-    console.log(this.state.executions);
 
     const dataColumns: Array<DataColumnDefinition<ImportExecutionsData>> = [
       {
@@ -91,7 +89,7 @@ class UserListImportCard extends React.Component<Props, State> {
         key: 'submissionDate',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (text, record) => formatUnixTimestamp(record['submissionDate']),
+        render: (text, record) => formatUnixTimestamp(record.submissionDate),
       },
       {
         translationKey: 'STATUS',
@@ -101,31 +99,36 @@ class UserListImportCard extends React.Component<Props, State> {
       },
       {
         translationKey: 'TOTAL_USER_SEGMENT_TREATED',
-        key: 'totalUserSegmentTreated',        
+        key: 'totalUserSegmentTreated',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (text, record) => formatMetric(text,'0', '', '') ,
+        render: (text, record) => formatMetric(text, '0', '', ''),
       },
       {
         translationKey: 'TOTAL_USER_SEGMENT_IMPORTED',
-        key: 'totalUserSegmentImported',        
+        key: 'totalUserSegmentImported',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (text, record) => formatMetric(text,'0', '', '') ,
+        render: (text, record) => formatMetric(text, '0', '', ''),
       },
     ];
 
-    const executionsData  = this.state.executions.map(
-      (execution:UserSegmentImportJobExecutionResource) =>
-          ({
-            status: execution.status,
-            totalUserSegmentTreated: execution.result !== undefined ? execution.result.total_user_segment_treated : null,
-            totalUserSegmentImported: execution.result !== undefined ? execution.result.total_user_segment_imported : null,
-            submissionDate: execution.creation_date,
-          } as ImportExecutionsData)
+    const executionsData = this.state.executions.map(
+      (execution: UserSegmentImportJobExecutionResource) =>
+        ({
+          status: execution.status,
+          totalUserSegmentTreated:
+            execution.result !== undefined
+              ? execution.result.total_user_segment_treated
+              : null,
+          totalUserSegmentImported:
+            execution.result !== undefined
+              ? execution.result.total_user_segment_imported
+              : null,
+          submissionDate: execution.creation_date,
+        } as ImportExecutionsData),
+    );
 
-      ) 
-    
     return (
       <ImportJobTableView
         columns={dataColumns}

@@ -109,9 +109,6 @@ class TableView<
         return column;
       })
       .map(dataColumn => {
-        if(dataColumn.translationKey === 'OUTPUT_RESULT'){
-          console.log('dataColumn',dataColumn);
-        }
         return {
           title: dataColumn.intlMessage ? (
             <FormattedMessage {...dataColumn.intlMessage} />
@@ -200,8 +197,6 @@ class TableView<
       onChange,
       pagination: newPagination,
     };
-
-    console.log(computedTableProps);
 
     return (
       <div>

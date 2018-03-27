@@ -1,7 +1,6 @@
 import { 
   BaseExecutionResource,
-} from './JobResource';
-import {  JobExecutionStatus,
+  JobExecutionStatus,
 } from './JobResource';
 export {
   BaseExecutionResource,

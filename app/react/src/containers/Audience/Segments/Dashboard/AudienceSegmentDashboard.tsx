@@ -15,9 +15,11 @@ import UserListImportCard from './UserListImportCard';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { Loading } from '../../../../components';
 
 interface State {
-  audienceSegment:null | AudienceSegmentShape;
+  audienceSegment?: AudienceSegmentShape;
+  loading: boolean;
 }
 
 interface MapStateToProps {
@@ -39,16 +41,17 @@ type Props = MapStateToProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class AudienceSegmentDashboard extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
-
     this.state = {
-      audienceSegment: null
-    }
+      loading: true,
+    };
   }
 
   componentDidMount() {
+
+    this.setState({ loading: true });
+    
     const { match: { params: { segmentId } } } = this.props;
 
     if (segmentId) {
@@ -56,16 +59,23 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         .then(res => {
           this.setState({
             audienceSegment: res.data,
+            loading:false,
           });
-          
         })
         .catch(err => {
           this.props.notifyError(err);
+          this.setState({ loading: false });
         });
     }
   }
 
   render() {
+    const { loading } = this.state;
+
+    if (loading) {
+      return <Loading className="loading-full-screen" />;
+    }
+
     const { segment, intl, isFetching } = this.props;
 
     const getLoadingValue = (
@@ -95,16 +105,19 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         display: <Overlap />,
       },
     ];
-    if(this.state.audienceSegment !== null){
+    if (this.state.audienceSegment !== undefined) {
       if (this.state.audienceSegment.type === 'USER_LIST') {
         items.push({
           title: intl.formatMessage(messages.imports),
-          display: <UserListImportCard datamartId ={this.state.audienceSegment.datamart_id}/>,
+          display: (
+            <UserListImportCard
+              datamartId={this.state.audienceSegment.datamart_id}
+            />
+          ),
         });
       }
     }
-      
-    
+
     return (
       <div>
         <AudienceCounters

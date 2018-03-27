@@ -20,8 +20,8 @@ import PluginService from './PluginService';
 import { BaseExecutionResource } from '../models/Job/JobResource';
 
 export interface SegmentImportResult{
-  total_user_segment_imported:number,
-  total_user_segment_treated:number
+  total_user_segment_imported:number;
+  total_user_segment_treated:number;
 }
 
 export interface UserSegmentImportJobExecutionResource extends BaseExecutionResource<{}, SegmentImportResult>{

@@ -33,7 +33,6 @@ class FormDragAndDrop extends React.Component<JoinedProps> {
     } = this.props;
 
     const checkIfSizeOK = (file: UploadFile) => {
-      const { intl: { formatMessage } } = this.props;
       const isSizeOK = file.size < maxFileSize;
       if (!isSizeOK) {
         message.error(`${file.name} ${formatMessage(uploadError)}`, 2);

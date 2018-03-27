@@ -84,20 +84,20 @@ class UserListSection extends React.Component<Props> {
       },
     ];
 
-    var workSheet = XLSX.utils.json_to_sheet(data);
+    const workSheet = XLSX.utils.json_to_sheet(data);
 
-    var workBook = XLSX.utils.book_new();
+    const workBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workBook, workSheet);
 
-    var workBookOout = XLSX.write(workBook, {
+    const workBookOout = XLSX.write(workBook, {
       bookType: 'csv',
       type: 'binary',
     });
 
     const s2ab = (s: any) => {
-      var buf = new ArrayBuffer(s.length);
-      var view = new Uint8Array(buf);
-      for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
+      const buf = new ArrayBuffer(s.length);
+      const view = new Uint8Array(buf);
+      for (var i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
       return buf;
     };
 
