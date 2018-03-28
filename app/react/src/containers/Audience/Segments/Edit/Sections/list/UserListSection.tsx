@@ -40,7 +40,7 @@ class UserListSection extends React.Component<Props> {
       },
       {
         OPERATION: 'DELETE',
-        USER_AGENT_ID: 'web:321:abcdedcba',
+        USER_AGENT_ID: 'web:321:abcd',
         USER_ACCOUNT_ID: '',
         EMAIL_HASH: '',
         SEGMENT_ID: `${segmentId}`,
@@ -51,7 +51,7 @@ class UserListSection extends React.Component<Props> {
       },
       {
         OPERATION: 'UPDATE',
-        USER_AGENT_ID: 'tech:apx:123454321',
+        USER_AGENT_ID: 'tech:apx:123',
         USER_ACCOUNT_ID: '',
         EMAIL_HASH: '',
         SEGMENT_ID: `${segmentId}`,
@@ -97,7 +97,7 @@ class UserListSection extends React.Component<Props> {
     const s2ab = (s: any) => {
       const buf = new ArrayBuffer(s.length);
       const view = new Uint8Array(buf);
-      for (var i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
+      for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i);
       return buf;
     };
 
