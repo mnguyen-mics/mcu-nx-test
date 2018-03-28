@@ -214,7 +214,7 @@ export default defineMessages({
     defaultMessage: 'Add Existing',
   },
   
-  //User List
+  // User List
 
   uploadMessage: {
     id: 'audience.segment.upload.message',

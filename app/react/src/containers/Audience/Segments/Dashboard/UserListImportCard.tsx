@@ -113,21 +113,18 @@ class UserListImportCard extends React.Component<Props, State> {
       },
     ];
 
-    const executionsData = this.state.executions.map(
-      (execution: UserSegmentImportJobExecutionResource) =>
-        ({
-          status: execution.status,
-          totalUserSegmentTreated:
-            execution.result !== undefined
-              ? execution.result.total_user_segment_treated
-              : null,
-          totalUserSegmentImported:
-            execution.result !== undefined
-              ? execution.result.total_user_segment_imported
-              : null,
-          submissionDate: execution.creation_date,
-        } as ImportExecutionsData),
-    );
+    const executionsData = this.state.executions.map(execution => {
+      return {
+        status: execution.status,
+        totalUserSegmentTreated: execution.result
+          ? execution.result.total_user_segment_treated
+          : undefined,
+        totalUserSegmentImported: execution.result
+          ? execution.result.total_user_segment_imported
+          : undefined,
+        submissionDate: execution.creation_date,
+      };
+    });
 
     return (
       <ImportJobTableView
