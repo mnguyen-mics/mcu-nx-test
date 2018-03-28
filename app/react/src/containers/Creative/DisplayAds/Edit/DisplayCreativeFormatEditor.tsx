@@ -36,16 +36,19 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { organisationId } } } = this.props;
-    CreativeService.getCreativeFormats(organisationId, { type: 'DISPLAY_AD' }).then(res => {
+    const { match: { params: { organisationId } }, input } = this.props;
+    CreativeService.getCreativeFormats(organisationId, {
+      type: 'DISPLAY_AD',
+    }).then(res => {
       const formats = res.data
         .sort((a, b) => {
           return a.width - b.width;
         })
-        .map(
-        adFormat => `${adFormat.width}x${adFormat.height}`,
-      );
+        .map(adFormat => `${adFormat.width}x${adFormat.height}`);
       this.setState({ availableFormats: formats });
+      if (!input.value) {
+        input.onChange(formats[0]);
+      }
     });
   }
 
@@ -60,9 +63,9 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
 
     const buttonLabel = formatMessage(
       messages[
-      standardFormat
-        ? 'creativeCreationGeneralFormatFieldButtonCustom'
-        : 'creativeCreationGeneralFormatFieldButtonStandard'
+        standardFormat
+          ? 'creativeCreationGeneralFormatFieldButtonCustom'
+          : 'creativeCreationGeneralFormatFieldButtonStandard'
       ],
     );
 
@@ -76,17 +79,14 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
     const height = dimensions[1] ? dimensions[1] : '';
 
     const onDimensionChange = (type: string) => (
-      e: React.FormEvent<HTMLButtonElement>,
+      e: React.ChangeEvent<HTMLInputElement>,
     ) => {
-      // const { value } = e.target;
-      const isDimension =
-        !input.value || (/^\d+$/i.test(input.value) && input.value.length < 15);
+      const { value } = e.target;
+      const isDimension = !value || (/^\d+$/i.test(value) && value.length < 15);
 
       if (isDimension) {
         input.onChange(
-          type === 'width'
-            ? `${input.value}x${height}`
-            : `${width}x${input.value}`,
+          type === 'width' ? `${value}x${height}` : `${width}x${value}`,
         );
       }
     };
@@ -105,39 +105,38 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
         <div className="creative-format">
           <div className="field">
             {standardFormat ? (
-              <FormSelect 
+              <FormSelect
                 onBlur={input.onBlur as () => any}
                 onChange={input.onChange as () => any}
                 onFocus={input.onFocus as () => any}
-                value={input.value} 
-                disabled={disabled}>
-                
+                value={input.value}
+                disabled={disabled}
+              >
                 {availableFormats.map(option => (
                   <Option key={option} value={option}>
                     {option}
                   </Option>
                 ))}
-
               </FormSelect>
             ) : (
-                <div className="custom">
-                  <div className="input">
-                    <Input
-                      value={width}
-                      onChange={onDimensionChange('width')}
-                      disabled={disabled}
-                    />
-                  </div>
-                  <div className="separator">x</div>
-                  <div className="input">
-                    <Input
-                      value={height}
-                      onChange={onDimensionChange('height')}
-                      disabled={disabled}
-                    />
-                  </div>
+              <div className="custom">
+                <div className="input">
+                  <Input
+                    value={width}
+                    onChange={onDimensionChange('width')}
+                    disabled={disabled}
+                  />
                 </div>
-              )}
+                <div className="separator">x</div>
+                <div className="input">
+                  <Input
+                    value={height}
+                    onChange={onDimensionChange('height')}
+                    disabled={disabled}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="button">
