@@ -9,7 +9,7 @@ import { DropDownProps } from 'antd/lib/dropdown';
 import * as Components from '../../components';
 import { SelectProps } from 'antd/lib/select';
 import { DatePickerProps } from 'antd/lib/date-picker/interface';
-import { TreeSelectProps } from 'antd/lib/tree-select';
+import { TreeSelectProps } from '../TreeSelect';
 
 function withPopupContainer<T>(Component: React.ComponentClass<any>) {
   return class EnhancedComponent extends React.Component<T> {
