@@ -47,8 +47,6 @@ function withCalendarContainer<T>(Component: React.ComponentClass<any>) {
   };
 }
 
-const AbstractClassTreeSelect = Components.TreeSelect as any;
-
 export const Popover = withPopupContainer<PopoverProps>(Antd.Popover);
 export const FormSelectField = withPopupContainer<
   GenericField<DefaultSelectProps>
@@ -56,7 +54,7 @@ export const FormSelectField = withPopupContainer<
 export const Dropdown = withPopupContainer<DropDownProps>(Antd.Dropdown);
 
 export const TreeSelect = withPopupContainer<TreeSelectProps>(
-  AbstractClassTreeSelect,
+  Components.TreeSelect,
 );
 export const Select = withPopupContainer<SelectProps>(Antd.Select);
 export const FormSelect = withPopupContainer<SelectProps>(Form.FormSelect);
