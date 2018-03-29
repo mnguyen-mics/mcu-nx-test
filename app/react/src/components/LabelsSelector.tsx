@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Dropdown, Tag, Tooltip, Input, Button, Menu } from 'antd';
+import { Tag, Tooltip, Input, Button, Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
 import McsIcon from './McsIcon';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { Dropdown } from '../components/PopupContainers';
 
 export interface Label {
   id: string;
@@ -33,8 +34,10 @@ const messages = defineMessages({
   },
 });
 
-class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelectorState> {
-
+class LabelsSelector extends React.Component<
+  LabelsSelectorProps,
+  LabelsSelectorState
+> {
   constructor(props: LabelsSelectorProps) {
     super(props);
     this.state = {
@@ -43,23 +46,32 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
     };
   }
 
-  saveInputRef = (input: any) => this.setState({input: input});
+  saveInputRef = (input: any) => this.setState({ input: input });
 
   handleClose = (removedLabel: Label) => {
-    const labels = [...this.props.selectedLabels.filter(selectedLabel => selectedLabel.id !== removedLabel.id)];
+    const labels = [
+      ...this.props.selectedLabels.filter(
+        selectedLabel => selectedLabel.id !== removedLabel.id,
+      ),
+    ];
     this.props.onChange(labels);
-  }
+  };
 
   showInput = () => {
-    this.setState({ inputVisible: true }, () => this.state.input && this.state.input.focus());
-  }
+    this.setState(
+      { inputVisible: true },
+      () => this.state.input && this.state.input.focus(),
+    );
+  };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ inputValue: e.target.value });
-  }
+  };
 
   handleInputConfirm = () => {
-    const selectedValue = this.props.labels.find(label => label.name === this.state.inputValue);
+    const selectedValue = this.props.labels.find(
+      label => label.name === this.state.inputValue,
+    );
     const labels = [...this.props.selectedLabels];
     if (selectedValue) {
       labels.push(selectedValue);
@@ -69,37 +81,31 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
       inputValue: '',
       inputVisible: false,
     });
-
-  }
+  };
 
   handleVisibleChange = () => {
     this.setState({ inputValue: '', inputVisible: false });
-  }
+  };
 
   render() {
-    const {
-      labels,
-      selectedLabels,
-      buttonMessage,
-    } = this.props;
+    const { labels, selectedLabels, buttonMessage } = this.props;
 
-    const {
-      inputValue,
-      inputVisible,
-    } = this.state;
+    const { inputValue, inputVisible } = this.state;
 
     const onClose = (label: Label) => () => {
-
       this.handleClose(label);
     };
 
     const onClick = (a: ClickParam) => {
       const foundLabel = this.props.labels.find(label => label.id === a.key);
-      this.setState({
-        inputValue: foundLabel && foundLabel.name ? foundLabel.name : '',
-      }, () => {
-        this.handleInputConfirm();
-      });
+      this.setState(
+        {
+          inputValue: foundLabel && foundLabel.name ? foundLabel.name : '',
+        },
+        () => {
+          this.handleInputConfirm();
+        },
+      );
     };
 
     const results = labels.filter(label => {
@@ -111,13 +117,16 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
 
     const overlayMenu = () => {
       return (
-        <Menu onClick={onClick} className="mcs-label-dropdown" style={{  }}>
-          {results.length ? results.map(label => {
-            return <Menu.Item key={label.id}>{label.name}</Menu.Item>;
-          }) :
-          <Menu.Item disabled={true}>
-            <FormattedMessage {...messages.labelNoResults} />
-          </Menu.Item> }
+        <Menu onClick={onClick} className="mcs-label-dropdown" style={{}}>
+          {results.length ? (
+            results.map(label => {
+              return <Menu.Item key={label.id}>{label.name}</Menu.Item>;
+            })
+          ) : (
+            <Menu.Item disabled={true}>
+              <FormattedMessage {...messages.labelNoResults} />
+            </Menu.Item>
+          )}
         </Menu>
       );
     };
@@ -127,18 +136,29 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
         {selectedLabels.map((label, index) => {
           const isLongTag = label.name.length > 20;
           const labelelem = (
-            <Tag className="label" key={label.id} closable={true} afterClose={onClose(label)}>
+            <Tag
+              className="label"
+              key={label.id}
+              closable={true}
+              afterClose={onClose(label)}
+            >
               {isLongTag ? `${label.name.slice(0, 20)}...` : label.name}
             </Tag>
           );
-          return isLongTag ? <Tooltip title={label.name} key={label.id}>{labelelem}</Tooltip> : labelelem;
+          return isLongTag ? (
+            <Tooltip title={label.name} key={label.id}>
+              {labelelem}
+            </Tooltip>
+          ) : (
+            labelelem
+          );
         })}
         {inputVisible && (
           <Dropdown
             overlay={overlayMenu()}
             visible={inputVisible}
             onVisibleChange={this.handleVisibleChange}
-            trigger={["click"]}
+            trigger={['click']}
           >
             <Input
               id="labelInput"
@@ -153,9 +173,16 @@ class LabelsSelector extends React.Component<LabelsSelectorProps, LabelsSelector
             />
           </Dropdown>
         )}
-        {!inputVisible && <Button size="small" className="label-button" onClick={this.showInput}><McsIcon type="plus" />
-          <FormattedMessage {...buttonMessage || messages.labelButton} />
-          </Button>}
+        {!inputVisible && (
+          <Button
+            size="small"
+            className="label-button"
+            onClick={this.showInput}
+          >
+            <McsIcon type="plus" />
+            <FormattedMessage {...buttonMessage || messages.labelButton} />
+          </Button>
+        )}
       </div>
     );
   }

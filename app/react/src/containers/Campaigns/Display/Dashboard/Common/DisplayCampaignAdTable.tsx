@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router-dom';
-import { Popover, Switch, Modal } from 'antd';
+import { Switch, Modal } from 'antd';
 import { compose } from 'recompose';
-import cuid from 'cuid';
+import { RouteComponentProps } from 'react-router';
 
 import { TableView } from '../../../../../components/TableView/index';
 import { formatMetric } from '../../../../../utils/MetricHelper';
@@ -14,7 +14,7 @@ import {
   AdResource,
   AdInfoResource,
 } from '../../../../../models/campaign/display/index';
-import { RouteComponentProps } from 'react-router';
+import { Popover } from '../../../../../components/PopupContainers/index'; 
 import { UpdateMessage } from '../Campaign/DisplayCampaignAdGroupTable';
 import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
 
@@ -82,10 +82,6 @@ class DisplayCampaignAdTable extends React.Component<
         //
       },
     });
-  };
-
-  attachToDOM = (elementId: string) => (triggerNode: Element) => {
-    return document.getElementById(elementId) as any;
   };
 
   render() {
@@ -250,17 +246,13 @@ class DisplayCampaignAdTable extends React.Component<
               state: { from: `${location.pathname}${location.search}` },
             });
           };
-          const randomId = cuid();
           return (
-            <div id={randomId}>
-              <Popover
-                content={renderPopover(record.creative_id, text)}
-                title={text}
-                getPopupContainer={this.attachToDOM(randomId)}
-              >
-                <ButtonStyleless onClick={editCreative}>{text}</ButtonStyleless>
-              </Popover>
-            </div>
+            <Popover
+              content={renderPopover(record.creative_id, text)}
+              title={text}
+            >
+              <ButtonStyleless onClick={editCreative}>{text}</ButtonStyleless>
+            </Popover>
           );
         },
       },

@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Icon, Checkbox, Menu } from 'antd';
 import Input from 'antd/lib/input/Input';
-import Dropdown from 'antd/lib/dropdown';
 import { ClickParam } from 'antd/lib/menu';
-import generateGuid from '../utils/generateGuid';
+import { Dropdown } from '../components/PopupContainers';
 
 export interface MenuItemProps {
   key: string;
@@ -24,16 +23,11 @@ interface SearchAndMultiSelectState {
   dropdownVisibility: boolean;
 }
 
-function documentGetElementById(id: string) {
-  return () => document.getElementById(id) as HTMLElement;
-}
-
 // TODO handle loading in case of async external search
-export default class SearchAndMultiSelect
-  extends React.Component<SearchAndMultiSelectProps, SearchAndMultiSelectState> {
-
-  containerId = generateGuid();
-
+export default class SearchAndMultiSelect extends React.Component<
+  SearchAndMultiSelectProps,
+  SearchAndMultiSelectState
+> {
   constructor(props: SearchAndMultiSelectProps) {
     super(props);
     this.state = { dropdownVisibility: false };
@@ -41,10 +35,11 @@ export default class SearchAndMultiSelect
 
   search = (keywords: string): MenuItemProps[] => {
     const { datasource } = this.props;
-    return datasource.filter(item =>
-      !keywords || item.label.toLowerCase().includes(keywords.toLowerCase()),
+    return datasource.filter(
+      item =>
+        !keywords || item.label.toLowerCase().includes(keywords.toLowerCase()),
     );
-  }
+  };
 
   handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { onSearch } = this.props;
@@ -58,35 +53,39 @@ export default class SearchAndMultiSelect
         inputValue: keywords,
       });
     }
-  }
+  };
 
   handleVisibleChange = (visible?: boolean) => {
     this.setState({ dropdownVisibility: !!visible });
-  }
+  };
 
   isChecked = (key: string) => {
     const { value } = this.props;
     return !!value.find(v => v === key);
-  }
+  };
 
   handleOnClick = (param: ClickParam) => {
     this.props.onClick(param.key);
-  }
+  };
 
   render() {
-
     const { placeholder, datasource } = this.props;
     const { inputValue, dropdownVisibility } = this.state;
 
     // if inputValue is defined, search is handled internaly
-    const menuItems = (inputValue ? this.search(inputValue) : datasource).map(item => {
-      return (
-        <Menu.Item key={item.key}>
-          <span>{item.label}</span>
-          <Checkbox className="float-right" checked={this.isChecked(item.key)} />
-        </Menu.Item>
-      );
-    });
+    const menuItems = (inputValue ? this.search(inputValue) : datasource).map(
+      item => {
+        return (
+          <Menu.Item key={item.key}>
+            <span>{item.label}</span>
+            <Checkbox
+              className="float-right"
+              checked={this.isChecked(item.key)}
+            />
+          </Menu.Item>
+        );
+      },
+    );
 
     const menu = (
       <Menu
@@ -100,9 +99,7 @@ export default class SearchAndMultiSelect
     );
 
     return (
-      <div id={this.containerId} >
       <Dropdown
-        getPopupContainer={documentGetElementById(this.containerId)}
         overlay={menu}
         trigger={['click']}
         visible={dropdownVisibility}
@@ -111,11 +108,10 @@ export default class SearchAndMultiSelect
       >
         <Input
           placeholder={placeholder}
-          suffix={<Icon type="down"/>}
+          suffix={<Icon type="down" />}
           onChange={this.handleOnChange}
         />
       </Dropdown>
-      </div>
     );
   }
 }
