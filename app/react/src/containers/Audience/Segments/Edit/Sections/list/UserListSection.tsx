@@ -25,15 +25,12 @@ class UserListSection extends React.Component<Props> {
   }
 
   downloadTemplateUserList = () => {
-    const { segmentId } = this.props;
     const data = [
       {
         OPERATION: 'UPDATE',
         USER_AGENT_ID: 'vec:89998434',
         USER_ACCOUNT_ID: '',
         EMAIL_HASH: '',
-        SEGMENT_ID: `${segmentId}`,
-        SEGMENT_TECHNICAL_NAME: '',
         EXPIRATION_DURATION: '0',
         EXPIRATION_TS: '',
         DATA_BAG: '',
@@ -43,8 +40,6 @@ class UserListSection extends React.Component<Props> {
         USER_AGENT_ID: 'web:321:abcd',
         USER_ACCOUNT_ID: '',
         EMAIL_HASH: '',
-        SEGMENT_ID: `${segmentId}`,
-        SEGMENT_TECHNICAL_NAME: '',
         EXPIRATION_DURATION: '0',
         EXPIRATION_TS: '',
         DATA_BAG: '',
@@ -54,8 +49,6 @@ class UserListSection extends React.Component<Props> {
         USER_AGENT_ID: 'tech:apx:123',
         USER_ACCOUNT_ID: '',
         EMAIL_HASH: '',
-        SEGMENT_ID: `${segmentId}`,
-        SEGMENT_TECHNICAL_NAME: '',
         EXPIRATION_DURATION: '',
         EXPIRATION_TS: '6516511616516',
         DATA_BAG: '',
@@ -65,8 +58,6 @@ class UserListSection extends React.Component<Props> {
         USER_AGENT_ID: '',
         USER_ACCOUNT_ID: 'my user account',
         EMAIL_HASH: '',
-        SEGMENT_ID: `${segmentId}`,
-        SEGMENT_TECHNICAL_NAME: '',
         EXPIRATION_DURATION: '10',
         EXPIRATION_TS: '',
         DATA_BAG: '{"distance_to_closest_store": 123}}',
@@ -76,8 +67,6 @@ class UserListSection extends React.Component<Props> {
         USER_AGENT_ID: '',
         USER_ACCOUNT_ID: '',
         EMAIL_HASH: 'my email hash',
-        SEGMENT_ID: `${segmentId}`,
-        SEGMENT_TECHNICAL_NAME: '',
         EXPIRATION_DURATION: '',
         EXPIRATION_TS: '0',
         DATA_BAG: '{"distance_to_closest_store": 123}}',
