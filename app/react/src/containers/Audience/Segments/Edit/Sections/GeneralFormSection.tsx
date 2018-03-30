@@ -14,7 +14,7 @@ import withNormalizer, {
 import {
   FormInput,
   FormSection,
-  FormSelect,
+  AddonSelect,
   FormInputField,
   FormAddonSelectField,
   FormBoolean,
@@ -23,7 +23,6 @@ import {
 
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import { SegmentTypeFormLoader } from '../domain';
-const { AddonSelect } = FormSelect;
 
 export interface GeneralFormSectionProps {
   segmentCreation: boolean;

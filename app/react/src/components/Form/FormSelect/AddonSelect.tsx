@@ -17,6 +17,11 @@ export interface FormSelectAddonProps {
 class AddonSelect extends React.Component<
   FormSelectAddonProps & WrappedFieldProps
 > {
+  static defaultProps: Partial<FormSelectAddonProps & WrappedFieldProps> = {
+    style: { width: 100 },
+    disabled: false,
+  };
+
   render() {
     const { selectProps, input, style, options, disabled } = this.props;
 

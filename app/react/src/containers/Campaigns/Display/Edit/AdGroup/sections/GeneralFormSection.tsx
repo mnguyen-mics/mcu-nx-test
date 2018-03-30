@@ -11,7 +11,7 @@ import withNormalizer, {
 import {
   FormInput,
   FormSection,
-  FormSelect,
+  AddonSelect,
   FormInputField,
   FormAddonSelectField,
   FormDateRangePickerField,
@@ -19,8 +19,6 @@ import {
 import { ButtonStyleless, McsIcon } from '../../../../../../components';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
 import { compose } from 'recompose';
-
-const { AddonSelect } = FormSelect;
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 

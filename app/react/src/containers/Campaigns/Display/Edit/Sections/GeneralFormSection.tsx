@@ -6,7 +6,7 @@ import { ButtonStyleless, McsIcon } from '../../../../../components';
 import {
   FormInput,
   FormSection,
-  FormSelect,
+  AddonSelect,
   FormInputField,
   FormAddonSelectField,
 } from '../../../../../components/Form';
@@ -16,8 +16,6 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../components/Form/withNormalizer';
-
-const { AddonSelect } = FormSelect;
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 

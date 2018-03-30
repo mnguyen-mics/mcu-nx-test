@@ -4,10 +4,12 @@ import { Select } from '../../PopupContainers';
 
 export interface FormSelectProps extends SelectProps {}
 
-const FormSelect: React.SFC<FormSelectProps> = props => {
-  const { children, ...otherProps } = props;
+class FormSelect extends React.Component<FormSelectProps> {
+  render() {
+    const { children, ...otherProps } = this.props;
 
-  return <Select {...otherProps}>{children}</Select>;
-};
+    return <Select {...otherProps}>{children}</Select>;
+  }
+}
 
 export default FormSelect;
