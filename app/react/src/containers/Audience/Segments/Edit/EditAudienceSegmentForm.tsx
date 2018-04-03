@@ -50,7 +50,7 @@ import { McsFormSection } from '../../../../utils/FormHelper';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Datamart } from '../../../../models/organisation/organisation';
 import { FormSection, FieldCtor } from '../../../../components/Form';
-
+import { Path } from '../../../../components/ActionBar';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL'
 
 const FORM_ID = 'audienceSegmentForm';
@@ -67,6 +67,7 @@ const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 export interface AudienceSegmentFormProps extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
   close: () => void;
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
+  breadCrumbPaths: Path[];
   audienceSegmentFormData: AudienceSegmentFormData;
   datamart: Datamart,
   segmentType: SegmentTypeFormLoader;
@@ -141,6 +142,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       segmentType,
       segmentCreation,
       change,
+      breadCrumbPaths,
     } = this.props;
 
     const genericFieldArrayProps = {
@@ -150,7 +152,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: [],
+      paths: breadCrumbPaths,
       message: messages.audienceSegmentSaveButton,
       onClose: close,
     };
