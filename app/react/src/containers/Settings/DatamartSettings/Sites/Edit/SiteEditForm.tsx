@@ -28,7 +28,7 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 
 import VisitAnalyzerSection, {
-    VisitAnalyzerSectionProps,
+  VisitAnalyzerSectionProps,
 } from '../../Common/VisitAnalyzerFormSection';
 
 import EventRulesSection, {
@@ -39,9 +39,8 @@ import * as SessionSelectors from '../../../../../state/Session/selectors';
 
 import DomainsField, { DomainFieldProps } from './Sections/DomainsField';
 
-
 const FormDomainFields = FieldArray as new () => GenericFieldArray<
-DomainFieldProps
+  DomainFieldProps
 >;
 
 const Content = Layout.Content as React.ComponentClass<
@@ -68,10 +67,7 @@ interface MapStateToProps {
   hasDatamarts: (organisationId: string) => boolean;
 }
 
-type Props = InjectedFormProps<
-  SiteFormData,
-  SiteEditFormProps
-> &
+type Props = InjectedFormProps<SiteFormData, SiteEditFormProps> &
   SiteEditFormProps &
   MapStateToProps &
   InjectedIntlProps &
@@ -80,13 +76,14 @@ type Props = InjectedFormProps<
 const FORM_ID = 'siteForm';
 
 class SiteEditForm extends React.Component<Props> {
+  onKeyPress = (event: any) => {
+    if (event && event.which === 13 /* Enter */) {
+      event.preventDefault();
+    }
+  };
+
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      close,
-      change,
-    } = this.props;
+    const { handleSubmit, breadCrumbPaths, close, change } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -110,12 +107,14 @@ class SiteEditForm extends React.Component<Props> {
     sections.push({
       id: 'aliases',
       title: messages.sectionAliasesTitle,
-      component: <FormDomainFields
-        name={"aliases"}
-        component={DomainsField}
-        {...genericFieldArrayProps}
-      />
-    })
+      component: (
+        <FormDomainFields
+          name={'aliases'}
+          component={DomainsField}
+          {...genericFieldArrayProps}
+        />
+      ),
+    });
 
     sections.push({
       id: 'eventRules',
@@ -165,6 +164,7 @@ class SiteEditForm extends React.Component<Props> {
           <Form
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
+            onKeyPress={this.onKeyPress}
           >
             <Content
               id={FORM_ID}

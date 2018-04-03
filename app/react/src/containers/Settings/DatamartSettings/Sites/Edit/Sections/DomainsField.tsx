@@ -4,15 +4,13 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { Row } from 'antd/lib/grid';
 import { compose } from 'recompose';
 import cuid from 'cuid';
-import messages from '../messages'
+import messages from '../messages';
 
 import FormMultiValueInput from '../../../../../../components/Form/FormMultiValueInput';
 
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { FormSection } from '../../../../../../components/Form';
 import { AliasesFieldModel } from '../domain';
-
-
 
 export interface DomainFieldProps extends ReduxFormChangeProps {}
 
@@ -21,49 +19,43 @@ type Props = WrappedFieldArrayProps<AliasesFieldModel> &
   DomainFieldProps;
 
 class DomainField extends React.Component<Props> {
-
   markAsDeleted = (e: string) => {
     const fields = this.props.fields.getAll();
     const foundIndex = fields.findIndex(f => f.model.name === e);
     if (foundIndex > -1) {
       const newFields = [...fields];
-      newFields.splice(foundIndex, 1)
-      this.props.formChange((this.props.fields as any).name, newFields)
+      newFields.splice(foundIndex, 1);
+      this.props.formChange((this.props.fields as any).name, newFields);
     }
-  }
+  };
 
-  addItem = (e: string) => {
+  addItem = (stringValue: string) => {
     const fields = this.props.fields.getAll();
-    const foundField = fields.find(f => f.model.name === e);
+    const foundField = fields.find(f => f.model.name === stringValue);
     if (foundField) {
-      this.props.formChange((this.props.fields as any).name, fields)
+      this.props.formChange((this.props.fields as any).name, fields);
     }
     const newFields = [...fields];
-    newFields.push({ key: cuid(), model: { name: e }} as any);
-    this.props.formChange((this.props.fields as any).name, newFields)
-    
-  }
+    newFields.push({ key: cuid(), model: { name: stringValue } } as any);
+    this.props.formChange((this.props.fields as any).name, newFields);
+  };
 
   getStringValues = () => {
-    const {
-      fields
-    } = this.props;
+    const { fields } = this.props;
 
-    return fields.getAll().map(f =>
-      (f as any).model.name
-    )
-  }
+    return fields.getAll().map(f => (f as any).model.name);
+  };
 
   formatStringValues = (stringValues: string[]) => {
-    const fields: AliasesFieldModel[] = this.props.fields.getAll()
+    const fields: AliasesFieldModel[] = this.props.fields.getAll();
     return stringValues.map(s => {
       const foundField = fields.find(f => (f as any).model.name === s);
       if (foundField) {
         return foundField;
       }
-      return { key: cuid(), model: { name: s }};
-    })
-  }
+      return { key: cuid(), model: { name: s } };
+    });
+  };
 
   render() {
     const { intl } = this.props;
@@ -82,7 +74,9 @@ class DomainField extends React.Component<Props> {
               handleClickOnRemove={this.markAsDeleted}
               handleClickOnItem={this.addItem}
               formItemProps={{
-                label: intl.formatMessage(messages.contentSectionAliasesNameLabel),
+                label: intl.formatMessage(
+                  messages.contentSectionAliasesNameLabel,
+                ),
               }}
               inputProps={{
                 placeholder: intl.formatMessage(
@@ -90,7 +84,9 @@ class DomainField extends React.Component<Props> {
                 ),
               }}
               helpToolTipProps={{
-                title: intl.formatMessage(messages.contentSectionGAliasesNameTooltip),
+                title: intl.formatMessage(
+                  messages.contentSectionGAliasesNameTooltip,
+                ),
               }}
             />
           </Row>
@@ -100,6 +96,4 @@ class DomainField extends React.Component<Props> {
   }
 }
 
-export default compose<Props, DomainFieldProps>(
-  injectIntl,
-)(DomainField);
+export default compose<Props, DomainFieldProps>(injectIntl)(DomainField);
