@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { WrappedFieldProps } from 'redux-form';
 import moment, { Moment } from 'moment';
-import { DatePicker } from 'antd';
 import { DatePickerProps } from 'antd/lib/date-picker/interface';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 import { DEFAULT_DATE_FORMAT } from '../../utils/DateHelper';
+import { DatePicker } from '../../components/PopupContainers';
 
 export interface FormDateRangePickerProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;

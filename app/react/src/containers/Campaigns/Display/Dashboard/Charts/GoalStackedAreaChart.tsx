@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Row, Col, Menu, Dropdown, Button, Icon } from 'antd';
+import { Row, Col, Menu, Button, Icon } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { ClickParam } from 'antd/lib/menu';
-
+import { Dropdown } from '../../../../../components/PopupContainers';
 import {
   EmptyCharts,
   LoadingChart,

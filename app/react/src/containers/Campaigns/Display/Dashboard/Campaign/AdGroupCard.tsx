@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Button, Modal, message, Dropdown, Menu } from 'antd';
+import { Button, Modal, message, Menu } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {
   InjectedIntlProps,
@@ -8,7 +8,7 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-
+import { Dropdown } from '../../../../../components/PopupContainers';
 import messages from '../messages';
 import Slide from '../../../../../components/Transition/Slide';
 import Card, { CardProps } from '../../../../../components/Card/Card';

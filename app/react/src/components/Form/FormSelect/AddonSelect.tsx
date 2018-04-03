@@ -14,40 +14,42 @@ export interface FormSelectAddonProps {
   disabled?: boolean;
 }
 
-const AddonSelect: React.SFC<FormSelectAddonProps & WrappedFieldProps> = props => {
+class AddonSelect extends React.Component<
+  FormSelectAddonProps & WrappedFieldProps
+> {
+  static defaultProps: Partial<FormSelectAddonProps & WrappedFieldProps> = {
+    style: { width: 100 },
+    disabled: false,
+  };
 
-  const {
-    selectProps,
-    input,
-    style,
-    options,
-    disabled,
-  } = props;
+  render() {
+    const { selectProps, input, style, options, disabled } = this.props;
 
-  const formValue = input.value || options[0];
-  const filteredOptions = options.filter(option => option.value !== formValue.key);
+    const formValue = input.value || options[0];
+    const filteredOptions = options.filter(
+      option => option.value !== formValue.key,
+    );
 
-  const optionsToDisplay = filteredOptions.map(option => (
-    <Option key={option.value} value={option.value}>{option.title}</Option>
-  ));
+    const optionsToDisplay = filteredOptions.map(option => (
+      <Option key={option.value} value={option.value}>
+        {option.title}
+      </Option>
+    ));
 
-  return (
-    <FormSelect
-      onBlur={input.onBlur as () => any}
-      onChange={input.onChange as () => any}
-      onFocus={input.onFocus as () => any}
-      value={input.value}
-      {...selectProps}
-      style={{ display: 'flex', justifyContent: 'center', ...style }}
-      disabled={disabled}
-    >{optionsToDisplay}
-    </FormSelect>
-  );
-};
-
-AddonSelect.defaultProps = {
-  style: { width: 100 },
-  disabled: false,
-};
+    return (
+      <FormSelect
+        onBlur={input.onBlur as () => any}
+        onChange={input.onChange as () => any}
+        onFocus={input.onFocus as () => any}
+        value={input.value}
+        {...selectProps}
+        style={{ display: 'flex', justifyContent: 'center', ...style }}
+        disabled={disabled}
+      >
+        {optionsToDisplay}
+      </FormSelect>
+    );
+  }
+}
 
 export default AddonSelect;

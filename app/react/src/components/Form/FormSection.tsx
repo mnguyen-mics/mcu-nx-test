@@ -1,9 +1,17 @@
 import * as React from 'react';
-import { Button, Row } from 'antd';
-
+import { Button, Row, Menu } from 'antd';
+import { FormattedMessage } from 'react-intl';
 import FormTitle, { FormTitleProps } from './FormTitle';
+import { ClickParam } from 'antd/lib/menu';
 
-import DropdownButton, { DropdownButtonItemProps } from '../DropdownButton';
+import { Dropdown } from '../../components/PopupContainers';
+import McsIcon from '../McsIcon';
+
+interface DropdownButtonItemProps {
+  id: string;
+  message: FormattedMessage.MessageDescriptor;
+  onClick: () => void;
+}
 
 interface FormSectionProps extends FormTitleProps {
   button?: {
@@ -13,31 +21,59 @@ interface FormSectionProps extends FormTitleProps {
   dropdownItems?: DropdownButtonItemProps[];
 }
 
-const FormSection: React.SFC<FormSectionProps> = props => {
+class FormSection extends React.Component<FormSectionProps> {
+  renderDropdownButton = () => {
+    const { dropdownItems } = this.props;
 
-  return (
-    <Row
-      type="flex"
-      align="middle"
-      justify="space-between"
-      className="section-header"
-    >
-      <FormTitle
-        title={props.title}
-        subtitle={props.subtitle}
-      />
+    const displayOptions =
+      dropdownItems &&
+      dropdownItems.map(item => (
+        <Menu.Item key={item.id}>
+          <FormattedMessage {...item.message} />
+        </Menu.Item>
+      ));
 
-      {props.button
-        ? <Button onClick={props.button.onClick}>{props.button.message}</Button>
-        : null
-      }
+    const handleClick = (param: ClickParam) => {
+      const currentItem =
+        dropdownItems && dropdownItems.find(item => item.id === param.key);
 
-      {props.dropdownItems
-        ? <DropdownButton items={props.dropdownItems} />
-        : null
-      }
-    </Row>
-  );
-};
+      currentItem!.onClick();
+    };
+
+    const overlay = (
+      <Menu className="mcs-dropdown-actions" onClick={handleClick}>
+        {displayOptions}
+      </Menu>
+    );
+
+    return (
+      <Dropdown overlay={overlay} trigger={['click']}>
+        <Button>
+          <McsIcon type="pen" />
+          <McsIcon type="chevron" />
+        </Button>
+      </Dropdown>
+    );
+  };
+
+  render() {
+    const { title, subtitle, button, dropdownItems } = this.props;
+
+    return (
+      <Row
+        type="flex"
+        align="middle"
+        justify="space-between"
+        className="section-header"
+      >
+        <FormTitle title={title} subtitle={subtitle} />
+
+        {button && <Button onClick={button.onClick}>{button.message}</Button>}
+
+        {dropdownItems && this.renderDropdownButton()}
+      </Row>
+    );
+  }
+}
 
 export default FormSection;

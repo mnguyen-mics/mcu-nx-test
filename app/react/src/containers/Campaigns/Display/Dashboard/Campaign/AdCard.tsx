@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Modal, Button, message, Menu, Dropdown } from 'antd';
+import { Modal, Button, message, Menu } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
   InjectedIntlProps,
@@ -8,7 +8,7 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-
+import { Dropdown } from '../../../../../components/PopupContainers';
 import { CardProps } from '../../../../../components/Card/Card';
 import { AdInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdResource } from '../../../../../models/campaign/display/AdResource';
