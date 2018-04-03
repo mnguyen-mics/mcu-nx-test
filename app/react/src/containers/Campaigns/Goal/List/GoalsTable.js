@@ -142,7 +142,7 @@ class GoalsTable extends Component {
       history,
       location,
     } = this.props;
-    const url = `/v2/o/${organisationId}/campaigns/goal/${goal.id}/edit`;
+    const url = `/v2/o/${organisationId}/campaigns/goals/${goal.id}/edit`;
     history.push({
       pathname: url,
       state: {
@@ -237,7 +237,7 @@ class GoalsTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/campaigns/goal/${record.id}`}
+            to={`/v2/o/${organisationId}/campaigns/goals/${record.id}`}
           >
             {text}
           </Link>

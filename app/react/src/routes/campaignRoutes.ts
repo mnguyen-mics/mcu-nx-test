@@ -104,17 +104,17 @@ const campaignsRoutes = [
     actionBarComponent: GoalsActionbar,
   },
   {
-    path: '/campaigns/goal/:goalId(\\d+)',
+    path: '/campaigns/goals/:goalId(\\d+)',
     layout: 'main',
     contentComponent: GoalDashboard,
   },
   {
-    path: '/campaigns/goal/:goalId/edit',
+    path: '/campaigns/goals/:goalId/edit',
     layout: 'edit',
     editComponent: EditGoalPage,
   },
   {
-    path: '/campaigns/goal',
+    path: '/campaigns/goals/create',
     layout: 'edit',
     editComponent: EditGoalPage,
   },

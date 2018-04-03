@@ -46,7 +46,7 @@ class ExportsActionbar extends React.Component<
       match: { params: { organisationId, goalId } },
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/campaigns/goal/${goalId}/edit`;
+    const editUrl = `/v2/o/${organisationId}/campaigns/goals/${goalId}/edit`;
     history.push({
       pathname: editUrl,
       state: { from: `${location.pathname}${location.search}` },

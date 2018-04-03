@@ -129,8 +129,8 @@ class EditGoalPage extends React.Component<Props, State> {
       .then(goalResource => {
         hideSaveInProgress();
         const goalUrl = goalId
-          ? `/v2/o/${organisationId}/campaigns/goal/${goalResource.id}`
-          : `/v2/o/${organisationId}/campaigns/goal/${goalResource.id}/edit`;
+          ? `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}`
+          : `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}/edit`;
         history.push({
           pathname: goalUrl,
           state: { from: `${location.pathname}` },
@@ -154,7 +154,7 @@ class EditGoalPage extends React.Component<Props, State> {
     } = this.props;
 
     const defaultRedirectUrl = goalId
-      ? `/v2/o/${organisationId}/campaigns/goal/${goalId}`
+      ? `/v2/o/${organisationId}/campaigns/goals/${goalId}`
       : `/v2/o/${organisationId}/campaigns/goals`;
 
     return location.state && location.state.from
