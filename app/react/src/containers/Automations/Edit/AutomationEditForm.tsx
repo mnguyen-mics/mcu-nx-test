@@ -104,6 +104,8 @@ class AutomationEditForm extends React.Component<Props> {
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
           >
+            {/* this button enables submit on enter */}
+            <button type="submit" style={{ display: 'none' }} />
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"

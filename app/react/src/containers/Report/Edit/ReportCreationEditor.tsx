@@ -159,6 +159,8 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
           className="edit-layout ant-layout"
           onSubmit={handleSubmit(this.exportReport)}
         >
+          {/* this button enables submit on enter */}
+          <button type="submit" style={{ display: 'none' }} />
           <Actionbar path={[{ name: intl.formatMessage(messages.actionBarTitle) }]} edition={true}>
             <Button type="primary" className="mcs-primary" htmlType="submit" loading={this.state.loadingData}>
               <FormattedMessage {...messages.reportCreationSaveButton} />

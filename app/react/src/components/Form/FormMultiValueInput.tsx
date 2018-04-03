@@ -36,15 +36,16 @@ class FormMultiInput extends React.Component<
   };
 
   onPressEnter = (stringValue: string) => {
+    if (event) event.stopImmediatePropagation();
     if (stringValue) {
-      this.inputField.input.input.value = '';
+      this.inputField.input.input.value = ''; // use state local
       return this.props.handleClickOnItem(stringValue);
     }
   };
 
   renderFields = () => {
     return this.props.values.map(key => {
-      const handleClick = () => {
+      const handleClick = (e: any) => {
         this.props.handleClickOnRemove(key);
       };
       return (
@@ -59,6 +60,15 @@ class FormMultiInput extends React.Component<
   };
 
   render() {
+    const cancelEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' || e.which === 13 /* Enter */) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      return;
+    };
+
     return (
       <FormFieldWrapper
         helpToolTipProps={this.props.helpToolTipProps}
@@ -72,6 +82,7 @@ class FormMultiInput extends React.Component<
           onSearch={this.onPressEnter}
           enterButton={'Add'}
           ref={this.saveInputRef}
+          onKeyDown={cancelEvent}
         />
       </FormFieldWrapper>
     );

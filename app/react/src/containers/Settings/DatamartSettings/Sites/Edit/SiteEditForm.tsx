@@ -76,12 +76,6 @@ type Props = InjectedFormProps<SiteFormData, SiteEditFormProps> &
 const FORM_ID = 'siteForm';
 
 class SiteEditForm extends React.Component<Props> {
-  onKeyPress = (event: any) => {
-    if (event && event.which === 13 /* Enter */) {
-      event.preventDefault();
-    }
-  };
-
   render() {
     const { handleSubmit, breadCrumbPaths, close, change } = this.props;
 
@@ -164,8 +158,9 @@ class SiteEditForm extends React.Component<Props> {
           <Form
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
-            onKeyPress={this.onKeyPress}
           >
+            {/* this button enables submit on enter */}
+            <button type="submit" style={{ display: 'none' }} />
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"
