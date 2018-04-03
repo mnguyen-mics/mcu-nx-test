@@ -3,10 +3,15 @@ import { createSelector } from 'reselect';
 import { normalizeArrayOfObject } from '../../utils/Normalizer.ts';
 
 const getAdditionnalWorkspace = state => state.session.workspace;
-const getConnectedUserWorkspaces = state => state.session.connectedUser.workspaces;
+const getConnectedUserWorkspaces = state =>
+  state.session.connectedUser.workspaces;
+const getSelectedDatamart = state => state.session.selectedDatamart;
 
 const getDefaultWorkspaceIndex = state => {
-  if (state.session.connectedUser.default_workspace && state.session.connectedUser.default_workspace !== -1) {
+  if (
+    state.session.connectedUser.default_workspace &&
+    state.session.connectedUser.default_workspace !== -1
+  ) {
     return state.session.connectedUser.default_workspace;
   }
   return 0;
@@ -15,7 +20,8 @@ const getDefaultWorkspaceIndex = state => {
 const getDefaultWorkspace = createSelector(
   state => state.session.connectedUser.workspaces,
   getDefaultWorkspaceIndex,
-  (userWorkspaces, defaultWorkspaceIndex) => userWorkspaces[defaultWorkspaceIndex],
+  (userWorkspaces, defaultWorkspaceIndex) =>
+    userWorkspaces[defaultWorkspaceIndex],
 );
 
 const getWorkspaces = createSelector(
@@ -23,10 +29,10 @@ const getWorkspaces = createSelector(
   getAdditionnalWorkspace,
   (userWorkspaces, additionnalWorkspace) => {
     if (additionnalWorkspace && additionnalWorkspace.organisation_id) {
-      return normalizeArrayOfObject([
-        ...userWorkspaces,
-        additionnalWorkspace,
-      ], 'organisation_id');
+      return normalizeArrayOfObject(
+        [...userWorkspaces, additionnalWorkspace],
+        'organisation_id',
+      );
     }
 
     return normalizeArrayOfObject(userWorkspaces, 'organisation_id');
@@ -40,7 +46,7 @@ const getWorkspace = state => organisationId => {
 
 const getDefaultWorkspaceOrganisationId = createSelector(
   getDefaultWorkspace,
-  (defaultWorkspace) => {
+  defaultWorkspace => {
     if (defaultWorkspace) return defaultWorkspace.organisation_id;
     return 'none';
   },
@@ -48,7 +54,7 @@ const getDefaultWorkspaceOrganisationId = createSelector(
 
 const getDefaultWorkspaceOrganisationName = createSelector(
   getDefaultWorkspace,
-  (defaultWorkspace) => {
+  defaultWorkspace => {
     if (defaultWorkspace) return defaultWorkspace.organisation_id;
     return 'none';
   },
@@ -83,4 +89,5 @@ export {
   getWorkspace,
   getWorkspaces,
   getDefaultDatamart,
+  getSelectedDatamart,
 };
