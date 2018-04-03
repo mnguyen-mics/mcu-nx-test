@@ -11,6 +11,7 @@ interface DropdownButtonItemProps {
   id: string;
   message: FormattedMessage.MessageDescriptor;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 interface FormSectionProps extends FormTitleProps {
