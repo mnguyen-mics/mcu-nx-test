@@ -120,7 +120,7 @@ class AudiencePartitionPage extends React.Component<
         formData,
       )
         .then(newAudiencePartition => {
-          const url = `/v2/o/${organisationId}/audience/partition/${
+          const url = `/v2/o/${organisationId}/audience/partitions/${
             newAudiencePartition.data.id
           }/dashboard`;
           location.pathname
@@ -144,7 +144,7 @@ class AudiencePartitionPage extends React.Component<
       match: { params: { organisationId, partitionId } },
     } = this.props;
     const url = partitionId
-      ? `/v2/o/${organisationId}/audience/partition/${partitionId}/dashboard`
+      ? `/v2/o/${organisationId}/audience/partitions/${partitionId}/dashboard`
       : `/v2/o/${organisationId}/audience/partitions`;
 
     return location.pathname

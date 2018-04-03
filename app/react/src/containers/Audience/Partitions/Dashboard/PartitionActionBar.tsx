@@ -84,7 +84,7 @@ class PartitionActionBar extends React.Component<
         <Link
           to={
             partition
-              ? `/v2/o/${organisationId}/audience/partition/${
+              ? `/v2/o/${organisationId}/audience/partitions/${
                   partition.id
                 }/edit?type=${partition.audience_partition_type}`
               : ''

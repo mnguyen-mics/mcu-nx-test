@@ -59,17 +59,17 @@ const audienceRoutes = [
     actionBarComponent: PartitionsActionbar,
   },
   {
-    path: '/audience/partition/:partitionId/edit',
+    path: '/audience/partitions/:partitionId/edit',
     layout: 'edit',
     editComponent: AudiencePartitionPage,
   },
   {
-    path: '/audience/partition/new',
+    path: '/audience/partitions/create',
     layout: 'edit',
     editComponent: AudiencePartitionPage,
   },
   {
-    path: '/audience/partition/:partitionId/dashboard',
+    path: '/audience/partitions/:partitionId/dashboard',
     layout: 'main',
     contentComponent: Partition,
   },

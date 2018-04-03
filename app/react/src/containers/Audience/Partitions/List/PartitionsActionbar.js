@@ -25,12 +25,12 @@ function PartitionsActionbar({
   const addMenu = (
     <Menu>
       <Menu.Item key="RANDOM_SPLIT">
-        <Link to={`/v2/o/${organisationId}/audience/partition/new?datamarts=${datamartId}&type=RANDOM_SPLIT`}>
+        <Link to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}>
           <FormattedMessage id="RANDOM_SPLIT" />
         </Link>
       </Menu.Item>
       <Menu.Item key="CLUSTERING">
-        <Link to={`/v2/o/${organisationId}/audience/partition/new?datamarts=${datamartId}&type=CLUSTERING`}>
+        <Link to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=CLUSTERING`}>
           <FormattedMessage id="CLUSTERING" />
         </Link>
       </Menu.Item>

@@ -146,7 +146,7 @@ class AudiencePartitionsTable extends Component {
       location,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/audience/partition/${
+    const editUrl = `/v2/o/${organisationId}/audience/partitions/${
       partition.id
     }/edit`;
 
@@ -243,7 +243,7 @@ class AudiencePartitionsTable extends Component {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/audience/partition/${
+            to={`/v2/o/${organisationId}/audience/partitions/${
               record.id
             }/dashboard`}
           >
