@@ -9,7 +9,8 @@ import MultiSelect from './MultiSelect';
 import SearchAndMultiSelect from './SearchAndMultiSelect';
 import SearchAndTreeSelect from './SearchAndTreeSelect';
 import LabelsSelector from './LabelsSelector';
-import OtqlConsole from './OtqlConsole'
+import OtqlConsole from './OtqlConsole';
+import TreeSelect from './TreeSelect';
 
 export {
   ButtonStyleless,
@@ -24,4 +25,5 @@ export {
   SearchAndMultiSelect,
   SearchAndTreeSelect,
   OtqlConsole,
+  TreeSelect,
 };

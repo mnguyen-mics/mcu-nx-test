@@ -1,7 +1,8 @@
 import * as React from 'react';
-import {Icon, Dropdown, Menu, Button} from 'antd';
+import {Icon, Menu, Button} from 'antd';
 import {ClickParam} from 'antd/lib/menu';
 import {ReactNode} from 'react-redux';
+import { Dropdown } from '../components/PopupContainers';
 
 export interface MultiSelectProps<T> {
   displayElement: JSX.Element;

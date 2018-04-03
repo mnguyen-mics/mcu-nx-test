@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import {
-  FormSelect,
+  DefaultSelect,
   FormSelectField,
 } from '../../../../../../components/Form';
 import withValidators, {
@@ -12,8 +12,6 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-
-const { DefaultSelect } = FormSelect;
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 

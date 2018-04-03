@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button, Dropdown, Icon, Menu, Modal, message } from 'antd';
+import { Button, Icon, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-
+import { Dropdown } from '../../../../../components/PopupContainers';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import withTranslations, { TranslationProps } from '../../../../Helpers/withTranslations';

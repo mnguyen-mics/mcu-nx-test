@@ -52,7 +52,7 @@ export interface TreeSelectProps extends AbstractSelectProps {
   placeholder?: string;
 }
 
-abstract class TreeSelect extends React.Component<TreeSelectProps, any> {
+class TreeSelect extends React.Component<TreeSelectProps, any> {
   static TreeNode = TreeNode;
   static SHOW_ALL = SHOW_ALL;
   static SHOW_PARENT = SHOW_PARENT;

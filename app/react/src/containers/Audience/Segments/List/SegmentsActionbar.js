@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Menu, Dropdown, Button, message } from 'antd';
+import { Menu, Button, message } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import lodash from 'lodash';
-
+import { Dropdown } from '../../../../components/PopupContainers/index.tsx';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon.tsx';
 

@@ -7,7 +7,6 @@ import FormRadio from './FormRadio';
 import FormRadioGroup from './FormRadioGroup';
 import FormRangePicker from './FormRangePicker/index';
 import FormSection from './FormSection';
-import FormSelect from './FormSelect';
 import FormTitle from './FormTitle';
 import SwitchInput from './SwitchInput';
 import FormSwitch, { FormSwitchProps } from './FormSwitch';
@@ -16,11 +15,14 @@ import withValidators from './withValidators';
 import FormUpload from './FormUpload';
 import FormTextArea from './FormTextArea';
 import FormInput, { FormInputProps } from './FormInput';
-import { DefaultSelectProps } from './FormSelect/DefaultSelect';
-import { FormSelectAddonProps } from './FormSelect/AddonSelect';
+import DefaultSelect, { DefaultSelectProps } from './FormSelect/DefaultSelect';
+import AddonSelect, { FormSelectAddonProps } from './FormSelect/AddonSelect';
 import FormDateRangePicker, { FormDateRangePickerProps } from './FormDateRangePicker';
 import FormCodeEdit from './FormCodeEdit';
 import FormCodeSnippet from './FormCodeSnippet';
+import TagSelect from './FormSelect/TagSelect';
+import FormSelect from './FormSelect/FormSelect';
+
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -34,7 +36,6 @@ export default {
   FormRangePicker,
   FormDateRangePicker,
   FormSection,
-  FormSelect,
   FormTextArea,
   FormTitle,
   FormUpload,
@@ -44,7 +45,11 @@ export default {
   FormCodeEdit,
   withNormalizer,
   withValidators,
-  FormCodeSnippet
+  FormCodeSnippet,
+  AddonSelect,
+  DefaultSelect,
+  TagSelect,
+  FormSelect,
 };
 
 export {
@@ -58,7 +63,6 @@ export {
   FormRangePicker,
   FormDateRangePicker,
   FormSection,
-  FormSelect,
   FormTitle,
   SwitchInput,
   FormSwitch,
@@ -67,7 +71,11 @@ export {
   FormCodeEdit,
   withNormalizer,
   withValidators,
-  FormCodeSnippet
+  FormCodeSnippet,
+  AddonSelect,
+  DefaultSelect,
+  TagSelect,
+  FormSelect,
 };
 
 export const FormInputField = Field as new() => GenericField<FormInputProps>;

@@ -7,8 +7,8 @@ import {
   injectIntl,
 } from 'react-intl';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Menu, Dropdown, Icon } from 'antd';
-
+import { Menu, Icon } from 'antd';
+import { Dropdown } from '../../../../components/PopupContainers';
 import { TableView } from '../../../../components/TableView';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import {

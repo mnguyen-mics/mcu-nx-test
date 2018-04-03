@@ -2,11 +2,11 @@ import * as React from 'react';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Dropdown, Menu, Table } from 'antd';
+import { Menu, Table } from 'antd';
 import { TableProps, ColumnProps, TableRowSelection } from 'antd/lib/table';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { ClickParam } from 'antd/lib/menu';
-
+import { Dropdown } from '../../components/PopupContainers';
 import McsIcon from '../McsIcon';
 import withTranslations, {
   TranslationProps,
