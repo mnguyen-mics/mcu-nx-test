@@ -3,10 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import moment from 'moment';
-import {
-  injectIntl,
-  InjectedIntlProps
-, defineMessages} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import {
   EditAudienceSegmentParam,
   AudienceSegmentFormData,
@@ -682,15 +679,14 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   };
 
   render() {
-
     const {
       match: { params: { type } },
-      datamart
-   ,
+      datamart,
       intl: { formatMessage },
-      match: { params: { organisationId } }, } = this.props;const { segmentCreation } = this.state;
+      match: { params: { organisationId } },
+    } = this.props;
 
-    const { segmentCreation, audienceSegmentFormData. loading } = this.state;
+    const { segmentCreation, audienceSegmentFormData, loading } = this.state;
 
     const segmentType = type || this.state.segmentType;
 
