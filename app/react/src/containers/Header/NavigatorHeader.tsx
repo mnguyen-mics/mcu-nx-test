@@ -10,16 +10,12 @@ import messages from './messages';
 import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
-import { setSelectedDatamart } from '../../state/Session/actions';
-import { ButtonStyleless } from '../../components';
-import { DatamartResource } from '../../models/datamart/DatamartResource';
 
 const { Header } = Layout;
 
 interface NavigatorHeaderStoreProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
   userEmail: string;
-  setSelectedDatamart: (datamart: DatamartResource) => void;
 }
 
 export interface NavigatorHeaderProps {
@@ -67,24 +63,6 @@ class NavigatorHeader extends React.Component<Props> {
       </Menu>
     );
 
-    const datamartMenuRenderer = () => {
-      const datamarts = workspace(organisationId).datamarts;
-      const onDatamartClick = (datamart: DatamartResource) => () => {
-        this.props.setSelectedDatamart(datamart);
-      };
-      return (
-        <Menu>
-          {datamarts.map((datamart, index) => (
-            <Menu.Item key={`datamart${datamart.id}`}>
-              <ButtonStyleless onClick={onDatamartClick(datamart)}>
-                {datamart.name}
-              </ButtonStyleless>
-            </Menu.Item>
-          ))}
-        </Menu>
-      );
-    };
-
     const renderSettings = (
       <Link to={`/v2/o/${organisationId}/settings/organisation/labels`}>
         <McsIcon type="options" className="menu-icon" />
@@ -106,15 +84,6 @@ class NavigatorHeader extends React.Component<Props> {
                 </span>
               ) : null}
               {<span className="organisation-name">{organisationName}</span>}
-            </span>
-            {/* TODO make condition datamarts.length > 1 */}
-            <span className="datamart-switcher">
-              <Dropdown overlay={datamartMenuRenderer()} trigger={['click']}>
-                <a className="datamart-name">
-                  Chose Datamart
-                  <McsIcon type="chevron" className="menu-icon" />
-                </a>
-              </Dropdown>
             </span>
           </Col>
           <Col span={2}>
@@ -144,15 +113,10 @@ class NavigatorHeader extends React.Component<Props> {
 const mapStateToProps = (state: any) => ({
   workspace: SessionHelper.getWorkspace(state),
   userEmail: state.session.connectedUser.email,
-  selectedDatamart: SessionHelper.getSelectedDatamart,
 });
-
-const mapDispatchToProps = {
-  setSelectedDatamart: setSelectedDatamart,
-};
 
 export default compose<Props, NavigatorHeaderProps>(
   withRouter,
   injectDatamart,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(mapStateToProps),
 )(NavigatorHeader);

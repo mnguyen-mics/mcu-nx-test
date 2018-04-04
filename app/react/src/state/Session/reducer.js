@@ -92,7 +92,7 @@ const session = (state = defaultSessionState, action) => {
     case STORE_SELECTED_DATAMART:
       return {
         ...state,
-        selectedDatamart: action.payload,
+        selectedDatamart: { ...action.payload },
       };
     default:
       return state;
