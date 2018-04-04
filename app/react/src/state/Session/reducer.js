@@ -23,7 +23,7 @@ const defaultSessionState = {
   isFechingCookies: true,
   isFetchingWorkspace: false,
   isUploadingLogo: false,
-  selectedDatamart: {},
+  selectedDatamart: undefined,
 };
 
 const session = (state = defaultSessionState, action) => {
@@ -92,7 +92,7 @@ const session = (state = defaultSessionState, action) => {
     case STORE_SELECTED_DATAMART:
       return {
         ...state,
-        selectedDatamart: { ...action.payload },
+        selectedDatamart: action.payload,
       };
     default:
       return state;
