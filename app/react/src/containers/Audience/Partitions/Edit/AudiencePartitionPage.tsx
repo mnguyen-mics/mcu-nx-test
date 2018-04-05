@@ -99,15 +99,24 @@ class AudiencePartitionPage extends React.Component<
       location,
       intl,
     } = this.props;
+    this.setState({
+      isLoading: true,
+    });
     formData.type = 'AUDIENCE_PARTITION';
     if (partitionId) {
       AudiencePartitionsService.savePartition(partitionId, formData)
         .then(() => {
           this.redirect();
           message.success(intl.formatMessage(messages.partitionSaved));
+          this.setState({
+            isLoading: false,
+          });
         })
         .catch(error => {
           this.props.notifyError(error);
+          this.setState({
+            isLoading: false,
+          });
         });
     } else {
       const query = queryString.parse(search);
@@ -122,7 +131,7 @@ class AudiencePartitionPage extends React.Component<
         .then(newAudiencePartition => {
           const url = `/v2/o/${organisationId}/audience/partitions/${
             newAudiencePartition.data.id
-          }/dashboard`;
+          }`;
           location.pathname
             ? history.push({
                 pathname: url,
@@ -130,9 +139,15 @@ class AudiencePartitionPage extends React.Component<
               })
             : history.push(url);
           message.success(intl.formatMessage(messages.partitionSaved));
+          this.setState({
+            isLoading: false,
+          });
         })
         .catch(error => {
           this.props.notifyError(error);
+          this.setState({
+            isLoading: false,
+          });
         });
     }
   };
@@ -144,7 +159,7 @@ class AudiencePartitionPage extends React.Component<
       match: { params: { organisationId, partitionId } },
     } = this.props;
     const url = partitionId
-      ? `/v2/o/${organisationId}/audience/partitions/${partitionId}/dashboard`
+      ? `/v2/o/${organisationId}/audience/partitions/${partitionId}`
       : `/v2/o/${organisationId}/audience/partitions`;
 
     return location.pathname
