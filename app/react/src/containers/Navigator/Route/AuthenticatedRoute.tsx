@@ -6,7 +6,6 @@ import {
   Route,
   Redirect,
   match,
-  RouteComponentProps,
 } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -46,7 +45,7 @@ export interface MapStateToProps {
 
 type Props = AuthenticatedRouteProps & InjectedIntlProps & MapStateToProps & MissingRouterProps;
 
-type SubComponentProps = any & RouteComponentProps<RouteParams>;
+type SubComponentProps = any;
 
 class AuthenticatedRoute extends React.Component<Props> {
 

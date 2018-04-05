@@ -180,7 +180,7 @@ class LabelsListPage extends Component<LabelsListProps & InjectedNotificationPro
                 onLabelArchive={onLabelArchive}
                 onLabelEdit={this.handleEditLabels}
               />
-              {this.state.modalVisible ? <Modal
+              <Modal
                 title={edition ? <FormattedMessage {...messages.editLabelTitle} /> : <FormattedMessage {...messages.addNewLabelTitle} />}
                 visible={this.state.modalVisible}
                 footer={this.buildModalFooter()}
@@ -190,7 +190,7 @@ class LabelsListPage extends Component<LabelsListProps & InjectedNotificationPro
                   <Alert message={<FormattedMessage {...messages.labelAlreadyExists} />} type="error" style={{ marginBottom: 16 }} />
                   : null}
                 <Input defaultValue={this.state.inputValue} onChange={onChange} placeholder="Name" />
-              </Modal> : null}
+              </Modal>
             </div>
           </Row>
         </Content>

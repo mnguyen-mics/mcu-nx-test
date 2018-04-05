@@ -9,8 +9,6 @@ import ItemList, { Filters } from '../../../../../components/ItemList';
 import UsersService from '../../../../../services/UsersService';
 import {
   PAGINATION_SEARCH_SETTINGS,
-  // parseSearch,
-  // updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { User } from '../../../../../models/settings/settings';
@@ -62,47 +60,6 @@ class UserList extends React.Component<
       })
   };
 
-  // onClickArchive = (user: User) => {
-  //   const {
-  //     location: { search, pathname, state },
-  //     history,
-  //     match: { params: { organisationId } },
-  //     intl: { formatMessage },
-  //   } = this.props;
-
-  //   const { data } = this.state;
-
-  //   const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-
-  //   Modal.confirm({
-  //     iconType: 'exclamation-circle',
-  //     title: formatMessage(messages.recommenderArchiveTitle),
-  //     content: formatMessage(messages.recommenderArchiveMessage),
-  //     okText: formatMessage(messages.recommenderArchiveOk),
-  //     cancelText: formatMessage(messages.recommenderArchiveCancel),
-  //     onOk: () => {
-  //       this.archiveUser(user.id).then(() => {
-  //         if (data.length === 1 && filter.currentPage !== 1) {
-  //           const newFilter = {
-  //             ...filter,
-  //             currentPage: filter.currentPage - 1,
-  //           };
-  //           history.replace({
-  //             pathname: pathname,
-  //             search: updateSearch(search, newFilter),
-  //             state: state,
-  //           });
-  //           return Promise.resolve();
-  //         }
-  //         return this.fetchUsers(organisationId, filter);
-  //       });
-  //     },
-  //     onCancel: () => {
-  //       // cancel
-  //     },
-  //   });
-  // };
-
   onClickEdit = (user: User) => {
     const { history, match: { params: { organisationId } } } = this.props;
 
@@ -119,7 +76,6 @@ class UserList extends React.Component<
         key: 'action',
         actions: [
           { translationKey: 'EDIT', callback: this.onClickEdit },
-          // { translationKey: 'ARCHIVE', callback: this.onClickArchive },
         ],
       },
     ];

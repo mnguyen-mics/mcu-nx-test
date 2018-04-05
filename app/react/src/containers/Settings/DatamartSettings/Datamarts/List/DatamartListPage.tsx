@@ -49,11 +49,7 @@ class DatamartsListPage extends React.Component<
       };
       DatamartService.getDatamarts(organisationId, options)
         .then(
-          (results: {
-            data: DatamartResource[];
-            total?: number;
-            count: number;
-          }) => {
+          (results) => {
             this.setState({
               loading: false,
               data: results.data,
