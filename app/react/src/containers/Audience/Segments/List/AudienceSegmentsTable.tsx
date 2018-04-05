@@ -29,7 +29,6 @@ import {
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';
 import { getWorkspace } from '../../../../state/Session/selectors';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { Label } from '../../../Labels/Labels';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 import { FilterProps } from '../../../Campaigns/Display/List/DisplayCampaignsActionbar';
@@ -94,7 +93,6 @@ interface MapStateToProps {
   isFetchingSegmentsStat: boolean;
   dataSource: AudienceSegmentResource[];
   totalAudienceSegments: number;
-  defaultDatamart: DatamartResource;
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
@@ -193,7 +191,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           nextSearch,
           this.getSearchSetting(nextOrganisationId),
         );
-        const datamartId = this.state.datamartId ? this.state.datamartId : datamart.id;
+        const datamartId = this.state.datamartId
+          ? this.state.datamartId
+          : datamart.id;
         loadAudienceSegmentsDataSource(
           nextOrganisationId,
           datamartId,
@@ -270,7 +270,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       ...SEGMENTS_SEARCH_SETTINGS,
       {
         paramName: 'datamarts',
-        defaultValue: datamartId ? [parseInt(datamartId, 0)] : [parseInt(datamart.id, 0)],
+        defaultValue: datamartId
+          ? [parseInt(datamartId, 0)]
+          : [parseInt(datamart.id, 0)],
         deserialize: () => {
           if (datamartId) {
             return [parseInt(datamartId, 0)];
