@@ -39,6 +39,9 @@ import { DataResponse } from '../../../../services/ApiService';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { PluginProperty } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
+import DatamartSelector from './DatamartSelector';
+import { Datamart } from '../../../../models/organisation/organisation';
+import { EditContentLayout } from '../../../../components/Layout';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -58,6 +61,7 @@ interface State {
   queryLanguage: QueryLanguage;
   queryContainer?: any;
   loading: boolean;
+  selectedDatamart?: Datamart;
 }
 
 type Props = InjectedIntlProps &
@@ -83,6 +87,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           : ('OTQL' as QueryLanguage),
       queryContainer: defQuery,
       loading: true,
+      selectedDatamart: undefined,
     };
   }
 
@@ -541,6 +546,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
+    const { selectedDatamart } = this.state;
+
     const countTTL = (formData: AudienceSegmentFormData) => {
       if (formData.defaultLiftimeUnit && formData.defaultLiftime) {
         return moment
@@ -573,7 +580,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return technicalName;
     };
 
-    const datamartId = datamart.id;
+    const datamartId = selectedDatamart ? selectedDatamart.id : datamart.id;
 
     switch (type) {
       case 'USER_PIXEL':
@@ -662,15 +669,25 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     }
   };
 
+  onDatamartSelect = (datamart: Datamart) => {
+    this.setState({
+      selectedDatamart: datamart,
+    });
+  };
+
   render() {
     const {
       match: { params: { type } },
       datamart,
       intl: { formatMessage },
-      match: { params: { organisationId } },
+      match: { params: { organisationId, segmentId } },
     } = this.props;
 
-    const { segmentCreation, audienceSegmentFormData } = this.state;
+    const {
+      segmentCreation,
+      audienceSegmentFormData,
+      selectedDatamart,
+    } = this.state;
 
     const { loading } = this.state;
 
@@ -694,6 +711,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       },
     ];
 
+    const actionbarProps = {
+      onClose: this.redirectToSegmentList,
+      formId: 'audienceSegmentForm',
+    };
+
     if (loading) {
       return <Loading className="loading-full-screen" />;
     }
@@ -703,19 +725,23 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       this.state.audienceSegmentFormData.query.query_language
         ? this.state.audienceSegmentFormData.query.query_language
         : this.state.queryLanguage;
-    return (
+    return segmentId || selectedDatamart ? (
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
         close={this.redirectToSegmentList}
         onSubmit={this.save}
         breadCrumbPaths={breadcrumbPaths}
         audienceSegmentFormData={this.state.audienceSegmentFormData}
-        datamart={datamart}
+        datamart={selectedDatamart ? selectedDatamart : datamart}
         segmentType={segmentType}
         segmentCreation={segmentCreation}
         queryContainer={this.state.queryContainer}
         queryLanguage={getQueryLanguageToDisplay}
       />
+    ) : (
+      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+        <DatamartSelector onSelect={this.onDatamartSelect} />
+      </EditContentLayout>
     );
   }
 }
