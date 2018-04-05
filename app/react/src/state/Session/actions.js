@@ -6,7 +6,6 @@ import {
   FETCH_COOKIES,
   GET_LOGO,
   PUT_LOGO,
-  STORE_SELECTED_DATAMART,
 } from '../action-types';
 
 const getConnectedUser = {
@@ -39,13 +38,10 @@ const getLogo = {
   failure: createAction(GET_LOGO.FAILURE),
 };
 
-const setSelectedDatamart = createAction(STORE_SELECTED_DATAMART);
-
 export {
   getConnectedUser,
   getWorkspace,
   getLogo,
   getCookies,
   putLogo,
-  setSelectedDatamart,
 };

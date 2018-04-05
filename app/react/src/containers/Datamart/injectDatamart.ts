@@ -1,4 +1,3 @@
-import { DatamartResource } from './../../models/datamart/DatamartResource';
 import { compose, mapProps } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -14,7 +13,6 @@ export interface InjectedDatamartProps {
 const mapStateToProps = (state: any) => {
   return {
     getDefaultDatamart: SessionHelper.getDefaultDatamart(state),
-    selectedDatamart: SessionHelper.getSelectedDatamart(state),
   };
 };
 
@@ -25,29 +23,21 @@ export default compose<any, InjectedDatamartProps>(
     (
       props: RouteComponentProps<{ organisationId: string }> & {
         getDefaultDatamart: (orgId: string) => InjectedDatamartProps;
-        selectedDatamart?: DatamartResource;
       } & { [key: string]: any },
     ) => {
-      const { getDefaultDatamart, selectedDatamart, ...rest } = props;
+      const { getDefaultDatamart, ...rest } = props;
       const defaultDatamart = getDefaultDatamart(
         rest.match.params.organisationId,
       );
-      if (selectedDatamart) {
-        return {
-          ...rest,
-          datamart: selectedDatamart,
-        };
-      } else {
-        if (!defaultDatamart)
-          log.error(
-            'No datamart found for organisationId ',
-            rest.match.params.organisationId,
-          );
-        return {
-          datamart: defaultDatamart,
-          ...rest,
-        };
-      }
+      if (!defaultDatamart)
+        log.error(
+          'No datamart found for organisationId ',
+          rest.match.params.organisationId,
+        );
+      return {
+        datamart: defaultDatamart,
+        ...rest,
+      };
     },
   ),
 );

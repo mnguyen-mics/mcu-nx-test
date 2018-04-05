@@ -5,7 +5,6 @@ import {
   FETCH_COOKIES,
   PUT_LOGO,
   GET_LOGO,
-  STORE_SELECTED_DATAMART,
 } from '../action-types';
 
 const defaultSessionState = {
@@ -23,7 +22,6 @@ const defaultSessionState = {
   isFechingCookies: true,
   isFetchingWorkspace: false,
   isUploadingLogo: false,
-  selectedDatamart: undefined,
 };
 
 const session = (state = defaultSessionState, action) => {
@@ -89,11 +87,6 @@ const session = (state = defaultSessionState, action) => {
       };
     case LOG_OUT:
       return defaultSessionState;
-    case STORE_SELECTED_DATAMART:
-      return {
-        ...state,
-        selectedDatamart: { ...action.payload },
-      };
     default:
       return state;
   }
