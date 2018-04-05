@@ -235,8 +235,8 @@ class TriggerFormSection extends React.Component<Props, State> {
           subtitle={messages.sectionSubtitle1}
           title={messages.sectionTitle1}
         />
-        <Row>
-          <Col span={4}>
+        <Row style={{ paddingBottom: '24px' }}>
+          <Col span={24}>
             <Radio
               checked={!this.state.pixelSectionVisible}
               onChange={this.toggleSections}
@@ -246,13 +246,17 @@ class TriggerFormSection extends React.Component<Props, State> {
             <Radio
               checked={this.state.pixelSectionVisible}
               onChange={this.toggleSections}
+              disabled={
+                !!this.props.initialValues.goal &&
+                !!this.props.initialValues.goal.new_query_id
+              }
             >
               {formatMessage(messages.formCheckBoxText2)}
             </Radio>
           </Col>
         </Row>
         <Row>
-          <Col span={20} offset={4}>
+          <Col span={24}>
             {!this.state.pixelSectionVisible
               ? this.state.editQueryMode
                 ? this.renderPropertiesField()
