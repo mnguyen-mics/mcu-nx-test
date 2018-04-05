@@ -15,7 +15,6 @@ import {
   AutomationCreateResource,
 } from '../../../models/automations/automations';
 import messages from './messages';
-import { getDefaultDatamart } from '../../../state/Session/selectors';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -152,7 +151,6 @@ export default compose<Props, {}>(
   connect(
     state => ({
       hasFeature: FeatureSelectors.hasFeature(state),
-      defaultDatamart: getDefaultDatamart(state),
     }),
     {
       notifyError: NotificationActions.notifyError,

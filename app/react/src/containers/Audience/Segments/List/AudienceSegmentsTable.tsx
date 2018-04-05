@@ -28,11 +28,7 @@ import {
 
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';
-import {
-  getDefaultDatamart,
-  getWorkspace,
-} from '../../../../state/Session/selectors';
-import { setSelectedDatamart } from '../../../../state/Session/actions';
+import { getWorkspace } from '../../../../state/Session/selectors';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { Label } from '../../../Labels/Labels';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
@@ -42,7 +38,6 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { withTranslations } from '../../../Helpers';
-import DatamartService from '../../../../services/DatamartService';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -103,7 +98,9 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-interface State {}
+interface State {
+  datamartId?: string;
+}
 
 interface MapDispatchToProps {
   loadAudienceSegmentsDataSource: (
@@ -115,7 +112,6 @@ interface MapDispatchToProps {
   archiveAudienceSegment: (segmentId: string) => Promise<any>;
   resetAudienceSegmentsTable: () => AudienceSegmentResource[];
   translations: TranslationProps;
-  setSelectedDatamart: (datamart: DatamartResource) => void;
 }
 
 type Props = MapStateToProps &
@@ -126,13 +122,26 @@ type Props = MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AudienceSegmentsTable extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      datamartId: undefined,
+    };
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { datamartId: prevDatamartId } = prevState;
+    const { datamartId } = this.state;
+    if (datamartId !== prevDatamartId) {
+      this.loadAudienceSegmentsData();
+    }
+  }
+
   componentDidMount() {
     const {
       history,
       location: { search, pathname },
       match: { params: { organisationId } },
-      loadAudienceSegmentsDataSource,
-      datamart,
     } = this.props;
 
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
@@ -145,9 +154,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, this.getSearchSetting(organisationId));
-      const datamartId = datamart.id;
-      loadAudienceSegmentsDataSource(organisationId, datamartId, filter, true);
+      this.loadAudienceSegmentsData();
     }
   }
 
@@ -156,21 +163,19 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       location: { search },
       match: { params: { organisationId } },
       history,
-      datamart,
       loadAudienceSegmentsDataSource,
+      datamart,
     } = this.props;
 
     const {
       location: { pathname: nextPathname, search: nextSearch, state },
       match: { params: { organisationId: nextOrganisationId } },
-      datamart: nextDatamart
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
     if (
       !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId ||
-      datamart.id !== nextDatamart.id
+      organisationId !== nextOrganisationId
     ) {
       if (
         !isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))
@@ -188,7 +193,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           nextSearch,
           this.getSearchSetting(nextOrganisationId),
         );
-        const datamartId = nextDatamart.id;
+        const datamartId = this.state.datamartId ? this.state.datamartId : datamart.id;
         loadAudienceSegmentsDataSource(
           nextOrganisationId,
           datamartId,
@@ -202,6 +207,20 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
   componentWillUnmount() {
     this.props.resetAudienceSegmentsTable();
   }
+
+  loadAudienceSegmentsData = () => {
+    const {
+      loadAudienceSegmentsDataSource,
+      match: { params: { organisationId } },
+      location: { search },
+      datamart,
+    } = this.props;
+    const datamartId = this.state.datamartId
+      ? this.state.datamartId
+      : datamart.id;
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    loadAudienceSegmentsDataSource(organisationId, datamartId, filter, true);
+  };
 
   archiveSegment = (segment: AudienceSegmentResource) => {
     const {
@@ -245,33 +264,43 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
 
   getSearchSetting(organisationId: string) {
     const { datamart, workspace } = this.props;
+    const { datamartId } = this.state;
 
     return [
       ...SEGMENTS_SEARCH_SETTINGS,
       {
         paramName: 'datamarts',
-        defaultValue: [parseInt(datamart.id, 0)],
+        defaultValue: datamartId ? [parseInt(datamartId, 0)] : [parseInt(datamart.id, 0)],
         deserialize: () => {
-          if (workspace(organisationId).datamarts.length >= 1) {
-            return workspace(organisationId).datamarts.map(d =>
-              parseInt(d.id, 0),
-            );
+          if (datamartId) {
+            return [parseInt(datamartId, 0)];
+          } else {
+            if (workspace(organisationId).datamarts.length >= 1) {
+              return workspace(organisationId).datamarts.map(d =>
+                parseInt(d.id, 0),
+              );
+            }
+            return [];
           }
-          return [];
         },
         serialize: (value: any) => value.join(','),
         isValid: () =>
-          workspace(organisationId).datamarts.length >= 1 &&
-          lodash.every(
-            workspace(organisationId).datamarts,
-            d => !isNaN(parseInt(d.id, 0)),
-          ),
+          datamartId
+            ? !isNaN(parseInt(datamartId, 0))
+            : workspace(organisationId).datamarts.length >= 1 &&
+              lodash.every(
+                workspace(organisationId).datamarts,
+                d => !isNaN(parseInt(d.id, 0)),
+              ),
       },
     ];
   }
 
   updateLocationSearch = (
-    params: Partial<FilterProps> & { types?: any; label_id?: string[] },
+    params: Partial<FilterProps> & {
+      types?: any;
+      label_id?: string[];
+    },
   ) => {
     const {
       history,
@@ -554,20 +583,22 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             <Icon type="down" />
           </div>
         ),
-        selectedItems: [
-          {
-            key: datamart.id,
-            value: datamart.name,
-          },
-        ],
+        selectedItems: this.state.datamartId
+          ? [datamartItems.find(d => d.key === this.state.datamartId)]
+          : [
+              {
+                key: datamart.id,
+                value: datamart.name,
+              },
+            ],
         items: datamartItems,
         singleSelectOnly: true,
         getKey: (item: any) => item.key,
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
-          DatamartService.getDatamart(datamartItem.key)
-            .then(resp => resp.data)
-            .then(datamartData => this.props.setSelectedDatamart(datamartData));
+          this.setState({
+            datamartId: datamartItem.key,
+          });
         },
       },
     ];
@@ -619,7 +650,6 @@ const mapStateToProps = (state: any) => ({
     state.audienceSegmentsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
   totalAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.total,
-  defaultDatamart: getDefaultDatamart(state),
   workspace: getWorkspace(state),
 });
 
@@ -629,7 +659,6 @@ const mapDispatchToProps = {
   // archiveAudienceSegment: AudienceSegmentsActions.archiveAudienceSegment,
   resetAudienceSegmentsTable:
     AudienceSegmentsActions.resetAudienceSegmentsTable,
-  setSelectedDatamart: setSelectedDatamart,
 };
 
 export default compose<Props, MapDispatchToProps>(

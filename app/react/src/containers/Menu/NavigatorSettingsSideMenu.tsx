@@ -6,7 +6,6 @@ import { FormattedMessage } from 'react-intl';
 
 import {
   hasDatamarts,
-  getDefaultDatamart,
 } from '../../state/Session/selectors';
 import McsIcon, { McsIconType } from '../../components/McsIcon';
 import { getOrgFeatures } from '../../state/Features/selectors';
@@ -221,7 +220,6 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
 
 const mapStateToProps = (state: any) => ({
   organisationHasDatamarts: hasDatamarts(state),
-  defaultDatamart: getDefaultDatamart(state),
   orgFeatures: getOrgFeatures(state),
 });
 

@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { FormattedMessage, FormattedNumber, FormattedPlural } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import EmailCampaignService from '../../../../services/EmailCampaignService';
-import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { EditEmailBlastRouteMatchParam } from './domain';
 
 interface SegmentReachProps {
@@ -97,10 +95,5 @@ class SegmentReach extends React.Component<Props, State> {
 }
 
 export default compose<Props, SegmentReachProps>(
-  withRouter,
-  connect(
-    state => ({
-      defaultDatamart: getDefaultDatamart(state),
-    }),
-  ),
+  withRouter
 )(SegmentReach);
