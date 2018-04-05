@@ -16,7 +16,6 @@ import {
 import AudiencePartitionService from '../../../../services/AudiencePartitionsService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
-import Loading from '../../../../components/Loading';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
 
 const { Content } = Layout;
@@ -183,17 +182,19 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   render() {
     const { intl } = this.props;
     const { isLoading } = this.state;
-    return isLoading ? (
-      <Loading className="loading-full-screen" />
-    ) : (
+    return (
       <div className="ant-layout">
         <PartitionActionBar
           partition={this.state.partitionData}
           publishPartition={this.displayHidePublishModal}
+          loading={isLoading}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <ContentHeader title={this.state.partitionData.name} />
+            <ContentHeader
+              title={this.state.partitionData.name}
+              loading={isLoading}
+            />
             <Card title={intl.formatMessage(messages.overview)}>
               <TableView
                 dataSource={this.state.partitions}
