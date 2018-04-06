@@ -332,14 +332,16 @@ class AttributionModelFormSection extends React.Component<
           formChange((fields as any).name, newFields);
         };
         return (
-          <Switch
-            className="mcs-table-switch"
-            checked={attributionModelField.meta.default}
-            onChange={handleDefaultClick}
-            checkedChildren={intl.formatMessage(
-              messages.checkedSwitchAttributionModelText,
-            )}
-          />
+          <span>
+            <Switch
+              className="mcs-table-switch m-r-10"
+              checked={attributionModelField.meta.default}
+              disabled={attributionModelField.meta.default}
+              onChange={handleDefaultClick}
+            />
+            {attributionModelField.meta.default &&
+              intl.formatMessage(messages.checkedSwitchAttributionModelText)}
+          </span>
         );
       };
 
