@@ -52,7 +52,7 @@ const DisplayCampaignService = {
     body: Partial<DisplayCampaignResource>,
   ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/${campaignId}`;
-    return ApiService.putRequest(endpoint, body);
+    return ApiService.putRequest(endpoint, {...body, type: 'DISPLAY' });
   },
 
   deleteCampaign(
