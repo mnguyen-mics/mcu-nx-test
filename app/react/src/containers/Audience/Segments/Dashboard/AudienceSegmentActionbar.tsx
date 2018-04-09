@@ -27,7 +27,7 @@ import AudienceLookalikeCreation, {
   AudienceLookalikeCreationProps,
 } from './Lookalike/AudienceLookalikeCreation';
 import { injectDrawer } from '../../../../components/Drawer';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { UserLookalikeSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { SEGMENT_QUERY_SETTINGS } from './constants';
@@ -54,7 +54,7 @@ type Props = AudienceSegmentActionbarProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   AudienceSegmentActionbarStoreProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedDatamartProps;
 
 interface State {
@@ -215,6 +215,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
               organisation_id: organisationId,
             },
           },
+          isModal: true
         },
       );
 

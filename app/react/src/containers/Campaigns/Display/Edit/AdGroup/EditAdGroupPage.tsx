@@ -18,7 +18,7 @@ import AdGroupFormService from './AdGroupFormService';
 import messages from '../messages';
 import AdGroupForm from './AdGroupForm';
 import Loading from '../../../../../components/Loading';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -30,7 +30,7 @@ interface State {
 }
 
 type Props = InjectedIntlProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAdGroupRouteMatchParam>;
 

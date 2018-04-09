@@ -14,7 +14,7 @@ import { injectDrawer } from '../../../../../components/Drawer';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { MobileApplicationResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
@@ -31,7 +31,7 @@ interface MobileApplicationsListPageState {
   filter: Filter;
 }
 
-type Props = MobileApplicationsListPageProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps & InjectDrawerProps & InjectedDatamartProps;
+type Props = MobileApplicationsListPageProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps & InjectedDrawerProps & InjectedDatamartProps;
 
 class MobileApplicationsListPage extends React.Component<Props, MobileApplicationsListPageState> {
 

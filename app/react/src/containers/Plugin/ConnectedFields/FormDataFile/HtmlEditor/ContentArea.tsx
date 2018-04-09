@@ -22,7 +22,7 @@ import FormTextArea, {
 } from '../../../../../components/Form/FormTextArea';
 import QuickAssetUpload, { QuickAssetUploadProps } from './QuickAssetUpload';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
 
 const { Content } = Layout;
@@ -50,7 +50,7 @@ const fieldGridConfig = {
 
 type Props = InjectedFormProps<{}, ContentAreaProps> &
   ContentAreaProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 const messages = defineMessages({
   quickEdit: {

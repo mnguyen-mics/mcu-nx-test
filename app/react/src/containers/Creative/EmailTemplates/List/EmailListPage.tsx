@@ -11,7 +11,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import CreativeService, {
   GetCreativesOptions,
 } from '../../../../services/CreativeService';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import {
   getEmailTemplates,
@@ -67,7 +67,7 @@ interface EmailListPageState {
 type JoinedProps = InjectedIntlProps &
   MapStateToProps &
   MapDispatchToProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 

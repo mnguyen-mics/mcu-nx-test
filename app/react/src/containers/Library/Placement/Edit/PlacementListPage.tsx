@@ -13,7 +13,7 @@ import PlacementListService from '../../../../services/Library/PlacementListsSer
 
 import PlacementListForm from './PlacementListForm';
 import { injectDrawer } from '../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { notifyError } from '../../../../state/Notifications/actions';
 import { Loading } from '../../../../components/index';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
@@ -57,7 +57,7 @@ interface PlacementListPageState {
   loading: boolean;
 }
 
-type Props = InjectDrawerProps &
+type Props = InjectedDrawerProps &
   PlacementListPageProps &
   RouteComponentProps<{ organisationId: string; placementListId: string }> &
   InjectedIntlProps;

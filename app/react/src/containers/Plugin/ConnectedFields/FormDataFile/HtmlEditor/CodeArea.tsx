@@ -18,7 +18,7 @@ import {
 import { EditContentLayout } from '../../../../../components/Layout';
 import { Omit } from '../../../../../utils/Types';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 const { Content } = Layout;
 
 const FormCodeField: FieldCtor<FormCodeEditProps> = Field;
@@ -27,7 +27,7 @@ export interface CodeAreaProps extends Omit<ConfigProps<any>, 'form'> {}
 
 type Props = InjectedFormProps<any, CodeAreaProps> &
   CodeAreaProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 const messages = defineMessages({
   quickEdit: {
