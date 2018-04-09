@@ -59,4 +59,41 @@ export default defineMessages({
     id: 'segment.overlap.button.create',
     defaultMessage: 'Create Overlap Analysis'
   },
+  lookAlikeCreation: {
+    id: 'segment.lookalike.button.create',
+    defaultMessage: 'Create Lookalike'
+  },
+  lookAlikeModalTitle: {
+    id: 'segment.lookalike.modal.title',
+    defaultMessage: 'Create Lookalike'
+  },
+  lookAlikeModalHelper: {
+    id: 'segment.lookalike.modal.helper',
+    defaultMessage: 'To create a Lookalike, please select a partition and your extension ratio. Your segment will then be overlapped against the partition selected and the most overlapping partitions will be added to your base segment.'
+  },
+  lookAlikeModalNameLabel: {
+    id: 'segment.lookalike.modal.name.label',
+    defaultMessage: 'Segment Name'
+  },
+  lookAlikeModalPartitionLabel: {
+    id: 'segment.lookalike.modal.partition.label',
+    defaultMessage: 'Partition'
+  },
+  lookAlikeModalExtentionFactorLabel: {
+    id: 'segment.lookalike.modal.extensionFactor.label',
+    defaultMessage: 'Extension Factor'
+  },
+  lookAlikeCalibrationExecution: {
+    id: 'segment.lookalike.button.calibration.execution',
+    defaultMessage: 'Calibrate'
+  },
+  lookAlikeCalibrationRunning: {
+    id: 'segment.lookalike.button.calibration.executing',
+    defaultMessage: 'Calibration Ongoing'
+  },
+  lookAlikeCalibrationErrorSuccess: {
+    id: 'segment.lookalike.button.calibration.done',
+    defaultMessage: 'Recalibrate'
+  },
+
 });

@@ -327,6 +327,13 @@ const AudienceSegmentService = {
       endpoint,
     );
   },
+
+  recalibrateAudienceLookAlike(
+    segmentId: string
+  ): Promise<DataResponse<void>> {
+    const endpoint = `audience_segment_lookalikes/${segmentId}/calibrate`;
+    return ApiService.postRequest(endpoint, {})
+  }
 };
 
 export default AudienceSegmentService;

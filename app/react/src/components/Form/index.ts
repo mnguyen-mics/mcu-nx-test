@@ -15,6 +15,7 @@ import withValidators from './withValidators';
 import FormUpload from './FormUpload';
 import FormTextArea from './FormTextArea';
 import FormInput, { FormInputProps } from './FormInput';
+import FormSlider, { FormSliderProps } from './FormSlider';
 import DefaultSelect, { DefaultSelectProps } from './FormSelect/DefaultSelect';
 import AddonSelect, { FormSelectAddonProps } from './FormSelect/AddonSelect';
 import FormDateRangePicker, { FormDateRangePickerProps } from './FormDateRangePicker';
@@ -51,6 +52,7 @@ export default {
   DefaultSelect,
   TagSelect,
   FormSelect,
+  FormSlider,
 };
 
 export {
@@ -77,7 +79,8 @@ export {
   DefaultSelect,
   TagSelect,
   FormSelect,
-  FormDragAndDrop
+  FormDragAndDrop,
+  FormSlider
 };
 
 export const FormInputField = Field as new() => GenericField<FormInputProps>;
@@ -88,3 +91,4 @@ export const FormSwitchField = Field as new() => GenericField<FormSwitchProps>;
 export const FormDateRangePickerField = Field as new() => GenericField<FormDateRangePickerProps>;
 export const FormCheckboxField = Field as new() => GenericField<FormCheckboxProps>;
 export const FormBooleanField = Field as new() => GenericField<FormBooleanProps>;
+export const FormSliderField = Field as new() => GenericField<FormSliderProps>;

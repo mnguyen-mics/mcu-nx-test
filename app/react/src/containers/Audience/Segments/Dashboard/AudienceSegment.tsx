@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import AudienceSegmentHeader from './AudienceSegmentHeader';
-import { Labels } from '../../../Labels/index.ts';
-import AudienceSegmentDashboard from './AudienceSegmentDashboard.tsx';
+import { Labels } from '../../../Labels/index';
+import AudienceSegmentDashboard from './AudienceSegmentDashboard';
+import LookalikeStatusWarning from './Lookalike/LookalikeStatusWarning';
 
 import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
 
@@ -16,24 +16,29 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../../utils/LocationSearchHelper.ts';
+} from '../../../../utils/LocationSearchHelper';
+import { compose } from 'recompose';
+import { InjectedIntlProps } from 'react-intl';
 
+export interface AudienceSegmentStoreProps {
+  loadAudienceSegmentSingleDataSource: (
+    segmentId: string,
+    organisationId: string,
+    filters: any,
+  ) => void;
+  resetAudienceSegmentSingle: () => void;
+}
 
-class AudienceSegment extends Component {
+type Props = AudienceSegmentStoreProps &
+  RouteComponentProps<{ organisationId: string; segmentId: string }> &
+  InjectedIntlProps;
 
+class AudienceSegment extends React.Component<Props> {
   componentDidMount() {
     const {
       history,
-      location: {
-        search,
-        pathname,
-      },
-      match: {
-        params: {
-          organisationId,
-          segmentId,
-        },
-      },
+      location: { search, pathname },
+      match: { params: { organisationId, segmentId } },
       loadAudienceSegmentSingleDataSource,
     } = this.props;
 
@@ -48,26 +53,16 @@ class AudienceSegment extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
-      location: {
-        search,
-      },
-      match: {
-        params: {
-          segmentId,
-          organisationId,
-        },
-      },
+      location: { search },
+      match: { params: { segmentId, organisationId } },
       history,
       loadAudienceSegmentSingleDataSource,
     } = this.props;
 
     const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-      },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
         params: {
           segmentId: nextSegmentId,
@@ -77,9 +72,9 @@ class AudienceSegment extends Component {
     } = nextProps;
 
     if (
-      !compareSearches(search, nextSearch)
-      || (segmentId !== nextSegmentId)
-      || (organisationId !== nextOrganisationId)
+      !compareSearches(search, nextSearch) ||
+      segmentId !== nextSegmentId ||
+      organisationId !== nextOrganisationId
     ) {
       if (organisationId !== nextOrganisationId) {
         history.push(`/v2/o/${nextOrganisationId}/audience/segments`);
@@ -92,7 +87,11 @@ class AudienceSegment extends Component {
       } else {
         const filter = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
 
-        loadAudienceSegmentSingleDataSource(nextSegmentId, nextOrganisationId, filter);
+        loadAudienceSegmentSingleDataSource(
+          nextSegmentId,
+          nextOrganisationId,
+          filter,
+        );
       }
     }
   }
@@ -101,50 +100,34 @@ class AudienceSegment extends Component {
     this.props.resetAudienceSegmentSingle();
   }
 
-
   render() {
-    const {
-      match: {
-        params: {
-          segmentId,
-          organisationId,
-        },
-      },
-    } = this.props;
+    const { match: { params: { segmentId, organisationId } } } = this.props;
     return (
       <div>
         <AudienceSegmentHeader />
-        <Labels labellableId={segmentId} labellableType="SEGMENT" organisationId={organisationId} />
+        <Labels
+          labellableId={segmentId}
+          labellableType="SEGMENT"
+          organisationId={organisationId}
+        />
+        <LookalikeStatusWarning />
         <AudienceSegmentDashboard />
       </div>
     );
   }
-
 }
 
-AudienceSegment.propTypes = {
-  match: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
-  loadAudienceSegmentSingleDataSource: PropTypes.func.isRequired,
-  resetAudienceSegmentSingle: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: any) => ({
   translations: state.translations,
 });
 
 const mapDispatchToProps = {
-  loadAudienceSegmentSingleDataSource: AudienceSegmentActions.loadAudienceSegmentSingleDataSource,
-  // archiveEmailCampaign: EmailCampaignAction.archiveEmailCampaign,
+  loadAudienceSegmentSingleDataSource:
+    AudienceSegmentActions.loadAudienceSegmentSingleDataSource,
   resetAudienceSegmentSingle: AudienceSegmentActions.resetAudienceSegmentSingle,
 };
 
-AudienceSegment = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps),
 )(AudienceSegment);
-
-AudienceSegment = withRouter(AudienceSegment);
-
-export default AudienceSegment;

@@ -299,6 +299,18 @@ class AudienceSegmentsTable extends Component {
                   <Icon type="global" />
                 </Tooltip>
               );
+            case 'USER_PARTITION':
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="api" />
+                </Tooltip>
+              );
+            case 'USER_LOOKALIKE':
+              return (
+                <Tooltip placement="top" title={translations[text]}>
+                  <Icon type="usergroup-add" />
+                </Tooltip>
+              );
             default:
               return (
                 <Tooltip placement="top" title={translations[text]}>
@@ -392,7 +404,7 @@ class AudienceSegmentsTable extends Component {
       },
     ];
 
-    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_PIXEL', 'USER_QUERY']
+    const typeItems = ['USER_ACTIVATION', 'USER_LIST', 'USER_PIXEL', 'USER_QUERY', 'USER_PARTITION', 'USER_LOOKALIKE']
       .map(type => ({ key: type, value: type }));
 
     const filtersOptions = [
