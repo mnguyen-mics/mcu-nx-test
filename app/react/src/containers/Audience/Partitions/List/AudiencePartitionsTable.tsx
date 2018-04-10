@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Modal } from 'antd';
+import { Modal, Icon } from 'antd';
 import lodash from 'lodash';
 import { compose } from 'recompose';
 
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../components/TableView/index';
 import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
@@ -19,12 +18,15 @@ import {
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import { getTableDataSource } from '../../../../state/Audience/Partitions/selectors';
-import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../state/Session/selectors';
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { withTranslations } from '../../../Helpers';
-import { Datamart } from '../../../../models/organisation/organisation';
 import McsMoment from '../../../../utils/McsMoment';
 import { CampaignStatus } from '../../../../models/campaign/constants';
+import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import { FormattedMessage } from 'react-intl';
+import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 
 interface FilterProps {
   currentPage: number;
@@ -37,10 +39,10 @@ interface FilterProps {
 
 interface MapStateToProps {
   isFetchingAudiencePartitions: boolean;
-  dataSource: any[]; // use partition type
+  dataSource: AudiencePartitionResource[];
   totalAudiencePartitions: number;
-  defaultDatamart: (organisationId: string) => Datamart;
   hasAudiencePartitions: boolean;
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 interface MapDispatchToProps {
@@ -49,30 +51,60 @@ interface MapDispatchToProps {
     datamartId: string,
     filter: FilterProps,
     bool?: boolean,
-  ) => any[]; // use partition type
+  ) => AudiencePartitionResource[];
   archiveAudiencePartition: (partitionId: string) => void;
   resetAudiencePartitionsTable: () => void;
+}
+
+interface State {
+  datamartId?: string;
 }
 
 type Props = MapStateToProps &
   MapDispatchToProps &
   TranslationProps &
+  InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AudiencePartitionsTable extends React.Component<Props> {
+class AudiencePartitionsTable extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archivePartition = this.archivePartition.bind(this);
     this.editPartition = this.editPartition.bind(this);
+    this.state = {
+      datamartId: undefined,
+    };
   }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { datamartId: prevDatamartId } = prevState;
+    const { datamartId } = this.state;
+    if (datamartId !== prevDatamartId) {
+      this.loadAudiencePartitionsData();
+    }
+  }
+
+  loadAudiencePartitionsData = () => {
+    const {
+      location: { search },
+      match: { params: { organisationId } },
+      loadAudiencePartitionsDataSource,
+      datamart,
+    } = this.props;
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const datamartId = this.state.datamartId
+      ? this.state.datamartId
+      : datamart.id;
+
+    loadAudiencePartitionsDataSource(organisationId, datamartId, filter, true);
+  };
 
   componentDidMount() {
     const {
       history,
       location: { search, pathname },
       match: { params: { organisationId } },
-      loadAudiencePartitionsDataSource,
     } = this.props;
 
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
@@ -85,15 +117,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, this.getSearchSetting(organisationId));
-      const datamartId = filter.datamarts[0];
-
-      loadAudiencePartitionsDataSource(
-        organisationId,
-        datamartId,
-        filter,
-        true,
-      );
+      this.loadAudiencePartitionsData();
     }
   }
 
@@ -148,8 +172,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
     this.props.resetAudiencePartitionsTable();
   }
 
-  archivePartition = (partition: any) => {
-    // use partition type
+  archivePartition = (partition: AudiencePartitionResource) => {
     const {
       // match: { params: { organisationId } },
       // location: { search },
@@ -194,26 +217,37 @@ class AudiencePartitionsTable extends React.Component<Props> {
   };
 
   getSearchSetting(organisationId: string) {
-    const { defaultDatamart } = this.props;
+    const { datamart, workspace } = this.props;
+    const { datamartId } = this.state;
 
     return [
       ...PARTITIONS_SEARCH_SETTINGS,
       {
         paramName: 'datamarts',
-        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
+        defaultValue: datamartId
+          ? [parseInt(datamartId, 0)]
+          : [parseInt(datamart.id, 0)],
         deserialize: (query: any) => {
-          if (query.datamarts) {
-            return query.datamarts
-              .split(',')
-              .map((d: string) => parseInt(d, 0));
+          if (datamartId) {
+            return [parseInt(datamartId, 0)];
+          } else {
+            if (workspace(organisationId).datamarts.length >= 1) {
+              return workspace(organisationId).datamarts.map(d =>
+                parseInt(d.id, 0),
+              );
+            }
+            return [];
           }
-          return [];
         },
         serialize: (value: string[]) => value.join(','),
         isValid: (query: any) =>
-          query.datamarts &&
-          query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, d => !isNaN(parseInt(d, 0))),
+          datamartId
+            ? !isNaN(parseInt(datamartId, 0))
+            : workspace(organisationId).datamarts.length >= 1 &&
+              lodash.every(
+                workspace(organisationId).datamarts,
+                d => !isNaN(parseInt(d.id, 0)),
+              ),
       },
     ];
   }
@@ -235,6 +269,40 @@ class AudiencePartitionsTable extends React.Component<Props> {
     };
 
     history.push(nextLocation);
+  };
+
+  getFiltersOptions = () => {
+    const { workspace, match: { params: { organisationId } } } = this.props;
+    const datamartItems = workspace(organisationId).datamarts.map(d => ({
+      key: d.id,
+      value: d.name,
+    }));
+
+    return [
+      {
+        displayElement: (
+          <div>
+            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <Icon type="down" />
+          </div>
+        ),
+        selectedItems: this.state.datamartId
+          ? [datamartItems.find(d => d.key === this.state.datamartId)]
+          : [
+              {
+                key: datamartItems[0].key,
+                value: datamartItems[0].value,
+              },
+            ],
+        items: datamartItems,
+        singleSelectOnly: true,
+        getKey: (item: any) => item.key,
+        display: (item: any) => item.value,
+        handleItemClick: (datamartItem: { key: string; value: string }) => {
+          this.setState({ datamartId: datamartItem.key });
+        },
+      },
+    ];
   };
 
   render() {
@@ -278,10 +346,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
       {
         translationKey: 'NAME',
         key: 'name',
-        render: (
-          text: string,
-          record: any, // use partition type
-        ) => (
+        render: (text: string, record: AudiencePartitionResource) => (
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/audience/partitions/${record.id}`}
@@ -325,19 +390,18 @@ class AudiencePartitionsTable extends React.Component<Props> {
       },
     ];
 
-    return hasAudiencePartitions ? (
+    return (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           searchOptions={searchOptions}
-          dataSource={dataSource}
+          dataSource={hasAudiencePartitions ? dataSource : []}
           loading={isFetchingAudiencePartitions}
           pagination={pagination}
+          filtersOptions={this.getFiltersOptions()}
         />
       </div>
-    ) : (
-      <EmptyTableView iconType="partitions" text="EMPTY_PARTITIONS" />
     );
   }
 }
@@ -350,7 +414,7 @@ const mapStateToProps = (state: any) => ({
   dataSource: getTableDataSource(state),
   totalAudiencePartitions:
     state.audiencePartitionsTable.audiencePartitionsApi.total,
-  defaultDatamart: getDefaultDatamart(state),
+  workspace: getWorkspace(state),
 });
 
 const mapDispatchToProps = {
@@ -361,8 +425,9 @@ const mapDispatchToProps = {
     AudiencePartitionsActions.resetAudiencePartitionsTable,
 };
 
-export default compose(
+export default compose<Props, {}>(
   withRouter,
   withTranslations,
+  injectDatamart,
   connect(mapStateToProps, mapDispatchToProps),
 )(AudiencePartitionsTable);
