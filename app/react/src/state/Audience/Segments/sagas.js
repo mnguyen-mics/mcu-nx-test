@@ -33,7 +33,7 @@ import {
   AUDIENCE_SEGMENT_DASHBOARD_EXPORT,
 } from '../../action-types';
 
-import messages from '../../../containers/Audience/Segments/Dashboard/messages';
+import messages from '../../../containers/Audience/Segments/Dashboard/messages.ts';
 
 const onFileUpdate = file => {
   return new Promise(resolve => {
