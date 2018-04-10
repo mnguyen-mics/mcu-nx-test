@@ -118,7 +118,7 @@ class DisplayCreativeForm extends React.Component<Props> {
     if (goToCreativeTypeSelection) {
       sideBarProps.items.unshift({
         sectionId: 'type',
-        title:messages.creativeSiderMenuCreativeType,
+        title: messages.creativeSiderMenuCreativeType,
         onClick: goToCreativeTypeSelection,
         type: 'validated',
       });
@@ -144,6 +144,8 @@ class DisplayCreativeForm extends React.Component<Props> {
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
           >
+            {/* this button enables submit on enter */}
+            <button type="submit" style={{ display: 'none' }} />
             <Content
               id={DISPLAY_CREATIVE_FORM}
               className="mcs-content-container mcs-form-container"
