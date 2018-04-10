@@ -33,7 +33,7 @@ import { AttributionSelectionCreateRequest } from '../../../../../models/goal';
 // import AttributionModelForm, {
 //   AttributionModelFormProps,
 // } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelForm';
-import { AttributionModelFormData } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/domain';
+// import { AttributionModelFormData } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/domain';
 
 const messages = defineMessages({
   sectionSubtitle: {
@@ -125,37 +125,37 @@ class AttributionModelFormSection extends React.Component<
   //   openNextDrawer<AttributionModelFormProps>(AttributionModelForm, options);
   // };
 
-  updateAttributionModels = (
-    formData: AttributionModelFormData,
-    fieldKey?: string,
-  ) => {
-    const { fields, formChange } = this.props;
+  // updateAttributionModels = (
+  //   formData: AttributionModelFormData,
+  //   fieldKey?: string,
+  // ) => {
+  //   const { fields, formChange } = this.props;
 
-    const newFields: AttributionModelListFieldModel[] = [];
-    if (fieldKey) {
-      fields.getAll().forEach(field => {
-        if (fieldKey === field.key) {
-          newFields.push({
-            key: fieldKey,
-            model: formData,
-            meta: this.buildFieldModelMeta(formData.plugin),
-          });
-        } else {
-          newFields.push(field);
-        }
-      });
-    } else {
-      newFields.push(...fields.getAll());
-      newFields.push({
-        key: cuid(),
-        model: formData,
-        meta: this.buildFieldModelMeta(formData.plugin),
-      });
-    }
+  //   const newFields: AttributionModelListFieldModel[] = [];
+  //   if (fieldKey) {
+  //     fields.getAll().forEach(field => {
+  //       if (fieldKey === field.key) {
+  //         newFields.push({
+  //           key: fieldKey,
+  //           model: formData,
+  //           meta: this.buildFieldModelMeta(formData.plugin),
+  //         });
+  //       } else {
+  //         newFields.push(field);
+  //       }
+  //     });
+  //   } else {
+  //     newFields.push(...fields.getAll());
+  //     newFields.push({
+  //       key: cuid(),
+  //       model: formData,
+  //       meta: this.buildFieldModelMeta(formData.plugin),
+  //     });
+  //   }
 
-    formChange((fields as any).name, newFields);
-    this.props.closeNextDrawer();
-  };
+  //   formChange((fields as any).name, newFields);
+  //   this.props.closeNextDrawer();
+  // };
 
   updateExistingAttributionModels = (attributionModels: AttributionModel[]) => {
     const { fields, formChange } = this.props;
@@ -193,16 +193,17 @@ class AttributionModelFormSection extends React.Component<
         attributionModel =>
           !existingAttributionModelIds.includes(attributionModel.id),
       )
-      .map(attributionModel => {
+      .map((attributionModel, index) => {
         const newSelection: AttributionSelectionCreateRequest = {
           attribution_model_id: attributionModel.id,
           attribution_type: 'WITH_PROCESSOR',
           default: false,
         };
+        const defaultAM = index === 0;
         return {
           key: cuid(),
           model: newSelection,
-          meta: this.buildFieldModelMeta(attributionModel),
+          meta: this.buildFieldModelMeta(attributionModel, defaultAM),
         };
       });
 
@@ -271,12 +272,13 @@ class AttributionModelFormSection extends React.Component<
 
   buildFieldModelMeta = (
     data: Partial<AttributionModelCreateRequest>,
+    defaultAM: boolean = false,
   ): AttributionModelMetaData => {
     return {
       name: data.name,
       artifact_id: data.artifact_id,
       group_id: data.group_id,
-      default: this.props.fields.length === 0,
+      default: defaultAM,
     };
   };
 
@@ -333,14 +335,14 @@ class AttributionModelFormSection extends React.Component<
         };
         return (
           <span>
+            {attributionModelField.meta.default &&
+              intl.formatMessage(messages.checkedSwitchAttributionModelText)}
             <Switch
-              className="mcs-table-switch m-r-10"
+              className="mcs-table-switch m-l-10"
               checked={attributionModelField.meta.default}
               disabled={attributionModelField.meta.default}
               onChange={handleDefaultClick}
             />
-            {attributionModelField.meta.default &&
-              intl.formatMessage(messages.checkedSwitchAttributionModelText)}
           </span>
         );
       };
