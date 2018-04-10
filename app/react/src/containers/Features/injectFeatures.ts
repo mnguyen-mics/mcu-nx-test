@@ -1,6 +1,6 @@
 import { compose, mapProps } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps, match } from 'react-router-dom';
 
 import * as featureSelector from '../../state/Features/selectors';
 import * as SessionHelper from '../../state/Session/selectors';
@@ -9,6 +9,8 @@ import { Datamart } from '../../models/organisation/organisation';
 export interface InjectedFeaturesProps {
   hasFeature: (requiredFeatures?: string | string[], requireDatamart?: boolean) => boolean;
 }
+
+interface RouteParams { organisationId: string }
 
 const mapStateToProps = (state: any) => {
   return {
@@ -22,25 +24,28 @@ export default compose<any, InjectedFeaturesProps>(
   connect(mapStateToProps),
   mapProps(
     (
-      props: RouteComponentProps<{ organisationId: string }> & {
+      props: RouteComponentProps<RouteParams> & {
         hasFeatureStore: (featureId: string) => boolean;
         getDefaultDatamart: (orgnasationId: string) => Datamart
+      } & {
+        computedMatch: match<RouteParams>
       } & { [key: string]: any },
     ) => {
       const { getDefaultDatamart, ...rest } = props;
+      const organisationId = rest.match && rest.match.params && rest.match.params.organisationId ? rest.match.params.organisationId : rest.computedMatch && rest.computedMatch.params.organisationId ? rest.computedMatch.params.organisationId : ''
       const defaultDatamart = getDefaultDatamart(
-        rest.match.params.organisationId,
+        organisationId,
       );
 
       const hasFeature = (requiredFeatures?: string | string[], requireDatamart?: boolean): boolean => {
         if (requiredFeatures && typeof requiredFeatures === 'string') {
-          return props.hasFeatureStore(requiredFeatures) && !(!defaultDatamart && requireDatamart);
+          return props.hasFeatureStore(requiredFeatures) && (!!defaultDatamart || !requireDatamart);
         } else if (requiredFeatures && Array.isArray(requiredFeatures)) {
           return requiredFeatures.reduce((acc, val) => {
-            return props.hasFeatureStore(val) && !(!defaultDatamart && requireDatamart);
+            return props.hasFeatureStore(val) && (!!defaultDatamart || !requireDatamart);
           }, false);
         } else if (!requiredFeatures) {
-          return true && !(!defaultDatamart && requireDatamart);
+          return true && (!!defaultDatamart || !requireDatamart);
         }
         return true
       }

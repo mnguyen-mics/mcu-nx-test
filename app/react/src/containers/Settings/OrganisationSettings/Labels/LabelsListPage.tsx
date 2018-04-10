@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Row, Button, Modal, Input, Alert, Layout } from 'antd';
@@ -40,7 +40,7 @@ interface LabelsListState {
   edition: boolean;
 }
 
-class LabelsListPage extends Component<LabelsListProps & InjectedNotificationProps, LabelsListState> {
+class LabelsListPage extends React.Component<LabelsListProps & InjectedNotificationProps, LabelsListState> {
 
   constructor(props: LabelsListProps & InjectedNotificationProps) {
     super(props);

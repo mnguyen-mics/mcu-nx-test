@@ -16,7 +16,7 @@ import { getWorkspace } from '../../../state/Session/actions';
 import { fetchAllLabels } from '../../../state/Labels/actions';
 import * as SessionHelper from '../../../state/Session/selectors';
 import errorMessages from '../../Navigator/messages';
-import * as featureSelector from '../../../state/Features/selectors';
+import injectFeatures, { InjectedFeaturesProps } from '../../Features/injectFeatures';
 
 export interface AuthenticatedRouteProps {
   render: (props: any) => JSX.Element;
@@ -39,11 +39,10 @@ export interface MapStateToProps {
   getWorkspaceRequest: (organisationId: string) => void;
   hasWorkspaceLoaded: (organisationId: string) => boolean;
   getLabels: (organisationId: string) => void;
-  hasFeature: (feature: string) => boolean,
   hasDatamarts: (organisationId: string) => boolean;
 }
 
-type Props = AuthenticatedRouteProps & InjectedIntlProps & MapStateToProps & MissingRouterProps;
+type Props = AuthenticatedRouteProps & InjectedIntlProps & MapStateToProps & MissingRouterProps & InjectedFeaturesProps;
 
 type SubComponentProps = any;
 
@@ -165,7 +164,6 @@ const mapStateToProps = (state: any) => ({
   accessGrantedToOrganisation: SessionHelper.hasAccessToOrganisation(state),
   hasWorkspaceLoaded: SessionHelper.hasWorkspace(state),
   connectedUserLoaded: state.session.connectedUserLoaded,
-  hasFeature: featureSelector.hasFeature(state),
   hasDatamarts: SessionHelper.hasDatamarts(state)
 });
 
@@ -176,6 +174,7 @@ const mapDispatchToProps = {
 
 export default compose<Props, AuthenticatedRouteProps>(
   injectIntl,
+  injectFeatures,
   connect(
     mapStateToProps,
     mapDispatchToProps,

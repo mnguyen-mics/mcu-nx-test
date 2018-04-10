@@ -32,7 +32,11 @@ type Props = NavigatorSettingsMainMenuProps &
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 
-class NavigatorSettingsMainMenu extends React.Component<Props, any> {
+interface State{
+  current: string;
+}
+
+class NavigatorSettingsMainMenu extends React.Component<Props, State> {
   state = {
     current: 'settings',
   };

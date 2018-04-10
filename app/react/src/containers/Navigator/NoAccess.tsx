@@ -4,11 +4,9 @@ import messages from './messages';
 import Error from '../../components/Error';
 import { compose } from 'recompose';
 
-export interface NoAccessProps {}
+type Props = InjectedIntlProps;
 
-type Props = InjectedIntlProps & NoAccessProps;
-
-class NoAccess extends React.Component<Props, any> {
+class NoAccess extends React.Component<Props> {
   render() {
     const {
       intl
