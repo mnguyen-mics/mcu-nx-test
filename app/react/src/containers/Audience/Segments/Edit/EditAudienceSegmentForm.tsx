@@ -171,7 +171,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     if (!(segmentCreation && (segmentType === 'USER_PIXEL' || segmentType === 'USER_LIST'))) {
       sections.push({
         id: 'properties',
-        title: messages.audienceSegmentSiderMenuProperties ,
+        title: segmentType === 'USER_PIXEL' ? messages.audienceSegmentSiderMenuProperties : messages.audienceSegmentSiderMenuImport ,
         component: this.renderPropertiesField()
       });
     }
@@ -189,7 +189,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
       sections.push({
         id: 'audienceTagFeed',
-        title: messages.sectionAudienceExternalFeedTitle,
+        title: messages.sectionAudienceTagFeedTitle,
         component: <AudienceTagFeedField
           name={"audienceTagFeeds"}
           component={AudienceTagFeedSection}

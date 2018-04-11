@@ -15,7 +15,6 @@ import UserListImportCard from './UserListImportCard';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { Loading } from '../../../../components';
 
 interface State {
   audienceSegment?: AudienceSegmentShape;
@@ -70,12 +69,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 
   render() {
-    const { loading } = this.state;
-
-    if (loading) {
-      return <Loading className="loading-full-screen" />;
-    }
-
+    
     const { segment, intl, isFetching } = this.props;
 
     const getLoadingValue = (
