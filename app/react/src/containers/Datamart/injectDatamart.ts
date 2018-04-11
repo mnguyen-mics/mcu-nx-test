@@ -6,6 +6,8 @@ import log from '../../utils/Logger';
 import * as SessionHelper from '../../state/Session/selectors';
 import { Datamart } from '../../models/organisation/organisation';
 
+let limiter = 0;
+
 export interface InjectedDatamartProps {
   datamart: Datamart;
 }
@@ -29,11 +31,13 @@ export default compose<any, InjectedDatamartProps>(
       const defaultDatamart = getDefaultDatamart(
         rest.match.params.organisationId,
       );
-      if (!defaultDatamart)
+      if (!defaultDatamart && limiter === 0) {
+        limiter = 1;
         log.error(
           'No datamart found for organisationId ',
           rest.match.params.organisationId,
         );
+      } 
       return {
         datamart: defaultDatamart,
         ...rest,

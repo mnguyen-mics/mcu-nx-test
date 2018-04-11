@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import VisitAnalyzerService from '../../../../../services/Library/VisitAnalyzerService';
@@ -15,6 +15,8 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from './messages';
+
+const { Content } = Layout;
 
 const initialState = {
   loading: false,
@@ -218,7 +220,7 @@ class VisitAnalyzerContent extends Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'library',
+      iconType: 'settings',
       intlMessage: messages.empty,
     };
 
@@ -239,17 +241,21 @@ class VisitAnalyzerContent extends Component<
     </div>)
 
     return (
-      <ItemList
-        fetchList={this.fetchVisitAnalyzer}
-        dataSource={this.state.data}
-        loading={this.state.loading}
-        total={this.state.total}
-        columns={dataColumnsDefinition}
-        actionsColumnsDefinition={actionsColumnsDefinition}
-        pageSettings={PAGINATION_SEARCH_SETTINGS}
-        emptyTable={emptyTable}
-        additionnalComponent={additionnalComponent}
-      />
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <ItemList
+            fetchList={this.fetchVisitAnalyzer}
+            dataSource={this.state.data}
+            loading={this.state.loading}
+            total={this.state.total}
+            columns={dataColumnsDefinition}
+            actionsColumnsDefinition={actionsColumnsDefinition}
+            pageSettings={PAGINATION_SEARCH_SETTINGS}
+            emptyTable={emptyTable}
+            additionnalComponent={additionnalComponent}
+          />
+        </Content>
+      </div>
     );
   }
 }

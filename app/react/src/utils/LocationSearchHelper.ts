@@ -3,6 +3,24 @@ import lodash from 'lodash';
 import McsMoment from './McsMoment';
 import { Index } from '.';
 
+function getOrSetInitialSessionValue(value: McsMoment, key: string): McsMoment {
+   if (window.sessionStorage && window.sessionStorage.getItem(key)) {
+    return new McsMoment(window.sessionStorage.getItem(key) as string)
+   } else {
+    if (window.sessionStorage)
+      window.sessionStorage.setItem(key, value.raw() as string)
+     return value;
+   }
+}
+
+function setSessionValue(value: McsMoment, key: string) {
+  if (window.sessionStorage)
+    window.sessionStorage.setItem(key, value.raw() as string)
+}
+
+const defaultFromValue = getOrSetInitialSessionValue(new McsMoment('now-7d'), 'from');
+const defaultToValue = getOrSetInitialSessionValue(new McsMoment('now'), 'to');
+
 export interface SearchSetting {
   paramName: string;
   defaultValue: any;
@@ -99,16 +117,16 @@ export interface FiltersSearchSettings extends KeywordSearchSettings {
 export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'from',
-    defaultValue: new McsMoment('now-7d'),
+    defaultValue: defaultFromValue,
     deserialize: (query: Index<string>) => new McsMoment(query.from),
-    serialize: (value: McsMoment) => value.raw() as string,
+    serialize: (value: McsMoment) => { setSessionValue(value, 'from'); return value.raw() as string },
     isValid: (query: Index<string>) => !!(query.from && query.from.length && new McsMoment(query.from).isValid()),
   },
   {
     paramName: 'to',
-    defaultValue: new McsMoment('now'),
+    defaultValue: defaultToValue,
     deserialize: (query: Index<string>) => new McsMoment(query.to),
-    serialize: (value: McsMoment) => value.raw() as string,
+    serialize: (value: McsMoment) => { setSessionValue(value, 'to'); return value.raw() as string },
     isValid: (query: Index<string>) => !!(query.to && query.to.length && new McsMoment(query.to).isValid()),
   }
 ];

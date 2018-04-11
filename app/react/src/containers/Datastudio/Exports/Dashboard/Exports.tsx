@@ -304,4 +304,4 @@ technical_name=${execution.result.output_files[0]}
   }
 }
 
-export default compose(injectIntl, withRouter)(Exports);
+export default compose<JoinedProps, {}>(injectIntl, withRouter)(Exports);

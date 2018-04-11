@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout } from 'antd';
-import { NavigatorHeader } from '../../containers/Header';
+import { NavigatorHeader } from '../../../containers/Header';
 
 interface EditLayoutProps {
   editComponent: React.ComponentType;

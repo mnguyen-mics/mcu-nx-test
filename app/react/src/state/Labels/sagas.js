@@ -26,7 +26,6 @@ function* loadLabels({ payload }) {
     } = payload;
 
     if (!(organisationId)) throw new Error('Payload is invalid');
-
     const response = yield call(LabelsService.getLabels, organisationId, { limit: 1000 });
     yield put(fetchAllLabels.success(response));
 
@@ -40,6 +39,7 @@ function* loadLabels({ payload }) {
 function* watchFetchLabels() {
   yield takeLatest(LABELS_FETCH.REQUEST, loadLabels);
 }
+
 
 export const labelsSagas = [
   fork(watchFetchLabels),
