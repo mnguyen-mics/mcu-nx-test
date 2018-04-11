@@ -12,6 +12,13 @@ export interface InjectedFeaturesProps {
 
 interface RouteParams { organisationId: string }
 
+type Props = RouteComponentProps<RouteParams> & {
+  hasFeatureStore: (featureId: string) => boolean;
+  getDefaultDatamart: (orgnasationId: string) => Datamart
+} & {
+  computedMatch: match<RouteParams>
+} & { [key: string]: any };
+
 const mapStateToProps = (state: any) => {
   return {
     hasFeatureStore: featureSelector.hasFeature(state),
@@ -24,12 +31,7 @@ export default compose<any, InjectedFeaturesProps>(
   connect(mapStateToProps),
   mapProps(
     (
-      props: RouteComponentProps<RouteParams> & {
-        hasFeatureStore: (featureId: string) => boolean;
-        getDefaultDatamart: (orgnasationId: string) => Datamart
-      } & {
-        computedMatch: match<RouteParams>
-      } & { [key: string]: any },
+      props: Props,
     ) => {
       const { getDefaultDatamart, ...rest } = props;
       const organisationId = rest.match && rest.match.params && rest.match.params.organisationId ? rest.match.params.organisationId : rest.computedMatch && rest.computedMatch.params.organisationId ? rest.computedMatch.params.organisationId : ''
@@ -45,7 +47,7 @@ export default compose<any, InjectedFeaturesProps>(
             return props.hasFeatureStore(val) && (!!defaultDatamart || !requireDatamart);
           }, false);
         } else if (!requiredFeatures) {
-          return true && (!!defaultDatamart || !requireDatamart);
+          return !!defaultDatamart || !requireDatamart;
         }
         return true
       }
