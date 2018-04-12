@@ -94,6 +94,10 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     if (segmentId !== nextSegmentId) {
       this.fetchAudienceSegment(nextSegmentId);
     }
+
+    if (Object.keys(this.state.segment).length && (this.state.segment as AudienceSegmentResource).type === 'USER_LOOKALIKE') {
+      this.fetchAudienceSegment(nextSegmentId);
+    }
   }
 
   fetchAudienceSegment = (segmentId: string) => {

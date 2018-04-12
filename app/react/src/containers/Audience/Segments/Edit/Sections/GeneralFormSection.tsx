@@ -86,7 +86,6 @@ class GeneralFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired, isNotZero, isValidInteger },
       intl: { formatMessage },
-      segmentCreation,
       segmentType
     } = this.props;
 
@@ -206,9 +205,6 @@ class GeneralFormSection extends React.Component<Props, State> {
                   label: formatMessage(
                       messages.audienceSegmentCreationGeneralPersistedFieldTitle,
                     ),
-                  }}
-                  inputProps={{
-                    disabled: !segmentCreation
                   }}
                   helpToolTipProps={{
                     title: formatMessage(

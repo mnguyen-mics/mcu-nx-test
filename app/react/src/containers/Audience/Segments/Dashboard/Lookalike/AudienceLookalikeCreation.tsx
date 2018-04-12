@@ -101,7 +101,9 @@ class AudienceLookalikeCreation extends React.Component<
       notifyError
     } = this.props;
     return this.setState({ loading: true }, () => {
-      AudienceSegmentService.createAudienceSegment(organisationId, formData)
+      const {extension_factor, ...rest} = formData;
+      const formattedFormData = extension_factor ? { ...rest, extension_factor:  extension_factor / 100 } : {...rest}
+      AudienceSegmentService.createAudienceSegment(organisationId, formattedFormData)
       .then(res => res.data)
       .then(res => {
         this.props.close()
@@ -173,7 +175,7 @@ class AudienceLookalikeCreation extends React.Component<
                 </div>
                 <div>
                   <FormSelectField
-                    name='partition_id'
+                    name='audience_partition_id'
                     component={DefaultSelect}
                     options={this.state.partitions.map(i => { return { title: i.name, value: i.id } })}
                     validate={[isRequired]}
