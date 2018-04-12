@@ -9,6 +9,8 @@ import {
 import messages from './messages';
 import { MobileApplicationResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { compose } from 'recompose';
 
 export interface MobileApplicationsTableProps {
   isFetchingMobileApplications: boolean;
@@ -21,7 +23,7 @@ export interface MobileApplicationsTableProps {
   filter: Filter;
 }
 
-type Props = MobileApplicationsTableProps & InjectedIntlProps;
+type Props = MobileApplicationsTableProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
 class MobileApplicationsTable extends React.Component<Props> {
   render() {
@@ -35,6 +37,7 @@ class MobileApplicationsTable extends React.Component<Props> {
       noMobileApplicationYet,
       isFetchingMobileApplications,
       dataSource,
+      match: { params: { organisationId } }
     } = this.props;
 
     const pagination = {
@@ -58,6 +61,11 @@ class MobileApplicationsTable extends React.Component<Props> {
         intlMessage: messages.mobileApplicationName,
         key: 'name',
         isHideable: false,
+        render: (text: string, record: MobileApplicationResource) => <Link to={
+          `/v2/o/${organisationId}/settings/datamart/mobile_application/${record.id}/edit`
+        }>
+          {text}
+        </Link>
       },
       {
         intlMessage: messages.mobileApplicationToken,
@@ -101,8 +109,9 @@ class MobileApplicationsTable extends React.Component<Props> {
 
     return noMobileApplicationYet ? (
       <EmptyTableView
-        iconType="display"
+        iconType="settings"
         intlMessage={messages.emptyMobileApplications}
+        className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (
       <TableViewFilters
@@ -117,4 +126,4 @@ class MobileApplicationsTable extends React.Component<Props> {
   }
 }
 
-export default injectIntl(MobileApplicationsTable);
+export default compose<Props, MobileApplicationsTableProps>(injectIntl, withRouter)(MobileApplicationsTable);

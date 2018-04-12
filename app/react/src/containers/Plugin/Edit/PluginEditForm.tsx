@@ -200,6 +200,8 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           onSubmit={handleSubmit(this.onSubmit)}
           id={formId}
         >
+          {/* this button enables submit on enter */}
+          <button type="submit" style={{ display: 'none' }} />
           <Content
             className="mcs-content-container mcs-form-container ad-group-form"
             // add ID?

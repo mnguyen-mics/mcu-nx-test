@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
@@ -15,6 +15,8 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { EmailRouter } from '../../../../../models/Plugins';
 import messages from './messages';
+
+const { Content } = Layout;
 
 const initialState = {
   loading: false,
@@ -144,7 +146,7 @@ class EmailRouterContent extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'library',
+      iconType: 'settings',
       intlMessage: messages.empty,
     };
 
@@ -165,17 +167,21 @@ class EmailRouterContent extends React.Component<
     </div>)
 
     return (
-      <ItemList
-        fetchList={this.fetchEmailRouter}
-        dataSource={this.state.data}
-        loading={this.state.loading}
-        total={this.state.total}
-        columns={dataColumnsDefinition}
-        actionsColumnsDefinition={actionsColumnsDefinition}
-        pageSettings={PAGINATION_SEARCH_SETTINGS}
-        emptyTable={emptyTable}
-        additionnalComponent={additionnalComponent}
-      />
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <ItemList
+            fetchList={this.fetchEmailRouter}
+            dataSource={this.state.data}
+            loading={this.state.loading}
+            total={this.state.total}
+            columns={dataColumnsDefinition}
+            actionsColumnsDefinition={actionsColumnsDefinition}
+            pageSettings={PAGINATION_SEARCH_SETTINGS}
+            emptyTable={emptyTable}
+            additionnalComponent={additionnalComponent}
+          />
+        </Content>
+      </div>
     );
   }
 }

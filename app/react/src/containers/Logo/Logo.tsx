@@ -46,7 +46,6 @@ class Logo extends React.Component<Props> {
         params: { organisationId: nextOrganisationId },
       },
     } = nextProps;
-
     if (organisationId !== nextOrganisationId) {
       this.props.getLogoRequest({ organisationId: nextOrganisationId });
     }
@@ -85,6 +84,6 @@ const mapDispatchToProps = {
 };
 
 export default compose<Props, LogoProps>(
-  connect(mapStateToProps, mapDispatchToProps),
   withRouter,
+  connect(mapStateToProps, mapDispatchToProps),
 )(Logo);

@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import AttributionModelService from '../../../../../services/AttributionModelService';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import PluginServices from '../../../../../services/PluginServices';
@@ -19,6 +19,8 @@ import {
   PluginProperty,
 } from '../../../../../models/Plugins';
 import messages from './messages';
+
+const { Content } = Layout;
 
 const initialState = {
   loading: false,
@@ -202,7 +204,7 @@ class AttributionModelContent extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'library',
+      iconType: 'settings',
       intlMessage: messages.empty,
     };
 
@@ -230,17 +232,21 @@ class AttributionModelContent extends React.Component<
     );
 
     return (
-      <ItemList
-        fetchList={this.fetchAttributionModel}
-        dataSource={this.state.data}
-        loading={this.state.loading}
-        total={this.state.total}
-        columns={dataColumnsDefinition}
-        actionsColumnsDefinition={actionsColumnsDefinition}
-        pageSettings={PAGINATION_SEARCH_SETTINGS}
-        emptyTable={emptyTable}
-        additionnalComponent={additionnalComponent}
-      />
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <ItemList
+            fetchList={this.fetchAttributionModel}
+            dataSource={this.state.data}
+            loading={this.state.loading}
+            total={this.state.total}
+            columns={dataColumnsDefinition}
+            actionsColumnsDefinition={actionsColumnsDefinition}
+            pageSettings={PAGINATION_SEARCH_SETTINGS}
+            emptyTable={emptyTable}
+            additionnalComponent={additionnalComponent}
+          />
+        </Content>
+      </div>
     );
   }
 }

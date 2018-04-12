@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { compose } from 'redux';
+import { compose } from 'recompose';
 import CatalogService from '../../../services/Library/CatalogService'
 import { CatalogRessource, CategoryRessource, ItemRessource } from '../../../models/catalog/catalog';
 import Card from '../../../components/Card/Card'
@@ -322,7 +322,7 @@ class CatalogContent extends React.Component<
   }
 }
 
-export default compose(
+export default compose<Props, {}>(
   injectIntl,
   withRouter,
   injectNotifications,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
-import { Form, Button, Icon } from 'antd';
+import { Form, Button, Icon, Layout } from 'antd';
 import { injectIntl, FormattedMessage, defineMessages, InjectedIntlProps } from 'react-intl';
 import SettingsService from '../../../services/SettingsService';
 import * as SessionActions from '../../../state/Session/actions';
@@ -14,7 +14,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { User } from '../../../models/settings/settings';
 
-
+const { Content } = Layout;
 export interface ProfileSettingsPageProps {
   refreshConnectedUser: () => void;
 }
@@ -148,7 +148,8 @@ class ProfileSettingsPage extends React.Component<Props, ProfileSettingsPageStat
     ];
 
     return (
-
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
           <Form onSubmit={handleSubmit(this.updateUserProfile)} className={'edit-top'}>
             <div className="mcs-card-header mcs-card-title">
               <span className="mcs-card-title">
@@ -178,7 +179,8 @@ class ProfileSettingsPage extends React.Component<Props, ProfileSettingsPageStat
             })
             }
           </Form>
-
+        </Content>
+      </div>
     );
   }
 }

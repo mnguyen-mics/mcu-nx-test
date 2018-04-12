@@ -229,7 +229,7 @@ class CreateEditRecommender extends React.Component<
   }
 }
 
-export default compose(
+export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
   // withDrawer,
