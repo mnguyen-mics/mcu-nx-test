@@ -67,7 +67,7 @@ interface DisplayCampaignsPageState {
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   visible: boolean;
-  isUploadingStatuses: boolean;
+  isUpdatingStatuses: boolean;
   isArchiving: boolean;
 }
 
@@ -89,7 +89,7 @@ class DisplayCampaignsPage extends React.Component<
       selectedRowKeys: [],
       allRowsAreSelected: false,
       visible: false,
-      isUploadingStatuses: false,
+      isUpdatingStatuses: false,
       isArchiving: false,
     };
   }
@@ -259,12 +259,12 @@ class DisplayCampaignsPage extends React.Component<
   updateCampaignStatus = (
     campaignId: string,
     body: { status: CampaignStatus },
-    successMessage: UpdateMessage,
-    errorMessage: UpdateMessage,
-    undoBody: { status: CampaignStatus },
+    successMessage?: UpdateMessage,
+    errorMessage?: UpdateMessage,
+    undoBody?: { status: CampaignStatus },
   ) => {
     this.setState({
-      isUploadingStatuses: true,
+      isUpdatingStatuses: true,
     });
     const { notifySuccess, notifyError, removeNotification } = this.props;
 
@@ -300,7 +300,7 @@ class DisplayCampaignsPage extends React.Component<
           });
         }
         this.setState({
-          isUploadingStatuses: false,
+          isUpdatingStatuses: false,
           selectedRowKeys: [],
         });
         return null;
@@ -308,7 +308,7 @@ class DisplayCampaignsPage extends React.Component<
       .catch(error => {
         notifyError(error);
         this.setState({
-          isUploadingStatuses: false,
+          isUpdatingStatuses: false,
           selectedRowKeys: [],
         });
       });
@@ -337,10 +337,65 @@ class DisplayCampaignsPage extends React.Component<
     });
   };
 
+  handleStatusAction = (status: CampaignStatus) => {
+    const {
+      totalDisplayCampaigns,
+      match: { params: { organisationId } },
+      loadDisplayCampaignsDataSource,
+      location: { search },
+    } = this.props;
+    const { allRowsAreSelected, selectedRowKeys } = this.state;
+    this.setState({
+      isUpdatingStatuses: true,
+    });
+    let campaignIdsToUpdate: string[] = [];
+    if (allRowsAreSelected) {
+      const options: GetCampaignsOptions = {
+        max_results: totalDisplayCampaigns,
+        archived: false,
+      };
+      const allCampaignsIds: string[] = [];
+      CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
+        apiResp => {
+          apiResp.data.forEach((campaignResource, index) => {
+            allCampaignsIds.push(campaignResource.id);
+          });
+          campaignIdsToUpdate = allCampaignsIds;
+        },
+      );
+    } else if (selectedRowKeys) {
+      campaignIdsToUpdate = selectedRowKeys;
+    }
+
+    const tasks: Task[] = [];
+    campaignIdsToUpdate.forEach(campaignId => {
+      tasks.push(() => {
+        return this.updateCampaignStatus(campaignId, {
+          status,
+        });
+      });
+    });
+    executeTasksInSequence(tasks)
+      .then(() => {
+        this.setState({
+          isUpdatingStatuses: false,
+        }, () => {
+          const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+          loadDisplayCampaignsDataSource(organisationId, filter);
+        });
+      })
+      .catch((err: any) => {
+        this.setState({
+          isUpdatingStatuses: false,
+        });
+        this.props.notifyError(err);
+      });
+  };
+
   render() {
     const {
       selectedRowKeys,
-      isUploadingStatuses,
+      isUpdatingStatuses,
       allRowsAreSelected,
     } = this.state;
 
@@ -369,13 +424,12 @@ class DisplayCampaignsPage extends React.Component<
 
     const multiEditProps = {
       archiveCampaigns: this.showModal,
-      updateCampaignStatus: this.updateCampaignStatus,
       visible: this.state.visible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
       openEditCampaignsDrawer: this.openEditCampaignsDrawer,
-      totalDisplayCampaigns: this.props.totalDisplayCampaigns,
       isArchiving: this.state.isArchiving,
+      handleStatusAction: this.handleStatusAction,
     };
 
     const reduxProps = {
@@ -399,12 +453,11 @@ class DisplayCampaignsPage extends React.Component<
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {!isUploadingStatuses ? (
-              <DisplayCampaignsTable
-                rowSelection={rowSelection}
-                {...reduxProps}
-              />
-            ) : null}
+            <DisplayCampaignsTable
+              rowSelection={rowSelection}
+              isUpdatingStatuses={isUpdatingStatuses}
+              {...reduxProps}
+            />
           </Content>
         </div>
       </div>

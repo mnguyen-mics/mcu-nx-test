@@ -11,6 +11,8 @@ class Slide extends React.Component<SlideProps> {
   render() {
     const duration = 120;
 
+    const { toShow } = this.props;
+
     const defaultStyle = !this.props.horizontal
       ? {
           transition: `height ${duration}ms ease-in-out`,
@@ -39,7 +41,7 @@ class Slide extends React.Component<SlideProps> {
         };
 
     return (
-      <Transition in={this.props.toShow} timeout={duration}>
+      <Transition in={toShow} timeout={duration}>
         {(state: any) => (
           <div
             style={{
@@ -47,7 +49,7 @@ class Slide extends React.Component<SlideProps> {
               ...transitionStyles[state],
             }}
           >
-            {this.props.content}
+            { toShow && this.props.content}
           </div>
         )}
       </Transition>

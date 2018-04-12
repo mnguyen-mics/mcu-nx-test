@@ -28,6 +28,7 @@ import { ExtendedTableRowSelection } from '../../../../components/TableView/Tabl
 
 interface DisplayAdsListProps extends MapStateToProps, MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
+  isUpdatingAuditStatus: boolean;
 }
 
 type JoinedProps = DisplayAdsListProps &
@@ -131,6 +132,7 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
       totalCreativeDisplay,
       hasCreativeDisplay,
       rowSelection,
+      isUpdatingAuditStatus,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -217,7 +219,7 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
-          loading={isFetchingCreativeDisplay}
+          loading={isFetchingCreativeDisplay || isUpdatingAuditStatus}
           pagination={pagination}
           rowSelection={rowSelection}
         />
