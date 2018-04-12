@@ -27,3 +27,5 @@ declare module 'react-syntax-highlighter';
 declare module 'react-syntax-highlighter/styles/hljs';
 declare module 'react-copy-to-clipboard';
 declare module 'react-simple-maps';
+
+declare module 'file-saver';
