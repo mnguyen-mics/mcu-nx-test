@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Field, getFormInitialValues } from 'redux-form';
+import { Field, getFormInitialValues, Validator } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -20,9 +20,8 @@ import {
   DISPLAY_CREATIVE_FORM,
   isDisplayAdResource,
 } from '../domain';
-// import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
-import {ButtonStyleless, McsIcon} from '../../../../../components';
+import { ButtonStyleless, McsIcon } from '../../../../../components';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
@@ -46,6 +45,20 @@ class GeneralFormSection extends React.Component<Props, State> {
     this.setState({
       displayAdvancedSection: !this.state.displayAdvancedSection,
     });
+  };
+
+  isCreativeFormatValid = (): Validator => (value: string) => {
+    const { intl } = this.props;
+    if (value) {
+      const width = value.split('x')[0];
+      const height = value.split('x')[1];
+      const isValidFormat =
+        width && height && /^\d+$/.test(width) && /^\d+$/.test(height);
+      return !isValidFormat
+        ? intl.formatMessage(messages.invalidFormat)
+        : undefined;
+    }
+    return undefined;
   };
 
   render() {
@@ -96,7 +109,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         <CreativeFormatEditorField
           name="creative.format"
           component={DisplayCreativeFormatEditor}
-          validate={[]}
+          validate={[this.isCreativeFormatValid()]}
           disabled={isDisabled}
         />
         <FormInputField
