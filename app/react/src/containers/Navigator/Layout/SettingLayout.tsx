@@ -6,14 +6,14 @@ import { connect } from 'react-redux';
 import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
 
-import { NavigatorHeader } from '../../containers/Header';
-import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu,  } from '../../containers/Menu';
-import * as MenuActions from '../../state/Menu/actions';
-import { ButtonStyleless } from '../';
+import { NavigatorHeader } from '../../Header';
+import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu,  } from '../../Menu';
+import * as MenuActions from '../../../state/Menu/actions';
+import { ButtonStyleless } from '../../../components';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
 
-const { Content, Sider } = Layout;
+const { Sider } = Layout;
 
 const messages = defineMessages({
   switchOrg: {
@@ -169,7 +169,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
     } = this.props;
 
     const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen })
-
+    const onClick = () => this.setState({ isOpen: false })
     const menu = (
       <NavigatorMenu
         mode={'vertical'}
@@ -188,37 +188,32 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
           onStateChange={onStateChange}
           width={orgSelectorSize}
         >
-          <OrganisationSelector size={orgSelectorSize} />
+          <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
         </PushMenu>
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
           <NavigatorHeader isSetting={true} menu={menu} />
-          <NavigatorSettingsMainMenu />
           <Layout>
-            <Sider
-              style={collapsed ? {} : { overflow: 'auto' }}
-              collapsible={true}
-              collapsed={collapsed}
-              trigger={this.renderSettingsTrigger()}
-            >
-              <NavigatorSettingsSideMenu
-                mode={mode}
-                collapsed={collapsed}
-                onMenuItemClick={this.onMenuItemClick}
-              />
-            </Sider>
-          
+            <NavigatorSettingsMainMenu />
             <Layout>
-
-              <div className="ant-layout">
-                <Content className="mcs-content-container">
-                  <ContentComponent />
-                </Content>
-              </div>
-
+              <Sider
+                style={collapsed ? {} : { overflow: 'auto' }}
+                collapsible={true}
+                collapsed={collapsed}
+                trigger={this.renderSettingsTrigger()}
+              >
+                <NavigatorSettingsSideMenu
+                  mode={mode}
+                  collapsed={collapsed}
+                  onMenuItemClick={this.onMenuItemClick}
+                />
+              </Sider>
+            
+              <Layout>
+                <ContentComponent />
+              </Layout>
             </Layout>
           </Layout>
-
         </LayoutId>
       </div>
     );

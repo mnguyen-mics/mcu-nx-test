@@ -1,6 +1,6 @@
 /* eslint-disable no-constant-condition */
 import { delay } from 'redux-saga';
-import { call, put, take, race, fork } from 'redux-saga/effects';
+import { call, put, take, race, fork, all } from 'redux-saga/effects';
 import moment from 'moment';
 
 import log from '../../utils/Logger';
@@ -10,10 +10,12 @@ import {
   LOG_IN,
   LOG_OUT,
   CONNECTED_USER,
+  STORE_ORG_FEATURES,
 } from '../action-types';
 
 import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
+import { setOrgFeature } from '../Features/actions';
 
 
 function* authorize(credentialsOrRefreshToken) {
@@ -41,7 +43,6 @@ function* authorize(credentialsOrRefreshToken) {
 function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false, remember = false) {
   try {
     log.debug('Authorize user with credentialsOrRefreshToken', credentialsOrRefreshToken);
-
     let refreshToken = false;
     let expiresIn = null;
 
@@ -67,6 +68,7 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
       expiresIn = result.expiresIn;
     }
     const connectedUser = yield call(AuthService.getConnectedUser);
+    yield put(setOrgFeature(global.window.MCS_CONSTANTS.FEATURES));
     yield put(getConnectedUser.success(connectedUser));
 
     // set global variable used by angular to run Session.init(organisationId) on stateChangeStart ui router hook
@@ -153,7 +155,10 @@ function* authentication() {
 function* redirectAfterLogin() {
   while (true) {
     const { meta: { redirect } } = yield take(LOG_IN.REQUEST);
-    yield take(CONNECTED_USER.SUCCESS);
+    yield all([
+      take(CONNECTED_USER.SUCCESS),
+      take(STORE_ORG_FEATURES)
+    ]);
     redirect();
   }
 }

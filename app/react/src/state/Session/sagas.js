@@ -18,11 +18,16 @@ import {
   getLogo,
 } from './actions';
 
+import {
+  fetchAllLabels
+} from '../Labels/actions';
+
 function* fetchOrganisationWorkspace({ payload }) {
   try {
     const organisationId = payload;
     const response = yield call(OrganisationService.getWorkspace, organisationId);
     yield put(getWorkspace.success(response.data));
+    yield put(fetchAllLabels.request(organisationId));
   } catch (e) {
     log.error(e);
     yield put(getWorkspace.failure(e));

@@ -182,7 +182,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   }
 }
 
-export default compose<Props, PlacementListPageProps>(
+export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDrawer,

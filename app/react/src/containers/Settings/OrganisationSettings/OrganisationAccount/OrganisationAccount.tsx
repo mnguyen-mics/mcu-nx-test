@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form } from 'antd';
+import { Form, Layout } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import {
   FormInput,
@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 
+const { Content } = Layout;
 export interface OrganisationAccountProps {
   organisationName: string;
 }
@@ -34,38 +35,42 @@ class OrganisationAccount extends React.Component<Props> {
     };
 
     return (
-      <Form className={'edit-top'}>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title"><FormattedMessage id="OrganisationProfile" defaultMessage="Organisation Profile" /></span>
-        </div>
-        <hr className="mcs-separator" />
-        <Field
-          name={"organisation_name"}
-          component={FormInput}
-          validate={[]}
-          props={{
-            formItemProps: {
-              label: intl.formatMessage(messages.OrganisationName),
-              ...fieldGridConfig,
-            },
-            inputProps: {
-              placeholder: intl.formatMessage(messages.OrganisationName),
-              disabled: true
-            },
-          }}
-        />
-        <Field
-          name={"organisation_id"}
-          component={LogoInput}
-          validate={[]}
-          props={{
-            formItemProps: {
-              label: intl.formatMessage(messages.OrganisationLogo),
-              ...fieldGridConfig,
-            },
-          }}
-        />
-      </Form>
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Form className={'edit-top'}>
+            <div className="mcs-card-header mcs-card-title">
+              <span className="mcs-card-title"><FormattedMessage id="OrganisationProfile" defaultMessage="Organisation Profile" /></span>
+            </div>
+            <hr className="mcs-separator" />
+            <Field
+              name={"organisation_name"}
+              component={FormInput}
+              validate={[]}
+              props={{
+                formItemProps: {
+                  label: intl.formatMessage(messages.OrganisationName),
+                  ...fieldGridConfig,
+                },
+                inputProps: {
+                  placeholder: intl.formatMessage(messages.OrganisationName),
+                  disabled: true
+                },
+              }}
+            />
+            <Field
+              name={"organisation_id"}
+              component={LogoInput}
+              validate={[]}
+              props={{
+                formItemProps: {
+                  label: intl.formatMessage(messages.OrganisationLogo),
+                  ...fieldGridConfig,
+                },
+              }}
+            />
+          </Form>
+        </Content>
+      </div>
     );
   }
 }

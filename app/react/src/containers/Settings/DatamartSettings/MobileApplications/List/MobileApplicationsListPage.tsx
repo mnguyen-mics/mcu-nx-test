@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Button, Row } from 'antd';
+import { Button, Row, Layout } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import MobileApplicationService from '../../../../../services/MobileApplicationService';
@@ -19,7 +19,7 @@ import { MobileApplicationResource } from '../../../../../models/settings/settin
 import { Filter } from '../../Common/domain';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 
-
+const { Content } = Layout;
 export interface MobileApplicationsListPageProps {
 }
 
@@ -77,6 +77,29 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     } = this.props;
 
     this.fetchMobileApplications(organisationId, datamart.id, this.state.filter);
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+     match: {
+       params: {
+         organisationId
+       }
+     }, 
+     datamart,
+    } = this.props;
+
+    const {
+      match: {
+        params: {
+          organisationId: nextOrganiastionId
+        }
+      }, 
+      datamart: nextDatamart,
+     } = this.props;
+
+    if (nextOrganiastionId !== organisationId || nextDatamart.id !== datamart.id)
+      this.fetchMobileApplications(organisationId, datamart.id, this.state.filter);
   }
 
 
@@ -159,25 +182,29 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     const buttons = [newButton];
 
     return (
-      <Row className="mcs-table-container">
-        <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.mobileApplications} /></span>
-            <span className="mcs-card-button">{buttons}</span>
-          </div>
-          <hr className="mcs-separator" />
-          <MobileApplicationsTable
-            dataSource={mobileApplications}
-            totalMobileApplications={totalMobileApplications}
-            isFetchingMobileApplications={isFetchingMobileApplications}
-            noMobileApplicationYet={noMobileApplicationYet}
-            filter={filter}
-            onFilterChange={this.handleFilterChange}
-            onArchiveMobileApplication={this.handleArchiveMobileApplication}
-            onEditMobileApplication={this.handleEditMobileApplication}
-          />
-        </div>
-      </Row>
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Row className="mcs-table-container">
+            <div>
+              <div className="mcs-card-header mcs-card-title">
+                <span className="mcs-card-title"><FormattedMessage {...settingsMessages.mobileApplications} /></span>
+                <span className="mcs-card-button">{buttons}</span>
+              </div>
+              <hr className="mcs-separator" />
+              <MobileApplicationsTable
+                dataSource={mobileApplications}
+                totalMobileApplications={totalMobileApplications}
+                isFetchingMobileApplications={isFetchingMobileApplications}
+                noMobileApplicationYet={noMobileApplicationYet}
+                filter={filter}
+                onFilterChange={this.handleFilterChange}
+                onArchiveMobileApplication={this.handleArchiveMobileApplication}
+                onEditMobileApplication={this.handleEditMobileApplication}
+              />
+            </div>
+          </Row>
+        </Content>
+      </div>
     );
   }
 }

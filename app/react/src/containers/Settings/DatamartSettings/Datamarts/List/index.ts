@@ -1,7 +1,5 @@
-import DatamartsListPage from './DatamartsListPage.tsx';
-import DatamartsTable from './DatamartsTable.tsx';
+import DatamartsListPage from './DatamartListPage';
 
 export {
   DatamartsListPage,
-  DatamartsTable,
 };

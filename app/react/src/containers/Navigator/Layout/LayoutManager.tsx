@@ -6,7 +6,7 @@ import {
   SettingLayout
 } from './';
 
-import log from '../../utils/Logger';
+import log from '../../../utils/Logger';
 
 type LayoutType = 'main' | 'settings' | 'edit';
 

@@ -52,3 +52,10 @@ export function executeTasksInSequence(tasks: Task[]): Promise<any> {
     });
   }, Promise.resolve());
 }
+
+export const submitOnEnter = (event: React.KeyboardEvent<HTMLElement>, cb: any) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    cb();
+  }
+};

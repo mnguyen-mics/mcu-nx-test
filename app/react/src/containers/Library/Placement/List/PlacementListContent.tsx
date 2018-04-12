@@ -101,9 +101,9 @@ class PlacementListContent extends React.Component<
   };
 
   onClickEdit = (placement: PlacementListResource) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const { history } = this.props;
 
-    history.push(`/${organisationId}/library/placementlists/${placement.id}`);
+    history.push(`placementlists/${placement.id}`);
   };
 
   render() {

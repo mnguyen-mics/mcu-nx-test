@@ -13,4 +13,8 @@ export default defineMessages({
     id: 'errors.notFound',
     defaultMessage: '404 not found',
   },
+  noAccess: {
+    id: 'errors.noAccess',
+    defaultMessage: 'You currently don\'t have the right to view this page, if you think this is a mistake, please contact your administrator.',
+  },
 });
