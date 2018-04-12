@@ -88,22 +88,6 @@ class EditCampaignsForm extends React.Component<
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const { selectedRowKeys, intl } = this.props;
-    const { selectedRowKeys: nextSelectedRowKeys } = nextProps;
-    if (
-      selectedRowKeys &&
-      nextSelectedRowKeys &&
-      selectedRowKeys !== nextSelectedRowKeys
-    ) {
-      this.fetchData(nextSelectedRowKeys);
-    } else {
-      this.setState({
-        campaignNames: [intl.formatMessage(messageMap.allCampaignsNames)],
-      });
-    }
-  }
-
   fetchData = (selectedRowKeys: string[]) => {
     Promise.all(
       selectedRowKeys.map(campaignId => {

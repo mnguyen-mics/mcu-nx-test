@@ -1,3 +1,4 @@
+import { UploadFile } from 'antd/lib/upload/interface';
 import { AudienceSegmentShape } from "../../../../models/audiencesegment/";
 import { FieldArrayModel } from "../../../../utils/FormHelper";
 import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from "../../../../models/Plugins";
@@ -31,6 +32,7 @@ export interface AudienceSegmentFormData {
   audienceExternalFeeds: AudienceExternalFeedsFieldModel[];
   audienceTagFeeds: AudienceTagFeedsFieldModel[];
   query?: QueryResource;
+  userListFiles?: UploadFile[];
 }
 
 
@@ -47,4 +49,5 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   defaultLiftimeUnit: 'days',
   audienceExternalFeeds: [],
   audienceTagFeeds: [],
+  userListFiles:[]
 };

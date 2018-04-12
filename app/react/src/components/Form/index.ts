@@ -22,7 +22,7 @@ import FormCodeEdit from './FormCodeEdit';
 import FormCodeSnippet from './FormCodeSnippet';
 import TagSelect from './FormSelect/TagSelect';
 import FormSelect from './FormSelect/FormSelect';
-
+import FormDragAndDrop from './FormDragAndDrop';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -46,6 +46,7 @@ export default {
   withNormalizer,
   withValidators,
   FormCodeSnippet,
+  FormDragAndDrop,
   AddonSelect,
   DefaultSelect,
   TagSelect,
@@ -76,6 +77,7 @@ export {
   DefaultSelect,
   TagSelect,
   FormSelect,
+  FormDragAndDrop
 };
 
 export const FormInputField = Field as new() => GenericField<FormInputProps>;
