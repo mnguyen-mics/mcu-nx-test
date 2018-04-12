@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Button, Dropdown, Icon, Menu, Modal, message } from 'antd';
+import { Button, Icon, Menu, Modal, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-
+import { Dropdown } from '../../../../components/PopupContainers';
 import messages from '../messages';
 import modalMessages from '../../../../common/messages/modalMessages';
 import exportMessages from '../../../../common/messages/exportMessages';

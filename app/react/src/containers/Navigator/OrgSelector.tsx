@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Input, Card, Row, Col } from 'antd';
 import { connect } from 'react-redux';
@@ -16,22 +16,23 @@ import { Workspace } from '../../models/organisation/organisation';
 const Search = Input.Search;
 const { Meta } = Card;
 
-
 export interface OrgSelectorProps {
   workspaces: Workspace[];
   workspace: Workspace;
   hasDatamarts: boolean;
   size: number;
+  onItemClick: () => void
 }
 
 interface OrgSelectorState {
   search: string;
 }
 
-type InnerProps = InjectedIntlProps & OrgSelectorProps & RouteComponentProps<{organisationId: string}>;
+type InnerProps = InjectedIntlProps &
+  OrgSelectorProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
-
   constructor(props: InnerProps) {
     super(props);
     this.state = {
@@ -46,6 +47,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
         path,
         params,
       },
+      onItemClick
     } = this.props;
 
     const toPath = pathToRegexp.compile(path);
@@ -55,26 +57,34 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
     });
     log.debug(`Change workspace, redirect to ${fullUrl}`);
     history.push(fullUrl);
+    onItemClick()
   }
 
   onSearch = (value: string) => {
     this.setState({ search: value });
-  }
+  };
 
-  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ search: e.target.value });
-  }
+  };
 
   onCardClick = (key: string) => {
     return () => this.changeWorkspace({ key });
-  }
+  };
 
   render() {
-    const filteredWorkspaces = this.props.workspaces &&
-    this.props.workspaces
-      .filter(item => {
+    const { workspaces } = this.props;
+
+    const showOrgs = workspaces.length > 49 ? false : true;
+
+    const filteredWorkspaces =
+      workspaces &&
+      workspaces.filter(item => {
         if (this.state.search !== '') {
-          return _.includes(item.organisation_name.toUpperCase(), this.state.search.toUpperCase());
+          return _.includes(
+            item.organisation_name.toUpperCase(),
+            this.state.search.toUpperCase(),
+          );
         }
         return true;
       });
@@ -98,42 +108,59 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
               onChange={this.onChange}
             />
           </Col>
-        
-          <Row gutter={24}
-          >
-          {(filteredWorkspaces && filteredWorkspaces.length) ? filteredWorkspaces
-            .map(item =>
-              <Col
-                span={24 / rowSize}
-                key={item.organisation_id}
-              >
-                <ButtonStyleless
-                  onClick={this.onCardClick(item.organisation_id)}
-                  style={{ height: 134, marginBottom: 20, width: '100%' }}
-                >
-                  <Card
-                    hoverable={true}
-                    className="mcs-org-card"
-                    cover={<OrgLogo organisationId={item.organisation_id} />}
-                    style={{ height: '100%' }}
-                  >
-                    <Meta
-                      className="mcs-card-body"
-                      description={item.organisation_name}
-                    />
-                  </Card>
-                </ButtonStyleless>
-              </Col>
-              ) : <div className="mcs-no-results">No Results</div>}
-            </Row>
+
+          <Row gutter={24}>
+            {showOrgs || this.state.search !== '' ? (
+              filteredWorkspaces && filteredWorkspaces.length ? (
+                filteredWorkspaces.map(item => (
+                  <Col span={24 / rowSize} key={item.organisation_id}>
+                    <ButtonStyleless
+                      onClick={this.onCardClick(item.organisation_id)}
+                      style={{ height: 134, marginBottom: 20, width: '100%' }}
+                    >
+                      <Card
+                        hoverable={true}
+                        className="mcs-org-card"
+                        cover={
+                          <OrgLogo organisationId={item.organisation_id} />
+                        }
+                        style={{ height: '100%' }}
+                      >
+                        <Meta
+                          className="mcs-card-body"
+                          description={item.organisation_name}
+                        />
+                      </Card>
+                    </ButtonStyleless>
+                  </Col>
+                ))
+              ) : (
+                <div className="mcs-no-results">
+                   <FormattedMessage
+                    id="orgSelector.noResult"
+                    defaultMessage="No Results"
+                  />
+                </div>
+              )
+            ) : (
+              <div>
+                <FormattedMessage
+                  id="orgSelector.tooManyOrgs"
+                  defaultMessage="You have access to too many organisations, please use the search to narrow your selection down"
+                />
+              </div>
+            )}
           </Row>
+        </Row>
       </div>
     );
   }
 }
 
 const mapStateToProps = (state: any) => ({
-  workspaces: Object.keys(SessionHelper.getWorkspaces(state)).map(item => SessionHelper.getWorkspaces(state)[item]),
+  workspaces: Object.keys(SessionHelper.getWorkspaces(state)).map(
+    item => SessionHelper.getWorkspaces(state)[item],
+  ),
   workspace: SessionHelper.getWorkspace(state),
   hasDatamarts: SessionHelper.hasDatamarts(state),
 });
@@ -141,8 +168,5 @@ const mapStateToProps = (state: any) => ({
 export default compose<InnerProps, OrgSelectorProps>(
   withRouter,
   injectIntl,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(OrgSelector);

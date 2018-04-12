@@ -13,7 +13,7 @@ import { AdGroupsInfosFieldModel } from '../domain';
 import { McsIcon } from '../../../../../../components/index';
 import {
   FormInput,
-  FormSelect,
+  DefaultSelect,
   FormSelectField,
   FormInputField,
   FormDatePickerField,
@@ -23,8 +23,6 @@ import { AdGroupResource } from '../../../../../../models/campaign/display/AdGro
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
-
-const { DefaultSelect } = FormSelect;
 
 const editableAdGroupProperties: Array<keyof AdGroupResource> = [
   'total_budget',

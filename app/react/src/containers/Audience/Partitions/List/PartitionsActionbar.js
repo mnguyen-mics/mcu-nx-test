@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Menu, Dropdown, Button } from 'antd';
+import { Menu, Button } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
+import { Dropdown } from '../../../../components/PopupContainers/index.tsx';
 
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon.tsx';
@@ -25,12 +26,12 @@ function PartitionsActionbar({
   const addMenu = (
     <Menu>
       <Menu.Item key="RANDOM_SPLIT">
-        <Link to={`/o${organisationId}d${datamartId}/datamart/partitions/RANDOM_SPLIT`}>
+        <Link to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}>
           <FormattedMessage id="RANDOM_SPLIT" />
         </Link>
       </Menu.Item>
       <Menu.Item key="CLUSTERING">
-        <Link to={`/o${organisationId}d${datamartId}/datamart/partitions/CLUSTERING`}>
+        <Link to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=CLUSTERING`}>
           <FormattedMessage id="CLUSTERING" />
         </Link>
       </Menu.Item>

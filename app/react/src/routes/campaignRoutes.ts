@@ -29,90 +29,109 @@ import {
   EmailCampaignListPage,
 } from '../containers/Campaigns/Email/List';
 
-import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard/index.ts';
+import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard';
 
 import { GoalsActionbar, GoalsTable } from '../containers/Campaigns/Goal/List';
 
 import GoalDashboard from '../containers/Campaigns/Goal/Dashboard/GoalDashboard';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
-const campaignsRoutes = [
-  {
+
+export const campaignsDefinition: NavigatorDefinition = {
+  campaignDisplayList: {
     path: '/campaigns/display',
     layout: 'main',
     contentComponent: DisplayCampaignsPage,
+    requiredFeature: 'campaigns.display'
   },
-  {
+  campaignDisplayCreation: {
     path: '/campaigns/display/create',
     layout: 'edit',
     editComponent: EditCampaignPage,
+    requiredFeature: 'campaigns.display'
   },
-  {
+  campaignDisplayEdition: {
     path: '/campaigns/display/:campaignId(\\d+)/edit',
     layout: 'edit',
     editComponent: EditCampaignPage,
+    requiredFeature: 'campaigns.display'
   },
-  {
+  campaignDisplayDashboard: {
     path: '/campaigns/display/:campaignId(\\d+)',
     layout: 'main',
     contentComponent: DisplayCampaignPage,
+    requiredFeature: 'campaigns.display'
   },
-  {
+  campaignDisplayAdGroupDashboard: {
     path: '/campaigns/display/:campaignId(\\d+)/adgroups/:adGroupId(\\d+)',
     layout: 'main',
     contentComponent: AdGroupPage,
+    requiredFeature: 'campaigns.display'
   },
-  {
+  campaignDisplayAdGroupCreation: {
     path: '/campaigns/display/:campaignId(\\d+)/adgroups/create',
     layout: 'edit',
     editComponent: EditAdGroupPage,
+    requiredFeature: 'campaigns.display'
   },
-  {
+  campaignDisplayAdGroupEdition: {
     path: '/campaigns/display/:campaignId(\\d+)/adgroups/edit/:adGroupId(\\d+)',
     layout: 'edit',
     editComponent: EditAdGroupPage,
+    requiredFeature: 'campaigns.display'
   },
-  {
+  campaignEmailList: {
     path: '/campaigns/email',
     layout: 'main',
     contentComponent: EmailCampaignListPage,
     actionBarComponent: EmailCampaignsActionbar,
+    requiredFeature: 'campaigns.email'
   },
-  {
+  campaignEmailCreation: {
     path: '/campaigns/email/create',
     layout: 'edit',
     editComponent: EditEmailCampaignPage,
+    requiredFeature: 'campaigns.email'
   },
-  {
+  campaignEmailDashboard: {
     path: '/campaigns/email/:campaignId(\\d+)',
     layout: 'main',
     contentComponent: EmailCampaignPage,
+    requiredFeature: 'campaigns.email'
   },
-  {
+  campaignEmailEdition: {
     path: '/campaigns/email/:campaignId(\\d+)/edit',
     layout: 'edit',
     editComponent: EditEmailCampaignPage,
+    requiredFeature: 'campaigns.email'
   },
-  {
+  campaignEmailBlastCreation: {
     path: '/campaigns/email/:campaignId(\\d+)/blasts/create',
     layout: 'edit',
     editComponent: EditBlastPage,
+    requiredFeature: 'campaigns.email'
   },
-  {
+  campaignEmailBlastEdition: {
     path: '/campaigns/email/:campaignId(\\d+)/blasts/:blastId(\\d+)/edit',
     layout: 'edit',
     editComponent: EditBlastPage,
+    requiredFeature: 'campaigns.email'
   },
-  {
+  campaignGoalList: {
     path: '/campaigns/goal',
     layout: 'main',
     contentComponent: GoalsTable,
     actionBarComponent: GoalsActionbar,
+    requiredFeature: 'campaigns.goals',
+    requireDatamart: true
   },
-  {
+  campaignGoalDashboard: {
     path: '/campaigns/goal/:goalId(\\d+)',
     layout: 'main',
     contentComponent: GoalDashboard,
+    requiredFeature: 'campaigns.goals',
+    requireDatamart: true
   },
-];
+}
 
-export default campaignsRoutes;
+export const campaignRoutes: NavigatorRoute[] = generateRoutesFromDefinition(campaignsDefinition)

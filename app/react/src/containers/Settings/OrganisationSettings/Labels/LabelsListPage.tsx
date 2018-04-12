@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Row, Button, Modal, Input, Alert } from 'antd';
+import { Row, Button, Modal, Input, Alert, Layout } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { withMcsRouter } from '../../../Helpers';
 import * as labelsActions from '../../../../state/Labels/actions';
@@ -14,6 +14,8 @@ import messages from './messages';
 import LabelsTable, { Filters } from './LabelsTable';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
+
+const { Content } = Layout;
 interface Options {
   limit: number;
 }
@@ -38,7 +40,7 @@ interface LabelsListState {
   edition: boolean;
 }
 
-class LabelsListPage extends Component<LabelsListProps & InjectedNotificationProps, LabelsListState> {
+class LabelsListPage extends React.Component<LabelsListProps & InjectedNotificationProps, LabelsListState> {
 
   constructor(props: LabelsListProps & InjectedNotificationProps) {
     super(props);
@@ -159,36 +161,40 @@ class LabelsListPage extends Component<LabelsListProps & InjectedNotificationPro
     const onLabelArchive = (label: Label) => { this.handleArchiveLabels(label, this); };
 
     return (
-      <Row className="mcs-table-container">
-        <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.labels} /></span>
-            <span className="mcs-card-button">{buttons}</span>
-          </div>
-          <hr className="mcs-separator" />
-          <LabelsTable
-            dataSource={labels}
-            totalLabels={totalLabels}
-            isFetchingLabels={isFetching}
-            noLabelYet={hasLabels}
-            filter={filter}
-            onFilterChange={this.handleFilterChange}
-            onLabelArchive={onLabelArchive}
-            onLabelEdit={this.handleEditLabels}
-          />
-          {this.state.modalVisible ? <Modal
-            title={edition ? <FormattedMessage {...messages.editLabelTitle} /> : <FormattedMessage {...messages.addNewLabelTitle} />}
-            visible={this.state.modalVisible}
-            footer={this.buildModalFooter()}
-            onCancel={this.handleCancel}
-          >
-            {hasError ?
-              <Alert message={<FormattedMessage {...messages.labelAlreadyExists} />} type="error" style={{ marginBottom: 16 }} />
-              : null}
-            <Input defaultValue={this.state.inputValue} onChange={onChange} placeholder="Name" />
-          </Modal> : null}
-        </div>
-      </Row>
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Row className="mcs-table-container">
+            <div>
+              <div className="mcs-card-header mcs-card-title">
+                <span className="mcs-card-title"><FormattedMessage {...settingsMessages.labels} /></span>
+                <span className="mcs-card-button">{buttons}</span>
+              </div>
+              <hr className="mcs-separator" />
+              <LabelsTable
+                dataSource={labels}
+                totalLabels={totalLabels}
+                isFetchingLabels={isFetching}
+                noLabelYet={hasLabels}
+                filter={filter}
+                onFilterChange={this.handleFilterChange}
+                onLabelArchive={onLabelArchive}
+                onLabelEdit={this.handleEditLabels}
+              />
+              <Modal
+                title={edition ? <FormattedMessage {...messages.editLabelTitle} /> : <FormattedMessage {...messages.addNewLabelTitle} />}
+                visible={this.state.modalVisible}
+                footer={this.buildModalFooter()}
+                onCancel={this.handleCancel}
+              >
+                {hasError ?
+                  <Alert message={<FormattedMessage {...messages.labelAlreadyExists} />} type="error" style={{ marginBottom: 16 }} />
+                  : null}
+                <Input defaultValue={this.state.inputValue} onChange={onChange} placeholder="Name" />
+              </Modal>
+            </div>
+          </Row>
+        </Content>
+      </div>
     );
   }
 }

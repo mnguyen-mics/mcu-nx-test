@@ -9,6 +9,7 @@ import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 
 import Navigator from './containers/Navigator';
+import { HashRouter as Router } from 'react-router-dom';
 
 addLocaleData([...enLocaleData, ...frLocaleData]);
 
@@ -39,7 +40,9 @@ const IntlApp: React.SFC<IntlAppProps> = ({ locale, translations }) => {
       defaultFormats={formats}
     >
       <LocaleProvider locale={enUS}>
-        <Navigator />
+        <Router>
+          <Navigator />
+        </Router>
       </LocaleProvider>
     </IntlProvider>
   );

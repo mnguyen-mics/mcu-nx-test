@@ -232,7 +232,7 @@ class CreateAttributionModel extends React.Component<
   }
 }
 
-export default compose(
+export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
   connect(undefined, { notifyError: actions.notifyError }),

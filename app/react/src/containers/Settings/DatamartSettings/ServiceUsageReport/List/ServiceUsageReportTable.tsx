@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Layout } from 'antd';
 import { compose } from 'recompose';
 import {
   updateSearch,
@@ -16,6 +17,8 @@ import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
 import ItemList from '../../../../../components/ItemList';
 import { McsIconType } from '../../../../../components/McsIcon';
 import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
+
+const { Content } = Layout;
 
 export const messages = defineMessages({
   providerName: {
@@ -130,17 +133,21 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
     };
 
     return (
-      <ItemList
-        fetchList={this.props.fetchList}
-        dataSource={dataSource}
-        loading={this.props.loading}
-        total={this.props.total}
-        columns={dataColumns}
-        pageSettings={PAGINATION_SEARCH_SETTINGS}
-        emptyTable={emptyTable}
-        additionnalComponent={additionnalComponent}
-        dateRangePickerOptions={dateRangePickerOptions}
-      />
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <ItemList
+            fetchList={this.props.fetchList}
+            dataSource={dataSource}
+            loading={this.props.loading}
+            total={this.props.total}
+            columns={dataColumns}
+            pageSettings={PAGINATION_SEARCH_SETTINGS}
+            emptyTable={emptyTable}
+            additionnalComponent={additionnalComponent}
+            dateRangePickerOptions={dateRangePickerOptions}
+          />
+        </Content>
+      </div>
     );
   }
 }

@@ -2,20 +2,19 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import {
-  HashRouter as Router,
   Switch,
   Route,
   Redirect,
 } from 'react-router-dom';
 import { addLocaleData, injectIntl, InjectedIntlProps } from 'react-intl';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 
-import LayoutManager from '../../components/Layout/LayoutManager';
+import LayoutManager from './Layout/LayoutManager';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
-import { AuthenticatedRoute } from '../../containers/Route';
+import { AuthenticatedRoute } from './Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../ForgotPassword';
 import { Login } from '../Login';
@@ -32,6 +31,8 @@ import errorMessages from './messages';
 import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { getCookies } from '../../state/Session/actions';
+import NoAccess from './NoAccess';
+import { NavigatorRoute } from '../../routes/domain';
 
 
 interface MapStateToProps {
@@ -95,12 +96,14 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       .catch(() => this.setState({ adBlockOn: true }));
   }
 
+
   render() {
     const {
       defaultWorkspaceOrganisationId,
       intl: { formatMessage },
       initialized,
       initializationError,
+
     } = this.props;
 
     if (this.state.adBlockOn) {
@@ -153,12 +156,40 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       return <Error message={formatMessage(errorMessages.notFound)} />;
     };
 
-    const routeMapping = routes.map((route: any) => {
+    const routeMapping = routes.map((route: NavigatorRoute, i) => {
       const authenticateRouteRender = (props: any) => {
-        const comps = {
+        const comps = route.layout === 'main' ? {
           contentComponent: route.contentComponent,
           actionBarComponent: route.actionBarComponent,
+        } : route.layout === 'edit' ? {
           editComponent: route.editComponent,
+        } : { contentComponent: route.contentComponent }
+        return (
+          <div>
+            <Notifications />
+            <div className="drawer-wrapper">
+              <DrawerManager />
+            </div>
+
+            <LayoutManager
+              layout={route.layout}              
+              organisationSelector={OrgSelector}
+              showOrgSelector={nbWorkspaces > 0}
+              orgSelectorSize={selectorSize}
+              {...comps}
+              {...props}
+            />
+          </div>
+        );
+      };
+
+      const notAuthorizedRouteRender = (props: any) => {
+        const comps = route.layout === 'main' ? {
+          contentComponent: NoAccess,
+        } : route.layout === 'settings' ? {
+          contentComponent: NoAccess,
+        } : {
+          editComponent: NoAccess,
         }
         return (
           <div>
@@ -179,18 +210,21 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         );
       };
       log.trace(`Available route : ${basePath}${route.path}`);
+
       return (
         <AuthenticatedRoute
           key={0} // shared key to reuse layout and avoid remounting components on route change
           exact={true}
           path={`${basePath}${route.path}`}
           render={authenticateRouteRender}
+          errorRender={notAuthorizedRouteRender}
+          requiredFeatures={route.requiredFeature}
+          requireDatamart={route.requireDatamart}
         />
       );
     });
 
     return (
-      <Router>
         <Switch>
           <Route exact={true} path="/" render={renderRoute} />
 
@@ -206,7 +240,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           />
           <Route render={errorRouteRender} />
         </Switch>
-      </Router>
     );
   }
 }
@@ -228,5 +261,6 @@ const mapDispatchToProps = {
 
 export default compose<JoinedProps, {}>(
   injectIntl,
+  withRouter,
   connect(mapStateToProps, mapDispatchToProps),
 )(Navigator);

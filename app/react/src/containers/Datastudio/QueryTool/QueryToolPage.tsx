@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Alert, Button, Dropdown, Menu, Modal, Input } from 'antd';
+import { Layout, Alert, Button, Menu, Modal, Input } from 'antd';
 import { compose } from 'recompose';
 import {
   FormattedMessage,
@@ -24,6 +24,7 @@ import AngularWidget from './AngularWidget';
 import { ClickParam } from 'antd/lib/menu';
 import ExportsService from '../../../services/Library/ExportsService';
 import { Export } from '../../../models/exports/exports';
+import { Dropdown } from '../../../components/PopupContainers';
 
 const { Content } = Layout;
 

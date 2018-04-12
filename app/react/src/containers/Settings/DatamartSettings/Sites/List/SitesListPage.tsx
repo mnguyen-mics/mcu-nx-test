@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Row, Button } from 'antd';
+import { Row, Button, Layout } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import SiteService from '../../../../../services/SiteService';
@@ -14,6 +14,8 @@ import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { Filter } from '../../Common/domain';
 import { SiteResource } from '../../../../../models/settings/settings';
+
+const { Content } = Layout;
 
 interface SiteListState {
   sites: SiteResource[],
@@ -55,6 +57,29 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     } = this.props;
 
     this.fetchSites(organisationId, datamart.id, this.state.filter);
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+     match: {
+       params: {
+         organisationId
+       }
+     }, 
+     datamart,
+    } = this.props;
+
+    const {
+      match: {
+        params: {
+          organisationId: nextOrganiastionId
+        }
+      }, 
+      datamart: nextDatamart,
+     } = this.props;
+
+    if (nextOrganiastionId !== organisationId || nextDatamart.id !== datamart.id)
+      this.fetchSites(organisationId, datamart.id, this.state.filter);
   }
 
 
@@ -149,25 +174,29 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     const buttons = [newButton];
 
     return (
-      <Row className="mcs-table-container">
-        <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title"><FormattedMessage {...settingsMessages.sites} /></span>
-            <span className="mcs-card-button">{buttons}</span>
-          </div>
-          <hr className="mcs-separator" />
-          <SitesTable
-            dataSource={sites}
-            totalSites={totalSites}
-            isFetchingSites={isFetchingSites}
-            noSiteYet={noSiteYet}
-            filter={filter}
-            onFilterChange={this.handleFilterChange}
-            onArchiveSite={this.handleArchiveSite}
-            onEditSite={this.handleEditSite}
-          />
-        </div>
-      </Row>
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Row className="mcs-table-container">
+            <div>
+              <div className="mcs-card-header mcs-card-title">
+                <span className="mcs-card-title"><FormattedMessage {...settingsMessages.sites} /></span>
+                <span className="mcs-card-button">{buttons}</span>
+              </div>
+              <hr className="mcs-separator" />
+              <SitesTable
+                dataSource={sites}
+                totalSites={totalSites}
+                isFetchingSites={isFetchingSites}
+                noSiteYet={noSiteYet}
+                filter={filter}
+                onFilterChange={this.handleFilterChange}
+                onArchiveSite={this.handleArchiveSite}
+                onEditSite={this.handleEditSite}
+              />
+            </div>
+          </Row>
+        </Content>
+      </div>
     );
   }
 }

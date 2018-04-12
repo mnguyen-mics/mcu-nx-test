@@ -141,7 +141,7 @@ class ItemList<T> extends React.Component<Props<T>> {
       ...rest,
     } = this.props;
 
-    if (!rest.dataSource.length && !rest.loading) {
+    if (!rest.dataSource.length && !rest.loading && !additionnalComponent) {
       return <EmptyTableView iconType={iconType} intlMessage={intlMessage} />;
     }
 
@@ -164,10 +164,10 @@ class ItemList<T> extends React.Component<Props<T>> {
     return (
       <div className="mcs-table-container">
         {additionnalComponent}
-        <TableViewFilters
+        {!rest.dataSource.length && !rest.loading ? <EmptyTableView iconType={iconType} intlMessage={intlMessage} className="mcs-table-view-empty mcs-empty-card" /> : <TableViewFilters
           pagination={pagination}
           {...rest}
-        />
+        />}
       </div>
     );
   }

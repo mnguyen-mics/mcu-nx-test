@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router-dom';
-import { Popover, Switch, Modal } from 'antd';
+import { Switch, Modal } from 'antd';
 import { compose } from 'recompose';
+import { RouteComponentProps } from 'react-router';
 
 import { TableView } from '../../../../../components/TableView/index';
 import { formatMetric } from '../../../../../utils/MetricHelper';
@@ -13,7 +14,7 @@ import {
   AdResource,
   AdInfoResource,
 } from '../../../../../models/campaign/display/index';
-import { RouteComponentProps } from 'react-router';
+import { Popover } from '../../../../../components/PopupContainers/index'; 
 import { UpdateMessage } from '../Campaign/DisplayCampaignAdGroupTable';
 import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
 

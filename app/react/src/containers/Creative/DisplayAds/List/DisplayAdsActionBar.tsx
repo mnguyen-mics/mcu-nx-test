@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Dropdown, Menu } from 'antd';
+import { Button, Modal, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import {
   FormattedMessage,
@@ -8,7 +8,7 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-
+import { Dropdown } from '../../../../components/PopupContainers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 import { withTranslations } from '../../../Helpers';
