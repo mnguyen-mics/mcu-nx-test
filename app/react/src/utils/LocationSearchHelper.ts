@@ -148,6 +148,20 @@ export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
   },
 ];
 
+export const DATAMART_SEARCH_SETTINGS: SearchSetting[] = [
+  {
+    paramName: 'datamart',
+    defaultValue: '',
+    deserialize: (query) => {
+      if(query.datamart) {
+        return query.datamart
+      }
+    },
+    serialize: (value: any) => value,
+    isValid: () => true,
+  },
+];
+
 export interface ArchivedSearchSettings {
   archived: boolean;
 }

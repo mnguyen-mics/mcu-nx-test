@@ -3,6 +3,7 @@ import {
   DATE_SEARCH_SETTINGS,
   KEYWORD_SEARCH_SETTINGS,
   LABELS_SEARCH_SETTINGS,
+  DATAMART_SEARCH_SETTINGS,
 } from '../../../../utils/LocationSearchHelper.ts';
 
 const typeSearchSetting = {
@@ -23,5 +24,6 @@ export const SEGMENTS_SEARCH_SETTINGS = [
   ...DATE_SEARCH_SETTINGS,
   ...KEYWORD_SEARCH_SETTINGS,
   ...LABELS_SEARCH_SETTINGS,
+  ...DATAMART_SEARCH_SETTINGS,
   typeSearchSetting,
 ];
