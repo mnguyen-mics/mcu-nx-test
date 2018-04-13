@@ -2,12 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Modal, Icon } from 'antd';
-import lodash from 'lodash';
 import { compose } from 'recompose';
 
-import {
-  TableViewFilters,
-} from '../../../../components/TableView/index';
+import { TableViewFilters } from '../../../../components/TableView/index';
 import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
 import {
@@ -21,8 +18,6 @@ import { getTableDataSource } from '../../../../state/Audience/Partitions/select
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { withTranslations } from '../../../Helpers';
-import McsMoment from '../../../../utils/McsMoment';
-import { CampaignStatus } from '../../../../models/campaign/constants';
 import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { FormattedMessage } from 'react-intl';
@@ -30,11 +25,9 @@ import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 
 interface FilterProps {
   currentPage: number;
-  from: McsMoment;
-  to: McsMoment;
   keywords: string;
   pageSize: number;
-  statuses: CampaignStatus[];
+  datamart?: string;
 }
 
 interface MapStateToProps {
@@ -48,16 +41,12 @@ interface MapStateToProps {
 interface MapDispatchToProps {
   loadAudiencePartitionsDataSource: (
     organisationId: string,
-    datamartId: string,
     filter: FilterProps,
     bool?: boolean,
+    datamartId?: string,
   ) => AudiencePartitionResource[];
   archiveAudiencePartition: (partitionId: string) => void;
   resetAudiencePartitionsTable: () => void;
-}
-
-interface State {
-  datamartId?: string;
 }
 
 type Props = MapStateToProps &
@@ -66,23 +55,12 @@ type Props = MapStateToProps &
   InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AudiencePartitionsTable extends React.Component<Props, State> {
+class AudiencePartitionsTable extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archivePartition = this.archivePartition.bind(this);
     this.editPartition = this.editPartition.bind(this);
-    this.state = {
-      datamartId: undefined,
-    };
-  }
-
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    const { datamartId: prevDatamartId } = prevState;
-    const { datamartId } = this.state;
-    if (datamartId !== prevDatamartId) {
-      this.loadAudiencePartitionsData();
-    }
   }
 
   loadAudiencePartitionsData = () => {
@@ -90,14 +68,14 @@ class AudiencePartitionsTable extends React.Component<Props, State> {
       location: { search },
       match: { params: { organisationId } },
       loadAudiencePartitionsDataSource,
-      datamart,
     } = this.props;
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
-    const datamartId = this.state.datamartId
-      ? this.state.datamartId
-      : datamart.id;
-
-    loadAudiencePartitionsDataSource(organisationId, datamartId, filter, true);
+    loadAudiencePartitionsDataSource(
+      organisationId,
+      filter,
+      true,
+      filter.datamart,
+    );
   };
 
   componentDidMount() {
@@ -121,48 +99,45 @@ class AudiencePartitionsTable extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(prevProps: Props) {
     const {
-      location: { search },
+      location: { search, pathname },
       match: { params: { organisationId } },
       history,
       loadAudiencePartitionsDataSource,
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch, state },
-      match: { params: { organisationId: nextOrganisationId } },
-    } = nextProps;
+      location: { search: prevSearch, state },
+      match: { params: { organisationId: prevOrganisationId } },
+    } = prevProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, prevSearch) ||
+      organisationId !== prevOrganisationId
     ) {
-      if (
-        !isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))
-      ) {
+      if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
         history.replace({
-          pathname: nextPathname,
+          pathname: pathname,
           search: buildDefaultSearch(
-            nextSearch,
-            this.getSearchSetting(nextOrganisationId),
+            search,
+            this.getSearchSetting(organisationId),
           ),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          state: { reloadDataSource: organisationId !== prevOrganisationId },
         });
       } else {
         const filter = parseSearch(
-          nextSearch,
-          this.getSearchSetting(nextOrganisationId),
+          search,
+          this.getSearchSetting(organisationId),
         );
-        const datamartId = filter.datamarts[0];
 
         loadAudiencePartitionsDataSource(
-          nextOrganisationId,
-          datamartId,
+          organisationId,
           filter,
           checkEmptyDataSource,
+          filter.datamart
         );
       }
     }
@@ -217,48 +192,16 @@ class AudiencePartitionsTable extends React.Component<Props, State> {
   };
 
   getSearchSetting(organisationId: string) {
-    const { datamart, workspace } = this.props;
-    const { datamartId } = this.state;
-
-    return [
-      ...PARTITIONS_SEARCH_SETTINGS,
-      {
-        paramName: 'datamarts',
-        defaultValue: datamartId
-          ? [parseInt(datamartId, 0)]
-          : [parseInt(datamart.id, 0)],
-        deserialize: (query: any) => {
-          if (datamartId) {
-            return [parseInt(datamartId, 0)];
-          } else {
-            if (workspace(organisationId).datamarts.length >= 1) {
-              return workspace(organisationId).datamarts.map(d =>
-                parseInt(d.id, 0),
-              );
-            }
-            return [];
-          }
-        },
-        serialize: (value: string[]) => value.join(','),
-        isValid: (query: any) =>
-          datamartId
-            ? !isNaN(parseInt(datamartId, 0))
-            : workspace(organisationId).datamarts.length >= 1 &&
-              lodash.every(
-                workspace(organisationId).datamarts,
-                d => !isNaN(parseInt(d.id, 0)),
-              ),
-      },
-    ];
+    return [...PARTITIONS_SEARCH_SETTINGS];
   }
 
   updateLocationSearch = (params: Partial<FilterProps>) => {
+   
     const {
       history,
       match: { params: { organisationId } },
       location: { search: currentSearch, pathname },
     } = this.props;
-
     const nextLocation = {
       pathname,
       search: updateSearch(
@@ -272,11 +215,23 @@ class AudiencePartitionsTable extends React.Component<Props, State> {
   };
 
   getFiltersOptions = () => {
-    const { workspace, match: { params: { organisationId } } } = this.props;
-    const datamartItems = workspace(organisationId).datamarts.map(d => ({
-      key: d.id,
-      value: d.name,
-    }));
+    const {
+      workspace,
+      match: { params: { organisationId } },
+      location: { search },
+    } = this.props;
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const datamartItems = workspace(organisationId)
+      .datamarts.map(d => ({
+        key: d.id,
+        value: d.name,
+      }))
+      .concat([
+        {
+          key: '',
+          value: 'All',
+        },
+      ]);
 
     return [
       {
@@ -286,20 +241,18 @@ class AudiencePartitionsTable extends React.Component<Props, State> {
             <Icon type="down" />
           </div>
         ),
-        selectedItems: this.state.datamartId
-          ? [datamartItems.find(d => d.key === this.state.datamartId)]
-          : [
-              {
-                key: datamartItems[0].key,
-                value: datamartItems[0].value,
-              },
-            ],
+        selectedItems: filter.datamart
+          ? [datamartItems.find(di => di.key === filter.datamart)]
+          : [datamartItems],
         items: datamartItems,
         singleSelectOnly: true,
-        getKey: (item: any) => item.key,
+        getKey: (item: any) => (item && item.key ? item.key : ''),
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
-          this.setState({ datamartId: datamartItem.key });
+          this.updateLocationSearch({
+            datamart:
+              datamartItem && datamartItem.key ? datamartItem.key : undefined,
+          });
         },
       },
     ];

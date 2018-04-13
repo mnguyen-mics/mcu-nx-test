@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { message } from 'antd';
-import queryString from 'query-string';
 
 import AudiencePartitionForm from './AudiencePartitionForm';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
@@ -17,6 +16,9 @@ import { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { Datamart } from '../../../../models/organisation/organisation';
+import { EditContentLayout } from '../../../../components/Layout';
+import DatamartSelector from './../../Common/DatamartSelector';
 
 const messages = defineMessages({
   editPartition: {
@@ -46,6 +48,7 @@ interface AudiencePartitionPageProps {}
 interface AudiencePartitionPageState {
   partitionFormData?: AudiencePartitionFormData;
   isLoading: boolean;
+  selectedDatamart?: Datamart;
 }
 
 type JoinedProps = AudiencePartitionPageProps &
@@ -94,11 +97,12 @@ class AudiencePartitionPage extends React.Component<
   save = (formData: AudiencePartitionFormData) => {
     const {
       match: { params: { partitionId, organisationId } },
-      location: { search },
       history,
       location,
       intl,
+      datamart,
     } = this.props;
+    const { selectedDatamart } = this.state;
     this.setState({
       isLoading: true,
     });
@@ -119,10 +123,7 @@ class AudiencePartitionPage extends React.Component<
           });
         });
     } else {
-      const query = queryString.parse(search);
-      const datamartId = query.datamart
-        ? query.datamart
-        : this.props.datamart.id;
+      const datamartId = selectedDatamart ? selectedDatamart.id : datamart.id;
       AudiencePartitionsService.createPartition(
         organisationId,
         datamartId,
@@ -170,12 +171,22 @@ class AudiencePartitionPage extends React.Component<
       : history.push(url);
   };
 
+  onDatamartSelect = (datamart: Datamart) => {
+    this.setState({
+      selectedDatamart: datamart,
+    });
+  };
+
   render() {
     const {
       intl,
       match: { params: { partitionId, organisationId } },
     } = this.props;
-    const { partitionFormData, isLoading } = this.state;
+    const { partitionFormData, isLoading, selectedDatamart } = this.state;
+    const actionbarProps = {
+      onClose: this.redirect,
+      formId: 'audienceSegmentForm',
+    };
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     } else {
@@ -196,13 +207,17 @@ class AudiencePartitionPage extends React.Component<
           name: placementListName,
         },
       ];
-      return (
+      return partitionId || selectedDatamart ? (
         <AudiencePartitionForm
           initialValues={this.state.partitionFormData}
           onSubmit={this.save}
           close={this.redirect}
           breadCrumbPaths={breadcrumbPaths}
         />
+      ) : (
+        <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+          <DatamartSelector onSelect={this.onDatamartSelect} />
+        </EditContentLayout>
       );
     }
   }

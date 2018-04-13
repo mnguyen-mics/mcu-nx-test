@@ -39,7 +39,7 @@ import { DataResponse } from '../../../../services/ApiService';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { PluginProperty } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
-import DatamartSelector from './DatamartSelector';
+import DatamartSelector from './../../Common/DatamartSelector';
 import { Datamart } from '../../../../models/organisation/organisation';
 import { EditContentLayout } from '../../../../components/Layout';
 

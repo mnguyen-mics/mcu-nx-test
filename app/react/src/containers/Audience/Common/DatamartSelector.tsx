@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { FormTitle } from '../../../../components/Form';
-import { MenuList } from '../../../../components/FormMenu';
+import { FormTitle } from '../../../components/Form';
+import { MenuList } from '../../../components/FormMenu';
 import { defineMessages } from 'react-intl';
-import { getWorkspace } from '../../../../state/Session/selectors';
-import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import { getWorkspace } from '../../../state/Session/selectors';
+import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Datamart } from '../../../../models/organisation/organisation';
+import { Datamart } from '../../../models/organisation/organisation';
 
 const { Content } = Layout;
 
