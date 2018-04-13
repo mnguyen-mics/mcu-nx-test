@@ -12,6 +12,7 @@ const Option = Select.Option;
 export interface FormTagSelectProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   selectProps?: SelectProps & { options: Array<{ label: string, value: string }> };
+  small?: boolean;
 }
 
 const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
@@ -22,6 +23,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
     input,
     meta,
     selectProps,
+    small,
   } = props;
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -43,6 +45,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
       help={meta.touched && (meta.warning || meta.error)}
       helpToolTipProps={helpToolTipProps}
       validateStatus={validateStatus}
+      small={small}
       {...formItemProps}
     >
       <FormSelect

@@ -14,6 +14,7 @@ export interface DefaultSelectProps extends FormFieldWrapperProps {
   selectProps?: SelectProps;
   options?: OptionProps[];
   disabled?: boolean;
+  small?: boolean;
 }
 
 const Option = Select.Option;
@@ -53,6 +54,7 @@ class DefaultSelect extends React.Component<
       meta,
       options,
       selectProps,
+      small,
     } = this.props;
 
     let validateStatus = 'success' as
@@ -77,6 +79,7 @@ class DefaultSelect extends React.Component<
           help={meta.touched && (meta.warning || meta.error)}
           helpToolTipProps={helpToolTipProps}
           validateStatus={validateStatus}
+          small={small}
           {...formItemProps}
         >
           <FormSelect

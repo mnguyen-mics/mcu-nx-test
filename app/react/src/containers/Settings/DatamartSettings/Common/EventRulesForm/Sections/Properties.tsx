@@ -57,7 +57,7 @@ class PropertyFields extends React.Component<JoinedProps> {
         <Row>
           <Col span={10} offset={4}>
             <div onClick={handleOnClick}>
-              <Col span={20} className="report-AddFilterButton">
+              <Col span={20} className="add-field-button">
                 <p>
                   <McsIcon type="plus" />
                   {intl.formatMessage(messages.AddFilterButtonText)}

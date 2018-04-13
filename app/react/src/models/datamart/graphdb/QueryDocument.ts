@@ -23,14 +23,61 @@ export type QueryFieldComparisonType =
   | 'BOOLEAN'
   | 'ENUM';
 
+export type EnumComparisonOperator = 'EQUAL' | 'NOT_EQUAL';
+
+export type BooleanComparisonOperator = 'EQUAL' | 'NOT_EQUAL';
+
+export type NumericComparisonOperator =
+  | 'EQUAL'
+  | 'NOT_EQUAL'
+  | 'LT'
+  | 'LTE'
+  | 'GT'
+  | 'GTE';
+
 export type QueryFieldComparisonShape =
   | StringFieldComparison
-  | TimeFieldComparison;
+  | TimeFieldComparison
+  | BooleanFieldComparison
+  | EnumFieldComparison
+  | NumericFieldComparison
+  | NumericIntervalFieldComparison
+  | TimeIntervalFieldComparison;
+
+export interface BooleanFieldComparison {
+  type: 'BOOLEAN';
+  operator: BooleanComparisonOperator;
+  values: string[];
+}
+
+export interface EnumFieldComparison {
+  type: 'ENUM';
+  operator: EnumComparisonOperator;
+  values: string[];
+}
+
+export interface NumericFieldComparison {
+  type: 'NUMERIC';
+  operator: NumericFieldComparison;
+  values: string[];
+}
+
+export interface NumericIntervalFieldComparison {
+  type: 'NUMERIC_INTERVAL';
+  operator: NumericFieldComparison;
+  values: string[];
+}
+
+export interface TimeIntervalFieldComparison {
+  type: 'TIME_INTERVAL';
+  operator: TimeComparisonOperator;
+  values: string[];
+}
 
 export interface StringFieldComparison {
   type: 'STRING';
   operator: StringComparisonOperator;
-  value: string;
+  values: string[];
 }
 
 export interface TimeFieldComparison {
@@ -39,7 +86,11 @@ export interface TimeFieldComparison {
   values: string[];
 }
 
-export type ObjectTreeExpressionNodeShape = FieldNode | GroupNode | ObjectNode | TaxonomyObjectNode;
+export type ObjectTreeExpressionNodeShape =
+  | FieldNode
+  | GroupNode
+  | ObjectNode
+  | TaxonomyObjectNode;
 
 export interface FieldNode {
   type: 'FIELD';
@@ -52,7 +103,7 @@ export interface TaxonomyObjectNode {
   type: 'TAXONOMY_OBJECT';
   field: string;
   negation?: boolean;
-  expressions: FieldNode[];
+  expressions: ObjectTreeExpressionNodeShape[];
 }
 
 export interface GroupNode {

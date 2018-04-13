@@ -16,6 +16,7 @@ export interface FormCodeSnippetProps extends FormFieldWrapperProps {
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
   hoverToolTipProps?: TooltipProps;
+  small?: boolean;
 }
 
 const FormCodeSnippet: React.SFC<FormCodeSnippetProps & WrappedFieldProps> = props => {
@@ -32,6 +33,7 @@ const FormCodeSnippet: React.SFC<FormCodeSnippetProps & WrappedFieldProps> = pro
         helpToolTipProps={props.helpToolTipProps}
         hoverToolTipProps={props.hoverToolTipProps}
         validateStatus={validateStatus}
+        small={props.small}
         {...props.formItemProps}        
       >
         <SyntaxHighlighter language={props.language} style={docco}

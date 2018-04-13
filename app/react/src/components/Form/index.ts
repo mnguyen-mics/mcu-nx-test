@@ -18,6 +18,7 @@ import FormInput, { FormInputProps } from './FormInput';
 import FormSlider, { FormSliderProps } from './FormSlider';
 import DefaultSelect, { DefaultSelectProps } from './FormSelect/DefaultSelect';
 import AddonSelect, { FormSelectAddonProps } from './FormSelect/AddonSelect';
+import { FormMultiTagProps } from './FormSelect/FormMultiTag';
 import FormDateRangePicker, { FormDateRangePickerProps } from './FormDateRangePicker';
 import FormCodeEdit from './FormCodeEdit';
 import FormCodeSnippet from './FormCodeSnippet';
@@ -86,6 +87,7 @@ export {
 export const FormInputField = Field as new() => GenericField<FormInputProps>;
 export const FormDatePickerField = Field as new() => GenericField<FormDatePickerProps>;
 export const FormSelectField = Field as new() => GenericField<DefaultSelectProps>;
+export const FormMultiTagField = Field as new() => GenericField<FormMultiTagProps>;
 export const FormAddonSelectField = Field as new() => GenericField<FormSelectAddonProps>;
 export const FormSwitchField = Field as new() => GenericField<FormSwitchProps>;
 export const FormDateRangePickerField = Field as new() => GenericField<FormDateRangePickerProps>;

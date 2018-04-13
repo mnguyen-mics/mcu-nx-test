@@ -32,7 +32,7 @@ class Slide extends React.Component<SlideProps> {
 
     const transitionStyles: React.CSSProperties = !this.props.horizontal
       ? {
-          entering: { height: '0px', opacity: 0 },
+          entering: { height: '0px', opacity: 0, },
           entered: { height: '50px', opacity: 1 },
         }
       : {

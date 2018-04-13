@@ -14,7 +14,6 @@ import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import AudienceFeedForm, { CreateAudienceFeedProps } from '../AudienceFeedForm/AudienceFeedForm';
-
 import messages from '../messages';
 import { PluginType } from '../../../../../models/Plugins';
 import { McsIcon } from '../../../../../components';
@@ -79,7 +78,6 @@ class AudienceExternalFeedSection extends React.Component<Props> {
       edition: false,
       identifier: null,
     };
-
     this.props.openNextDrawer<CreateAudienceFeedProps<AudienceExternalFeedsFieldModel>>(AudienceFeedForm, { additionalProps: props })
   }
 

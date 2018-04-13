@@ -49,8 +49,10 @@ import { PixelSection } from './Sections/pixel';
 import { UserListSection } from './Sections/list';
 
 import { McsFormSection } from '../../../../utils/FormHelper';
-import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
-import { Datamart } from '../../../../models/organisation/organisation';
+import {
+  QueryLanguage,
+  DatamartResource,
+} from '../../../../models/datamart/DatamartResource';
 import { FormSection, FieldCtor } from '../../../../components/Form';
 import { Path } from '../../../../components/ActionBar';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
@@ -59,17 +61,18 @@ const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
->;
+  >;
 const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<
   Field,
   AudienceExternalFeedSectionProps
->;
+  >;
 const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<
   Field,
   AudienceTagFeedSectionProps
->;
+  >;
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
 
 export interface AudienceSegmentFormProps
   extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
@@ -144,29 +147,29 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       case 'USER_QUERY':
         return queryLanguage === 'OTQL'
           ? this.generateUserQueryTemplate(
-              <FormOTQL
-                name={'query.query_text'}
-                component={OTQLInputEditor}
-                formItemProps={{
-                  label: intl.formatMessage(
-                    messages.audienceSegmentSectionQueryTitle,
-                  ),
-                }}
-                helpToolTipProps={{
-                  title: intl.formatMessage(
-                    messages.audienceSegmentCreationUserQueryFieldHelper,
-                  ),
-                }}
-              />,
-            )
+            <FormOTQL
+              name={'query.query_text'}
+              component={OTQLInputEditor}
+              formItemProps={{
+                label: intl.formatMessage(
+                  messages.audienceSegmentSectionQueryTitle,
+                ),
+              }}
+              helpToolTipProps={{
+                title: intl.formatMessage(
+                  messages.audienceSegmentCreationUserQueryFieldHelper,
+                ),
+              }}
+            />,
+          )
           : datamart
             ? this.generateUserQueryTemplate(
-                <SelectorQL
-                  datamartId={datamart.id}
-                  organisationId={organisationId}
-                  queryContainer={this.props.queryContainer}
-                />,
-              )
+              <SelectorQL
+                datamartId={datamart.id}
+                organisationId={organisationId}
+                queryContainer={this.props.queryContainer}
+              />,
+            )
             : null;
       default:
         return <div>Not Supported</div>;
@@ -177,6 +180,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     const {
       handleSubmit,
       close,
+      segmentType,
       segmentCreation,
       change,
       breadCrumbPaths,

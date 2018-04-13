@@ -13,6 +13,7 @@ export interface FormBooleanProps {
   formItemProps?: FormItemProps;
   inputProps?: CheckboxProps;
   helpToolTipProps: TooltipProps;
+  small?: boolean;
 }
 
 interface StateInterface {
@@ -51,6 +52,7 @@ class FormBoolean extends React.Component<
       inputProps,
       helpToolTipProps,
       input,
+      small,
     } = this.props;
 
     let validateStatus = 'success' as
@@ -66,6 +68,7 @@ class FormBoolean extends React.Component<
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
+        small={small}
         {...formItemProps}
       >
         <Checkbox

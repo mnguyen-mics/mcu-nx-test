@@ -14,6 +14,7 @@ export interface FormCodeEditProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   inputProps?: AceEditorProps;
   helpToolTipProps?: TooltipProps;
+  small?: boolean;
 }
 
 const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => {
@@ -30,6 +31,7 @@ const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => 
       help={props.meta.touched && (props.meta.warning || props.meta.error)}
       helpToolTipProps={props.helpToolTipProps}
       validateStatus={validateStatus}
+      small={props.small}
       {...props.formItemProps}
     >
       <AceEditor

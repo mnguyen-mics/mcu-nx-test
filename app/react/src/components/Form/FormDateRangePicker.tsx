@@ -16,6 +16,7 @@ export interface FormDateRangePickerProps extends FormFieldWrapperProps {
   unixTimestamp?: boolean;
   startDateFieldName?: string;
   endDateFieldName?: string;
+  small?: boolean;
 }
 
 interface DefaultProps {
@@ -128,6 +129,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
       startDateFieldName,
       endDateFieldName,
       unixTimestamp,
+      small,
     } = this.props;
 
     // TODO properly handle required/validation case
@@ -165,6 +167,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
         // help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
         // validateStatus={validateStatus}
+        small={small}
         {...formItemProps}
       >
         <div className="range-picker">

@@ -20,6 +20,7 @@ export interface FormDoubleLinkedSelectProps extends FormFieldWrapperProps {
   leftFormSelectProps: FormSelectProps;
   rightFormSelectProps: FormSelectProps;
   optionsProps: DoubleLinkedSelectOptionsProps;
+  small?:boolean
 }
 
 type JoinedProps = FormDoubleLinkedSelectProps & WrappedFieldProps;
