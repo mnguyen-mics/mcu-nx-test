@@ -41,6 +41,7 @@ interface DisplayCampaignsTableProps
   extends MapDispatchToProps,
     MapStateToProps {
   rowSelection: ExtendedTableRowSelection;
+  isUpdatingStatuses: boolean;
 }
 
 type JoinedProps = DisplayCampaignsTableProps &
@@ -201,6 +202,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       totalDisplayCampaigns,
       labels,
       rowSelection,
+      isUpdatingStatuses,
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -433,7 +435,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           filtersOptions={filtersOptions}
           columnsVisibilityOptions={columnsVisibilityOptions}
           dataSource={dataSource}
-          loading={isFetchingDisplayCampaigns}
+          loading={isFetchingDisplayCampaigns || isUpdatingStatuses}
           pagination={pagination}
           labelsOptions={labelsOptions}
           rowSelection={rowSelection}

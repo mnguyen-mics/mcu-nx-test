@@ -201,4 +201,8 @@ export default defineMessages({
     id: 'creatives.create.section.advanced.field.technical.tooltip',
     defaultMessage: 'Give your creative a technical name to leverage integrations such as external click tracking.',
   },
+  invalidFormat: {
+    id: 'creatives.create.section.general.invalidFormat',
+    defaultMessage: 'Invalid format.',
+  },
 });

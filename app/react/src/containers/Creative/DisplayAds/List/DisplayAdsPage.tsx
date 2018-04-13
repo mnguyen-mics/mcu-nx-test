@@ -64,6 +64,7 @@ interface DisplayAdsPageState {
   allRowsAreSelected: boolean;
   isArchiveModalVisible: boolean;
   isArchiving: boolean;
+  isUpdatingAuditStatus: boolean;
 }
 
 type JoinedProps = DisplayAdsPage &
@@ -82,6 +83,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       allRowsAreSelected: false,
       isArchiveModalVisible: false,
       isArchiving: false,
+      isUpdatingAuditStatus: false,
     };
   }
 
@@ -106,6 +108,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
   };
 
   makeAuditAction = (creativesIds: string[], action: CreativeAuditAction) => {
+    this.setState({
+      isUpdatingAuditStatus: true,
+    });
     const tasks: Task[] = [];
     creativesIds.forEach(creativeId => {
       tasks.push(() => {
@@ -123,10 +128,14 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         this.setState({
           selectedRowKeys: [],
           allRowsAreSelected: false,
+          isUpdatingAuditStatus: false,
         });
         this.redirect();
       })
       .catch((err: any) => {
+        this.setState({
+          isUpdatingAuditStatus: false,
+        });
         this.props.notifyError(err);
       });
   };
@@ -261,7 +270,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
   };
 
   render() {
-    const { selectedRowKeys, allRowsAreSelected } = this.state;
+    const {
+      selectedRowKeys,
+      allRowsAreSelected,
+      isUpdatingAuditStatus,
+    } = this.state;
     const {
       hasCreativeDisplay,
       isFetchingCreativeDisplay,
@@ -307,7 +320,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayAdsList rowSelection={rowSelection} {...reduxProps} />
+            <DisplayAdsList
+              rowSelection={rowSelection}
+              isUpdatingAuditStatus={isUpdatingAuditStatus}
+              {...reduxProps}
+            />
           </Content>
         </div>
       </div>

@@ -31,8 +31,6 @@ import {
   injectDrawer,
 } from '../../../../components/Drawer/index';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
-import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
-import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -70,15 +68,8 @@ interface DisplayCampaignsActionbarProps {
     handleOk: () => any;
     handleCancel: () => void;
     openEditCampaignsDrawer: () => void;
-    updateCampaignStatus: (
-      campaignId: string,
-      body: { status: CampaignStatus },
-      successMessage?: UpdateMessage,
-      errorMessage?: UpdateMessage,
-      undoBody?: { status: CampaignStatus },
-    ) => void;
-    totalDisplayCampaigns: number;
     isArchiving: boolean;
+    handleStatusAction: (status: CampaignStatus) => void;
   };
 }
 
@@ -101,7 +92,6 @@ interface DisplayCampaignsActionbarState {
   exportIsRunning: boolean;
   allCampaignsActivated: boolean;
   allCampaignsPaused: boolean;
-  isUpdatingStatuses: boolean;
 }
 
 const fetchExportData = (organisationId: string, filter: FilterProps) => {
@@ -169,7 +159,6 @@ class DisplayCampaignsActionbar extends React.Component<
       exportIsRunning: false,
       allCampaignsActivated: false,
       allCampaignsPaused: false,
-      isUpdatingStatuses: false,
     };
   }
 
@@ -206,61 +195,14 @@ class DisplayCampaignsActionbar extends React.Component<
       });
   };
 
-  handleStatusAction = (status: CampaignStatus) => {
-    const {
-      multiEditProps: { updateCampaignStatus, totalDisplayCampaigns },
-      rowSelection: { selectedRowKeys, allRowsAreSelected },
-      match: { params: { organisationId } },
-    } = this.props;
-    this.setState({
-      isUpdatingStatuses: true,
-    });
-    let campaignIdsToUpdate: string[] = [];
-    if (allRowsAreSelected) {
-      const options: GetCampaignsOptions = {
-        max_results: totalDisplayCampaigns,
-        archived: false,
-      };
-      const allCampaignsIds: string[] = [];
-      CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
-        apiResp => {
-          apiResp.data.forEach((campaignResource, index) => {
-            allCampaignsIds.push(campaignResource.id);
-          });
-          campaignIdsToUpdate = allCampaignsIds;
-        },
-      );
-    } else if (selectedRowKeys) {
-      campaignIdsToUpdate = selectedRowKeys;
-    }
-
-    const tasks: Task[] = [];
-    campaignIdsToUpdate.forEach(campaignId => {
-      tasks.push(() => {
-        updateCampaignStatus(campaignId, {
-          status,
-        });
-        return Promise.resolve();
-      });
-    });
-    Promise.all([executeTasksInSequence(tasks)])
-      .then(() => {
-        this.setState({
-          isUpdatingStatuses: false,
-        });
-      })
-      .catch((err: any) => {
-        this.props.notifyError(err);
-      });
-  };
-
   buildMenu = () => {
+    const { multiEditProps: { handleStatusAction } } = this.props;
     const onClick = (event: any) => {
       switch (event.key) {
         case 'pause':
-          return this.handleStatusAction('PAUSED');
+          return handleStatusAction('PAUSED');
         case 'activate':
-          return this.handleStatusAction('ACTIVE');
+          return handleStatusAction('ACTIVE');
         default:
           break;
       }
