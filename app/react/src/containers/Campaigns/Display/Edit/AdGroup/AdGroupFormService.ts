@@ -60,7 +60,10 @@ const AdGroupFormService = {
       }
 
       return {
-        adGroup: duplicate ? omit(adGroup, 'id') : adGroup,
+        adGroup: {
+          ...INITIAL_AD_GROUP_FORM_DATA.adGroup,
+          ...(duplicate ? omit(adGroup, 'id') : adGroup)
+        },
         ...dependencies,
         bidOptimizerFields,
       };

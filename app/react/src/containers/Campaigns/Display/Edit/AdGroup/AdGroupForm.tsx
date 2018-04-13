@@ -43,6 +43,7 @@ import InventoryCatalogFormSection, { InventoryCatalogFormSectionProps } from '.
 import * as SessionSelectors from '../../../../../state/Session/selectors';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
+import DeviceFormSection from './sections/DeviceFormSection';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -76,7 +77,7 @@ const BidOptimizerFieldArray = FieldArray as new () => GenericFieldArray<
 const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   InventoryCatalogFormSectionProps
->
+>;
 
 export interface AdGroupFormProps
   extends Omit<ConfigProps<AdGroupFormData>, 'form'> {
@@ -159,6 +160,11 @@ class AdGroupForm extends React.Component<Props> {
         />
       ),
     };
+    const device = {
+      id: 'device',
+      title: messages.sectionTitleDevice,
+      component: <DeviceFormSection />,
+    };
     const placementList = {
       id: 'placementList',
       title: messages.sectionTitlePlacement,
@@ -177,7 +183,7 @@ class AdGroupForm extends React.Component<Props> {
       component: (
         <AdFieldArray
           name="adFields"
-          
+
           component={AdFormSection}
           {...genericFieldArrayProps}
         />
@@ -198,13 +204,14 @@ class AdGroupForm extends React.Component<Props> {
 
     sections.push(general);
     if (hasDatamarts(organisationId)) sections.push(audience);
+    sections.push(device);
     sections.push(location);
     sections.push(placementList);
     sections.push(displayAd);
     sections.push(bidOptimizer);
 
-    const insertIndice = displaySummaryFirst ? 0 : sections.length;
-    sections.splice(insertIndice, 0, summary);
+    const insertIndex = displaySummaryFirst ? 0 : sections.length;
+    sections.splice(insertIndex, 0, summary);
 
     return sections;
   };

@@ -136,6 +136,10 @@ export default defineMessages({
     id: 'adGroupEditor.section.title3bis',
     defaultMessage: 'Location Targeting',
   },
+  sectionTitleDeviceTargeting: {
+    id: 'adGroupEditor.section.title.device',
+    defaultMessage: 'Device Targeting',
+  },
   sectionTitleDevice: {
     id: 'adGroupEditor.section.title.device',
     defaultMessage: 'Device Targeting',
@@ -432,6 +436,91 @@ export default defineMessages({
   contentSectionDevicePart1Row4Tooltip: {
     id: 'adGroupEditor.section.device.part1.row4.tooltip',
     defaultMessage: 'Lorem ipsum',
+  },
+
+  // Operating systems
+
+  contentSectionDeviceOSLabel: {
+    id: 'adGroup.section.device.operating_system.label',
+    defaultMessage: 'Operating System',
+  },
+  contentSectionDeviceOSAll: {
+    id: 'adGroup.section.device.operating_system.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceOSiOS: {
+    id: 'adGroup.section.device.operating_system.ios',
+    defaultMessage: 'iOS',
+  },
+  contentSectionDeviceOSAndroid: {
+    id: 'adGroup.section.device.operating_system.and',
+    defaultMessage: 'Android',
+  },
+  contentSectionDeviceOSWindowsPhone: {
+    id: 'adGroup.section.device.operating_system.wip',
+    defaultMessage: 'Windows Phone',
+  },
+
+  // Devices
+
+  contentSectionDeviceTypeLabel: {
+    id: 'adGroup.section.device.type.label',
+    defaultMessage: 'Device Type',
+  },
+  contentSectionDeviceTypeAll: {
+    id: 'adGroup.section.device.type.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceTypeDesktop: {
+    id: 'adGroup.section.device.type.desktop',
+    defaultMessage: 'Desktop',
+  },
+  contentSectionDeviceTypeMobile: {
+    id: 'adGroup.section.device.type.mobile',
+    defaultMessage: 'Mobile',
+  },
+  contentSectionDeviceTypeTablet: {
+    id: 'adGroup.section.device.type.tablet',
+    defaultMessage: 'Tablet',
+  },
+  contentSectionDeviceTypeMobileAndTablet: {
+    id: 'adGroup.section.device.type.mobile_and_tablet',
+    defaultMessage: 'Mobile and Tablet',
+  },
+
+  // Devices
+
+  contentSectionDeviceMediaTypeLabel: {
+    id: 'adGroup.section.device.media_type.label',
+    defaultMessage: 'Media Type',
+  },
+  contentSectionDeviceMediaTypeWebsite: {
+    id: 'adGroup.section.device.media_type.website',
+    defaultMessage: 'Website',
+  },
+  contentSectionDeviceMediaTypeMobileApp: {
+    id: 'adGroup.section.device.media_type.mobile_app',
+    defaultMessage: 'Mobile App',
+  },
+
+
+  contentSectionDeviceModal1: {
+    id: 'adGroupEditor.section.device.modal1',
+    defaultMessage:
+      "You can't add a device that is inside an already included or excluded device.",
+  },
+  contentSectionDeviceModal1Title: {
+    id: 'adGroupEditor.section.device.modal1Title',
+    defaultMessage: 'Warning',
+  },
+  contentSectionDeviceModal2: {
+    id: 'adGroupEditor.section.device.modal2',
+    defaultMessage:
+      'By adding this device the following device will be removed, do you want to proceed?',
+  },
+  contentSectionDeviceModal2Title: {
+    id: 'adGroupEditor.section.device.modal2Title',
+    defaultMessage: 'Warning',
   },
 
   /* ---------------------------- SECTION LOCATION -------------------------- */

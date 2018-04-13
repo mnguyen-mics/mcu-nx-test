@@ -3,6 +3,9 @@ import {
   AdGroupStatus,
   BidOptimizationObjectiveType,
   BudgetPeriod,
+  TargetedOperatingSystem,
+  TargetedDevice,
+  TargetedMedia
  } from './../constants/';
 
  export interface AdGroupCreateRequest {
@@ -28,6 +31,9 @@ import {
   max_budget_per_period: number | null;
   max_budget_period: BudgetPeriod;
   status: AdGroupStatus;
+  targeted_operating_systems: TargetedOperatingSystem;
+  targeted_medias: TargetedMedia;
+  targeted_devices: TargetedDevice;
  }
 
 export interface AdGroupResource extends AdGroupCreateRequest {

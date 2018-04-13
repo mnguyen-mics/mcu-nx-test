@@ -32,7 +32,7 @@ export interface DisplayCampaignResource {
   end_date: string;
   targeted_devices: TargetedDevice;
   targeted_medias: TargetedMedia;
-  targeted_operating_systems: TargetedOperatingSystem;
+  targeted_operating_system: TargetedOperatingSystem;
   time_zone: string;
   model_version: ModelVersion;
   type: string;
