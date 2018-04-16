@@ -3,11 +3,11 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { OptionProps } from 'antd/lib/select';
 import { getFormValues, Field, GenericField } from 'redux-form';
 import {
-  FormSelect,
   FormSelectField,
   withNormalizer,
   withValidators,
   FormMultiTagField,
+  DefaultSelect,
 } from '../../../../../../components/Form';
 import { compose } from 'recompose';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
@@ -23,11 +23,10 @@ import {
   StringComparisonOperator,
   TimeComparisonOperator,
 } from '../../../../../../models/datamart/graphdb/QueryDocument';
-import { FormTagSelectProps } from '../../../../../../components/Form/FormSelect/TagSelect';
+import TagSelect, { FormTagSelectProps } from '../../../../../../components/Form/FormSelect/TagSelect';
 import { FieldResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import FormRelativeAbsoluteDate, { FormRelativeAbsoluteDateProps } from './Comparison/FormRelativeAbsoluteDate';
-
-const { DefaultSelect, FormMultiTag, TagSelect } = FormSelect;
+import FormMultiTag from '../../../../../../components/Form/FormSelect/FormMultiTag';
 
 export const FormTagSelectField = Field as new() => GenericField<FormTagSelectProps>;
 export const FormRelativeAbsoluteDateField = Field as new() => GenericField<FormRelativeAbsoluteDateProps>;

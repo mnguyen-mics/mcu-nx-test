@@ -3,9 +3,9 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import {
   FormInput,
   FormSection,
-  FormSelect,
   FormInputField,
   FormSelectField,
+  DefaultSelect,
 } from '../../../../../components/Form';
 import withNormalizer, {
   NormalizerProps,
@@ -19,8 +19,6 @@ import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
 import { FORM_ID, ObjectNodeFormData } from '../domain';
 import { FieldResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
-
-const { DefaultSelect } = FormSelect;
 
 export interface ObjectNodeSectionProps {
   availableFields: FieldResource[];
