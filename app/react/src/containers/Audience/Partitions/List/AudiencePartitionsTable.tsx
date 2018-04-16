@@ -224,7 +224,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
     const datamartItems = workspace(organisationId)
       .datamarts.map(d => ({
         key: d.id,
-        value: d.name,
+        value: d.name || d.token,
       }))
       .concat([
         {

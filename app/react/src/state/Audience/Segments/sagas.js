@@ -161,9 +161,9 @@ function* loadAudienceSegmentSingle({ payload }) {
 
 function* loadAudienceSegmentList({ payload }) {
   try {
-    const { organisationId, datamartId, filter, isInitialRender } = payload;
+    const { organisationId, filter, isInitialRender } = payload;
 
-    if (!(organisationId || datamartId || filter)) {
+    if (!(organisationId || filter.datamartId || filter)) {
       throw new Error('Payload is invalid');
     }
 
@@ -174,6 +174,11 @@ function* loadAudienceSegmentList({ payload }) {
     if (filter.keywords) {
       options.name = filter.keywords;
     }
+
+    if (filter.datamart) {
+      options.datamart_id = filter.datamart;
+    }
+
     if (filter.label_id.length) {
       options.label_id = filter.label_id;
     }
@@ -182,6 +187,10 @@ function* loadAudienceSegmentList({ payload }) {
       ...getPaginatedApiParam(1, 1),
     };
 
+    if (filter.datamart) {
+      initialOptions.datamart_id = filter.datamart;
+    }
+
     let allCalls;
 
     if (isInitialRender) {
@@ -189,13 +198,11 @@ function* loadAudienceSegmentList({ payload }) {
         initialFetch: call(
           AudienceSegmentService.getSegments,
           organisationId,
-          datamartId,
           initialOptions,
         ),
         response: call(
           AudienceSegmentService.getSegments,
           organisationId,
-          datamartId,
           options,
         ),
       };
@@ -204,7 +211,6 @@ function* loadAudienceSegmentList({ payload }) {
         response: call(
           AudienceSegmentService.getSegments,
           organisationId,
-          datamartId,
           options,
         ),
       };

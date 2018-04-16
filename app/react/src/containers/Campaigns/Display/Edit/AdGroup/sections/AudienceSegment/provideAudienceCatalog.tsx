@@ -181,8 +181,9 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
         },
       }));
   
-      AudienceSegmentService.getSegments(organisationId, datamart.id, {
+      AudienceSegmentService.getSegments(organisationId, {
         max_results: 500,
+        datamart_id: datamart.id
       })
         .then(res => res.data)
         .then(audienceSegments => {

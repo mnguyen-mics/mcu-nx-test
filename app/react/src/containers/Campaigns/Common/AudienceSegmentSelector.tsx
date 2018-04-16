@@ -81,10 +81,8 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
     this.props.save(segments);
   };
 
-  fetchSegments = (filter: SearchFilter) => {
-    const { datamart } = this.props;
-
-    const datamartId = filter.datamartId ? filter.datamartId : datamart.id;
+  fetchSegments = (filter: SearchFilter, datmartId?: string) => {
+    const { match: { params: { organisationId } } } = this.props;
 
     const options: GetSegmentsOption = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -94,7 +92,11 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       options.name = filter.keywords;
     }
 
-    return AudienceSegmentService.getSegments(undefined, datamartId, options);
+    if (datmartId) {
+      options.datamart_id = datmartId;
+    }
+
+    return AudienceSegmentService.getSegments(organisationId, options);
   };
 
   fetchSegment = (segmentId: string) => {

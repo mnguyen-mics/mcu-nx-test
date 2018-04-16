@@ -44,6 +44,7 @@ const fetchExportData = (
     const options: any = {
       first_result: 0,
       max_results: 2000,
+      datamartId: datamartId
     };
 
     if (filter.keywords) {
@@ -62,7 +63,6 @@ const fetchExportData = (
   const apiResults = Promise.all([
     AudienceSegmentService.getSegments(
       organisationId,
-      datamartId,
       buildOptions(),
     ),
     ReportService.getAudienceSegmentReport(

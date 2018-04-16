@@ -23,7 +23,7 @@ export interface TableSelectorProps<T extends SelectableItem> {
   searchPlaceholder?: string;
   filtersOptions?: Array<MultiSelectProps<any>>;
   selectedIds?: string[];
-  fetchDataList: (filter?: SearchFilter) => Promise<DataListResponse<T>>;
+  fetchDataList: (filter?: SearchFilter, datamartId?: string) => Promise<DataListResponse<T>>;
   fetchData: (id: string) => Promise<DataResponse<T>>;
   singleSelection?: boolean;
   save: (selectedIds: string[], selectedElement: T[]) => void;
@@ -169,8 +169,13 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     } = this.props;
     const datamartItems = workspace(organisationId).datamarts.map(d => ({
       key: d.id,
-      value: d.name,
-    }));
+      value: d.name || d.token,
+    })).concat([
+      {
+        key: '',
+        value: 'All',
+      },
+    ]);;
 
     return displayDatamartSelector
       ? [
@@ -183,18 +188,15 @@ class TableSelector<T extends SelectableItem> extends React.Component<
             ),
             selectedItems: this.state.datamartId
               ? [datamartItems.find(d => d.key === this.state.datamartId)]
-              : [
-                  {
-                    key: datamartItems[0].key,
-                    value: datamartItems[0].value,
-                  },
-                ],
+              : [datamartItems],
             items: datamartItems,
             singleSelectOnly: true,
-            getKey: (item: any) => item.key,
+            getKey: (item: any) => (item && item.key ? item.key : ''),
             display: (item: any) => item.value,
             handleItemClick: (datamartItem: { key: string; value: string }) => {
-              this.setState({ datamartId: datamartItem.key });
+              this.setState({ datamartId: datamartItem.key }, () => {
+                this.populateTable(Object.keys(this.state.selectedElementsById));
+              });
             },
           },
         ]
@@ -220,7 +222,9 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       ? { currentPage, keywords, pageSize, datamartId }
       : undefined;
 
-    return this.props.fetchDataList(filterOptions).then(({ data, total }) => {
+    const datamart = datamartId ? datamartId : undefined; 
+
+    return this.props.fetchDataList(filterOptions, datamart).then(({ data, total }) => {
       const allElementIds = data.map(element => element.id);
       const elementsById = normalizeArrayOfObject(data, 'id');
       const selectedElementsById = {

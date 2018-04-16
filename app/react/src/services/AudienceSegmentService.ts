@@ -37,18 +37,17 @@ export interface GetSegmentsOption extends PaginatedApiParam {
   campaign_id?: string;
   audience_partition_id?: string;
   persisted?: boolean;
+  datamart_id?: string;
 }
 
 const AudienceSegmentService = {
   getSegments(
     organisationId?: string,
-    datamartId?: string,
     options: GetSegmentsOption = {},
   ): Promise<DataListResponse<AudienceSegmentResource>> {
     const endpoint = 'audience_segments';
     const params = {
       organisation_id: organisationId,
-      datamart_id: datamartId,
       ...options,
     };
 
@@ -175,11 +174,10 @@ const AudienceSegmentService = {
   // DEPRECATED, will be removed in a near future
   getSegmentsWithMetadata(
     organisationId: string,
-    datamartId: string,
     options: GetSegmentsOption = {},
   ): Promise<any> {
     return Promise.all([
-      AudienceSegmentService.getSegments(organisationId, datamartId, options),
+      AudienceSegmentService.getSegments(organisationId, options),
       AudienceSegmentService.getSegmentMetaData(organisationId),
     ]).then(([segmentApiResp, metadata]) => {
       const augmentedSegments = segmentApiResp.data.map((segment: any) => {
