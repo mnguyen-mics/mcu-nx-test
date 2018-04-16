@@ -199,7 +199,8 @@ class AttributionModelFormSection extends React.Component<
           attribution_type: 'WITH_PROCESSOR',
           default: false,
         };
-        const defaultAM = this.props.fields.getAll().length >=1 ? false : index === 0;
+        const defaultAM =
+          this.props.fields.getAll().length >= 1 ? false : index === 0;
         return {
           key: cuid(),
           model: newSelection,
@@ -302,7 +303,8 @@ class AttributionModelFormSection extends React.Component<
         }
       };
       const getName = (attributionModel: AttributionModelListFieldModel) => {
-        return attributionModel.meta.name
+        return attributionModel.meta.name &&
+          attributionModel.meta.name !== 'DIRECT'
           ? `${attributionModel.meta.name} /
          ${attributionModel.meta.group_id} /
          ${attributionModel.meta.artifact_id}`

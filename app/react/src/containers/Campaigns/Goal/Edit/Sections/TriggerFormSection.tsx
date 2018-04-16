@@ -184,6 +184,12 @@ class TriggerFormSection extends React.Component<Props, State> {
     });
   };
 
+  onClickCancel = () => {
+    this.setState({
+      editQueryMode: false,
+    });
+  }
+
   closeEditMode = () => {
     this.setState({
       editQueryMode: false,
@@ -276,7 +282,7 @@ class TriggerFormSection extends React.Component<Props, State> {
                         defaultMessage="Ok"
                       />
                     </Button>
-                    <Button onClick={this.switchEditMode} type="danger">
+                    <Button onClick={this.onClickCancel} type="danger">
                       <FormattedMessage
                         id="edit.goal.form.section.trigger.updateQueryContainer.cancel"
                         defaultMessage="Cancel"
