@@ -47,12 +47,6 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.myDatamartSettingsTitle,
     },
-    {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsServiceUsageReport,
-      ),
-      translation: messages.serviceUsageReportSettingsTitle,
-    },
   ],
 };
 

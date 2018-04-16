@@ -163,10 +163,6 @@ export default defineMessages({
         id: 'menu.datamart.myDatamart',
         defaultMessage: 'My Datamart',
     },
-    serviceUsageReportSettingsTitle: {
-        id: 'menu.datamart.serviceUsageReport',
-        defaultMessage: 'Service Usage Report',
-    },
     organisationSettingsTitle: {
         id: 'menu.organisation.title',
         defaultMessage: 'Organisation',

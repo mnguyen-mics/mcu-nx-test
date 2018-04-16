@@ -99,6 +99,13 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'datamartSettings.datamarts',
     requireDatamart: true
   },
+  settingsDatamartServiceUsageReport: {
+    path: '/settings/datamart/my_datamart/:datamartId/service_usage_report',
+    layout: 'settings',
+    contentComponent: ServiceUsageReportListPage,
+    requiredFeature: 'datamartSettings.service_usage_report',
+    requireDatamart: true
+  },
 
   // visit analyzer
   settingsDatamartVisitAnalyzerList: {
@@ -120,15 +127,6 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
     requiredFeature: 'datamartSettings.visit_analyzers',
-    requireDatamart: true
-  },
-
-  // service usage report
-  settingsServiceUsageReport: {
-    path: '/settings/datamart/service_usage_report',
-    layout: 'settings',
-    contentComponent: ServiceUsageReportListPage,
-    requiredFeature: 'datamartSettings.service_usage_report',
     requireDatamart: true
   },
 

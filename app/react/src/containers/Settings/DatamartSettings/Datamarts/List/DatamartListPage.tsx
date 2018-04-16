@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Layout } from 'antd';
+import {
+  injectIntl,
+  InjectedIntlProps,
+  FormattedMessage,
+  defineMessages,
+} from 'react-intl';
+import { Layout, message } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
@@ -11,7 +16,9 @@ import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import messages from './messages';
 import settingsMessages from '../../../messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -20,6 +27,17 @@ const initialState = {
   data: [],
   total: 0,
 };
+
+const messagesMap = defineMessages({
+  serviceUsageReport: {
+    id: 'datamart.service_usage_report',
+    defaultMessage: 'Service Usage Report',
+  },
+  noData: {
+    id: 'datamart.no.data.service_usage_report',
+    defaultMessage: 'There is no service usage report for this datamart.',
+  }
+});
 
 interface DatamartsListPageState {
   loading: boolean;
@@ -32,7 +50,9 @@ interface RouterProps {
 }
 
 class DatamartsListPage extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps,
+  RouteComponentProps<RouterProps> &
+    InjectedIntlProps &
+    InjectedNotificationProps,
   DatamartsListPageState
 > {
   state = initialState;
@@ -48,15 +68,13 @@ class DatamartsListPage extends React.Component<
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       DatamartService.getDatamarts(organisationId, options)
-        .then(
-          (results) => {
-            this.setState({
-              loading: false,
-              data: results.data,
-              total: results.total || results.count,
-            });
-          },
-        )
+        .then(results => {
+          this.setState({
+            loading: false,
+            data: results.data,
+            total: results.total || results.count,
+          });
+        })
         .catch(error => {
           this.setState({ loading: false });
           this.props.notifyError(error);
@@ -65,19 +83,47 @@ class DatamartsListPage extends React.Component<
   };
 
   onClickEdit = (datamart: DatamartResource) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/my_datamart/${datamart.id}/edit`,
+      `/v2/o/${organisationId}/settings/datamart/my_datamart/${
+        datamart.id
+      }/edit`,
     );
   };
 
-  render() {
+  onClickSUR = (datamart: DatamartResource) => {
+    const {
+      history,
+      intl,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
+    datamart.id === '1048' ? history.push(
+      `/v2/o/${organisationId}/settings/datamart/my_datamart/${
+        datamart.id
+      }/service_usage_report`,
+    ) : message.warning(intl.formatMessage(messagesMap.noData));
+  };
+
+  render() {
     const actionsColumnsDefinition = [
       {
         key: 'action',
-        actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
+        actions: [
+          { translationKey: 'EDIT', callback: this.onClickEdit },
+          {
+            intlMessage: messagesMap.serviceUsageReport,
+            callback: this.onClickSUR,
+          },
+        ],
       },
     ];
 
@@ -102,7 +148,6 @@ class DatamartsListPage extends React.Component<
       iconType: 'settings',
       intlMessage: messages.emptyDatamarts,
     };
-
 
     const additionnalComponent = (
       <div>
@@ -135,4 +180,6 @@ class DatamartsListPage extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl, injectNotifications)(DatamartsListPage);
+export default compose(withRouter, injectIntl, injectNotifications)(
+  DatamartsListPage,
+);
