@@ -71,12 +71,11 @@ class AudiencePartitionsTable extends React.Component<Props> {
       },
       loadAudiencePartitionsDataSource,
     } = this.props;
-    const filter = parseSearch<FilterParams>(search, this.getSearchSetting(organisationId));
-    loadAudiencePartitionsDataSource(
-      organisationId,
-      filter,
-      true,
+    const filter = parseSearch<FilterParams>(
+      search,
+      this.getSearchSetting(organisationId),
     );
+    loadAudiencePartitionsDataSource(organisationId, filter, true);
   };
 
   componentDidMount() {
@@ -235,41 +234,45 @@ class AudiencePartitionsTable extends React.Component<Props> {
       location: { search },
     } = this.props;
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
-    const datamartItems = workspace(organisationId)
-      .datamarts.map(d => ({
-        key: d.id,
-        value: d.name || d.token,
-      }))
-      .concat([
-        {
-          key: '',
-          value: 'All',
-        },
-      ]);
 
-    return [
-      {
-        displayElement: (
-          <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
-            <Icon type="down" />
-          </div>
-        ),
-        selectedItems: filter.datamartId
-          ? [datamartItems.find(di => di.key === filter.datamartId)]
-          : [datamartItems],
-        items: datamartItems,
-        singleSelectOnly: true,
-        getKey: (item: any) => (item && item.key ? item.key : ''),
-        display: (item: any) => item.value,
-        handleItemClick: (datamartItem: { key: string; value: string }) => {
-          this.updateLocationSearch({
-            datamartId:
-              datamartItem && datamartItem.key ? datamartItem.key : undefined,
-          });
+    if (workspace(organisationId).datamarts.length > 1) {
+      const datamartItems = workspace(organisationId)
+        .datamarts.map(d => ({
+          key: d.id,
+          value: d.name || d.token,
+        }))
+        .concat([
+          {
+            key: '',
+            value: 'All',
+          },
+        ]);
+
+      return [
+        {
+          displayElement: (
+            <div>
+              <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+              <Icon type="down" />
+            </div>
+          ),
+          selectedItems: filter.datamartId
+            ? [datamartItems.find(di => di.key === filter.datamartId)]
+            : [datamartItems],
+          items: datamartItems,
+          singleSelectOnly: true,
+          getKey: (item: any) => (item && item.key ? item.key : ''),
+          display: (item: any) => item.value,
+          handleItemClick: (datamartItem: { key: string; value: string }) => {
+            this.updateLocationSearch({
+              datamartId:
+                datamartItem && datamartItem.key ? datamartItem.key : undefined,
+            });
+          },
         },
-      },
-    ];
+      ];
+    }
+    return [];
   };
 
   render() {

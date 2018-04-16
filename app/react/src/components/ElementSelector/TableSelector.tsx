@@ -173,50 +173,55 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         params: { organisationId },
       },
     } = this.props;
-    const datamartItems = workspace(organisationId)
-      .datamarts.map(d => ({
-        key: d.id,
-        value: d.name || d.token,
-      }))
-      .concat([
-        {
-          key: '',
-          value: 'All',
-        },
-      ]);
 
-    return displayDatamartSelector
-      ? [
+    if (
+      workspace(organisationId).datamarts.length > 1 &&
+      displayDatamartSelector
+    ) {
+      const datamartItems = workspace(organisationId)
+        .datamarts.map(d => ({
+          key: d.id,
+          value: d.name || d.token,
+        }))
+        .concat([
           {
-            displayElement: (
-              <div>
-                <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
-                <Icon type="down" />
-              </div>
-            ),
-            selectedItems: this.state.datamartId
-              ? [datamartItems.find(d => d.key === this.state.datamartId)]
-              : [datamartItems],
-            items: datamartItems,
-            singleSelectOnly: true,
-            getKey: (item: any) => (item && item.key ? item.key : ''),
-            display: (item: any) => item.value,
-            handleItemClick: (datamartItem: { key: string; value: string }) => {
-              this.setState(
-                {
-                  datamartId:
-                    datamartItem && datamartItem.key ? datamartItem.key : '',
-                },
-                () => {
-                  this.populateTable(
-                    Object.keys(this.state.selectedElementsById),
-                  );
-                },
-              );
-            },
+            key: '',
+            value: 'All',
           },
-        ]
-      : undefined;
+        ]);
+
+      return [
+        {
+          displayElement: (
+            <div>
+              <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+              <Icon type="down" />
+            </div>
+          ),
+          selectedItems: this.state.datamartId
+            ? [datamartItems.find(d => d.key === this.state.datamartId)]
+            : [datamartItems],
+          items: datamartItems,
+          singleSelectOnly: true,
+          getKey: (item: any) => (item && item.key ? item.key : ''),
+          display: (item: any) => item.value,
+          handleItemClick: (datamartItem: { key: string; value: string }) => {
+            this.setState(
+              {
+                datamartId:
+                  datamartItem && datamartItem.key ? datamartItem.key : '',
+              },
+              () => {
+                this.populateTable(
+                  Object.keys(this.state.selectedElementsById),
+                );
+              },
+            );
+          },
+        },
+      ];
+    }
+    return [];
   };
 
   handleAdd = () => {

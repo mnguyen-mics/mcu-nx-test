@@ -43,6 +43,7 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { withTranslations } from '../../../Helpers';
+import { MultiSelectProps } from '../../../../components/MultiSelect';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -540,7 +541,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
         },
       ]);
 
-    const filtersOptions = [
+    const filtersOptions: Array<MultiSelectProps<any>> = [
       {
         displayElement: (
           <div>
@@ -559,8 +560,11 @@ class AudienceSegmentsTable extends React.Component<Props> {
           this.updateLocationSearch({
             types: values.map((v: any) => v.value),
           }),
-      },
-      {
+      }
+    ];
+
+    if(workspace(organisationId).datamarts.length > 1) {
+      const datamartFilter = {
         displayElement: (
           <div>
             <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
@@ -580,8 +584,9 @@ class AudienceSegmentsTable extends React.Component<Props> {
               datamartItem && datamartItem.key ? datamartItem.key : undefined,
           });
         },
-      },
-    ];
+      }; 
+      filtersOptions.push(datamartFilter);
+    }
 
     const labelsOptions = {
       labels: this.props.labels,
