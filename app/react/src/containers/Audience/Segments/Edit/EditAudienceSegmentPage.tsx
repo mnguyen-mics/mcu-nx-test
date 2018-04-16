@@ -345,7 +345,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     const saveCreatePromise = audienceSegmentFormData.audienceExternalFeeds.map(
       erf => {
         if (!erf.model.id) {
-          const newAudienceFeed = { ...erf.model };
+          const newAudienceFeed = erf.model.status === 'ACTIVE' ? { ...erf.model, status: 'INITIAL' as any } : { ...erf.model };
           delete newAudienceFeed.properties;
           return () =>
             AudienceSegmentService.createAudienceExternalFeeds(
@@ -364,17 +364,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           delete newAudienceFeed.properties;
           savedIds.push(erf.model.id);
           return () =>
-            AudienceSegmentService.updateAudienceExternalFeeds(
+            this.updateFeedPropertiesValue(
               segmentId,
-              erf.key,
-              newAudienceFeed,
+              erf.model.properties as any,
+              organisationId,
+              newAudienceFeed.id
             ).then(res =>
-              this.updateFeedPropertiesValue(
+              AudienceSegmentService.updateAudienceExternalFeeds(
                 segmentId,
-                erf.model.properties as any,
-                organisationId,
-                res.data.id,
-              ),
+                erf.key,
+                newAudienceFeed,
+              )
             );
         }
         return () => Promise.resolve();
@@ -423,18 +423,18 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           delete newAudienceFeed.properties;
           savedIds.push(erf.model.id);
           return () =>
-            AudienceSegmentService.updateAudienceTagFeeds(
+            this.updateTagPropertiesValue(
               segmentId,
-              erf.key,
-              newAudienceFeed,
-            ).then(res =>
-              this.updateTagPropertiesValue(
+              erf.model.properties as any,
+              organisationId,
+              newAudienceFeed.id
+            ).then(res => 
+              AudienceSegmentService.updateAudienceTagFeeds(
                 segmentId,
-                erf.model.properties as any,
-                organisationId,
-                res.data.id,
-              ),
-            );
+                erf.key,
+                newAudienceFeed,
+              )
+            )
         }
         return () => Promise.resolve();
       },
