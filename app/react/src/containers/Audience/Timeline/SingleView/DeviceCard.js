@@ -35,9 +35,9 @@ class DeviceCard extends Component {
     return (
       <Card title={formatMessage(messages.deviceTitle)} isLoading={identifiers.isLoading}>
         { accountsFormatted && accountsFormatted.map(agent => {
-          return (
+          return agent.device ? (
             <Device key={agent.vector_id} vectorId={agent.vector_id} device={agent.device} />
-          );
+          ) : <div key={agent.vector_id}>{agent.vector_id}</div>;
         })}
         { (accountsFormatted.length === 0 || identifiers.hasItems === false) && (<span><FormattedMessage {...messages.emptyDevice} /></span>) }
         { (canViewMore) ? (
