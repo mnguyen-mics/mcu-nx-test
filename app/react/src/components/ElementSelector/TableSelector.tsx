@@ -222,9 +222,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       ? { currentPage, keywords, pageSize, datamartId }
       : undefined;
 
-    const datamart = datamartId ? datamartId : undefined; 
-
-    return this.props.fetchDataList(filterOptions, datamart).then(({ data, total }) => {
+    return this.props.fetchDataList(filterOptions).then(({ data, total }) => {
       const allElementIds = data.map(element => element.id);
       const elementsById = normalizeArrayOfObject(data, 'id');
       const selectedElementsById = {

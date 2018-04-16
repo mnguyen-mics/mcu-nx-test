@@ -163,7 +163,7 @@ function* loadAudienceSegmentList({ payload }) {
   try {
     const { organisationId, filter, isInitialRender } = payload;
 
-    if (!(organisationId || filter.datamartId || filter)) {
+    if (!(organisationId)) {
       throw new Error('Payload is invalid');
     }
 

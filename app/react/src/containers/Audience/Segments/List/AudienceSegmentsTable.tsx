@@ -109,7 +109,6 @@ interface MapDispatchToProps {
     organisationId: string,
     filter: FilterProps,
     checkEmptyDataSource?: boolean,
-    datamartId?: string
   ) => AudienceSegmentResource[];
   archiveAudienceSegment: (segmentId: string) => Promise<any>;
   resetAudienceSegmentsTable: () => AudienceSegmentResource[];
@@ -185,8 +184,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
         loadAudienceSegmentsDataSource(
           organisationId,
           filter,
-          checkEmptyDataSource,
-          filter.datamart
+          checkEmptyDataSource
         );
       }
     }
@@ -203,7 +201,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
       location: { search },
     } = this.props;
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
-    loadAudienceSegmentsDataSource(organisationId, filter, true, filter.datamart);
+    loadAudienceSegmentsDataSource(organisationId, filter, true);
   };
 
   archiveSegment = (segment: AudienceSegmentResource) => {

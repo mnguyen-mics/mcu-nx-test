@@ -2,7 +2,7 @@ export interface SearchFilter {
   keywords: string;
   currentPage: number;
   pageSize: number;
-  datamart_id?: string;
+  datamartId?: string;
 }
 
 export interface SelectableItem {

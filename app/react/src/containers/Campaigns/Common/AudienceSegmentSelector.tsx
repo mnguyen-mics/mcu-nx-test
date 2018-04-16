@@ -81,7 +81,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
     this.props.save(segments);
   };
 
-  fetchSegments = (filter: SearchFilter, datmartId?: string) => {
+  fetchSegments = (filter: SearchFilter) => {
     const { match: { params: { organisationId } } } = this.props;
 
     const options: GetSegmentsOption = {
@@ -92,8 +92,8 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       options.name = filter.keywords;
     }
 
-    if (datmartId) {
-      options.datamart_id = datmartId;
+    if (filter.datamartId) {
+      options.datamart_id = filter.datamartId;
     }
 
     return AudienceSegmentService.getSegments(organisationId, options);
