@@ -1,9 +1,12 @@
-export interface SearchFilter {
-  keywords: string;
-  currentPage: number;
-  pageSize: number;
-  datamartId?: string;
-}
+import {
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+  DatamartSearchSettings,
+} from './../../utils/LocationSearchHelper';
+export interface SearchFilter
+  extends PaginationSearchSettings,
+    KeywordSearchSettings,
+    DatamartSearchSettings {}
 
 export interface SelectableItem {
   id: string;

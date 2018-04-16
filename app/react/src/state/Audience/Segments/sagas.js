@@ -175,8 +175,8 @@ function* loadAudienceSegmentList({ payload }) {
       options.name = filter.keywords;
     }
 
-    if (filter.datamart) {
-      options.datamart_id = filter.datamart;
+    if (filter.datamartId) {
+      options.datamart_id = filter.datamartId;
     }
 
     if (filter.label_id.length) {
@@ -186,10 +186,6 @@ function* loadAudienceSegmentList({ payload }) {
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
     };
-
-    if (filter.datamart) {
-      initialOptions.datamart_id = filter.datamart;
-    }
 
     let allCalls;
 

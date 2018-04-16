@@ -16,13 +16,21 @@ import {
 } from '../../../../components/TableView/index';
 import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
 
-import { SEGMENTS_SEARCH_SETTINGS } from './constants';
+import {
+  SEGMENTS_SEARCH_SETTINGS,
+  SegmentTypeSearchSettings,
+} from './constants';
 import {
   updateSearch,
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
+  DateSearchSettings,
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+  DatamartSearchSettings,
+  LabelsSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
 
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -35,7 +43,6 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { withTranslations } from '../../../Helpers';
-import McsMoment from '../../../../utils/McsMoment';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -95,19 +102,18 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-interface FilterProps {
-  currentPage: number;
-  from: McsMoment;
-  to: McsMoment;
-  keywords: string[];
-  pageSize: number;
-  datamart?: string;
-}
+interface FilterParams
+  extends DateSearchSettings,
+    PaginationSearchSettings,
+    KeywordSearchSettings,
+    DatamartSearchSettings,
+    SegmentTypeSearchSettings,
+    LabelsSearchSettings {}
 
 interface MapDispatchToProps {
   loadAudienceSegmentsDataSource: (
     organisationId: string,
-    filter: FilterProps,
+    filter: FilterParams,
     checkEmptyDataSource?: boolean,
   ) => AudienceSegmentResource[];
   archiveAudienceSegment: (segmentId: string) => Promise<any>;
@@ -131,7 +137,9 @@ class AudienceSegmentsTable extends React.Component<Props> {
     const {
       history,
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
       history.replace({
@@ -150,14 +158,18 @@ class AudienceSegmentsTable extends React.Component<Props> {
   componentDidUpdate(prevProps: Props) {
     const {
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       loadAudienceSegmentsDataSource,
     } = this.props;
 
     const {
       location: { search: prevSearch, state },
-      match: { params: { organisationId: prevOrganisationId } },
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
     } = prevProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -165,9 +177,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
       !compareSearches(search, prevSearch) ||
       organisationId !== prevOrganisationId
     ) {
-      if (
-        !isSearchValid(search, this.getSearchSetting(organisationId))
-      ) {
+      if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
         history.replace({
           pathname: pathname,
           search: buildDefaultSearch(
@@ -177,14 +187,14 @@ class AudienceSegmentsTable extends React.Component<Props> {
           state: { reloadDataSource: organisationId !== prevOrganisationId },
         });
       } else {
-        const filter = parseSearch(
+        const filter = parseSearch<FilterParams>(
           search,
           this.getSearchSetting(organisationId),
         );
         loadAudienceSegmentsDataSource(
           organisationId,
           filter,
-          checkEmptyDataSource
+          checkEmptyDataSource,
         );
       }
     }
@@ -197,16 +207,23 @@ class AudienceSegmentsTable extends React.Component<Props> {
   loadAudienceSegmentsData = () => {
     const {
       loadAudienceSegmentsDataSource,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
     } = this.props;
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const filter = parseSearch<FilterParams>(
+      search,
+      this.getSearchSetting(organisationId),
+    );
     loadAudienceSegmentsDataSource(organisationId, filter, true);
   };
 
   archiveSegment = (segment: AudienceSegmentResource) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       archiveAudienceSegment,
       loadAudienceSegmentsDataSource,
@@ -214,7 +231,10 @@ class AudienceSegmentsTable extends React.Component<Props> {
       // datamart,
     } = this.props;
 
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const filter = parseSearch<FilterParams>(
+      search,
+      this.getSearchSetting(organisationId),
+    );
 
     Modal.confirm({
       title: formatMessage(messages.archiveSegmentModalTitle),
@@ -235,7 +255,12 @@ class AudienceSegmentsTable extends React.Component<Props> {
   };
 
   editSegment = (segment: AudienceSegmentResource) => {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/audience/segments/${
       segment.id
@@ -248,15 +273,12 @@ class AudienceSegmentsTable extends React.Component<Props> {
     return [...SEGMENTS_SEARCH_SETTINGS];
   }
 
-  updateLocationSearch = (
-    params: Partial<FilterProps> & {
-      types?: any;
-      label_id?: string[];
-    },
-  ) => {
+  updateLocationSearch = (params: Partial<FilterParams>) => {
     const {
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search: currentSearch, pathname },
     } = this.props;
     const nextLocation = {
@@ -273,7 +295,9 @@ class AudienceSegmentsTable extends React.Component<Props> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       isFetchingAudienceSegments,
       isFetchingSegmentsStat,
@@ -285,13 +309,16 @@ class AudienceSegmentsTable extends React.Component<Props> {
       workspace,
     } = this.props;
 
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const filter = parseSearch<FilterParams>(
+      search,
+      this.getSearchSetting(organisationId),
+    );
 
     const searchOptions = {
       placeholder: formatMessage(messages.searchAudienceSegments),
       onSearch: (value: string) =>
         this.updateLocationSearch({
-          keywords: [value],
+          keywords: value,
         }),
       defaultValue: filter.keywords,
     };
@@ -540,8 +567,8 @@ class AudienceSegmentsTable extends React.Component<Props> {
             <Icon type="down" />
           </div>
         ),
-        selectedItems: filter.datamart
-          ? [datamartItems.find(di => di.key === filter.datamart)]
+        selectedItems: filter.datamartId
+          ? [datamartItems.find(di => di.key === filter.datamartId)]
           : [datamartItems],
         items: datamartItems,
         singleSelectOnly: true,
@@ -549,7 +576,8 @@ class AudienceSegmentsTable extends React.Component<Props> {
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
           this.updateLocationSearch({
-            datamart: datamartItem && datamartItem.key ? datamartItem.key : undefined,
+            datamartId:
+              datamartItem && datamartItem.key ? datamartItem.key : undefined,
           });
         },
       },

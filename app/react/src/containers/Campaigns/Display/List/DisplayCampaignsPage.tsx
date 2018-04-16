@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
 import DisplayCampaignsActionbar, {
-  FilterProps,
+  FilterParams,
 } from './DisplayCampaignsActionbar';
 import DisplayCampaignsTable from './DisplayCampaignsTable';
 import { injectDrawer } from '../../../../components/Drawer';
@@ -51,7 +51,7 @@ export interface MapDispatchToProps {
 export interface MapStateToProps {
   loadDisplayCampaignsDataSource: (
     organisationId: string,
-    filer: FilterProps,
+    filer: FilterParams,
     bool?: boolean,
   ) => void;
   resetDisplayCampaignsTable: () => void;
@@ -129,7 +129,7 @@ class DisplayCampaignsPage extends React.Component<
       loadDisplayCampaignsDataSource,
       match: { params: { organisationId } },
     } = this.props;
-    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+    const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
     if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
@@ -380,7 +380,7 @@ class DisplayCampaignsPage extends React.Component<
         this.setState({
           isUpdatingStatuses: false,
         }, () => {
-          const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+          const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
           loadDisplayCampaignsDataSource(organisationId, filter);
         });
       })

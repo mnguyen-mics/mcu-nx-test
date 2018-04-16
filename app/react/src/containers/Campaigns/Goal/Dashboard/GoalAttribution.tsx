@@ -11,8 +11,8 @@ import {
   parseSearch,
   compareSearches,
   updateSearch,
+  DateSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
-import McsMoment from '../../../../utils/McsMoment';
 import {
   normalizeReportView,
   formatMetric,
@@ -77,10 +77,7 @@ export interface SourceStatData {
   dataSource: SourceStat[];
 }
 
-interface Filters {
-  from: McsMoment;
-  to: McsMoment;
-}
+interface Filters extends DateSearchSettings {}
 
 const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = ['SOURCE', 'CAMPAIGN', 'CREATIVES'];
 
@@ -147,7 +144,7 @@ class GoalAttribution extends React.Component<
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
+      const filter = parseSearch<Filters>(search, DATE_SEARCH_SETTINGS);
 
       this.fetchOverall(organisationId, goalId, attributionModelId, filter);
       this.fetchDetailled(
@@ -189,7 +186,7 @@ class GoalAttribution extends React.Component<
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, DATE_SEARCH_SETTINGS);
+        const filter = parseSearch<Filters>(nextSearch, DATE_SEARCH_SETTINGS);
         this.fetchOverall(
           nextOrganisationId,
           nextGoalId,

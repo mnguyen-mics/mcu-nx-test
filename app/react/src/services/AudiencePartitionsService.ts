@@ -4,14 +4,12 @@ import { AudiencePartitionResource } from '../models/audiencePartition/AudienceP
 const AudiencePartitionsService = {
   getPartitions(
     organisationId: string,
-    datamartId: string,
     options: object = {},
   ): Promise<DataListResponse<AudiencePartitionResource>> {
     const endpoint = 'audience_partitions';
 
     const params = {
       organisation_id: organisationId,
-      datamart_id: datamartId,
       ...options,
     };
 

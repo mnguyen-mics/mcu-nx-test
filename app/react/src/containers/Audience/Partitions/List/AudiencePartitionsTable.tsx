@@ -13,6 +13,9 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+  DatamartSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
 import { getTableDataSource } from '../../../../state/Audience/Partitions/selectors';
 import { getWorkspace } from '../../../../state/Session/selectors';
@@ -23,12 +26,10 @@ import { UserWorkspaceResource } from '../../../../models/directory/UserProfileR
 import { FormattedMessage } from 'react-intl';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 
-interface FilterProps {
-  currentPage: number;
-  keywords: string;
-  pageSize: number;
-  datamart?: string;
-}
+interface FilterParams
+  extends PaginationSearchSettings,
+    KeywordSearchSettings,
+    DatamartSearchSettings {}
 
 interface MapStateToProps {
   isFetchingAudiencePartitions: boolean;
@@ -41,9 +42,8 @@ interface MapStateToProps {
 interface MapDispatchToProps {
   loadAudiencePartitionsDataSource: (
     organisationId: string,
-    filter: FilterProps,
+    filter: FilterParams,
     bool?: boolean,
-    datamartId?: string,
   ) => AudiencePartitionResource[];
   archiveAudiencePartition: (partitionId: string) => void;
   resetAudiencePartitionsTable: () => void;
@@ -66,15 +66,16 @@ class AudiencePartitionsTable extends React.Component<Props> {
   loadAudiencePartitionsData = () => {
     const {
       location: { search },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       loadAudiencePartitionsDataSource,
     } = this.props;
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const filter = parseSearch<FilterParams>(search, this.getSearchSetting(organisationId));
     loadAudiencePartitionsDataSource(
       organisationId,
       filter,
       true,
-      filter.datamart,
     );
   };
 
@@ -82,7 +83,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
     const {
       history,
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
@@ -102,14 +105,18 @@ class AudiencePartitionsTable extends React.Component<Props> {
   componentDidUpdate(prevProps: Props) {
     const {
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       loadAudiencePartitionsDataSource,
     } = this.props;
 
     const {
       location: { search: prevSearch, state },
-      match: { params: { organisationId: prevOrganisationId } },
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
     } = prevProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -128,7 +135,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
           state: { reloadDataSource: organisationId !== prevOrganisationId },
         });
       } else {
-        const filter = parseSearch(
+        const filter = parseSearch<FilterParams>(
           search,
           this.getSearchSetting(organisationId),
         );
@@ -137,7 +144,6 @@ class AudiencePartitionsTable extends React.Component<Props> {
           organisationId,
           filter,
           checkEmptyDataSource,
-          filter.datamart
         );
       }
     }
@@ -178,7 +184,12 @@ class AudiencePartitionsTable extends React.Component<Props> {
   };
 
   editPartition = (partition: any) => {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/audience/partitions/${
       partition.id
@@ -195,11 +206,12 @@ class AudiencePartitionsTable extends React.Component<Props> {
     return [...PARTITIONS_SEARCH_SETTINGS];
   }
 
-  updateLocationSearch = (params: Partial<FilterProps>) => {
-   
+  updateLocationSearch = (params: Partial<FilterParams>) => {
     const {
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search: currentSearch, pathname },
     } = this.props;
     const nextLocation = {
@@ -217,7 +229,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
   getFiltersOptions = () => {
     const {
       workspace,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
     } = this.props;
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
@@ -241,8 +255,8 @@ class AudiencePartitionsTable extends React.Component<Props> {
             <Icon type="down" />
           </div>
         ),
-        selectedItems: filter.datamart
-          ? [datamartItems.find(di => di.key === filter.datamart)]
+        selectedItems: filter.datamartId
+          ? [datamartItems.find(di => di.key === filter.datamartId)]
           : [datamartItems],
         items: datamartItems,
         singleSelectOnly: true,
@@ -250,7 +264,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
           this.updateLocationSearch({
-            datamart:
+            datamartId:
               datamartItem && datamartItem.key ? datamartItem.key : undefined,
           });
         },
@@ -260,7 +274,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       translations,
       isFetchingAudiencePartitions,

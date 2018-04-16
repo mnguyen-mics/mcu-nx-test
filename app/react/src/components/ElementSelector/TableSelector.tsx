@@ -15,6 +15,11 @@ import { MultiSelectProps } from '../MultiSelect';
 import { getWorkspace } from '../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';
+import {
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+  DatamartSearchSettings,
+} from '../../utils/LocationSearchHelper';
 
 export interface TableSelectorProps<T extends SelectableItem> {
   actionBarTitle: string;
@@ -23,7 +28,7 @@ export interface TableSelectorProps<T extends SelectableItem> {
   searchPlaceholder?: string;
   filtersOptions?: Array<MultiSelectProps<any>>;
   selectedIds?: string[];
-  fetchDataList: (filter?: SearchFilter, datamartId?: string) => Promise<DataListResponse<T>>;
+  fetchDataList: (filter?: SearchFilter) => Promise<DataListResponse<T>>;
   fetchData: (id: string) => Promise<DataResponse<T>>;
   singleSelection?: boolean;
   save: (selectedIds: string[], selectedElement: T[]) => void;
@@ -35,17 +40,16 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-interface State<T> {
+interface State<T>
+  extends PaginationSearchSettings,
+    KeywordSearchSettings,
+    DatamartSearchSettings {
   selectedElementsById: { [elementId: string]: T };
   elementsById: { [elementId: string]: T };
   allElementIds: string[];
   noElement: boolean;
   isLoading: boolean;
   total: number;
-  pageSize: number;
-  currentPage: number;
-  keywords: string;
-  datamartId: string;
 }
 
 type Props<T extends SelectableItem> = TableSelectorProps<T> &
@@ -165,17 +169,21 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     const {
       displayDatamartSelector,
       workspace,
-      match: { params: { organisationId } },
-    } = this.props;
-    const datamartItems = workspace(organisationId).datamarts.map(d => ({
-      key: d.id,
-      value: d.name || d.token,
-    })).concat([
-      {
-        key: '',
-        value: 'All',
+      match: {
+        params: { organisationId },
       },
-    ]);;
+    } = this.props;
+    const datamartItems = workspace(organisationId)
+      .datamarts.map(d => ({
+        key: d.id,
+        value: d.name || d.token,
+      }))
+      .concat([
+        {
+          key: '',
+          value: 'All',
+        },
+      ]);
 
     return displayDatamartSelector
       ? [
@@ -194,9 +202,17 @@ class TableSelector<T extends SelectableItem> extends React.Component<
             getKey: (item: any) => (item && item.key ? item.key : ''),
             display: (item: any) => item.value,
             handleItemClick: (datamartItem: { key: string; value: string }) => {
-              this.setState({ datamartId: datamartItem.key }, () => {
-                this.populateTable(Object.keys(this.state.selectedElementsById));
-              });
+              this.setState(
+                {
+                  datamartId:
+                    datamartItem && datamartItem.key ? datamartItem.key : '',
+                },
+                () => {
+                  this.populateTable(
+                    Object.keys(this.state.selectedElementsById),
+                  );
+                },
+              );
             },
           },
         ]
