@@ -86,6 +86,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
 
     const options: GetSegmentsOption = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      persisted: true
     };
 
     if (filter.keywords) {
