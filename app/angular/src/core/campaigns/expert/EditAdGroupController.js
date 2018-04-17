@@ -9,6 +9,7 @@ define(['./module'], function (module) {
   module.controller('core/campaigns/expert/EditAdGroupController', [
     '$scope', '$location', '$stateParams', '$uibModal', '$log', 'core/campaigns/DisplayCampaignService', 'core/common/ConstantsService', 'lodash','core/common/auth/Session',
     function($scope, $location, $stateParams, $uibModal, $log, DisplayCampaignService, ConstantsService, _, Session) {
+      $scope.targetedOperatingSystems = [{ code: "ALL", name: "All Operating Systems" }];
 
       var adGroupId = $stateParams.ad_group_id;
       var organisationId = $stateParams.organisation_id;
@@ -134,6 +135,25 @@ define(['./module'], function (module) {
         $location.path(Session.getWorkspacePrefixUrl()+ '/campaigns/display/expert/edit/' + DisplayCampaignService.getCampaignId());
       };
 
+      $scope.$watch("adGroup.targeted_devices", function (device) {
+        if (device !== undefined) {
+          updateOperatingSystems(device);
+        }
+      });
+
+      function updateOperatingSystems(targetedDevice) {
+        if (targetedDevice === "ALL" || targetedDevice === "ONLY_DESKTOP") {
+          $scope.campaign.targeted_operating_systems = 'ALL';
+          $scope.targetedOperatingSystems = [{ code: "ALL", name: "All Operating Systems" }];
+        } else {
+          $scope.targetedOperatingSystems = [
+            { code: "ALL", name: "All Operating Systems" },
+            { code: "IOS", name: "iOS" },
+            { code: "ANDROID", name: "Android" },
+            { code: "WINDOWS_PHONE", name: "Windows Phone" },
+          ];
+        }
+      }
 
       //$scope.uploader = new plupload.Uploader({
       //runtimes:'html5,flash,html4',

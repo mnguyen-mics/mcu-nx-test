@@ -1,12 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
-import Header from 'mcs-react-header';
 
 import * as sessionActions from '../../services/session/SessionActions';
-
-import logoUrl from '../../assets/images/mediarithmics-small-white.png';
-import imgUrl from '../../assets/images/user.svg';
 
 class NavigatorHeader extends Component {
 
@@ -20,30 +16,10 @@ class NavigatorHeader extends Component {
   render() {
 
     const {
-      authenticated,
-      isVisible,
-      activeWorkspace: {
-        workspaceId
-      }
+      isVisible
     } = this.props;
 
-    const homeUrl = authenticated ? `/${workspaceId}/campaigns/display` : '';
-    const navigationItems = this.buildNavigationItems();
-    const workspaceItems = this.buildWorkspaceItems();
-    const profileItems = this.buildProfileItems();
-
-    const logo = {
-      url: logoUrl,
-      alt: 'mediarithmics'
-    };
-
-    const img = {
-      url: imgUrl,
-      alt: 'profile'
-    };
-
-    return isVisible ? <Header homeUrl={homeUrl} navigationItems={navigationItems} workspaceItems={workspaceItems} profileItems={profileItems} logo={logo} img={img} /> : null;
-
+    return isVisible ? 'header' : null;
   }
 
   buildNavigationItems() {
@@ -54,9 +30,6 @@ class NavigatorHeader extends Component {
         datamartId,
         workspaceId
       },
-      location: {
-        pathname
-      },
       authenticated
     } = this.props;
 
@@ -65,8 +38,6 @@ class NavigatorHeader extends Component {
       Use isActiveUrl function by passing the path of the route.
       The property is used by the NavLink component to apply an active class to the element.
     */
-    const isActiveUrl = path => pathname.search(path) >= 0; // eslint-disable-line no-unused-vars
-
     const datamartEntries = datamartId ? [
       {
         url: `/${workspaceId}/datamart/segments`,
@@ -206,7 +177,6 @@ NavigatorHeader.propTypes = {
   workspaces: PropTypes.arrayOf(PropTypes.object).isRequired,
   isVisible: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   switchWorkspace: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   router: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types

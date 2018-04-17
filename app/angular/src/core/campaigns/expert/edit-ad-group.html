@@ -59,7 +59,9 @@
           <td>{{creative.creative_type}}</td>
           <td pretty-print-url="creativeProperties['destination_url'] | rendererProperty"></td>
           <td>{{creative.creation_date|date:'shortDate'}}</td>
-          <td class="actions"><button class="mics-btn mics-btn-delete" ng-click="deleteAd(ad.id)">Remove</button></td>
+          <td class="actions">
+            <button class="mics-btn mics-btn-delete" ng-click="deleteAd(ad.id)">Remove</button>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -185,7 +187,7 @@
         <div class="panel-body form-inline">
           Bid Optimizer :
           <span ng-show="!adGroup.bid_optimizer_id">Default</span>
-            <span ng-show="adGroup.bid_optimizer_id">
+          <span ng-show="adGroup.bid_optimizer_id">
               {{bidOptimizer.name}}  (
                 {{engineProperties['name'].value}}
                 by
@@ -203,6 +205,31 @@
             <input ng-model="adGroup.bid_optimization_objective_value" class="form-control"/> &euro;
           </div>
         </div>
+      </div>
+    </div>
+
+    <div>
+      <div mcs-form-group="" label-for="targeted_devices" label-text="Targeted devices">
+        <select ng-model="adGroup.targeted_devices" type="text" id="targeted_devices">
+          <option value="ALL">All devices</option>
+          <option value="ONLY_DESKTOP">Only desktop</option>
+          <option value="ONLY_MOBILE">Only mobile</option>
+          <option value="ONLY_TABLET">Only tablet</option>
+          <option value="MOBILE_AND_TABLET">Mobile and tablet</option>
+        </select>
+      </div>
+
+      <div mcs-form-group="" label-for="targeted_medias" label-text="Targeted media types">
+        <select ng-model="adGroup.targeted_medias" type="text" id="targeted_medias">
+          <option value="WEB">Only websites</option>
+          <option value="MOBILE_APP">Only mobile apps</option>
+        </select>
+      </div>
+
+      <div mcs-form-group="" label-for="targeted_operating_systems" label-text="Targeted operating systems">
+        <select ng-model="adGroup.targeted_operating_systems" type="text" id="targeted_operating_systems"
+                ng-options="os.code as os.name for os in targetedOperatingSystems">
+        </select>
       </div>
     </div>
 

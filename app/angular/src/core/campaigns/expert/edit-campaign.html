@@ -202,28 +202,6 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse">
           <div class="panel-body">
-            <div mcs-form-group="" label-for="targeted_devices" label-text="Targeted devices">
-              <select ng-model="campaign.targeted_devices" type="text" id="targeted_devices">
-                <option value="ALL">All devices</option>
-                <option value="ONLY_DESKTOP">Only desktop</option>
-                <option value="ONLY_MOBILE">Only mobile</option>
-                <option value="ONLY_TABLET">Only tablet</option>
-                <option value="MOBILE_AND_TABLET">Mobile and tablet</option>
-              </select>
-            </div>
-
-            <div mcs-form-group="" label-for="targeted_medias" label-text="Targeted media types">
-              <select ng-model="campaign.targeted_medias" type="text" id="targeted_medias">
-                <option value="WEB">Only websites</option>
-                <option value="MOBILE_APP">Only mobile apps</option>
-              </select>
-            </div>
-
-            <div mcs-form-group="" label-for="targeted_operating_systems" label-text="Targeted operating systems">
-              <select ng-model="campaign.targeted_operating_systems" type="text" id="targeted_operating_systems"
-                      ng-options="os.code as os.name for os in targetedOperatingSystems">
-              </select>
-            </div>
 
             <div mcs-form-group="" label-for="user_activation_segments" label-text="Create following user activation segments">
               <label><input type="checkbox" ng-change="addUserActivationSegment('clickers')" ng-model="checkedUserActivationSegments['clickers']" ng-disabled="disabledUserActivationSegments['clickers']"/> Clickers

@@ -17,7 +17,6 @@ define(['./module', 'moment'], function (module, moment) {
       $scope.getConversionType = GoalsService.getConversionType;
       $scope.checkedGoalTypes = [];
       $scope.conversionGoals = [];
-      $scope.targetedOperatingSystems = [{ code: "ALL", name: "All Operating Systems" }];
       $scope.campaignScopeHelper = {
         campaignDateRange: { startDate: moment(), endDate: moment().add(20, 'days') },
         schedule: ''
@@ -219,26 +218,6 @@ define(['./module', 'moment'], function (module, moment) {
           }
           updateSelectedGoals();
         };
-
-        function updateOperatingSystems(targetedDevice) {
-          if (targetedDevice === "ALL" || targetedDevice === "ONLY_DESKTOP") {
-            $scope.campaign.targeted_operating_systems = 'ALL';
-            $scope.targetedOperatingSystems = [{ code: "ALL", name: "All Operating Systems" }];
-          } else {
-            $scope.targetedOperatingSystems = [
-              { code: "ALL", name: "All Operating Systems" },
-              { code: "IOS", name: "iOS" },
-              { code: "ANDROID", name: "Android" },
-              { code: "WINDOWS_PHONE", name: "Windows Phone" },
-            ];
-          }
-        }
-
-        $scope.$watch("campaign.targeted_devices", function (device) {
-          if (device !== undefined) {
-            updateOperatingSystems(device);
-          }
-        });
 
         /**
          * Inventory Source

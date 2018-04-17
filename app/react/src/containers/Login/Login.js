@@ -4,9 +4,6 @@ import { reduxForm } from 'redux-form';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage } from 'react-intl';
 
-import Button from 'mcs-react-button';
-import Alert from 'mcs-react-alert';
-
 import * as loginActions from './redux/LoginActions';
 import * as sessionActions from '../../services/session/SessionActions';
 
@@ -37,7 +34,7 @@ class Login extends Component {
 
     const submitCredentials = this.submitCredentials;
 
-    const errorMsg = error ? <Alert type="danger" text={<FormattedMessage id={error} />} /> : null;
+    const errorMsg = error ? <FormattedMessage id={error} /> : null;
 
     return (
       <div className="container">
@@ -67,9 +64,9 @@ class Login extends Component {
               </Link>
             </div>
           </div>
-          <Button action="finish" type="submit">
+          <button type="submit">
             <FormattedMessage id="SUBMIT" />
-          </Button>
+          </button>
         </form>
 
       </div>
