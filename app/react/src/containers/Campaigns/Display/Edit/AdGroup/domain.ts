@@ -139,6 +139,8 @@ export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
     targeted_operating_systems: 'ALL',
     targeted_medias: 'WEB',
     targeted_devices: 'ALL',
+    targeted_connection_types: 'ALL',
+    targeted_browser_families: 'ALL',
   },
   segmentFields: [],
   adFields: [],

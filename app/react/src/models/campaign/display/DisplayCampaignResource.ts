@@ -2,11 +2,8 @@ import {
   BudgetPeriod,
   CampaignStatus,
   DisplayCampaignSubType,
-  ModelVersion,
-  TargetedDevice,
-  TargetedMedia,
-  TargetedOperatingSystem,
- } from './../constants';
+  ModelVersion
+} from '../constants';
 
 export interface DisplayCampaignResource {
   id: string;
@@ -30,9 +27,6 @@ export interface DisplayCampaignResource {
   per_day_impression_capping: number;
   start_date: string;
   end_date: string;
-  targeted_devices: TargetedDevice;
-  targeted_medias: TargetedMedia;
-  targeted_operating_system: TargetedOperatingSystem;
   time_zone: string;
   model_version: ModelVersion;
   type: string;

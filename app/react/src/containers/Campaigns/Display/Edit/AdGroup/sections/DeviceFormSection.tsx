@@ -108,6 +108,67 @@ class DeviceFormSection extends React.Component<Props, State> {
     ]
   };
 
+  connectionTypes = () => {
+    const { intl: { formatMessage } } = this.props;
+    return [
+      {
+        value: 'ALL',
+        title: formatMessage(messages.contentSectionDeviceConnectionTypeAll),
+      },
+      {
+        value: 'ETHERNET',
+        title: formatMessage(messages.contentSectionDeviceConnectionTypeEthernet),
+
+      },
+      {
+        value: 'WIFI',
+        title: formatMessage(messages.contentSectionDeviceConnectionTypeWifi),
+      },
+      {
+        value: 'CELLULAR_NETWORK_2G',
+        title: formatMessage(messages.contentSectionDeviceConnectionType2G),
+      },
+      {
+        value: 'CELLULAR_NETWORK_3G',
+        title: formatMessage(messages.contentSectionDeviceConnectionType3G),
+      },
+      {
+        value: 'CELLULAR_NETWORK_4G',
+        title: formatMessage(messages.contentSectionDeviceConnectionType4G),
+      }
+    ]
+  };
+
+  browserFamilies = () => {
+    const { intl: { formatMessage } } = this.props;
+    return [
+      {
+        value: 'ALL',
+        title: formatMessage(messages.contentSectionDeviceBrowserAll),
+      },
+      {
+        value: 'CHROME',
+        title: formatMessage(messages.contentSectionDeviceBrowserChrome),
+      },
+      {
+        value: 'FIREFOX',
+        title: formatMessage(messages.contentSectionDeviceBrowserFirefox),
+      },
+      {
+        value: 'SAFARI',
+        title: formatMessage(messages.contentSectionDeviceBrowserSafari),
+      },
+      {
+        value: 'INTERNET_EXPLORER',
+        title: formatMessage(messages.contentSectionDeviceBrowserIE),
+      },
+      {
+        value: 'OPERA',
+        title: formatMessage(messages.contentSectionDeviceBrowserOpera),
+      }
+    ]
+  };
+
   render() {
     const {
       fieldValidators: { isRequired },
@@ -162,6 +223,34 @@ class DeviceFormSection extends React.Component<Props, State> {
               defaultValue: 'All'
             }}
             options={this.operatingSystems()}
+          />
+
+          <FormSelectField
+            name="adGroup.targeted_connection_types"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.contentSectionDeviceConnectionTypeLabel),
+              required: true,
+            }}
+            selectProps={{
+              defaultValue: 'All'
+            }}
+            options={this.connectionTypes()}
+          />
+
+          <FormSelectField
+            name="adGroup.targeted_browser_families"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.contentSectionDeviceBrowserLabel),
+              required: true,
+            }}
+            selectProps={{
+              defaultValue: 'All'
+            }}
+            options={this.browserFamilies()}
           />
         </div>
 

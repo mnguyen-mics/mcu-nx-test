@@ -461,7 +461,7 @@ export default defineMessages({
     defaultMessage: 'Windows Phone',
   },
 
-  // Devices
+  // Device types
 
   contentSectionDeviceTypeLabel: {
     id: 'adGroup.section.device.type.label',
@@ -488,7 +488,7 @@ export default defineMessages({
     defaultMessage: 'Mobile and Tablet',
   },
 
-  // Devices
+  // Media types
 
   contentSectionDeviceMediaTypeLabel: {
     id: 'adGroup.section.device.media_type.label',
@@ -503,6 +503,67 @@ export default defineMessages({
     defaultMessage: 'Mobile App',
   },
 
+  // Connection Types
+
+  contentSectionDeviceConnectionTypeLabel: {
+    id: 'adGroup.section.device.connection_type.label',
+    defaultMessage: 'Connection Type',
+  },
+  contentSectionDeviceConnectionTypeAll: {
+    id: 'adGroup.section.device.connection_type.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceConnectionTypeEthernet: {
+    id: 'adGroup.section.device.connection_type.ethernet',
+    defaultMessage: 'Ethernet',
+  },
+  contentSectionDeviceConnectionTypeWifi: {
+    id: 'adGroup.section.device.connection_type.wifi',
+    defaultMessage: 'Wifi',
+  },
+  contentSectionDeviceConnectionType2G: {
+    id: 'adGroup.section.device.connection_type.2g',
+    defaultMessage: '2G',
+  },
+  contentSectionDeviceConnectionType3G: {
+    id: 'adGroup.section.device.connection_type.3g',
+    defaultMessage: '3G',
+  },
+  contentSectionDeviceConnectionType4G: {
+    id: 'adGroup.section.device.connection_type.4g',
+    defaultMessage: '4G',
+  },
+
+  // Browser Families
+
+  contentSectionDeviceBrowserLabel: {
+    id: 'adGroup.section.device.browser_family.label',
+    defaultMessage: 'Browser',
+  },
+  contentSectionDeviceBrowserAll: {
+    id: 'adGroup.section.device.browser_family.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceBrowserChrome: {
+    id: 'adGroup.section.device.browser_family.chrome',
+    defaultMessage: 'Chrome',
+  },
+  contentSectionDeviceBrowserFirefox: {
+    id: 'adGroup.section.device.browser_family.firefox',
+    defaultMessage: 'Firefox',
+  },
+  contentSectionDeviceBrowserSafari: {
+    id: 'adGroup.section.device.browser_family.safari',
+    defaultMessage: 'Safari',
+  },
+  contentSectionDeviceBrowserIE: {
+    id: 'adGroup.section.device.browser_family.ie',
+    defaultMessage: 'Internet Explorer',
+  },
+  contentSectionDeviceBrowserOpera: {
+    id: 'adGroup.section.device.browser_family.opera',
+    defaultMessage: 'Opera',
+  },
 
   contentSectionDeviceModal1: {
     id: 'adGroupEditor.section.device.modal1',

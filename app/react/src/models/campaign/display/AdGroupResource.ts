@@ -5,10 +5,12 @@ import {
   BudgetPeriod,
   TargetedOperatingSystem,
   TargetedDevice,
-  TargetedMedia
- } from './../constants/';
+  TargetedMedia,
+  TargetedBrowserFamily,
+  TargetedConnectionType
+} from '../constants';
 
- export interface AdGroupCreateRequest {
+export interface AdGroupCreateRequest {
   name: string;
   technical_name: string;
   visibility: AdSlotVisibilityFilter;
@@ -34,7 +36,9 @@ import {
   targeted_operating_systems: TargetedOperatingSystem;
   targeted_medias: TargetedMedia;
   targeted_devices: TargetedDevice;
- }
+  targeted_browser_families: TargetedBrowserFamily;
+  targeted_connection_types: TargetedConnectionType;
+}
 
 export interface AdGroupResource extends AdGroupCreateRequest {
   id: string;
