@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { compose } from 'recompose';
+import {WrappedFieldProps} from "redux-form";
 
 import messages from '../../messages';
 import withValidators, {
@@ -12,9 +14,7 @@ import {
   FormSection,
   FormSelectField,
 } from '../../../../../../components/Form';
-import { compose } from 'recompose';
 import DefaultSelect from "../../../../../../components/Form/FormSelect/DefaultSelect";
-import {WrappedFieldProps} from "redux-form";
 
 interface DeviceFormSectionProps extends WrappedFieldProps {}
 
@@ -191,8 +191,10 @@ class DeviceFormSection extends React.Component<Props, State> {
               label: formatMessage(messages.contentSectionDeviceMediaTypeLabel),
               required: true,
             }}
-            selectProps={{
-              defaultValue: 'Web'
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionDeviceMediaTypeTooltip,
+              ),
             }}
             options={this.medias()}
           />
@@ -205,8 +207,10 @@ class DeviceFormSection extends React.Component<Props, State> {
               label: formatMessage(messages.contentSectionDeviceTypeLabel),
               required: true,
             }}
-            selectProps={{
-              defaultValue: 'All'
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionDeviceTypeTooltip,
+              ),
             }}
             options={this.devices()}
           />
@@ -219,8 +223,10 @@ class DeviceFormSection extends React.Component<Props, State> {
               label: formatMessage(messages.contentSectionDeviceOSLabel),
               required: true,
             }}
-            selectProps={{
-              defaultValue: 'All'
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionDeviceOSTooltip,
+              ),
             }}
             options={this.operatingSystems()}
           />
@@ -233,8 +239,10 @@ class DeviceFormSection extends React.Component<Props, State> {
               label: formatMessage(messages.contentSectionDeviceConnectionTypeLabel),
               required: true,
             }}
-            selectProps={{
-              defaultValue: 'All'
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionDeviceConnectionTypeTooltip,
+              ),
             }}
             options={this.connectionTypes()}
           />
@@ -247,8 +255,10 @@ class DeviceFormSection extends React.Component<Props, State> {
               label: formatMessage(messages.contentSectionDeviceBrowserLabel),
               required: true,
             }}
-            selectProps={{
-              defaultValue: 'All'
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionDeviceBrowserTooltip,
+              ),
             }}
             options={this.browserFamilies()}
           />

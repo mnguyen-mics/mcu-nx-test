@@ -440,6 +440,10 @@ export default defineMessages({
 
   // Operating systems
 
+  contentSectionDeviceOSTooltip: {
+    id: 'adGroup.section.device.operating_system.tooltip',
+    defaultMessage: 'Operating system filter',
+  },
   contentSectionDeviceOSLabel: {
     id: 'adGroup.section.device.operating_system.label',
     defaultMessage: 'Operating System',
@@ -463,6 +467,10 @@ export default defineMessages({
 
   // Device types
 
+  contentSectionDeviceTypeTooltip: {
+    id: 'adGroup.section.device.type.tooltip',
+    defaultMessage: 'Device type filter',
+  },
   contentSectionDeviceTypeLabel: {
     id: 'adGroup.section.device.type.label',
     defaultMessage: 'Device Type',
@@ -490,6 +498,10 @@ export default defineMessages({
 
   // Media types
 
+  contentSectionDeviceMediaTypeTooltip: {
+    id: 'adGroup.section.device.media_type.tooltip',
+    defaultMessage: 'Media type filter',
+  },
   contentSectionDeviceMediaTypeLabel: {
     id: 'adGroup.section.device.media_type.label',
     defaultMessage: 'Media Type',
@@ -505,6 +517,10 @@ export default defineMessages({
 
   // Connection Types
 
+  contentSectionDeviceConnectionTypeTooltip: {
+    id: 'adGroup.section.device.connection_type.tooltip',
+    defaultMessage: 'Connection type filter',
+  },
   contentSectionDeviceConnectionTypeLabel: {
     id: 'adGroup.section.device.connection_type.label',
     defaultMessage: 'Connection Type',
@@ -536,6 +552,10 @@ export default defineMessages({
 
   // Browser Families
 
+  contentSectionDeviceBrowserTooltip: {
+    id: 'adGroup.section.device.browser_family.tooltip',
+    defaultMessage: 'Browser filter',
+  },
   contentSectionDeviceBrowserLabel: {
     id: 'adGroup.section.device.browser_family.label',
     defaultMessage: 'Browser',
@@ -594,10 +614,6 @@ export default defineMessages({
   contentSectionLocationPart2Row1Label: {
     id: 'adGroupEditor.section.location.part2.row1.label',
     defaultMessage: 'Location : ',
-  },
-  contentSectionLocationPart2Row1Tooltip: {
-    id: 'adGroupEditor.section.location.part2.row1.tooltip',
-    defaultMessage: 'Lorem ipsum',
   },
   contentSectionLocationInputPlaceholder: {
     id: 'adGroupEditor.section.location.inputPlaceholder',
