@@ -72,6 +72,24 @@ class GeneralFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
+            name="adGroup.total_budget"
+            component={FormInput}
+            validate={[isValidFloat, isNotZero]}
+            formItemProps={{
+              label: formatMessage(messages.contentSectionGeneralRow3Label),
+            }}
+            inputProps={{
+              suffix: <span>€</span>,
+              placeholder: formatMessage(
+                messages.contentSectionGeneralRow3Placeholder,
+              ),
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
+            }}
+          />
+
+          <FormInputField
             name="adGroup.max_budget_per_period"
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
@@ -113,24 +131,6 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow2Tooltip),
-            }}
-          />
-
-          <FormInputField
-            name="adGroup.total_budget"
-            component={FormInput}
-            validate={[isValidFloat, isNotZero]}
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralRow3Label),
-            }}
-            inputProps={{
-              suffix: <span>€</span>,
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow3Placeholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
             }}
           />
 
