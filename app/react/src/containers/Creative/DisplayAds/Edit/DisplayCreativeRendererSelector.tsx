@@ -12,8 +12,8 @@ import messages from './messages';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-
-// import { FormSectionProps } from './DispayCreativeForm';
+import PluginService from '../../../../services/PluginService';
+import { Submenu } from '../../../../components/FormMenu/MenuSubList';
 
 const { Content } = Layout;
 
@@ -29,11 +29,25 @@ export interface DisplayCreativeRendererSelectorProps {
   close: () => void;
 }
 
+interface State {
+  adRendererSubmenu: Submenu[];
+}
+
 type Props = DisplayCreativeRendererSelectorProps & InjectedIntlProps;
 
-class DisplayCreativeRendererSelector extends React.Component<Props> {
+class DisplayCreativeRendererSelector extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      adRendererSubmenu: [],
+    };
+  }
+
   renderNativeSubmenu = () => {
-    const { onSelect, intl: { formatMessage } } = this.props;
+    const {
+      onSelect,
+      intl: { formatMessage },
+    } = this.props;
 
     return [
       {
@@ -47,8 +61,30 @@ class DisplayCreativeRendererSelector extends React.Component<Props> {
     ];
   };
 
+  renderAdRendererSubmenu = () => {
+    const { onSelect } = this.props;
+    const previousAdRendererIds = ['1', '1004', '1005', '1032', '1047', '1026'];
+    const adRendererSubmenu: Submenu[] = [];
+    PluginService.getPlugins({ max_results: 1000, plugin_type: 'DISPLAY_AD_RENDERER' })
+      .then(resp => resp.data)
+      .then(adRendererList => {
+        adRendererList
+          .filter(ad => !previousAdRendererIds.includes(ad.id))
+          .forEach(adRenderer => {
+            return adRendererSubmenu.push({
+              title: `${adRenderer.plugin_type} (${adRenderer.artifact_id})`,
+              select: () => onSelect(adRenderer.id),
+            });
+          });
+      });
+    return adRendererSubmenu;
+  };
+
   render() {
-    const { onSelect, intl: { formatMessage } } = this.props;
+    const {
+      onSelect,
+      intl: { formatMessage },
+    } = this.props;
 
     const onTypeSelect = (adRendererId: string) => () => {
       onSelect(adRendererId);
@@ -56,7 +92,6 @@ class DisplayCreativeRendererSelector extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'typePickerForm',
-      // message: messages.saveCreative,
       onClose: this.props.close,
       paths: [
         {
@@ -112,6 +147,13 @@ class DisplayCreativeRendererSelector extends React.Component<Props> {
                       formatMessage(messages.creativeTypeIvidence),
                     ]}
                     submenu={this.renderNativeSubmenu()}
+                  />
+                  <MenuSubList
+                    title={formatMessage(messages.allRendererList)}
+                    subtitles={[
+                      formatMessage(messages.allRendererListSubtitle),
+                    ]}
+                    submenu={this.renderAdRendererSubmenu()}
                   />
                 </Row>
               </Row>

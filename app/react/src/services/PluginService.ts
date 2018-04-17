@@ -1,10 +1,18 @@
+import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PluginInterface, PluginVersion } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
 import DataFileService from './DataFileService';
 
+interface GetPluginOptions extends PaginatedApiParam {
+  plugin_type?: string;
+  artifact_id?: string;
+  group_id?: string;
+  organisation_id?: number;
+}
+
 const pluginService = {
-  getPlugins(options: object = {}): Promise<DataListResponse<PluginInterface>> {
+  getPlugins(options: GetPluginOptions = {}): Promise<DataListResponse<PluginInterface>> {
     const endpoint = 'plugins';
     return ApiService.getRequest(endpoint, options);
   },
