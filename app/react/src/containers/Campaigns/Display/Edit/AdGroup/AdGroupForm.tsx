@@ -39,7 +39,9 @@ import AudienceCatalogFormSection, {
 import BidOptimizerFormSection, {
   BidOptimizerFormSectionProps,
 } from './sections/BidOptimizerFormSection';
-import InventoryCatalogFormSection, { InventoryCatalogFormSectionProps } from './sections/InventoryCatalog/InventoryCatalogFormSection'
+import InventoryCatalogFormSection, {
+  InventoryCatalogFormSectionProps,
+} from './sections/InventoryCatalog/InventoryCatalogFormSection';
 import * as SessionSelectors from '../../../../../state/Session/selectors';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
@@ -99,7 +101,9 @@ const FORM_ID = 'adGroupForm';
 class AdGroupForm extends React.Component<Props> {
   buildFormSections = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       change,
       initialValues,
       hasDatamarts,
@@ -163,7 +167,12 @@ class AdGroupForm extends React.Component<Props> {
     const device = {
       id: 'device',
       title: messages.sectionTitleDevice,
-      component: <DeviceFormSection />,
+      component: (
+        <DeviceFormSection
+          formChange={this.props.change}
+          initialValues={this.props.initialValues.adGroup}
+        />
+      ),
     };
     const placementList = {
       id: 'placementList',
@@ -183,7 +192,6 @@ class AdGroupForm extends React.Component<Props> {
       component: (
         <AdFieldArray
           name="adFields"
-
           component={AdFormSection}
           {...genericFieldArrayProps}
         />
@@ -253,8 +261,8 @@ class AdGroupForm extends React.Component<Props> {
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
           >
-          {/* this button enables submit on enter */}
-          <button type="submit" style={{ display: 'none' }} />
+            {/* this button enables submit on enter */}
+            <button type="submit" style={{ display: 'none' }} />
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"
