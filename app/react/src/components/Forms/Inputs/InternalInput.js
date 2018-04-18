@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 
-import Alert from 'mcs-react-alert';
-
 class InternalInput extends Component {
   render() {
 
@@ -12,10 +10,10 @@ class InternalInput extends Component {
     } = this.props;
 
     return (
-      <div >
+      <div>
         <input {...input} type="text" {...other} />
-        {(touched && error && <Alert type="danger" text={error} />) ||
-          (warning && <Alert type="warning" text={warning} />)}
+        {(touched && error) ||
+         warning}
       </div>
     );
   }

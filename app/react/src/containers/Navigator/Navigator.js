@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { IntlProvider } from 'react-intl';
-import Loading from 'mcs-react-loading';
+
 
 import { NavigatorHeader } from '../Header';
 
@@ -79,7 +79,9 @@ class Navigator extends Component {
     } = this.props;
 
     if (!isReady) {
-      return <Loading />;
+      return (<div>
+        <span>Loading...</span>
+      </div>);
     }
 
     return (
