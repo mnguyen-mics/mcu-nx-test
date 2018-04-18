@@ -2,13 +2,12 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Alert } from 'antd'
-import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { AudienceSegmentResource } from '../../../../../models/audiencesegment';
 import { UserLookalikeSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 
-export interface LookalikeStatusWarningStoreProps {
-  segment: {} | AudienceSegmentResource;
+export interface LookalikeStatusWarningProps {
+  segment: null | AudienceSegmentResource;
   isFetching: boolean;
 }
 
@@ -31,7 +30,7 @@ const messages = defineMessages({
   }
 })
 
-type Props = LookalikeStatusWarningStoreProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string, segmentId: string }>;
+type Props = LookalikeStatusWarningProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string, segmentId: string }>;
 
 class LookalikeStatusWarning extends React.Component<Props, any> {
   render() {
@@ -62,14 +61,7 @@ class LookalikeStatusWarning extends React.Component<Props, any> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  segment:
-    state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
-  isFetching: state.audienceSegmentsTable.audienceSegmentsSingleApi.isFeching,
-});
-
-export default compose(
+export default compose<Props, LookalikeStatusWarningProps>(
   withRouter,
   injectIntl,
-  connect(mapStateToProps)
 )(LookalikeStatusWarning)

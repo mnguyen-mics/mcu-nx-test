@@ -1,7 +1,5 @@
-import AudienceSegmentActionbar from './AudienceSegmentActionbar';
-import AudienceSegment from './AudienceSegment';
+import AudienceSegmentPage from './AudienceSegmentPage';
 
 export {
-  AudienceSegment,
-  AudienceSegmentActionbar,
+  AudienceSegmentPage
 };

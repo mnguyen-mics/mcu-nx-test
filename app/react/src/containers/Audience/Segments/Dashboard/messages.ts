@@ -95,5 +95,16 @@ export default defineMessages({
     id: 'segment.lookalike.button.calibration.done',
     defaultMessage: 'Recalibrate'
   },
-
+  USER_POINT_ADDITIONS: {
+    id: 'segment.additiondeletions.userpointaddition.label',
+    defaultMessage: 'Userpoint Additions'
+  },
+  USER_POINT_DELETIONS: {
+    id: 'segment.additiondeletions.userpointdeletion.label',
+    defaultMessage: 'Userpoint Deletions'
+  },
+  noAdditionDeletion: {
+    id: 'segment.additiondeletions.nodata',
+    defaultMessage: 'There is no data on the selected period!'
+  }
 });

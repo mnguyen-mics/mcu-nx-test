@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, message } from 'antd';
 import { connect } from 'react-redux';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import injectNotifications, {
@@ -17,11 +17,9 @@ import {
   getAudienceSegmentPerformance,
   getOverlapView,
 } from '../../../../state/Audience/Segments/selectors';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 
 import exportMessages from '../../../../common/messages/exportMessages';
 import segmentMessages from './messages';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 import AudienceLookalikeCreation, {
   AudienceLookalikeCreationProps,
@@ -30,37 +28,27 @@ import { injectDrawer } from '../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { UserLookalikeSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { SEGMENT_QUERY_SETTINGS } from './constants';
+import { SEGMENT_QUERY_SETTINGS, fetchOverlapAnalysis, OverlapData } from './constants';
+import ReportService, { Filter } from '../../../../services/ReportService';
+import McsMoment from '../../../../utils/McsMoment';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
 
-export interface AudienceSegmentActionbarProps {}
-
-interface AudienceSegmentActionbarStoreProps {
-  defaultDatamart: (organisationId: string) => DatamartResource;
-  overlapView: any;
-  segmentData: AudienceSegmentResource[];
-  exportAudienceSegmentDashboard: (
-    a: { segmentId: string; organisationId: string; datamartId: string },
-    b: { export: () => void },
-  ) => void;
-  loadAudienceSegmentSingleDataSource: (
-    segmentId: string,
-    organisationId: string,
-    filters: any,
-  ) => void;
+export interface AudienceSegmentActionbarProps {
+  segment: null | AudienceSegmentResource;
+  isLoading: boolean;
+  onCalibrationClick: () => void;
 }
 
 type Props = AudienceSegmentActionbarProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedIntlProps &
   InjectedNotificationProps &
-  AudienceSegmentActionbarStoreProps &
   InjectedDrawerProps &
   InjectedDatamartProps;
 
 interface State {
   overlapFetchIsRunning: boolean;
   overlap?: any;
-  segment: {} | AudienceSegmentResource;
   exportIsRunning: boolean;
   showLookalikeModal: boolean;
 }
@@ -69,7 +57,6 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
   state = {
     overlapFetchIsRunning: false,
     overlap: undefined,
-    segment: {},
     exportIsRunning: false,
     showLookalikeModal: false,
   };
@@ -78,106 +65,105 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     // init
   };
 
-  componentDidMount() {
-    const { match: { params: { segmentId } } } = this.props;
 
-    if (segmentId) {
-      this.fetchAudienceSegment(segmentId);
-    }
+  fetchExportData = (organisationId: string, segmentId: string, from: McsMoment, to: McsMoment) => {
+    const fetchCounters = this.fetchCounterView(organisationId, [{ name: 'audience_segment_id', value: segmentId }])
+    const fetchDashboard = this.fetchDashboardView(organisationId, from, to, [{ name: 'audience_segment_id', value: segmentId }])
+    const overlapData = fetchOverlapAnalysis(segmentId).then(res => this.formatOverlapData(res))
+
+    return Promise.all([fetchCounters, fetchDashboard, overlapData])
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const { match: { params: { segmentId } } } = this.props;
-
-    const { match: { params: { segmentId: nextSegmentId } } } = nextProps;
-
-    if (segmentId !== nextSegmentId) {
-      this.fetchAudienceSegment(nextSegmentId);
-    }
-
-    if (Object.keys(this.state.segment).length && (this.state.segment as AudienceSegmentResource).type === 'USER_LOOKALIKE') {
-      this.fetchAudienceSegment(nextSegmentId);
-    }
+  formatOverlapData = (data: OverlapData) => {
+    return data.data ? data.data.formattedOverlap.map(d => ({
+      xKey: d!.segment_intersect_with.name,
+      yKey: d!.segment_intersect_with.segment_size === 0 ? 0 : (d!.overlap_number / d!.segment_intersect_with.segment_size) * 100,
+      segment_intersect_with: d!.segment_intersect_with.id
+    })) : []
   }
 
-  fetchAudienceSegment = (segmentId: string) => {
-    return AudienceSegmentService.getSegment(segmentId)
-      .then(response =>
-        this.setState({
-          segment: response.data,
-        }),
-      )
-      .catch(err => {
-        this.props.notifyError(err);
-      });
-  };
-
-  doExport = () => {
-    const {
-      match: { params: { organisationId } },
-      location: { search },
-      defaultDatamart,
-      segmentData,
-      overlapView,
-      intl,
-    } = this.props;
-
-    const { segment } = this.state;
-
-    const filter = parseSearch(search, undefined);
-    this.setState({ exportIsRunning: false });
-    if (this.hideExportLoadingMsg !== null && this.hideExportLoadingMsg) {
-      this.hideExportLoadingMsg();
-    }
-    const datamartId = defaultDatamart(organisationId).id;
-    const overlapData = overlapView ? overlapView.data : [];
-
-    // Overlap job may still be pending. In which case we dont include it in the export.
-    ExportService.exportAudienceSegmentDashboard(
+  fetchCounterView = (organisationId: string, filters: Filter[]) => {
+    return ReportService.getAudienceSegmentReport(
       organisationId,
-      datamartId,
-      segmentData,
-      overlapData,
-      filter,
-      intl.formatMessage,
-      segment,
-    );
-  };
+      new McsMoment('now'),
+      new McsMoment('now'),
+      ['day'],
+      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
+      filters,
+    ).then(res => normalizeReportView(res.data.report_view))
+
+  }
+
+  fetchDashboardView = (organisationId: string, from: McsMoment, to: McsMoment, filters: Filter[]) => {
+    return ReportService.getAudienceSegmentReport(
+      organisationId,
+      from,
+      to,
+      ['day'],
+      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'],
+      filters,
+    ).then(res => normalizeReportView(res.data.report_view))
+
+  }
 
   handleRunExport = () => {
     const {
       match: { params: { organisationId, segmentId } },
+      location: { search },
       intl: { formatMessage },
-      defaultDatamart,
-      exportAudienceSegmentDashboard,
+      segment,
     } = this.props;
-
-    const datamartId = defaultDatamart(organisationId).id;
+    const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     this.setState({ exportIsRunning: true });
-    this.hideExportLoadingMsg = message.loading(
+    const hideExportLoadingMsg = message.loading(
       formatMessage(exportMessages.exportInProgress),
       0,
     );
-    exportAudienceSegmentDashboard(
-      {
-        segmentId: segmentId,
-        organisationId: organisationId,
-        datamartId: datamartId,
-      },
-      { export: this.doExport },
-    );
+
+    this.fetchExportData(organisationId, segmentId, filters.from, filters.to)
+      .then(res => {
+        return ExportService.exportAudienceSegmentDashboard(
+          organisationId,
+          segment && segment.datamart_id,
+          res[1],
+          res[2],
+          filters,
+          formatMessage,
+          segment,
+        );
+      }).then(() => {
+        hideExportLoadingMsg()
+        this.setState({ exportIsRunning: false });
+      })
+      .catch((err) => {
+        hideExportLoadingMsg()
+        message.error('There was an error generating your export please try again.', 5)
+        this.setState({ exportIsRunning: false });
+      })
   };
+
+
+  onEditClick = () => {
+
+    const {
+      match: { params: { organisationId, segmentId } },
+      location,
+      history
+    } = this.props;
+    const editUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}/edit`;
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
+  }
 
   render() {
     const {
-      match: { params: { organisationId, segmentId } },
+      match: { params: { organisationId } },
       intl: { formatMessage },
       datamart,
-      loadAudienceSegmentSingleDataSource,
-      location: { search },
+      segment,
+      onCalibrationClick
     } = this.props;
 
-    const { segment } = this.state;
+
 
     const exportIsRunning = this.state.exportIsRunning;
 
@@ -192,8 +178,6 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         name: segment ? (segment as AudienceSegmentResource).name : '',
       },
     ];
-
-    const editLink = `/v2/o/${organisationId}/audience/segments/${segmentId}/edit`;
 
     const onClick = () =>
       this.props.openNextDrawer<AudienceLookalikeCreationProps>(
@@ -223,25 +207,28 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         },
       );
 
-    const onRecalibrateClick = () => {
-      if (
-        segment &&
-        Object.keys(segment).length &&
-        (segment as AudienceSegmentResource).id
-      ) {
-        AudienceSegmentService.recalibrateAudienceLookAlike(
-          (segment as AudienceSegmentResource).id,
-        ).then(res => {
-          const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-          loadAudienceSegmentSingleDataSource(
-            segmentId,
-            organisationId,
-            filter,
-          );
-        });
-      }
-      return Promise.resolve();
-    };
+    const onRecalibrateClick = () => onCalibrationClick()
+
+    // const onRecalibrateClick = () => {
+    //   if (
+    //     segment &&
+    //     Object.keys(segment).length &&
+    //     (segment as AudienceSegmentResource).id
+    //   ) {
+    //     AudienceSegmentService.recalibrateAudienceLookAlike(
+    //       (segment as AudienceSegmentResource).id,
+    //     ).then(res => {
+    //       const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
+    //       loadAudienceSegmentSingleDataSource(
+    //         segmentId,
+    //         organisationId,
+    //         filter,
+    //       );
+    //     });
+    //   }
+    //   return Promise.resolve();
+    // };
+
     let actionButton = (
       <Button className="mcs-primary" type="primary" onClick={onClick}>
         <McsIcon type="bolt" />
@@ -250,7 +237,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     );
 
     if (
-      Object.keys(segment).length &&
+      segment &&
       (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE'
     ) {
       switch ((segment as UserLookalikeSegment).status) {
@@ -316,12 +303,10 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
           <McsIcon type="download" />
           <FormattedMessage id="EXPORT" />
         </Button>
-        <Link key="2" to={editLink}>
-          <Button>
-            <McsIcon type="pen" />
-            <FormattedMessage id="EDIT" />
-          </Button>
-        </Link>
+        <Button onClick={this.onEditClick}>
+          <McsIcon type="pen" />
+          <FormattedMessage id="EDIT" />
+        </Button>
       </Actionbar>
     );
   }
@@ -342,7 +327,7 @@ const mapDispatchToProps = {
     AudienceSegmentActions.exportAudienceSegmentDashboard.request,
 };
 
-export default compose(
+export default compose<Props, AudienceSegmentActionbarProps>(
   withRouter,
   injectIntl,
   injectNotifications,

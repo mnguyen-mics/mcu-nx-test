@@ -5,6 +5,7 @@ import {
   AudienceSegmentType,
   UserQueryEvaluationMode,
   AudienceSegmentShape,
+  OverlapJobResult,
 } from '../models/audiencesegment/AudienceSegmentResource';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
@@ -147,7 +148,7 @@ const AudienceSegmentService = {
       first_result?: number;
       max_results?: number;
     } = {},
-  ): Promise<any> {
+  ): Promise<DataListResponse<OverlapJobResult>> {
     const endpoint = `audience_segments/${segmentId}/overlap_analysis`;
     const params = {
       audienceSegmentId: segmentId,

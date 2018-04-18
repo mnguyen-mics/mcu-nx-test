@@ -49,15 +49,15 @@ type Props = AudienceLookalikeCreationProps &
   ValidatorProps;
 
 const fieldGridConfig = {
-    labelCol: { span: 3 },
-    wrapperCol: { span: 19, offset: 1 },
-  };
+  labelCol: { span: 3 },
+  wrapperCol: { span: 19, offset: 1 },
+};
 
 
 class AudienceLookalikeCreation extends React.Component<
   Props,
   AudienceLookalikeState
-> {
+  > {
 
   constructor(props: Props) {
     super(props);
@@ -81,7 +81,7 @@ class AudienceLookalikeCreation extends React.Component<
       datamart,
       notifyError
     } = this.props;
-    AudiencePartitionService.getPartitions(organisationId, datamart.id, { first_result: 0, max_results: 500 })
+    AudiencePartitionService.getPartitions(organisationId, datamart.id, { first_result: 0, max_results: 500, status: 'PUBLISHED' })
       .then(res => res.data)
       .then(res => this.setState({ partitions: res, loading: false }))
       .catch(err => {
@@ -101,19 +101,19 @@ class AudienceLookalikeCreation extends React.Component<
       notifyError
     } = this.props;
     return this.setState({ loading: true }, () => {
-      const {extension_factor, ...rest} = formData;
-      const formattedFormData = extension_factor ? { ...rest, extension_factor:  extension_factor / 100 } : {...rest}
+      const { extension_factor, ...rest } = formData;
+      const formattedFormData = extension_factor ? { ...rest, extension_factor: extension_factor / 100 } : { ...rest }
       AudienceSegmentService.createAudienceSegment(organisationId, formattedFormData)
-      .then(res => res.data)
-      .then(res => {
-        this.props.close()
-        this.setState({ loading: false })
-        history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`)
-      })
-      .catch(err => {
-        notifyError(err)
-        this.setState({ loading: false })
-      })
+        .then(res => res.data)
+        .then(res => {
+          this.props.close()
+          this.setState({ loading: false })
+          history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`)
+        })
+        .catch(err => {
+          notifyError(err)
+          this.setState({ loading: false })
+        })
     })
   }
 
@@ -144,71 +144,71 @@ class AudienceLookalikeCreation extends React.Component<
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
-          <Layout>
-            <Form
-              onSubmit={handleSubmit(this.save) as any}
-              className={'edit-layout ant-layout'}
+        <Layout>
+          <Form
+            onSubmit={handleSubmit(this.save) as any}
+            className={'edit-layout ant-layout'}
+          >
+            <Content
+              id={FORM_ID}
+              className="mcs-content-container mcs-form-container"
             >
-              <Content
-                id={FORM_ID}
-                className="mcs-content-container mcs-form-container"
-              >
-                <div className="m-t-20 m-b-20">
-                  {intl.formatMessage(messages.lookAlikeModalHelper)}
-                </div>
-                <div>
-                  <FormInputField
-                    name='name'
-                    component={FormInput}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: intl.formatMessage(messages.lookAlikeModalNameLabel),
-                        required: true,
-                        ...fieldGridConfig
-                      },
-                      inputProps: {
-                        placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
-                      },
-                    }}
-                  />
-                </div>
-                <div>
-                  <FormSelectField
-                    name='audience_partition_id'
-                    component={DefaultSelect}
-                    options={this.state.partitions.map(i => { return { title: i.name, value: i.id } })}
-                    validate={[isRequired]}
-                    formItemProps={{
-                      label: intl.formatMessage(messages.lookAlikeModalPartitionLabel),
+              <div className="m-t-20 m-b-20">
+                {intl.formatMessage(messages.lookAlikeModalHelper)}
+              </div>
+              <div>
+                <FormInputField
+                  name='name'
+                  component={FormInput}
+                  validate={[isRequired]}
+                  props={{
+                    formItemProps: {
+                      label: intl.formatMessage(messages.lookAlikeModalNameLabel),
                       required: true,
                       ...fieldGridConfig
-                    }}
-                    selectProps={{
-                      defaultValue: this.state.partitions.length && this.state.partitions[0].id ? this.state.partitions[0].id : '',
-                    }}
-                  />
-                </div>
-                
-                <div>
-                  <FormSliderField
-                    name='extension_factor'
-                    component={FormSlider}
-                    validate={[isRequired]}
-                    formItemProps={{
-                      label: intl.formatMessage(messages.lookAlikeModalExtentionFactorLabel),
-                      required: true,
-                      ...fieldGridConfig
-                    }}
-                    inputProps={{
-                      defaultValue: 30
-                    }}
-                  />
-                </div>
-              </Content>
-            </Form>
-          </Layout>
-        </Layout>);
+                    },
+                    inputProps: {
+                      placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                    },
+                  }}
+                />
+              </div>
+              <div>
+                <FormSelectField
+                  name='audience_partition_id'
+                  component={DefaultSelect}
+                  options={this.state.partitions.map(i => { return { title: i.name, value: i.id } })}
+                  validate={[isRequired]}
+                  formItemProps={{
+                    label: intl.formatMessage(messages.lookAlikeModalPartitionLabel),
+                    required: true,
+                    ...fieldGridConfig
+                  }}
+                  selectProps={{
+                    defaultValue: this.state.partitions.length && this.state.partitions[0].id ? this.state.partitions[0].id : '',
+                  }}
+                />
+              </div>
+
+              <div>
+                <FormSliderField
+                  name='extension_factor'
+                  component={FormSlider}
+                  validate={[isRequired]}
+                  formItemProps={{
+                    label: intl.formatMessage(messages.lookAlikeModalExtentionFactorLabel),
+                    required: true,
+                    ...fieldGridConfig
+                  }}
+                  inputProps={{
+                    defaultValue: 30
+                  }}
+                />
+              </div>
+            </Content>
+          </Form>
+        </Layout>
+      </Layout>);
   }
 }
 

@@ -8,8 +8,7 @@ import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage';
 import { EditAudienceSegmentPage } from '../containers/Audience/Segments/Edit';
 
 import {
-  AudienceSegment,
-  AudienceSegmentActionbar,
+  AudienceSegmentPage,
 } from '../containers/Audience/Segments/Dashboard';
 
 import {
@@ -53,8 +52,7 @@ export const audienceDefinition: NavigatorDefinition = {
   audienceSegmentDashboard: {
     path: '/audience/segments/:segmentId',
     layout: 'main',
-    contentComponent: AudienceSegment,
-    actionBarComponent: AudienceSegmentActionbar,
+    contentComponent: AudienceSegmentPage,
     requiredFeature: 'audience.segments',
     requireDatamart: true
   },

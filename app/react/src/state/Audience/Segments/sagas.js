@@ -172,7 +172,7 @@ function* loadAudienceSegmentList({ payload }) {
     };
 
     if (filter.keywords) {
-      options.name = filter.keywords;
+      options.keywords = filter.keywords;
     }
     if (filter.label_id.length) {
       options.label_id = filter.label_id;

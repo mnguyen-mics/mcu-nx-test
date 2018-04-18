@@ -13,6 +13,7 @@ export interface Props {
 class AudienceCounters extends React.Component<Props> {
   render() {
     const { userPoints, userAccounts, userAgents, userEmails } = this.props;
+
     const counters: CounterProps[] = [];
 
     if (userPoints) {

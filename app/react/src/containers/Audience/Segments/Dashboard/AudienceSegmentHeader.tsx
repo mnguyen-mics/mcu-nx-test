@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
@@ -12,11 +11,12 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-export interface AudienceSegmentHeaderStoreProps {
-  segment: {} | AudienceSegmentResource;
+export interface AudienceSegmentHeaderProps {
+  segment: AudienceSegmentResource | null;
+  isLoading: boolean
 }
 
-type Props = AudienceSegmentHeaderStoreProps & InjectedIntlProps;
+type Props = AudienceSegmentHeaderProps & InjectedIntlProps;
 
 export const messages = defineMessages({
   USER_ACTIVATION: {
@@ -47,11 +47,11 @@ export const messages = defineMessages({
 
 class AudienceSegmentHeader extends React.Component<Props> {
   render() {
-    const { segment } = this.props;
+    const { segment, isLoading } = this.props;
 
     let iconType = '';
 
-    if (Object.keys(segment).length) {
+    if (segment) {
       if ((segment as AudienceSegmentResource).type === 'USER_ACTIVATION') {
         iconType = 'rocket';
       } else if ((segment as AudienceSegmentResource).type === 'USER_QUERY') {
@@ -71,7 +71,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
       }
     }
 
-    const segmentType = Object.keys(segment).length ? (
+    const segmentType = segment ? (
       <span>
         <Icon type={iconType} />{' '}
         <FormattedMessage
@@ -85,23 +85,17 @@ class AudienceSegmentHeader extends React.Component<Props> {
     return (
       <ContentHeader
         title={
-          Object.keys(segment).length
+          segment
             ? (segment as AudienceSegmentResource).name
             : ''
         }
         subTitle={segmentType}
-        loading={Object.keys(segment).length === 0}
+        loading={isLoading}
       />
     );
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-  segment:
-    state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
-});
-
-export default compose(withRouter, connect(mapStateToProps))(
+export default compose<Props, AudienceSegmentHeaderProps>(withRouter)(
   AudienceSegmentHeader,
 );
