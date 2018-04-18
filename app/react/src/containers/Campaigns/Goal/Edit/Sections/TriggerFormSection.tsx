@@ -103,7 +103,7 @@ class TriggerFormSection extends React.Component<Props, State> {
           !this.props.initialValues.goal.new_query_id),
       editQueryMode: false,
       queryContainer: this.props.initialValues.queryContainer,
-      queryContainerCopy: this.props.initialValues.queryContainer.copy(),
+      queryContainerCopy: undefined,
     };
   }
 
@@ -154,7 +154,7 @@ class TriggerFormSection extends React.Component<Props, State> {
       />
     ) : (
       <SelectorQLReadOnly
-        queryContainer={this.props.initialValues.queryContainer}
+        queryContainer={this.state.queryContainer}
       />
     );
   };
@@ -176,11 +176,23 @@ class TriggerFormSection extends React.Component<Props, State> {
     }
   };
 
+  updateQueryContainerAndCloseEditMode = () => {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        queryContainer: prevState.queryContainerCopy,
+        editQueryMode: false,
+      };
+    }, () => {
+      this.props.formChange('queryContainer', this.state.queryContainer);
+    });
+   
+  };
+
   switchEditMode = () => {
     this.setState({
       editQueryMode: !this.state.editQueryMode,
-      queryContainer: this.state.queryContainerCopy,
-      queryContainerCopy: this.state.queryContainer,
+      queryContainerCopy: this.state.queryContainer.copy(),
     });
   };
 
@@ -225,15 +237,6 @@ class TriggerFormSection extends React.Component<Props, State> {
 
   render() {
     const { intl: { formatMessage } } = this.props;
-    const updateQueryContainerAndCloseEditMode = () => {
-      this.setState(prevState => {
-        return {
-          ...prevState,
-          queryContainer: prevState.queryContainerCopy.copy(),
-        };
-      });
-      this.closeEditMode();
-    };
 
     return (
       <div>
@@ -274,7 +277,7 @@ class TriggerFormSection extends React.Component<Props, State> {
                 this.state.editQueryMode ? (
                   <div>
                     <Button
-                      onClick={updateQueryContainerAndCloseEditMode}
+                      onClick={this.updateQueryContainerAndCloseEditMode}
                       type="primary"
                     >
                       <FormattedMessage
