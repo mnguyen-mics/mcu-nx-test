@@ -136,6 +136,10 @@ export default defineMessages({
     id: 'adGroupEditor.section.title3bis',
     defaultMessage: 'Location Targeting',
   },
+  sectionTitleDeviceTargeting: {
+    id: 'adGroupEditor.section.title.device',
+    defaultMessage: 'Device Targeting',
+  },
   sectionTitleDevice: {
     id: 'adGroupEditor.section.title.device',
     defaultMessage: 'Device Targeting',
@@ -434,6 +438,172 @@ export default defineMessages({
     defaultMessage: 'Lorem ipsum',
   },
 
+  // Operating systems
+
+  contentSectionDeviceOSTooltip: {
+    id: 'adGroup.section.device.operating_system.tooltip',
+    defaultMessage: 'Operating system filter',
+  },
+  contentSectionDeviceOSLabel: {
+    id: 'adGroup.section.device.operating_system.label',
+    defaultMessage: 'Operating System',
+  },
+  contentSectionDeviceOSAll: {
+    id: 'adGroup.section.device.operating_system.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceOSiOS: {
+    id: 'adGroup.section.device.operating_system.ios',
+    defaultMessage: 'iOS',
+  },
+  contentSectionDeviceOSAndroid: {
+    id: 'adGroup.section.device.operating_system.and',
+    defaultMessage: 'Android',
+  },
+  contentSectionDeviceOSWindowsPhone: {
+    id: 'adGroup.section.device.operating_system.wip',
+    defaultMessage: 'Windows Phone',
+  },
+
+  // Device types
+
+  contentSectionDeviceTypeTooltip: {
+    id: 'adGroup.section.device.type.tooltip',
+    defaultMessage: 'Device type filter',
+  },
+  contentSectionDeviceTypeLabel: {
+    id: 'adGroup.section.device.type.label',
+    defaultMessage: 'Device Type',
+  },
+  contentSectionDeviceTypeAll: {
+    id: 'adGroup.section.device.type.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceTypeDesktop: {
+    id: 'adGroup.section.device.type.desktop',
+    defaultMessage: 'Desktop',
+  },
+  contentSectionDeviceTypeMobile: {
+    id: 'adGroup.section.device.type.mobile',
+    defaultMessage: 'Mobile',
+  },
+  contentSectionDeviceTypeTablet: {
+    id: 'adGroup.section.device.type.tablet',
+    defaultMessage: 'Tablet',
+  },
+  contentSectionDeviceTypeMobileAndTablet: {
+    id: 'adGroup.section.device.type.mobile_and_tablet',
+    defaultMessage: 'Mobile and Tablet',
+  },
+
+  // Media types
+
+  contentSectionDeviceMediaTypeTooltip: {
+    id: 'adGroup.section.device.media_type.tooltip',
+    defaultMessage: 'Media type filter',
+  },
+  contentSectionDeviceMediaTypeLabel: {
+    id: 'adGroup.section.device.media_type.label',
+    defaultMessage: 'Media Type',
+  },
+  contentSectionDeviceMediaTypeWebsite: {
+    id: 'adGroup.section.device.media_type.website',
+    defaultMessage: 'Website',
+  },
+  contentSectionDeviceMediaTypeMobileApp: {
+    id: 'adGroup.section.device.media_type.mobile_app',
+    defaultMessage: 'Mobile App',
+  },
+
+  // Connection Types
+
+  contentSectionDeviceConnectionTypeTooltip: {
+    id: 'adGroup.section.device.connection_type.tooltip',
+    defaultMessage: 'Connection type filter',
+  },
+  contentSectionDeviceConnectionTypeLabel: {
+    id: 'adGroup.section.device.connection_type.label',
+    defaultMessage: 'Connection Type',
+  },
+  contentSectionDeviceConnectionTypeAll: {
+    id: 'adGroup.section.device.connection_type.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceConnectionTypeEthernet: {
+    id: 'adGroup.section.device.connection_type.ethernet',
+    defaultMessage: 'Ethernet',
+  },
+  contentSectionDeviceConnectionTypeWifi: {
+    id: 'adGroup.section.device.connection_type.wifi',
+    defaultMessage: 'Wifi',
+  },
+  contentSectionDeviceConnectionType2G: {
+    id: 'adGroup.section.device.connection_type.2g',
+    defaultMessage: '2G',
+  },
+  contentSectionDeviceConnectionType3G: {
+    id: 'adGroup.section.device.connection_type.3g',
+    defaultMessage: '3G',
+  },
+  contentSectionDeviceConnectionType4G: {
+    id: 'adGroup.section.device.connection_type.4g',
+    defaultMessage: '4G',
+  },
+
+  // Browser Families
+
+  contentSectionDeviceBrowserTooltip: {
+    id: 'adGroup.section.device.browser_family.tooltip',
+    defaultMessage: 'Browser filter',
+  },
+  contentSectionDeviceBrowserLabel: {
+    id: 'adGroup.section.device.browser_family.label',
+    defaultMessage: 'Browser',
+  },
+  contentSectionDeviceBrowserAll: {
+    id: 'adGroup.section.device.browser_family.all',
+    defaultMessage: 'All',
+  },
+  contentSectionDeviceBrowserChrome: {
+    id: 'adGroup.section.device.browser_family.chrome',
+    defaultMessage: 'Chrome',
+  },
+  contentSectionDeviceBrowserFirefox: {
+    id: 'adGroup.section.device.browser_family.firefox',
+    defaultMessage: 'Firefox',
+  },
+  contentSectionDeviceBrowserSafari: {
+    id: 'adGroup.section.device.browser_family.safari',
+    defaultMessage: 'Safari',
+  },
+  contentSectionDeviceBrowserIE: {
+    id: 'adGroup.section.device.browser_family.ie',
+    defaultMessage: 'Internet Explorer',
+  },
+  contentSectionDeviceBrowserOpera: {
+    id: 'adGroup.section.device.browser_family.opera',
+    defaultMessage: 'Opera',
+  },
+
+  contentSectionDeviceModal1: {
+    id: 'adGroupEditor.section.device.modal1',
+    defaultMessage:
+      "You can't add a device that is inside an already included or excluded device.",
+  },
+  contentSectionDeviceModal1Title: {
+    id: 'adGroupEditor.section.device.modal1Title',
+    defaultMessage: 'Warning',
+  },
+  contentSectionDeviceModal2: {
+    id: 'adGroupEditor.section.device.modal2',
+    defaultMessage:
+      'By adding this device the following device will be removed, do you want to proceed?',
+  },
+  contentSectionDeviceModal2Title: {
+    id: 'adGroupEditor.section.device.modal2Title',
+    defaultMessage: 'Warning',
+  },
+
   /* ---------------------------- SECTION LOCATION -------------------------- */
 
   contentSectionLocationPart2Message: {
@@ -444,10 +614,6 @@ export default defineMessages({
   contentSectionLocationPart2Row1Label: {
     id: 'adGroupEditor.section.location.part2.row1.label',
     defaultMessage: 'Location : ',
-  },
-  contentSectionLocationPart2Row1Tooltip: {
-    id: 'adGroupEditor.section.location.part2.row1.tooltip',
-    defaultMessage: 'Lorem ipsum',
   },
   contentSectionLocationInputPlaceholder: {
     id: 'adGroupEditor.section.location.inputPlaceholder',

@@ -127,7 +127,6 @@ export interface AdGroupFormData {
   segmentFields: SegmentFieldModel[];
   adFields: AdFieldModel[];
   locationFields: LocationFieldModel[];
-  
   bidOptimizerFields: BidOptimizerFieldModel[];
 
   inventoryCatalFields: InventoryCatalFieldsModel[];
@@ -137,6 +136,11 @@ export interface AdGroupFormData {
 export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
   adGroup: {
     max_budget_period: 'DAY',
+    targeted_operating_systems: 'ALL',
+    targeted_medias: 'WEB',
+    targeted_devices: 'ALL',
+    targeted_connection_types: 'ALL',
+    targeted_browser_families: 'ALL',
   },
   segmentFields: [],
   adFields: [],
