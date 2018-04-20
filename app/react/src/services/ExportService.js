@@ -440,8 +440,8 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   if (filter.keywords) {
     dataSheet.push(['Search keywords', filter.keywords]);
   }
-  if (filter.types.length > 0) {
-    dataSheet.push(['Displayed types', filter.statuses.join(', ')]);
+  if (filter.type.length > 0) {
+    dataSheet.push(['Displayed types', filter.type.join(', ')]);
   }
 
   dataSheet.push(blankLine);

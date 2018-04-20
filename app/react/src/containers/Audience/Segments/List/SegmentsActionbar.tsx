@@ -1,45 +1,78 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Menu, Button, message } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { FormattedMessage, InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import lodash from 'lodash';
-import { Dropdown } from '../../../../components/PopupContainers/index.tsx';
+import { Dropdown } from '../../../../components/PopupContainers';
 import { Actionbar } from '../../../Actionbar';
-import McsIcon from '../../../../components/McsIcon.tsx';
+import McsIcon from '../../../../components/McsIcon';
 
 import ExportService from '../../../../services/ExportService';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService.ts';
-import ReportService from '../../../../services/ReportService.ts';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import ReportService from '../../../../services/ReportService';
 
-import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
-import { parseSearch } from '../../../../utils/LocationSearchHelper.ts';
-import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
+import { Index } from '../../../../utils';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 
-const fetchExportData = (organisationId, datamartId, filter) => {
+const messages = defineMessages({
+  exportRunning: {
+    id: 'audiencesegment.actionbar.exportRunning',
+    defaultMessage: 'Export in progress...'
+  },
+  audienceSegment: {
+    id: 'audiencesegment.actionbar.audienceSegment',
+    defaultMessage: 'Segments'
+  },
+  newSegment: {
+    id: 'audiencesegment.actionbar.newSegment',
+    defaultMessage: 'New Segment'
+  },
+  export: {
+    id: 'audiencesegment.actionbar.export',
+    defaultMessage: 'Export'
+  },
+  userQuery: {
+    id: 'audiencesegment.actionbar.userQuery',
+    defaultMessage: 'User Query'
+  },
+  userPixel: {
+    id: 'audiencesegment.actionbar.userPixel',
+    defaultMessage: 'User Pixel'
+  },
+  userList: {
+    id: 'audiencesegment.actionbar.userList',
+    defaultMessage: 'User List'
+  }
+})
+
+
+
+const fetchExportData = (organisationId: string, datamartId: string, filter: Index<any>) => {
 
   const buildOptions = () => {
-    const options = {
+    const options: Index<any> = {
       first_result: 0,
       max_results: 2000,
     };
 
     if (filter.keywords) { options.name = filter.keywords; }
-    if (filter.types && filter.types.length > 0) {
-      options.types = filter.types;
+    if (filter.type && filter.type.length > 0) {
+      options.type = filter.type;
     }
     return options;
   };
 
   const startDate = filter.from;
   const endDate = filter.to;
-  const dimension = 'audience_segment_id';
+  const dimension = ['audience_segment_id'];
 
   const apiResults = Promise.all([
     AudienceSegmentService.getSegments(organisationId, datamartId, buildOptions()),
@@ -64,67 +97,58 @@ const fetchExportData = (organisationId, datamartId, filter) => {
   });
 };
 
-class SegmentsActionbar extends Component {
+interface MapStateToProps {
+  translations: any
+}
 
-  constructor(props) {
+type Props = RouteComponentProps<{ organisationId: string }> & InjectedIntlProps & InjectedDatamartProps & MapStateToProps & InjectedNotificationProps;
+
+
+interface State {
+  exportIsRunning: boolean
+}
+
+
+class SegmentsActionbar extends React.Component<Props, State> {
+
+  constructor(props: Props) {
     super(props);
-    this.handleRunExport = this.handleRunExport.bind(this);
     this.state = { exportIsRunning: false };
   }
 
-  getSearchSetting() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      defaultDatamart,
-    } = this.props;
-
+  getSearchSetting = () => {
     return [
       ...SEGMENTS_SEARCH_SETTINGS,
-      {
-        paramName: 'datamarts',
-        defaultValue: [parseInt(defaultDatamart(organisationId).id, 0)],
-        deserialize: query => {
-          if (query.datamarts) {
-            return query.datamarts.split(',').map((d) => parseInt(d, 0));
-          }
-          return [];
-        },
-        serialize: value => value.join(','),
-        isValid: query =>
-          query.datamarts &&
-          query.datamarts.split(',').length > 0 &&
-          lodash.every(query.datamarts, (d) => !isNaN(parseInt(d, 0))),
-      },
     ];
-
   }
 
 
-  handleRunExport() {
+  handleRunExport = () => {
     const {
       match: {
         params: {
           organisationId,
         },
       },
+      intl,
       translations,
+      notifyError,
     } = this.props;
 
     const filter = parseSearch(this.props.location.search, this.getSearchSetting());
 
     this.setState({ exportIsRunning: true });
-    const hideExportLoadingMsg = message.loading(translations.EXPORT_IN_PROGRESS, 0);
+    const hideExportLoadingMsg = message.loading(intl.formatMessage(messages.exportRunning), 0);
 
-    const datamartId = filter.datamarts[0];
+    const datamartId = filter.datamartId ? filter.datamartId : undefined;
 
     fetchExportData(organisationId, datamartId, filter).then(data => {
       ExportService.exportAudienceSegments(organisationId, datamartId, data, filter, translations);
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
-    }).catch(() => {
+    }).catch((err) => {
       // TODO notify error
+      notifyError(err)
       this.setState({ exportIsRunning: false });
       hideExportLoadingMsg();
     });
@@ -139,18 +163,17 @@ class SegmentsActionbar extends Component {
           organisationId,
         },
       },
-      defaultDatamart,
-      translations,
+      datamart,
+      intl
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
-    const datamart = defaultDatamart(organisationId);
 
     const userPixelMenu = () => {
 
       return (<Menu.Item key="USER_PIXEL">
         <Link to={{ pathname: `/v2/o/${organisationId}/audience/segments/create/USER_PIXEL` }}>
-          <FormattedMessage id="USER_PIXEL" />
+          <FormattedMessage {...messages.userPixel} />
         </Link>
       </Menu.Item>);
     };
@@ -159,21 +182,21 @@ class SegmentsActionbar extends Component {
       <Menu>
         <Menu.Item key="USER_LIST">
           <Link to={{ pathname: `/v2/o/${organisationId}/audience/segments/create/USER_LIST` }}>
-            <FormattedMessage id="USER_LIST" />
+            <FormattedMessage {...messages.userList} />
           </Link>
         </Menu.Item>
         {datamart.storage_model_version === 'v201709' ? userPixelMenu() : null}
 
         <Menu.Item key="USER_QUERY">
           <Link to={`/v2/o/${organisationId}/audience/segments/create/USER_QUERY`}>
-            <FormattedMessage id="USER_QUERY" />
+            <FormattedMessage {...messages.userQuery} />
           </Link>
         </Menu.Item>
       </Menu>
     );
 
     const breadcrumbPaths = [{
-      name: translations.AUDIENCE_SEGMENTS,
+      name: intl.formatMessage(messages.audienceSegment),
       url: `/v2/o/${organisationId}/audience/segments`,
     }];
 
@@ -181,11 +204,11 @@ class SegmentsActionbar extends Component {
       <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_SEGMENT" />
+            <McsIcon type="plus" /> <FormattedMessage {...messages.newSegment} />
           </Button>
         </Dropdown>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcon type="download" />}<FormattedMessage id="EXPORT" />
+          {!exportIsRunning && <McsIcon type="download" />}<FormattedMessage {...messages.export} />
         </Button>
       </Actionbar>
     );
@@ -194,24 +217,17 @@ class SegmentsActionbar extends Component {
 
 }
 
-SegmentsActionbar.propTypes = {
-  match: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
-  defaultDatamart: PropTypes.func.isRequired,
-  translations: PropTypes.shape().isRequired,
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   translations: state.translations,
-  defaultDatamart: getDefaultDatamart(state),
 });
 
 
-SegmentsActionbar = compose(
+export default compose<Props, {}>(
   withRouter,
+  injectIntl,
+  injectDatamart,
+  injectNotifications,
   connect(
     mapStateToProps,
   ),
 )(SegmentsActionbar);
-
-export default SegmentsActionbar;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, message } from 'antd';
-import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
@@ -9,14 +8,8 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
-import * as AudienceSegmentActions from '../../../../state/Audience/Segments/actions';
-import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import ExportService from '../../../../services/ExportService';
-import {
-  getAudienceSegmentPerformance,
-  getOverlapView,
-} from '../../../../state/Audience/Segments/selectors';
 
 import exportMessages from '../../../../common/messages/exportMessages';
 import segmentMessages from './messages';
@@ -312,26 +305,10 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  defaultDatamart: getDefaultDatamart(state),
-  overlapView: getOverlapView(state),
-  segmentData: getAudienceSegmentPerformance(state),
-});
-
-const mapDispatchToProps = {
-  loadAudienceSegmentSingleDataSource:
-    AudienceSegmentActions.loadAudienceSegmentSingleDataSource,
-  createOverlapAnalysis:
-    AudienceSegmentActions.createAudienceSegmentOverlap.request,
-  exportAudienceSegmentDashboard:
-    AudienceSegmentActions.exportAudienceSegmentDashboard.request,
-};
-
 export default compose<Props, AudienceSegmentActionbarProps>(
   withRouter,
   injectIntl,
   injectNotifications,
-  connect(mapStateToProps, mapDispatchToProps),
   injectDrawer,
   injectDatamart,
 )(AudienceSegmentActionbar);
