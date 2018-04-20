@@ -1,56 +1,120 @@
 import * as React from 'react';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 // TS Interface
+import { message } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
-import { FormItemProps } from 'antd/lib/form/FormItem';
-import { InputProps } from 'antd/lib/input/Input';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import FormFieldWrapper, {
+  FormFieldWrapperProps,
+} from '../../components/Form/FormFieldWrapper';
+import { compose } from 'recompose';
 
-import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
+const messages = defineMessages({
+  pixelSectionCodeSnippetCopied: {
+    id: 'pixel.section.codesnippetcopied',
+    defaultMessage: 'Code snippet copied',
+  },
+  pixelSectionCodeSnippet: {
+    id: 'pixel.section.codesnippet',
+    defaultMessage: 'Code Snippet',
+  },
+  pixelSectionCodeSnippetIndication: {
+    id: 'pixel.section.codesnippet.indication',
+    defaultMessage:
+      'The code snippet to copy on your web page for custom intergration',
+  },
+  pixelSectionCodeSnippetTooltipHover: {
+    id: 'pixel.section.codesnippet.tooltiphover',
+    defaultMessage: 'Click to copy',
+  },
+  pixelSectionCodeSnippetCodeCopied: {
+    id: 'pixel.section.codesnippet.code.copied',
+    defaultMessage: 'Code snippet copied',
+  },
+});
 
 export interface FormCodeSnippetProps extends FormFieldWrapperProps {
   language: string;
   codeSnippet: string;
-  formItemProps?: FormItemProps;
-  inputProps?: InputProps;
-  helpToolTipProps?: TooltipProps;
-  hoverToolTipProps?: TooltipProps;
+  copyToClipboard?: boolean;
 }
 
-const FormCodeSnippet: React.SFC<FormCodeSnippetProps & WrappedFieldProps> = props => {
+type Props = FormCodeSnippetProps & InjectedIntlProps;
 
-  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
+  let validateStatus = 'success' as
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'validating';
 
-  if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
-  if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
+  if (props.meta && props.meta.touched && props.meta.invalid)
+    validateStatus = 'error';
+  if (props.meta && props.meta.touched && props.meta.warning)
+    validateStatus = 'warning';
+
+  // const encodeSnippet = () => {
+  //   let uri = '';
+  //   if (userListTechName) {
+  //     uri = ;
+  //   }
+
+  //   return uri;
+  // };
+
+  const handleOnClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    message.info(
+      props.intl.formatMessage(messages.pixelSectionCodeSnippetCodeCopied),
+    );
+  };
+
+  const codeSnippetFieldProps = {
+    formItemProps: {
+      label: props.intl.formatMessage(messages.pixelSectionCodeSnippet),
+    },
+    helpToolTipProps: {
+      title: props.intl.formatMessage(
+        messages.pixelSectionCodeSnippetIndication,
+      ),
+    },
+    hoverToolTipProps: {
+      title: props.intl.formatMessage(
+        messages.pixelSectionCodeSnippetTooltipHover,
+      ),
+    },
+  };
 
   return (
     <div>
       <FormFieldWrapper
-        help={props.meta.touched && (props.meta.warning || props.meta.error)}
+        help={
+          props.meta &&
+          props.meta.touched &&
+          (props.meta.warning || props.meta.error)
+        }
         helpToolTipProps={props.helpToolTipProps}
         hoverToolTipProps={props.hoverToolTipProps}
         validateStatus={validateStatus}
-        {...props.formItemProps}        
+        {...codeSnippetFieldProps.formItemProps}
       >
-        <SyntaxHighlighter language={props.language} style={docco}
-          id={props.input.name}
-          {...props.input}
-          {...props.inputProps}
-        >
-          {props.codeSnippet}
-        </SyntaxHighlighter>
+        <CopyToClipboard onCopy={handleOnClick} text={props.codeSnippet}>
+          <div style={{ cursor: 'pointer' }}>
+            <SyntaxHighlighter
+              language={props.language}
+              style={docco}
+              {...props.input}
+            >
+              {props.codeSnippet}
+            </SyntaxHighlighter>
+          </div>
+        </CopyToClipboard>
       </FormFieldWrapper>
     </div>
   );
 };
 
-FormCodeSnippet.defaultProps = {
-  formItemProps: {},
-  inputProps:{},
-  helpToolTipProps: {},
-
-};
-
-export default FormCodeSnippet;
+export default compose<Props, FormCodeSnippetProps>(injectIntl)(
+  FormCodeSnippet,
+);

@@ -6,8 +6,12 @@ import {
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
-import { Radio, Button, Row, Col, message } from 'antd';
-import { FormSection } from '../../../../../components/Form';
+import { Button, Row, Col, message } from 'antd';
+import {
+  FormSection,
+  FormRadioGroupField,
+  FormRadioGroup,
+} from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
@@ -25,7 +29,7 @@ import { Field } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { GoalFormData } from '../domain';
-import PixelSection from '../../../../../components/PixelSection';
+import FormCodeSnippet from '../../../../../components/Form/FormCodeSnippet';
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 
@@ -97,10 +101,7 @@ class TriggerFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      pixelSectionVisible:
-        this.props.initialValues.triggerMode !== 'QUERY' ||
-        (!!this.props.initialValues.goal &&
-          !this.props.initialValues.goal.new_query_id),
+      pixelSectionVisible: this.props.initialValues.triggerMode === 'PIXEL',
       editQueryMode: false,
       queryContainer: this.props.initialValues.queryContainer,
       queryContainerCopy: undefined,
@@ -110,7 +111,9 @@ class TriggerFormSection extends React.Component<Props, State> {
   renderPropertiesField = () => {
     const {
       datamart,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl,
     } = this.props;
 
@@ -153,9 +156,7 @@ class TriggerFormSection extends React.Component<Props, State> {
         }}
       />
     ) : (
-      <SelectorQLReadOnly
-        queryContainer={this.state.queryContainer}
-      />
+      <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
     );
   };
 
@@ -177,16 +178,18 @@ class TriggerFormSection extends React.Component<Props, State> {
   };
 
   updateQueryContainerAndCloseEditMode = () => {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        queryContainer: prevState.queryContainerCopy,
-        editQueryMode: false,
-      };
-    }, () => {
-      this.props.formChange('queryContainer', this.state.queryContainer);
-    });
-   
+    this.setState(
+      prevState => {
+        return {
+          ...prevState,
+          queryContainer: prevState.queryContainerCopy,
+          editQueryMode: false,
+        };
+      },
+      () => {
+        this.props.formChange('queryContainer', this.state.queryContainer);
+      },
+    );
   };
 
   switchEditMode = () => {
@@ -200,7 +203,7 @@ class TriggerFormSection extends React.Component<Props, State> {
     this.setState({
       editQueryMode: false,
     });
-  }
+  };
 
   closeEditMode = () => {
     this.setState({
@@ -211,7 +214,9 @@ class TriggerFormSection extends React.Component<Props, State> {
   displayPixelSection = () => {
     const {
       intl: { formatMessage },
-      match: { params: { goalId } },
+      match: {
+        params: { goalId },
+      },
       datamart,
     } = this.props;
     return (
@@ -223,9 +228,12 @@ class TriggerFormSection extends React.Component<Props, State> {
             {formatMessage(messages.triggerPixelModalMessage)}
             <br />
             <br />
-            <PixelSection
-              datamartToken={datamart.token}
-              goalId={goalId || this.props.goalId}
+            <FormCodeSnippet
+              language="html"
+              codeSnippet={`"https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
+                datamart.token
+              }&$goal_id=${goalId || this.props.goalId}"`}
+              copyToClipboard={true}
             />
           </div>
         ) : (
@@ -236,7 +244,29 @@ class TriggerFormSection extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    const radioOptions = [
+      {
+        checked: !this.state.pixelSectionVisible,
+        label: formatMessage(messages.formCheckBoxText1),
+        value: 'QUERY',
+      },
+      {
+        checked: this.state.pixelSectionVisible,
+        disabled:
+          !!this.props.initialValues.goal &&
+          !!this.props.initialValues.goal.new_query_id,
+        label: formatMessage(messages.formCheckBoxText2),
+        value: 'PIXEL',
+      },
+    ];
+
+    const radioGroupProps = {
+      onChange: this.toggleSections,
+    };
 
     return (
       <div>
@@ -246,7 +276,13 @@ class TriggerFormSection extends React.Component<Props, State> {
         />
         <Row style={{ paddingBottom: '24px' }}>
           <Col span={24}>
-            <Radio
+            <FormRadioGroupField
+              name="triggerMode"
+              component={FormRadioGroup}
+              options={radioOptions}
+              radioGroupProps={radioGroupProps}
+            />
+            {/* <Radio
               checked={!this.state.pixelSectionVisible}
               onChange={this.toggleSections}
             >
@@ -261,7 +297,7 @@ class TriggerFormSection extends React.Component<Props, State> {
               }
             >
               {formatMessage(messages.formCheckBoxText2)}
-            </Radio>
+            </Radio> */}
           </Col>
         </Row>
         <Row>

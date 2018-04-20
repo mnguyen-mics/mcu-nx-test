@@ -45,14 +45,13 @@ import AudienceExternalFeedSection, {
 import AudienceTagFeedSection, {
   AudienceTagFeedSectionProps,
 } from './Sections/AudienceTagFeedSection';
-import PixelSection from '../../../../components/PixelSection';
 import { UserListSection } from './Sections/list';
 
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Datamart } from '../../../../models/organisation/organisation';
 import { FormSection, FieldCtor } from '../../../../components/Form';
-
+import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 import { Path } from '../../../../components/ActionBar';
 
@@ -112,7 +111,9 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       segmentType,
       datamart,
       queryLanguage,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl,
     } = this.props;
     switch (segmentType) {
@@ -125,11 +126,15 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         );
       case 'USER_PIXEL':
         return (
-          <PixelSection
-            datamartToken={datamart.token}
-            userListTechName={
-              this.props.audienceSegmentFormData.audienceSegment.technical_name
-            }
+          <FormCodeSnippet
+            language="html"
+            codeSnippet={`"https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
+              datamart.token
+            }&user_list_tech_name=${encodeURIComponent(
+              this.props.audienceSegmentFormData.audienceSegment
+                .technical_name || '',
+            )}"`}
+            copyToClipboard={true}
           />
         );
       case 'USER_QUERY':

@@ -3,8 +3,7 @@ import FormBoolean, { FormBooleanProps } from './FormBoolean';
 import FormCheckbox, { FormCheckboxProps } from './FormCheckbox';
 import FormDatePicker, { FormDatePickerProps } from './FormDatePicker';
 import FormFieldWrapper from './FormFieldWrapper';
-import FormRadio from './FormRadio';
-import FormRadioGroup from './FormRadioGroup';
+import FormRadioGroup, { FormRadioGroupProps } from './FormRadioGroup';
 import FormRangePicker from './FormRangePicker/index';
 import FormSection from './FormSection';
 import FormTitle from './FormTitle';
@@ -31,7 +30,6 @@ export default {
   FormCheckbox,
   FormDatePicker,
   FormFieldWrapper,
-  FormRadio,
   FormRadioGroup,
   FormRangePicker,
   FormDateRangePicker,
@@ -59,7 +57,6 @@ export {
   FormFieldWrapper,
   FormInput,
   FormBoolean,
-  FormRadio,
   FormRadioGroup,
   FormRangePicker,
   FormDateRangePicker,
@@ -88,3 +85,4 @@ export const FormSwitchField = Field as new() => GenericField<FormSwitchProps>;
 export const FormDateRangePickerField = Field as new() => GenericField<FormDateRangePickerProps>;
 export const FormCheckboxField = Field as new() => GenericField<FormCheckboxProps>;
 export const FormBooleanField = Field as new() => GenericField<FormBooleanProps>;
+export const FormRadioGroupField = Field as new() => GenericField<FormRadioGroupProps>;

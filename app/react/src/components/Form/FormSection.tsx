@@ -29,7 +29,7 @@ class FormSection extends React.Component<FormSectionProps> {
     const displayOptions =
       dropdownItems &&
       dropdownItems.map(item => (
-        <Menu.Item key={item.id}>
+        <Menu.Item key={item.id} disabled={item.disabled}>
           <FormattedMessage {...item.message} />
         </Menu.Item>
       ));
