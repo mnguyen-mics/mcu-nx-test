@@ -26,7 +26,7 @@ import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
 import { McsIcon } from '../../../../../components/index';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import EditAdGroupsForm, {
   EditAdGroupsFormProps,
@@ -85,7 +85,7 @@ interface AdGroupCardState {
 
 type JoinedProps = AdGroupCardProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedNotificationProps &
   InjectedIntlProps;
 

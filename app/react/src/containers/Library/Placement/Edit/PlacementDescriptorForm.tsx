@@ -27,7 +27,7 @@ import {
 } from '../../../../components/Form';
 import DefaultSelect from '../../../../components/Form/FormSelect/DefaultSelect';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -131,7 +131,7 @@ export interface PlacementDescriptorFormProps {
 }
 
 type JoinedProps = PlacementDescriptorFormProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedFormProps<PlacementDescriptorResource, PlacementDescriptorFormProps> &
   InjectedIntlProps &
   ValidatorProps &

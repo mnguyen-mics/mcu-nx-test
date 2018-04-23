@@ -81,6 +81,8 @@
   "NEW_SEGMENT": "New Segment",
   "USER_LIST": "List",
   "USER_PIXEL": "Pixel",
+  "USER_PARTITION": "Partitions",
+  "USER_LOOKALIKE": "User Lookalike",
   "USER_QUERY": "Query",
   "AUDIENCE_SEGMENTS": "Segments",
   "AUDIENCE_PARTITIONS": "Partitions",

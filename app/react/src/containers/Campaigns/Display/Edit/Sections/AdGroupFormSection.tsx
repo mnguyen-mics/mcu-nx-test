@@ -16,14 +16,14 @@ import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import AdGroupForm, { AdGroupFormProps } from '../AdGroup/AdGroupForm';
 import { AdGroupFieldModel } from '../domain';
 import { AdGroupFormData, INITIAL_AD_GROUP_FORM_DATA } from '../AdGroup/domain';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
 export interface AdGroupFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<AdGroupFieldModel> &
   AdGroupFormSectionProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AdGroupFormSection extends React.Component<Props> {

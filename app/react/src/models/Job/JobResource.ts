@@ -8,7 +8,8 @@ export interface PublicJobExecutionResource {
     user_id?: string,
     debug?: string,
     num_tasks?: number,
-    completed_tasks?: number,    
+    completed_tasks?: number,
+    external_model_name: ExternalModelName,
 }
 
 export interface BaseExecutionResource<I, R> extends PublicJobExecutionResource {

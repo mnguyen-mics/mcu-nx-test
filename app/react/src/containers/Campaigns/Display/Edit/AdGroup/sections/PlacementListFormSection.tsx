@@ -17,13 +17,13 @@ import RelatedRecords from '../../../../../../components/RelatedRecord/RelatedRe
 import FormSection from '../../../../../../components/Form/FormSection';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
 export interface PlacementListFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = PlacementListFormSectionProps &
   InjectedIntlProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   WrappedFieldArrayProps<PlacementListFieldModel>;
 
 class PlacementListFormSection extends React.Component<Props> {

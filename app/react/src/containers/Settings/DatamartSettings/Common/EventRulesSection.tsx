@@ -12,7 +12,7 @@ import RecordElement from '../../../../components/RelatedRecord/RecordElement';
 
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 
 import EventRulesForm, {
   EventRulesFormProps,
@@ -24,7 +24,7 @@ export interface EventRulesSectionProps extends ReduxFormChangeProps {}
 type Props = EventRulesSectionProps &
   WrappedFieldArrayProps<EventRuleFieldModel> &
   InjectedIntlProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 const messages = defineMessages({
   dropdownCatalogAutoMatch: {

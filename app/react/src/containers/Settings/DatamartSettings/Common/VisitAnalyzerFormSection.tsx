@@ -27,14 +27,14 @@ import {
   makeCancelable,
   CancelablePromise,
 } from '../../../../utils/ApiHelper';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 
 export interface VisitAnalyzerSectionProps extends ReduxFormChangeProps {}
 
 type Props = VisitAnalyzerSectionProps &
   WrappedFieldArrayProps<VisitAnalyzerFieldModel> &
   InjectedIntlProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 interface State {
   visitAnalyzerData: {

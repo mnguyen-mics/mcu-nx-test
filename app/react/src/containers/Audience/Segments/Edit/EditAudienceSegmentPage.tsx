@@ -89,9 +89,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   countDefaultLifetime = (
     audienceSegment: AudienceSegmentShape,
   ): {
-    defaultLiftime?: number;
-    defaultLiftimeUnit?: DefaultLiftimeUnit;
-  } => {
+      defaultLiftime?: number;
+      defaultLiftimeUnit?: DefaultLiftimeUnit;
+    } => {
     let lifetime = moment
       .duration(audienceSegment.default_ttl, 'milliseconds')
       .asMonths();
@@ -137,76 +137,76 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     if (segmentId) {
       const getSegment: Promise<
         DataResponse<AudienceSegmentShape>
-      > = AudienceSegmentService.getSegment(segmentId).then(res => {
-        if (res.data.type === 'USER_QUERY' && res.data.query_id) {
-          QueryService.getQuery(datamart.id, res.data.query_id)
-            .then(r => r.data)
-            .then(r => {
-              const QueryContainer = (window as any).angular
-                .element(document.body)
-                .injector()
-                .get('core/datamart/queries/QueryContainer');
-              const defQuery = new QueryContainer(props.datamart.id, r.id);
-              defQuery.load();
-              this.setState({
-                queryLanguage: r.query_language as QueryLanguage,
-                queryContainer: defQuery,
-                audienceSegmentFormData: {
-                  ...this.state.audienceSegmentFormData,
-                  query: r,
-                },
+        > = AudienceSegmentService.getSegment(segmentId).then(res => {
+          if (res.data.type === 'USER_QUERY' && res.data.query_id) {
+            QueryService.getQuery(datamart.id, res.data.query_id)
+              .then(r => r.data)
+              .then(r => {
+                const QueryContainer = (window as any).angular
+                  .element(document.body)
+                  .injector()
+                  .get('core/datamart/queries/QueryContainer');
+                const defQuery = new QueryContainer(props.datamart.id, r.id);
+                defQuery.load();
+                this.setState({
+                  queryLanguage: r.query_language as QueryLanguage,
+                  queryContainer: defQuery,
+                  audienceSegmentFormData: {
+                    ...this.state.audienceSegmentFormData,
+                    query: r,
+                  },
+                });
               });
-            });
-        }
-        return res;
-      });
+          }
+          return res;
+        });
 
       const getExternalFeed: Promise<
         AudienceExternalFeedResource[]
-      > = AudienceSegmentService.getAudienceExternalFeeds(segmentId)
-        .then(res => res.data)
-        .then(res => {
-          return Promise.all(
-            res.map(plugin =>
-              AudienceSegmentService.getAudienceExternalFeedProperty(
-                segmentId,
-                plugin.id,
-              )
-                .then(r => r.data)
-                .then(r => {
-                  return {
-                    ...plugin,
-                    status:
-                      (plugin.status as any) === 'INITIAL'
-                        ? 'PAUSED'
-                        : plugin.status,
-                    properties: r,
-                  };
-                }),
-            ),
-          );
-        });
+        > = AudienceSegmentService.getAudienceExternalFeeds(segmentId)
+          .then(res => res.data)
+          .then(res => {
+            return Promise.all(
+              res.map(plugin =>
+                AudienceSegmentService.getAudienceExternalFeedProperty(
+                  segmentId,
+                  plugin.id,
+                )
+                  .then(r => r.data)
+                  .then(r => {
+                    return {
+                      ...plugin,
+                      status:
+                        (plugin.status as any) === 'INITIAL'
+                          ? 'PAUSED'
+                          : plugin.status,
+                      properties: r,
+                    };
+                  }),
+              ),
+            );
+          });
       const getTagFeed: Promise<
         AudienceTagFeedResource[]
-      > = AudienceSegmentService.getAudienceTagFeeds(segmentId)
-        .then(res => res.data)
-        .then(res => {
-          return Promise.all(
-            res.map(plugin =>
-              AudienceSegmentService.getAudienceTagFeedProperty(
-                segmentId,
-                plugin.id,
-              )
-                .then(r => r.data)
-                .then(r => {
-                  return {
-                    ...plugin,
-                    properties: r,
-                  };
-                }),
-            ),
-          );
-        });
+        > = AudienceSegmentService.getAudienceTagFeeds(segmentId)
+          .then(res => res.data)
+          .then(res => {
+            return Promise.all(
+              res.map(plugin =>
+                AudienceSegmentService.getAudienceTagFeedProperty(
+                  segmentId,
+                  plugin.id,
+                )
+                  .then(r => r.data)
+                  .then(r => {
+                    return {
+                      ...plugin,
+                      properties: r,
+                    };
+                  }),
+              ),
+            );
+          });
 
       Promise.all([getSegment, getExternalFeed, getTagFeed])
         .then(res =>
@@ -228,7 +228,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             };
             return newStat;
           }),
-        )
+      )
         .catch(err => {
           props.notifyError(err);
           this.setState({ loading: false });
@@ -255,10 +255,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     message.error(intl.formatMessage(messages.errorFormMessage));
   };
 
-  redirectToSegmentList = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+  onClose = () => {
+    const { history, match: { params: { organisationId } }, location } = this.props;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/audience/segments`;
 
-    return history.push(`/v2/o/${organisationId}/audience/segments`);
+    return location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(defaultRedirectUrl);
   };
 
   generateCreatePromise = (
@@ -384,7 +387,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       sid =>
         sid && !savedIds.includes(sid)
           ? () =>
-              AudienceSegmentService.deleteAudienceExternalFeeds(segmentId, sid)
+            AudienceSegmentService.deleteAudienceExternalFeeds(segmentId, sid)
           : () => Promise.resolve(),
     );
     return [...saveCreatePromise, ...deletePromise];
@@ -470,13 +473,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     return queryLanguage === 'OTQL'
       ? QueryService.updateQuery(datamart.id, queryId, {
-          query_language: queryLanguage,
-          query_text: (audienceSegmentFormData.query as QueryResource)
-            .query_text,
-          datamart_id: datamart.id,
-        })
-          .then(res => res.data)
-          .then(res => res.id)
+        query_language: queryLanguage,
+        query_text: (audienceSegmentFormData.query as QueryResource)
+          .query_text,
+        datamart_id: datamart.id,
+      })
+        .then(res => res.data)
+        .then(res => res.id)
       : queryContainer.saveOrUpdate().then(() => queryContainer.id);
   };
 
@@ -489,13 +492,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     return queryLanguage === 'OTQL'
       ? QueryService.createQuery(datamart.id, {
-          query_language: 'OTQL',
-          query_text: (audienceSegmentFormData.query as QueryResource)
-            .query_text,
-          datamart_id: datamart.id,
-        })
-          .then(res => res.data)
-          .then(res => res.id)
+        query_language: 'OTQL',
+        query_text: (audienceSegmentFormData.query as QueryResource)
+          .query_text,
+        datamart_id: datamart.id,
+      })
+        .then(res => res.data)
+        .then(res => res.id)
       : queryContainer.saveOrUpdate().then(() => queryContainer.id);
   };
 
@@ -511,7 +514,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         )
           .then(res =>
             this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData),
-          )
+        )
           .then(rest => {
             if (audienceSegmentFormData.userListFiles !== undefined) {
               Promise.all(
@@ -521,7 +524,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                   return AudienceSegmentService.importUserListForOneSegment(
                     audienceSegmentFormData.audienceSegment
                       .datamart_id as string,
-                      audienceSegmentFormData.audienceSegment
+                    audienceSegmentFormData.audienceSegment
                       .id as string,
                     formData,
                   );
@@ -548,7 +551,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           })
           .then(res =>
             this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData),
-          );
+        );
       default:
         return Promise.resolve();
     }
@@ -569,7 +572,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           .duration(
             Number(formData.defaultLiftime),
             formData.defaultLiftimeUnit,
-          )
+        )
           .asMilliseconds();
       }
       return undefined;
@@ -653,7 +656,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         .then(response => {
           hideSaveInProgress();
           this.setState({ loading: false });
-          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit` ;
+          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit`;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {
@@ -692,10 +695,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const audienceSegmentName =
       audienceSegmentFormData.audienceSegment &&
-      audienceSegmentFormData.audienceSegment.name
+        audienceSegmentFormData.audienceSegment.name
         ? formatMessage(messagesMap.breadcrumbEditAudienceSegment, {
-            name: audienceSegmentFormData.audienceSegment.name,
-          })
+          name: audienceSegmentFormData.audienceSegment.name,
+        })
         : formatMessage(messages.audienceSegmentBreadCrumb);
 
     const breadcrumbPaths = [
@@ -714,13 +717,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const getQueryLanguageToDisplay =
       this.state.audienceSegmentFormData.query &&
-      this.state.audienceSegmentFormData.query.query_language
+        this.state.audienceSegmentFormData.query.query_language
         ? this.state.audienceSegmentFormData.query.query_language
         : this.state.queryLanguage;
     return (
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
-        close={this.redirectToSegmentList}
+        close={this.onClose}
         onSubmit={this.save}
         breadCrumbPaths={breadcrumbPaths}
         audienceSegmentFormData={this.state.audienceSegmentFormData}

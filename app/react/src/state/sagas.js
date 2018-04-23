@@ -7,7 +7,6 @@ import { displayCampaignsSagas } from './Campaigns/Display/sagas';
 import { goalsSagas } from './Campaigns/Goal/sagas';
 import { forgotPasswordSagas } from './ForgotPassword/sagas';
 import { automationsSagas } from './Automations/sagas';
-import { segmentsSagas } from './Audience/Segments/sagas';
 import { partitionsSagas } from './Audience/Partitions/sagas';
 import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
@@ -26,7 +25,6 @@ export default function* sagas() {
     ...displayCampaignsSagas,
     ...goalsSagas,
     ...automationsSagas,
-    ...segmentsSagas,
     ...versionSagas,
     ...labelsSagas,
     ...partitionsSagas,

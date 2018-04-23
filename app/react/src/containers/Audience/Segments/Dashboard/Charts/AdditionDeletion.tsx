@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
@@ -15,33 +14,34 @@ import { StackedBarCharts } from '../../../../../components/BarCharts/index';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
 
-import { SEGMENT_QUERY_SETTINGS } from '../constants';
+import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 
 import {
   updateSearch,
   parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
-import { getAudienceSegmentPerformance } from '../../../../../state/Audience/Segments/selectors';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import { RouteComponentProps } from 'react-router';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 const StackedBarChartsJS = StackedBarCharts as any;
 
-interface MapStateToProps {
-  hasFetchedAudienceStat: boolean;
-  dataSource: any[];
+interface AdditionDeletionProps {
+  isFetching: boolean;
+  dataSource: AudienceReport;
 }
 
-type AdditionDeletionProps = MapStateToProps &
+type Props = AdditionDeletionProps &
   InjectedThemeColorsProps &
+  InjectedIntlProps &
   TranslationProps &
   RouteComponentProps<{}>;
 
-class AdditionDeletion extends React.Component<AdditionDeletionProps> {
+class AdditionDeletion extends React.Component<Props> {
   updateLocationSearch(params: McsDateRangeValue) {
     const {
       history,
@@ -76,15 +76,14 @@ class AdditionDeletion extends React.Component<AdditionDeletionProps> {
   }
 
   renderStackedAreaCharts() {
-    const { dataSource, hasFetchedAudienceStat, colors } = this.props;
+    const { dataSource, isFetching, colors } = this.props;
 
-    const formattedDataSource = dataSource.map(item => {
+    const formattedDataSource = dataSource.length && dataSource.map(item => {
       return {
         ...item,
         user_point_deletions: -item.user_point_deletions,
       };
     });
-
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
@@ -93,7 +92,7 @@ class AdditionDeletion extends React.Component<AdditionDeletionProps> {
       ],
       colors: [colors['mcs-success'], colors['mcs-error']],
     };
-    return hasFetchedAudienceStat ? (
+    return !isFetching ? (
       <StackedBarChartsJS
         identifier="StackedBarCharAdditionDeletion"
         dataset={formattedDataSource}
@@ -106,19 +105,19 @@ class AdditionDeletion extends React.Component<AdditionDeletionProps> {
 
   render() {
     const {
-      translations,
       dataSource,
-      hasFetchedAudienceStat,
+      isFetching,
       colors,
+      intl,
     } = this.props;
 
     const options = [
       {
-        domain: translations['user_point_additions'.toUpperCase()],
+        domain: intl.formatMessage(messages.USER_POINT_ADDITIONS),
         color: colors['mcs-success'],
       },
       {
-        domain: translations['user_point_deletions'.toUpperCase()],
+        domain: intl.formatMessage(messages.USER_POINT_DELETIONS),
         color: colors['mcs-error'],
       },
     ];
@@ -127,7 +126,7 @@ class AdditionDeletion extends React.Component<AdditionDeletionProps> {
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {dataSource.length === 0 && hasFetchedAudienceStat ? (
+            {dataSource.length === 0 && isFetching ? (
               <div />
             ) : (
               <LegendChart
@@ -140,8 +139,8 @@ class AdditionDeletion extends React.Component<AdditionDeletionProps> {
             <span className="mcs-card-button">{this.renderDatePicker()}</span>
           </Col>
         </Row>
-        {dataSource.length === 0 && hasFetchedAudienceStat ? (
-          <EmptyCharts title={translations.NO_EMAIL_STATS} />
+        {dataSource.length === 0 && !isFetching ? (
+          <EmptyCharts title={intl.formatMessage(messages.noAdditionDeletion)} />
         ) : (
           this.renderStackedAreaCharts()
         )}
@@ -150,15 +149,8 @@ class AdditionDeletion extends React.Component<AdditionDeletionProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-  hasFetchedAudienceStat:
-    state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
-  dataSource: getAudienceSegmentPerformance(state),
-});
-
-export default compose<{}, {}>(
+export default compose<Props, AdditionDeletionProps>(
   withRouter,
-  connect(mapStateToProps),
+  injectIntl,
   injectThemeColors,
 )(AdditionDeletion);

@@ -25,7 +25,7 @@ import {
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import messages from '../messages';
 import DisplayCampaignFormService from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
@@ -73,7 +73,7 @@ interface DisplayCampaignsPageState {
 
 type JoinedProps = DisplayCampaignsPageProps &
   InjectedIntlProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   MapDispatchToProps &
   MapStateToProps &
   InjectedNotificationProps &

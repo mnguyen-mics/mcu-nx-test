@@ -1,7 +1,7 @@
 import XLSX from 'xlsx';
 import displayCampaignMessages from '../containers/Campaigns/Display/messages';
 import emailCampaignMessages from '../containers/Campaigns/Email/messages.ts';
-import segmentMessages from '../containers/Audience/Segments/Dashboard/messages';
+import segmentMessages from '../containers/Audience/Segments/Dashboard/messages.ts';
 import dateMessages from '../common/messages/dateMessages';
 import exportMessages from '../common/messages/exportMessages';
 import log from '../utils/Logger';
@@ -441,8 +441,8 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   if (filter.keywords) {
     dataSheet.push(['Search keywords', filter.keywords]);
   }
-  if (filter.types.length > 0) {
-    dataSheet.push(['Displayed types', filter.statuses.join(', ')]);
+  if (filter.type.length > 0) {
+    dataSheet.push(['Displayed types', filter.type.join(', ')]);
   }
 
   dataSheet.push(blankLine);

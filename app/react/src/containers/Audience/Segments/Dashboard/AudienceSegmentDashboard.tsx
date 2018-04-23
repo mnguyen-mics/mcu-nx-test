@@ -1,40 +1,43 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { Card } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { EditAudienceSegmentParam } from '../Edit/domain';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import UserListImportCard from './UserListImportCard';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
-import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { AudienceSegmentShape, AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import ReportService, { Filter } from '../../../../services/ReportService';
+import McsMoment from '../../../../utils/McsMoment';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { parseSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
+import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
 
 interface State {
   audienceSegment?: AudienceSegmentShape;
   loading: boolean;
+  counter: {
+    report: AudienceReport,
+    isLoading: boolean
+  },
+  dashboard: {
+    report: AudienceReport,
+    isLoading: boolean
+  }
 }
 
-interface MapStateToProps {
-  segment: {
-    report_view: Array<{
-      day: string;
-      user_points: number;
-      user_accounts: number;
-      emails: number;
-      desktop_cookie_ids: number;
-    }>;
-  };
-  isFetching: boolean;
+export interface AudienceSegmentDashboardProps {
+  segment: AudienceSegmentResource | null;
+  isLoading: boolean;
 }
 
-type Props = MapStateToProps &
+type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
@@ -44,55 +47,109 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     super(props);
     this.state = {
       loading: true,
+      counter: {
+        isLoading: true,
+        report: []
+      },
+      dashboard: {
+        isLoading: true,
+        report: []
+      }
     };
   }
 
   componentDidMount() {
 
-    this.setState({ loading: true });
-    
-    const { match: { params: { segmentId } } } = this.props;
+    const { match: { params: { segmentId, organisationId } }, location: { search }, } = this.props;
 
     if (segmentId) {
-      AudienceSegmentService.getSegment(segmentId)
-        .then(res => {
-          this.setState({
-            audienceSegment: res.data,
-            loading:false,
-          });
-        })
-        .catch(err => {
-          this.props.notifyError(err);
-          this.setState({ loading: false });
-        });
+      const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
+      this.fetchCounterView(organisationId, [{
+        name: 'audience_segment_id',
+        value: segmentId
+      }])
+      this.fetchDashboardView(organisationId,
+        filters.from,
+        filters.to,
+        [{
+          name: 'audience_segment_id',
+          value: segmentId
+        }]
+      )
     }
   }
 
+
+  componentWillReceiveProps(nextProps: Props) {
+
+    const { match: { params: { segmentId } }, location: { search }, } = this.props;
+    const { match: { params: { segmentId: nextSegmentId, organisationId: nextOrganisationId } }, location: { search: nextSearch }, } = nextProps;
+
+    if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId) {
+      const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
+      this.fetchCounterView(nextOrganisationId, [{
+        name: 'audience_segment_id',
+        value: nextSegmentId
+      }])
+      this.fetchDashboardView(nextOrganisationId,
+        nextFilters.from,
+        nextFilters.to,
+        [{
+          name: 'audience_segment_id',
+          value: nextSegmentId
+        }]
+      )
+    }
+  }
+
+  fetchCounterView = (organisationId: string, filters: Filter[]) => {
+    return ReportService.getAudienceSegmentReport(
+      organisationId,
+      new McsMoment('now'),
+      new McsMoment('now'),
+      ['day'],
+      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
+      filters,
+    ).then(res => this.setState({ counter: { isLoading: false, report: normalizeReportView(res.data.report_view) } }))
+
+  }
+
+  fetchDashboardView = (organisationId: string, from: McsMoment, to: McsMoment, filters: Filter[]) => {
+    return ReportService.getAudienceSegmentReport(
+      organisationId,
+      from,
+      to,
+      ['day'],
+      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'],
+      filters,
+    ).then(res => this.setState({ dashboard: { isLoading: false, report: normalizeReportView(res.data.report_view) } }))
+
+  }
+
+
   render() {
-    
-    const { segment, intl, isFetching } = this.props;
+
+    const { intl } = this.props;
+    const { counter, dashboard } = this.state
 
     const getLoadingValue = (
       key: 'user_points' | 'user_accounts' | 'emails' | 'desktop_cookie_ids',
     ) => {
-      const value =
-        segment &&
-        segment.report_view &&
-        segment.report_view[0] &&
-        segment.report_view[0][key];
+
+      const value = !counter.isLoading && counter.report && counter.report[0] ? counter.report[0][key] : undefined
       return {
         value,
-        loading: isFetching,
+        loading: counter.isLoading,
       };
     };
     const items = [
       {
         title: intl.formatMessage(messages.overview),
-        display: <Overview />,
+        display: <Overview isFetching={dashboard.isLoading} dataSource={dashboard.report} />,
       },
       {
         title: intl.formatMessage(messages.additionDeletion),
-        display: <AdditionDeletion />,
+        display: <AdditionDeletion isFetching={dashboard.isLoading} dataSource={dashboard.report} />,
       },
       {
         title: intl.formatMessage(messages.overlap),
@@ -128,17 +185,10 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  segment:
-    state.audienceSegmentsTable.audienceSegmentsSingleApi.audienceSegment,
-  isFetching: state.audienceSegmentsTable.audienceSegmentsSingleApi.isFeching,
-});
-
-export default compose(
+export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
   injectNotifications,
-  connect(mapStateToProps),
 )(AudienceSegmentDashboard);
 
 const messages = defineMessages({

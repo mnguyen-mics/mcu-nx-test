@@ -31,7 +31,7 @@ import McsMoment from '../../../../../../../utils/McsMoment';
 import FormSwitch from '../../../../../../../components/Form/FormSwitch';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../../components/Drawer/';
-import { InjectDrawerProps } from '../../../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../../../components/Drawer/injectDrawer';
 
 export interface AudienceSegmentFormSectionProps extends ReduxFormChangeProps {}
 
@@ -44,7 +44,7 @@ type Props = WrappedFieldArrayProps<SegmentFieldModel> &
   InjectedIntlProps &
   AudienceSegmentFormSectionProps &
   RouteComponentProps<EditAdGroupRouteMatchParam> &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 class AudienceSegmentFormSection extends React.Component<Props, State> {
   constructor(props: Props) {

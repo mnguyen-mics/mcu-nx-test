@@ -18,14 +18,14 @@ import messages from '../../messages';
 import { TemplateFieldModel } from '../../domain';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
 export interface TemplateFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<TemplateFieldModel> &
   TemplateFormSectionProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class TemplateFormSection extends React.Component<Props> {

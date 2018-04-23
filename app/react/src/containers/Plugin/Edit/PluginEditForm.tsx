@@ -18,7 +18,7 @@ import { PluginFieldGenerator } from '../../Plugin';
 import { Omit } from '../../../utils/Types';
 
 import messages from './messages';
-import { InjectDrawerProps } from '../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../components/Drawer/index';
 import { ButtonStyleless, McsIcon } from '../../../components'
 
@@ -43,7 +43,7 @@ type JoinedProps = PluginEditFormProps &
   InjectedFormProps &
   ValidatorProps &
   InjectedIntlProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 interface PluginEditFormState {
   loading: boolean;
