@@ -65,14 +65,21 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
     const { onSelect } = this.props;
     const previousAdRendererIds = ['1', '1004', '1005', '1032', '1047', '1026'];
     const adRendererSubmenu: Submenu[] = [];
-    PluginService.getPlugins({ max_results: 1000, plugin_type: 'DISPLAY_AD_RENDERER' })
+    PluginService.getPlugins({
+      max_results: 1000,
+      plugin_type: 'DISPLAY_AD_RENDERER',
+    })
       .then(resp => resp.data)
       .then(adRendererList => {
         adRendererList
           .filter(ad => !previousAdRendererIds.includes(ad.id))
           .forEach(adRenderer => {
+            const formattedName = adRenderer.artifact_id
+              .split('-')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
             return adRendererSubmenu.push({
-              title: `${adRenderer.plugin_type} (${adRenderer.artifact_id})`,
+              title: formattedName,
               select: () => onSelect(adRenderer.id),
             });
           });
