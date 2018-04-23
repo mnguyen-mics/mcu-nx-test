@@ -3,6 +3,8 @@ import { CreateReportPage } from '../containers/Datastudio/Report/Edit';
 import Exports from '../containers/Datastudio/Exports/Dashboard/Exports';
 import ExportsList from '../containers/Datastudio/Exports/List';
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
+import ExportEditPage from '../containers/Datastudio/Exports/Edit/ExportEditPage';
+
 
 export const datastudioDefinition: NavigatorDefinition = {
   datastudioQueryTool: {
@@ -36,6 +38,20 @@ export const datastudioDefinition: NavigatorDefinition = {
     requiredFeature: 'datastudio.exports',
     requireDatamart: true,
   },
+  datastudioExportCreation: {
+    path: '/datastudio/exports/create',
+    layout: 'edit',
+    editComponent: ExportEditPage,
+    requiredFeature: 'datastudio.exports',
+    requireDatamart: true,
+  },
+  datastudioExportEdition: {
+    path: '/datastudio/exports/:exportId/edit',
+    layout: 'edit',
+    editComponent: ExportEditPage,
+    requiredFeature: 'datastudio.exports',
+    requireDatamart: true,
+  }
 }
 
 export const datastudioRoutes: NavigatorRoute[] = generateRoutesFromDefinition(datastudioDefinition)

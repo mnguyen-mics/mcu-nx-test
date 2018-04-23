@@ -34,7 +34,7 @@ const FORM_ID = 'exportForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
->;
+  >;
 
 
 const messages = defineMessages({
@@ -73,15 +73,13 @@ interface ExportEditFormProps
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 
-interface ExportEditFormState {}
-
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &
   RouteComponentProps<{ organisationId: string; exportId: string }> &
   InjectedIntlProps &
   InjectedDatamartProps;
 
-class PlacementListForm extends React.Component<Props, ExportEditFormState> {
+class PlacementListForm extends React.Component<Props> {
 
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
@@ -110,17 +108,17 @@ class PlacementListForm extends React.Component<Props, ExportEditFormState> {
       return this.props.initialValues.query ? this.generateUserQueryTemplate(<SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.initialValues.query} />) : null
     } else {
       return this.generateUserQueryTemplate(<FormOTQL
-      name={'query.query_text'}
-      component={OTQLInputEditor}
-      formItemProps={{
-        label: intl.formatMessage(messages.saveExport),
-        required: true,
-      }}
-      helpToolTipProps={{
-        title: intl.formatMessage(messages.saveExport),
-      }}
-    />)
-      
+        name={'query.query_text'}
+        component={OTQLInputEditor}
+        formItemProps={{
+          label: intl.formatMessage(messages.saveExport),
+          required: true,
+        }}
+        helpToolTipProps={{
+          title: intl.formatMessage(messages.saveExport),
+        }}
+      />)
+
     }
   }
 
@@ -131,7 +129,7 @@ class PlacementListForm extends React.Component<Props, ExportEditFormState> {
       title: messages.sectionTitleGeneral,
       component: <GeneralFormSection />,
     };
-   
+
     const query = {
       id: 'query',
       title: messages.sectionTitleQuery,

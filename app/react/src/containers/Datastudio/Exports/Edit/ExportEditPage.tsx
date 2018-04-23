@@ -47,15 +47,12 @@ const messages = defineMessages({
   },
 });
 
-interface ExportEditPageProps {}
-
 interface ExportEditPageState {
   export: ExportFormData;
   loading: boolean;
 }
 
 type Props = InjectDrawerProps &
-  ExportEditPageProps &
   RouteComponentProps<{ organisationId: string; exportId: string }> &
   InjectedIntlProps &
   InjectedDatamartProps;
@@ -73,7 +70,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     const { match: { params: { exportId } }, datamart } = this.props;
     const isSelectorQL = this.props.datamart.storage_model_version === 'v201506'
     if (exportId) {
-        ExportsService.getExport(exportId)
+      ExportsService.getExport(exportId)
         .then(exportData => exportData.data)
         .then(res => {
           return QueryService.getQuery(datamart.id, res.query_id)
@@ -89,7 +86,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
             })
         });
     } else {
-      this.setState({export: { ...this.state.export, query: isSelectorQL ? this.generateV1Query() : null }})
+      this.setState({ export: { ...this.state.export, query: isSelectorQL ? this.generateV1Query() : null } })
     }
   }
 
@@ -104,7 +101,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
   close = () => {
     const { history, match: { params: { organisationId } } } = this.props;
 
-    const url = `/v2/o/${organisationId}/library/exports`;
+    const url = `/v2/o/${organisationId}/datastudio/exports`;
 
     return history.push(url);
   };
@@ -131,7 +128,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         ? message.success(intl.formatMessage(messages.updateSuccess))
         : message.error(intl.formatMessage(messages.updateError));
     };
-    
+
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
       0,
@@ -144,7 +141,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
             this.state.export.query.saveOrUpdate() :
             QueryService.updateQuery(datamart.id, this.state.export.query.id, formData.query).then(res => res.data)
         }
-  
+
         return generateQuerySaveMethod()
           .then((res: QueryResource) => {
             return ExportsService.updateExport(exportId, formData.export)
@@ -161,11 +158,11 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         }
         return generateQuerySaveMethod()
           .then((res: QueryResource) => {
-            return ExportsService.createExport(organisationId, {...formData.export, query_id: res.id})
+            return ExportsService.createExport(organisationId, { ...formData.export, query_id: res.id })
           })
       }
     }
-    
+
 
     generatesSaveMethod()
       .then(() => {
@@ -186,15 +183,15 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
 
     const exportName = exportId
       ? formatMessage(messages.editExports, {
-          name: this.state.export.export.name
-            ? this.state.export.export.name
-            : formatMessage(messages.exports),
-        })
+        name: this.state.export.export.name
+          ? this.state.export.export.name
+          : formatMessage(messages.exports),
+      })
       : formatMessage(messages.newExports);
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.exports),
-        url: `/v2/o/${organisationId}/library/exports`,
+        url: `/v2/o/${organisationId}/datastudio/exports`,
       },
       {
         name: exportName,
@@ -216,7 +213,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
   }
 }
 
-export default compose<Props, ExportEditPageProps>(
+export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
