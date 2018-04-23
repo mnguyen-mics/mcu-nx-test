@@ -16,10 +16,17 @@ function* loadCreativeEmails({ payload }) {
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
-    const options = {
+    let options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       archived: filter.archived,
     };
+
+    if (filter.keywords) {
+      options = {
+        ...options,
+        keywords: filter.keywords,
+      };
+    }
 
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),

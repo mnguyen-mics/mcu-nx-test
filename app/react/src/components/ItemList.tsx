@@ -18,6 +18,7 @@ export interface Filters {
   currentPage?: number;
   pageSize?: number;
   status?: string[];
+  keywords?: string;
 }
 
 interface RouterParams {

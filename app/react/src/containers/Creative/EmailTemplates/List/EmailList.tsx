@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 
 import {
@@ -42,12 +42,20 @@ interface CreativeEmailsTableState {
 
 type JoinedProps = CreativeEmailsTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  TranslationProps;
+  TranslationProps & InjectedIntlProps;
+
+
+const messages = defineMessages({
+  searchPlaceholder: {
+    id: 'creative.email.list.searchPlaceholder',
+    defaultMessage: 'Search Email Templates'
+  }
+})
 
 class CreativeEmailsTable extends React.Component<
   JoinedProps,
   CreativeEmailsTableState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -154,6 +162,7 @@ class CreativeEmailsTable extends React.Component<
       totalCreativeEmails,
       hasCreativeEmails,
       rowSelection,
+      intl,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -239,6 +248,15 @@ class CreativeEmailsTable extends React.Component<
       },
     ];
 
+    const searchOptions = {
+      placeholder: intl.formatMessage(messages.searchPlaceholder),
+      onSearch: (value: string) => this.updateLocationSearch({
+        keywords: value,
+        currentPage: 1
+      }),
+      defaultValue: filter.keywords,
+    };
+
     return hasCreativeEmails ? (
       <div className="mcs-table-container">
         <EmailTestModal
@@ -254,11 +272,12 @@ class CreativeEmailsTable extends React.Component<
           loading={isFetchingCreativeEmails}
           pagination={pagination}
           rowSelection={rowSelection}
+          searchOptions={searchOptions}
         />
       </div>
     ) : (
-      <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
-    );
+        <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
+      );
   }
 
   editCreativeEmails(campaign: EmailTemplateResource) {
