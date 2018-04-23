@@ -112,7 +112,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
 }
 
 export default compose<JoinedProps, EmailActionBarProps>(
-  withTranslations,
   withRouter,
   injectIntl,
+  withTranslations,
 )(EmailActionBar);

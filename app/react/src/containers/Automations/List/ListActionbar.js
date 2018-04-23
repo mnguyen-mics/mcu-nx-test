@@ -43,6 +43,6 @@ ListActionbar.propTypes = {
 
 
 export default compose(
-  withTranslations,
   withRouter,
+  withTranslations,
 )(ListActionbar);

@@ -141,8 +141,8 @@ GoalsActionbar.propTypes = {
 };
 
 GoalsActionbar = compose(
-  withTranslations,
   withRouter,
+  withTranslations,
 )(GoalsActionbar);
 
 export default GoalsActionbar;
