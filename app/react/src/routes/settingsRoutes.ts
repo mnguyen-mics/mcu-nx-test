@@ -28,6 +28,8 @@ import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/Vi
 import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit'
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
+import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
+
 export const settingsDefinition: NavigatorDefinition = {
   /*
   *
@@ -82,7 +84,6 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'datamartSettings.mobile_applications',
     requireDatamart: true
   },
-
   // datamart
   settingsDatamartDatamartList: {
     path: '/settings/datamart/my_datamart',
@@ -96,6 +97,13 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: DatamartEditPage,
     requiredFeature: 'datamartSettings.datamarts',
+    requireDatamart: true
+  },
+  settingsDatamartServiceUsageReport: {
+    path: '/settings/datamart/my_datamart/:datamartId/service_usage_report',
+    layout: 'settings',
+    contentComponent: ServiceUsageReportListPage,
+    requiredFeature: 'datamartSettings.service_usage_report',
     requireDatamart: true
   },
 

@@ -51,8 +51,36 @@ export default defineMessages({
     id: 'export.title.email.campaign',
     defaultMessage: 'Email Campaign'
   },
+  serviceUsageReportList: {
+    id: 'settings.datamart.seriveUsageReport.export.title',
+    defaultMessage: 'Serivce Usage Report List'
+  },
   emailCampaignBlastExportTitle: {
     id: 'export.title.email.campaign.blast',
     defaultMessage: 'Email Campaign Blast'
+  },
+  providerOrganisationId: {
+    id: 'settings.datamart.seriveUsageReport.export.providerOrganisationId',
+    defaultMessage: 'Provider Organisation Id',
+  },
+  campaignId: {
+    id: 'settings.datamart.seriveUsageReport.export.campaign_id',
+    defaultMessage: 'Campaign Id',
+  },
+  serviceId: {
+    id: 'settings.datamart.seriveUsageReport.export.service_id',
+    defaultMessage: 'Service Id',
+  },
+  serviceElementId: {
+    id: 'settings.datamart.seriveUsageReport.export.serviceElementId',
+    defaultMessage: 'Service Id',
+  },
+  segmentName: {
+    id: 'settings.datamart.seriveUsageReport.export.segmentName',
+    defaultMessage: 'Segment Name',
+  },
+  serviceElementName: {
+    id: 'settings.datamart.seriveUsageReport.export.serviceElementName',
+    defaultMessage: 'Segment Element Name',
   },
 });

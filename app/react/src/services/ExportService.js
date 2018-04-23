@@ -5,6 +5,7 @@ import segmentMessages from '../containers/Audience/Segments/Dashboard/messages'
 import dateMessages from '../common/messages/dateMessages';
 import exportMessages from '../common/messages/exportMessages';
 import log from '../utils/Logger';
+import { messages } from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportTable.tsx';
 
 const datenum = (v, date1904) => {
   let newV = v;
@@ -514,6 +515,34 @@ const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData,
   }
 };
 
+const exportServiceUsageReportList = (organisationId, data, filter, formatMessage) => {
+  const pageTitle = `Service Usage Report List - ${organisationId}`;
+  const emailHeaders = [
+    { name: 'provider_organisation_id', translation: formatMessage(exportMessages.providerOrganisationId) },
+    { name: 'provider_name', translation: formatMessage(messages.providerName) },
+    { name: 'campaign_id', translation: formatMessage(exportMessages.campaignId) },
+    { name: 'campaign_name', translation: formatMessage(messages.campaignName) },
+    { name: 'service_id', translation: formatMessage(exportMessages.serviceId) },
+    { name: 'service_name', translation: formatMessage(messages.serviceName) },
+    { name: 'service_element_id', translation: formatMessage(exportMessages.serviceElementId) },
+    { name: 'segment_name', translation: formatMessage(exportMessages.segmentName) },
+    { name: 'unit_count', translation: formatMessage(messages.usage) },
+  ];
+
+  const formattedFilter = {
+    from: filter.from.toMoment().format('YYYY-MM-DD'),
+    to: filter.to.toMoment().format('YYYY-MM-DD'),
+  };
+
+  const sheets = [
+    addSheet(exportMessages.serviceUsageReportList, data, emailHeaders, formattedFilter, formatMessage, pageTitle)
+  ].filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_service-usage-report-list`, 'xlsx');
+  }
+};
+
 export default {
   exportData,
   exportGoals,
@@ -522,5 +551,6 @@ export default {
   exportAudienceSegments,
   exportDisplayCampaigns,
   exportDisplayCampaignDashboard,
-  exportAudienceSegmentDashboard
+  exportAudienceSegmentDashboard,
+  exportServiceUsageReportList
 };
