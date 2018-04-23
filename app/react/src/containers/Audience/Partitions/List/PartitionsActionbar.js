@@ -64,9 +64,8 @@ const mapStateToProps = state => ({
   defaultDatamart: getDefaultDatamart(state),
 });
 
-const ConnectedPartitionsActionbar = connect(mapStateToProps)(PartitionsActionbar);
-
 export default compose(
-  withTranslations,
   withRouter,
-)(ConnectedPartitionsActionbar);
+  withTranslations,
+  connect(mapStateToProps),
+)(PartitionsActionbar);
