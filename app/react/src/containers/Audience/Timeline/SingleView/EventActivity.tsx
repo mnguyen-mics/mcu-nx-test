@@ -1,25 +1,33 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Row, Col, Tag, Tooltip } from 'antd';
 import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
 
-import McsIcon from '../../../../components/McsIcon.tsx';
+import McsIcon from '../../../../components/McsIcon';
 import messages from '../messages';
 
-class EventActivity extends Component {
-  constructor(props) {
+interface EventActivityProps {
+  event: {
+    $event_name: string;
+    $properties: object; // type it better
+    $ts: number;
+  };
+}
+
+interface State {
+  showMore: boolean;
+}
+
+class EventActivity extends React.Component<EventActivityProps, State> {
+  constructor(props: EventActivityProps) {
     super(props);
     this.state = {
       showMore: false,
     };
   }
 
-
-  renderProperties = (object, isInitial = false) => {
-
-    let returnValue = <div />;
-
+  renderProperties = (object: any, isInitial = false) => {
+    let returnValue: any = <div />;
 
     if (typeof object === 'string' || typeof object === 'number') {
       // string;
@@ -33,7 +41,9 @@ class EventActivity extends Component {
     if (Array.isArray(object)) {
       // array;
       if (object.length > 0) {
-        returnValue = object.map(o => <div className="m-b-10">{this.renderProperties(o)}</div>);
+        returnValue = object.map(o => (
+          <div className="m-b-10">{this.renderProperties(o)}</div>
+        ));
       } else {
         returnValue = '[]';
       }
@@ -54,21 +64,30 @@ class EventActivity extends Component {
                 <FormattedMessage {...messages.empty} />
               </i>
             ) : (
-
               this.renderProperties(value)
             )}
           </div>
         );
         return generatedValue;
       });
-      returnValue = isInitial ? <div>{returnValue}</div> : (<Col
-        className="event-properties-sublist"
-        span={24}
-        style={{ marginLeft: '40px', marginTop: 10, marginRight: '40px' }}
-      >{returnValue}</Col>);
+      returnValue = isInitial ? (
+        <div>{returnValue}</div>
+      ) : (
+        <Col
+          className="event-properties-sublist"
+          span={24}
+          style={{ marginLeft: '40px', marginTop: 10, marginRight: '40px' }}
+        >
+          {returnValue}
+        </Col>
+      );
     }
 
-    return isInitial ? <div className="event-properties-list-item">{returnValue}</div> : returnValue;
+    return isInitial ? (
+      <div className="event-properties-list-item">{returnValue}</div>
+    ) : (
+      returnValue
+    );
   };
 
   render() {
@@ -122,13 +141,5 @@ class EventActivity extends Component {
     );
   }
 }
-
-EventActivity.propTypes = {
-  event: PropTypes.shape({
-    $event_name: PropTypes.string,
-    $properties: PropTypes.object,
-    $ts: PropTypes.number,
-  }).isRequired,
-};
 
 export default EventActivity;
