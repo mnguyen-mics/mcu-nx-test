@@ -128,12 +128,12 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         return (
           <FormCodeSnippet
             language="html"
-            codeSnippet={`"https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
+            codeSnippet={`<img style="display:none" src="https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
               datamart.token
             }&user_list_tech_name=${encodeURIComponent(
               this.props.audienceSegmentFormData.audienceSegment
                 .technical_name || '',
-            )}"`}
+            )}" />`}
             copyToClipboard={true}
           />
         );

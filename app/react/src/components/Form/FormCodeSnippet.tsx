@@ -55,15 +55,6 @@ const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
   if (props.meta && props.meta.touched && props.meta.warning)
     validateStatus = 'warning';
 
-  // const encodeSnippet = () => {
-  //   let uri = '';
-  //   if (userListTechName) {
-  //     uri = ;
-  //   }
-
-  //   return uri;
-  // };
-
   const handleOnClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     message.info(
       props.intl.formatMessage(messages.pixelSectionCodeSnippetCodeCopied),
@@ -86,6 +77,12 @@ const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
     },
   };
 
+  const content = (
+    <SyntaxHighlighter language={props.language} style={docco} {...props.input}>
+      {props.codeSnippet}
+    </SyntaxHighlighter>
+  );
+
   return (
     <div>
       <FormFieldWrapper
@@ -99,17 +96,13 @@ const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
         validateStatus={validateStatus}
         {...codeSnippetFieldProps.formItemProps}
       >
-        <CopyToClipboard onCopy={handleOnClick} text={props.codeSnippet}>
-          <div style={{ cursor: 'pointer' }}>
-            <SyntaxHighlighter
-              language={props.language}
-              style={docco}
-              {...props.input}
-            >
-              {props.codeSnippet}
-            </SyntaxHighlighter>
-          </div>
-        </CopyToClipboard>
+        {props.copyToClipboard ? (
+          <CopyToClipboard onCopy={handleOnClick} text={props.codeSnippet}>
+            <div style={{ cursor: 'pointer' }}>{content}</div>
+          </CopyToClipboard>
+        ) : (
+          content
+        )}
       </FormFieldWrapper>
     </div>
   );
