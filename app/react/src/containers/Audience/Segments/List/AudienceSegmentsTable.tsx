@@ -282,7 +282,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         this.setState({ list: { ...this.state.list, isLoading: true } });
         this.fetchAudienceSegments(nextOrganisationId, datamartId, nextFilter);
         this.checkIfHasItem(organisationId, filter)
-        if (organisationId !== nextOrganisationId || nextState.reloadDataSource === true) {
+        if (organisationId !== nextOrganisationId || nextState && nextState.reloadDataSource === true) {
           this.setState({ reportView: { ...this.state.reportView, isLoading: true } });
           this.fetchAudienceSegmentStatistics(nextOrganisationId, datamartId)
         }
