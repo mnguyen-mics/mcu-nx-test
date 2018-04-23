@@ -7,7 +7,7 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
@@ -19,7 +19,6 @@ import settingsMessages from '../../../messages';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { ButtonStyleless } from '../../../../../components';
 
 const { Content } = Layout;
 
@@ -138,9 +137,9 @@ class DatamartsListPage extends React.Component<
         key: 'service_usage_report',
         render: (value: string, record: DatamartResource) =>
           record.id === '1048' ? (
-            <ButtonStyleless onClick={this.onClickSUR(record)}>
+            <Button type="primary" onClick={this.onClickSUR(record)}>
               {intl.formatMessage(messagesMap.serviceUsageReport)}
-            </ButtonStyleless>
+            </Button>
           ) : null,
         isVisibleByDefault: true,
         isHideable: false,
