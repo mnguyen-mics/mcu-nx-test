@@ -50,7 +50,7 @@ type Props = InjectedFormProps<GoalFormData, GoalFormProps> &
   GoalFormProps &
   InjectedIntlProps;
 
-const FORM_ID = 'goalForm';
+export const FORM_ID = 'goalForm';
 
 class GoalForm extends React.Component<Props> {
   render() {
@@ -121,7 +121,6 @@ class GoalForm extends React.Component<Props> {
               <hr />
               <div id={sections.trigger.sectionId}>
                 <TriggerFormSection
-                  goalId={goalId}
                   initialValues={this.props.initialValues}
                   formChange={this.props.change}
                 />

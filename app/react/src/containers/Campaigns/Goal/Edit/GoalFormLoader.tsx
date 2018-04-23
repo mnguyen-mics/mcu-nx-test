@@ -32,7 +32,7 @@ class GoalFormLoader extends React.Component<Props, State> {
       .get('core/datamart/queries/QueryContainer');
     const defQuery = new QueryContainer(props.datamart.id);
     this.state = {
-      loading: true,
+      loading: false,
       goalFormData: {
         goal: INITIAL_GOAL_FORM_DATA.goal,
         attributionModels: INITIAL_GOAL_FORM_DATA.attributionModels,
@@ -48,6 +48,9 @@ class GoalFormLoader extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    this.setState({
+      loading: true,
+    });
     const { goalId, notifyError, datamart } = this.props;
     GoalFormService.loadGoalData(goalId, datamart.id)
       .then(goalData => {

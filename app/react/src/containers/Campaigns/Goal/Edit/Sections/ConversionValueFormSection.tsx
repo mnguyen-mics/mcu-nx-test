@@ -43,10 +43,6 @@ const messages = defineMessages({
     defaultMessage:
       'Give a conversion a value so that you can track your value creation directly in the goal dashboard.',
   },
-  goalValueCurrencyPlaceholder: {
-    id: 'goalEditor.value.currency.placeholder',
-    defaultMessage: 'Ex: 500',
-  },
 });
 
 interface State {

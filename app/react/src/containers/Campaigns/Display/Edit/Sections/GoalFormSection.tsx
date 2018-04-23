@@ -5,6 +5,8 @@ import { Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
+import SyntaxHighlighter from 'react-syntax-highlighter';
 
 import messages from '../messages';
 import { injectDrawer } from '../../../../../components/Drawer/index';
@@ -136,12 +138,10 @@ class GoalFormSection extends React.Component<Props> {
     formChange((fields as any).name, newFields);
   };
 
-  updateQueryContainer = () => {
-    //
-  };
-
   openGoalForm = (field?: GoalFieldModel) => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     const breadCrumbPaths = [
       {
@@ -211,12 +211,11 @@ class GoalFormSection extends React.Component<Props> {
           <div>
             <p>{formatMessage(messages.goalPixelModalContent)}</p>
             <br />
-            <pre>
-              <code
-              >{`<img src="//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
+            <SyntaxHighlighter language="html" style={docco}>
+              {`<img style="display:none" src="https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
                 datamart.token
-              }&$goal_id=${goalId}" />`}</code>
-            </pre>
+              }&$goal_id=${goalId}" />`}
+            </SyntaxHighlighter>
           </div>
         ),
         onOk() {
@@ -300,7 +299,9 @@ class GoalFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     return (
       <div id="goals">

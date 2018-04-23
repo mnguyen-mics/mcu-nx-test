@@ -21,24 +21,20 @@ const messages = defineMessages({
     defaultMessage:
       'There is an error with some fields in your form. Please review the data you entered.',
   },
-  noAttributionModelErrorFormMessage: {
-    id: 'campaign.form.no.attribution.model.error.message',
-    defaultMessage: 'You must give your goal an attribution model.',
-  },
   savingInProgress: {
     id: 'form.saving.in.progress',
     defaultMessage: 'Saving in progress',
   },
-  breadcrumbTitle1: {
-    id: 'goalEditor.breadcrumb.title1',
+  breadcrumbGoalsTitle: {
+    id: 'goalEditor.breadcrumb.goals',
     defaultMessage: 'Goals',
   },
-  breadcrumbTitle2: {
-    id: 'goalEditor.breadcrumb.title2',
+  breadcrumbNewGoalTitle: {
+    id: 'goalEditor.breadcrumb.new-goal',
     defaultMessage: 'New Goal',
   },
-  breadcrumbTitle3: {
-    id: 'goalEditor.breadcrumb.title3',
+  breadcrumbEditGoalTitle: {
+    id: 'goalEditor.breadcrumb.edit-goal-name',
     defaultMessage: 'Edit {name}',
   },
 });
@@ -62,31 +58,34 @@ class EditGoalPage extends React.Component<Props, State> {
       .get('core/datamart/queries/QueryContainer');
     const defQuery = new QueryContainer(props.datamart.id);
     this.state = {
-      loading: true,
+      loading: false,
       goalFormData: {
-        goal: INITIAL_GOAL_FORM_DATA.goal,
-        attributionModels: INITIAL_GOAL_FORM_DATA.attributionModels,
+        ...INITIAL_GOAL_FORM_DATA,
         queryLanguage:
           props.datamart.storage_model_version === 'v201506'
             ? 'SELECTORQL'
             : 'OTQL',
         queryContainer: defQuery,
-        triggerMode: 'QUERY',
       },
     };
   }
 
   componentDidMount() {
-    const { match: { params: { goalId } } } = this.props;
+    const {
+      match: {
+        params: { goalId },
+      },
+    } = this.props;
 
     if (goalId) {
       this.fetchData(goalId);
-    } else {
-      this.setState({ loading: false });
     }
   }
 
   fetchData = (goalId: string) => {
+    this.setState({
+      loading: true,
+    });
     GoalFormService.loadGoalData(goalId, this.props.datamart.id)
       .then(goalData => {
         this.setState({
@@ -109,7 +108,9 @@ class EditGoalPage extends React.Component<Props, State> {
 
   save = (goalFormData: GoalFormData) => {
     const {
-      match: { params: { organisationId, goalId } },
+      match: {
+        params: { organisationId },
+      },
       notifyError,
       history,
       intl,
@@ -128,14 +129,15 @@ class EditGoalPage extends React.Component<Props, State> {
     GoalFormService.saveGoal(organisationId, goalFormData, initialGoalFormData)
       .then(goalResource => {
         hideSaveInProgress();
-        const goalUrl = goalId
-          ? `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}`
-          : `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}/edit`;
+        const goalUrl =
+          goalFormData.triggerMode === 'QUERY'
+            ? `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}`
+            : `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}/edit`;
+        this.fetchData(goalResource.id);
         history.push({
           pathname: goalUrl,
           state: { from: `${location.pathname}` },
         });
-        this.fetchData(goalResource.id);
       })
       .catch(err => {
         hideSaveInProgress();
@@ -150,7 +152,9 @@ class EditGoalPage extends React.Component<Props, State> {
     const {
       history,
       location,
-      match: { params: { goalId, organisationId } },
+      match: {
+        params: { goalId, organisationId },
+      },
     } = this.props;
 
     const defaultRedirectUrl = goalId
@@ -164,7 +168,9 @@ class EditGoalPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -176,14 +182,14 @@ class EditGoalPage extends React.Component<Props, State> {
 
     const goalName =
       goalFormData.goal && goalFormData.goal.name
-        ? formatMessage(messages.breadcrumbTitle3, {
+        ? formatMessage(messages.breadcrumbEditGoalTitle, {
             name: goalFormData.goal.name,
           })
-        : formatMessage(messages.breadcrumbTitle2);
+        : formatMessage(messages.breadcrumbNewGoalTitle);
 
     const breadcrumbPaths = [
       {
-        name: messages.breadcrumbTitle1,
+        name: messages.breadcrumbGoalsTitle,
         path: `/v2/o/${organisationId}/campaigns/goals`,
       },
       {

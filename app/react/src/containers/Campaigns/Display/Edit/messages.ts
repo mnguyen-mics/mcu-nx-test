@@ -234,6 +234,10 @@ export default defineMessages({
     id: 'adGroupEditor.section.general.row1.placeholder',
     defaultMessage: 'This is an ad group',
   },
+  campaignFormPlaceholderCampaignName: {
+    id: 'campaign.form.section.general.placeholder.name',
+    defaultMessage: 'This is a campaign name',
+  },
   contentSectionGeneralRow1Tooltip: {
     id: 'adGroupEditor.section.general.row1.tooltip',
     defaultMessage:

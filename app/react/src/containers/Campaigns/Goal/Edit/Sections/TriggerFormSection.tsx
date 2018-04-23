@@ -6,7 +6,7 @@ import {
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
-import { Button, Row, Col, message } from 'antd';
+import { Button, Row, Col, Alert } from 'antd';
 import {
   FormSection,
   FormRadioGroupField,
@@ -25,11 +25,13 @@ import OTQLInputEditor, {
 import { FieldCtor } from '../../../../../components/Form/index';
 import SelectorQL from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQL';
 import SelectorQLReadOnly from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQLReadOnly';
-import { Field } from 'redux-form';
+import { Field, getFormValues } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
-import { GoalFormData } from '../domain';
+import { GoalFormData, isExistingGoal } from '../domain';
 import FormCodeSnippet from '../../../../../components/Form/FormCodeSnippet';
+import { FORM_ID } from '../GoalForm';
+import { connect } from 'react-redux';
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 
@@ -50,14 +52,10 @@ const messages = defineMessages({
     id: 'goalEditor.section.trigger.formcheckbox.pixel',
     defaultMessage: 'Trigger via pixel',
   },
-  triggerPixelModalTitle: {
+  triggerPixelHelpTooltip: {
     id: 'goalEditor.section.trigger.pixel.modal.title',
-    defaultMessage: 'Pixel for goal',
-  },
-  triggerPixelModalMessage: {
-    id: 'goalEditor.section.trigger.pixel.modal.message',
     defaultMessage:
-      'Use this pixel url tracking to capture a conversion goal :',
+      'Pixel for goal. Use this pixel url tracking to capture a conversion goal.',
   },
   audienceSegmentSectionQueryTitle: {
     id: 'edit.goal.form.section.query.title',
@@ -79,8 +77,11 @@ const messages = defineMessages({
   },
 });
 
+interface MapStateToProps {
+  formValues: GoalFormData;
+}
+
 interface State {
-  pixelSectionVisible: boolean;
   editQueryMode: boolean;
   queryContainer: any;
   queryContainerCopy: any;
@@ -88,27 +89,26 @@ interface State {
 
 interface TriggerFormSectionProps extends ReduxFormChangeProps {
   initialValues: Partial<GoalFormData>;
-  goalId?: string;
 }
 
 type Props = TriggerFormSectionProps &
   InjectedIntlProps &
   ValidatorProps &
+  MapStateToProps &
   InjectedDatamartProps &
-  RouteComponentProps<{ organisationId: string; goalId: string }>;
+  RouteComponentProps<{ organisationId: string }>;
 
 class TriggerFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      pixelSectionVisible: this.props.initialValues.triggerMode === 'PIXEL',
       editQueryMode: false,
       queryContainer: this.props.initialValues.queryContainer,
       queryContainerCopy: undefined,
     };
   }
 
-  renderPropertiesField = () => {
+  renderQueryField = () => {
     const {
       datamart,
       match: {
@@ -117,6 +117,8 @@ class TriggerFormSection extends React.Component<Props, State> {
       intl,
     } = this.props;
 
+    const { editQueryMode } = this.state;
+
     return this.props.initialValues.queryLanguage === 'OTQL' ? (
       <FormOTQL
         name={'query.query_text'}
@@ -130,51 +132,15 @@ class TriggerFormSection extends React.Component<Props, State> {
           ),
         }}
       />
-    ) : (
+    ) : editQueryMode ? (
       <SelectorQL
         datamartId={datamart.id}
         organisationId={organisationId}
         queryContainer={this.state.queryContainerCopy}
       />
-    );
-  };
-
-  renderPropertiesFieldReadOnly = () => {
-    const { intl } = this.props;
-
-    return this.props.initialValues.queryLanguage === 'OTQL' ? (
-      <FormOTQL
-        name={'query.query_text'}
-        component={OTQLInputEditor}
-        formItemProps={{
-          label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
-        }}
-        helpToolTipProps={{
-          title: intl.formatMessage(
-            messages.audienceSegmentCreationUserQueryFieldHelper,
-          ),
-        }}
-      />
     ) : (
       <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
     );
-  };
-
-  toggleSections = () => {
-    if (
-      this.props.initialValues.goal &&
-      this.props.initialValues.goal.new_query_id
-    ) {
-      message.error(
-        this.props.intl.formatMessage(messages.goalAlreadyHasQueryTrigger),
-      );
-    } else {
-      this.setState({
-        pixelSectionVisible: !this.state.pixelSectionVisible,
-      });
-      const newTriggerMode = this.state.pixelSectionVisible ? 'QUERY' : 'PIXEL';
-      this.props.formChange('triggerMode', newTriggerMode);
-    }
   };
 
   updateQueryContainerAndCloseEditMode = () => {
@@ -199,12 +165,6 @@ class TriggerFormSection extends React.Component<Props, State> {
     });
   };
 
-  onClickCancel = () => {
-    this.setState({
-      editQueryMode: false,
-    });
-  };
-
   closeEditMode = () => {
     this.setState({
       editQueryMode: false,
@@ -214,30 +174,26 @@ class TriggerFormSection extends React.Component<Props, State> {
   displayPixelSection = () => {
     const {
       intl: { formatMessage },
-      match: {
-        params: { goalId },
-      },
       datamart,
     } = this.props;
     return (
       <div>
-        {goalId || this.props.goalId ? (
-          <div>
-            {formatMessage(messages.triggerPixelModalTitle)}
-            <br />
-            {formatMessage(messages.triggerPixelModalMessage)}
-            <br />
-            <br />
-            <FormCodeSnippet
-              language="html"
-              codeSnippet={`<img style="display:none" src="https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
-                datamart.token
-              }&$goal_id=${goalId || this.props.goalId}" />`}
-              copyToClipboard={true}
-            />
-          </div>
+        {isExistingGoal(this.props.formValues.goal) ? (
+          <FormCodeSnippet
+            language="html"
+            codeSnippet={`<img style="display:none" src="https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
+              datamart.token
+            }&$goal_id=${this.props.formValues.goal.id}" />`}
+            copyToClipboard={true}
+            helpToolTipProps={{
+              title: formatMessage(messages.triggerPixelHelpTooltip),
+            }}
+          />
         ) : (
-          formatMessage(messages.newGoalPixelSection)
+          <Alert
+            message={formatMessage(messages.newGoalPixelSection)}
+            type="warning"
+          />
         )}
       </div>
     );
@@ -250,23 +206,16 @@ class TriggerFormSection extends React.Component<Props, State> {
 
     const radioOptions = [
       {
-        checked: !this.state.pixelSectionVisible,
         label: formatMessage(messages.formCheckBoxText1),
         value: 'QUERY',
       },
       {
-        checked: this.state.pixelSectionVisible,
-        disabled:
-          !!this.props.initialValues.goal &&
-          !!this.props.initialValues.goal.new_query_id,
         label: formatMessage(messages.formCheckBoxText2),
         value: 'PIXEL',
       },
     ];
 
-    const radioGroupProps = {
-      onChange: this.toggleSections,
-    };
+    const pixelSectionVisible = this.props.formValues.triggerMode === 'PIXEL';
 
     return (
       <div>
@@ -274,43 +223,26 @@ class TriggerFormSection extends React.Component<Props, State> {
           subtitle={messages.sectionSubtitle1}
           title={messages.sectionTitle1}
         />
-        <Row style={{ paddingBottom: '24px' }}>
-          <Col span={24}>
-            <FormRadioGroupField
-              name="triggerMode"
-              component={FormRadioGroup}
-              options={radioOptions}
-              radioGroupProps={radioGroupProps}
-            />
-            {/* <Radio
-              checked={!this.state.pixelSectionVisible}
-              onChange={this.toggleSections}
-            >
-              {formatMessage(messages.formCheckBoxText1)}
-            </Radio>
-            <Radio
-              checked={this.state.pixelSectionVisible}
-              onChange={this.toggleSections}
-              disabled={
-                !!this.props.initialValues.goal &&
-                !!this.props.initialValues.goal.new_query_id
-              }
-            >
-              {formatMessage(messages.formCheckBoxText2)}
-            </Radio> */}
-          </Col>
-        </Row>
+        {!isExistingGoal(this.props.formValues.goal) && (
+          <Row style={{ paddingBottom: '24px' }}>
+            <Col span={24}>
+              <FormRadioGroupField
+                name="triggerMode"
+                component={FormRadioGroup}
+                options={radioOptions}
+              />
+            </Col>
+          </Row>
+        )}
         <Row>
           <Col span={24}>
-            {!this.state.pixelSectionVisible
-              ? this.state.editQueryMode
-                ? this.renderPropertiesField()
-                : this.renderPropertiesFieldReadOnly()
-              : this.displayPixelSection()}
+            {pixelSectionVisible
+              ? this.displayPixelSection()
+              : this.renderQueryField()}
             <br />
             <div style={{ float: 'right' }}>
-              {!this.state.pixelSectionVisible ? (
-                this.state.editQueryMode ? (
+              {!pixelSectionVisible &&
+                (this.state.editQueryMode ? (
                   <div>
                     <Button
                       onClick={this.updateQueryContainerAndCloseEditMode}
@@ -321,7 +253,7 @@ class TriggerFormSection extends React.Component<Props, State> {
                         defaultMessage="Ok"
                       />
                     </Button>
-                    <Button onClick={this.onClickCancel} type="danger">
+                    <Button onClick={this.closeEditMode} type="danger">
                       <FormattedMessage
                         id="edit.goal.form.section.trigger.updateQueryContainer.cancel"
                         defaultMessage="Cancel"
@@ -335,10 +267,7 @@ class TriggerFormSection extends React.Component<Props, State> {
                       defaultMessage="Edit trigger"
                     />
                   </Button>
-                )
-              ) : (
-                undefined
-              )}
+                ))}
             </div>
           </Col>
         </Row>
@@ -350,5 +279,8 @@ class TriggerFormSection extends React.Component<Props, State> {
 export default compose<Props, TriggerFormSectionProps>(
   injectIntl,
   withValidators,
+  connect(state => ({
+    formValues: getFormValues(FORM_ID)(state),
+  })),
   injectDatamart,
 )(TriggerFormSection);

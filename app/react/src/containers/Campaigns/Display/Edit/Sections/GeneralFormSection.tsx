@@ -60,7 +60,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             inputProps={{
               placeholder: formatMessage(
-                messages.contentSectionGeneralRow1Placeholder,
+                messages.campaignFormPlaceholderCampaignName,
               ),
             }}
             helpToolTipProps={{

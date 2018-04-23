@@ -18,6 +18,7 @@ class FormRadioGroup extends React.Component<
 
     const optionsToMap = options.map(option => (
       <Radio
+        key={option.value}
         value={option.value}
         checked={option.checked}
         disabled={option.disabled}
