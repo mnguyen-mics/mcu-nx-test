@@ -466,10 +466,6 @@ export default defineMessages({
     id: 'adGroupEditor.section.location.option2',
     defaultMessage: 'Exclude',
   },
-  contentSectionLocationOptionCountryPlaceholder: {
-    id: 'adGroupEditor.section.location.option.country.placeholder',
-    defaultMessage: 'Select country',
-  },
   contentSectionLocationModal1: {
     id: 'adGroupEditor.section.location.modal1',
     defaultMessage:
