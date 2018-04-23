@@ -7,7 +7,7 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-import { Layout, message } from 'antd';
+import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
@@ -19,6 +19,7 @@ import settingsMessages from '../../../messages';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { ButtonStyleless } from '../../../../../components';
 
 const { Content } = Layout;
 
@@ -31,12 +32,12 @@ const initialState = {
 const messagesMap = defineMessages({
   serviceUsageReport: {
     id: 'datamart.service_usage_report',
-    defaultMessage: 'Service Usage Report',
+    defaultMessage: 'View Service Usage Report',
   },
   noData: {
     id: 'datamart.no.data.service_usage_report',
     defaultMessage: 'There is no service usage report for this datamart.',
-  }
+  },
 });
 
 interface DatamartsListPageState {
@@ -97,33 +98,27 @@ class DatamartsListPage extends React.Component<
     );
   };
 
-  onClickSUR = (datamart: DatamartResource) => {
+  onClickSUR = (datamart: DatamartResource) => () => {
     const {
       history,
-      intl,
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    datamart.id === '1048' ? history.push(
+    history.push(
       `/v2/o/${organisationId}/settings/datamart/my_datamart/${
         datamart.id
       }/service_usage_report`,
-    ) : message.warning(intl.formatMessage(messagesMap.noData));
+    );
   };
 
   render() {
+    const { intl } = this.props;
     const actionsColumnsDefinition = [
       {
         key: 'action',
-        actions: [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          {
-            intlMessage: messagesMap.serviceUsageReport,
-            callback: this.onClickSUR,
-          },
-        ],
+        actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
       },
     ];
 
@@ -136,6 +131,17 @@ class DatamartsListPage extends React.Component<
       {
         intlMessage: messages.datamartToken,
         key: 'name',
+        isVisibleByDefault: true,
+        isHideable: false,
+      },
+      {
+        key: 'service_usage_report',
+        render: (value: string, record: DatamartResource) =>
+          record.id === '1048' ? (
+            <ButtonStyleless onClick={this.onClickSUR(record)}>
+              {intl.formatMessage(messagesMap.serviceUsageReport)}
+            </ButtonStyleless>
+          ) : null,
         isVisibleByDefault: true,
         isHideable: false,
       },
