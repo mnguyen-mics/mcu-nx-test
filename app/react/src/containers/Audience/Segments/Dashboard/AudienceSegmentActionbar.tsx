@@ -195,8 +195,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
               datamart_id: datamart.id,
               organisation_id: organisationId,
             },
-          },
-          isModal: true
+          }
         },
       );
 

@@ -259,6 +259,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       location: {
         pathname: nextPathname,
         search: nextSearch,
+        state: nextState,
       },
       match: {
         params: {
@@ -267,7 +268,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     } = nextProps;
 
-    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId || nextState && nextState.reloadDataSource === true) {
       if (!isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))) {
         history.replace({
           pathname: nextPathname,
@@ -281,7 +282,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         this.setState({ list: { ...this.state.list, isLoading: true } });
         this.fetchAudienceSegments(nextOrganisationId, datamartId, nextFilter);
         this.checkIfHasItem(organisationId, filter)
-        if (organisationId !== nextOrganisationId) {
+        if (organisationId !== nextOrganisationId || nextState.reloadDataSource === true) {
           this.setState({ reportView: { ...this.state.reportView, isLoading: true } });
           this.fetchAudienceSegmentStatistics(nextOrganisationId, datamartId)
         }

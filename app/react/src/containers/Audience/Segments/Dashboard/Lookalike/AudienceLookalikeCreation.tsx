@@ -106,9 +106,11 @@ class AudienceLookalikeCreation extends React.Component<
       AudienceSegmentService.createAudienceSegment(organisationId, formattedFormData)
         .then(res => res.data)
         .then(res => {
-          this.props.close()
-          this.setState({ loading: false })
-          history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`)
+
+          this.setState({ loading: false }, () => {
+            this.props.close()
+            history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`)
+          })
         })
         .catch(err => {
           notifyError(err)
