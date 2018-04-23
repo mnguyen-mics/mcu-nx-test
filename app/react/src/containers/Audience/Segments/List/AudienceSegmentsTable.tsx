@@ -27,12 +27,12 @@ import ReportService from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
-import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../../components/LabelsSelector';
 import { getPaginatedApiParam, CancelablePromise, makeCancelable } from '../../../../utils/ApiHelper';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -164,7 +164,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       const filter = parseSearch(search, this.getSearchSetting(organisationId));
       const datamartId = filter.datamartId;
       this.fetchAudienceSegments(organisationId, datamartId, filter);
-      this.fetchAudienceSegmentStatistics(organisationId, datamartId, filter.from, filter.to)
+      this.fetchAudienceSegmentStatistics(organisationId, datamartId)
       this.checkIfHasItem(organisationId, filter)
     }
   }
@@ -191,8 +191,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     })
   }
 
-  fetchAudienceSegmentStatistics = (organisationId: string, datamartId: string, from: McsMoment, to: McsMoment) => {
-    const cancelablePromise = makeCancelable(ReportService.getAudienceSegmentReport(organisationId, from, to, ['audience_segment_id']))
+  fetchAudienceSegmentStatistics = (organisationId: string, datamartId: string) => {
+    const cancelablePromise = makeCancelable(ReportService.getAudienceSegmentReport(organisationId, new McsMoment('now'), new McsMoment('now'), ['audience_segment_id']))
     this.cancellablePromises.push(cancelablePromise);
     return cancelablePromise.promise.then(res => {
       this.setState({ reportView: { data: normalizeReportView(res.data.report_view), isLoading: false } })
@@ -281,9 +281,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         this.setState({ list: { ...this.state.list, isLoading: true } });
         this.fetchAudienceSegments(nextOrganisationId, datamartId, nextFilter);
         this.checkIfHasItem(organisationId, filter)
-        if (organisationId !== nextOrganisationId || filter.from.value !== nextFilter.from.value || filter.to.value !== nextFilter.to.value) {
+        if (organisationId !== nextOrganisationId) {
           this.setState({ reportView: { ...this.state.reportView, isLoading: true } });
-          this.fetchAudienceSegmentStatistics(nextOrganisationId, datamartId, nextFilter.from, nextFilter.to)
+          this.fetchAudienceSegmentStatistics(nextOrganisationId, datamartId)
         }
       }
     }
@@ -369,9 +369,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
   }
 
   buildDataset = (segments: AudienceSegmentResource[], report: Array<Index<any>>) => {
+
+    const formattedReport = normalizeArrayOfObject(report, 'audience_segment_id')
+
     return segments.map((segment) => {
       return {
-        ...report[segment.id as any],
+        ...formattedReport[segment.id as any],
         ...segment,
       };
     });
@@ -403,17 +406,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       defaultValue: filter.keywords,
     };
 
-    const dateRangePickerOptions = {
-      isEnabled: true,
-      onChange: (values: McsDateRangeValue) => this.updateLocationSearch({
-        from: values.from,
-        to: values.to,
-      }),
-      values: {
-        from: filter.from,
-        to: filter.to,
-      },
-    };
 
     const columnsVisibilityOptions = {
       isEnabled: true,
@@ -654,7 +646,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             columns={dataColumns}
             actionsColumnsDefinition={actionColumns}
             searchOptions={searchOptions}
-            dateRangePickerOptions={dateRangePickerOptions}
             filtersOptions={filtersOptions}
             columnsVisibilityOptions={columnsVisibilityOptions}
             dataSource={this.buildDataset(this.state.list.segments, this.state.reportView.data)}
