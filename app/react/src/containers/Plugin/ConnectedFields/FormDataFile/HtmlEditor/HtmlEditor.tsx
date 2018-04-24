@@ -8,7 +8,7 @@ import AceEditor from 'react-ace';
 import 'brace/ext/searchbox';
 import ContentArea, { ContentType } from './ContentArea';
 
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { McsIcon } from '../../../../../components';
 import { RadioChangeEvent } from 'antd/lib/radio';
@@ -25,7 +25,7 @@ interface HtmlEditorState {
   type: Type;
 }
 
-type Props = HtmlEditorProps & InjectDrawerProps;
+type Props = HtmlEditorProps & InjectedDrawerProps;
 
 class HtmlEditor extends React.Component<Props, HtmlEditorState> {
   

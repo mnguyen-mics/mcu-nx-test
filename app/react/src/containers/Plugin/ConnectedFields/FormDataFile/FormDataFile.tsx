@@ -17,7 +17,7 @@ import { FormFieldWrapper } from '../../../../components/Form';
 
 import messages from '../../messages';
 import { injectDrawer } from '../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 
 const defaultTooltipPlacement: TooltipPlacement = 'right';
 
@@ -41,7 +41,7 @@ export interface FormDataFileState {
   basePath?: string;
 }
 
-type JoinedProps = FormDataFileProps & WrappedFieldProps & InjectDrawerProps;
+type JoinedProps = FormDataFileProps & WrappedFieldProps & InjectedDrawerProps;
 
 class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   static defaultprops = {

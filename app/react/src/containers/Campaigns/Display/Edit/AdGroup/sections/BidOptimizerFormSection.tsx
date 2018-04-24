@@ -29,7 +29,7 @@ import {
   makeCancelable,
   CancelablePromise,
 } from '../../../../../../utils/ApiHelper';
-import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import { BidOptimizationObjectiveType } from '../../../../../../models/campaign/constants';
 
 
@@ -40,7 +40,7 @@ export interface BidOptimizerFormSectionProps extends ReduxFormChangeProps {}
 type Props = BidOptimizerFormSectionProps &
   WrappedFieldArrayProps<BidOptimizerFieldModel> &
   InjectedIntlProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 interface State {
   bidOptimizerData: {

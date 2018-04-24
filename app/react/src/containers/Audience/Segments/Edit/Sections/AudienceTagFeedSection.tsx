@@ -12,7 +12,7 @@ import RecordElement from '../../../../../components/RelatedRecord/RecordElement
 
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
 import messages from '../messages';
 import { PluginType } from '../../../../../models/Plugins';
@@ -25,7 +25,7 @@ export interface AudienceTagFeedSectionProps extends ReduxFormChangeProps {}
 type Props = AudienceTagFeedSectionProps &
   WrappedFieldArrayProps<AudienceTagFeedsFieldModel> &
   InjectedIntlProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 class AudienceTagFeedSection extends React.Component<Props> {
   constructor(props: Props) {

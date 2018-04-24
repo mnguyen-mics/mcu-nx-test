@@ -38,14 +38,14 @@ import GoalFormLoader, {
   GoalFormLoaderProps,
 } from '../../../Goal/Edit/GoalFormLoader';
 import GoalFormService from '../../../Goal/Edit/GoalFormService';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
 export interface GoalFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = GoalFormSectionProps &
   InjectedIntlProps &
   InjectedDatamartProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam> &
   WrappedFieldArrayProps<GoalFieldModel>;
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { RouteComponentProps } from 'react-router';
@@ -15,37 +14,37 @@ import McsDateRangePicker, {
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
-import { SEGMENT_QUERY_SETTINGS } from '../constants';
+import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 
 import {
   updateSearch,
   parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
-import { getAudienceSegmentPerformance } from '../../../../../state/Audience/Segments/selectors';
-
 import messages from '../messages';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 const StackedAreaPlotJS = StackedAreaPlot as any;
 
-interface MapStateToProps {
-  hasFetchedAudienceStat: boolean;
-  dataSource: any;
+interface OverviewProps {
+  isFetching: boolean;
+  dataSource: AudienceReport;
 }
 
-type OverviewProps = MapStateToProps &
+type Props = OverviewProps &
   TranslationProps &
   InjectedThemeColorsProps &
+  InjectedIntlProps &
   RouteComponentProps<{
     organisationId: string;
     segmentId: string;
   }>;
 
-class Overview extends React.Component<OverviewProps> {
+class Overview extends React.Component<Props> {
   updateLocationSearch(params: McsDateRangeValue) {
     const {
       history,
@@ -80,7 +79,7 @@ class Overview extends React.Component<OverviewProps> {
   }
 
   renderStackedAreaCharts() {
-    const { dataSource, hasFetchedAudienceStat, colors } = this.props;
+    const { dataSource, isFetching, colors } = this.props;
 
     const optionsForChart = {
       xKey: 'day',
@@ -97,7 +96,7 @@ class Overview extends React.Component<OverviewProps> {
         colors['mcs-error'],
       ],
     };
-    return hasFetchedAudienceStat ? (
+    return !isFetching ? (
       <StackedAreaPlotJS
         identifier="StackedAreaChartEmailOverview"
         dataset={dataSource}
@@ -110,27 +109,27 @@ class Overview extends React.Component<OverviewProps> {
 
   render() {
     const {
-      translations,
       dataSource,
-      hasFetchedAudienceStat,
+      isFetching,
       colors,
+      intl,
     } = this.props;
 
     const options = [
       {
-        domain: translations['user_points'.toUpperCase()],
+        domain: intl.formatMessage(messages.userPoints),
         color: colors['mcs-warning'],
       },
       {
-        domain: translations['user_accounts'.toUpperCase()],
+        domain: intl.formatMessage(messages.userAccounts),
         color: colors['mcs-info'],
       },
       {
-        domain: translations['emails'.toUpperCase()],
+        domain: intl.formatMessage(messages.emails),
         color: colors['mcs-success'],
       },
       {
-        domain: translations['desktop_cookie_ids'.toUpperCase()],
+        domain: intl.formatMessage(messages.desktopCookieId),
         color: colors['mcs-error'],
       },
     ];
@@ -139,7 +138,7 @@ class Overview extends React.Component<OverviewProps> {
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {dataSource.length === 0 && hasFetchedAudienceStat ? (
+            {dataSource.length === 0 && !isFetching ? (
               <div />
             ) : (
               <LegendChart identifier="LegendOverview" options={options} />
@@ -149,8 +148,8 @@ class Overview extends React.Component<OverviewProps> {
             <span className="mcs-card-button">{this.renderDatePicker()}</span>
           </Col>
         </Row>
-        {dataSource.length === 0 && hasFetchedAudienceStat ? (
-          <EmptyCharts title={translations.NO_EMAIL_STATS} />
+        {dataSource.length === 0 && !isFetching ? (
+          <EmptyCharts title={intl.formatMessage(messages.noAdditionDeletion)} />
         ) : (
           this.renderStackedAreaCharts()
         )}
@@ -159,15 +158,8 @@ class Overview extends React.Component<OverviewProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-  hasFetchedAudienceStat:
-    state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
-  dataSource: getAudienceSegmentPerformance(state),
-});
-
-export default compose<{}, {}>(
+export default compose<Props, OverviewProps>(
   withRouter,
-  connect(mapStateToProps),
+  injectIntl,
   injectThemeColors,
 )(Overview);

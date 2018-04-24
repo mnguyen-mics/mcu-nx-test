@@ -22,14 +22,14 @@ import EmailBlastForm, {
 } from '../../Blast/EmailBlastForm';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
 export interface BlastFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<BlastFieldModel> &
   BlastFormSectionProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class BlastFormSection extends React.Component<Props> {

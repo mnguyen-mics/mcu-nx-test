@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Row, Col, Button, Modal } from 'antd';
 import moment from 'moment';
@@ -14,10 +13,8 @@ import {
 import { VerticalBarChart } from '../../../../../components/BarCharts/index';
 import { LegendChart } from '../../../../../components/LegendChart';
 import McsIcon from '../../../../../components/McsIcon';
-import * as AudienceSegmentActions from '../../../../../state/Audience/Segments/actions';
 import messages from '../messages';
 
-import { getOverlapView } from '../../../../../state/Audience/Segments/selectors';
 import { TranslationProps } from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
@@ -26,53 +23,82 @@ import {
   injectDatamart,
   InjectedDatamartProps,
 } from '../../../../Datamart/index';
+import { OverlapData, fetchOverlapAnalysis, createOverlapAnalysis, stopInterval } from '../constants';
 
 const VerticalBarChartJS = VerticalBarChart as any;
-
-interface MapStateToProps {
-  hasFetchedAudienceStat: boolean;
+interface State {
+  data: OverlapData;
   isFetchingOverlap: boolean;
-  hasOverlap: boolean;
-  dataSource: any;
-  segmentsInformation: any;
 }
 
-interface MapDispatchToProps {
-  fetchOverlapAnalysis: (
-    segmentId: string,
-    organisationId: string,
-    datamartId: string,
-  ) => void;
-  createOverlapAnalysis: (
-    datamartId: string,
-    segmentId: string,
-    organisationId: string,
-  ) => void;
-}
-
-type OverlapProps = MapStateToProps &
-  MapDispatchToProps &
+type Props =
   InjectedThemeColorsProps &
   InjectedDatamartProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedIntlProps;
 
-class Overlap extends React.Component<OverlapProps> {
+class Overlap extends React.Component<Props, State> {
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      data: {
+        hasOverlap: false,
+        isRunning: false,
+        isInError: false,
+        data: null
+      },
+      isFetchingOverlap: true
+    }
+  }
+
   componentDidMount() {
     const {
-      datamart,
-      fetchOverlapAnalysis,
-      match: { params: { segmentId, organisationId } },
+      match: { params: { segmentId } },
     } = this.props;
 
-    fetchOverlapAnalysis(segmentId, organisationId, datamart.id);
+    fetchOverlapAnalysis(segmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: { params: { segmentId } },
+    } = this.props;
+    const {
+      match: { params: { segmentId: nextSegmentId } },
+    } = nextProps;
+
+    if (segmentId !== nextSegmentId) {
+      this.setState({ isFetchingOverlap: true }, () => {
+        fetchOverlapAnalysis(nextSegmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+      })
+    }
+  }
+
+  componentWillUpdate() {
+    stopInterval()
   }
 
   renderStackedAreaCharts() {
-    const { dataSource, isFetchingOverlap, colors } = this.props;
+    const { colors } = this.props;
+    const { data, isFetchingOverlap } = this.state;
 
-    const data = dataSource.data.slice(0, 20);
+    if (isFetchingOverlap) return <LoadingChart />
+
+    const dataSource: Array<{ xKey: string, yKey: number }> = [];
+
+    const overlapData = data.data;
+    if (overlapData) {
+      overlapData.formattedOverlap.forEach(item => {
+        if (item) {
+          dataSource.push({
+            xKey: item.segment_intersect_with.name,
+            yKey: item.segment_intersect_with.segment_size === 0 ? 0 : (item.overlap_number / item.segment_intersect_with.segment_size) * 100
+          })
+        }
+      })
+    }
 
     const optionsForChart = {
       xKey: 'xKey',
@@ -83,22 +109,30 @@ class Overlap extends React.Component<OverlapProps> {
     return !isFetchingOverlap ? (
       <VerticalBarChartJS
         identifier="StackedAreaChartEmailOverlap"
-        dataset={data}
+        dataset={dataSource.sort((a, b) => b.yKey - a.yKey).slice(0, 20)}
         options={optionsForChart}
         colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
       />
     ) : (
-      <LoadingChart />
-    );
+        <LoadingChart />
+      );
   }
+
 
   renderModalExtend = () => {
     const {
       datamart,
-      createOverlapAnalysis,
       match: { params: { organisationId, segmentId } },
       intl: { formatMessage },
     } = this.props;
+
+    const createOv = () => {
+      this.setState({ isFetchingOverlap: true })
+      createOverlapAnalysis(datamart.id, segmentId, organisationId)
+        .then(() => {
+          fetchOverlapAnalysis(segmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+        });
+    }
 
     Modal.confirm({
       title: formatMessage(messages.modalOverlapContentTitle),
@@ -108,7 +142,7 @@ class Overlap extends React.Component<OverlapProps> {
         </div>
       ),
       onOk() {
-        createOverlapAnalysis(datamart.id, segmentId, organisationId);
+        createOv()
       },
       onCancel() {
         //
@@ -118,17 +152,18 @@ class Overlap extends React.Component<OverlapProps> {
 
   render() {
     const {
-      translations,
-      dataSource,
-      hasFetchedAudienceStat,
-      isFetchingOverlap,
-      hasOverlap,
       colors,
+      intl,
     } = this.props;
+
+    const {
+      data,
+      isFetchingOverlap
+    } = this.state;
 
     const options = [
       {
-        domain: translations['overlap_number'.toUpperCase()],
+        domain: intl.formatMessage(messages.overlapNumber),
         color: colors['mcs-info'],
       },
     ];
@@ -137,39 +172,37 @@ class Overlap extends React.Component<OverlapProps> {
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {isFetchingOverlap && !hasFetchedAudienceStat && !hasOverlap ? (
+            {isFetchingOverlap || !data.hasOverlap ? (
               <div />
             ) : (
-              <LegendChart identifier="LegendOverlap" options={options} />
-            )}
+                <LegendChart identifier="LegendOverlap" options={options} />
+              )}
           </Col>
           <Col span={12} className="text-right">
             {!isFetchingOverlap &&
-              hasFetchedAudienceStat &&
-              hasOverlap && (
+              data.hasOverlap && (
                 <span className="generated">
                   <FormattedMessage {...messages.generated} />{' '}
-                  {moment(dataSource.date).fromNow()}
+                  {moment(data.data ? data.data.date : 0).fromNow()}
                 </span>
               )}{' '}
-            {!isFetchingOverlap &&
-              hasFetchedAudienceStat && (
-                <Button onClick={this.renderModalExtend}>
-                  <McsIcon type="extend" />{' '}
-                  {hasOverlap ? (
-                    <FormattedMessage {...messages.refresh} />
-                  ) : (
+            {!isFetchingOverlap && (
+              <Button onClick={this.renderModalExtend}>
+                <McsIcon type="extend" />{' '}
+                {data.hasOverlap ? (
+                  <FormattedMessage {...messages.refresh} />
+                ) : (
                     <FormattedMessage {...messages.createOverlap} />
                   )}
-                </Button>
-              )}
+              </Button>
+            )}
           </Col>
         </Row>
-        {!hasOverlap && hasFetchedAudienceStat && !isFetchingOverlap ? (
-          <EmptyCharts title={translations.NO_EMAIL_STATS} />
+        {!data.hasOverlap && !isFetchingOverlap ? (
+          <EmptyCharts title={intl.formatMessage(messages.noAdditionDeletion)} />
         ) : (
-          this.renderStackedAreaCharts()
-        )}
+            this.renderStackedAreaCharts()
+          )}
       </div>
     );
 
@@ -177,27 +210,9 @@ class Overlap extends React.Component<OverlapProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-  hasFetchedAudienceStat:
-    state.audienceSegmentsTable.performanceReportSingleApi.hasFetched,
-  isFetchingOverlap: state.audienceSegmentsTable.overlapAnalysisApi.isFetching,
-  hasOverlap: state.audienceSegmentsTable.overlapAnalysisApi.hasOverlap,
-  dataSource: getOverlapView(state),
-  segmentsInformation: state.audienceSegmentsTable.audienceSegmentsApi.data,
-});
-
-const mapDispatchToProps = {
-  fetchOverlapAnalysis:
-    AudienceSegmentActions.fetchAudienceSegmentOverlap.request,
-  createOverlapAnalysis:
-    AudienceSegmentActions.createAudienceSegmentOverlap.request,
-};
-
-export default compose<{}, {}>(
+export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  connect(mapStateToProps, mapDispatchToProps),
   injectThemeColors,
   injectDatamart,
 )(Overlap);

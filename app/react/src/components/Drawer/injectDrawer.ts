@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { closeNextDrawer, openNextDrawer } from '../../components/Drawer/DrawerStore';
 import { DrawableContentOptions } from './index';
 
-export interface InjectDrawerProps {
+export interface InjectedDrawerProps {
   openNextDrawer: <T>(
     component: React.ComponentClass<T>,
     options: DrawableContentOptions<T>,

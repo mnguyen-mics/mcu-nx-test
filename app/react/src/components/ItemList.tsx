@@ -164,10 +164,15 @@ class ItemList<T> extends React.Component<Props<T>> {
     return (
       <div className="mcs-table-container">
         {additionnalComponent}
-        {!rest.dataSource.length && !rest.loading ? <EmptyTableView iconType={iconType} intlMessage={intlMessage} className="mcs-table-view-empty mcs-empty-card" /> : <TableViewFilters
-          pagination={pagination}
-          {...rest}
-        />}
+        {!rest.dataSource.length && !rest.loading ? (
+          <EmptyTableView
+            iconType={iconType}
+            intlMessage={intlMessage}
+            className="mcs-table-view-empty mcs-empty-card"
+          />
+        ) : (
+          <TableViewFilters pagination={pagination} {...rest} />
+        )}
       </div>
     );
   }

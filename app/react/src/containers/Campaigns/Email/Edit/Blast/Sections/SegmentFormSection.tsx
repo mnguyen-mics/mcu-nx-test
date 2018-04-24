@@ -32,7 +32,7 @@ import messages from '../../messages';
 import McsMoment from '../../../../../../utils/McsMoment';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
 export interface SegmentFormSectionProps extends ReduxFormChangeProps {
   formName: string;
@@ -42,7 +42,7 @@ type Props = MapStateProps &
   WrappedFieldArrayProps<SegmentFieldModel> &
   InjectedIntlProps &
   SegmentFormSectionProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {

@@ -3,9 +3,14 @@ import {
   AdGroupStatus,
   BidOptimizationObjectiveType,
   BudgetPeriod,
- } from './../constants/';
+  TargetedOperatingSystem,
+  TargetedDevice,
+  TargetedMedia,
+  TargetedBrowserFamily,
+  TargetedConnectionType
+} from '../constants';
 
- export interface AdGroupCreateRequest {
+export interface AdGroupCreateRequest {
   name: string;
   technical_name: string;
   visibility: AdSlotVisibilityFilter;
@@ -28,7 +33,12 @@ import {
   max_budget_per_period: number | null;
   max_budget_period: BudgetPeriod;
   status: AdGroupStatus;
- }
+  targeted_operating_systems: TargetedOperatingSystem;
+  targeted_medias: TargetedMedia;
+  targeted_devices: TargetedDevice;
+  targeted_browser_families: TargetedBrowserFamily;
+  targeted_connection_types: TargetedConnectionType;
+}
 
 export interface AdGroupResource extends AdGroupCreateRequest {
   id: string;

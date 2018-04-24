@@ -17,7 +17,7 @@ import { FormSection } from '../../../../../components/Form';
 import { RouteComponentProps } from 'react-router';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import PlacementDescriptorForm from '../PlacementDescriptorForm';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import {
   ReduxFormChangeProps,
   FieldArrayModel,
@@ -95,7 +95,7 @@ const messages = defineMessages({
 interface PlacementsFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = PlacementsFormSectionProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedIntlProps &
   ValidatorProps &
   NormalizerProps &

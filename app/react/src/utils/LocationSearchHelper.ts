@@ -4,13 +4,13 @@ import McsMoment from './McsMoment';
 import { Index } from '.';
 
 function getOrSetInitialSessionValue(value: McsMoment, key: string): McsMoment {
-   if (window.sessionStorage && window.sessionStorage.getItem(key)) {
+  if (window.sessionStorage && window.sessionStorage.getItem(key)) {
     return new McsMoment(window.sessionStorage.getItem(key) as string)
-   } else {
+  } else {
     if (window.sessionStorage)
       window.sessionStorage.setItem(key, value.raw() as string)
-     return value;
-   }
+    return value;
+  }
 }
 
 function setSessionValue(value: McsMoment, key: string) {
@@ -148,6 +148,18 @@ export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
   },
 ];
 
+export const DATAMART_SEARCH_SETTINGS: SearchSetting[] = [
+  {
+    paramName: 'datamartId',
+    defaultValue: '',
+    deserialize: query => {
+      return query.datamartId;
+    },
+    serialize: (value: any) => value,
+    isValid: () => true,
+  },
+];
+
 export interface ArchivedSearchSettings {
   archived: boolean;
 }
@@ -156,9 +168,9 @@ export const isSearchValid = (search: string, settings: SearchSetting[]) => {
   const query = queryString.parse(search);
   // notEmpty and must forall settings query isValid
   return Object.keys(query).length > 0 &&
-        settings.reduce((acc, setting) => {
-          return acc && setting.isValid(query);
-        }, true);
+    settings.reduce((acc, setting) => {
+      return acc && setting.isValid(query);
+    }, true);
 };
 
 // add missing and/or replace invalid params with default value
