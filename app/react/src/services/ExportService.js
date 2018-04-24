@@ -6,6 +6,7 @@ import dateMessages from '../common/messages/dateMessages';
 import exportMessages from '../common/messages/exportMessages';
 import log from '../utils/Logger';
 import { messages } from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportTable.tsx';
+import McsMoment from '../utils/McsMoment.ts';
 
 const datenum = (v, date1904) => {
   let newV = v;
@@ -185,6 +186,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
   dataSheet.push(blankLine);
 
   const headersMap = [
+    { name: 'id', translation: translations.ID },
     { name: 'status', translation: translations.STATUS },
     { name: 'name', translation: translations.NAME },
     { name: 'technical_name', translation: translations.TECHNICAL_NAME },
@@ -248,6 +250,7 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
   ];
 
   const adsAdGroupsHeaders = [
+    { name: 'id', translation: formatMessage(displayCampaignMessages.id) },
     { name: 'status', translation: formatMessage(displayCampaignMessages.status) },
     { name: 'name', translation: formatMessage(displayCampaignMessages.name) },
     { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
@@ -304,6 +307,7 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
   dataSheet.push(blankLine);
 
   const headersMap = [
+    { name: 'id', translation: translations.ID },
     { name: 'status', translation: translations.STATUS },
     { name: 'name', translation: translations.NAME },
     { name: 'technical_name', translation: translations.TECHNICAL_NAME },
@@ -435,7 +439,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${translations.FROM} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')} ${translations.TO} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -448,11 +452,13 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   dataSheet.push(blankLine);
 
   const headersMap = [
+    { name: 'id', translation: translations.ID },
     { name: 'type', translation: translations.TYPE },
     { name: 'name', translation: translations.NAME },
     { name: 'technical_name', translation: translations.TECHNICAL_NAME },
     { name: 'user_points', translation: translations.USER_POINTS },
     { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
+    { name: 'desktop_cookie_ids', translation: translations.DESKTOP_COOKIE_IDS },
     { name: 'emails', translation: translations.EMAILS },
     { name: 'user_point_additions', translation: translations.ADDITION },
     { name: 'user_point_deletions', translation: translations.DELETION },
@@ -474,7 +480,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
     data: dataSheet,
   }];
 
-  exportData(sheets, `${organisationId}_${datamartId}_audience-segments`, 'xlsx');
+  exportData(sheets, `${organisationId}_audience-segments`, 'xlsx');
 };
 
 /**
