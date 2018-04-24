@@ -1,6 +1,6 @@
 {
   "CAMPAIGN_COMPONENT": "Campaign component",
-  "LOREM_IPSUM":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
+  "LOREM_IPSUM": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
   "AUDIENCE": "Audience",
   "CATALOGS": "Catalogs",
   "CAMPAIGNS": "Campaigns",
@@ -11,7 +11,6 @@
   "FILTERED_BY": "Filtered By",
   "LOGIN": "Login",
   "LOGOUT": "Logout",
-
   "EMAIL_ADDRESS": "Email Address",
   "EMAIL_PLACEHOLDER": "Email",
   "EMAL_REQUIRED": "Please input your email!",
@@ -22,7 +21,6 @@
   "LOG_IN": "Log in",
   "REMEMBER_ME": "Remember me",
   "LOG_IN_ERROR": "Incorrect email or password",
-
   "RESET_PASSWORD": "To reset your password please enter your email address.",
   "YOUR_EMAIL_ADDRESS": "Your Email Address",
   "VALID_EMAIL": "Please enter a valid registered email address.",
@@ -31,24 +29,23 @@
   "RETURN_TO_LOGIN": "Return to Login",
   "PASSWORD_SENT": "We've sent you an email with a link to finish reseting your password.",
   "EMAIL_SPAM": "Can't find the email ? try checking your  spam folder.",
-
   "CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Campaign?",
   "CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Campaign all its activities will be suspended. You'll be able to recover it from the archived campaign filter.",
   "GOAL_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this goal?",
   "GOAL_MODAL_CONFIRM_ARCHIVED_BODY": "You'll be able to recover it from the archived goal filter.",
   "MODAL_CONFIRM_ARCHIVED_OK": "Archive Now",
   "MODAL_CONFIRM_ARCHIVED_CANCEL": "Cancel",
-  "STATUS":"Status",
-  "NAME":"Name",
-  "IMPRESSIONS":"Imp.",
-  "CLICKS":"Clicks",
+  "STATUS": "Status",
+  "NAME": "Name",
+  "IMPRESSIONS": "Imp.",
+  "CLICKS": "Clicks",
   "IMPRESSIONS_COST": "Spent",
-  "CPM":"CPM",
-  "CTR":"CTR",
-  "CPC":"CPC",
-  "CPA":"CPA",
-  "CONVERSIONS":"Conversions",
-  "CONVERSION_VALUE":"Conversion value",
+  "CPM": "CPM",
+  "CTR": "CTR",
+  "CPC": "CPC",
+  "CPA": "CPA",
+  "CONVERSIONS": "Conversions",
+  "CONVERSION_VALUE": "Conversion value",
   "SAVE": "Save",
   "DISPLAY_CAMPAIGNS": "Display",
   "EMAIL_CAMPAIGNS": "Emails",
@@ -73,11 +70,9 @@
   "EMAIL_SOFT_BOUNCED": "Emails soft bounced",
   "USD": "$",
   "EUR": "€",
-
-  "TOTAL_USER_SEGMENT_TREATED" : "User Segments Treated",
-  "TOTAL_USER_SEGMENT_IMPORTED" : "User Segments Imported",
-  "SUBMISSION_DATE" : "Submission Date",
-  
+  "TOTAL_USER_SEGMENT_TREATED": "User Segments Treated",
+  "TOTAL_USER_SEGMENT_IMPORTED": "User Segments Imported",
+  "SUBMISSION_DATE": "Submission Date",
   "NEW_SEGMENT": "New Segment",
   "USER_LIST": "List",
   "USER_PIXEL": "Pixel",
@@ -98,13 +93,10 @@
   "USER_ACTIVATION": "User Activation",
   "SEARCH_AUDIENCE_SEGMENTS": "Search Segments",
   "TECHNICAL_NAME": "Technical Name",
-
   "SEGMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Segment?",
   "SEGMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Segment all it will stop campaign using it. Are you sure?",
-
   "AUTOMATIONS_LIST": "Automations",
   "NEW_AUTOMATION": "New Automation",
-
   "EMPTY_EMAILS": "There is no Email Campaigns created yet! Click on New to get started",
   "EMPTY_DISPLAY": "There is no Display Campaigns created yet! Click on New to get started",
   "EMPTY_GOALS": "There is no Goals created yet! Click on New to get started",
@@ -116,7 +108,6 @@
   "EMPTY_LIBRARY_ASSETS": "There is no Assets created yet! Click on New to get started",
   "EMPTY_LIBRARY_PLACEMENT": "There is no Placement created yet! Click on New to get started",
   "EMPTY_LIBRARY_KEYWORD": "There is no Keyword created yet! Click on New to get started",
-
   "TODAY": "Today",
   "YESTERDAY": "Yesterday",
   "LAST_7_DAYS": "Last 7 Days",
@@ -140,29 +131,23 @@
   "MEDIAS_EXPORT_TITLE": "Medias Export",
   "AD_GROUPS_EXPORT_TITLE": "Ad Groups Export",
   "ADS_EXPORT_TITLE": "Ads Export",
-
   "NOTIFICATION_ERROR_TITLE": "Error",
   "NOTIFICATION_ERROR_DESCRIPTION": "An error occured",
   "NOTIFICATION_NEW_VERSION_TITLE": "New Version",
   "NOTIFICATION_NEW_VERSION_DESCRIPTION": "Please reload the page",
-
   "CAMPAIGN_STATUS_ACTIVE": "Active",
   "CAMPAIGN_STATUS_PAUSED": "Paused",
   "CAMPAIGN_STATUS_PENDING": "Pending",
   "CAMPAIGN_OVERVIEW": "Overview",
   "CAMPAIGN_DELIVERY_ANALYSIS": "Delivery Analysis",
-
   "NO_EMAIL_STATS": "No Data during the selected period.",
   "EMAIL_BLASTS": "Email Blast",
   "NEW_EMAIL_BLAST": "New Email Blast",
-
   "CREATE_NEW_TAG": "Create New",
-
   "DELIVERED": "Delivered",
   "OPENS": "Opened",
   "CLICKS_TO_OPENS": "Opening Clicks",
   "UNSUBSCRIBE": "Unsubscribed",
-
   "PART_COUNT": "Part Count",
   "NEW_PARTITION": "New Partition",
   "RANDOM_SPLIT": "Random Split",
@@ -170,66 +155,54 @@
   "PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Partition?",
   "PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Partition all it will stop campaign using it. Are you sure?",
   "SEARCH_AUDIENCE_PARTITIONS": "Search Partition",
-
   "PLACEMENT_LIST": "Placement List",
   "KEYWORD_LIST": "Keyword List",
   "BID_OPTIMIZER": "Bid Optimizer",
   "ATTRIBUTION_MODEL": "Attribution Model",
   "VISIT_ANALYZER": "Visit Analyzer",
   "CATALOG": "Catalog",
-  "AD_LAYOUTS":"Ad Layouts",
-  "STYLESHEETS":"Stylesheets",
-  "EMAIL_ROUTERS":"Email Routers",
+  "AD_LAYOUTS": "Ad Layouts",
+  "STYLESHEETS": "Stylesheets",
+  "EMAIL_ROUTERS": "Email Routers",
   "ASSETS": "Assets",
   "EXPORTS": "Exports",
-
   "ANALYTICS": "Analytics",
   "OVERVIEW": "Overview",
-
   "NEW_PLACEMENT_LIST": "New Placement List",
-  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Placement List?",
+  "PLACEMENT_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Placement List?",
   "PLACEMENT_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this PLacement all it will stop campaign using it. Are you sure?",
-
   "NEW_KEYWORD_LIST": "New Keyword List",
-  "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Keyword List?",
+  "KEYWORD_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Keyword List?",
   "KEYWORD_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Keyword all it will stop campaign using it. Are you sure?",
-
   "NEW_ASSET": "New Asset",
-  "ASSET_MODAL_CONFIRM_ARCHIVED_TITLE":  "Are you sure you want to archive this Asset?",
+  "ASSET_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Asset?",
   "ASSET_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Asset all it will stop campaign using it. Are you sure?",
   "PREVIEW": "Preview",
   "DIMENSIONS": "Dimensions",
   "AUDIT_STATUS": "Audit Status",
   "PUBLISHED_VERSION": "Published Version",
-
   "DISPLAY_ADS": "Display Ads",
   "EMAILS_TEMPLATES": "Email Templates",
   "NEW_DISPLAY_AD": "New Display Ad",
   "NEW_EMAIL_TEMPLATE": "New Email Template",
-
   "ACTIVATE_CAMPAIGN": "Activate Campaign",
   "PAUSE_CAMPAIGN": "Pause Campaign",
   "ACTIVATE": "Activate",
   "OVERLAP": "Overlap",
   "OVERVIEW": "Overview",
   "ADDITION_DELETION": "Addition Deletion",
-
   "OVERLAP_NUMBER": "Overlap Number",
   "USER_POINT_ADDITIONS": "Userpoint Additions",
   "USER_POINT_DELETIONS": "Userpoint Deletions",
   "DESKTOP_COOKIE_IDS": "Display Cookies",
   "EXTEND": "Extend",
-
   "NEW_SITE": "New Site",
   "EMPTY_SITES": "There are no sites set up. Click on 'New Site' to create one.",
-
   "NEW_MOBILE_APPLICATION": "New Mobile Application",
   "EMPTY_MOBILE_APPLICATIONS": "There are no mobile applications set up. Click on 'New Mobile Application' to create one.",
-
   "AD_GROUPS": "Ad Groups",
   "NEW_AD_GROUP": "New Ad Group",
   "TOP_SITES": "Top Sites",
-
   "DISPLAY_NETWORK_NAME": "Display Network",
   "AD_GROUP_UPDATE_ACTIVE_SUCCESS": "Ad Group Successfully Activated",
   "AD_GROUP_UPDATE_ACTIVE_ERROR": "There was an error activating your Ad Group... Please try again...",
@@ -243,13 +216,12 @@
   "NOTIFICATION_ERROR": "Error",
   "AUDIT_SUCCESS": "Audit Successful",
   "AUDIT_ERROR": "You need to pass the Audit first",
-
   "EMPTY_DATAMARTS": "There are no datamarts set up.",
-
   "AD_GROUP_STATUS_ACTIVE": "Ad Group Active",
   "AD_GROUP_STATUS_PENDING": "Ad Group Pending",
   "AD_GROUP_STATUS_PAUSED": "Ad Group Paused",
   "SEND_TEST": "Send a test Email",
   "REPORT": "DSP Report",
-  "CREATE": "Create"
+  "CREATE": "Create",
+  "ID": "Id"
 }
