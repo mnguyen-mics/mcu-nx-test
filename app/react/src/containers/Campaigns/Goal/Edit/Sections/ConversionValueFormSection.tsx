@@ -61,9 +61,9 @@ type Props = ConversionValueFormSectionProps &
 
 class ConversionValueFormSection extends React.Component<Props, State> {
   isDefaultGoalValue = this.props.initialValues &&
-    this.props.initialValues.goal &&
-    this.props.initialValues.goal.default_goal_value &&
-    this.props.initialValues.goal.default_goal_value !== 0;
+  this.props.initialValues.goal &&
+  this.props.initialValues.goal.default_goal_value &&
+  this.props.initialValues.goal.default_goal_value !== 0;
 
   constructor(props: Props) {
     super(props);
@@ -78,7 +78,10 @@ class ConversionValueFormSection extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+      fieldValidators: { isValidDouble },
+    } = this.props;
 
     return (
       <div>
@@ -107,6 +110,7 @@ class ConversionValueFormSection extends React.Component<Props, State> {
           <FormInputField
             name="goal.default_goal_value"
             component={FormInput}
+            validate={[isValidDouble]}
             formItemProps={{
               label: formatMessage(messages.defaultGoalValueLabel),
             }}
@@ -122,9 +126,9 @@ class ConversionValueFormSection extends React.Component<Props, State> {
                       value: 'EUR',
                     },
                   ]}
-                 selectProps={{
-                  value: 'EUR'
-                 }}
+                  selectProps={{
+                    value: 'EUR',
+                  }}
                 />
               ),
             }}

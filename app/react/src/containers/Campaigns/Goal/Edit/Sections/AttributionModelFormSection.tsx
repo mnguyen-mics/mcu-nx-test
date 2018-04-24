@@ -8,7 +8,6 @@ import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import {
@@ -30,10 +29,7 @@ import {
   AttributionModelCreateRequest,
 } from '../../../../../models/Plugins';
 import { AttributionSelectionCreateRequest } from '../../../../../models/goal';
-// import AttributionModelForm, {
-//   AttributionModelFormProps,
-// } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelForm';
-// import { AttributionModelFormData } from '../../../../Settings/CampaignSettings/AttributionModel/Edit/domain';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
 const messages = defineMessages({
   sectionSubtitle: {
@@ -84,7 +80,7 @@ interface AttributionModelFormSectionProps extends ReduxFormChangeProps {}
 type Props = AttributionModelFormSectionProps &
   InjectedIntlProps &
   ValidatorProps &
-  InjectDrawerProps &
+  InjectedDrawerProps & 
   WrappedFieldArrayProps<AttributionModelListFieldModel>;
 
 class AttributionModelFormSection extends React.Component<

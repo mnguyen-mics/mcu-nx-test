@@ -302,9 +302,7 @@ class GoalsTable extends Component {
       selectedLabels: labels.filter(label => {
         return filter.label_id.find(
           filteredLabelId => filteredLabelId === label.id,
-        )
-          ? true
-          : false;
+        );
       }),
       onChange: newLabels => {
         const formattedLabels = newLabels.map(label => label.id);
