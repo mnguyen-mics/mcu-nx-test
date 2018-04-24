@@ -843,6 +843,11 @@ export default defineMessages({
     id: 'goal.pixel.modal.title',
     defaultMessage: 'Your Goal Pixel',
   },
+  
+  getCodeSnippet: {
+    id: 'goal.pixel.get.code.snippet',
+    defaultMessage: 'Get code snippet',
+  },
 
   goalPixelModalContent: {
     id: 'goal.pixel.modal.content',

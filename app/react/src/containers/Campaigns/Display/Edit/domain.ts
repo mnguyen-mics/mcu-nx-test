@@ -22,7 +22,7 @@ export type GoalModelShape =
 
 export type GoalFieldModel = FieldArrayModelWithMeta<
   GoalModelShape,
-  { name: string }
+  { name: string, triggerMode: string }
 >;
 export type AdGroupFieldModel = FieldArrayModel<AdGroupFormData>;
 

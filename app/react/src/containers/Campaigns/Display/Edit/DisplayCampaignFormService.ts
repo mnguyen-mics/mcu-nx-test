@@ -1,4 +1,7 @@
-import { INITIAL_GOAL_FORM_DATA, isExistingGoal } from './../../Goal/Edit/domain';
+import {
+  INITIAL_GOAL_FORM_DATA,
+  isExistingGoal,
+} from './../../Goal/Edit/domain';
 import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
 import { extractDataList, extractData } from '../../../../services/ApiService';
@@ -22,6 +25,7 @@ import GoalFormService from '../../Goal/Edit/GoalFormService';
 import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
 import operation from '../Edit/Campaign/domain';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import GoalService from '../../../../services/GoalService';
 
 type DisplayCampaignId = string;
 
@@ -67,18 +71,34 @@ const DisplayCampaignFormService = {
         );
       }),
     ]).then(([goalSelections, adGroupFormDataList]) => {
-      const goalFields = goalSelections.map(el => ({
-        ...createFieldArrayModelWithMeta(duplicate ? omit(el, 'id') : el, {
-          name: el.goal_name,
-        }),
-      }));
-      const adGroupFields = adGroupFormDataList.map(el =>
-        createFieldArrayModel(duplicate ? omit(el, 'id') : el),
-      );
-      return {
-        goalFields,
-        adGroupFields,
-      };
+      const goalFields: GoalFieldModel[] = [];
+      const tasks: Task[] = [];
+      goalSelections.forEach(el => {
+        tasks.push(() => {
+          return GoalService.getGoal(el.goal_id)
+            .then(resp => resp.data)
+            .then(goalResource => {
+              goalFields.push({
+                ...createFieldArrayModelWithMeta(
+                  duplicate ? omit(el, 'id') : el,
+                  {
+                    name: el.goal_name,
+                    triggerMode: goalResource.new_query_id ? 'QUERY' : 'PIXEL',
+                  },
+                ),
+              });
+            });
+        });
+      });
+      return executeTasksInSequence(tasks).then(() => {
+        const adGroupFields = adGroupFormDataList.map(el =>
+          createFieldArrayModel(duplicate ? omit(el, 'id') : el),
+        );
+        return {
+          goalFields,
+          adGroupFields,
+        };
+      });
     });
   },
 

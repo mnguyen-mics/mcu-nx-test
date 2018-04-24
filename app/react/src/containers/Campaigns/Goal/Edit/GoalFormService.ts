@@ -80,7 +80,6 @@ const GoalFormService = {
           };
         });
     } else if (goalFormData.triggerMode === 'PIXEL') {
-      // backend does not change new_query_id to null
       goalDataToUpload.then(() => {
         return {
           ...goalFormData.goal,

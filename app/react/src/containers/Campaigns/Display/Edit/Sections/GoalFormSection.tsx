@@ -39,6 +39,7 @@ import GoalFormLoader, {
 } from '../../../Goal/Edit/GoalFormLoader';
 import GoalFormService from '../../../Goal/Edit/GoalFormService';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import GoalService from '../../../../../services/GoalService';
 
 export interface GoalFormSectionProps extends ReduxFormChangeProps {}
 
@@ -92,22 +93,27 @@ class GoalFormSection extends React.Component<Props> {
     });
 
     const existingGoalIds = getExistingGoalIds(fields.getAll());
-    const newFields = goals
-      .filter(goal => !existingGoalIds.includes(goal.id))
-      .map(goal => {
-        const model: GoalSelectionCreateRequest = {
-          goal_id: goal.id,
-          goal_selection_type: 'CONVERSION',
-          default: true,
-        };
-        return {
-          key: cuid(),
-          model,
-          meta: { name: goal.name },
-        };
-      });
-
-    formChange((fields as any).name, keptFields.concat(newFields));
+    const newFields: GoalFieldModel[] = [];
+    goals.filter(goal => !existingGoalIds.includes(goal.id)).forEach(goal => {
+      const model: GoalSelectionCreateRequest = {
+        goal_id: goal.id,
+        goal_selection_type: 'CONVERSION',
+        default: true,
+      };
+      return GoalService.getGoal(model.goal_id)
+        .then(resp => resp.data)
+        .then(goalResource => {
+          const triggerMode = goalResource.new_query_id ? 'QUERY' : 'PIXEL';
+          newFields.push({
+            key: cuid(),
+            model,
+            meta: { name: goal.name, triggerMode: triggerMode },
+          });
+        })
+        .then(() => {
+          formChange((fields as any).name, keptFields.concat(newFields));
+        });
+    });
   };
 
   updateGoals = (goalFormData: GoalFormData, fieldKey?: string) => {
@@ -120,7 +126,10 @@ class GoalFormSection extends React.Component<Props> {
           newFields.push({
             key: fieldKey,
             model: goalFormData,
-            meta: { name: goalFormData.goal.name || '' },
+            meta: {
+              name: goalFormData.goal.name || '',
+              triggerMode: goalFormData.triggerMode,
+            },
           });
         } else {
           newFields.push(field);
@@ -131,7 +140,10 @@ class GoalFormSection extends React.Component<Props> {
       newFields.push({
         key: cuid(),
         model: goalFormData,
-        meta: { name: goalFormData.goal.name || '' },
+        meta: {
+          name: goalFormData.goal.name || '',
+          triggerMode: goalFormData.triggerMode,
+        },
       });
     }
 
@@ -227,19 +239,26 @@ class GoalFormSection extends React.Component<Props> {
     const updateFields = (goalId: string, goalName: string) => {
       const newFields: GoalFieldModel[] = [];
       fields.getAll().forEach(_field => {
-        if (_field.key === field.key) {
-          newFields.push({
-            key: cuid(),
-            model: {
-              goal_id: goalId,
-              goal_selection_type: 'CONVERSION',
-              default: true,
-            },
-            meta: { name: goalName },
+        GoalService.getGoal(goalId)
+          .then(resp => resp.data)
+          .then(goalResource => {
+            if (_field.key === field.key) {
+              newFields.push({
+                key: cuid(),
+                model: {
+                  goal_id: goalId,
+                  goal_selection_type: 'CONVERSION',
+                  default: true,
+                },
+                meta: {
+                  name: goalName,
+                  triggerMode: goalResource.new_query_id ? 'QUERY' : 'PIXEL',
+                },
+              });
+            } else {
+              newFields.push(_field);
+            }
           });
-        } else {
-          newFields.push(_field);
-        }
       });
       formChange((fields as any).name, newFields);
     };
@@ -270,8 +289,11 @@ class GoalFormSection extends React.Component<Props> {
     };
 
     return (
-      <ButtonStyleless onClick={handleOnClick}>
-        <McsIcon type="settings" className="big" />
+      <ButtonStyleless
+        onClick={handleOnClick}
+        title={formatMessage(messages.getCodeSnippet)}
+      >
+        <McsIcon type="code" className="big" />
       </ButtonStyleless>
     );
   };
@@ -282,6 +304,7 @@ class GoalFormSection extends React.Component<Props> {
     const getGoalName = (field: GoalFieldModel) => field.meta.name;
 
     return fields.getAll().map((field, index) => {
+      const displayPixelSnippet = field.meta.triggerMode === 'PIXEL';
       const handleRemove = () => fields.remove(index);
       const handleEdit = () => this.openGoalForm(field);
       return (
@@ -290,7 +313,9 @@ class GoalFormSection extends React.Component<Props> {
           recordIconType={'goals'}
           record={field}
           title={getGoalName}
-          additionalActionButtons={this.getPixelSnippet}
+          additionalActionButtons={
+            displayPixelSnippet ? this.getPixelSnippet : undefined
+          }
           onEdit={handleEdit}
           onRemove={handleRemove}
         />
