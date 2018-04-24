@@ -20,6 +20,7 @@ import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import McsMoment from '../../../../utils/McsMoment';
 
 
 const messages = defineMessages({
@@ -70,8 +71,8 @@ const fetchExportData = (organisationId: string, datamartId: string, filter: Ind
     return options;
   };
 
-  const startDate = filter.from;
-  const endDate = filter.to;
+  const startDate = new McsMoment('now');
+  const endDate = new McsMoment('now');
   const dimension = ['audience_segment_id'];
 
   const apiResults = Promise.all([
