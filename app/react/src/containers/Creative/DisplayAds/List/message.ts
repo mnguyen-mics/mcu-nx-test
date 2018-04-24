@@ -24,5 +24,9 @@ export default defineMessages({
     creativeModalNoArchiveMessage: {
         id: 'creative.modal.no.archive.msg',
         defaultMessage: 'You can\'t archive a creative in the audit status AUDIT_FAILED, AUDIT_PENDING or AUDIT_PASSED',
+    },
+    creativeModalSearchPlaceholder: {
+        id: 'creative.modal.search.placeholder',
+        defaultMessage: 'Search Display Creative',
     }
 });

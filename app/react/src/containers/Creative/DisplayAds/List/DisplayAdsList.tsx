@@ -133,9 +133,19 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
       hasCreativeDisplay,
       rowSelection,
       isUpdatingAuditStatus,
+      intl,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
+
+    const searchOptions = {
+      placeholder: intl.formatMessage(messages.creativeModalSearchPlaceholder),
+      onSearch: (value: string) => this.updateLocationSearch({
+        keywords: value,
+        currentPage: 1
+      }),
+      defaultValue: filter.keywords,
+    };
 
     const pagination = {
       current: filter.currentPage,
@@ -222,11 +232,12 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
           loading={isFetchingCreativeDisplay || isUpdatingAuditStatus}
           pagination={pagination}
           rowSelection={rowSelection}
+          searchOptions={searchOptions}
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />
-    );
+        <EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />
+      );
   }
 
   editCreativeDisplay(creative: DisplayAdResource) {
@@ -281,11 +292,11 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
     } else {
       Modal.warning({
         title: intl.formatMessage(messages.creativeModalNoArchiveTitle),
-        content : intl.formatMessage(messages.creativeModalNoArchiveMessage),
+        content: intl.formatMessage(messages.creativeModalNoArchiveMessage),
         iconType: 'exclamation-circle',
       })
     }
-   
+
   }
 }
 
