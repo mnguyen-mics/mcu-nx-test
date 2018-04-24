@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Menu, Button, message } from 'antd';
+import { Button, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   FormattedMessage,
@@ -9,7 +9,6 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { Dropdown } from '../../../../components/PopupContainers';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 
@@ -186,48 +185,11 @@ class SegmentsActionbar extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      datamart,
+      // datamart,
       intl,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
-
-    const userPixelMenu = () => {
-      return (
-        <Menu.Item key="USER_PIXEL">
-          <Link
-            to={{
-              pathname: `/v2/o/${organisationId}/audience/segments/create/USER_PIXEL`,
-            }}
-          >
-            <FormattedMessage {...messages.userPixel} />
-          </Link>
-        </Menu.Item>
-      );
-    };
-
-    const addMenu = (
-      <Menu>
-        <Menu.Item key="USER_LIST">
-          <Link
-            to={{
-              pathname: `/v2/o/${organisationId}/audience/segments/create/USER_LIST`,
-            }}
-          >
-            <FormattedMessage {...messages.userList} />
-          </Link>
-        </Menu.Item>
-        {datamart.storage_model_version === 'v201709' ? userPixelMenu() : null}
-
-        <Menu.Item key="USER_QUERY">
-          <Link
-            to={`/v2/o/${organisationId}/audience/segments/create/USER_QUERY`}
-          >
-            <FormattedMessage {...messages.userQuery} />
-          </Link>
-        </Menu.Item>
-      </Menu>
-    );
 
     const breadcrumbPaths = [
       {
@@ -238,12 +200,14 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Dropdown overlay={addMenu} trigger={['click']}>
+        <Link to={{
+          pathname: `/v2/o/${organisationId}/audience/segments/create`,
+        }}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
             <FormattedMessage {...messages.newSegment} />
           </Button>
-        </Dropdown>
+        </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
           <FormattedMessage {...messages.export} />

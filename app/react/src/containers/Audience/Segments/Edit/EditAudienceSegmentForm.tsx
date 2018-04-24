@@ -7,6 +7,7 @@ import {
   GenericFieldArray,
   FieldArray,
   Field,
+  getFormValues,
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps } from 'react-intl';
@@ -31,7 +32,6 @@ import withNormalizer, {
 } from '../../../../components/Form/withNormalizer';
 import {
   AudienceSegmentFormData,
-  SegmentTypeFormLoader,
   EditAudienceSegmentParam
 } from './domain'
 import {
@@ -60,6 +60,10 @@ const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
   >;
 
+interface MapStateToProps {
+  formValues: AudienceSegmentFormData;
+}
+
 const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceExternalFeedSectionProps>;
 const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<Field, AudienceTagFeedSectionProps>;
 
@@ -70,8 +74,7 @@ export interface AudienceSegmentFormProps extends Omit<ConfigProps<AudienceSegme
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
   breadCrumbPaths: Path[];
   audienceSegmentFormData: AudienceSegmentFormData;
-  datamart: Datamart,
-  segmentType: SegmentTypeFormLoader;
+  datamart: Datamart;
   feedType?: FeedType;
   segmentCreation: boolean;
   queryContainer: any;
@@ -82,6 +85,7 @@ type Props = InjectedFormProps<AudienceSegmentFormProps> &
   AudienceSegmentFormProps &
   InjectedIntlProps &
   ValidatorProps &
+  MapStateToProps &
   NormalizerProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -102,7 +106,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
   renderPropertiesField = () => {
     const {
-      segmentType,
       datamart,
       queryLanguage,
       match: {
@@ -111,8 +114,9 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         }
       },
       intl,
+      formValues,
     } = this.props;
-    switch(segmentType) {
+    switch(formValues.type) {
       case 'USER_LIST':
         const {audienceSegmentFormData} = this.props;
         return <UserListSection segmentId= {audienceSegmentFormData.audienceSegment.id as string}/>;
@@ -141,10 +145,13 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
     const {
       handleSubmit, close,
-      segmentType,
+      formValues: {
+        type: segmentType
+      },
       segmentCreation,
       change,
       breadCrumbPaths,
+      datamart,
     } = this.props;
 
     const genericFieldArrayProps = {
@@ -166,12 +173,13 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       component: <GeneralFormSection
         segmentCreation={segmentCreation}
         segmentType={segmentType as any}
+        datamart={datamart}
       />,
     });
     if (!(segmentCreation && (segmentType === 'USER_PIXEL' || segmentType === 'USER_LIST'))) {
       sections.push({
         id: 'properties',
-        title: segmentType === 'USER_PIXEL' ? messages.audienceSegmentSiderMenuProperties : messages.audienceSegmentSiderMenuImport ,
+        title: segmentType === 'USER_PIXEL' ? messages.audienceSegmentSiderMenuProperties : (segmentType === 'USER_QUERY') ? messages.audienceSegmentSiderMenuUserQuery : messages.audienceSegmentSiderMenuImport,
         component: this.renderPropertiesField()
       });
     }
@@ -252,5 +260,6 @@ export default compose<Props, AudienceSegmentFormProps>(
   }),
   connect(state => ({
     hasFeature: FeatureSelectors.hasFeature(state),
+    formValues: getFormValues(FORM_ID)(state)
   }))
 )(EditAudienceSegmentForm);

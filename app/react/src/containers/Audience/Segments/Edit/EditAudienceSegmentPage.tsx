@@ -10,6 +10,7 @@ import {
   DefaultLiftimeUnit,
   AudienceExternalFeedResource,
   AudienceTagFeedResource,
+  SegmentType,
 } from './domain';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import QueryService from '../../../../services/QueryService';
@@ -56,7 +57,6 @@ const messagesMap = defineMessages({
 
 interface State {
   audienceSegmentFormData: AudienceSegmentFormData;
-  segmentType?: string;
   segmentCreation: boolean;
   queryLanguage: QueryLanguage;
   queryContainer?: any;
@@ -133,7 +133,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     ) {
       return 'USER_PIXEL';
     }
-    return audienceSegment.type;
+    return audienceSegment.type as SegmentType;
   };
 
   initialLoading = (props: Props) => {
@@ -164,6 +164,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                 audienceSegmentFormData: {
                   ...this.state.audienceSegmentFormData,
                   query: r,
+                type: this.extractSegmentType(res.data)
                 },
               });
             });
@@ -598,7 +599,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   save = (audienceSegmentFormData: AudienceSegmentFormData) => {
     const {
       match: {
-        params: { organisationId, type },
+        params: { organisationId },
       },
       datamart,
       notifyError,
@@ -642,7 +643,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const datamartId = selectedDatamart ? selectedDatamart.id : datamart.id;
 
-    switch (type) {
+    switch (audienceSegmentFormData.type) {
       case 'USER_PIXEL':
         audienceSegmentFormData = {
           ...audienceSegmentFormData,
@@ -748,9 +749,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: {
-        params: { type },
-      },
       datamart,
       intl: { formatMessage },
       match: {
@@ -764,8 +762,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       selectedDatamart,
       loading,
     } = this.state;
-
-    const segmentType = type || this.state.segmentType;
 
     const audienceSegmentName =
       audienceSegmentFormData.audienceSegment &&
@@ -807,7 +803,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         audienceSegmentFormData={this.state.audienceSegmentFormData}
         datamart={selectedDatamart ? selectedDatamart : datamart}
-        segmentType={segmentType}
         segmentCreation={segmentCreation}
         queryContainer={this.state.queryContainer}
         queryLanguage={getQueryLanguageToDisplay}
