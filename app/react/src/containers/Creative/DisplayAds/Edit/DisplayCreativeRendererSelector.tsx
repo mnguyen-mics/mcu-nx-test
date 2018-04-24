@@ -74,8 +74,9 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
         adRendererList
           .filter(ad => !previousAdRendererIds.includes(ad.id))
           .forEach(adRenderer => {
+            const separators = ['_','-'];
             const formattedName = adRenderer.artifact_id
-              .split('-')
+              .split(new RegExp(separators.join('|'), 'g'))
               .map(word => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
             return adRendererSubmenu.push({
