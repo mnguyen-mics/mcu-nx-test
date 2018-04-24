@@ -121,9 +121,9 @@ class CatalogContent extends React.Component<
             .then(r => r.data)
             .then(r => { return {...category, hasSubCategory: r.length > 0 } })
             .then(r => {
-              return r.hasSubCategory ? CatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id, { first_result: 0, max_results: 500 })
+              return CatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id, { first_result: 0, max_results: 500 })
                 .then(i => i.data)
-                .then(i => { return {...r, hasItems: i.length > 0, subItems: i } }) : {...r, hasItems: false, subItems: []}
+                .then(i => { return {...r, hasItems: i.length > 0, subItems: i } })
             })
         })
         return Promise.all(promises)
