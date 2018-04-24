@@ -9,7 +9,7 @@ import DisplayAdsActionBar from './DisplayAdsActionBar';
 import DisplayAdsList from './DisplayAdsList';
 import { injectDrawer } from '../../../../components/Drawer';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import { InjectDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import {
   getDisplayCreatives,
   getDisplayCreativesTotal,
@@ -69,7 +69,7 @@ interface DisplayAdsPageState {
 
 type JoinedProps = DisplayAdsPage &
   InjectedIntlProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   MapStateToProps &
   MapDispatchToProps &
   InjectedNotificationProps &

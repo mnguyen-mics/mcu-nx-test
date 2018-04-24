@@ -5,6 +5,7 @@ import {
   AudienceSegmentType,
   UserQueryEvaluationMode,
   AudienceSegmentShape,
+  OverlapJobResult,
 } from '../models/audiencesegment/AudienceSegmentResource';
 import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
@@ -19,13 +20,14 @@ import {
 import PluginService from './PluginService';
 import { BaseExecutionResource } from '../models/Job/JobResource';
 
-export interface SegmentImportResult{
-  total_user_segment_imported:number;
-  total_user_segment_treated:number;
+export interface SegmentImportResult {
+  total_user_segment_imported: number;
+  total_user_segment_treated: number;
 }
 
-export interface UserSegmentImportJobExecutionResource extends BaseExecutionResource<{}, SegmentImportResult>{
-  job_type: 'USER_SEGMENT_IMPORT'
+export interface UserSegmentImportJobExecutionResource
+  extends BaseExecutionResource<{}, SegmentImportResult> {
+  job_type: 'USER_SEGMENT_IMPORT';
 }
 
 export interface GetSegmentsOption extends PaginatedApiParam {
@@ -146,7 +148,7 @@ const AudienceSegmentService = {
       first_result?: number;
       max_results?: number;
     } = {},
-  ): Promise<any> {
+  ): Promise<DataListResponse<OverlapJobResult>> {
     const endpoint = `audience_segments/${segmentId}/overlap_analysis`;
     const params = {
       audienceSegmentId: segmentId,
@@ -324,6 +326,11 @@ const AudienceSegmentService = {
       id,
       endpoint,
     );
+  },
+
+  recalibrateAudienceLookAlike(segmentId: string): Promise<DataResponse<void>> {
+    const endpoint = `audience_segment_lookalikes/${segmentId}/calibrate`;
+    return ApiService.postRequest(endpoint, {});
   },
 };
 

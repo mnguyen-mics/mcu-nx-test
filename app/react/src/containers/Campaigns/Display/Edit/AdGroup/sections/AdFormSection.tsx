@@ -45,7 +45,7 @@ import {
   makeCancelable,
   CancelablePromise,
 } from '../../../../../../utils/ApiHelper';
-import { InjectDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
 export interface AdFormSectionProps extends ReduxFormChangeProps {}
 
@@ -64,7 +64,7 @@ type Props = AdFormSectionProps &
   RouteComponentProps<EditAdGroupRouteMatchParam> &
   WrappedFieldArrayProps<AdFieldModel> &
   InjectedIntlProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 class AdFormSection extends React.Component<Props, AdsSectionState> {
   cancelablePromise: CancelablePromise<DisplayAdResource[]>;

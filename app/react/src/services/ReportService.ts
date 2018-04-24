@@ -5,14 +5,14 @@ import McsMoment, { formatMcsDate } from '../utils/McsMoment';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-type ReportViewResponse = DataResponse<ReportViewResource>;
+export type ReportViewResponse = DataResponse<ReportViewResource>;
 
 export interface Filter {
   name: string;
   value: string | number;
 }
 
-function parseFilter(filterList?: Filter[]): string[] | undefined {
+export function parseFilter(filterList?: Filter[]): string[] | undefined {
   if (filterList !== undefined && filterList.length !== 0) {
     const parsedFilters = filterList
       .filter(filter => (filter !== undefined) && (filter.name !== '') && (filter.value !== ''))

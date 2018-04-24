@@ -16,7 +16,7 @@ import { UpdateMessage } from './DisplayCampaignAdGroupTable';
 import DisplayCampaignActionbar from './DisplayCampaignActionbar';
 import messages from '../messages';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { AdResource } from '../../../../../models/campaign/display/AdResource';
 import AdCard from './AdCard';
 import AdGroupCard from './AdGroupCard';
@@ -75,7 +75,7 @@ interface DisplayCampaignProps {
 
 type JoinedProps = DisplayCampaignProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedIntlProps;
 
 class DisplayCampaign extends React.Component<JoinedProps> {

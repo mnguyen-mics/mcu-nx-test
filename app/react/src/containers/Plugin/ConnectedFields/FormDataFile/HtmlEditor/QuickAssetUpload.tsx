@@ -12,7 +12,7 @@ import { TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 export interface QuickAssetUploadProps extends FormFieldWrapperProps {
@@ -33,7 +33,7 @@ type OuterProps = QuickAssetUploadProps &
   RouteComponentProps<{ organisationId: string }>;
 
 
-type JoinedProps = OuterProps & InjectDrawerProps & InjectedNotificationProps;
+type JoinedProps = OuterProps & InjectedDrawerProps & InjectedNotificationProps;
 
 class QuickAssetUpload extends React.Component<
   JoinedProps,

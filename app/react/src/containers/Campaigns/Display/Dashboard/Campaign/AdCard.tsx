@@ -28,7 +28,7 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import Slide from '../../../../../components/Transition/Slide';
 import { McsIcon } from '../../../../../components/index';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { executeTasksInSequence, Task } from '../../../../../utils/FormHelper';
 import injectNotifications, {
@@ -91,7 +91,7 @@ interface AdCardState {
 
 type JoinedProps = AdCardProps &
   InjectedIntlProps &
-  InjectDrawerProps &
+  InjectedDrawerProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 

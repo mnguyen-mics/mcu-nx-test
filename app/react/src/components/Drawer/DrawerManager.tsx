@@ -1,19 +1,19 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import * as React from 'react';
-import { DrawableContent, DrawerSize } from './index';
+import lodash from 'lodash';
+import { injectDrawer, DrawableContent, DrawerSize } from './index';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { DrawerStore } from './DrawerStore';
+import { InjectedDrawerProps } from './injectDrawer';
 
 const viewportDrawerRatio = {
   large: 0.85,
   small: 0.4,
 };
 
-export interface DrawerManagerProps {
+export interface DrawerManagerProps extends InjectedDrawerProps {
   drawableContents: DrawableContent[];
-  onEscapeKeyDown: () => void;
-  onClickOnBackground: () => void;
 }
 
 export interface DrawerManagerState {
@@ -50,9 +50,9 @@ class DrawerManager extends React.Component<
 
   componentDidUpdate() {
     // TODO focus blur issue with GoalForm
-    // if (this.drawerDiv) {
-    //   this.drawerDiv.focus();
-    // }
+    if (this.drawerDiv) {
+      this.drawerDiv.focus();
+    }
   }
 
   componentWillUnmount() {
@@ -80,9 +80,18 @@ class DrawerManager extends React.Component<
       : 'large';
   };
 
+  canProgramaticallyCloseDrawer = () => {
+    const {
+      drawableContents
+    } = this.props;
+    const last = lodash.last(drawableContents);
+    return last ? !last.isModal : true;
+  }
+
   handleOnKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape') {
-      this.props.onEscapeKeyDown();
+    
+    if (event.key === 'Escape' && this.canProgramaticallyCloseDrawer()) {
+      this.props.closeNextDrawer();
     }
   };
 
@@ -100,8 +109,14 @@ class DrawerManager extends React.Component<
     });
   };
 
+  handleClickOnBackground = () => {
+    if (this.canProgramaticallyCloseDrawer()) {
+      this.props.closeNextDrawer()
+    }
+  }
+
   render() {
-    const { drawableContents, onClickOnBackground } = this.props;
+    const { drawableContents } = this.props;
     const { drawerMaxWidth, viewportWidth } = this.state;
     const foregroundContentSize = this.getForegroundContentSize(
       drawableContents,
@@ -115,7 +130,6 @@ class DrawerManager extends React.Component<
       ),
       background: this.getDrawerStyle(0),
     };
-
     // TODO fix react unique key issue
     const drawersWithOverlay: JSX.Element[] = [];
 
@@ -128,7 +142,7 @@ class DrawerManager extends React.Component<
         const displayInForeground = lastElement;
 
         drawersWithOverlay.push(
-          <div className={'drawer-overlay'} onClick={onClickOnBackground} />,
+          <div className={'drawer-overlay'} onClick={this.handleClickOnBackground} />,
         );
 
         drawersWithOverlay.push(
@@ -167,6 +181,7 @@ const mapStatetoProps = (state: DrawerStore) => ({
   drawableContents: state.drawableContents,
 });
 
-export default compose<DrawerManagerProps, {}>(connect(mapStatetoProps))(
-  DrawerManager,
-);
+export default compose<DrawerManagerProps, {}>(
+  connect(mapStatetoProps),
+  injectDrawer
+)(DrawerManager);

@@ -61,7 +61,7 @@ const getDefaultWorkspaceOrganisationName = createSelector(
 
 const getDefaultDatamart = state => organisationId => {
   const workspaces = getWorkspaces(state);
-  return workspaces[organisationId].datamarts[0];
+  return workspaces && workspaces[organisationId] && workspaces[organisationId].datamarts && workspaces[organisationId].datamarts[0];
 };
 
 const hasDatamarts = state => organisationId => {

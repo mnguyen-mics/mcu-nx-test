@@ -39,10 +39,13 @@ import AudienceCatalogFormSection, {
 import BidOptimizerFormSection, {
   BidOptimizerFormSectionProps,
 } from './sections/BidOptimizerFormSection';
-import InventoryCatalogFormSection, { InventoryCatalogFormSectionProps } from './sections/InventoryCatalog/InventoryCatalogFormSection'
+import InventoryCatalogFormSection, {
+  InventoryCatalogFormSectionProps,
+} from './sections/InventoryCatalog/InventoryCatalogFormSection';
 import * as SessionSelectors from '../../../../../state/Session/selectors';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
+import DeviceFormSection from './sections/DeviceFormSection';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -76,7 +79,7 @@ const BidOptimizerFieldArray = FieldArray as new () => GenericFieldArray<
 const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   InventoryCatalogFormSectionProps
->
+>;
 
 export interface AdGroupFormProps
   extends Omit<ConfigProps<AdGroupFormData>, 'form'> {
@@ -98,7 +101,9 @@ const FORM_ID = 'adGroupForm';
 class AdGroupForm extends React.Component<Props> {
   buildFormSections = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       change,
       initialValues,
       hasDatamarts,
@@ -159,6 +164,16 @@ class AdGroupForm extends React.Component<Props> {
         />
       ),
     };
+    const device = {
+      id: 'device',
+      title: messages.sectionTitleDevice,
+      component: (
+        <DeviceFormSection
+          formChange={this.props.change}
+          initialValues={this.props.initialValues.adGroup}
+        />
+      ),
+    };
     const placementList = {
       id: 'placementList',
       title: messages.sectionTitlePlacement,
@@ -177,7 +192,6 @@ class AdGroupForm extends React.Component<Props> {
       component: (
         <AdFieldArray
           name="adFields"
-          
           component={AdFormSection}
           {...genericFieldArrayProps}
         />
@@ -198,13 +212,14 @@ class AdGroupForm extends React.Component<Props> {
 
     sections.push(general);
     if (hasDatamarts(organisationId)) sections.push(audience);
+    sections.push(device);
     sections.push(location);
     sections.push(placementList);
     sections.push(displayAd);
     sections.push(bidOptimizer);
 
-    const insertIndice = displaySummaryFirst ? 0 : sections.length;
-    sections.splice(insertIndice, 0, summary);
+    const insertIndex = displaySummaryFirst ? 0 : sections.length;
+    sections.splice(insertIndex, 0, summary);
 
     return sections;
   };
@@ -246,8 +261,8 @@ class AdGroupForm extends React.Component<Props> {
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
           >
-          {/* this button enables submit on enter */}
-          <button type="submit" style={{ display: 'none' }} />
+            {/* this button enables submit on enter */}
+            <button type="submit" style={{ display: 'none' }} />
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"

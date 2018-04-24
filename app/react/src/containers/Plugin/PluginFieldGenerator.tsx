@@ -8,7 +8,7 @@ import { ValidatorProps } from '../../components/Form/withValidators';
 import { StringPropertyResource } from '../../models/plugin';
 import { PluginProperty } from '../../models/Plugins';
 import { injectDrawer } from '../../components/Drawer/index';
-import { InjectDrawerProps } from '../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../components/Drawer/injectDrawer';
 
 const { FormInput, FormBoolean, FormUpload, withValidators } = Form;
 
@@ -26,7 +26,7 @@ interface PluginFieldGeneratorProps {
 
 type JoinedProps = PluginFieldGeneratorProps &
   ValidatorProps &
-  InjectDrawerProps;
+  InjectedDrawerProps;
 
 interface AdditionalInputProps {
   buttonText?: string;

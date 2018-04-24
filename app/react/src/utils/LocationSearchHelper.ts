@@ -257,7 +257,10 @@ export const updateSearch = (
  * @param {Array} settings (optional) type settings
  * @returns the parsed search string into object
  */
-export function parseSearch<T = Index<any>> (search: string, settings?: SearchSetting[]): T {
+export function parseSearch<T = Index<any>>(
+  search: string,
+  settings?: SearchSetting[],
+): T {
   const query = queryString.parse(search);
   if (!settings) return query;
   return settings.reduce(
@@ -267,7 +270,7 @@ export function parseSearch<T = Index<any>> (search: string, settings?: SearchSe
     }),
     {},
   ) as T;
-};
+}
 
 /**
  * Compare two searchs strings coming from location api

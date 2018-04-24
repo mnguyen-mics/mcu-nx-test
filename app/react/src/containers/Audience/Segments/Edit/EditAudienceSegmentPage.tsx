@@ -137,7 +137,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   };
 
   initialLoading = (props: Props) => {
-    const { match: { params: { segmentId } }, datamart } = props;
+    const {
+      match: {
+        params: { segmentId },
+      },
+      datamart,
+    } = props;
 
     if (segmentId) {
       const getSegment: Promise<
@@ -244,8 +249,16 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   };
 
   componentWillReceiveProps(nextProps: Props) {
-    const { match: { params: { segmentId } } } = this.props;
-    const { match: { params: { segmentId: nextSegmentId } } } = nextProps;
+    const {
+      match: {
+        params: { segmentId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { segmentId: nextSegmentId },
+      },
+    } = nextProps;
     if (segmentId === undefined && nextSegmentId) {
       this.initialLoading(nextProps);
     }
@@ -260,16 +273,29 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     message.error(intl.formatMessage(messages.errorFormMessage));
   };
 
-  redirectToSegmentList = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+  onClose = () => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+      location,
+    } = this.props;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/audience/segments`;
 
-    return history.push(`/v2/o/${organisationId}/audience/segments`);
+    return location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(defaultRedirectUrl);
   };
 
   generateCreatePromise = (
     audienceSegmentFormData: AudienceSegmentFormData,
   ): Promise<DataResponse<AudienceSegmentShape> | any> => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     switch (audienceSegmentFormData.audienceSegment.type) {
       case 'USER_LIST':
@@ -340,7 +366,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     segmentId: string,
     audienceSegmentFormData: AudienceSegmentFormData,
   ) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const startId = this.state.audienceSegmentFormData.audienceExternalFeeds.map(
       erf => erf.model.id,
@@ -350,7 +380,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     const saveCreatePromise = audienceSegmentFormData.audienceExternalFeeds.map(
       erf => {
         if (!erf.model.id) {
-          const newAudienceFeed = { ...erf.model };
+          const newAudienceFeed =
+            erf.model.status === 'ACTIVE'
+              ? { ...erf.model, status: 'INITIAL' as any }
+              : { ...erf.model };
           delete newAudienceFeed.properties;
           return () =>
             AudienceSegmentService.createAudienceExternalFeeds(
@@ -369,16 +402,16 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           delete newAudienceFeed.properties;
           savedIds.push(erf.model.id);
           return () =>
-            AudienceSegmentService.updateAudienceExternalFeeds(
+            this.updateFeedPropertiesValue(
               segmentId,
-              erf.key,
-              newAudienceFeed,
+              erf.model.properties as any,
+              organisationId,
+              newAudienceFeed.id,
             ).then(res =>
-              this.updateFeedPropertiesValue(
+              AudienceSegmentService.updateAudienceExternalFeeds(
                 segmentId,
-                erf.model.properties as any,
-                organisationId,
-                res.data.id,
+                erf.key,
+                newAudienceFeed,
               ),
             );
         }
@@ -399,7 +432,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     segmentId: string,
     audienceSegmentFormData: AudienceSegmentFormData,
   ) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const startId = this.state.audienceSegmentFormData.audienceTagFeeds.map(
       erf => erf.model.id,
@@ -428,16 +465,16 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           delete newAudienceFeed.properties;
           savedIds.push(erf.model.id);
           return () =>
-            AudienceSegmentService.updateAudienceTagFeeds(
+            this.updateTagPropertiesValue(
               segmentId,
-              erf.key,
-              newAudienceFeed,
+              erf.model.properties as any,
+              organisationId,
+              newAudienceFeed.id,
             ).then(res =>
-              this.updateTagPropertiesValue(
+              AudienceSegmentService.updateAudienceTagFeeds(
                 segmentId,
-                erf.model.properties as any,
-                organisationId,
-                res.data.id,
+                erf.key,
+                newAudienceFeed,
               ),
             );
         }
@@ -526,8 +563,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                   return AudienceSegmentService.importUserListForOneSegment(
                     audienceSegmentFormData.audienceSegment
                       .datamart_id as string,
-                      audienceSegmentFormData.audienceSegment
-                      .id as string,
+                    audienceSegmentFormData.audienceSegment.id as string,
                     formData,
                   );
                 }),
@@ -561,7 +597,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   save = (audienceSegmentFormData: AudienceSegmentFormData) => {
     const {
-      match: { params: { organisationId, type } },
+      match: {
+        params: { organisationId, type },
+      },
       datamart,
       notifyError,
       history,
@@ -660,7 +698,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         .then(response => {
           hideSaveInProgress();
           this.setState({ loading: false });
-          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit` ;
+          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${
+            response.data.id
+          }/edit`;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {
@@ -669,7 +709,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           notifyError(err);
         });
     } else {
-      const { match: { params: { segmentId } } } = this.props;
+      const {
+        match: {
+          params: { segmentId },
+        },
+      } = this.props;
       return this.generateUpdateRequest(segmentId, audienceSegmentFormData)
         .then(response => {
           hideSaveInProgress();
@@ -685,6 +729,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     }
   };
 
+  redirectToSegmentList = () => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    return history.push(`/v2/o/${organisationId}/audience/segments`);
+  };
+
   onDatamartSelect = (datamart: Datamart) => {
     this.setState({
       selectedDatamart: datamart,
@@ -693,17 +748,21 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { type } },
+      match: {
+        params: { type },
+      },
       datamart,
       intl: { formatMessage },
-      match: { params: { organisationId, segmentId } },
+      match: {
+        params: { organisationId, segmentId },
+      },
     } = this.props;
 
     const {
       segmentCreation,
       audienceSegmentFormData,
       selectedDatamart,
-      loading
+      loading,
     } = this.state;
 
     const segmentType = type || this.state.segmentType;
@@ -743,7 +802,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     return segmentId || selectedDatamart ? (
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
-        close={this.redirectToSegmentList}
+        close={this.onClose}
         onSubmit={this.save}
         breadCrumbPaths={breadcrumbPaths}
         audienceSegmentFormData={this.state.audienceSegmentFormData}

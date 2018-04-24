@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Icon, Modal, Tooltip } from 'antd';
-import { compose } from 'recompose';
+import { Icon, Tooltip } from 'antd';
 import {
   FormattedMessage,
   defineMessages,
@@ -13,125 +12,142 @@ import {
 import {
   TableViewFilters,
   EmptyTableView,
-} from '../../../../components/TableView/index';
-import * as AudienceSegmentsActions from '../../../../state/Audience/Segments/actions';
+} from '../../../../components/TableView';
 
-import {
-  SEGMENTS_SEARCH_SETTINGS,
-  SegmentTypeSearchSettings,
-} from './constants';
+import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-  DateSearchSettings,
-  PaginationSearchSettings,
-  KeywordSearchSettings,
-  DatamartSearchSettings,
-  LabelsSearchSettings,
+  SearchSetting,
 } from '../../../../utils/LocationSearchHelper';
 
-import { formatMetric } from '../../../../utils/MetricHelper';
-import { getTableDataSource } from '../../../../state/Audience/Segments/selectors';
-import { getWorkspace } from '../../../../state/Session/selectors';
-import { Label } from '../../../Labels/Labels';
+import {
+  formatMetric,
+  normalizeReportView,
+} from '../../../../utils/MetricHelper';
+import { compose } from 'recompose';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
-import { TranslationProps } from '../../../Helpers/withTranslations';
-import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
+import ReportService from '../../../../services/ReportService';
+import McsMoment from '../../../../utils/McsMoment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
+import { Index } from '../../../../utils';
+import { Label } from '../../../../components/LabelsSelector';
+import {
+  getPaginatedApiParam,
+  CancelablePromise,
+  makeCancelable,
+} from '../../../../utils/ApiHelper';
+import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import { withTranslations } from '../../../Helpers';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
 const messages = defineMessages({
   filterByLabel: {
     id: 'audience.label.filterBy',
     defaultMessage: 'Filter By Label',
   },
-  archiveSegmentModalTitle: {
-    id: 'audience.segment.list.archive.segment.modal.title',
-    defaultMessage: 'Are you sure you want to archive this segment ?',
+  modalTitle: {
+    id: 'audience.archive.modal.title',
+    defaultMessage: 'Are you sure you want to archive this Segment?',
   },
-  archiveSegmentModalContent: {
-    id: 'audience.segment.list.archive.segment.modal.content',
+  modalText: {
+    id: 'audience.archive.modal.text',
     defaultMessage:
-      "By archiving this segment all its activities will be suspended. You'll be able to recover it from the archived audience segment filter.",
+      'By archiving this Segment all it will stop campaign using it. Are you sure?',
   },
-  archiveSegmentModalOk: {
-    id: 'audience.segment.list.archive.segment.modal.ok',
-    defaultMessage: 'Archive Now',
+  modalOk: {
+    id: 'audience.archive.modal.ok',
+    defaultMessage: 'Ok',
   },
-  archiveSegmentModalCancel: {
-    id: 'audience.segment.list.archive.segment.modal.cancel',
+  modalCancel: {
+    id: 'audience.archive.modal.cancel',
     defaultMessage: 'Cancel',
   },
-  searchAudienceSegments: {
-    id: 'audience.segment.list.search.placeholder',
+  searchTitle: {
+    id: 'audience.table.search.title',
     defaultMessage: 'Search Segments',
   },
-  audienceSegmentsTableColumnTypeActivation: {
-    id: 'audience.segment.table.column.type.activation',
-    defaultMessage: 'Activation',
+  userActivation: {
+    id: 'audience.table.type.userActivation',
+    defaultMessage: 'User Activation',
   },
-  audienceSegmentsTableColumnTypeQuery: {
-    id: 'audience.segment.table.column.type.query',
-    defaultMessage: 'Query',
+  userLookalike: {
+    id: 'audience.table.type.userLookalike',
+    defaultMessage: 'User Lookalike',
   },
-  audienceSegmentsTableColumnTypeList: {
-    id: 'audience.segment.table.column.type.list',
-    defaultMessage: 'List',
+  userPartition: {
+    id: 'audience.table.type.userPartition',
+    defaultMessage: 'User Partition',
   },
-  audienceSegmentsTableColumnTypePixel: {
-    id: 'audience.segment.table.column.type.pixel',
-    defaultMessage: 'Pixel',
+  userQuery: {
+    id: 'audience.table.type.userQuery',
+    defaultMessage: 'User Query',
   },
-  audienceSegmentsTableColumnTypeDefault: {
-    id: 'audience.segment.table.column.type.default',
-    defaultMessage: 'Query',
+  userList: {
+    id: 'audience.table.type.userList',
+    defaultMessage: 'User List',
+  },
+  userPixel: {
+    id: 'audience.table.type.userPixel',
+    defaultMessage: 'User Pixel',
+  },
+  userUnknown: {
+    id: 'audience.table.type.userUnknown',
+    defaultMessage: 'Unknown Type',
+  },
+  filterType: {
+    id: 'audience.table.filter.type',
+    defaultMessage: 'Type',
   },
 });
 
+export interface AudienceSegmentsTableProps {}
+
 interface MapStateToProps {
   labels: Label[];
-  hasAudienceSegments: boolean;
-  isFetchingAudienceSegments: boolean;
-  isFetchingSegmentsStat: boolean;
-  dataSource: AudienceSegmentResource[];
-  totalAudienceSegments: number;
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-interface FilterParams
-  extends DateSearchSettings,
-    PaginationSearchSettings,
-    KeywordSearchSettings,
-    DatamartSearchSettings,
-    SegmentTypeSearchSettings,
-    LabelsSearchSettings {}
+type Props = RouteComponentProps<{ organisationId: string }> &
+  MapStateToProps &
+  InjectedIntlProps &
+  InjectedDatamartProps;
 
-interface MapDispatchToProps {
-  loadAudienceSegmentsDataSource: (
-    organisationId: string,
-    filter: FilterParams,
-    checkEmptyDataSource?: boolean,
-  ) => AudienceSegmentResource[];
-  archiveAudienceSegment: (segmentId: string) => Promise<any>;
-  resetAudienceSegmentsTable: () => AudienceSegmentResource[];
-  translations: TranslationProps;
+interface State {
+  list: {
+    segments: AudienceSegmentResource[];
+    total: number;
+    isLoading: boolean;
+  };
+  reportView: {
+    data: Array<Index<any>>;
+    isLoading: boolean;
+  };
+  hasItem: boolean;
 }
 
-type Props = MapStateToProps &
-  MapDispatchToProps &
-  InjectedIntlProps &
-  TranslationProps &
-  InjectedDatamartProps &
-  RouteComponentProps<{ organisationId: string }>;
+class AudienceSegmentsTable extends React.Component<Props, State> {
+  cancellablePromises: Array<CancelablePromise<any>> = [];
 
-class AudienceSegmentsTable extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      list: {
+        isLoading: true,
+        total: 0,
+        segments: [],
+      },
+      reportView: {
+        data: [],
+        isLoading: true,
+      },
+      hasItem: true,
+    };
   }
 
   componentDidMount() {
@@ -142,6 +158,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
         params: { organisationId },
       },
     } = this.props;
+
     if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
       history.replace({
         pathname: pathname,
@@ -152,108 +169,215 @@ class AudienceSegmentsTable extends React.Component<Props> {
         state: { reloadDataSource: true },
       });
     } else {
-      this.loadAudienceSegmentsData();
-    }
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const {
-      location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-      history,
-      loadAudienceSegmentsDataSource,
-    } = this.props;
-
-    const {
-      location: { search: prevSearch, state },
-      match: {
-        params: { organisationId: prevOrganisationId },
-      },
-    } = prevProps;
-
-    const checkEmptyDataSource = state && state.reloadDataSource;
-    if (
-      !compareSearches(search, prevSearch) ||
-      organisationId !== prevOrganisationId
-    ) {
-      if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
-        history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            this.getSearchSetting(organisationId),
-          ),
-          state: { reloadDataSource: organisationId !== prevOrganisationId },
-        });
-      } else {
-        const filter = parseSearch<FilterParams>(
-          search,
-          this.getSearchSetting(organisationId),
-        );
-        loadAudienceSegmentsDataSource(
-          organisationId,
-          filter,
-          checkEmptyDataSource,
-        );
-      }
+      const filter = parseSearch(search, this.getSearchSetting(organisationId));
+      const datamartId = filter.datamartId;
+      this.fetchAudienceSegments(organisationId, datamartId, filter);
+      this.fetchAudienceSegmentStatistics(organisationId, datamartId);
+      this.checkIfHasItem(organisationId, filter);
     }
   }
 
   componentWillUnmount() {
-    this.props.resetAudienceSegmentsTable();
+    this.cancellablePromises.forEach(promise => {
+      promise.cancel();
+    });
   }
 
-  loadAudienceSegmentsData = () => {
-    const {
-      loadAudienceSegmentsDataSource,
-      match: {
-        params: { organisationId },
+  checkIfHasItem = (organisationId: string, filter: Index<any>) => {
+    const newFilters = {
+      with_third_parties: true,
+      ...getPaginatedApiParam(1, 1),
+    };
+    return AudienceSegmentService.getSegments(organisationId, newFilters).then(
+      res => {
+        this.setState({ hasItem: res.count !== 0 });
       },
-      location: { search },
-    } = this.props;
-    const filter = parseSearch<FilterParams>(
-      search,
-      this.getSearchSetting(organisationId),
     );
-    loadAudienceSegmentsDataSource(organisationId, filter, true);
   };
 
-  archiveSegment = (segment: AudienceSegmentResource) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      location: { search },
-      archiveAudienceSegment,
-      loadAudienceSegmentsDataSource,
-      intl: { formatMessage },
-      // datamart,
-    } = this.props;
-
-    const filter = parseSearch<FilterParams>(
-      search,
-      this.getSearchSetting(organisationId),
-    );
-
-    Modal.confirm({
-      title: formatMessage(messages.archiveSegmentModalTitle),
-      content: formatMessage(messages.archiveSegmentModalContent),
-      iconType: 'exclamation-circle',
-      okText: formatMessage(messages.archiveSegmentModalOk),
-      cancelText: formatMessage(messages.archiveSegmentModalCancel),
-      onOk() {
-        return archiveAudienceSegment(segment.id).then(() => {
-          // const datamartId = datamart.id;
-          loadAudienceSegmentsDataSource(organisationId, filter);
-        });
-      },
-      onCancel() {
-        //
-      },
+  fetchAudienceSegments = (
+    organisationId: string,
+    datamartId: string,
+    filter: Index<any>,
+  ) => {
+    return AudienceSegmentService.getSegments(
+      organisationId,
+      this.buildApiSearchFilters(filter, datamartId),
+    ).then(res => {
+      this.setState({
+        list: {
+          segments: res.data,
+          total: res.total ? res.total : res.count,
+          isLoading: false,
+        },
+      });
     });
   };
+
+  fetchAudienceSegmentStatistics = (
+    organisationId: string,
+    datamartId: string,
+  ) => {
+    const cancelablePromise = makeCancelable(
+      ReportService.getAudienceSegmentReport(
+        organisationId,
+        new McsMoment('now'),
+        new McsMoment('now'),
+        ['audience_segment_id'],
+      ),
+    );
+    this.cancellablePromises.push(cancelablePromise);
+    return cancelablePromise.promise.then(res => {
+      this.setState({
+        reportView: {
+          data: normalizeReportView(res.data.report_view),
+          isLoading: false,
+        },
+      });
+    });
+  };
+
+  buildApiSearchFilters = (filter: Index<any>, datamartId?: string) => {
+    let formattedFilters: Index<any> = {
+      with_third_parties: true,
+    };
+    if (filter.currentPage && filter.pageSize) {
+      formattedFilters = {
+        ...formattedFilters,
+        ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      };
+    }
+    if (datamartId) {
+      formattedFilters = {
+        ...formattedFilters,
+        datamart_id: datamartId,
+      };
+    }
+    if (filter.keywords) {
+      formattedFilters = {
+        ...formattedFilters,
+        keywords: filter.keywords,
+      };
+    }
+    if (filter.types.length) {
+      formattedFilters = {
+        ...formattedFilters,
+        type: filter.types,
+      };
+    }
+    if (filter.label_id.length) {
+      formattedFilters = {
+        ...formattedFilters,
+        label_id: filter.label_id,
+      };
+    }
+    if (filter.types.length) {
+      formattedFilters = {
+        ...formattedFilters,
+        type: filter.types,
+      };
+    }
+    return formattedFilters;
+  };
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      location: { search },
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+
+    const {
+      location: {
+        pathname: nextPathname,
+        search: nextSearch,
+        state: nextState,
+      },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
+    } = nextProps;
+
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId ||
+      (nextState && nextState.reloadDataSource === true)
+    ) {
+      if (
+        !isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))
+      ) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(
+            nextSearch,
+            this.getSearchSetting(nextOrganisationId),
+          ),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
+        });
+      } else {
+        const filter = parseSearch(
+          search,
+          this.getSearchSetting(organisationId),
+        );
+        const nextFilter = parseSearch(
+          nextSearch,
+          this.getSearchSetting(nextOrganisationId),
+        );
+        const datamartId = nextFilter.datamartId;
+        this.setState({ list: { ...this.state.list, isLoading: true } });
+        this.fetchAudienceSegments(nextOrganisationId, datamartId, nextFilter);
+        this.checkIfHasItem(organisationId, filter);
+        if (
+          organisationId !== nextOrganisationId ||
+          (nextState && nextState.reloadDataSource === true)
+        ) {
+          this.setState({
+            reportView: { ...this.state.reportView, isLoading: true },
+          });
+          this.fetchAudienceSegmentStatistics(nextOrganisationId, datamartId);
+        }
+      }
+    }
+  }
+
+  // archiveSegment = (segment: AudienceSegmentResource) => {
+  //   const {
+  //     match: {
+  //       params: {
+  //         organisationId,
+  //       },
+  //     },
+  //     location: {
+  //       search,
+  //     },
+  //     intl,
+  //   } = this.props;
+
+  //   const filter = parseSearch(search, this.getSearchSetting(organisationId));
+
+  //   const archiveAudienceSegment = () => {
+  //     return AudienceSegmentService.
+  //   }
+
+  //   Modal.confirm({
+  //     title: intl.formatMessage(messages.modalTitle),
+  //     content: intl.formatMessage(messages.modalText),
+  //     iconType: 'exclamation-circle',
+  //     okText: intl.formatMessage(messages.modalOk),
+  //     cancelText: intl.formatMessage(messages.modalCancel),
+  //     onOk() {
+  //       return archiveAudienceSegment(segment.id).then(() => {
+  //         const datamartId = filter.datamarts[0];
+  //         loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
+  //       });
+  //     },
+  //     onCancel() {
+  //       // cancel
+  //     },
+  //   });
+  // }
 
   editSegment = (segment: AudienceSegmentResource) => {
     const {
@@ -270,11 +394,11 @@ class AudienceSegmentsTable extends React.Component<Props> {
     history.push(editUrl);
   };
 
-  getSearchSetting(organisationId: string) {
+  getSearchSetting(organisationId: string): SearchSetting[] {
     return [...SEGMENTS_SEARCH_SETTINGS];
   }
 
-  updateLocationSearch = (params: Partial<FilterParams>) => {
+  updateLocationSearch = (params: Index<any>) => {
     const {
       history,
       match: {
@@ -282,6 +406,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
       },
       location: { search: currentSearch, pathname },
     } = this.props;
+
     const nextLocation = {
       pathname,
       search: updateSearch(
@@ -294,47 +419,44 @@ class AudienceSegmentsTable extends React.Component<Props> {
     history.push(nextLocation);
   };
 
+  buildDataset = (
+    segments: AudienceSegmentResource[],
+    report: Array<Index<any>>,
+  ) => {
+    const formattedReport = normalizeArrayOfObject(
+      report,
+      'audience_segment_id',
+    );
+
+    return segments.map(segment => {
+      return {
+        ...formattedReport[segment.id as any],
+        ...segment,
+      };
+    });
+  };
+
   render() {
     const {
       match: {
         params: { organisationId },
       },
       location: { search },
-      isFetchingAudienceSegments,
-      isFetchingSegmentsStat,
-      dataSource,
-      totalAudienceSegments,
-      hasAudienceSegments,
       labels,
-      intl: { formatMessage },
+      intl,
       workspace,
     } = this.props;
 
-    const filter = parseSearch<FilterParams>(
-      search,
-      this.getSearchSetting(organisationId),
-    );
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
 
     const searchOptions = {
-      placeholder: formatMessage(messages.searchAudienceSegments),
+      placeholder: intl.formatMessage(messages.searchTitle),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
+          currentPage: 1,
         }),
       defaultValue: filter.keywords,
-    };
-
-    const dateRangePickerOptions = {
-      isEnabled: true,
-      onChange: (values: McsDateRangeValue) =>
-        this.updateLocationSearch({
-          from: values.from,
-          to: values.to,
-        }),
-      values: {
-        from: filter.from,
-        to: filter.to,
-      },
     };
 
     const columnsVisibilityOptions = {
@@ -344,10 +466,11 @@ class AudienceSegmentsTable extends React.Component<Props> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalAudienceSegments,
-      onChange: (page: number) =>
+      total: this.state.list.total,
+      onChange: (page: number, size: number) =>
         this.updateLocationSearch({
           currentPage: page,
+          pageSize: size,
         }),
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
@@ -357,16 +480,14 @@ class AudienceSegmentsTable extends React.Component<Props> {
     };
 
     const renderMetricData = (
-      value: string,
+      value: string | number,
       numeralFormat: string,
-      currency = '',
+      currency: string = '',
     ) => {
-      if (isFetchingSegmentsStat) {
-        return <i className="mcs-table-cell-loading" />; // (<span>loading...</span>);
+      if (this.state.reportView.isLoading) {
+        return <i className="mcs-table-cell-loading" />;
       }
-
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
-
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
@@ -381,9 +502,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
               return (
                 <Tooltip
                   placement="top"
-                  title={formatMessage(
-                    messages.audienceSegmentsTableColumnTypeActivation,
-                  )}
+                  title={intl.formatMessage(messages.userActivation)}
                 >
                   <Icon type="rocket" />
                 </Tooltip>
@@ -392,9 +511,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
               return (
                 <Tooltip
                   placement="top"
-                  title={formatMessage(
-                    messages.audienceSegmentsTableColumnTypeQuery,
-                  )}
+                  title={intl.formatMessage(messages.userQuery)}
                 >
                   <Icon type="database" />
                 </Tooltip>
@@ -403,9 +520,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
               return (
                 <Tooltip
                   placement="top"
-                  title={formatMessage(
-                    messages.audienceSegmentsTableColumnTypeList,
-                  )}
+                  title={intl.formatMessage(messages.userList)}
                 >
                   <Icon type="solution" />
                 </Tooltip>
@@ -414,21 +529,32 @@ class AudienceSegmentsTable extends React.Component<Props> {
               return (
                 <Tooltip
                   placement="top"
-                  title={formatMessage(
-                    messages.audienceSegmentsTableColumnTypePixel,
-                  )}
+                  title={intl.formatMessage(messages.userPixel)}
                 >
                   <Icon type="global" />
                 </Tooltip>
               );
-            default:
+            case 'USER_PARTITION':
               return (
                 <Tooltip
                   placement="top"
-                  title={formatMessage(
-                    messages.audienceSegmentsTableColumnTypeDefault,
-                  )}
+                  title={intl.formatMessage(messages.userPartition)}
                 >
+                  <Icon type="api" />
+                </Tooltip>
+              );
+            case 'USER_LOOKALIKE':
+              return (
+                <Tooltip
+                  placement="top"
+                  title={intl.formatMessage(messages.userLookalike)}
+                >
+                  <Icon type="usergroup-add" />
+                </Tooltip>
+              );
+            default:
+              return (
+                <Tooltip placement="top" title={text}>
                   <Icon type="database" />
                 </Tooltip>
               );
@@ -514,10 +640,10 @@ class AudienceSegmentsTable extends React.Component<Props> {
             translationKey: 'EDIT',
             callback: this.editSegment,
           },
-          {
-            translationKey: 'ARCHIVE',
-            callback: this.archiveSegment,
-          },
+          // {
+          //   translationKey: 'ARCHIVE',
+          //   callback: this.archiveSegment,
+          // },
         ],
       },
     ];
@@ -525,8 +651,9 @@ class AudienceSegmentsTable extends React.Component<Props> {
     const typeItems = [
       'USER_ACTIVATION',
       'USER_LIST',
-      'USER_PIXEL',
       'USER_QUERY',
+      'USER_PARTITION',
+      'USER_LOOKALIKE',
     ].map(type => ({ key: type, value: type }));
 
     const datamartItems = workspace(organisationId)
@@ -545,8 +672,7 @@ class AudienceSegmentsTable extends React.Component<Props> {
       {
         displayElement: (
           <div>
-            <FormattedMessage id="TYPE" defaultMessage="TYPE" />{' '}
-            <Icon type="down" />
+            <FormattedMessage {...messages.filterType} /> <Icon type="down" />
           </div>
         ),
         selectedItems: filter.types.map((type: string) => ({
@@ -554,16 +680,17 @@ class AudienceSegmentsTable extends React.Component<Props> {
           value: type,
         })),
         items: typeItems,
-        getKey: (item: any) => item.key,
-        display: (item: any) => item.value,
-        handleMenuClick: (values: any) =>
+        getKey: (item: { key: string; value: string }) => item.key,
+        display: (item: { key: string; value: string }) => item.value,
+        handleMenuClick: (values: Array<{ key: string; value: string }>) =>
           this.updateLocationSearch({
-            types: values.map((v: any) => v.value),
+            type: values.map(v => v.value),
+            currentPage: 1,
           }),
-      }
+      },
     ];
 
-    if(workspace(organisationId).datamarts.length > 1) {
+    if (workspace(organisationId).datamarts.length > 1) {
       const datamartFilter = {
         displayElement: (
           <div>
@@ -582,9 +709,10 @@ class AudienceSegmentsTable extends React.Component<Props> {
           this.updateLocationSearch({
             datamartId:
               datamartItem && datamartItem.key ? datamartItem.key : undefined,
+            currentPage: 1,
           });
         },
-      }; 
+      };
       filtersOptions.push(datamartFilter);
     }
 
@@ -599,22 +727,27 @@ class AudienceSegmentsTable extends React.Component<Props> {
       }),
       onChange: (newLabels: Label[]) => {
         const formattedLabels = newLabels.map(label => label.id);
-        this.updateLocationSearch({ label_id: formattedLabels });
+        this.updateLocationSearch({
+          label_id: formattedLabels,
+          currentPage: 1,
+        });
       },
       buttonMessage: messages.filterByLabel,
     };
 
-    return hasAudienceSegments ? (
+    return this.state.hasItem ? (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           searchOptions={searchOptions}
-          dateRangePickerOptions={dateRangePickerOptions}
           filtersOptions={filtersOptions}
           columnsVisibilityOptions={columnsVisibilityOptions}
-          dataSource={dataSource}
-          loading={isFetchingAudienceSegments}
+          dataSource={this.buildDataset(
+            this.state.list.segments,
+            this.state.reportView.data,
+          )}
+          loading={this.state.list.isLoading}
           pagination={pagination}
           labelsOptions={labelsOptions}
         />
@@ -626,30 +759,13 @@ class AudienceSegmentsTable extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: any) => ({
-  translations: state.translations,
   labels: state.labels.labelsApi.data,
-  hasAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.hasItems,
-  isFetchingAudienceSegments:
-    state.audienceSegmentsTable.audienceSegmentsApi.isFetching,
-  isFetchingSegmentsStat:
-    state.audienceSegmentsTable.performanceReportApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalAudienceSegments: state.audienceSegmentsTable.audienceSegmentsApi.total,
   workspace: getWorkspace(state),
 });
 
-const mapDispatchToProps = {
-  loadAudienceSegmentsDataSource:
-    AudienceSegmentsActions.loadAudienceSegmentsDataSource,
-  // archiveAudienceSegment: AudienceSegmentsActions.archiveAudienceSegment,
-  resetAudienceSegmentsTable:
-    AudienceSegmentsActions.resetAudienceSegmentsTable,
-};
-
-export default compose<Props, MapDispatchToProps>(
-  injectIntl,
+export default compose<Props, {}>(
   withRouter,
+  injectIntl,
   injectDatamart,
-  withTranslations,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(mapStateToProps),
 )(AudienceSegmentsTable);
