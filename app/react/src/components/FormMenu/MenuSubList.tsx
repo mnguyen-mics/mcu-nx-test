@@ -1,8 +1,9 @@
 
 import React, { Component } from 'react';
 import McsIcon from '../McsIcon';
+import cuid from 'cuid';
 
-interface Submenu {
+export interface Submenu {
   title: string;
   select: React.FormEventHandler<any>;
 }
@@ -54,7 +55,7 @@ class MenuList extends Component<MenuListProps, MenuListState> {
         <div className={`lines ${this.state.open ? 'opened' : 'closed'}`}>
           {submenu && submenu.map(sub => {
             return (
-              <button key={sub.title} className="menu-item small" onClick={sub.select}>
+              <button key={cuid()} className="menu-item small" onClick={sub.select}>
                 <div className="content alone small">
                   <div className="subtitles">{sub.title}</div>
                 </div>

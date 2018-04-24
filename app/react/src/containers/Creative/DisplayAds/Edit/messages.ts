@@ -169,6 +169,14 @@ export default defineMessages({
     id: 'creatives.type.native',
     defaultMessage: 'Native'
   },
+  allRendererList: {
+    id: 'creatives.type.all.renderer.list',
+    defaultMessage: 'All Ad Renderer'
+  },
+  allRendererListSubtitle: {
+    id: 'creatives.type.all.renderer.list.subtitle',
+    defaultMessage: 'List of all available ad renderer.'
+  },
   creativeTypeOr: {
     id: 'creatives.type.or',
     defaultMessage: 'Or'
