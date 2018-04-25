@@ -162,15 +162,28 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               }}
             />,
           )
-          : datamart
+          : queryLanguage === 'JSON_OTQL'
             ? this.generateUserQueryTemplate(
+              <FormJSONQL
+                name={'query.query_text'}
+                component={JSONQL}
+                inputProps={{
+                  datamartId:
+                    this.props.initialValues &&
+                      this.props.initialValues.query
+                      ? this.props.initialValues.query
+                        .datamart_id
+                      : datamart.id,
+                }}
+              />,
+            )
+            : this.generateUserQueryTemplate(
               <SelectorQL
                 datamartId={datamart.id}
                 organisationId={organisationId}
                 queryContainer={this.props.queryContainer}
               />,
-            )
-            : null;
+            );
       default:
         return <div>Not Supported</div>;
     }

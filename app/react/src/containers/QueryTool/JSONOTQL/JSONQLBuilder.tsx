@@ -88,17 +88,21 @@ class JSONQLBuilder extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    if (this.div && this.div.current){
-      this.div.current.addEventListener('keydown', this.handleKeyDown);
-      this.div.current.addEventListener('keyup', this.handleKeyUp);
-    }
+    // if (this.div && this.div.current){
+    //   this.div.current.addEventListener('keydown', this.handleKeyDown);
+    //   this.div.current.addEventListener('keyup', this.handleKeyUp);
+    // }
+    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keyup', this.handleKeyUp);
   }
 
   componentWillUnmount() {
-    if (this.div && this.div.current){
-      this.div.current.removeEventListener('keydown', this.handleKeyDown);
-      this.div.current.removeEventListener('keyup', this.handleKeyUp);
-    }
+    // if (this.div && this.div.current){
+    //   this.div.current.removeEventListener('keydown', this.handleKeyDown);
+    //   this.div.current.removeEventListener('keyup', this.handleKeyUp);
+    // }
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
   }
 
   getTreeNodeOperations = (): TreeNodeOperations => {
@@ -156,7 +160,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           this.state.keydown.length === 1
         ) {
           this.engine.getDiagramModel().setZoomLevel(100);
-          this.engine.getDiagramModel().setOffset(0,0);
+          this.engine.getDiagramModel().setOffset(0, 0);
         }
         if (
           this.state.keydown.includes('Control') &&
@@ -196,10 +200,8 @@ class JSONQLBuilder extends React.Component<Props, State> {
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
 
-    const initialObjectType = objectTypes.find(ot => ot.name === 'UserPoint')!;
-    rootNode.objectTypeInfo = initialObjectType;
+    this.buildModelTree(this.props.query, rootNode, objectTypes, model);
 
-    model.addNode(rootNode);
     this.engine.setDiagramModel(model);
   }
 
@@ -218,43 +220,48 @@ class JSONQLBuilder extends React.Component<Props, State> {
       rootNode.x = ROOT_NODE_POSITION.x;
       rootNode.y = ROOT_NODE_POSITION.y;
 
-      const initialObjectType = objectTypes.find(
-        ot => ot.name === 'UserPoint',
-      )!;
-      rootNode.objectTypeInfo = initialObjectType;
-
-      model.addNode(rootNode);
-
-      if (nextQuery) {
-        const nodeBTree = buildNodeModelBTree(
-          nextQuery,
-          initialObjectType,
-          objectTypes,
-        );
-        setUniqueModelId(nodeBTree);
-        computeNodeExtras(nodeBTree);
-        layout(
-          nodeBTree,
-          applyTranslation(
-            ROOT_NODE_POSITION,
-            MIN_X,
-            (rootNode.getSize().height +
-              (rootNode.getSize().borderWidth || 0) * 2) /
-              2 -
-              (nodeBTree.node.getSize().height +
-                (nodeBTree.node.getSize().borderWidth || 0) * 2) /
-                2,
-          ),
-        );
-        model.addLink(
-          createLink(rootNode.ports.center, nodeBTree.node.ports.center),
-        );
-        toNodeList(nodeBTree).forEach(n => model.addNode(n));
-        buildLinkList(nodeBTree).forEach(l => model.addLink(l));
-        this.nodeBTreeCache = nodeBTree;
-      }
+      this.buildModelTree(nextQuery, rootNode, objectTypes, model);
 
       this.engine.setDiagramModel(model);
+    }
+  }
+
+  buildModelTree(
+    query: ObjectTreeExpressionNodeShape | undefined,
+    rootNode: PlusNodeModel,
+    objectTypes: ObjectLikeTypeInfoResource[],
+    model: DiagramModel,
+  ) {
+    const initialObjectType = objectTypes.find(ot => ot.name === 'UserPoint')!;
+    rootNode.objectTypeInfo = initialObjectType;
+    model.addNode(rootNode);
+    if (query) {
+      const nodeBTree = buildNodeModelBTree(
+        query,
+        initialObjectType,
+        objectTypes,
+      );
+      setUniqueModelId(nodeBTree);
+      computeNodeExtras(nodeBTree);
+      layout(
+        nodeBTree,
+        applyTranslation(
+          ROOT_NODE_POSITION,
+          MIN_X,
+          (rootNode.getSize().height +
+            (rootNode.getSize().borderWidth || 0) * 2) /
+            2 -
+            (nodeBTree.node.getSize().height +
+              (nodeBTree.node.getSize().borderWidth || 0) * 2) /
+              2,
+        ),
+      );
+      model.addLink(
+        createLink(rootNode.ports.center, nodeBTree.node.ports.center),
+      );
+      toNodeList(nodeBTree).forEach(n => model.addNode(n));
+      buildLinkList(nodeBTree).forEach(l => model.addLink(l));
+      this.nodeBTreeCache = nodeBTree;
     }
   }
 

@@ -20,6 +20,7 @@ import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBui
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
+import QueryService from '../../../services/QueryService';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -67,27 +68,33 @@ class SegmentBuilderPage extends React.Component<Props> {
     const jsonQLActionbar = (query: QueryDocument, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
         const { name, technical_name, persisted } = segmentFormData;
-        const userQuerySegment: Partial<UserQuerySegment> = {
-          datamart_id: datamartId,
-          type: 'USER_QUERY',
-          name,
-          technical_name,
-          persisted,
-          default_ttl: calculateDefaultTtl(segmentFormData),
+
+        return QueryService.createQuery(datamartId, {
           query_language: 'JSON_OTQL',
           query_text: JSON.stringify(query),
-        };
-
-        return AudienceSegmentService.saveSegment(
-          match.params.organisationId,
-          userQuerySegment,
-        ).then(res => {
-          history.push(
-            `/v2/o/${match.params.organisationId}/audience/segments/${
-              res.data.id
-            }`,
-          );
-        });
+        })
+          .then(res => {
+            const userQuerySegment: Partial<UserQuerySegment> = {
+              datamart_id: datamartId,
+              type: 'USER_QUERY',
+              name,
+              technical_name,
+              persisted,
+              default_ttl: calculateDefaultTtl(segmentFormData),
+              query_id: res.data.id,
+            };
+            return AudienceSegmentService.saveSegment(
+              match.params.organisationId,
+              userQuerySegment,
+            );
+          })
+          .then(res => {
+            history.push(
+              `/v2/o/${match.params.organisationId}/audience/segments/${
+                res.data.id
+              }`,
+            );
+          });
       };
       return <SaveQueryAsActionBar saveAsUserQuery={saveAsUserQuery} />;
     };
@@ -107,7 +114,6 @@ class SegmentBuilderPage extends React.Component<Props> {
             technical_name,
             persisted,
             default_ttl: calculateDefaultTtl(segmentFormData),
-            query_language: 'SELECTORQL',
             query_id: queryResource.id,
           };
           return AudienceSegmentService.saveSegment(

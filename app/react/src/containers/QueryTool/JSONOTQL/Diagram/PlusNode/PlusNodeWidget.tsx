@@ -3,7 +3,7 @@ import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import { compose } from 'recompose';
 import PlusNodeModel from './PlusNodeModel';
 import { injectDrawer } from '../../../../../components/Drawer';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { TreeNodeOperations } from '../../domain';
 import { McsIcon, RenderInBody } from '../../../../../components';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -26,11 +26,11 @@ interface State {
   hover: boolean;
 }
 
-class PlusNodeWidget extends React.Component<Props & InjectDrawerProps, State> {
+class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State> {
   top: number = 0;
   left: number = 0;
 
-  constructor(props: Props & InjectDrawerProps) {
+  constructor(props: Props & InjectedDrawerProps) {
     super(props);
     this.state = { focus: false, hover: false };
   }
@@ -191,6 +191,6 @@ class PlusNodeWidget extends React.Component<Props & InjectDrawerProps, State> {
   }
 }
 
-export default compose<Props & InjectDrawerProps, Props>(injectDrawer)(
+export default compose<Props & InjectedDrawerProps, Props>(injectDrawer)(
   PlusNodeWidget,
 );

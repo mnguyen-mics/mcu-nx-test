@@ -21,6 +21,7 @@ import OTQLService from '../../../services/OTQLService';
 export interface JSONQLBuilderContainerProps {
   datamartId: string;
   queryId?: string;
+  queryDocument?: QueryDocument;
   renderActionBar: (queryDocument: QueryDocument, datamartId: string) => React.ReactNode;
   editionLayout?: boolean;
 }
@@ -89,7 +90,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           objectTypes,
           queryHistory: {
             past: [],
-            present: undefined,
+            present: this.props.queryDocument ? this.props.queryDocument.where :undefined,
             future: [],
           },
         }));

@@ -6,7 +6,7 @@ import ObjectNodeModel from './ObjectNodeModel';
 import { RenderInBody } from '../../../../../components';
 import { TreeNodeOperations } from '../../domain';
 import { injectDrawer } from '../../../../../components/Drawer';
-import { InjectDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import ObjectNodeForm, { ObjectNodeFormProps } from '../../Edit/ObjectNodeForm';
 import {
@@ -32,14 +32,14 @@ interface State {
 
 const RenderInBodyAny = RenderInBody as any;
 
-type Props = ObjectNodeWidgetProps & InjectedIntlProps & InjectDrawerProps;
+type Props = ObjectNodeWidgetProps & InjectedIntlProps & InjectedDrawerProps;
 
 class ObjectNodeWidget extends React.Component<Props, State> {
   top: number = 0;
   left: number = 0;
   id: string = cuid();
 
-  constructor(props: Props & InjectDrawerProps) {
+  constructor(props: Props & InjectedDrawerProps) {
     super(props);
     this.state = {
       focus: false,

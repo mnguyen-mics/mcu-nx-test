@@ -87,7 +87,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       queryLanguage:
         props.datamart.storage_model_version === 'v201506'
           ? 'SELECTORQL'
-          : ('JSON_OTQL' as QueryLanguage),
+          : 'OTQL',
       queryContainer: defQuery,
       loading: true,
       displayDatamartSelector: true,
@@ -160,22 +160,35 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             QueryService.getQuery(res.data.datamart_id, res.data.query_id)
               .then(r => r.data)
               .then(r => {
-                const defQuery = new QueryContainer(r.datamart_id, r.id);
-                defQuery.load();
+
                 DatamartService.getDatamart(r.datamart_id)
                   .then(resp => resp.data)
                   .then(datamartResource => {
-                    this.setState({
-                      queryLanguage: r.query_language as QueryLanguage,
-                      queryContainer: defQuery,
+
+                    const newState: Partial<State> = {
+                      queryLanguage: r.query_language,
                       audienceSegmentFormData: {
                         ...this.state.audienceSegmentFormData,
                         query: r,
-                        type: this.extractSegmentType(res.data),
                       },
                       selectedDatamart: datamartResource,
-                    });
+                    }
+
+                    if (r.query_language === 'SELECTORQL') {
+                      const QueryContainer = (window as any).angular
+                        .element(document.body)
+                        .injector()
+                        .get('core/datamart/queries/QueryContainer');
+                      const defQuery = new QueryContainer(res.data.datamart_id, r.id);
+                      defQuery.load();
+                      newState.queryContainer = defQuery;
+                    }
+
+                    this.setState(newState as State);
+
                   });
+
+
               });
           }
           return res;
@@ -532,8 +545,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const { queryLanguage, queryContainer } = this.state;
 
-    return queryLanguage === 'OTQL'
-      ? QueryService.updateQuery(datamartId, queryId, {
+    return queryLanguage === 'OTQL' || queryLanguage === 'JSON_OTQL'
+      ? QueryService.updateQuery(datamart.id, queryId, {
         query_language: queryLanguage,
         query_text: (audienceSegmentFormData.query as QueryResource)
           .query_text,

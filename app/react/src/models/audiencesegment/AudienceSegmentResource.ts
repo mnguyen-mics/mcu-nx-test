@@ -74,8 +74,6 @@ export interface OverlapJobResult extends PublicJobExecutionResource {
 export interface UserQuerySegment extends AudienceSegmentResource {
   query_id?: string;
   type: 'USER_QUERY';
-  query_language?: QueryLanguage;
-  query_text?: string;
 }
 
 export interface SegmentOverlapResult {
