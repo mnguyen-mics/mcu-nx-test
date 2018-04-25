@@ -32,7 +32,6 @@ export interface AudienceSegmentFormData {
   audienceTagFeeds: AudienceTagFeedsFieldModel[];
   query?: QueryResource;
   userListFiles?: UploadFile[];
-  type: SegmentType;
 }
 
 
@@ -50,5 +49,4 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceExternalFeeds: [],
   audienceTagFeeds: [],
   userListFiles:[],
-  type: 'USER_LIST'
 };

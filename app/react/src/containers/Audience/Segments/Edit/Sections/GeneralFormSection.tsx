@@ -41,7 +41,7 @@ const messagesMap = defineMessages({
 export interface GeneralFormSectionProps {
   segmentCreation: boolean;
   segmentType: SegmentType;
-  datamart: Datamart;
+  datamart?: Datamart;
 }
 
 type Props = InjectedIntlProps &
@@ -123,7 +123,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         ),
       },
     ];
-    if (datamart.storage_model_version === 'v201709') {
+    if (datamart && datamart.storage_model_version === 'v201709') {
       typeOptions.push({
         value: 'USER_PIXEL',
         title: formatMessage(

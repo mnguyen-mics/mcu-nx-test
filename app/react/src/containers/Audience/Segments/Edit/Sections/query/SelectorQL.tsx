@@ -39,6 +39,6 @@ export default class AngularWidget extends React.Component<AngularWidgetProps, A
         <mcs-query-tool query-container="container" statistics-enabled="true" selected-values-enabled="true" datamart-id="datamartId" organisation-id="organisationId" />
         </div>
       </ReactAngularJS>
-    ) : 'error';
+    ) : null;
   }
 }

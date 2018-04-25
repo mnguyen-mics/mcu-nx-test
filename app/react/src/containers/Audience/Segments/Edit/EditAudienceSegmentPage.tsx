@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import moment from 'moment';
@@ -22,9 +23,6 @@ import {
 import messages from './messages';
 
 import EditAudienceSegmentForm from './EditAudienceSegmentForm';
-import injectDatamart, {
-  InjectedDatamartProps,
-} from '../../../Datamart/injectDatamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -43,6 +41,10 @@ import { Loading } from '../../../../components';
 import DatamartSelector from './../../Common/DatamartSelector';
 import { Datamart } from '../../../../models/organisation/organisation';
 import { EditContentLayout } from '../../../../components/Layout';
+import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
+import { getWorkspace } from '../../../../state/Session/selectors';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import DatamartService from '../../../../services/DatamartService';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -58,36 +60,32 @@ const messagesMap = defineMessages({
 interface State {
   audienceSegmentFormData: AudienceSegmentFormData;
   segmentCreation: boolean;
-  queryLanguage: QueryLanguage;
+  queryLanguage?: QueryLanguage;
   queryContainer?: any;
   loading: boolean;
   selectedDatamart?: Datamart;
+  selectedSegmentType?: SegmentType;
+  displayDatamartSelector: boolean;
+}
+
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 type Props = InjectedIntlProps &
-  InjectedDatamartProps &
+  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class EditAudienceSegmentPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const QueryContainer = (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/datamart/queries/QueryContainer');
-    const defQuery = new QueryContainer(props.datamart.id);
 
     this.state = {
       audienceSegmentFormData: INITIAL_AUDIENCE_SEGMENT_FORM_DATA,
       segmentCreation: true,
-      queryLanguage:
-        props.datamart.storage_model_version === 'v201506'
-          ? 'SELECTORQL'
-          : ('OTQL' as QueryLanguage),
-      queryContainer: defQuery,
       loading: true,
-      selectedDatamart: undefined,
+      displayDatamartSelector: true,
     };
   }
 
@@ -139,34 +137,40 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   initialLoading = (props: Props) => {
     const {
       match: {
-        params: { segmentId },
+        params: { organisationId, segmentId },
       },
-      datamart,
+      workspace,
     } = props;
+
+    const QueryContainer = (window as any).angular
+      .element(document.body)
+      .injector()
+      .get('core/datamart/queries/QueryContainer');
 
     if (segmentId) {
       const getSegment: Promise<
         DataResponse<AudienceSegmentShape>
       > = AudienceSegmentService.getSegment(segmentId).then(res => {
         if (res.data.type === 'USER_QUERY' && res.data.query_id) {
-          QueryService.getQuery(datamart.id, res.data.query_id)
+          QueryService.getQuery(res.data.datamart_id, res.data.query_id)
             .then(r => r.data)
             .then(r => {
-              const QueryContainer = (window as any).angular
-                .element(document.body)
-                .injector()
-                .get('core/datamart/queries/QueryContainer');
-              const defQuery = new QueryContainer(props.datamart.id, r.id);
+              const defQuery = new QueryContainer(r.datamart_id, r.id);
               defQuery.load();
-              this.setState({
-                queryLanguage: r.query_language as QueryLanguage,
-                queryContainer: defQuery,
-                audienceSegmentFormData: {
-                  ...this.state.audienceSegmentFormData,
-                  query: r,
-                type: this.extractSegmentType(res.data)
-                },
-              });
+              DatamartService.getDatamart(r.datamart_id)
+                .then(resp => resp.data)
+                .then(datamartResource => {
+                  this.setState({
+                    queryLanguage: r.query_language as QueryLanguage,
+                    queryContainer: defQuery,
+                    audienceSegmentFormData: {
+                      ...this.state.audienceSegmentFormData,
+                      query: r,
+                      type: this.extractSegmentType(res.data),
+                    },
+                    selectedDatamart: datamartResource,
+                  });
+                });
             });
         }
         return res;
@@ -245,7 +249,18 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           this.setState({ loading: false });
         });
     } else {
-      this.setState({ loading: false });
+      const datamarts = workspace(organisationId).datamarts;
+      const multipleDatamarts = datamarts.length > 1;
+      const defQuery = new QueryContainer(datamarts[0].id);
+      defQuery.load();
+      this.setState({
+        loading: false,
+        displayDatamartSelector: multipleDatamarts,
+        selectedDatamart: multipleDatamarts
+          ? undefined
+          : workspace(organisationId).datamarts[0],
+        queryContainer: defQuery,
+      });
     }
   };
 
@@ -507,35 +522,37 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     queryId: string,
     audienceSegmentFormData: AudienceSegmentFormData,
   ): Promise<string> => {
-    const { datamart } = this.props;
+    const datamartId = audienceSegmentFormData.audienceSegment
+      .datamart_id as string;
 
     const { queryLanguage, queryContainer } = this.state;
 
     return queryLanguage === 'OTQL'
-      ? QueryService.updateQuery(datamart.id, queryId, {
+      ? QueryService.updateQuery(datamartId, queryId, {
           query_language: queryLanguage,
           query_text: (audienceSegmentFormData.query as QueryResource)
             .query_text,
-          datamart_id: datamart.id,
+          datamart_id: datamartId,
         })
-          .then(res => res.data)
-          .then(res => res.id)
+          .then((res: any) => res.data)
+          .then((res: any) => res.id)
       : queryContainer.saveOrUpdate().then(() => queryContainer.id);
   };
 
   createQuery = (
     audienceSegmentFormData: AudienceSegmentFormData,
   ): Promise<string> => {
-    const { datamart } = this.props;
+    const datamartId = audienceSegmentFormData.audienceSegment
+      .datamart_id as string;
 
     const { queryLanguage, queryContainer } = this.state;
 
     return queryLanguage === 'OTQL'
-      ? QueryService.createQuery(datamart.id, {
+      ? QueryService.createQuery(datamartId, {
           query_language: 'OTQL',
           query_text: (audienceSegmentFormData.query as QueryResource)
             .query_text,
-          datamart_id: datamart.id,
+          datamart_id: datamartId,
         })
           .then(res => res.data)
           .then(res => res.id)
@@ -601,13 +618,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      datamart,
       notifyError,
       history,
       intl,
     } = this.props;
 
-    const { selectedDatamart } = this.state;
+    const { selectedDatamart, selectedSegmentType } = this.state;
 
     const countTTL = (formData: AudienceSegmentFormData) => {
       if (formData.defaultLiftimeUnit && formData.defaultLiftime) {
@@ -641,9 +657,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return technicalName;
     };
 
-    const datamartId = selectedDatamart ? selectedDatamart.id : datamart.id;
+    const datamartId = selectedDatamart
+      ? selectedDatamart.id
+      : audienceSegmentFormData.audienceSegment.datamart_id;
 
-    switch (audienceSegmentFormData.type) {
+    switch (selectedSegmentType) {
       case 'USER_PIXEL':
         audienceSegmentFormData = {
           ...audienceSegmentFormData,
@@ -742,14 +760,30 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   };
 
   onDatamartSelect = (datamart: Datamart) => {
+    const QueryContainer = (window as any).angular
+      .element(document.body)
+      .injector()
+      .get('core/datamart/queries/QueryContainer');
+    const defQuery = new QueryContainer(datamart.id);
     this.setState({
       selectedDatamart: datamart,
+      queryContainer: defQuery,
+      queryLanguage:
+        datamart.storage_model_version === 'v201506'
+          ? 'SELECTORQL'
+          : ('OTQL' as QueryLanguage),
+      displayDatamartSelector: false,
+    });
+  };
+
+  onSegmentTypeSelect = (segmentType: SegmentType) => {
+    this.setState({
+      selectedSegmentType: segmentType,
     });
   };
 
   render() {
     const {
-      datamart,
       intl: { formatMessage },
       match: {
         params: { organisationId, segmentId },
@@ -761,6 +795,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       audienceSegmentFormData,
       selectedDatamart,
       loading,
+      selectedSegmentType,
+      displayDatamartSelector,
     } = this.state;
 
     const audienceSegmentName =
@@ -795,29 +831,38 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       this.state.audienceSegmentFormData.query.query_language
         ? this.state.audienceSegmentFormData.query.query_language
         : this.state.queryLanguage;
-    return segmentId || selectedDatamart ? (
+    return segmentId || (selectedSegmentType && selectedDatamart) ? (
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
         close={this.onClose}
         onSubmit={this.save}
         breadCrumbPaths={breadcrumbPaths}
         audienceSegmentFormData={this.state.audienceSegmentFormData}
-        datamart={selectedDatamart ? selectedDatamart : datamart}
+        datamart={selectedDatamart}
         segmentCreation={segmentCreation}
         queryContainer={this.state.queryContainer}
         queryLanguage={getQueryLanguageToDisplay}
+        segmentType={selectedSegmentType}
       />
     ) : (
       <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        <DatamartSelector onSelect={this.onDatamartSelect} />
+        {displayDatamartSelector ? (
+          <DatamartSelector onSelect={this.onDatamartSelect} />
+        ) : (
+          <SegmentTypeSelector onSelect={this.onSegmentTypeSelect} />
+        )}
       </EditContentLayout>
     );
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  injectDatamart,
   injectNotifications,
+  connect(mapStateToProps),
 )(EditAudienceSegmentPage);
