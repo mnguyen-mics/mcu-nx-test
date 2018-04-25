@@ -19,6 +19,7 @@ import settingsMessages from '../../../messages';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { Link } from 'react-router-dom';
 
 const { Content } = Layout;
 
@@ -51,10 +52,10 @@ interface RouterProps {
 
 class DatamartsListPage extends React.Component<
   RouteComponentProps<RouterProps> &
-    InjectedIntlProps &
-    InjectedNotificationProps,
+  InjectedIntlProps &
+  InjectedNotificationProps,
   DatamartsListPageState
-> {
+  > {
   state = initialState;
 
   archiveUser = (recommenderId: string) => {
@@ -92,7 +93,7 @@ class DatamartsListPage extends React.Component<
 
     history.push(
       `/v2/o/${organisationId}/settings/datamart/my_datamart/${
-        datamart.id
+      datamart.id
       }/edit`,
     );
   };
@@ -107,19 +108,20 @@ class DatamartsListPage extends React.Component<
 
     history.push(
       `/v2/o/${organisationId}/settings/datamart/my_datamart/${
-        datamart.id
+      datamart.id
       }/service_usage_report`,
     );
   };
 
   render() {
-    const { intl } = this.props;
+    const { intl, match: { params: { organisationId } } } = this.props;
     const actionsColumnsDefinition = [
       {
         key: 'action',
         actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
       },
     ];
+
 
     const dataColumnsDefinition = [
       {
@@ -128,8 +130,15 @@ class DatamartsListPage extends React.Component<
         isHideable: false,
       },
       {
-        intlMessage: messages.datamartToken,
+        intlMessage: messages.datamartName,
         key: 'name',
+        isVisibleByDefault: true,
+        isHideable: false,
+        render: (value: string, record: DatamartResource) => <Link to={`/v2/o/${organisationId}/settings/datamart/my_datamart/${record.id}/edit`}>{value}</Link>
+      },
+      {
+        intlMessage: messages.datamartToken,
+        key: 'token',
         isVisibleByDefault: true,
         isHideable: false,
       },
@@ -150,9 +159,9 @@ class DatamartsListPage extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'settings',
-      intlMessage: messages.emptyDatamarts,
-    };
+        iconType: 'settings',
+        intlMessage: messages.emptyDatamarts,
+      };
 
     const additionnalComponent = (
       <div>

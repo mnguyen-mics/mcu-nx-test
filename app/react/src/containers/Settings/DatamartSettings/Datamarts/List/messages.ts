@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'datamart.token',
     defaultMessage: 'Token',
   },
+  datamartName: {
+    id: 'datamart.name',
+    defaultMessage: 'Name',
+  },
   datamartCreationDate: {
     id: 'datamart.creation_date',
     defaultMessage: 'Creation Date',
