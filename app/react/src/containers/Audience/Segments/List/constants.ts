@@ -9,21 +9,21 @@ import { AudienceSegmentType } from '../../../../models/audiencesegment';
 import { Index } from '../../../../utils';
 
 const typeSearchSetting = {
-  paramName: 'types',
+  paramName: 'type',
   defaultValue: [],
   deserialize: (query: Index<string>) => {
-    if (query.types) {
-      return query.types.split(',');
+    if (query.type) {
+      return query.type.split(',');
     }
     return [];
   },
   serialize: (value: AudienceSegmentType[]) => value.join(','),
   isValid: (query: Index<string>) =>
-    !query.types || query.types.split(',').length > 0,
+    !query.type || query.type.split(',').length > 0,
 };
 
 export interface SegmentTypeSearchSettings {
-  types: AudienceSegmentType[];
+  type: AudienceSegmentType[];
 }
 
 export const SEGMENTS_SEARCH_SETTINGS: SearchSetting[] = [

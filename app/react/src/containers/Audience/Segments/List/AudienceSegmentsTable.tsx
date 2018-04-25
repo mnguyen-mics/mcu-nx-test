@@ -259,10 +259,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         keywords: filter.keywords,
       };
     }
-    if (filter.types.length) {
+    if (filter.type.length) {
       formattedFilters = {
         ...formattedFilters,
-        type: filter.types,
+        type: filter.type,
       };
     }
     if (filter.label_id.length) {
@@ -271,10 +271,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         label_id: filter.label_id,
       };
     }
-    if (filter.types.length) {
+    if (filter.type.length) {
       formattedFilters = {
         ...formattedFilters,
-        type: filter.types,
+        type: filter.type,
       };
     }
     return formattedFilters;
@@ -675,7 +675,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             <FormattedMessage {...messages.filterType} /> <Icon type="down" />
           </div>
         ),
-        selectedItems: filter.types.map((type: string) => ({
+        selectedItems: filter.type.map((type: string) => ({
           key: type,
           value: type,
         })),

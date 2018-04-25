@@ -18,8 +18,6 @@ import {
   FormAddonSelectField,
   FormBoolean,
   FormBooleanField,
-  FormSelectField,
-  DefaultSelect,
 } from '../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import { SegmentType } from '../domain';
@@ -37,14 +35,6 @@ const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserQuery: {
     id: 'audience.segment.section1.select.type.option.query',
     defaultMessage: 'User Query',
-  },
-  audienceSegmentFormSelectLabel: {
-    id: 'audience.segment.section1.select.type.label',
-    defaultMessage: 'Type',
-  },
-  audienceSegmentFormSelectTooltip: {
-    id: 'audience.segment.section1.select.type.tooltip',
-    defaultMessage: 'Select the segment user type.',
   },
 });
 
@@ -179,23 +169,6 @@ class GeneralFormSection extends React.Component<Props, State> {
                   messages.audienceSegmentCreationGeneralNameFieldHelper,
                 ),
               }}
-            />
-            <FormSelectField
-              name="type"
-              component={DefaultSelect}
-              validate={[isRequired]}
-              formItemProps={{
-                label: formatMessage(
-                  messagesMap.audienceSegmentFormSelectLabel,
-                ),
-                required: true,
-              }}
-              helpToolTipProps={{
-                title: formatMessage(
-                  messagesMap.audienceSegmentFormSelectTooltip,
-                ),
-              }}
-              options={this.getAudienceTypeOptions()}
             />
           </div>
           <div>

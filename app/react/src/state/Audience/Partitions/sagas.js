@@ -23,8 +23,8 @@ function* loadAudiencePartitionsList({ payload }) {
     if (filter.keywords) {
       options.name = filter.keywords;
     }
-    if (filter.types) {
-      options.types = filter.types;
+    if (filter.type) {
+      options.types = filter.type;
     }
 
     if (filter.datamartId) {
