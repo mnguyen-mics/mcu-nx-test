@@ -20,16 +20,8 @@ function* loadAudiencePartitionsList({ payload }) {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
-    if (filter.keywords) {
-      options.name = filter.keywords;
-    }
-    if (filter.type) {
-      options.types = filter.type;
-    }
-
-    if (filter.datamartId) {
-      options.datamart_id = filter.datamartId;
-    }
+    if (filter.keywords) { options.keywords = filter.keywords; }
+    if (filter.types) { options.types = filter.types; }
 
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
