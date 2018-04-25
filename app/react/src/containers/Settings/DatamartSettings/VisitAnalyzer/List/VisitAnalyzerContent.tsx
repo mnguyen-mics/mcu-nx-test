@@ -58,7 +58,7 @@ interface RouterProps {
 class VisitAnalyzerContent extends Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   VisitAnalyzerContentState
-> {
+  > {
   state = initialState;
 
   archiveVisitAnalyzer = (visitAnalyzerId: string) => {
@@ -145,7 +145,7 @@ class VisitAnalyzerContent extends Component<
 
     history.push(
       `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
-        visitAnalyzer.id
+      visitAnalyzer.id
       }/edit`,
     );
   };
@@ -165,8 +165,7 @@ class VisitAnalyzerContent extends Component<
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'PROCESSOR',
-        intlMessage: messages.processor,
+        intlMessage: messages.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: VisitAnalyzer) => (
@@ -174,16 +173,15 @@ class VisitAnalyzerContent extends Component<
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
               record.id
-            }/edit`}
+              }/edit`}
           >
             {text}
           </Link>
         ),
       },
       {
-        translationKey: 'PROVIDER',
-        intlMessage: messages.provider,
-        key: 'id',
+        intlMessage: messages.processor,
+        key: 'version_id',
         isHideable: false,
         render: (text: string, record: VisitAnalyzer) => {
           const property =
@@ -198,9 +196,8 @@ class VisitAnalyzerContent extends Component<
         },
       },
       {
-        translationKey: 'NAME',
-        intlMessage: messages.name,
-        key: 'version_id',
+        intlMessage: messages.provider,
+        key: 'id',
         isHideable: false,
         render: (text: string, record: VisitAnalyzer) => {
           const property =
@@ -214,22 +211,23 @@ class VisitAnalyzerContent extends Component<
           return <span>{render}</span>;
         },
       },
+
     ];
 
     const emptyTable: {
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'settings',
-      intlMessage: messages.empty,
-    };
+        iconType: 'settings',
+        intlMessage: messages.empty,
+      };
 
     const onClick = () => history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`)
 
     const buttons = [
       (<Button key="create" type="primary" onClick={onClick}>
-      <FormattedMessage {...messages.newVisitAnalyzer} />
-    </Button>)
+        <FormattedMessage {...messages.newVisitAnalyzer} />
+      </Button>)
     ]
 
     const additionnalComponent = (<div>
