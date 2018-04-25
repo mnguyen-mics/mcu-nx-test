@@ -1,3 +1,4 @@
+/* tslint:disable */ 
 import * as React from 'react';
 import createReactClass from 'create-react-class';
 import * as DOM from 'react-dom';

@@ -60,12 +60,6 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
     onItemClick();
   };
 
-  componentDidMount() {
-    if (this.searchInput.current) {
-      console.log('object');
-    }
-  }
-
   onSearch = (value: string) => {
     this.setState({ search: value });
   };
