@@ -156,7 +156,7 @@ class AttributionModelContent extends React.Component<
         render: (text: string, record: AttributionModelInterface) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/library/attribution_models/${
+            to={`/v2/o/${organisationId}/settings/campaigns/attribution_models/${
               record.id
             }/edit`}
           >
