@@ -4,7 +4,7 @@ import * as React from 'react';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { SaveAsExportModal, SaveAsUserQuerySegmentModal } from '.';
-import ActionBar from '../../../components/ActionBar';
+import ActionBar, { Path } from '../../../components/ActionBar';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { NewExportSimpleFormData } from './NewExportSimpleForm';
 import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
@@ -12,6 +12,7 @@ import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
   saveAsExort?: (formData: NewExportSimpleFormData) => Promise<any>;
+  breadcrumb: Path[];
 }
 
 interface State {
@@ -35,7 +36,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
   }
 
   render() {
-    const { intl, saveAsExort, saveAsUserQuery } = this.props;
+    const { saveAsExort, saveAsUserQuery, breadcrumb } = this.props;
     const handleMenuClick = (e: ClickParam) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
@@ -45,12 +46,12 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
     };
 
     const closeSegmentModal = () =>
-      this.setState({ 
+      this.setState({
         segmentModalVisible: false,
         segmentModalLoading: false,
       });
 
-    const closeExportModal = () => this.setState({ 
+    const closeExportModal = () => this.setState({
       exportModalVisible: false,
       exportModalLoading: false,
     });
@@ -96,14 +97,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
 
     return (
       <ActionBar
-        paths={[
-          {
-            name: intl.formatMessage({
-              id: 'query-builder-page-actionbar-title',
-              defaultMessage: 'Query Builder',
-            }),
-          },
-        ]}
+        paths={breadcrumb}
       >
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">

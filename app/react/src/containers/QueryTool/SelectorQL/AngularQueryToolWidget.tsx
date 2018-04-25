@@ -17,7 +17,7 @@ interface AngularQueryToolWidgetState {
   queryContainer: QueryContainer,
 }
 
-declare global { namespace JSX { interface IntrinsicElements {"mcs-query-tool": any } } }
+declare global { namespace JSX { interface IntrinsicElements { "mcs-query-tool": any } } }
 
 
 const ReactAngularJS = ReactAngular as any;
@@ -31,7 +31,7 @@ export default class AngularQueryToolWidget extends React.Component<AngularQuery
   constructor(props: AngularQueryToolWidgetProps) {
     super(props);
     this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`)
-    this.queryContainer = new this.AngularQueryContainer(this.props.datamartId)    
+    this.queryContainer = new this.AngularQueryContainer(this.props.datamartId)
   }
 
   componentDidMount() {

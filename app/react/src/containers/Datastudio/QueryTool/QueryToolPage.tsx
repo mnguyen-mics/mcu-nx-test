@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import queryString from 'query-string';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -28,6 +28,13 @@ interface MapStateToProps {
 type Props = RouteComponentProps<QueryToolPageRouteParams> &
   MapStateToProps &
   InjectedIntlProps;
+
+const messages = defineMessages({
+  queryBuilder: {
+    id: 'query-builder-page-actionbar-title',
+    defaultMessage: 'Query Tool',
+  },
+})
 
 class QueryToolPage extends React.Component<Props> {
 
@@ -61,7 +68,7 @@ class QueryToolPage extends React.Component<Props> {
         pathname: location.pathname,
         search: queryString.stringify({ datamartId: selection.id }),
       });
-    };    
+    };
 
     const selectedDatamart = this.getSelectedDatamart();
 
@@ -80,7 +87,6 @@ class QueryToolPage extends React.Component<Props> {
             technical_name,
             persisted,
             default_ttl: calculateDefaultTtl(segmentFormData),
-            query_language: 'SELECTORQL',
             query_id: queryResource.id,
           };
           return AudienceSegmentService.saveSegment(
@@ -89,7 +95,7 @@ class QueryToolPage extends React.Component<Props> {
           ).then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/audience/segments/${
-                res.data.id
+              res.data.id
               }`,
             );
           });
@@ -106,7 +112,7 @@ class QueryToolPage extends React.Component<Props> {
           }).then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                res.data.id
+              res.data.id
               }`,
             );
           });
@@ -116,6 +122,11 @@ class QueryToolPage extends React.Component<Props> {
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
           saveAsExort={saveAsExport}
+          breadcrumb={[
+            {
+              name: intl.formatMessage(messages.queryBuilder),
+            },
+          ]}
         />
       );
     };
@@ -128,10 +139,7 @@ class QueryToolPage extends React.Component<Props> {
             actionbarProps={{
               paths: [
                 {
-                  name: intl.formatMessage({
-                    id: 'query-builder-page-actionbar-title',
-                    defaultMessage: 'Query Builder',
-                  }),
+                  name: intl.formatMessage(messages.queryBuilder),
                 },
               ],
             }}
@@ -145,9 +153,10 @@ class QueryToolPage extends React.Component<Props> {
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' && (
-            <SelectorQLBuilderContainer 
-              datamartId={selectedDatamart.id} 
+            <SelectorQLBuilderContainer
+              datamartId={selectedDatamart.id}
               renderActionBar={selectorQLActionbar}
+              title={intl.formatMessage(messages.queryBuilder)}
             />
           )}
       </div>

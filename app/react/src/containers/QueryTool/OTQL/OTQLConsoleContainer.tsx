@@ -33,7 +33,7 @@ interface State {
   error: any | null;
 }
 
-type Props = 
+type Props =
   OTQLConsoleContainerProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -53,7 +53,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   }
 
   runQuery = (otqlQuery: string) => {
-   const { datamartId } = this.props;
+    const { datamartId } = this.props;
 
     this.setState({
       runningQuery: true,
@@ -99,8 +99,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
               <code>{error.error_id}</code>
             </span>
           ) : (
-            intl.formatMessage(messages.queryErrorDefaultMsg)
-          )
+              intl.formatMessage(messages.queryErrorDefaultMsg)
+            )
         }
         type="error"
         showIcon={true}
@@ -112,12 +112,12 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     const queryResultRenderer: React.ReactNode = (runningQuery ||
       queryAborted ||
       queryResult) && (
-      <OTQLResultRenderer
-        loading={runningQuery}
-        result={queryResult}
-        aborted={queryAborted}
-      />
-    );
+        <OTQLResultRenderer
+          loading={runningQuery}
+          result={queryResult}
+          aborted={queryAborted}
+        />
+      );
 
     return (
       <Layout>

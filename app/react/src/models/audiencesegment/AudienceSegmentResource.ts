@@ -2,7 +2,6 @@ import {
   PublicJobExecutionResource,
   JobExecutionStatus,
 } from '../Job/JobResource';
-import { QueryLanguage } from '../datamart/DatamartResource';
 
 export interface AudienceSegmentResource {
   id: string;

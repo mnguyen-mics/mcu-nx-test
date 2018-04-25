@@ -4,6 +4,7 @@ import AngularQueryToolWidget, {
   QueryContainer,
 } from './AngularQueryToolWidget';
 import { withRouter, RouteComponentProps } from 'react-router';
+import ContentHeader from '../../../components/ContentHeader';
 
 export interface SelectorQLBuilderContainerProps {
   datamartId: string;
@@ -11,6 +12,7 @@ export interface SelectorQLBuilderContainerProps {
     queryContainer: QueryContainer | null,
     datamartId: string,
   ) => React.ReactNode;
+  title: string;
 }
 
 interface State {
@@ -40,7 +42,7 @@ class SelectorQLBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { renderActionBar, datamartId } = this.props;
+    const { renderActionBar, datamartId, title } = this.props;
     const { queryContainer } = this.state;
 
     return (
@@ -48,8 +50,12 @@ class SelectorQLBuilderContainer extends React.Component<Props, State> {
         {renderActionBar(queryContainer, datamartId)}
         <Layout.Content
           className="mcs-content-container"
-          style={{ padding: 0 }}
         >
+          <ContentHeader
+            title={
+              title
+            }
+          />
           <AngularQueryToolWidget
             organisationId={this.props.match.params.organisationId}
             datamartId={this.props.datamartId}

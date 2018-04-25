@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import queryString from 'query-string';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -35,7 +35,16 @@ type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
   InjectedNotificationProps &
   InjectedIntlProps;
 
+const messages = defineMessages({
+  segmentBuilder: {
+    id: 'segment-builder-page-actionbar-title',
+    defaultMessage: 'Segment Builder',
+  }
+})
+
 class SegmentBuilderPage extends React.Component<Props> {
+
+
   render() {
     const { intl, connectedUser, location, history, match } = this.props;
 
@@ -91,12 +100,18 @@ class SegmentBuilderPage extends React.Component<Props> {
           .then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/audience/segments/${
-                res.data.id
+              res.data.id
               }`,
             );
           });
       };
-      return <SaveQueryAsActionBar saveAsUserQuery={saveAsUserQuery} />;
+      return <SaveQueryAsActionBar saveAsUserQuery={saveAsUserQuery} breadcrumb={
+        [
+          {
+            name: intl.formatMessage(messages.segmentBuilder),
+          },
+        ]
+      } />;
     };
 
     const selectorQLActionbar = (
@@ -122,7 +137,7 @@ class SegmentBuilderPage extends React.Component<Props> {
           ).then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/audience/segments/${
-                res.data.id
+              res.data.id
               }`,
             );
           });
@@ -139,7 +154,7 @@ class SegmentBuilderPage extends React.Component<Props> {
           }).then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                res.data.id
+              res.data.id
               }`,
             );
           });
@@ -149,6 +164,13 @@ class SegmentBuilderPage extends React.Component<Props> {
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
           saveAsExort={saveAsExport}
+          breadcrumb={
+            [
+              {
+                name: intl.formatMessage(messages.segmentBuilder),
+              },
+            ]
+          }
         />
       );
     };
@@ -163,10 +185,7 @@ class SegmentBuilderPage extends React.Component<Props> {
             actionbarProps={{
               paths: [
                 {
-                  name: intl.formatMessage({
-                    id: 'query-builder-page-actionbar-title',
-                    defaultMessage: 'Query Builder',
-                  }),
+                  name: intl.formatMessage(messages.segmentBuilder),
                 },
               ],
             }}
@@ -184,6 +203,7 @@ class SegmentBuilderPage extends React.Component<Props> {
             <SelectorQLBuilderContainer
               datamartId={selectedDatamart.id}
               renderActionBar={selectorQLActionbar}
+              title={intl.formatMessage(messages.segmentBuilder)}
             />
           )}
       </div>
