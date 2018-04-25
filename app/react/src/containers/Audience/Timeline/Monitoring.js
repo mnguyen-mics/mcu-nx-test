@@ -13,7 +13,7 @@ import SegmentsCard from './SingleView/SegmentsCard';
 import AccountIdCard from './SingleView/AccountIdCard';
 import DeviceCard from './SingleView/DeviceCard';
 import EmailCard from './SingleView/EmailCard';
-import ActivityCard from './SingleView/ActivityCard';
+import ActivityCard from './SingleView/ActivityCard.tsx';
 import TimelineHeader from './TimelineHeader';
 import messages from './messages';
 

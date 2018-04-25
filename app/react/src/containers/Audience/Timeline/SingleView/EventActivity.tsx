@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Tag, Tooltip } from 'antd';
+import { Row, Col, Tag, Tooltip, Button, Modal } from 'antd';
 import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
 
@@ -16,6 +16,7 @@ interface EventActivityProps {
 
 interface State {
   showMore: boolean;
+  showEventModal: boolean;
 }
 
 class EventActivity extends React.Component<EventActivityProps, State> {
@@ -23,14 +24,20 @@ class EventActivity extends React.Component<EventActivityProps, State> {
     super(props);
     this.state = {
       showMore: false,
+      showEventModal: false,
     };
   }
+
+  handleJSONViewModal = () => {
+    this.setState({
+      showEventModal: !this.state.showEventModal,
+    });
+  };
 
   renderProperties = (object: any, isInitial = false) => {
     let returnValue: any = <div />;
 
     if (typeof object === 'string' || typeof object === 'number') {
-      // string;
       returnValue = (
         <span>
           <Tooltip title={object}>{object}</Tooltip>
@@ -39,7 +46,6 @@ class EventActivity extends React.Component<EventActivityProps, State> {
     }
 
     if (Array.isArray(object)) {
-      // array;
       if (object.length > 0) {
         returnValue = object.map(o => (
           <div className="m-b-10">{this.renderProperties(o)}</div>
@@ -50,7 +56,6 @@ class EventActivity extends React.Component<EventActivityProps, State> {
     }
 
     if (typeof object === 'object' && !Array.isArray(object)) {
-      // object;
       returnValue = Object.keys(object).map(key => {
         const value = object[key];
         const generatedValue = (
@@ -92,6 +97,7 @@ class EventActivity extends React.Component<EventActivityProps, State> {
 
   render() {
     const { event } = this.props;
+    const { showEventModal } = this.state;
 
     const changeVisibility = () => {
       this.setState(prevState => {
@@ -111,7 +117,7 @@ class EventActivity extends React.Component<EventActivityProps, State> {
         <Col span={19}>
           <div className="section-title">{event.$event_name}</div>
           <div className="section-cta">
-            {Object.keys(event.$properties).length !== 0 ? (
+            {Object.keys(event.$properties).length !== 0 && (
               <button
                 className="mcs-card-inner-action"
                 onClick={changeVisibility}
@@ -129,14 +135,25 @@ class EventActivity extends React.Component<EventActivityProps, State> {
                   </span>
                 )}
               </button>
-            ) : null}
+            )}
           </div>
         </Col>
-        {this.state.showMore === true ? (
+        {this.state.showMore && (
           <div className="event-properties-list">
             {this.renderProperties(event.$properties, true)}
+            <Button onClick={this.handleJSONViewModal} size="small">
+              <FormattedMessage {...messages.viewEventJson} />
+            </Button>
+            <Modal
+              width={980}
+              title="Title"
+              visible={showEventModal}
+              onCancel={this.handleJSONViewModal}
+            >
+              <p>{JSON.stringify(event, undefined, 4)}</p>
+            </Modal>
           </div>
-        ) : null}
+        )}
       </Row>
     );
   }

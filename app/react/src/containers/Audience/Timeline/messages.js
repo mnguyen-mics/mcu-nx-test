@@ -213,4 +213,8 @@ export default defineMessages({
     id: 'timeline.activity.visit.duration.seconds',
     defaultMessage: 'seconds',
   },
+  viewEventJson: {
+    id: 'timeline.event.activity.view.json.button',
+    defaultMessage: 'View JSON source',
+  },
 });
