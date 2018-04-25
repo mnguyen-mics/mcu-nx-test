@@ -1,11 +1,15 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import {
   FormInput,
   FormSection,
   FormInputField,
   FormSelectField,
   DefaultSelect,
+  FormAddonSelectField,
+  AddonSelect,
+  FormCheckbox,
+  FormCheckboxField,
 } from '../../../../../components/Form';
 import withNormalizer, {
   NormalizerProps,
@@ -19,14 +23,12 @@ import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
 import { FORM_ID, ObjectNodeFormData } from '../domain';
 import { FieldResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
+import { SelectValue } from 'antd/lib/select';
+import { frequencyModeMessageMap } from '../../messages';
 
 export interface ObjectNodeSectionProps {
-  availableFields: FieldResource[];
-  domainObjects: string[];
-}
-
-interface ObjectNodeSectionState {
-  isListOfObject: boolean;
+  objectTypeFields: FieldResource[];
+  onSelect: (value: SelectValue) => void;
 }
 
 interface MapStateToProps {
@@ -39,42 +41,13 @@ type Props = InjectedIntlProps &
   ObjectNodeSectionProps &
   MapStateToProps;
 
-class ObjectNodeSection extends React.Component<Props, ObjectNodeSectionState> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isListOfObject: props.availableFields.reduce((acc: boolean, val) => {
-        return val.field_type.indexOf('[') > -1 &&
-          val.field_type.indexOf(']') > -1
-          ? true
-          : acc;
-      }, false),
-    };
-  }
-
-  checkIfFieldIsDomainObject = (field: FieldResource) => {
-    const { domainObjects } = this.props;
-    return domainObjects.reduce((acc: boolean, val) => {
-      return field.field_type.indexOf(val) > -1 ? true : acc;
-    }, false);
-  };
-
-  buildObjectOptions = () => {
-    const { availableFields } = this.props;
-    const options: Array<{ value: string; title: string }> = [];
-    availableFields.forEach(f => {
-      if (this.checkIfFieldIsDomainObject(f)) {
-        options.push({
-          value: f.field_type
-            .replace('[', '')
-            .replace(']', '')
-            .replace('!', '')
-            .replace('!', ''),
-          title: f.name,
-        });
-      }
-    });
-    return options;
+class ObjectNodeSection extends React.Component<Props> {
+  buildOptions = () => {
+    const { objectTypeFields } = this.props;
+    return objectTypeFields.map(otf => ({
+      title: otf.name,
+      value: otf.name,
+    }));
   };
 
   render() {
@@ -82,8 +55,18 @@ class ObjectNodeSection extends React.Component<Props, ObjectNodeSectionState> {
       fieldValidators: { isRequired, isValidInteger },
       intl: { formatMessage },
       formValues,
-      availableFields,
+      objectTypeFields,
+      onSelect,
     } = this.props;
+
+    const showEnableFrequency = !!(
+      formValues.objectNodeForm.field &&
+      objectTypeFields
+        .find(otf => formValues.objectNodeForm.field === otf.name)!
+        .field_type.startsWith('[')
+    );
+    const showFrequency = formValues.frequency.enabled;
+
     return (
       <div>
         <FormSection
@@ -96,34 +79,32 @@ class ObjectNodeSection extends React.Component<Props, ObjectNodeSectionState> {
             name="objectNodeForm.field"
             component={DefaultSelect}
             validate={[isRequired]}
-            options={this.buildObjectOptions()}
+            options={this.buildOptions()}
             formItemProps={{
               label: formatMessage(messages.objectNodeFieldLabel),
               required: true,
             }}
-            selectProps={{
-              defaultValue:
-                this.buildObjectOptions() && this.buildObjectOptions()[0].value,
-            }}
             helpToolTipProps={{
               title: formatMessage(messages.objectNodeFieldTooltip),
+            }}
+            selectProps={{
+              onSelect,
             }}
             small={true}
           />
         </div>
-        {formValues &&
-        formValues.objectNodeForm &&
-        formValues.objectNodeForm.field &&
-        availableFields.reduce((acc: boolean, val) => {
-          return val.field_type.indexOf(formValues.objectNodeForm.field) > -1 &&
-            val.field_type.indexOf('[') > -1 &&
-            val.field_type.indexOf(']') > -1
-            ? true
-            : acc;
-        }, false) ? (
+        {showEnableFrequency && (
+          <FormCheckboxField name="frequency.enabled" component={FormCheckbox} className="field-label m-b-20">
+            <FormattedMessage
+              id="queryDocument.objectNode.freqency.enabled"
+              defaultMessage="I want to add a frequency"
+            />
+          </FormCheckboxField>
+        )}
+        {showFrequency ? (
           <div>
             <FormInputField
-              name="objectNodeForm.minScore"
+              name="frequency.value"
               component={FormInput}
               validate={[isValidInteger]}
               formItemProps={{
@@ -133,6 +114,28 @@ class ObjectNodeSection extends React.Component<Props, ObjectNodeSectionState> {
                 placeholder: formatMessage(
                   messages.objectNodeMinScorePlaceholder,
                 ),
+                type: 'number',
+                addonBefore: (
+                  <FormAddonSelectField
+                    name="frequency.mode"
+                    component={AddonSelect}
+                    options={[
+                      {
+                        value: 'AT_LEAST',
+                        title: formatMessage(frequencyModeMessageMap.AT_LEAST),
+                      },
+                      {
+                        value: 'AT_MOST',
+                        title: formatMessage(frequencyModeMessageMap.AT_MOST),
+                        disabled: true,
+                      },
+                    ]}
+                  />
+                ),
+                addonAfter: <FormattedMessage 
+                  id="queryDocument.objectNode.freqency.time" 
+                  defaultMessage="times" 
+                />
               }}
               helpToolTipProps={{
                 title: formatMessage(messages.objectNodeMinScoreTooltip),

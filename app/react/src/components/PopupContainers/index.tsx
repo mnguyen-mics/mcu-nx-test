@@ -10,7 +10,6 @@ import * as Components from '../../components';
 import { SelectProps } from 'antd/lib/select';
 import { DatePickerProps } from 'antd/lib/date-picker/interface';
 import { TreeSelectProps } from '../TreeSelect';
-import { FormSelectProps } from '../Form/FormSelect/FormSelect';
 
 function withPopupContainer<T>(Component: React.ComponentClass<any>) {
   return class EnhancedComponent extends React.Component<T> {
@@ -58,7 +57,6 @@ export const TreeSelect = withPopupContainer<TreeSelectProps>(
   Components.TreeSelect,
 );
 export const Select = withPopupContainer<SelectProps>(Antd.Select);
-export const FormSelect = withPopupContainer<FormSelectProps>(Form.FormSelect);
 export const DatePicker = withCalendarContainer<DatePickerProps>(
   Antd.DatePicker,
 );

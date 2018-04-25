@@ -6,7 +6,7 @@ import { Modal } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
-import ExportsService from '../../../../services/Library/ExportsService';
+import ExportService from '../../../../services/Library/ExportService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -39,7 +39,7 @@ class ExportContent extends React.Component<
   state = initialState;
 
   archiveExport = (exportId: string) => {
-    return ExportsService.deleteExport(exportId);
+    return ExportService.deleteExport(exportId);
   };
 
   fetchExport = (organisationId: string, filter: Filters) => {
@@ -47,7 +47,7 @@ class ExportContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      ExportsService.getExports(organisationId, options).then(results => {
+      ExportService.getExports(organisationId, options).then(results => {
         this.setState({
           loading: false,
           data: results.data,

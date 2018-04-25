@@ -162,7 +162,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           onStateChange={onStateChange}
           width={orgSelectorSize}
         >
-          <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
+          { this.state.isSelectorOpen && <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} /> }
         </PushMenu>
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">

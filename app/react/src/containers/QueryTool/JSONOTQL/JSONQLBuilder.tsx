@@ -13,7 +13,6 @@ import { ObjectNodeFactory } from './Diagram/ObjectNode';
 import { PlusNodeFactory, PlusNodeModel } from './Diagram/PlusNode';
 import { SimplePortFactory } from './Diagram/Port';
 import BuilderMenu, { UndoRedoProps } from './BuilderMenu';
-import CounterCard from './CounterCard';
 import {
   AddOperation,
   DeleteOperation,
@@ -31,6 +30,14 @@ import {
   toNodeList,
   buildLinkList,
 } from './domain';
+import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
+import CounterList from './CounterList';
+
+export interface QueryResult {
+  loading: boolean;
+  error?: any;
+  otqlResult?: OTQLResult;
+}
 
 export interface JSONQLBuilderProps {
   objectTypes: ObjectLikeTypeInfoResource[];
@@ -38,8 +45,9 @@ export interface JSONQLBuilderProps {
   updateQuery: (query: ObjectTreeExpressionNodeShape | undefined) => void;
   undoRedo: UndoRedoProps;
   edition?: boolean;
-  shouldReloadQuery: boolean;
-  handleRefreshValue: () => void;
+  staleQueryResult: boolean;
+  queryResult: QueryResult;
+  runQuery: () => void;
 }
 
 interface State {
@@ -51,6 +59,7 @@ type Props = JSONQLBuilderProps;
 class JSONQLBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();
   nodeBTreeCache?: NodeModelBTree;
+  div: React.RefObject<HTMLDivElement>;
 
   constructor(props: Props) {
     super(props);
@@ -75,12 +84,21 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
     this.state = {
       keydown: [],
-    }
+    };
   }
 
   componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-    window.addEventListener('keyup', this.handleKeyUp);
+    if (this.div && this.div.current){
+      this.div.current.addEventListener('keydown', this.handleKeyDown);
+      this.div.current.addEventListener('keyup', this.handleKeyUp);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.div && this.div.current){
+      this.div.current.removeEventListener('keydown', this.handleKeyDown);
+      this.div.current.removeEventListener('keyup', this.handleKeyUp);
+    }
   }
 
   getTreeNodeOperations = (): TreeNodeOperations => {
@@ -112,55 +130,82 @@ class JSONQLBuilder extends React.Component<Props, State> {
     const { updateQuery, query } = this.props;
     updateQuery({
       type: 'GROUP',
-      booleanOperator: 'OR',
+      boolean_operator: 'OR',
       expressions: query ? [query] : [],
     });
   };
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-    window.removeEventListener('keyup', this.handleKeyUp);
-  }
-
   handleKeyDown = (event: KeyboardEvent) => {
-    this.setState(prevState => {
-      return { keydown: prevState.keydown.find(k => k === event.key) ? prevState.keydown : [...this.state.keydown, event.key] }
-    }, () => {
-      if (this.state.keydown.includes('f') && this.state.keydown.length === 1) {
-        this.engine.zoomToFit();
-      }
-      if (this.state.keydown.includes('Control') && this.state.keydown.includes('z') && this.props.undoRedo.enableUndo) {
-        this.props.undoRedo.handleUndo()
-      }
-      if (this.state.keydown.includes('Control') && (this.state.keydown.includes('z') || this.state.keydown.includes('Z')) && this.state.keydown.includes('Shift') && this.props.undoRedo.enableRedo) {
-        this.props.undoRedo.handleRedo()
-      }
-    })
+    this.setState(
+      prevState => {
+        return {
+          keydown: prevState.keydown.find(k => k === event.key)
+            ? prevState.keydown
+            : [...this.state.keydown, event.key],
+        };
+      },
+      () => {
+        if (
+          this.state.keydown.includes('f') &&
+          this.state.keydown.length === 1
+        ) {
+          this.engine.zoomToFit();
+        }
+        if (
+          this.state.keydown.includes('r') &&
+          this.state.keydown.length === 1
+        ) {
+          this.engine.getDiagramModel().setZoomLevel(100);
+          this.engine.getDiagramModel().setOffset(0,0);
+        }
+        if (
+          this.state.keydown.includes('Control') &&
+          this.state.keydown.includes('z') &&
+          this.props.undoRedo.enableUndo
+        ) {
+          this.props.undoRedo.handleUndo();
+        }
+        if (
+          this.state.keydown.includes('Control') &&
+          (this.state.keydown.includes('z') ||
+            this.state.keydown.includes('Z')) &&
+          this.state.keydown.includes('Shift') &&
+          this.props.undoRedo.enableRedo
+        ) {
+          this.props.undoRedo.handleRedo();
+        }
+      },
+    );
   };
 
   handleKeyUp = (event: KeyboardEvent) => {
     this.setState(prevState => {
-      const newKeyList = prevState.keydown.filter(k => k !== event.key)
+      const newKeyList = prevState.keydown.filter(k => k !== event.key);
       return {
-        keydown: newKeyList
-      }
-    })
-  }
+        keydown: newKeyList,
+      };
+    });
+  };
 
   componentWillMount() {
+    const { objectTypes } = this.props;
     const model = new DiagramModel();
     model.setLocked(true);
     const rootNode = new PlusNodeModel();
     rootNode.root = true;
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
+
+    const initialObjectType = objectTypes.find(ot => ot.name === 'UserPoint')!;
+    rootNode.objectTypeInfo = initialObjectType;
+
     model.addNode(rootNode);
     this.engine.setDiagramModel(model);
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    const { query, objectTypes } = this.props;
-    const { query: nextQuery } = nextProps;
+    const { query } = this.props;
+    const { query: nextQuery, objectTypes } = nextProps;
     if (query !== nextQuery) {
       const model = new DiagramModel();
       model.setLocked(this.engine.getDiagramModel().locked);
@@ -172,10 +217,20 @@ class JSONQLBuilder extends React.Component<Props, State> {
       rootNode.root = true;
       rootNode.x = ROOT_NODE_POSITION.x;
       rootNode.y = ROOT_NODE_POSITION.y;
+
+      const initialObjectType = objectTypes.find(
+        ot => ot.name === 'UserPoint',
+      )!;
+      rootNode.objectTypeInfo = initialObjectType;
+
       model.addNode(rootNode);
 
       if (nextQuery) {
-        const nodeBTree = buildNodeModelBTree(nextQuery, objectTypes);
+        const nodeBTree = buildNodeModelBTree(
+          nextQuery,
+          initialObjectType,
+          objectTypes,
+        );
         setUniqueModelId(nodeBTree);
         computeNodeExtras(nodeBTree);
         layout(
@@ -203,15 +258,19 @@ class JSONQLBuilder extends React.Component<Props, State> {
     }
   }
 
-  render() {    
-    const { shouldReloadQuery, handleRefreshValue } = this.props;
-    const values = [
-      { viewValue: 999999999, viewName: 'UserPoint', loading: false },
-    ];
+  render() {
+    const { queryResult, staleQueryResult, runQuery } = this.props;
 
     return (
-      <div className={`query-builder ${this.props.edition ? 'edition-mode' : ''}`}>
-        <CounterCard values={values} handleRefreshValue={handleRefreshValue} shouldRefreshValue={shouldReloadQuery} />
+      <div
+        className={`query-builder ${this.props.edition ? 'edition-mode' : ''}`}
+        ref={this.div}
+      >
+        <CounterList
+          queryResults={[queryResult]}
+          staleQueryResult={staleQueryResult}
+          onRefresh={runQuery}
+        />
         <DiagramWidget
           diagramEngine={this.engine}
           allowCanvasZoom={true}

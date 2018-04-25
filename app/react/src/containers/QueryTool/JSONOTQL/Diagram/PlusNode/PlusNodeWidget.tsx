@@ -11,6 +11,7 @@ import ObjectNodeForm, { ObjectNodeFormProps } from '../../Edit/ObjectNodeForm';
 import {
   ObjectNodeFormData,
   generateObjectNodeFromFormData,
+  QUERY_DOCUMENT_INITIAL_VALUE,
 } from '../../Edit/domain';
 
 interface Props {
@@ -37,16 +38,13 @@ class PlusNodeWidget extends React.Component<Props & InjectDrawerProps, State> {
   addObjectNode = () => {
     const { node } = this.props;
     this.setState({ focus: false }, () => {
-      let computedSchemaPath = ['UserPoint'];
-      if (node.objectOrGroupNode && node.objectOrGroupNode.type === 'OBJECT') {
-        computedSchemaPath = [node.objectOrGroupNode.field];
-      }
+      // let computedSchemaPath = ['UserPoint'];
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
         additionalProps: {
           close: this.props.closeNextDrawer,
-          breadCrumbPaths: computedSchemaPath.map(csp => ({ name: csp })),
+          breadCrumbPaths: [{ name: node.objectTypeInfo!.name }],
           objectTypes: this.props.objectTypes,
-          schemaPath: computedSchemaPath,
+          objectType: node.objectTypeInfo!,
           onSubmit: (e: ObjectNodeFormData) => {
             this.props.treeNodeOperations.addNode(
               node.treeNodePath,
@@ -54,6 +52,7 @@ class PlusNodeWidget extends React.Component<Props & InjectDrawerProps, State> {
             );
             this.props.closeNextDrawer();
           },
+          initialValues: QUERY_DOCUMENT_INITIAL_VALUE,
         },
         size: 'small',
       });
@@ -67,7 +66,7 @@ class PlusNodeWidget extends React.Component<Props & InjectDrawerProps, State> {
     } else {
       treeNodeOperations.addNode(node.treeNodePath, {
         type: 'GROUP',
-        booleanOperator: 'OR',
+        boolean_operator: 'OR',
         expressions: [],
       });
     }

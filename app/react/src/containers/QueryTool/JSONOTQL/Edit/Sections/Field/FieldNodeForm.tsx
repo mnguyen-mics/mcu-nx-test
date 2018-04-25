@@ -13,7 +13,12 @@ import { compose } from 'recompose';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import messages from '../../messages';
-import { FORM_ID, ObjectNodeFormData, FieldNodeFormData } from '../../domain';
+import {
+  FORM_ID,
+  ObjectNodeFormData,
+  FieldNodeFormData,
+  SUPPORTED_FIELD_TYPES,
+} from '../../domain';
 import { connect } from 'react-redux';
 import {
   BooleanComparisonOperator,
@@ -23,13 +28,21 @@ import {
   StringComparisonOperator,
   TimeComparisonOperator,
 } from '../../../../../../models/datamart/graphdb/QueryDocument';
-import TagSelect, { FormTagSelectProps } from '../../../../../../components/Form/FormSelect/TagSelect';
+import TagSelect, {
+  FormTagSelectProps,
+} from '../../../../../../components/Form/FormSelect/TagSelect';
 import { FieldResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import FormRelativeAbsoluteDate, { FormRelativeAbsoluteDateProps } from './Comparison/FormRelativeAbsoluteDate';
+import FormRelativeAbsoluteDate, {
+  FormRelativeAbsoluteDateProps,
+} from './Comparison/FormRelativeAbsoluteDate';
 import FormMultiTag from '../../../../../../components/Form/FormSelect/FormMultiTag';
 
-export const FormTagSelectField = Field as new() => GenericField<FormTagSelectProps>;
-export const FormRelativeAbsoluteDateField = Field as new() => GenericField<FormRelativeAbsoluteDateProps>;
+export const FormTagSelectField = Field as new () => GenericField<
+  FormTagSelectProps
+>;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
+  FormRelativeAbsoluteDateProps
+>;
 
 export interface FieldNodeFormProps {
   expressionIndex: number;
@@ -71,7 +84,7 @@ class FieldNodeForm extends React.Component<Props> {
     const fieldName = field ? field.field : undefined;
 
     const nextField = this.getField(nextFormValues, nextExpressionIndex);
-    const nextFieldName = nextField ? nextField.field : undefined
+    const nextFieldName = nextField ? nextField.field : undefined;
 
     if (fieldName !== nextFieldName && nextFieldName !== undefined) {
       const fieldType = this.getSelectedFieldType(nextFieldName);
@@ -82,15 +95,18 @@ class FieldNodeForm extends React.Component<Props> {
     }
   }
 
-  getField = (formValues: ObjectNodeFormData, index: number): FieldNodeFormData | undefined => {
+  getField = (
+    formValues: ObjectNodeFormData,
+    index: number,
+  ): FieldNodeFormData | undefined => {
     return formValues.fieldNodeForm &&
-    formValues.fieldNodeForm.length &&
-    formValues.fieldNodeForm[index] ?
+      formValues.fieldNodeForm.length &&
       formValues.fieldNodeForm[index]
+      ? formValues.fieldNodeForm[index]
       : undefined;
-  }
+  };
 
-  generateFieldTypeComparison = (fieldType: string) => {
+  generateFieldTypeComparison = (fieldType: string | null) => {
     switch (fieldType) {
       case 'Timestamp':
         return { type: 'TIME', operator: 'BEFORE', values: [] };
@@ -104,23 +120,30 @@ class FieldNodeForm extends React.Component<Props> {
         return { type: 'ENUM', operator: 'EQ', values: [] };
       case 'Number':
         return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
+      case 'Float':
+        return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
+      default:
+        return {};
     }
-
-    return {};
   };
 
   getAvailableFields = (): OptionProps[] => {
     const { availableFields } = this.props;
-    return availableFields.map(i => {
-      return { value: i.name, title: i.name };
-    });
+    return availableFields
+      .filter(field =>
+        SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1),
+      )
+      .map(i => ({ value: i.name, title: i.name }));
   };
 
   getSelectedFieldType = (fieldName: string) => {
     const { availableFields } = this.props;
-    return availableFields.find(
-        i => i.name === fieldName,
-    )!.field_type.replace('!', '');
+
+    const fieldType = availableFields.find(i => i.name === fieldName)!
+      .field_type;
+
+    const match = fieldType.match(/\w+/);
+    return match && match[0];
   };
 
   generateStringComparisonOperator = (): Array<{
@@ -138,30 +161,30 @@ class FieldNodeForm extends React.Component<Props> {
         value: 'NOT_EQ',
         title: intl.formatMessage(messages.NOT_EQ),
       },
-      {
-        value: 'MATCHES',
-        title: intl.formatMessage(messages.MATCHES),
-      },
-      {
-        value: 'DOES_NOT_MATCH',
-        title: intl.formatMessage(messages.DOES_NOT_MATCH),
-      },
-      {
-        value: 'STARTS_WITH',
-        title: intl.formatMessage(messages.STARTS_WITH),
-      },
-      {
-        value: 'DOES_NOT_START_WITH',
-        title: intl.formatMessage(messages.DOES_NOT_START_WITH),
-      },
-      {
-        value: 'CONTAINS',
-        title: intl.formatMessage(messages.CONTAINS),
-      },
-      {
-        value: 'DOES_NOT_CONTAIN',
-        title: intl.formatMessage(messages.DOES_NOT_CONTAIN),
-      },
+      // {
+      //   value: 'MATCHES',
+      //   title: intl.formatMessage(messages.MATCHES),
+      // },
+      // {
+      //   value: 'DOES_NOT_MATCH',
+      //   title: intl.formatMessage(messages.DOES_NOT_MATCH),
+      // },
+      // {
+      //   value: 'STARTS_WITH',
+      //   title: intl.formatMessage(messages.STARTS_WITH),
+      // },
+      // {
+      //   value: 'DOES_NOT_START_WITH',
+      //   title: intl.formatMessage(messages.DOES_NOT_START_WITH),
+      // },
+      // {
+      //   value: 'CONTAINS',
+      //   title: intl.formatMessage(messages.CONTAINS),
+      // },
+      // {
+      //   value: 'DOES_NOT_CONTAIN',
+      //   title: intl.formatMessage(messages.DOES_NOT_CONTAIN),
+      // },
     ];
   };
 
@@ -261,7 +284,9 @@ class FieldNodeForm extends React.Component<Props> {
   };
 
   generateAvailableConditionOptions = (fieldName?: string) => {
-    const fieldType = fieldName ? this.getSelectedFieldType(fieldName) : undefined;
+    const fieldType = fieldName
+      ? this.getSelectedFieldType(fieldName)
+      : undefined;
     switch (fieldType) {
       case 'Timestamp':
         return this.generateTimeComparisonOperator();
@@ -275,6 +300,8 @@ class FieldNodeForm extends React.Component<Props> {
         return this.generateEnumComparisonOperator();
       case 'Number':
         return this.generateNumericComparisonOperator();
+      case 'Float':
+        return this.generateNumericComparisonOperator();
       default:
         return [];
     }
@@ -283,30 +310,34 @@ class FieldNodeForm extends React.Component<Props> {
   generateTimestampComparisonField(condition: TimeComparisonOperator) {
     const { intl, name } = this.props;
 
-    return <FormRelativeAbsoluteDateField
-      name={`${name}.comparison.values`}
-      component={FormRelativeAbsoluteDate}
-      formItemProps={{
-        label: intl.formatMessage(messages.fieldConditionValuesLabel),
-        required: true,
-      }}
-      small={true}
-      unixTimstamp={true}
-    />;
+    return (
+      <FormRelativeAbsoluteDateField
+        name={`${name}.comparison.values`}
+        component={FormRelativeAbsoluteDate}
+        formItemProps={{
+          label: intl.formatMessage(messages.fieldConditionValuesLabel),
+          required: true,
+        }}
+        small={true}
+        unixTimstamp={true}
+      />
+    );
   }
 
   generateDateComparisonField(condition: TimeComparisonOperator) {
     const { intl, name } = this.props;
 
-    return <FormRelativeAbsoluteDateField
-      name={`${name}.comparison.values`}
-      component={FormRelativeAbsoluteDate}
-      formItemProps={{
-        label: intl.formatMessage(messages.fieldConditionValuesLabel),
-        required: true,
-      }}
-      small={true}
-    />;
+    return (
+      <FormRelativeAbsoluteDateField
+        name={`${name}.comparison.values`}
+        component={FormRelativeAbsoluteDate}
+        formItemProps={{
+          label: intl.formatMessage(messages.fieldConditionValuesLabel),
+          required: true,
+        }}
+        small={true}
+      />
+    );
   }
 
   generateStringComparisonField(condition: StringComparisonOperator) {
@@ -322,13 +353,12 @@ class FieldNodeForm extends React.Component<Props> {
         }}
         selectProps={{
           options: [],
-          dropdownStyle: { display: 'none' }
+          dropdownStyle: { display: 'none' },
         }}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
         small={true}
-        
       />
     );
   }
@@ -345,14 +375,17 @@ class FieldNodeForm extends React.Component<Props> {
           required: true,
         }}
         selectProps={{
-          options: [{ value: 'true', label: 'true' }, { value: 'false', label: 'false' }],
+          options: [
+            { value: 'true', label: 'true' },
+            { value: 'false', label: 'false' },
+          ],
         }}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
         small={true}
       />
-    )
+    );
   }
 
   generateEnumComparisonField(condition: EnumComparisonOperator) {
@@ -369,21 +402,24 @@ class FieldNodeForm extends React.Component<Props> {
       <FormMultiTagField
         name={`${name}.comparison.values`}
         component={FormMultiTag}
-        validate={[fieldValidators.isRequired, fieldValidators.isValidArrayOfNumber]}
+        validate={[
+          fieldValidators.isRequired,
+          fieldValidators.isValidArrayOfNumber,
+        ]}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesNumberLabel),
           required: true,
         }}
         selectProps={{
           options: [],
-          dropdownStyle: { display: 'none' }
+          dropdownStyle: { display: 'none' },
         }}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
         small={true}
       />
-    )
+    );
   }
 
   generateAvailableConditionField = (
@@ -416,6 +452,10 @@ class FieldNodeForm extends React.Component<Props> {
         return this.generateNumericComparisonField(
           condition as NumericComparisonOperator,
         );
+      case 'Float':
+        return this.generateNumericComparisonField(
+          condition as NumericComparisonOperator,
+        );
       default:
         return [];
     }
@@ -433,7 +473,10 @@ class FieldNodeForm extends React.Component<Props> {
     const field = this.getField(formValues, expressionIndex);
     const hasSelectedAField = field && field.field !== '';
     const fieldName = field ? field.field : undefined;
-    const fieldCondition = field && field.comparison && field.comparison.operator ? field.comparison.operator as ConditionsOperators : undefined ;
+    const fieldCondition =
+      field && field.comparison && field.comparison.operator
+        ? (field.comparison.operator as ConditionsOperators)
+        : undefined;
 
     return (
       <div>

@@ -7,9 +7,27 @@ export type FormCheckboxProps = CheckboxProps & WrappedFieldProps
 
 const FormCheckbox: React.SFC<FormCheckboxProps> = props => {
 
-  const { input, ...otherProps } = props;
+  const { 
+    input: {
+      onChange,
+      value,
+    },
+    children, 
+    ...otherProps 
+  } = props;
 
-  return <Checkbox {...otherProps} {...input} />;
+  const checked = !!value;
+  const handleOnChange = () => onChange(!checked);
+
+  return (
+    <Checkbox 
+      {...otherProps}
+      checked={checked}
+      onChange={handleOnChange}      
+    >
+      {children}
+    </Checkbox>
+  );
 };
 
 export default FormCheckbox;

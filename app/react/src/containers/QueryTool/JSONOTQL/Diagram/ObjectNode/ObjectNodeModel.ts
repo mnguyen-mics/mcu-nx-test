@@ -2,6 +2,7 @@ import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../Port/SimplePortModel';
 import { QueryBuilderNode } from '../../domain';
 import { ObjectNode } from '../../../../../models/datamart/graphdb/QueryDocument';
+import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 
 export default class ObjectNodeModel extends NodeModel
   implements QueryBuilderNode {
@@ -9,7 +10,7 @@ export default class ObjectNodeModel extends NodeModel
   negation = false;
   treeNodePath: number[] = [];
   objectNode: ObjectNode;
-  parentObjectNode?: ObjectNode;
+  objectTypeInfo: ObjectLikeTypeInfoResource;
 
   constructor(objectNode?: ObjectNode, treeNodePath?: number[]) {
     super('object-node');

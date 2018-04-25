@@ -59,7 +59,6 @@ class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      technicalName: '',
       displayAdvancedSection: false,
       neverExpire: false,
     };

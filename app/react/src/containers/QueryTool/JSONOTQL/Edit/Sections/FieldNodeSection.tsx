@@ -48,33 +48,19 @@ class FieldNodeSection extends React.Component<JoinedProps> {
     let renderedFields = fields.map((name, index, _fields) => {
       const handleRemove = () => fields.remove(index);
       return (
-        // <CSSTransition
-        //   key={_fields.get(index).key}
-        //   timeout={{
-        //     enter: 500,
-        //     exit: 100,
-        //   }}
-        //   classNames={{
-        //     enter: 'fade-enter',
-        //     enterActive: 'fade-enter-active',
-        //     exit: 'fade-exit',
-        //     exitActive: 'fade-exit-active',
-        //   }}
-        // >
-          <div className={'form-input-group'} key={_fields.get(index).key}>
-            <div className={'action-buttons'} onClick={handleRemove}>
-              <McsIcon type="close" />
-            </div>
-            <div>
-              <FieldNodeForm
-                formChange={formChange}
-                name={name}
-                expressionIndex={index}
-                availableFields={availableFields}
-              />
-            </div>
+        <div className={'form-input-group'} key={_fields.get(index).key}>
+          <div className={'action-buttons'} onClick={handleRemove}>
+            <McsIcon type="close" />
           </div>
-        // </CSSTransition>
+          <div>
+            <FieldNodeForm
+              formChange={formChange}
+              name={name}
+              expressionIndex={index}
+              availableFields={availableFields}
+            />
+          </div>
+        </div>
       );
     });
 
@@ -83,36 +69,25 @@ class FieldNodeSection extends React.Component<JoinedProps> {
 
     const generateOperator = (key: string) => {
       return (
-        // <CSSTransition
-        //   key={key}
-        //   timeout={500}
-        //   classNames={{
-        //     enter: 'fade-enter',
-        //     enterActive: 'fade-enter-active',
-        //     exit: 'fade-exit',
-        //     exitActive: 'fade-exit-active',
-        //   }}
-        // >
-          <div key={key} className={'form-input-group-separator'}>
-            <div className="wrapper">
-              <div className={'item'}>
-                <input
-                  id={key}
-                  className="tgl tgl-operator"
-                  type="checkbox"
-                  checked={booleanOperator === 'OR' ? true : false}
-                  onChange={onClick}
-                />
-                <label
-                  className="tgl-btn"
-                  data-tg-off="AND"
-                  data-tg-on="OR"
-                  htmlFor={key}
-                />
-              </div>
+        <div key={key} className={'form-input-group-separator'}>
+          <div className="wrapper">
+            <div className={'item'}>
+              <input
+                id={key}
+                className="tgl tgl-operator"
+                type="checkbox"
+                checked={booleanOperator === 'OR' ? true : false}
+                onChange={onClick}
+              />
+              <label
+                className="tgl-btn"
+                data-tg-off="AND"
+                data-tg-on="OR"
+                htmlFor={key}
+              />
             </div>
           </div>
-        // </CSSTransition>
+        </div>
       );
     };
 

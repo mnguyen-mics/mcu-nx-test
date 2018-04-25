@@ -3,6 +3,7 @@ import {
   RuntimeSchemaResource,
   ObjectLikeTypeResource,
   FieldResource,
+  FieldDirectiveResource,
 } from '../models/datamart/graphdb/RuntimeSchema';
 
 const RuntimeSchemaService = {
@@ -60,6 +61,29 @@ const RuntimeSchemaService = {
   ): Promise<DataResponse<FieldResource>> {
     return ApiService.getRequest(
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/fields/${fieldId}`,
+    );
+  },
+
+  getFieldDirectives(
+    datamartId: string,
+    runtimeSchemaId: string,
+    objectTypeId: string,
+    fieldId: string,
+  ): Promise<DataListResponse<FieldDirectiveResource>> {
+    return ApiService.getRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/fields/${fieldId}/directives`,
+    );
+  },
+
+  getFieldDirective(
+    datamartId: string,
+    runtimeSchemaId: string,
+    objectTypeId: string,
+    fieldId: string,
+    directiveId: string,
+  ): Promise<DataResponse<FieldDirectiveResource>> {
+    return ApiService.getRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/fields/${fieldId}/directives/${directiveId}`,
     );
   },
 };

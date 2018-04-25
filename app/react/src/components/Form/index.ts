@@ -1,6 +1,6 @@
 import { BaseFieldProps, Field, GenericField } from 'redux-form';
 import FormBoolean, { FormBooleanProps } from './FormBoolean';
-import FormCheckbox, { FormCheckboxProps } from './FormCheckbox';
+import FormCheckbox from './FormCheckbox';
 import FormDatePicker, { FormDatePickerProps } from './FormDatePicker';
 import FormFieldWrapper from './FormFieldWrapper';
 import FormRadio from './FormRadio';
@@ -23,8 +23,8 @@ import FormDateRangePicker, { FormDateRangePickerProps } from './FormDateRangePi
 import FormCodeEdit from './FormCodeEdit';
 import FormCodeSnippet from './FormCodeSnippet';
 import TagSelect from './FormSelect/TagSelect';
-import FormSelect from './FormSelect/FormSelect';
 import FormDragAndDrop from './FormDragAndDrop';
+import { CheckboxProps } from 'antd/lib/checkbox';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -52,7 +52,6 @@ export default {
   AddonSelect,
   DefaultSelect,
   TagSelect,
-  FormSelect,
   FormSlider,
 };
 
@@ -79,7 +78,6 @@ export {
   AddonSelect,
   DefaultSelect,
   TagSelect,
-  FormSelect,
   FormDragAndDrop,
   FormSlider
 };
@@ -91,6 +89,6 @@ export const FormMultiTagField = Field as new() => GenericField<FormMultiTagProp
 export const FormAddonSelectField = Field as new() => GenericField<FormSelectAddonProps>;
 export const FormSwitchField = Field as new() => GenericField<FormSwitchProps>;
 export const FormDateRangePickerField = Field as new() => GenericField<FormDateRangePickerProps>;
-export const FormCheckboxField = Field as new() => GenericField<FormCheckboxProps>;
+export const FormCheckboxField = Field as new() => GenericField<CheckboxProps>;
 export const FormBooleanField = Field as new() => GenericField<FormBooleanProps>;
 export const FormSliderField = Field as new() => GenericField<FormSliderProps>;

@@ -5,6 +5,7 @@ import {
   GroupNode,
   ObjectNode,
 } from '../../../../../models/datamart/graphdb/QueryDocument';
+import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 
 export default class PlusNodeModel extends NodeModel
   implements QueryBuilderNode {
@@ -12,11 +13,13 @@ export default class PlusNodeModel extends NodeModel
   negation = false;
   treeNodePath: number[] = [];
   objectOrGroupNode?: GroupNode | ObjectNode;
+  objectTypeInfo?: ObjectLikeTypeInfoResource;
   root?: boolean;
 
   constructor(
     objectOrGroupNode?: GroupNode | ObjectNode,
     treeNodePath?: number[],
+    objectTypeInfo?: ObjectLikeTypeInfoResource,
   ) {
     super('plus-node');
 
@@ -26,6 +29,7 @@ export default class PlusNodeModel extends NodeModel
       this.objectOrGroupNode = objectOrGroupNode;
       this.treeNodePath = treeNodePath;
     }
+    this.objectTypeInfo = objectTypeInfo;
   }
 
   getSize() {

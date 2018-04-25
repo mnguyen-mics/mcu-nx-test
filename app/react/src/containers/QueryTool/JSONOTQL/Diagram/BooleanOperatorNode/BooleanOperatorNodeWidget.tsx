@@ -46,7 +46,7 @@ export default class BooleanOperatorNodeWidget extends React.Component<Props, St
     return treeNodeOperations.updateNode(node.treeNodePath, {
       ...node.objectOrGroupNode,
       negation: negation,
-      booleanOperator: operator
+      boolean_operator: operator
     })
   }
 
@@ -88,7 +88,7 @@ export default class BooleanOperatorNodeWidget extends React.Component<Props, St
           onMouseLeave={onHover('leave')}
           onClick={onClick}
         >
-          {node.objectOrGroupNode.booleanOperator}
+          {node.objectOrGroupNode.boolean_operator}
           <div
             style={{
               position: 'absolute',
@@ -117,7 +117,7 @@ export default class BooleanOperatorNodeWidget extends React.Component<Props, St
                 transform: `scale(${zoomRatio})`
               }}
             >
-              {node.objectOrGroupNode.booleanOperator}
+              {node.objectOrGroupNode.boolean_operator}
               <div
                 style={{
                   position: 'absolute',
@@ -136,9 +136,9 @@ export default class BooleanOperatorNodeWidget extends React.Component<Props, St
                   zIndex: 1001
                 }}
               >
-                <div onClick={this.changeBooleanOperator(node.objectOrGroupNode.booleanOperator === 'AND' ? 'OR' : 'AND', false)} className='boolean-menu-item'>{node.objectOrGroupNode.booleanOperator === 'AND' ? 'OR' : 'AND' }</div>
-                <div onClick={this.changeBooleanOperator('AND', node.objectOrGroupNode.booleanOperator === 'AND' && node.objectOrGroupNode.negation === true ? false : true)} className='boolean-menu-item'>{node.objectOrGroupNode.booleanOperator === 'AND' && node.objectOrGroupNode.negation === true ? 'AND' : 'AND NOT'}</div>
-                <div onClick={this.changeBooleanOperator('OR', node.objectOrGroupNode.booleanOperator === 'OR' && node.objectOrGroupNode.negation === true ? false : true)} className='boolean-menu-item'>{node.objectOrGroupNode.booleanOperator === 'OR' && node.objectOrGroupNode.negation === true ? 'OR' : 'OR NOT'}</div>
+                <div onClick={this.changeBooleanOperator(node.objectOrGroupNode.boolean_operator === 'AND' ? 'OR' : 'AND', false)} className='boolean-menu-item'>{node.objectOrGroupNode.boolean_operator === 'AND' ? 'OR' : 'AND' }</div>
+                <div onClick={this.changeBooleanOperator('AND', node.objectOrGroupNode.boolean_operator === 'AND' && node.objectOrGroupNode.negation === true ? false : true)} className='boolean-menu-item'>{node.objectOrGroupNode.boolean_operator === 'AND' && node.objectOrGroupNode.negation === true ? 'AND' : 'AND NOT'}</div>
+                <div onClick={this.changeBooleanOperator('OR', node.objectOrGroupNode.boolean_operator === 'OR' && node.objectOrGroupNode.negation === true ? false : true)} className='boolean-menu-item'>{node.objectOrGroupNode.boolean_operator === 'OR' && node.objectOrGroupNode.negation === true ? 'OR' : 'OR NOT'}</div>
                 <div onClick={this.removeGroup} className='boolean-menu-item'>Remove</div>
               </div>
             </CSSTransition>

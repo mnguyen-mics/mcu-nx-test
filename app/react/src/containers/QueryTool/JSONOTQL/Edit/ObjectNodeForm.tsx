@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { 
-  Omit, connect,
-} from 'react-redux';
-import { 
+import { Omit, connect } from 'react-redux';
+import {
   reduxForm,
   InjectedFormProps,
   ConfigProps,
@@ -10,8 +8,8 @@ import {
   GenericFieldArray,
   Field,
   getFormValues,
- } from 'redux-form';
-import { ObjectNodeFormData, FORM_ID } from './domain';
+} from 'redux-form';
+import { ObjectNodeFormData, FORM_ID, FrequencyFormData } from './domain';
 import { Path } from '../../../../components/ActionBar';
 import { Layout, Form } from 'antd';
 import FormLayoutActionbar, {
@@ -21,18 +19,24 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import messages from './messages'
+import messages from './messages';
 import ObjectNodeSection from './Sections/ObjectNodeSection';
 import { QueryBooleanOperator } from '../../../../models/datamart/graphdb/QueryDocument';
-import { ObjectLikeTypeInfoResource, FieldResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
-import FieldNodeSection, { FieldNodeSectionProps } from './Sections/FieldNodeSection';
+import {
+  ObjectLikeTypeInfoResource,
+  FieldResource,
+} from '../../../../models/datamart/graphdb/RuntimeSchema';
+import FieldNodeSection, {
+  FieldNodeSectionProps,
+} from './Sections/FieldNodeSection';
 
 const { Content } = Layout;
 
-export interface ObjectNodeFormProps extends Omit<ConfigProps<ObjectNodeFormData>, 'form'> {
+export interface ObjectNodeFormProps
+  extends Omit<ConfigProps<ObjectNodeFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  schemaPath: string[];
+  objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
 }
 
@@ -42,86 +46,39 @@ interface MapStateToProps {
 
 const FieldNodeListFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  FieldNodeSectionProps>;
+  FieldNodeSectionProps
+>;
 
-interface QueryToolDocumentFormState {
-  selectedFields: FieldResource[];
-}
+type Props = InjectedFormProps<ObjectNodeFormData, ObjectNodeFormProps> &
+  ObjectNodeFormProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }> &
+  MapStateToProps;
 
-type Props = InjectedFormProps<
-ObjectNodeFormData,
-ObjectNodeFormProps
-> &
-ObjectNodeFormProps &
-InjectedIntlProps &
-RouteComponentProps<{ organisationId: string }> &
-MapStateToProps;
-
-class ObjectNodeForm extends React.Component<Props, QueryToolDocumentFormState> {
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      selectedFields: [],
-    }
-  }
-
-  componentWillReceiveProps (nextProps: Props) {
-    const {
-      formValues
-    } = this.props;
-    const {
-      formValues: nextFormValues,
-      change,
-    } = nextProps;
-    if (formValues && nextFormValues && formValues.objectNodeForm && nextFormValues.objectNodeForm && formValues.objectNodeForm.field !== nextFormValues.objectNodeForm.field) {
-      // resetting value when the object node is change;
-      change('fieldNodeForm', []);
-    }
-
-    if (nextFormValues && nextFormValues.objectNodeForm && nextFormValues.objectNodeForm.field) {
-      this.setState({
-        selectedFields: this.buildAvailableFieldResource(nextFormValues.objectNodeForm.field)
-      })
-    }
-  }
-
+class ObjectNodeForm extends React.Component<Props> {
   buildAvailableFieldResource = (selectedValue: string): FieldResource[] => {
-    const selectedObject = this.props.objectTypes.find(i => i.name === selectedValue);
+    const selectedObject = this.props.objectTypes.find(
+      i => i.name === selectedValue,
+    );
     const objectTypesNames = this.props.objectTypes.map(i => i.name);
-    return selectedObject && selectedObject.fields ? selectedObject.fields.filter(i => !objectTypesNames.find(o => i.field_type.indexOf(o) > -1)) : [];
-  }
-  
-
-  buildOptionsFromPath = (fieldPath: string[]): FieldResource[] => {
-    let selectedObject: ObjectLikeTypeInfoResource | undefined;
-    fieldPath.forEach((fieldName, index) => {
-      if (index === 0) {
-        // has to be an object of the domain
-        selectedObject = this.props.objectTypes.find(i => i.name === fieldName);
-      } else {
-        const selectedField = selectedObject && selectedObject.fields && selectedObject.fields.find(i => i.name === fieldName);
-        if (selectedField && selectedField.field_type.indexOf('[') &&  selectedField.field_type.indexOf(']')) {
-          // check if the field is a list
-          const selectedFieldName = selectedField.field_type.replace('[', '').replace(']', '').replace('!', '');
-          selectedObject = this.props.objectTypes.find(i => i.name === selectedFieldName)
-        }
-      }
-    })
-    return selectedObject && selectedObject.fields ? selectedObject.fields : [];
-  }
+    return selectedObject && selectedObject.fields
+      ? selectedObject.fields.filter(
+          i => !objectTypesNames.find(o => i.field_type.indexOf(o) > -1),
+        )
+      : [];
+  };
 
   render() {
-
     const {
       handleSubmit,
       breadCrumbPaths,
       close,
-      schemaPath,
       change,
       formValues,
+      objectType,
+      objectTypes,
     } = this.props;
-    
+
     const genericFieldArrayProps = {
       formChange: change,
       rerenderOnEveryChange: true,
@@ -134,33 +91,63 @@ class ObjectNodeForm extends React.Component<Props, QueryToolDocumentFormState> 
       onClose: close,
     };
 
+    const resetFieldNodeForm = () => {
+      const resetFrequency: FrequencyFormData = {
+        enabled: false,
+        mode: 'AT_LEAST',
+      };
+      change('frequency', resetFrequency);
+      change('fieldNodeForm', []);
+    };
+
     const sections: McsFormSection[] = [];
     sections.push({
-      id: 'general',
+      id: 'objectNode',
       title: messages.objectNodeTitle,
-      component: <ObjectNodeSection availableFields={this.buildOptionsFromPath(schemaPath)} domainObjects={this.props.objectTypes.map(a => a.name)} />,
+      component: (
+        <ObjectNodeSection
+          objectTypeFields={objectType.fields.filter(field => {
+            const found = objectTypes.find(ot => field.field_type.indexOf(ot.name) > -1);            
+            const hasIndexedField = !!found && !!found.fields.find(f => !f.directives.find(dir => dir.name === 'TreeIndex'))
+            return !!found && hasIndexedField;
+          })}
+          onSelect={resetFieldNodeForm}
+        />
+      ),
     });
 
-    const onBooleanOperatorChange = (value: QueryBooleanOperator) => change('objectNodeForm.booleanOperator', value);
+    const onBooleanOperatorChange = (value: QueryBooleanOperator) =>
+      change('objectNodeForm.boolean_operator', value);
 
-    if (formValues && formValues.objectNodeForm && formValues.objectNodeForm.field)
+    const hasField = formValues && formValues.objectNodeForm.field;
+    const showFieldNodeForm = hasField;
 
-      
-
+    if (showFieldNodeForm) {
+      const selectedFieldType = objectType.fields.find(
+        f => f.name === formValues.objectNodeForm.field,
+      )!.field_type;
       sections.push({
         id: 'fieldConditions',
         title: messages.objectNodeTitle,
-        component: <FieldNodeListFieldArray
-          name="fieldNodeForm"
-          component={FieldNodeSection}
-          availableFields={this.state.selectedFields}
-          formChange={change}
-          booleanOperator={formValues.objectNodeForm.booleanOperator}
-          onBooleanOperatorChange={onBooleanOperatorChange}
-          {...genericFieldArrayProps}
-        />,
+        component: (
+          <FieldNodeListFieldArray
+            name="fieldNodeForm"
+            component={FieldNodeSection}
+            availableFields={objectTypes
+              .find(ot => selectedFieldType.indexOf(ot.name) > -1)!
+              .fields.filter(
+                f =>
+                  !objectTypes.find(ot => f.field_type.indexOf(ot.name) > -1) &&
+                  f.directives.find(dir => dir.name === 'TreeIndex'),
+              )}
+            formChange={change}
+            booleanOperator={formValues.objectNodeForm.boolean_operator}
+            onBooleanOperatorChange={onBooleanOperatorChange}
+            {...genericFieldArrayProps}
+          />
+        ),
       });
-
+    }
 
     const renderedSections = sections.map((section, index) => {
       return (
@@ -173,8 +160,6 @@ class ObjectNodeForm extends React.Component<Props, QueryToolDocumentFormState> 
       );
     });
 
-    
-
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
@@ -182,7 +167,7 @@ class ObjectNodeForm extends React.Component<Props, QueryToolDocumentFormState> 
           <Form
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
-            layout='vertical'
+            layout="vertical"
           >
             <Content
               id={FORM_ID}
@@ -207,6 +192,6 @@ export default compose<Props, ObjectNodeFormProps>(
   connect(mapStateToProps),
   reduxForm({
     form: FORM_ID,
-    enableReinitialize: true, 
+    enableReinitialize: true,
   }),
-)(ObjectNodeForm)
+)(ObjectNodeForm);

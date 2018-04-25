@@ -7,7 +7,6 @@ import { ObjectNodeModel } from './Diagram/ObjectNode';
 import {
   ObjectTreeExpressionNodeShape,
   FieldNode,
-  ObjectNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 
@@ -259,23 +258,24 @@ export function setUniqueModelId(
   }
 }
 
-function containsAllField(
-  objectNode: ObjectNode,
-  objectTypes: ObjectLikeTypeInfoResource[] = [],
+function hasTypeChild(
+  objectType: ObjectLikeTypeInfoResource,
+  objectTypes: ObjectLikeTypeInfoResource[],
 ): boolean {
-  if (objectTypes.length === 0) return true;
-  const currentObject = objectTypes.find(type => type.name === objectNode.field);
-  return !!(currentObject &&
-    objectTypes
-      .filter(t => currentObject.fields.map(f => f.field_type).find((i: string) => i.indexOf(t.name) > -1)
-        ).length === 0);
+  const objectTypeNames = objectTypes.map(ots => ots.name);
+  const fieldTypeNames = objectType.fields.map(f => f.field_type);
+  return (
+    fieldTypeNames.filter(
+      ftn => !!objectTypeNames.find(otn => ftn.indexOf(otn) > -1),
+    ).length > 0
+  );
 }
 
 export function buildNodeModelBTree(
   treeNode: ObjectTreeExpressionNodeShape,
+  objectType: ObjectLikeTypeInfoResource,
   objectTypes: ObjectLikeTypeInfoResource[],
   treeNodePath: number[] = [],
-  parentTreeNode?: ObjectTreeExpressionNodeShape,
 ): NodeModelBTree {
   switch (treeNode.type) {
     case 'GROUP':
@@ -283,7 +283,7 @@ export function buildNodeModelBTree(
         return {
           node: new BooleanOperatorNodeModel(treeNode, treeNodePath),
           right: {
-            node: new PlusNodeModel(treeNode, treeNodePath),
+            node: new PlusNodeModel(treeNode, treeNodePath, objectType),
           },
         };
       }
@@ -295,26 +295,28 @@ export function buildNodeModelBTree(
             return {
               node: new BooleanOperatorNodeModel(treeNode, treeNodePath),
               down: treeNode.expressions.length > 0 ? acc : undefined,
-              right: buildNodeModelBTree(expr, objectTypes, [
+              right: buildNodeModelBTree(expr, objectType, objectTypes, [
                 ...treeNodePath,
                 treeNode.expressions.length - 1 - index,
-              ], treeNode),
+              ]),
             };
           },
           {
-            node: new PlusNodeModel(treeNode, treeNodePath) as CustomNodeShape,
+            node: new PlusNodeModel(treeNode, treeNodePath, objectType),
           },
-      );
+        );
     // TODO PlusNodeModel are only available in certain condition
     case 'OBJECT':
       const objectNode = new ObjectNodeModel(treeNode, treeNodePath);
-      if (parentTreeNode && parentTreeNode.type === 'OBJECT') {
-        objectNode.parentObjectNode = parentTreeNode;
-      }
-      const hidePlusNode = containsAllField(
-        treeNode,
-        objectTypes,
-      );
+      objectNode.objectTypeInfo = objectType;
+
+      
+      const field = objectType.fields.find(f => f.name === treeNode.field)!;
+      const nextObjectType = objectTypes.find(
+        ot => field.field_type.indexOf(ot.name) > -1,
+      )!;
+      
+      const hidePlusNode = !hasTypeChild(nextObjectType, objectTypes);
       return {
         node: objectNode,
         down: treeNode.expressions
@@ -325,19 +327,16 @@ export function buildNodeModelBTree(
               return {
                 node: new BooleanOperatorNodeModel(treeNode, treeNodePath),
                 down: acc,
-                right: buildNodeModelBTree(expr, objectTypes, [
+                right: buildNodeModelBTree(expr, nextObjectType, objectTypes, [
                   ...treeNodePath,
                   treeNode.expressions.length - 1 - index,
-                ], treeNode),
+                ]),
               };
             },
             hidePlusNode
               ? undefined
               : {
-                  node: new PlusNodeModel(
-                    treeNode,
-                    treeNodePath,
-                  ) as CustomNodeShape,
+                  node: new PlusNodeModel(treeNode, treeNodePath, nextObjectType),
                 },
           ),
       };
@@ -370,15 +369,15 @@ export function layout(
       isCollapsed
         ? position
         : applyTranslation(
-          position,
-          MIN_X,
-          (tree.node.getSize().height +
-            (tree.node.getSize().borderWidth || 0) * 2) /
-          2 -
-          (tree.right.node.getSize().height +
-            (tree.right.node.getSize().borderWidth || 0) * 2) /
-          2,
-        ),
+            position,
+            MIN_X,
+            (tree.node.getSize().height +
+              (tree.node.getSize().borderWidth || 0) * 2) /
+              2 -
+              (tree.right.node.getSize().height +
+                (tree.right.node.getSize().borderWidth || 0) * 2) /
+                2,
+          ),
       tree,
     );
   }
@@ -389,15 +388,15 @@ export function layout(
       isCollapsed
         ? position
         : applyTranslation(
-          { x: position.x, y: rightP.y },
-          (tree.node.getSize().width +
-            (tree.node.getSize().borderWidth || 0) * 2) /
-          2 -
-          (tree.down.node.getSize().width +
-            (tree.down.node.getSize().borderWidth || 0) * 2) /
-          2,
-          MIN_Y,
-        ),
+            { x: position.x, y: rightP.y },
+            (tree.node.getSize().width +
+              (tree.node.getSize().borderWidth || 0) * 2) /
+              2 -
+              (tree.down.node.getSize().width +
+                (tree.down.node.getSize().borderWidth || 0) * 2) /
+                2,
+            MIN_Y,
+          ),
       tree,
     );
   }
@@ -442,19 +441,19 @@ export function buildLinkList(nodeBTree: NodeModelBTree): LinkModel[] {
   return [
     ...(nodeBTree.right
       ? [
-        createLink(
-          nodeBTree.node.ports.center,
-          nodeBTree.right.node.ports.center,
-        ),
-      ]
+          createLink(
+            nodeBTree.node.ports.center,
+            nodeBTree.right.node.ports.center,
+          ),
+        ]
       : []),
     ...(nodeBTree.down
       ? [
-        createLink(
-          nodeBTree.node.ports.center,
-          nodeBTree.down.node.ports.center,
-        ),
-      ]
+          createLink(
+            nodeBTree.node.ports.center,
+            nodeBTree.down.node.ports.center,
+          ),
+        ]
       : []),
     ...(nodeBTree.right ? buildLinkList(nodeBTree.right) : []),
     ...(nodeBTree.down ? buildLinkList(nodeBTree.down) : []),

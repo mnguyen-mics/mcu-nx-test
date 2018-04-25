@@ -23,8 +23,21 @@ export interface FieldResource {
   name: string;
 }
 
+export interface FieldDirectiveResource {
+  id: string;
+  field_id: string;
+  object_like_type_id: string;
+  runtime_schema_id: string;
+  name: string;
+  comment: string;
+}
+
+export interface FieldInfoResource extends FieldResource {
+  directives: FieldDirectiveResource[];
+}
+
 export interface ObjectLikeTypeInfoResource extends ObjectLikeTypeResource {
-  fields: FieldResource[],
+  fields: FieldInfoResource[],
 }
 
 type GTypes =

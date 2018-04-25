@@ -600,7 +600,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       case 'USER_QUERY':
         return this.updateQuery(
           (audienceSegmentFormData.audienceSegment as UserQuerySegment)
-            .query_id,
+            .query_id!,
           audienceSegmentFormData,
         )
           .then(queryId => {
@@ -610,7 +610,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               query_id: queryId,
             });
           })
-          .then(res =>
+          .then((res: any) =>
             this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData),
         );
       default:

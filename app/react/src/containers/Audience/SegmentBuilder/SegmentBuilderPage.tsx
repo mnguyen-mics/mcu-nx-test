@@ -1,14 +1,25 @@
-import * as React from 'react';
+import * as moment from 'moment';
 import queryString from 'query-string';
+import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { Loading } from '../../../components';
+import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import AudienceSegmentService from '../../../services/AudienceSegmentService';
+import ExportService from '../../../services/Library/ExportService';
 import { DatamartSelector } from '../../Datamart';
-import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBuilderContainer';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 import JSONQLBuilderContainer from '../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
+import { QueryContainer } from '../../QueryTool/SelectorQL/AngularQueryToolWidget';
+import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBuilderContainer';
+import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
+import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
+import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -18,27 +29,14 @@ interface MapStateToProps {
   connectedUser: any;
 }
 
-interface State {
-  loading: boolean;
-  datamart?: DatamartResource;
-}
-
 type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
   MapStateToProps &
+  InjectedNotificationProps &
   InjectedIntlProps;
 
-class QueryBuilderPage extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      loading: false,
-    };
-  }
-
+class SegmentBuilderPage extends React.Component<Props> {
   render() {
-    const { intl, connectedUser, location, history } = this.props;
-    const { loading } = this.state;
+    const { intl, connectedUser, location, history, match } = this.props;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       // this.setState({ datamart: selection });
@@ -46,10 +44,6 @@ class QueryBuilderPage extends React.Component<Props, State> {
         pathname: location.pathname,
         search: queryString.stringify({ datamartId: selection.id }),
       });
-    };
-
-    const handleOnSave = () => {
-      // TODO create a segment
     };
 
     let selectedDatamart: DatamartResource | undefined;
@@ -70,9 +64,93 @@ class QueryBuilderPage extends React.Component<Props, State> {
       );
     }
 
+    const jsonQLActionbar = (query: QueryDocument, datamartId: string) => {
+      const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
+        const { name, technical_name, persisted } = segmentFormData;
+        const userQuerySegment: Partial<UserQuerySegment> = {
+          datamart_id: datamartId,
+          type: 'USER_QUERY',
+          name,
+          technical_name,
+          persisted,
+          default_ttl: calculateDefaultTtl(segmentFormData),
+          query_language: 'JSON_OTQL',
+          query_text: JSON.stringify(query),
+        };
+
+        return AudienceSegmentService.saveSegment(
+          match.params.organisationId,
+          userQuerySegment,
+        ).then(res => {
+          history.push(
+            `/v2/o/${match.params.organisationId}/audience/segments/${
+              res.data.id
+            }`,
+          );
+        });
+      };
+      return <SaveQueryAsActionBar saveAsUserQuery={saveAsUserQuery} />;
+    };
+
+    const selectorQLActionbar = (
+      query: QueryContainer | null,
+      datamartId: string,
+    ) => {
+      const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
+        if (!query) return Promise.resolve();
+        return query.saveOrUpdate().then(queryResource => {
+          const { name, technical_name, persisted } = segmentFormData;
+          const userQuerySegment: Partial<UserQuerySegment> = {
+            datamart_id: datamartId,
+            type: 'USER_QUERY',
+            name,
+            technical_name,
+            persisted,
+            default_ttl: calculateDefaultTtl(segmentFormData),
+            query_language: 'SELECTORQL',
+            query_id: queryResource.id,
+          };
+          return AudienceSegmentService.saveSegment(
+            match.params.organisationId,
+            userQuerySegment,
+          ).then(res => {
+            history.push(
+              `/v2/o/${match.params.organisationId}/audience/segments/${
+                res.data.id
+              }`,
+            );
+          });
+        });
+      };
+      const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
+        if (!query) return Promise.resolve();
+        return query.saveOrUpdate().then(queryResource => {
+          return ExportService.createExport(match.params.organisationId, {
+            name: exportFormData.name,
+            output_format: exportFormData.outputFormat,
+            query_id: queryResource.id,
+            type: 'QUERY',
+          }).then(res => {
+            history.push(
+              `/v2/o/${match.params.organisationId}/datastudio/exports/${
+                res.data.id
+              }`,
+            );
+          });
+        });
+      };
+      return (
+        <SaveQueryAsActionBar
+          saveAsUserQuery={saveAsUserQuery}
+          saveAsExort={saveAsExport}
+        />
+      );
+    };
+
+    // TODO DatamartSelector could render React.Children({ selectedDatamart })
+
     return (
       <div style={{ height: '100%', display: 'flex' }}>
-        {loading && <Loading className="loading-full-screen" />}
         {!selectedDatamart && (
           <DatamartSelector
             onSelectDatamart={handleOnSelectDatamart}
@@ -92,22 +170,15 @@ class QueryBuilderPage extends React.Component<Props, State> {
           selectedDatamart.storage_model_version === 'v201709' && (
             <JSONQLBuilderContainer
               datamartId={selectedDatamart.id}
-              onSave={handleOnSave}
-              actionbarProps={{
-                paths: [
-                  {
-                    name: intl.formatMessage({
-                      id: 'query-builder-page-actionbar-title',
-                      defaultMessage: 'Query Builder',
-                    }),
-                  },
-                ],
-              }}
+              renderActionBar={jsonQLActionbar}
             />
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' && (
-            <SelectorQLBuilderContainer datamartId={selectedDatamart.id} />
+            <SelectorQLBuilderContainer
+              datamartId={selectedDatamart.id}
+              renderActionBar={selectorQLActionbar}
+            />
           )}
       </div>
     );
@@ -117,7 +188,17 @@ class QueryBuilderPage extends React.Component<Props, State> {
 export default compose(
   injectIntl,
   withRouter,
+  injectNotifications,
   connect((state: any) => ({
     connectedUser: state.session.connectedUser,
   })),
-)(QueryBuilderPage);
+)(SegmentBuilderPage);
+
+function calculateDefaultTtl(formData: NewUserQuerySimpleFormData) {
+  if (formData.defaultLifetime && formData.defaultLifetimeUnit) {
+    return moment
+      .duration(Number(formData.defaultLifetime), formData.defaultLifetimeUnit)
+      .asMilliseconds();
+  }
+  return undefined;
+}

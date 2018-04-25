@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as moment from 'moment';
 import queryString from 'query-string';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -8,6 +9,13 @@ import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { DatamartSelector } from '../../Datamart';
 import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBuilderContainer';
 import OTQLConsoleContainer from '../../QueryTool/OTQL/OTQLConsoleContainer';
+import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
+import { QueryContainer } from '../../QueryTool/SelectorQL/AngularQueryToolWidget';
+import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
+import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
+import AudienceSegmentService from '../../../services/AudienceSegmentService';
+import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
+import ExportService from '../../../services/Library/ExportService';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -46,7 +54,7 @@ class QueryToolPage extends React.Component<Props> {
   }
 
   render() {
-    const { intl, location, history } = this.props;
+    const { intl, location, history, match } = this.props;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       history.push({
@@ -56,6 +64,61 @@ class QueryToolPage extends React.Component<Props> {
     };    
 
     const selectedDatamart = this.getSelectedDatamart();
+
+    const selectorQLActionbar = (
+      query: QueryContainer | null,
+      datamartId: string,
+    ) => {
+      const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
+        if (!query) return Promise.resolve();
+        return query.saveOrUpdate().then(queryResource => {
+          const { name, technical_name, persisted } = segmentFormData;
+          const userQuerySegment: Partial<UserQuerySegment> = {
+            datamart_id: datamartId,
+            type: 'USER_QUERY',
+            name,
+            technical_name,
+            persisted,
+            default_ttl: calculateDefaultTtl(segmentFormData),
+            query_language: 'SELECTORQL',
+            query_id: queryResource.id,
+          };
+          return AudienceSegmentService.saveSegment(
+            match.params.organisationId,
+            userQuerySegment,
+          ).then(res => {
+            history.push(
+              `/v2/o/${match.params.organisationId}/audience/segments/${
+                res.data.id
+              }`,
+            );
+          });
+        });
+      };
+      const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
+        if (!query) return Promise.resolve();
+        return query.saveOrUpdate().then(queryResource => {
+          return ExportService.createExport(match.params.organisationId, {
+            name: exportFormData.name,
+            output_format: exportFormData.outputFormat,
+            query_id: queryResource.id,
+            type: 'QUERY',
+          }).then(res => {
+            history.push(
+              `/v2/o/${match.params.organisationId}/datastudio/exports/${
+                res.data.id
+              }`,
+            );
+          });
+        });
+      };
+      return (
+        <SaveQueryAsActionBar
+          saveAsUserQuery={saveAsUserQuery}
+          saveAsExort={saveAsExport}
+        />
+      );
+    };
 
     return (
       <div style={{ height: '100%', display: 'flex' }}>
@@ -82,7 +145,10 @@ class QueryToolPage extends React.Component<Props> {
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' && (
-            <SelectorQLBuilderContainer datamartId={selectedDatamart.id} />
+            <SelectorQLBuilderContainer 
+              datamartId={selectedDatamart.id} 
+              renderActionBar={selectorQLActionbar}
+            />
           )}
       </div>
     );
@@ -96,3 +162,12 @@ export default compose(
     connectedUser: state.session.connectedUser,
   })),
 )(QueryToolPage);
+
+function calculateDefaultTtl(formData: NewUserQuerySimpleFormData) {
+  if (formData.defaultLifetime && formData.defaultLifetimeUnit) {
+    return moment
+      .duration(Number(formData.defaultLifetime), formData.defaultLifetimeUnit)
+      .asMilliseconds();
+  }
+  return undefined;
+}

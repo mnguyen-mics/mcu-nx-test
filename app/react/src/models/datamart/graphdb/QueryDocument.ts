@@ -110,7 +110,7 @@ export interface GroupNode {
   type: 'GROUP';
   expressions: ObjectTreeExpressionNodeShape[];
   negation?: boolean;
-  booleanOperator: QueryBooleanOperator;
+  boolean_operator: QueryBooleanOperator;
 }
 
 export interface ObjectNode {
@@ -118,11 +118,28 @@ export interface ObjectNode {
   field: string;
   expressions: ObjectTreeExpressionNodeShape[];
   negation?: boolean;
-  booleanOperator: QueryBooleanOperator;
-  minScore?: number;
-  scoreFunction?: 'SUM' | 'AVERAGE' | 'MIN' | 'MAX';
-  scoreField?: string;
+  boolean_operator: QueryBooleanOperator;
+  min_score?: number;
+  score_function?: 'SUM' | 'AVERAGE' | 'MIN' | 'MAX';
+  score_field?: string;
 }
 
 export type QueryBooleanOperator = 'AND' | 'OR';
 export type QueryFieldExistence = 'EXISTS' | 'DOES_NOT_EXIST';
+
+export interface SelectionField {
+  name: string;
+  selections: SelectionField[]
+}
+
+export interface SelectionOperation {
+  selections: SelectionField[]
+}
+
+export interface QueryDocument {
+  language_version?: string;
+  operation?: SelectionOperation;
+  // aggregations: Aggregation[],
+  from: string;
+  where?: ObjectTreeExpressionNodeShape
+}

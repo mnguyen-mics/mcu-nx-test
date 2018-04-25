@@ -310,6 +310,10 @@
     border-radius: 2px;
     opacity: 0.6;
     cursor: pointer;
+
+    &.error {
+      background-color: @error-color;
+    }
   }
   .refresh-text {
     position: absolute;
@@ -321,6 +325,10 @@
     cursor: pointer;
     .icon {
       margin: 0!important
+    }
+
+    &.error {
+      color: @error-color;
     }
   }
 }

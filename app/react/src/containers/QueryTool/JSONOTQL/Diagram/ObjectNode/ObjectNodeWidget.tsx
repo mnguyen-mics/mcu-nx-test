@@ -13,9 +13,12 @@ import {
   ObjectNodeFormData,
   generateObjectNodeFromFormData,
   generateFormDataFromObjectNode,
+  FrequencyConverter,
 } from '../../Edit/domain';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { frequencyModeMessageMap } from '../../messages';
 
-interface Props {
+interface ObjectNodeWidgetProps {
   node: ObjectNodeModel;
   diagramEngine: DiagramEngine;
   treeNodeOperations: TreeNodeOperations;
@@ -29,10 +32,9 @@ interface State {
 
 const RenderInBodyAny = RenderInBody as any;
 
-class ObjectNodeWidget extends React.Component<
-  Props & InjectDrawerProps,
-  State
-> {
+type Props = ObjectNodeWidgetProps & InjectedIntlProps & InjectDrawerProps;
+
+class ObjectNodeWidget extends React.Component<Props, State> {
   top: number = 0;
   left: number = 0;
   id: string = cuid();
@@ -66,17 +68,13 @@ class ObjectNodeWidget extends React.Component<
 
   editNode = () => {
     const { node } = this.props;
-    let computedSchemaPath = ['UserPoint'];
-    if (node.parentObjectNode) {
-      computedSchemaPath = [node.parentObjectNode.field];
-    }
     this.setState({ focus: false }, () => {
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
         additionalProps: {
           close: this.props.closeNextDrawer,
-          breadCrumbPaths: [{ name: 'test' }],
+          breadCrumbPaths: [{ name: node.objectTypeInfo.name }],
           objectTypes: this.props.objectTypes,
-          schemaPath: computedSchemaPath,
+          objectType: node.objectTypeInfo,
           onSubmit: (e: ObjectNodeFormData) => {
             this.props.treeNodeOperations.updateNode(
               node.treeNodePath,
@@ -92,7 +90,7 @@ class ObjectNodeWidget extends React.Component<
   };
 
   render() {
-    const { node } = this.props;
+    const { node, intl } = this.props;
 
     const onHover = (type: 'enter' | 'leave') => () =>
       this.setState({ hover: type === 'enter' ? true : false });
@@ -102,6 +100,22 @@ class ObjectNodeWidget extends React.Component<
     };
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
+
+    const frequency = FrequencyConverter.toFrequency(node.objectNode);
+
+    const renderedObjectNode = (
+      <div className="field">
+        <div className="objectValue">
+          <span>{node.objectNode.field}</span>
+          {frequency.enabled && (
+            <div>
+              {intl.formatMessage(frequencyModeMessageMap[frequency.mode])}{' '}
+              {frequency.value} times
+            </div>
+          )}
+        </div>
+      </div>
+    );
 
     return (
       <div
@@ -124,9 +138,7 @@ class ObjectNodeWidget extends React.Component<
               : 'none',
         }}
       >
-        <div className="field">
-          <div className="objectValue">{node.objectNode.field}</div>
-        </div>
+        {renderedObjectNode}
         <div
           style={{
             position: 'absolute',
@@ -171,11 +183,7 @@ class ObjectNodeWidget extends React.Component<
                 }}
                 onClick={onFocus(false)}
               >
-                <div className="field">
-                  <div className="objectValue" title={node.objectNode.field}>
-                    {node.objectNode.field}
-                  </div>
-                </div>
+                {renderedObjectNode}
               </span>
               <div
                 className="boolean-menu"
@@ -202,6 +210,6 @@ class ObjectNodeWidget extends React.Component<
   }
 }
 
-export default compose<Props & InjectDrawerProps, Props>(injectDrawer)(
+export default compose<Props, ObjectNodeWidgetProps>(injectIntl, injectDrawer)(
   ObjectNodeWidget,
 );
