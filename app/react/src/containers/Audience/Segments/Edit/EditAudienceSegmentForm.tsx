@@ -227,7 +227,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       component: (
         <GeneralFormSection
           segmentCreation={segmentCreation}
-          segmentType={segmentType as any}
+          segmentType={type as any}
           datamart={datamart}
         />
       ),

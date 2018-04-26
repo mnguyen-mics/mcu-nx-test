@@ -248,7 +248,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 </div>
               </div>
 
-              {segmentType === 'USER_QUERY' ? (
+              {segmentType === 'USER_QUERY' || segmentType === 'USER_LOOKALIKE' ? (
                 <div>
                   <FormBooleanField
                     name="audienceSegment.persisted"
