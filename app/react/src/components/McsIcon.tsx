@@ -54,6 +54,8 @@ export type McsIconType =
   'tablet' |
   'user' |
   'users' |
+  'user-query' |
+  'user-list' |
   'video' |
   'warning';
 

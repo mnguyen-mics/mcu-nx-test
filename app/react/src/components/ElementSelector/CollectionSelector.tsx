@@ -65,7 +65,7 @@ class CollectionSelector<T extends SelectableItem> extends React.Component<
   componentDidMount() {
     this.setState({ isLoading: true });
     Promise.all([
-      this.fetchNewData(this.props.selectedIds).then(response => {
+      this.fetchNewData(this.props.selectedIds).then((response: any[]) => {
         if (response.length === 0) {
           this.setState({
             noElement: true,

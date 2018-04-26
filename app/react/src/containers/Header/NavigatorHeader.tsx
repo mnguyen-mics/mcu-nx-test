@@ -7,14 +7,14 @@ import { Dropdown } from '../../components/PopupContainers';
 import * as SessionHelper from '../../state/Session/selectors';
 import McsIcon from '../../components/McsIcon';
 import messages from './messages';
-import { Workspace } from '../../models/organisation/organisation';
 import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
+import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 
 const { Header } = Layout;
 
 interface NavigatorHeaderStoreProps {
-  workspace: (organisationId: string) => Workspace;
+  workspace: (organisationId: string) => UserWorkspaceResource;
   userEmail: string;
 }
 
@@ -49,7 +49,7 @@ class NavigatorHeader extends React.Component<Props> {
         <Menu.Item key="account">
           <Link
             to={{
-              pathname: `/v2/o/${organisationId}/settings/account/my_profile`
+              pathname: `/v2/o/${organisationId}/settings/account/my_profile`,
             }}
           >
             <FormattedMessage {...messages.account} />

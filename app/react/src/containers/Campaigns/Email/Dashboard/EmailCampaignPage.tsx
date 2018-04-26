@@ -102,7 +102,7 @@ class EmailCampaign extends React.Component<Props, State> {
         search: buildDefaultSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+      const filter = parseSearch<EmailDashboardSearchSettings>(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
       this.loadCampaign(campaignId);
       this.refreshStats(organisationId, campaignId, filter);
     }
@@ -134,7 +134,7 @@ class EmailCampaign extends React.Component<Props, State> {
           ),
         });
       } else {
-        const filter = parseSearch(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+        const filter = parseSearch<EmailDashboardSearchSettings>(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS);
         this.loadCampaign(nextCampaignId);
         this.refreshStats(nextOrganisationId, nextCampaignId, filter);
       }

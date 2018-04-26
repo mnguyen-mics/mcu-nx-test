@@ -6,7 +6,7 @@ import { CampaignStatus } from '../models/campaign/constants/index';
 export interface GetCampaignsOptions extends PaginatedApiParam {
   administration_id?: string;
   scope?: string;
-  keywords?: string[];
+  keywords?: string;
   status?: CampaignStatus[];
   archived?: boolean;
   label_ids?: string[];

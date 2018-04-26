@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   hasDatamarts,
-  getDefaultDatamart,
 } from '../../state/Session/selectors';
 import { getOrgFeatures } from '../../state/Features/selectors';
 import { Datamart } from '../../models/organisation/organisation';
@@ -143,7 +142,6 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
 
 const mapStateToProps = (state: any) => ({
   organisationHasDatamarts: hasDatamarts(state),
-  defaultDatamart: getDefaultDatamart(state),
   orgFeatures: getOrgFeatures(state),
 });
 

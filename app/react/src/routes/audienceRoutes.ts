@@ -36,7 +36,7 @@ export const audienceDefinition: NavigatorDefinition = {
     requireDatamart: true
   },
   audienceSegmentCreation: {
-    path: '/audience/segments/create/:type?',
+    path: '/audience/segments/create',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
     requiredFeature: 'audience.segments',

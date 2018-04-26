@@ -20,13 +20,14 @@ import {
 import PluginService from './PluginService';
 import { BaseExecutionResource } from '../models/Job/JobResource';
 
-export interface SegmentImportResult{
-  total_user_segment_imported:number;
-  total_user_segment_treated:number;
+export interface SegmentImportResult {
+  total_user_segment_imported: number;
+  total_user_segment_treated: number;
 }
 
-export interface UserSegmentImportJobExecutionResource extends BaseExecutionResource<{}, SegmentImportResult>{
-  job_type: 'USER_SEGMENT_IMPORT'
+export interface UserSegmentImportJobExecutionResource
+  extends BaseExecutionResource<{}, SegmentImportResult> {
+  job_type: 'USER_SEGMENT_IMPORT';
 }
 
 export interface GetSegmentsOption extends PaginatedApiParam {
@@ -38,18 +39,17 @@ export interface GetSegmentsOption extends PaginatedApiParam {
   campaign_id?: string;
   audience_partition_id?: string;
   persisted?: boolean;
+  datamart_id?: string;
 }
 
 const AudienceSegmentService = {
   getSegments(
     organisationId?: string,
-    datamartId?: string,
     options: GetSegmentsOption = {},
   ): Promise<DataListResponse<AudienceSegmentResource>> {
     const endpoint = 'audience_segments';
     const params = {
       organisation_id: organisationId,
-      datamart_id: datamartId,
       ...options,
     };
 
@@ -176,11 +176,10 @@ const AudienceSegmentService = {
   // DEPRECATED, will be removed in a near future
   getSegmentsWithMetadata(
     organisationId: string,
-    datamartId: string,
     options: GetSegmentsOption = {},
   ): Promise<any> {
     return Promise.all([
-      AudienceSegmentService.getSegments(organisationId, datamartId, options),
+      AudienceSegmentService.getSegments(organisationId, options),
       AudienceSegmentService.getSegmentMetaData(organisationId),
     ]).then(([segmentApiResp, metadata]) => {
       const augmentedSegments = segmentApiResp.data.map((segment: any) => {
@@ -329,12 +328,10 @@ const AudienceSegmentService = {
     );
   },
 
-  recalibrateAudienceLookAlike(
-    segmentId: string
-  ): Promise<DataResponse<void>> {
+  recalibrateAudienceLookAlike(segmentId: string): Promise<DataResponse<void>> {
     const endpoint = `audience_segment_lookalikes/${segmentId}/calibrate`;
-    return ApiService.postRequest(endpoint, {})
-  }
+    return ApiService.postRequest(endpoint, {});
+  },
 };
 
 export default AudienceSegmentService;

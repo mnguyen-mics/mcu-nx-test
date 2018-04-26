@@ -21,9 +21,13 @@ import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
-import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import {
+  parseSearch,
+  DateSearchSettings,
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+} from '../../../../utils/LocationSearchHelper';
 import { RouteComponentProps } from 'react-router';
-import McsMoment from '../../../../utils/McsMoment';
 import messages from './messages';
 import Slider from '../../../../components/Transition/Slide';
 import {
@@ -73,12 +77,10 @@ interface DisplayCampaignsActionbarProps {
   };
 }
 
-export interface FilterProps {
-  currentPage: number;
-  from: McsMoment;
-  to: McsMoment;
-  keywords: string[];
-  pageSize: number;
+export interface FilterParams
+  extends DateSearchSettings,
+    PaginationSearchSettings,
+    KeywordSearchSettings {
   statuses: CampaignStatus[];
 }
 
@@ -94,7 +96,7 @@ interface DisplayCampaignsActionbarState {
   allCampaignsPaused: boolean;
 }
 
-const fetchExportData = (organisationId: string, filter: FilterProps) => {
+const fetchExportData = (organisationId: string, filter: FilterParams) => {
   const campaignType = 'DISPLAY';
   const buildOptionsForGetCampaigns = () => {
     const options: GetCampaignsOptions = {
@@ -163,9 +165,14 @@ class DisplayCampaignsActionbar extends React.Component<
   }
 
   handleRunExport = () => {
-    const { match: { params: { organisationId } }, translations } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      translations,
+    } = this.props;
 
-    const filter = parseSearch(
+    const filter = parseSearch<FilterParams>(
       this.props.location.search,
       DISPLAY_SEARCH_SETTINGS,
     );
@@ -196,7 +203,9 @@ class DisplayCampaignsActionbar extends React.Component<
   };
 
   buildMenu = () => {
-    const { multiEditProps: { handleStatusAction } } = this.props;
+    const {
+      multiEditProps: { handleStatusAction },
+    } = this.props;
     const onClick = (event: any) => {
       switch (event.key) {
         case 'pause':
@@ -223,7 +232,9 @@ class DisplayCampaignsActionbar extends React.Component<
   render() {
     const { exportIsRunning } = this.state;
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl,
       rowSelection: { selectedRowKeys },
       multiEditProps: {

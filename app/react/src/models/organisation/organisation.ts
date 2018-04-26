@@ -15,9 +15,9 @@ export interface Datamart {
     name: string;
     organisation_id: string;
     token: string;
-    creation_date: string;
+    creation_date: Date;
     time_zone: string;
-    type: 'DATAMART';
+    type: 'DATAMART' | 'CROSS_DATAMART';
     datafarm: string;
     storage_model_version: string;
   }

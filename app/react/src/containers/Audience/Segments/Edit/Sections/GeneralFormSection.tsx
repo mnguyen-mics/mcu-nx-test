@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 
 import { compose } from 'recompose';
 import { Row } from 'antd/lib/grid';
-
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
@@ -20,21 +19,40 @@ import {
   FormBoolean,
   FormBooleanField,
 } from '../../../../../components/Form';
-
 import { ButtonStyleless, McsIcon } from '../../../../../components';
-import { SegmentTypeFormLoader } from '../domain';
+import { SegmentType } from '../domain';
+import { Datamart } from '../../../../../models/organisation/organisation';
+
+const messagesMap = defineMessages({
+  audienceSegmentFormSelectTypeOptionUserList: {
+    id: 'audience.segment.section1.select.type.option.list',
+    defaultMessage: 'User List',
+  },
+  audienceSegmentFormSelectTypeOptionUserPixel: {
+    id: 'audience.segment.section1.select.type.option.pixel',
+    defaultMessage: 'User Pixel',
+  },
+  audienceSegmentFormSelectTypeOptionUserQuery: {
+    id: 'audience.segment.section1.select.type.option.query',
+    defaultMessage: 'User Query',
+  },
+});
 
 export interface GeneralFormSectionProps {
   segmentCreation: boolean;
-  segmentType: SegmentTypeFormLoader;
+  segmentType: SegmentType;
+  datamart?: Datamart;
 }
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps & GeneralFormSectionProps;
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  GeneralFormSectionProps;
 
 interface State {
-  technicalName?: string
-  displayAdvancedSection: boolean,
-  neverExpire: boolean,
+  technicalName?: string;
+  displayAdvancedSection: boolean;
+  neverExpire: boolean;
 }
 
 class GeneralFormSection extends React.Component<Props, State> {
@@ -55,38 +73,72 @@ class GeneralFormSection extends React.Component<Props, State> {
 
   handleOnchangeTechnicalName = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ technicalName: e.target.value });
-  }
+  };
 
   getTechnicalNameField = () => {
-
     const {
       intl: { formatMessage },
     } = this.props;
 
-    return <FormInputField
-      name="audienceSegment.technical_name"
-      component={FormInput}
-      onChange={this.handleOnchangeTechnicalName}
-      formItemProps={{
-        label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
-      }}
-      inputProps={{
-        placeholder: formatMessage(
-          messages.contentSectionGeneralAdvancedPartRow1Placeholder,
-        ),
-      }}
-      helpToolTipProps={{
-        title: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Tooltip),
-      }}
-    />
+    return (
+      <FormInputField
+        name="audienceSegment.technical_name"
+        component={FormInput}
+        onChange={this.handleOnchangeTechnicalName}
+        formItemProps={{
+          label: formatMessage(
+            messages.contentSectionGeneralAdvancedPartRow1Label,
+          ),
+        }}
+        inputProps={{
+          placeholder: formatMessage(
+            messages.contentSectionGeneralAdvancedPartRow1Placeholder,
+          ),
+        }}
+        helpToolTipProps={{
+          title: formatMessage(
+            messages.contentSectionGeneralAdvancedPartRow1Tooltip,
+          ),
+        }}
+      />
+    );
+  };
 
-  }
+  getAudienceTypeOptions = () => {
+    const {
+      intl: { formatMessage },
+      datamart,
+    } = this.props;
+    const typeOptions = [
+      {
+        value: 'USER_LIST',
+        title: formatMessage(
+          messagesMap.audienceSegmentFormSelectTypeOptionUserList,
+        ),
+      },
+      {
+        value: 'USER_QUERY',
+        title: formatMessage(
+          messagesMap.audienceSegmentFormSelectTypeOptionUserQuery,
+        ),
+      },
+    ];
+    if (datamart && datamart.storage_model_version === 'v201709') {
+      typeOptions.push({
+        value: 'USER_PIXEL',
+        title: formatMessage(
+          messagesMap.audienceSegmentFormSelectTypeOptionUserPixel,
+        ),
+      });
+    }
+    return typeOptions;
+  };
 
   render() {
     const {
       fieldValidators: { isRequired, isNotZero, isValidInteger },
       intl: { formatMessage },
-      segmentType
+      segmentType,
     } = this.props;
 
     return (
@@ -196,24 +248,25 @@ class GeneralFormSection extends React.Component<Props, State> {
                   />
                 </div>
               </div>
-              
-             {segmentType === 'USER_QUERY' ? <div>
-                <FormBooleanField
-                  name="audienceSegment.persisted"
-                  component={FormBoolean}
-                  formItemProps={{
-                  label: formatMessage(
-                      messages.audienceSegmentCreationGeneralPersistedFieldTitle,
-                    ),
-                  }}
-                  helpToolTipProps={{
-                    title: formatMessage(
-                      messages.audienceSegmentCreationGeneralPersistedFieldHelper,
-                    ),
-                  }}
-                />
-              </div> : null}
 
+              {segmentType === 'USER_QUERY' ? (
+                <div>
+                  <FormBooleanField
+                    name="audienceSegment.persisted"
+                    component={FormBoolean}
+                    formItemProps={{
+                      label: formatMessage(
+                        messages.audienceSegmentCreationGeneralPersistedFieldTitle,
+                      ),
+                    }}
+                    helpToolTipProps={{
+                      title: formatMessage(
+                        messages.audienceSegmentCreationGeneralPersistedFieldHelper,
+                      ),
+                    }}
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -222,6 +275,8 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, GeneralFormSectionProps>(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose<Props, GeneralFormSectionProps>(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(GeneralFormSection);

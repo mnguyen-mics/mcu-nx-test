@@ -1,4 +1,4 @@
-import { DatamartResource } from "../datamart/DatamartResource";
+import { Datamart } from './../organisation/organisation';
 
 
 export interface UserWorkspaceResource {
@@ -7,6 +7,6 @@ export interface UserWorkspaceResource {
 	customer_type: string;
 	administrator: boolean;
 	role: string;
-	datamarts: DatamartResource[];
+	datamarts: Datamart[];
 }
 

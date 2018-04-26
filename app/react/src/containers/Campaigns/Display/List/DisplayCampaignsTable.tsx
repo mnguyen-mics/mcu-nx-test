@@ -36,6 +36,7 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
 import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
+import { FilterParams } from './DisplayCampaignsActionbar';
 
 interface DisplayCampaignsTableProps
   extends MapDispatchToProps,
@@ -65,7 +66,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+      const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
       loadDisplayCampaignsDataSource(organisationId, filter, true);
     }
   }
@@ -96,7 +97,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, DISPLAY_SEARCH_SETTINGS);
+        const filter = parseSearch<FilterParams>(nextSearch, DISPLAY_SEARCH_SETTINGS);
         loadDisplayCampaignsDataSource(
           nextOrganisationId,
           filter,
@@ -120,7 +121,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       translations,
     } = this.props;
 
-    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+    const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
