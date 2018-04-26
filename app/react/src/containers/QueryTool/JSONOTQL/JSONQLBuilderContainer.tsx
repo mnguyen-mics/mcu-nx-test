@@ -64,14 +64,14 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   componentDidMount() {
     const { datamartId, queryId } = this.props;
     this.loadData(datamartId, queryId);
-    
+
   }
 
   componentWillReceiveProps(nextProps: Props) {
     const { datamartId, queryId } = this.props;
     const { datamartId: nextDatamartId, queryId: nextQueryId } = nextProps;
 
-    if (nextDatamartId !== datamartId || queryId !== nextQueryId){
+    if (nextDatamartId !== datamartId || queryId !== nextQueryId) {
       this.loadData(nextDatamartId, nextQueryId);
     }
   }
@@ -90,16 +90,18 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           objectTypes,
           queryHistory: {
             past: [],
-            present: this.props.queryDocument ? this.props.queryDocument.where :undefined,
+            present: this.props.queryDocument ? this.props.queryDocument.where : undefined,
             future: [],
           },
-        }));
+        }), () => {
+          this.runQuery(datamartId);
+        });
       })
       .catch(err => {
         this.props.notifyError(err);
         this.setState({ fetchingObjectTypes: false });
       });
-    this.runQuery(datamartId);
+
   }
 
   fetchObjectTypes = (datamartId: string): Promise<ObjectLikeTypeInfoResource[]> => {
@@ -148,7 +150,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           present: newPresent,
           future: [],
         },
-        staleQueryResult: true,        
+        staleQueryResult: true,
         queryResult: {
           ...prevState.queryResult,
           error: undefined,
@@ -215,7 +217,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     });
     OTQLService.runJSONOTQLQuery(datamartId, queryDocument)
       .then(res => {
-        this.setState({          
+        this.setState({
           queryResult: {
             loading: false,
             otqlResult: res.data,
@@ -223,7 +225,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         });
       })
       .catch(error => {
-        this.setState({          
+        this.setState({
           queryResult: {
             loading: false,
             error,
@@ -258,7 +260,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         <Layout.Content
           className={`mcs-content-container ${
             editionLayout ? 'flex' : ''
-          }`}
+            }`}
           style={{ padding: 0 }}
         >
           <JSONQLBuilder
